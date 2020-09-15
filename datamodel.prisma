@@ -360,12 +360,25 @@ type Product {
       link: TABLE
       onDelete: CASCADE
     )
-  season: String
+  season: ProductSeason
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type Season {
+  id: ID! @id
+	year: Int
+	seasonCode: SeasonCode
+}
+
+type ProductSeason {
+  id: ID! @id
+	vendorSeason: Season @relation(name: "ProductSeasonVendorSeason")
+	internalSeason: Season @relation(name: "ProductSeasonInternalSeason")
+  wearableSeasons: [SeasonString!] @scalarList(strategy: RELATION)
 }
 
 type ProductMaterialCategory {
@@ -543,6 +556,25 @@ type PushNotificationReceipt {
   sentAt: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+enum SeasonCode {
+  # For Vendor and Internal Seasons
+	FW # Fall winter
+  SS # Spring Summer
+
+  # For Vendor Seasons only
+  PS # Pre spring
+  PF # Pre Fall
+  HO # Holiday
+  AW # Autumn Winter
+}
+
+enum SeasonString {
+  Spring 
+  Summer
+	Winter
+  Fall
 }
 
 enum UserVerificationMethod {

@@ -64,6 +64,7 @@ type PhysicalProduct {
 
 input WarehouseLocationConnectWhereUniqueInput {
   connect: WarehouseLocationWhereUniqueInput
+  disconnect: Boolean
 }
 
 input PhysicalProductUpdateInput {
@@ -75,6 +76,7 @@ input PhysicalProductUpdateInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  barcoded: Boolean
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationConnectWhereUniqueInput
   dateOrdered: DateTime

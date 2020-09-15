@@ -379,6 +379,10 @@ type AggregateProductRequest {
   count: Int!
 }
 
+type AggregateProductSeason {
+  count: Int!
+}
+
 type AggregateProductStatusChange {
   count: Int!
 }
@@ -420,6 +424,10 @@ type AggregateReservationReceipt {
 }
 
 type AggregateReservationReceiptItem {
+  count: Int!
+}
+
+type AggregateSeason {
   count: Int!
 }
 
@@ -5700,6 +5708,12 @@ type Mutation {
   upsertProductRequest(where: ProductRequestWhereUniqueInput!, create: ProductRequestCreateInput!, update: ProductRequestUpdateInput!): ProductRequest!
   deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
+  createProductSeason(data: ProductSeasonCreateInput!): ProductSeason!
+  updateProductSeason(data: ProductSeasonUpdateInput!, where: ProductSeasonWhereUniqueInput!): ProductSeason
+  updateManyProductSeasons(data: ProductSeasonUpdateManyMutationInput!, where: ProductSeasonWhereInput): BatchPayload!
+  upsertProductSeason(where: ProductSeasonWhereUniqueInput!, create: ProductSeasonCreateInput!, update: ProductSeasonUpdateInput!): ProductSeason!
+  deleteProductSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
+  deleteManyProductSeasons(where: ProductSeasonWhereInput): BatchPayload!
   createProductStatusChange(data: ProductStatusChangeCreateInput!): ProductStatusChange!
   updateProductStatusChange(data: ProductStatusChangeUpdateInput!, where: ProductStatusChangeWhereUniqueInput!): ProductStatusChange
   updateManyProductStatusChanges(data: ProductStatusChangeUpdateManyMutationInput!, where: ProductStatusChangeWhereInput): BatchPayload!
@@ -5765,6 +5779,12 @@ type Mutation {
   upsertReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!, create: ReservationReceiptItemCreateInput!, update: ReservationReceiptItemUpdateInput!): ReservationReceiptItem!
   deleteReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   deleteManyReservationReceiptItems(where: ReservationReceiptItemWhereInput): BatchPayload!
+  createSeason(data: SeasonCreateInput!): Season!
+  updateSeason(data: SeasonUpdateInput!, where: SeasonWhereUniqueInput!): Season
+  updateManySeasons(data: SeasonUpdateManyMutationInput!, where: SeasonWhereInput): BatchPayload!
+  upsertSeason(where: SeasonWhereUniqueInput!, create: SeasonCreateInput!, update: SeasonUpdateInput!): Season!
+  deleteSeason(where: SeasonWhereUniqueInput!): Season
+  deleteManySeasons(where: SeasonWhereInput): BatchPayload!
   createSize(data: SizeCreateInput!): Size!
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
@@ -7830,7 +7850,7 @@ type Product {
   variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
   status: ProductStatus
   statusChanges(where: ProductStatusChangeWhereInput, orderBy: ProductStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductStatusChange!]
-  season: String
+  season: ProductSeason
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -7878,7 +7898,7 @@ input ProductCreateInput {
   variants: ProductVariantCreateManyWithoutProductInput
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
-  season: String
+  season: ProductSeasonCreateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -7956,7 +7976,7 @@ input ProductCreateWithoutBrandInput {
   variants: ProductVariantCreateManyWithoutProductInput
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
-  season: String
+  season: ProductSeasonCreateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -7985,7 +8005,7 @@ input ProductCreateWithoutCategoryInput {
   variants: ProductVariantCreateManyWithoutProductInput
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
-  season: String
+  season: ProductSeasonCreateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -8014,7 +8034,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   variants: ProductVariantCreateManyWithoutProductInput
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
-  season: String
+  season: ProductSeasonCreateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -8043,7 +8063,7 @@ input ProductCreateWithoutModelInput {
   variants: ProductVariantCreateManyWithoutProductInput
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
-  season: String
+  season: ProductSeasonCreateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -8072,7 +8092,7 @@ input ProductCreateWithoutStatusChangesInput {
   outerMaterials: ProductCreateouterMaterialsInput
   variants: ProductVariantCreateManyWithoutProductInput
   status: ProductStatus
-  season: String
+  season: ProductSeasonCreateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -8101,7 +8121,7 @@ input ProductCreateWithoutTagsInput {
   variants: ProductVariantCreateManyWithoutProductInput
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
-  season: String
+  season: ProductSeasonCreateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -8130,7 +8150,7 @@ input ProductCreateWithoutVariantsInput {
   outerMaterials: ProductCreateouterMaterialsInput
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
-  season: String
+  season: ProductSeasonCreateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -8637,8 +8657,6 @@ enum ProductOrderByInput {
   retailPrice_DESC
   status_ASC
   status_DESC
-  season_ASC
-  season_DESC
   architecture_ASC
   architecture_DESC
   photographyStatus_ASC
@@ -8663,7 +8681,6 @@ type ProductPreviousValues {
   innerMaterials: [String!]!
   outerMaterials: [String!]!
   status: ProductStatus
-  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9042,20 +9059,6 @@ input ProductScalarWhereInput {
   status_not: ProductStatus
   status_in: [ProductStatus!]
   status_not_in: [ProductStatus!]
-  season: String
-  season_not: String
-  season_in: [String!]
-  season_not_in: [String!]
-  season_lt: String
-  season_lte: String
-  season_gt: String
-  season_gte: String
-  season_contains: String
-  season_not_contains: String
-  season_starts_with: String
-  season_not_starts_with: String
-  season_ends_with: String
-  season_not_ends_with: String
   architecture: ProductArchitecture
   architecture_not: ProductArchitecture
   architecture_in: [ProductArchitecture!]
@@ -9091,6 +9094,128 @@ input ProductScalarWhereInput {
   AND: [ProductScalarWhereInput!]
   OR: [ProductScalarWhereInput!]
   NOT: [ProductScalarWhereInput!]
+}
+
+type ProductSeason {
+  id: ID!
+  vendorSeason: Season
+  internalSeason: Season
+  wearableSeasons: [SeasonString!]!
+}
+
+type ProductSeasonConnection {
+  pageInfo: PageInfo!
+  edges: [ProductSeasonEdge]!
+  aggregate: AggregateProductSeason!
+}
+
+input ProductSeasonCreateInput {
+  id: ID
+  vendorSeason: SeasonCreateOneInput
+  internalSeason: SeasonCreateOneInput
+  wearableSeasons: ProductSeasonCreatewearableSeasonsInput
+}
+
+input ProductSeasonCreateOneInput {
+  create: ProductSeasonCreateInput
+  connect: ProductSeasonWhereUniqueInput
+}
+
+input ProductSeasonCreatewearableSeasonsInput {
+  set: [SeasonString!]
+}
+
+type ProductSeasonEdge {
+  node: ProductSeason!
+  cursor: String!
+}
+
+enum ProductSeasonOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type ProductSeasonPreviousValues {
+  id: ID!
+  wearableSeasons: [SeasonString!]!
+}
+
+type ProductSeasonSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductSeason
+  updatedFields: [String!]
+  previousValues: ProductSeasonPreviousValues
+}
+
+input ProductSeasonSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ProductSeasonWhereInput
+  AND: [ProductSeasonSubscriptionWhereInput!]
+  OR: [ProductSeasonSubscriptionWhereInput!]
+  NOT: [ProductSeasonSubscriptionWhereInput!]
+}
+
+input ProductSeasonUpdateDataInput {
+  vendorSeason: SeasonUpdateOneInput
+  internalSeason: SeasonUpdateOneInput
+  wearableSeasons: ProductSeasonUpdatewearableSeasonsInput
+}
+
+input ProductSeasonUpdateInput {
+  vendorSeason: SeasonUpdateOneInput
+  internalSeason: SeasonUpdateOneInput
+  wearableSeasons: ProductSeasonUpdatewearableSeasonsInput
+}
+
+input ProductSeasonUpdateManyMutationInput {
+  wearableSeasons: ProductSeasonUpdatewearableSeasonsInput
+}
+
+input ProductSeasonUpdateOneInput {
+  create: ProductSeasonCreateInput
+  update: ProductSeasonUpdateDataInput
+  upsert: ProductSeasonUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ProductSeasonWhereUniqueInput
+}
+
+input ProductSeasonUpdatewearableSeasonsInput {
+  set: [SeasonString!]
+}
+
+input ProductSeasonUpsertNestedInput {
+  update: ProductSeasonUpdateDataInput!
+  create: ProductSeasonCreateInput!
+}
+
+input ProductSeasonWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  vendorSeason: SeasonWhereInput
+  internalSeason: SeasonWhereInput
+  AND: [ProductSeasonWhereInput!]
+  OR: [ProductSeasonWhereInput!]
+  NOT: [ProductSeasonWhereInput!]
+}
+
+input ProductSeasonWhereUniqueInput {
+  id: ID
 }
 
 enum ProductStatus {
@@ -9367,7 +9492,7 @@ input ProductUpdateDataInput {
   variants: ProductVariantUpdateManyWithoutProductInput
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
-  season: String
+  season: ProductSeasonUpdateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9400,7 +9525,7 @@ input ProductUpdateInput {
   variants: ProductVariantUpdateManyWithoutProductInput
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
-  season: String
+  season: ProductSeasonUpdateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9417,7 +9542,6 @@ input ProductUpdateManyDataInput {
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   status: ProductStatus
-  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9446,7 +9570,6 @@ input ProductUpdateManyMutationInput {
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   status: ProductStatus
-  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9564,7 +9687,7 @@ input ProductUpdateWithoutBrandDataInput {
   variants: ProductVariantUpdateManyWithoutProductInput
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
-  season: String
+  season: ProductSeasonUpdateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9592,7 +9715,7 @@ input ProductUpdateWithoutCategoryDataInput {
   variants: ProductVariantUpdateManyWithoutProductInput
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
-  season: String
+  season: ProductSeasonUpdateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9620,7 +9743,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   variants: ProductVariantUpdateManyWithoutProductInput
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
-  season: String
+  season: ProductSeasonUpdateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9648,7 +9771,7 @@ input ProductUpdateWithoutModelDataInput {
   variants: ProductVariantUpdateManyWithoutProductInput
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
-  season: String
+  season: ProductSeasonUpdateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9676,7 +9799,7 @@ input ProductUpdateWithoutStatusChangesDataInput {
   outerMaterials: ProductUpdateouterMaterialsInput
   variants: ProductVariantUpdateManyWithoutProductInput
   status: ProductStatus
-  season: String
+  season: ProductSeasonUpdateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9704,7 +9827,7 @@ input ProductUpdateWithoutTagsDataInput {
   variants: ProductVariantUpdateManyWithoutProductInput
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
-  season: String
+  season: ProductSeasonUpdateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9732,7 +9855,7 @@ input ProductUpdateWithoutVariantsDataInput {
   outerMaterials: ProductUpdateouterMaterialsInput
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
-  season: String
+  season: ProductSeasonUpdateOneInput
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -11138,20 +11261,7 @@ input ProductWhereInput {
   statusChanges_every: ProductStatusChangeWhereInput
   statusChanges_some: ProductStatusChangeWhereInput
   statusChanges_none: ProductStatusChangeWhereInput
-  season: String
-  season_not: String
-  season_in: [String!]
-  season_not_in: [String!]
-  season_lt: String
-  season_lte: String
-  season_gt: String
-  season_gte: String
-  season_contains: String
-  season_not_contains: String
-  season_starts_with: String
-  season_not_starts_with: String
-  season_ends_with: String
-  season_not_ends_with: String
+  season: ProductSeasonWhereInput
   architecture: ProductArchitecture
   architecture_not: ProductArchitecture
   architecture_in: [ProductArchitecture!]
@@ -11892,6 +12002,9 @@ type Query {
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   productRequests(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRequest]!
   productRequestsConnection(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductRequestConnection!
+  productSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
+  productSeasons(where: ProductSeasonWhereInput, orderBy: ProductSeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductSeason]!
+  productSeasonsConnection(where: ProductSeasonWhereInput, orderBy: ProductSeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductSeasonConnection!
   productStatusChange(where: ProductStatusChangeWhereUniqueInput!): ProductStatusChange
   productStatusChanges(where: ProductStatusChangeWhereInput, orderBy: ProductStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductStatusChange]!
   productStatusChangesConnection(where: ProductStatusChangeWhereInput, orderBy: ProductStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductStatusChangeConnection!
@@ -11925,6 +12038,9 @@ type Query {
   reservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   reservationReceiptItems(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem]!
   reservationReceiptItemsConnection(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationReceiptItemConnection!
+  season(where: SeasonWhereUniqueInput!): Season
+  seasons(where: SeasonWhereInput, orderBy: SeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Season]!
+  seasonsConnection(where: SeasonWhereInput, orderBy: SeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SeasonConnection!
   size(where: SizeWhereUniqueInput!): Size
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
@@ -13189,6 +13305,148 @@ input ReservationWhereUniqueInput {
   reservationNumber: Int
 }
 
+type Season {
+  id: ID!
+  year: Int
+  seasonCode: SeasonCode
+}
+
+enum SeasonCode {
+  FW
+  SS
+  PS
+  PF
+  HO
+  AW
+}
+
+type SeasonConnection {
+  pageInfo: PageInfo!
+  edges: [SeasonEdge]!
+  aggregate: AggregateSeason!
+}
+
+input SeasonCreateInput {
+  id: ID
+  year: Int
+  seasonCode: SeasonCode
+}
+
+input SeasonCreateOneInput {
+  create: SeasonCreateInput
+  connect: SeasonWhereUniqueInput
+}
+
+type SeasonEdge {
+  node: Season!
+  cursor: String!
+}
+
+enum SeasonOrderByInput {
+  id_ASC
+  id_DESC
+  year_ASC
+  year_DESC
+  seasonCode_ASC
+  seasonCode_DESC
+}
+
+type SeasonPreviousValues {
+  id: ID!
+  year: Int
+  seasonCode: SeasonCode
+}
+
+enum SeasonString {
+  Spring
+  Summer
+  Winter
+  Fall
+}
+
+type SeasonSubscriptionPayload {
+  mutation: MutationType!
+  node: Season
+  updatedFields: [String!]
+  previousValues: SeasonPreviousValues
+}
+
+input SeasonSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: SeasonWhereInput
+  AND: [SeasonSubscriptionWhereInput!]
+  OR: [SeasonSubscriptionWhereInput!]
+  NOT: [SeasonSubscriptionWhereInput!]
+}
+
+input SeasonUpdateDataInput {
+  year: Int
+  seasonCode: SeasonCode
+}
+
+input SeasonUpdateInput {
+  year: Int
+  seasonCode: SeasonCode
+}
+
+input SeasonUpdateManyMutationInput {
+  year: Int
+  seasonCode: SeasonCode
+}
+
+input SeasonUpdateOneInput {
+  create: SeasonCreateInput
+  update: SeasonUpdateDataInput
+  upsert: SeasonUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: SeasonWhereUniqueInput
+}
+
+input SeasonUpsertNestedInput {
+  update: SeasonUpdateDataInput!
+  create: SeasonCreateInput!
+}
+
+input SeasonWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  year: Int
+  year_not: Int
+  year_in: [Int!]
+  year_not_in: [Int!]
+  year_lt: Int
+  year_lte: Int
+  year_gt: Int
+  year_gte: Int
+  seasonCode: SeasonCode
+  seasonCode_not: SeasonCode
+  seasonCode_in: [SeasonCode!]
+  seasonCode_not_in: [SeasonCode!]
+  AND: [SeasonWhereInput!]
+  OR: [SeasonWhereInput!]
+  NOT: [SeasonWhereInput!]
+}
+
+input SeasonWhereUniqueInput {
+  id: ID
+}
+
 type Size {
   id: ID!
   slug: String!
@@ -13928,6 +14186,7 @@ type Subscription {
   productMaterialCategory(where: ProductMaterialCategorySubscriptionWhereInput): ProductMaterialCategorySubscriptionPayload
   productModel(where: ProductModelSubscriptionWhereInput): ProductModelSubscriptionPayload
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
+  productSeason(where: ProductSeasonSubscriptionWhereInput): ProductSeasonSubscriptionPayload
   productStatusChange(where: ProductStatusChangeSubscriptionWhereInput): ProductStatusChangeSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
   productVariantFeedback(where: ProductVariantFeedbackSubscriptionWhereInput): ProductVariantFeedbackSubscriptionPayload
@@ -13939,6 +14198,7 @@ type Subscription {
   reservationFeedback(where: ReservationFeedbackSubscriptionWhereInput): ReservationFeedbackSubscriptionPayload
   reservationReceipt(where: ReservationReceiptSubscriptionWhereInput): ReservationReceiptSubscriptionPayload
   reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
+  season(where: SeasonSubscriptionWhereInput): SeasonSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
