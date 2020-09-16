@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Sep 15 2020 12:08:36 GMT-0400 (Eastern Daylight Time)
+# timestamp: Wed Sep 16 2020 12:41:00 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -8214,6 +8214,7 @@ type CustomerEdge {
 
 type CustomerMembership implements Node {
   id: ID!
+  plan: PaymentPlan
   subscriptionId: String!
   customer: Customer!
   pauseRequests(
@@ -8246,6 +8247,7 @@ type CustomerMembershipConnection {
 input CustomerMembershipCreateInput {
   id: ID
   subscriptionId: String!
+  plan: PaymentPlanCreateOneInput
   customer: CustomerCreateOneWithoutMembershipInput!
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
@@ -8263,12 +8265,14 @@ input CustomerMembershipCreateOneWithoutPauseRequestsInput {
 input CustomerMembershipCreateWithoutCustomerInput {
   id: ID
   subscriptionId: String!
+  plan: PaymentPlanCreateOneInput
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
 
 input CustomerMembershipCreateWithoutPauseRequestsInput {
   id: ID
   subscriptionId: String!
+  plan: PaymentPlanCreateOneInput
   customer: CustomerCreateOneWithoutMembershipInput!
 }
 
@@ -8346,6 +8350,7 @@ input CustomerMembershipSubscriptionWhereInput {
 
 input CustomerMembershipUpdateInput {
   subscriptionId: String
+  plan: PaymentPlanUpdateOneInput
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
 }
@@ -8372,11 +8377,13 @@ input CustomerMembershipUpdateOneWithoutCustomerInput {
 
 input CustomerMembershipUpdateWithoutCustomerDataInput {
   subscriptionId: String
+  plan: PaymentPlanUpdateOneInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
 }
 
 input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
   subscriptionId: String
+  plan: PaymentPlanUpdateOneInput
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
 }
 
@@ -8537,6 +8544,7 @@ input CustomerMembershipWhereInput {
   All values not ending with the given string.
   """
   subscriptionId_not_ends_with: String
+  plan: PaymentPlanWhereInput
   customer: CustomerWhereInput
   pauseRequests_every: PauseRequestWhereInput
   pauseRequests_some: PauseRequestWhereInput
@@ -13388,7 +13396,6 @@ type Mutation {
   createWarehouseLocation(
     data: WarehouseLocationCreateInput!
   ): WarehouseLocation!
-  createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
   createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
   createFitPic(data: FitPicCreateInput!): FitPic!
   createFitPicReport(data: FitPicReportCreateInput!): FitPicReport!
@@ -13453,6 +13460,7 @@ type Mutation {
   createImage(data: ImageCreateInput!): Image!
   createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
+  createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
   createProduct(data: ProductCreateInput!): Product!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createReservation(data: ReservationCreateInput!): Reservation!
@@ -13490,10 +13498,6 @@ type Mutation {
     data: WarehouseLocationUpdateInput!
     where: WarehouseLocationWhereUniqueInput!
   ): WarehouseLocation
-  updatePaymentPlan(
-    data: PaymentPlanUpdateInput!
-    where: PaymentPlanWhereUniqueInput!
-  ): PaymentPlan
   updateEmailReceipt(
     data: EmailReceiptUpdateInput!
     where: EmailReceiptWhereUniqueInput!
@@ -13633,6 +13637,10 @@ type Mutation {
     data: ProductVariantUpdateInput!
     where: ProductVariantWhereUniqueInput!
   ): ProductVariant
+  updatePaymentPlan(
+    data: PaymentPlanUpdateInput!
+    where: PaymentPlanWhereUniqueInput!
+  ): PaymentPlan
   updateProduct(
     data: ProductUpdateInput!
     where: ProductWhereUniqueInput!
@@ -13669,7 +13677,6 @@ type Mutation {
   deleteWarehouseLocation(
     where: WarehouseLocationWhereUniqueInput!
   ): WarehouseLocation
-  deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   deleteFitPic(where: FitPicWhereUniqueInput!): FitPic
   deleteFitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
@@ -13742,6 +13749,7 @@ type Mutation {
   deleteImage(where: ImageWhereUniqueInput!): Image
   deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
+  deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   deleteProduct(where: ProductWhereUniqueInput!): Product
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
@@ -13795,11 +13803,6 @@ type Mutation {
     create: WarehouseLocationCreateInput!
     update: WarehouseLocationUpdateInput!
   ): WarehouseLocation!
-  upsertPaymentPlan(
-    where: PaymentPlanWhereUniqueInput!
-    create: PaymentPlanCreateInput!
-    update: PaymentPlanUpdateInput!
-  ): PaymentPlan!
   upsertEmailReceipt(
     where: EmailReceiptWhereUniqueInput!
     create: EmailReceiptCreateInput!
@@ -14000,6 +14003,11 @@ type Mutation {
     create: ProductVariantCreateInput!
     update: ProductVariantUpdateInput!
   ): ProductVariant!
+  upsertPaymentPlan(
+    where: PaymentPlanWhereUniqueInput!
+    create: PaymentPlanCreateInput!
+    update: PaymentPlanUpdateInput!
+  ): PaymentPlan!
   upsertProduct(
     where: ProductWhereUniqueInput!
     create: ProductCreateInput!
@@ -14054,10 +14062,6 @@ type Mutation {
   updateManyWarehouseLocations(
     data: WarehouseLocationUpdateManyMutationInput!
     where: WarehouseLocationWhereInput
-  ): BatchPayload!
-  updateManyPaymentPlans(
-    data: PaymentPlanUpdateManyMutationInput!
-    where: PaymentPlanWhereInput
   ): BatchPayload!
   updateManyEmailReceipts(
     data: EmailReceiptUpdateManyMutationInput!
@@ -14211,6 +14215,10 @@ type Mutation {
     data: ProductVariantUpdateManyMutationInput!
     where: ProductVariantWhereInput
   ): BatchPayload!
+  updateManyPaymentPlans(
+    data: PaymentPlanUpdateManyMutationInput!
+    where: PaymentPlanWhereInput
+  ): BatchPayload!
   updateManyProducts(
     data: ProductUpdateManyMutationInput!
     where: ProductWhereInput
@@ -14245,7 +14253,6 @@ type Mutation {
   deleteManyWarehouseLocations(
     where: WarehouseLocationWhereInput
   ): BatchPayload!
-  deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
   deleteManyFitPics(where: FitPicWhereInput): BatchPayload!
   deleteManyFitPicReports(where: FitPicReportWhereInput): BatchPayload!
@@ -14310,6 +14317,7 @@ type Mutation {
   deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
+  deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
@@ -16211,6 +16219,11 @@ input PaymentPlanCreateInput {
   tier: PaymentPlanTier
 }
 
+input PaymentPlanCreateOneInput {
+  create: PaymentPlanCreateInput
+  connect: PaymentPlanWhereUniqueInput
+}
+
 """
 An edge in a connection.
 """
@@ -16315,6 +16328,17 @@ enum PaymentPlanTier {
   AllAccess
 }
 
+input PaymentPlanUpdateDataInput {
+  description: String
+  planID: String
+  status: String
+  name: String
+  price: Int
+  itemCount: Int
+  tagline: String
+  tier: PaymentPlanTier
+}
+
 input PaymentPlanUpdateInput {
   description: String
   planID: String
@@ -16335,6 +16359,20 @@ input PaymentPlanUpdateManyMutationInput {
   itemCount: Int
   tagline: String
   tier: PaymentPlanTier
+}
+
+input PaymentPlanUpdateOneInput {
+  create: PaymentPlanCreateInput
+  connect: PaymentPlanWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: PaymentPlanUpdateDataInput
+  upsert: PaymentPlanUpsertNestedInput
+}
+
+input PaymentPlanUpsertNestedInput {
+  update: PaymentPlanUpdateDataInput!
+  create: PaymentPlanCreateInput!
 }
 
 input PaymentPlanWhereInput {
@@ -28736,15 +28774,6 @@ type Query {
     first: Int
     last: Int
   ): [WarehouseLocation]!
-  paymentPlans(
-    where: PaymentPlanWhereInput
-    orderBy: PaymentPlanOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [PaymentPlan]!
   emailReceipts(
     where: EmailReceiptWhereInput
     orderBy: EmailReceiptOrderByInput
@@ -29105,6 +29134,15 @@ type Query {
     first: Int
     last: Int
   ): [ProductVariant]!
+  paymentPlans(
+    where: PaymentPlanWhereInput
+    orderBy: PaymentPlanOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PaymentPlan]!
   products(
     where: ProductWhereInput
     orderBy: ProductOrderByInput
@@ -29154,7 +29192,6 @@ type Query {
   warehouseLocation(
     where: WarehouseLocationWhereUniqueInput!
   ): WarehouseLocation
-  paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   fitPic(where: FitPicWhereUniqueInput!): FitPic
   fitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
@@ -29219,6 +29256,7 @@ type Query {
   image(where: ImageWhereUniqueInput!): Image
   smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
+  paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   product(where: ProductWhereUniqueInput!): Product
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   reservation(where: ReservationWhereUniqueInput!): Reservation
@@ -29312,15 +29350,6 @@ type Query {
     first: Int
     last: Int
   ): WarehouseLocationConnection!
-  paymentPlansConnection(
-    where: PaymentPlanWhereInput
-    orderBy: PaymentPlanOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): PaymentPlanConnection!
   emailReceiptsConnection(
     where: EmailReceiptWhereInput
     orderBy: EmailReceiptOrderByInput
@@ -29681,6 +29710,15 @@ type Query {
     first: Int
     last: Int
   ): ProductVariantConnection!
+  paymentPlansConnection(
+    where: PaymentPlanWhereInput
+    orderBy: PaymentPlanOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PaymentPlanConnection!
   productsConnection(
     where: ProductWhereInput
     orderBy: ProductOrderByInput
@@ -34580,9 +34618,6 @@ type Subscription {
   warehouseLocation(
     where: WarehouseLocationSubscriptionWhereInput
   ): WarehouseLocationSubscriptionPayload
-  paymentPlan(
-    where: PaymentPlanSubscriptionWhereInput
-  ): PaymentPlanSubscriptionPayload
   emailReceipt(
     where: EmailReceiptSubscriptionWhereInput
   ): EmailReceiptSubscriptionPayload
@@ -34677,6 +34712,9 @@ type Subscription {
   productVariant(
     where: ProductVariantSubscriptionWhereInput
   ): ProductVariantSubscriptionPayload
+  paymentPlan(
+    where: PaymentPlanSubscriptionWhereInput
+  ): PaymentPlanSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   customerDetail(
     where: CustomerDetailSubscriptionWhereInput

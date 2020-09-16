@@ -2878,6 +2878,8 @@ export type CustomerStatus =
 
 export type Plan = "AllAccess" | "Essential";
 
+export type PaymentPlanTier = "Essential" | "AllAccess";
+
 export type BagItemStatus = "Added" | "Reserved" | "Received";
 
 export type PackageTransitEventStatus =
@@ -3252,8 +3254,6 @@ export type PackageOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
-
-export type PaymentPlanTier = "Essential" | "AllAccess";
 
 export type PaymentPlanOrderByInput =
   | "id_ASC"
@@ -5812,6 +5812,7 @@ export interface CustomerMembershipWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  plan?: Maybe<PaymentPlanWhereInput>;
   subscriptionId?: Maybe<String>;
   subscriptionId_not?: Maybe<String>;
   subscriptionId_in?: Maybe<String[] | String>;
@@ -5833,6 +5834,132 @@ export interface CustomerMembershipWhereInput {
   AND?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
   OR?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
   NOT?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
+}
+
+export interface PaymentPlanWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  description?: Maybe<String>;
+  description_not?: Maybe<String>;
+  description_in?: Maybe<String[] | String>;
+  description_not_in?: Maybe<String[] | String>;
+  description_lt?: Maybe<String>;
+  description_lte?: Maybe<String>;
+  description_gt?: Maybe<String>;
+  description_gte?: Maybe<String>;
+  description_contains?: Maybe<String>;
+  description_not_contains?: Maybe<String>;
+  description_starts_with?: Maybe<String>;
+  description_not_starts_with?: Maybe<String>;
+  description_ends_with?: Maybe<String>;
+  description_not_ends_with?: Maybe<String>;
+  planID?: Maybe<String>;
+  planID_not?: Maybe<String>;
+  planID_in?: Maybe<String[] | String>;
+  planID_not_in?: Maybe<String[] | String>;
+  planID_lt?: Maybe<String>;
+  planID_lte?: Maybe<String>;
+  planID_gt?: Maybe<String>;
+  planID_gte?: Maybe<String>;
+  planID_contains?: Maybe<String>;
+  planID_not_contains?: Maybe<String>;
+  planID_starts_with?: Maybe<String>;
+  planID_not_starts_with?: Maybe<String>;
+  planID_ends_with?: Maybe<String>;
+  planID_not_ends_with?: Maybe<String>;
+  status?: Maybe<String>;
+  status_not?: Maybe<String>;
+  status_in?: Maybe<String[] | String>;
+  status_not_in?: Maybe<String[] | String>;
+  status_lt?: Maybe<String>;
+  status_lte?: Maybe<String>;
+  status_gt?: Maybe<String>;
+  status_gte?: Maybe<String>;
+  status_contains?: Maybe<String>;
+  status_not_contains?: Maybe<String>;
+  status_starts_with?: Maybe<String>;
+  status_not_starts_with?: Maybe<String>;
+  status_ends_with?: Maybe<String>;
+  status_not_ends_with?: Maybe<String>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  price?: Maybe<Int>;
+  price_not?: Maybe<Int>;
+  price_in?: Maybe<Int[] | Int>;
+  price_not_in?: Maybe<Int[] | Int>;
+  price_lt?: Maybe<Int>;
+  price_lte?: Maybe<Int>;
+  price_gt?: Maybe<Int>;
+  price_gte?: Maybe<Int>;
+  itemCount?: Maybe<Int>;
+  itemCount_not?: Maybe<Int>;
+  itemCount_in?: Maybe<Int[] | Int>;
+  itemCount_not_in?: Maybe<Int[] | Int>;
+  itemCount_lt?: Maybe<Int>;
+  itemCount_lte?: Maybe<Int>;
+  itemCount_gt?: Maybe<Int>;
+  itemCount_gte?: Maybe<Int>;
+  tagline?: Maybe<String>;
+  tagline_not?: Maybe<String>;
+  tagline_in?: Maybe<String[] | String>;
+  tagline_not_in?: Maybe<String[] | String>;
+  tagline_lt?: Maybe<String>;
+  tagline_lte?: Maybe<String>;
+  tagline_gt?: Maybe<String>;
+  tagline_gte?: Maybe<String>;
+  tagline_contains?: Maybe<String>;
+  tagline_not_contains?: Maybe<String>;
+  tagline_starts_with?: Maybe<String>;
+  tagline_not_starts_with?: Maybe<String>;
+  tagline_ends_with?: Maybe<String>;
+  tagline_not_ends_with?: Maybe<String>;
+  tier?: Maybe<PaymentPlanTier>;
+  tier_not?: Maybe<PaymentPlanTier>;
+  tier_in?: Maybe<PaymentPlanTier[] | PaymentPlanTier>;
+  tier_not_in?: Maybe<PaymentPlanTier[] | PaymentPlanTier>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<PaymentPlanWhereInput[] | PaymentPlanWhereInput>;
+  OR?: Maybe<PaymentPlanWhereInput[] | PaymentPlanWhereInput>;
+  NOT?: Maybe<PaymentPlanWhereInput[] | PaymentPlanWhereInput>;
 }
 
 export interface CustomerWhereInput {
@@ -7076,132 +7203,6 @@ export type PaymentPlanWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   planID?: Maybe<String>;
 }>;
-
-export interface PaymentPlanWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  description?: Maybe<String>;
-  description_not?: Maybe<String>;
-  description_in?: Maybe<String[] | String>;
-  description_not_in?: Maybe<String[] | String>;
-  description_lt?: Maybe<String>;
-  description_lte?: Maybe<String>;
-  description_gt?: Maybe<String>;
-  description_gte?: Maybe<String>;
-  description_contains?: Maybe<String>;
-  description_not_contains?: Maybe<String>;
-  description_starts_with?: Maybe<String>;
-  description_not_starts_with?: Maybe<String>;
-  description_ends_with?: Maybe<String>;
-  description_not_ends_with?: Maybe<String>;
-  planID?: Maybe<String>;
-  planID_not?: Maybe<String>;
-  planID_in?: Maybe<String[] | String>;
-  planID_not_in?: Maybe<String[] | String>;
-  planID_lt?: Maybe<String>;
-  planID_lte?: Maybe<String>;
-  planID_gt?: Maybe<String>;
-  planID_gte?: Maybe<String>;
-  planID_contains?: Maybe<String>;
-  planID_not_contains?: Maybe<String>;
-  planID_starts_with?: Maybe<String>;
-  planID_not_starts_with?: Maybe<String>;
-  planID_ends_with?: Maybe<String>;
-  planID_not_ends_with?: Maybe<String>;
-  status?: Maybe<String>;
-  status_not?: Maybe<String>;
-  status_in?: Maybe<String[] | String>;
-  status_not_in?: Maybe<String[] | String>;
-  status_lt?: Maybe<String>;
-  status_lte?: Maybe<String>;
-  status_gt?: Maybe<String>;
-  status_gte?: Maybe<String>;
-  status_contains?: Maybe<String>;
-  status_not_contains?: Maybe<String>;
-  status_starts_with?: Maybe<String>;
-  status_not_starts_with?: Maybe<String>;
-  status_ends_with?: Maybe<String>;
-  status_not_ends_with?: Maybe<String>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  price?: Maybe<Int>;
-  price_not?: Maybe<Int>;
-  price_in?: Maybe<Int[] | Int>;
-  price_not_in?: Maybe<Int[] | Int>;
-  price_lt?: Maybe<Int>;
-  price_lte?: Maybe<Int>;
-  price_gt?: Maybe<Int>;
-  price_gte?: Maybe<Int>;
-  itemCount?: Maybe<Int>;
-  itemCount_not?: Maybe<Int>;
-  itemCount_in?: Maybe<Int[] | Int>;
-  itemCount_not_in?: Maybe<Int[] | Int>;
-  itemCount_lt?: Maybe<Int>;
-  itemCount_lte?: Maybe<Int>;
-  itemCount_gt?: Maybe<Int>;
-  itemCount_gte?: Maybe<Int>;
-  tagline?: Maybe<String>;
-  tagline_not?: Maybe<String>;
-  tagline_in?: Maybe<String[] | String>;
-  tagline_not_in?: Maybe<String[] | String>;
-  tagline_lt?: Maybe<String>;
-  tagline_lte?: Maybe<String>;
-  tagline_gt?: Maybe<String>;
-  tagline_gte?: Maybe<String>;
-  tagline_contains?: Maybe<String>;
-  tagline_not_contains?: Maybe<String>;
-  tagline_starts_with?: Maybe<String>;
-  tagline_not_starts_with?: Maybe<String>;
-  tagline_ends_with?: Maybe<String>;
-  tagline_not_ends_with?: Maybe<String>;
-  tier?: Maybe<PaymentPlanTier>;
-  tier_not?: Maybe<PaymentPlanTier>;
-  tier_in?: Maybe<PaymentPlanTier[] | PaymentPlanTier>;
-  tier_not_in?: Maybe<PaymentPlanTier[] | PaymentPlanTier>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<PaymentPlanWhereInput[] | PaymentPlanWhereInput>;
-  OR?: Maybe<PaymentPlanWhereInput[] | PaymentPlanWhereInput>;
-  NOT?: Maybe<PaymentPlanWhereInput[] | PaymentPlanWhereInput>;
-}
 
 export type PhysicalProductWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -11853,8 +11854,26 @@ export interface CustomerMembershipCreateOneWithoutCustomerInput {
 
 export interface CustomerMembershipCreateWithoutCustomerInput {
   id?: Maybe<ID_Input>;
+  plan?: Maybe<PaymentPlanCreateOneInput>;
   subscriptionId: String;
   pauseRequests?: Maybe<PauseRequestCreateManyWithoutMembershipInput>;
+}
+
+export interface PaymentPlanCreateOneInput {
+  create?: Maybe<PaymentPlanCreateInput>;
+  connect?: Maybe<PaymentPlanWhereUniqueInput>;
+}
+
+export interface PaymentPlanCreateInput {
+  id?: Maybe<ID_Input>;
+  description?: Maybe<String>;
+  planID: String;
+  status?: Maybe<String>;
+  name?: Maybe<String>;
+  price?: Maybe<Int>;
+  itemCount?: Maybe<Int>;
+  tagline?: Maybe<String>;
+  tier?: Maybe<PaymentPlanTier>;
 }
 
 export interface PauseRequestCreateManyWithoutMembershipInput {
@@ -12274,8 +12293,34 @@ export interface CustomerMembershipUpdateOneWithoutCustomerInput {
 }
 
 export interface CustomerMembershipUpdateWithoutCustomerDataInput {
+  plan?: Maybe<PaymentPlanUpdateOneInput>;
   subscriptionId?: Maybe<String>;
   pauseRequests?: Maybe<PauseRequestUpdateManyWithoutMembershipInput>;
+}
+
+export interface PaymentPlanUpdateOneInput {
+  create?: Maybe<PaymentPlanCreateInput>;
+  update?: Maybe<PaymentPlanUpdateDataInput>;
+  upsert?: Maybe<PaymentPlanUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<PaymentPlanWhereUniqueInput>;
+}
+
+export interface PaymentPlanUpdateDataInput {
+  description?: Maybe<String>;
+  planID?: Maybe<String>;
+  status?: Maybe<String>;
+  name?: Maybe<String>;
+  price?: Maybe<Int>;
+  itemCount?: Maybe<Int>;
+  tagline?: Maybe<String>;
+  tier?: Maybe<PaymentPlanTier>;
+}
+
+export interface PaymentPlanUpsertNestedInput {
+  update: PaymentPlanUpdateDataInput;
+  create: PaymentPlanCreateInput;
 }
 
 export interface PauseRequestUpdateManyWithoutMembershipInput {
@@ -13694,6 +13739,7 @@ export interface CustomerDetailUpdateManyMutationInput {
 
 export interface CustomerMembershipCreateInput {
   id?: Maybe<ID_Input>;
+  plan?: Maybe<PaymentPlanCreateOneInput>;
   subscriptionId: String;
   customer: CustomerCreateOneWithoutMembershipInput;
   pauseRequests?: Maybe<PauseRequestCreateManyWithoutMembershipInput>;
@@ -13716,6 +13762,7 @@ export interface CustomerCreateWithoutMembershipInput {
 }
 
 export interface CustomerMembershipUpdateInput {
+  plan?: Maybe<PaymentPlanUpdateOneInput>;
   subscriptionId?: Maybe<String>;
   customer?: Maybe<CustomerUpdateOneRequiredWithoutMembershipInput>;
   pauseRequests?: Maybe<PauseRequestUpdateManyWithoutMembershipInput>;
@@ -14018,6 +14065,7 @@ export interface CustomerMembershipCreateOneWithoutPauseRequestsInput {
 
 export interface CustomerMembershipCreateWithoutPauseRequestsInput {
   id?: Maybe<ID_Input>;
+  plan?: Maybe<PaymentPlanCreateOneInput>;
   subscriptionId: String;
   customer: CustomerCreateOneWithoutMembershipInput;
 }
@@ -14040,6 +14088,7 @@ export interface CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
 }
 
 export interface CustomerMembershipUpdateWithoutPauseRequestsDataInput {
+  plan?: Maybe<PaymentPlanUpdateOneInput>;
   subscriptionId?: Maybe<String>;
   customer?: Maybe<CustomerUpdateOneRequiredWithoutMembershipInput>;
 }
@@ -14054,18 +14103,6 @@ export interface PauseRequestUpdateManyMutationInput {
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
   notified?: Maybe<Boolean>;
-}
-
-export interface PaymentPlanCreateInput {
-  id?: Maybe<ID_Input>;
-  description?: Maybe<String>;
-  planID: String;
-  status?: Maybe<String>;
-  name?: Maybe<String>;
-  price?: Maybe<Int>;
-  itemCount?: Maybe<Int>;
-  tagline?: Maybe<String>;
-  tier?: Maybe<PaymentPlanTier>;
 }
 
 export interface PaymentPlanUpdateInput {
@@ -19552,6 +19589,7 @@ export interface CustomerMembershipPromise
   extends Promise<CustomerMembership>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  plan: <T = PaymentPlanPromise>() => T;
   subscriptionId: () => Promise<String>;
   customer: <T = CustomerPromise>() => T;
   pauseRequests: <T = FragmentableArray<PauseRequest>>(args?: {
@@ -19569,6 +19607,7 @@ export interface CustomerMembershipSubscription
   extends Promise<AsyncIterator<CustomerMembership>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  plan: <T = PaymentPlanSubscription>() => T;
   subscriptionId: () => Promise<AsyncIterator<String>>;
   customer: <T = CustomerSubscription>() => T;
   pauseRequests: <T = Promise<AsyncIterator<PauseRequestSubscription>>>(args?: {
@@ -19586,6 +19625,7 @@ export interface CustomerMembershipNullablePromise
   extends Promise<CustomerMembership | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  plan: <T = PaymentPlanPromise>() => T;
   subscriptionId: () => Promise<String>;
   customer: <T = CustomerPromise>() => T;
   pauseRequests: <T = FragmentableArray<PauseRequest>>(args?: {
@@ -19597,6 +19637,66 @@ export interface CustomerMembershipNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+}
+
+export interface PaymentPlan {
+  id: ID_Output;
+  description?: String;
+  planID: String;
+  status?: String;
+  name?: String;
+  price?: Int;
+  itemCount?: Int;
+  tagline?: String;
+  tier?: PaymentPlanTier;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface PaymentPlanPromise extends Promise<PaymentPlan>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  description: () => Promise<String>;
+  planID: () => Promise<String>;
+  status: () => Promise<String>;
+  name: () => Promise<String>;
+  price: () => Promise<Int>;
+  itemCount: () => Promise<Int>;
+  tagline: () => Promise<String>;
+  tier: () => Promise<PaymentPlanTier>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PaymentPlanSubscription
+  extends Promise<AsyncIterator<PaymentPlan>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  description: () => Promise<AsyncIterator<String>>;
+  planID: () => Promise<AsyncIterator<String>>;
+  status: () => Promise<AsyncIterator<String>>;
+  name: () => Promise<AsyncIterator<String>>;
+  price: () => Promise<AsyncIterator<Int>>;
+  itemCount: () => Promise<AsyncIterator<Int>>;
+  tagline: () => Promise<AsyncIterator<String>>;
+  tier: () => Promise<AsyncIterator<PaymentPlanTier>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface PaymentPlanNullablePromise
+  extends Promise<PaymentPlan | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  description: () => Promise<String>;
+  planID: () => Promise<String>;
+  status: () => Promise<String>;
+  name: () => Promise<String>;
+  price: () => Promise<Int>;
+  itemCount: () => Promise<Int>;
+  tagline: () => Promise<String>;
+  tier: () => Promise<PaymentPlanTier>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface PauseRequest {
@@ -21452,66 +21552,6 @@ export interface AggregatePauseRequestSubscription
   extends Promise<AsyncIterator<AggregatePauseRequest>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface PaymentPlan {
-  id: ID_Output;
-  description?: String;
-  planID: String;
-  status?: String;
-  name?: String;
-  price?: Int;
-  itemCount?: Int;
-  tagline?: String;
-  tier?: PaymentPlanTier;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface PaymentPlanPromise extends Promise<PaymentPlan>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  description: () => Promise<String>;
-  planID: () => Promise<String>;
-  status: () => Promise<String>;
-  name: () => Promise<String>;
-  price: () => Promise<Int>;
-  itemCount: () => Promise<Int>;
-  tagline: () => Promise<String>;
-  tier: () => Promise<PaymentPlanTier>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface PaymentPlanSubscription
-  extends Promise<AsyncIterator<PaymentPlan>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  description: () => Promise<AsyncIterator<String>>;
-  planID: () => Promise<AsyncIterator<String>>;
-  status: () => Promise<AsyncIterator<String>>;
-  name: () => Promise<AsyncIterator<String>>;
-  price: () => Promise<AsyncIterator<Int>>;
-  itemCount: () => Promise<AsyncIterator<Int>>;
-  tagline: () => Promise<AsyncIterator<String>>;
-  tier: () => Promise<AsyncIterator<PaymentPlanTier>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface PaymentPlanNullablePromise
-  extends Promise<PaymentPlan | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  description: () => Promise<String>;
-  planID: () => Promise<String>;
-  status: () => Promise<String>;
-  name: () => Promise<String>;
-  price: () => Promise<Int>;
-  itemCount: () => Promise<Int>;
-  tagline: () => Promise<String>;
-  tier: () => Promise<PaymentPlanTier>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface PaymentPlanConnection {

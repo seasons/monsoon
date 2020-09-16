@@ -3281,6 +3281,7 @@ type CustomerEdge {
 
 type CustomerMembership {
   id: ID!
+  plan: PaymentPlan
   subscriptionId: String!
   customer: Customer!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
@@ -3294,6 +3295,7 @@ type CustomerMembershipConnection {
 
 input CustomerMembershipCreateInput {
   id: ID
+  plan: PaymentPlanCreateOneInput
   subscriptionId: String!
   customer: CustomerCreateOneWithoutMembershipInput!
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
@@ -3311,12 +3313,14 @@ input CustomerMembershipCreateOneWithoutPauseRequestsInput {
 
 input CustomerMembershipCreateWithoutCustomerInput {
   id: ID
+  plan: PaymentPlanCreateOneInput
   subscriptionId: String!
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
 
 input CustomerMembershipCreateWithoutPauseRequestsInput {
   id: ID
+  plan: PaymentPlanCreateOneInput
   subscriptionId: String!
   customer: CustomerCreateOneWithoutMembershipInput!
 }
@@ -3357,6 +3361,7 @@ input CustomerMembershipSubscriptionWhereInput {
 }
 
 input CustomerMembershipUpdateInput {
+  plan: PaymentPlanUpdateOneInput
   subscriptionId: String
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
@@ -3383,11 +3388,13 @@ input CustomerMembershipUpdateOneWithoutCustomerInput {
 }
 
 input CustomerMembershipUpdateWithoutCustomerDataInput {
+  plan: PaymentPlanUpdateOneInput
   subscriptionId: String
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
 }
 
 input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
+  plan: PaymentPlanUpdateOneInput
   subscriptionId: String
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
 }
@@ -3417,6 +3424,7 @@ input CustomerMembershipWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  plan: PaymentPlanWhereInput
   subscriptionId: String
   subscriptionId_not: String
   subscriptionId_in: [String!]
@@ -6549,6 +6557,11 @@ input PaymentPlanCreateInput {
   tier: PaymentPlanTier
 }
 
+input PaymentPlanCreateOneInput {
+  create: PaymentPlanCreateInput
+  connect: PaymentPlanWhereUniqueInput
+}
+
 type PaymentPlanEdge {
   node: PaymentPlan!
   cursor: String!
@@ -6616,6 +6629,17 @@ enum PaymentPlanTier {
   AllAccess
 }
 
+input PaymentPlanUpdateDataInput {
+  description: String
+  planID: String
+  status: String
+  name: String
+  price: Int
+  itemCount: Int
+  tagline: String
+  tier: PaymentPlanTier
+}
+
 input PaymentPlanUpdateInput {
   description: String
   planID: String
@@ -6636,6 +6660,20 @@ input PaymentPlanUpdateManyMutationInput {
   itemCount: Int
   tagline: String
   tier: PaymentPlanTier
+}
+
+input PaymentPlanUpdateOneInput {
+  create: PaymentPlanCreateInput
+  update: PaymentPlanUpdateDataInput
+  upsert: PaymentPlanUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: PaymentPlanWhereUniqueInput
+}
+
+input PaymentPlanUpsertNestedInput {
+  update: PaymentPlanUpdateDataInput!
+  create: PaymentPlanCreateInput!
 }
 
 input PaymentPlanWhereInput {

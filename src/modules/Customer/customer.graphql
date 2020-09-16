@@ -73,8 +73,12 @@ type Customer {
   status: CustomerStatus
   detail: CustomerDetail
   billingInfo: BillingInfo
+
+  # FIXME: remove Plan after migration to new plan model
   plan: Plan
+  # FIXME: remove PaymentPlan after migration to new plan model
   paymentPlan: PaymentPlan
+
   bagItems(
     where: BagItemWhereInput
     orderBy: BagItemOrderByInput

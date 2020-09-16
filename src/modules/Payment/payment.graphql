@@ -119,10 +119,6 @@ type CreditNote {
   status: CreditNoteStatus
 }
 
-type ChargebeePlanPayload {
-  plans: [Plan]
-}
-
 type ChargebeeHostedPagePayload {
   created_at: DateTime!
   embed: Boolean!

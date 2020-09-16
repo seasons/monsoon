@@ -723,6 +723,7 @@ type Customer {
 
 type CustomerMembership {
   id: ID! @id
+  plan: PaymentPlan
   subscriptionId: String!
   customer: Customer!
     @relation(
