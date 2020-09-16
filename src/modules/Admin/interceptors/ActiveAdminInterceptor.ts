@@ -50,7 +50,6 @@ export class ActiveAdminInterceptor implements NestInterceptor {
 
     let numPolls = 0
     if (ctx.isAdminAction && ctx.isMutation && ctx.activeUserIsAdmin) {
-      console.log("**** WE RUN ACTIVE ADMIN TABLE CODE IN INTERCEPT **")
       // Ensure we're not colliding with another admin action by enforcing an empty ActiveAdminTable
       // Note that this technically *could* fail if we have three simultaneous queries. But the probability
       // of that is basically 0 until we get real big
