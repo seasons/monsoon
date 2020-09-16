@@ -3,18 +3,6 @@
 -- Need this datatype to store update logs as key/value data
 CREATE EXTENSION IF NOT EXISTS hstore;
 
--- Function to get the environment on which we're running this
--- Not used yet, but perhaps in the future.
-CREATE OR REPLACE FUNCTION get_environment() RETURNS text AS $body$
-BEGIN
-
-RETURN 'dev';
-
-END;
-$body$
-LANGUAGE plpgsql
-SECURITY DEFINER
-
 CREATE OR REPLACE FUNCTION monsoon$dev.if_modified_func() RETURNS TRIGGER AS $body$
 DECLARE
     audit_row monsoon$dev."AdminActionLog";
