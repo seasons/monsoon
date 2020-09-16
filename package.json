@@ -101,6 +101,7 @@
     "jwks-rsa": "^1.6.0",
     "lodash": "^4.17.15",
     "luxon": "^1.22.0",
+    "mixpanel": "^0.13.0",
     "module-alias": "^2.2.2",
     "moment": "^2.26.0",
     "mustache": "^4.0.1",
