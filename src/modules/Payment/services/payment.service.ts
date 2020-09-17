@@ -306,6 +306,18 @@ export class PaymentService {
       ? { specific_date: DateTime.fromISO(date).toSeconds() }
       : "immediately"
 
+    const pauseRequest = head(
+      await this.prisma.client.pauseRequests({
+        where: {
+          membership: {
+            customer: {
+              id: customer.id,
+            },
+          },
+        },
+      })
+    )
+
     try {
       const result = await chargebee.subscription
         .resume(subscriptionId, {
@@ -315,18 +327,6 @@ export class PaymentService {
         .request()
 
       if (result) {
-        const pauseRequests = await this.prisma.client.pauseRequests({
-          where: {
-            membership: {
-              customer: {
-                id: customer.id,
-              },
-            },
-          },
-        })
-
-        const pauseRequest = head(pauseRequests)
-
         await this.prisma.client.updatePauseRequest({
           where: { id: pauseRequest.id },
           data: { pausePending: false },
@@ -344,18 +344,6 @@ export class PaymentService {
         e?.api_error_code &&
         e?.api_error_code === "payment_processing_failed"
       ) {
-        const pauseRequests = await this.prisma.client.pauseRequests({
-          where: {
-            membership: {
-              customer: {
-                id: customer.id,
-              },
-            },
-          },
-        })
-
-        const pauseRequest = head(pauseRequests)
-
         await this.prisma.client.updatePauseRequest({
           where: { id: pauseRequest.id },
           data: { pausePending: false },
