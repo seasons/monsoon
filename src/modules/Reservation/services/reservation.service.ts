@@ -71,11 +71,17 @@ export class ReservationService {
     let reservationReturnData
     const rollbackFuncs = []
 
+    const planItemCount = await this.prisma.client
+      .customer({ id: customer.id })
+      .membership()
+      .plan()
+      .itemCount()
+
     try {
       // Do a quick validation on the data
-      if (items.length < 3) {
+      if (items.length < planItemCount) {
         throw new ApolloError(
-          "Must supply at least three product variant ids",
+          `Must supply at least ${planItemCount} product variant ids`,
           "515"
         )
       }
@@ -135,7 +141,8 @@ export class ReservationService {
           newProductVariantsBeingReserved as string[]
         ),
         physicalProductsBeingReserved,
-        heldPhysicalProducts
+        heldPhysicalProducts,
+        planItemCount
       )
       const [
         prismaReservation,
@@ -605,14 +612,19 @@ export class ReservationService {
     customer: Customer,
     shipmentWeight: number,
     physicalProductsBeingReserved: PhysicalProduct[],
-    heldPhysicalProducts: PhysicalProduct[]
+    heldPhysicalProducts: PhysicalProduct[],
+    planItemCount: number
   ): Promise<ReservationCreateInput> {
     const allPhysicalProductsInReservation = [
       ...physicalProductsBeingReserved,
       ...heldPhysicalProducts,
     ]
-    if (allPhysicalProductsInReservation.length > 3) {
-      throw new ApolloError("Can not reserve more than 3 items at a time")
+
+    // FIXME
+    if (allPhysicalProductsInReservation.length > planItemCount) {
+      throw new ApolloError(
+        `Can not reserve more than ${planItemCount} items at a time`
+      )
     }
     const physicalProductSUIDs = allPhysicalProductsInReservation.map(p => ({
       seasonsUID: p.seasonsUID,
