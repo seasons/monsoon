@@ -37,6 +37,12 @@ export class PaymentMutationsResolver {
   }
 
   @Mutation()
+  async changeCustomerPlan(@Args() { planID }, @Customer() customer) {
+    await this.paymentService.changeCustomerPlan(planID, customer)
+    return true
+  }
+
+  @Mutation()
   async updateResumeDate(@Args() { date }, @Customer() customer) {
     await this.paymentService.updateResumeDate(date, customer)
     return true

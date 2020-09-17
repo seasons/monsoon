@@ -33,6 +33,45 @@ export class PaymentService {
     private readonly segment: SegmentService
   ) {}
 
+  async changeCustomerPlan(planID, customer) {
+    try {
+      const customerWithMembershipData = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+          {
+            id
+            membership {
+              id
+              subscriptionId
+              plan {
+                id
+              }
+            }
+          }
+        `
+      )
+
+      const { membership } = customerWithMembershipData
+
+      const subscriptionID = membership.subscriptionId
+
+      await chargebee.subscription
+        .update(subscriptionID, {
+          plan_id: planID,
+        })
+        .request()
+
+      await this.prisma.client.updateCustomerMembership({
+        where: { id: membership.id },
+        data: {
+          plan: { connect: { planID } },
+        },
+      })
+    } catch (e) {
+      throw new Error(`Error updating to new plan: ${e}`)
+    }
+  }
+
   async applePayUpdatePaymentMethod(planID, token, customer) {
     const customerWithUserData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
@@ -151,16 +190,10 @@ export class PaymentService {
       subscriptionID
     )
 
-    await this.prisma.client.upsertCustomerMembership({
-      where: { id: "" },
-      create: {
-        customer: { connect: { id: customer.id } },
-        subscriptionId: subscriptionID,
-      },
-      update: {
-        customer: { connect: { id: customer.id } },
-        subscriptionId: subscriptionID,
-      },
+    await this.prisma.client.createCustomerMembership({
+      customer: { connect: { id: customer.id } },
+      subscriptionId: subscriptionID,
+      plan: { connect: { planID } },
     })
 
     this.segment.trackSubscribed(user.id, {
