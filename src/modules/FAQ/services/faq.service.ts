@@ -3,7 +3,6 @@ import { Injectable } from "@nestjs/common"
 @Injectable()
 export class FAQService {
   getSections(sectionType) {
-    console.log("sectionType", sectionType)
     if (!!sectionType && sectionType === "PaymentPlanPage") {
       return [
         {
