@@ -190,12 +190,6 @@ export class PaymentService {
       subscriptionID
     )
 
-    await this.prisma.client.createCustomerMembership({
-      customer: { connect: { id: customer.id } },
-      subscriptionId: subscriptionID,
-      plan: { connect: { planID } },
-    })
-
     this.segment.trackSubscribed(user.id, {
       tier: this.getPaymentPlanTier(planID),
       planID,
@@ -257,25 +251,9 @@ export class PaymentService {
         .plus({ months: 1 })
         .toISO()
 
-      let customerMembership
-
-      if (!customerWithMembership.membership) {
-        customerMembership = await this.prisma.client.upsertCustomerMembership({
-          where: { id: customerWithMembership.membership?.id || "" },
-          create: {
-            customer: { connect: { id: customer.id } },
-            subscriptionId,
-          },
-          update: {
-            customer: { connect: { id: customer.id } },
-            subscriptionId,
-          },
-        })
-      } else {
-        customerMembership = await this.prisma.client.customerMembership({
-          id: customerWithMembership.membership?.id,
-        })
-      }
+      const customerMembership = await this.prisma.client.customerMembership({
+        id: customerWithMembership.membership?.id,
+      })
 
       await this.prisma.client.createPauseRequest({
         membership: { connect: { id: customerMembership.id } },
@@ -507,18 +485,18 @@ export class PaymentService {
 
     await this.prisma.client.updateCustomer({
       data: {
-        membership: {
-          create: {
-            plan: { connect: { planID } },
-            subscriptionId: subscriptionID || "",
-          },
-        },
         billingInfo: {
           create: billingInfo,
         },
         status: "Active",
       },
       where: { id: prismaCustomer.id },
+    })
+
+    await this.prisma.client.createCustomerMembership({
+      customer: { connect: { id: prismaCustomer.id } },
+      subscriptionId: subscriptionID,
+      plan: { connect: { planID } },
     })
 
     // Send welcome to seasons email
