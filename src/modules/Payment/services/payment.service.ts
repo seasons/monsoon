@@ -1,7 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { CustomerService } from "@app/modules/User"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerStatus, Plan, User } from "@app/prisma"
+import { CustomerStatus, PaymentPlanTier, Plan, User } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
@@ -32,6 +32,45 @@ export class PaymentService {
     private readonly utils: UtilsService,
     private readonly segment: SegmentService
   ) {}
+
+  async changeCustomerPlan(planID, customer) {
+    try {
+      const customerWithMembershipData = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+          {
+            id
+            membership {
+              id
+              subscriptionId
+              plan {
+                id
+              }
+            }
+          }
+        `
+      )
+
+      const { membership } = customerWithMembershipData
+
+      const subscriptionID = membership.subscriptionId
+
+      await chargebee.subscription
+        .update(subscriptionID, {
+          plan_id: planID,
+        })
+        .request()
+
+      await this.prisma.client.updateCustomerMembership({
+        where: { id: membership.id },
+        data: {
+          plan: { connect: { planID } },
+        },
+      })
+    } catch (e) {
+      throw new Error(`Error updating to new plan: ${e}`)
+    }
+  }
 
   async applePayUpdatePaymentMethod(planID, token, customer) {
     const customerWithUserData = await this.prisma.binding.query.customer(
@@ -147,23 +186,19 @@ export class PaymentService {
       user.id,
       subscription.customer,
       paymentSource.payment_source.card,
-      planID
+      planID,
+      subscriptionID
     )
 
-    await this.prisma.client.upsertCustomerMembership({
-      where: { id: "" },
-      create: {
-        customer: { connect: { id: customer.id } },
-        subscriptionId: subscriptionID,
-      },
-      update: {
-        customer: { connect: { id: customer.id } },
-        subscriptionId: subscriptionID,
-      },
+    await this.prisma.client.createCustomerMembership({
+      customer: { connect: { id: customer.id } },
+      subscriptionId: subscriptionID,
+      plan: { connect: { planID } },
     })
 
     this.segment.trackSubscribed(user.id, {
-      plan: this.chargebeePlanIdToPrismaPlan(planID),
+      tier: this.getPaymentPlanTier(planID),
+      planID,
       method: "ApplePay",
       firstName: user.firstName,
       lastName: user.lastName,
@@ -343,14 +378,14 @@ export class PaymentService {
   }
 
   async createSubscription(
-    plan: Plan,
+    planID: string,
     billingAddress: BillingAddress,
     user: User,
     card: Card
   ) {
     return await chargebee.subscription
       .create({
-        plan_id: this.prismaPlanToChargebeePlanId(plan),
+        plan_id: planID,
         billingAddress,
         customer: {
           id: user.id,
@@ -449,10 +484,10 @@ export class PaymentService {
     userID: string,
     chargebeeCustomer: any,
     card: any,
-    planID: string
+    planID: string,
+    subscriptionID: string
   ) {
     // Retrieve plan and billing data
-    const plan = this.chargebeePlanIdToPrismaPlan(planID as any)
     const billingInfo = this.paymentUtils.createBillingInfoObject(
       card,
       chargebeeCustomer
@@ -469,9 +504,15 @@ export class PaymentService {
     if (!prismaCustomer) {
       throw new Error(`Could not find customer with user id: ${prismaUser.id}`)
     }
+
     await this.prisma.client.updateCustomer({
       data: {
-        plan,
+        membership: {
+          create: {
+            plan: { connect: { planID } },
+            subscriptionId: subscriptionID || "",
+          },
+        },
         billingInfo: {
           create: billingInfo,
         },
@@ -575,6 +616,14 @@ export class PaymentService {
     }
   }
 
+  getPaymentPlanTier(planID): PaymentPlanTier {
+    if (planID.includes("essential")) {
+      return "Essential"
+    } else {
+      return "AllAccess"
+    }
+  }
+
   async getCustomerInvoiceHistory(
     // payment customerId is equivalent to prisma user id, NOT prisma customer id
     customerId: string,
@@ -637,7 +686,10 @@ export class PaymentService {
     return true
   }
 
-  prismaPlanToChargebeePlanId(plan: Plan) {
+  /*
+   * This is scheduled for deletion after chargebee checkout flow is no longer used
+   */
+  prismaPlanToChargebeePlanId(plan) {
     let chargebeePlanId
     if (plan === "AllAccess") {
       chargebeePlanId = "all-access"
@@ -649,18 +701,6 @@ export class PaymentService {
       throw new Error(`unrecognized planID: ${plan}`)
     }
     return chargebeePlanId
-  }
-
-  chargebeePlanIdToPrismaPlan(planID: "all-access" | "essential"): Plan {
-    let prismaPlan
-    if (planID === "all-access") {
-      prismaPlan = "AllAccess"
-    } else if (planID === "essential") {
-      prismaPlan = "Essential"
-    } else {
-      throw new Error(`unrecognized planID: ${planID}`)
-    }
-    return prismaPlan
   }
 
   private getInvoiceTransactionIds(invoice): string[] {

@@ -38,14 +38,33 @@ export class ChargebeeQueriesResolver {
       phoneNumber
     )
 
+    const customerWithData = (await this.prisma.binding.query.customer(
+      {
+        where: { id: customer.id },
+      },
+      `{
+      id
+      membership {
+        id
+        paymentPlan {
+          id
+          tier
+        }
+      }
+    }`
+    )) as any
+
+    const tier = customerWithData?.membership?.paymentPlan?.tier
+
     // Track the selection
-    this.segment.track<{ plan: Plan }>(user.id, "Opened Hosted Checkout", {
+    this.segment.track(user.id, "Opened Hosted Checkout", {
       email,
       firstName,
       lastName,
       application,
       customerID: customer.id,
-      plan: planID,
+      planID,
+      tier,
     })
 
     return hostedPage
@@ -73,14 +92,33 @@ export class ChargebeeQueriesResolver {
       phoneNumber
     )
 
+    const customerWithData = (await this.prisma.binding.query.customer(
+      {
+        where: { id: customer.id },
+      },
+      `{
+      id
+      membership {
+        id
+        paymentPlan {
+          id
+          tier
+        }
+      }
+    }`
+    )) as any
+
+    const tier = customerWithData?.membership?.paymentPlan?.tier
+
     // Track the selection
-    this.segment.track<{ plan: Plan }>(user.id, "Opened Checkout", {
+    this.segment.track(user.id, "Opened Checkout", {
       email,
       firstName,
       lastName,
       application,
       customerID: customer.id,
-      plan: planID,
+      planID,
+      tier,
     })
 
     return hostedPage

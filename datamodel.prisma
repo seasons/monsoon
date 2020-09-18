@@ -489,9 +489,16 @@ type PaymentPlan {
   status: String
   name: String
   price: Int
+  itemCount: Int
   tagline: String
+  tier: PaymentPlanTier
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+enum PaymentPlanTier {
+  Essential
+  AllAccess
 }
 
 type EmailReceipt {
@@ -716,6 +723,7 @@ type Customer {
 
 type CustomerMembership {
   id: ID! @id
+  plan: PaymentPlan
   subscriptionId: String!
   customer: Customer!
     @relation(

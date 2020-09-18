@@ -99,13 +99,20 @@ export class UserCommands {
     @PasswordOption()
     _password,
     @Option({
-      name: "plan",
+      name: "planID",
       describe: "Subscription plan of the user",
       type: "string",
-      default: "Essential",
-      choices: ["AllAccess", "Essential"],
+      default: "essential-2",
+      choices: [
+        "all-access",
+        "essential",
+        "all-access-1",
+        "essential-1",
+        "all-access-2",
+        "essential-2",
+      ],
     })
-    plan,
+    planID,
     @Option({
       name: "roles",
       alias: "r",
@@ -216,9 +223,24 @@ export class UserCommands {
         cvv: "222",
       }
       this.logger.log("Updating customer")
+      const subscription = await this.paymentService.createSubscription(
+        planID,
+        this.utils.snakeCaseify(address),
+        user,
+        this.utils.snakeCaseify(card)
+      )
       await this.prisma.client.updateCustomer({
         data: {
-          plan,
+          membership: {
+            create: {
+              plan: {
+                connect: {
+                  planID,
+                },
+              },
+              subscriptionId: subscription.subscription.id,
+            },
+          },
           billingInfo: {
             create: {
               brand: "Visa",
@@ -233,12 +255,6 @@ export class UserCommands {
         },
         where: { id: customer.id },
       })
-      await this.paymentService.createSubscription(
-        plan,
-        this.utils.snakeCaseify(address),
-        user,
-        this.utils.snakeCaseify(card)
-      )
     }
 
     this.logger.log(

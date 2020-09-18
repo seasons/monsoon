@@ -40,7 +40,7 @@ export class ChargebeeController {
 
   private async chargebeeSubscriptionCreated(content: any) {
     const {
-      subscription: { customer_id, plan_id },
+      subscription: { customer_id, plan_id, id: subscriptionID },
       customer,
       card,
     } = content
@@ -71,7 +71,8 @@ export class ChargebeeController {
       if (!customerWithBillingAndUserData?.billingInfo?.id) {
         const user = customerWithBillingAndUserData.user
         this.segment.trackSubscribed(customer_id, {
-          plan: this.payment.chargebeePlanIdToPrismaPlan(plan_id),
+          tier: this.payment.getPaymentPlanTier(plan_id),
+          planID: plan_id,
           method: "ChargebeeHostedCheckout",
           firstName: user?.firstName || "",
           lastName: user?.lastName || "",
@@ -82,7 +83,8 @@ export class ChargebeeController {
           customer_id,
           customer,
           card,
-          plan_id
+          plan_id,
+          subscriptionID
         )
       }
     } catch (err) {
