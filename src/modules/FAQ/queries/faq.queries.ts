@@ -1,4 +1,4 @@
-import { Query, Resolver } from "@nestjs/graphql"
+import { Args, Query, Resolver } from "@nestjs/graphql"
 
 import { FAQService } from "../services/faq.service"
 
@@ -7,10 +7,9 @@ export class FAQQueriesResolver {
   constructor(private readonly faqService: FAQService) {}
 
   @Query()
-  faq() {
+  faq(@Args() { sectionType }) {
     return {
-      sections: this.faqService.getSections(),
-      paymentPlanFaqSections: this.faqService.getPaymentPlanFaqSections(),
+      sections: this.faqService.getSections(sectionType),
     }
   }
 }

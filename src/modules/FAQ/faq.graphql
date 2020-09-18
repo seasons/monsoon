@@ -1,10 +1,9 @@
 type Query {
-  faq: Faq
+  faq(sectionType: SectionType): Faq
 }
 
 type Faq {
   sections: [FaqSection!]!
-  paymentPlanFaqSections: [FaqSection!]!
 }
 
 type FaqSection {
@@ -15,4 +14,8 @@ type FaqSection {
 type FaqSubsection {
   title: String!
   text: String!
+}
+
+enum SectionType {
+  PaymentPlanPage
 }
