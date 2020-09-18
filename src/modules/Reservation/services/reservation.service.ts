@@ -281,11 +281,6 @@ export class ReservationService {
             seasonsUID
           )
           return Promise.all([
-            this.prisma.client.createPhysicalProductInventoryStatusChange({
-              old: physProdBeforeUpdates.inventoryStatus,
-              new: updateData.inventoryStatus,
-              physicalProduct: { connect: { seasonsUID } },
-            }),
             this.productVariantService.updateCountsForStatusChange({
               id: physProdBeforeUpdates.productVariant.id,
               oldInventoryStatus: physProdBeforeUpdates.inventoryStatus,
