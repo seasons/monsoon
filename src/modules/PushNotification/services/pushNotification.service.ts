@@ -88,7 +88,6 @@ export class PushNotificationService {
       await update
     }
 
-    // return receipt
     return receipt
   }
 
