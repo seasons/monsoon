@@ -3,9 +3,9 @@ type Query {
     planID: PlanID!
     userIDHash: String!
   ): ChargebeeHostedPagePayload
-  hostedChargebeeCheckout(planID: PlanID!): ChargebeeHostedPagePayload
-    @hasRole(roles: [Customer])
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
+    @hasRole(roles: [Customer])
+  hostedChargebeeCheckout(planID: PlanID!): ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
   paymentPlans(
     where: PaymentPlanWhereInput
@@ -19,6 +19,11 @@ type Query {
 }
 
 type Mutation {
+  applePayCheckout(planID: String!, token: StripeToken!): Boolean
+    @hasRole(roles: [Customer])
+  applePayUpdatePaymentMethod(planID: String!, token: StripeToken!): Boolean
+    @hasRole(roles: [Customer])
+  changeCustomerPlan(planID: String!): Boolean @hasRole(roles: [Customer])
   updateResumeDate(date: DateTime): Boolean @hasRole(roles: [Customer])
   removeScheduledPause(subscriptionID: String!): Boolean
     @hasRole(roles: [Customer])
@@ -115,10 +120,6 @@ type CreditNote {
   status: CreditNoteStatus
 }
 
-type ChargebeePlanPayload {
-  plans: [Plan]
-}
-
 type ChargebeeHostedPagePayload {
   created_at: DateTime!
   embed: Boolean!
@@ -140,11 +141,45 @@ input RefundInvoiceInput {
   reasonCode: CreditNoteReasonCodeInput
 }
 
-type PaymentPlan {
-  id: String!
-  description: String
-  planID: String!
-  status: String
-  name: String
-  price: Int
+input StripeToken {
+  card: StripeTokenCard!
+  created: Int!
+  extra: StripeTokenExtra!
+  livemode: Boolean!
+  tokenId: String!
+}
+
+input StripeTokenCard {
+  addressCity: String # "Brooklyn"
+  addressCountry: String # "US"
+  addressLine1: String # "34 Havemeyer St↵Apt 5A"
+  addressState: String # "NY"
+  addressZip: String # "11211"
+  brand: String # "Visa"
+  cardId: String # "card_1HKsSHKj0L34HDecsPacg32I"
+  country: String # "US"
+  dynamicLast4: String # "4242"
+  expMonth: Int # 12
+  expYear: Int # 2020
+  funding: String # "credit"
+  isApplePayCard: Boolean
+  last4: String # "4242"
+  name: String # "Kieran Gillen"
+}
+
+input StripeTokenExtra {
+  billingContact: StripeContact
+  shippingContact: StripeContact
+  shippingMethod: String
+}
+
+input StripeContact {
+  ISOCountryCode: String! # "US"
+  city: String! # "Brooklyn"
+  country: String! # "United States"
+  name: String! # "Kieran Gillen"
+  postalCode: String # "11211"
+  state: String # "NY"
+  street: String # "35 Havemeyer St↵Apt 5A"
+  supplementarySubLocality: String # ""
 }

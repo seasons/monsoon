@@ -8,17 +8,17 @@ export class PaymentUtilsService {
   createBillingInfoObject(card, chargebeeCustomer) {
     try {
       return {
-        brand: card.card_type,
+        brand: card.card_type || card.brand,
         name: `${card.first_name || ""} ${card.last_name || ""}`,
         last_digits: card.last4,
         expiration_month: card.expiry_month,
         expiration_year: card.expiry_year,
-        street1: chargebeeCustomer.billing_address.line1,
-        street2: chargebeeCustomer.billing_address.line2,
-        city: chargebeeCustomer.billing_address.city,
-        state: chargebeeCustomer.billing_address.state,
-        country: chargebeeCustomer.billing_address.country,
-        postal_code: chargebeeCustomer.billing_address.zip,
+        street1: chargebeeCustomer?.billing_address?.line1 || "",
+        street2: chargebeeCustomer?.billing_address?.line2 || "",
+        city: chargebeeCustomer?.billing_address?.city || "",
+        state: chargebeeCustomer?.billing_address?.state || "",
+        country: chargebeeCustomer?.billing_address?.country || "",
+        postal_code: chargebeeCustomer?.billing_address?.zip || "",
       }
     } catch (err) {
       Sentry.captureException(err)

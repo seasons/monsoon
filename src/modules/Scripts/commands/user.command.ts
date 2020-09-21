@@ -11,7 +11,6 @@ import { head } from "lodash"
 import { Command, Option, Positional } from "nestjs-command"
 
 import {
-  AirtableIdOption,
   EmailOption,
   PasswordOption,
   PrismaEnvOption,
@@ -23,11 +22,11 @@ export class UserCommands {
   private readonly logger = new Logger(UserCommands.name)
 
   constructor(
-    private readonly scriptsService: ScriptsService,
-    private readonly authService: AuthService,
+    private readonly scripts: ScriptsService,
+    private readonly auth: AuthService,
     private readonly prisma: PrismaService,
     private readonly paymentService: PaymentService,
-    private readonly utilsService: UtilsService,
+    private readonly utils: UtilsService,
     private moduleRef: ModuleRef
   ) {}
 
@@ -56,7 +55,7 @@ export class UserCommands {
     })
     _password
   ) {
-    await this.scriptsService.updateConnections({
+    await this.scripts.updateConnections({
       prismaEnv,
       moduleRef: this.moduleRef,
     })
@@ -66,7 +65,7 @@ export class UserCommands {
       firstName,
       lastName,
     } = this.createTestUserBasics(_newEmail, _password)
-    const auth0Id = await this.authService.createAuth0User(newEmail, password, {
+    const auth0Id = await this.auth.createAuth0User(newEmail, password, {
       firstName,
       lastName,
     })
@@ -100,20 +99,27 @@ export class UserCommands {
     @PasswordOption()
     _password,
     @Option({
-      name: "plan",
+      name: "planID",
       describe: "Subscription plan of the user",
       type: "string",
-      default: "Essential",
-      choices: ["AllAccess", "Essential"],
+      default: "essential-2",
+      choices: [
+        "all-access",
+        "essential",
+        "all-access-1",
+        "essential-1",
+        "all-access-2",
+        "essential-2",
+      ],
     })
-    plan,
+    planID,
     @Option({
       name: "roles",
       alias: "r",
       describe: "Roles of the user",
       type: "array",
       default: "Customer",
-      choices: ["Customer", "Admin", "Partner"],
+      choices: ["Customer", "Admin", "Partner", "Marketer"],
     })
     roles,
     @Option({
@@ -135,7 +141,7 @@ export class UserCommands {
     })
     status
   ) {
-    await this.scriptsService.updateConnections({
+    await this.scripts.updateConnections({
       prismaEnv,
       moduleRef: this.moduleRef,
     })
@@ -168,7 +174,7 @@ export class UserCommands {
     }
 
     try {
-      ;({ user, tokenData } = await this.authService.signupUser({
+      ;({ user, tokenData } = await this.auth.signupUser({
         email,
         password,
         firstName,
@@ -217,9 +223,24 @@ export class UserCommands {
         cvv: "222",
       }
       this.logger.log("Updating customer")
+      const subscription = await this.paymentService.createSubscription(
+        planID,
+        this.utils.snakeCaseify(address),
+        user,
+        this.utils.snakeCaseify(card)
+      )
       await this.prisma.client.updateCustomer({
         data: {
-          plan,
+          membership: {
+            create: {
+              plan: {
+                connect: {
+                  planID,
+                },
+              },
+              subscriptionId: subscription.subscription.id,
+            },
+          },
           billingInfo: {
             create: {
               brand: "Visa",
@@ -234,12 +255,6 @@ export class UserCommands {
         },
         where: { id: customer.id },
       })
-      await this.paymentService.createSubscription(
-        plan,
-        this.utilsService.snakeCaseify(address),
-        user,
-        this.utilsService.snakeCaseify(card)
-      )
     }
 
     this.logger.log(

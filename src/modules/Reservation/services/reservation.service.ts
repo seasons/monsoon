@@ -1,5 +1,6 @@
 import { RollbackError } from "@app/errors"
 import { PushNotificationService } from "@app/modules/PushNotification"
+import { AdminActionLog } from "@app/prisma/prisma.binding"
 import { AirtableService } from "@modules/Airtable"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
@@ -30,7 +31,7 @@ import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { addFragmentToInfo } from "graphql-binding"
-import { head } from "lodash"
+import { head, omit } from "lodash"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
 
@@ -70,11 +71,17 @@ export class ReservationService {
     let reservationReturnData
     const rollbackFuncs = []
 
+    const customerPlanItemCount = await this.prisma.client
+      .customer({ id: customer.id })
+      .membership()
+      .plan()
+      .itemCount()
+
     try {
       // Do a quick validation on the data
-      if (items.length < 3) {
+      if (!!customerPlanItemCount && items.length !== customerPlanItemCount) {
         throw new ApolloError(
-          "Must supply at least three product variant ids",
+          `Your reservation must contain ${customerPlanItemCount} items`,
           "515"
         )
       }
@@ -134,7 +141,8 @@ export class ReservationService {
           newProductVariantsBeingReserved as string[]
         ),
         physicalProductsBeingReserved,
-        heldPhysicalProducts
+        heldPhysicalProducts,
+        customerPlanItemCount
       )
       const [
         prismaReservation,
@@ -348,6 +356,32 @@ export class ReservationService {
       returnedPhysicalProducts,
       reservation
     )
+  }
+
+  interpretReservationLogs(logs: AdminActionLog[]) {
+    // for now, just filter these out of the changed logs
+    const keysWeDontCareAbout = [
+      "receipt",
+      "id",
+      "sentPackage",
+      "returnedPackage",
+    ]
+
+    return logs
+      .map(a => {
+        const filteredLog = { ...a }
+        filteredLog.changedFields = omit(a.changedFields, keysWeDontCareAbout)
+        return filteredLog
+      })
+      .filter(b => {
+        if (
+          b.action === "Update" &&
+          Object.keys(b.changedFields).length === 0
+        ) {
+          return false
+        }
+        return true
+      })
   }
 
   async updateReservation(
@@ -578,15 +612,14 @@ export class ReservationService {
     customer: Customer,
     shipmentWeight: number,
     physicalProductsBeingReserved: PhysicalProduct[],
-    heldPhysicalProducts: PhysicalProduct[]
+    heldPhysicalProducts: PhysicalProduct[],
+    customerPlanItemCount: number
   ): Promise<ReservationCreateInput> {
     const allPhysicalProductsInReservation = [
       ...physicalProductsBeingReserved,
       ...heldPhysicalProducts,
     ]
-    if (allPhysicalProductsInReservation.length > 3) {
-      throw new ApolloError("Can not reserve more than 3 items at a time")
-    }
+
     const physicalProductSUIDs = allPhysicalProductsInReservation.map(p => ({
       seasonsUID: p.seasonsUID,
     }))

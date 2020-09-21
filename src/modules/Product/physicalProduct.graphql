@@ -57,12 +57,14 @@ type PhysicalProduct {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  reservations(orderBy: ReservationOrderByInput): [Reservation!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
 input WarehouseLocationConnectWhereUniqueInput {
   connect: WarehouseLocationWhereUniqueInput
+  disconnect: Boolean
 }
 
 input PhysicalProductUpdateInput {
@@ -74,6 +76,7 @@ input PhysicalProductUpdateInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  barcoded: Boolean
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationConnectWhereUniqueInput
   dateOrdered: DateTime

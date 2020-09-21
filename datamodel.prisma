@@ -39,6 +39,7 @@ enum UserRole {
   Admin
   Customer
   Partner
+  Marketer
 }
 
 enum InventoryStatus {
@@ -359,12 +360,25 @@ type Product {
       link: TABLE
       onDelete: CASCADE
     )
-  season: String
+  season: ProductSeason
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type Season {
+  id: ID! @id
+	year: Int
+	seasonCode: SeasonCode
+}
+
+type ProductSeason {
+  id: ID! @id
+	vendorSeason: Season @relation(name: "ProductSeasonVendorSeason")
+	internalSeason: Season @relation(name: "ProductSeasonInternalSeason")
+  wearableSeasons: [SeasonString!] @scalarList(strategy: RELATION)
 }
 
 type ProductMaterialCategory {
@@ -475,8 +489,16 @@ type PaymentPlan {
   status: String
   name: String
   price: Int
+  itemCount: Int
+  tagline: String
+  tier: PaymentPlanTier
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+enum PaymentPlanTier {
+  Essential
+  AllAccess
 }
 
 type EmailReceipt {
@@ -541,6 +563,25 @@ type PushNotificationReceipt {
   sentAt: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+enum SeasonCode {
+  # For Vendor and Internal Seasons
+	FW # Fall winter
+  SS # Spring Summer
+
+  # For Vendor Seasons only
+  PS # Pre spring
+  PF # Pre Fall
+  HO # Holiday
+  AW # Autumn Winter
+}
+
+enum SeasonString {
+  Spring 
+  Summer
+	Winter
+  Fall
 }
 
 enum UserVerificationMethod {
@@ -682,6 +723,7 @@ type Customer {
 
 type CustomerMembership {
   id: ID! @id
+  plan: PaymentPlan
   subscriptionId: String!
   customer: Customer!
     @relation(
@@ -719,10 +761,11 @@ type Reservation {
   user: User!
   customer: Customer! @relation(name: "CustomerToReservation")
   sentPackage: Package
-    @relation(name: "SeasonsToCustomerPackage", onDelete: CASCADE)
+    @relation(link: INLINE, name: "SeasonsToCustomerPackage", onDelete: CASCADE)
   returnedPackage: Package
-    @relation(name: "CustomerToSeasonsPackage", onDelete: CASCADE)
+    @relation(link: INLINE, name: "CustomerToSeasonsPackage", onDelete: CASCADE)
   products: [PhysicalProduct!]!
+  packageEvents: [PackageTransitEvent!]
   reservationNumber: Int! @unique
   phase: ReservationPhase!
   shipped: Boolean!
@@ -730,6 +773,7 @@ type Reservation {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceipt
     @relation(
       link: INLINE
@@ -818,6 +862,8 @@ type PackageTransitEvent {
   id: ID! @id
   status: PackageTransitEventStatus!
   subStatus: PackageTransitEventSubStatus!
+  package: Package!
+  reservation: Reservation
   data: Json!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -897,4 +943,30 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
+}
+
+# Helper table for audit logs. Should only ever have 0 or 1 records.
+# In the event that it has a record, stores a link to the admin currently making a change
+type ActiveAdminUser {
+  id: ID! @id
+  admin: User!
+}
+
+enum AdminAction {
+  Insert
+  Delete
+  Update
+  Truncate
+}
+
+type AdminActionLog {
+  actionId: Int! @id(strategy: AUTO)
+  entityId: String!
+  tableName: String!
+  activeAdminUser: User!
+  triggeredAt: DateTime!
+  action: AdminAction!
+  rowData: Json!
+  changedFields: Json
+  statementOnly: Boolean!
 }

@@ -17,7 +17,6 @@ export class UserFieldsResolver {
   async beamsToken(
     @Parent() user,
     @Loader({
-      type: PrismaLoader.name,
       params: {
         query: "users",
         info: `{id email}`,
@@ -37,7 +36,6 @@ export class UserFieldsResolver {
   async fullName(
     @Parent() user,
     @Loader({
-      type: PrismaLoader.name,
       params: {
         query: "users",
         info: `{id firstName lastName}`,
@@ -56,12 +54,12 @@ export class UserFieldsResolver {
   async customer(
     @Parent() user,
     @Loader({
-      type: PrismaLoader.name,
       params: {
         query: "customers",
         infoFragment: `fragment EnsureUserWithId on Customer {user {id}}`,
-        formatWhere: ids => ({ where: { user: { id_in: ids } } }),
-        getKey: a => a.user.id,
+        formatWhere: ids => ({ user: { id_in: ids } }),
+        getKeys: a => [a.user.id],
+        fallbackValue: null,
       },
       includeInfo: true,
     })

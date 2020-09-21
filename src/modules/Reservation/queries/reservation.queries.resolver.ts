@@ -1,5 +1,6 @@
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
+import { addFragmentToInfo } from "graphql-binding"
 
 @Resolver()
 export class ReservationQueriesResolver {
@@ -22,12 +23,18 @@ export class ReservationQueriesResolver {
 
   @Query()
   async reservation(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.reservation(args, info)
+    return await this.prisma.binding.query.reservation(
+      args,
+      addFragmentToInfo(info, `fragment EnsureId on Reservation {id}`)
+    )
   }
 
   @Query()
   async reservations(@Args() args, @Info() info) {
-    const data = await this.prisma.binding.query.reservations(args, info)
+    const data = await this.prisma.binding.query.reservations(
+      args,
+      addFragmentToInfo(info, `fragment EnsureId on Reservation {id}`)
+    )
     return data
   }
 
