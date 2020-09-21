@@ -7,8 +7,7 @@ import { Command, Positional } from "nestjs-command"
 export class HerokuCommands {
   @Command({
     command: "get:production-commit <app>",
-    describe:
-      "gets the latest commit to be deployed on the specified app",
+    describe: "gets the latest commit to be deployed on the specified app",
     aliases: "gpc",
   })
   async create(
