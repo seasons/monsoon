@@ -19,11 +19,10 @@ export async function hasRole(
     .user({ id: userID })
     .roles()
 
-  // Set a flag so admin-related contextual work can happen. e.g Admin Audit logging
-  // Only do it for mutatios, because we don't want simultaneous queries to get jammed up and fail things
-  ctx.isAdminAction =
-    permissibleRoles.includes("Admin") &&
-    ctx.req.body.query?.includes("mutation")
+  // Set flags so admin-related contextual work can happen. e.g Admin Audit logging
+  ctx.isAdminAction = permissibleRoles.includes("Admin")
+  ctx.isMutation = ctx.req.body.query?.includes("mutation")
+  ctx.activeUserIsAdmin = userRoles.includes("Admin")
 
   if (intersection(permissibleRoles, userRoles).length === 0) {
     if (nullable) {
