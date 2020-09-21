@@ -1,16 +1,10 @@
-import {
-  ID_Input,
-  UserPushNotificationInterest,
-  UserPushNotificationInterestType,
-} from "@app/prisma"
+import { UserPushNotificationInterestType } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Token } from "@pusher/push-notifications-server"
 import { upperFirst } from "lodash"
 
 import {
-  PushNotificationID,
-  PushNotificationVars,
   PushNotifyInterestInput,
   PushNotifyUserInput,
 } from "../pushNotification.types"
@@ -51,8 +45,8 @@ export class PushNotificationService {
       notificationPayload as any
     )
 
-    // Create the receipt
-    const usersToUpdate = await this.prisma.client.users({
+    // // Create the receipt
+    let usersToUpdate = await this.prisma.client.users({
       where: {
         pushNotification: {
           AND: [
@@ -73,6 +67,9 @@ export class PushNotificationService {
         },
       },
     })
+    if (targetInterest.includes("debug")) {
+      usersToUpdate = usersToUpdate.filter(a => a.roles.includes("Admin"))
+    }
     const receipt = await this.prisma.client.createPushNotificationReceipt({
       ...receiptPayload,
       interest: targetInterest,
@@ -86,8 +83,12 @@ export class PushNotificationService {
         data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
       })
     )
-    await Promise.all(updates)
+    // await each one separately. Sending them simultaneously fails on the DB
+    for (const update of updates) {
+      await update
+    }
 
+    // return receipt
     return receipt
   }
 
