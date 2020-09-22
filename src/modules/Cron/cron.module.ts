@@ -13,6 +13,7 @@ import { PrismaModule } from "@prisma/prisma.module"
 import { DripModule } from "../Drip/drip.module"
 import { PaymentModule } from "../Payment/payment.module"
 import { SearchModule } from "../Search/search.module"
+import { AnalyticsScheduledJobs } from "./services/analytics.job.service"
 import { DataScheduledJobs } from "./services/data.job.service"
 import { MarketingScheduledJobs } from "./services/marketing.job.service"
 import { MembershipScheduledJobs } from "./services/membership.service"
@@ -37,12 +38,13 @@ import { SearchScheduledJobs } from "./services/search.job.service"
     SearchModule,
   ],
   providers: [
-    ReservationScheduledJobs,
+    // ReservationScheduledJobs,
     DataScheduledJobs,
-    MarketingScheduledJobs,
-    MembershipScheduledJobs,
-    PaymentScheduledJobs,
-    SearchScheduledJobs,
+    // MarketingScheduledJobs,
+    // MembershipScheduledJobs,
+    // PaymentScheduledJobs,
+    // SearchScheduledJobs,
+    AnalyticsScheduledJobs,
   ],
   exports: [DataScheduledJobs],
 })
