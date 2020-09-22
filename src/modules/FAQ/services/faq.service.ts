@@ -14,6 +14,11 @@ export class FAQService {
                 "We’re accepting members in select cities around the Northeast, Southeast, and Midwest.",
             },
             {
+              title: "What is a “Swap”?",
+              text:
+                "A swap is you sending back an item for another. Whenever we receive your return, we’ll reset your bag slots and you can place a new order!",
+            },
+            {
               title: "How does shipping work?",
               text:
                 "Free shipping and returns are included in both plans. Shipping times average about 1-2 days in the NY metro area and 3-4 days for the rest of the midwest and East Coast.",
