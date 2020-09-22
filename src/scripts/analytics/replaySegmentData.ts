@@ -7,8 +7,6 @@ import csv from "csv-parser"
 import { camelCase, mapKeys, pick } from "lodash"
 import moment from "moment"
 
-import { PrismaService } from "../../prisma/prisma.service"
-
 interface TrackPayload {
   properties: any
 }
@@ -18,20 +16,6 @@ interface IdentifyPayload {
 }
 
 type SegmentPayload = TrackPayload | IdentifyPayload
-
-interface ReplayEventsFromDBRecords {
-  query: string
-  getUserIdFunc: (rec) => string
-  createPayloadFunc: (rec) => any
-  getTimestampFunc?: (rec) => Date
-  shouldSendEventFunc?: (rec) => boolean
-  where?: any
-  event?: string
-  method?: "identify" | "track"
-  info: any
-}
-
-const ps = new PrismaService()
 
 // Useful Docs: https://segment.com/docs/connections/sources/catalog/libraries/server/node/#identify
 
@@ -109,7 +93,7 @@ const replayHarvestData = async () => {
     // we started sending harvest events to mixpanel on sept 18, 2020
     stopDate: new Date(2020, 8, 18),
     app: "harvest",
-    csvName: "create_account_modal_test",
+    csvName: "create_account_modal",
     event: "CreateAccountModal",
     rowTransformFunc: row => ({
       properties: createPropertiesFromCSVColumns(row, [
