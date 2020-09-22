@@ -10,7 +10,7 @@ const run = async () => {
   const ps = new PrismaService()
   const allUsers = await ps.client.users()
   for (const user of allUsers) {
-    await mp.alias(user.id, user.email)
+    await mp.alias(user.email, user.id)
   }
 }
 
