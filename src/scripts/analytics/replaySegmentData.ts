@@ -87,8 +87,6 @@ const createPropertiesFromCSVColumns = (row, columnNames: string[]) => {
 }
 
 const replayHarvestData = async () => {
-  // We have no records on whether or not someone opened a hosted checkout
-  // besides the actual event data, so we leave this one as is.
   uploadCSV({
     // we started sending harvest events to mixpanel on sept 18, 2020
     stopDate: new Date(2020, 8, 18),
