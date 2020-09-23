@@ -39,7 +39,7 @@ export class FAQService {
     } else {
       return [
         {
-          title: "Need to return your items?",
+          title: "Frequently asked questions",
           subsections: [
             {
               title: "Ready to return your items?",

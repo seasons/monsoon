@@ -418,7 +418,7 @@ export class ReservationService {
     return this.prisma.binding.query.reservation({ where }, info)
   }
 
-  private async createReservationFeedbacksForVariants(
+  async createReservationFeedbacksForVariants(
     productVariants: ProductVariant[],
     user: User,
     reservation: Reservation
