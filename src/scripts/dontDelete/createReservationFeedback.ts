@@ -2,23 +2,27 @@ import "module-alias/register"
 
 import * as Airtable from "airtable"
 
-import { AirtableBaseService } from "../modules/Airtable/services/airtable.base.service"
-import { AirtableService } from "../modules/Airtable/services/airtable.service"
-import { AirtableUtilsService } from "../modules/Airtable/services/airtable.utils.service"
-import { EmailDataProvider } from "../modules/Email/services/email.data.service"
-import { EmailService } from "../modules/Email/services/email.service"
-import { PhysicalProductUtilsService } from "../modules/Product/services/physicalProduct.utils.service"
-import { ProductUtilsService } from "../modules/Product/services/product.utils.service"
-import { ProductVariantService } from "../modules/Product/services/productVariant.service"
-import { PusherService } from "../modules/PushNotification/services/pusher.service"
-import { PushNotificationDataProvider } from "../modules/PushNotification/services/pushNotification.data.service"
-import { PushNotificationService } from "../modules/PushNotification/services/pushNotification.service"
-import { ReservationService } from "../modules/Reservation/services/reservation.service"
-import { ReservationUtilsService } from "../modules/Reservation/services/reservation.utils.service"
-import { ShippingService } from "../modules/Shipping/services/shipping.service"
-import { UtilsService } from "../modules/Utils/services/utils.service"
-import { PrismaService } from "../prisma/prisma.service"
+import { AirtableBaseService } from "../../modules/Airtable/services/airtable.base.service"
+import { AirtableService } from "../../modules/Airtable/services/airtable.service"
+import { AirtableUtilsService } from "../../modules/Airtable/services/airtable.utils.service"
+import { EmailDataProvider } from "../../modules/Email/services/email.data.service"
+import { EmailService } from "../../modules/Email/services/email.service"
+import { PhysicalProductUtilsService } from "../../modules/Product/services/physicalProduct.utils.service"
+import { ProductUtilsService } from "../../modules/Product/services/product.utils.service"
+import { ProductVariantService } from "../../modules/Product/services/productVariant.service"
+import { PusherService } from "../../modules/PushNotification/services/pusher.service"
+import { PushNotificationDataProvider } from "../../modules/PushNotification/services/pushNotification.data.service"
+import { PushNotificationService } from "../../modules/PushNotification/services/pushNotification.service"
+import { ReservationService } from "../../modules/Reservation/services/reservation.service"
+import { ReservationUtilsService } from "../../modules/Reservation/services/reservation.utils.service"
+import { ShippingService } from "../../modules/Shipping/services/shipping.service"
+import { UtilsService } from "../../modules/Utils/services/utils.service"
+import { PrismaService } from "../../prisma/prisma.service"
 
+/*
+ *  Use: This script can be used to make a reservation feedback object on a specific user for testing purposes
+ *  Reason not to delete: This is helpful for testing the reservation feedback flow
+ */
 const run = async () => {
   Airtable.configure({
     endpointUrl: "https://api.airtable.com",
