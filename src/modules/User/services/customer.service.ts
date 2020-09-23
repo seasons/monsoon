@@ -190,7 +190,8 @@ export class CustomerService {
 
   async triageCustomer(
     where: CustomerWhereUniqueInput,
-    application: ApplicationType
+    application: ApplicationType,
+    dryRun: boolean
   ): Promise<TriageCustomerResult> {
     const customer = await this.prisma.binding.query.customer(
       { where },
@@ -228,23 +229,27 @@ export class CustomerService {
         (await this.admissions.haveSufficientInventoryToServiceCustomer(where))
       ) {
         status = "Authorized"
-        this.segment.trackBecameAuthorized(customer.user.id, {
-          previousStatus: customer.status,
-          firstName: customer.user.firstName,
-          lastName: customer.user.lastName,
-          email: customer.user.email,
-          method: "Automatic",
-          application,
-        })
+        if (!dryRun) {
+          this.segment.trackBecameAuthorized(customer.user.id, {
+            previousStatus: customer.status,
+            firstName: customer.user.firstName,
+            lastName: customer.user.lastName,
+            email: customer.user.email,
+            method: "Automatic",
+            application,
+          })
+        }
       }
     } catch (err) {
       Sentry.captureException(err)
     }
 
-    await this.prisma.client.updateCustomer({
-      where,
-      data: { status },
-    })
+    if (!dryRun) {
+      await this.prisma.client.updateCustomer({
+        where,
+        data: { status },
+      })
+    }
     return status
   }
 }
