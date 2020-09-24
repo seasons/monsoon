@@ -223,8 +223,13 @@ export class AdmissionsService {
     }`
     )
     const pausedCustomersResumingThisWeek = pausedCustomers.filter(a => {
+      const pauseRequests = a.membership?.pauseRequests || []
+      if (pauseRequests.length === 0) {
+        return false
+      }
+
       const latestPauseRequest = head(
-        a.membership.pauseRequests.sort((a, b) => {
+        pauseRequests.sort((a, b) => {
           return moment(a.createdAt).isAfter(moment(b.createdAt)) ? -1 : 1
         })
       )
