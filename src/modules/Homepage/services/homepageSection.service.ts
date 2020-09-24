@@ -9,6 +9,7 @@ const ProductFragment = `
   __typename
   id
   slug
+  name
   images {
     id
     url
