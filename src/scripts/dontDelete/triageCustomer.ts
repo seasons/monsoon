@@ -48,22 +48,7 @@ const run = async () => {
     pushNotificationService,
     shippingUtils
   )
-  const productUtils = new ProductUtilsService(ps)
-  const airtableBase = new AirtableBaseService()
-  const airtableUtils = new AirtableUtilsService(airtableBase)
   const utilsService = new UtilsService(ps)
-  const physicalProductUtilsService = new PhysicalProductUtilsService(
-    ps,
-    productUtils
-  )
-  const airtableService = new AirtableService(airtableBase, airtableUtils)
-  const productVariantService = new ProductVariantService(
-    ps,
-    productUtils,
-    physicalProductUtilsService,
-    airtableService
-  )
-  const emailData = new EmailDataProvider()
   const shippingService = new ShippingService(ps, utilsService)
   const admissionsService = new AdmissionsService(ps, utilsService)
   const segmentService = new SegmentService()
@@ -74,38 +59,11 @@ const run = async () => {
     admissionsService,
     segmentService
   )
-  const emails = new EmailService(ps, utilsService, emailData)
-  const pushNotifs = new PushNotificationService(pusher, pushNotifData, ps)
-  const reservationUtils = new ReservationUtilsService(ps, shippingService)
-  const reservationService = new ReservationService(
-    ps,
-    productUtils,
-    productVariantService,
-    physicalProductUtilsService,
-    airtableService,
-    shippingService,
-    emails,
-    pushNotifs,
-    reservationUtils
-  )
 
-  const productVariantIDs = ["ckewwenqw05lj07707oi3dyy7"]
-
-  const returnedPhysicalProducts = await ps.client.productVariants({
-    where: {
-      id_in: productVariantIDs,
-    },
-  })
-
-  const prismaUser = await ps.client.user({ id: "ckfe58vr902990763htfxgve3" })
-  const reservation = await ps.client.reservation({
-    id: "ckfe71slw04d40763l5mcrzuh",
-  })
-
-  await reservationService.createReservationFeedbacksForVariants(
-    returnedPhysicalProducts,
-    prismaUser,
-    reservation
+  await customerService.triageCustomer(
+    { id: "ckf8meipx0e6f07296x61ory9" },
+    "harvest",
+    true
   )
 }
 
