@@ -8,6 +8,11 @@ import { head, intersection, uniqBy } from "lodash"
 import moment from "moment"
 import zipcodes from "zipcodes"
 
+export interface TriageFuncResult {
+  pass: boolean
+  detail: any
+}
+
 @Injectable()
 export class AdmissionsService {
   serviceableStates: string[]
@@ -29,12 +34,17 @@ export class AdmissionsService {
     ))
   }
 
-  zipcodeAllowed(zipcode: string): boolean {
+  zipcodeAllowed(zipcode: string): TriageFuncResult {
     const state = zipcodes.lookup(zipcode)?.state
-    return this.serviceableStates.includes(state)
+    const pass = this.serviceableStates.includes(state)
+    const detail = { zipcode, state, serviceableStates: this.serviceableStates }
+    return { pass, detail }
   }
 
-  async belowWeeklyNewActiveUsersOpsThreshold(): Promise<boolean> {
+  async belowWeeklyNewActiveUsersOpsThreshold(): Promise<TriageFuncResult> {
+    let pass = true
+    let detail = {}
+
     const emailsSent = await this.prisma.binding.query.emailReceipts(
       {
         where: {
@@ -76,37 +86,51 @@ export class AdmissionsService {
       .map(b => b.user.id)
       .filter(c => !usersActivatedPastWeek.includes(c))
 
-    if (
-      usersActivatedPastWeek.length >
-      parseInt(process.env.WEEKLY_NEW_USERS_THRESHOLD, 10)
-    ) {
-      return false
+    const weeklyNewUsersThreshold = parseInt(
+      process.env.WEEKLY_NEW_USERS_THRESHOLD,
+      10
+    )
+    const weeklyInvitationsThreshold = parseInt(
+      process.env.WEEKLY_INVITATIONS_THRESHOLD,
+      10
+    )
+    detail = {
+      usersActivatedPastWeek: usersActivatedPastWeek.length,
+      invitationsSentPastWeek: invitationsSentPastWeek.length,
+      weeklyNewUsersThreshold,
+      weeklyInvitationsThreshold,
     }
 
     if (
-      usersInvitedButNotActivatedPastWeek.length >
-      parseInt(process.env.WEEKLY_INVITATIONS_THRESHOLD, 10)
+      usersActivatedPastWeek.length > weeklyNewUsersThreshold ||
+      usersInvitedButNotActivatedPastWeek.length > weeklyInvitationsThreshold
     ) {
-      return false
+      pass = false
     }
 
-    return true
+    return { pass, detail }
   }
 
   async haveSufficientInventoryToServiceCustomer(
     where: CustomerWhereUniqueInput
-  ): Promise<boolean> {
+  ): Promise<TriageFuncResult> {
     const inventoryThreshold =
       parseInt(process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER, 10) || 15
-    const reservableInventoryForCustomer = await this.reservableInventoryForCustomer(
-      where
-    )
-    return reservableInventoryForCustomer > inventoryThreshold
+    const {
+      reservableStyles,
+      detail: reservableInventoryForCustomerDetail,
+    } = await this.reservableInventoryForCustomer(where)
+    const pass = reservableStyles > inventoryThreshold
+
+    return {
+      pass,
+      detail: { ...reservableInventoryForCustomerDetail, inventoryThreshold },
+    }
   }
 
   async reservableInventoryForCustomer(
     where: CustomerWhereUniqueInput
-  ): Promise<number> {
+  ): Promise<{ reservableStyles: number; detail: any }> {
     const availableTopStyles = await this.availableStylesForCustomer(
       where,
       "Top"
@@ -115,7 +139,10 @@ export class AdmissionsService {
       where,
       "Bottom"
     )
-    return availableTopStyles + availableBottomStyles
+    return {
+      reservableStyles: availableTopStyles + availableBottomStyles,
+      detail: { availableBottomStyles, availableTopStyles },
+    }
   }
 
   private async availableStylesForCustomer(
@@ -224,12 +251,12 @@ export class AdmissionsService {
     )
     const pausedCustomersResumingThisWeek = pausedCustomers.filter(a => {
       const latestPauseRequest = head(
-        a.membership.pauseRequests.sort((a, b) => {
+        a.membership?.pauseRequests?.sort((a, b) => {
           return moment(a.createdAt).isAfter(moment(b.createdAt)) ? -1 : 1
         })
       )
       return this.utils.isLessThanXDaysFromNow(
-        latestPauseRequest.resumeDate as string,
+        latestPauseRequest?.resumeDate as string,
         7
       )
     })
