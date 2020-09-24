@@ -121,6 +121,11 @@ export class ProductQueriesResolver {
   }
 
   @Query()
+  async category(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.category(args, info)
+  }
+
+  @Query()
   async categoriesConnection(@Args() args, @Info() info) {
     return await this.prisma.binding.query.categoriesConnection(args, info)
   }
