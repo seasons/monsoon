@@ -229,7 +229,7 @@ export class AdmissionsService {
       }
 
       const latestPauseRequest = head(
-        a.membership.pauseRequests.sort((a, b) => {
+        pauseRequests.sort((a, b) => {
           return moment(a.createdAt).isAfter(moment(b.createdAt)) ? -1 : 1
         })
       )

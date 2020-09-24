@@ -33,6 +33,14 @@ export class CustomerFieldsResolver {
   ) {}
 
   @ResolveField()
+  async paymentPlan(@Parent() customer) {
+    return await this.prisma.client
+      .customer({ id: customer.id })
+      .membership()
+      .plan()
+  }
+
+  @ResolveField()
   async shouldRequestFeedback(@User() user) {
     if (!user) return null
     const feedbacks = await this.prisma.binding.query.reservationFeedbacks(
