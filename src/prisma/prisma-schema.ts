@@ -4931,6 +4931,7 @@ enum LetterSize {
   L
   XL
   XXL
+  XXXL
 }
 
 type Location {

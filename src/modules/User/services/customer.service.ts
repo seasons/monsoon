@@ -10,6 +10,7 @@ import {
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
+import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { pick } from "lodash"
 
@@ -262,16 +263,21 @@ export class CustomerService {
     let triageDetail = {}
     let reason: WaitlistReason
     let admit = true
-    for (const { func, waitlistReason } of triageFuncs) {
-      const { pass, detail } = await func()
+    try {
+      for (const { func, waitlistReason } of triageFuncs) {
+        const { pass, detail } = await func()
 
-      triageDetail = { ...triageDetail, ...detail }
+        triageDetail = { ...triageDetail, ...detail }
 
-      admit = admit && pass
-      if (!admit) {
-        reason = waitlistReason
-        break
+        admit = admit && pass
+        if (!admit) {
+          reason = waitlistReason
+          break
+        }
       }
+    } catch (err) {
+      admit = false
+      Sentry.captureException(err)
     }
 
     if (admit) {

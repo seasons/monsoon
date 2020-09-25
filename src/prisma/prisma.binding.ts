@@ -9191,6 +9191,7 @@ enum LetterSize {
   L
   XL
   XXL
+  XXXL
 }
 
 type Location implements Node {
@@ -27995,7 +27996,8 @@ export type LetterSize =   'XS' |
   'M' |
   'L' |
   'XL' |
-  'XXL'
+  'XXL' |
+  'XXXL'
 
 export type LocationOrderByInput =   'id_ASC' |
   'id_DESC' |
