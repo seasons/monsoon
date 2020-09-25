@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Sep 24 2020 15:40:48 GMT-0400 (Eastern Daylight Time)
+# timestamp: Fri Sep 25 2020 10:40:25 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -8579,7 +8579,6 @@ enum CustomerStatus {
   Suspended
   Paused
   Deactivated
-  PaymentFailed
 }
 
 type CustomerSubscriptionPayload {

@@ -137,7 +137,6 @@ export class UserCommands {
         "Suspended",
         "Paused",
         "Deactivated",
-        "PaymentFailed",
       ],
     })
     status

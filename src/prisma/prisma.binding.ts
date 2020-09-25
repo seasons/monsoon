@@ -6638,7 +6638,6 @@ enum CustomerStatus {
   Suspended
   Paused
   Deactivated
-  PaymentFailed
 }
 
 type CustomerSubscriptionPayload {
@@ -27906,8 +27905,7 @@ export type CustomerStatus =   'Invited' |
   'Active' |
   'Suspended' |
   'Paused' |
-  'Deactivated' |
-  'PaymentFailed'
+  'Deactivated'
 
 export type EmailId =   'ReservationReturnConfirmation' |
   'ReservationConfirmation' |

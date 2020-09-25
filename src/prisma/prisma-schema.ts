@@ -3476,7 +3476,6 @@ enum CustomerStatus {
   Suspended
   Paused
   Deactivated
-  PaymentFailed
 }
 
 type CustomerSubscriptionPayload {
