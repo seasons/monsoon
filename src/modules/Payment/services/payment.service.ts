@@ -344,17 +344,17 @@ export class PaymentService {
         e?.api_error_code &&
         e?.api_error_code === "payment_processing_failed"
       ) {
-        await this.prisma.client.updatePauseRequest({
-          where: { id: pauseRequest.id },
-          data: { pausePending: false },
-        })
-
-        await this.prisma.client.updateCustomer({
-          data: {
-            status: "PaymentFailed",
-          },
-          where: { id: customer.id },
-        })
+        // FIXME: Need to fix this status for with whatever field we're using in payment failed cases
+        // await this.prisma.client.updatePauseRequest({
+        //   where: { id: pauseRequest.id },
+        //   data: { pausePending: false },
+        // })
+        // await this.prisma.client.updateCustomer({
+        //   data: {
+        //     status: "PaymentFailed",
+        //   },
+        //   where: { id: customer.id },
+        // })
       } else {
         throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
       }
