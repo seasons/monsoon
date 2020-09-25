@@ -509,7 +509,7 @@ export class ProductService {
     if (product.status === "Stored" && status !== "Stored") {
       if (Object.keys(data).length !== 1) {
         throw new Error(
-          "To reduce the surface area of potential areas, do not make other changes when unstoring a product"
+          "To reduce the surface area of potential errors, do not make other changes when unstoring a product"
         )
       }
     }
