@@ -306,53 +306,59 @@ export class PaymentService {
       ? { specific_date: DateTime.fromISO(date).toSeconds() }
       : "immediately"
 
-    let newStatus = "Active" as CustomerStatus
+    const pauseRequest = head(
+      await this.prisma.client.pauseRequests({
+        where: {
+          membership: {
+            customer: {
+              id: customer.id,
+            },
+          },
+        },
+      })
+    )
 
     try {
-      await chargebee.subscription
+      const result = await chargebee.subscription
         .resume(subscriptionId, {
           resume_option: resumeDate,
           unpaid_invoices_handling: "schedule_payment_collection",
         })
         .request()
+
+      if (result) {
+        await this.prisma.client.updatePauseRequest({
+          where: { id: pauseRequest.id },
+          data: { pausePending: false },
+        })
+
+        await this.prisma.client.updateCustomer({
+          data: {
+            status: "Active",
+          },
+          where: { id: customer.id },
+        })
+      }
     } catch (e) {
       if (
         e?.api_error_code &&
-        e?.api_error_code !== "invalid_state_for_request"
-      ) {
-        throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
-      } else if (
-        e?.api_error_code &&
         e?.api_error_code === "payment_processing_failed"
       ) {
-        // FIXME: We need to handle accounts where the credit card is no longer valid
-        newStatus = "Paused"
+        // FIXME: Need to fix this status for with whatever field we're using in payment failed cases
+        // await this.prisma.client.updatePauseRequest({
+        //   where: { id: pauseRequest.id },
+        //   data: { pausePending: false },
+        // })
+        // await this.prisma.client.updateCustomer({
+        //   data: {
+        //     status: "PaymentFailed",
+        //   },
+        //   where: { id: customer.id },
+        // })
+      } else {
+        throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
       }
     }
-
-    const pauseRequests = await this.prisma.client.pauseRequests({
-      where: {
-        membership: {
-          customer: {
-            id: customer.id,
-          },
-        },
-      },
-    })
-
-    const pauseRequest = head(pauseRequests)
-
-    await this.prisma.client.updatePauseRequest({
-      where: { id: pauseRequest.id },
-      data: { pausePending: false },
-    })
-
-    await this.prisma.client.updateCustomer({
-      data: {
-        status: newStatus,
-      },
-      where: { id: customer.id },
-    })
   }
 
   async createSubscription(

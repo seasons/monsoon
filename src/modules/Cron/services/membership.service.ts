@@ -3,6 +3,7 @@ import { PrismaService } from "@modules/../prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/index"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
+import * as Sentry from "@sentry/node"
 import { head } from "lodash"
 import { DateTime } from "luxon"
 
@@ -25,66 +26,70 @@ export class MembershipScheduledJobs {
     })
 
     for (const pauseRequest of pauseRequests) {
-      if (DateTime.fromISO(pauseRequest.pauseDate) <= DateTime.local()) {
-        const pauseRequestWithCustomer = (await this.prisma.binding.query.pauseRequest(
-          { where: { id: pauseRequest.id } },
-          `
-            {
-              id
-              membership {
+      try {
+        if (DateTime.fromISO(pauseRequest.pauseDate) <= DateTime.local()) {
+          const pauseRequestWithCustomer = (await this.prisma.binding.query.pauseRequest(
+            { where: { id: pauseRequest.id } },
+            `
+              {
                 id
-                subscriptionId
-                customer {
+                membership {
                   id
+                  subscriptionId
+                  customer {
+                    id
+                  }
                 }
               }
+            `
+          )) as any
+
+          const customerId = pauseRequestWithCustomer?.membership?.customer?.id
+
+          const reservations = await this.prisma.client
+            .customer({ id: customerId })
+            .reservations({ orderBy: "createdAt_DESC" })
+
+          const latestReservation = head(reservations)
+
+          if (
+            latestReservation &&
+            !["Completed", "Cancelled"].includes(latestReservation.status)
+          ) {
+            const customer = this.prisma.client.pauseRequests({
+              where: {
+                id: customerId,
+              },
+            })
+
+            const subscriptionId =
+              pauseRequestWithCustomer?.membership?.subscriptionId
+
+            if (!subscriptionId) {
+              return
             }
-          `
-        )) as any
 
-        const customerId = pauseRequestWithCustomer?.membership?.customer?.id
+            // Customer has an active reservation so we restart membership
+            this.payment.resumeSubscription(subscriptionId, null, customer)
+            this.logger.log(`Resumed customer subscription: ${customerId}`)
+          } else {
+            // Otherwise we can pause the membership if no active reservations
+            await this.prisma.client.updatePauseRequest({
+              where: { id: pauseRequest.id },
+              data: { pausePending: false },
+            })
 
-        const reservations = await this.prisma.client
-          .customer({ id: customerId })
-          .reservations({ orderBy: "createdAt_DESC" })
-
-        const latestReservation = head(reservations)
-
-        if (
-          latestReservation &&
-          !["Completed", "Cancelled"].includes(latestReservation.status)
-        ) {
-          const customer = this.prisma.client.pauseRequests({
-            where: {
-              id: customerId,
-            },
-          })
-
-          const subscriptionId =
-            pauseRequestWithCustomer?.membership?.subscriptionId
-
-          if (!subscriptionId) {
-            return
+            await this.prisma.client.updateCustomer({
+              data: {
+                status: "Paused",
+              },
+              where: { id: customerId },
+            })
+            this.logger.log(`Paused customer subscription: ${customerId}`)
           }
-
-          // Customer has an active reservation so we restart membership
-          this.payment.resumeSubscription(subscriptionId, null, customer)
-          this.logger.log(`Resumed customer subscription: ${customerId}`)
-        } else {
-          // Otherwise we can pause the membership if no active reservations
-          await this.prisma.client.updatePauseRequest({
-            where: { id: pauseRequest.id },
-            data: { pausePending: false },
-          })
-
-          await this.prisma.client.updateCustomer({
-            data: {
-              status: "Paused",
-            },
-            where: { id: customerId },
-          })
-          this.logger.log(`Paused customer subscription: ${customerId}`)
         }
+      } catch (e) {
+        Sentry.captureException(JSON.stringify(e))
       }
     }
   }
@@ -98,49 +103,53 @@ export class MembershipScheduledJobs {
     })
 
     for (const customer of pausedCustomers) {
-      const pauseRequests = await this.prisma.client.pauseRequests({
-        where: {
-          membership: {
-            customer: {
-              id: customer.id,
+      try {
+        const pauseRequests = await this.prisma.client.pauseRequests({
+          where: {
+            membership: {
+              customer: {
+                id: customer.id,
+              },
             },
           },
-        },
-        orderBy: "createdAt_DESC",
-      })
+          orderBy: "createdAt_DESC",
+        })
 
-      const pauseRequest = head(pauseRequests)
-      const resumeDate = DateTime.fromISO(pauseRequest?.resumeDate)
+        const pauseRequest = head(pauseRequests)
+        const resumeDate = DateTime.fromISO(pauseRequest?.resumeDate)
 
-      await this.sendReminderPushNotification(
-        customer,
-        pauseRequest,
-        resumeDate
-      )
+        await this.sendReminderPushNotification(
+          customer,
+          pauseRequest,
+          resumeDate
+        )
 
-      if (!!pauseRequest && resumeDate <= DateTime.local()) {
-        const customerWithMembership = (await this.prisma.binding.query.pauseRequest(
-          { where: { id: pauseRequest.id } },
-          `
-            {
-              id
-              membership {
+        if (!!pauseRequest && resumeDate <= DateTime.local()) {
+          const customerWithMembership = (await this.prisma.binding.query.pauseRequest(
+            { where: { id: pauseRequest.id } },
+            `
+              {
                 id
-                subscriptionId
+                membership {
+                  id
+                  subscriptionId
+                }
               }
-            }
-          `
-        )) as any
+            `
+          )) as any
 
-        const subscriptionId =
-          customerWithMembership?.membership?.subscriptionId
+          const subscriptionId =
+            customerWithMembership?.membership?.subscriptionId
 
-        if (!subscriptionId) {
-          return
+          if (!subscriptionId) {
+            return
+          }
+
+          this.logger.log(`Paused customer subscription: ${customer.id}`)
+          this.payment.resumeSubscription(subscriptionId, null, customer)
         }
-
-        this.logger.log(`Paused customer subscription: ${customer.id}`)
-        this.payment.resumeSubscription(subscriptionId, null, customer)
+      } catch (e) {
+        Sentry.captureException(JSON.stringify(e))
       }
     }
   }
