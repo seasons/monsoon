@@ -25,9 +25,9 @@ describe("Admissions Service", () => {
   describe("Serviceable Zipcodes", () => {
     beforeAll(() => {
       expectAdmit = (zipcode: string) =>
-        expect(admissions.zipcodeAllowed(zipcode)).toBe(true)
+        expect(admissions.zipcodeAllowed(zipcode).pass).toBe(true)
       expectNotAdmit = (zipcode: string) =>
-        expect(admissions.zipcodeAllowed(zipcode)).toBe(false)
+        expect(admissions.zipcodeAllowed(zipcode).pass).toBe(false)
     })
 
     it("admits New York", () => expectAdmit("11432"))
@@ -158,8 +158,11 @@ describe("Admissions Service", () => {
         PrismaServiceMockElevenAccountActivations
       )
 
-      const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
-      expect(belowOpsThreshold).toBe(false)
+      const {
+        pass,
+        detail,
+      } = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      expect(pass).toBe(false)
     })
 
     it("Returns false if we've sent out too many invitations", async () => {
@@ -195,8 +198,11 @@ describe("Admissions Service", () => {
         PrismaServiceMockTwentyOneAccountActivations
       )
 
-      const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
-      expect(belowOpsThreshold).toBe(false)
+      const {
+        pass,
+        detail,
+      } = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      expect(pass).toBe(false)
     })
 
     it("Returns true if we're below both thresholds", async () => {
@@ -215,8 +221,11 @@ describe("Admissions Service", () => {
         PrismaServiceMockNoInvitationsOrAccountActiviations
       )
 
-      const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
-      expect(belowOpsThreshold).toBe(true)
+      const {
+        pass,
+        detail,
+      } = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      expect(pass).toBe(true)
     })
   })
 
@@ -326,10 +335,12 @@ describe("Admissions Service", () => {
     })
 
     it("correctly calculates the available inventory for a user with no competing users", async () => {
-      const reservableStylesForCustomer = await admissions.reservableInventoryForCustomer(
-        { id: testCustomer.id }
-      )
-      expect(reservableStylesForCustomer).toBe(12)
+      const {
+        reservableStyles,
+      } = await admissions.reservableInventoryForCustomer({
+        id: testCustomer.id,
+      })
+      expect(reservableStyles).toBe(12)
     })
 
     it("correctly calculates the available inventory for a user with competing paused users", async () => {
@@ -383,10 +394,12 @@ describe("Admissions Service", () => {
         cleanupFuncs.push(cleanupFunc)
       }
 
-      const reservableStylesForCustomer = await admissions.reservableInventoryForCustomer(
-        { id: testCustomer.id }
-      )
-      expect(reservableStylesForCustomer).toBe(9) // 6.5 available top styles, 2.5 available bottom styles
+      const {
+        reservableStyles,
+      } = await admissions.reservableInventoryForCustomer({
+        id: testCustomer.id,
+      })
+      expect(reservableStyles).toBe(9) // 6.5 available top styles, 2.5 available bottom styles
     }, 20000)
 
     it("correctly calculates the available inventory for a user with competing active users", async () => {
@@ -407,28 +420,34 @@ describe("Admissions Service", () => {
         cleanupFuncs.push(cleanupFunc)
       }
 
-      const reservableStylesForCustomer = await admissions.reservableInventoryForCustomer(
-        { id: testCustomer.id }
-      )
-      expect(reservableStylesForCustomer).toBe(6)
+      const {
+        reservableStyles,
+      } = await admissions.reservableInventoryForCustomer({
+        id: testCustomer.id,
+      })
+      expect(reservableStyles).toBe(6)
     })
 
     it("does not admit a user with insufficient available inventory", async () => {
       process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER = "15"
 
-      const passesThreshold = await admissions.haveSufficientInventoryToServiceCustomer(
-        { id: testCustomer.id }
-      )
-      expect(passesThreshold).toBe(false)
+      const {
+        pass,
+      } = await admissions.haveSufficientInventoryToServiceCustomer({
+        id: testCustomer.id,
+      })
+      expect(pass).toBe(false)
     })
 
     it("admits a user with sufficient inventory", async () => {
       process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER = "11"
 
-      const passesThreshold = await admissions.haveSufficientInventoryToServiceCustomer(
-        { id: testCustomer.id }
-      )
-      expect(passesThreshold).toBe(true)
+      const {
+        pass,
+      } = await admissions.haveSufficientInventoryToServiceCustomer({
+        id: testCustomer.id,
+      })
+      expect(pass).toBe(true)
     })
   })
 })
