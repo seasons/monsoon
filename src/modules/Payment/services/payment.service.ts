@@ -1,7 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { CustomerService } from "@app/modules/User"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerStatus, Plan, User } from "@app/prisma"
+import { CustomerStatus, PaymentPlanTier, Plan, User } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
@@ -32,6 +32,45 @@ export class PaymentService {
     private readonly utils: UtilsService,
     private readonly segment: SegmentService
   ) {}
+
+  async changeCustomerPlan(planID, customer) {
+    try {
+      const customerWithMembershipData = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+          {
+            id
+            membership {
+              id
+              subscriptionId
+              plan {
+                id
+              }
+            }
+          }
+        `
+      )
+
+      const { membership } = customerWithMembershipData
+
+      const subscriptionID = membership.subscriptionId
+
+      await chargebee.subscription
+        .update(subscriptionID, {
+          plan_id: planID,
+        })
+        .request()
+
+      await this.prisma.client.updateCustomerMembership({
+        where: { id: membership.id },
+        data: {
+          plan: { connect: { planID } },
+        },
+      })
+    } catch (e) {
+      throw new Error(`Error updating to new plan: ${e}`)
+    }
+  }
 
   async applePayUpdatePaymentMethod(planID, token, customer) {
     const customerWithUserData = await this.prisma.binding.query.customer(
@@ -147,23 +186,13 @@ export class PaymentService {
       user.id,
       subscription.customer,
       paymentSource.payment_source.card,
-      planID
+      planID,
+      subscriptionID
     )
 
-    await this.prisma.client.upsertCustomerMembership({
-      where: { id: "" },
-      create: {
-        customer: { connect: { id: customer.id } },
-        subscriptionId: subscriptionID,
-      },
-      update: {
-        customer: { connect: { id: customer.id } },
-        subscriptionId: subscriptionID,
-      },
-    })
-
     this.segment.trackSubscribed(user.id, {
-      plan: this.chargebeePlanIdToPrismaPlan(planID),
+      tier: this.getPaymentPlanTier(planID),
+      planID,
       method: "ApplePay",
       firstName: user.firstName,
       lastName: user.lastName,
@@ -222,25 +251,9 @@ export class PaymentService {
         .plus({ months: 1 })
         .toISO()
 
-      let customerMembership
-
-      if (!customerWithMembership.membership) {
-        customerMembership = await this.prisma.client.upsertCustomerMembership({
-          where: { id: customerWithMembership.membership?.id || "" },
-          create: {
-            customer: { connect: { id: customer.id } },
-            subscriptionId,
-          },
-          update: {
-            customer: { connect: { id: customer.id } },
-            subscriptionId,
-          },
-        })
-      } else {
-        customerMembership = await this.prisma.client.customerMembership({
-          id: customerWithMembership.membership?.id,
-        })
-      }
+      const customerMembership = await this.prisma.client.customerMembership({
+        id: customerWithMembership.membership?.id,
+      })
 
       await this.prisma.client.createPauseRequest({
         membership: { connect: { id: customerMembership.id } },
@@ -293,64 +306,70 @@ export class PaymentService {
       ? { specific_date: DateTime.fromISO(date).toSeconds() }
       : "immediately"
 
-    let newStatus = "Active" as CustomerStatus
+    const pauseRequest = head(
+      await this.prisma.client.pauseRequests({
+        where: {
+          membership: {
+            customer: {
+              id: customer.id,
+            },
+          },
+        },
+      })
+    )
 
     try {
-      await chargebee.subscription
+      const result = await chargebee.subscription
         .resume(subscriptionId, {
           resume_option: resumeDate,
           unpaid_invoices_handling: "schedule_payment_collection",
         })
         .request()
+
+      if (result) {
+        await this.prisma.client.updatePauseRequest({
+          where: { id: pauseRequest.id },
+          data: { pausePending: false },
+        })
+
+        await this.prisma.client.updateCustomer({
+          data: {
+            status: "Active",
+          },
+          where: { id: customer.id },
+        })
+      }
     } catch (e) {
       if (
         e?.api_error_code &&
-        e?.api_error_code !== "invalid_state_for_request"
-      ) {
-        throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
-      } else if (
-        e?.api_error_code &&
         e?.api_error_code === "payment_processing_failed"
       ) {
-        // FIXME: We need to handle accounts where the credit card is no longer valid
-        newStatus = "Paused"
+        // FIXME: Need to fix this status for with whatever field we're using in payment failed cases
+        // await this.prisma.client.updatePauseRequest({
+        //   where: { id: pauseRequest.id },
+        //   data: { pausePending: false },
+        // })
+        // await this.prisma.client.updateCustomer({
+        //   data: {
+        //     status: "PaymentFailed",
+        //   },
+        //   where: { id: customer.id },
+        // })
+      } else {
+        throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
       }
     }
-
-    const pauseRequests = await this.prisma.client.pauseRequests({
-      where: {
-        membership: {
-          customer: {
-            id: customer.id,
-          },
-        },
-      },
-    })
-
-    const pauseRequest = head(pauseRequests)
-
-    await this.prisma.client.updatePauseRequest({
-      where: { id: pauseRequest.id },
-      data: { pausePending: false },
-    })
-
-    await this.prisma.client.updateCustomer({
-      data: {
-        status: newStatus,
-      },
-      where: { id: customer.id },
-    })
   }
 
   async createSubscription(
-    plan: Plan,
+    planID: string,
     billingAddress: BillingAddress,
     user: User,
     card: Card
   ) {
     return await chargebee.subscription
       .create({
-        plan_id: this.prismaPlanToChargebeePlanId(plan),
+        plan_id: planID,
         billingAddress,
         customer: {
           id: user.id,
@@ -449,10 +468,10 @@ export class PaymentService {
     userID: string,
     chargebeeCustomer: any,
     card: any,
-    planID: string
+    planID: string,
+    subscriptionID: string
   ) {
     // Retrieve plan and billing data
-    const plan = this.chargebeePlanIdToPrismaPlan(planID as any)
     const billingInfo = this.paymentUtils.createBillingInfoObject(
       card,
       chargebeeCustomer
@@ -469,15 +488,21 @@ export class PaymentService {
     if (!prismaCustomer) {
       throw new Error(`Could not find customer with user id: ${prismaUser.id}`)
     }
+
     await this.prisma.client.updateCustomer({
       data: {
-        plan,
         billingInfo: {
           create: billingInfo,
         },
         status: "Active",
       },
       where: { id: prismaCustomer.id },
+    })
+
+    await this.prisma.client.createCustomerMembership({
+      customer: { connect: { id: prismaCustomer.id } },
+      subscriptionId: subscriptionID,
+      plan: { connect: { planID } },
     })
 
     // Send welcome to seasons email
@@ -575,6 +600,14 @@ export class PaymentService {
     }
   }
 
+  getPaymentPlanTier(planID): PaymentPlanTier {
+    if (planID.includes("essential")) {
+      return "Essential"
+    } else {
+      return "AllAccess"
+    }
+  }
+
   async getCustomerInvoiceHistory(
     // payment customerId is equivalent to prisma user id, NOT prisma customer id
     customerId: string,
@@ -637,7 +670,10 @@ export class PaymentService {
     return true
   }
 
-  prismaPlanToChargebeePlanId(plan: Plan) {
+  /*
+   * This is scheduled for deletion after chargebee checkout flow is no longer used
+   */
+  prismaPlanToChargebeePlanId(plan) {
     let chargebeePlanId
     if (plan === "AllAccess") {
       chargebeePlanId = "all-access"
@@ -649,18 +685,6 @@ export class PaymentService {
       throw new Error(`unrecognized planID: ${plan}`)
     }
     return chargebeePlanId
-  }
-
-  chargebeePlanIdToPrismaPlan(planID: "all-access" | "essential"): Plan {
-    let prismaPlan
-    if (planID === "all-access") {
-      prismaPlan = "AllAccess"
-    } else if (planID === "essential") {
-      prismaPlan = "Essential"
-    } else {
-      throw new Error(`unrecognized planID: ${planID}`)
-    }
-    return prismaPlan
   }
 
   private getInvoiceTransactionIds(invoice): string[] {

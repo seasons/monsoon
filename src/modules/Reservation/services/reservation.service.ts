@@ -71,11 +71,17 @@ export class ReservationService {
     let reservationReturnData
     const rollbackFuncs = []
 
+    const customerPlanItemCount = await this.prisma.client
+      .customer({ id: customer.id })
+      .membership()
+      .plan()
+      .itemCount()
+
     try {
       // Do a quick validation on the data
-      if (items.length < 3) {
+      if (!!customerPlanItemCount && items.length !== customerPlanItemCount) {
         throw new ApolloError(
-          "Must supply at least three product variant ids",
+          `Your reservation must contain ${customerPlanItemCount} items`,
           "515"
         )
       }
@@ -135,7 +141,8 @@ export class ReservationService {
           newProductVariantsBeingReserved as string[]
         ),
         physicalProductsBeingReserved,
-        heldPhysicalProducts
+        heldPhysicalProducts,
+        customerPlanItemCount
       )
       const [
         prismaReservation,
@@ -274,11 +281,6 @@ export class ReservationService {
             seasonsUID
           )
           return Promise.all([
-            this.prisma.client.createPhysicalProductInventoryStatusChange({
-              old: physProdBeforeUpdates.inventoryStatus,
-              new: updateData.inventoryStatus,
-              physicalProduct: { connect: { seasonsUID } },
-            }),
             this.productVariantService.updateCountsForStatusChange({
               id: physProdBeforeUpdates.productVariant.id,
               oldInventoryStatus: physProdBeforeUpdates.inventoryStatus,
@@ -411,7 +413,7 @@ export class ReservationService {
     return this.prisma.binding.query.reservation({ where }, info)
   }
 
-  private async createReservationFeedbacksForVariants(
+  async createReservationFeedbacksForVariants(
     productVariants: ProductVariant[],
     user: User,
     reservation: Reservation
@@ -605,15 +607,14 @@ export class ReservationService {
     customer: Customer,
     shipmentWeight: number,
     physicalProductsBeingReserved: PhysicalProduct[],
-    heldPhysicalProducts: PhysicalProduct[]
+    heldPhysicalProducts: PhysicalProduct[],
+    customerPlanItemCount: number
   ): Promise<ReservationCreateInput> {
     const allPhysicalProductsInReservation = [
       ...physicalProductsBeingReserved,
       ...heldPhysicalProducts,
     ]
-    if (allPhysicalProductsInReservation.length > 3) {
-      throw new ApolloError("Can not reserve more than 3 items at a time")
-    }
+
     const physicalProductSUIDs = allPhysicalProductsInReservation.map(p => ({
       seasonsUID: p.seasonsUID,
     }))

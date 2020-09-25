@@ -73,8 +73,12 @@ type Customer {
   status: CustomerStatus
   detail: CustomerDetail
   billingInfo: BillingInfo
-  plan: Plan
+
+  # FIXME: When everyone is on iOS app version > 1.3, remove these two.
+  plan: Plan @deprecated(reason: "replaced with customer.membership.plan")
   paymentPlan: PaymentPlan
+    @deprecated(reason: "replaced with customer.membership.plan")
+
   bagItems(
     where: BagItemWhereInput
     orderBy: BagItemOrderByInput

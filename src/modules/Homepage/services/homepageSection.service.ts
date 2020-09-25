@@ -9,11 +9,12 @@ const ProductFragment = `
   __typename
   id
   slug
+  name
+  retailPrice
   images {
     id
     url
   }
-  name
   brand {
     id
     name
@@ -36,7 +37,6 @@ const ProductFragment = `
   color {
     name
   }
-  retailPrice
 }
 `
 

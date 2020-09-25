@@ -87,11 +87,14 @@ export class ReservationScheduledJobs {
   }
 
   private async returnNoticeNeeded(reservation: Reservation) {
-    const customer = await this.prisma.client
+    const tier = await this.prisma.client
       .reservation({
         id: reservation.id,
       })
       .customer()
+      .membership()
+      .plan()
+      .tier()
     const reservationCreatedAt = moment(reservation.createdAt)
     return (
       this.utils.isXDaysBefore({
@@ -105,7 +108,7 @@ export class ReservationScheduledJobs {
         numDays: 27,
       }) &&
       !reservation.reminderSentAt &&
-      customer.plan === "Essential" &&
+      tier === "Essential" &&
       !["Cancelled", "Completed"].includes(reservation.status)
     )
   }

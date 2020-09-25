@@ -7,7 +7,7 @@ import {
   createParamDecorator,
 } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
-import { isUndefined } from "lodash"
+import { cloneDeep, isUndefined } from "lodash"
 import sha1 from "sha1"
 
 import { DataloaderContext, LoaderParams } from "../dataloader.types"
@@ -16,10 +16,9 @@ import { DataLoaderInterceptor } from "../interceptors/dataloader.interceptor"
 export const Loader: (
   params: LoaderParams
 ) => ParameterDecorator = createParamDecorator(
-  (
-    { type = PrismaLoader.name, ...data }: LoaderParams,
-    context: ExecutionContext
-  ) => {
+  (options: LoaderParams, context: ExecutionContext) => {
+    const { type = PrismaLoader.name, ...data } = options
+
     const [obj, args, ctx, info]: [
       any,
       any,
@@ -35,24 +34,20 @@ export const Loader: (
 
     const { operationName, variables } = ctx.req.body
 
-    const key = createKey(type, operationName, variables, data)
-
-    const adjustedData = {
-      ...{ type, ...data },
-      name: key,
-    }
+    const adjustedOptions = cloneDeep({ type, ...data })
+    adjustedOptions.name = createKey(type, operationName, variables, data)
 
     // If needed, get the info from the context
     if (data.includeInfo === true) {
-      adjustedData.params.info = info
+      adjustedOptions.params.info = info
     }
 
     // If needed, get the orderBy from the context
     if (data.includeOrderBy === true) {
-      adjustedData.params.orderBy = args.orderBy
+      adjustedOptions.params.orderBy = args.orderBy
     }
 
-    return ctx.getDataLoader(adjustedData)
+    return ctx.getDataLoader(adjustedOptions)
   }
 )
 

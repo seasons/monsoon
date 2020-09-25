@@ -117,15 +117,6 @@ export class PhysicalProductService {
 
     await this.prisma.client.updatePhysicalProduct({ where, data: newData })
 
-    // Do this at the end so it only happens *after* any status changes have occured
-    if (this.changingInventoryStatus(newData, physProdBeforeUpdate)) {
-      await this.prisma.client.createPhysicalProductInventoryStatusChange({
-        old: physProdBeforeUpdate.inventoryStatus,
-        new: newData.inventoryStatus,
-        physicalProduct: { connect: where },
-      })
-    }
-
     return await this.prisma.binding.query.physicalProduct({ where }, info)
   }
 
@@ -432,9 +423,6 @@ export class PhysicalProductService {
       }
 
       // Core logic
-      // Note that we do not create a PhysicalProductInventoryStatusChange record here
-      // because this function is only called from the updatePhysicalProduct, where we
-      // do create that record.
       await this.updateVariantCountsIfNeeded({
         where,
         inventoryStatus: "Offloaded",

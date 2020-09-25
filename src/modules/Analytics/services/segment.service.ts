@@ -1,11 +1,12 @@
 import { ApplicationType } from "@app/decorators/application.decorator"
-import { CustomerStatus, Plan } from "@app/prisma"
+import { CustomerStatus, PaymentPlanTier } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
 import Analytics from "analytics-node"
 
 type SubscribedProperties = CommonTrackProperties & {
-  plan: Plan
+  tier: PaymentPlanTier
+  planID: string
   method: "ApplePay" | "ChargebeeHostedCheckout"
 }
 

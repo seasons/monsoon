@@ -33,6 +33,14 @@ export class CustomerFieldsResolver {
   ) {}
 
   @ResolveField()
+  async paymentPlan(@Parent() customer) {
+    return await this.prisma.client
+      .customer({ id: customer.id })
+      .membership()
+      .plan()
+  }
+
+  @ResolveField()
   async shouldRequestFeedback(@User() user) {
     if (!user) return null
     const feedbacks = await this.prisma.binding.query.reservationFeedbacks(
@@ -84,42 +92,6 @@ export class CustomerFieldsResolver {
       userId,
       transactionsForCustomerLoader
     )
-  }
-
-  @ResolveField()
-  async paymentPlan(
-    @Parent() customer,
-    @Loader({
-      params: {
-        query: `customers`,
-        info: `{
-          id
-          plan
-        }`,
-        formatData: a => a.plan,
-        fallbackValue: "",
-      },
-    })
-    prismaLoader: PrismaDataLoader<any>,
-    @Loader({
-      params: {
-        formatWhere: (ids: string[]) => ({ planID_in: ids }),
-        query: `paymentPlans`,
-        infoFragment: `fragment EnsurePlanID on PaymentPlan {planID}`,
-        getKeys: a => [a.planID],
-      },
-      includeInfo: true,
-    })
-    paymentPlanLoader: PrismaDataLoader<PaymentPlan>
-  ) {
-    const plan = await prismaLoader.load(customer.id)
-    if (!plan) {
-      return null
-    }
-    const paymentPlan = await paymentPlanLoader.load(
-      this.paymentService.prismaPlanToChargebeePlanId(plan)
-    )
-    return paymentPlan
   }
 
   @ResolveField()

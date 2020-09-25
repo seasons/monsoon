@@ -1,5 +1,6 @@
 import { Customer, User } from "@app/decorators"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { CustomerService } from "@modules/User/services/customer.service"
@@ -9,6 +10,7 @@ import { pick } from "lodash"
 @Resolver()
 export class PaymentMutationsResolver {
   constructor(
+    private readonly prisma: PrismaService,
     private readonly customerService: CustomerService,
     private readonly paymentService: PaymentService,
     private readonly shippingService: ShippingService,
@@ -35,6 +37,12 @@ export class PaymentMutationsResolver {
   }
 
   @Mutation()
+  async changeCustomerPlan(@Args() { planID }, @Customer() customer) {
+    await this.paymentService.changeCustomerPlan(planID, customer)
+    return true
+  }
+
+  @Mutation()
   async updateResumeDate(@Args() { date }, @Customer() customer) {
     await this.paymentService.updateResumeDate(date, customer)
     return true
@@ -47,10 +55,30 @@ export class PaymentMutationsResolver {
     @User() user
   ) {
     await this.paymentService.pauseSubscription(subscriptionID, customer)
+    const customerWithData = (await this.prisma.binding.query.customer(
+      {
+        where: { id: customer.id },
+      },
+      `{
+      id
+      membership {
+        id
+        plan {
+          id
+          tier
+          planID
+        }
+      }
+    }`
+    )) as any
+
+    const tier = customerWithData?.membership?.plan?.tier
+    const planID = customerWithData?.membership?.plan?.planID
 
     this.segment.track(user.id, "Paused Subscription", {
       ...pick(user, ["firstName", "lastName", "email"]),
-      plan: customer.plan,
+      planID,
+      tier,
     })
     return true
   }
@@ -62,9 +90,30 @@ export class PaymentMutationsResolver {
     @User() user
   ) {
     await this.paymentService.resumeSubscription(subscriptionID, date, customer)
+    const customerWithData = (await this.prisma.binding.query.customer(
+      {
+        where: { id: customer.id },
+      },
+      `{
+      id
+      membership {
+        id
+        plan {
+          id
+          tier
+          planID
+        }
+      }
+    }`
+    )) as any
+
+    const tier = customerWithData?.membership?.plan?.tier
+    const planID = customerWithData?.membership?.plan?.planID
+
     this.segment.track(user.id, "Resumed Subscription", {
       ...pick(user, ["firstName", "lastName", "email"]),
-      plan: customer.plan,
+      planID,
+      tier,
     })
     return true
   }
