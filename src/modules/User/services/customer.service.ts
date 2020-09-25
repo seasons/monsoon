@@ -214,6 +214,7 @@ export class CustomerService {
           id
           firstName
           lastName
+          email
         }
       }`
     )
@@ -293,7 +294,7 @@ export class CustomerService {
       this.segment.track(customer.user.id, "Triaged", {
         ...pick(customer.user, ["firstName", "lastName", "email"]),
         decision: status,
-        reason: !!reason ? reason : null,
+        waitlistReason: !!reason ? reason : null,
         ...triageDetail,
       })
 

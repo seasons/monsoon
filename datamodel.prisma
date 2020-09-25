@@ -132,6 +132,7 @@ enum LetterSize {
   L
   XL
   XXL
+  XXXL
 }
 
 enum ProductArchitecture {
@@ -370,14 +371,14 @@ type Product {
 
 type Season {
   id: ID! @id
-	year: Int
-	seasonCode: SeasonCode
+  year: Int
+  seasonCode: SeasonCode
 }
 
 type ProductSeason {
   id: ID! @id
-	vendorSeason: Season @relation(name: "ProductSeasonVendorSeason")
-	internalSeason: Season @relation(name: "ProductSeasonInternalSeason")
+  vendorSeason: Season @relation(name: "ProductSeasonVendorSeason")
+  internalSeason: Season @relation(name: "ProductSeasonInternalSeason")
   wearableSeasons: [SeasonString!] @scalarList(strategy: RELATION)
 }
 
@@ -567,9 +568,8 @@ type PushNotificationReceipt {
 
 enum SeasonCode {
   # For Vendor and Internal Seasons
-	FW # Fall winter
+  FW # Fall winter
   SS # Spring Summer
-
   # For Vendor Seasons only
   PS # Pre spring
   PF # Pre Fall
@@ -578,9 +578,9 @@ enum SeasonCode {
 }
 
 enum SeasonString {
-  Spring 
+  Spring
   Summer
-	Winter
+  Winter
   Fall
 }
 
