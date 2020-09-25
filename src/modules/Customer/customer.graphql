@@ -74,10 +74,10 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
 
-  # FIXME: remove Plan after migration to new plan model
-  plan: Plan
-  # FIXME: remove PaymentPlan after migration to new plan model
+  # FIXME: When everyone is on iOS app version > 1.3, remove these two.
+  plan: Plan @deprecated(reason: "replaced with customer.membership.plan")
   paymentPlan: PaymentPlan
+    @deprecated(reason: "replaced with customer.membership.plan")
 
   bagItems(
     where: BagItemWhereInput
