@@ -321,16 +321,6 @@ type Tag {
   updatedAt: DateTime! @updatedAt
 }
 
-type ProductStatusChange {
-  id: ID! @id
-  old: ProductStatus!
-  new: ProductStatus!
-  product: Product!
-    @relation(name: "ProductToProductStatusChange", onDelete: SET_NULL)
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
-}
-
 type Product {
   id: ID! @id
   slug: String! @unique
@@ -354,12 +344,6 @@ type Product {
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
   variants: [ProductVariant!]! @relation(link: TABLE, onDelete: CASCADE)
   status: ProductStatus @default(value: Available)
-  statusChanges: [ProductStatusChange!]!
-    @relation(
-      name: "ProductToProductStatusChange"
-      link: TABLE
-      onDelete: CASCADE
-    )
   season: ProductSeason
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -370,14 +354,14 @@ type Product {
 
 type Season {
   id: ID! @id
-	year: Int
-	seasonCode: SeasonCode
+  year: Int
+  seasonCode: SeasonCode
 }
 
 type ProductSeason {
   id: ID! @id
-	vendorSeason: Season @relation(name: "ProductSeasonVendorSeason")
-	internalSeason: Season @relation(name: "ProductSeasonInternalSeason")
+  vendorSeason: Season @relation(name: "ProductSeasonVendorSeason")
+  internalSeason: Season @relation(name: "ProductSeasonInternalSeason")
   wearableSeasons: [SeasonString!] @scalarList(strategy: RELATION)
 }
 
@@ -424,30 +408,12 @@ type ProductVariant {
   updatedAt: DateTime! @updatedAt
 }
 
-type PhysicalProductInventoryStatusChange {
-  id: ID! @id
-  old: InventoryStatus!
-  new: InventoryStatus!
-  physicalProduct: PhysicalProduct!
-    @relation(
-      name: "PhysicalProductToPhysicalProductStatusChange"
-      onDelete: SET_NULL
-    )
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime @updatedAt
-}
 type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
   location: Location
   productVariant: ProductVariant! @relation(onDelete: SET_NULL)
   inventoryStatus: InventoryStatus!
-  inventoryStatusChanges: [PhysicalProductInventoryStatusChange!]!
-    @relation(
-      name: "PhysicalProductToPhysicalProductStatusChange"
-      link: TABLE
-      onDelete: CASCADE
-    )
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -567,9 +533,8 @@ type PushNotificationReceipt {
 
 enum SeasonCode {
   # For Vendor and Internal Seasons
-	FW # Fall winter
+  FW # Fall winter
   SS # Spring Summer
-
   # For Vendor Seasons only
   PS # Pre spring
   PF # Pre Fall
@@ -578,9 +543,9 @@ enum SeasonCode {
 }
 
 enum SeasonString {
-  Spring 
+  Spring
   Summer
-	Winter
+  Winter
   Fall
 }
 
