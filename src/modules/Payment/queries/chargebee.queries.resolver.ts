@@ -46,7 +46,7 @@ export class ChargebeeQueriesResolver {
       id
       membership {
         id
-        paymentPlan {
+        plan {
           id
           tier
         }
@@ -54,7 +54,7 @@ export class ChargebeeQueriesResolver {
     }`
     )) as any
 
-    const tier = customerWithData?.membership?.paymentPlan?.tier
+    const tier = customerWithData?.membership?.plan?.tier
 
     // Track the selection
     this.segment.track(user.id, "Opened Hosted Checkout", {
@@ -100,7 +100,7 @@ export class ChargebeeQueriesResolver {
       id
       membership {
         id
-        paymentPlan {
+        plan {
           id
           tier
         }
@@ -108,7 +108,7 @@ export class ChargebeeQueriesResolver {
     }`
     )) as any
 
-    const tier = customerWithData?.membership?.paymentPlan?.tier
+    const tier = customerWithData?.membership?.plan?.tier
 
     // Track the selection
     this.segment.track(user.id, "Opened Checkout", {

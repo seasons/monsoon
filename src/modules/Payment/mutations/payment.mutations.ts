@@ -63,7 +63,7 @@ export class PaymentMutationsResolver {
       id
       membership {
         id
-        paymentPlan {
+        plan {
           id
           tier
           planID
@@ -72,8 +72,8 @@ export class PaymentMutationsResolver {
     }`
     )) as any
 
-    const tier = customerWithData?.membership?.paymentPlan?.tier
-    const planID = customerWithData?.membership?.paymentPlan?.planID
+    const tier = customerWithData?.membership?.plan?.tier
+    const planID = customerWithData?.membership?.plan?.planID
 
     this.segment.track(user.id, "Paused Subscription", {
       ...pick(user, ["firstName", "lastName", "email"]),
@@ -98,7 +98,7 @@ export class PaymentMutationsResolver {
       id
       membership {
         id
-        paymentPlan {
+        plan {
           id
           tier
           planID
@@ -107,8 +107,8 @@ export class PaymentMutationsResolver {
     }`
     )) as any
 
-    const tier = customerWithData?.membership?.paymentPlan?.tier
-    const planID = customerWithData?.membership?.paymentPlan?.planID
+    const tier = customerWithData?.membership?.plan?.tier
+    const planID = customerWithData?.membership?.plan?.planID
 
     this.segment.track(user.id, "Resumed Subscription", {
       ...pick(user, ["firstName", "lastName", "email"]),

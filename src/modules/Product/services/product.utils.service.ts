@@ -7,7 +7,7 @@ import {
   ProductMaterialCategoryCreateInput,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { head, identity, pickBy, union, uniqBy } from "lodash"
+import { head, identity, pickBy, union, uniq, uniqBy } from "lodash"
 import slugify from "slugify"
 
 import {
@@ -107,6 +107,7 @@ export class ProductUtilsService {
           cat => cat.slug === categorySlug
         )
         if (category?.children.length > 0) {
+          results.push(categorySlug)
           category.children.forEach(child => {
             getChildren(child.slug, results)
           })
@@ -123,7 +124,7 @@ export class ProductUtilsService {
             where: {
               ...args.where,
               ...brandFilter.where,
-              category: { slug_in: children },
+              category: { slug_in: uniq(children) },
             },
           }
         : {
