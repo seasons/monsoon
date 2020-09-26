@@ -156,26 +156,40 @@ export class PaymentService {
       country: token.card.addressCountry || "",
     }
 
-    const createdCustomerResult = await chargebee.customer
-      .create({
-        id: user.id,
-        first_name: user.firstName || "",
-        last_name: user.lastName || "",
-        email: user.email || "",
-        billing_address: billingAddress,
-      })
-      .request()
+    let chargebeeCustomer
+    let existingCustomer
+
+    try {
+      // The customer may exist if their first card was declined
+      existingCustomer = await chargebee.customer.retrieve(user.id).request()
+    } catch (e) {
+      // continue
+    }
+
+    if (existingCustomer?.customer?.id) {
+      chargebeeCustomer = existingCustomer
+    } else {
+      chargebeeCustomer = await chargebee.customer
+        .create({
+          id: user.id,
+          first_name: user.firstName || "",
+          last_name: user.lastName || "",
+          email: user.email || "",
+          billing_address: billingAddress,
+        })
+        .request()
+    }
 
     const paymentSource = await chargebee.payment_source
       .create_using_temp_token({
         tmp_token: token.tokenId,
         type: "apple_pay",
-        customer_id: createdCustomerResult.customer.id,
+        customer_id: chargebeeCustomer.customer.id,
       })
       .request()
 
     const subscription = await chargebee.subscription
-      .create_for_customer(createdCustomerResult.customer.id, {
+      .create_for_customer(chargebeeCustomer.customer.id, {
         plan_id: planID,
       })
       .request()
