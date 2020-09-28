@@ -1,10 +1,5 @@
 import "module-alias/register"
 
-import * as Airtable from "airtable"
-
-import { AirtableBaseService } from "../../modules/Airtable/services/airtable.base.service"
-import { AirtableService } from "../../modules/Airtable/services/airtable.service"
-import { AirtableUtilsService } from "../../modules/Airtable/services/airtable.utils.service"
 import { SegmentService } from "../../modules/Analytics/services/segment.service"
 import { EmailDataProvider } from "../../modules/Email/services/email.data.service"
 import { EmailService } from "../../modules/Email/services/email.service"
@@ -29,11 +24,6 @@ import { PrismaService } from "../../prisma/prisma.service"
  *  Reason not to delete: This is helpful for testing the reservation feedback flow
  */
 const run = async () => {
-  Airtable.configure({
-    endpointUrl: "https://api.airtable.com",
-    apiKey: process.env.AIRTABLE_KEY,
-  })
-
   const ps = new PrismaService()
   const pusher = new PusherService()
   const pushNotifData = new PushNotificationDataProvider()
@@ -49,19 +39,15 @@ const run = async () => {
     shippingUtils
   )
   const productUtils = new ProductUtilsService(ps)
-  const airtableBase = new AirtableBaseService()
-  const airtableUtils = new AirtableUtilsService(airtableBase)
   const utilsService = new UtilsService(ps)
   const physicalProductUtilsService = new PhysicalProductUtilsService(
     ps,
     productUtils
   )
-  const airtableService = new AirtableService(airtableBase, airtableUtils)
   const productVariantService = new ProductVariantService(
     ps,
     productUtils,
-    physicalProductUtilsService,
-    airtableService
+    physicalProductUtilsService
   )
   const emailData = new EmailDataProvider()
   const shippingService = new ShippingService(ps, utilsService)
@@ -82,7 +68,6 @@ const run = async () => {
     productUtils,
     productVariantService,
     physicalProductUtilsService,
-    airtableService,
     shippingService,
     emails,
     pushNotifs,
