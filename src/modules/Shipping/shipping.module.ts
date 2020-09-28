@@ -6,12 +6,11 @@ import { UtilsModule } from "../Utils/utils.module"
 import { ShippoController } from "./controllers/shippo.controller"
 import { ShippingMutationsResolver } from "./mutations/shipping.mutations"
 import { ShippingService } from "./services/shipping.service"
-import { ShippingUtilsService } from "./services/shipping.utils.service"
 
 @Module({
   controllers: [ShippoController],
   imports: [UtilsModule, PrismaModule, PushNotificationModule],
-  providers: [ShippingMutationsResolver, ShippingService, ShippingUtilsService],
-  exports: [ShippingService, ShippingUtilsService],
+  providers: [ShippingMutationsResolver, ShippingService],
+  exports: [ShippingService],
 })
 export class ShippingModule {}

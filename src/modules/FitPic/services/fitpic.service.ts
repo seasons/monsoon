@@ -1,7 +1,6 @@
 import { ImageService } from "@app/modules/Image"
 import { IMGIX_BASE, S3_BASE } from "@app/modules/Image/services/image.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
-import { ShippingUtilsService } from "@app/modules/Shipping/services/shipping.utils.service"
 import {
   Customer,
   FitPicUpdateInput,
@@ -11,13 +10,13 @@ import {
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
+import zipcodes from "zipcodes"
 
 @Injectable()
 export class FitPicService {
   constructor(
     private readonly image: ImageService,
     private readonly prisma: PrismaService,
-    private readonly shippingUtils: ShippingUtilsService,
     private readonly pushNotification: PushNotificationService
   ) {}
 
@@ -105,14 +104,14 @@ export class FitPicService {
     ) {
       return location
     } else if (location?.create?.zipCode) {
-      const detail = await this.shippingUtils.getCityAndStateFromZipCode(
-        location.create.zipCode
-      )
+      const zipCode = location.create.zipCode
+      const state = zipcodes.lookup(zipCode)?.state
+      const city = zipcodes.lookup(zipCode)?.city
       return {
         create: {
           zipCode: location.create.zipCode,
-          city: detail.city,
-          state: detail.state,
+          city,
+          state,
         },
       }
     } else {
