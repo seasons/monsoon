@@ -132,6 +132,7 @@ enum LetterSize {
   L
   XL
   XXL
+  XXXL
 }
 
 enum ProductArchitecture {

@@ -115,7 +115,8 @@ export class CustomerMutationsResolver {
       {
         id: sessionCustomer.id,
       },
-      application
+      application,
+      false
     )
     return returnValue
   }
