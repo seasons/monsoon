@@ -6,6 +6,6 @@ export class LookerService {
   client = LookerNodeSDK.init31(new NodeSettings())
 
   baseURL() {
-    return "https://seasonsnyc.cloud.looker.com"
+    return "https://looker.seasons.nyc"
   }
 }
