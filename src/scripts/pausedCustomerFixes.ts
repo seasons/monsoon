@@ -13,7 +13,6 @@ import { PusherService } from "../modules/PushNotification/services/pusher.servi
 import { PushNotificationDataProvider } from "../modules/PushNotification/services/pushNotification.data.service"
 import { PushNotificationService } from "../modules/PushNotification/services/pushNotification.service"
 import { ShippingService } from "../modules/Shipping/services/shipping.service"
-import { ShippingUtilsService } from "../modules/Shipping/services/shipping.utils.service"
 import { CustomerService } from "../modules/User"
 import { AdmissionsService } from "../modules/User/services/admissions.service"
 import { AuthService } from "../modules/User/services/auth.service"
@@ -28,7 +27,6 @@ const updateActiveInPrismaButPausedInChargebee = async () => {
   const emailData = new EmailDataProvider()
   const segment = new SegmentService()
   const paymentUtils = new PaymentUtilsService()
-  const shippingUtils = new ShippingUtilsService()
   const emailService = new EmailService(ps, utilsService, emailData)
   const shippingService = new ShippingService(ps, utilsService)
   const pusherService = new PusherService()
@@ -38,7 +36,7 @@ const updateActiveInPrismaButPausedInChargebee = async () => {
     pushNotificationDataProvider,
     ps
   )
-  const authService = new AuthService(ps, pushNotification, shippingUtils)
+  const authService = new AuthService(ps, pushNotification)
   const customerService = new CustomerService(
     authService,
     ps,
@@ -132,7 +130,6 @@ const updatePausePendingCustomersToBeImmediatelyPaused = async () => {
   const emailData = new EmailDataProvider()
   const segment = new SegmentService()
   const paymentUtils = new PaymentUtilsService()
-  const shippingUtils = new ShippingUtilsService()
   const emailService = new EmailService(ps, utilsService, emailData)
   const shippingService = new ShippingService(ps, utilsService)
   const pusherService = new PusherService()
@@ -142,7 +139,7 @@ const updatePausePendingCustomersToBeImmediatelyPaused = async () => {
     pushNotificationDataProvider,
     ps
   )
-  const authService = new AuthService(ps, pushNotification, shippingUtils)
+  const authService = new AuthService(ps, pushNotification)
   const customerService = new CustomerService(
     authService,
     ps,
@@ -217,7 +214,6 @@ const fixPrismaPausedButChargebeeActive = async () => {
   const emailData = new EmailDataProvider()
   const segment = new SegmentService()
   const paymentUtils = new PaymentUtilsService()
-  const shippingUtils = new ShippingUtilsService()
   const emailService = new EmailService(ps, utilsService, emailData)
   const shippingService = new ShippingService(ps, utilsService)
   const pusherService = new PusherService()
@@ -227,7 +223,7 @@ const fixPrismaPausedButChargebeeActive = async () => {
     pushNotificationDataProvider,
     ps
   )
-  const authService = new AuthService(ps, pushNotification, shippingUtils)
+  const authService = new AuthService(ps, pushNotification)
   const customerService = new CustomerService(
     authService,
     ps,
