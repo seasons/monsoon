@@ -1,5 +1,4 @@
 import { PushNotificationModule } from "@app/modules/PushNotification/pushNotification.module"
-import { AirtableModule } from "@modules/Airtable/airtable.module"
 import { EmailModule } from "@modules/Email/email.module"
 import { ErrorModule } from "@modules/Error/error.module"
 import { ReservationModule } from "@modules/Reservation/reservation.module"
@@ -22,7 +21,6 @@ import { SearchScheduledJobs } from "./services/search.job.service"
 
 @Module({
   imports: [
-    AirtableModule,
     DripModule,
     EmailModule,
     ErrorModule,
