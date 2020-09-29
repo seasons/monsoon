@@ -34,6 +34,19 @@ export class PaymentService {
   ) {}
 
   async changeCustomerPlan(planID, customer) {
+    const reservations = await this.prisma.client
+      .customer({ id: customer.id })
+      .reservations({ orderBy: "createdAt_DESC" })
+    const latestReservation = head(reservations)
+    if (
+      latestReservation &&
+      !["Completed", "Cancelled"].includes(latestReservation.status)
+    ) {
+      throw new Error(
+        `You must return your current reservation before changing your plan.`
+      )
+    }
+
     try {
       const customerWithMembershipData = await this.prisma.binding.query.customer(
         { where: { id: customer.id } },
