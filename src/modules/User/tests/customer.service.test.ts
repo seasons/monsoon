@@ -48,13 +48,10 @@ describe("Customer Service", () => {
   })
 
   describe("Add Customer Details", () => {
-    let cleanupFuncs = []
+    let cleanupFunc
 
     afterEach(async () => {
-      for (const func of cleanupFuncs) {
-        await func()
-      }
-      cleanupFuncs = []
+      cleanupFunc()
     })
 
     function runTest(status) {
@@ -72,7 +69,10 @@ describe("Customer Service", () => {
             .spyOn(shippingUtilsService, "getCityAndStateFromZipCode")
             .mockResolvedValue({ city: "New York", state: "NY" })
 
-          const { customer, cleanupFunc } = await testUtils.createTestCustomer(
+          const {
+            customer,
+            cleanupFunc: customerCleanupFunc,
+          } = await testUtils.createTestCustomer(
             { status: "Created" },
             `{
             id
@@ -110,7 +110,7 @@ describe("Customer Service", () => {
 
           expect(newCustomer.status).toEqual(status ? status : "Created")
 
-          cleanupFuncs.push(cleanupFunc)
+          cleanupFunc = customerCleanupFunc
         }
       )
     }

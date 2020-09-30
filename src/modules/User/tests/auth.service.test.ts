@@ -29,13 +29,10 @@ describe("Auth Service", () => {
   })
 
   describe("Signup User", () => {
-    let cleanupFuncs = []
+    let cleanupFunc
 
     afterEach(async () => {
-      for (const func of cleanupFuncs) {
-        await func()
-      }
-      cleanupFuncs = []
+      cleanupFunc()
     })
 
     it("Successfully creates and sets new user", async () => {
@@ -94,7 +91,7 @@ describe("Auth Service", () => {
       const customerShippingAddress = await prisma.client.location({ id: "2" })
       expect(customerShippingAddress.zipCode).toEqual(zipCode)
 
-      const cleanupFunc = async () => {
+      cleanupFunc = async () => {
         const userNotifInterests = await prisma.client.userPushNotificationInterests()
         const userNotifs = await prisma.client.userPushNotifications()
 
@@ -110,8 +107,6 @@ describe("Auth Service", () => {
         await prisma.client.deleteCustomerDetail({ id: "1" })
         await prisma.client.deleteCustomer({ id: customer.id })
       }
-
-      cleanupFuncs.push(cleanupFunc)
     })
   })
 })
