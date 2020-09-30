@@ -55,6 +55,7 @@ export class ProductService {
 
   async getProductsConnection(args, info) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
+    console.log("queryOptions", queryOptions)
     const products = await this.prisma.binding.query.productsConnection(
       { ...args, ...queryOptions },
       info

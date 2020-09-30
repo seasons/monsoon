@@ -84,7 +84,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): ProductConnection!
+  ): ProductConnection
   productFunctions(
     where: ProductFunctionWhereInput
     orderBy: ProductFunctionOrderByInput
@@ -214,6 +214,53 @@ type Product {
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedAt: DateTime
+}
+
+type Brand {
+  id: ID!
+  slug: String!
+  brandCode: String!
+  description: String
+  isPrimaryBrand: Boolean!
+  logo: Json
+  name: String!
+  basedIn: String
+  products(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product!]
+  productsConnection(
+    sizes: [String!]
+    category: String
+    brand: String
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    sizes: [String!]
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductConnection!
+  images(
+    where: ImageWhereInput
+    orderBy: ImageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Image!]
+  since: DateTime
+  tier: BrandTier!
+  websiteUrl: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input UpsertProductInput {

@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Sep 24 2020 22:23:35 GMT-0400 (Eastern Daylight Time)
+# timestamp: Wed Sep 30 2020 17:41:57 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -693,10 +693,6 @@ type AggregatePhysicalProduct {
   count: Int!
 }
 
-type AggregatePhysicalProductInventoryStatusChange {
-  count: Int!
-}
-
 type AggregateProduct {
   count: Int!
 }
@@ -718,10 +714,6 @@ type AggregateProductRequest {
 }
 
 type AggregateProductSeason {
-  count: Int!
-}
-
-type AggregateProductStatusChange {
   count: Int!
 }
 
@@ -13381,16 +13373,10 @@ type Mutation {
     data: HomepageProductRailCreateInput!
   ): HomepageProductRail!
   createTag(data: TagCreateInput!): Tag!
-  createProductStatusChange(
-    data: ProductStatusChangeCreateInput!
-  ): ProductStatusChange!
   createProductMaterialCategory(
     data: ProductMaterialCategoryCreateInput!
   ): ProductMaterialCategory!
   createProductModel(data: ProductModelCreateInput!): ProductModel!
-  createPhysicalProductInventoryStatusChange(
-    data: PhysicalProductInventoryStatusChangeCreateInput!
-  ): PhysicalProductInventoryStatusChange!
   createWarehouseLocationConstraint(
     data: WarehouseLocationConstraintCreateInput!
   ): WarehouseLocationConstraint!
@@ -13475,10 +13461,6 @@ type Mutation {
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
   updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
-  updateProductStatusChange(
-    data: ProductStatusChangeUpdateInput!
-    where: ProductStatusChangeWhereUniqueInput!
-  ): ProductStatusChange
   updateProductMaterialCategory(
     data: ProductMaterialCategoryUpdateInput!
     where: ProductMaterialCategoryWhereUniqueInput!
@@ -13487,10 +13469,6 @@ type Mutation {
     data: ProductModelUpdateInput!
     where: ProductModelWhereUniqueInput!
   ): ProductModel
-  updatePhysicalProductInventoryStatusChange(
-    data: PhysicalProductInventoryStatusChangeUpdateInput!
-    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
-  ): PhysicalProductInventoryStatusChange
   updateWarehouseLocationConstraint(
     data: WarehouseLocationConstraintUpdateInput!
     where: WarehouseLocationConstraintWhereUniqueInput!
@@ -13662,16 +13640,10 @@ type Mutation {
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
   deleteTag(where: TagWhereUniqueInput!): Tag
-  deleteProductStatusChange(
-    where: ProductStatusChangeWhereUniqueInput!
-  ): ProductStatusChange
   deleteProductMaterialCategory(
     where: ProductMaterialCategoryWhereUniqueInput!
   ): ProductMaterialCategory
   deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
-  deletePhysicalProductInventoryStatusChange(
-    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
-  ): PhysicalProductInventoryStatusChange
   deleteWarehouseLocationConstraint(
     where: WarehouseLocationConstraintWhereUniqueInput!
   ): WarehouseLocationConstraint
@@ -13774,11 +13746,6 @@ type Mutation {
     create: TagCreateInput!
     update: TagUpdateInput!
   ): Tag!
-  upsertProductStatusChange(
-    where: ProductStatusChangeWhereUniqueInput!
-    create: ProductStatusChangeCreateInput!
-    update: ProductStatusChangeUpdateInput!
-  ): ProductStatusChange!
   upsertProductMaterialCategory(
     where: ProductMaterialCategoryWhereUniqueInput!
     create: ProductMaterialCategoryCreateInput!
@@ -13789,11 +13756,6 @@ type Mutation {
     create: ProductModelCreateInput!
     update: ProductModelUpdateInput!
   ): ProductModel!
-  upsertPhysicalProductInventoryStatusChange(
-    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
-    create: PhysicalProductInventoryStatusChangeCreateInput!
-    update: PhysicalProductInventoryStatusChangeUpdateInput!
-  ): PhysicalProductInventoryStatusChange!
   upsertWarehouseLocationConstraint(
     where: WarehouseLocationConstraintWhereUniqueInput!
     create: WarehouseLocationConstraintCreateInput!
@@ -14040,10 +14002,6 @@ type Mutation {
     data: TagUpdateManyMutationInput!
     where: TagWhereInput
   ): BatchPayload!
-  updateManyProductStatusChanges(
-    data: ProductStatusChangeUpdateManyMutationInput!
-    where: ProductStatusChangeWhereInput
-  ): BatchPayload!
   updateManyProductMaterialCategories(
     data: ProductMaterialCategoryUpdateManyMutationInput!
     where: ProductMaterialCategoryWhereInput
@@ -14051,10 +14009,6 @@ type Mutation {
   updateManyProductModels(
     data: ProductModelUpdateManyMutationInput!
     where: ProductModelWhereInput
-  ): BatchPayload!
-  updateManyPhysicalProductInventoryStatusChanges(
-    data: PhysicalProductInventoryStatusChangeUpdateManyMutationInput!
-    where: PhysicalProductInventoryStatusChangeWhereInput
   ): BatchPayload!
   updateManyWarehouseLocationConstraints(
     data: WarehouseLocationConstraintUpdateManyMutationInput!
@@ -14238,16 +14192,10 @@ type Mutation {
     where: HomepageProductRailWhereInput
   ): BatchPayload!
   deleteManyTags(where: TagWhereInput): BatchPayload!
-  deleteManyProductStatusChanges(
-    where: ProductStatusChangeWhereInput
-  ): BatchPayload!
   deleteManyProductMaterialCategories(
     where: ProductMaterialCategoryWhereInput
   ): BatchPayload!
   deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
-  deleteManyPhysicalProductInventoryStatusChanges(
-    where: PhysicalProductInventoryStatusChangeWhereInput
-  ): BatchPayload!
   deleteManyWarehouseLocationConstraints(
     where: WarehouseLocationConstraintWhereInput
   ): BatchPayload!
@@ -16968,15 +16916,6 @@ type PhysicalProduct implements Node {
   location: Location
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
-  inventoryStatusChanges(
-    where: PhysicalProductInventoryStatusChangeWhereInput
-    orderBy: PhysicalProductInventoryStatusChangeOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [PhysicalProductInventoryStatusChange!]
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -17020,7 +16959,6 @@ input PhysicalProductCreateInput {
   unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -17049,28 +16987,6 @@ input PhysicalProductCreateOneInput {
   connect: PhysicalProductWhereUniqueInput
 }
 
-input PhysicalProductCreateOneWithoutInventoryStatusChangesInput {
-  create: PhysicalProductCreateWithoutInventoryStatusChangesInput
-  connect: PhysicalProductWhereUniqueInput
-}
-
-input PhysicalProductCreateWithoutInventoryStatusChangesInput {
-  id: ID
-  seasonsUID: String!
-  inventoryStatus: InventoryStatus!
-  productStatus: PhysicalProductStatus!
-  offloadMethod: PhysicalProductOffloadMethod
-  offloadNotes: String
-  sequenceNumber: Int!
-  barcoded: Boolean
-  dateOrdered: DateTime
-  dateReceived: DateTime
-  unitCost: Float
-  location: LocationCreateOneWithoutPhysicalProductsInput
-  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
-  warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
-}
-
 input PhysicalProductCreateWithoutLocationInput {
   id: ID
   seasonsUID: String!
@@ -17084,7 +17000,6 @@ input PhysicalProductCreateWithoutLocationInput {
   dateReceived: DateTime
   unitCost: Float
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -17101,7 +17016,6 @@ input PhysicalProductCreateWithoutProductVariantInput {
   dateReceived: DateTime
   unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -17119,7 +17033,6 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
 }
 
 """
@@ -17135,558 +17048,6 @@ type PhysicalProductEdge {
   A cursor for use in pagination.
   """
   cursor: String!
-}
-
-type PhysicalProductInventoryStatusChange implements Node {
-  id: ID!
-  old: InventoryStatus!
-  new: InventoryStatus!
-  physicalProduct: PhysicalProduct!
-  createdAt: DateTime!
-  updatedAt: DateTime
-}
-
-"""
-A connection to a list of items.
-"""
-type PhysicalProductInventoryStatusChangeConnection {
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  A list of edges.
-  """
-  edges: [PhysicalProductInventoryStatusChangeEdge]!
-  aggregate: AggregatePhysicalProductInventoryStatusChange!
-}
-
-input PhysicalProductInventoryStatusChangeCreateInput {
-  id: ID
-  old: InventoryStatus!
-  new: InventoryStatus!
-  physicalProduct: PhysicalProductCreateOneWithoutInventoryStatusChangesInput!
-}
-
-input PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput {
-  create: [PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!]
-  connect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
-}
-
-input PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput {
-  id: ID
-  old: InventoryStatus!
-  new: InventoryStatus!
-}
-
-"""
-An edge in a connection.
-"""
-type PhysicalProductInventoryStatusChangeEdge {
-  """
-  The item at the end of the edge.
-  """
-  node: PhysicalProductInventoryStatusChange!
-
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-}
-
-enum PhysicalProductInventoryStatusChangeOrderByInput {
-  id_ASC
-  id_DESC
-  old_ASC
-  old_DESC
-  new_ASC
-  new_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type PhysicalProductInventoryStatusChangePreviousValues {
-  id: ID!
-  old: InventoryStatus!
-  new: InventoryStatus!
-  createdAt: DateTime!
-  updatedAt: DateTime
-}
-
-input PhysicalProductInventoryStatusChangeScalarWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  old: InventoryStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  old_not: InventoryStatus
-
-  """
-  All values that are contained in given list.
-  """
-  old_in: [InventoryStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  old_not_in: [InventoryStatus!]
-  new: InventoryStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  new_not: InventoryStatus
-
-  """
-  All values that are contained in given list.
-  """
-  new_in: [InventoryStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  new_not_in: [InventoryStatus!]
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  updatedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  updatedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  updatedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  updatedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  updatedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  updatedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  updatedAt_gte: DateTime
-}
-
-type PhysicalProductInventoryStatusChangeSubscriptionPayload {
-  mutation: MutationType!
-  node: PhysicalProductInventoryStatusChange
-  updatedFields: [String!]
-  previousValues: PhysicalProductInventoryStatusChangePreviousValues
-}
-
-input PhysicalProductInventoryStatusChangeSubscriptionWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: PhysicalProductInventoryStatusChangeWhereInput
-}
-
-input PhysicalProductInventoryStatusChangeUpdateInput {
-  old: InventoryStatus
-  new: InventoryStatus
-  physicalProduct: PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput
-}
-
-input PhysicalProductInventoryStatusChangeUpdateManyDataInput {
-  old: InventoryStatus
-  new: InventoryStatus
-}
-
-input PhysicalProductInventoryStatusChangeUpdateManyMutationInput {
-  old: InventoryStatus
-  new: InventoryStatus
-}
-
-input PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput {
-  create: [PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!]
-  connect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
-  set: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
-  disconnect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
-  delete: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
-  update: [PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput!]
-  updateMany: [PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput!]
-  deleteMany: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
-  upsert: [PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput!]
-}
-
-input PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput {
-  where: PhysicalProductInventoryStatusChangeScalarWhereInput!
-  data: PhysicalProductInventoryStatusChangeUpdateManyDataInput!
-}
-
-input PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput {
-  old: InventoryStatus
-  new: InventoryStatus
-}
-
-input PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput {
-  where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
-  data: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput!
-}
-
-input PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput {
-  where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
-  update: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput!
-  create: PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!
-}
-
-input PhysicalProductInventoryStatusChangeWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [PhysicalProductInventoryStatusChangeWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [PhysicalProductInventoryStatusChangeWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [PhysicalProductInventoryStatusChangeWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  old: InventoryStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  old_not: InventoryStatus
-
-  """
-  All values that are contained in given list.
-  """
-  old_in: [InventoryStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  old_not_in: [InventoryStatus!]
-  new: InventoryStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  new_not: InventoryStatus
-
-  """
-  All values that are contained in given list.
-  """
-  new_in: [InventoryStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  new_not_in: [InventoryStatus!]
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  updatedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  updatedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  updatedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  updatedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  updatedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  updatedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  updatedAt_gte: DateTime
-  physicalProduct: PhysicalProductWhereInput
-}
-
-input PhysicalProductInventoryStatusChangeWhereUniqueInput {
-  id: ID
 }
 
 enum PhysicalProductOffloadMethod {
@@ -18295,7 +17656,6 @@ input PhysicalProductUpdateDataInput {
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -18312,7 +17672,6 @@ input PhysicalProductUpdateInput {
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -18402,29 +17761,6 @@ input PhysicalProductUpdateOneRequiredInput {
   upsert: PhysicalProductUpsertNestedInput
 }
 
-input PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput {
-  create: PhysicalProductCreateWithoutInventoryStatusChangesInput
-  connect: PhysicalProductWhereUniqueInput
-  update: PhysicalProductUpdateWithoutInventoryStatusChangesDataInput
-  upsert: PhysicalProductUpsertWithoutInventoryStatusChangesInput
-}
-
-input PhysicalProductUpdateWithoutInventoryStatusChangesDataInput {
-  seasonsUID: String
-  inventoryStatus: InventoryStatus
-  productStatus: PhysicalProductStatus
-  offloadMethod: PhysicalProductOffloadMethod
-  offloadNotes: String
-  sequenceNumber: Int
-  barcoded: Boolean
-  dateOrdered: DateTime
-  dateReceived: DateTime
-  unitCost: Float
-  location: LocationUpdateOneWithoutPhysicalProductsInput
-  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
-}
-
 input PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
@@ -18437,7 +17773,6 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   dateReceived: DateTime
   unitCost: Float
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -18453,7 +17788,6 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   dateReceived: DateTime
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -18470,7 +17804,6 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -18496,11 +17829,6 @@ input PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput {
 input PhysicalProductUpsertNestedInput {
   update: PhysicalProductUpdateDataInput!
   create: PhysicalProductCreateInput!
-}
-
-input PhysicalProductUpsertWithoutInventoryStatusChangesInput {
-  update: PhysicalProductUpdateWithoutInventoryStatusChangesDataInput!
-  create: PhysicalProductCreateWithoutInventoryStatusChangesInput!
 }
 
 input PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -19012,9 +18340,6 @@ input PhysicalProductWhereInput {
   updatedAt_gte: DateTime
   location: LocationWhereInput
   productVariant: ProductVariantWhereInput
-  inventoryStatusChanges_every: PhysicalProductInventoryStatusChangeWhereInput
-  inventoryStatusChanges_some: PhysicalProductInventoryStatusChangeWhereInput
-  inventoryStatusChanges_none: PhysicalProductInventoryStatusChangeWhereInput
   warehouseLocation: WarehouseLocationWhereInput
 }
 
@@ -19083,15 +18408,6 @@ type Product implements Node {
     last: Int
   ): [ProductVariant!]
   status: ProductStatus
-  statusChanges(
-    where: ProductStatusChangeWhereInput
-    orderBy: ProductStatusChangeOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [ProductStatusChange!]
   season: ProductSeason
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -19152,7 +18468,6 @@ input ProductCreateInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
 }
 
@@ -19191,11 +18506,6 @@ input ProductCreateOneInput {
   connect: ProductWhereUniqueInput
 }
 
-input ProductCreateOneWithoutStatusChangesInput {
-  create: ProductCreateWithoutStatusChangesInput
-  connect: ProductWhereUniqueInput
-}
-
 input ProductCreateOneWithoutVariantsInput {
   create: ProductCreateWithoutVariantsInput
   connect: ProductWhereUniqueInput
@@ -19230,7 +18540,6 @@ input ProductCreateWithoutBrandInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
 }
 
@@ -19259,7 +18568,6 @@ input ProductCreateWithoutCategoryInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
 }
 
@@ -19288,7 +18596,6 @@ input ProductCreateWithoutMaterialCategoryInput {
   tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
   variants: ProductVariantCreateManyWithoutProductInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
 }
 
@@ -19310,36 +18617,6 @@ input ProductCreateWithoutModelInput {
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   images: ImageCreateManyInput
-  modelSize: SizeCreateOneInput
-  color: ColorCreateOneInput!
-  secondaryColor: ColorCreateOneInput
-  tags: TagCreateManyWithoutProductsInput
-  functions: ProductFunctionCreateManyInput
-  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
-  variants: ProductVariantCreateManyWithoutProductInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
-  season: ProductSeasonCreateOneInput
-}
-
-input ProductCreateWithoutStatusChangesInput {
-  id: ID
-  slug: String!
-  name: String!
-  type: ProductType
-  description: String
-  externalURL: String
-  modelHeight: Int
-  retailPrice: Int
-  status: ProductStatus
-  architecture: ProductArchitecture
-  photographyStatus: PhotographyStatus
-  publishedAt: DateTime
-  innerMaterials: ProductCreateinnerMaterialsInput
-  outerMaterials: ProductCreateouterMaterialsInput
-  brand: BrandCreateOneWithoutProductsInput!
-  category: CategoryCreateOneWithoutProductsInput!
-  images: ImageCreateManyInput
-  model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
@@ -19375,7 +18652,6 @@ input ProductCreateWithoutTagsInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
 }
 
@@ -19404,7 +18680,6 @@ input ProductCreateWithoutVariantsInput {
   tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
 }
 
@@ -22283,558 +21558,6 @@ enum ProductStatus {
   Offloaded
 }
 
-type ProductStatusChange implements Node {
-  id: ID!
-  old: ProductStatus!
-  new: ProductStatus!
-  product: Product!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-"""
-A connection to a list of items.
-"""
-type ProductStatusChangeConnection {
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  A list of edges.
-  """
-  edges: [ProductStatusChangeEdge]!
-  aggregate: AggregateProductStatusChange!
-}
-
-input ProductStatusChangeCreateInput {
-  id: ID
-  old: ProductStatus!
-  new: ProductStatus!
-  product: ProductCreateOneWithoutStatusChangesInput!
-}
-
-input ProductStatusChangeCreateManyWithoutProductInput {
-  create: [ProductStatusChangeCreateWithoutProductInput!]
-  connect: [ProductStatusChangeWhereUniqueInput!]
-}
-
-input ProductStatusChangeCreateWithoutProductInput {
-  id: ID
-  old: ProductStatus!
-  new: ProductStatus!
-}
-
-"""
-An edge in a connection.
-"""
-type ProductStatusChangeEdge {
-  """
-  The item at the end of the edge.
-  """
-  node: ProductStatusChange!
-
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-}
-
-enum ProductStatusChangeOrderByInput {
-  id_ASC
-  id_DESC
-  old_ASC
-  old_DESC
-  new_ASC
-  new_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type ProductStatusChangePreviousValues {
-  id: ID!
-  old: ProductStatus!
-  new: ProductStatus!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-input ProductStatusChangeScalarWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [ProductStatusChangeScalarWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [ProductStatusChangeScalarWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [ProductStatusChangeScalarWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  old: ProductStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  old_not: ProductStatus
-
-  """
-  All values that are contained in given list.
-  """
-  old_in: [ProductStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  old_not_in: [ProductStatus!]
-  new: ProductStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  new_not: ProductStatus
-
-  """
-  All values that are contained in given list.
-  """
-  new_in: [ProductStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  new_not_in: [ProductStatus!]
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  updatedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  updatedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  updatedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  updatedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  updatedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  updatedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  updatedAt_gte: DateTime
-}
-
-type ProductStatusChangeSubscriptionPayload {
-  mutation: MutationType!
-  node: ProductStatusChange
-  updatedFields: [String!]
-  previousValues: ProductStatusChangePreviousValues
-}
-
-input ProductStatusChangeSubscriptionWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [ProductStatusChangeSubscriptionWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [ProductStatusChangeSubscriptionWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [ProductStatusChangeSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: ProductStatusChangeWhereInput
-}
-
-input ProductStatusChangeUpdateInput {
-  old: ProductStatus
-  new: ProductStatus
-  product: ProductUpdateOneRequiredWithoutStatusChangesInput
-}
-
-input ProductStatusChangeUpdateManyDataInput {
-  old: ProductStatus
-  new: ProductStatus
-}
-
-input ProductStatusChangeUpdateManyMutationInput {
-  old: ProductStatus
-  new: ProductStatus
-}
-
-input ProductStatusChangeUpdateManyWithoutProductInput {
-  create: [ProductStatusChangeCreateWithoutProductInput!]
-  connect: [ProductStatusChangeWhereUniqueInput!]
-  set: [ProductStatusChangeWhereUniqueInput!]
-  disconnect: [ProductStatusChangeWhereUniqueInput!]
-  delete: [ProductStatusChangeWhereUniqueInput!]
-  update: [ProductStatusChangeUpdateWithWhereUniqueWithoutProductInput!]
-  updateMany: [ProductStatusChangeUpdateManyWithWhereNestedInput!]
-  deleteMany: [ProductStatusChangeScalarWhereInput!]
-  upsert: [ProductStatusChangeUpsertWithWhereUniqueWithoutProductInput!]
-}
-
-input ProductStatusChangeUpdateManyWithWhereNestedInput {
-  where: ProductStatusChangeScalarWhereInput!
-  data: ProductStatusChangeUpdateManyDataInput!
-}
-
-input ProductStatusChangeUpdateWithoutProductDataInput {
-  old: ProductStatus
-  new: ProductStatus
-}
-
-input ProductStatusChangeUpdateWithWhereUniqueWithoutProductInput {
-  where: ProductStatusChangeWhereUniqueInput!
-  data: ProductStatusChangeUpdateWithoutProductDataInput!
-}
-
-input ProductStatusChangeUpsertWithWhereUniqueWithoutProductInput {
-  where: ProductStatusChangeWhereUniqueInput!
-  update: ProductStatusChangeUpdateWithoutProductDataInput!
-  create: ProductStatusChangeCreateWithoutProductInput!
-}
-
-input ProductStatusChangeWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [ProductStatusChangeWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [ProductStatusChangeWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [ProductStatusChangeWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  old: ProductStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  old_not: ProductStatus
-
-  """
-  All values that are contained in given list.
-  """
-  old_in: [ProductStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  old_not_in: [ProductStatus!]
-  new: ProductStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  new_not: ProductStatus
-
-  """
-  All values that are contained in given list.
-  """
-  new_in: [ProductStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  new_not_in: [ProductStatus!]
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  updatedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  updatedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  updatedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  updatedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  updatedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  updatedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  updatedAt_gte: DateTime
-  product: ProductWhereInput
-}
-
-input ProductStatusChangeWhereUniqueInput {
-  id: ID
-}
-
 type ProductSubscriptionPayload {
   mutation: MutationType!
   node: Product
@@ -22912,7 +21635,6 @@ input ProductUpdateDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -22945,7 +21667,6 @@ input ProductUpdateInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -23065,13 +21786,6 @@ input ProductUpdateOneRequiredInput {
   upsert: ProductUpsertNestedInput
 }
 
-input ProductUpdateOneRequiredWithoutStatusChangesInput {
-  create: ProductCreateWithoutStatusChangesInput
-  connect: ProductWhereUniqueInput
-  update: ProductUpdateWithoutStatusChangesDataInput
-  upsert: ProductUpsertWithoutStatusChangesInput
-}
-
 input ProductUpdateOneRequiredWithoutVariantsInput {
   create: ProductCreateWithoutVariantsInput
   connect: ProductWhereUniqueInput
@@ -23107,7 +21821,6 @@ input ProductUpdateWithoutBrandDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -23135,7 +21848,6 @@ input ProductUpdateWithoutCategoryDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -23163,7 +21875,6 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -23184,35 +21895,6 @@ input ProductUpdateWithoutModelDataInput {
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   images: ImageUpdateManyInput
-  modelSize: SizeUpdateOneInput
-  color: ColorUpdateOneRequiredInput
-  secondaryColor: ColorUpdateOneInput
-  tags: TagUpdateManyWithoutProductsInput
-  functions: ProductFunctionUpdateManyInput
-  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
-  variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
-  season: ProductSeasonUpdateOneInput
-}
-
-input ProductUpdateWithoutStatusChangesDataInput {
-  slug: String
-  name: String
-  type: ProductType
-  description: String
-  externalURL: String
-  modelHeight: Int
-  retailPrice: Int
-  status: ProductStatus
-  architecture: ProductArchitecture
-  photographyStatus: PhotographyStatus
-  publishedAt: DateTime
-  innerMaterials: ProductUpdateinnerMaterialsInput
-  outerMaterials: ProductUpdateouterMaterialsInput
-  brand: BrandUpdateOneRequiredWithoutProductsInput
-  category: CategoryUpdateOneRequiredWithoutProductsInput
-  images: ImageUpdateManyInput
-  model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
@@ -23247,7 +21929,6 @@ input ProductUpdateWithoutTagsDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -23275,7 +21956,6 @@ input ProductUpdateWithoutVariantsDataInput {
   tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -23312,11 +21992,6 @@ input ProductUpdateWithWhereUniqueWithoutTagsInput {
 input ProductUpsertNestedInput {
   update: ProductUpdateDataInput!
   create: ProductCreateInput!
-}
-
-input ProductUpsertWithoutStatusChangesInput {
-  update: ProductUpdateWithoutStatusChangesDataInput!
-  create: ProductCreateWithoutStatusChangesInput!
 }
 
 input ProductUpsertWithoutVariantsInput {
@@ -26787,9 +25462,6 @@ input ProductWhereInput {
   variants_every: ProductVariantWhereInput
   variants_some: ProductVariantWhereInput
   variants_none: ProductVariantWhereInput
-  statusChanges_every: ProductStatusChangeWhereInput
-  statusChanges_some: ProductStatusChangeWhereInput
-  statusChanges_none: ProductStatusChangeWhereInput
   season: ProductSeasonWhereInput
 }
 
@@ -28721,15 +27393,6 @@ type Query {
     first: Int
     last: Int
   ): [Tag]!
-  productStatusChanges(
-    where: ProductStatusChangeWhereInput
-    orderBy: ProductStatusChangeOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [ProductStatusChange]!
   productMaterialCategories(
     where: ProductMaterialCategoryWhereInput
     orderBy: ProductMaterialCategoryOrderByInput
@@ -28748,15 +27411,6 @@ type Query {
     first: Int
     last: Int
   ): [ProductModel]!
-  physicalProductInventoryStatusChanges(
-    where: PhysicalProductInventoryStatusChangeWhereInput
-    orderBy: PhysicalProductInventoryStatusChangeOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [PhysicalProductInventoryStatusChange]!
   warehouseLocationConstraints(
     where: WarehouseLocationConstraintWhereInput
     orderBy: WarehouseLocationConstraintOrderByInput
@@ -29177,16 +27831,10 @@ type Query {
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
   tag(where: TagWhereUniqueInput!): Tag
-  productStatusChange(
-    where: ProductStatusChangeWhereUniqueInput!
-  ): ProductStatusChange
   productMaterialCategory(
     where: ProductMaterialCategoryWhereUniqueInput!
   ): ProductMaterialCategory
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
-  physicalProductInventoryStatusChange(
-    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
-  ): PhysicalProductInventoryStatusChange
   warehouseLocationConstraint(
     where: WarehouseLocationConstraintWhereUniqueInput!
   ): WarehouseLocationConstraint
@@ -29297,15 +27945,6 @@ type Query {
     first: Int
     last: Int
   ): TagConnection!
-  productStatusChangesConnection(
-    where: ProductStatusChangeWhereInput
-    orderBy: ProductStatusChangeOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): ProductStatusChangeConnection!
   productMaterialCategoriesConnection(
     where: ProductMaterialCategoryWhereInput
     orderBy: ProductMaterialCategoryOrderByInput
@@ -29324,15 +27963,6 @@ type Query {
     first: Int
     last: Int
   ): ProductModelConnection!
-  physicalProductInventoryStatusChangesConnection(
-    where: PhysicalProductInventoryStatusChangeWhereInput
-    orderBy: PhysicalProductInventoryStatusChangeOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): PhysicalProductInventoryStatusChangeConnection!
   warehouseLocationConstraintsConnection(
     where: WarehouseLocationConstraintWhereInput
     orderBy: WarehouseLocationConstraintOrderByInput
@@ -34601,18 +33231,12 @@ type Subscription {
     where: HomepageProductRailSubscriptionWhereInput
   ): HomepageProductRailSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
-  productStatusChange(
-    where: ProductStatusChangeSubscriptionWhereInput
-  ): ProductStatusChangeSubscriptionPayload
   productMaterialCategory(
     where: ProductMaterialCategorySubscriptionWhereInput
   ): ProductMaterialCategorySubscriptionPayload
   productModel(
     where: ProductModelSubscriptionWhereInput
   ): ProductModelSubscriptionPayload
-  physicalProductInventoryStatusChange(
-    where: PhysicalProductInventoryStatusChangeSubscriptionWhereInput
-  ): PhysicalProductInventoryStatusChangeSubscriptionPayload
   warehouseLocationConstraint(
     where: WarehouseLocationConstraintSubscriptionWhereInput
   ): WarehouseLocationConstraintSubscriptionPayload
