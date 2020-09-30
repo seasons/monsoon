@@ -84,7 +84,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): ProductConnection
+  ): ProductConnection!
   productFunctions(
     where: ProductFunctionWhereInput
     orderBy: ProductFunctionOrderByInput
