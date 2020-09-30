@@ -95,13 +95,10 @@ describe("Auth Service", () => {
         const userNotifInterests = await prisma.client.userPushNotificationInterests()
         const userNotifs = await prisma.client.userPushNotifications()
 
-        await Promise.all(
-          userNotifInterests.map(interest => {
-            return prisma.client.deleteUserPushNotificationInterest({
-              id: interest.id,
-            })
-          })
-        )
+        await prisma.client.deleteManyUserPushNotificationInterests({
+          id_in: userNotifInterests.map(interest => interest.id),
+        })
+
         await prisma.client.deleteUserPushNotification({ id: userNotifs[0].id })
         await prisma.client.deleteLocation({ id: "2" })
         await prisma.client.deleteCustomerDetail({ id: "1" })
