@@ -6,8 +6,8 @@ import { Cron, CronExpression } from "@nestjs/schedule"
 export class MarketingScheduledJobs {
   constructor(private readonly dripSync: DripSyncService) {}
 
-  @Cron(CronExpression.EVERY_6_HOURS)
-  async syncCustomers() {
-    await this.dripSync.syncCustomers()
+  @Cron(CronExpression.EVERY_MINUTE)
+  async syncCustomersToDrip() {
+    await this.dripSync.syncCustomersDifferential()
   }
 }

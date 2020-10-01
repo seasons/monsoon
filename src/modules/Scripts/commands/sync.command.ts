@@ -143,13 +143,13 @@ export class SyncCommands {
     @Positional({
       name: "table",
       type: "string",
-      describe: "Name of the airtable base to sync",
+      describe: "Name of the prisma table to sync",
       choices: ["customers"],
     })
     table,
     @PrismaEnvOption({
       choices: ["local", "staging", "production"],
-      default: "staging",
+      default: "production",
     })
     prismaEnv
   ) {
@@ -171,7 +171,7 @@ export class SyncCommands {
 
     switch (table) {
       case "customers":
-        await this.dripSyncService.syncCustomers()
+        await this.dripSyncService.syncAllCustomers()
         break
     }
   }
