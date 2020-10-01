@@ -1,5 +1,7 @@
 import { ApplicationType } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { EmailService } from "@app/modules/Email/services/email.service"
+import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -25,6 +27,8 @@ export class CustomerService {
     private readonly prisma: PrismaService,
     private readonly shipping: ShippingService,
     private readonly admissions: AdmissionsService,
+    private readonly email: EmailService,
+    private readonly pushNotification: PushNotificationService,
     private readonly segment: SegmentService
   ) {}
 
@@ -93,6 +97,56 @@ export class CustomerService {
       { where: { id: customer.id } },
       info
     )
+  }
+
+  async updateCustomer(args, info, application: ApplicationType) {
+    const { where, data } = args
+    const customer = await this.prisma.binding.query.customer(
+      {
+        where,
+      },
+      `{
+        id
+        user {
+          id
+          email
+          firstName
+          lastName
+        }
+        status
+      }`
+    )
+
+    if (
+      ["Waitlisted", "Invited"].includes(customer.status) &&
+      data.status &&
+      data.status === "Authorized"
+    ) {
+      // Normal users
+      if (customer.status === "Waitlisted") {
+        await this.email.sendAuthorizedToSubscribeEmail(customer.user as User)
+      }
+      // Users we invited off the admin
+      if (customer.status === "Invited") {
+        await this.email.sendPriorityAccessEmail(customer.user as User)
+      }
+
+      // either kind of user
+      await this.pushNotification.pushNotifyUser({
+        email: customer.user.email,
+        pushNotifID: "CompleteAccount",
+      })
+
+      this.segment.trackBecameAuthorized(customer.user.id, {
+        previousStatus: customer.status,
+        firstName: customer.user.firstName,
+        lastName: customer.user.lastName,
+        email: customer.user.email,
+        method: "Manual",
+        application,
+      })
+    }
+    return this.prisma.binding.mutation.updateCustomer(args, info)
   }
 
   async updateCustomerDetail(user, customer, shippingAddress, phoneNumber) {
