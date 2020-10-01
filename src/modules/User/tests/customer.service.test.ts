@@ -10,6 +10,7 @@ import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
+import { ApolloError } from "apollo-server"
 
 import { AdmissionsService } from "../services/admissions.service"
 import { AuthService } from "../services/auth.service"
@@ -21,6 +22,7 @@ describe("Customer Service", () => {
   let emailService: EmailService
   let shippingUtilsService: ShippingUtilsService
   let testUtils: TestUtilsService
+  let admissionsService: AdmissionsService
 
   beforeAll(async () => {
     prisma = new PrismaService()
@@ -40,7 +42,7 @@ describe("Customer Service", () => {
       shippingUtilsService
     )
     const shippingService = new ShippingService(prisma, utilsService)
-    const admissionsService = new AdmissionsService(prisma, utilsService)
+    admissionsService = new AdmissionsService(prisma, utilsService)
     const segmentService = new SegmentService()
     emailService = new EmailService(
       prisma,
@@ -72,10 +74,7 @@ describe("Customer Service", () => {
           .spyOn<any, any>(emailService, "sendTransactionalEmail")
           .mockResolvedValue(null)
 
-        const {
-          customer,
-          cleanupFunc: customerCleanupFunc,
-        } = await testUtils.createTestCustomer(
+        const { customer, cleanupFunc } = await testUtils.createTestCustomer(
           {
             status: oldStatus as CustomerStatus,
             email: authorized ? "membership@seasons.nyc" : undefined,
@@ -145,7 +144,7 @@ describe("Customer Service", () => {
         await prisma.client.deleteManyEmailReceipts({
           user: { id: newCustomer.user.id },
         })
-        customerCleanupFunc()
+        cleanupFunc()
       }
     )
   })
@@ -163,10 +162,7 @@ describe("Customer Service", () => {
           .spyOn(shippingUtilsService, "getCityAndStateFromZipCode")
           .mockResolvedValue({ city: "New York", state: "NY" })
 
-        const {
-          customer,
-          cleanupFunc: customerCleanupFunc,
-        } = await testUtils.createTestCustomer(
+        const { customer, cleanupFunc } = await testUtils.createTestCustomer(
           { status: "Created" },
           `{
           id
@@ -204,8 +200,68 @@ describe("Customer Service", () => {
 
         expect(newCustomer.status).toEqual(status ? status : "Created")
 
-        customerCleanupFunc()
+        cleanupFunc()
       }
     )
+  })
+
+  describe("Triage Customer", () => {
+    let cleanupFunc
+
+    afterEach(() => {
+      cleanupFunc()
+    })
+
+    it("Throws on status not Created or Invited", async () => {
+      const {
+        customer,
+        cleanupFunc: customerCleanupFunc,
+      } = await testUtils.createTestCustomer(
+        { status: "Waitlisted" },
+        `{
+        id
+        user {
+          id
+        }
+      }`
+      )
+      expect(
+        customerService.triageCustomer({ id: customer.id }, null)
+      ).rejects.toThrowError(ApolloError)
+
+      cleanupFunc = customerCleanupFunc
+    })
+
+    it("Updates customer to Authorized", async () => {
+      jest
+        .spyOn(admissionsService, "belowWeeklyNewActiveUsersOpsThreshold")
+        .mockResolvedValue(true)
+      jest
+        .spyOn(admissionsService, "haveSufficientInventoryToServiceCustomer")
+        .mockResolvedValue(true)
+      jest.spyOn(admissionsService, "zipcodeAllowed").mockReturnValue(true)
+
+      const {
+        customer,
+        cleanupFunc: customerCleanupFunc,
+      } = await testUtils.createTestCustomer(
+        { detail: {}, status: "Created" },
+        `{
+        id
+        status
+        user {
+          id
+        }
+      }`
+      )
+
+      const result = await customerService.triageCustomer(
+        { id: customer.id },
+        null
+      )
+      expect(result).toEqual("Authorized")
+
+      cleanupFunc = customerCleanupFunc
+    })
   })
 })

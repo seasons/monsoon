@@ -136,6 +136,11 @@ export class TestUtilsService {
           create: {
             topSizes: { set: input.detail.topSizes || [] },
             waistSizes: { set: input.detail.waistSizes || [] },
+            shippingAddress: {
+              create: {
+                zipCode: "10013",
+              },
+            },
           } as CustomerDetailCreateInput,
         }
       : {}
