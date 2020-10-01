@@ -8,6 +8,7 @@ import { ShippingService } from "@app/modules/Shipping/services/shipping.service
 import { ShippingUtilsService } from "@app/modules/Shipping/services/shipping.utils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { CustomerStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 
 import { AdmissionsService } from "../services/admissions.service"
@@ -17,7 +18,7 @@ import { CustomerService } from "../services/customer.service"
 describe("Customer Service", () => {
   let customerService: CustomerService
   let prisma: PrismaService
-  let pushNotificationsService: PushNotificationService
+  let emailService: EmailService
   let shippingUtilsService: ShippingUtilsService
   let testUtils: TestUtilsService
 
@@ -27,7 +28,7 @@ describe("Customer Service", () => {
     testUtils = new TestUtilsService(prisma, new UtilsService(prisma))
     const pusherService = new PusherService()
     const pushNotificationsDataProvider = new PushNotificationDataProvider()
-    pushNotificationsService = new PushNotificationService(
+    const pushNotificationsService = new PushNotificationService(
       pusherService,
       pushNotificationsDataProvider,
       prisma
@@ -41,7 +42,7 @@ describe("Customer Service", () => {
     const shippingService = new ShippingService(prisma, utilsService)
     const admissionsService = new AdmissionsService(prisma, utilsService)
     const segmentService = new SegmentService()
-    const emailService = new EmailService(
+    emailService = new EmailService(
       prisma,
       utilsService,
       new EmailDataProvider()
@@ -58,158 +59,153 @@ describe("Customer Service", () => {
   })
 
   describe("Update Customer Details", () => {
-    let cleanupFunc = () =>
-      void afterEach(async () => {
-        cleanupFunc()
-      })
+    test.each([
+      ["Invited", true],
+      ["Invited", false],
+      ["Waitlisted", true],
+      ["Waitlisted", false],
+      ["Created", false],
+    ])(
+      "Successfully updates customer details: (old status: %p, authorized: %p)",
+      async (oldStatus, authorized) => {
+        jest
+          .spyOn<any, any>(emailService, "sendTransactionalEmail")
+          .mockResolvedValue(null)
 
-    function runTest(oldStatus, authorized) {
-      it(
-        "Successfully updates customer details: " +
-          oldStatus +
-          (authorized ? " -> Authorized" : " (Not Authorized yet)"),
-        async () => {
-          jest
-            .spyOn(pushNotificationsService, "pushNotifyUser")
-            .mockResolvedValue(null)
+        const {
+          customer,
+          cleanupFunc: customerCleanupFunc,
+        } = await testUtils.createTestCustomer(
+          {
+            status: oldStatus as CustomerStatus,
+            email: authorized ? "membership@seasons.nyc" : undefined,
+          },
+          `{
+            id
+            user {
+              id
+            }
+          }`
+        )
 
-          const {
-            customer,
-            cleanupFunc: customerCleanupFunc,
-          } = await testUtils.createTestCustomer(
-            { status: oldStatus },
-            `{
+        const newPlan = "Essential"
+        const newCustomer = await customerService.updateCustomer(
+          {
+            where: {
+              id: customer.id,
+            },
+            data: {
+              status: authorized ? "Authorized" : undefined,
+              plan: newPlan,
+            },
+          },
+          `{
+          id
+          status
+          plan
+          user {
+            id
+          }
+        }`,
+          null
+        )
+
+        if (authorized) {
+          if (oldStatus == "Waitlisted") {
+            const emailReceipts = await prisma.client.emailReceipts({
+              where: {
+                user: { id: newCustomer.user.id },
+              },
+            })
+            expect(emailReceipts.length).toEqual(1)
+            expect(emailReceipts[0].emailId).toEqual("CompleteAccount")
+          } else if (oldStatus == "Invited") {
+            const emailReceipts = await prisma.client.emailReceipts({
+              where: {
+                user: { id: newCustomer.user.id },
+              },
+            })
+            expect(emailReceipts.length).toEqual(1)
+            expect(emailReceipts[0].emailId).toEqual("PriorityAccess")
+          }
+          const notifReceipts = await prisma.client.pushNotificationReceipts({
+            where: {
+              users_some: { id: newCustomer.user.id },
+            },
+          })
+          expect(notifReceipts.length).toEqual(1)
+          expect(notifReceipts[0].notificationKey).toEqual("CompleteAccount")
+        }
+
+        expect(newCustomer.plan).toEqual(newPlan)
+
+        await prisma.client.deleteManyPushNotificationReceipts({
+          users_some: { id: newCustomer.user.id },
+        })
+        await prisma.client.deleteManyEmailReceipts({
+          user: { id: newCustomer.user.id },
+        })
+        customerCleanupFunc()
+      }
+    )
+  })
+
+  describe("Add Customer Details", () => {
+    test.each([["Waitlisted"], [null]])(
+      "Successfully adds customer details from onboarding: (status arg: %p)",
+      async status => {
+        const weight = [150, 160]
+        const height = 72
+        const topSizes = ["L", "XL"]
+        const waistSizes = [32, 34]
+
+        jest
+          .spyOn(shippingUtilsService, "getCityAndStateFromZipCode")
+          .mockResolvedValue({ city: "New York", state: "NY" })
+
+        const {
+          customer,
+          cleanupFunc: customerCleanupFunc,
+        } = await testUtils.createTestCustomer(
+          { status: "Created" },
+          `{
           id
           user {
             id
           }
         }`
-          )
+        )
 
-          const newPlan = "Essential"
-          const newCustomer = await customerService.updateCustomer(
-            {
-              where: {
-                id: customer.id,
-              },
-              data: {
-                status: authorized ? "Authorized" : undefined,
-                plan: newPlan,
-              },
+        const user = await prisma.client.user({ id: customer.user.id })
+        const newCustomer = await customerService.addCustomerDetails(
+          {
+            details: {
+              weight: { set: weight },
+              height,
+              topSizes: { set: topSizes },
+              waistSizes: { set: waistSizes },
             },
-            `{
-            id
-            status
-            plan
-            user {
-              id
-            }
-          }`,
-            null
-          )
+            status: status,
+          },
+          customer,
+          user,
+          `{
+          id
+          status
+        }`
+        )
 
-          if (authorized) {
-            if (oldStatus == "Waitlisted") {
-              const receipts = await prisma.client.emailReceipts({
-                where: {
-                  user: { id: newCustomer.user.id },
-                },
-              })
-              expect(receipts.length).toEqual(1)
-              expect(receipts[0].emailId).toEqual("CompleteAccount")
-            } else if (oldStatus == "Invited") {
-              const receipts = await prisma.client.emailReceipts({
-                where: {
-                  user: { id: newCustomer.user.id },
-                },
-              })
-              expect(receipts.length).toEqual(1)
-              expect(receipts[0].emailId).toEqual("PriorityAccess")
-            }
-            // Check Push Notif receipt
-          }
+        const newCustomerDetails = (await prisma.client.customerDetails())[0]
 
-          expect(newCustomer.plan).toEqual(newPlan)
+        expect(newCustomerDetails.topSizes).toEqual(topSizes)
+        expect(newCustomerDetails.waistSizes).toEqual(waistSizes)
+        expect(newCustomerDetails.weight).toEqual(weight)
+        expect(newCustomerDetails.height).toEqual(height)
 
-          cleanupFunc = customerCleanupFunc
-        }
-      )
-    }
-    runTest("Invited", true)
-    runTest("Waitlisted", true)
-    runTest("Invited", false)
-    runTest("Waitlisted", false)
-    runTest("Created", false)
-  })
+        expect(newCustomer.status).toEqual(status ? status : "Created")
 
-  describe("Add Customer Details", () => {
-    let cleanupFunc
-
-    afterEach(async () => {
-      cleanupFunc()
-    })
-
-    function runTest(status) {
-      it(
-        "Successfully adds customer details from onboarding " +
-          (!!status ? "with" : "without") +
-          " status",
-        async () => {
-          const weight = [150, 160]
-          const height = 72
-          const topSizes = ["L", "XL"]
-          const waistSizes = [32, 34]
-
-          jest
-            .spyOn(shippingUtilsService, "getCityAndStateFromZipCode")
-            .mockResolvedValue({ city: "New York", state: "NY" })
-
-          const {
-            customer,
-            cleanupFunc: customerCleanupFunc,
-          } = await testUtils.createTestCustomer(
-            { status: "Created" },
-            `{
-            id
-            user {
-              id
-            }
-          }`
-          )
-
-          const user = await prisma.client.user({ id: customer.user.id })
-          const newCustomer = await customerService.addCustomerDetails(
-            {
-              details: {
-                weight: { set: weight },
-                height,
-                topSizes: { set: topSizes },
-                waistSizes: { set: waistSizes },
-              },
-              status: status,
-            },
-            customer,
-            user,
-            `{
-            id
-            status
-          }`
-          )
-
-          const newCustomerDetails = (await prisma.client.customerDetails())[0]
-
-          expect(newCustomerDetails.topSizes).toEqual(topSizes)
-          expect(newCustomerDetails.waistSizes).toEqual(waistSizes)
-          expect(newCustomerDetails.weight).toEqual(weight)
-          expect(newCustomerDetails.height).toEqual(height)
-
-          expect(newCustomer.status).toEqual(status ? status : "Created")
-
-          cleanupFunc = customerCleanupFunc
-        }
-      )
-    }
-    runTest(null)
-    runTest("Waitlisted")
+        customerCleanupFunc()
+      }
+    )
   })
 })

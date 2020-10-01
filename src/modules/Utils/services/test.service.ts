@@ -1,10 +1,10 @@
 import {
   CustomerDetailCreateInput,
-  CustomerMembershipCreateOneWithoutCustomerInput,
   InventoryStatus,
   PhysicalProductStatus,
   ProductCreateInput,
   SizeCreateOneInput,
+  UserPushNotificationInterestType,
 } from "@app/prisma"
 import { PrismaService } from "@prisma/prisma.service"
 
@@ -161,7 +161,7 @@ export class TestUtilsService {
           user: {
             create: {
               auth0Id: this.utils.randomString(),
-              email: this.utils.randomString(),
+              email: input.email || this.utils.randomString(),
               firstName: this.utils.randomString(),
               lastName: this.utils.randomString(),
             },
@@ -170,8 +170,41 @@ export class TestUtilsService {
           membership,
         },
       },
-      `{id}`
+      `{
+        id
+        user {
+          id
+        }
+      }`
     )
+
+    const defaultPushNotificationInterests = [
+      "General",
+      "Blog",
+      "Bag",
+      "NewProduct",
+    ] as UserPushNotificationInterestType[]
+
+    const pushNotif = await this.prisma.client.createUserPushNotification({
+      interests: {
+        create: defaultPushNotificationInterests.map(type => ({
+          type,
+          value: "",
+          user: { connect: { id: customer.user.id } },
+          status: true,
+        })),
+      },
+      status: true,
+    })
+
+    await this.prisma.client.updateUser({
+      where: { id: customer.user.id },
+      data: {
+        pushNotification: {
+          connect: { id: pushNotif.id },
+        },
+      },
+    })
 
     // If there are additional pause requests, create them in order
     if (input.membership?.pauseRequests?.length > 1) {
@@ -196,6 +229,10 @@ export class TestUtilsService {
     )
 
     const cleanupFunc = async () => {
+      await this.prisma.client.deleteManyUserPushNotificationInterests({
+        user: { id: customer.user.id },
+      })
+      await this.prisma.client.deleteUserPushNotification({ id: pushNotif.id })
       await this.prisma.client.deleteCustomer({ id: customer.id })
     }
     return { cleanupFunc, customer }
