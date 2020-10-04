@@ -163,6 +163,7 @@ enum EmailId {
   WelcomeToSeasons
   ReturnReminder
   PriorityAccess
+  SubmittedEmail
 }
 
 enum PackageTransitEventStatus {

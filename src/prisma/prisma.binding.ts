@@ -6847,6 +6847,7 @@ enum EmailId {
   WelcomeToSeasons
   ReturnReminder
   PriorityAccess
+  SubmittedEmail
 }
 
 type EmailReceipt implements Node {
@@ -26932,7 +26933,8 @@ export type EmailId =   'ReservationReturnConfirmation' |
   'FreeToReserve' |
   'WelcomeToSeasons' |
   'ReturnReminder' |
-  'PriorityAccess'
+  'PriorityAccess' |
+  'SubmittedEmail'
 
 export type EmailReceiptOrderByInput =   'id_ASC' |
   'id_DESC' |

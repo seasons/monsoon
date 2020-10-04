@@ -3057,7 +3057,8 @@ export type EmailId =
   | "FreeToReserve"
   | "WelcomeToSeasons"
   | "ReturnReminder"
-  | "PriorityAccess";
+  | "PriorityAccess"
+  | "SubmittedEmail";
 
 export type EmailReceiptOrderByInput =
   | "id_ASC"
