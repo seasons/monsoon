@@ -129,9 +129,7 @@ describe("Payment Service", () => {
           addressCountry: "USA",
         },
       }
-      const { customer, cleanupFunc } = await testUtils.createTestCustomer({
-        email: "test@seasons.nyc",
-      })
+      const { customer, cleanupFunc } = await testUtils.createTestCustomer({})
       jest
         .spyOn<any, any>(chargebee.customer, "create")
         .mockReturnValue(

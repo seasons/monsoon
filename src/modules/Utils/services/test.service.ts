@@ -171,7 +171,7 @@ export class TestUtilsService {
           user: {
             create: {
               auth0Id: this.utils.randomString(),
-              email: this.utils.randomString(),
+              email: this.utils.randomString() + "@seasons.nyc",
               firstName: this.utils.randomString(),
               lastName: this.utils.randomString(),
             },
