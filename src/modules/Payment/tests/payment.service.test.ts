@@ -17,11 +17,6 @@ import chargebee from "chargebee"
 import { PaymentService } from "../services/payment.service"
 import { PaymentUtilsService } from "../services/payment.utils.service"
 
-chargebee.configure({
-  site: process.env.CHARGEBEE_SITE,
-  api_key: process.env.CHARGEBEE_API_KEY,
-})
-
 enum ChargebeeMockFunction {
   CustomerCreate,
   PaymentSourceCreateUsingTempToken,
@@ -227,6 +222,10 @@ describe("Payment Service", () => {
 })
 
 const setupPaymentPlans = async () => {
+  chargebee.configure({
+    site: process.env.CHARGEBEE_SITE,
+    api_key: process.env.CHARGEBEE_API_KEY,
+  })
   const ps = new PrismaService()
   const request = await chargebee.plan.list().request()
   const list = request?.list || []
