@@ -129,7 +129,12 @@ export class TestUtilsService {
 
   async createTestCustomer(
     input: CreateTestCustomerInput,
-    info = `{id}`
+    info = `{
+      id
+      user {
+        id
+      }
+    }`
   ): Promise<CreateTestCustomerOutput> {
     const detail = !!input.detail
       ? {

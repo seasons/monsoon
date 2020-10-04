@@ -188,15 +188,19 @@ describe("Customer Service", () => {
           `{
           id
           status
+          detail {
+            topSizes
+            waistSizes
+            weight
+            height
+          }
         }`
         )
 
-        const newCustomerDetails = (await prisma.client.customerDetails())[0]
-
-        expect(newCustomerDetails.topSizes).toEqual(topSizes)
-        expect(newCustomerDetails.waistSizes).toEqual(waistSizes)
-        expect(newCustomerDetails.weight).toEqual(weight)
-        expect(newCustomerDetails.height).toEqual(height)
+        expect(newCustomer.detail.topSizes).toEqual(topSizes)
+        expect(newCustomer.detail.waistSizes).toEqual(waistSizes)
+        expect(newCustomer.detail.weight).toEqual(weight)
+        expect(newCustomer.detail.height).toEqual(height)
 
         expect(newCustomer.status).toEqual(status ? status : "Created")
 
