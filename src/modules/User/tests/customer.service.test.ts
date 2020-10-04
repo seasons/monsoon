@@ -77,7 +77,6 @@ describe("Customer Service", () => {
         const { customer, cleanupFunc } = await testUtils.createTestCustomer(
           {
             status: oldStatus as CustomerStatus,
-            email: authorized ? "membership@seasons.nyc" : undefined,
           },
           `{
             id

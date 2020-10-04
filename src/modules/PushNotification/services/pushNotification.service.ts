@@ -134,12 +134,12 @@ export class PushNotificationService {
     // Create the receipt
     const receipt = await this.prisma.client.createPushNotificationReceipt({
       ...receiptPayload,
-      users: { connect: [{ email: targetEmail }] },
+      users: { connect: [{ email: email }] },
     })
 
     // Update the user's history
     await this.prisma.client.updateUser({
-      where: { email: targetEmail },
+      where: { email: email },
       data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
     })
 
