@@ -10,13 +10,7 @@ import { ProductCommands } from "./commands/product.command"
 import { SyncCommands } from "./commands/sync.command"
 import { UserCommands } from "./commands/user.command"
 import { ScriptsService } from "./services/scripts.service"
-import {
-  AirtableModule,
-  CronModule,
-  PaymentModule,
-  SyncModule,
-  UserModule,
-} from ".."
+import { CronModule, PaymentModule, SyncModule, UserModule } from ".."
 
 @Module({
   imports: [
@@ -26,7 +20,6 @@ import {
     PrismaModule,
     UserModule,
     UtilsModule,
-    AirtableModule,
     PaymentModule,
     CronModule,
   ],

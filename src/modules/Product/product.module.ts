@@ -1,4 +1,3 @@
-import { AirtableModule } from "@modules/Airtable/airtable.module"
 import { EmailModule } from "@modules/Email/email.module"
 import { ImageModule } from "@modules/Image"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
@@ -30,7 +29,6 @@ import { ProductVariantService } from "./services/productVariant.service"
 
 export const ProductModuleDef = {
   imports: [
-    AirtableModule,
     EmailModule,
     ImageModule,
     PrismaModule,
