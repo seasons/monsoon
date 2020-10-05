@@ -4,6 +4,7 @@ import { Injectable } from "@nestjs/common"
 import * as RenderEmail from "@seasons/wind"
 import sgMail from "@sendgrid/mail"
 import Handlebars from "handlebars"
+import { head } from "lodash"
 import nodemailer from "nodemailer"
 
 import {
@@ -54,6 +55,36 @@ export class EmailService {
       product2: fourTriageStyles?.[1],
       product3: fourTriageStyles?.[2],
       product4: fourTriageStyles?.[3],
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      to: user.email,
+      payload,
+    })
+    await this.storeEmailReceipt("CompleteAccount", user.id)
+  }
+
+  async sendSubscribedEmail(user: User) {
+    const cust = head(
+      await this.prisma.binding.query.customers(
+        {
+          where: { user: { id: user.id } },
+        },
+        `
+      {
+        membership {
+          plan {
+            planID
+            itemCount
+          }
+        }
+      }
+      `
+      )
+    ) as any
+    const payload = await RenderEmail.default.subscribed({
+      name: `${user.firstName}`,
+      planId: cust.membership?.plan?.planID,
+      itemCount: `${cust.membership?.plan?.itemCount}`,
     })
     await this.sendPreRenderedTransactionalEmail({
       to: user.email,
@@ -139,14 +170,6 @@ export class EmailService {
       }),
     })
     await this.storeEmailReceipt("ReturnReminder", user.id)
-  }
-
-  async sendWelcomeToSeasonsEmail(user: User) {
-    await this.sendTransactionalEmail({
-      to: user.email,
-      data: this.data.welcomeToSeasons(user.firstName),
-    })
-    await this.storeEmailReceipt("WelcomeToSeasons", user.id)
   }
 
   async sendYouCanNowReserveAgainEmail(user: User) {

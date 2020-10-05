@@ -1,4 +1,4 @@
-import { Customer, User } from "@app/prisma"
+import { User } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { head } from "lodash"
 
