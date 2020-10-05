@@ -164,6 +164,7 @@ enum EmailId {
   ReturnReminder
   PriorityAccess
   SubmittedEmail
+  Waitlisted
 }
 
 enum PackageTransitEventStatus {

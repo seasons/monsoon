@@ -299,6 +299,8 @@ export class CustomerService {
         })
 
         await this.email.sendAutomaticallyAuthorizedEmail(customer.user as User)
+      } else {
+        await this.email.sendWaitlistedEmail(customer.user as User)
       }
 
       this.segment.track(customer.user.id, "Triaged", {

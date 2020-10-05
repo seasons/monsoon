@@ -63,6 +63,17 @@ export class EmailService {
     await this.storeEmailReceipt("CompleteAccount", user.id)
   }
 
+  async sendWaitlistedEmail(user: User) {
+    const payload = await RenderEmail.default.waitlisted({
+      name: `${user.firstName}`,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      to: user.email,
+      payload,
+    })
+    await this.storeEmailReceipt("Waitlisted", user.id)
+  }
+
   async sendSubscribedEmail(user: User) {
     const cust = head(
       await this.prisma.binding.query.customers(
