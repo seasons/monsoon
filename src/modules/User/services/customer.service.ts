@@ -297,6 +297,8 @@ export class CustomerService {
           method: "Automatic",
           application,
         })
+
+        await this.email.sendAutomaticallyAuthorizedEmail(customer.user as User)
       }
 
       this.segment.track(customer.user.id, "Triaged", {
@@ -305,8 +307,6 @@ export class CustomerService {
         waitlistReason: !!reason ? reason : null,
         ...triageDetail,
       })
-
-      await this.email.sendAutomaticallyAuthorizedEmail(customer.user as User)
 
       await this.prisma.client.updateCustomer({
         where,
