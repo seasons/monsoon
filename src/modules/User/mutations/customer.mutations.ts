@@ -9,6 +9,7 @@ import { User as PrismaUser } from "@prisma/index"
 import { UserInputError } from "apollo-server"
 import { pick } from "lodash"
 
+import { AdmissionsService } from "../services/admissions.service"
 import { CustomerService } from "../services/customer.service"
 
 @Resolver()
@@ -18,7 +19,8 @@ export class CustomerMutationsResolver {
     private readonly prisma: PrismaService,
     private readonly email: EmailService,
     private readonly pushNotification: PushNotificationService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly admissions: AdmissionsService
   ) {}
 
   @Mutation()
@@ -77,10 +79,18 @@ export class CustomerMutationsResolver {
       data.status &&
       data.status === "Authorized"
     ) {
+      const haveSufficientInventory = await this.admissions.haveSufficientInventoryToServiceCustomer(
+        where
+      )
+      if (!haveSufficientInventory) {
+        throw new Error("Can not authorize user. Insufficient inventory")
+      }
+
       // Normal users
       if (customer.status === "Waitlisted") {
-        await this.email.sendAuthorizedToSubscribeEmail(
-          customer.user as PrismaUser
+        await this.email.sendAuthorizedEmail(
+          customer.user as PrismaUser,
+          "manual"
         )
       }
       // Users we invited off the admin
