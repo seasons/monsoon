@@ -533,7 +533,7 @@ export class PaymentService {
     })
 
     // Send welcome to seasons email
-    await this.emailService.sendWelcomeToSeasonsEmail(prismaUser)
+    await this.emailService.sendSubscribedEmail(prismaUser)
   }
 
   async updateChargebeeBillingAddress(

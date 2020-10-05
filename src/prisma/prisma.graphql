@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Sep 30 2020 17:41:57 GMT-0400 (Eastern Daylight Time)
+# timestamp: Sun Oct 04 2020 22:32:29 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -6628,6 +6628,15 @@ type Customer implements Node {
     first: Int
     last: Int
   ): [Reservation!]
+  triageStyles(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product!]
 }
 
 """
@@ -6656,6 +6665,7 @@ input CustomerCreateInput {
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
+  triageStyles: ProductCreateManyInput
 }
 
 input CustomerCreateOneInput {
@@ -6687,6 +6697,7 @@ input CustomerCreateWithoutBagItemsInput {
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
+  triageStyles: ProductCreateManyInput
 }
 
 input CustomerCreateWithoutMembershipInput {
@@ -6698,6 +6709,7 @@ input CustomerCreateWithoutMembershipInput {
   billingInfo: BillingInfoCreateOneInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
+  triageStyles: ProductCreateManyInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -6709,6 +6721,7 @@ input CustomerCreateWithoutReservationsInput {
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
+  triageStyles: ProductCreateManyInput
 }
 
 type CustomerDetail implements Node {
@@ -8627,6 +8640,7 @@ input CustomerUpdateDataInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  triageStyles: ProductUpdateManyInput
 }
 
 input CustomerUpdateInput {
@@ -8638,6 +8652,7 @@ input CustomerUpdateInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  triageStyles: ProductUpdateManyInput
 }
 
 input CustomerUpdateManyMutationInput {
@@ -8681,6 +8696,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  triageStyles: ProductUpdateManyInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
@@ -8691,6 +8707,7 @@ input CustomerUpdateWithoutMembershipDataInput {
   billingInfo: BillingInfoUpdateOneInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  triageStyles: ProductUpdateManyInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -8701,6 +8718,7 @@ input CustomerUpdateWithoutReservationsDataInput {
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
+  triageStyles: ProductUpdateManyInput
 }
 
 input CustomerUpsertNestedInput {
@@ -8846,6 +8864,9 @@ input CustomerWhereInput {
   reservations_every: ReservationWhereInput
   reservations_some: ReservationWhereInput
   reservations_none: ReservationWhereInput
+  triageStyles_every: ProductWhereInput
+  triageStyles_some: ProductWhereInput
+  triageStyles_none: ProductWhereInput
 }
 
 input CustomerWhereUniqueInput {
@@ -8862,6 +8883,7 @@ enum EmailId {
   WelcomeToSeasons
   ReturnReminder
   PriorityAccess
+  SubmittedEmail
 }
 
 type EmailReceipt implements Node {
@@ -13448,9 +13470,9 @@ type Mutation {
   createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
-  createProduct(data: ProductCreateInput!): Product!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createReservation(data: ReservationCreateInput!): Reservation!
+  createProduct(data: ProductCreateInput!): Product!
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateCollectionGroup(
     data: CollectionGroupUpdateInput!
@@ -13620,10 +13642,6 @@ type Mutation {
     data: PaymentPlanUpdateInput!
     where: PaymentPlanWhereUniqueInput!
   ): PaymentPlan
-  updateProduct(
-    data: ProductUpdateInput!
-    where: ProductWhereUniqueInput!
-  ): Product
   updateCustomerDetail(
     data: CustomerDetailUpdateInput!
     where: CustomerDetailWhereUniqueInput!
@@ -13632,6 +13650,10 @@ type Mutation {
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
   ): Reservation
+  updateProduct(
+    data: ProductUpdateInput!
+    where: ProductWhereUniqueInput!
+  ): Product
   deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteCollectionGroup(
     where: CollectionGroupWhereUniqueInput!
@@ -13723,9 +13745,9 @@ type Mutation {
   deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
-  deleteProduct(where: ProductWhereUniqueInput!): Product
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
+  deleteProduct(where: ProductWhereUniqueInput!): Product
   upsertBrand(
     where: BrandWhereUniqueInput!
     create: BrandCreateInput!
@@ -13971,11 +13993,6 @@ type Mutation {
     create: PaymentPlanCreateInput!
     update: PaymentPlanUpdateInput!
   ): PaymentPlan!
-  upsertProduct(
-    where: ProductWhereUniqueInput!
-    create: ProductCreateInput!
-    update: ProductUpdateInput!
-  ): Product!
   upsertCustomerDetail(
     where: CustomerDetailWhereUniqueInput!
     create: CustomerDetailCreateInput!
@@ -13986,6 +14003,11 @@ type Mutation {
     create: ReservationCreateInput!
     update: ReservationUpdateInput!
   ): Reservation!
+  upsertProduct(
+    where: ProductWhereUniqueInput!
+    create: ProductCreateInput!
+    update: ProductUpdateInput!
+  ): Product!
   updateManyBrands(
     data: BrandUpdateManyMutationInput!
     where: BrandWhereInput
@@ -14174,10 +14196,6 @@ type Mutation {
     data: PaymentPlanUpdateManyMutationInput!
     where: PaymentPlanWhereInput
   ): BatchPayload!
-  updateManyProducts(
-    data: ProductUpdateManyMutationInput!
-    where: ProductWhereInput
-  ): BatchPayload!
   updateManyCustomerDetails(
     data: CustomerDetailUpdateManyMutationInput!
     where: CustomerDetailWhereInput
@@ -14185,6 +14203,10 @@ type Mutation {
   updateManyReservations(
     data: ReservationUpdateManyMutationInput!
     where: ReservationWhereInput
+  ): BatchPayload!
+  updateManyProducts(
+    data: ProductUpdateManyMutationInput!
+    where: ProductWhereInput
   ): BatchPayload!
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
   deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
@@ -14267,9 +14289,9 @@ type Mutation {
   deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
-  deleteManyProducts(where: ProductWhereInput): BatchPayload!
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
+  deleteManyProducts(where: ProductWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -27798,15 +27820,6 @@ type Query {
     first: Int
     last: Int
   ): [PaymentPlan]!
-  products(
-    where: ProductWhereInput
-    orderBy: ProductOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Product]!
   customerDetails(
     where: CustomerDetailWhereInput
     orderBy: CustomerDetailOrderByInput
@@ -27825,6 +27838,15 @@ type Query {
     first: Int
     last: Int
   ): [Reservation]!
+  products(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product]!
   brand(where: BrandWhereUniqueInput!): Brand
   collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   homepageProductRail(
@@ -27906,9 +27928,9 @@ type Query {
   smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
-  product(where: ProductWhereUniqueInput!): Product
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   reservation(where: ReservationWhereUniqueInput!): Reservation
+  product(where: ProductWhereUniqueInput!): Product
   brandsConnection(
     where: BrandWhereInput
     orderBy: BrandOrderByInput
@@ -28350,15 +28372,6 @@ type Query {
     first: Int
     last: Int
   ): PaymentPlanConnection!
-  productsConnection(
-    where: ProductWhereInput
-    orderBy: ProductOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): ProductConnection!
   customerDetailsConnection(
     where: CustomerDetailWhereInput
     orderBy: CustomerDetailOrderByInput
@@ -28377,6 +28390,15 @@ type Query {
     first: Int
     last: Int
   ): ReservationConnection!
+  productsConnection(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductConnection!
 
   """
   Fetches an object given its ID
@@ -33340,13 +33362,13 @@ type Subscription {
   paymentPlan(
     where: PaymentPlanSubscriptionWhereInput
   ): PaymentPlanSubscriptionPayload
-  product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   customerDetail(
     where: CustomerDetailSubscriptionWhereInput
   ): CustomerDetailSubscriptionPayload
   reservation(
     where: ReservationSubscriptionWhereInput
   ): ReservationSubscriptionPayload
+  product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
 }
 
 type Tag implements Node {

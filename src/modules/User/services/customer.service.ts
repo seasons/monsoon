@@ -1,5 +1,6 @@
 import { ApplicationType } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { EmailService } from "@app/modules/Email"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -32,7 +33,8 @@ export class CustomerService {
     private readonly prisma: PrismaService,
     private readonly shipping: ShippingService,
     private readonly admissions: AdmissionsService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly email: EmailService
   ) {}
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
@@ -295,6 +297,8 @@ export class CustomerService {
           method: "Automatic",
           application,
         })
+
+        await this.email.sendAutomaticallyAuthorizedEmail(customer.user as User)
       }
 
       this.segment.track(customer.user.id, "Triaged", {

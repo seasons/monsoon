@@ -2669,6 +2669,7 @@ type Customer {
   membership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
+  triageStyles(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
 }
 
 type CustomerConnection {
@@ -2687,6 +2688,7 @@ input CustomerCreateInput {
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
+  triageStyles: ProductCreateManyInput
 }
 
 input CustomerCreateOneInput {
@@ -2718,6 +2720,7 @@ input CustomerCreateWithoutBagItemsInput {
   plan: Plan
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
+  triageStyles: ProductCreateManyInput
 }
 
 input CustomerCreateWithoutMembershipInput {
@@ -2729,6 +2732,7 @@ input CustomerCreateWithoutMembershipInput {
   plan: Plan
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
+  triageStyles: ProductCreateManyInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -2740,6 +2744,7 @@ input CustomerCreateWithoutReservationsInput {
   plan: Plan
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
+  triageStyles: ProductCreateManyInput
 }
 
 type CustomerDetail {
@@ -3497,6 +3502,7 @@ input CustomerUpdateDataInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  triageStyles: ProductUpdateManyInput
 }
 
 input CustomerUpdateInput {
@@ -3508,6 +3514,7 @@ input CustomerUpdateInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  triageStyles: ProductUpdateManyInput
 }
 
 input CustomerUpdateManyMutationInput {
@@ -3551,6 +3558,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
   plan: Plan
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  triageStyles: ProductUpdateManyInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
@@ -3561,6 +3569,7 @@ input CustomerUpdateWithoutMembershipDataInput {
   plan: Plan
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  triageStyles: ProductUpdateManyInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -3571,6 +3580,7 @@ input CustomerUpdateWithoutReservationsDataInput {
   plan: Plan
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
+  triageStyles: ProductUpdateManyInput
 }
 
 input CustomerUpsertNestedInput {
@@ -3626,6 +3636,9 @@ input CustomerWhereInput {
   reservations_every: ReservationWhereInput
   reservations_some: ReservationWhereInput
   reservations_none: ReservationWhereInput
+  triageStyles_every: ProductWhereInput
+  triageStyles_some: ProductWhereInput
+  triageStyles_none: ProductWhereInput
   AND: [CustomerWhereInput!]
   OR: [CustomerWhereInput!]
   NOT: [CustomerWhereInput!]
@@ -3645,6 +3658,7 @@ enum EmailId {
   WelcomeToSeasons
   ReturnReminder
   PriorityAccess
+  SubmittedEmail
 }
 
 type EmailReceipt {
