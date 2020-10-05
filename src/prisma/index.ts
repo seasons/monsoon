@@ -3058,7 +3058,8 @@ export type EmailId =
   | "WelcomeToSeasons"
   | "ReturnReminder"
   | "PriorityAccess"
-  | "SubmittedEmail";
+  | "SubmittedEmail"
+  | "Waitlisted";
 
 export type EmailReceiptOrderByInput =
   | "id_ASC"

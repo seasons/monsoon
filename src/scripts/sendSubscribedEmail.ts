@@ -36,6 +36,10 @@ const run = async () => {
   await emails.sendSubscribedEmail(
     await ps.client.user({ id: "ckfegqw9s05eo0770j3vkisne" })
   )
+
+  await emails.sendWaitlistedEmail(
+    await ps.client.user({ id: "ckfegqw9s05eo0770j3vkisne" })
+  )
 }
 
 run()

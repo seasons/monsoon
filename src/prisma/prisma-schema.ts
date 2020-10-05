@@ -3659,6 +3659,7 @@ enum EmailId {
   ReturnReminder
   PriorityAccess
   SubmittedEmail
+  Waitlisted
 }
 
 type EmailReceipt {
