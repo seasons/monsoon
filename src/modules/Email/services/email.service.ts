@@ -44,13 +44,14 @@ export class EmailService {
     await this.storeEmailReceipt("SubmittedEmail", user.id)
   }
 
-  async sendAutomaticallyAuthorizedEmail(user: User) {
+  async sendAuthorizedEmail(user: User, version: "manual" | "automatic") {
     const fourTriageStyles = await this.emailUtils.getXReservableProductsForUser(
       4,
       user
     )
-    const payload = await RenderEmail.default.automaticallyAuthorized({
+    const payload = await RenderEmail.default.authorized({
       name: `${user.firstName}`,
+      version,
       product1: fourTriageStyles?.[0],
       product2: fourTriageStyles?.[1],
       product3: fourTriageStyles?.[2],

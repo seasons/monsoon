@@ -298,7 +298,7 @@ export class CustomerService {
           application,
         })
 
-        await this.email.sendAutomaticallyAuthorizedEmail(customer.user as User)
+        await this.email.sendAuthorizedEmail(customer.user as User, "automatic")
       } else {
         await this.email.sendWaitlistedEmail(customer.user as User)
       }

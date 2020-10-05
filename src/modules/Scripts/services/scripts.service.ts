@@ -86,25 +86,19 @@ export class ScriptsService {
    */
   async updateConnections({
     prismaEnv = "local",
-    airtableEnv = "staging",
     moduleRef,
   }: UpdateConnectionsInputs) {
     await this.overrideEnvFromRemoteConfig({
       prismaEnv,
-      airtableEnv,
     })
     moduleRef.get(PrismaService, { strict: false }).updateConnection({
       secret: process.env.PRISMA_SECRET,
       endpoint: process.env.PRISMA_ENDPOINT,
     })
-    moduleRef.get(AirtableBaseService, { strict: false }).updateConnection({
-      id: process.env.AIRTABLE_DATABASE_ID,
-    })
   }
 
   private async overrideEnvFromRemoteConfig({
     prismaEnv = "local",
-    airtableEnv = "staging",
   }: UpdateEnvironmentInputs) {
     const envFilePath = await this.downloadFromS3(
       "/tmp/__monsoon__env.json",
@@ -116,15 +110,6 @@ export class ScriptsService {
       const { endpoint, secret } = env.prisma[prismaEnv]
       process.env.PRISMA_ENDPOINT = endpoint
       process.env.PRISMA_SECRET = secret
-      if (!!airtableEnv && !["staging", "production"].includes(airtableEnv)) {
-        process.env.AIRTABLE_DATABASE_ID = airtableEnv
-      } else if (["staging", "production"].includes(airtableEnv)) {
-        process.env.AIRTABLE_DATABASE_ID = env.airtable[airtableEnv].baseID
-      } else {
-        throw new Error(
-          "Invalid airtable config options. Must pass airtableEnvironment of 'staging' or 'production' OR a valid airtable base id (e.g app702vE3MaQbzciw)"
-        )
-      }
       chargebee.configure({
         site: env.chargebee.staging.site,
         api_key: env.chargebee.staging.apiKey,
