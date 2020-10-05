@@ -79,9 +79,10 @@ export class CustomerMutationsResolver {
       data.status &&
       data.status === "Authorized"
     ) {
-      const haveSufficientInventory = await this.admissions.haveSufficientInventoryToServiceCustomer(
-        where
-      )
+      const {
+        pass: haveSufficientInventory,
+      } = await this.admissions.haveSufficientInventoryToServiceCustomer(where)
+
       if (!haveSufficientInventory) {
         throw new Error("Can not authorize user. Insufficient inventory")
       }
