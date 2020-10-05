@@ -15,9 +15,11 @@ export class EmailUtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
   productInfoForGridData = `
+  type
   name
   variants {
     internalSize {
+        productType
         display
     }
   }
@@ -59,13 +61,22 @@ export class EmailUtilsService {
     return firstXProducts.map(this.productToGridPayload)
   }
 
-  private productToGridPayload = (product: any) => ({
-    sizes: `${product.variants?.map(b => b.internalSize?.display)}`.replace(
-      /,/g,
-      " "
-    ),
-    //@ts-ignore
-    src: head(product.images)?.url,
-    name: product.name,
-  })
+  private productToGridPayload = (product: any) => {
+    const letterSizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"]
+    let sizes = product.variants?.map(b => b.internalSize?.display)
+    if (product.type === "Top") {
+      sizes = sizes.sort((size1, size2) => {
+        return letterSizes.indexOf(size1) - letterSizes.indexOf(size2)
+      })
+    }
+    if (product.type === "Bottom") {
+      sizes = sizes.sort()
+    }
+    return {
+      sizes: `${sizes}`.replace(/,/g, " "),
+      //@ts-ignore
+      src: head(product.images)?.url,
+      name: product.name,
+    }
+  }
 }
