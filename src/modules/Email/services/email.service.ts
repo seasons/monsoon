@@ -90,7 +90,7 @@ export class EmailService {
       to: user.email,
       payload,
     })
-    await this.storeEmailReceipt("CompleteAccount", user.id)
+    await this.storeEmailReceipt("WelcomeToSeasons", user.id)
   }
 
   async sendAdminConfirmationEmail(
