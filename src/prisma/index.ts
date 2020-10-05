@@ -5763,6 +5763,9 @@ export interface CustomerWhereInput {
   reservations_every?: Maybe<ReservationWhereInput>;
   reservations_some?: Maybe<ReservationWhereInput>;
   reservations_none?: Maybe<ReservationWhereInput>;
+  triageStyles_every?: Maybe<ProductWhereInput>;
+  triageStyles_some?: Maybe<ProductWhereInput>;
+  triageStyles_none?: Maybe<ProductWhereInput>;
   AND?: Maybe<CustomerWhereInput[] | CustomerWhereInput>;
   OR?: Maybe<CustomerWhereInput[] | CustomerWhereInput>;
   NOT?: Maybe<CustomerWhereInput[] | CustomerWhereInput>;
@@ -11234,6 +11237,7 @@ export interface CustomerCreateWithoutBagItemsInput {
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
+  triageStyles?: Maybe<ProductCreateManyInput>;
 }
 
 export interface CustomerDetailCreateOneInput {
@@ -11513,6 +11517,7 @@ export interface CustomerCreateWithoutReservationsInput {
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
+  triageStyles?: Maybe<ProductCreateManyInput>;
 }
 
 export interface BagItemCreateManyWithoutCustomerInput {
@@ -11643,6 +11648,7 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+  triageStyles?: Maybe<ProductUpdateManyInput>;
 }
 
 export interface CustomerDetailUpdateOneInput {
@@ -12168,6 +12174,7 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
+  triageStyles?: Maybe<ProductUpdateManyInput>;
 }
 
 export interface BagItemUpdateManyWithoutCustomerInput {
@@ -13144,6 +13151,7 @@ export interface CustomerCreateInput {
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
+  triageStyles?: Maybe<ProductCreateManyInput>;
 }
 
 export interface CustomerUpdateInput {
@@ -13155,6 +13163,7 @@ export interface CustomerUpdateInput {
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+  triageStyles?: Maybe<ProductUpdateManyInput>;
 }
 
 export interface CustomerUpdateManyMutationInput {
@@ -13232,6 +13241,7 @@ export interface CustomerCreateWithoutMembershipInput {
   plan?: Maybe<Plan>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
+  triageStyles?: Maybe<ProductCreateManyInput>;
 }
 
 export interface CustomerMembershipUpdateInput {
@@ -13256,6 +13266,7 @@ export interface CustomerUpdateWithoutMembershipDataInput {
   plan?: Maybe<Plan>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+  triageStyles?: Maybe<ProductUpdateManyInput>;
 }
 
 export interface CustomerUpsertWithoutMembershipInput {
@@ -14435,6 +14446,7 @@ export interface CustomerUpdateDataInput {
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+  triageStyles?: Maybe<ProductUpdateManyInput>;
 }
 
 export interface CustomerUpsertNestedInput {
@@ -18393,6 +18405,15 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  triageStyles: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface CustomerSubscription
@@ -18423,6 +18444,15 @@ export interface CustomerSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  triageStyles: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface CustomerNullablePromise
@@ -18447,6 +18477,15 @@ export interface CustomerNullablePromise
   reservations: <T = FragmentableArray<Reservation>>(args?: {
     where?: ReservationWhereInput;
     orderBy?: ReservationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  triageStyles: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;

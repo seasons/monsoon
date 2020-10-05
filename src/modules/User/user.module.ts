@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common"
+import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
 import { AirtableModule } from "../Airtable/airtable.module"
@@ -21,7 +21,7 @@ import { CustomerService } from "./services/customer.service"
 @Module({
   imports: [
     AirtableModule,
-    EmailModule,
+    forwardRef(() => EmailModule),
     PrismaModule,
     ShippingModule,
     PushNotificationModule,

@@ -30,7 +30,7 @@ export class EmailService {
 
   async sendSubmittedEmailEmail(user: User) {
     const fourLatestProducts = await this.emailUtils.getXLatestProducts(4)
-    const { subject, body } = await RenderEmail.default.createdAccount({
+    const payload = await RenderEmail.default.createdAccount({
       product1: fourLatestProducts?.[0],
       product2: fourLatestProducts?.[1],
       product3: fourLatestProducts?.[2],
@@ -38,9 +38,28 @@ export class EmailService {
     })
     await this.sendPreRenderedTransactionalEmail({
       to: user.email,
-      payload: { subject, body },
+      payload,
     })
     await this.storeEmailReceipt("SubmittedEmail", user.id)
+  }
+
+  async sendAutomaticallyAuthorizedEmail(user: User) {
+    const fourTriageStyles = await this.emailUtils.getXReservableProductsForUser(
+      4,
+      user
+    )
+    const payload = await RenderEmail.default.automaticallyAuthorized({
+      name: `${user.firstName}`,
+      product1: fourTriageStyles?.[0],
+      product2: fourTriageStyles?.[1],
+      product3: fourTriageStyles?.[2],
+      product4: fourTriageStyles?.[3],
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      to: user.email,
+      payload,
+    })
+    await this.storeEmailReceipt("CompleteAccount", user.id)
   }
 
   async sendAdminConfirmationEmail(
