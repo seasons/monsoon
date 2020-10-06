@@ -107,7 +107,13 @@ export class CustomerMutationsResolver {
       })
       await this.sms.sendSMSMessage({
         to: { id: customer.user.id },
-        body: "You've been authorized!",
+        body:
+          `${customer.user.firstName}, it's Seasons. You're in. You'll soon have access to hundreds of new styles without the stress ` +
+          `of commitment. To finish setting up your membership, you will need to download or sign in on the app, then select a plan. ` +
+          `https://szns.co/app. Due to demand, your invitation will expire in 48 hours. If you have any questions please contact membership@seasons.nyc.`,
+        mediaUrls: [
+          "https://seasons-images.s3.amazonaws.com/email-images/AuthorizedHero.jpg",
+        ],
       })
 
       this.segment.trackBecameAuthorized(customer.user.id, {
