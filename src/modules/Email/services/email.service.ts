@@ -5,6 +5,7 @@ import * as RenderEmail from "@seasons/wind"
 import sgMail from "@sendgrid/mail"
 import Handlebars from "handlebars"
 import { head } from "lodash"
+import moment from "moment"
 import nodemailer from "nodemailer"
 
 import {
@@ -14,7 +15,7 @@ import {
   Product,
   User,
 } from "../../../prisma"
-import { Reservation } from "../../../prisma/prisma.binding"
+import { Customer, Reservation } from "../../../prisma/prisma.binding"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { EmailDataProvider } from "./email.data.service"
@@ -103,6 +104,24 @@ export class EmailService {
       payload,
     })
     await this.storeEmailReceipt("WelcomeToSeasons", user.id)
+  }
+
+  async sendPausedEmail(customer: Customer) {
+    const latestPauseRequest = head(
+      customer.membership.pauseRequests.sort((a, b) =>
+        this.utils.dateSort(a.createdAt, b.createdAt)
+      )
+    )
+    const payload = await RenderEmail.default.paused({
+      name: `${customer.user.firstName}`,
+      resumeDate: latestPauseRequest.resumeDate,
+    })
+
+    await this.sendPreRenderedTransactionalEmail({
+      to: customer.user.email,
+      payload,
+    })
+    await this.storeEmailReceipt("Paused", customer.user.id)
   }
 
   async sendAdminConfirmationEmail(

@@ -6862,6 +6862,7 @@ enum EmailId {
   PriorityAccess
   SubmittedEmail
   Waitlisted
+  Paused
 }
 
 type EmailReceipt implements Node {
@@ -26949,7 +26950,8 @@ export type EmailId =   'ReservationReturnConfirmation' |
   'ReturnReminder' |
   'PriorityAccess' |
   'SubmittedEmail' |
-  'Waitlisted'
+  'Waitlisted' |
+  'Paused'
 
 export type EmailReceiptOrderByInput =   'id_ASC' |
   'id_DESC' |

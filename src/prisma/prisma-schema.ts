@@ -3660,6 +3660,7 @@ enum EmailId {
   PriorityAccess
   SubmittedEmail
   Waitlisted
+  Paused
 }
 
 type EmailReceipt {
