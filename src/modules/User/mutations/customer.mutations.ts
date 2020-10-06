@@ -3,6 +3,7 @@ import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { User as PrismaUser } from "@prisma/index"
@@ -20,7 +21,8 @@ export class CustomerMutationsResolver {
     private readonly email: EmailService,
     private readonly pushNotification: PushNotificationService,
     private readonly segment: SegmentService,
-    private readonly admissions: AdmissionsService
+    private readonly admissions: AdmissionsService,
+    private readonly sms: SMSService
   ) {}
 
   @Mutation()
@@ -103,6 +105,16 @@ export class CustomerMutationsResolver {
       await this.pushNotification.pushNotifyUser({
         email: customer.user.email,
         pushNotifID: "CompleteAccount",
+      })
+      await this.sms.sendSMSMessage({
+        to: { id: customer.user.id },
+        body:
+          `${customer.user.firstName}, it's Seasons. You're in. You'll soon have access to hundreds of new styles without the stress ` +
+          `of commitment. To finish setting up your membership, you will need to download or sign in on the app, then select a plan. ` +
+          `https://szns.co/app. Due to demand, your invitation will expire in 48 hours. If you have any questions please contact membership@seasons.nyc.`,
+        mediaUrls: [
+          "https://seasons-images.s3.amazonaws.com/email-images/AuthorizedHero.jpg",
+        ],
       })
 
       this.segment.trackBecameAuthorized(customer.user.id, {

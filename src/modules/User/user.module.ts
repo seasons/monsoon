@@ -5,6 +5,7 @@ import { AnalyticsModule } from "../Analytics/analytics.module"
 import { EmailModule } from "../Email/email.module"
 import { PushNotificationModule } from "../PushNotification/pushNotification.module"
 import { ShippingModule } from "../Shipping/shipping.module"
+import { SMSModule } from "../SMS/sms.module"
 import { UtilsModule } from "../Utils/utils.module"
 import { MeFieldsResolver } from "./fields/me.fields"
 import { UserFieldsResolver } from "./fields/user.fields"
@@ -26,6 +27,7 @@ import { CustomerService } from "./services/customer.service"
     ShippingModule,
     UtilsModule,
     AnalyticsModule,
+    SMSModule,
   ],
   providers: [
     AuthService,
