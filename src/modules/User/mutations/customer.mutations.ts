@@ -3,6 +3,7 @@ import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { User as PrismaUser } from "@prisma/index"
@@ -20,7 +21,8 @@ export class CustomerMutationsResolver {
     private readonly email: EmailService,
     private readonly pushNotification: PushNotificationService,
     private readonly segment: SegmentService,
-    private readonly admissions: AdmissionsService
+    private readonly admissions: AdmissionsService,
+    private readonly sms: SMSService
   ) {}
 
   @Mutation()
@@ -102,6 +104,10 @@ export class CustomerMutationsResolver {
       await this.pushNotification.pushNotifyUser({
         email: customer.user.email,
         pushNotifID: "CompleteAccount",
+      })
+      await this.sms.sendSMSMessage({
+        to: { id: customer.user.id },
+        body: "You've been authorized!",
       })
 
       this.segment.trackBecameAuthorized(customer.user.id, {
