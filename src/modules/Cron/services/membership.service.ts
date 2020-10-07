@@ -1,3 +1,4 @@
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/index"
@@ -14,7 +15,8 @@ export class MembershipScheduledJobs {
   constructor(
     private readonly prisma: PrismaService,
     private readonly payment: PaymentService,
-    private readonly pushNotification: PushNotificationService
+    private readonly pushNotification: PushNotificationService,
+    private readonly email: EmailService
   ) {}
 
   @Cron(CronExpression.EVERY_6_HOURS)
@@ -118,7 +120,7 @@ export class MembershipScheduledJobs {
         const pauseRequest = head(pauseRequests)
         const resumeDate = DateTime.fromISO(pauseRequest?.resumeDate)
 
-        await this.sendReminderPushNotification(
+        await this.sendReminderPushNotificationAndEmail(
           customer,
           pauseRequest,
           resumeDate
@@ -154,7 +156,11 @@ export class MembershipScheduledJobs {
     }
   }
 
-  async sendReminderPushNotification(customer, pauseRequest, resumeDate) {
+  async sendReminderPushNotificationAndEmail(
+    customer,
+    pauseRequest,
+    resumeDate
+  ) {
     // Send reminder two days before customer membership is set to resume
     if (!!pauseRequest && resumeDate.minus({ days: 2 }) <= DateTime.local()) {
       const user = await this.prisma.client.customer({ id: customer.id }).user()
@@ -189,6 +195,8 @@ export class MembershipScheduledJobs {
           pushNotifID: notificationID,
           vars: notificationVars,
         })
+
+        await this.email.sendResumeReminderEmail(user, pauseRequest.resumeDate)
       }
     }
   }

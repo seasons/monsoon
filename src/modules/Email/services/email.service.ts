@@ -15,7 +15,7 @@ import {
   Product,
   User,
 } from "../../../prisma"
-import { Customer, Reservation } from "../../../prisma/prisma.binding"
+import { Customer, DateTime, Reservation } from "../../../prisma/prisma.binding"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { EmailDataProvider } from "./email.data.service"
@@ -122,6 +122,18 @@ export class EmailService {
       payload,
     })
     await this.storeEmailReceipt("Paused", customer.user.id)
+  }
+
+  async sendResumeReminderEmail(user: User, resumeDate: DateTime) {
+    const payload = await RenderEmail.default.resumeReminder({
+      name: `${user.firstName}`,
+      resumeDate: resumeDate,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      to: user.email,
+      payload,
+    })
+    await this.storeEmailReceipt("ResumeReminder", user.id)
   }
 
   async sendAdminConfirmationEmail(
