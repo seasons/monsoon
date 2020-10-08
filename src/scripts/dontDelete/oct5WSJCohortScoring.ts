@@ -1,8 +1,8 @@
 import "module-alias/register"
 
 import { head } from "lodash"
-import { DateTime } from "luxon"
 import moment from "moment"
+import { Client } from "pg"
 
 import { PrismaService } from "../../prisma/prisma.service"
 
@@ -10,8 +10,23 @@ const csvwriter = require("csv-writer")
 
 const formatDate = d => moment(d).format("dd, MMM Do, h:mm a")
 
+// const config = {
+//   database: "database-name",
+//   host: "host-or-ip",
+//   // this object will be passed to the TLSSocket constructor
+//   ssl: {
+//     rejectUnauthorized: false,
+//     ca: fs.readFileSync("/path/to/server-certificates/root.crt").toString(),
+//     key: fs.readFileSync("/path/to/client-key/postgresql.key").toString(),
+//     cert: fs
+//       .readFileSync("/path/to/client-certificates/postgresql.crt")
+//       .toString(),
+//   },
+// }
+
 const run = async () => {
   const ps = new PrismaService()
+  const pg = new Client()
 
   /*    
     Get the all the users who've created an account since Oct 5
@@ -30,84 +45,95 @@ const run = async () => {
         -> What was the plain text time of their waitlisting?
   */
 
-  const statusOrder = ["Authorized", "Waitlisted", "Created"]
-  let wsjLeadCustomers = await ps.binding.query.customers(
-    {
-      where: {
-        AND: [
-          { user: { createdAt_gte: new Date(2020, 9, 5) } },
-          { user: { email_not_contains: "seasons.nyc" } },
-          { status_not: "Active" },
-        ],
+  //@ts-ignore
+  await pg.connect()
+  try {
+    const result = await pg.query(
+      `SELECT * from monsoon$production."Customers" LIMIT 1`
+    )
+    const statusOrder = ["Authorized", "Waitlisted", "Created"]
+    let wsjLeadCustomers = await ps.binding.query.customers(
+      {
+        where: {
+          AND: [
+            { user: { createdAt_gte: new Date(2020, 9, 5) } },
+            { user: { email_not_contains: "seasons.nyc" } },
+            { status_not: "Active" },
+          ],
+        },
       },
-    },
-    `{
-      status
-      user {
-        firstName 
-        lastName 
-        email
-        createdAt
-      }
-    }`
-  )
-  wsjLeadCustomers.sort(
-    (a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status)
-  )
-
-  const emailReceipts = await ps.binding.query.emailReceipts(
-    {
-      where: { user: { email_in: wsjLeadCustomers.map(a => a.user.email) } },
-    },
-    `{
-      user {
-        email
-      }
-      emailId
-      createdAt
-    }`
-  )
-
-  const records = wsjLeadCustomers.map(a => {
-    const emailReceiptsForUser = emailReceipts.filter(
-      b => b.user.email === a.user.email
+      `{
+        status
+        user {
+          firstName 
+          lastName 
+          email
+          createdAt
+        }
+      }`
+    )
+    wsjLeadCustomers.sort(
+      (a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status)
     )
 
-    const getAuthFields = receipts => {
-      const youreInReceipt = head(
-        emailReceiptsForUser.filter(c => c.emailId === "CompleteAccount")
+    const emailReceipts = await ps.binding.query.emailReceipts(
+      {
+        where: { user: { email_in: wsjLeadCustomers.map(a => a.user.email) } },
+      },
+      `{
+        user {
+          email
+        }
+        emailId
+        createdAt
+      }`
+    )
+
+    const records = wsjLeadCustomers.map(a => {
+      const emailReceiptsForUser = emailReceipts.filter(
+        b => b.user.email === a.user.email
       )
-      if (!youreInReceipt) {
-        return ""
+
+      const getAuthFields = receipts => {
+        const youreInReceipt = head(
+          emailReceiptsForUser.filter(c => c.emailId === "CompleteAccount")
+        )
+        if (!youreInReceipt) {
+          return ""
+        }
+        const createdAtMoment = moment(youreInReceipt.createdAt)
+        return {
+          authorizedAt: formatDate(youreInReceipt.createdAt),
+          authWindowClosesAt: formatDate(createdAtMoment.add(2, "days")),
+        }
       }
-      const createdAtMoment = moment(youreInReceipt.createdAt)
+
       return {
-        authorizedAt: formatDate(youreInReceipt.createdAt),
-        authWindowClosesAt: formatDate(createdAtMoment.add(2, "days")),
+        name: `${a.user.firstName} ${a.user.lastName}`,
+        email: a.user.email,
+        status: a.status,
+        createdAt: formatDate(a.user.createdAt),
+        ...getAuthFields(emailReceiptsForUser),
       }
-    }
+    })
 
-    return {
-      name: `${a.user.firstName} ${a.user.lastName}`,
-      email: a.user.email,
-      status: a.status,
-      createdAt: formatDate(a.user.createdAt),
-      ...getAuthFields(emailReceiptsForUser),
-    }
-  })
-
-  const writer = csvwriter.createObjectCsvWriter({
-    path: "oct5WSJLeadScoring.csv",
-    header: [
-      { id: "name", title: "Name" },
-      { id: "email", title: "Email" },
-      { id: "status", title: "Status" },
-      { id: "createdAt", title: "Created At" },
-      { id: "authorizedAt", title: "Authorized At" },
-      { id: "authWindowClosesAt", title: "Auth Window Close Time" },
-    ],
-  })
-  writer.writeRecords(records).then(() => console.log("...Done"))
+    const writer = csvwriter.createObjectCsvWriter({
+      path: "oct5WSJLeadScoring.csv",
+      header: [
+        { id: "name", title: "Name" },
+        { id: "email", title: "Email" },
+        { id: "status", title: "Status" },
+        { id: "createdAt", title: "Created At" },
+        { id: "authorizedAt", title: "Authorized At" },
+        { id: "authWindowClosesAt", title: "Auth Window Close Time" },
+      ],
+    })
+    writer.writeRecords(records).then(() => console.log("...Done"))
+  } catch (err) {
+    console.log(err)
+  } finally {
+    await pg.end()
+  }
 }
 
 run()

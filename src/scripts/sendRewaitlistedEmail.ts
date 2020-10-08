@@ -24,7 +24,7 @@ const run = async () => {
   )
   const admissions = new AdmissionsService(ps, utilsService)
 
-  const email = "faiyam@seasons.nyc"
+  const email = ""
   const cust = head(
     await ps.binding.query.customers(
       { where: { user: { email } } },
