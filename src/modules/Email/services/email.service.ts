@@ -18,7 +18,7 @@ import { Reservation } from "../../../prisma/prisma.binding"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { EmailDataProvider } from "./email.data.service"
-import { EmailUtilsService } from "./email.utils.service"
+import { EmailUtilsService, ProductGridItem } from "./email.utils.service"
 
 @Injectable()
 export class EmailService {
@@ -32,10 +32,7 @@ export class EmailService {
   async sendSubmittedEmailEmail(user: User) {
     const fourLatestProducts = await this.emailUtils.getXLatestProducts(4)
     const payload = await RenderEmail.default.createdAccount({
-      product1: fourLatestProducts?.[0],
-      product2: fourLatestProducts?.[1],
-      product3: fourLatestProducts?.[2],
-      product4: fourLatestProducts?.[3],
+      ...this.formatProductGridInput(fourLatestProducts),
     })
     await this.sendPreRenderedTransactionalEmail({
       to: user.email,
@@ -52,10 +49,7 @@ export class EmailService {
     const payload = await RenderEmail.default.authorized({
       name: `${user.firstName}`,
       version,
-      product1: fourTriageStyles?.[0],
-      product2: fourTriageStyles?.[1],
-      product3: fourTriageStyles?.[2],
-      product4: fourTriageStyles?.[3],
+      ...this.formatProductGridInput(fourTriageStyles),
     })
     await this.sendPreRenderedTransactionalEmail({
       to: user.email,
@@ -103,6 +97,22 @@ export class EmailService {
       payload,
     })
     await this.storeEmailReceipt("WelcomeToSeasons", user.id)
+  }
+
+  async sendRewaitlistedEmail(user: User) {
+    const fourTriageStyles = await this.emailUtils.getXReservableProductsForUser(
+      4,
+      user
+    )
+    const payload = await RenderEmail.default.rewaitlisted({
+      name: `${user.firstName}`,
+      ...this.formatProductGridInput(fourTriageStyles),
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      to: user.email,
+      payload,
+    })
+    await this.storeEmailReceipt("Rewaitlisted", user.id)
   }
 
   async sendAdminConfirmationEmail(
@@ -268,6 +278,22 @@ export class EmailService {
         from: "membership@seasons.nyc",
         ...msg,
       })
+    }
+  }
+
+  private formatProductGridInput = (
+    products: ProductGridItem[]
+  ): {
+    product1: ProductGridItem
+    product2: ProductGridItem
+    product3: ProductGridItem
+    product4: ProductGridItem
+  } => {
+    return {
+      product1: products?.[0],
+      product2: products?.[1],
+      product3: products?.[2],
+      product4: products?.[3],
     }
   }
 }
