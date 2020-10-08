@@ -103,7 +103,6 @@ export class MembershipScheduledJobs {
         status: "Paused",
       },
     })
-
     for (const customer of pausedCustomers) {
       try {
         const pauseRequests = await this.prisma.client.pauseRequests({
@@ -170,7 +169,7 @@ export class MembershipScheduledJobs {
         date: resumeDate,
       }
 
-      // Check if push notification was sent before sending
+      // Check if user has been notified already
       const pauseRequests = await this.prisma.client.pauseRequests({
         where: {
           membership: {

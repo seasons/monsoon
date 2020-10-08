@@ -1,11 +1,10 @@
 import fs from "fs"
 
 import { Injectable } from "@nestjs/common"
-import * as RenderEmail from "@seasons/wind"
+import RenderEmail from "@seasons/wind"
 import sgMail from "@sendgrid/mail"
 import Handlebars from "handlebars"
 import { head } from "lodash"
-import moment from "moment"
 import nodemailer from "nodemailer"
 
 import {
@@ -32,7 +31,7 @@ export class EmailService {
 
   async sendSubmittedEmailEmail(user: User) {
     const fourLatestProducts = await this.emailUtils.getXLatestProducts(4)
-    const payload = await RenderEmail.default.createdAccount({
+    const payload = await RenderEmail.createdAccount({
       product1: fourLatestProducts?.[0],
       product2: fourLatestProducts?.[1],
       product3: fourLatestProducts?.[2],
@@ -50,7 +49,7 @@ export class EmailService {
       4,
       user
     )
-    const payload = await RenderEmail.default.authorized({
+    const payload = await RenderEmail.authorized({
       name: `${user.firstName}`,
       version,
       product1: fourTriageStyles?.[0],
@@ -66,7 +65,7 @@ export class EmailService {
   }
 
   async sendWaitlistedEmail(user: User) {
-    const payload = await RenderEmail.default.waitlisted({
+    const payload = await RenderEmail.waitlisted({
       name: `${user.firstName}`,
     })
     await this.sendPreRenderedTransactionalEmail({
@@ -94,7 +93,7 @@ export class EmailService {
       `
       )
     ) as any
-    const payload = await RenderEmail.default.subscribed({
+    const payload = await RenderEmail.subscribed({
       name: `${user.firstName}`,
       planId: cust.membership?.plan?.planID,
       itemCount: `${cust.membership?.plan?.itemCount}`,
@@ -112,7 +111,7 @@ export class EmailService {
         this.utils.dateSort(a.createdAt, b.createdAt)
       )
     )
-    const payload = await RenderEmail.default.paused({
+    const payload = await RenderEmail.paused({
       name: `${customer.user.firstName}`,
       resumeDate: latestPauseRequest.resumeDate,
     })
@@ -125,10 +124,25 @@ export class EmailService {
   }
 
   async sendResumeReminderEmail(user: User, resumeDate: DateTime) {
-    const payload = await RenderEmail.default.resumeReminder({
+    const fourLatestProducts = await this.emailUtils.getXLatestProducts(4)
+    console.log({
       name: `${user.firstName}`,
       resumeDate: resumeDate,
+      product1: fourLatestProducts?.[0],
+      product2: fourLatestProducts?.[1],
+      product3: fourLatestProducts?.[2],
+      product4: fourLatestProducts?.[3],
     })
+    console.log("137")
+    const payload = await RenderEmail.resumeReminder({
+      name: `${user.firstName}`,
+      resumeDate: resumeDate,
+      product1: fourLatestProducts?.[0],
+      product2: fourLatestProducts?.[1],
+      product3: fourLatestProducts?.[2],
+      product4: fourLatestProducts?.[3],
+    })
+    console.log("146")
     await this.sendPreRenderedTransactionalEmail({
       to: user.email,
       payload,
