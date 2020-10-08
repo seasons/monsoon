@@ -14,7 +14,7 @@ const run = async () => {
   const sleep = async ms => {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
-  const userIdentifier = { email: "chadmjohnson@gmail.com" }
+  const userIdentifier = { email: "faiyam@faiyamrahman.com" }
   await sms.sendSMSMessage({
     to: userIdentifier,
     body: `Chad, it's Seasons. Your 48 hours expires today at 9:51pm. Login and choose a plan to secure your membership: https://szns.co/app. `,
