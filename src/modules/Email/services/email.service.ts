@@ -125,15 +125,6 @@ export class EmailService {
 
   async sendResumeReminderEmail(user: User, resumeDate: DateTime) {
     const fourLatestProducts = await this.emailUtils.getXLatestProducts(4)
-    console.log({
-      name: `${user.firstName}`,
-      resumeDate: resumeDate,
-      product1: fourLatestProducts?.[0],
-      product2: fourLatestProducts?.[1],
-      product3: fourLatestProducts?.[2],
-      product4: fourLatestProducts?.[3],
-    })
-    console.log("137")
     const payload = await RenderEmail.resumeReminder({
       name: `${user.firstName}`,
       resumeDate: resumeDate,
@@ -142,7 +133,6 @@ export class EmailService {
       product3: fourLatestProducts?.[2],
       product4: fourLatestProducts?.[3],
     })
-    console.log("146")
     await this.sendPreRenderedTransactionalEmail({
       to: user.email,
       payload,
