@@ -1,39 +1,21 @@
-import { SyncError } from "@app/errors"
 import { PushNotificationService } from "@app/modules/PushNotification"
-import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import {
-  AirtableInventoryStatus,
-  AirtableProductVariantCounts,
-} from "@modules/Airtable/airtable.types"
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ErrorService } from "@modules/Error/services/error.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { InventoryStatus, ProductVariant, Reservation } from "@prisma/index"
+import { Reservation } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { head } from "lodash"
 import moment from "moment"
-
-type prismaProductVariantCounts = Pick<
-  ProductVariant,
-  "reservable" | "nonReservable" | "reserved"
->
-type productVariantCounts =
-  | prismaProductVariantCounts
-  | AirtableProductVariantCounts
 
 @Injectable()
 export class ReservationScheduledJobs {
   private readonly logger = new Logger(ReservationScheduledJobs.name)
 
   constructor(
-    private readonly airtableService: AirtableService,
     private readonly emailService: EmailService,
     private readonly prisma: PrismaService,
     private readonly errorService: ErrorService,
-    private readonly reservationService: ReservationService,
     private readonly pushNotifs: PushNotificationService,
     private readonly utils: UtilsService
   ) {}

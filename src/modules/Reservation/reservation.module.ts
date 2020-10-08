@@ -1,4 +1,3 @@
-import { AirtableModule } from "@modules/Airtable"
 import { EmailModule } from "@modules/Email"
 import { ImageModule } from "@modules/Image"
 import { ProductModule } from "@modules/Product"
@@ -20,7 +19,6 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
 
 @Module({
   imports: [
-    AirtableModule,
     EmailModule,
     ImageModule,
     PrismaModule,

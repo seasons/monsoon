@@ -1,4 +1,3 @@
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
 import {
   BottomSizeType,
@@ -23,8 +22,7 @@ export class ProductVariantService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly productUtils: ProductUtilsService,
-    private readonly physicalProductUtilsService: PhysicalProductUtilsService,
-    private readonly airtableService: AirtableService
+    private readonly physicalProductUtilsService: PhysicalProductUtilsService
   ) {}
 
   async updateProductVariantCounts(
@@ -76,13 +74,6 @@ export class ProductVariantService {
       )
     }
 
-    // Get the corresponding product variant records from airtable
-    const allAirtableProductVariants = await this.airtableService.getAllProductVariants()
-    const allAirtableProductVariantSlugs = prismaProductVariants.map(a => a.sku)
-    const airtableProductVariants = allAirtableProductVariants.filter(a =>
-      allAirtableProductVariantSlugs.includes(a.model.sku)
-    )
-
     const productsBeingReserved = [] as Product[]
     const rollbackFuncs = []
     try {
@@ -92,7 +83,7 @@ export class ProductVariantService {
           .product()
         productsBeingReserved.push(iProduct)
 
-        // Update product variant counts in prisma and airtable
+        // Update product variant counts in prisma
         if (!dryRun) {
           const data = {
             reservable: prismaProductVariant.reservable - 1,
@@ -118,24 +109,6 @@ export class ProductVariantService {
             })
           }
           rollbackFuncs.push(rollbackPrismaProductVariantUpdate)
-
-          // Airtable record of product variant
-          const airtableProductVariant = airtableProductVariants.find(
-            a => a.model.sku === prismaProductVariant.sku
-          )
-          if (airtableProductVariant) {
-            await airtableProductVariant.patchUpdate({
-              "Reservable Count": data.reservable,
-              "Reserved Count": data.reserved,
-            })
-            const rollbackAirtableProductVariantUpdate = async () => {
-              await airtableProductVariant.patchUpdate({
-                "Reservable Count": rollbackData.reservable,
-                "Reserved Count": rollbackData.reserved,
-              })
-            }
-            rollbackFuncs.push(rollbackAirtableProductVariantUpdate)
-          }
         }
       }
     } catch (err) {

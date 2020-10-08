@@ -23,8 +23,7 @@ describe("Validate Warehouse Location", () => {
     let productVariantService = new ProductVariantService(
       prismaService,
       productUtilsService,
-      physicalProductUtilsService,
-      null
+      physicalProductUtilsService
     )
     utilsService = new UtilsService(prismaService)
     physicalProductsService = new PhysicalProductService(

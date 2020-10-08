@@ -1,7 +1,6 @@
 import { RollbackError } from "@app/errors"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { AdminActionLog } from "@app/prisma/prisma.binding"
-import { AirtableService } from "@modules/Airtable"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
   PhysicalProductUtilsService,
@@ -9,14 +8,12 @@ import {
   ProductVariantService,
 } from "@modules/Product"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { ShippoTransaction } from "@modules/Shipping/shipping.types"
 import { Injectable } from "@nestjs/common"
 import {
   Customer,
   ID_Input,
   InventoryStatus,
   PhysicalProduct,
-  PhysicalProductPromise,
   PhysicalProductStatus,
   Product,
   ProductVariant,
@@ -60,7 +57,6 @@ export class ReservationService {
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
     private readonly physicalProductUtilsService: PhysicalProductUtilsService,
-    private readonly airtableService: AirtableService,
     private readonly shippingService: ShippingService,
     private readonly emails: EmailService,
     private readonly pushNotifs: PushNotificationService,
@@ -131,7 +127,7 @@ export class ReservationService {
       )
       rollbackFuncs.push(rollbackBagItemsUpdate)
 
-      // Create reservation records in prisma and airtable
+      // Create reservation records in prisma
       const reservationData = await this.createReservationData(
         seasonsToCustomerTransaction,
         customerToSeasonsTransaction,
@@ -149,21 +145,6 @@ export class ReservationService {
         rollbackPrismaReservationCreation,
       ] = await this.createPrismaReservation(reservationData)
       rollbackFuncs.push(rollbackPrismaReservationCreation)
-      try {
-        const [
-          ,
-          rollbackAirtableReservationCreation,
-        ] = await this.airtableService.createAirtableReservation(
-          user.email,
-          reservationData,
-          (seasonsToCustomerTransaction as ShippoTransaction).formatted_error,
-          (customerToSeasonsTransaction as ShippoTransaction).formatted_error
-        )
-        rollbackFuncs.push(rollbackAirtableReservationCreation)
-      } catch (err) {
-        console.log(err)
-        Sentry.captureException(err)
-      }
 
       // Send confirmation email
       await this.emails.sendReservationConfirmationEmail(

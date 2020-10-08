@@ -1,7 +1,6 @@
 import fs from "fs"
 
 import { DripSyncService } from "@app/modules/Drip/services/dripSync.service"
-import { AirtableSyncService } from "@modules/Sync/services/sync.airtable.service"
 import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { Injectable } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
@@ -18,74 +17,11 @@ import { ScriptsService } from "../services/scripts.service"
 @Injectable()
 export class SyncCommands {
   constructor(
-    private readonly airtableSyncService: AirtableSyncService,
     private readonly prismaSyncService: PrismaSyncService,
     private readonly dripSyncService: DripSyncService,
     private readonly scriptsService: ScriptsService,
     private readonly moduleRef: ModuleRef
   ) {}
-
-  @Command({
-    command: "sync:airtable:prisma <table>",
-    describe: "sync airtable data to prisma",
-    aliases: "sap",
-  })
-  async syncAirtableToPrisma(
-    @Positional({
-      name: "table",
-      type: "string",
-      describe: "Name of the airtable base to sync",
-      choices: [
-        "all",
-        "brands",
-        "categories",
-        "products",
-        "product-variants",
-        "collections",
-        "collection-groups",
-        "homepage-product-rails",
-        "physical-products",
-        "models",
-      ],
-    })
-    table,
-    @PrismaEnvOption({
-      choices: ["local", "staging", "production"],
-      default: "staging",
-    })
-    prismaEnv,
-    @AirtableEnvOption({ choices: ["staging", "production"] })
-    airtableEnv,
-    @AirtableIdOption()
-    abid
-  ) {
-    await this.scriptsService.updateConnections({
-      prismaEnv,
-      airtableEnv: abid || airtableEnv,
-      moduleRef: this.moduleRef,
-    })
-
-    const shouldProceed = readlineSync.keyInYN(
-      `You are about sync ${
-        table === "all" ? "all the tables" : "the " + table
-      } from airtable with baseID ${
-        process.env.AIRTABLE_DATABASE_ID
-      } to prisma at url ${process.env.PRISMA_ENDPOINT}.\n` +
-        `${
-          airtableEnv === "production"
-            ? "WARNING: You should NOT run against production for dev purposes." +
-              " You should instead run against staging or a duplicate of production."
-            : ""
-        }\n` +
-        `Proceed? (y/n)`
-    )
-    if (!shouldProceed) {
-      console.log("\nExited without running anything\n")
-      return
-    }
-
-    await this.airtableSyncService.syncAirtableToPrisma(table)
-  }
 
   @Command({
     command: "sync:prisma:prisma <destination>",

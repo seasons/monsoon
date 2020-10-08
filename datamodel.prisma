@@ -163,6 +163,8 @@ enum EmailId {
   WelcomeToSeasons
   ReturnReminder
   PriorityAccess
+  SubmittedEmail
+  Waitlisted
 }
 
 enum PackageTransitEventStatus {
@@ -685,6 +687,10 @@ type Customer {
     @relation(name: "CustomerToCustomerMembership", onDelete: CASCADE)
   bagItems: [BagItem] @relation(name: "CustomerToBagItem")
   reservations: [Reservation] @relation(name: "CustomerToReservation")
+  # A link to the all the available styles the last time this customer was triaged
+  # Used for communication purposes
+  triageStyles: [Product!]!
+    @relation(name: "CustomerToTriageStyles", onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

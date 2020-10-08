@@ -1,5 +1,6 @@
 import { Customer, User } from "@app/decorators"
-import { TwilioService, TwilioUtils } from "@app/modules/Twilio"
+import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
+import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
 import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
 import {

@@ -1,4 +1,3 @@
-import { AirtableModule } from "@modules/Airtable/airtable.module"
 import { EmailModule } from "@modules/Email/email.module"
 import { ImageModule } from "@modules/Image"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
@@ -7,6 +6,7 @@ import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
+import { BrandFieldsResolver } from "./fields/brand.fields.resolver"
 import { PhysicalProductFieldsResolver } from "./fields/physicalProduct.fields.resolver"
 import { ProductFieldsResolver } from "./fields/product.fields.resolver"
 import { ProductVariantFieldsResolver } from "./fields/productVariant.fields.resolver"
@@ -29,7 +29,6 @@ import { ProductVariantService } from "./services/productVariant.service"
 
 export const ProductModuleDef = {
   imports: [
-    AirtableModule,
     EmailModule,
     ImageModule,
     PrismaModule,
@@ -55,6 +54,7 @@ export const ProductModuleDef = {
     ProductVariantFieldsResolver,
     ProductVariantMutationsResolver,
     PhysicalProductFieldsResolver,
+    BrandFieldsResolver,
     PhysicalProductMutationsResolver,
     SizeQueriesResolver,
   ],

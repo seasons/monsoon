@@ -1,3 +1,4 @@
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { CustomerDetail } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
@@ -30,7 +31,8 @@ interface Auth0User {
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly pushNotification: PushNotificationService
+    private readonly pushNotification: PushNotificationService,
+    private readonly email: EmailService
   ) {}
 
   async signupUser({
@@ -85,6 +87,8 @@ export class AuthService {
       details,
       "Created"
     )
+
+    await this.email.sendSubmittedEmailEmail(user)
 
     return { user, tokenData, customer }
   }

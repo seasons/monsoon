@@ -1,4 +1,3 @@
-import { AirtableModule } from "@modules/Airtable/airtable.module"
 import { AnalyticsModule } from "@modules/Analytics/analytics.module"
 import { EmailModule } from "@modules/Email/email.module"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
@@ -21,7 +20,6 @@ import { PaymentUtilsService } from "./services/payment.utils.service"
 @Module({
   controllers: [ChargebeeController],
   imports: [
-    AirtableModule,
     EmailModule,
     PaymentModule,
     PrismaModule,

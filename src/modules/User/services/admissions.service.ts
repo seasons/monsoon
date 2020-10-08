@@ -1,7 +1,7 @@
 import * as fs from "fs"
 
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerWhereUniqueInput } from "@app/prisma"
+import { CustomerWhereUniqueInput, Product } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, intersection, uniqBy } from "lodash"
@@ -131,16 +131,30 @@ export class AdmissionsService {
   async reservableInventoryForCustomer(
     where: CustomerWhereUniqueInput
   ): Promise<{ reservableStyles: number; detail: any }> {
-    const availableTopStyles = await this.availableStylesForCustomer(
+    const {
+      reservableStyles: availableTopStyles,
+      adjustedReservableStyles: numAvailableAdjustedTopStyles,
+    } = await this.availableStylesForCustomer(where, "Top")
+    const {
+      reservableStyles: availableBottomStyles,
+      adjustedReservableStyles: numAvailableAdjustedBottomStyles,
+    } = await this.availableStylesForCustomer(where, "Bottom")
+
+    // store a link to the available styles for a customer for communication purposes
+    await this.prisma.client.updateCustomer({
       where,
-      "Top"
-    )
-    const availableBottomStyles = await this.availableStylesForCustomer(
-      where,
-      "Bottom"
-    )
+      data: {
+        triageStyles: {
+          set: [...availableBottomStyles, ...availableTopStyles].map(a => ({
+            id: a.id,
+          })),
+        },
+      },
+    })
+
     return {
-      reservableStyles: availableTopStyles + availableBottomStyles,
+      reservableStyles:
+        numAvailableAdjustedTopStyles + numAvailableAdjustedBottomStyles,
       detail: { availableBottomStyles, availableTopStyles },
     }
   }
@@ -148,7 +162,10 @@ export class AdmissionsService {
   private async availableStylesForCustomer(
     where: CustomerWhereUniqueInput,
     productType: "Top" | "Bottom"
-  ): Promise<number> {
+  ): Promise<{
+    reservableStyles: Product[]
+    adjustedReservableStyles: number
+  }> {
     const customer = await this.prisma.binding.query.customer(
       {
         where,
@@ -184,7 +201,7 @@ export class AdmissionsService {
     }
 
     const preferredSizes = customer.detail[sizesKey]
-    const availableStyles = await this.prisma.binding.query.products({
+    const availableStyles = (await this.prisma.binding.query.products({
       where: {
         AND: [
           { type: productType },
@@ -202,7 +219,7 @@ export class AdmissionsService {
           },
         ],
       },
-    })
+    })) as Product[]
 
     // Find the competing users. Note that we assume all active customers without an active
     // reservation may be a competing user, regardless of how long it's been since their last reservation
@@ -227,7 +244,10 @@ export class AdmissionsService {
     const numTrueAvailableStyles =
       availableStyles.length - numStylesForCompetingUsers
 
-    return Math.max(0, numTrueAvailableStyles)
+    return {
+      reservableStyles: availableStyles,
+      adjustedReservableStyles: Math.max(0, numTrueAvailableStyles),
+    }
   }
 
   private async pausedCustomersResumingThisWeek() {
