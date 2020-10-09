@@ -1,8 +1,10 @@
 import fs from "fs"
 
 import { Injectable } from "@nestjs/common"
+import * as RenderEmail from "@seasons/wind"
 import sgMail from "@sendgrid/mail"
 import Handlebars from "handlebars"
+import { head } from "lodash"
 import nodemailer from "nodemailer"
 
 import {
@@ -16,14 +18,92 @@ import { Reservation } from "../../../prisma/prisma.binding"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { EmailDataProvider } from "./email.data.service"
+import { EmailUtilsService } from "./email.utils.service"
 
 @Injectable()
 export class EmailService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
-    private readonly data: EmailDataProvider
+    private readonly data: EmailDataProvider,
+    private readonly emailUtils: EmailUtilsService
   ) {}
+
+  async sendSubmittedEmailEmail(user: User) {
+    const fourLatestProducts = await this.emailUtils.getXLatestProducts(4)
+    const payload = await RenderEmail.default.createdAccount({
+      product1: fourLatestProducts?.[0],
+      product2: fourLatestProducts?.[1],
+      product3: fourLatestProducts?.[2],
+      product4: fourLatestProducts?.[3],
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      to: user.email,
+      payload,
+    })
+    await this.storeEmailReceipt("SubmittedEmail", user.id)
+  }
+
+  async sendAuthorizedEmail(user: User, version: "manual" | "automatic") {
+    const fourTriageStyles = await this.emailUtils.getXReservableProductsForUser(
+      4,
+      user
+    )
+    const payload = await RenderEmail.default.authorized({
+      name: `${user.firstName}`,
+      version,
+      product1: fourTriageStyles?.[0],
+      product2: fourTriageStyles?.[1],
+      product3: fourTriageStyles?.[2],
+      product4: fourTriageStyles?.[3],
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      to: user.email,
+      payload,
+    })
+    await this.storeEmailReceipt("CompleteAccount", user.id)
+  }
+
+  async sendWaitlistedEmail(user: User) {
+    const payload = await RenderEmail.default.waitlisted({
+      name: `${user.firstName}`,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      to: user.email,
+      payload,
+    })
+    await this.storeEmailReceipt("Waitlisted", user.id)
+  }
+
+  async sendSubscribedEmail(user: User) {
+    const cust = head(
+      await this.prisma.binding.query.customers(
+        {
+          where: { user: { id: user.id } },
+        },
+        `
+      {
+        membership {
+          plan {
+            planID
+            itemCount
+          }
+        }
+      }
+      `
+      )
+    ) as any
+    const payload = await RenderEmail.default.subscribed({
+      name: `${user.firstName}`,
+      planId: cust.membership?.plan?.planID,
+      itemCount: `${cust.membership?.plan?.itemCount}`,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      to: user.email,
+      payload,
+    })
+    await this.storeEmailReceipt("WelcomeToSeasons", user.id)
+  }
 
   async sendAdminConfirmationEmail(
     user: User,
@@ -104,14 +184,6 @@ export class EmailService {
     await this.storeEmailReceipt("ReturnReminder", user.id)
   }
 
-  async sendWelcomeToSeasonsEmail(user: User) {
-    await this.sendTransactionalEmail({
-      to: user.email,
-      data: this.data.welcomeToSeasons(user.firstName),
-    })
-    await this.storeEmailReceipt("WelcomeToSeasons", user.id)
-  }
-
   async sendYouCanNowReserveAgainEmail(user: User) {
     await this.sendTransactionalEmail({
       to: user.email,
@@ -153,6 +225,26 @@ export class EmailService {
     const buffer = fs.readFileSync(path + "/" + "master-email.html")
     const emailTemplate = buffer.toString()
     const RenderedEmailTemplate = Handlebars.compile(emailTemplate)
+
+    await this.sendEmail({
+      to,
+      subject: data.email.subject,
+      html: RenderedEmailTemplate(data),
+    })
+  }
+
+  private async sendPreRenderedTransactionalEmail({
+    to,
+    payload: { body, subject },
+  }) {
+    await this.sendEmail({
+      to,
+      subject: subject,
+      html: body,
+    })
+  }
+
+  private async sendEmail({ to, subject, html }) {
     const nodemailerTransport = nodemailer.createTransport({
       host: "smtp.mailtrap.io",
       port: 2525,
@@ -162,15 +254,14 @@ export class EmailService {
       },
     })
 
-    const rendered = RenderedEmailTemplate(data)
     const msg = {
       from: { email: "membership@seasons.nyc", name: "Seasons NYC" },
       to,
       bcc: "emails@seasons.nyc",
-      subject: data.email.subject,
-      html: rendered,
+      subject: subject,
+      html,
     }
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === "production" || to.includes("seasons.nyc")) {
       sgMail.send(msg)
     } else {
       await nodemailerTransport.sendMail({

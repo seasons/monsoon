@@ -5,6 +5,7 @@ import { AuthService } from "@modules/User"
 import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
 import { PrismaService } from "@prisma/prisma.service"
+import sgMail from "@sendgrid/mail"
 import chargebee from "chargebee"
 import faker from "faker"
 import { head } from "lodash"
@@ -16,6 +17,8 @@ import {
   PrismaEnvOption,
 } from "../scripts.decorators"
 import { ScriptsService } from "../services/scripts.service"
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 @Injectable()
 export class UserCommands {

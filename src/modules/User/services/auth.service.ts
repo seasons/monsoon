@@ -1,5 +1,5 @@
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
-import { ShippingUtilsService } from "@app/modules/Shipping/services/shipping.utils.service"
 import { CustomerDetail } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import {
@@ -8,9 +8,9 @@ import {
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
-import axios from "axios"
 import { head } from "lodash"
 import request from "request"
+import zipcodes from "zipcodes"
 
 const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"
@@ -32,7 +32,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly pushNotification: PushNotificationService,
-    private readonly shippingUtils: ShippingUtilsService
+    private readonly email: EmailService
   ) {}
 
   async signupUser({
@@ -87,6 +87,8 @@ export class AuthService {
       details,
       "Created"
     )
+
+    await this.email.sendSubmittedEmailEmail(user)
 
     return { user, tokenData, customer }
   }
@@ -329,20 +331,11 @@ export class AuthService {
 
   private async createPrismaCustomerForExistingUser(userID, details, status) {
     if (details?.shippingAddress?.create?.zipCode) {
-      try {
-        const {
-          city,
-          state,
-        } = (await this.shippingUtils.getCityAndStateFromZipCode(
-          details?.shippingAddress?.create?.zipCode
-        )) as any
-        details.shippingAddress.create.city = city
-        details.shippingAddress.create.state = state
-      } catch (error) {
-        throw new Error(
-          `Error looking up city and state from zipCode: ${error}`
-        )
-      }
+      const zipCode = details?.shippingAddress?.create?.zipCode
+      const state = zipcodes.lookup(zipCode)?.state
+      const city = zipcodes.lookup(zipCode)?.city
+      details.shippingAddress.create.city = city
+      details.shippingAddress.create.state = state
     }
 
     return await this.prisma.client.createCustomer({

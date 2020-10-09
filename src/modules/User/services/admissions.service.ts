@@ -1,12 +1,17 @@
 import * as fs from "fs"
 
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerWhereUniqueInput } from "@app/prisma"
+import { CustomerWhereUniqueInput, Product } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, intersection, uniqBy } from "lodash"
 import moment from "moment"
 import zipcodes from "zipcodes"
+
+export interface TriageFuncResult {
+  pass: boolean
+  detail: any
+}
 
 @Injectable()
 export class AdmissionsService {
@@ -29,12 +34,17 @@ export class AdmissionsService {
     ))
   }
 
-  zipcodeAllowed(zipcode: string): boolean {
+  zipcodeAllowed(zipcode: string): TriageFuncResult {
     const state = zipcodes.lookup(zipcode)?.state
-    return this.serviceableStates.includes(state)
+    const pass = this.serviceableStates.includes(state)
+    const detail = { zipcode, state, serviceableStates: this.serviceableStates }
+    return { pass, detail }
   }
 
-  async belowWeeklyNewActiveUsersOpsThreshold(): Promise<boolean> {
+  async belowWeeklyNewActiveUsersOpsThreshold(): Promise<TriageFuncResult> {
+    let pass = true
+    let detail = {}
+
     const emailsSent = await this.prisma.binding.query.emailReceipts(
       {
         where: {
@@ -76,52 +86,86 @@ export class AdmissionsService {
       .map(b => b.user.id)
       .filter(c => !usersActivatedPastWeek.includes(c))
 
-    if (
-      usersActivatedPastWeek.length >
-      parseInt(process.env.WEEKLY_NEW_USERS_THRESHOLD, 10)
-    ) {
-      return false
+    const weeklyNewUsersThreshold = parseInt(
+      process.env.WEEKLY_NEW_USERS_THRESHOLD,
+      10
+    )
+    const weeklyInvitationsThreshold = parseInt(
+      process.env.WEEKLY_INVITATIONS_THRESHOLD,
+      10
+    )
+    detail = {
+      usersActivatedPastWeek: usersActivatedPastWeek.length,
+      invitationsSentPastWeek: invitationsSentPastWeek.length,
+      weeklyNewUsersThreshold,
+      weeklyInvitationsThreshold,
     }
 
     if (
-      usersInvitedButNotActivatedPastWeek.length >
-      parseInt(process.env.WEEKLY_INVITATIONS_THRESHOLD, 10)
+      usersActivatedPastWeek.length > weeklyNewUsersThreshold ||
+      usersInvitedButNotActivatedPastWeek.length > weeklyInvitationsThreshold
     ) {
-      return false
+      pass = false
     }
 
-    return true
+    return { pass, detail }
   }
 
   async haveSufficientInventoryToServiceCustomer(
     where: CustomerWhereUniqueInput
-  ): Promise<boolean> {
+  ): Promise<TriageFuncResult> {
     const inventoryThreshold =
       parseInt(process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER, 10) || 15
-    const reservableInventoryForCustomer = await this.reservableInventoryForCustomer(
-      where
-    )
-    return reservableInventoryForCustomer > inventoryThreshold
+    const {
+      reservableStyles,
+      detail: reservableInventoryForCustomerDetail,
+    } = await this.reservableInventoryForCustomer(where)
+    const pass = reservableStyles > inventoryThreshold
+
+    return {
+      pass,
+      detail: { ...reservableInventoryForCustomerDetail, inventoryThreshold },
+    }
   }
 
   async reservableInventoryForCustomer(
     where: CustomerWhereUniqueInput
-  ): Promise<number> {
-    const availableTopStyles = await this.availableStylesForCustomer(
+  ): Promise<{ reservableStyles: number; detail: any }> {
+    const {
+      reservableStyles: availableTopStyles,
+      adjustedReservableStyles: numAvailableAdjustedTopStyles,
+    } = await this.availableStylesForCustomer(where, "Top")
+    const {
+      reservableStyles: availableBottomStyles,
+      adjustedReservableStyles: numAvailableAdjustedBottomStyles,
+    } = await this.availableStylesForCustomer(where, "Bottom")
+
+    // store a link to the available styles for a customer for communication purposes
+    await this.prisma.client.updateCustomer({
       where,
-      "Top"
-    )
-    const availableBottomStyles = await this.availableStylesForCustomer(
-      where,
-      "Bottom"
-    )
-    return availableTopStyles + availableBottomStyles
+      data: {
+        triageStyles: {
+          set: [...availableBottomStyles, ...availableTopStyles].map(a => ({
+            id: a.id,
+          })),
+        },
+      },
+    })
+
+    return {
+      reservableStyles:
+        numAvailableAdjustedTopStyles + numAvailableAdjustedBottomStyles,
+      detail: { availableBottomStyles, availableTopStyles },
+    }
   }
 
   private async availableStylesForCustomer(
     where: CustomerWhereUniqueInput,
     productType: "Top" | "Bottom"
-  ): Promise<number> {
+  ): Promise<{
+    reservableStyles: Product[]
+    adjustedReservableStyles: number
+  }> {
     const customer = await this.prisma.binding.query.customer(
       {
         where,
@@ -157,7 +201,7 @@ export class AdmissionsService {
     }
 
     const preferredSizes = customer.detail[sizesKey]
-    const availableStyles = await this.prisma.binding.query.products({
+    const availableStyles = (await this.prisma.binding.query.products({
       where: {
         AND: [
           { type: productType },
@@ -175,7 +219,7 @@ export class AdmissionsService {
           },
         ],
       },
-    })
+    })) as Product[]
 
     // Find the competing users. Note that we assume all active customers without an active
     // reservation may be a competing user, regardless of how long it's been since their last reservation
@@ -200,7 +244,10 @@ export class AdmissionsService {
     const numTrueAvailableStyles =
       availableStyles.length - numStylesForCompetingUsers
 
-    return Math.max(0, numTrueAvailableStyles)
+    return {
+      reservableStyles: availableStyles,
+      adjustedReservableStyles: Math.max(0, numTrueAvailableStyles),
+    }
   }
 
   private async pausedCustomersResumingThisWeek() {
@@ -234,7 +281,7 @@ export class AdmissionsService {
         })
       )
       return this.utils.isLessThanXDaysFromNow(
-        latestPauseRequest.resumeDate as string,
+        latestPauseRequest?.resumeDate as string,
         7
       )
     })

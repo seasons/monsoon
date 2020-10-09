@@ -6,12 +6,10 @@ import { APP_INTERCEPTOR } from "@nestjs/core"
 import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
 import { ScheduleModule } from "@nestjs/schedule"
 import sgMail from "@sendgrid/mail"
-import * as Airtable from "airtable"
 import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
 
 import {
-  AirtableModule,
   BlogModule,
   CollectionModule,
   CronModule,
@@ -36,11 +34,6 @@ import { AdminModule } from "./modules/Admin/admin.module"
 import { AnalyticsModule } from "./modules/Analytics/analytics.module"
 import { TwilioModule } from "./modules/Twilio/twilio.module"
 import { UtilsModule } from "./modules/Utils/utils.module"
-
-Airtable.configure({
-  endpointUrl: "https://api.airtable.com",
-  apiKey: process.env.AIRTABLE_KEY,
-})
 
 // make the call to chargebee
 chargebee.configure({
@@ -85,7 +78,6 @@ const scheduleModule =
     }),
     AdminModule,
     AnalyticsModule,
-    AirtableModule,
     BlogModule,
     CollectionModule,
     FitPicModule,
@@ -102,8 +94,8 @@ const scheduleModule =
     SearchModule,
     ShippingModule,
     SlackModule,
-    SMSModule,
     TwilioModule,
+    SMSModule,
     UserModule,
     UtilsModule,
   ],

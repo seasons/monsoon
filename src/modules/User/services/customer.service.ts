@@ -1,5 +1,6 @@
 import { ApplicationType } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { EmailService } from "@app/modules/Email"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -12,11 +13,18 @@ import {
 import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
+import { pick } from "lodash"
 
-import { AdmissionsService } from "./admissions.service"
+import { AdmissionsService, TriageFuncResult } from "./admissions.service"
 import { AuthService } from "./auth.service"
 
 type TriageCustomerResult = "Waitlisted" | "Authorized"
+
+type WaitlistReason =
+  | "AutomaticAdmissionsFlagOff"
+  | "Unserviceable Zipcode"
+  | "Insufficient Inventory"
+  | "Exceeds Ops Threshold"
 
 @Injectable()
 export class CustomerService {
@@ -25,7 +33,8 @@ export class CustomerService {
     private readonly prisma: PrismaService,
     private readonly shipping: ShippingService,
     private readonly admissions: AdmissionsService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly email: EmailService
   ) {}
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
@@ -190,7 +199,8 @@ export class CustomerService {
 
   async triageCustomer(
     where: CustomerWhereUniqueInput,
-    application: ApplicationType
+    application: ApplicationType,
+    dryRun: boolean
   ): Promise<TriageCustomerResult> {
     const customer = await this.prisma.binding.query.customer(
       { where },
@@ -207,27 +217,78 @@ export class CustomerService {
           id
           firstName
           lastName
+          email
         }
       }`
     )
 
-    if (!["Created", "Invited"].includes(customer.status)) {
+    if (!["Created", "Invited", "Waitlisted"].includes(customer.status)) {
       throw new ApolloError(
-        `Invalid customer status: ${customer.status}. Can only triage an "Invited" or "Created" customer`
+        `Invalid customer status: ${customer.status}. Can only triage an "Invited" or "Created" or "Waitlisted" customer`
       )
     }
-
     let status = "Waitlisted" as TriageCustomerResult
+
+    const triageFuncs = [
+      {
+        func: async () =>
+          Promise.resolve({
+            pass: process.env.AUTOMATIC_ADMISSIONS === "true",
+            detail: {
+              automaticAdmissionsFlag: process.env.AUTOMATIC_ADMISSIONS,
+            },
+          }),
+        waitlistReason: "AutomaticAdmissionsFlagOff",
+      },
+      {
+        func: async () =>
+          Promise.resolve(
+            this.admissions.zipcodeAllowed(
+              customer.detail.shippingAddress.zipCode
+            )
+          ),
+        waitlistReason: "Unserviceable Zipcode",
+      },
+      {
+        func: () => this.admissions.belowWeeklyNewActiveUsersOpsThreshold(),
+        waitlistReason: "Exceeds Ops Threshold",
+      },
+      {
+        func: () =>
+          this.admissions.haveSufficientInventoryToServiceCustomer(where),
+        waitlistReason: "Insufficient Inventory",
+      },
+    ] as {
+      func: () => Promise<TriageFuncResult>
+      waitlistReason: WaitlistReason
+    }[]
+    let triageDetail = {}
+    let reason: WaitlistReason
+    let admit = true
     try {
-      if (
-        process.env.AUTOMATIC_ADMISSIONS === "true" &&
-        this.admissions.zipcodeAllowed(
-          customer.detail.shippingAddress.zipCode
-        ) &&
-        (await this.admissions.belowWeeklyNewActiveUsersOpsThreshold()) &&
-        (await this.admissions.haveSufficientInventoryToServiceCustomer(where))
-      ) {
-        status = "Authorized"
+      for (const { func, waitlistReason } of triageFuncs) {
+        const { pass, detail } = await func()
+
+        triageDetail = { ...triageDetail, ...detail }
+
+        admit = admit && pass
+        if (!admit) {
+          reason = waitlistReason
+          break
+        }
+      }
+    } catch (err) {
+      admit = false
+      Sentry.captureException(err)
+    }
+
+    if (admit) {
+      status = "Authorized"
+    }
+
+    // If it's not a dry run, log events and update the customer
+    if (!dryRun) {
+      if (admit) {
         this.segment.trackBecameAuthorized(customer.user.id, {
           previousStatus: customer.status,
           firstName: customer.user.firstName,
@@ -236,15 +297,25 @@ export class CustomerService {
           method: "Automatic",
           application,
         })
+
+        await this.email.sendAuthorizedEmail(customer.user as User, "automatic")
+      } else {
+        await this.email.sendWaitlistedEmail(customer.user as User)
       }
-    } catch (err) {
-      Sentry.captureException(err)
+
+      this.segment.track(customer.user.id, "Triaged", {
+        ...pick(customer.user, ["firstName", "lastName", "email"]),
+        decision: status,
+        waitlistReason: !!reason ? reason : null,
+        ...triageDetail,
+      })
+
+      await this.prisma.client.updateCustomer({
+        where,
+        data: { status },
+      })
     }
 
-    await this.prisma.client.updateCustomer({
-      where,
-      data: { status },
-    })
     return status
   }
 }

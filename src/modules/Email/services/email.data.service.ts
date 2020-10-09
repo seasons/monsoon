@@ -99,9 +99,6 @@ export class EmailDataProvider {
                 `To choose your plan and start reserving, download or update the Seasons app below, login ` +
                 `and visit your profile. If you have any questions or need any help, contact us at ${process.env.MAIN_CONTACT_EMAIL}.`,
             },
-            {
-              html: `For a limited time, enjoy $30 off of your first month using code: NEW30 at checkout.`,
-            },
             { html: "Thanks,<br>The Seasons Team" },
             {
               html:
