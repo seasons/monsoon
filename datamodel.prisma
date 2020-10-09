@@ -165,6 +165,7 @@ enum EmailId {
   PriorityAccess
   SubmittedEmail
   Waitlisted
+  Rewaitlisted
 }
 
 enum PackageTransitEventStatus {

@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Oct 08 2020 00:24:38 GMT-0400 (Eastern Daylight Time)
+# timestamp: Fri Oct 09 2020 01:17:24 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -8969,6 +8969,7 @@ enum EmailId {
   PriorityAccess
   SubmittedEmail
   Waitlisted
+  Rewaitlisted
 }
 
 type EmailReceipt implements Node {

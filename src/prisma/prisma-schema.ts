@@ -3688,6 +3688,7 @@ enum EmailId {
   PriorityAccess
   SubmittedEmail
   Waitlisted
+  Rewaitlisted
 }
 
 type EmailReceipt {
