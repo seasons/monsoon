@@ -1,11 +1,16 @@
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
-import { zip } from "lodash"
+
+import { AdmissionsService } from "../services/admissions.service"
 
 @Resolver()
 export class UserQueriesResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly admissions: AdmissionsService
+  ) {}
 
   @Query()
   async user(@Args() args, @Info() info) {
@@ -30,6 +35,7 @@ export class UserQueriesResolver {
 
   @Query()
   async zipcodeServiced(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.zipcodeServiced(args, info)
+    const data = await this.admissions.zipcodeAllowed(args.zipcode)
+    return data.pass
   }
 }
