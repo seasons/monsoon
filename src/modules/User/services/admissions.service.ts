@@ -34,6 +34,27 @@ export class AdmissionsService {
     ))
   }
 
+  async hasSupportedPlatform(
+    where: CustomerWhereUniqueInput
+  ): Promise<TriageFuncResult> {
+    const customer = await this.prisma.binding.query.customer(
+      {
+        where,
+      },
+      `{
+        id
+        detail {
+          phoneOS
+        }
+      }`
+    )
+
+    return {
+      pass: customer.detail.phoneOS === "iOS",
+      detail: customer.detail,
+    }
+  }
+
   zipcodeAllowed(zipcode: string): TriageFuncResult {
     const state = zipcodes.lookup(zipcode)?.state
     const pass = this.serviceableStates.includes(state)

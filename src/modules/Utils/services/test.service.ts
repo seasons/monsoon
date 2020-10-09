@@ -136,6 +136,7 @@ export class TestUtilsService {
           create: {
             topSizes: { set: input.detail.topSizes || [] },
             waistSizes: { set: input.detail.waistSizes || [] },
+            phoneOS: input.detail.phoneOS,
           } as CustomerDetailCreateInput,
         }
       : {}

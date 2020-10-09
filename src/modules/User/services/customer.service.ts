@@ -242,6 +242,11 @@ export class CustomerService {
       },
       {
         func: async () =>
+          Promise.resolve(this.admissions.hasSupportedPlatform(where)),
+        waitlistReason: "Unsupported Platform",
+      },
+      {
+        func: async () =>
           Promise.resolve(
             this.admissions.zipcodeAllowed(
               customer.detail.shippingAddress.zipCode
