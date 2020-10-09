@@ -3057,9 +3057,12 @@ export type EmailId =
   | "FreeToReserve"
   | "WelcomeToSeasons"
   | "ReturnReminder"
+  | "ResumeReminder"
   | "PriorityAccess"
   | "SubmittedEmail"
-  | "Waitlisted";
+  | "Waitlisted"
+  | "Paused"
+  | "Rewaitlisted";
 
 export type EmailReceiptOrderByInput =
   | "id_ASC"
