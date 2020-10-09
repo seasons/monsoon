@@ -421,7 +421,7 @@ export class PaymentService {
       chargebee.hosted_page
         .checkout_new({
           subscription: {
-            plan_id: this.prismaPlanToChargebeePlanId(planId),
+            plan_id: planId,
           },
           customer: {
             id: userId,
