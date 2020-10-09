@@ -3104,9 +3104,11 @@ export type EmailId =
   | "FreeToReserve"
   | "WelcomeToSeasons"
   | "ReturnReminder"
+  | "ResumeReminder"
   | "PriorityAccess"
   | "SubmittedEmail"
   | "Waitlisted"
+  | "Paused"
   | "Rewaitlisted";
 
 export type EmailReceiptOrderByInput =

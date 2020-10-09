@@ -297,9 +297,9 @@ export class AdmissionsService {
       }
 
       const latestPauseRequest = head(
-        pauseRequests.sort((a, b) => {
-          return moment(a.createdAt).isAfter(moment(b.createdAt)) ? -1 : 1
-        })
+        pauseRequests.sort((a, b) =>
+          this.utils.dateSort(a.createdAt, b.createdAt)
+        )
       )
       return this.utils.isLessThanXDaysFromNow(
         latestPauseRequest?.resumeDate as string,

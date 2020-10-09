@@ -1,5 +1,6 @@
 import { Customer, User } from "@app/decorators"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
@@ -14,7 +15,8 @@ export class PaymentMutationsResolver {
     private readonly customerService: CustomerService,
     private readonly paymentService: PaymentService,
     private readonly shippingService: ShippingService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly email: EmailService
   ) {}
 
   @Mutation()
@@ -61,6 +63,11 @@ export class PaymentMutationsResolver {
       },
       `{
       id
+      user {
+        firstName
+        email
+        id
+      }
       membership {
         id
         plan {
@@ -68,9 +75,14 @@ export class PaymentMutationsResolver {
           tier
           planID
         }
+        pauseRequests {
+          createdAt
+          resumeDate
+        }
       }
     }`
     )) as any
+    await this.email.sendPausedEmail(customerWithData)
 
     const tier = customerWithData?.membership?.plan?.tier
     const planID = customerWithData?.membership?.plan?.planID
@@ -80,6 +92,7 @@ export class PaymentMutationsResolver {
       planID,
       tier,
     })
+
     return true
   }
 
