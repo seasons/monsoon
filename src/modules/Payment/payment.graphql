@@ -1,11 +1,12 @@
 type Query {
   chargebeeCheckout(
-    planID: PlanID!
-    userIDHash: String!
+    planID: String!
+    userIDHash: String
+    email: String
   ): ChargebeeHostedPagePayload
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
-  hostedChargebeeCheckout(planID: PlanID!): ChargebeeHostedPagePayload
+  hostedChargebeeCheckout(planID: String!): ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
   paymentPlans(
     where: PaymentPlanWhereInput

@@ -3662,6 +3662,7 @@ enum EmailId {
   SubmittedEmail
   Waitlisted
   Paused
+  Rewaitlisted
 }
 
 type EmailReceipt {

@@ -3061,7 +3061,8 @@ export type EmailId =
   | "PriorityAccess"
   | "SubmittedEmail"
   | "Waitlisted"
-  | "Paused";
+  | "Paused"
+  | "Rewaitlisted";
 
 export type EmailReceiptOrderByInput =
   | "id_ASC"
