@@ -6859,9 +6859,11 @@ enum EmailId {
   FreeToReserve
   WelcomeToSeasons
   ReturnReminder
+  ResumeReminder
   PriorityAccess
   SubmittedEmail
   Waitlisted
+  Paused
   Rewaitlisted
 }
 
@@ -26948,9 +26950,11 @@ export type EmailId =   'ReservationReturnConfirmation' |
   'FreeToReserve' |
   'WelcomeToSeasons' |
   'ReturnReminder' |
+  'ResumeReminder' |
   'PriorityAccess' |
   'SubmittedEmail' |
   'Waitlisted' |
+  'Paused' |
   'Rewaitlisted'
 
 export type EmailReceiptOrderByInput =   'id_ASC' |

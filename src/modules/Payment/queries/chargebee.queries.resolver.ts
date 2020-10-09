@@ -72,13 +72,22 @@ export class ChargebeeQueriesResolver {
 
   @Query()
   async chargebeeCheckout(
-    @Args() { planID, userIDHash },
+    @Args() { planID, email: passedEmail, userIDHash },
     @Application() application
   ) {
-    const userID = this.utils.decryptUserIDHash(userIDHash)
-    const user = await this.prisma.client.user({ id: userID })
+    let user
+
+    if (userIDHash) {
+      const userID = this.utils.decryptUserIDHash(userIDHash)
+      user = await this.prisma.client.user({ id: userID })
+    } else if (passedEmail) {
+      user = await this.prisma.client.user({ email: passedEmail })
+    } else {
+      throw new Error("Need to pass in either email or userIDHash")
+    }
+
     const { email, firstName, lastName } = user
-    const customer = await this.auth.getCustomerFromUserID(userID)
+    const customer = await this.auth.getCustomerFromUserID(user.id)
     const { phoneNumber } = await this.prisma.client
       .customer({ id: customer.id })
       .detail()

@@ -1,6 +1,7 @@
 import crypto from "crypto"
 import * as fs from "fs"
 
+import { DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import { Location } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -34,6 +35,10 @@ export class UtilsService {
 
   randomString() {
     return Math.random().toString(36).slice(2)
+  }
+
+  dateSort(dateOne: DateTime, dateTwo: DateTime) {
+    return moment(dateOne).isAfter(moment(dateTwo)) ? -1 : 1
   }
 
   isXDaysBefore({
