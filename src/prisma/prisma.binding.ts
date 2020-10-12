@@ -6865,6 +6865,7 @@ enum EmailId {
   Waitlisted
   Paused
   Rewaitlisted
+  TwentyFourHourAuthorizationFollowup
 }
 
 type EmailReceipt implements Node {
@@ -6888,7 +6889,17 @@ type EmailReceiptConnection {
 input EmailReceiptCreateInput {
   id: ID
   emailId: EmailId!
-  user: UserCreateOneInput!
+  user: UserCreateOneWithoutEmailsInput!
+}
+
+input EmailReceiptCreateManyWithoutUserInput {
+  create: [EmailReceiptCreateWithoutUserInput!]
+  connect: [EmailReceiptWhereUniqueInput!]
+}
+
+input EmailReceiptCreateWithoutUserInput {
+  id: ID
+  emailId: EmailId!
 }
 
 """An edge in a connection."""
@@ -6916,6 +6927,111 @@ type EmailReceiptPreviousValues {
   emailId: EmailId!
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input EmailReceiptScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [EmailReceiptScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [EmailReceiptScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [EmailReceiptScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  emailId: EmailId
+
+  """All values that are not equal to given value."""
+  emailId_not: EmailId
+
+  """All values that are contained in given list."""
+  emailId_in: [EmailId!]
+
+  """All values that are not contained in given list."""
+  emailId_not_in: [EmailId!]
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 type EmailReceiptSubscriptionPayload {
@@ -6957,11 +7073,47 @@ input EmailReceiptSubscriptionWhereInput {
 
 input EmailReceiptUpdateInput {
   emailId: EmailId
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutEmailsInput
+}
+
+input EmailReceiptUpdateManyDataInput {
+  emailId: EmailId
 }
 
 input EmailReceiptUpdateManyMutationInput {
   emailId: EmailId
+}
+
+input EmailReceiptUpdateManyWithoutUserInput {
+  create: [EmailReceiptCreateWithoutUserInput!]
+  connect: [EmailReceiptWhereUniqueInput!]
+  set: [EmailReceiptWhereUniqueInput!]
+  disconnect: [EmailReceiptWhereUniqueInput!]
+  delete: [EmailReceiptWhereUniqueInput!]
+  update: [EmailReceiptUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [EmailReceiptUpdateManyWithWhereNestedInput!]
+  deleteMany: [EmailReceiptScalarWhereInput!]
+  upsert: [EmailReceiptUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input EmailReceiptUpdateManyWithWhereNestedInput {
+  where: EmailReceiptScalarWhereInput!
+  data: EmailReceiptUpdateManyDataInput!
+}
+
+input EmailReceiptUpdateWithoutUserDataInput {
+  emailId: EmailId
+}
+
+input EmailReceiptUpdateWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput!
+  data: EmailReceiptUpdateWithoutUserDataInput!
+}
+
+input EmailReceiptUpsertWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput!
+  update: EmailReceiptUpdateWithoutUserDataInput!
+  create: EmailReceiptCreateWithoutUserInput!
 }
 
 input EmailReceiptWhereInput {
@@ -24126,6 +24278,7 @@ type User implements Node {
   roles: [UserRole!]!
   pushNotificationStatus: PushNotificationStatus!
   pushNotifications(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt!]
+  emails(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt!]
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
@@ -24157,6 +24310,7 @@ input UserCreateInput {
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
@@ -24172,6 +24326,11 @@ input UserCreateOneInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutEmailsInput {
+  create: UserCreateWithoutEmailsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateOneWithoutFitPicsInput {
   create: UserCreateWithoutFitPicsInput
   connect: UserWhereUniqueInput
@@ -24179,6 +24338,23 @@ input UserCreateOneWithoutFitPicsInput {
 
 input UserCreaterolesInput {
   set: [UserRole!]
+}
+
+input UserCreateWithoutEmailsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserCreaterolesInput
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  pushNotification: UserPushNotificationCreateOneInput
+  smsReceipts: SmsReceiptCreateManyInput
+  fitPics: FitPicCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutFitPicsInput {
@@ -24193,6 +24369,7 @@ input UserCreateWithoutFitPicsInput {
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
 }
@@ -24208,6 +24385,7 @@ input UserCreateWithoutPushNotificationsInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
@@ -25166,6 +25344,7 @@ input UserUpdateDataInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
@@ -25182,6 +25361,7 @@ input UserUpdateInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
@@ -25244,6 +25424,13 @@ input UserUpdateOneRequiredInput {
   upsert: UserUpsertNestedInput
 }
 
+input UserUpdateOneRequiredWithoutEmailsInput {
+  create: UserCreateWithoutEmailsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutEmailsDataInput
+  upsert: UserUpsertWithoutEmailsInput
+}
+
 input UserUpdateOneRequiredWithoutFitPicsInput {
   create: UserCreateWithoutFitPicsInput
   connect: UserWhereUniqueInput
@@ -25253,6 +25440,22 @@ input UserUpdateOneRequiredWithoutFitPicsInput {
 
 input UserUpdaterolesInput {
   set: [UserRole!]
+}
+
+input UserUpdateWithoutEmailsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserUpdaterolesInput
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  pushNotification: UserPushNotificationUpdateOneInput
+  smsReceipts: SmsReceiptUpdateManyInput
+  fitPics: FitPicUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutFitPicsDataInput {
@@ -25266,6 +25469,7 @@ input UserUpdateWithoutFitPicsDataInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
 }
@@ -25280,6 +25484,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
@@ -25293,6 +25498,11 @@ input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutEmailsInput {
+  update: UserUpdateWithoutEmailsDataInput!
+  create: UserCreateWithoutEmailsInput!
 }
 
 input UserUpsertWithoutFitPicsInput {
@@ -25614,6 +25824,9 @@ input UserWhereInput {
   pushNotifications_every: PushNotificationReceiptWhereInput
   pushNotifications_some: PushNotificationReceiptWhereInput
   pushNotifications_none: PushNotificationReceiptWhereInput
+  emails_every: EmailReceiptWhereInput
+  emails_some: EmailReceiptWhereInput
+  emails_none: EmailReceiptWhereInput
   pushNotification: UserPushNotificationWhereInput
   smsReceipts_every: SmsReceiptWhereInput
   smsReceipts_some: SmsReceiptWhereInput
@@ -26955,7 +27168,8 @@ export type EmailId =   'ReservationReturnConfirmation' |
   'SubmittedEmail' |
   'Waitlisted' |
   'Paused' |
-  'Rewaitlisted'
+  'Rewaitlisted' |
+  'TwentyFourHourAuthorizationFollowup'
 
 export type EmailReceiptOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -30252,7 +30466,57 @@ export interface CustomerWhereUniqueInput {
 export interface EmailReceiptCreateInput {
   id?: ID_Input | null
   emailId: EmailId
-  user: UserCreateOneInput
+  user: UserCreateOneWithoutEmailsInput
+}
+
+export interface EmailReceiptCreateManyWithoutUserInput {
+  create?: EmailReceiptCreateWithoutUserInput[] | EmailReceiptCreateWithoutUserInput | null
+  connect?: EmailReceiptWhereUniqueInput[] | EmailReceiptWhereUniqueInput | null
+}
+
+export interface EmailReceiptCreateWithoutUserInput {
+  id?: ID_Input | null
+  emailId: EmailId
+}
+
+export interface EmailReceiptScalarWhereInput {
+  AND?: EmailReceiptScalarWhereInput[] | EmailReceiptScalarWhereInput | null
+  OR?: EmailReceiptScalarWhereInput[] | EmailReceiptScalarWhereInput | null
+  NOT?: EmailReceiptScalarWhereInput[] | EmailReceiptScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  emailId?: EmailId | null
+  emailId_not?: EmailId | null
+  emailId_in?: EmailId[] | EmailId | null
+  emailId_not_in?: EmailId[] | EmailId | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
 }
 
 export interface EmailReceiptSubscriptionWhereInput {
@@ -30268,11 +30532,47 @@ export interface EmailReceiptSubscriptionWhereInput {
 
 export interface EmailReceiptUpdateInput {
   emailId?: EmailId | null
-  user?: UserUpdateOneRequiredInput | null
+  user?: UserUpdateOneRequiredWithoutEmailsInput | null
+}
+
+export interface EmailReceiptUpdateManyDataInput {
+  emailId?: EmailId | null
 }
 
 export interface EmailReceiptUpdateManyMutationInput {
   emailId?: EmailId | null
+}
+
+export interface EmailReceiptUpdateManyWithoutUserInput {
+  create?: EmailReceiptCreateWithoutUserInput[] | EmailReceiptCreateWithoutUserInput | null
+  connect?: EmailReceiptWhereUniqueInput[] | EmailReceiptWhereUniqueInput | null
+  set?: EmailReceiptWhereUniqueInput[] | EmailReceiptWhereUniqueInput | null
+  disconnect?: EmailReceiptWhereUniqueInput[] | EmailReceiptWhereUniqueInput | null
+  delete?: EmailReceiptWhereUniqueInput[] | EmailReceiptWhereUniqueInput | null
+  update?: EmailReceiptUpdateWithWhereUniqueWithoutUserInput[] | EmailReceiptUpdateWithWhereUniqueWithoutUserInput | null
+  updateMany?: EmailReceiptUpdateManyWithWhereNestedInput[] | EmailReceiptUpdateManyWithWhereNestedInput | null
+  deleteMany?: EmailReceiptScalarWhereInput[] | EmailReceiptScalarWhereInput | null
+  upsert?: EmailReceiptUpsertWithWhereUniqueWithoutUserInput[] | EmailReceiptUpsertWithWhereUniqueWithoutUserInput | null
+}
+
+export interface EmailReceiptUpdateManyWithWhereNestedInput {
+  where: EmailReceiptScalarWhereInput
+  data: EmailReceiptUpdateManyDataInput
+}
+
+export interface EmailReceiptUpdateWithoutUserDataInput {
+  emailId?: EmailId | null
+}
+
+export interface EmailReceiptUpdateWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput
+  data: EmailReceiptUpdateWithoutUserDataInput
+}
+
+export interface EmailReceiptUpsertWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput
+  update: EmailReceiptUpdateWithoutUserDataInput
+  create: EmailReceiptCreateWithoutUserInput
 }
 
 export interface EmailReceiptWhereInput {
@@ -37993,6 +38293,7 @@ export interface UserCreateInput {
   verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
   pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
+  emails?: EmailReceiptCreateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
   fitPics?: FitPicCreateManyWithoutUserInput | null
@@ -38008,6 +38309,11 @@ export interface UserCreateOneInput {
   connect?: UserWhereUniqueInput | null
 }
 
+export interface UserCreateOneWithoutEmailsInput {
+  create?: UserCreateWithoutEmailsInput | null
+  connect?: UserWhereUniqueInput | null
+}
+
 export interface UserCreateOneWithoutFitPicsInput {
   create?: UserCreateWithoutFitPicsInput | null
   connect?: UserWhereUniqueInput | null
@@ -38015,6 +38321,23 @@ export interface UserCreateOneWithoutFitPicsInput {
 
 export interface UserCreaterolesInput {
   set?: UserRole[] | UserRole | null
+}
+
+export interface UserCreateWithoutEmailsInput {
+  id?: ID_Input | null
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role?: UserRole | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
+  roles?: UserCreaterolesInput | null
+  pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
+  pushNotification?: UserPushNotificationCreateOneInput | null
+  smsReceipts?: SmsReceiptCreateManyInput | null
+  fitPics?: FitPicCreateManyWithoutUserInput | null
 }
 
 export interface UserCreateWithoutFitPicsInput {
@@ -38029,6 +38352,7 @@ export interface UserCreateWithoutFitPicsInput {
   verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
   pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
+  emails?: EmailReceiptCreateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
 }
@@ -38044,6 +38368,7 @@ export interface UserCreateWithoutPushNotificationsInput {
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
+  emails?: EmailReceiptCreateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
   fitPics?: FitPicCreateManyWithoutUserInput | null
@@ -38427,6 +38752,7 @@ export interface UserUpdateDataInput {
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
+  emails?: EmailReceiptUpdateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
   fitPics?: FitPicUpdateManyWithoutUserInput | null
@@ -38443,6 +38769,7 @@ export interface UserUpdateInput {
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
+  emails?: EmailReceiptUpdateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
   fitPics?: FitPicUpdateManyWithoutUserInput | null
@@ -38505,6 +38832,13 @@ export interface UserUpdateOneRequiredInput {
   upsert?: UserUpsertNestedInput | null
 }
 
+export interface UserUpdateOneRequiredWithoutEmailsInput {
+  create?: UserCreateWithoutEmailsInput | null
+  connect?: UserWhereUniqueInput | null
+  update?: UserUpdateWithoutEmailsDataInput | null
+  upsert?: UserUpsertWithoutEmailsInput | null
+}
+
 export interface UserUpdateOneRequiredWithoutFitPicsInput {
   create?: UserCreateWithoutFitPicsInput | null
   connect?: UserWhereUniqueInput | null
@@ -38514,6 +38848,22 @@ export interface UserUpdateOneRequiredWithoutFitPicsInput {
 
 export interface UserUpdaterolesInput {
   set?: UserRole[] | UserRole | null
+}
+
+export interface UserUpdateWithoutEmailsDataInput {
+  auth0Id?: String | null
+  email?: String | null
+  firstName?: String | null
+  lastName?: String | null
+  role?: UserRole | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
+  roles?: UserUpdaterolesInput | null
+  pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
+  pushNotification?: UserPushNotificationUpdateOneInput | null
+  smsReceipts?: SmsReceiptUpdateManyInput | null
+  fitPics?: FitPicUpdateManyWithoutUserInput | null
 }
 
 export interface UserUpdateWithoutFitPicsDataInput {
@@ -38527,6 +38877,7 @@ export interface UserUpdateWithoutFitPicsDataInput {
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
+  emails?: EmailReceiptUpdateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
 }
@@ -38541,6 +38892,7 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
+  emails?: EmailReceiptUpdateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
   fitPics?: FitPicUpdateManyWithoutUserInput | null
@@ -38554,6 +38906,11 @@ export interface UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
 export interface UserUpsertNestedInput {
   update: UserUpdateDataInput
   create: UserCreateInput
+}
+
+export interface UserUpsertWithoutEmailsInput {
+  update: UserUpdateWithoutEmailsDataInput
+  create: UserCreateWithoutEmailsInput
 }
 
 export interface UserUpsertWithoutFitPicsInput {
@@ -38676,6 +39033,9 @@ export interface UserWhereInput {
   pushNotifications_every?: PushNotificationReceiptWhereInput | null
   pushNotifications_some?: PushNotificationReceiptWhereInput | null
   pushNotifications_none?: PushNotificationReceiptWhereInput | null
+  emails_every?: EmailReceiptWhereInput | null
+  emails_some?: EmailReceiptWhereInput | null
+  emails_none?: EmailReceiptWhereInput | null
   pushNotification?: UserPushNotificationWhereInput | null
   smsReceipts_every?: SmsReceiptWhereInput | null
   smsReceipts_some?: SmsReceiptWhereInput | null
@@ -41635,6 +41995,7 @@ export interface User extends Node {
   roles: Array<UserRole>
   pushNotificationStatus: PushNotificationStatus
   pushNotifications?: Array<PushNotificationReceipt> | null
+  emails?: Array<EmailReceipt> | null
   pushNotification?: UserPushNotification | null
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod

@@ -168,6 +168,7 @@ enum EmailId {
   Waitlisted
   Paused
   Rewaitlisted
+  TwentyFourHourAuthorizationFollowup
 }
 
 enum PackageTransitEventStatus {
@@ -476,7 +477,7 @@ enum PaymentPlanTier {
 type EmailReceipt {
   id: ID! @id
   emailId: EmailId!
-  user: User!
+  user: User! @relation(name: "UserToEmailReceipts")
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -617,6 +618,7 @@ type User {
   pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
   pushNotifications: [PushNotificationReceipt!]
     @relation(name: "UserToPushNotificationReceipts", onDelete: CASCADE)
+  emails: [EmailReceipt!] @relation(name: "UserToEmailReceipts")
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus! @default(value: Pending)
   verificationMethod: UserVerificationMethod! @default(value: None)

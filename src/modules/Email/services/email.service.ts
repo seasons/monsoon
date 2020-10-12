@@ -18,7 +18,9 @@ import { Customer, DateTime, Reservation } from "../../../prisma/prisma.binding"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { EmailDataProvider } from "./email.data.service"
-import { EmailUtilsService } from "./email.utils.service"
+import { EmailUtilsService, ProductGridItem } from "./email.utils.service"
+
+type EmailUser = Pick<User, "email" | "firstName" | "id">
 
 @Injectable()
 export class EmailService {
@@ -29,13 +31,10 @@ export class EmailService {
     private readonly emailUtils: EmailUtilsService
   ) {}
 
-  async sendSubmittedEmailEmail(user: User) {
+  async sendSubmittedEmailEmail(user: EmailUser) {
     const fourLatestProducts = await this.emailUtils.getXLatestProducts(4)
     const payload = await RenderEmail.createdAccount({
-      product1: fourLatestProducts?.[0],
-      product2: fourLatestProducts?.[1],
-      product3: fourLatestProducts?.[2],
-      product4: fourLatestProducts?.[3],
+      ...this.formatProductGridInput(fourLatestProducts),
     })
     await this.sendPreRenderedTransactionalEmail({
       to: user.email,
@@ -44,18 +43,15 @@ export class EmailService {
     await this.storeEmailReceipt("SubmittedEmail", user.id)
   }
 
-  async sendAuthorizedEmail(user: User, version: "manual" | "automatic") {
+  async sendAuthorizedEmail(user: EmailUser, version: "manual" | "automatic") {
     const fourTriageStyles = await this.emailUtils.getXReservableProductsForUser(
       4,
-      user
+      user as User
     )
     const payload = await RenderEmail.authorized({
       name: `${user.firstName}`,
       version,
-      product1: fourTriageStyles?.[0],
-      product2: fourTriageStyles?.[1],
-      product3: fourTriageStyles?.[2],
-      product4: fourTriageStyles?.[3],
+      ...this.formatProductGridInput(fourTriageStyles),
     })
     await this.sendPreRenderedTransactionalEmail({
       to: user.email,
@@ -64,7 +60,7 @@ export class EmailService {
     await this.storeEmailReceipt("CompleteAccount", user.id)
   }
 
-  async sendWaitlistedEmail(user: User) {
+  async sendWaitlistedEmail(user: EmailUser) {
     const payload = await RenderEmail.waitlisted({
       name: `${user.firstName}`,
     })
@@ -75,7 +71,7 @@ export class EmailService {
     await this.storeEmailReceipt("Waitlisted", user.id)
   }
 
-  async sendSubscribedEmail(user: User) {
+  async sendSubscribedEmail(user: EmailUser) {
     const cust = head(
       await this.prisma.binding.query.customers(
         {
@@ -105,6 +101,22 @@ export class EmailService {
     await this.storeEmailReceipt("WelcomeToSeasons", user.id)
   }
 
+  async sendRewaitlistedEmail(user: EmailUser) {
+    const fourTriageStyles = await this.emailUtils.getXReservableProductsForUser(
+      4,
+      user as User
+    )
+    const payload = await RenderEmail.rewaitlisted({
+      name: `${user.firstName}`,
+      ...this.formatProductGridInput(fourTriageStyles),
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      to: user.email,
+      payload,
+    })
+    await this.storeEmailReceipt("Rewaitlisted", user.id)
+  }
+
   async sendPausedEmail(customer: Customer) {
     const latestPauseRequest = head(
       customer.membership.pauseRequests.sort((a, b) =>
@@ -123,15 +135,12 @@ export class EmailService {
     await this.storeEmailReceipt("Paused", customer.user.id)
   }
 
-  async sendResumeReminderEmail(user: User, resumeDate: DateTime) {
+  async sendResumeReminderEmail(user: EmailUser, resumeDate: DateTime) {
     const fourLatestProducts = await this.emailUtils.getXLatestProducts(4)
     const payload = await RenderEmail.resumeReminder({
       name: `${user.firstName}`,
       resumeDate: resumeDate,
-      product1: fourLatestProducts?.[0],
-      product2: fourLatestProducts?.[1],
-      product3: fourLatestProducts?.[2],
-      product4: fourLatestProducts?.[3],
+      ...this.formatProductGridInput(fourLatestProducts),
     })
     await this.sendPreRenderedTransactionalEmail({
       to: user.email,
@@ -141,7 +150,7 @@ export class EmailService {
   }
 
   async sendAdminConfirmationEmail(
-    user: User,
+    user: EmailUser,
     products: any[],
     reservation: Reservation
   ) {
@@ -156,15 +165,7 @@ export class EmailService {
     await this.storeEmailReceipt("ReservationReturnConfirmation", user.id)
   }
 
-  async sendAuthorizedToSubscribeEmail(user: User) {
-    await this.sendTransactionalEmail({
-      to: user.email,
-      data: this.data.completeAccount(user.firstName),
-    })
-    await this.storeEmailReceipt("CompleteAccount", user.id)
-  }
-
-  async sendPriorityAccessEmail(user: User) {
+  async sendPriorityAccessEmail(user: EmailUser) {
     await this.sendTransactionalEmail({
       to: user.email,
       data: this.data.priorityAccess({ name: user.firstName }),
@@ -173,7 +174,7 @@ export class EmailService {
   }
 
   async sendReservationConfirmationEmail(
-    user: User,
+    user: EmailUser,
     products: Product[],
     reservation: PrismaReservation,
     trackingNumber?: string,
@@ -206,7 +207,10 @@ export class EmailService {
     await this.storeEmailReceipt("ReservationConfirmation", user.id)
   }
 
-  async sendReturnReminderEmail(user: User, reservation: PrismaReservation) {
+  async sendReturnReminderEmail(
+    user: EmailUser,
+    reservation: PrismaReservation
+  ) {
     await this.sendTransactionalEmail({
       to: user.email,
       data: this.data.returnReminder({
@@ -219,7 +223,7 @@ export class EmailService {
     await this.storeEmailReceipt("ReturnReminder", user.id)
   }
 
-  async sendYouCanNowReserveAgainEmail(user: User) {
+  async sendYouCanNowReserveAgainEmail(user: EmailUser) {
     await this.sendTransactionalEmail({
       to: user.email,
       data: this.data.freeToReserve(),
@@ -303,6 +307,22 @@ export class EmailService {
         from: "membership@seasons.nyc",
         ...msg,
       })
+    }
+  }
+
+  private formatProductGridInput = (
+    products: ProductGridItem[]
+  ): {
+    product1: ProductGridItem
+    product2: ProductGridItem
+    product3: ProductGridItem
+    product4: ProductGridItem
+  } => {
+    return {
+      product1: products?.[0],
+      product2: products?.[1],
+      product3: products?.[2],
+      product4: products?.[3],
     }
   }
 }

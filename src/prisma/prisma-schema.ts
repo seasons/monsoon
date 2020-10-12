@@ -3663,6 +3663,7 @@ enum EmailId {
   Waitlisted
   Paused
   Rewaitlisted
+  TwentyFourHourAuthorizationFollowup
 }
 
 type EmailReceipt {
@@ -3682,7 +3683,17 @@ type EmailReceiptConnection {
 input EmailReceiptCreateInput {
   id: ID
   emailId: EmailId!
-  user: UserCreateOneInput!
+  user: UserCreateOneWithoutEmailsInput!
+}
+
+input EmailReceiptCreateManyWithoutUserInput {
+  create: [EmailReceiptCreateWithoutUserInput!]
+  connect: [EmailReceiptWhereUniqueInput!]
+}
+
+input EmailReceiptCreateWithoutUserInput {
+  id: ID
+  emailId: EmailId!
 }
 
 type EmailReceiptEdge {
@@ -3708,6 +3719,46 @@ type EmailReceiptPreviousValues {
   updatedAt: DateTime!
 }
 
+input EmailReceiptScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  emailId: EmailId
+  emailId_not: EmailId
+  emailId_in: [EmailId!]
+  emailId_not_in: [EmailId!]
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [EmailReceiptScalarWhereInput!]
+  OR: [EmailReceiptScalarWhereInput!]
+  NOT: [EmailReceiptScalarWhereInput!]
+}
+
 type EmailReceiptSubscriptionPayload {
   mutation: MutationType!
   node: EmailReceipt
@@ -3728,11 +3779,47 @@ input EmailReceiptSubscriptionWhereInput {
 
 input EmailReceiptUpdateInput {
   emailId: EmailId
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutEmailsInput
+}
+
+input EmailReceiptUpdateManyDataInput {
+  emailId: EmailId
 }
 
 input EmailReceiptUpdateManyMutationInput {
   emailId: EmailId
+}
+
+input EmailReceiptUpdateManyWithoutUserInput {
+  create: [EmailReceiptCreateWithoutUserInput!]
+  delete: [EmailReceiptWhereUniqueInput!]
+  connect: [EmailReceiptWhereUniqueInput!]
+  set: [EmailReceiptWhereUniqueInput!]
+  disconnect: [EmailReceiptWhereUniqueInput!]
+  update: [EmailReceiptUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [EmailReceiptUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [EmailReceiptScalarWhereInput!]
+  updateMany: [EmailReceiptUpdateManyWithWhereNestedInput!]
+}
+
+input EmailReceiptUpdateManyWithWhereNestedInput {
+  where: EmailReceiptScalarWhereInput!
+  data: EmailReceiptUpdateManyDataInput!
+}
+
+input EmailReceiptUpdateWithoutUserDataInput {
+  emailId: EmailId
+}
+
+input EmailReceiptUpdateWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput!
+  data: EmailReceiptUpdateWithoutUserDataInput!
+}
+
+input EmailReceiptUpsertWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput!
+  update: EmailReceiptUpdateWithoutUserDataInput!
+  create: EmailReceiptCreateWithoutUserInput!
 }
 
 input EmailReceiptWhereInput {
@@ -13983,6 +14070,7 @@ type User {
   roles: [UserRole!]!
   pushNotificationStatus: PushNotificationStatus!
   pushNotifications(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt!]
+  emails(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt!]
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
@@ -14008,6 +14096,7 @@ input UserCreateInput {
   roles: UserCreaterolesInput
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -14025,6 +14114,11 @@ input UserCreateOneInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutEmailsInput {
+  create: UserCreateWithoutEmailsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateOneWithoutFitPicsInput {
   create: UserCreateWithoutFitPicsInput
   connect: UserWhereUniqueInput
@@ -14032,6 +14126,23 @@ input UserCreateOneWithoutFitPicsInput {
 
 input UserCreaterolesInput {
   set: [UserRole!]
+}
+
+input UserCreateWithoutEmailsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  roles: UserCreaterolesInput
+  pushNotificationStatus: PushNotificationStatus
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  pushNotification: UserPushNotificationCreateOneInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptCreateManyInput
+  fitPics: FitPicCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutFitPicsInput {
@@ -14044,6 +14155,7 @@ input UserCreateWithoutFitPicsInput {
   roles: UserCreaterolesInput
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -14059,6 +14171,7 @@ input UserCreateWithoutPushNotificationsInput {
   role: UserRole
   roles: UserCreaterolesInput
   pushNotificationStatus: PushNotificationStatus
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -14590,6 +14703,7 @@ input UserUpdateDataInput {
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -14606,6 +14720,7 @@ input UserUpdateInput {
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -14670,6 +14785,13 @@ input UserUpdateOneRequiredInput {
   connect: UserWhereUniqueInput
 }
 
+input UserUpdateOneRequiredWithoutEmailsInput {
+  create: UserCreateWithoutEmailsInput
+  update: UserUpdateWithoutEmailsDataInput
+  upsert: UserUpsertWithoutEmailsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserUpdateOneRequiredWithoutFitPicsInput {
   create: UserCreateWithoutFitPicsInput
   update: UserUpdateWithoutFitPicsDataInput
@@ -14681,6 +14803,22 @@ input UserUpdaterolesInput {
   set: [UserRole!]
 }
 
+input UserUpdateWithoutEmailsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  roles: UserUpdaterolesInput
+  pushNotificationStatus: PushNotificationStatus
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  pushNotification: UserPushNotificationUpdateOneInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptUpdateManyInput
+  fitPics: FitPicUpdateManyWithoutUserInput
+}
+
 input UserUpdateWithoutFitPicsDataInput {
   auth0Id: String
   email: String
@@ -14690,6 +14828,7 @@ input UserUpdateWithoutFitPicsDataInput {
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -14704,6 +14843,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   role: UserRole
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -14719,6 +14859,11 @@ input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutEmailsInput {
+  update: UserUpdateWithoutEmailsDataInput!
+  create: UserCreateWithoutEmailsInput!
 }
 
 input UserUpsertWithoutFitPicsInput {
@@ -14826,6 +14971,9 @@ input UserWhereInput {
   pushNotifications_every: PushNotificationReceiptWhereInput
   pushNotifications_some: PushNotificationReceiptWhereInput
   pushNotifications_none: PushNotificationReceiptWhereInput
+  emails_every: EmailReceiptWhereInput
+  emails_some: EmailReceiptWhereInput
+  emails_none: EmailReceiptWhereInput
   pushNotification: UserPushNotificationWhereInput
   verificationStatus: UserVerificationStatus
   verificationStatus_not: UserVerificationStatus

@@ -4,7 +4,7 @@ import { head } from "lodash"
 
 import { PrismaService } from "../../../prisma/prisma.service"
 
-interface ProductGridItem {
+export interface ProductGridItem {
   sizes: string
   name: string
   src: string
@@ -58,6 +58,11 @@ export class EmailUtilsService {
       )
     ) as any
     const firstXProducts = customer.triageStyles?.slice(0, numProducts)
+    if (firstXProducts?.length !== numProducts) {
+      throw new Error(
+        `Could not retrieve ${numProducts} reservable products for user`
+      )
+    }
     return firstXProducts.map(this.productToGridPayload)
   }
 
