@@ -210,4 +210,9 @@ export class PaymentMutationsResolver {
   async refundInvoice(@Args() { input: args }) {
     return await this.paymentService.refundInvoice(args)
   }
+
+  @Mutation()
+  async checkCoupon(@Args() { couponID }) {
+    return await this.paymentService.checkCoupon(couponID)
+  }
 }

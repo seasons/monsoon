@@ -1,7 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { CustomerService } from "@app/modules/User"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerStatus, PaymentPlanTier, Plan, User } from "@app/prisma"
+import { PaymentPlanTier, User } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
@@ -691,6 +691,10 @@ export class PaymentService {
         await transactionsForCustomerloader.load(customerId)
       )
       ?.map(this.formatTransaction)
+  }
+
+  async checkCoupon({ couponId }): Promise<boolean> {
+    return true
   }
 
   async refundInvoice({
