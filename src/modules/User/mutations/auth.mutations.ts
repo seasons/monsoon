@@ -39,7 +39,10 @@ export class AuthMutationsResolver {
     // Add them to segment and track their account creation event
     const now = new Date()
     this.segment.identify(user.id, {
-      ...this.auth.extractSegmentReservedTraitsFromCustomerDetail(details),
+      ...this.auth.extractSegmentReservedTraitsFromCustomerDetail({
+        ...details,
+        ...customer.detail,
+      }),
       ...pick(user, [
         "firstName",
         "lastName",
