@@ -196,12 +196,14 @@ export class AuthService {
     if (!!detail?.phoneNumber) {
       traits.phone = detail.phoneNumber
     }
+    const state = detail?.shippingAddress?.state
     if (!!detail.shippingAddress) {
       traits.address = {
         city: detail.shippingAddress?.city,
         postalCode: detail.shippingAddress?.zipCode,
-        state: detail.shippingAddress?.state,
+        state,
       }
+      traits.state = state
     }
     return traits
   }
