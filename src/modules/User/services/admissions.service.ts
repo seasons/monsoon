@@ -1,5 +1,6 @@
 import * as fs from "fs"
 
+import { ApplicationType } from "@app/decorators/application.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerWhereUniqueInput, Product } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
@@ -35,7 +36,8 @@ export class AdmissionsService {
   }
 
   async hasSupportedPlatform(
-    where: CustomerWhereUniqueInput
+    where: CustomerWhereUniqueInput,
+    application: ApplicationType
   ): Promise<TriageFuncResult> {
     const customer = await this.prisma.binding.query.customer(
       {
@@ -49,8 +51,11 @@ export class AdmissionsService {
       }`
     )
 
+    const phoneOS =
+      application === "harvest" ? "iOS" : customer?.detail?.phoneOS
+
     return {
-      pass: customer.detail.phoneOS === "iOS",
+      pass: phoneOS === "iOS",
       detail: customer.detail,
     }
   }
