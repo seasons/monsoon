@@ -459,9 +459,12 @@ describe("Admissions Service", () => {
         },
       })
 
-      const { pass } = await admissions.hasSupportedPlatform({
-        id: customer.id,
-      })
+      const { pass } = await admissions.hasSupportedPlatform(
+        {
+          id: customer.id,
+        },
+        "flare"
+      )
       expect(pass).toBe(false)
     })
 
@@ -470,9 +473,12 @@ describe("Admissions Service", () => {
         detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
       })
 
-      const { pass } = await admissions.hasSupportedPlatform({
-        id: customer.id,
-      })
+      const { pass } = await admissions.hasSupportedPlatform(
+        {
+          id: customer.id,
+        },
+        "flare"
+      )
       expect(pass).toBe(false)
     })
   })
