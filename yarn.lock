@@ -7084,6 +7084,13 @@ drip-nodejs@^3.1.1:
     request "^2.88.0"
     request-promise "^4.2.5"
 
+drip@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/drip/-/drip-1.4.0.tgz#24386166ad90aec67d69861a18089e113edf2602"
+  integrity sha1-JDhhZq2QrsZ9aYYaGAieET7fJgI=
+  dependencies:
+    tea-concat "0.1.0"
+
 duplexer3@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/duplexer3/-/duplexer3-0.1.4.tgz#ee01dd1cac0ed3cbc7fdbea37dc0a8f1ce002ce2"
@@ -16516,6 +16523,11 @@ tar@^6.0.0, tar@^6.0.2:
     minizlib "^2.1.0"
     mkdirp "^1.0.3"
     yallist "^4.0.0"
+
+tea-concat@0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/tea-concat/-/tea-concat-0.1.0.tgz#ea2e907400fdd78a6334ce020fa3c69502d99e84"
+  integrity sha1-6i6QdAD914pjNM4CD6PGlQLZnoQ=
 
 term-size@^1.2.0:
   version "1.2.0"

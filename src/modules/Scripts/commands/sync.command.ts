@@ -2,7 +2,7 @@ import fs from "fs"
 
 import { DripSyncService } from "@app/modules/Drip/services/dripSync.service"
 import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
 import { Command, Option, Positional } from "nestjs-command"
 import readlineSync from "readline-sync"
@@ -12,6 +12,8 @@ import { ScriptsService } from "../services/scripts.service"
 
 @Injectable()
 export class SyncCommands {
+  private readonly logger = new Logger(SyncCommands.name)
+
   constructor(
     private readonly prismaSyncService: PrismaSyncService,
     private readonly dripSyncService: DripSyncService,
@@ -87,7 +89,7 @@ export class SyncCommands {
     @Option({
       name: "drip",
       describe: `Drip environment command runs against.`,
-      choices: ["staging", "production"],
+      choices: ["local", "staging", "production"],
       type: "string",
       default: "staging",
       alias: "de",
@@ -112,7 +114,7 @@ export class SyncCommands {
         table === "all" ? "all the tables" : "the " + table
       } from prisma at url ${
         process.env.PRISMA_ENDPOINT
-      } to ${dripEnv} Drip .\n` + `Proceed? (y/n)`
+      } to ${dripEnv} Drip.\n` + `Proceed? (y/n)`
     )
     if (!shouldProceed) {
       console.log("\nExited without running anything\n")
@@ -124,5 +126,7 @@ export class SyncCommands {
         await this.dripSyncService.syncAllCustomers(batch)
         break
     }
+
+    this.logger.log(`Complete!`)
   }
 }

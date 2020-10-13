@@ -28,7 +28,6 @@ export class DripSyncService {
       updatedAt_gte: syncTimings.dripSyncedAt,
     })
     for (const cust of customers) {
-      console.log(`updating cust: ${cust.user.email}`)
       try {
         await this.drip.client.createUpdateSubscriber(
           this.customerToDripRecord(cust)
@@ -41,44 +40,28 @@ export class DripSyncService {
     await this.updateDripSyncedAt()
   }
 
-  // TODO: Rewrite this to use the batch API. AS IS, we may hit the 3600 requests per hour rate limit
   async syncAllCustomers(batched = true) {
     let customers = await this.getCustomersWithDripData()
-
+    const subscribers = customers.map(this.customerToDripRecord)
     const total = customers.length
+
     this.logger.log(`Syncing ${total} customers with Drip`)
 
     // Batch sync
     if (batched) {
-      let sliceLimit = 1000
-      let batchIndex = 0
-      const batches = []
-      while (customers.length + 1000 > sliceLimit) {
-        batches[batchIndex++] = [
-          {
-            subscribers: customers
-              .slice(sliceLimit - 1000, sliceLimit)
-              .map(this.customerToDripRecord),
-          },
-        ]
-        sliceLimit = sliceLimit + 1000
+      const batchSize = 1000
+      const subscriberBatches = []
+
+      for (let i = 0, j = subscribers.length; i < j; i += batchSize) {
+        subscriberBatches.push(subscribers.slice(i, i + batchSize))
       }
 
-      const payload = { batches }
-      const prom = new Promise((resolve, reject) => {
-        this.drip.client.updateBatchSubscribers(
-          payload,
-          (errors, responses, bodies) => {
-            if (!!bodies?.[0].errors) {
-              console.log(bodies[0].errors)
-              Sentry.captureException(bodies[0].errors)
-              reject(bodies[0].errors)
-            }
-            resolve(bodies)
-          }
-        )
-      })
-      await prom
+      try {
+        await Promise.all(subscriberBatches.map(this.batchUpdateSubscribers))
+      } catch (err) {
+        Sentry.captureException(err)
+        console.log(err)
+      }
     } else {
       let progressBar = this.utils
         .makeCLIProgressBar()
@@ -86,23 +69,45 @@ export class DripSyncService {
           modelName: "Customers",
         })
 
-      for (const cust of customers) {
+      for (const sub of subscribers) {
         progressBar.increment()
         try {
-          await this.drip.client.createUpdateSubscriber(
-            this.customerToDripRecord(cust)
-          )
+          await this.drip.client.createUpdateSubscriber(sub)
         } catch (err) {
           Sentry.captureException(err)
           console.log(err)
-          console.log(this.customerToDripRecord(cust))
+          console.log(sub)
           break
         }
       }
     }
 
-    console.log(`success!`)
     await this.updateDripSyncedAt()
+  }
+
+  // wrapper around the drip batch upload func
+  private batchUpdateSubscribers = async (subscribers: any[]) => {
+    if (subscribers.length > 1000) {
+      throw new Error(
+        `Subscribers with length ${subscribers.length} greater than max size 1000`
+      )
+    }
+    return new Promise((resolve, reject) =>
+      this.drip.client.updateBatchSubscribers(
+        { batches: [{ subscribers }] },
+        // the errors result from drip doesn't work as expected.
+        (_, __, bodies) => {
+          const trueErrors = bodies
+            .map(a => a.errors)
+            .filter(b => b !== undefined)
+          if (trueErrors?.length > 0) {
+            Sentry.captureException(trueErrors)
+            reject(trueErrors)
+          }
+          resolve(bodies)
+        }
+      )
+    )
   }
 
   private async getCustomersWithDripData(where: CustomerWhereInput = {}) {
