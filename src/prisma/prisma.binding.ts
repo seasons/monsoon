@@ -15,6 +15,7 @@ export interface Query {
     emailReceipts: <T = Array<EmailReceipt | null>>(args: { where?: EmailReceiptWhereInput | null, orderBy?: EmailReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     fitPics: <T = Array<FitPic | null>>(args: { where?: FitPicWhereInput | null, orderBy?: FitPicOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     fitPicReports: <T = Array<FitPicReport | null>>(args: { where?: FitPicReportWhereInput | null, orderBy?: FitPicReportOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    interestedUsers: <T = Array<InterestedUser | null>>(args: { where?: InterestedUserWhereInput | null, orderBy?: InterestedUserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItems: <T = Array<BagItem | null>>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerMemberships: <T = Array<CustomerMembership | null>>(args: { where?: CustomerMembershipWhereInput | null, orderBy?: CustomerMembershipOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pauseRequests: <T = Array<PauseRequest | null>>(args: { where?: PauseRequestWhereInput | null, orderBy?: PauseRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -67,6 +68,7 @@ export interface Query {
     emailReceipt: <T = EmailReceipt | null>(args: { where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     fitPic: <T = FitPic | null>(args: { where: FitPicWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     fitPicReport: <T = FitPicReport | null>(args: { where: FitPicReportWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    interestedUser: <T = InterestedUser | null>(args: { where: InterestedUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     bagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerMembership: <T = CustomerMembership | null>(args: { where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     pauseRequest: <T = PauseRequest | null>(args: { where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -119,6 +121,7 @@ export interface Query {
     emailReceiptsConnection: <T = EmailReceiptConnection>(args: { where?: EmailReceiptWhereInput | null, orderBy?: EmailReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     fitPicsConnection: <T = FitPicConnection>(args: { where?: FitPicWhereInput | null, orderBy?: FitPicOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     fitPicReportsConnection: <T = FitPicReportConnection>(args: { where?: FitPicReportWhereInput | null, orderBy?: FitPicReportOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    interestedUsersConnection: <T = InterestedUserConnection>(args: { where?: InterestedUserWhereInput | null, orderBy?: InterestedUserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItemsConnection: <T = BagItemConnection>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerMembershipsConnection: <T = CustomerMembershipConnection>(args: { where?: CustomerMembershipWhereInput | null, orderBy?: CustomerMembershipOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pauseRequestsConnection: <T = PauseRequestConnection>(args: { where?: PauseRequestWhereInput | null, orderBy?: PauseRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -175,6 +178,7 @@ export interface Mutation {
     createEmailReceipt: <T = EmailReceipt>(args: { data: EmailReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createFitPic: <T = FitPic>(args: { data: FitPicCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createFitPicReport: <T = FitPicReport>(args: { data: FitPicReportCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createInterestedUser: <T = InterestedUser>(args: { data: InterestedUserCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBagItem: <T = BagItem>(args: { data: BagItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerMembership: <T = CustomerMembership>(args: { data: CustomerMembershipCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPauseRequest: <T = PauseRequest>(args: { data: PauseRequestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -227,6 +231,7 @@ export interface Mutation {
     updateEmailReceipt: <T = EmailReceipt | null>(args: { data: EmailReceiptUpdateInput, where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateFitPic: <T = FitPic | null>(args: { data: FitPicUpdateInput, where: FitPicWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateFitPicReport: <T = FitPicReport | null>(args: { data: FitPicReportUpdateInput, where: FitPicReportWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateInterestedUser: <T = InterestedUser | null>(args: { data: InterestedUserUpdateInput, where: InterestedUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBagItem: <T = BagItem | null>(args: { data: BagItemUpdateInput, where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerMembership: <T = CustomerMembership | null>(args: { data: CustomerMembershipUpdateInput, where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePauseRequest: <T = PauseRequest | null>(args: { data: PauseRequestUpdateInput, where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -279,6 +284,7 @@ export interface Mutation {
     deleteEmailReceipt: <T = EmailReceipt | null>(args: { where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteFitPic: <T = FitPic | null>(args: { where: FitPicWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteFitPicReport: <T = FitPicReport | null>(args: { where: FitPicReportWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteInterestedUser: <T = InterestedUser | null>(args: { where: InterestedUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerMembership: <T = CustomerMembership | null>(args: { where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePauseRequest: <T = PauseRequest | null>(args: { where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -331,6 +337,7 @@ export interface Mutation {
     upsertEmailReceipt: <T = EmailReceipt>(args: { where: EmailReceiptWhereUniqueInput, create: EmailReceiptCreateInput, update: EmailReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertFitPic: <T = FitPic>(args: { where: FitPicWhereUniqueInput, create: FitPicCreateInput, update: FitPicUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertFitPicReport: <T = FitPicReport>(args: { where: FitPicReportWhereUniqueInput, create: FitPicReportCreateInput, update: FitPicReportUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertInterestedUser: <T = InterestedUser>(args: { where: InterestedUserWhereUniqueInput, create: InterestedUserCreateInput, update: InterestedUserUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBagItem: <T = BagItem>(args: { where: BagItemWhereUniqueInput, create: BagItemCreateInput, update: BagItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerMembership: <T = CustomerMembership>(args: { where: CustomerMembershipWhereUniqueInput, create: CustomerMembershipCreateInput, update: CustomerMembershipUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPauseRequest: <T = PauseRequest>(args: { where: PauseRequestWhereUniqueInput, create: PauseRequestCreateInput, update: PauseRequestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -383,6 +390,7 @@ export interface Mutation {
     updateManyEmailReceipts: <T = BatchPayload>(args: { data: EmailReceiptUpdateManyMutationInput, where?: EmailReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyFitPics: <T = BatchPayload>(args: { data: FitPicUpdateManyMutationInput, where?: FitPicWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyFitPicReports: <T = BatchPayload>(args: { data: FitPicReportUpdateManyMutationInput, where?: FitPicReportWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyInterestedUsers: <T = BatchPayload>(args: { data: InterestedUserUpdateManyMutationInput, where?: InterestedUserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBagItems: <T = BatchPayload>(args: { data: BagItemUpdateManyMutationInput, where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerMemberships: <T = BatchPayload>(args: { data: CustomerMembershipUpdateManyMutationInput, where?: CustomerMembershipWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPauseRequests: <T = BatchPayload>(args: { data: PauseRequestUpdateManyMutationInput, where?: PauseRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -433,6 +441,7 @@ export interface Mutation {
     deleteManyEmailReceipts: <T = BatchPayload>(args: { where?: EmailReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyFitPics: <T = BatchPayload>(args: { where?: FitPicWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyFitPicReports: <T = BatchPayload>(args: { where?: FitPicReportWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyInterestedUsers: <T = BatchPayload>(args: { where?: InterestedUserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBagItems: <T = BatchPayload>(args: { where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCustomerMemberships: <T = BatchPayload>(args: { where?: CustomerMembershipWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPauseRequests: <T = BatchPayload>(args: { where?: PauseRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -488,6 +497,7 @@ export interface Subscription {
     emailReceipt: <T = EmailReceiptSubscriptionPayload | null>(args: { where?: EmailReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     fitPic: <T = FitPicSubscriptionPayload | null>(args: { where?: FitPicSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     fitPicReport: <T = FitPicReportSubscriptionPayload | null>(args: { where?: FitPicReportSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    interestedUser: <T = InterestedUserSubscriptionPayload | null>(args: { where?: InterestedUserSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     bagItem: <T = BagItemSubscriptionPayload | null>(args: { where?: BagItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customerMembership: <T = CustomerMembershipSubscriptionPayload | null>(args: { where?: CustomerMembershipSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     pauseRequest: <T = PauseRequestSubscriptionPayload | null>(args: { where?: PauseRequestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -543,6 +553,7 @@ export interface Exists {
   EmailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>
   FitPic: (where?: FitPicWhereInput) => Promise<boolean>
   FitPicReport: (where?: FitPicReportWhereInput) => Promise<boolean>
+  InterestedUser: (where?: InterestedUserWhereInput) => Promise<boolean>
   BagItem: (where?: BagItemWhereInput) => Promise<boolean>
   CustomerMembership: (where?: CustomerMembershipWhereInput) => Promise<boolean>
   PauseRequest: (where?: PauseRequestWhereInput) => Promise<boolean>
@@ -1103,6 +1114,10 @@ type AggregateHomepageProductRail {
 }
 
 type AggregateImage {
+  count: Int!
+}
+
+type AggregateInterestedUser {
   count: Int!
 }
 
@@ -6859,9 +6874,11 @@ enum EmailId {
   FreeToReserve
   WelcomeToSeasons
   ReturnReminder
+  ResumeReminder
   PriorityAccess
   SubmittedEmail
   Waitlisted
+  Paused
   Rewaitlisted
 }
 
@@ -8813,6 +8830,286 @@ input ImageWhereUniqueInput {
   url: String
 }
 
+type InterestedUser implements Node {
+  id: ID!
+  email: String!
+  zipcode: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type InterestedUserConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [InterestedUserEdge]!
+  aggregate: AggregateInterestedUser!
+}
+
+input InterestedUserCreateInput {
+  id: ID
+  email: String!
+  zipcode: String
+}
+
+"""An edge in a connection."""
+type InterestedUserEdge {
+  """The item at the end of the edge."""
+  node: InterestedUser!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum InterestedUserOrderByInput {
+  id_ASC
+  id_DESC
+  email_ASC
+  email_DESC
+  zipcode_ASC
+  zipcode_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type InterestedUserPreviousValues {
+  id: ID!
+  email: String!
+  zipcode: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type InterestedUserSubscriptionPayload {
+  mutation: MutationType!
+  node: InterestedUser
+  updatedFields: [String!]
+  previousValues: InterestedUserPreviousValues
+}
+
+input InterestedUserSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [InterestedUserSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [InterestedUserSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [InterestedUserSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: InterestedUserWhereInput
+}
+
+input InterestedUserUpdateInput {
+  email: String
+  zipcode: String
+}
+
+input InterestedUserUpdateManyMutationInput {
+  email: String
+  zipcode: String
+}
+
+input InterestedUserWhereInput {
+  """Logical AND on all given filters."""
+  AND: [InterestedUserWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [InterestedUserWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [InterestedUserWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+  zipcode: String
+
+  """All values that are not equal to given value."""
+  zipcode_not: String
+
+  """All values that are contained in given list."""
+  zipcode_in: [String!]
+
+  """All values that are not contained in given list."""
+  zipcode_not_in: [String!]
+
+  """All values less than the given value."""
+  zipcode_lt: String
+
+  """All values less than or equal the given value."""
+  zipcode_lte: String
+
+  """All values greater than the given value."""
+  zipcode_gt: String
+
+  """All values greater than or equal the given value."""
+  zipcode_gte: String
+
+  """All values containing the given string."""
+  zipcode_contains: String
+
+  """All values not containing the given string."""
+  zipcode_not_contains: String
+
+  """All values starting with the given string."""
+  zipcode_starts_with: String
+
+  """All values not starting with the given string."""
+  zipcode_not_starts_with: String
+
+  """All values ending with the given string."""
+  zipcode_ends_with: String
+
+  """All values not ending with the given string."""
+  zipcode_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
+input InterestedUserWhereUniqueInput {
+  id: ID
+}
+
 enum InventoryStatus {
   NonReservable
   Reservable
@@ -9995,6 +10292,7 @@ type Mutation {
   createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
   createFitPic(data: FitPicCreateInput!): FitPic!
   createFitPicReport(data: FitPicReportCreateInput!): FitPicReport!
+  createInterestedUser(data: InterestedUserCreateInput!): InterestedUser!
   createBagItem(data: BagItemCreateInput!): BagItem!
   createCustomerMembership(data: CustomerMembershipCreateInput!): CustomerMembership!
   createPauseRequest(data: PauseRequestCreateInput!): PauseRequest!
@@ -10047,6 +10345,7 @@ type Mutation {
   updateEmailReceipt(data: EmailReceiptUpdateInput!, where: EmailReceiptWhereUniqueInput!): EmailReceipt
   updateFitPic(data: FitPicUpdateInput!, where: FitPicWhereUniqueInput!): FitPic
   updateFitPicReport(data: FitPicReportUpdateInput!, where: FitPicReportWhereUniqueInput!): FitPicReport
+  updateInterestedUser(data: InterestedUserUpdateInput!, where: InterestedUserWhereUniqueInput!): InterestedUser
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateCustomerMembership(data: CustomerMembershipUpdateInput!, where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   updatePauseRequest(data: PauseRequestUpdateInput!, where: PauseRequestWhereUniqueInput!): PauseRequest
@@ -10099,6 +10398,7 @@ type Mutation {
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   deleteFitPic(where: FitPicWhereUniqueInput!): FitPic
   deleteFitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
+  deleteInterestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
   deleteCustomerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   deletePauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
@@ -10151,6 +10451,7 @@ type Mutation {
   upsertEmailReceipt(where: EmailReceiptWhereUniqueInput!, create: EmailReceiptCreateInput!, update: EmailReceiptUpdateInput!): EmailReceipt!
   upsertFitPic(where: FitPicWhereUniqueInput!, create: FitPicCreateInput!, update: FitPicUpdateInput!): FitPic!
   upsertFitPicReport(where: FitPicReportWhereUniqueInput!, create: FitPicReportCreateInput!, update: FitPicReportUpdateInput!): FitPicReport!
+  upsertInterestedUser(where: InterestedUserWhereUniqueInput!, create: InterestedUserCreateInput!, update: InterestedUserUpdateInput!): InterestedUser!
   upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
   upsertCustomerMembership(where: CustomerMembershipWhereUniqueInput!, create: CustomerMembershipCreateInput!, update: CustomerMembershipUpdateInput!): CustomerMembership!
   upsertPauseRequest(where: PauseRequestWhereUniqueInput!, create: PauseRequestCreateInput!, update: PauseRequestUpdateInput!): PauseRequest!
@@ -10203,6 +10504,7 @@ type Mutation {
   updateManyEmailReceipts(data: EmailReceiptUpdateManyMutationInput!, where: EmailReceiptWhereInput): BatchPayload!
   updateManyFitPics(data: FitPicUpdateManyMutationInput!, where: FitPicWhereInput): BatchPayload!
   updateManyFitPicReports(data: FitPicReportUpdateManyMutationInput!, where: FitPicReportWhereInput): BatchPayload!
+  updateManyInterestedUsers(data: InterestedUserUpdateManyMutationInput!, where: InterestedUserWhereInput): BatchPayload!
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
   updateManyCustomerMemberships(data: CustomerMembershipUpdateManyMutationInput!, where: CustomerMembershipWhereInput): BatchPayload!
   updateManyPauseRequests(data: PauseRequestUpdateManyMutationInput!, where: PauseRequestWhereInput): BatchPayload!
@@ -10253,6 +10555,7 @@ type Mutation {
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
   deleteManyFitPics(where: FitPicWhereInput): BatchPayload!
   deleteManyFitPicReports(where: FitPicReportWhereInput): BatchPayload!
+  deleteManyInterestedUsers(where: InterestedUserWhereInput): BatchPayload!
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
   deleteManyCustomerMemberships(where: CustomerMembershipWhereInput): BatchPayload!
   deleteManyPauseRequests(where: PauseRequestWhereInput): BatchPayload!
@@ -19606,6 +19909,7 @@ type Query {
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
   fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic]!
   fitPicReports(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPicReport]!
+  interestedUsers(where: InterestedUserWhereInput, orderBy: InterestedUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InterestedUser]!
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   customerMemberships(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerMembership]!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest]!
@@ -19658,6 +19962,7 @@ type Query {
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   fitPic(where: FitPicWhereUniqueInput!): FitPic
   fitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
+  interestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   customerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   pauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
@@ -19710,6 +20015,7 @@ type Query {
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
   fitPicsConnection(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicConnection!
   fitPicReportsConnection(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicReportConnection!
+  interestedUsersConnection(where: InterestedUserWhereInput, orderBy: InterestedUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InterestedUserConnection!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
   customerMembershipsConnection(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerMembershipConnection!
   pauseRequestsConnection(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PauseRequestConnection!
@@ -23236,6 +23542,7 @@ type Subscription {
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
   fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload
   fitPicReport(where: FitPicReportSubscriptionWhereInput): FitPicReportSubscriptionPayload
+  interestedUser(where: InterestedUserSubscriptionWhereInput): InterestedUserSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   customerMembership(where: CustomerMembershipSubscriptionWhereInput): CustomerMembershipSubscriptionPayload
   pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
@@ -26948,9 +27255,11 @@ export type EmailId =   'ReservationReturnConfirmation' |
   'FreeToReserve' |
   'WelcomeToSeasons' |
   'ReturnReminder' |
+  'ResumeReminder' |
   'PriorityAccess' |
   'SubmittedEmail' |
   'Waitlisted' |
+  'Paused' |
   'Rewaitlisted'
 
 export type EmailReceiptOrderByInput =   'id_ASC' |
@@ -27006,6 +27315,17 @@ export type ImageOrderByInput =   'id_ASC' |
   'width_DESC' |
   'title_ASC' |
   'title_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
+export type InterestedUserOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'email_ASC' |
+  'email_DESC' |
+  'zipcode_ASC' |
+  'zipcode_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -31071,6 +31391,101 @@ export interface ImageWhereInput {
 export interface ImageWhereUniqueInput {
   id?: ID_Input | null
   url?: String | null
+}
+
+export interface InterestedUserCreateInput {
+  id?: ID_Input | null
+  email: String
+  zipcode?: String | null
+}
+
+export interface InterestedUserSubscriptionWhereInput {
+  AND?: InterestedUserSubscriptionWhereInput[] | InterestedUserSubscriptionWhereInput | null
+  OR?: InterestedUserSubscriptionWhereInput[] | InterestedUserSubscriptionWhereInput | null
+  NOT?: InterestedUserSubscriptionWhereInput[] | InterestedUserSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: InterestedUserWhereInput | null
+}
+
+export interface InterestedUserUpdateInput {
+  email?: String | null
+  zipcode?: String | null
+}
+
+export interface InterestedUserUpdateManyMutationInput {
+  email?: String | null
+  zipcode?: String | null
+}
+
+export interface InterestedUserWhereInput {
+  AND?: InterestedUserWhereInput[] | InterestedUserWhereInput | null
+  OR?: InterestedUserWhereInput[] | InterestedUserWhereInput | null
+  NOT?: InterestedUserWhereInput[] | InterestedUserWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  email?: String | null
+  email_not?: String | null
+  email_in?: String[] | String | null
+  email_not_in?: String[] | String | null
+  email_lt?: String | null
+  email_lte?: String | null
+  email_gt?: String | null
+  email_gte?: String | null
+  email_contains?: String | null
+  email_not_contains?: String | null
+  email_starts_with?: String | null
+  email_not_starts_with?: String | null
+  email_ends_with?: String | null
+  email_not_ends_with?: String | null
+  zipcode?: String | null
+  zipcode_not?: String | null
+  zipcode_in?: String[] | String | null
+  zipcode_not_in?: String[] | String | null
+  zipcode_lt?: String | null
+  zipcode_lte?: String | null
+  zipcode_gt?: String | null
+  zipcode_gte?: String | null
+  zipcode_contains?: String | null
+  zipcode_not_contains?: String | null
+  zipcode_starts_with?: String | null
+  zipcode_not_starts_with?: String | null
+  zipcode_ends_with?: String | null
+  zipcode_not_ends_with?: String | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+}
+
+export interface InterestedUserWhereUniqueInput {
+  id?: ID_Input | null
 }
 
 export interface LabelCreateInput {
@@ -39328,6 +39743,10 @@ export interface AggregateImage {
   count: Int
 }
 
+export interface AggregateInterestedUser {
+  count: Int
+}
+
 export interface AggregateLabel {
   count: Int
 }
@@ -40232,6 +40651,48 @@ export interface ImageSubscriptionPayload {
   node?: Image | null
   updatedFields?: Array<String> | null
   previousValues?: ImagePreviousValues | null
+}
+
+export interface InterestedUser extends Node {
+  id: ID_Output
+  email: String
+  zipcode?: String | null
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface InterestedUserConnection {
+  pageInfo: PageInfo
+  edges: Array<InterestedUserEdge | null>
+  aggregate: AggregateInterestedUser
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface InterestedUserEdge {
+  node: InterestedUser
+  cursor: String
+}
+
+export interface InterestedUserPreviousValues {
+  id: ID_Output
+  email: String
+  zipcode?: String | null
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface InterestedUserSubscriptionPayload {
+  mutation: MutationType
+  node?: InterestedUser | null
+  updatedFields?: Array<String> | null
+  previousValues?: InterestedUserPreviousValues | null
 }
 
 export interface Label extends Node {
