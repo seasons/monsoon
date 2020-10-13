@@ -89,7 +89,7 @@ export class SyncCommands {
     @Option({
       name: "drip",
       describe: `Drip environment command runs against.`,
-      choices: ["local", "staging", "production"],
+      choices: ["staging", "production"],
       type: "string",
       default: "staging",
       alias: "de",
