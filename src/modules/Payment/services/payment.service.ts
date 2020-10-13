@@ -13,6 +13,8 @@ import { DateTime } from "luxon"
 import {
   BillingAddress,
   Card,
+  Coupon,
+  CouponType,
   Invoice,
   InvoicesDataLoader,
   RefundInvoiceInput,
@@ -693,8 +695,16 @@ export class PaymentService {
       ?.map(this.formatTransaction)
   }
 
-  async checkCoupon({ couponId }): Promise<boolean> {
-    return true
+  async checkCoupon(couponID): Promise<Coupon> {
+    try {
+      const coupon = await chargebee.coupon.retrieve(couponID).request()
+      return {
+        amount: coupon.coupon.discount_amount,
+        type: upperFirst(camelCase(coupon.coupon.discount_type)) as CouponType,
+      }
+    } catch {
+      // TODO: Error handling (expired, invalid, used, etc.)
+    }
   }
 
   async refundInvoice({

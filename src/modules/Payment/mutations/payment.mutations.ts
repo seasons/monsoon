@@ -213,6 +213,7 @@ export class PaymentMutationsResolver {
 
   @Mutation()
   async checkCoupon(@Args() { couponID }) {
+    console.log(couponID)
     return await this.paymentService.checkCoupon(couponID)
   }
 }
