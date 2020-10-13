@@ -37,10 +37,10 @@ export class EmailService {
       ...this.formatProductGridInput(fourLatestProducts),
     })
     await this.sendPreRenderedTransactionalEmail({
-      to: user.email,
+      user,
       payload,
+      emailId: "SubmittedEmail",
     })
-    await this.storeEmailReceipt("SubmittedEmail", user.id)
   }
 
   async sendAuthorizedEmail(user: EmailUser, version: "manual" | "automatic") {
@@ -54,10 +54,26 @@ export class EmailService {
       ...this.formatProductGridInput(fourTriageStyles),
     })
     await this.sendPreRenderedTransactionalEmail({
-      to: user.email,
+      user,
       payload,
+      emailId: "CompleteAccount",
     })
-    await this.storeEmailReceipt("CompleteAccount", user.id)
+  }
+
+  async sendAuthorized24HourFollowup(user: EmailUser) {
+    const fourTriageStyles = await this.emailUtils.getXReservableProductsForUser(
+      4,
+      user as User
+    )
+    const payload = await RenderEmail.authorized24HourFollowup({
+      name: `${user.firstName}`,
+      ...this.formatProductGridInput(fourTriageStyles),
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      user,
+      payload,
+      emailId: "TwentyFourHourAuthorizationFollowup",
+    })
   }
 
   async sendWaitlistedEmail(user: EmailUser) {
@@ -65,10 +81,10 @@ export class EmailService {
       name: `${user.firstName}`,
     })
     await this.sendPreRenderedTransactionalEmail({
-      to: user.email,
+      user,
       payload,
+      emailId: "Waitlisted",
     })
-    await this.storeEmailReceipt("Waitlisted", user.id)
   }
 
   async sendSubscribedEmail(user: EmailUser) {
@@ -95,10 +111,10 @@ export class EmailService {
       itemCount: `${cust.membership?.plan?.itemCount}`,
     })
     await this.sendPreRenderedTransactionalEmail({
-      to: user.email,
+      user,
       payload,
+      emailId: "WelcomeToSeasons",
     })
-    await this.storeEmailReceipt("WelcomeToSeasons", user.id)
   }
 
   async sendRewaitlistedEmail(user: EmailUser) {
@@ -111,10 +127,10 @@ export class EmailService {
       ...this.formatProductGridInput(fourTriageStyles),
     })
     await this.sendPreRenderedTransactionalEmail({
-      to: user.email,
+      user,
       payload,
+      emailId: "Rewaitlisted",
     })
-    await this.storeEmailReceipt("Rewaitlisted", user.id)
   }
 
   async sendPausedEmail(customer: Customer) {
@@ -129,10 +145,10 @@ export class EmailService {
     })
 
     await this.sendPreRenderedTransactionalEmail({
-      to: customer.user.email,
+      user: customer.user,
       payload,
+      emailId: "Paused",
     })
-    await this.storeEmailReceipt("Paused", customer.user.id)
   }
 
   async sendResumeReminderEmail(user: EmailUser, resumeDate: DateTime) {
@@ -143,10 +159,10 @@ export class EmailService {
       ...this.formatProductGridInput(fourLatestProducts),
     })
     await this.sendPreRenderedTransactionalEmail({
-      to: user.email,
+      user,
       payload,
+      emailId: "ResumeReminder",
     })
-    await this.storeEmailReceipt("ResumeReminder", user.id)
   }
 
   async sendAdminConfirmationEmail(
@@ -273,14 +289,20 @@ export class EmailService {
   }
 
   private async sendPreRenderedTransactionalEmail({
-    to,
+    user,
     payload: { body, subject },
+    emailId,
+  }: {
+    user: EmailUser
+    payload: { body: string; subject: string }
+    emailId: EmailId
   }) {
     await this.sendEmail({
-      to,
+      to: user.email,
       subject: subject,
       html: body,
     })
+    await this.storeEmailReceipt(emailId, user.id)
   }
 
   private async sendEmail({ to, subject, html }) {

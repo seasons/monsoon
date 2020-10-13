@@ -56,6 +56,11 @@ export class MarketingScheduledJobs {
       const twentyFourHourFollowupSent = receivedEmails.includes(
         "TwentyFourHourAuthorizationFollowup"
       )
+      if (twentyFoursPassed && !twentyFourHourFollowupSent) {
+        await this.email.sendAuthorized24HourFollowup(cust.user)
+        // TODO: Send text message
+        break
+      }
 
       // Send rewaitlist email as needed
       const deadlinePassed = moment(completeAccountReceipt.createdAt)
@@ -64,6 +69,7 @@ export class MarketingScheduledJobs {
       const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
       if (deadlinePassed && !rewaitlistEmailSent) {
         await this.email.sendRewaitlistedEmail(cust.user)
+        // TODO: Send text message
         break
       }
     }
