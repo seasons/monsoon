@@ -1,5 +1,6 @@
 import fs from "fs"
 
+import { DripService } from "@app/modules/Drip/services/drip.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
@@ -95,6 +96,10 @@ export class ScriptsService {
     moduleRef.get(PrismaService, { strict: false }).updateConnection({
       secret: process.env.PRISMA_SECRET,
       endpoint: process.env.PRISMA_ENDPOINT,
+    })
+    moduleRef.get(DripService, { strict: false }).updateConnection({
+      dripKey: process.env.DRIP_KEY,
+      accountId: process.env.DRIP_ACCOUNT_ID,
     })
   }
 
