@@ -1,8 +1,8 @@
 import "module-alias/register"
 
-import * as util from "util"
-
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { User } from "@app/prisma"
 import { CustomerWhereInput } from "@app/prisma/prisma.binding"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
@@ -18,26 +18,41 @@ export class DripSyncService {
   constructor(
     private readonly drip: DripService,
     private readonly prisma: PrismaService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly error: ErrorService
   ) {}
 
   async syncCustomersDifferential() {
     const syncTimings = await this.getSyncTimingsRecord()
 
     const customers = await this.getCustomersWithDripData({
-      updatedAt_gte: syncTimings.dripSyncedAt,
+      OR: [
+        { updatedAt_gte: syncTimings.dripSyncedAt },
+        { user: { updatedAt_gte: syncTimings.dripSyncedAt } },
+        { detail: { updatedAt_gte: syncTimings.dripSyncedAt } },
+        {
+          detail: {
+            shippingAddress: { updatedAt_gte: syncTimings.dripSyncedAt },
+          },
+        },
+      ],
     })
+    const result = { errors: [], successes: [] }
     for (const cust of customers) {
+      const sub = this.customerToDripRecord(cust)
       try {
-        await this.drip.client.createUpdateSubscriber(
-          this.customerToDripRecord(cust)
-        )
+        await this.drip.client.createUpdateSubscriber(sub)
+        result.successes.push(cust.user.email)
       } catch (err) {
-        Sentry.captureException(err)
+        result.errors.push(cust.user.email)
+        this.error.setUserContext(cust.user as User)
+        this.error.setExtraContext(sub, "payload")
+        this.error.captureError(err)
       }
     }
 
     await this.updateDripSyncedAt()
+    return result
   }
 
   async syncAllCustomers(batched = true) {
@@ -116,6 +131,7 @@ export class DripSyncService {
       `{
         id
         user {
+          id
           firstName
           lastName
           email
