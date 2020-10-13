@@ -35,9 +35,7 @@ const run = async () => {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
-  const emails = []
-
-  // const emails = ["faiyam+1@seasons.nyc"]
+  const emails = ["stephendecastro@gmail.com", "john.fontein@gmail.com"]
 
   for (const em of emails) {
     const cust = head(
@@ -47,12 +45,20 @@ const run = async () => {
       )
     ) as any
     const shouldProceed = readlineSync.keyInYN(
-      `You are about to send a text message to ${em}. Proceed? y/n. `
+      `You are about to rewaitlist ${em}. Proceed? y/n. `
     )
+
     if (!shouldProceed) {
       console.log(`Skipped ${em}\n`)
       return
     }
+
+    await admissions.haveSufficientInventoryToServiceCustomer({ id: cust.id })
+    await ps.client.updateManyCustomers({
+      where: { user: { email: em } },
+      data: { status: "Waitlisted" },
+    })
+    await email.sendRewaitlistedEmail(cust.user)
 
     await sms.sendSMSMessage({
       to: { id: cust.user.id },
@@ -67,10 +73,6 @@ const run = async () => {
       to: { id: cust.user.id },
       body: `If you'd still like to obtain a membership, please contact us at membership@seasons.nyc and we'll see if we can acommodate you.`,
     })
-
-    // await admissions.haveSufficientInventoryToServiceCustomer({ id: cust.id })
-    // await ps.client.updateManyCustomers({where: {user: {email: em}}, data: {status: "Waitlisted"}})
-    // await email.sendRewaitlistedEmail(cust.user)
   }
 }
 
