@@ -1,5 +1,5 @@
 # source: https://monsoon-prisma-staging.herokuapp.com/monsoon/staging
-# timestamp: Mon Oct 12 2020 12:43:29 GMT-0400 (Eastern Daylight Time)
+# timestamp: Mon Oct 12 2020 22:11:31 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -662,6 +662,10 @@ type AggregateHomepageProductRail {
 }
 
 type AggregateImage {
+  count: Int!
+}
+
+type AggregateInterestedUser {
   count: Int!
 }
 
@@ -8882,9 +8886,11 @@ enum EmailId {
   FreeToReserve
   WelcomeToSeasons
   ReturnReminder
+  ResumeReminder
   PriorityAccess
   SubmittedEmail
   Waitlisted
+  Paused
   Rewaitlisted
 }
 
@@ -11706,6 +11712,418 @@ input ImageWhereUniqueInput {
   url: String
 }
 
+type InterestedUser implements Node {
+  id: ID!
+  email: String!
+  zipcode: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type InterestedUserConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [InterestedUserEdge]!
+  aggregate: AggregateInterestedUser!
+}
+
+input InterestedUserCreateInput {
+  id: ID
+  email: String!
+  zipcode: String
+}
+
+"""
+An edge in a connection.
+"""
+type InterestedUserEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: InterestedUser!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum InterestedUserOrderByInput {
+  id_ASC
+  id_DESC
+  email_ASC
+  email_DESC
+  zipcode_ASC
+  zipcode_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type InterestedUserPreviousValues {
+  id: ID!
+  email: String!
+  zipcode: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type InterestedUserSubscriptionPayload {
+  mutation: MutationType!
+  node: InterestedUser
+  updatedFields: [String!]
+  previousValues: InterestedUserPreviousValues
+}
+
+input InterestedUserSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [InterestedUserSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [InterestedUserSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [InterestedUserSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: InterestedUserWhereInput
+}
+
+input InterestedUserUpdateInput {
+  email: String
+  zipcode: String
+}
+
+input InterestedUserUpdateManyMutationInput {
+  email: String
+  zipcode: String
+}
+
+input InterestedUserWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [InterestedUserWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [InterestedUserWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [InterestedUserWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  email: String
+
+  """
+  All values that are not equal to given value.
+  """
+  email_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  email_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  email_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  email_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  email_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  email_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  email_gte: String
+
+  """
+  All values containing the given string.
+  """
+  email_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  email_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  email_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  email_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  email_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  email_not_ends_with: String
+  zipcode: String
+
+  """
+  All values that are not equal to given value.
+  """
+  zipcode_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  zipcode_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  zipcode_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  zipcode_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  zipcode_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  zipcode_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  zipcode_gte: String
+
+  """
+  All values containing the given string.
+  """
+  zipcode_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  zipcode_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  zipcode_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  zipcode_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  zipcode_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  zipcode_not_ends_with: String
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+}
+
+input InterestedUserWhereUniqueInput {
+  id: ID
+}
+
 enum InventoryStatus {
   NonReservable
   Reservable
@@ -13410,6 +13828,7 @@ type Mutation {
   createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
   createFitPic(data: FitPicCreateInput!): FitPic!
   createFitPicReport(data: FitPicReportCreateInput!): FitPicReport!
+  createInterestedUser(data: InterestedUserCreateInput!): InterestedUser!
   createBagItem(data: BagItemCreateInput!): BagItem!
   createCustomerMembership(
     data: CustomerMembershipCreateInput!
@@ -13510,6 +13929,10 @@ type Mutation {
     data: FitPicReportUpdateInput!
     where: FitPicReportWhereUniqueInput!
   ): FitPicReport
+  updateInterestedUser(
+    data: InterestedUserUpdateInput!
+    where: InterestedUserWhereUniqueInput!
+  ): InterestedUser
   updateBagItem(
     data: BagItemUpdateInput!
     where: BagItemWhereUniqueInput!
@@ -13677,6 +14100,7 @@ type Mutation {
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   deleteFitPic(where: FitPicWhereUniqueInput!): FitPic
   deleteFitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
+  deleteInterestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
   deleteCustomerMembership(
     where: CustomerMembershipWhereUniqueInput!
@@ -13805,6 +14229,11 @@ type Mutation {
     create: FitPicReportCreateInput!
     update: FitPicReportUpdateInput!
   ): FitPicReport!
+  upsertInterestedUser(
+    where: InterestedUserWhereUniqueInput!
+    create: InterestedUserCreateInput!
+    update: InterestedUserUpdateInput!
+  ): InterestedUser!
   upsertBagItem(
     where: BagItemWhereUniqueInput!
     create: BagItemCreateInput!
@@ -14054,6 +14483,10 @@ type Mutation {
     data: FitPicReportUpdateManyMutationInput!
     where: FitPicReportWhereInput
   ): BatchPayload!
+  updateManyInterestedUsers(
+    data: InterestedUserUpdateManyMutationInput!
+    where: InterestedUserWhereInput
+  ): BatchPayload!
   updateManyBagItems(
     data: BagItemUpdateManyMutationInput!
     where: BagItemWhereInput
@@ -14229,6 +14662,7 @@ type Mutation {
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
   deleteManyFitPics(where: FitPicWhereInput): BatchPayload!
   deleteManyFitPicReports(where: FitPicReportWhereInput): BatchPayload!
+  deleteManyInterestedUsers(where: InterestedUserWhereInput): BatchPayload!
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
   deleteManyCustomerMemberships(
     where: CustomerMembershipWhereInput
@@ -27480,6 +27914,15 @@ type Query {
     first: Int
     last: Int
   ): [FitPicReport]!
+  interestedUsers(
+    where: InterestedUserWhereInput
+    orderBy: InterestedUserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [InterestedUser]!
   bagItems(
     where: BagItemWhereInput
     orderBy: BagItemOrderByInput
@@ -27868,6 +28311,7 @@ type Query {
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   fitPic(where: FitPicWhereUniqueInput!): FitPic
   fitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
+  interestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   customerMembership(
     where: CustomerMembershipWhereUniqueInput!
@@ -28032,6 +28476,15 @@ type Query {
     first: Int
     last: Int
   ): FitPicReportConnection!
+  interestedUsersConnection(
+    where: InterestedUserWhereInput
+    orderBy: InterestedUserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): InterestedUserConnection!
   bagItemsConnection(
     where: BagItemWhereInput
     orderBy: BagItemOrderByInput
@@ -33274,6 +33727,9 @@ type Subscription {
   fitPicReport(
     where: FitPicReportSubscriptionWhereInput
   ): FitPicReportSubscriptionPayload
+  interestedUser(
+    where: InterestedUserSubscriptionWhereInput
+  ): InterestedUserSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   customerMembership(
     where: CustomerMembershipSubscriptionWhereInput
