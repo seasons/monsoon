@@ -1,5 +1,5 @@
-# source: http://localhost:4466/monsoon/dev
-# timestamp: Mon Oct 12 2020 10:48:06 GMT-0400 (Eastern Daylight Time)
+# source: https://monsoon-prisma-staging.herokuapp.com/monsoon/staging
+# timestamp: Mon Oct 12 2020 12:43:29 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -8882,11 +8882,9 @@ enum EmailId {
   FreeToReserve
   WelcomeToSeasons
   ReturnReminder
-  ResumeReminder
   PriorityAccess
   SubmittedEmail
   Waitlisted
-  Paused
   Rewaitlisted
 }
 
