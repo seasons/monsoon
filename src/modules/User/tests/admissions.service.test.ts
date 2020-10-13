@@ -479,7 +479,7 @@ describe("Admissions Service", () => {
         },
         "flare"
       )
-      expect(pass).toBe(false)
+      expect(pass).toBe(true)
     })
   })
 })
