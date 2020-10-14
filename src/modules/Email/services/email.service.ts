@@ -49,41 +49,33 @@ export class EmailService {
     version: "manual" | "automatic",
     availableStyles: Product[]
   ) {
-    const fourReservableStyles = await this.emailUtils.getXReservableProductsForUser(
-      4,
-      user as User,
-      availableStyles
-    )
-    const payload = await RenderEmail.authorized({
-      name: `${user.firstName}`,
-      version,
-      ...this.formatProductGridInput(fourReservableStyles),
-    })
-    await this.sendPreRenderedTransactionalEmail({
+    await this.sendEmailWithReservableStyles({
       user,
-      payload,
+      availableStyles,
+      renderEmailFunc: "authorized",
       emailId: "CompleteAccount",
+      renderData: { version },
     })
-    if (fourReservableStyles !== null) {
-      await this.addEmailedProductsToCustomer(user, fourReservableStyles)
-    }
   }
 
-  async sendAuthorized24HourFollowup(user: EmailUser) {
-    const fourTriageStyles = await this.emailUtils.getXReservableProductsForUser(
-      4,
-      user as User,
-      // TODO: Supply products
-      []
-    )
-    const payload = await RenderEmail.authorized24HourFollowup({
-      name: `${user.firstName}`,
-      ...this.formatProductGridInput(fourTriageStyles),
-    })
-    await this.sendPreRenderedTransactionalEmail({
+  async sendAuthorized24HourFollowup(
+    user: EmailUser,
+    availableStyles: Product[]
+  ) {
+    await this.sendEmailWithReservableStyles({
       user,
-      payload,
+      availableStyles,
+      renderEmailFunc: "authorized24HourFollowup",
       emailId: "TwentyFourHourAuthorizationFollowup",
+    })
+  }
+
+  async sendRewaitlistedEmail(user: EmailUser, availableStyles: Product[]) {
+    await this.sendEmailWithReservableStyles({
+      user,
+      availableStyles,
+      renderEmailFunc: "rewaitlisted",
+      emailId: "Rewaitlisted",
     })
   }
 
@@ -125,24 +117,6 @@ export class EmailService {
       user,
       payload,
       emailId: "WelcomeToSeasons",
-    })
-  }
-
-  async sendRewaitlistedEmail(user: EmailUser) {
-    const fourTriageStyles = await this.emailUtils.getXReservableProductsForUser(
-      4,
-      user as User,
-      // TODO: Supply products
-      []
-    )
-    const payload = await RenderEmail.rewaitlisted({
-      name: `${user.firstName}`,
-      ...this.formatProductGridInput(fourTriageStyles),
-    })
-    await this.sendPreRenderedTransactionalEmail({
-      user,
-      payload,
-      emailId: "Rewaitlisted",
     })
   }
 
@@ -282,6 +256,39 @@ export class EmailService {
     }
   }
 
+  private async sendEmailWithReservableStyles({
+    user,
+    availableStyles,
+    renderEmailFunc,
+    emailId,
+    renderData = {},
+  }: {
+    user: EmailUser
+    availableStyles: Product[]
+    renderEmailFunc: "authorized" | "authorized24HourFollowup" | "rewaitlisted"
+    emailId: EmailId
+    renderData?: any
+  }) {
+    const fourReservableStyles = await this.emailUtils.getXReservableProductsForUser(
+      4,
+      user as User,
+      availableStyles
+    )
+    const payload = await RenderEmail[renderEmailFunc]({
+      name: `${user.firstName}`,
+      ...this.formatProductGridInput(fourReservableStyles),
+      ...renderData,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      user,
+      payload,
+      emailId,
+    })
+    if (fourReservableStyles !== null) {
+      await this.addEmailedProductsToCustomer(user, fourReservableStyles)
+    }
+  }
+
   private async sendTransactionalEmail({
     to,
     data,
@@ -346,7 +353,7 @@ export class EmailService {
   }
 
   private formatProductGridInput = (
-    products: ProductGridItem[]
+    products: ProductGridItem[] | null
   ): {
     product1: ProductGridItem
     product2: ProductGridItem

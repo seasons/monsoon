@@ -3112,6 +3112,8 @@ export type CustomerOrderByInput =
   | "status_DESC"
   | "plan_ASC"
   | "plan_DESC"
+  | "authorizedAt_ASC"
+  | "authorizedAt_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -5940,12 +5942,17 @@ export interface CustomerWhereInput {
   reservations_every?: Maybe<ReservationWhereInput>;
   reservations_some?: Maybe<ReservationWhereInput>;
   reservations_none?: Maybe<ReservationWhereInput>;
-  triageStyles_every?: Maybe<ProductWhereInput>;
-  triageStyles_some?: Maybe<ProductWhereInput>;
-  triageStyles_none?: Maybe<ProductWhereInput>;
   emailedProducts_every?: Maybe<ProductWhereInput>;
   emailedProducts_some?: Maybe<ProductWhereInput>;
   emailedProducts_none?: Maybe<ProductWhereInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
+  authorizedAt_not?: Maybe<DateTimeInput>;
+  authorizedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  authorizedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  authorizedAt_lt?: Maybe<DateTimeInput>;
+  authorizedAt_lte?: Maybe<DateTimeInput>;
+  authorizedAt_gt?: Maybe<DateTimeInput>;
+  authorizedAt_gte?: Maybe<DateTimeInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -11623,8 +11630,8 @@ export interface CustomerCreateWithoutBagItemsInput {
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
-  triageStyles?: Maybe<ProductCreateManyInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerDetailCreateOneInput {
@@ -11904,8 +11911,8 @@ export interface CustomerCreateWithoutReservationsInput {
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
-  triageStyles?: Maybe<ProductCreateManyInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface BagItemCreateManyWithoutCustomerInput {
@@ -12036,8 +12043,8 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
-  triageStyles?: Maybe<ProductUpdateManyInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerDetailUpdateOneInput {
@@ -12563,8 +12570,8 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
-  triageStyles?: Maybe<ProductUpdateManyInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface BagItemUpdateManyWithoutCustomerInput {
@@ -13541,8 +13548,8 @@ export interface CustomerCreateInput {
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
-  triageStyles?: Maybe<ProductCreateManyInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerUpdateInput {
@@ -13554,13 +13561,14 @@ export interface CustomerUpdateInput {
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
-  triageStyles?: Maybe<ProductUpdateManyInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerUpdateManyMutationInput {
   status?: Maybe<CustomerStatus>;
   plan?: Maybe<Plan>;
+  authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerDetailUpdateInput {
@@ -13633,8 +13641,8 @@ export interface CustomerCreateWithoutMembershipInput {
   plan?: Maybe<Plan>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
-  triageStyles?: Maybe<ProductCreateManyInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerMembershipUpdateInput {
@@ -13659,8 +13667,8 @@ export interface CustomerUpdateWithoutMembershipDataInput {
   plan?: Maybe<Plan>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
-  triageStyles?: Maybe<ProductUpdateManyInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerUpsertWithoutMembershipInput {
@@ -14910,8 +14918,8 @@ export interface CustomerUpdateDataInput {
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
-  triageStyles?: Maybe<ProductUpdateManyInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerUpsertNestedInput {
@@ -18961,6 +18969,7 @@ export interface Customer {
   id: ID_Output;
   status?: CustomerStatus;
   plan?: Plan;
+  authorizedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -18991,15 +19000,6 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
-  triageStyles: <T = FragmentableArray<Product>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
   emailedProducts: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
@@ -19009,6 +19009,7 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  authorizedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -19041,15 +19042,6 @@ export interface CustomerSubscription
     first?: Int;
     last?: Int;
   }) => T;
-  triageStyles: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
   emailedProducts: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
@@ -19059,6 +19051,7 @@ export interface CustomerSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  authorizedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -19091,15 +19084,6 @@ export interface CustomerNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
-  triageStyles: <T = FragmentableArray<Product>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
   emailedProducts: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
@@ -19109,6 +19093,7 @@ export interface CustomerNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  authorizedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -24045,6 +24030,7 @@ export interface CustomerPreviousValues {
   id: ID_Output;
   status?: CustomerStatus;
   plan?: Plan;
+  authorizedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -24055,6 +24041,7 @@ export interface CustomerPreviousValuesPromise
   id: () => Promise<ID_Output>;
   status: () => Promise<CustomerStatus>;
   plan: () => Promise<Plan>;
+  authorizedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -24065,6 +24052,7 @@ export interface CustomerPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   status: () => Promise<AsyncIterator<CustomerStatus>>;
   plan: () => Promise<AsyncIterator<Plan>>;
+  authorizedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

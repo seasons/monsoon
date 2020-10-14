@@ -5267,8 +5267,8 @@ type Customer implements Node {
   membership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
-  triageStyles(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   emailedProducts(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5287,13 +5287,13 @@ input CustomerCreateInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
   emailedProducts: ProductCreateManyInput
 }
 
@@ -5321,12 +5321,12 @@ input CustomerCreateWithoutBagItemsInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
   emailedProducts: ProductCreateManyInput
 }
 
@@ -5334,12 +5334,12 @@ input CustomerCreateWithoutMembershipInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
   emailedProducts: ProductCreateManyInput
 }
 
@@ -5347,12 +5347,12 @@ input CustomerCreateWithoutReservationsInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
   emailedProducts: ProductCreateManyInput
 }
 
@@ -6633,6 +6633,8 @@ enum CustomerOrderByInput {
   status_DESC
   plan_ASC
   plan_DESC
+  authorizedAt_ASC
+  authorizedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6643,6 +6645,7 @@ type CustomerPreviousValues {
   id: ID!
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6698,32 +6701,33 @@ input CustomerSubscriptionWhereInput {
 input CustomerUpdateDataInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
   emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
   emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateManyMutationInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
 }
 
 input CustomerUpdateOneRequiredInput {
@@ -6757,36 +6761,36 @@ input CustomerUpdateOneRequiredWithoutReservationsInput {
 input CustomerUpdateWithoutBagItemsDataInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
   emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
   emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
   emailedProducts: ProductUpdateManyInput
 }
 
@@ -6879,6 +6883,28 @@ input CustomerWhereInput {
 
   """All values that are not contained in given list."""
   plan_not_in: [Plan!]
+  authorizedAt: DateTime
+
+  """All values that are not equal to given value."""
+  authorizedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  authorizedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  authorizedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  authorizedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  authorizedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  authorizedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  authorizedAt_gte: DateTime
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -6933,9 +6959,6 @@ input CustomerWhereInput {
   reservations_every: ReservationWhereInput
   reservations_some: ReservationWhereInput
   reservations_none: ReservationWhereInput
-  triageStyles_every: ProductWhereInput
-  triageStyles_some: ProductWhereInput
-  triageStyles_none: ProductWhereInput
   emailedProducts_every: ProductWhereInput
   emailedProducts_some: ProductWhereInput
   emailedProducts_none: ProductWhereInput
@@ -27807,6 +27830,8 @@ export type CustomerOrderByInput =   'id_ASC' |
   'status_DESC' |
   'plan_ASC' |
   'plan_DESC' |
+  'authorizedAt_ASC' |
+  'authorizedAt_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -30374,13 +30399,13 @@ export interface CustomerCreateInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user: UserCreateOneInput
   detail?: CustomerDetailCreateOneInput | null
   billingInfo?: BillingInfoCreateOneInput | null
   membership?: CustomerMembershipCreateOneWithoutCustomerInput | null
   bagItems?: BagItemCreateManyWithoutCustomerInput | null
   reservations?: ReservationCreateManyWithoutCustomerInput | null
-  triageStyles?: ProductCreateManyInput | null
   emailedProducts?: ProductCreateManyInput | null
 }
 
@@ -30408,12 +30433,12 @@ export interface CustomerCreateWithoutBagItemsInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user: UserCreateOneInput
   detail?: CustomerDetailCreateOneInput | null
   billingInfo?: BillingInfoCreateOneInput | null
   membership?: CustomerMembershipCreateOneWithoutCustomerInput | null
   reservations?: ReservationCreateManyWithoutCustomerInput | null
-  triageStyles?: ProductCreateManyInput | null
   emailedProducts?: ProductCreateManyInput | null
 }
 
@@ -30421,12 +30446,12 @@ export interface CustomerCreateWithoutMembershipInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user: UserCreateOneInput
   detail?: CustomerDetailCreateOneInput | null
   billingInfo?: BillingInfoCreateOneInput | null
   bagItems?: BagItemCreateManyWithoutCustomerInput | null
   reservations?: ReservationCreateManyWithoutCustomerInput | null
-  triageStyles?: ProductCreateManyInput | null
   emailedProducts?: ProductCreateManyInput | null
 }
 
@@ -30434,12 +30459,12 @@ export interface CustomerCreateWithoutReservationsInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user: UserCreateOneInput
   detail?: CustomerDetailCreateOneInput | null
   billingInfo?: BillingInfoCreateOneInput | null
   membership?: CustomerMembershipCreateOneWithoutCustomerInput | null
   bagItems?: BagItemCreateManyWithoutCustomerInput | null
-  triageStyles?: ProductCreateManyInput | null
   emailedProducts?: ProductCreateManyInput | null
 }
 
@@ -31001,32 +31026,33 @@ export interface CustomerSubscriptionWhereInput {
 export interface CustomerUpdateDataInput {
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
   membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
   bagItems?: BagItemUpdateManyWithoutCustomerInput | null
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
-  triageStyles?: ProductUpdateManyInput | null
   emailedProducts?: ProductUpdateManyInput | null
 }
 
 export interface CustomerUpdateInput {
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
   membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
   bagItems?: BagItemUpdateManyWithoutCustomerInput | null
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
-  triageStyles?: ProductUpdateManyInput | null
   emailedProducts?: ProductUpdateManyInput | null
 }
 
 export interface CustomerUpdateManyMutationInput {
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
 }
 
 export interface CustomerUpdateOneRequiredInput {
@@ -31060,36 +31086,36 @@ export interface CustomerUpdateOneRequiredWithoutReservationsInput {
 export interface CustomerUpdateWithoutBagItemsDataInput {
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
   membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
-  triageStyles?: ProductUpdateManyInput | null
   emailedProducts?: ProductUpdateManyInput | null
 }
 
 export interface CustomerUpdateWithoutMembershipDataInput {
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
   bagItems?: BagItemUpdateManyWithoutCustomerInput | null
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
-  triageStyles?: ProductUpdateManyInput | null
   emailedProducts?: ProductUpdateManyInput | null
 }
 
 export interface CustomerUpdateWithoutReservationsDataInput {
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
   membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
   bagItems?: BagItemUpdateManyWithoutCustomerInput | null
-  triageStyles?: ProductUpdateManyInput | null
   emailedProducts?: ProductUpdateManyInput | null
 }
 
@@ -31139,6 +31165,14 @@ export interface CustomerWhereInput {
   plan_not?: Plan | null
   plan_in?: Plan[] | Plan | null
   plan_not_in?: Plan[] | Plan | null
+  authorizedAt?: DateTime | null
+  authorizedAt_not?: DateTime | null
+  authorizedAt_in?: DateTime[] | DateTime | null
+  authorizedAt_not_in?: DateTime[] | DateTime | null
+  authorizedAt_lt?: DateTime | null
+  authorizedAt_lte?: DateTime | null
+  authorizedAt_gt?: DateTime | null
+  authorizedAt_gte?: DateTime | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -31165,9 +31199,6 @@ export interface CustomerWhereInput {
   reservations_every?: ReservationWhereInput | null
   reservations_some?: ReservationWhereInput | null
   reservations_none?: ReservationWhereInput | null
-  triageStyles_every?: ProductWhereInput | null
-  triageStyles_some?: ProductWhereInput | null
-  triageStyles_none?: ProductWhereInput | null
   emailedProducts_every?: ProductWhereInput | null
   emailedProducts_some?: ProductWhereInput | null
   emailedProducts_none?: ProductWhereInput | null
@@ -41138,8 +41169,8 @@ export interface Customer extends Node {
   membership?: CustomerMembership | null
   bagItems?: Array<BagItem> | null
   reservations?: Array<Reservation> | null
-  triageStyles?: Array<Product> | null
   emailedProducts?: Array<Product> | null
+  authorizedAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -41286,6 +41317,7 @@ export interface CustomerPreviousValues {
   id: ID_Output
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
 }

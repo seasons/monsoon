@@ -149,6 +149,15 @@ export class AdmissionsService {
     return { pass, detail }
   }
 
+  async getAvailableStyles(
+    where: CustomerWhereUniqueInput
+  ): Promise<Product[]> {
+    const {
+      detail: { availableTopStyles, availableBottomStyles },
+    } = await this.haveSufficientInventoryToServiceCustomer(where)
+    return [...availableBottomStyles, ...availableTopStyles]
+  }
+
   async haveSufficientInventoryToServiceCustomer(
     where: CustomerWhereUniqueInput
   ): Promise<HaveSufficientInventoryToServiceCustomerResult> {

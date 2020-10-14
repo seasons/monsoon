@@ -2677,8 +2677,8 @@ type Customer {
   membership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
-  triageStyles(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   emailedProducts(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2699,8 +2699,8 @@ input CustomerCreateInput {
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
   emailedProducts: ProductCreateManyInput
+  authorizedAt: DateTime
 }
 
 input CustomerCreateOneInput {
@@ -2732,8 +2732,8 @@ input CustomerCreateWithoutBagItemsInput {
   plan: Plan
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
   emailedProducts: ProductCreateManyInput
+  authorizedAt: DateTime
 }
 
 input CustomerCreateWithoutMembershipInput {
@@ -2745,8 +2745,8 @@ input CustomerCreateWithoutMembershipInput {
   plan: Plan
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
   emailedProducts: ProductCreateManyInput
+  authorizedAt: DateTime
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -2758,8 +2758,8 @@ input CustomerCreateWithoutReservationsInput {
   plan: Plan
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
   emailedProducts: ProductCreateManyInput
+  authorizedAt: DateTime
 }
 
 type CustomerDetail {
@@ -3471,6 +3471,8 @@ enum CustomerOrderByInput {
   status_DESC
   plan_ASC
   plan_DESC
+  authorizedAt_ASC
+  authorizedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -3481,6 +3483,7 @@ type CustomerPreviousValues {
   id: ID!
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3523,8 +3526,8 @@ input CustomerUpdateDataInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
   emailedProducts: ProductUpdateManyInput
+  authorizedAt: DateTime
 }
 
 input CustomerUpdateInput {
@@ -3536,13 +3539,14 @@ input CustomerUpdateInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
   emailedProducts: ProductUpdateManyInput
+  authorizedAt: DateTime
 }
 
 input CustomerUpdateManyMutationInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
 }
 
 input CustomerUpdateOneRequiredInput {
@@ -3581,8 +3585,8 @@ input CustomerUpdateWithoutBagItemsDataInput {
   plan: Plan
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
   emailedProducts: ProductUpdateManyInput
+  authorizedAt: DateTime
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
@@ -3593,8 +3597,8 @@ input CustomerUpdateWithoutMembershipDataInput {
   plan: Plan
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
   emailedProducts: ProductUpdateManyInput
+  authorizedAt: DateTime
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -3605,8 +3609,8 @@ input CustomerUpdateWithoutReservationsDataInput {
   plan: Plan
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
   emailedProducts: ProductUpdateManyInput
+  authorizedAt: DateTime
 }
 
 input CustomerUpsertNestedInput {
@@ -3662,12 +3666,17 @@ input CustomerWhereInput {
   reservations_every: ReservationWhereInput
   reservations_some: ReservationWhereInput
   reservations_none: ReservationWhereInput
-  triageStyles_every: ProductWhereInput
-  triageStyles_some: ProductWhereInput
-  triageStyles_none: ProductWhereInput
   emailedProducts_every: ProductWhereInput
   emailedProducts_some: ProductWhereInput
   emailedProducts_none: ProductWhereInput
+  authorizedAt: DateTime
+  authorizedAt_not: DateTime
+  authorizedAt_in: [DateTime!]
+  authorizedAt_not_in: [DateTime!]
+  authorizedAt_lt: DateTime
+  authorizedAt_lte: DateTime
+  authorizedAt_gt: DateTime
+  authorizedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

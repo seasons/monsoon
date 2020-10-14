@@ -1,3 +1,5 @@
+import fs from "fs"
+
 import { Customer, User } from "@app/decorators"
 import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
 import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
@@ -10,8 +12,11 @@ import {
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
+import mustache from "mustache"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
 import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
+
+import { SMSID, SMSPayload } from "../sms.types"
 
 const twilioStatusCallback = process.env.TWILIO_STATUS_CALLBACK
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
@@ -19,6 +24,13 @@ const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
 @Injectable()
 export class SMSService {
   private sid?: string
+
+  private globalConstants = {
+    accountDeepLink: "https://szns.co/account",
+    contactEmail: "membership@seasons.nyc",
+    stylistLink: "https://szns.co/app",
+  }
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly twilio: TwilioService,
@@ -132,6 +144,23 @@ export class SMSService {
     return this.twilioUtils.twilioToPrismaVerificationStatus(check.status)
   }
 
+  async sendSMSById({
+    to,
+    smsId,
+    renderData,
+  }: {
+    to: UserWhereUniqueInput
+    smsId: SMSID
+    renderData: any
+  }) {
+    const { body, mediaUrls } = this.getSMSData(smsId, renderData)
+    await this.sendSMSMessage({
+      to,
+      body,
+      mediaUrls,
+    })
+  }
+
   async sendSMSMessage(
     @Args()
     {
@@ -201,5 +230,29 @@ export class SMSService {
       data: { status },
       where: { externalId },
     })
+  }
+
+  private getSMSData(smsID: SMSID, vars: any): SMSPayload {
+    let { body, mediaUrls } = JSON.parse(
+      fs.readFileSync(process.cwd() + "/src/modules/SMS/data.json", "utf-8")
+    )[smsID]
+
+    body = this.interpolateJSONObjectWithMustache(body, {
+      ...vars,
+      ...this.globalConstants,
+    })
+    mediaUrls = this.interpolateJSONObjectWithMustache(mediaUrls, {
+      ...vars,
+      ...this.globalConstants,
+    })
+
+    return {
+      body,
+      mediaUrls,
+    }
+  }
+
+  private interpolateJSONObjectWithMustache(obj: any, vars: any = {}) {
+    return JSON.parse(mustache.render(JSON.stringify(obj), vars))
   }
 }

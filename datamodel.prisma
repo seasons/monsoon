@@ -701,14 +701,11 @@ type Customer {
     @relation(name: "CustomerToCustomerMembership", onDelete: CASCADE)
   bagItems: [BagItem] @relation(name: "CustomerToBagItem")
   reservations: [Reservation] @relation(name: "CustomerToReservation")
-  # A link to the all the available styles the last time this customer was triaged
-  # Used for communication purposes
-  triageStyles: [Product!]!
-    @relation(name: "CustomerToTriageStyles", onDelete: SET_NULL)
 
   ## A list of all the products we've shown this person via email
   emailedProducts: [Product!]!
     @relation(name: "CustomerToEmailedProducts", onDelete: SET_NULL)
+  authorizedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

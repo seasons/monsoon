@@ -203,7 +203,7 @@ export class CustomerService {
   }
 
   async updateCustomer(args, info, application: ApplicationType) {
-    const { where, data } = args
+    let { where, data } = args
     const customer = await this.prisma.binding.query.customer(
       {
         where,
@@ -225,6 +225,7 @@ export class CustomerService {
       data.status &&
       data.status === "Authorized"
     ) {
+      data = { ...data, authorizedAt: new Date() }
       const {
         pass: haveSufficientInventory,
         detail: { availableBottomStyles, availableTopStyles },
@@ -251,15 +252,10 @@ export class CustomerService {
         email: customer.user.email,
         pushNotifID: "CompleteAccount",
       })
-      await this.sms.sendSMSMessage({
+      await this.sms.sendSMSById({
         to: { id: customer.user.id },
-        body:
-          `${customer.user.firstName}, it's Seasons. You're in. You'll soon have access to hundreds of new styles without the stress ` +
-          `of commitment. To finish setting up your membership, you will need to download or sign in on the app, then select a plan. ` +
-          `https://szns.co/app. Due to demand, your invitation will expire in 48 hours. If you have any questions please contact membership@seasons.nyc.`,
-        mediaUrls: [
-          "https://seasons-images.s3.amazonaws.com/email-images/AuthorizedHero.jpg",
-        ],
+        renderData: { name: customer.user.firstName },
+        smsId: "CompleteAccount",
       })
 
       this.segment.trackBecameAuthorized(customer.user.id, {
@@ -271,7 +267,7 @@ export class CustomerService {
         application,
       })
     }
-    return this.prisma.binding.mutation.updateCustomer(args, info)
+    return this.prisma.binding.mutation.updateCustomer({ where, data }, info)
   }
 
   async triageCustomer(
@@ -410,7 +406,7 @@ export class CustomerService {
 
       await this.prisma.client.updateCustomer({
         where,
-        data: { status },
+        data: { status, authorizedAt: new Date() },
       })
     }
 
