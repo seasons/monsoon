@@ -6,22 +6,13 @@ import { Command, Positional } from "nestjs-command"
 @Injectable()
 export class HerokuCommands {
   @Command({
-    command: "get:production-commit <app>",
-    describe: "gets the latest commit to be deployed on the specified app",
+    command: "get:production-commit",
+    describe: "gets the latest commit to be deployed on monsoon-production",
     aliases: "gpc",
   })
-  async create(
-    @Positional({
-      name: "app",
-      type: "string",
-      choices: ["monsoon-production", "monsoon-staging"],
-      describe:
-        "heroku application for which to retrieve the production commit hash",
-    })
-    app
-  ) {
+  async create() {
     const releases = JSON.parse(
-      execSync(`heroku releases --app ${app} --json`).toString()
+      execSync(`heroku releases --app monsoon-production --json`).toString()
     ) as { description: string; version: number }[]
 
     let release = releases.shift()
@@ -45,7 +36,7 @@ export class HerokuCommands {
     }
 
     console.log(
-      `Current production commit for ${app}: ${this.extractCommitHash(
+      `Current production commit for monsoon-production: ${this.extractCommitHash(
         activeRelease
       )}`
     )
