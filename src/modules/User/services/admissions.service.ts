@@ -190,18 +190,6 @@ export class AdmissionsService {
       adjustedReservableStyles: numAvailableAdjustedBottomStyles,
     } = await this.availableStylesForCustomer(where, "Bottom")
 
-    // store a link to the available styles for a customer for communication purposes
-    await this.prisma.client.updateCustomer({
-      where,
-      data: {
-        triageStyles: {
-          set: [...availableBottomStyles, ...availableTopStyles].map(a => ({
-            id: a.id,
-          })),
-        },
-      },
-    })
-
     return {
       reservableStyles:
         numAvailableAdjustedTopStyles + numAvailableAdjustedBottomStyles,
