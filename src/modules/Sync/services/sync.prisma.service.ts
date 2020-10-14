@@ -84,40 +84,26 @@ export class PrismaSyncService {
 
   private getWarning({ toHost, toDBName, toPort, toUsername }) {
     return `
-    For your convenience:
-
-    Prisma production URL: https://dashboard.heroku.com/apps/monsoon-prisma-production
-    Prisma staging URL: https://dashboard.heroku.com/apps/monsoon-prisma-staging
-
-    Prisma Production DB Credentials: https://data.heroku.com/datastores/678b494b-b22a-4623-b8be-cdd4af0b73aa#credentials
-    Prisma Staging DB Credentials: https://data.heroku.com/datastores/22766167-0a92-40df-9949-6c9733728e93#administration
-
     DANGER ALERT. Please review the change you are about to make.
 
-    Source DB (Always production):
-    -- Host: ${process.env.DB_PRODUCTION_HOST}
-    -- Port: ${process.env.DB_PRODUCTION_PORT}
-    -- DBname: ${process.env.DB_PRODUCTION_DBNAME}
-    -- Username: ${process.env.DB_PRODUCTION_USERNAME}
-
-    Destination DB:
+    DESTINATION:
     -- Host: ${toHost}
     -- Port: ${toPort}
     -- DBName: ${toDBName}
     -- Username: ${toUsername}
 
-    All data on the destination DB will be irreversibly (unless you have a backup)
-    replaced with the data from source.
+    All data on the destination will be irreversibly replaced with the data from source.
 
-    DOUBLE DANGER: If the schema on the target DB does not match the schema on the source (production) db, 
+    DOUBLE DANGER: If the schema on the target DB does not match the schema on the production db, 
     this will irrevocably damage your target DB. You will then need to recreate it from scratch. 
 
     Please ensure before proceeding that your target DB's schema matches production's.
     You can do so as follows:
-    1. Get the latest commit to be deployed to production here: https://dashboard.heroku.com/apps/monsoon-production/activity
-    2. Checkout that commit and deploy prisma to your target DB
+    1. Get the latest commit to deployed to production by running "monsoon gpc"
+    2. Checkout that commit and deploy prisma to your target DB. 
+    3. Re-run this sync. 
 
-    Proceed?
+    After step 3, you free to switch branches as you desire. 
     `
   }
 

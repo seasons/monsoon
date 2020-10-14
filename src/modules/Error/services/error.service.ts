@@ -11,7 +11,10 @@ export class ErrorService {
   setUserContext(prismaUser: User) {
     if (this.shouldReportErrorsToSentry) {
       Sentry.configureScope(scope => {
-        scope.setUser({ id: prismaUser.id, email: prismaUser.email })
+        scope.setUser({
+          id: prismaUser?.id || "",
+          email: prismaUser?.email || "",
+        })
       })
     }
   }

@@ -257,7 +257,7 @@ export class ImageService {
       images.map(async (image, index) => {
         const data = await image
         if (typeof data === "string") {
-          // This means that we received an image URL in which case
+          // This means that we  an image URL in which case
           // we just have perfom an upsertImage with the url
 
           // This URL is sent by the client which means it an Imgix URL.

@@ -703,6 +703,8 @@ type Customer {
   # Used for communication purposes
   triageStyles: [Product!]!
     @relation(name: "CustomerToTriageStyles", onDelete: CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type CustomerMembership {
@@ -953,4 +955,11 @@ type AdminActionLog {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+}
+
+type SyncTiming {
+  id: ID! @id
+  dripSyncedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
