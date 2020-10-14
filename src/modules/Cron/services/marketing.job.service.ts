@@ -46,29 +46,26 @@ export class MarketingScheduledJobs {
       const completeAccountReceipt = head(
         cust.user.emails.filter(a => a.emailId === "CompleteAccount")
       )
+      const authorizedAt = completeAccountReceipt.createdAt
       const receivedEmails = cust.user.emails.map(a => a.emailId)
       const now = moment()
 
+      // Send rewaitlist email as needed
+      const deadlinePassed = moment(authorizedAt).add(2, "d").isAfter(now)
+      const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
+      if (deadlinePassed && !rewaitlistEmailSent) {
+        await this.email.sendRewaitlistedEmail(cust.user)
+        // TODO: Send text message
+        break
+      }
+
       // Send 24 hour follow up email as needed
-      const twentyFoursPassed = moment(completeAccountReceipt.createdAt)
-        .add(1, "d")
-        .isAfter(now)
+      const twentyFoursPassed = moment(authorizedAt).add(1, "d").isAfter(now)
       const twentyFourHourFollowupSent = receivedEmails.includes(
         "TwentyFourHourAuthorizationFollowup"
       )
       if (twentyFoursPassed && !twentyFourHourFollowupSent) {
         await this.email.sendAuthorized24HourFollowup(cust.user)
-        // TODO: Send text message
-        break
-      }
-
-      // Send rewaitlist email as needed
-      const deadlinePassed = moment(completeAccountReceipt.createdAt)
-        .add(2, "d")
-        .isAfter(now)
-      const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
-      if (deadlinePassed && !rewaitlistEmailSent) {
-        await this.email.sendRewaitlistedEmail(cust.user)
         // TODO: Send text message
         break
       }

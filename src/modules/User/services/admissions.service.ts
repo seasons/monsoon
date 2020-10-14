@@ -130,7 +130,10 @@ export class AdmissionsService {
 
   async reservableInventoryForCustomer(
     where: CustomerWhereUniqueInput
-  ): Promise<{ reservableStyles: number; detail: any }> {
+  ): Promise<{
+    reservableStyles: number
+    detail: { availableBottomStyles: Product[]; availableTopStyles: Product[] }
+  }> {
     const {
       reservableStyles: availableTopStyles,
       adjustedReservableStyles: numAvailableAdjustedTopStyles,

@@ -78,7 +78,7 @@ export class EmailService {
 
   async sendWaitlistedEmail(user: EmailUser) {
     const payload = await RenderEmail.waitlisted({
-      name: `${user.firstName}`,
+      name: user.firstName,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -106,7 +106,7 @@ export class EmailService {
       )
     ) as any
     const payload = await RenderEmail.subscribed({
-      name: `${user.firstName}`,
+      name: user.firstName,
       planId: cust.membership?.plan?.planID,
       itemCount: `${cust.membership?.plan?.itemCount}`,
     })
@@ -140,7 +140,7 @@ export class EmailService {
       )
     )
     const payload = await RenderEmail.paused({
-      name: `${customer.user.firstName}`,
+      name: customer.user.firstName,
       resumeDate: latestPauseRequest.resumeDate,
     })
 
@@ -154,7 +154,7 @@ export class EmailService {
   async sendResumeReminderEmail(user: EmailUser, resumeDate: DateTime) {
     const fourLatestProducts = await this.emailUtils.getXLatestProducts(4)
     const payload = await RenderEmail.resumeReminder({
-      name: `${user.firstName}`,
+      name: user.firstName,
       resumeDate: resumeDate,
       ...this.formatProductGridInput(fourLatestProducts),
     })
