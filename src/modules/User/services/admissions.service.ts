@@ -14,6 +14,18 @@ export interface TriageFuncResult {
   detail: any
 }
 
+export interface ReservableInventoryForCustomerResultDetail {
+  availableBottomStyles: Product[]
+  availableTopStyles: Product[]
+}
+
+export interface HaveSufficientInventoryToServiceCustomerResult
+  extends TriageFuncResult {
+  detail: ReservableInventoryForCustomerResultDetail & {
+    inventoryThreshold: number
+  }
+}
+
 @Injectable()
 export class AdmissionsService {
   serviceableStates: string[]
@@ -139,7 +151,7 @@ export class AdmissionsService {
 
   async haveSufficientInventoryToServiceCustomer(
     where: CustomerWhereUniqueInput
-  ): Promise<TriageFuncResult> {
+  ): Promise<HaveSufficientInventoryToServiceCustomerResult> {
     const inventoryThreshold =
       parseInt(process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER, 10) || 15
     const {
@@ -158,7 +170,7 @@ export class AdmissionsService {
     where: CustomerWhereUniqueInput
   ): Promise<{
     reservableStyles: number
-    detail: { availableBottomStyles: Product[]; availableTopStyles: Product[] }
+    detail: ReservableInventoryForCustomerResultDetail
   }> {
     const {
       reservableStyles: availableTopStyles,
@@ -230,25 +242,41 @@ export class AdmissionsService {
     }
 
     const preferredSizes = customer.detail[sizesKey]
-    const availableStyles = (await this.prisma.binding.query.products({
-      where: {
-        AND: [
-          { type: productType },
-          {
-            variants_some: {
-              AND: [
-                {
-                  internalSize: internalSizeWhereInputCreateFunc(
-                    preferredSizes
-                  ),
-                },
-                { reservable_gte: 1 },
-              ],
+    const availableStyles = (await this.prisma.binding.query.products(
+      {
+        where: {
+          AND: [
+            { type: productType },
+            {
+              variants_some: {
+                AND: [
+                  {
+                    internalSize: internalSizeWhereInputCreateFunc(
+                      preferredSizes
+                    ),
+                  },
+                  { reservable_gte: 1 },
+                ],
+              },
             },
-          },
-        ],
+          ],
+        },
       },
-    })) as Product[]
+      // Need to query certain fields for the emails sent based on this data
+      `{
+        id
+        type
+        name
+        images {
+          url
+        }
+        variants {
+          internalSize {
+            display
+          }
+        }
+    }`
+    )) as Product[]
 
     // Find the competing users. Note that we assume all active customers without an active
     // reservation may be a competing user, regardless of how long it's been since their last reservation

@@ -8,7 +8,7 @@ export class ErrorService {
 
   constructor() {}
 
-  setUserContext(prismaUser: User) {
+  setUserContext(prismaUser: Pick<User, "id" | "email">) {
     if (this.shouldReportErrorsToSentry) {
       Sentry.configureScope(scope => {
         scope.setUser({
@@ -32,6 +32,12 @@ export class ErrorService {
   captureError(err) {
     if (this.shouldReportErrorsToSentry) {
       Sentry.captureException(err)
+    }
+  }
+
+  captureMessage(message) {
+    if (this.shouldReportErrorsToSentry) {
+      Sentry.captureMessage(message)
     }
   }
 }

@@ -1,6 +1,7 @@
-import { ID_Input, User } from "@app/prisma"
+import { ErrorService } from "@app/modules/Error/services/error.service"
+import { ID_Input, LetterSize, Product, User } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
-import { head } from "lodash"
+import { head, sampleSize, uniq } from "lodash"
 
 import { PrismaService } from "../../../prisma/prisma.service"
 
@@ -13,7 +14,10 @@ export interface ProductGridItem {
 
 @Injectable()
 export class EmailUtilsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly error: ErrorService
+  ) {}
 
   productInfoForGridData = `
   id
@@ -44,33 +48,57 @@ export class EmailUtilsService {
 
   async getXReservableProductsForUser(
     numProducts: number,
-    user: User
-  ): Promise<ProductGridItem[]> {
+    user: User,
+    products: Product[]
+  ): Promise<ProductGridItem[] | null> {
+    let returnProducts = null
+
+    // Filter out from products we've already emailed to the user
     const customer = head(
       await this.prisma.binding.query.customers(
         {
           where: { user: { id: user.id } },
         },
         `{
-          triageStyles {
+          emailedProducts {
             ${this.productInfoForGridData}
           }
         }
         `
       )
     ) as any
-    const firstXProducts = customer.triageStyles?.slice(0, numProducts)
-    if (firstXProducts?.length !== numProducts) {
-      throw new Error(
-        `Could not retrieve ${numProducts} reservable products for user`
+    const emailedProductsIDs = customer.emailedProducts.map(a => a.id)
+    const reservableProductsWeHaventAlreadySent = products.filter(
+      a => !emailedProductsIDs.includes(a.id)
+    )
+
+    // Of the remaining ones, try to get numProducts. If we can't, allow repeats
+    if (reservableProductsWeHaventAlreadySent.length >= numProducts) {
+      returnProducts = sampleSize(
+        reservableProductsWeHaventAlreadySent,
+        numProducts
+      ).map(this.productToGridPayload)
+    } else if (products.length >= numProducts) {
+      returnProducts = sampleSize(products, numProducts).map(
+        this.productToGridPayload
       )
     }
-    return firstXProducts.map(this.productToGridPayload)
+
+    if (returnProducts === null) {
+      this.error.setUserContext(user)
+      this.error.captureMessage(
+        `Unable to find ${numProducts} reservable products for email`
+      )
+    }
+
+    return returnProducts
   }
 
-  private productToGridPayload = (product: any) => {
+  productToGridPayload = (product: any) => {
     const letterSizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"]
-    let sizes = product.variants?.map(b => b.internalSize?.display)
+    let sizes = uniq(
+      product.variants?.map(b => b.internalSize?.display)
+    ) as LetterSize[]
     if (product.type === "Top") {
       sizes = sizes.sort((size1, size2) => {
         return letterSizes.indexOf(size1) - letterSizes.indexOf(size2)

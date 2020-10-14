@@ -44,27 +44,37 @@ export class EmailService {
     await this.addEmailedProductsToCustomer(user, fourLatestProducts)
   }
 
-  async sendAuthorizedEmail(user: EmailUser, version: "manual" | "automatic") {
-    const fourTriageStyles = await this.emailUtils.getXReservableProductsForUser(
+  async sendAuthorizedEmail(
+    user: EmailUser,
+    version: "manual" | "automatic",
+    availableStyles: Product[]
+  ) {
+    const fourReservableStyles = await this.emailUtils.getXReservableProductsForUser(
       4,
-      user as User
+      user as User,
+      availableStyles
     )
     const payload = await RenderEmail.authorized({
       name: `${user.firstName}`,
       version,
-      ...this.formatProductGridInput(fourTriageStyles),
+      ...this.formatProductGridInput(fourReservableStyles),
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
       emailId: "CompleteAccount",
     })
+    if (fourReservableStyles !== null) {
+      await this.addEmailedProductsToCustomer(user, fourReservableStyles)
+    }
   }
 
   async sendAuthorized24HourFollowup(user: EmailUser) {
     const fourTriageStyles = await this.emailUtils.getXReservableProductsForUser(
       4,
-      user as User
+      user as User,
+      // TODO: Supply products
+      []
     )
     const payload = await RenderEmail.authorized24HourFollowup({
       name: `${user.firstName}`,
@@ -121,7 +131,9 @@ export class EmailService {
   async sendRewaitlistedEmail(user: EmailUser) {
     const fourTriageStyles = await this.emailUtils.getXReservableProductsForUser(
       4,
-      user as User
+      user as User,
+      // TODO: Supply products
+      []
     )
     const payload = await RenderEmail.rewaitlisted({
       name: `${user.firstName}`,
@@ -341,6 +353,14 @@ export class EmailService {
     product3: ProductGridItem
     product4: ProductGridItem
   } => {
+    if (products === null) {
+      return {
+        product1: null,
+        product2: null,
+        product3: null,
+        product4: null,
+      }
+    }
     return {
       product1: products?.[0],
       product2: products?.[1],
