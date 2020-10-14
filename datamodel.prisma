@@ -162,9 +162,11 @@ enum EmailId {
   FreeToReserve
   WelcomeToSeasons
   ReturnReminder
+  ResumeReminder
   PriorityAccess
   SubmittedEmail
   Waitlisted
+  Paused
   Rewaitlisted
 }
 
@@ -305,6 +307,7 @@ type Location {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -601,6 +604,14 @@ type FitPicReport {
   reported: FitPic! @relation(name: "FitPicToFitPicReport")
   status: FitPicReportStatus! @default(value: Pending)
   reportedAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type InterestedUser {
+  id: ID! @id
+  email: String! 
+  zipcode: String 
+  createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 

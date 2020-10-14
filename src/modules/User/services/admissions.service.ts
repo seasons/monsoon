@@ -1,5 +1,6 @@
 import * as fs from "fs"
 
+import { ApplicationType } from "@app/decorators/application.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerWhereUniqueInput, Product } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
@@ -32,6 +33,31 @@ export class AdmissionsService {
         "utf-8"
       )
     ))
+  }
+
+  async hasSupportedPlatform(
+    where: CustomerWhereUniqueInput,
+    application: ApplicationType
+  ): Promise<TriageFuncResult> {
+    const customer = await this.prisma.binding.query.customer(
+      {
+        where,
+      },
+      `{
+        id
+        detail {
+          phoneOS
+        }
+      }`
+    )
+
+    const phoneOS =
+      application === "harvest" ? "iOS" : customer?.detail?.phoneOS
+
+    return {
+      pass: phoneOS === "iOS",
+      detail: customer.detail,
+    }
   }
 
   zipcodeAllowed(zipcode: string): TriageFuncResult {
@@ -276,9 +302,9 @@ export class AdmissionsService {
       }
 
       const latestPauseRequest = head(
-        pauseRequests.sort((a, b) => {
-          return moment(a.createdAt).isAfter(moment(b.createdAt)) ? -1 : 1
-        })
+        pauseRequests.sort((a, b) =>
+          this.utils.dateSort(a.createdAt, b.createdAt)
+        )
       )
       return this.utils.isLessThanXDaysFromNow(
         latestPauseRequest?.resumeDate as string,

@@ -73,7 +73,7 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
-    // 3. Create the user in our database and Airtable
+    // 3. Create the user in our database
     const user = await this.createPrismaUser(
       userAuth0ID,
       email,
@@ -195,6 +195,15 @@ export class AuthService {
     const traits = {} as any
     if (!!detail?.phoneNumber) {
       traits.phone = detail.phoneNumber
+    }
+    const state = detail?.shippingAddress?.state
+    if (!!detail.shippingAddress) {
+      traits.address = {
+        city: detail.shippingAddress?.city,
+        postalCode: detail.shippingAddress?.zipCode,
+        state,
+      }
+      traits.state = state
     }
     return traits
   }
@@ -338,13 +347,28 @@ export class AuthService {
       details.shippingAddress.create.state = state
     }
 
-    return await this.prisma.client.createCustomer({
-      user: {
-        connect: { id: userID },
+    return await this.prisma.binding.mutation.createCustomer(
+      {
+        data: {
+          user: {
+            connect: { id: userID },
+          },
+          detail: { create: details },
+          status: status || "Waitlisted",
+        },
       },
-      detail: { create: details },
-      status: status || "Waitlisted",
-    })
+      `{
+      id
+      status
+      detail {
+        shippingAddress {
+          zipCode
+          state
+          city
+        }
+      }
+    }`
+    )
   }
 
   private async getAuth0UserAccessToken(

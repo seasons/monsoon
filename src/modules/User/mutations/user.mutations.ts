@@ -50,4 +50,16 @@ export class UserMutationsResolver {
     })
     return result
   }
+
+  @Mutation()
+  async createInterestedUser(@Args() { email, zipcode }, @Info() info) {
+    const interestUser = await this.prisma.client.createInterestedUser({
+      email,
+      zipcode,
+    })
+
+    // TODO: Subscribe user to newsletter and send welcome email
+
+    return interestUser
+  }
 }
