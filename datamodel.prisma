@@ -308,6 +308,7 @@ type Location {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -607,6 +608,14 @@ type FitPicReport {
   updatedAt: DateTime! @updatedAt
 }
 
+type InterestedUser {
+  id: ID! @id
+  email: String!
+  zipcode: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type User {
   id: ID! @id
   auth0Id: String! @unique
@@ -695,7 +704,13 @@ type Customer {
   # A link to the all the available styles the last time this customer was triaged
   # Used for communication purposes
   triageStyles: [Product!]!
-    @relation(name: "CustomerToTriageStyles", onDelete: CASCADE)
+    @relation(name: "CustomerToTriageStyles", onDelete: SET_NULL)
+
+  ## A list of all the products we've shown this person via email
+  emailedProducts: [Product!]!
+    @relation(name: "CustomerToSentProducts", onDelete: SET_NULL)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type CustomerMembership {
@@ -946,4 +961,11 @@ type AdminActionLog {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+}
+
+type SyncTiming {
+  id: ID! @id
+  dripSyncedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }

@@ -2,20 +2,18 @@ import fs from "fs"
 
 import { DripSyncService } from "@app/modules/Drip/services/dripSync.service"
 import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
 import { Command, Option, Positional } from "nestjs-command"
 import readlineSync from "readline-sync"
 
-import {
-  AirtableEnvOption,
-  AirtableIdOption,
-  PrismaEnvOption,
-} from "../scripts.decorators"
+import { PrismaEnvOption } from "../scripts.decorators"
 import { ScriptsService } from "../services/scripts.service"
 
 @Injectable()
 export class SyncCommands {
+  private readonly logger = new Logger(SyncCommands.name)
+
   constructor(
     private readonly prismaSyncService: PrismaSyncService,
     private readonly dripSyncService: DripSyncService,
@@ -79,17 +77,34 @@ export class SyncCommands {
     @Positional({
       name: "table",
       type: "string",
-      describe: "Name of the airtable base to sync",
+      describe: "Name of the prisma table to sync",
       choices: ["customers"],
     })
     table,
     @PrismaEnvOption({
       choices: ["local", "staging", "production"],
-      default: "staging",
+      default: "production",
     })
-    prismaEnv
+    prismaEnv,
+    @Option({
+      name: "drip",
+      describe: `Drip environment command runs against.`,
+      choices: ["staging", "production"],
+      type: "string",
+      default: "staging",
+      alias: "de",
+    })
+    dripEnv,
+    @Option({
+      name: "batch",
+      describe: `Sync in 1000 length batches, or one at a time.`,
+      type: "boolean",
+      default: "true",
+    })
+    batch
   ) {
     await this.scriptsService.updateConnections({
+      dripEnv,
       prismaEnv,
       moduleRef: this.moduleRef,
     })
@@ -97,8 +112,9 @@ export class SyncCommands {
     const shouldProceed = readlineSync.keyInYN(
       `You are about sync ${
         table === "all" ? "all the tables" : "the " + table
-      } from prisma at url ${process.env.PRISMA_ENDPOINT} to Drip .\n` +
-        `Proceed? (y/n)`
+      } from prisma at url ${
+        process.env.PRISMA_ENDPOINT
+      } to ${dripEnv} Drip.\n` + `Proceed? (y/n)`
     )
     if (!shouldProceed) {
       console.log("\nExited without running anything\n")
@@ -107,8 +123,10 @@ export class SyncCommands {
 
     switch (table) {
       case "customers":
-        await this.dripSyncService.syncCustomers()
+        await this.dripSyncService.syncAllCustomers(batch)
         break
     }
+
+    this.logger.log(`Complete!`)
   }
 }

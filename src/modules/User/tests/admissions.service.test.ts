@@ -321,7 +321,7 @@ describe("Admissions Service", () => {
         cleanupFunc: customerCleanUpFunc,
         customer,
       } = await testUtils.createTestCustomer({
-        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31] },
+        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
       })
       cleanupFuncs.push(customerCleanUpFunc)
       testCustomer = customer
@@ -348,7 +348,7 @@ describe("Admissions Service", () => {
         // paused, but not resuming within the next week and therefore not competing
         {
           status: "Paused",
-          detail: { topSizes: ["XS"], waistSizes: [30, 31] },
+          detail: { topSizes: ["XS"], waistSizes: [30, 31], phoneOS: "iOS" },
           membership: {
             pauseRequests: [
               {
@@ -363,7 +363,7 @@ describe("Admissions Service", () => {
         // paused, resuming in the next week, competing
         {
           status: "Paused",
-          detail: { topSizes: ["XS"], waistSizes: [30, 31] },
+          detail: { topSizes: ["XS"], waistSizes: [30, 31], phoneOS: "iOS" },
           membership: {
             // put a few pause requests to test the code that retrieves the latest one
             pauseRequests: [
@@ -447,6 +447,38 @@ describe("Admissions Service", () => {
       } = await admissions.haveSufficientInventoryToServiceCustomer({
         id: testCustomer.id,
       })
+      expect(pass).toBe(true)
+    })
+
+    it("does not admit a user with an unsupported platform", async () => {
+      const { customer } = await testUtils.createTestCustomer({
+        detail: {
+          topSizes: ["XS", "S"],
+          waistSizes: [30, 31],
+          phoneOS: "Android",
+        },
+      })
+
+      const { pass } = await admissions.hasSupportedPlatform(
+        {
+          id: customer.id,
+        },
+        "flare"
+      )
+      expect(pass).toBe(false)
+    })
+
+    it("admits a user with a supported platform", async () => {
+      const { customer } = await testUtils.createTestCustomer({
+        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
+      })
+
+      const { pass } = await admissions.hasSupportedPlatform(
+        {
+          id: customer.id,
+        },
+        "flare"
+      )
       expect(pass).toBe(true)
     })
   })

@@ -25,6 +25,7 @@ type WaitlistReason =
   | "Unserviceable Zipcode"
   | "Insufficient Inventory"
   | "Exceeds Ops Threshold"
+  | "Unsupported Platform"
 
 @Injectable()
 export class CustomerService {
@@ -239,6 +240,13 @@ export class CustomerService {
             },
           }),
         waitlistReason: "AutomaticAdmissionsFlagOff",
+      },
+      {
+        func: async () =>
+          Promise.resolve(
+            this.admissions.hasSupportedPlatform(where, application)
+          ),
+        waitlistReason: "Unsupported Platform",
       },
       {
         func: async () =>

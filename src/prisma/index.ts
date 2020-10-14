@@ -38,6 +38,7 @@ export interface Exists {
     where?: HomepageProductRailWhereInput
   ) => Promise<boolean>;
   image: (where?: ImageWhereInput) => Promise<boolean>;
+  interestedUser: (where?: InterestedUserWhereInput) => Promise<boolean>;
   label: (where?: LabelWhereInput) => Promise<boolean>;
   location: (where?: LocationWhereInput) => Promise<boolean>;
   package: (where?: PackageWhereInput) => Promise<boolean>;
@@ -85,6 +86,7 @@ export interface Exists {
   size: (where?: SizeWhereInput) => Promise<boolean>;
   smsReceipt: (where?: SmsReceiptWhereInput) => Promise<boolean>;
   stylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>;
+  syncTiming: (where?: SyncTimingWhereInput) => Promise<boolean>;
   tag: (where?: TagWhereInput) => Promise<boolean>;
   topSize: (where?: TopSizeWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
@@ -479,6 +481,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ImageConnectionPromise;
+  interestedUser: (
+    where: InterestedUserWhereUniqueInput
+  ) => InterestedUserNullablePromise;
+  interestedUsers: (args?: {
+    where?: InterestedUserWhereInput;
+    orderBy?: InterestedUserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<InterestedUser>;
+  interestedUsersConnection: (args?: {
+    where?: InterestedUserWhereInput;
+    orderBy?: InterestedUserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => InterestedUserConnectionPromise;
   label: (where: LabelWhereUniqueInput) => LabelNullablePromise;
   labels: (args?: {
     where?: LabelWhereInput;
@@ -1032,6 +1055,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => StylePreferencesConnectionPromise;
+  syncTiming: (where: SyncTimingWhereUniqueInput) => SyncTimingNullablePromise;
+  syncTimings: (args?: {
+    where?: SyncTimingWhereInput;
+    orderBy?: SyncTimingOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<SyncTiming>;
+  syncTimingsConnection: (args?: {
+    where?: SyncTimingWhereInput;
+    orderBy?: SyncTimingOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => SyncTimingConnectionPromise;
   tag: (where: TagWhereUniqueInput) => TagNullablePromise;
   tags: (args?: {
     where?: TagWhereInput;
@@ -1509,6 +1551,28 @@ export interface Prisma {
   }) => ImagePromise;
   deleteImage: (where: ImageWhereUniqueInput) => ImagePromise;
   deleteManyImages: (where?: ImageWhereInput) => BatchPayloadPromise;
+  createInterestedUser: (
+    data: InterestedUserCreateInput
+  ) => InterestedUserPromise;
+  updateInterestedUser: (args: {
+    data: InterestedUserUpdateInput;
+    where: InterestedUserWhereUniqueInput;
+  }) => InterestedUserPromise;
+  updateManyInterestedUsers: (args: {
+    data: InterestedUserUpdateManyMutationInput;
+    where?: InterestedUserWhereInput;
+  }) => BatchPayloadPromise;
+  upsertInterestedUser: (args: {
+    where: InterestedUserWhereUniqueInput;
+    create: InterestedUserCreateInput;
+    update: InterestedUserUpdateInput;
+  }) => InterestedUserPromise;
+  deleteInterestedUser: (
+    where: InterestedUserWhereUniqueInput
+  ) => InterestedUserPromise;
+  deleteManyInterestedUsers: (
+    where?: InterestedUserWhereInput
+  ) => BatchPayloadPromise;
   createLabel: (data: LabelCreateInput) => LabelPromise;
   updateLabel: (args: {
     data: LabelUpdateInput;
@@ -2043,6 +2107,22 @@ export interface Prisma {
   deleteManyStylePreferenceses: (
     where?: StylePreferencesWhereInput
   ) => BatchPayloadPromise;
+  createSyncTiming: (data: SyncTimingCreateInput) => SyncTimingPromise;
+  updateSyncTiming: (args: {
+    data: SyncTimingUpdateInput;
+    where: SyncTimingWhereUniqueInput;
+  }) => SyncTimingPromise;
+  updateManySyncTimings: (args: {
+    data: SyncTimingUpdateManyMutationInput;
+    where?: SyncTimingWhereInput;
+  }) => BatchPayloadPromise;
+  upsertSyncTiming: (args: {
+    where: SyncTimingWhereUniqueInput;
+    create: SyncTimingCreateInput;
+    update: SyncTimingUpdateInput;
+  }) => SyncTimingPromise;
+  deleteSyncTiming: (where: SyncTimingWhereUniqueInput) => SyncTimingPromise;
+  deleteManySyncTimings: (where?: SyncTimingWhereInput) => BatchPayloadPromise;
   createTag: (data: TagCreateInput) => TagPromise;
   updateTag: (args: {
     data: TagUpdateInput;
@@ -2242,6 +2322,9 @@ export interface Subscription {
   image: (
     where?: ImageSubscriptionWhereInput
   ) => ImageSubscriptionPayloadSubscription;
+  interestedUser: (
+    where?: InterestedUserSubscriptionWhereInput
+  ) => InterestedUserSubscriptionPayloadSubscription;
   label: (
     where?: LabelSubscriptionWhereInput
   ) => LabelSubscriptionPayloadSubscription;
@@ -2323,6 +2406,9 @@ export interface Subscription {
   stylePreferences: (
     where?: StylePreferencesSubscriptionWhereInput
   ) => StylePreferencesSubscriptionPayloadSubscription;
+  syncTiming: (
+    where?: SyncTimingSubscriptionWhereInput
+  ) => SyncTimingSubscriptionPayloadSubscription;
   tag: (
     where?: TagSubscriptionWhereInput
   ) => TagSubscriptionPayloadSubscription;
@@ -3025,7 +3111,11 @@ export type CustomerOrderByInput =
   | "status_ASC"
   | "status_DESC"
   | "plan_ASC"
-  | "plan_DESC";
+  | "plan_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type CustomerDetailOrderByInput =
   | "id_ASC"
@@ -3083,6 +3173,18 @@ export type HomepageProductRailOrderByInput =
   | "name_ASC"
   | "name_DESC";
 
+export type InterestedUserOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "email_ASC"
+  | "email_DESC"
+  | "zipcode_ASC"
+  | "zipcode_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
 export type LabelOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -3112,6 +3214,8 @@ export type LocationOrderByInput =
   | "address2_DESC"
   | "city_ASC"
   | "city_DESC"
+  | "country_ASC"
+  | "country_DESC"
   | "state_ASC"
   | "state_DESC"
   | "zipCode_ASC"
@@ -3268,6 +3372,16 @@ export type SeasonOrderByInput =
   | "seasonCode_DESC";
 
 export type StylePreferencesOrderByInput = "id_ASC" | "id_DESC";
+
+export type SyncTimingOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "dripSyncedAt_ASC"
+  | "dripSyncedAt_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type TopSizeOrderByInput =
   | "id_ASC"
@@ -4060,6 +4174,20 @@ export interface LocationWhereInput {
   city_not_starts_with?: Maybe<String>;
   city_ends_with?: Maybe<String>;
   city_not_ends_with?: Maybe<String>;
+  country?: Maybe<String>;
+  country_not?: Maybe<String>;
+  country_in?: Maybe<String[] | String>;
+  country_not_in?: Maybe<String[] | String>;
+  country_lt?: Maybe<String>;
+  country_lte?: Maybe<String>;
+  country_gt?: Maybe<String>;
+  country_gte?: Maybe<String>;
+  country_contains?: Maybe<String>;
+  country_not_contains?: Maybe<String>;
+  country_starts_with?: Maybe<String>;
+  country_not_starts_with?: Maybe<String>;
+  country_ends_with?: Maybe<String>;
+  country_not_ends_with?: Maybe<String>;
   state?: Maybe<String>;
   state_not?: Maybe<String>;
   state_in?: Maybe<String[] | String>;
@@ -5815,6 +5943,25 @@ export interface CustomerWhereInput {
   triageStyles_every?: Maybe<ProductWhereInput>;
   triageStyles_some?: Maybe<ProductWhereInput>;
   triageStyles_none?: Maybe<ProductWhereInput>;
+  emailedProducts_every?: Maybe<ProductWhereInput>;
+  emailedProducts_some?: Maybe<ProductWhereInput>;
+  emailedProducts_none?: Maybe<ProductWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<CustomerWhereInput[] | CustomerWhereInput>;
   OR?: Maybe<CustomerWhereInput[] | CustomerWhereInput>;
   NOT?: Maybe<CustomerWhereInput[] | CustomerWhereInput>;
@@ -6957,6 +7104,74 @@ export type ImageWhereUniqueInput = AtLeastOne<{
   url?: Maybe<String>;
 }>;
 
+export type InterestedUserWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface InterestedUserWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  email?: Maybe<String>;
+  email_not?: Maybe<String>;
+  email_in?: Maybe<String[] | String>;
+  email_not_in?: Maybe<String[] | String>;
+  email_lt?: Maybe<String>;
+  email_lte?: Maybe<String>;
+  email_gt?: Maybe<String>;
+  email_gte?: Maybe<String>;
+  email_contains?: Maybe<String>;
+  email_not_contains?: Maybe<String>;
+  email_starts_with?: Maybe<String>;
+  email_not_starts_with?: Maybe<String>;
+  email_ends_with?: Maybe<String>;
+  email_not_ends_with?: Maybe<String>;
+  zipcode?: Maybe<String>;
+  zipcode_not?: Maybe<String>;
+  zipcode_in?: Maybe<String[] | String>;
+  zipcode_not_in?: Maybe<String[] | String>;
+  zipcode_lt?: Maybe<String>;
+  zipcode_lte?: Maybe<String>;
+  zipcode_gt?: Maybe<String>;
+  zipcode_gte?: Maybe<String>;
+  zipcode_contains?: Maybe<String>;
+  zipcode_not_contains?: Maybe<String>;
+  zipcode_starts_with?: Maybe<String>;
+  zipcode_not_starts_with?: Maybe<String>;
+  zipcode_ends_with?: Maybe<String>;
+  zipcode_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<InterestedUserWhereInput[] | InterestedUserWhereInput>;
+  OR?: Maybe<InterestedUserWhereInput[] | InterestedUserWhereInput>;
+  NOT?: Maybe<InterestedUserWhereInput[] | InterestedUserWhereInput>;
+}
+
 export type LabelWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -7440,6 +7655,54 @@ export type StylePreferencesWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type SyncTimingWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface SyncTimingWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  dripSyncedAt?: Maybe<DateTimeInput>;
+  dripSyncedAt_not?: Maybe<DateTimeInput>;
+  dripSyncedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dripSyncedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dripSyncedAt_lt?: Maybe<DateTimeInput>;
+  dripSyncedAt_lte?: Maybe<DateTimeInput>;
+  dripSyncedAt_gt?: Maybe<DateTimeInput>;
+  dripSyncedAt_gte?: Maybe<DateTimeInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
+  OR?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
+  NOT?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
+}
+
 export type TagWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   name?: Maybe<String>;
@@ -7683,6 +7946,7 @@ export interface LocationCreateInput {
   address1?: Maybe<String>;
   address2?: Maybe<String>;
   city?: Maybe<String>;
+  country?: Maybe<String>;
   state?: Maybe<String>;
   zipCode: String;
   locationType?: Maybe<LocationType>;
@@ -8031,6 +8295,7 @@ export interface LocationCreateWithoutPhysicalProductsInput {
   address1?: Maybe<String>;
   address2?: Maybe<String>;
   city?: Maybe<String>;
+  country?: Maybe<String>;
   state?: Maybe<String>;
   zipCode: String;
   locationType?: Maybe<LocationType>;
@@ -9057,6 +9322,7 @@ export interface LocationUpdateDataInput {
   address1?: Maybe<String>;
   address2?: Maybe<String>;
   city?: Maybe<String>;
+  country?: Maybe<String>;
   state?: Maybe<String>;
   zipCode?: Maybe<String>;
   locationType?: Maybe<LocationType>;
@@ -9818,6 +10084,7 @@ export interface LocationUpdateWithoutPhysicalProductsDataInput {
   address1?: Maybe<String>;
   address2?: Maybe<String>;
   city?: Maybe<String>;
+  country?: Maybe<String>;
   state?: Maybe<String>;
   zipCode?: Maybe<String>;
   locationType?: Maybe<LocationType>;
@@ -11357,6 +11624,7 @@ export interface CustomerCreateWithoutBagItemsInput {
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
   triageStyles?: Maybe<ProductCreateManyInput>;
+  emailedProducts?: Maybe<ProductCreateManyInput>;
 }
 
 export interface CustomerDetailCreateOneInput {
@@ -11637,6 +11905,7 @@ export interface CustomerCreateWithoutReservationsInput {
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
   triageStyles?: Maybe<ProductCreateManyInput>;
+  emailedProducts?: Maybe<ProductCreateManyInput>;
 }
 
 export interface BagItemCreateManyWithoutCustomerInput {
@@ -11768,6 +12037,7 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
   triageStyles?: Maybe<ProductUpdateManyInput>;
+  emailedProducts?: Maybe<ProductUpdateManyInput>;
 }
 
 export interface CustomerDetailUpdateOneInput {
@@ -12294,6 +12564,7 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   triageStyles?: Maybe<ProductUpdateManyInput>;
+  emailedProducts?: Maybe<ProductUpdateManyInput>;
 }
 
 export interface BagItemUpdateManyWithoutCustomerInput {
@@ -13271,6 +13542,7 @@ export interface CustomerCreateInput {
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
   triageStyles?: Maybe<ProductCreateManyInput>;
+  emailedProducts?: Maybe<ProductCreateManyInput>;
 }
 
 export interface CustomerUpdateInput {
@@ -13283,6 +13555,7 @@ export interface CustomerUpdateInput {
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
   triageStyles?: Maybe<ProductUpdateManyInput>;
+  emailedProducts?: Maybe<ProductUpdateManyInput>;
 }
 
 export interface CustomerUpdateManyMutationInput {
@@ -13361,6 +13634,7 @@ export interface CustomerCreateWithoutMembershipInput {
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
   triageStyles?: Maybe<ProductCreateManyInput>;
+  emailedProducts?: Maybe<ProductCreateManyInput>;
 }
 
 export interface CustomerMembershipUpdateInput {
@@ -13386,6 +13660,7 @@ export interface CustomerUpdateWithoutMembershipDataInput {
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
   triageStyles?: Maybe<ProductUpdateManyInput>;
+  emailedProducts?: Maybe<ProductUpdateManyInput>;
 }
 
 export interface CustomerUpsertWithoutMembershipInput {
@@ -13620,6 +13895,22 @@ export interface ImageUpdateManyMutationInput {
   title?: Maybe<String>;
 }
 
+export interface InterestedUserCreateInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  zipcode?: Maybe<String>;
+}
+
+export interface InterestedUserUpdateInput {
+  email?: Maybe<String>;
+  zipcode?: Maybe<String>;
+}
+
+export interface InterestedUserUpdateManyMutationInput {
+  email?: Maybe<String>;
+  zipcode?: Maybe<String>;
+}
+
 export interface LabelUpdateInput {
   name?: Maybe<String>;
   image?: Maybe<String>;
@@ -13642,6 +13933,7 @@ export interface LocationUpdateInput {
   address1?: Maybe<String>;
   address2?: Maybe<String>;
   city?: Maybe<String>;
+  country?: Maybe<String>;
   state?: Maybe<String>;
   zipCode?: Maybe<String>;
   locationType?: Maybe<LocationType>;
@@ -13659,6 +13951,7 @@ export interface LocationUpdateManyMutationInput {
   address1?: Maybe<String>;
   address2?: Maybe<String>;
   city?: Maybe<String>;
+  country?: Maybe<String>;
   state?: Maybe<String>;
   zipCode?: Maybe<String>;
   locationType?: Maybe<LocationType>;
@@ -14618,6 +14911,7 @@ export interface CustomerUpdateDataInput {
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
   triageStyles?: Maybe<ProductUpdateManyInput>;
+  emailedProducts?: Maybe<ProductUpdateManyInput>;
 }
 
 export interface CustomerUpsertNestedInput {
@@ -14932,6 +15226,19 @@ export interface StylePreferencesUpdateManyMutationInput {
   patterns?: Maybe<StylePreferencesUpdatepatternsInput>;
   colors?: Maybe<StylePreferencesUpdatecolorsInput>;
   brands?: Maybe<StylePreferencesUpdatebrandsInput>;
+}
+
+export interface SyncTimingCreateInput {
+  id?: Maybe<ID_Input>;
+  dripSyncedAt: DateTimeInput;
+}
+
+export interface SyncTimingUpdateInput {
+  dripSyncedAt?: Maybe<DateTimeInput>;
+}
+
+export interface SyncTimingUpdateManyMutationInput {
+  dripSyncedAt?: Maybe<DateTimeInput>;
 }
 
 export interface TagCreateInput {
@@ -15727,6 +16034,26 @@ export interface ImageSubscriptionWhereInput {
   NOT?: Maybe<ImageSubscriptionWhereInput[] | ImageSubscriptionWhereInput>;
 }
 
+export interface InterestedUserSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<InterestedUserWhereInput>;
+  AND?: Maybe<
+    | InterestedUserSubscriptionWhereInput[]
+    | InterestedUserSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | InterestedUserSubscriptionWhereInput[]
+    | InterestedUserSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | InterestedUserSubscriptionWhereInput[]
+    | InterestedUserSubscriptionWhereInput
+  >;
+}
+
 export interface LabelSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -16196,6 +16523,23 @@ export interface StylePreferencesSubscriptionWhereInput {
   NOT?: Maybe<
     | StylePreferencesSubscriptionWhereInput[]
     | StylePreferencesSubscriptionWhereInput
+  >;
+}
+
+export interface SyncTimingSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<SyncTimingWhereInput>;
+  AND?: Maybe<
+    SyncTimingSubscriptionWhereInput[] | SyncTimingSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    SyncTimingSubscriptionWhereInput[] | SyncTimingSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    SyncTimingSubscriptionWhereInput[] | SyncTimingSubscriptionWhereInput
   >;
 }
 
@@ -16969,6 +17313,7 @@ export interface Location {
   address1?: String;
   address2?: String;
   city?: String;
+  country?: String;
   state?: String;
   zipCode: String;
   locationType?: LocationType;
@@ -16987,6 +17332,7 @@ export interface LocationPromise extends Promise<Location>, Fragmentable {
   address1: () => Promise<String>;
   address2: () => Promise<String>;
   city: () => Promise<String>;
+  country: () => Promise<String>;
   state: () => Promise<String>;
   zipCode: () => Promise<String>;
   locationType: () => Promise<LocationType>;
@@ -17017,6 +17363,7 @@ export interface LocationSubscription
   address1: () => Promise<AsyncIterator<String>>;
   address2: () => Promise<AsyncIterator<String>>;
   city: () => Promise<AsyncIterator<String>>;
+  country: () => Promise<AsyncIterator<String>>;
   state: () => Promise<AsyncIterator<String>>;
   zipCode: () => Promise<AsyncIterator<String>>;
   locationType: () => Promise<AsyncIterator<LocationType>>;
@@ -17049,6 +17396,7 @@ export interface LocationNullablePromise
   address1: () => Promise<String>;
   address2: () => Promise<String>;
   city: () => Promise<String>;
+  country: () => Promise<String>;
   state: () => Promise<String>;
   zipCode: () => Promise<String>;
   locationType: () => Promise<LocationType>;
@@ -18613,6 +18961,8 @@ export interface Customer {
   id: ID_Output;
   status?: CustomerStatus;
   plan?: Plan;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface CustomerPromise extends Promise<Customer>, Fragmentable {
@@ -18650,6 +19000,17 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  emailedProducts: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerSubscription
@@ -18689,6 +19050,17 @@ export interface CustomerSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  emailedProducts: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface CustomerNullablePromise
@@ -18728,6 +19100,17 @@ export interface CustomerNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  emailedProducts: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerDetail {
@@ -20615,6 +20998,100 @@ export interface AggregateImageSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface InterestedUser {
+  id: ID_Output;
+  email: String;
+  zipcode?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface InterestedUserPromise
+  extends Promise<InterestedUser>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  email: () => Promise<String>;
+  zipcode: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface InterestedUserSubscription
+  extends Promise<AsyncIterator<InterestedUser>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  email: () => Promise<AsyncIterator<String>>;
+  zipcode: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface InterestedUserNullablePromise
+  extends Promise<InterestedUser | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  email: () => Promise<String>;
+  zipcode: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface InterestedUserConnection {
+  pageInfo: PageInfo;
+  edges: InterestedUserEdge[];
+}
+
+export interface InterestedUserConnectionPromise
+  extends Promise<InterestedUserConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<InterestedUserEdge>>() => T;
+  aggregate: <T = AggregateInterestedUserPromise>() => T;
+}
+
+export interface InterestedUserConnectionSubscription
+  extends Promise<AsyncIterator<InterestedUserConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<InterestedUserEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateInterestedUserSubscription>() => T;
+}
+
+export interface InterestedUserEdge {
+  node: InterestedUser;
+  cursor: String;
+}
+
+export interface InterestedUserEdgePromise
+  extends Promise<InterestedUserEdge>,
+    Fragmentable {
+  node: <T = InterestedUserPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface InterestedUserEdgeSubscription
+  extends Promise<AsyncIterator<InterestedUserEdge>>,
+    Fragmentable {
+  node: <T = InterestedUserSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateInterestedUser {
+  count: Int;
+}
+
+export interface AggregateInterestedUserPromise
+  extends Promise<AggregateInterestedUser>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateInterestedUserSubscription
+  extends Promise<AsyncIterator<AggregateInterestedUser>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface LabelConnection {
   pageInfo: PageInfo;
   edges: LabelEdge[];
@@ -22453,6 +22930,94 @@ export interface AggregateStylePreferencesSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface SyncTiming {
+  id: ID_Output;
+  dripSyncedAt: DateTimeOutput;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface SyncTimingPromise extends Promise<SyncTiming>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  dripSyncedAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface SyncTimingSubscription
+  extends Promise<AsyncIterator<SyncTiming>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  dripSyncedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface SyncTimingNullablePromise
+  extends Promise<SyncTiming | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  dripSyncedAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface SyncTimingConnection {
+  pageInfo: PageInfo;
+  edges: SyncTimingEdge[];
+}
+
+export interface SyncTimingConnectionPromise
+  extends Promise<SyncTimingConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<SyncTimingEdge>>() => T;
+  aggregate: <T = AggregateSyncTimingPromise>() => T;
+}
+
+export interface SyncTimingConnectionSubscription
+  extends Promise<AsyncIterator<SyncTimingConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<SyncTimingEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateSyncTimingSubscription>() => T;
+}
+
+export interface SyncTimingEdge {
+  node: SyncTiming;
+  cursor: String;
+}
+
+export interface SyncTimingEdgePromise
+  extends Promise<SyncTimingEdge>,
+    Fragmentable {
+  node: <T = SyncTimingPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface SyncTimingEdgeSubscription
+  extends Promise<AsyncIterator<SyncTimingEdge>>,
+    Fragmentable {
+  node: <T = SyncTimingSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateSyncTiming {
+  count: Int;
+}
+
+export interface AggregateSyncTimingPromise
+  extends Promise<AggregateSyncTiming>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateSyncTimingSubscription
+  extends Promise<AsyncIterator<AggregateSyncTiming>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface TagConnection {
   pageInfo: PageInfo;
   edges: TagEdge[];
@@ -23480,6 +24045,8 @@ export interface CustomerPreviousValues {
   id: ID_Output;
   status?: CustomerStatus;
   plan?: Plan;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface CustomerPreviousValuesPromise
@@ -23488,6 +24055,8 @@ export interface CustomerPreviousValuesPromise
   id: () => Promise<ID_Output>;
   status: () => Promise<CustomerStatus>;
   plan: () => Promise<Plan>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerPreviousValuesSubscription
@@ -23496,6 +24065,8 @@ export interface CustomerPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   status: () => Promise<AsyncIterator<CustomerStatus>>;
   plan: () => Promise<AsyncIterator<Plan>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface CustomerDetailSubscriptionPayload {
@@ -23908,6 +24479,59 @@ export interface ImagePreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface InterestedUserSubscriptionPayload {
+  mutation: MutationType;
+  node: InterestedUser;
+  updatedFields: String[];
+  previousValues: InterestedUserPreviousValues;
+}
+
+export interface InterestedUserSubscriptionPayloadPromise
+  extends Promise<InterestedUserSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = InterestedUserPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = InterestedUserPreviousValuesPromise>() => T;
+}
+
+export interface InterestedUserSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<InterestedUserSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = InterestedUserSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = InterestedUserPreviousValuesSubscription>() => T;
+}
+
+export interface InterestedUserPreviousValues {
+  id: ID_Output;
+  email: String;
+  zipcode?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface InterestedUserPreviousValuesPromise
+  extends Promise<InterestedUserPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  email: () => Promise<String>;
+  zipcode: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface InterestedUserPreviousValuesSubscription
+  extends Promise<AsyncIterator<InterestedUserPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  email: () => Promise<AsyncIterator<String>>;
+  zipcode: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface LabelSubscriptionPayload {
   mutation: MutationType;
   node: Label;
@@ -23995,6 +24619,7 @@ export interface LocationPreviousValues {
   address1?: String;
   address2?: String;
   city?: String;
+  country?: String;
   state?: String;
   zipCode: String;
   locationType?: LocationType;
@@ -24015,6 +24640,7 @@ export interface LocationPreviousValuesPromise
   address1: () => Promise<String>;
   address2: () => Promise<String>;
   city: () => Promise<String>;
+  country: () => Promise<String>;
   state: () => Promise<String>;
   zipCode: () => Promise<String>;
   locationType: () => Promise<LocationType>;
@@ -24035,6 +24661,7 @@ export interface LocationPreviousValuesSubscription
   address1: () => Promise<AsyncIterator<String>>;
   address2: () => Promise<AsyncIterator<String>>;
   city: () => Promise<AsyncIterator<String>>;
+  country: () => Promise<AsyncIterator<String>>;
   state: () => Promise<AsyncIterator<String>>;
   zipCode: () => Promise<AsyncIterator<String>>;
   locationType: () => Promise<AsyncIterator<LocationType>>;
@@ -25487,6 +26114,56 @@ export interface StylePreferencesPreviousValuesSubscription
   brands: () => Promise<AsyncIterator<String[]>>;
 }
 
+export interface SyncTimingSubscriptionPayload {
+  mutation: MutationType;
+  node: SyncTiming;
+  updatedFields: String[];
+  previousValues: SyncTimingPreviousValues;
+}
+
+export interface SyncTimingSubscriptionPayloadPromise
+  extends Promise<SyncTimingSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = SyncTimingPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = SyncTimingPreviousValuesPromise>() => T;
+}
+
+export interface SyncTimingSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<SyncTimingSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = SyncTimingSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = SyncTimingPreviousValuesSubscription>() => T;
+}
+
+export interface SyncTimingPreviousValues {
+  id: ID_Output;
+  dripSyncedAt: DateTimeOutput;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface SyncTimingPreviousValuesPromise
+  extends Promise<SyncTimingPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  dripSyncedAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface SyncTimingPreviousValuesSubscription
+  extends Promise<AsyncIterator<SyncTimingPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  dripSyncedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface TagSubscriptionPayload {
   mutation: MutationType;
   node: Tag;
@@ -26168,6 +26845,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "InterestedUser",
+    embedded: false
+  },
+  {
     name: "User",
     embedded: false
   },
@@ -26277,6 +26958,10 @@ export const models: Model[] = [
   },
   {
     name: "AdminActionLog",
+    embedded: false
+  },
+  {
+    name: "SyncTiming",
     embedded: false
   }
 ];

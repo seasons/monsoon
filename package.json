@@ -86,6 +86,7 @@
     "csv-parser": "^2.3.3",
     "dataloader": "^2.0.0",
     "dotenv": "^8.2.0",
+    "drip": "^1.4.0",
     "drip-nodejs": "^3.1.1",
     "exec": "^0.2.1",
     "expect": "^25.1.0",

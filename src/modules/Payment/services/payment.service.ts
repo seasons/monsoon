@@ -111,7 +111,7 @@ export class PaymentService {
       city: token.card.addressCity || "",
       state: token.card.addressState || "",
       zip: token.card.addressZip || "",
-      country: token.card.addressCountry || "",
+      country: token.card.addressCountry.toUpperCase() || "",
     }
 
     await chargebee.customer
@@ -166,7 +166,7 @@ export class PaymentService {
       city: token.card.addressCity || "",
       state: token.card.addressState || "",
       zip: token.card.addressZip || "",
-      country: token.card.addressCountry || "",
+      country: token.card.addressCountry.toUpperCase() || "",
     }
 
     let chargebeeCustomer
@@ -209,7 +209,7 @@ export class PaymentService {
 
     const subscriptionID = subscription.subscription.id
 
-    await this.chargebeeSubscriptionCreated(
+    await this.createPrismaSubscription(
       user.id,
       subscription.customer,
       paymentSource.payment_source.card,
@@ -491,7 +491,7 @@ export class PaymentService {
     }
   }
 
-  async chargebeeSubscriptionCreated(
+  async createPrismaSubscription(
     userID: string,
     chargebeeCustomer: any,
     card: any,

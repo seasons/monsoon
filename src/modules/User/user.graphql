@@ -21,6 +21,7 @@ type Query {
     first: Int
     last: Int
   ): UserConnection! @hasRole(roles: [Admin])
+  zipcodeServiced(zipcode: String!): Boolean!
 }
 
 type Mutation {
@@ -38,6 +39,7 @@ type Mutation {
     @isAuthenticated
   resetPassword(email: String!): ResetPasswordPayload! # Do not put @isAuthenticated guard here because only users who can't login need to reset passwords!
   refreshToken(refreshToken: String!): String!
+  createInterestedUser(email: String!, zipcode: String): InterestedUser!
 }
 
 type AuthPayload {
