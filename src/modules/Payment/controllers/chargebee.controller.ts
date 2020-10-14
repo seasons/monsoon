@@ -79,7 +79,7 @@ export class ChargebeeController {
           email: user?.email || "",
         })
         // Only create the billing info and send welcome email if user used chargebee checkout
-        await this.payment.chargebeeSubscriptionCreated(
+        await this.payment.createPrismaSubscription(
           customer_id,
           customer,
           card,
