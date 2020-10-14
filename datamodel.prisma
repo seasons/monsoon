@@ -708,7 +708,7 @@ type Customer {
 
   ## A list of all the products we've shown this person via email
   emailedProducts: [Product!]!
-    @relation(name: "CustomerToSentProducts", onDelete: SET_NULL)
+    @relation(name: "CustomerToEmailedProducts", onDelete: SET_NULL)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

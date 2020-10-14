@@ -41,6 +41,7 @@ export class EmailService {
       payload,
       emailId: "SubmittedEmail",
     })
+    await this.addEmailedProductsToCustomer(user, fourLatestProducts)
   }
 
   async sendAuthorizedEmail(user: EmailUser, version: "manual" | "automatic") {
@@ -346,5 +347,22 @@ export class EmailService {
       product3: products?.[2],
       product4: products?.[3],
     }
+  }
+
+  private async addEmailedProductsToCustomer(
+    user: EmailUser,
+    products: ProductGridItem[]
+  ) {
+    const customer = head(
+      await this.prisma.client.customers({ where: { user: { id: user.id } } })
+    )
+    await this.prisma.client.updateCustomer({
+      where: { id: customer.id },
+      data: {
+        emailedProducts: {
+          connect: products.map(a => ({ id: a.id })),
+        },
+      },
+    })
   }
 }

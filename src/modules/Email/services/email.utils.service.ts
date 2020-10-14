@@ -1,10 +1,11 @@
-import { User } from "@app/prisma"
+import { ID_Input, User } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { head } from "lodash"
 
 import { PrismaService } from "../../../prisma/prisma.service"
 
 export interface ProductGridItem {
+  id: ID_Input
   sizes: string
   name: string
   src: string
@@ -15,6 +16,7 @@ export class EmailUtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
   productInfoForGridData = `
+  id
   type
   name
   variants {
@@ -78,6 +80,7 @@ export class EmailUtilsService {
       sizes = sizes.sort()
     }
     return {
+      id: product.id,
       sizes: `${sizes}`.replace(/,/g, " "),
       //@ts-ignore
       src: head(product.images)?.url,
