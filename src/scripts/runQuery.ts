@@ -7,9 +7,9 @@ const run = async () => {
 
   const allProductIds = (await ps.client.products()).map(a => a.id)
 
-  await ps.client.updateCustomer({
-    where: { id: "ckg9ufodu07y70806w62njafb" },
-    data: { emailedProducts: { connect: allProductIds.map(a => ({ id: a })) } },
+  await ps.client.updateManyCustomers({
+    where: { status: "Authorized" },
+    data: { status: "Waitlisted" },
   })
 }
 

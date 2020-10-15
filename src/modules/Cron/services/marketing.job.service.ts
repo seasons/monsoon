@@ -5,7 +5,6 @@ import { AdmissionsService } from "@app/modules/User/services/admissions.service
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { head } from "lodash"
 import moment from "moment"
 
 @Injectable()
@@ -30,10 +29,15 @@ export class MarketingScheduledJobs {
 
   @Cron(CronExpression.EVERY_10_MINUTES)
   async authWindowFollowups() {
+    this.logger.log("Run auth window followups job")
+    const twentyFourHourFollowupsSent = []
+    const windowsClosed = []
+
     const customers = await this.prisma.binding.query.customers(
       {
         where: {
           AND: [
+            // october 5 is 2020 is when we started manually enforcing the auth window
             { user: { createdAt_gte: new Date(2020, 9, 5) } },
             { status: "Authorized" },
           ],
@@ -56,11 +60,12 @@ export class MarketingScheduledJobs {
     for (const cust of customers) {
       const now = moment()
 
-      // TODO: Sort this by createdAt date.
       const twentyFoursPassed = moment(cust.authorizedAt)
         .add(1, "d")
-        .isAfter(now)
-      const windowClosed = moment(cust.authorizedAt).add(2, "d").isAfter(now)
+        .isSameOrBefore(now)
+      const windowClosed = moment(cust.authorizedAt)
+        .add(2, "d")
+        .isSameOrBefore(now)
 
       const receivedEmails = cust.user.emails.map(a => a.emailId)
       const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
@@ -83,6 +88,7 @@ export class MarketingScheduledJobs {
           where: { id: cust.id },
           data: { status: "Waitlisted" },
         })
+        windowsClosed.push(cust.user.email)
         break
       }
 
@@ -100,8 +106,11 @@ export class MarketingScheduledJobs {
           renderData: { name: cust.user.firstName },
           smsId: "TwentyFourHourAuthorizationFollowup",
         })
+        twentyFourHourFollowupsSent.push(cust.user.email)
         break
       }
     }
+    this.logger.log("Auth window followups job finished")
+    this.logger.log({ twentyFourHourFollowupsSent, windowsClosed })
   }
 }
