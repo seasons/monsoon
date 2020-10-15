@@ -342,7 +342,7 @@ export class CustomerService {
       func: () => Promise<TriageFuncResult>
       waitlistReason: WaitlistReason
     }[]
-    let triageDetail = {}
+    let triageDetail = {} as any
     let reason: WaitlistReason
     let admit = true
     let availableStyles = []
@@ -397,6 +397,13 @@ export class CustomerService {
         await this.email.sendWaitlistedEmail(customer.user as User)
       }
 
+      if (Object.keys(triageDetail).includes("availableBottomStyles")) {
+        triageDetail.availableBottomStyles =
+          triageDetail.availableBottomStyles.length
+      }
+      if (Object.keys(triageDetail).includes("availableTopStyles")) {
+        triageDetail.availableTopStyles = triageDetail.availableTopStyles.length
+      }
       this.segment.track(customer.user.id, "Triaged", {
         ...pick(customer.user, ["firstName", "lastName", "email"]),
         decision: status,
