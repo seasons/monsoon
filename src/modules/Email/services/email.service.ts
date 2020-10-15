@@ -1,3 +1,5 @@
+import fs from "fs"
+
 import { Injectable } from "@nestjs/common"
 import RenderEmail from "@seasons/wind"
 import sgMail from "@sendgrid/mail"
