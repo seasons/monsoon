@@ -12,7 +12,7 @@
     ]
   },
   "Rewaitlisted": {
-    "body": "{{{name}}}, your signup window has closed. Due to demand, we've had to give your spot to the next person in line.\n\nIf you'd still like to obtain a membership, please contact us at {{{contactEmail}}} and we'll see if we can acommodate you.",
+    "body": "{{{name}}}, your signup window has closed. Due to demand, we've had to give your spot to the next person in line.\n\nIf you'd still like to obtain a membership, please contact us at {{{contactEmail}}}.",
     "mediaUrls": [
       "https://seasons-images.s3.amazonaws.com/email-images/WaitlistedHero.jpg"
     ]

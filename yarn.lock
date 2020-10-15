@@ -2559,10 +2559,10 @@
     "@angular-devkit/core" "9.1.9"
     "@angular-devkit/schematics" "9.1.9"
 
-"@seasons/wind@^2.1.15":
-  version "2.1.15"
-  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.1.15.tgz#c02da1c30367ce6db4aac3a343a1dcb25ad430be"
-  integrity sha512-FYE5RolSux6p3KbwIfKUVRVcBTbCIMWOdBFUW1KtsHK25u5T0WYFlSQ7Mrw1JJIed+3B+3wmpyT1WmshZqyU7g==
+"@seasons/wind@^2.1.17":
+  version "2.1.17"
+  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.1.17.tgz#44c4cc373eacd455ae9db42715db00759c81dec7"
+  integrity sha512-rTelhNANaZEX9tmmcWbW+zTwSav9ncaomrNcnZkGji8w886EVXSdQEHTmxVooH7HBWNhTNFY6dIrzuSmC+R5/A==
   dependencies:
     "@types/node" "^14.0.23"
     handlebars "^4.7.6"
