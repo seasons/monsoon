@@ -23,13 +23,10 @@ type Mutation {
   applePayCheckout(
     planID: String!
     token: StripeToken!
-    tokenType: String
+    couponID: String
   ): Boolean @hasRole(roles: [Customer])
-  applePayUpdatePaymentMethod(
-    planID: String!
-    token: StripeToken!
-    tokenType: String
-  ): Boolean @hasRole(roles: [Customer])
+  applePayUpdatePaymentMethod(planID: String!, token: StripeToken!): Boolean
+    @hasRole(roles: [Customer])
   changeCustomerPlan(planID: String!): Boolean @hasRole(roles: [Customer])
   updateResumeDate(date: DateTime): Boolean @hasRole(roles: [Customer])
   removeScheduledPause(subscriptionID: String!): Boolean

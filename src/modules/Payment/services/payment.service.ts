@@ -170,7 +170,7 @@ export class PaymentService {
     }
   }
 
-  async stripeTokenCheckout(planID, token, customer, tokenType) {
+  async applePayCheckout(planID, token, couponID, customer) {
     const customerWithUserData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
       `
@@ -234,6 +234,7 @@ export class PaymentService {
     const subscription = await chargebee.subscription
       .create_for_customer(chargebeeCustomer.customer.id, {
         plan_id: planID,
+        coupon_ids: !!couponID ? [couponID] : [],
       })
       .request()
 

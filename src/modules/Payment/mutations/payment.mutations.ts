@@ -21,14 +21,14 @@ export class PaymentMutationsResolver {
 
   @Mutation()
   async applePayCheckout(
-    @Args() { planID, token, tokenType },
+    @Args() { planID, token, couponID },
     @Customer() customer
   ) {
-    await this.paymentService.stripeTokenCheckout(
+    await this.paymentService.applePayCheckout(
       planID,
       token,
-      customer,
-      tokenType
+      couponID,
+      customer
     )
     return true
   }
