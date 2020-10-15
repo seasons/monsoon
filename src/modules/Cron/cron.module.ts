@@ -12,6 +12,7 @@ import { PrismaModule } from "@prisma/prisma.module"
 import { DripModule } from "../Drip/drip.module"
 import { PaymentModule } from "../Payment/payment.module"
 import { SearchModule } from "../Search/search.module"
+import { SMSModule } from "../SMS/sms.module"
 import { DataScheduledJobs } from "./services/data.job.service"
 import { MarketingScheduledJobs } from "./services/marketing.job.service"
 import { MembershipScheduledJobs } from "./services/membership.service"
@@ -33,6 +34,7 @@ import { SearchScheduledJobs } from "./services/search.job.service"
     UtilsModule,
     PushNotificationModule,
     SearchModule,
+    SMSModule,
   ],
   providers: [
     ReservationScheduledJobs,

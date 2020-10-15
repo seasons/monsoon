@@ -168,6 +168,7 @@ enum EmailId {
   Waitlisted
   Paused
   Rewaitlisted
+  TwentyFourHourAuthorizationFollowup
 }
 
 enum PackageTransitEventStatus {
@@ -477,7 +478,7 @@ enum PaymentPlanTier {
 type EmailReceipt {
   id: ID! @id
   emailId: EmailId!
-  user: User!
+  user: User! @relation(name: "UserToEmailReceipts")
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -609,8 +610,8 @@ type FitPicReport {
 
 type InterestedUser {
   id: ID! @id
-  email: String! 
-  zipcode: String 
+  email: String!
+  zipcode: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -626,6 +627,7 @@ type User {
   pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
   pushNotifications: [PushNotificationReceipt!]
     @relation(name: "UserToPushNotificationReceipts", onDelete: CASCADE)
+  emails: [EmailReceipt!] @relation(name: "UserToEmailReceipts")
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus! @default(value: Pending)
   verificationMethod: UserVerificationMethod! @default(value: None)
@@ -699,10 +701,11 @@ type Customer {
     @relation(name: "CustomerToCustomerMembership", onDelete: CASCADE)
   bagItems: [BagItem] @relation(name: "CustomerToBagItem")
   reservations: [Reservation] @relation(name: "CustomerToReservation")
-  # A link to the all the available styles the last time this customer was triaged
-  # Used for communication purposes
-  triageStyles: [Product!]!
-    @relation(name: "CustomerToTriageStyles", onDelete: CASCADE)
+
+  ## A list of all the products we've shown this person via email
+  emailedProducts: [Product!]!
+    @relation(name: "CustomerToEmailedProducts", onDelete: SET_NULL)
+  authorizedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

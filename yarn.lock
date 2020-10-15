@@ -2559,16 +2559,17 @@
     "@angular-devkit/core" "9.1.9"
     "@angular-devkit/schematics" "9.1.9"
 
-"@seasons/wind@^2.1.7":
-  version "2.1.7"
-  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.1.7.tgz#a77a4c20afdf33090f588c10f1dfddf33524ff8d"
-  integrity sha512-fqtGubHt2AzV9X3HwR7CBzwBqfPjfZkHVLpqRY1dNT07/LEiUjrj0YTjFzXR0pqJP9sRWTlBI18J49gi7QCNbQ==
+"@seasons/wind@^2.1.17":
+  version "2.1.17"
+  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.1.17.tgz#44c4cc373eacd455ae9db42715db00759c81dec7"
+  integrity sha512-rTelhNANaZEX9tmmcWbW+zTwSav9ncaomrNcnZkGji8w886EVXSdQEHTmxVooH7HBWNhTNFY6dIrzuSmC+R5/A==
   dependencies:
     "@types/node" "^14.0.23"
     handlebars "^4.7.6"
     lodash "^4.17.15"
     mjml "^4.7.0-beta.1"
     moment "^2.29.1"
+    prettier "^2.1.2"
 
 "@segment/loosely-validate-event@^2.0.0":
   version "2.0.0"
@@ -14070,6 +14071,11 @@ prettier@^2.0.0:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.0.5.tgz#d6d56282455243f2f92cc1716692c08aa31522d4"
   integrity sha512-7PtVymN48hGcO4fGjybyBSIWDsLU4H4XlvOHfq91pz9kkGlonzwTfYkaIEwiRg/dAJF9YlbsduBAgtYLi+8cFg==
+
+prettier@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.1.2.tgz#3050700dae2e4c8b67c4c3f666cdb8af405e1ce5"
+  integrity sha512-16c7K+x4qVlJg9rEbXl7HEGmQyZlG4R9AgP+oHKRMsMsuk8s+ATStlf1NpDqyBI1HpVyfjLOeMhH2LvuNvV5Vg==
 
 pretty-format@^24.9.0:
   version "24.9.0"

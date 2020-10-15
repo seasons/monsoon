@@ -1,6 +1,8 @@
 import { ApplicationType } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email"
+import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -35,7 +37,9 @@ export class CustomerService {
     private readonly shipping: ShippingService,
     private readonly admissions: AdmissionsService,
     private readonly segment: SegmentService,
-    private readonly email: EmailService
+    private readonly email: EmailService,
+    private readonly pushNotification: PushNotificationService,
+    private readonly sms: SMSService
   ) {}
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
@@ -198,6 +202,77 @@ export class CustomerService {
     }
   }
 
+  async updateCustomer(args, info, application: ApplicationType) {
+    let { where, data, withContact = true } = args
+    const customer = await this.prisma.binding.query.customer(
+      {
+        where,
+      },
+      `{
+        id
+        user {
+          id
+          email
+          firstName
+          lastName
+        }
+        status
+      }`
+    )
+
+    if (
+      ["Waitlisted", "Invited"].includes(customer.status) &&
+      data.status &&
+      data.status === "Authorized"
+    ) {
+      data = { ...data, authorizedAt: new Date() }
+      const {
+        pass: haveSufficientInventory,
+        detail: { availableBottomStyles, availableTopStyles },
+      } = await this.admissions.haveSufficientInventoryToServiceCustomer(where)
+
+      if (!haveSufficientInventory) {
+        throw new Error("Can not authorize user. Insufficient inventory")
+      }
+
+      if (withContact) {
+        // Normal users
+        if (customer.status === "Waitlisted") {
+          await this.email.sendAuthorizedEmail(
+            customer.user as User,
+            "manual",
+            [...availableBottomStyles, ...availableTopStyles]
+          )
+        }
+        // Users we invited off the admin
+        if (customer.status === "Invited") {
+          await this.email.sendPriorityAccessEmail(customer.user as User)
+        }
+
+        // either kind of user
+        await this.pushNotification.pushNotifyUser({
+          email: customer.user.email,
+          pushNotifID: "CompleteAccount",
+        })
+        await this.sms.sendSMSById({
+          to: { id: customer.user.id },
+          renderData: { name: customer.user.firstName },
+          smsId: "CompleteAccount",
+        })
+      }
+
+      this.segment.trackBecameAuthorized(customer.user.id, {
+        previousStatus: customer.status,
+        firstName: customer.user.firstName,
+        lastName: customer.user.lastName,
+        email: customer.user.email,
+        method: "Manual",
+        application,
+      })
+    }
+    return this.prisma.binding.mutation.updateCustomer({ where, data }, info)
+  }
+
   async triageCustomer(
     where: CustomerWhereUniqueInput,
     application: ApplicationType,
@@ -270,12 +345,22 @@ export class CustomerService {
       func: () => Promise<TriageFuncResult>
       waitlistReason: WaitlistReason
     }[]
-    let triageDetail = {}
+    let triageDetail = {} as any
     let reason: WaitlistReason
     let admit = true
+    let availableStyles = []
     try {
       for (const { func, waitlistReason } of triageFuncs) {
         const { pass, detail } = await func()
+        if (
+          Object.keys(detail).includes("availableBottomStyles") &&
+          Object.keys(detail).includes("availableTopStyles")
+        ) {
+          availableStyles = [
+            ...detail.availableBottomStyles,
+            ...detail.availableTopStyles,
+          ]
+        }
 
         triageDetail = { ...triageDetail, ...detail }
 
@@ -306,11 +391,22 @@ export class CustomerService {
           application,
         })
 
-        await this.email.sendAuthorizedEmail(customer.user as User, "automatic")
+        await this.email.sendAuthorizedEmail(
+          customer.user as User,
+          "automatic",
+          availableStyles
+        )
       } else {
         await this.email.sendWaitlistedEmail(customer.user as User)
       }
 
+      if (Object.keys(triageDetail).includes("availableBottomStyles")) {
+        triageDetail.availableBottomStyles =
+          triageDetail.availableBottomStyles.length
+      }
+      if (Object.keys(triageDetail).includes("availableTopStyles")) {
+        triageDetail.availableTopStyles = triageDetail.availableTopStyles.length
+      }
       this.segment.track(customer.user.id, "Triaged", {
         ...pick(customer.user, ["firstName", "lastName", "email"]),
         decision: status,
@@ -320,7 +416,7 @@ export class CustomerService {
 
       await this.prisma.client.updateCustomer({
         where,
-        data: { status },
+        data: { status, authorizedAt: new Date() },
       })
     }
 

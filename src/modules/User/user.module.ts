@@ -41,6 +41,6 @@ import { CustomerService } from "./services/customer.service"
     UserFieldsResolver,
     AdmissionsService,
   ],
-  exports: [AuthService, CustomerService],
+  exports: [AuthService, CustomerService, AdmissionsService],
 })
 export class UserModule {}

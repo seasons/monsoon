@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Oct 14 2020 22:41:36 GMT-0400 (Eastern Daylight Time)
+# timestamp: Wed Oct 14 2020 22:52:14 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -6636,7 +6636,7 @@ type Customer implements Node {
     first: Int
     last: Int
   ): [Reservation!]
-  triageStyles(
+  emailedProducts(
     where: ProductWhereInput
     orderBy: ProductOrderByInput
     skip: Int
@@ -6645,6 +6645,7 @@ type Customer implements Node {
     first: Int
     last: Int
   ): [Product!]
+  authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6669,13 +6670,14 @@ input CustomerCreateInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
+  emailedProducts: ProductCreateManyInput
 }
 
 input CustomerCreateOneInput {
@@ -6702,36 +6704,39 @@ input CustomerCreateWithoutBagItemsInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
+  emailedProducts: ProductCreateManyInput
 }
 
 input CustomerCreateWithoutMembershipInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
+  emailedProducts: ProductCreateManyInput
 }
 
 input CustomerCreateWithoutReservationsInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
+  emailedProducts: ProductCreateManyInput
 }
 
 type CustomerDetail implements Node {
@@ -8577,6 +8582,8 @@ enum CustomerOrderByInput {
   status_DESC
   plan_ASC
   plan_DESC
+  authorizedAt_ASC
+  authorizedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -8587,6 +8594,7 @@ type CustomerPreviousValues {
   id: ID!
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8650,30 +8658,33 @@ input CustomerSubscriptionWhereInput {
 input CustomerUpdateDataInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
+  emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
+  emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateManyMutationInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
 }
 
 input CustomerUpdateOneRequiredInput {
@@ -8707,34 +8718,37 @@ input CustomerUpdateOneRequiredWithoutReservationsInput {
 input CustomerUpdateWithoutBagItemsDataInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
+  emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
+  emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
+  emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpsertNestedInput {
@@ -8870,6 +8884,42 @@ input CustomerWhereInput {
   All values that are not contained in given list.
   """
   plan_not_in: [Plan!]
+  authorizedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  authorizedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  authorizedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  authorizedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  authorizedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  authorizedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  authorizedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  authorizedAt_gte: DateTime
   createdAt: DateTime
 
   """
@@ -8952,9 +9002,9 @@ input CustomerWhereInput {
   reservations_every: ReservationWhereInput
   reservations_some: ReservationWhereInput
   reservations_none: ReservationWhereInput
-  triageStyles_every: ProductWhereInput
-  triageStyles_some: ProductWhereInput
-  triageStyles_none: ProductWhereInput
+  emailedProducts_every: ProductWhereInput
+  emailedProducts_some: ProductWhereInput
+  emailedProducts_none: ProductWhereInput
 }
 
 input CustomerWhereUniqueInput {
@@ -8976,6 +9026,7 @@ enum EmailId {
   Waitlisted
   Paused
   Rewaitlisted
+  TwentyFourHourAuthorizationFollowup
 }
 
 type EmailReceipt implements Node {
@@ -9005,7 +9056,17 @@ type EmailReceiptConnection {
 input EmailReceiptCreateInput {
   id: ID
   emailId: EmailId!
-  user: UserCreateOneInput!
+  user: UserCreateOneWithoutEmailsInput!
+}
+
+input EmailReceiptCreateManyWithoutUserInput {
+  create: [EmailReceiptCreateWithoutUserInput!]
+  connect: [EmailReceiptWhereUniqueInput!]
+}
+
+input EmailReceiptCreateWithoutUserInput {
+  id: ID
+  emailId: EmailId!
 }
 
 """
@@ -9039,6 +9100,177 @@ type EmailReceiptPreviousValues {
   emailId: EmailId!
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input EmailReceiptScalarWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [EmailReceiptScalarWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [EmailReceiptScalarWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [EmailReceiptScalarWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  emailId: EmailId
+
+  """
+  All values that are not equal to given value.
+  """
+  emailId_not: EmailId
+
+  """
+  All values that are contained in given list.
+  """
+  emailId_in: [EmailId!]
+
+  """
+  All values that are not contained in given list.
+  """
+  emailId_not_in: [EmailId!]
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
 }
 
 type EmailReceiptSubscriptionPayload {
@@ -9088,11 +9320,47 @@ input EmailReceiptSubscriptionWhereInput {
 
 input EmailReceiptUpdateInput {
   emailId: EmailId
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutEmailsInput
+}
+
+input EmailReceiptUpdateManyDataInput {
+  emailId: EmailId
 }
 
 input EmailReceiptUpdateManyMutationInput {
   emailId: EmailId
+}
+
+input EmailReceiptUpdateManyWithoutUserInput {
+  create: [EmailReceiptCreateWithoutUserInput!]
+  connect: [EmailReceiptWhereUniqueInput!]
+  set: [EmailReceiptWhereUniqueInput!]
+  disconnect: [EmailReceiptWhereUniqueInput!]
+  delete: [EmailReceiptWhereUniqueInput!]
+  update: [EmailReceiptUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [EmailReceiptUpdateManyWithWhereNestedInput!]
+  deleteMany: [EmailReceiptScalarWhereInput!]
+  upsert: [EmailReceiptUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input EmailReceiptUpdateManyWithWhereNestedInput {
+  where: EmailReceiptScalarWhereInput!
+  data: EmailReceiptUpdateManyDataInput!
+}
+
+input EmailReceiptUpdateWithoutUserDataInput {
+  emailId: EmailId
+}
+
+input EmailReceiptUpdateWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput!
+  data: EmailReceiptUpdateWithoutUserDataInput!
+}
+
+input EmailReceiptUpsertWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput!
+  update: EmailReceiptUpdateWithoutUserDataInput!
+  create: EmailReceiptCreateWithoutUserInput!
 }
 
 input EmailReceiptWhereInput {
@@ -14052,9 +14320,9 @@ type Mutation {
   createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
+  createProduct(data: ProductCreateInput!): Product!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createReservation(data: ReservationCreateInput!): Reservation!
-  createProduct(data: ProductCreateInput!): Product!
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateCollectionGroup(
     data: CollectionGroupUpdateInput!
@@ -14232,6 +14500,10 @@ type Mutation {
     data: PaymentPlanUpdateInput!
     where: PaymentPlanWhereUniqueInput!
   ): PaymentPlan
+  updateProduct(
+    data: ProductUpdateInput!
+    where: ProductWhereUniqueInput!
+  ): Product
   updateCustomerDetail(
     data: CustomerDetailUpdateInput!
     where: CustomerDetailWhereUniqueInput!
@@ -14240,10 +14512,6 @@ type Mutation {
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
   ): Reservation
-  updateProduct(
-    data: ProductUpdateInput!
-    where: ProductWhereUniqueInput!
-  ): Product
   deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteCollectionGroup(
     where: CollectionGroupWhereUniqueInput!
@@ -14337,9 +14605,9 @@ type Mutation {
   deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  deleteProduct(where: ProductWhereUniqueInput!): Product
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
-  deleteProduct(where: ProductWhereUniqueInput!): Product
   upsertBrand(
     where: BrandWhereUniqueInput!
     create: BrandCreateInput!
@@ -14595,6 +14863,11 @@ type Mutation {
     create: PaymentPlanCreateInput!
     update: PaymentPlanUpdateInput!
   ): PaymentPlan!
+  upsertProduct(
+    where: ProductWhereUniqueInput!
+    create: ProductCreateInput!
+    update: ProductUpdateInput!
+  ): Product!
   upsertCustomerDetail(
     where: CustomerDetailWhereUniqueInput!
     create: CustomerDetailCreateInput!
@@ -14605,11 +14878,6 @@ type Mutation {
     create: ReservationCreateInput!
     update: ReservationUpdateInput!
   ): Reservation!
-  upsertProduct(
-    where: ProductWhereUniqueInput!
-    create: ProductCreateInput!
-    update: ProductUpdateInput!
-  ): Product!
   updateManyBrands(
     data: BrandUpdateManyMutationInput!
     where: BrandWhereInput
@@ -14806,6 +15074,10 @@ type Mutation {
     data: PaymentPlanUpdateManyMutationInput!
     where: PaymentPlanWhereInput
   ): BatchPayload!
+  updateManyProducts(
+    data: ProductUpdateManyMutationInput!
+    where: ProductWhereInput
+  ): BatchPayload!
   updateManyCustomerDetails(
     data: CustomerDetailUpdateManyMutationInput!
     where: CustomerDetailWhereInput
@@ -14813,10 +15085,6 @@ type Mutation {
   updateManyReservations(
     data: ReservationUpdateManyMutationInput!
     where: ReservationWhereInput
-  ): BatchPayload!
-  updateManyProducts(
-    data: ProductUpdateManyMutationInput!
-    where: ProductWhereInput
   ): BatchPayload!
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
   deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
@@ -14901,9 +15169,9 @@ type Mutation {
   deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
+  deleteManyProducts(where: ProductWhereInput): BatchPayload!
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
-  deleteManyProducts(where: ProductWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -28450,6 +28718,15 @@ type Query {
     first: Int
     last: Int
   ): [PaymentPlan]!
+  products(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product]!
   customerDetails(
     where: CustomerDetailWhereInput
     orderBy: CustomerDetailOrderByInput
@@ -28468,15 +28745,6 @@ type Query {
     first: Int
     last: Int
   ): [Reservation]!
-  products(
-    where: ProductWhereInput
-    orderBy: ProductOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Product]!
   brand(where: BrandWhereUniqueInput!): Brand
   collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   homepageProductRail(
@@ -28560,9 +28828,9 @@ type Query {
   smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  product(where: ProductWhereUniqueInput!): Product
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   reservation(where: ReservationWhereUniqueInput!): Reservation
-  product(where: ProductWhereUniqueInput!): Product
   brandsConnection(
     where: BrandWhereInput
     orderBy: BrandOrderByInput
@@ -29022,6 +29290,15 @@ type Query {
     first: Int
     last: Int
   ): PaymentPlanConnection!
+  productsConnection(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductConnection!
   customerDetailsConnection(
     where: CustomerDetailWhereInput
     orderBy: CustomerDetailOrderByInput
@@ -29040,15 +29317,6 @@ type Query {
     first: Int
     last: Int
   ): ReservationConnection!
-  productsConnection(
-    where: ProductWhereInput
-    orderBy: ProductOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): ProductConnection!
 
   """
   Fetches an object given its ID
@@ -34018,13 +34286,13 @@ type Subscription {
   paymentPlan(
     where: PaymentPlanSubscriptionWhereInput
   ): PaymentPlanSubscriptionPayload
+  product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   customerDetail(
     where: CustomerDetailSubscriptionWhereInput
   ): CustomerDetailSubscriptionPayload
   reservation(
     where: ReservationSubscriptionWhereInput
   ): ReservationSubscriptionPayload
-  product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
 }
 
 type SyncTiming implements Node {
@@ -35569,6 +35837,15 @@ type User implements Node {
     first: Int
     last: Int
   ): [PushNotificationReceipt!]
+  emails(
+    where: EmailReceiptWhereInput
+    orderBy: EmailReceiptOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [EmailReceipt!]
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
@@ -35622,6 +35899,7 @@ input UserCreateInput {
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
@@ -35637,6 +35915,11 @@ input UserCreateOneInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutEmailsInput {
+  create: UserCreateWithoutEmailsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateOneWithoutFitPicsInput {
   create: UserCreateWithoutFitPicsInput
   connect: UserWhereUniqueInput
@@ -35644,6 +35927,23 @@ input UserCreateOneWithoutFitPicsInput {
 
 input UserCreaterolesInput {
   set: [UserRole!]
+}
+
+input UserCreateWithoutEmailsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserCreaterolesInput
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  pushNotification: UserPushNotificationCreateOneInput
+  smsReceipts: SmsReceiptCreateManyInput
+  fitPics: FitPicCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutFitPicsInput {
@@ -35658,6 +35958,7 @@ input UserCreateWithoutFitPicsInput {
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
 }
@@ -35673,6 +35974,7 @@ input UserCreateWithoutPushNotificationsInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
@@ -37055,6 +37357,7 @@ input UserUpdateDataInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
@@ -37071,6 +37374,7 @@ input UserUpdateInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
@@ -37133,6 +37437,13 @@ input UserUpdateOneRequiredInput {
   upsert: UserUpsertNestedInput
 }
 
+input UserUpdateOneRequiredWithoutEmailsInput {
+  create: UserCreateWithoutEmailsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutEmailsDataInput
+  upsert: UserUpsertWithoutEmailsInput
+}
+
 input UserUpdateOneRequiredWithoutFitPicsInput {
   create: UserCreateWithoutFitPicsInput
   connect: UserWhereUniqueInput
@@ -37142,6 +37453,22 @@ input UserUpdateOneRequiredWithoutFitPicsInput {
 
 input UserUpdaterolesInput {
   set: [UserRole!]
+}
+
+input UserUpdateWithoutEmailsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserUpdaterolesInput
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  pushNotification: UserPushNotificationUpdateOneInput
+  smsReceipts: SmsReceiptUpdateManyInput
+  fitPics: FitPicUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutFitPicsDataInput {
@@ -37155,6 +37482,7 @@ input UserUpdateWithoutFitPicsDataInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
 }
@@ -37169,6 +37497,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
@@ -37182,6 +37511,11 @@ input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutEmailsInput {
+  update: UserUpdateWithoutEmailsDataInput!
+  create: UserCreateWithoutEmailsInput!
 }
 
 input UserUpsertWithoutFitPicsInput {
@@ -37691,6 +38025,9 @@ input UserWhereInput {
   pushNotifications_every: PushNotificationReceiptWhereInput
   pushNotifications_some: PushNotificationReceiptWhereInput
   pushNotifications_none: PushNotificationReceiptWhereInput
+  emails_every: EmailReceiptWhereInput
+  emails_some: EmailReceiptWhereInput
+  emails_none: EmailReceiptWhereInput
   pushNotification: UserPushNotificationWhereInput
   smsReceipts_every: SmsReceiptWhereInput
   smsReceipts_some: SmsReceiptWhereInput

@@ -55,9 +55,9 @@ export interface Query {
     smsReceipts: <T = Array<SmsReceipt | null>>(args: { where?: SmsReceiptWhereInput | null, orderBy?: SmsReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariants: <T = Array<ProductVariant | null>>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     paymentPlans: <T = Array<PaymentPlan | null>>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    products: <T = Array<Product | null>>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetails: <T = Array<CustomerDetail | null>>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservations: <T = Array<Reservation | null>>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    products: <T = Array<Product | null>>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     brand: <T = Brand | null>(args: { where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     collectionGroup: <T = CollectionGroup | null>(args: { where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     homepageProductRail: <T = HomepageProductRail | null>(args: { where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -109,9 +109,9 @@ export interface Query {
     smsReceipt: <T = SmsReceipt | null>(args: { where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     paymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    product: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    product: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     brandsConnection: <T = BrandConnection>(args: { where?: BrandWhereInput | null, orderBy?: BrandOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     collectionGroupsConnection: <T = CollectionGroupConnection>(args: { where?: CollectionGroupWhereInput | null, orderBy?: CollectionGroupOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     homepageProductRailsConnection: <T = HomepageProductRailConnection>(args: { where?: HomepageProductRailWhereInput | null, orderBy?: HomepageProductRailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -163,9 +163,9 @@ export interface Query {
     smsReceiptsConnection: <T = SmsReceiptConnection>(args: { where?: SmsReceiptWhereInput | null, orderBy?: SmsReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantsConnection: <T = ProductVariantConnection>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     paymentPlansConnection: <T = PaymentPlanConnection>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productsConnection: <T = ProductConnection>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetailsConnection: <T = CustomerDetailConnection>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationsConnection: <T = ReservationConnection>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    productsConnection: <T = ProductConnection>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     node: <T = Node | null>(args: { id: ID_Output }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> 
   }
 
@@ -221,9 +221,9 @@ export interface Mutation {
     createSmsReceipt: <T = SmsReceipt>(args: { data: SmsReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductVariant: <T = ProductVariant>(args: { data: ProductVariantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPaymentPlan: <T = PaymentPlan>(args: { data: PaymentPlanCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createProduct: <T = Product>(args: { data: ProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerDetail: <T = CustomerDetail>(args: { data: CustomerDetailCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createReservation: <T = Reservation>(args: { data: ReservationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createProduct: <T = Product>(args: { data: ProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateBrand: <T = Brand | null>(args: { data: BrandUpdateInput, where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCollectionGroup: <T = CollectionGroup | null>(args: { data: CollectionGroupUpdateInput, where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateHomepageProductRail: <T = HomepageProductRail | null>(args: { data: HomepageProductRailUpdateInput, where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -275,9 +275,9 @@ export interface Mutation {
     updateSmsReceipt: <T = SmsReceipt | null>(args: { data: SmsReceiptUpdateInput, where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductVariant: <T = ProductVariant | null>(args: { data: ProductVariantUpdateInput, where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePaymentPlan: <T = PaymentPlan | null>(args: { data: PaymentPlanUpdateInput, where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateProduct: <T = Product | null>(args: { data: ProductUpdateInput, where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerDetail: <T = CustomerDetail | null>(args: { data: CustomerDetailUpdateInput, where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateReservation: <T = Reservation | null>(args: { data: ReservationUpdateInput, where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateProduct: <T = Product | null>(args: { data: ProductUpdateInput, where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBrand: <T = Brand | null>(args: { where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCollectionGroup: <T = CollectionGroup | null>(args: { where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteHomepageProductRail: <T = HomepageProductRail | null>(args: { where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -329,9 +329,9 @@ export interface Mutation {
     deleteSmsReceipt: <T = SmsReceipt | null>(args: { where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePaymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteProduct: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteReservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteProduct: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     upsertBrand: <T = Brand>(args: { where: BrandWhereUniqueInput, create: BrandCreateInput, update: BrandUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCollectionGroup: <T = CollectionGroup>(args: { where: CollectionGroupWhereUniqueInput, create: CollectionGroupCreateInput, update: CollectionGroupUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertHomepageProductRail: <T = HomepageProductRail>(args: { where: HomepageProductRailWhereUniqueInput, create: HomepageProductRailCreateInput, update: HomepageProductRailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -383,9 +383,9 @@ export interface Mutation {
     upsertSmsReceipt: <T = SmsReceipt>(args: { where: SmsReceiptWhereUniqueInput, create: SmsReceiptCreateInput, update: SmsReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductVariant: <T = ProductVariant>(args: { where: ProductVariantWhereUniqueInput, create: ProductVariantCreateInput, update: ProductVariantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPaymentPlan: <T = PaymentPlan>(args: { where: PaymentPlanWhereUniqueInput, create: PaymentPlanCreateInput, update: PaymentPlanUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertProduct: <T = Product>(args: { where: ProductWhereUniqueInput, create: ProductCreateInput, update: ProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerDetail: <T = CustomerDetail>(args: { where: CustomerDetailWhereUniqueInput, create: CustomerDetailCreateInput, update: CustomerDetailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertReservation: <T = Reservation>(args: { where: ReservationWhereUniqueInput, create: ReservationCreateInput, update: ReservationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertProduct: <T = Product>(args: { where: ProductWhereUniqueInput, create: ProductCreateInput, update: ProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBrands: <T = BatchPayload>(args: { data: BrandUpdateManyMutationInput, where?: BrandWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCollectionGroups: <T = BatchPayload>(args: { data: CollectionGroupUpdateManyMutationInput, where?: CollectionGroupWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyHomepageProductRails: <T = BatchPayload>(args: { data: HomepageProductRailUpdateManyMutationInput, where?: HomepageProductRailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -435,9 +435,9 @@ export interface Mutation {
     updateManySmsReceipts: <T = BatchPayload>(args: { data: SmsReceiptUpdateManyMutationInput, where?: SmsReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductVariants: <T = BatchPayload>(args: { data: ProductVariantUpdateManyMutationInput, where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPaymentPlans: <T = BatchPayload>(args: { data: PaymentPlanUpdateManyMutationInput, where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyProducts: <T = BatchPayload>(args: { data: ProductUpdateManyMutationInput, where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerDetails: <T = BatchPayload>(args: { data: CustomerDetailUpdateManyMutationInput, where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyReservations: <T = BatchPayload>(args: { data: ReservationUpdateManyMutationInput, where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyProducts: <T = BatchPayload>(args: { data: ProductUpdateManyMutationInput, where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBrands: <T = BatchPayload>(args: { where?: BrandWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCollectionGroups: <T = BatchPayload>(args: { where?: CollectionGroupWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyHomepageProductRails: <T = BatchPayload>(args: { where?: HomepageProductRailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -489,9 +489,9 @@ export interface Mutation {
     deleteManySmsReceipts: <T = BatchPayload>(args: { where?: SmsReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductVariants: <T = BatchPayload>(args: { where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPaymentPlans: <T = BatchPayload>(args: { where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyProducts: <T = BatchPayload>(args: { where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCustomerDetails: <T = BatchPayload>(args: { where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyReservations: <T = BatchPayload>(args: { where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyProducts: <T = BatchPayload>(args: { where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> 
+    deleteManyReservations: <T = BatchPayload>(args: { where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> 
   }
 
 export interface Subscription {
@@ -546,9 +546,9 @@ export interface Subscription {
     smsReceipt: <T = SmsReceiptSubscriptionPayload | null>(args: { where?: SmsReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productVariant: <T = ProductVariantSubscriptionPayload | null>(args: { where?: ProductVariantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     paymentPlan: <T = PaymentPlanSubscriptionPayload | null>(args: { where?: PaymentPlanSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    product: <T = ProductSubscriptionPayload | null>(args: { where?: ProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customerDetail: <T = CustomerDetailSubscriptionPayload | null>(args: { where?: CustomerDetailSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    reservation: <T = ReservationSubscriptionPayload | null>(args: { where?: ReservationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    product: <T = ProductSubscriptionPayload | null>(args: { where?: ProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> 
+    reservation: <T = ReservationSubscriptionPayload | null>(args: { where?: ReservationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> 
   }
 
 export interface Exists {
@@ -603,9 +603,9 @@ export interface Exists {
   SmsReceipt: (where?: SmsReceiptWhereInput) => Promise<boolean>
   ProductVariant: (where?: ProductVariantWhereInput) => Promise<boolean>
   PaymentPlan: (where?: PaymentPlanWhereInput) => Promise<boolean>
+  Product: (where?: ProductWhereInput) => Promise<boolean>
   CustomerDetail: (where?: CustomerDetailWhereInput) => Promise<boolean>
   Reservation: (where?: ReservationWhereInput) => Promise<boolean>
-  Product: (where?: ProductWhereInput) => Promise<boolean>
 }
 
 export interface Prisma {
@@ -5267,7 +5267,8 @@ type Customer implements Node {
   membership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
-  triageStyles(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  emailedProducts(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5286,13 +5287,14 @@ input CustomerCreateInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
+  emailedProducts: ProductCreateManyInput
 }
 
 input CustomerCreateOneInput {
@@ -5319,36 +5321,39 @@ input CustomerCreateWithoutBagItemsInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
+  emailedProducts: ProductCreateManyInput
 }
 
 input CustomerCreateWithoutMembershipInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
+  emailedProducts: ProductCreateManyInput
 }
 
 input CustomerCreateWithoutReservationsInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
-  triageStyles: ProductCreateManyInput
+  emailedProducts: ProductCreateManyInput
 }
 
 type CustomerDetail implements Node {
@@ -6628,6 +6633,8 @@ enum CustomerOrderByInput {
   status_DESC
   plan_ASC
   plan_DESC
+  authorizedAt_ASC
+  authorizedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6638,6 +6645,7 @@ type CustomerPreviousValues {
   id: ID!
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6693,30 +6701,33 @@ input CustomerSubscriptionWhereInput {
 input CustomerUpdateDataInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
+  emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
+  emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateManyMutationInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
 }
 
 input CustomerUpdateOneRequiredInput {
@@ -6750,34 +6761,37 @@ input CustomerUpdateOneRequiredWithoutReservationsInput {
 input CustomerUpdateWithoutBagItemsDataInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
+  emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
+  emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
   status: CustomerStatus
   plan: Plan
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
-  triageStyles: ProductUpdateManyInput
+  emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpsertNestedInput {
@@ -6869,6 +6883,28 @@ input CustomerWhereInput {
 
   """All values that are not contained in given list."""
   plan_not_in: [Plan!]
+  authorizedAt: DateTime
+
+  """All values that are not equal to given value."""
+  authorizedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  authorizedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  authorizedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  authorizedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  authorizedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  authorizedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  authorizedAt_gte: DateTime
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -6923,9 +6959,9 @@ input CustomerWhereInput {
   reservations_every: ReservationWhereInput
   reservations_some: ReservationWhereInput
   reservations_none: ReservationWhereInput
-  triageStyles_every: ProductWhereInput
-  triageStyles_some: ProductWhereInput
-  triageStyles_none: ProductWhereInput
+  emailedProducts_every: ProductWhereInput
+  emailedProducts_some: ProductWhereInput
+  emailedProducts_none: ProductWhereInput
 }
 
 input CustomerWhereUniqueInput {
@@ -6947,6 +6983,7 @@ enum EmailId {
   Waitlisted
   Paused
   Rewaitlisted
+  TwentyFourHourAuthorizationFollowup
 }
 
 type EmailReceipt implements Node {
@@ -6970,7 +7007,17 @@ type EmailReceiptConnection {
 input EmailReceiptCreateInput {
   id: ID
   emailId: EmailId!
-  user: UserCreateOneInput!
+  user: UserCreateOneWithoutEmailsInput!
+}
+
+input EmailReceiptCreateManyWithoutUserInput {
+  create: [EmailReceiptCreateWithoutUserInput!]
+  connect: [EmailReceiptWhereUniqueInput!]
+}
+
+input EmailReceiptCreateWithoutUserInput {
+  id: ID
+  emailId: EmailId!
 }
 
 """An edge in a connection."""
@@ -6998,6 +7045,111 @@ type EmailReceiptPreviousValues {
   emailId: EmailId!
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input EmailReceiptScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [EmailReceiptScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [EmailReceiptScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [EmailReceiptScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  emailId: EmailId
+
+  """All values that are not equal to given value."""
+  emailId_not: EmailId
+
+  """All values that are contained in given list."""
+  emailId_in: [EmailId!]
+
+  """All values that are not contained in given list."""
+  emailId_not_in: [EmailId!]
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 type EmailReceiptSubscriptionPayload {
@@ -7039,11 +7191,47 @@ input EmailReceiptSubscriptionWhereInput {
 
 input EmailReceiptUpdateInput {
   emailId: EmailId
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutEmailsInput
+}
+
+input EmailReceiptUpdateManyDataInput {
+  emailId: EmailId
 }
 
 input EmailReceiptUpdateManyMutationInput {
   emailId: EmailId
+}
+
+input EmailReceiptUpdateManyWithoutUserInput {
+  create: [EmailReceiptCreateWithoutUserInput!]
+  connect: [EmailReceiptWhereUniqueInput!]
+  set: [EmailReceiptWhereUniqueInput!]
+  disconnect: [EmailReceiptWhereUniqueInput!]
+  delete: [EmailReceiptWhereUniqueInput!]
+  update: [EmailReceiptUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [EmailReceiptUpdateManyWithWhereNestedInput!]
+  deleteMany: [EmailReceiptScalarWhereInput!]
+  upsert: [EmailReceiptUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input EmailReceiptUpdateManyWithWhereNestedInput {
+  where: EmailReceiptScalarWhereInput!
+  data: EmailReceiptUpdateManyDataInput!
+}
+
+input EmailReceiptUpdateWithoutUserDataInput {
+  emailId: EmailId
+}
+
+input EmailReceiptUpdateWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput!
+  data: EmailReceiptUpdateWithoutUserDataInput!
+}
+
+input EmailReceiptUpsertWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput!
+  update: EmailReceiptUpdateWithoutUserDataInput!
+  create: EmailReceiptCreateWithoutUserInput!
 }
 
 input EmailReceiptWhereInput {
@@ -10449,9 +10637,9 @@ type Mutation {
   createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
+  createProduct(data: ProductCreateInput!): Product!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createReservation(data: ReservationCreateInput!): Reservation!
-  createProduct(data: ProductCreateInput!): Product!
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateCollectionGroup(data: CollectionGroupUpdateInput!, where: CollectionGroupWhereUniqueInput!): CollectionGroup
   updateHomepageProductRail(data: HomepageProductRailUpdateInput!, where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
@@ -10503,9 +10691,9 @@ type Mutation {
   updateSmsReceipt(data: SmsReceiptUpdateInput!, where: SmsReceiptWhereUniqueInput!): SmsReceipt
   updateProductVariant(data: ProductVariantUpdateInput!, where: ProductVariantWhereUniqueInput!): ProductVariant
   updatePaymentPlan(data: PaymentPlanUpdateInput!, where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
   updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
   updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
-  updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
   deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteCollectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   deleteHomepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
@@ -10557,9 +10745,9 @@ type Mutation {
   deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  deleteProduct(where: ProductWhereUniqueInput!): Product
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
-  deleteProduct(where: ProductWhereUniqueInput!): Product
   upsertBrand(where: BrandWhereUniqueInput!, create: BrandCreateInput!, update: BrandUpdateInput!): Brand!
   upsertCollectionGroup(where: CollectionGroupWhereUniqueInput!, create: CollectionGroupCreateInput!, update: CollectionGroupUpdateInput!): CollectionGroup!
   upsertHomepageProductRail(where: HomepageProductRailWhereUniqueInput!, create: HomepageProductRailCreateInput!, update: HomepageProductRailUpdateInput!): HomepageProductRail!
@@ -10611,9 +10799,9 @@ type Mutation {
   upsertSmsReceipt(where: SmsReceiptWhereUniqueInput!, create: SmsReceiptCreateInput!, update: SmsReceiptUpdateInput!): SmsReceipt!
   upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
   upsertPaymentPlan(where: PaymentPlanWhereUniqueInput!, create: PaymentPlanCreateInput!, update: PaymentPlanUpdateInput!): PaymentPlan!
+  upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
   upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
-  upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
   updateManyBrands(data: BrandUpdateManyMutationInput!, where: BrandWhereInput): BatchPayload!
   updateManyCollectionGroups(data: CollectionGroupUpdateManyMutationInput!, where: CollectionGroupWhereInput): BatchPayload!
   updateManyHomepageProductRails(data: HomepageProductRailUpdateManyMutationInput!, where: HomepageProductRailWhereInput): BatchPayload!
@@ -10663,9 +10851,9 @@ type Mutation {
   updateManySmsReceipts(data: SmsReceiptUpdateManyMutationInput!, where: SmsReceiptWhereInput): BatchPayload!
   updateManyProductVariants(data: ProductVariantUpdateManyMutationInput!, where: ProductVariantWhereInput): BatchPayload!
   updateManyPaymentPlans(data: PaymentPlanUpdateManyMutationInput!, where: PaymentPlanWhereInput): BatchPayload!
+  updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
   updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
   updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
-  updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
   deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
   deleteManyHomepageProductRails(where: HomepageProductRailWhereInput): BatchPayload!
@@ -10717,9 +10905,9 @@ type Mutation {
   deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
+  deleteManyProducts(where: ProductWhereInput): BatchPayload!
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
-  deleteManyProducts(where: ProductWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -20072,9 +20260,9 @@ type Query {
   smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt]!
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
   paymentPlans(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PaymentPlan]!
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
-  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   brand(where: BrandWhereUniqueInput!): Brand
   collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
@@ -20126,9 +20314,9 @@ type Query {
   smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  product(where: ProductWhereUniqueInput!): Product
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   reservation(where: ReservationWhereUniqueInput!): Reservation
-  product(where: ProductWhereUniqueInput!): Product
   brandsConnection(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BrandConnection!
   collectionGroupsConnection(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionGroupConnection!
   homepageProductRailsConnection(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomepageProductRailConnection!
@@ -20180,9 +20368,9 @@ type Query {
   smsReceiptsConnection(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SmsReceiptConnection!
   productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
   paymentPlansConnection(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PaymentPlanConnection!
+  productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
   reservationsConnection(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationConnection!
-  productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -23708,9 +23896,9 @@ type Subscription {
   smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
   paymentPlan(where: PaymentPlanSubscriptionWhereInput): PaymentPlanSubscriptionPayload
+  product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
-  product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
 }
 
 type SyncTiming implements Node {
@@ -24773,6 +24961,7 @@ type User implements Node {
   roles: [UserRole!]!
   pushNotificationStatus: PushNotificationStatus!
   pushNotifications(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt!]
+  emails(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt!]
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
@@ -24804,6 +24993,7 @@ input UserCreateInput {
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
@@ -24819,6 +25009,11 @@ input UserCreateOneInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutEmailsInput {
+  create: UserCreateWithoutEmailsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateOneWithoutFitPicsInput {
   create: UserCreateWithoutFitPicsInput
   connect: UserWhereUniqueInput
@@ -24826,6 +25021,23 @@ input UserCreateOneWithoutFitPicsInput {
 
 input UserCreaterolesInput {
   set: [UserRole!]
+}
+
+input UserCreateWithoutEmailsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserCreaterolesInput
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  pushNotification: UserPushNotificationCreateOneInput
+  smsReceipts: SmsReceiptCreateManyInput
+  fitPics: FitPicCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutFitPicsInput {
@@ -24840,6 +25052,7 @@ input UserCreateWithoutFitPicsInput {
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
 }
@@ -24855,6 +25068,7 @@ input UserCreateWithoutPushNotificationsInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
@@ -25813,6 +26027,7 @@ input UserUpdateDataInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
@@ -25829,6 +26044,7 @@ input UserUpdateInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
@@ -25891,6 +26107,13 @@ input UserUpdateOneRequiredInput {
   upsert: UserUpsertNestedInput
 }
 
+input UserUpdateOneRequiredWithoutEmailsInput {
+  create: UserCreateWithoutEmailsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutEmailsDataInput
+  upsert: UserUpsertWithoutEmailsInput
+}
+
 input UserUpdateOneRequiredWithoutFitPicsInput {
   create: UserCreateWithoutFitPicsInput
   connect: UserWhereUniqueInput
@@ -25900,6 +26123,22 @@ input UserUpdateOneRequiredWithoutFitPicsInput {
 
 input UserUpdaterolesInput {
   set: [UserRole!]
+}
+
+input UserUpdateWithoutEmailsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserUpdaterolesInput
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  pushNotification: UserPushNotificationUpdateOneInput
+  smsReceipts: SmsReceiptUpdateManyInput
+  fitPics: FitPicUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutFitPicsDataInput {
@@ -25913,6 +26152,7 @@ input UserUpdateWithoutFitPicsDataInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
 }
@@ -25927,6 +26167,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
@@ -25940,6 +26181,11 @@ input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutEmailsInput {
+  update: UserUpdateWithoutEmailsDataInput!
+  create: UserCreateWithoutEmailsInput!
 }
 
 input UserUpsertWithoutFitPicsInput {
@@ -26261,6 +26507,9 @@ input UserWhereInput {
   pushNotifications_every: PushNotificationReceiptWhereInput
   pushNotifications_some: PushNotificationReceiptWhereInput
   pushNotifications_none: PushNotificationReceiptWhereInput
+  emails_every: EmailReceiptWhereInput
+  emails_some: EmailReceiptWhereInput
+  emails_none: EmailReceiptWhereInput
   pushNotification: UserPushNotificationWhereInput
   smsReceipts_every: SmsReceiptWhereInput
   smsReceipts_some: SmsReceiptWhereInput
@@ -27581,6 +27830,8 @@ export type CustomerOrderByInput =   'id_ASC' |
   'status_DESC' |
   'plan_ASC' |
   'plan_DESC' |
+  'authorizedAt_ASC' |
+  'authorizedAt_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -27606,7 +27857,8 @@ export type EmailId =   'ReservationReturnConfirmation' |
   'SubmittedEmail' |
   'Waitlisted' |
   'Paused' |
-  'Rewaitlisted'
+  'Rewaitlisted' |
+  'TwentyFourHourAuthorizationFollowup'
 
 export type EmailReceiptOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -30147,13 +30399,14 @@ export interface CustomerCreateInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user: UserCreateOneInput
   detail?: CustomerDetailCreateOneInput | null
   billingInfo?: BillingInfoCreateOneInput | null
   membership?: CustomerMembershipCreateOneWithoutCustomerInput | null
   bagItems?: BagItemCreateManyWithoutCustomerInput | null
   reservations?: ReservationCreateManyWithoutCustomerInput | null
-  triageStyles?: ProductCreateManyInput | null
+  emailedProducts?: ProductCreateManyInput | null
 }
 
 export interface CustomerCreateOneInput {
@@ -30180,36 +30433,39 @@ export interface CustomerCreateWithoutBagItemsInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user: UserCreateOneInput
   detail?: CustomerDetailCreateOneInput | null
   billingInfo?: BillingInfoCreateOneInput | null
   membership?: CustomerMembershipCreateOneWithoutCustomerInput | null
   reservations?: ReservationCreateManyWithoutCustomerInput | null
-  triageStyles?: ProductCreateManyInput | null
+  emailedProducts?: ProductCreateManyInput | null
 }
 
 export interface CustomerCreateWithoutMembershipInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user: UserCreateOneInput
   detail?: CustomerDetailCreateOneInput | null
   billingInfo?: BillingInfoCreateOneInput | null
   bagItems?: BagItemCreateManyWithoutCustomerInput | null
   reservations?: ReservationCreateManyWithoutCustomerInput | null
-  triageStyles?: ProductCreateManyInput | null
+  emailedProducts?: ProductCreateManyInput | null
 }
 
 export interface CustomerCreateWithoutReservationsInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user: UserCreateOneInput
   detail?: CustomerDetailCreateOneInput | null
   billingInfo?: BillingInfoCreateOneInput | null
   membership?: CustomerMembershipCreateOneWithoutCustomerInput | null
   bagItems?: BagItemCreateManyWithoutCustomerInput | null
-  triageStyles?: ProductCreateManyInput | null
+  emailedProducts?: ProductCreateManyInput | null
 }
 
 export interface CustomerDetailCreateInput {
@@ -30770,30 +31026,33 @@ export interface CustomerSubscriptionWhereInput {
 export interface CustomerUpdateDataInput {
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
   membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
   bagItems?: BagItemUpdateManyWithoutCustomerInput | null
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
-  triageStyles?: ProductUpdateManyInput | null
+  emailedProducts?: ProductUpdateManyInput | null
 }
 
 export interface CustomerUpdateInput {
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
   membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
   bagItems?: BagItemUpdateManyWithoutCustomerInput | null
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
-  triageStyles?: ProductUpdateManyInput | null
+  emailedProducts?: ProductUpdateManyInput | null
 }
 
 export interface CustomerUpdateManyMutationInput {
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
 }
 
 export interface CustomerUpdateOneRequiredInput {
@@ -30827,34 +31086,37 @@ export interface CustomerUpdateOneRequiredWithoutReservationsInput {
 export interface CustomerUpdateWithoutBagItemsDataInput {
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
   membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
-  triageStyles?: ProductUpdateManyInput | null
+  emailedProducts?: ProductUpdateManyInput | null
 }
 
 export interface CustomerUpdateWithoutMembershipDataInput {
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
   bagItems?: BagItemUpdateManyWithoutCustomerInput | null
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
-  triageStyles?: ProductUpdateManyInput | null
+  emailedProducts?: ProductUpdateManyInput | null
 }
 
 export interface CustomerUpdateWithoutReservationsDataInput {
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
   membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
   bagItems?: BagItemUpdateManyWithoutCustomerInput | null
-  triageStyles?: ProductUpdateManyInput | null
+  emailedProducts?: ProductUpdateManyInput | null
 }
 
 export interface CustomerUpsertNestedInput {
@@ -30903,6 +31165,14 @@ export interface CustomerWhereInput {
   plan_not?: Plan | null
   plan_in?: Plan[] | Plan | null
   plan_not_in?: Plan[] | Plan | null
+  authorizedAt?: DateTime | null
+  authorizedAt_not?: DateTime | null
+  authorizedAt_in?: DateTime[] | DateTime | null
+  authorizedAt_not_in?: DateTime[] | DateTime | null
+  authorizedAt_lt?: DateTime | null
+  authorizedAt_lte?: DateTime | null
+  authorizedAt_gt?: DateTime | null
+  authorizedAt_gte?: DateTime | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -30929,9 +31199,9 @@ export interface CustomerWhereInput {
   reservations_every?: ReservationWhereInput | null
   reservations_some?: ReservationWhereInput | null
   reservations_none?: ReservationWhereInput | null
-  triageStyles_every?: ProductWhereInput | null
-  triageStyles_some?: ProductWhereInput | null
-  triageStyles_none?: ProductWhereInput | null
+  emailedProducts_every?: ProductWhereInput | null
+  emailedProducts_some?: ProductWhereInput | null
+  emailedProducts_none?: ProductWhereInput | null
 }
 
 export interface CustomerWhereUniqueInput {
@@ -30941,7 +31211,57 @@ export interface CustomerWhereUniqueInput {
 export interface EmailReceiptCreateInput {
   id?: ID_Input | null
   emailId: EmailId
-  user: UserCreateOneInput
+  user: UserCreateOneWithoutEmailsInput
+}
+
+export interface EmailReceiptCreateManyWithoutUserInput {
+  create?: EmailReceiptCreateWithoutUserInput[] | EmailReceiptCreateWithoutUserInput | null
+  connect?: EmailReceiptWhereUniqueInput[] | EmailReceiptWhereUniqueInput | null
+}
+
+export interface EmailReceiptCreateWithoutUserInput {
+  id?: ID_Input | null
+  emailId: EmailId
+}
+
+export interface EmailReceiptScalarWhereInput {
+  AND?: EmailReceiptScalarWhereInput[] | EmailReceiptScalarWhereInput | null
+  OR?: EmailReceiptScalarWhereInput[] | EmailReceiptScalarWhereInput | null
+  NOT?: EmailReceiptScalarWhereInput[] | EmailReceiptScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  emailId?: EmailId | null
+  emailId_not?: EmailId | null
+  emailId_in?: EmailId[] | EmailId | null
+  emailId_not_in?: EmailId[] | EmailId | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
 }
 
 export interface EmailReceiptSubscriptionWhereInput {
@@ -30957,11 +31277,47 @@ export interface EmailReceiptSubscriptionWhereInput {
 
 export interface EmailReceiptUpdateInput {
   emailId?: EmailId | null
-  user?: UserUpdateOneRequiredInput | null
+  user?: UserUpdateOneRequiredWithoutEmailsInput | null
+}
+
+export interface EmailReceiptUpdateManyDataInput {
+  emailId?: EmailId | null
 }
 
 export interface EmailReceiptUpdateManyMutationInput {
   emailId?: EmailId | null
+}
+
+export interface EmailReceiptUpdateManyWithoutUserInput {
+  create?: EmailReceiptCreateWithoutUserInput[] | EmailReceiptCreateWithoutUserInput | null
+  connect?: EmailReceiptWhereUniqueInput[] | EmailReceiptWhereUniqueInput | null
+  set?: EmailReceiptWhereUniqueInput[] | EmailReceiptWhereUniqueInput | null
+  disconnect?: EmailReceiptWhereUniqueInput[] | EmailReceiptWhereUniqueInput | null
+  delete?: EmailReceiptWhereUniqueInput[] | EmailReceiptWhereUniqueInput | null
+  update?: EmailReceiptUpdateWithWhereUniqueWithoutUserInput[] | EmailReceiptUpdateWithWhereUniqueWithoutUserInput | null
+  updateMany?: EmailReceiptUpdateManyWithWhereNestedInput[] | EmailReceiptUpdateManyWithWhereNestedInput | null
+  deleteMany?: EmailReceiptScalarWhereInput[] | EmailReceiptScalarWhereInput | null
+  upsert?: EmailReceiptUpsertWithWhereUniqueWithoutUserInput[] | EmailReceiptUpsertWithWhereUniqueWithoutUserInput | null
+}
+
+export interface EmailReceiptUpdateManyWithWhereNestedInput {
+  where: EmailReceiptScalarWhereInput
+  data: EmailReceiptUpdateManyDataInput
+}
+
+export interface EmailReceiptUpdateWithoutUserDataInput {
+  emailId?: EmailId | null
+}
+
+export interface EmailReceiptUpdateWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput
+  data: EmailReceiptUpdateWithoutUserDataInput
+}
+
+export interface EmailReceiptUpsertWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput
+  update: EmailReceiptUpdateWithoutUserDataInput
+  create: EmailReceiptCreateWithoutUserInput
 }
 
 export interface EmailReceiptWhereInput {
@@ -38869,6 +39225,7 @@ export interface UserCreateInput {
   verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
   pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
+  emails?: EmailReceiptCreateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
   fitPics?: FitPicCreateManyWithoutUserInput | null
@@ -38884,6 +39241,11 @@ export interface UserCreateOneInput {
   connect?: UserWhereUniqueInput | null
 }
 
+export interface UserCreateOneWithoutEmailsInput {
+  create?: UserCreateWithoutEmailsInput | null
+  connect?: UserWhereUniqueInput | null
+}
+
 export interface UserCreateOneWithoutFitPicsInput {
   create?: UserCreateWithoutFitPicsInput | null
   connect?: UserWhereUniqueInput | null
@@ -38891,6 +39253,23 @@ export interface UserCreateOneWithoutFitPicsInput {
 
 export interface UserCreaterolesInput {
   set?: UserRole[] | UserRole | null
+}
+
+export interface UserCreateWithoutEmailsInput {
+  id?: ID_Input | null
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role?: UserRole | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
+  roles?: UserCreaterolesInput | null
+  pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
+  pushNotification?: UserPushNotificationCreateOneInput | null
+  smsReceipts?: SmsReceiptCreateManyInput | null
+  fitPics?: FitPicCreateManyWithoutUserInput | null
 }
 
 export interface UserCreateWithoutFitPicsInput {
@@ -38905,6 +39284,7 @@ export interface UserCreateWithoutFitPicsInput {
   verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
   pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
+  emails?: EmailReceiptCreateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
 }
@@ -38920,6 +39300,7 @@ export interface UserCreateWithoutPushNotificationsInput {
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
+  emails?: EmailReceiptCreateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
   fitPics?: FitPicCreateManyWithoutUserInput | null
@@ -39303,6 +39684,7 @@ export interface UserUpdateDataInput {
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
+  emails?: EmailReceiptUpdateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
   fitPics?: FitPicUpdateManyWithoutUserInput | null
@@ -39319,6 +39701,7 @@ export interface UserUpdateInput {
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
+  emails?: EmailReceiptUpdateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
   fitPics?: FitPicUpdateManyWithoutUserInput | null
@@ -39381,6 +39764,13 @@ export interface UserUpdateOneRequiredInput {
   upsert?: UserUpsertNestedInput | null
 }
 
+export interface UserUpdateOneRequiredWithoutEmailsInput {
+  create?: UserCreateWithoutEmailsInput | null
+  connect?: UserWhereUniqueInput | null
+  update?: UserUpdateWithoutEmailsDataInput | null
+  upsert?: UserUpsertWithoutEmailsInput | null
+}
+
 export interface UserUpdateOneRequiredWithoutFitPicsInput {
   create?: UserCreateWithoutFitPicsInput | null
   connect?: UserWhereUniqueInput | null
@@ -39390,6 +39780,22 @@ export interface UserUpdateOneRequiredWithoutFitPicsInput {
 
 export interface UserUpdaterolesInput {
   set?: UserRole[] | UserRole | null
+}
+
+export interface UserUpdateWithoutEmailsDataInput {
+  auth0Id?: String | null
+  email?: String | null
+  firstName?: String | null
+  lastName?: String | null
+  role?: UserRole | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
+  roles?: UserUpdaterolesInput | null
+  pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
+  pushNotification?: UserPushNotificationUpdateOneInput | null
+  smsReceipts?: SmsReceiptUpdateManyInput | null
+  fitPics?: FitPicUpdateManyWithoutUserInput | null
 }
 
 export interface UserUpdateWithoutFitPicsDataInput {
@@ -39403,6 +39809,7 @@ export interface UserUpdateWithoutFitPicsDataInput {
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
+  emails?: EmailReceiptUpdateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
 }
@@ -39417,6 +39824,7 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
+  emails?: EmailReceiptUpdateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
   fitPics?: FitPicUpdateManyWithoutUserInput | null
@@ -39430,6 +39838,11 @@ export interface UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
 export interface UserUpsertNestedInput {
   update: UserUpdateDataInput
   create: UserCreateInput
+}
+
+export interface UserUpsertWithoutEmailsInput {
+  update: UserUpdateWithoutEmailsDataInput
+  create: UserCreateWithoutEmailsInput
 }
 
 export interface UserUpsertWithoutFitPicsInput {
@@ -39552,6 +39965,9 @@ export interface UserWhereInput {
   pushNotifications_every?: PushNotificationReceiptWhereInput | null
   pushNotifications_some?: PushNotificationReceiptWhereInput | null
   pushNotifications_none?: PushNotificationReceiptWhereInput | null
+  emails_every?: EmailReceiptWhereInput | null
+  emails_some?: EmailReceiptWhereInput | null
+  emails_none?: EmailReceiptWhereInput | null
   pushNotification?: UserPushNotificationWhereInput | null
   smsReceipts_every?: SmsReceiptWhereInput | null
   smsReceipts_some?: SmsReceiptWhereInput | null
@@ -40753,7 +41169,8 @@ export interface Customer extends Node {
   membership?: CustomerMembership | null
   bagItems?: Array<BagItem> | null
   reservations?: Array<Reservation> | null
-  triageStyles?: Array<Product> | null
+  emailedProducts?: Array<Product> | null
+  authorizedAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -40900,6 +41317,7 @@ export interface CustomerPreviousValues {
   id: ID_Output
   status?: CustomerStatus | null
   plan?: Plan | null
+  authorizedAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -42607,6 +43025,7 @@ export interface User extends Node {
   roles: Array<UserRole>
   pushNotificationStatus: PushNotificationStatus
   pushNotifications?: Array<PushNotificationReceipt> | null
+  emails?: Array<EmailReceipt> | null
   pushNotification?: UserPushNotification | null
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod

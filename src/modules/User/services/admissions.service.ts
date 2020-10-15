@@ -14,6 +14,18 @@ export interface TriageFuncResult {
   detail: any
 }
 
+export interface ReservableInventoryForCustomerResultDetail {
+  availableBottomStyles: Product[]
+  availableTopStyles: Product[]
+}
+
+export interface HaveSufficientInventoryToServiceCustomerResult
+  extends TriageFuncResult {
+  detail: ReservableInventoryForCustomerResultDetail & {
+    inventoryThreshold: number
+  }
+}
+
 @Injectable()
 export class AdmissionsService {
   serviceableStates: string[]
@@ -137,9 +149,18 @@ export class AdmissionsService {
     return { pass, detail }
   }
 
+  async getAvailableStyles(
+    where: CustomerWhereUniqueInput
+  ): Promise<Product[]> {
+    const {
+      detail: { availableTopStyles, availableBottomStyles },
+    } = await this.haveSufficientInventoryToServiceCustomer(where)
+    return [...availableBottomStyles, ...availableTopStyles]
+  }
+
   async haveSufficientInventoryToServiceCustomer(
     where: CustomerWhereUniqueInput
-  ): Promise<TriageFuncResult> {
+  ): Promise<HaveSufficientInventoryToServiceCustomerResult> {
     const inventoryThreshold =
       parseInt(process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER, 10) || 15
     const {
@@ -156,7 +177,10 @@ export class AdmissionsService {
 
   async reservableInventoryForCustomer(
     where: CustomerWhereUniqueInput
-  ): Promise<{ reservableStyles: number; detail: any }> {
+  ): Promise<{
+    reservableStyles: number
+    detail: ReservableInventoryForCustomerResultDetail
+  }> {
     const {
       reservableStyles: availableTopStyles,
       adjustedReservableStyles: numAvailableAdjustedTopStyles,
@@ -165,18 +189,6 @@ export class AdmissionsService {
       reservableStyles: availableBottomStyles,
       adjustedReservableStyles: numAvailableAdjustedBottomStyles,
     } = await this.availableStylesForCustomer(where, "Bottom")
-
-    // store a link to the available styles for a customer for communication purposes
-    await this.prisma.client.updateCustomer({
-      where,
-      data: {
-        triageStyles: {
-          set: [...availableBottomStyles, ...availableTopStyles].map(a => ({
-            id: a.id,
-          })),
-        },
-      },
-    })
 
     return {
       reservableStyles:
@@ -227,25 +239,41 @@ export class AdmissionsService {
     }
 
     const preferredSizes = customer.detail[sizesKey]
-    const availableStyles = (await this.prisma.binding.query.products({
-      where: {
-        AND: [
-          { type: productType },
-          {
-            variants_some: {
-              AND: [
-                {
-                  internalSize: internalSizeWhereInputCreateFunc(
-                    preferredSizes
-                  ),
-                },
-                { reservable_gte: 1 },
-              ],
+    const availableStyles = (await this.prisma.binding.query.products(
+      {
+        where: {
+          AND: [
+            { type: productType },
+            {
+              variants_some: {
+                AND: [
+                  {
+                    internalSize: internalSizeWhereInputCreateFunc(
+                      preferredSizes
+                    ),
+                  },
+                  { reservable_gte: 1 },
+                ],
+              },
             },
-          },
-        ],
+          ],
+        },
       },
-    })) as Product[]
+      // Need to query certain fields for the emails sent based on this data
+      `{
+        id
+        type
+        name
+        images {
+          url
+        }
+        variants {
+          internalSize {
+            display
+          }
+        }
+    }`
+    )) as Product[]
 
     // Find the competing users. Note that we assume all active customers without an active
     // reservation may be a competing user, regardless of how long it's been since their last reservation

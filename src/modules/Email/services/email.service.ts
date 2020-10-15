@@ -18,7 +18,9 @@ import { Customer, DateTime, Reservation } from "../../../prisma/prisma.binding"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { EmailDataProvider } from "./email.data.service"
-import { EmailUtilsService } from "./email.utils.service"
+import { EmailUtilsService, ProductGridItem } from "./email.utils.service"
+
+type EmailUser = Pick<User, "email" | "firstName" | "id">
 
 @Injectable()
 export class EmailService {
@@ -29,53 +31,66 @@ export class EmailService {
     private readonly emailUtils: EmailUtilsService
   ) {}
 
-  async sendSubmittedEmailEmail(user: User) {
+  async sendSubmittedEmailEmail(user: EmailUser) {
     const fourLatestProducts = await this.emailUtils.getXLatestProducts(4)
     const payload = await RenderEmail.createdAccount({
-      product1: fourLatestProducts?.[0],
-      product2: fourLatestProducts?.[1],
-      product3: fourLatestProducts?.[2],
-      product4: fourLatestProducts?.[3],
+      ...this.formatProductGridInput(fourLatestProducts),
     })
     await this.sendPreRenderedTransactionalEmail({
-      to: user.email,
+      user,
       payload,
+      emailId: "SubmittedEmail",
     })
-    await this.storeEmailReceipt("SubmittedEmail", user.id)
+    await this.addEmailedProductsToCustomer(user, fourLatestProducts)
   }
 
-  async sendAuthorizedEmail(user: User, version: "manual" | "automatic") {
-    const fourTriageStyles = await this.emailUtils.getXReservableProductsForUser(
-      4,
-      user
-    )
-    const payload = await RenderEmail.authorized({
-      name: `${user.firstName}`,
-      version,
-      product1: fourTriageStyles?.[0],
-      product2: fourTriageStyles?.[1],
-      product3: fourTriageStyles?.[2],
-      product4: fourTriageStyles?.[3],
+  async sendAuthorizedEmail(
+    user: EmailUser,
+    version: "manual" | "automatic",
+    availableStyles: Product[]
+  ) {
+    await this.sendEmailWithReservableStyles({
+      user,
+      availableStyles,
+      renderEmailFunc: "authorized",
+      emailId: "CompleteAccount",
+      renderData: { version },
     })
-    await this.sendPreRenderedTransactionalEmail({
-      to: user.email,
-      payload,
-    })
-    await this.storeEmailReceipt("CompleteAccount", user.id)
   }
 
-  async sendWaitlistedEmail(user: User) {
+  async sendAuthorized24HourFollowup(
+    user: EmailUser,
+    availableStyles: Product[]
+  ) {
+    await this.sendEmailWithReservableStyles({
+      user,
+      availableStyles,
+      renderEmailFunc: "authorized24HourFollowup",
+      emailId: "TwentyFourHourAuthorizationFollowup",
+    })
+  }
+
+  async sendRewaitlistedEmail(user: EmailUser, availableStyles: Product[]) {
+    await this.sendEmailWithReservableStyles({
+      user,
+      availableStyles,
+      renderEmailFunc: "rewaitlisted",
+      emailId: "Rewaitlisted",
+    })
+  }
+
+  async sendWaitlistedEmail(user: EmailUser) {
     const payload = await RenderEmail.waitlisted({
-      name: `${user.firstName}`,
+      name: user.firstName,
     })
     await this.sendPreRenderedTransactionalEmail({
-      to: user.email,
+      user,
       payload,
+      emailId: "Waitlisted",
     })
-    await this.storeEmailReceipt("Waitlisted", user.id)
   }
 
-  async sendSubscribedEmail(user: User) {
+  async sendSubscribedEmail(user: EmailUser) {
     const cust = head(
       await this.prisma.binding.query.customers(
         {
@@ -94,15 +109,15 @@ export class EmailService {
       )
     ) as any
     const payload = await RenderEmail.subscribed({
-      name: `${user.firstName}`,
+      name: user.firstName,
       planId: cust.membership?.plan?.planID,
       itemCount: `${cust.membership?.plan?.itemCount}`,
     })
     await this.sendPreRenderedTransactionalEmail({
-      to: user.email,
+      user,
       payload,
+      emailId: "WelcomeToSeasons",
     })
-    await this.storeEmailReceipt("WelcomeToSeasons", user.id)
   }
 
   async sendPausedEmail(customer: Customer) {
@@ -112,36 +127,34 @@ export class EmailService {
       )
     )
     const payload = await RenderEmail.paused({
-      name: `${customer.user.firstName}`,
+      name: customer.user.firstName,
       resumeDate: latestPauseRequest.resumeDate,
     })
 
     await this.sendPreRenderedTransactionalEmail({
-      to: customer.user.email,
+      user: customer.user,
       payload,
+      emailId: "Paused",
     })
-    await this.storeEmailReceipt("Paused", customer.user.id)
   }
 
-  async sendResumeReminderEmail(user: User, resumeDate: DateTime) {
+  async sendResumeReminderEmail(user: EmailUser, resumeDate: DateTime) {
     const fourLatestProducts = await this.emailUtils.getXLatestProducts(4)
     const payload = await RenderEmail.resumeReminder({
-      name: `${user.firstName}`,
+      name: user.firstName,
       resumeDate: resumeDate,
-      product1: fourLatestProducts?.[0],
-      product2: fourLatestProducts?.[1],
-      product3: fourLatestProducts?.[2],
-      product4: fourLatestProducts?.[3],
+      ...this.formatProductGridInput(fourLatestProducts),
     })
     await this.sendPreRenderedTransactionalEmail({
-      to: user.email,
+      user,
       payload,
+      emailId: "ResumeReminder",
     })
-    await this.storeEmailReceipt("ResumeReminder", user.id)
+    await this.addEmailedProductsToCustomer(user, fourLatestProducts)
   }
 
   async sendAdminConfirmationEmail(
-    user: User,
+    user: EmailUser,
     products: any[],
     reservation: Reservation
   ) {
@@ -156,15 +169,7 @@ export class EmailService {
     await this.storeEmailReceipt("ReservationReturnConfirmation", user.id)
   }
 
-  async sendAuthorizedToSubscribeEmail(user: User) {
-    await this.sendTransactionalEmail({
-      to: user.email,
-      data: this.data.completeAccount(user.firstName),
-    })
-    await this.storeEmailReceipt("CompleteAccount", user.id)
-  }
-
-  async sendPriorityAccessEmail(user: User) {
+  async sendPriorityAccessEmail(user: EmailUser) {
     await this.sendTransactionalEmail({
       to: user.email,
       data: this.data.priorityAccess({ name: user.firstName }),
@@ -173,7 +178,7 @@ export class EmailService {
   }
 
   async sendReservationConfirmationEmail(
-    user: User,
+    user: EmailUser,
     products: Product[],
     reservation: PrismaReservation,
     trackingNumber?: string,
@@ -206,7 +211,10 @@ export class EmailService {
     await this.storeEmailReceipt("ReservationConfirmation", user.id)
   }
 
-  async sendReturnReminderEmail(user: User, reservation: PrismaReservation) {
+  async sendReturnReminderEmail(
+    user: EmailUser,
+    reservation: PrismaReservation
+  ) {
     await this.sendTransactionalEmail({
       to: user.email,
       data: this.data.returnReminder({
@@ -219,7 +227,7 @@ export class EmailService {
     await this.storeEmailReceipt("ReturnReminder", user.id)
   }
 
-  async sendYouCanNowReserveAgainEmail(user: User) {
+  async sendYouCanNowReserveAgainEmail(user: EmailUser) {
     await this.sendTransactionalEmail({
       to: user.email,
       data: this.data.freeToReserve(),
@@ -249,6 +257,39 @@ export class EmailService {
     }
   }
 
+  private async sendEmailWithReservableStyles({
+    user,
+    availableStyles,
+    renderEmailFunc,
+    emailId,
+    renderData = {},
+  }: {
+    user: EmailUser
+    availableStyles: Product[]
+    renderEmailFunc: "authorized" | "authorized24HourFollowup" | "rewaitlisted"
+    emailId: EmailId
+    renderData?: any
+  }) {
+    const fourReservableStyles = await this.emailUtils.getXReservableProductsForUser(
+      4,
+      user as User,
+      availableStyles
+    )
+    const payload = await RenderEmail[renderEmailFunc]({
+      name: `${user.firstName}`,
+      ...this.formatProductGridInput(fourReservableStyles),
+      ...renderData,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      user,
+      payload,
+      emailId,
+    })
+    if (fourReservableStyles !== null) {
+      await this.addEmailedProductsToCustomer(user, fourReservableStyles)
+    }
+  }
+
   private async sendTransactionalEmail({
     to,
     data,
@@ -269,14 +310,20 @@ export class EmailService {
   }
 
   private async sendPreRenderedTransactionalEmail({
-    to,
+    user,
     payload: { body, subject },
+    emailId,
+  }: {
+    user: EmailUser
+    payload: { body: string; subject: string }
+    emailId: EmailId
   }) {
     await this.sendEmail({
-      to,
+      to: user.email,
       subject: subject,
       html: body,
     })
+    await this.storeEmailReceipt(emailId, user.id)
   }
 
   private async sendEmail({ to, subject, html }) {
@@ -304,5 +351,46 @@ export class EmailService {
         ...msg,
       })
     }
+  }
+
+  private formatProductGridInput = (
+    products: ProductGridItem[] | null
+  ): {
+    product1: ProductGridItem
+    product2: ProductGridItem
+    product3: ProductGridItem
+    product4: ProductGridItem
+  } => {
+    if (products === null) {
+      return {
+        product1: null,
+        product2: null,
+        product3: null,
+        product4: null,
+      }
+    }
+    return {
+      product1: products?.[0],
+      product2: products?.[1],
+      product3: products?.[2],
+      product4: products?.[3],
+    }
+  }
+
+  private async addEmailedProductsToCustomer(
+    user: EmailUser,
+    products: ProductGridItem[]
+  ) {
+    const customer = head(
+      await this.prisma.client.customers({ where: { user: { id: user.id } } })
+    )
+    await this.prisma.client.updateCustomer({
+      where: { id: customer.id },
+      data: {
+        emailedProducts: {
+          connect: products.map(a => ({ id: a.id })),
+        },
+      },
+    })
   }
 }
