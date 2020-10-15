@@ -203,7 +203,7 @@ export class CustomerService {
   }
 
   async updateCustomer(args, info, application: ApplicationType) {
-    let { where, data } = args
+    let { where, data, withContact = true } = args
     const customer = await this.prisma.binding.query.customer(
       {
         where,
@@ -235,28 +235,31 @@ export class CustomerService {
         throw new Error("Can not authorize user. Insufficient inventory")
       }
 
-      // Normal users
-      if (customer.status === "Waitlisted") {
-        await this.email.sendAuthorizedEmail(customer.user as User, "manual", [
-          ...availableBottomStyles,
-          ...availableTopStyles,
-        ])
-      }
-      // Users we invited off the admin
-      if (customer.status === "Invited") {
-        await this.email.sendPriorityAccessEmail(customer.user as User)
-      }
+      if (withContact) {
+        // Normal users
+        if (customer.status === "Waitlisted") {
+          await this.email.sendAuthorizedEmail(
+            customer.user as User,
+            "manual",
+            [...availableBottomStyles, ...availableTopStyles]
+          )
+        }
+        // Users we invited off the admin
+        if (customer.status === "Invited") {
+          await this.email.sendPriorityAccessEmail(customer.user as User)
+        }
 
-      // either kind of user
-      await this.pushNotification.pushNotifyUser({
-        email: customer.user.email,
-        pushNotifID: "CompleteAccount",
-      })
-      await this.sms.sendSMSById({
-        to: { id: customer.user.id },
-        renderData: { name: customer.user.firstName },
-        smsId: "CompleteAccount",
-      })
+        // either kind of user
+        await this.pushNotification.pushNotifyUser({
+          email: customer.user.email,
+          pushNotifID: "CompleteAccount",
+        })
+        await this.sms.sendSMSById({
+          to: { id: customer.user.id },
+          renderData: { name: customer.user.firstName },
+          smsId: "CompleteAccount",
+        })
+      }
 
       this.segment.trackBecameAuthorized(customer.user.id, {
         previousStatus: customer.status,
