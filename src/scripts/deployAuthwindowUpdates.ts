@@ -25,6 +25,7 @@ const run = async () => {
         email
         firstName
         emails {
+          createdAt
           emailId
         }
       }
