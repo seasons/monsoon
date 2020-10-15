@@ -98,6 +98,16 @@ type Customer {
     first: Int
     last: Int
   ): [Reservation!]
+  emailedProducts(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product!]
+  authorizedAt: DateTime
   invoices: [Invoice]
   transactions: [Transaction]
   membership: CustomerMembership
