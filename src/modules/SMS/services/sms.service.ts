@@ -11,6 +11,7 @@ import {
   UserWhereUniqueInput,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
+import { LinksAndEmails } from "@seasons/wind"
 import { head } from "lodash"
 import mustache from "mustache"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
@@ -24,12 +25,6 @@ const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
 @Injectable()
 export class SMSService {
   private sid?: string
-
-  private globalConstants = {
-    accountDeepLink: "https://szns.co/account",
-    contactEmail: "membership@seasons.nyc",
-    stylistLink: "https://szns.co/app",
-  }
 
   constructor(
     private readonly prisma: PrismaService,
@@ -180,14 +175,23 @@ export class SMSService {
       )
     }
 
-    const phoneNumber = (head(
+    const cust = head(
       await this.prisma.binding.query.customers(
         { where: { user: to } },
-        `{ detail { phoneNumber } }`
+        `{ user { roles email } detail { phoneNumber } }`
       )
-    ) as { detail?: { phoneNumber?: string } })?.detail?.phoneNumber
+    ) as any
+
+    const phoneNumber = cust?.detail?.phoneNumber
     if (!phoneNumber) {
       throw new Error(`Could not find a phone number for the indicated user.`)
+    }
+
+    const shouldSend =
+      process.env.NODE_ENV === "production" ||
+      cust.user.email.includes("seasons.nyc")
+    if (!shouldSend) {
+      return "Undelivered"
     }
 
     // Send SMS message
@@ -239,11 +243,11 @@ export class SMSService {
 
     body = this.interpolateJSONObjectWithMustache(body, {
       ...vars,
-      ...this.globalConstants,
+      ...LinksAndEmails,
     })
     mediaUrls = this.interpolateJSONObjectWithMustache(mediaUrls, {
       ...vars,
-      ...this.globalConstants,
+      ...LinksAndEmails,
     })
 
     return {
