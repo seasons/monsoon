@@ -23,6 +23,18 @@ import {
 } from "../payment.types"
 import { PaymentUtilsService } from "./payment.utils.service"
 
+class CouponNotFound extends Error {
+  constructor() {
+    super("Coupon Not Found")
+  }
+}
+
+class CouponExpired extends Error {
+  constructor() {
+    super("Coupon Expired")
+  }
+}
+
 @Injectable()
 export class PaymentService {
   constructor(
@@ -698,12 +710,18 @@ export class PaymentService {
   async checkCoupon(couponID): Promise<Coupon> {
     try {
       const coupon = await chargebee.coupon.retrieve(couponID).request()
-      return {
-        amount: coupon.coupon.discount_amount,
-        type: upperFirst(camelCase(coupon.coupon.discount_type)) as CouponType,
+      if (coupon.coupon.status == "active") {
+        return {
+          amount: coupon.coupon.discount_amount,
+          type: upperFirst(
+            camelCase(coupon.coupon.discount_type)
+          ) as CouponType,
+        }
+      } else {
+        throw new CouponExpired()
       }
     } catch {
-      // TODO: Error handling (expired, invalid, used, etc.)
+      throw new CouponNotFound()
     }
   }
 
