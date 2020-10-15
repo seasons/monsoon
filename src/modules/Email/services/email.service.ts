@@ -1,5 +1,3 @@
-import fs from "fs"
-
 import { Injectable } from "@nestjs/common"
 import RenderEmail from "@seasons/wind"
 import sgMail from "@sendgrid/mail"
@@ -150,6 +148,7 @@ export class EmailService {
       payload,
       emailId: "ResumeReminder",
     })
+    await this.addEmailedProductsToCustomer(user, fourLatestProducts)
   }
 
   async sendAdminConfirmationEmail(
