@@ -26,6 +26,8 @@ type Mutation {
   updateCustomer(
     data: CustomerUpdateInput!
     where: CustomerWhereUniqueInput!
+    # True if we want to notify the user upon salient changes. Defaults to true
+    withContact: Boolean
   ): Customer @hasRole(roles: [Admin])
   addCustomerDetails(
     details: CustomerDetailCreateInput!

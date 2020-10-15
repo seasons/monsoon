@@ -9553,6 +9553,7 @@ type Location implements Node {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -9583,6 +9584,7 @@ input LocationCreateInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -9611,6 +9613,7 @@ input LocationCreateWithoutPhysicalProductsInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -9645,6 +9648,8 @@ enum LocationOrderByInput {
   address2_DESC
   city_ASC
   city_DESC
+  country_ASC
+  country_DESC
   state_ASC
   state_DESC
   zipCode_ASC
@@ -9670,6 +9675,7 @@ type LocationPreviousValues {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -9731,6 +9737,7 @@ input LocationUpdateDataInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String
   locationType: LocationType
@@ -9748,6 +9755,7 @@ input LocationUpdateInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String
   locationType: LocationType
@@ -9765,6 +9773,7 @@ input LocationUpdateManyMutationInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String
   locationType: LocationType
@@ -9805,6 +9814,7 @@ input LocationUpdateWithoutPhysicalProductsDataInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String
   locationType: LocationType
@@ -10152,6 +10162,46 @@ input LocationWhereInput {
 
   """All values not ending with the given string."""
   city_not_ends_with: String
+  country: String
+
+  """All values that are not equal to given value."""
+  country_not: String
+
+  """All values that are contained in given list."""
+  country_in: [String!]
+
+  """All values that are not contained in given list."""
+  country_not_in: [String!]
+
+  """All values less than the given value."""
+  country_lt: String
+
+  """All values less than or equal the given value."""
+  country_lte: String
+
+  """All values greater than the given value."""
+  country_gt: String
+
+  """All values greater than or equal the given value."""
+  country_gte: String
+
+  """All values containing the given string."""
+  country_contains: String
+
+  """All values not containing the given string."""
+  country_not_contains: String
+
+  """All values starting with the given string."""
+  country_starts_with: String
+
+  """All values not starting with the given string."""
+  country_not_starts_with: String
+
+  """All values ending with the given string."""
+  country_ends_with: String
+
+  """All values not ending with the given string."""
+  country_not_ends_with: String
   state: String
 
   """All values that are not equal to given value."""
@@ -27668,6 +27718,8 @@ export type LocationOrderByInput =   'id_ASC' |
   'address2_DESC' |
   'city_ASC' |
   'city_DESC' |
+  'country_ASC' |
+  'country_DESC' |
   'state_ASC' |
   'state_DESC' |
   'zipCode_ASC' |
@@ -31955,6 +32007,7 @@ export interface LocationCreateInput {
   address1?: String | null
   address2?: String | null
   city?: String | null
+  country?: String | null
   state?: String | null
   zipCode: String
   locationType?: LocationType | null
@@ -31983,6 +32036,7 @@ export interface LocationCreateWithoutPhysicalProductsInput {
   address1?: String | null
   address2?: String | null
   city?: String | null
+  country?: String | null
   state?: String | null
   zipCode: String
   locationType?: LocationType | null
@@ -32010,6 +32064,7 @@ export interface LocationUpdateDataInput {
   address1?: String | null
   address2?: String | null
   city?: String | null
+  country?: String | null
   state?: String | null
   zipCode?: String | null
   locationType?: LocationType | null
@@ -32027,6 +32082,7 @@ export interface LocationUpdateInput {
   address1?: String | null
   address2?: String | null
   city?: String | null
+  country?: String | null
   state?: String | null
   zipCode?: String | null
   locationType?: LocationType | null
@@ -32044,6 +32100,7 @@ export interface LocationUpdateManyMutationInput {
   address1?: String | null
   address2?: String | null
   city?: String | null
+  country?: String | null
   state?: String | null
   zipCode?: String | null
   locationType?: LocationType | null
@@ -32084,6 +32141,7 @@ export interface LocationUpdateWithoutPhysicalProductsDataInput {
   address1?: String | null
   address2?: String | null
   city?: String | null
+  country?: String | null
   state?: String | null
   zipCode?: String | null
   locationType?: LocationType | null
@@ -32218,6 +32276,20 @@ export interface LocationWhereInput {
   city_not_starts_with?: String | null
   city_ends_with?: String | null
   city_not_ends_with?: String | null
+  country?: String | null
+  country_not?: String | null
+  country_in?: String[] | String | null
+  country_not_in?: String[] | String | null
+  country_lt?: String | null
+  country_lte?: String | null
+  country_gt?: String | null
+  country_gte?: String | null
+  country_contains?: String | null
+  country_not_contains?: String | null
+  country_starts_with?: String | null
+  country_not_starts_with?: String | null
+  country_ends_with?: String | null
+  country_not_ends_with?: String | null
   state?: String | null
   state_not?: String | null
   state_in?: String[] | String | null
@@ -41147,6 +41219,7 @@ export interface Location extends Node {
   address1?: String | null
   address2?: String | null
   city?: String | null
+  country?: String | null
   state?: String | null
   zipCode: String
   locationType?: LocationType | null
@@ -41186,6 +41259,7 @@ export interface LocationPreviousValues {
   address1?: String | null
   address2?: String | null
   city?: String | null
+  country?: String | null
   state?: String | null
   zipCode: String
   locationType?: LocationType | null
