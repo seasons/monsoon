@@ -85,62 +85,78 @@ export class PaymentService {
     }
   }
 
-  async applePayUpdatePaymentMethod(planID, token, customer) {
-    const customerWithUserData = await this.prisma.binding.query.customer(
-      { where: { id: customer.id } },
-      `
-        {
-          id
-          user {
+  async updatePaymentMethodWithStripeToken(planID, token, customer, tokenType) {
+    try {
+      const customerWithUserData = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+          {
             id
-            firstName
-            lastName
-            email
+            user {
+              id
+              firstName
+              lastName
+              email
+            }
+            billingInfo {
+              id
+            }
           }
-        }
-      `
-    )
+        `
+      )
 
-    const { user } = customerWithUserData
+      const { user, billingInfo } = customerWithUserData
 
-    const billingAddress = {
-      first_name: user.firstName || "",
-      last_name: user.lastName || "",
-      line1: token.card.addressLine1 || "",
-      line2: token.card?.addressLine2 || "",
-      city: token.card.addressCity || "",
-      state: token.card.addressState || "",
-      zip: token.card.addressZip || "",
-      country: token.card.addressCountry.toUpperCase() || "",
+      const billingAddress = {
+        first_name: user.firstName || "",
+        last_name: user.lastName || "",
+        line1: token.card.addressLine1 || "",
+        line2: token.card?.addressLine2 || "",
+        city: token.card.addressCity || "",
+        state: token.card.addressState || "",
+        zip: token.card.addressZip || "",
+        country: token.card.addressCountry?.toUpperCase() || "",
+      }
+
+      await chargebee.customer
+        .update_billing_info(user.id, {
+          billing_address: billingAddress,
+        })
+        .request()
+
+      const subscriptions = await chargebee.subscription
+        .list({
+          plan_id: { in: [planID] },
+          customer_id: { is: user.id },
+        })
+        .request()
+
+      const subscription = head(subscriptions.list) as any
+
+      await chargebee.subscription
+        .update(subscription.subscription.id, {
+          plan_id: planID,
+          payment_method: {
+            tmp_token: token.tokenId,
+            type: tokenType ? tokenType : "apple_pay",
+          },
+        })
+        .request()
+
+      const last4 = token?.card?.last4
+      const brand = token?.card?.brand
+      const billingInfoID = billingInfo?.id
+
+      await this.prisma.client.updateBillingInfo({
+        where: { id: billingInfoID },
+        data: { brand, last_digits: last4 },
+      })
+    } catch (e) {
+      throw new Error(`Error updating your payment method ${e}`)
     }
-
-    await chargebee.customer
-      .update_billing_info(user.id, {
-        billing_address: billingAddress,
-      })
-      .request()
-
-    const subscriptions = await chargebee.subscription
-      .list({
-        plan_id: { in: [planID] },
-        customer_id: { is: user.id },
-      })
-      .request()
-
-    const subscription = head(subscriptions.list) as any
-
-    await chargebee.subscription
-      .update(subscription.subscription.id, {
-        plan_id: planID,
-        payment_method: {
-          tmp_token: token.tokenId,
-          type: "apple_pay",
-        },
-      })
-      .request()
   }
 
-  async applePayCheckout(planID, token, customer) {
+  async stripeTokenCheckout(planID, token, customer, tokenType) {
     const customerWithUserData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
       `
@@ -166,7 +182,7 @@ export class PaymentService {
       city: token.card.addressCity || "",
       state: token.card.addressState || "",
       zip: token.card.addressZip || "",
-      country: token.card.addressCountry.toUpperCase() || "",
+      country: token.card.addressCountry?.toUpperCase() || "",
     }
 
     let chargebeeCustomer
@@ -196,7 +212,7 @@ export class PaymentService {
     const paymentSource = await chargebee.payment_source
       .create_using_temp_token({
         tmp_token: token.tokenId,
-        type: "apple_pay",
+        type: tokenType ? tokenType : "apple_pay",
         customer_id: chargebeeCustomer.customer.id,
       })
       .request()

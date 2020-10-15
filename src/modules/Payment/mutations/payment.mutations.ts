@@ -20,20 +20,29 @@ export class PaymentMutationsResolver {
   ) {}
 
   @Mutation()
-  async applePayCheckout(@Args() { planID, token }, @Customer() customer) {
-    await this.paymentService.applePayCheckout(planID, token, customer)
+  async applePayCheckout(
+    @Args() { planID, token, tokenType },
+    @Customer() customer
+  ) {
+    await this.paymentService.stripeTokenCheckout(
+      planID,
+      token,
+      customer,
+      tokenType
+    )
     return true
   }
 
   @Mutation()
   async applePayUpdatePaymentMethod(
-    @Args() { planID, token },
+    @Args() { planID, token, tokenType },
     @Customer() customer
   ) {
-    await this.paymentService.applePayUpdatePaymentMethod(
+    await this.paymentService.updatePaymentMethodWithStripeToken(
       planID,
       token,
-      customer
+      customer,
+      tokenType
     )
     return true
   }
