@@ -307,6 +307,7 @@ type Location {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -606,6 +607,14 @@ type FitPicReport {
   updatedAt: DateTime! @updatedAt
 }
 
+type InterestedUser {
+  id: ID! @id
+  email: String! 
+  zipcode: String 
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type User {
   id: ID! @id
   auth0Id: String! @unique
@@ -694,6 +703,8 @@ type Customer {
   # Used for communication purposes
   triageStyles: [Product!]!
     @relation(name: "CustomerToTriageStyles", onDelete: CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type CustomerMembership {
@@ -944,4 +955,11 @@ type AdminActionLog {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+}
+
+type SyncTiming {
+  id: ID! @id
+  dripSyncedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }

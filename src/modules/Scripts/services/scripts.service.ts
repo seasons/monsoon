@@ -1,5 +1,6 @@
 import fs from "fs"
 
+import { DripService } from "@app/modules/Drip/services/drip.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
@@ -84,20 +85,27 @@ export class ScriptsService {
    * Returns prisma and airtable services that point to the specified environments
    */
   async updateConnections({
+    dripEnv = "staging",
     prismaEnv = "local",
     moduleRef,
   }: UpdateConnectionsInputs) {
     await this.overrideEnvFromRemoteConfig({
       prismaEnv,
+      dripEnv,
     })
     moduleRef.get(PrismaService, { strict: false }).updateConnection({
       secret: process.env.PRISMA_SECRET,
       endpoint: process.env.PRISMA_ENDPOINT,
     })
+    moduleRef.get(DripService, { strict: false }).updateConnection({
+      dripKey: process.env.DRIP_KEY,
+      accountId: process.env.DRIP_ACCOUNT_ID,
+    })
   }
 
   private async overrideEnvFromRemoteConfig({
     prismaEnv = "local",
+    dripEnv = "staging",
   }: UpdateEnvironmentInputs) {
     const envFilePath = await this.downloadFromS3(
       "/tmp/__monsoon__env.json",
@@ -106,9 +114,18 @@ export class ScriptsService {
     )
     try {
       const env = this.readJSONObjectFromFile(envFilePath)
+
+      // prisma
       const { endpoint, secret } = env.prisma[prismaEnv]
       process.env.PRISMA_ENDPOINT = endpoint
       process.env.PRISMA_SECRET = secret
+
+      // drip
+      const { account, apiKey } = env.drip[dripEnv]
+      process.env.DRIP_ACCOUNT_ID = account
+      process.env.DRIP_KEY = apiKey
+
+      // chargebee
       chargebee.configure({
         site: env.chargebee.staging.site,
         api_key: env.chargebee.staging.apiKey,

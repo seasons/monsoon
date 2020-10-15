@@ -55,6 +55,7 @@ export class SegmentService {
     try {
       this.client.identify({ userId, traits })
     } catch (err) {
+      console.log(err)
       Sentry.captureException(err)
     }
   }

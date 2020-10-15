@@ -9,6 +9,7 @@ export interface MonsoonCommandOptions
 
 export interface UpdateEnvironmentInputs {
   prismaEnv: PrismaEnvironmentSetting
+  dripEnv?: "staging" | "production"
 }
 
 export interface UpdateConnectionsInputs extends UpdateEnvironmentInputs {

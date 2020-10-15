@@ -46,6 +46,7 @@ export interface CreateTestProductOutput {
 export interface CreateTestCustomerDetailInput {
   topSizes?: String[]
   waistSizes?: Int[]
+  phoneOS?: string
 }
 
 export interface CreateTestPauseRequestInput {

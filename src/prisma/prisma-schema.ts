@@ -323,6 +323,10 @@ type AggregateImage {
   count: Int!
 }
 
+type AggregateInterestedUser {
+  count: Int!
+}
+
 type AggregateLabel {
   count: Int!
 }
@@ -428,6 +432,10 @@ type AggregateSmsReceipt {
 }
 
 type AggregateStylePreferences {
+  count: Int!
+}
+
+type AggregateSyncTiming {
   count: Int!
 }
 
@@ -2670,6 +2678,8 @@ type Customer {
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
   triageStyles(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type CustomerConnection {
@@ -3456,12 +3466,18 @@ enum CustomerOrderByInput {
   status_DESC
   plan_ASC
   plan_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type CustomerPreviousValues {
   id: ID!
   status: CustomerStatus
   plan: Plan
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 enum CustomerStatus {
@@ -3639,6 +3655,22 @@ input CustomerWhereInput {
   triageStyles_every: ProductWhereInput
   triageStyles_some: ProductWhereInput
   triageStyles_none: ProductWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [CustomerWhereInput!]
   OR: [CustomerWhereInput!]
   NOT: [CustomerWhereInput!]
@@ -4740,6 +4772,148 @@ input ImageWhereUniqueInput {
   url: String
 }
 
+type InterestedUser {
+  id: ID!
+  email: String!
+  zipcode: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type InterestedUserConnection {
+  pageInfo: PageInfo!
+  edges: [InterestedUserEdge]!
+  aggregate: AggregateInterestedUser!
+}
+
+input InterestedUserCreateInput {
+  id: ID
+  email: String!
+  zipcode: String
+}
+
+type InterestedUserEdge {
+  node: InterestedUser!
+  cursor: String!
+}
+
+enum InterestedUserOrderByInput {
+  id_ASC
+  id_DESC
+  email_ASC
+  email_DESC
+  zipcode_ASC
+  zipcode_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type InterestedUserPreviousValues {
+  id: ID!
+  email: String!
+  zipcode: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type InterestedUserSubscriptionPayload {
+  mutation: MutationType!
+  node: InterestedUser
+  updatedFields: [String!]
+  previousValues: InterestedUserPreviousValues
+}
+
+input InterestedUserSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: InterestedUserWhereInput
+  AND: [InterestedUserSubscriptionWhereInput!]
+  OR: [InterestedUserSubscriptionWhereInput!]
+  NOT: [InterestedUserSubscriptionWhereInput!]
+}
+
+input InterestedUserUpdateInput {
+  email: String
+  zipcode: String
+}
+
+input InterestedUserUpdateManyMutationInput {
+  email: String
+  zipcode: String
+}
+
+input InterestedUserWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
+  zipcode: String
+  zipcode_not: String
+  zipcode_in: [String!]
+  zipcode_not_in: [String!]
+  zipcode_lt: String
+  zipcode_lte: String
+  zipcode_gt: String
+  zipcode_gte: String
+  zipcode_contains: String
+  zipcode_not_contains: String
+  zipcode_starts_with: String
+  zipcode_not_starts_with: String
+  zipcode_ends_with: String
+  zipcode_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [InterestedUserWhereInput!]
+  OR: [InterestedUserWhereInput!]
+  NOT: [InterestedUserWhereInput!]
+}
+
+input InterestedUserWhereUniqueInput {
+  id: ID
+}
+
 enum InventoryStatus {
   NonReservable
   Reservable
@@ -4953,6 +5127,7 @@ type Location {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -4979,6 +5154,7 @@ input LocationCreateInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -5007,6 +5183,7 @@ input LocationCreateWithoutPhysicalProductsInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -5037,6 +5214,8 @@ enum LocationOrderByInput {
   address2_DESC
   city_ASC
   city_DESC
+  country_ASC
+  country_DESC
   state_ASC
   state_DESC
   zipCode_ASC
@@ -5062,6 +5241,7 @@ type LocationPreviousValues {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -5104,6 +5284,7 @@ input LocationUpdateDataInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String
   locationType: LocationType
@@ -5121,6 +5302,7 @@ input LocationUpdateInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String
   locationType: LocationType
@@ -5138,6 +5320,7 @@ input LocationUpdateManyMutationInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String
   locationType: LocationType
@@ -5178,6 +5361,7 @@ input LocationUpdateWithoutPhysicalProductsDataInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String
   locationType: LocationType
@@ -5309,6 +5493,20 @@ input LocationWhereInput {
   city_not_starts_with: String
   city_ends_with: String
   city_not_ends_with: String
+  country: String
+  country_not: String
+  country_in: [String!]
+  country_not_in: [String!]
+  country_lt: String
+  country_lte: String
+  country_gt: String
+  country_gte: String
+  country_contains: String
+  country_not_contains: String
+  country_starts_with: String
+  country_not_starts_with: String
+  country_ends_with: String
+  country_not_ends_with: String
   state: String
   state_not: String
   state_in: [String!]
@@ -5497,6 +5695,12 @@ type Mutation {
   upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   deleteImage(where: ImageWhereUniqueInput!): Image
   deleteManyImages(where: ImageWhereInput): BatchPayload!
+  createInterestedUser(data: InterestedUserCreateInput!): InterestedUser!
+  updateInterestedUser(data: InterestedUserUpdateInput!, where: InterestedUserWhereUniqueInput!): InterestedUser
+  updateManyInterestedUsers(data: InterestedUserUpdateManyMutationInput!, where: InterestedUserWhereInput): BatchPayload!
+  upsertInterestedUser(where: InterestedUserWhereUniqueInput!, create: InterestedUserCreateInput!, update: InterestedUserUpdateInput!): InterestedUser!
+  deleteInterestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
+  deleteManyInterestedUsers(where: InterestedUserWhereInput): BatchPayload!
   createLabel(data: LabelCreateInput!): Label!
   updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
   updateManyLabels(data: LabelUpdateManyMutationInput!, where: LabelWhereInput): BatchPayload!
@@ -5658,6 +5862,12 @@ type Mutation {
   upsertStylePreferences(where: StylePreferencesWhereUniqueInput!, create: StylePreferencesCreateInput!, update: StylePreferencesUpdateInput!): StylePreferences!
   deleteStylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
+  createSyncTiming(data: SyncTimingCreateInput!): SyncTiming!
+  updateSyncTiming(data: SyncTimingUpdateInput!, where: SyncTimingWhereUniqueInput!): SyncTiming
+  updateManySyncTimings(data: SyncTimingUpdateManyMutationInput!, where: SyncTimingWhereInput): BatchPayload!
+  upsertSyncTiming(where: SyncTimingWhereUniqueInput!, create: SyncTimingCreateInput!, update: SyncTimingUpdateInput!): SyncTiming!
+  deleteSyncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
+  deleteManySyncTimings(where: SyncTimingWhereInput): BatchPayload!
   createTag(data: TagCreateInput!): Tag!
   updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
   updateManyTags(data: TagUpdateManyMutationInput!, where: TagWhereInput): BatchPayload!
@@ -11282,6 +11492,9 @@ type Query {
   image(where: ImageWhereUniqueInput!): Image
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
+  interestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
+  interestedUsers(where: InterestedUserWhereInput, orderBy: InterestedUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InterestedUser]!
+  interestedUsersConnection(where: InterestedUserWhereInput, orderBy: InterestedUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InterestedUserConnection!
   label(where: LabelWhereUniqueInput!): Label
   labels(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Label]!
   labelsConnection(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LabelConnection!
@@ -11363,6 +11576,9 @@ type Query {
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   stylePreferenceses(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StylePreferences]!
   stylePreferencesesConnection(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StylePreferencesConnection!
+  syncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
+  syncTimings(where: SyncTimingWhereInput, orderBy: SyncTimingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SyncTiming]!
+  syncTimingsConnection(where: SyncTimingWhereInput, orderBy: SyncTimingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SyncTimingConnection!
   tag(where: TagWhereUniqueInput!): Tag
   tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag]!
   tagsConnection(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TagConnection!
@@ -13485,6 +13701,7 @@ type Subscription {
   fitPicReport(where: FitPicReportSubscriptionWhereInput): FitPicReportSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
+  interestedUser(where: InterestedUserSubscriptionWhereInput): InterestedUserSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
@@ -13512,6 +13729,7 @@ type Subscription {
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
+  syncTiming(where: SyncTimingSubscriptionWhereInput): SyncTimingSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
@@ -13519,6 +13737,121 @@ type Subscription {
   userPushNotificationInterest(where: UserPushNotificationInterestSubscriptionWhereInput): UserPushNotificationInterestSubscriptionPayload
   warehouseLocation(where: WarehouseLocationSubscriptionWhereInput): WarehouseLocationSubscriptionPayload
   warehouseLocationConstraint(where: WarehouseLocationConstraintSubscriptionWhereInput): WarehouseLocationConstraintSubscriptionPayload
+}
+
+type SyncTiming {
+  id: ID!
+  dripSyncedAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SyncTimingConnection {
+  pageInfo: PageInfo!
+  edges: [SyncTimingEdge]!
+  aggregate: AggregateSyncTiming!
+}
+
+input SyncTimingCreateInput {
+  id: ID
+  dripSyncedAt: DateTime!
+}
+
+type SyncTimingEdge {
+  node: SyncTiming!
+  cursor: String!
+}
+
+enum SyncTimingOrderByInput {
+  id_ASC
+  id_DESC
+  dripSyncedAt_ASC
+  dripSyncedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type SyncTimingPreviousValues {
+  id: ID!
+  dripSyncedAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SyncTimingSubscriptionPayload {
+  mutation: MutationType!
+  node: SyncTiming
+  updatedFields: [String!]
+  previousValues: SyncTimingPreviousValues
+}
+
+input SyncTimingSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: SyncTimingWhereInput
+  AND: [SyncTimingSubscriptionWhereInput!]
+  OR: [SyncTimingSubscriptionWhereInput!]
+  NOT: [SyncTimingSubscriptionWhereInput!]
+}
+
+input SyncTimingUpdateInput {
+  dripSyncedAt: DateTime
+}
+
+input SyncTimingUpdateManyMutationInput {
+  dripSyncedAt: DateTime
+}
+
+input SyncTimingWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  dripSyncedAt: DateTime
+  dripSyncedAt_not: DateTime
+  dripSyncedAt_in: [DateTime!]
+  dripSyncedAt_not_in: [DateTime!]
+  dripSyncedAt_lt: DateTime
+  dripSyncedAt_lte: DateTime
+  dripSyncedAt_gt: DateTime
+  dripSyncedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [SyncTimingWhereInput!]
+  OR: [SyncTimingWhereInput!]
+  NOT: [SyncTimingWhereInput!]
+}
+
+input SyncTimingWhereUniqueInput {
+  id: ID
 }
 
 type Tag {
