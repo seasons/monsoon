@@ -102,6 +102,8 @@ type Customer {
   transactions: [Transaction]
   membership: CustomerMembership
   onboardingSteps: [OnboardingStep!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type CustomerMembership {
