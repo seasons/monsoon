@@ -10,6 +10,7 @@ import {
   CustomerStatus,
   CustomerWhereUniqueInput,
   ID_Input,
+  InAdmissableReason,
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -20,14 +21,12 @@ import { pick } from "lodash"
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
 import { AuthService } from "./auth.service"
 
-type TriageCustomerResult = "Waitlisted" | "Authorized"
+type TriageCustomerStatusResult = "Waitlisted" | "Authorized"
 
-type WaitlistReason =
-  | "AutomaticAdmissionsFlagOff"
-  | "Unserviceable Zipcode"
-  | "Insufficient Inventory"
-  | "Exceeds Ops Threshold"
-  | "Unsupported Platform"
+type TriageCustomerResult = {
+  status: TriageCustomerStatusResult
+  waitlistReason?: InAdmissableReason
+}
 
 @Injectable()
 export class CustomerService {
@@ -298,12 +297,12 @@ export class CustomerService {
       }`
     )
 
-    if (!["Created", "Invited", "Waitlisted"].includes(customer.status)) {
+    if (!this.admissions.isTriageable(customer.status)) {
       throw new ApolloError(
-        `Invalid customer status: ${customer.status}. Can only triage an "Invited" or "Created" or "Waitlisted" customer`
+        `Invalid customer status: ${customer.status}. Can not triage a ${customer.status} customer`
       )
     }
-    let status = "Waitlisted" as TriageCustomerResult
+    let status = "Waitlisted" as TriageCustomerStatusResult
 
     const triageFuncs = [
       {
@@ -321,7 +320,7 @@ export class CustomerService {
           Promise.resolve(
             this.admissions.hasSupportedPlatform(where, application)
           ),
-        waitlistReason: "Unsupported Platform",
+        waitlistReason: "UnsupportedPlatform",
       },
       {
         func: async () =>
@@ -330,23 +329,23 @@ export class CustomerService {
               customer.detail.shippingAddress.zipCode
             )
           ),
-        waitlistReason: "Unserviceable Zipcode",
+        waitlistReason: "UnserviceableZipcode",
       },
       {
         func: () => this.admissions.belowWeeklyNewActiveUsersOpsThreshold(),
-        waitlistReason: "Exceeds Ops Threshold",
+        waitlistReason: "ExceedsOpsThreshold",
       },
       {
         func: () =>
           this.admissions.haveSufficientInventoryToServiceCustomer(where),
-        waitlistReason: "Insufficient Inventory",
+        waitlistReason: "InsufficientInventory",
       },
     ] as {
       func: () => Promise<TriageFuncResult>
-      waitlistReason: WaitlistReason
+      waitlistReason: InAdmissableReason
     }[]
     let triageDetail = {} as any
-    let reason: WaitlistReason
+    let reason: InAdmissableReason
     let admit = true
     let availableStyles = []
     try {
@@ -420,6 +419,6 @@ export class CustomerService {
       })
     }
 
-    return status
+    return { status, waitlistReason: reason }
   }
 }

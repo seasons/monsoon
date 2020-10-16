@@ -1,6 +1,11 @@
 import { ExecutionContext, createParamDecorator } from "@nestjs/common"
 
-export type ApplicationType = "harvest" | "flare" | "spring" | "unknown"
+export type ApplicationType =
+  | "harvest"
+  | "flare"
+  | "spring"
+  | "unknown"
+  | "monsoon"
 
 export const Application = createParamDecorator(
   (data, context: ExecutionContext): ApplicationType => {

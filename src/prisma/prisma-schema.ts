@@ -295,6 +295,10 @@ type AggregateCustomer {
   count: Int!
 }
 
+type AggregateCustomerAdmissionsData {
+  count: Int!
+}
+
 type AggregateCustomerDetail {
   count: Int!
 }
@@ -2678,9 +2682,177 @@ type Customer {
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
   emailedProducts(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  admissions: CustomerAdmissionsData
   authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type CustomerAdmissionsData {
+  id: ID!
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  customers(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type CustomerAdmissionsDataConnection {
+  pageInfo: PageInfo!
+  edges: [CustomerAdmissionsDataEdge]!
+  aggregate: AggregateCustomerAdmissionsData!
+}
+
+input CustomerAdmissionsDataCreateInput {
+  id: ID
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  customers: CustomerCreateManyWithoutAdmissionsInput
+}
+
+input CustomerAdmissionsDataCreateOneWithoutCustomersInput {
+  create: CustomerAdmissionsDataCreateWithoutCustomersInput
+  connect: CustomerAdmissionsDataWhereUniqueInput
+}
+
+input CustomerAdmissionsDataCreateWithoutCustomersInput {
+  id: ID
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+}
+
+type CustomerAdmissionsDataEdge {
+  node: CustomerAdmissionsData!
+  cursor: String!
+}
+
+enum CustomerAdmissionsDataOrderByInput {
+  id_ASC
+  id_DESC
+  inServiceableZipcode_ASC
+  inServiceableZipcode_DESC
+  admissable_ASC
+  admissable_DESC
+  inAdmissableReason_ASC
+  inAdmissableReason_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type CustomerAdmissionsDataPreviousValues {
+  id: ID!
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type CustomerAdmissionsDataSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerAdmissionsData
+  updatedFields: [String!]
+  previousValues: CustomerAdmissionsDataPreviousValues
+}
+
+input CustomerAdmissionsDataSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: CustomerAdmissionsDataWhereInput
+  AND: [CustomerAdmissionsDataSubscriptionWhereInput!]
+  OR: [CustomerAdmissionsDataSubscriptionWhereInput!]
+  NOT: [CustomerAdmissionsDataSubscriptionWhereInput!]
+}
+
+input CustomerAdmissionsDataUpdateInput {
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason: InAdmissableReason
+  customers: CustomerUpdateManyWithoutAdmissionsInput
+}
+
+input CustomerAdmissionsDataUpdateManyMutationInput {
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason: InAdmissableReason
+}
+
+input CustomerAdmissionsDataUpdateOneWithoutCustomersInput {
+  create: CustomerAdmissionsDataCreateWithoutCustomersInput
+  update: CustomerAdmissionsDataUpdateWithoutCustomersDataInput
+  upsert: CustomerAdmissionsDataUpsertWithoutCustomersInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: CustomerAdmissionsDataWhereUniqueInput
+}
+
+input CustomerAdmissionsDataUpdateWithoutCustomersDataInput {
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason: InAdmissableReason
+}
+
+input CustomerAdmissionsDataUpsertWithoutCustomersInput {
+  update: CustomerAdmissionsDataUpdateWithoutCustomersDataInput!
+  create: CustomerAdmissionsDataCreateWithoutCustomersInput!
+}
+
+input CustomerAdmissionsDataWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  inServiceableZipcode: Boolean
+  inServiceableZipcode_not: Boolean
+  admissable: Boolean
+  admissable_not: Boolean
+  inAdmissableReason: InAdmissableReason
+  inAdmissableReason_not: InAdmissableReason
+  inAdmissableReason_in: [InAdmissableReason!]
+  inAdmissableReason_not_in: [InAdmissableReason!]
+  customers_every: CustomerWhereInput
+  customers_some: CustomerWhereInput
+  customers_none: CustomerWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [CustomerAdmissionsDataWhereInput!]
+  OR: [CustomerAdmissionsDataWhereInput!]
+  NOT: [CustomerAdmissionsDataWhereInput!]
+}
+
+input CustomerAdmissionsDataWhereUniqueInput {
+  id: ID
 }
 
 type CustomerConnection {
@@ -2700,7 +2872,13 @@ input CustomerCreateInput {
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
   authorizedAt: DateTime
+}
+
+input CustomerCreateManyWithoutAdmissionsInput {
+  create: [CustomerCreateWithoutAdmissionsInput!]
+  connect: [CustomerWhereUniqueInput!]
 }
 
 input CustomerCreateOneInput {
@@ -2723,6 +2901,20 @@ input CustomerCreateOneWithoutReservationsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerCreateWithoutAdmissionsInput {
+  id: ID
+  user: UserCreateOneInput!
+  status: CustomerStatus
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  plan: Plan
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+  emailedProducts: ProductCreateManyInput
+  authorizedAt: DateTime
+}
+
 input CustomerCreateWithoutBagItemsInput {
   id: ID
   user: UserCreateOneInput!
@@ -2733,6 +2925,7 @@ input CustomerCreateWithoutBagItemsInput {
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
   authorizedAt: DateTime
 }
 
@@ -2746,6 +2939,7 @@ input CustomerCreateWithoutMembershipInput {
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
   authorizedAt: DateTime
 }
 
@@ -2759,6 +2953,7 @@ input CustomerCreateWithoutReservationsInput {
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
   authorizedAt: DateTime
 }
 
@@ -3488,6 +3683,58 @@ type CustomerPreviousValues {
   updatedAt: DateTime!
 }
 
+input CustomerScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  status: CustomerStatus
+  status_not: CustomerStatus
+  status_in: [CustomerStatus!]
+  status_not_in: [CustomerStatus!]
+  plan: Plan
+  plan_not: Plan
+  plan_in: [Plan!]
+  plan_not_in: [Plan!]
+  authorizedAt: DateTime
+  authorizedAt_not: DateTime
+  authorizedAt_in: [DateTime!]
+  authorizedAt_not_in: [DateTime!]
+  authorizedAt_lt: DateTime
+  authorizedAt_lte: DateTime
+  authorizedAt_gt: DateTime
+  authorizedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [CustomerScalarWhereInput!]
+  OR: [CustomerScalarWhereInput!]
+  NOT: [CustomerScalarWhereInput!]
+}
+
 enum CustomerStatus {
   Invited
   Created
@@ -3527,6 +3774,7 @@ input CustomerUpdateDataInput {
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
   authorizedAt: DateTime
 }
 
@@ -3540,6 +3788,13 @@ input CustomerUpdateInput {
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
+  authorizedAt: DateTime
+}
+
+input CustomerUpdateManyDataInput {
+  status: CustomerStatus
+  plan: Plan
   authorizedAt: DateTime
 }
 
@@ -3547,6 +3802,23 @@ input CustomerUpdateManyMutationInput {
   status: CustomerStatus
   plan: Plan
   authorizedAt: DateTime
+}
+
+input CustomerUpdateManyWithoutAdmissionsInput {
+  create: [CustomerCreateWithoutAdmissionsInput!]
+  delete: [CustomerWhereUniqueInput!]
+  connect: [CustomerWhereUniqueInput!]
+  set: [CustomerWhereUniqueInput!]
+  disconnect: [CustomerWhereUniqueInput!]
+  update: [CustomerUpdateWithWhereUniqueWithoutAdmissionsInput!]
+  upsert: [CustomerUpsertWithWhereUniqueWithoutAdmissionsInput!]
+  deleteMany: [CustomerScalarWhereInput!]
+  updateMany: [CustomerUpdateManyWithWhereNestedInput!]
+}
+
+input CustomerUpdateManyWithWhereNestedInput {
+  where: CustomerScalarWhereInput!
+  data: CustomerUpdateManyDataInput!
 }
 
 input CustomerUpdateOneRequiredInput {
@@ -3577,6 +3849,19 @@ input CustomerUpdateOneRequiredWithoutReservationsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerUpdateWithoutAdmissionsDataInput {
+  user: UserUpdateOneRequiredInput
+  status: CustomerStatus
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  emailedProducts: ProductUpdateManyInput
+  authorizedAt: DateTime
+}
+
 input CustomerUpdateWithoutBagItemsDataInput {
   user: UserUpdateOneRequiredInput
   status: CustomerStatus
@@ -3586,6 +3871,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
   authorizedAt: DateTime
 }
 
@@ -3598,6 +3884,7 @@ input CustomerUpdateWithoutMembershipDataInput {
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
   authorizedAt: DateTime
 }
 
@@ -3610,7 +3897,13 @@ input CustomerUpdateWithoutReservationsDataInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
   authorizedAt: DateTime
+}
+
+input CustomerUpdateWithWhereUniqueWithoutAdmissionsInput {
+  where: CustomerWhereUniqueInput!
+  data: CustomerUpdateWithoutAdmissionsDataInput!
 }
 
 input CustomerUpsertNestedInput {
@@ -3631,6 +3924,12 @@ input CustomerUpsertWithoutMembershipInput {
 input CustomerUpsertWithoutReservationsInput {
   update: CustomerUpdateWithoutReservationsDataInput!
   create: CustomerCreateWithoutReservationsInput!
+}
+
+input CustomerUpsertWithWhereUniqueWithoutAdmissionsInput {
+  where: CustomerWhereUniqueInput!
+  update: CustomerUpdateWithoutAdmissionsDataInput!
+  create: CustomerCreateWithoutAdmissionsInput!
 }
 
 input CustomerWhereInput {
@@ -3669,6 +3968,7 @@ input CustomerWhereInput {
   emailedProducts_every: ProductWhereInput
   emailedProducts_some: ProductWhereInput
   emailedProducts_none: ProductWhereInput
+  admissions: CustomerAdmissionsDataWhereInput
   authorizedAt: DateTime
   authorizedAt_not: DateTime
   authorizedAt_in: [DateTime!]
@@ -4881,6 +5181,15 @@ input ImageWhereUniqueInput {
   url: String
 }
 
+enum InAdmissableReason {
+  Untriageable
+  UnsupportedPlatform
+  AutomaticAdmissionsFlagOff
+  UnserviceableZipcode
+  InsufficientInventory
+  OpsThresholdExceeded
+}
+
 type InterestedUser {
   id: ID!
   email: String!
@@ -5762,6 +6071,12 @@ type Mutation {
   upsertCustomer(where: CustomerWhereUniqueInput!, create: CustomerCreateInput!, update: CustomerUpdateInput!): Customer!
   deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
+  createCustomerAdmissionsData(data: CustomerAdmissionsDataCreateInput!): CustomerAdmissionsData!
+  updateCustomerAdmissionsData(data: CustomerAdmissionsDataUpdateInput!, where: CustomerAdmissionsDataWhereUniqueInput!): CustomerAdmissionsData
+  updateManyCustomerAdmissionsDatas(data: CustomerAdmissionsDataUpdateManyMutationInput!, where: CustomerAdmissionsDataWhereInput): BatchPayload!
+  upsertCustomerAdmissionsData(where: CustomerAdmissionsDataWhereUniqueInput!, create: CustomerAdmissionsDataCreateInput!, update: CustomerAdmissionsDataUpdateInput!): CustomerAdmissionsData!
+  deleteCustomerAdmissionsData(where: CustomerAdmissionsDataWhereUniqueInput!): CustomerAdmissionsData
+  deleteManyCustomerAdmissionsDatas(where: CustomerAdmissionsDataWhereInput): BatchPayload!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
   updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
@@ -11580,6 +11895,9 @@ type Query {
   customer(where: CustomerWhereUniqueInput!): Customer
   customers(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer]!
   customersConnection(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerConnection!
+  customerAdmissionsData(where: CustomerAdmissionsDataWhereUniqueInput!): CustomerAdmissionsData
+  customerAdmissionsDatas(where: CustomerAdmissionsDataWhereInput, orderBy: CustomerAdmissionsDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerAdmissionsData]!
+  customerAdmissionsDatasConnection(where: CustomerAdmissionsDataWhereInput, orderBy: CustomerAdmissionsDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerAdmissionsDataConnection!
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
@@ -13803,6 +14121,7 @@ type Subscription {
   collectionGroup(where: CollectionGroupSubscriptionWhereInput): CollectionGroupSubscriptionPayload
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
+  customerAdmissionsData(where: CustomerAdmissionsDataSubscriptionWhereInput): CustomerAdmissionsDataSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   customerMembership(where: CustomerMembershipSubscriptionWhereInput): CustomerMembershipSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload

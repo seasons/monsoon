@@ -689,6 +689,27 @@ type BagItem {
   status: BagItemStatus!
 }
 
+# TODO: Move this to be with other enums
+enum InAdmissableReason {
+  Untriageable
+  UnsupportedPlatform
+  AutomaticAdmissionsFlagOff
+  UnserviceableZipcode
+  InsufficientInventory
+  OpsThresholdExceeded
+}
+
+type CustomerAdmissionsData {
+  id: ID! @id
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  customers: [Customer!]!
+    @relation(name: "CustomerToCustomerAdmissionsData", onDelete: SET_NULL)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type Customer {
   id: ID! @id
   user: User! @unique @relation(name: "CustomerToUser", onDelete: CASCADE)
@@ -705,6 +726,8 @@ type Customer {
   ## A list of all the products we've shown this person via email
   emailedProducts: [Product!]!
     @relation(name: "CustomerToEmailedProducts", onDelete: SET_NULL)
+  admissions: CustomerAdmissionsData
+    @relation(name: "CustomerToCustomerAdmissionsData", onDelete: SET_NULL)
   authorizedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt

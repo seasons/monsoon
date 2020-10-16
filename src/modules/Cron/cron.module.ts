@@ -13,6 +13,7 @@ import { DripModule } from "../Drip/drip.module"
 import { PaymentModule } from "../Payment/payment.module"
 import { SearchModule } from "../Search/search.module"
 import { SMSModule } from "../SMS/sms.module"
+import { AdmissionsScheduledJobs } from "./services/admissions.job.service"
 import { DataScheduledJobs } from "./services/data.job.service"
 import { MarketingScheduledJobs } from "./services/marketing.job.service"
 import { MembershipScheduledJobs } from "./services/membership.service"
@@ -43,6 +44,7 @@ import { SearchScheduledJobs } from "./services/search.job.service"
     MembershipScheduledJobs,
     PaymentScheduledJobs,
     SearchScheduledJobs,
+    AdmissionsScheduledJobs,
   ],
   exports: [DataScheduledJobs],
 })
