@@ -45,10 +45,14 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 // Don't run cron jobs in dev mode, to keep the console clean
 const scheduleModule =
-  process.env.NODE_ENV === "production" ? [ScheduleModule.forRoot()] : []
+  process.env.NODE_ENV === "production" && process.env.DYNO.includes("cron")
+    ? [ScheduleModule.forRoot()]
+    : []
 // const scheduleModule =
 //   process.env.NODE_ENV === "development" ? [ScheduleModule.forRoot()] : []
 
+console.log(process.env.DYNO)
+console.log(scheduleModule)
 @Module({
   imports: [
     ...scheduleModule,
