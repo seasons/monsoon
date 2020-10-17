@@ -15,13 +15,9 @@ import { prisma } from "./prisma"
 // Set up the server
 const server = express()
 
-if (process.env.NODE_ENV === "production") {
-  // Set up Sentry, which automatically reports on uncaught exceptions
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-  })
-  server.use(Sentry.Handlers.requestHandler()) // must be first middleware on app
-}
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+})
 
 const handleErrors = (err, req, res, next) => {
   if (err) {
