@@ -20,7 +20,7 @@ export class SentryFilter extends BaseExceptionFilter {
     } else if (host.getType<GqlContextType>() === "graphql") {
       // If its a graphql request, handle it one way
       const gqlHost = GqlArgumentsHost.create(host)
-      this.error.setExtraContext(gqlHost.getContext())
+      this.error.setExtraContext(gqlHost.getContext(), "context")
       this.error.captureError(exception)
       return exception
     } else {
