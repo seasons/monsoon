@@ -20,10 +20,16 @@ type Query {
 }
 
 type Mutation {
-  applePayCheckout(planID: String!, token: StripeToken!): Boolean
-    @hasRole(roles: [Customer])
-  applePayUpdatePaymentMethod(planID: String!, token: StripeToken!): Boolean
-    @hasRole(roles: [Customer])
+  applePayCheckout(
+    planID: String!
+    token: StripeToken!
+    tokenType: String
+  ): Boolean @hasRole(roles: [Customer])
+  applePayUpdatePaymentMethod(
+    planID: String!
+    token: StripeToken!
+    tokenType: String
+  ): Boolean @hasRole(roles: [Customer])
   changeCustomerPlan(planID: String!): Boolean @hasRole(roles: [Customer])
   updateResumeDate(date: DateTime): Boolean @hasRole(roles: [Customer])
   removeScheduledPause(subscriptionID: String!): Boolean
@@ -145,7 +151,7 @@ input RefundInvoiceInput {
 input StripeToken {
   card: StripeTokenCard!
   created: Int!
-  extra: StripeTokenExtra!
+  extra: StripeTokenExtra
   livemode: Boolean!
   tokenId: String!
 }
@@ -153,7 +159,8 @@ input StripeToken {
 input StripeTokenCard {
   addressCity: String # "Brooklyn"
   addressCountry: String # "US"
-  addressLine1: String # "34 Havemeyer St↵Apt 5A"
+  addressLine1: String # "34 Havemeyer St"
+  addressLine2: String # "Apt 5A"
   addressState: String # "NY"
   addressZip: String # "11211"
   brand: String # "Visa"
