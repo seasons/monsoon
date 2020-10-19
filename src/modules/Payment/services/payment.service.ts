@@ -170,7 +170,7 @@ export class PaymentService {
     }
   }
 
-  async applePayCheckout(planID, token, couponID, customer) {
+  async stripeTokenCheckout(planID, token, customer, tokenType, couponID) {
     const customerWithUserData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
       `
