@@ -24,6 +24,7 @@ type Mutation {
     planID: String!
     token: StripeToken!
     tokenType: String
+    couponID: String
   ): Boolean @hasRole(roles: [Customer])
   applePayUpdatePaymentMethod(
     planID: String!
@@ -39,6 +40,7 @@ type Mutation {
   resumeSubscription(subscriptionID: String!, date: DateTime): Boolean
     @hasRole(roles: [Customer])
   refundInvoice(input: RefundInvoiceInput): Boolean! @hasRole(roles: [Admin])
+  checkCoupon(couponID: String!): Coupon
 }
 
 enum CreditNoteReasonCodeInput {
@@ -95,6 +97,16 @@ enum TransactionType {
 enum PlanID {
   AllAccess
   Essential
+}
+
+enum CouponType {
+  FixedAmount
+  Percentage
+}
+
+type Coupon {
+  amount: Int!
+  type: CouponType!
 }
 
 type Invoice {

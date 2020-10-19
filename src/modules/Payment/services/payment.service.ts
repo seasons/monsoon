@@ -1,7 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { CustomerService } from "@app/modules/User"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerStatus, PaymentPlanTier, Plan, User } from "@app/prisma"
+import { PaymentPlanTier, User } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
@@ -13,6 +13,8 @@ import { DateTime } from "luxon"
 import {
   BillingAddress,
   Card,
+  Coupon,
+  CouponType,
   Invoice,
   InvoicesDataLoader,
   RefundInvoiceInput,
@@ -20,6 +22,18 @@ import {
   TransactionsDataLoader,
 } from "../payment.types"
 import { PaymentUtilsService } from "./payment.utils.service"
+
+class CouponNotFound extends Error {
+  constructor() {
+    super("Coupon Not Found")
+  }
+}
+
+class CouponExpired extends Error {
+  constructor() {
+    super("Coupon Expired")
+  }
+}
 
 @Injectable()
 export class PaymentService {
@@ -156,7 +170,7 @@ export class PaymentService {
     }
   }
 
-  async stripeTokenCheckout(planID, token, customer, tokenType) {
+  async stripeTokenCheckout(planID, token, customer, tokenType, couponID) {
     const customerWithUserData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
       `
@@ -220,6 +234,7 @@ export class PaymentService {
     const subscription = await chargebee.subscription
       .create_for_customer(chargebeeCustomer.customer.id, {
         plan_id: planID,
+        coupon_ids: !!couponID ? [couponID] : [],
       })
       .request()
 
@@ -691,6 +706,24 @@ export class PaymentService {
         await transactionsForCustomerloader.load(customerId)
       )
       ?.map(this.formatTransaction)
+  }
+
+  async checkCoupon(couponID): Promise<Coupon> {
+    try {
+      const coupon = await chargebee.coupon.retrieve(couponID).request()
+      if (coupon.coupon.status == "active") {
+        return {
+          amount: coupon.coupon.discount_amount,
+          type: upperFirst(
+            camelCase(coupon.coupon.discount_type)
+          ) as CouponType,
+        }
+      } else {
+        throw new CouponExpired()
+      }
+    } catch {
+      throw new CouponNotFound()
+    }
   }
 
   async refundInvoice({
