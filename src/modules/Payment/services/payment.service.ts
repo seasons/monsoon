@@ -223,7 +223,21 @@ export class PaymentService {
         .request()
     }
 
-    const paymentSource = await chargebee.payment_source
+    // Create the payment method. If one already exists, delete it
+    // and create a new one using the passed token.
+    let paymentSource
+    const customerPaymentSources = await chargebee.payment_source
+      .list({
+        "customer_id[is]": chargebeeCustomer.customer.id,
+      })
+      .request()
+    paymentSource = head(customerPaymentSources.list)
+    if (!!paymentSource) {
+      await chargebee.payment_source
+        .delete(paymentSource.payment_source.id)
+        .request()
+    }
+    paymentSource = await chargebee.payment_source
       .create_using_temp_token({
         tmp_token: token.tokenId,
         type: tokenType ? tokenType : "apple_pay",
