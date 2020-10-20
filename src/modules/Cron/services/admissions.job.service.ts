@@ -5,16 +5,6 @@ import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 
-/*
-- get this saving to the DB
-- expose it in looker (in serviceable state, admissable)
-- expose it in the admin
-- get number of times authorized into the admin also
-- update iOS track count for email matching
-- update num times authorized count
-- update auhtorizedAt field
-*/
-
 @Injectable()
 export class AdmissionsScheduledJobs {
   private readonly logger = new Logger(`Cron: ${AdmissionsScheduledJobs.name}`)

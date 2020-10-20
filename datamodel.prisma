@@ -210,7 +210,7 @@ enum PackageTransitEventSubStatus {
   Other
 }
 
-enum ReservationPhase {
+enum ReservationPhase {p
   BusinessToCustomer
   CustomerToBusiness
 }
@@ -221,6 +221,15 @@ enum UserPushNotificationInterestType {
   Bag
   NewProduct
   Brand
+}
+
+enum InAdmissableReason {
+  Untriageable
+  UnsupportedPlatform
+  AutomaticAdmissionsFlagOff
+  UnserviceableZipcode
+  InsufficientInventory
+  OpsThresholdExceeded
 }
 
 type Brand {
@@ -687,16 +696,6 @@ type BagItem {
   position: Int
   saved: Boolean
   status: BagItemStatus!
-}
-
-# TODO: Move this to be with other enums
-enum InAdmissableReason {
-  Untriageable
-  UnsupportedPlatform
-  AutomaticAdmissionsFlagOff
-  UnserviceableZipcode
-  InsufficientInventory
-  OpsThresholdExceeded
 }
 
 type CustomerAdmissionsData {
