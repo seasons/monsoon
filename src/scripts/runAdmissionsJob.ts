@@ -19,7 +19,6 @@ import { AdmissionsService } from "../modules/User/services/admissions.service"
 import { AuthService } from "../modules/User/services/auth.service"
 import { CustomerService } from "../modules/User/services/customer.service"
 import { UtilsService } from "../modules/Utils/services/utils.service"
-import { prisma } from "../prisma"
 import { PrismaService } from "../prisma/prisma.service"
 
 const run = async () => {
@@ -49,13 +48,7 @@ const run = async () => {
     pn,
     sms
   )
-  const admissionsJobService = new AdmissionsScheduledJobs(
-    ps,
-    as,
-    cs,
-    error,
-    segment
-  )
+  const admissionsJobService = new AdmissionsScheduledJobs(ps, as, cs, error)
   await admissionsJobService.updateAdmissionsFields()
 }
 
