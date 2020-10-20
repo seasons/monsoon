@@ -210,7 +210,7 @@ enum PackageTransitEventSubStatus {
   Other
 }
 
-enum ReservationPhase {p
+enum ReservationPhase {
   BusinessToCustomer
   CustomerToBusiness
 }
