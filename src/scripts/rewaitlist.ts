@@ -2,6 +2,7 @@ import "module-alias/register"
 
 import sgMail from "@sendgrid/mail"
 import { head } from "lodash"
+import moment from "moment"
 import readlineSync from "readline-sync"
 
 import { EmailDataProvider } from "../modules/Email/services/email.data.service"
@@ -32,49 +33,117 @@ const run = async () => {
   const twilioUtils = new TwilioUtils()
   const sms = new SMSService(ps, twilio, twilioUtils)
 
+  const customersToRewaitlist = await ps.binding.query.customers(
+    {
+      where: {
+        AND: [
+          { user: { createdAt_lte: new Date(2020, 9, 5) } },
+          { status: "Authorized" },
+          { authorizedAt: null },
+          { user: { email_not_contains: "seasons.nyc" } },
+          { user: { email_not_contains: "faiyamrahman.com" } },
+          { user: { email_not_contains: "alexisohanian.com" } },
+          { user: { email_not_contains: "mylesthompsoncreative@gmail.com" } },
+        ],
+      },
+    },
+    // { where: { user: { email_contains: "faiyam" } } },
+    `{
+      id
+    user {
+      id
+      email
+      firstName
+      lastName
+      emails {
+        emailId
+        createdAt
+      }
+      createdAt
+    }
+    authorizedAt
+  }`
+  )
+  console.log(`${customersToRewaitlist.length} to rewaitlist`)
+  const emails = customersToRewaitlist.map(a => a.user.email)
+  console.log(emails)
+  // const emails = ["faiyam@faiyamrahman.com"]
+
+  let i = 0
+  let queue = []
+  for (const cust of customersToRewaitlist) {
+    if (queue.length > 0) {
+      console.log(`rewaitlisting customers: `)
+      console.log(queue.map(a => a.user.email))
+      await rewaitlistCustomers(admissions, ps, email, sms, queue)
+      queue = []
+    }
+
+    console.log(`cust ${i++} of ${customersToRewaitlist.length}`)
+    const shouldProceed = readlineSync.keyInYN(
+      `\nYou are about to rewaitlist ${cust.user.email}.\n` +
+        `authorizedAt: ${cust.authorizedAt}\n` +
+        `createdAt: ${cust.user.createdAt}\n` +
+        `createdAt: ${moment(cust.user.createdAt).format("MMMM Do YYYY")}\n` +
+        `emails:\n${cust.user.emails.reduce((acc, curval) => {
+          const newString = `${curval.emailId} at ${moment(
+            curval.createdAt
+          ).format("MMMM Do YYYY")}\n`
+          return acc + newString
+        }, ``)}\n`
+    )
+
+    if (!shouldProceed) {
+      console.log(`Skipped ${cust.user.email}\n`)
+      continue
+    } else {
+      queue.push(cust)
+    }
+  }
+  await rewaitlistCustomers(admissions, ps, email, sms, queue)
+}
+
+const rewaitlistCustomers = async (admissions, ps, email, sms, customers) => {
   const sleep = async ms => {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
-  const emails = ["faiyam@faiyamrahman.com"]
+  for (const cust of customers) {
+    try {
+      const availableStyles = await admissions.getAvailableStyles({
+        id: cust.id,
+      })
+      await ps.client.updateManyCustomers({
+        where: { id: cust.id },
+        data: { status: "Waitlisted" },
+      })
+      await email.sendRewaitlistedEmail(cust.user, availableStyles)
 
-  for (const em of emails) {
-    const cust = head(
-      await ps.binding.query.customers(
-        { where: { user: { email: em } } },
-        `{id user {id email firstName lastName}}`
-      )
-    ) as any
-    const shouldProceed = readlineSync.keyInYN(
-      `You are about to rewaitlist ${em}. Proceed? y/n. `
-    )
-
-    if (!shouldProceed) {
-      console.log(`Skipped ${em}\n`)
-      return
+      await sms.sendSMSMessage({
+        to: { id: cust.user.id },
+        body: `${cust.user.firstName}, it's Seasons. Your signup window has closed. Due to demand, we've had to give your spot to the next person in line.`,
+        mediaUrls: [
+          "https://seasons-images.s3.amazonaws.com/email-images/WaitlistedHero.jpg",
+        ],
+      })
+    } catch (err) {
+      console.log(cust.user.email)
+      console.log(err)
     }
+  }
 
-    const availableStyles = await admissions.getAvailableStyles({ id: cust.id })
-    await ps.client.updateManyCustomers({
-      where: { user: { email: em } },
-      data: { status: "Waitlisted" },
-    })
-    await email.sendRewaitlistedEmail(cust.user, availableStyles)
+  await sleep(30000)
 
-    await sms.sendSMSMessage({
-      to: { id: cust.user.id },
-      body: `${cust.user.firstName}, it's Seasons. Your signup window has closed. Due to demand, we've had to give your spot to the next person in line.`,
-      mediaUrls: [
-        "https://seasons-images.s3.amazonaws.com/email-images/WaitlistedHero.jpg",
-      ],
-    })
-
-    await sleep(30000)
-    await sms.sendSMSMessage({
-      to: { id: cust.user.id },
-      body: `If you'd still like to obtain a membership, please contact us at membership@seasons.nyc and we'll see if we can acommodate you.`,
-    })
+  for (const cust of customers) {
+    try {
+      await sms.sendSMSMessage({
+        to: { id: cust.user.id },
+        body: `If you'd still like to obtain a membership, please contact us at membership@seasons.nyc.`,
+      })
+    } catch (err) {
+      console.log(cust.user.email)
+      console.log(err)
+    }
   }
 }
-
 run()
