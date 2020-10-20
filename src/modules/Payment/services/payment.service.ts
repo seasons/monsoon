@@ -13,6 +13,8 @@ import { DateTime } from "luxon"
 import {
   BillingAddress,
   Card,
+  Coupon,
+  CouponType,
   Invoice,
   InvoicesDataLoader,
   RefundInvoiceInput,
@@ -20,6 +22,18 @@ import {
   TransactionsDataLoader,
 } from "../payment.types"
 import { PaymentUtilsService } from "./payment.utils.service"
+
+class CouponNotFound extends Error {
+  constructor() {
+    super("Coupon Not Found")
+  }
+}
+
+class CouponExpired extends Error {
+  constructor() {
+    super("Coupon Expired")
+  }
+}
 
 @Injectable()
 export class PaymentService {
@@ -85,62 +99,78 @@ export class PaymentService {
     }
   }
 
-  async applePayUpdatePaymentMethod(planID, token, customer) {
-    const customerWithUserData = await this.prisma.binding.query.customer(
-      { where: { id: customer.id } },
-      `
-        {
-          id
-          user {
+  async updatePaymentMethodWithStripeToken(planID, token, customer, tokenType) {
+    try {
+      const customerWithUserData = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+          {
             id
-            firstName
-            lastName
-            email
+            user {
+              id
+              firstName
+              lastName
+              email
+            }
+            billingInfo {
+              id
+            }
           }
-        }
-      `
-    )
+        `
+      )
 
-    const { user } = customerWithUserData
+      const { user, billingInfo } = customerWithUserData
 
-    const billingAddress = {
-      first_name: user.firstName || "",
-      last_name: user.lastName || "",
-      line1: token.card.addressLine1 || "",
-      line2: token.card?.addressLine2 || "",
-      city: token.card.addressCity || "",
-      state: token.card.addressState || "",
-      zip: token.card.addressZip || "",
-      country: token.card.addressCountry.toUpperCase() || "",
+      const billingAddress = {
+        first_name: user.firstName || "",
+        last_name: user.lastName || "",
+        line1: token.card.addressLine1 || "",
+        line2: token.card?.addressLine2 || "",
+        city: token.card.addressCity || "",
+        state: token.card.addressState || "",
+        zip: token.card.addressZip || "",
+        country: token.card.addressCountry?.toUpperCase() || "",
+      }
+
+      await chargebee.customer
+        .update_billing_info(user.id, {
+          billing_address: billingAddress,
+        })
+        .request()
+
+      const subscriptions = await chargebee.subscription
+        .list({
+          plan_id: { in: [planID] },
+          customer_id: { is: user.id },
+        })
+        .request()
+
+      const subscription = head(subscriptions.list) as any
+
+      await chargebee.subscription
+        .update(subscription.subscription.id, {
+          plan_id: planID,
+          payment_method: {
+            tmp_token: token.tokenId,
+            type: tokenType ? tokenType : "apple_pay",
+          },
+        })
+        .request()
+
+      const last4 = token?.card?.last4
+      const brand = token?.card?.brand
+      const billingInfoID = billingInfo?.id
+
+      await this.prisma.client.updateBillingInfo({
+        where: { id: billingInfoID },
+        data: { brand, last_digits: last4 },
+      })
+    } catch (e) {
+      throw new Error(`Error updating your payment method ${e}`)
     }
-
-    await chargebee.customer
-      .update_billing_info(user.id, {
-        billing_address: billingAddress,
-      })
-      .request()
-
-    const subscriptions = await chargebee.subscription
-      .list({
-        plan_id: { in: [planID] },
-        customer_id: { is: user.id },
-      })
-      .request()
-
-    const subscription = head(subscriptions.list) as any
-
-    await chargebee.subscription
-      .update(subscription.subscription.id, {
-        plan_id: planID,
-        payment_method: {
-          tmp_token: token.tokenId,
-          type: "apple_pay",
-        },
-      })
-      .request()
   }
 
-  async applePayCheckout(planID, token, customer) {
+  async stripeTokenCheckout(planID, token, customer, tokenType, couponID) {
     const customerWithUserData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
       `
@@ -166,7 +196,7 @@ export class PaymentService {
       city: token.card.addressCity || "",
       state: token.card.addressState || "",
       zip: token.card.addressZip || "",
-      country: token.card.addressCountry.toUpperCase() || "",
+      country: token.card.addressCountry?.toUpperCase() || "",
     }
 
     let chargebeeCustomer
@@ -193,10 +223,24 @@ export class PaymentService {
         .request()
     }
 
-    const paymentSource = await chargebee.payment_source
+    // Create the payment method. If one already exists, delete it
+    // and create a new one using the passed token.
+    let paymentSource
+    const customerPaymentSources = await chargebee.payment_source
+      .list({
+        "customer_id[is]": chargebeeCustomer.customer.id,
+      })
+      .request()
+    paymentSource = head(customerPaymentSources.list)
+    if (!!paymentSource) {
+      await chargebee.payment_source
+        .delete(paymentSource.payment_source.id)
+        .request()
+    }
+    paymentSource = await chargebee.payment_source
       .create_using_temp_token({
         tmp_token: token.tokenId,
-        type: "apple_pay",
+        type: tokenType ? tokenType : "apple_pay",
         customer_id: chargebeeCustomer.customer.id,
       })
       .request()
@@ -204,6 +248,7 @@ export class PaymentService {
     const subscription = await chargebee.subscription
       .create_for_customer(chargebeeCustomer.customer.id, {
         plan_id: planID,
+        coupon_ids: !!couponID ? [couponID] : [],
       })
       .request()
 
@@ -676,6 +721,24 @@ export class PaymentService {
         await transactionsForCustomerloader.load(customerId)
       )
       ?.map(this.formatTransaction)
+  }
+
+  async checkCoupon(couponID): Promise<Coupon> {
+    try {
+      const coupon = await chargebee.coupon.retrieve(couponID).request()
+      if (coupon.coupon.status == "active") {
+        return {
+          amount: coupon.coupon.discount_amount,
+          type: upperFirst(
+            camelCase(coupon.coupon.discount_type)
+          ) as CouponType,
+        }
+      } else {
+        throw new CouponExpired()
+      }
+    } catch {
+      throw new CouponNotFound()
+    }
   }
 
   async refundInvoice({
