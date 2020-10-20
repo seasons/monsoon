@@ -52,6 +52,6 @@ export class AdmissionsScheduledJobs {
       }
     }
 
-    console.log(`Update Admissions Fields Job done`)
+    this.logger.log(`Update Admissions Fields Job done`)
   }
 }
