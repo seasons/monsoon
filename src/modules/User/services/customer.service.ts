@@ -3,6 +3,7 @@ import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { Customer } from "@app/prisma/prisma.binding"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -275,29 +276,32 @@ export class CustomerService {
   async triageCustomer(
     where: CustomerWhereUniqueInput,
     application: ApplicationType,
-    dryRun: boolean
+    dryRun: boolean,
+    customer: Customer = {} as Customer
   ): Promise<TriageCustomerResult> {
-    const customer = await this.prisma.binding.query.customer(
-      { where },
-      `{
-        status
-        detail {
-          shippingAddress {
-            zipCode
+    if (Object.keys(customer).length === 0) {
+      customer = await this.prisma.binding.query.customer(
+        { where },
+        `{
+          status
+          detail {
+            shippingAddress {
+              zipCode
+            }
+            topSizes
+            waistSizes
           }
-          topSizes
-          waistSizes
-        }
-        user {
-          id
-          firstName
-          lastName
-          email
-        }
-      }`
-    )
+          user {
+            id
+            firstName
+            lastName
+            email
+          }
+        }`
+      )
+    }
 
-    if (!this.admissions.isTriageable(customer.status)) {
+    if (!this.admissions.isTriageable(customer.status) && !dryRun) {
       throw new ApolloError(
         `Invalid customer status: ${customer.status}. Can not triage a ${customer.status} customer`
       )
@@ -317,9 +321,7 @@ export class CustomerService {
       },
       {
         func: async () =>
-          Promise.resolve(
-            this.admissions.hasSupportedPlatform(where, application)
-          ),
+          this.admissions.hasSupportedPlatform(where, application),
         waitlistReason: "UnsupportedPlatform",
       },
       {
@@ -332,11 +334,12 @@ export class CustomerService {
         waitlistReason: "UnserviceableZipcode",
       },
       {
-        func: () => this.admissions.belowWeeklyNewActiveUsersOpsThreshold(),
+        func: async () =>
+          this.admissions.belowWeeklyNewActiveUsersOpsThreshold(),
         waitlistReason: "ExceedsOpsThreshold",
       },
       {
-        func: () =>
+        func: async () =>
           this.admissions.haveSufficientInventoryToServiceCustomer(where),
         waitlistReason: "InsufficientInventory",
       },

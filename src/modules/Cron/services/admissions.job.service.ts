@@ -1,3 +1,5 @@
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { AdmissionsService } from "@app/modules/User/services/admissions.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import {
@@ -51,12 +53,14 @@ export class AdmissionsScheduledJobs {
   private readonly logger = new Logger(`Cron: ${AdmissionsScheduledJobs.name}`)
 
   private admissionsDataWheres: AllAdmissionsDataWhereUniqueInputs
-  private updates: {}
+  private updates = {}
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly admissions: AdmissionsService,
-    private readonly customer: CustomerService
+    private readonly customer: CustomerService,
+    private readonly error: ErrorService,
+    private readonly segment: SegmentService
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
@@ -64,15 +68,25 @@ export class AdmissionsScheduledJobs {
     this.logger.log(`Start update admissions field job`)
 
     const customers = await this.prisma.binding.query.customers(
-      { where: {} },
+      {
+        where: {
+          status_in: ["Invited", "Created", "Waitlisted", "Authorized"],
+        },
+      },
       `{
           id
+          status
           detail {
             shippingAddress {
                 zipCode
             }
+            topSizes
+            waistSizes
           }
           user {
+            id
+            firstName
+            lastName
             email
           }
           admissions {
@@ -87,64 +101,72 @@ export class AdmissionsScheduledJobs {
     await this.setAdmissionsDataWheres()
 
     for (const cust of customers) {
-      const { pass: inServiceableZipcode } = this.admissions.zipcodeAllowed(
-        cust.detail?.shippingAddress?.zipCode
-      )
-
-      // If possible, check if they are admissable. If needed, update their data.
-      if (this.admissions.isTriageable(cust.status)) {
-        const { status, waitlistReason } = await this.customer.triageCustomer(
-          {
-            id: cust.id,
-          },
-          "monsoon",
-          true
-        )
-        switch (status) {
-          case "Authorized":
-            if (this.shouldUpdateAdmissableCustomer(cust)) {
-              this.updateCustomerAdmissionsData({ cust, admissable: true })
-            }
-            break
-          case "Waitlisted":
-            if (
-              this.shouldUpdateInadmissableCustomer(
-                cust,
-                inServiceableZipcode,
-                waitlistReason
-              )
-            ) {
-              await this.updateCustomerAdmissionsData({
-                cust,
-                admissable: false,
-                inadmissableReason: waitlistReason,
-                inServiceableZipcode,
-              })
-            }
-            break
-          default:
-            throw new Error(
-              `Invalid status returned from triageCustomer: ${cust.status}`
-            )
-        }
-      } else {
-        if (this.shouldUpdateUntriageableCustomer(cust, inServiceableZipcode)) {
-          await this.updateCustomerAdmissionsData({
-            cust,
-            admissable: false,
-            inadmissableReason: "Untriageable",
-            inServiceableZipcode,
-          })
-        }
+      try {
+        await this.updateCustomer(cust)
+      } catch (err) {
+        console.log(err)
+        this.error.setUserContext(cust.user)
+        this.error.setExtraContext(cust, "customer")
+        this.error.captureError(err)
       }
     }
 
+    console.log(`Update Admissions Fields Job done`)
     this.logger.log(this.updates)
 
     // Reset it for the next run
     this.updates = {}
   }
 
+  private async updateCustomer(cust) {
+    const { pass: inServiceableZipcode } = this.admissions.zipcodeAllowed(
+      cust.detail?.shippingAddress?.zipCode
+    )
+
+    // If possible, check if they are admissable. If needed, update their data.
+    if (
+      this.admissions.isTriageable(cust.status) ||
+      cust.status === "Authorized"
+    ) {
+      const { status, waitlistReason } = await this.customer.triageCustomer(
+        {
+          id: cust.id,
+        },
+        "monsoon",
+        true,
+        cust
+      )
+      switch (status) {
+        case "Authorized":
+          if (this.shouldUpdateAdmissableCustomer(cust)) {
+            await this.updateCustomerAdmissionsData({ cust, admissable: true })
+          }
+          break
+        case "Waitlisted":
+          if (
+            this.shouldUpdateInadmissableCustomer(
+              cust,
+              inServiceableZipcode,
+              waitlistReason
+            )
+          ) {
+            await this.updateCustomerAdmissionsData({
+              cust,
+              admissable: false,
+              inadmissableReason: waitlistReason,
+              inServiceableZipcode,
+            })
+          }
+          break
+        default:
+          throw new Error(
+            `Invalid status returned from triageCustomer: ${cust.status}`
+          )
+      }
+    } else {
+      this.updates[cust.user.email] = `Not triageable.`
+    }
+  }
   private getZipcodeKey(
     inServiceableZipcode: boolean
   ): AdmissibleRecordWhereSubKey {
@@ -163,13 +185,9 @@ export class AdmissionsScheduledJobs {
     waitlistReason
   ) {
     return (
-      cust.admissions.inServiceableZipcode !== inServiceableZipcode ||
-      cust.admissions.inAdmissableReason !== waitlistReason
+      cust.admissions?.inServiceableZipcode !== inServiceableZipcode ||
+      cust.admissions?.inAdmissableReason !== waitlistReason
     )
-  }
-
-  private shouldUpdateUntriageableCustomer(cust, inServiceableZipcode) {
-    return cust.admissions?.inServiceableZipcode !== inServiceableZipcode
   }
 
   private async setAdmissionsDataWheres() {
@@ -184,6 +202,7 @@ export class AdmissionsScheduledJobs {
       "OpsThresholdExceeded",
       "UnserviceableZipcode",
       "UnsupportedPlatform",
+      "Untriageable",
     ] as InAdmissableReason[]
 
     this.admissionsDataWheres = {
@@ -209,6 +228,7 @@ export class AdmissionsScheduledJobs {
     inadmissableReason,
     inServiceableZipcode,
   }: UpdateCustomerAdmissionsDataInput) {
+    let updateAndIdentifyPayload
     if (admissable) {
       await this.prisma.client.updateCustomer({
         where: { id: cust.id },
@@ -216,7 +236,10 @@ export class AdmissionsScheduledJobs {
           admissions: { connect: this.admissionsDataWheres.admissable },
         },
       })
-      this.updates[cust.user.email] = { admissable: true }
+      updateAndIdentifyPayload = {
+        admissable: true,
+        inServiceableZipcode: true,
+      }
     } else {
       await this.prisma.client.updateCustomer({
         where: { id: cust.id },
@@ -228,12 +251,15 @@ export class AdmissionsScheduledJobs {
           },
         },
       })
-      this.updates[cust.user.email] = {
+      updateAndIdentifyPayload = {
         admissable: false,
         inadmissableReason,
-        serviceableZipcode: inServiceableZipcode,
+        inServiceableZipcode,
       }
     }
+
+    this.updates[cust.user.email] = updateAndIdentifyPayload
+    this.segment.identify(cust.user.id, updateAndIdentifyPayload)
   }
 
   private getInAdmissableRecordsWheres(
@@ -242,11 +268,12 @@ export class AdmissionsScheduledJobs {
   ) {
     const subRecords = allRecords.filter(a => a.inAdmissableReason === reason)
 
-    const withServiceableZipcode = find(subRecords, a => a.inServiceableZipcode)
-    const withUnserviceableZipcode = find(
-      subRecords,
-      a => !a.inServiceableZipcode
-    )
+    const withServiceableZipcode = {
+      id: find(subRecords, a => a.inServiceableZipcode)?.id,
+    }
+    const withUnserviceableZipcode = {
+      id: find(subRecords, a => !a.inServiceableZipcode)?.id,
+    }
 
     return {
       [reason]: { withServiceableZipcode, withUnserviceableZipcode },

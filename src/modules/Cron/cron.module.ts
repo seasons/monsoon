@@ -9,6 +9,7 @@ import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
+import { AnalyticsModule } from "../Analytics/analytics.module"
 import { DripModule } from "../Drip/drip.module"
 import { PaymentModule } from "../Payment/payment.module"
 import { SearchModule } from "../Search/search.module"
@@ -36,6 +37,7 @@ import { SearchScheduledJobs } from "./services/search.job.service"
     PushNotificationModule,
     SearchModule,
     SMSModule,
+    AnalyticsModule,
   ],
   providers: [
     ReservationScheduledJobs,
