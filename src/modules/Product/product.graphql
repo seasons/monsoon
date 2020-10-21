@@ -148,6 +148,10 @@ type Mutation {
   ): Brand @hasRole(roles: [Admin])
   publishProducts(productIDs: [String!]): PublishProductsResponse!
     @hasRole(roles: [Admin])
+  updatePhysicalProductByBarcode(
+    barcode: String
+    status: PhysicalProductStatus
+  ): PhysicalProduct
 }
 
 type PublishProductsResponse {
