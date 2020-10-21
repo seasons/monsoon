@@ -8,6 +8,7 @@ import {
   BagItem,
   BottomSizeType,
   Customer,
+  CustomerWhereUniqueInput,
   ID_Input,
   InventoryStatus,
   LetterSize,
@@ -15,6 +16,7 @@ import {
   ProductFunction,
   ProductStatus,
   ProductType,
+  ProductVariant,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
   Tag,
@@ -435,6 +437,86 @@ export class ProductService {
         })
       })
       .flat()
+  }
+
+  getSizeKey(productType: "Top" | "Bottom") {
+    let sizesKey
+    let internalSizeWhereInputCreateFunc
+    switch (productType) {
+      case "Top":
+        sizesKey = "topSizes"
+        internalSizeWhereInputCreateFunc = sizes => ({
+          top: {
+            letter_in: sizes,
+          },
+        })
+        break
+      case "Bottom":
+        sizesKey = "waistSizes"
+        internalSizeWhereInputCreateFunc = sizes => ({
+          display_in: sizes.map(a => `${a}`), // typecasting,
+        })
+        break
+      default:
+        throw new Error(`Invalid product type: ${productType}`)
+    }
+
+    return { sizesKey, internalSizeWhereInputCreateFunc }
+  }
+
+  async availableProductVariantsForCustomer(
+    where: CustomerWhereUniqueInput,
+    info: GraphQLResolveInfo
+  ) {
+    const productTypes = ["Top", "Bottom"]
+    const customer = await this.prisma.binding.query.customer(
+      {
+        where,
+      },
+      `{
+        id
+        detail {
+          topSizes
+          waistSizes
+        }
+      }`
+    )
+
+    let productVariants = [] as ProductVariant[]
+
+    for (const productType of productTypes) {
+      const { sizesKey, internalSizeWhereInputCreateFunc } = this.getSizeKey(
+        productType as "Top" | "Bottom"
+      )
+
+      const preferredSizes = customer.detail[sizesKey]
+
+      const variantsOfType = (await this.prisma.binding.query.productVariants(
+        {
+          where: {
+            AND: [
+              {
+                internalSize: internalSizeWhereInputCreateFunc(preferredSizes),
+              },
+              { reservable_gte: 1 },
+              {
+                product: {
+                  AND: [
+                    { status: "Available" },
+                    { type: productType as ProductType },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+        info
+      )) as ProductVariant[]
+
+      productVariants = [...productVariants, ...variantsOfType]
+    }
+
+    return productVariants
   }
 
   async getSKUData({ brandID, colorCode }) {

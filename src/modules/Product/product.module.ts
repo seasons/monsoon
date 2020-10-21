@@ -1,11 +1,11 @@
 import { EmailModule } from "@modules/Email/email.module"
 import { ImageModule } from "@modules/Image"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
-import { UserModule } from "@modules/User/user.module"
 import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
+import { UserModule } from "../User/user.module"
 import { BrandFieldsResolver } from "./fields/brand.fields.resolver"
 import { PhysicalProductFieldsResolver } from "./fields/physicalProduct.fields.resolver"
 import { ProductFieldsResolver } from "./fields/product.fields.resolver"
