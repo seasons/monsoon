@@ -18,7 +18,10 @@ import { Customer, DateTime, Reservation } from "../../../prisma/prisma.binding"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { EmailDataProvider } from "./email.data.service"
-import { EmailUtilsService, ProductGridItem } from "./email.utils.service"
+import {
+  EmailUtilsService,
+  MonsoonProductGridItem,
+} from "./email.utils.service"
 
 type EmailUser = Pick<User, "email" | "firstName" | "id">
 
@@ -354,12 +357,12 @@ export class EmailService {
   }
 
   private formatProductGridInput = (
-    products: ProductGridItem[] | null
+    products: MonsoonProductGridItem[] | null
   ): {
-    product1: ProductGridItem
-    product2: ProductGridItem
-    product3: ProductGridItem
-    product4: ProductGridItem
+    product1: MonsoonProductGridItem
+    product2: MonsoonProductGridItem
+    product3: MonsoonProductGridItem
+    product4: MonsoonProductGridItem
   } => {
     if (products === null) {
       return {
@@ -371,23 +374,15 @@ export class EmailService {
     }
     return {
       product1: products?.[0],
-      product2: {
-        ...products?.[1],
-        src1: products?.[1]?.src2,
-        src2: products?.[1]?.src1,
-      },
+      product2: products?.[1],
       product3: products?.[2],
-      product4: {
-        ...products?.[3],
-        src1: products?.[3]?.src2,
-        src2: products?.[3]?.src1,
-      },
+      product4: products?.[3],
     }
   }
 
   private async addEmailedProductsToCustomer(
     user: EmailUser,
-    products: ProductGridItem[]
+    products: MonsoonProductGridItem[]
   ) {
     const customer = head(
       await this.prisma.client.customers({ where: { user: { id: user.id } } })

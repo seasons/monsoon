@@ -2559,14 +2559,14 @@
     "@angular-devkit/core" "9.1.9"
     "@angular-devkit/schematics" "9.1.9"
 
-"@seasons/wind@^2.1.26":
-  version "2.1.26"
-  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.1.26.tgz#c26beecbc5bedd1fe462a55eacc883d10a91c972"
-  integrity sha512-PBuAxTS9WnVz3/7J3wdOVQsOV2r+KFdKxICRuJU/TthY5Y4YzQhEDW+RjyfZGIgOvew7OJLp6t/GZ818IL6Gpw==
+"@seasons/wind@^2.1.29":
+  version "2.1.29"
+  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.1.29.tgz#a9262dde2d4843cbe1e51ce6e728fbda3b791766"
+  integrity sha512-mYevjlPZcU/eOp+rXVlvEzXqyemYKtqWYKVws4N29K4+y6QHBipNlQ5sPNy7sOhY6Rx76/7oWxVftT0a9TkIng==
   dependencies:
     "@types/node" "^14.0.23"
     handlebars "^4.7.6"
-    lodash "^4.17.15"
+    lodash "^4.17.20"
     mjml "^4.7.0-beta.1"
     moment "^2.29.1"
     prettier "^2.1.2"
@@ -11559,7 +11559,7 @@ lodash@4.17.5:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
   integrity sha512-svL3uiZf1RwhH+cWrfZn3A4+U58wbP0tGVTLQPbjplZxZ8ROD9VLuNgsRniTlLe7OlSqR79RUehXgpBW/s0IQw==
 
-lodash@^4.17.19:
+lodash@^4.17.19, lodash@^4.17.20:
   version "4.17.20"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==

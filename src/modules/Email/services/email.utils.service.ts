@@ -2,16 +2,13 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ImageService } from "@app/modules/Image/services/image.service"
 import { ID_Input, LetterSize, Product, User } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import { ProductGridItem } from "@seasons/wind"
 import { head, sampleSize, uniq } from "lodash"
 
 import { PrismaService } from "../../../prisma/prisma.service"
 
-export interface ProductGridItem {
+export type MonsoonProductGridItem = ProductGridItem & {
   id: ID_Input
-  sizes: string
-  name: string
-  src1: string
-  src2: string
 }
 
 @Injectable()
@@ -37,7 +34,9 @@ export class EmailUtilsService {
   }
     `
 
-  async getXLatestProducts(numProducts: number): Promise<ProductGridItem[]> {
+  async getXLatestProducts(
+    numProducts: number
+  ): Promise<MonsoonProductGridItem[]> {
     const xLatestProducts = await this.prisma.binding.query.products(
       {
         where: { status: "Available" },
@@ -53,7 +52,7 @@ export class EmailUtilsService {
     numProducts: number,
     user: User,
     products: Product[]
-  ): Promise<ProductGridItem[] | null> {
+  ): Promise<MonsoonProductGridItem[] | null> {
     let returnProducts = null
 
     // Filter out from products we've already emailed to the user
@@ -98,7 +97,9 @@ export class EmailUtilsService {
     return returnProducts
   }
 
-  productToGridPayload = async (product: any) => {
+  productToGridPayload = async (
+    product: any
+  ): Promise<MonsoonProductGridItem> => {
     const letterSizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"]
     let sizes = uniq(
       product.variants?.map(b => b.internalSize?.display)
@@ -111,12 +112,12 @@ export class EmailUtilsService {
     if (product.type === "Bottom") {
       sizes = sizes.sort()
     }
-    const src1 = await this.image.resizeImage(
+    const smallImageSrc = await this.image.resizeImage(
       product.images?.[0].url,
       "Small",
       { fm: "jpg" }
     )
-    const src2 = await this.image.resizeImage(
+    const bigImageSrc = await this.image.resizeImage(
       product.images?.[1].url,
       "Small",
       { fm: "jpg" }
@@ -125,8 +126,8 @@ export class EmailUtilsService {
       id: product.id,
       sizes: `${sizes}`.replace(/,/g, " "),
       //@ts-ignore
-      src1,
-      src2,
+      smallImageSrc,
+      bigImageSrc,
       name: product.name,
     }
     return payload
