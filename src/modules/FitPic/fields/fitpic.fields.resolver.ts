@@ -1,8 +1,8 @@
 import { Loader } from "@app/modules/DataLoader"
 import { FitPic } from "@app/prisma"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
-import { ImageService } from "@modules/Image"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
+import { ImageService } from "@modules/Image/services/image.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("FitPic")

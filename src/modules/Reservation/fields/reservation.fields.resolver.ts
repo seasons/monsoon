@@ -1,5 +1,5 @@
-import { ImageService } from "@modules/Image"
 import { ImageSize } from "@modules/Image/image.types"
+import { ImageService } from "@modules/Image/services/image.service"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 

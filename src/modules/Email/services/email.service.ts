@@ -371,9 +371,17 @@ export class EmailService {
     }
     return {
       product1: products?.[0],
-      product2: products?.[1],
+      product2: {
+        ...products?.[1],
+        src1: products?.[1]?.src2,
+        src2: products?.[1]?.src1,
+      },
       product3: products?.[2],
-      product4: products?.[3],
+      product4: {
+        ...products?.[3],
+        src1: products?.[3]?.src2,
+        src2: products?.[3]?.src1,
+      },
     }
   }
 

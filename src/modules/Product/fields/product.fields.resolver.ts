@@ -1,6 +1,6 @@
 import { Customer } from "@app/decorators"
-import { ImageService } from "@modules/Image"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
+import { ImageService } from "@modules/Image/services/image.service"
 import { ProductService } from "@modules/Product/services/product.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"

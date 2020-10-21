@@ -1,4 +1,5 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { ImageService } from "@app/modules/Image/services/image.service"
 import { ID_Input, LetterSize, Product, User } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { head, sampleSize, uniq } from "lodash"
@@ -9,14 +10,16 @@ export interface ProductGridItem {
   id: ID_Input
   sizes: string
   name: string
-  src: string
+  src1: string
+  src2: string
 }
 
 @Injectable()
 export class EmailUtilsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly image: ImageService
   ) {}
 
   productInfoForGridData = `
@@ -43,7 +46,7 @@ export class EmailUtilsService {
       },
       `{${this.productInfoForGridData}}`
     )
-    return xLatestProducts.map(this.productToGridPayload)
+    return Promise.all(xLatestProducts.map(this.productToGridPayload))
   }
 
   async getXReservableProductsForUser(
@@ -74,13 +77,14 @@ export class EmailUtilsService {
 
     // Of the remaining ones, try to get numProducts. If we can't, allow repeats
     if (reservableProductsWeHaventAlreadySent.length >= numProducts) {
-      returnProducts = sampleSize(
-        reservableProductsWeHaventAlreadySent,
-        numProducts
-      ).map(this.productToGridPayload)
+      returnProducts = await Promise.all(
+        sampleSize(reservableProductsWeHaventAlreadySent, numProducts).map(
+          this.productToGridPayload
+        )
+      )
     } else if (products.length >= numProducts) {
-      returnProducts = sampleSize(products, numProducts).map(
-        this.productToGridPayload
+      returnProducts = await Promise.all(
+        sampleSize(products, numProducts).map(this.productToGridPayload)
       )
     }
 
@@ -94,7 +98,7 @@ export class EmailUtilsService {
     return returnProducts
   }
 
-  productToGridPayload = (product: any) => {
+  productToGridPayload = async (product: any) => {
     const letterSizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"]
     let sizes = uniq(
       product.variants?.map(b => b.internalSize?.display)
@@ -107,12 +111,24 @@ export class EmailUtilsService {
     if (product.type === "Bottom") {
       sizes = sizes.sort()
     }
-    return {
+    const src1 = await this.image.resizeImage(
+      product.images?.[0].url,
+      "Small",
+      { fm: "jpg" }
+    )
+    const src2 = await this.image.resizeImage(
+      product.images?.[1].url,
+      "Small",
+      { fm: "jpg" }
+    )
+    const payload = {
       id: product.id,
       sizes: `${sizes}`.replace(/,/g, " "),
       //@ts-ignore
-      src: head(product.images)?.url,
+      src1,
+      src2,
       name: product.name,
     }
+    return payload
   }
 }
