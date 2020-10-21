@@ -112,6 +112,7 @@ type Customer {
   transactions: [Transaction]
   membership: CustomerMembership
   onboardingSteps: [OnboardingStep!]!
+  authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
