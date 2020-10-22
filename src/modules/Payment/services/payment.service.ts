@@ -240,9 +240,6 @@ export class PaymentService {
       })
       .request()
 
-    console.log("couponID", couponID)
-    console.log("subscription", subscription)
-
     const subscriptionID = subscription.subscription.id
 
     await this.createPrismaSubscription(
