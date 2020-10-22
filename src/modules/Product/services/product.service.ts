@@ -412,10 +412,22 @@ export class ProductService {
 
     const { brandCode, styleCode } = skuData
 
-    return sizeNames.map(sizeName => {
+    const skus = sizeNames.map(sizeName => {
       const sizeCode = this.utils.sizeNameToSizeCode(sizeName)
       return `${brandCode}-${colorCode}-${sizeCode}-${styleCode}`
     })
+
+    // This check was added because Judy Turner had some colliding SKUs
+    // that most likely arose from a manual record delete. It's hard to say
+    // exactly what went wrong, so we just check for collisions
+    const collidingVariants = await this.prisma.client.productVariants({
+      where: { sku_in: skus },
+    })
+    if (collidingVariants.length > 0) {
+      throw new Error(`SKU collisions: ${collidingVariants.map(a => a.sku)}`)
+    }
+
+    return skus
   }
 
   async getGeneratedSeasonsUIDs({ brandID, colorCode, sizes }) {
