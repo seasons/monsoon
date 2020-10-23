@@ -3,7 +3,7 @@ import { ImageService } from "@app/modules/Image/services/image.service"
 import { ID_Input, LetterSize, Product, User } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { ProductGridItem } from "@seasons/wind"
-import { head, sampleSize, uniq } from "lodash"
+import { head, pick, sampleSize, uniq } from "lodash"
 
 import { PrismaService } from "../../../prisma/prisma.service"
 
@@ -23,6 +23,10 @@ export class EmailUtilsService {
   id
   type
   name
+  brand {
+    name
+  }
+  retailPrice
   variants {
     internalSize {
         productType
@@ -123,12 +127,12 @@ export class EmailUtilsService {
       { fm: "jpg" }
     )
     const payload = {
-      id: product.id,
+      ...pick(product, ["id", "name", "retailPrice"]),
       sizes: `${sizes}`.replace(/,/g, " "),
       //@ts-ignore
       smallImageSrc,
       bigImageSrc,
-      name: product.name,
+      brand: product.brand?.name || "",
     }
     return payload
   }

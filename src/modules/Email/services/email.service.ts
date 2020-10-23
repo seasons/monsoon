@@ -35,16 +35,16 @@ export class EmailService {
   ) {}
 
   async sendSubmittedEmailEmail(user: EmailUser) {
-    const fourLatestProducts = await this.emailUtils.getXLatestProducts(4)
+    const products = await this.emailUtils.getXLatestProducts(4)
     const payload = await RenderEmail.createdAccount({
-      ...this.formatProductGridInput(fourLatestProducts),
+      products,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
       emailId: "SubmittedEmail",
     })
-    await this.addEmailedProductsToCustomer(user, fourLatestProducts)
+    await this.addEmailedProductsToCustomer(user, products)
   }
 
   async sendAuthorizedEmail(
@@ -142,18 +142,18 @@ export class EmailService {
   }
 
   async sendResumeReminderEmail(user: EmailUser, resumeDate: DateTime) {
-    const fourLatestProducts = await this.emailUtils.getXLatestProducts(4)
+    const products = await this.emailUtils.getXLatestProducts(4)
     const payload = await RenderEmail.resumeReminder({
       name: user.firstName,
       resumeDate: resumeDate,
-      ...this.formatProductGridInput(fourLatestProducts),
+      products,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
       emailId: "ResumeReminder",
     })
-    await this.addEmailedProductsToCustomer(user, fourLatestProducts)
+    await this.addEmailedProductsToCustomer(user, products)
   }
 
   async sendAdminConfirmationEmail(
@@ -273,14 +273,14 @@ export class EmailService {
     emailId: EmailId
     renderData?: any
   }) {
-    const fourReservableStyles = await this.emailUtils.getXReservableProductsForUser(
+    const products = await this.emailUtils.getXReservableProductsForUser(
       4,
       user as User,
       availableStyles
     )
     const payload = await RenderEmail[renderEmailFunc]({
       name: `${user.firstName}`,
-      ...this.formatProductGridInput(fourReservableStyles),
+      products,
       ...renderData,
     })
     await this.sendPreRenderedTransactionalEmail({
@@ -288,8 +288,8 @@ export class EmailService {
       payload,
       emailId,
     })
-    if (fourReservableStyles !== null) {
-      await this.addEmailedProductsToCustomer(user, fourReservableStyles)
+    if (products !== null) {
+      await this.addEmailedProductsToCustomer(user, products)
     }
   }
 
@@ -353,30 +353,6 @@ export class EmailService {
         from: "membership@seasons.nyc",
         ...msg,
       })
-    }
-  }
-
-  private formatProductGridInput = (
-    products: MonsoonProductGridItem[] | null
-  ): {
-    product1: MonsoonProductGridItem
-    product2: MonsoonProductGridItem
-    product3: MonsoonProductGridItem
-    product4: MonsoonProductGridItem
-  } => {
-    if (products === null) {
-      return {
-        product1: null,
-        product2: null,
-        product3: null,
-        product4: null,
-      }
-    }
-    return {
-      product1: products?.[0],
-      product2: products?.[1],
-      product3: products?.[2],
-      product4: products?.[3],
     }
   }
 
