@@ -716,6 +716,7 @@ type Customer {
   detail: CustomerDetail
     @relation(name: "CustomerToCustomerDetail", onDelete: CASCADE)
   billingInfo: BillingInfo
+  referralLink: String @unique
   plan: Plan
   membership: CustomerMembership
     @relation(name: "CustomerToCustomerMembership", onDelete: CASCADE)

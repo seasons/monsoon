@@ -5278,6 +5278,7 @@ type Customer implements Node {
   status: CustomerStatus
   detail: CustomerDetail
   billingInfo: BillingInfo
+  referralLink: String
   plan: Plan
   membership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
@@ -5565,6 +5566,7 @@ type CustomerConnection {
 input CustomerCreateInput {
   id: ID
   status: CustomerStatus
+  referralLink: String
   plan: Plan
   authorizedAt: DateTime
   user: UserCreateOneInput!
@@ -5619,6 +5621,7 @@ input CustomerCreateWithoutAdmissionsInput {
 input CustomerCreateWithoutBagItemsInput {
   id: ID
   status: CustomerStatus
+  referralLink: String
   plan: Plan
   authorizedAt: DateTime
   user: UserCreateOneInput!
@@ -5633,6 +5636,7 @@ input CustomerCreateWithoutBagItemsInput {
 input CustomerCreateWithoutMembershipInput {
   id: ID
   status: CustomerStatus
+  referralLink: String
   plan: Plan
   authorizedAt: DateTime
   user: UserCreateOneInput!
@@ -5647,6 +5651,7 @@ input CustomerCreateWithoutMembershipInput {
 input CustomerCreateWithoutReservationsInput {
   id: ID
   status: CustomerStatus
+  referralLink: String
   plan: Plan
   authorizedAt: DateTime
   user: UserCreateOneInput!
@@ -6933,6 +6938,8 @@ enum CustomerOrderByInput {
   id_DESC
   status_ASC
   status_DESC
+  referralLink_ASC
+  referralLink_DESC
   plan_ASC
   plan_DESC
   authorizedAt_ASC
@@ -6946,6 +6953,7 @@ enum CustomerOrderByInput {
 type CustomerPreviousValues {
   id: ID!
   status: CustomerStatus
+  referralLink: String
   plan: Plan
   authorizedAt: DateTime
   createdAt: DateTime!
@@ -7139,6 +7147,7 @@ input CustomerSubscriptionWhereInput {
 
 input CustomerUpdateDataInput {
   status: CustomerStatus
+  referralLink: String
   plan: Plan
   authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
@@ -7153,6 +7162,7 @@ input CustomerUpdateDataInput {
 
 input CustomerUpdateInput {
   status: CustomerStatus
+  referralLink: String
   plan: Plan
   authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
@@ -7173,6 +7183,7 @@ input CustomerUpdateManyDataInput {
 
 input CustomerUpdateManyMutationInput {
   status: CustomerStatus
+  referralLink: String
   plan: Plan
   authorizedAt: DateTime
 }
@@ -7237,6 +7248,7 @@ input CustomerUpdateWithoutAdmissionsDataInput {
 
 input CustomerUpdateWithoutBagItemsDataInput {
   status: CustomerStatus
+  referralLink: String
   plan: Plan
   authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
@@ -7250,6 +7262,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
 
 input CustomerUpdateWithoutMembershipDataInput {
   status: CustomerStatus
+  referralLink: String
   plan: Plan
   authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
@@ -7263,6 +7276,7 @@ input CustomerUpdateWithoutMembershipDataInput {
 
 input CustomerUpdateWithoutReservationsDataInput {
   status: CustomerStatus
+  referralLink: String
   plan: Plan
   authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
@@ -7364,6 +7378,46 @@ input CustomerWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [CustomerStatus!]
+  referralLink: String
+
+  """All values that are not equal to given value."""
+  referralLink_not: String
+
+  """All values that are contained in given list."""
+  referralLink_in: [String!]
+
+  """All values that are not contained in given list."""
+  referralLink_not_in: [String!]
+
+  """All values less than the given value."""
+  referralLink_lt: String
+
+  """All values less than or equal the given value."""
+  referralLink_lte: String
+
+  """All values greater than the given value."""
+  referralLink_gt: String
+
+  """All values greater than or equal the given value."""
+  referralLink_gte: String
+
+  """All values containing the given string."""
+  referralLink_contains: String
+
+  """All values not containing the given string."""
+  referralLink_not_contains: String
+
+  """All values starting with the given string."""
+  referralLink_starts_with: String
+
+  """All values not starting with the given string."""
+  referralLink_not_starts_with: String
+
+  """All values ending with the given string."""
+  referralLink_ends_with: String
+
+  """All values not ending with the given string."""
+  referralLink_not_ends_with: String
   plan: Plan
 
   """All values that are not equal to given value."""
@@ -7458,6 +7512,7 @@ input CustomerWhereInput {
 
 input CustomerWhereUniqueInput {
   id: ID
+  referralLink: String
 }
 
 scalar DateTime
@@ -28352,6 +28407,8 @@ export type CustomerOrderByInput =   'id_ASC' |
   'id_DESC' |
   'status_ASC' |
   'status_DESC' |
+  'referralLink_ASC' |
+  'referralLink_DESC' |
   'plan_ASC' |
   'plan_DESC' |
   'authorizedAt_ASC' |
@@ -31044,6 +31101,7 @@ export interface CustomerAdmissionsDataWhereUniqueInput {
 export interface CustomerCreateInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
+  referralLink?: String | null
   plan?: Plan | null
   authorizedAt?: DateTime | null
   user: UserCreateOneInput
@@ -31098,6 +31156,7 @@ export interface CustomerCreateWithoutAdmissionsInput {
 export interface CustomerCreateWithoutBagItemsInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
+  referralLink?: String | null
   plan?: Plan | null
   authorizedAt?: DateTime | null
   user: UserCreateOneInput
@@ -31112,6 +31171,7 @@ export interface CustomerCreateWithoutBagItemsInput {
 export interface CustomerCreateWithoutMembershipInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
+  referralLink?: String | null
   plan?: Plan | null
   authorizedAt?: DateTime | null
   user: UserCreateOneInput
@@ -31126,6 +31186,7 @@ export interface CustomerCreateWithoutMembershipInput {
 export interface CustomerCreateWithoutReservationsInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
+  referralLink?: String | null
   plan?: Plan | null
   authorizedAt?: DateTime | null
   user: UserCreateOneInput
@@ -31746,6 +31807,7 @@ export interface CustomerSubscriptionWhereInput {
 
 export interface CustomerUpdateDataInput {
   status?: CustomerStatus | null
+  referralLink?: String | null
   plan?: Plan | null
   authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
@@ -31760,6 +31822,7 @@ export interface CustomerUpdateDataInput {
 
 export interface CustomerUpdateInput {
   status?: CustomerStatus | null
+  referralLink?: String | null
   plan?: Plan | null
   authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
@@ -31780,6 +31843,7 @@ export interface CustomerUpdateManyDataInput {
 
 export interface CustomerUpdateManyMutationInput {
   status?: CustomerStatus | null
+  referralLink?: String | null
   plan?: Plan | null
   authorizedAt?: DateTime | null
 }
@@ -31844,6 +31908,7 @@ export interface CustomerUpdateWithoutAdmissionsDataInput {
 
 export interface CustomerUpdateWithoutBagItemsDataInput {
   status?: CustomerStatus | null
+  referralLink?: String | null
   plan?: Plan | null
   authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
@@ -31857,6 +31922,7 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
 
 export interface CustomerUpdateWithoutMembershipDataInput {
   status?: CustomerStatus | null
+  referralLink?: String | null
   plan?: Plan | null
   authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
@@ -31870,6 +31936,7 @@ export interface CustomerUpdateWithoutMembershipDataInput {
 
 export interface CustomerUpdateWithoutReservationsDataInput {
   status?: CustomerStatus | null
+  referralLink?: String | null
   plan?: Plan | null
   authorizedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
@@ -31934,6 +32001,20 @@ export interface CustomerWhereInput {
   status_not?: CustomerStatus | null
   status_in?: CustomerStatus[] | CustomerStatus | null
   status_not_in?: CustomerStatus[] | CustomerStatus | null
+  referralLink?: String | null
+  referralLink_not?: String | null
+  referralLink_in?: String[] | String | null
+  referralLink_not_in?: String[] | String | null
+  referralLink_lt?: String | null
+  referralLink_lte?: String | null
+  referralLink_gt?: String | null
+  referralLink_gte?: String | null
+  referralLink_contains?: String | null
+  referralLink_not_contains?: String | null
+  referralLink_starts_with?: String | null
+  referralLink_not_starts_with?: String | null
+  referralLink_ends_with?: String | null
+  referralLink_not_ends_with?: String | null
   plan?: Plan | null
   plan_not?: Plan | null
   plan_in?: Plan[] | Plan | null
@@ -31980,6 +32061,7 @@ export interface CustomerWhereInput {
 
 export interface CustomerWhereUniqueInput {
   id?: ID_Input | null
+  referralLink?: String | null
 }
 
 export interface EmailReceiptCreateInput {
@@ -41943,6 +42025,7 @@ export interface Customer extends Node {
   status?: CustomerStatus | null
   detail?: CustomerDetail | null
   billingInfo?: BillingInfo | null
+  referralLink?: String | null
   plan?: Plan | null
   membership?: CustomerMembership | null
   bagItems?: Array<BagItem> | null
@@ -42140,6 +42223,7 @@ export interface CustomerMembershipSubscriptionPayload {
 export interface CustomerPreviousValues {
   id: ID_Output
   status?: CustomerStatus | null
+  referralLink?: String | null
   plan?: Plan | null
   authorizedAt?: DateTime | null
   createdAt: DateTime

@@ -75,6 +75,7 @@ type Customer {
   status: CustomerStatus
   detail: CustomerDetail
   billingInfo: BillingInfo
+  referralLink: String
   # FIXME: When everyone is on iOS app version > 1.3, remove these two.
   plan: Plan @deprecated(reason: "replaced with customer.membership.plan")
   paymentPlan: PaymentPlan

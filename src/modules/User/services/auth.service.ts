@@ -81,11 +81,17 @@ export class AuthService {
       lastName
     )
 
+    // There will be a race condition in the case where two members with the same first name sign up at the same time
+    const usersWithSameFirstName = await this.prisma.client.users({
+      where: { firstName },
+    })
+
     // 4. Create the customer in our database
     const customer = await this.createPrismaCustomerForExistingUser(
       user.id,
       details,
-      "Created"
+      "Created",
+      firstName + usersWithSameFirstName.length.toString()
     )
 
     await this.email.sendSubmittedEmailEmail(user)
@@ -338,7 +344,12 @@ export class AuthService {
     return user
   }
 
-  private async createPrismaCustomerForExistingUser(userID, details, status) {
+  private async createPrismaCustomerForExistingUser(
+    userID,
+    details,
+    status,
+    referralSlashTag
+  ) {
     if (details?.shippingAddress?.create?.zipCode) {
       const zipCode = details?.shippingAddress?.create?.zipCode
       const state = zipcodes.lookup(zipCode)?.state
@@ -347,7 +358,7 @@ export class AuthService {
       details.shippingAddress.create.state = state
     }
 
-    return await this.prisma.binding.mutation.createCustomer(
+    const newCustomer = await this.prisma.binding.mutation.createCustomer(
       {
         data: {
           user: {
@@ -368,6 +379,41 @@ export class AuthService {
         }
       }
     }`
+    )
+
+    // Don't want to await on this
+    this.createReferralLink(newCustomer.id, referralSlashTag)
+    return newCustomer
+  }
+
+  private async createReferralLink(customerId, referralSlashTag) {
+    let linkRequest = {
+      destination:
+        "https://www.seasons.nyc/signup?referral_id=" + referralSlashTag,
+      domain: { fullName: "szns.co" },
+      slashtag: referralSlashTag,
+    }
+
+    let requestHeaders = {
+      "Content-Type": "application/json",
+      apikey: process.env.REBRANDLY_API_KEY,
+      workspace: process.env.REBRANDLY_WORKSPACE_ID,
+    }
+
+    request(
+      {
+        uri: "https://api.rebrandly.com/v1/links",
+        method: "POST",
+        body: JSON.stringify(linkRequest),
+        headers: requestHeaders,
+      },
+      (err, response, body) => {
+        let link = JSON.parse(body)
+        this.prisma.binding.mutation.updateCustomer({
+          data: { referralLink: link.shortUrl },
+          where: { id: customerId },
+        })
+      }
     )
   }
 

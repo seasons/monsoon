@@ -2677,6 +2677,7 @@ type Customer {
   status: CustomerStatus
   detail: CustomerDetail
   billingInfo: BillingInfo
+  referralLink: String
   plan: Plan
   membership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
@@ -2867,6 +2868,7 @@ input CustomerCreateInput {
   status: CustomerStatus
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
+  referralLink: String
   plan: Plan
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
@@ -2921,6 +2923,7 @@ input CustomerCreateWithoutBagItemsInput {
   status: CustomerStatus
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
+  referralLink: String
   plan: Plan
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
@@ -2935,6 +2938,7 @@ input CustomerCreateWithoutMembershipInput {
   status: CustomerStatus
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
+  referralLink: String
   plan: Plan
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
@@ -2949,6 +2953,7 @@ input CustomerCreateWithoutReservationsInput {
   status: CustomerStatus
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
+  referralLink: String
   plan: Plan
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
@@ -3664,6 +3669,8 @@ enum CustomerOrderByInput {
   id_DESC
   status_ASC
   status_DESC
+  referralLink_ASC
+  referralLink_DESC
   plan_ASC
   plan_DESC
   authorizedAt_ASC
@@ -3677,6 +3684,7 @@ enum CustomerOrderByInput {
 type CustomerPreviousValues {
   id: ID!
   status: CustomerStatus
+  referralLink: String
   plan: Plan
   authorizedAt: DateTime
   createdAt: DateTime!
@@ -3769,6 +3777,7 @@ input CustomerUpdateDataInput {
   status: CustomerStatus
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
+  referralLink: String
   plan: Plan
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
@@ -3783,6 +3792,7 @@ input CustomerUpdateInput {
   status: CustomerStatus
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
+  referralLink: String
   plan: Plan
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
@@ -3800,6 +3810,7 @@ input CustomerUpdateManyDataInput {
 
 input CustomerUpdateManyMutationInput {
   status: CustomerStatus
+  referralLink: String
   plan: Plan
   authorizedAt: DateTime
 }
@@ -3867,6 +3878,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
   status: CustomerStatus
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
+  referralLink: String
   plan: Plan
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
@@ -3880,6 +3892,7 @@ input CustomerUpdateWithoutMembershipDataInput {
   status: CustomerStatus
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
+  referralLink: String
   plan: Plan
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
@@ -3893,6 +3906,7 @@ input CustomerUpdateWithoutReservationsDataInput {
   status: CustomerStatus
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
+  referralLink: String
   plan: Plan
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
@@ -3954,6 +3968,20 @@ input CustomerWhereInput {
   status_not_in: [CustomerStatus!]
   detail: CustomerDetailWhereInput
   billingInfo: BillingInfoWhereInput
+  referralLink: String
+  referralLink_not: String
+  referralLink_in: [String!]
+  referralLink_not_in: [String!]
+  referralLink_lt: String
+  referralLink_lte: String
+  referralLink_gt: String
+  referralLink_gte: String
+  referralLink_contains: String
+  referralLink_not_contains: String
+  referralLink_starts_with: String
+  referralLink_not_starts_with: String
+  referralLink_ends_with: String
+  referralLink_not_ends_with: String
   plan: Plan
   plan_not: Plan
   plan_in: [Plan!]
@@ -4000,6 +4028,7 @@ input CustomerWhereInput {
 
 input CustomerWhereUniqueInput {
   id: ID
+  referralLink: String
 }
 
 scalar DateTime

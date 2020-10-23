@@ -27,9 +27,6 @@ export interface Exists {
   collectionGroup: (where?: CollectionGroupWhereInput) => Promise<boolean>;
   color: (where?: ColorWhereInput) => Promise<boolean>;
   customer: (where?: CustomerWhereInput) => Promise<boolean>;
-  customerAdmissionsData: (
-    where?: CustomerAdmissionsDataWhereInput
-  ) => Promise<boolean>;
   customerDetail: (where?: CustomerDetailWhereInput) => Promise<boolean>;
   customerMembership: (
     where?: CustomerMembershipWhereInput
@@ -341,27 +338,6 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => CustomerConnectionPromise;
-  customerAdmissionsData: (
-    where: CustomerAdmissionsDataWhereUniqueInput
-  ) => CustomerAdmissionsDataNullablePromise;
-  customerAdmissionsDatas: (args?: {
-    where?: CustomerAdmissionsDataWhereInput;
-    orderBy?: CustomerAdmissionsDataOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => FragmentableArray<CustomerAdmissionsData>;
-  customerAdmissionsDatasConnection: (args?: {
-    where?: CustomerAdmissionsDataWhereInput;
-    orderBy?: CustomerAdmissionsDataOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => CustomerAdmissionsDataConnectionPromise;
   customerDetail: (
     where: CustomerDetailWhereUniqueInput
   ) => CustomerDetailNullablePromise;
@@ -1437,28 +1413,6 @@ export interface Prisma {
   }) => CustomerPromise;
   deleteCustomer: (where: CustomerWhereUniqueInput) => CustomerPromise;
   deleteManyCustomers: (where?: CustomerWhereInput) => BatchPayloadPromise;
-  createCustomerAdmissionsData: (
-    data: CustomerAdmissionsDataCreateInput
-  ) => CustomerAdmissionsDataPromise;
-  updateCustomerAdmissionsData: (args: {
-    data: CustomerAdmissionsDataUpdateInput;
-    where: CustomerAdmissionsDataWhereUniqueInput;
-  }) => CustomerAdmissionsDataPromise;
-  updateManyCustomerAdmissionsDatas: (args: {
-    data: CustomerAdmissionsDataUpdateManyMutationInput;
-    where?: CustomerAdmissionsDataWhereInput;
-  }) => BatchPayloadPromise;
-  upsertCustomerAdmissionsData: (args: {
-    where: CustomerAdmissionsDataWhereUniqueInput;
-    create: CustomerAdmissionsDataCreateInput;
-    update: CustomerAdmissionsDataUpdateInput;
-  }) => CustomerAdmissionsDataPromise;
-  deleteCustomerAdmissionsData: (
-    where: CustomerAdmissionsDataWhereUniqueInput
-  ) => CustomerAdmissionsDataPromise;
-  deleteManyCustomerAdmissionsDatas: (
-    where?: CustomerAdmissionsDataWhereInput
-  ) => BatchPayloadPromise;
   createCustomerDetail: (
     data: CustomerDetailCreateInput
   ) => CustomerDetailPromise;
@@ -2347,9 +2301,6 @@ export interface Subscription {
   customer: (
     where?: CustomerSubscriptionWhereInput
   ) => CustomerSubscriptionPayloadSubscription;
-  customerAdmissionsData: (
-    where?: CustomerAdmissionsDataSubscriptionWhereInput
-  ) => CustomerAdmissionsDataSubscriptionPayloadSubscription;
   customerDetail: (
     where?: CustomerDetailSubscriptionWhereInput
   ) => CustomerDetailSubscriptionPayloadSubscription;
@@ -2970,14 +2921,6 @@ export type ReservationStatus =
   | "Unknown"
   | "Received";
 
-export type InAdmissableReason =
-  | "Untriageable"
-  | "UnsupportedPlatform"
-  | "AutomaticAdmissionsFlagOff"
-  | "UnserviceableZipcode"
-  | "InsufficientInventory"
-  | "OpsThresholdExceeded";
-
 export type PauseRequestOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -3049,20 +2992,6 @@ export type ReservationReceiptItemOrderByInput =
   | "productStatus_DESC"
   | "notes_ASC"
   | "notes_DESC";
-
-export type CustomerOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "status_ASC"
-  | "status_DESC"
-  | "plan_ASC"
-  | "plan_DESC"
-  | "authorizedAt_ASC"
-  | "authorizedAt_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
 
 export type BillingInfoOrderByInput =
   | "id_ASC"
@@ -3176,15 +3105,17 @@ export type ColorOrderByInput =
   | "hexCode_ASC"
   | "hexCode_DESC";
 
-export type CustomerAdmissionsDataOrderByInput =
+export type CustomerOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "inServiceableZipcode_ASC"
-  | "inServiceableZipcode_DESC"
-  | "admissable_ASC"
-  | "admissable_DESC"
-  | "inAdmissableReason_ASC"
-  | "inAdmissableReason_DESC"
+  | "status_ASC"
+  | "status_DESC"
+  | "referralLink_ASC"
+  | "referralLink_DESC"
+  | "plan_ASC"
+  | "plan_DESC"
+  | "authorizedAt_ASC"
+  | "authorizedAt_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -6002,6 +5933,20 @@ export interface CustomerWhereInput {
   status_not_in?: Maybe<CustomerStatus[] | CustomerStatus>;
   detail?: Maybe<CustomerDetailWhereInput>;
   billingInfo?: Maybe<BillingInfoWhereInput>;
+  referralLink?: Maybe<String>;
+  referralLink_not?: Maybe<String>;
+  referralLink_in?: Maybe<String[] | String>;
+  referralLink_not_in?: Maybe<String[] | String>;
+  referralLink_lt?: Maybe<String>;
+  referralLink_lte?: Maybe<String>;
+  referralLink_gt?: Maybe<String>;
+  referralLink_gte?: Maybe<String>;
+  referralLink_contains?: Maybe<String>;
+  referralLink_not_contains?: Maybe<String>;
+  referralLink_starts_with?: Maybe<String>;
+  referralLink_not_starts_with?: Maybe<String>;
+  referralLink_ends_with?: Maybe<String>;
+  referralLink_not_ends_with?: Maybe<String>;
   plan?: Maybe<Plan>;
   plan_not?: Maybe<Plan>;
   plan_in?: Maybe<Plan[] | Plan>;
@@ -6016,7 +5961,6 @@ export interface CustomerWhereInput {
   emailedProducts_every?: Maybe<ProductWhereInput>;
   emailedProducts_some?: Maybe<ProductWhereInput>;
   emailedProducts_none?: Maybe<ProductWhereInput>;
-  admissions?: Maybe<CustomerAdmissionsDataWhereInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   authorizedAt_not?: Maybe<DateTimeInput>;
   authorizedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -6910,59 +6854,6 @@ export interface ReservationReceiptItemWhereInput {
   >;
 }
 
-export interface CustomerAdmissionsDataWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  inServiceableZipcode?: Maybe<Boolean>;
-  inServiceableZipcode_not?: Maybe<Boolean>;
-  admissable?: Maybe<Boolean>;
-  admissable_not?: Maybe<Boolean>;
-  inAdmissableReason?: Maybe<InAdmissableReason>;
-  inAdmissableReason_not?: Maybe<InAdmissableReason>;
-  inAdmissableReason_in?: Maybe<InAdmissableReason[] | InAdmissableReason>;
-  inAdmissableReason_not_in?: Maybe<InAdmissableReason[] | InAdmissableReason>;
-  customers_every?: Maybe<CustomerWhereInput>;
-  customers_some?: Maybe<CustomerWhereInput>;
-  customers_none?: Maybe<CustomerWhereInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<
-    CustomerAdmissionsDataWhereInput[] | CustomerAdmissionsDataWhereInput
-  >;
-  OR?: Maybe<
-    CustomerAdmissionsDataWhereInput[] | CustomerAdmissionsDataWhereInput
-  >;
-  NOT?: Maybe<
-    CustomerAdmissionsDataWhereInput[] | CustomerAdmissionsDataWhereInput
-  >;
-}
-
 export type BillingInfoWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -7153,10 +7044,7 @@ export type ColorWhereUniqueInput = AtLeastOne<{
 
 export type CustomerWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
-}>;
-
-export type CustomerAdmissionsDataWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
+  referralLink?: Maybe<String>;
 }>;
 
 export type CustomerDetailWhereUniqueInput = AtLeastOne<{
@@ -11756,11 +11644,11 @@ export interface CustomerCreateWithoutBagItemsInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailCreateOneInput>;
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
+  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomersInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -12038,11 +11926,11 @@ export interface CustomerCreateWithoutReservationsInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailCreateOneInput>;
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
+  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomersInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -12084,18 +11972,6 @@ export interface ProductVariantCreateInput {
   nonReservable: Int;
   offloaded: Int;
   stored: Int;
-}
-
-export interface CustomerAdmissionsDataCreateOneWithoutCustomersInput {
-  create?: Maybe<CustomerAdmissionsDataCreateWithoutCustomersInput>;
-  connect?: Maybe<CustomerAdmissionsDataWhereUniqueInput>;
-}
-
-export interface CustomerAdmissionsDataCreateWithoutCustomersInput {
-  id?: Maybe<ID_Input>;
-  inServiceableZipcode: Boolean;
-  admissable: Boolean;
-  inAdmissableReason?: Maybe<InAdmissableReason>;
 }
 
 export interface ReservationReceiptCreateOneWithoutReservationInput {
@@ -12183,11 +12059,11 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
+  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomersInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -12711,11 +12587,11 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
+  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomersInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -12834,26 +12710,6 @@ export interface BagItemUpdateManyDataInput {
   position?: Maybe<Int>;
   saved?: Maybe<Boolean>;
   status?: Maybe<BagItemStatus>;
-}
-
-export interface CustomerAdmissionsDataUpdateOneWithoutCustomersInput {
-  create?: Maybe<CustomerAdmissionsDataCreateWithoutCustomersInput>;
-  update?: Maybe<CustomerAdmissionsDataUpdateWithoutCustomersDataInput>;
-  upsert?: Maybe<CustomerAdmissionsDataUpsertWithoutCustomersInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<CustomerAdmissionsDataWhereUniqueInput>;
-}
-
-export interface CustomerAdmissionsDataUpdateWithoutCustomersDataInput {
-  inServiceableZipcode?: Maybe<Boolean>;
-  admissable?: Maybe<Boolean>;
-  inAdmissableReason?: Maybe<InAdmissableReason>;
-}
-
-export interface CustomerAdmissionsDataUpsertWithoutCustomersInput {
-  update: CustomerAdmissionsDataUpdateWithoutCustomersDataInput;
-  create: CustomerAdmissionsDataCreateWithoutCustomersInput;
 }
 
 export interface CustomerUpsertWithoutReservationsInput {
@@ -13709,12 +13565,12 @@ export interface CustomerCreateInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailCreateOneInput>;
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
+  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomersInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -13723,173 +13579,20 @@ export interface CustomerUpdateInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
+  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomersInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerUpdateManyMutationInput {
   status?: Maybe<CustomerStatus>;
+  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   authorizedAt?: Maybe<DateTimeInput>;
-}
-
-export interface CustomerAdmissionsDataCreateInput {
-  id?: Maybe<ID_Input>;
-  inServiceableZipcode: Boolean;
-  admissable: Boolean;
-  inAdmissableReason?: Maybe<InAdmissableReason>;
-  customers?: Maybe<CustomerCreateManyWithoutAdmissionsInput>;
-}
-
-export interface CustomerCreateManyWithoutAdmissionsInput {
-  create?: Maybe<
-    | CustomerCreateWithoutAdmissionsInput[]
-    | CustomerCreateWithoutAdmissionsInput
-  >;
-  connect?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
-}
-
-export interface CustomerCreateWithoutAdmissionsInput {
-  id?: Maybe<ID_Input>;
-  user: UserCreateOneInput;
-  status?: Maybe<CustomerStatus>;
-  detail?: Maybe<CustomerDetailCreateOneInput>;
-  billingInfo?: Maybe<BillingInfoCreateOneInput>;
-  plan?: Maybe<Plan>;
-  membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
-  bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
-  reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
-  emailedProducts?: Maybe<ProductCreateManyInput>;
-  authorizedAt?: Maybe<DateTimeInput>;
-}
-
-export interface CustomerAdmissionsDataUpdateInput {
-  inServiceableZipcode?: Maybe<Boolean>;
-  admissable?: Maybe<Boolean>;
-  inAdmissableReason?: Maybe<InAdmissableReason>;
-  customers?: Maybe<CustomerUpdateManyWithoutAdmissionsInput>;
-}
-
-export interface CustomerUpdateManyWithoutAdmissionsInput {
-  create?: Maybe<
-    | CustomerCreateWithoutAdmissionsInput[]
-    | CustomerCreateWithoutAdmissionsInput
-  >;
-  delete?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
-  connect?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
-  set?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
-  disconnect?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
-  update?: Maybe<
-    | CustomerUpdateWithWhereUniqueWithoutAdmissionsInput[]
-    | CustomerUpdateWithWhereUniqueWithoutAdmissionsInput
-  >;
-  upsert?: Maybe<
-    | CustomerUpsertWithWhereUniqueWithoutAdmissionsInput[]
-    | CustomerUpsertWithWhereUniqueWithoutAdmissionsInput
-  >;
-  deleteMany?: Maybe<CustomerScalarWhereInput[] | CustomerScalarWhereInput>;
-  updateMany?: Maybe<
-    | CustomerUpdateManyWithWhereNestedInput[]
-    | CustomerUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface CustomerUpdateWithWhereUniqueWithoutAdmissionsInput {
-  where: CustomerWhereUniqueInput;
-  data: CustomerUpdateWithoutAdmissionsDataInput;
-}
-
-export interface CustomerUpdateWithoutAdmissionsDataInput {
-  user?: Maybe<UserUpdateOneRequiredInput>;
-  status?: Maybe<CustomerStatus>;
-  detail?: Maybe<CustomerDetailUpdateOneInput>;
-  billingInfo?: Maybe<BillingInfoUpdateOneInput>;
-  plan?: Maybe<Plan>;
-  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
-  bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
-  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
-  emailedProducts?: Maybe<ProductUpdateManyInput>;
-  authorizedAt?: Maybe<DateTimeInput>;
-}
-
-export interface CustomerUpsertWithWhereUniqueWithoutAdmissionsInput {
-  where: CustomerWhereUniqueInput;
-  update: CustomerUpdateWithoutAdmissionsDataInput;
-  create: CustomerCreateWithoutAdmissionsInput;
-}
-
-export interface CustomerScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  status?: Maybe<CustomerStatus>;
-  status_not?: Maybe<CustomerStatus>;
-  status_in?: Maybe<CustomerStatus[] | CustomerStatus>;
-  status_not_in?: Maybe<CustomerStatus[] | CustomerStatus>;
-  plan?: Maybe<Plan>;
-  plan_not?: Maybe<Plan>;
-  plan_in?: Maybe<Plan[] | Plan>;
-  plan_not_in?: Maybe<Plan[] | Plan>;
-  authorizedAt?: Maybe<DateTimeInput>;
-  authorizedAt_not?: Maybe<DateTimeInput>;
-  authorizedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  authorizedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  authorizedAt_lt?: Maybe<DateTimeInput>;
-  authorizedAt_lte?: Maybe<DateTimeInput>;
-  authorizedAt_gt?: Maybe<DateTimeInput>;
-  authorizedAt_gte?: Maybe<DateTimeInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<CustomerScalarWhereInput[] | CustomerScalarWhereInput>;
-  OR?: Maybe<CustomerScalarWhereInput[] | CustomerScalarWhereInput>;
-  NOT?: Maybe<CustomerScalarWhereInput[] | CustomerScalarWhereInput>;
-}
-
-export interface CustomerUpdateManyWithWhereNestedInput {
-  where: CustomerScalarWhereInput;
-  data: CustomerUpdateManyDataInput;
-}
-
-export interface CustomerUpdateManyDataInput {
-  status?: Maybe<CustomerStatus>;
-  plan?: Maybe<Plan>;
-  authorizedAt?: Maybe<DateTimeInput>;
-}
-
-export interface CustomerAdmissionsDataUpdateManyMutationInput {
-  inServiceableZipcode?: Maybe<Boolean>;
-  admissable?: Maybe<Boolean>;
-  inAdmissableReason?: Maybe<InAdmissableReason>;
 }
 
 export interface CustomerDetailUpdateInput {
@@ -13959,11 +13662,11 @@ export interface CustomerCreateWithoutMembershipInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailCreateOneInput>;
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
+  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomersInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -13986,11 +13689,11 @@ export interface CustomerUpdateWithoutMembershipDataInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
+  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomersInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -15237,12 +14940,12 @@ export interface CustomerUpdateDataInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
+  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomersInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -16247,26 +15950,6 @@ export interface CustomerSubscriptionWhereInput {
   OR?: Maybe<CustomerSubscriptionWhereInput[] | CustomerSubscriptionWhereInput>;
   NOT?: Maybe<
     CustomerSubscriptionWhereInput[] | CustomerSubscriptionWhereInput
-  >;
-}
-
-export interface CustomerAdmissionsDataSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<CustomerAdmissionsDataWhereInput>;
-  AND?: Maybe<
-    | CustomerAdmissionsDataSubscriptionWhereInput[]
-    | CustomerAdmissionsDataSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    | CustomerAdmissionsDataSubscriptionWhereInput[]
-    | CustomerAdmissionsDataSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    | CustomerAdmissionsDataSubscriptionWhereInput[]
-    | CustomerAdmissionsDataSubscriptionWhereInput
   >;
 }
 
@@ -19312,6 +18995,7 @@ export interface BagItemNullablePromise
 export interface Customer {
   id: ID_Output;
   status?: CustomerStatus;
+  referralLink?: String;
   plan?: Plan;
   authorizedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
@@ -19324,6 +19008,7 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
   status: () => Promise<CustomerStatus>;
   detail: <T = CustomerDetailPromise>() => T;
   billingInfo: <T = BillingInfoPromise>() => T;
+  referralLink: () => Promise<String>;
   plan: () => Promise<Plan>;
   membership: <T = CustomerMembershipPromise>() => T;
   bagItems: <T = FragmentableArray<BagItem>>(args?: {
@@ -19353,7 +19038,6 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
-  admissions: <T = CustomerAdmissionsDataPromise>() => T;
   authorizedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -19367,6 +19051,7 @@ export interface CustomerSubscription
   status: () => Promise<AsyncIterator<CustomerStatus>>;
   detail: <T = CustomerDetailSubscription>() => T;
   billingInfo: <T = BillingInfoSubscription>() => T;
+  referralLink: () => Promise<AsyncIterator<String>>;
   plan: () => Promise<AsyncIterator<Plan>>;
   membership: <T = CustomerMembershipSubscription>() => T;
   bagItems: <T = Promise<AsyncIterator<BagItemSubscription>>>(args?: {
@@ -19396,7 +19081,6 @@ export interface CustomerSubscription
     first?: Int;
     last?: Int;
   }) => T;
-  admissions: <T = CustomerAdmissionsDataSubscription>() => T;
   authorizedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -19410,6 +19094,7 @@ export interface CustomerNullablePromise
   status: () => Promise<CustomerStatus>;
   detail: <T = CustomerDetailPromise>() => T;
   billingInfo: <T = BillingInfoPromise>() => T;
+  referralLink: () => Promise<String>;
   plan: () => Promise<Plan>;
   membership: <T = CustomerMembershipPromise>() => T;
   bagItems: <T = FragmentableArray<BagItem>>(args?: {
@@ -19439,7 +19124,6 @@ export interface CustomerNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
-  admissions: <T = CustomerAdmissionsDataPromise>() => T;
   authorizedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -20251,75 +19935,6 @@ export interface ReservationReceiptItemNullablePromise
   notes: () => Promise<String>;
 }
 
-export interface CustomerAdmissionsData {
-  id: ID_Output;
-  inServiceableZipcode: Boolean;
-  admissable: Boolean;
-  inAdmissableReason?: InAdmissableReason;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface CustomerAdmissionsDataPromise
-  extends Promise<CustomerAdmissionsData>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  inServiceableZipcode: () => Promise<Boolean>;
-  admissable: () => Promise<Boolean>;
-  inAdmissableReason: () => Promise<InAdmissableReason>;
-  customers: <T = FragmentableArray<Customer>>(args?: {
-    where?: CustomerWhereInput;
-    orderBy?: CustomerOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface CustomerAdmissionsDataSubscription
-  extends Promise<AsyncIterator<CustomerAdmissionsData>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  inServiceableZipcode: () => Promise<AsyncIterator<Boolean>>;
-  admissable: () => Promise<AsyncIterator<Boolean>>;
-  inAdmissableReason: () => Promise<AsyncIterator<InAdmissableReason>>;
-  customers: <T = Promise<AsyncIterator<CustomerSubscription>>>(args?: {
-    where?: CustomerWhereInput;
-    orderBy?: CustomerOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface CustomerAdmissionsDataNullablePromise
-  extends Promise<CustomerAdmissionsData | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  inServiceableZipcode: () => Promise<Boolean>;
-  admissable: () => Promise<Boolean>;
-  inAdmissableReason: () => Promise<InAdmissableReason>;
-  customers: <T = FragmentableArray<Customer>>(args?: {
-    where?: CustomerWhereInput;
-    orderBy?: CustomerOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
 export interface BagItemConnection {
   pageInfo: PageInfo;
   edges: BagItemEdge[];
@@ -20946,64 +20561,6 @@ export interface AggregateCustomerPromise
 
 export interface AggregateCustomerSubscription
   extends Promise<AsyncIterator<AggregateCustomer>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface CustomerAdmissionsDataConnection {
-  pageInfo: PageInfo;
-  edges: CustomerAdmissionsDataEdge[];
-}
-
-export interface CustomerAdmissionsDataConnectionPromise
-  extends Promise<CustomerAdmissionsDataConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<CustomerAdmissionsDataEdge>>() => T;
-  aggregate: <T = AggregateCustomerAdmissionsDataPromise>() => T;
-}
-
-export interface CustomerAdmissionsDataConnectionSubscription
-  extends Promise<AsyncIterator<CustomerAdmissionsDataConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<CustomerAdmissionsDataEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateCustomerAdmissionsDataSubscription>() => T;
-}
-
-export interface CustomerAdmissionsDataEdge {
-  node: CustomerAdmissionsData;
-  cursor: String;
-}
-
-export interface CustomerAdmissionsDataEdgePromise
-  extends Promise<CustomerAdmissionsDataEdge>,
-    Fragmentable {
-  node: <T = CustomerAdmissionsDataPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface CustomerAdmissionsDataEdgeSubscription
-  extends Promise<AsyncIterator<CustomerAdmissionsDataEdge>>,
-    Fragmentable {
-  node: <T = CustomerAdmissionsDataSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateCustomerAdmissionsData {
-  count: Int;
-}
-
-export interface AggregateCustomerAdmissionsDataPromise
-  extends Promise<AggregateCustomerAdmissionsData>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateCustomerAdmissionsDataSubscription
-  extends Promise<AsyncIterator<AggregateCustomerAdmissionsData>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -24503,6 +24060,7 @@ export interface CustomerSubscriptionPayloadSubscription
 export interface CustomerPreviousValues {
   id: ID_Output;
   status?: CustomerStatus;
+  referralLink?: String;
   plan?: Plan;
   authorizedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
@@ -24514,6 +24072,7 @@ export interface CustomerPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   status: () => Promise<CustomerStatus>;
+  referralLink: () => Promise<String>;
   plan: () => Promise<Plan>;
   authorizedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -24525,64 +24084,9 @@ export interface CustomerPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   status: () => Promise<AsyncIterator<CustomerStatus>>;
+  referralLink: () => Promise<AsyncIterator<String>>;
   plan: () => Promise<AsyncIterator<Plan>>;
   authorizedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface CustomerAdmissionsDataSubscriptionPayload {
-  mutation: MutationType;
-  node: CustomerAdmissionsData;
-  updatedFields: String[];
-  previousValues: CustomerAdmissionsDataPreviousValues;
-}
-
-export interface CustomerAdmissionsDataSubscriptionPayloadPromise
-  extends Promise<CustomerAdmissionsDataSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = CustomerAdmissionsDataPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = CustomerAdmissionsDataPreviousValuesPromise>() => T;
-}
-
-export interface CustomerAdmissionsDataSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<CustomerAdmissionsDataSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = CustomerAdmissionsDataSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = CustomerAdmissionsDataPreviousValuesSubscription>() => T;
-}
-
-export interface CustomerAdmissionsDataPreviousValues {
-  id: ID_Output;
-  inServiceableZipcode: Boolean;
-  admissable: Boolean;
-  inAdmissableReason?: InAdmissableReason;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface CustomerAdmissionsDataPreviousValuesPromise
-  extends Promise<CustomerAdmissionsDataPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  inServiceableZipcode: () => Promise<Boolean>;
-  admissable: () => Promise<Boolean>;
-  inAdmissableReason: () => Promise<InAdmissableReason>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface CustomerAdmissionsDataPreviousValuesSubscription
-  extends Promise<AsyncIterator<CustomerAdmissionsDataPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  inServiceableZipcode: () => Promise<AsyncIterator<Boolean>>;
-  admissable: () => Promise<AsyncIterator<Boolean>>;
-  inAdmissableReason: () => Promise<AsyncIterator<InAdmissableReason>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -27227,10 +26731,6 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "InAdmissableReason",
-    embedded: false
-  },
-  {
     name: "Brand",
     embedded: false
   },
@@ -27384,10 +26884,6 @@ export const models: Model[] = [
   },
   {
     name: "BagItem",
-    embedded: false
-  },
-  {
-    name: "CustomerAdmissionsData",
     embedded: false
   },
   {
