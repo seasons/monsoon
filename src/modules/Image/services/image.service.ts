@@ -129,11 +129,13 @@ export class ImageService {
     options: { imageName?: string }
   ): Promise<ImageData> {
     const file = await image
+    console.log("2. file", file)
     const { createReadStream, filename } = file
+    console.log("3. createReadStream", createReadStream, " filename", filename)
     const fileStream = createReadStream()
-
+    console.log("4. fileStream", fileStream)
     const name = options.imageName || filename
-
+    console.log("4. name", name)
     // Here stream it to S3
     const uploadParams = {
       ACL: "public-read",
@@ -141,9 +143,11 @@ export class ImageService {
       Key: name,
       Body: fileStream,
     }
+    console.log("5. uploadParams", uploadParams)
     const result = await this.s3.upload(uploadParams).promise()
+    console.log("6. result", result)
     const url = result.Location
-
+    console.log("7. url", url)
     // Get image size
     const { width, height } = await new Promise((resolve, reject) => {
       request({ url, encoding: null }, async (err, res, body) => {
@@ -160,7 +164,11 @@ export class ImageService {
       })
     })
 
+    console.log("8. width ", width, " height ", height)
+
     fileStream.destroy()
+
+    console.log("9. fileStream.destroy()")
 
     return {
       height,
