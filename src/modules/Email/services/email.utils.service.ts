@@ -38,6 +38,16 @@ export class EmailUtilsService {
   }
     `
 
+  async createGridPayload(products: Product[]) {
+    const productsWithData = await this.prisma.binding.query.products(
+      {
+        where: { id_in: products.map(a => a.id) },
+      },
+      `{${this.productInfoForGridData}}`
+    )
+    return Promise.all(productsWithData.map(this.productToGridPayload))
+  }
+
   async getXLatestProducts(
     numProducts: number
   ): Promise<MonsoonProductGridItem[]> {

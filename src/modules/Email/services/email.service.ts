@@ -187,31 +187,25 @@ export class EmailService {
     trackingNumber?: string,
     trackingUrl?: string
   ) {
-    const reservedItems = [
-      await this.getReservationConfirmationDataForProduct(products[0]),
-    ]
-    if (!!products?.[1]) {
-      reservedItems.push(
-        await this.getReservationConfirmationDataForProduct(products[1])
-      )
-    }
-    if (!!products?.[2]) {
-      reservedItems.push(
-        await this.getReservationConfirmationDataForProduct(products[2])
-      )
-    }
+    const formattedProducts = await this.emailUtils.createGridPayload(products)
 
-    await this.sendTransactionalEmail({
-      to: user.email,
-      data: this.data.reservationConfirmation(
-        reservation.reservationNumber,
-        reservedItems,
-        this.utils.formatReservationReturnDate(new Date(reservation.createdAt)),
-        trackingNumber,
-        trackingUrl
-      ),
+    // TODO: When we update return date logic for west coast expansion,
+    // refactor this code to be in a more reusable location
+    const returnDate = new Date()
+    returnDate.setDate(new Date(reservation.createdAt).getDate() + 30)
+
+    const payload = await RenderEmail.reservationConfirmation({
+      products: formattedProducts,
+      orderNumber: reservation.reservationNumber,
+      returnDate,
+      trackingNumber,
+      trackingURL: trackingUrl,
     })
-    await this.storeEmailReceipt("ReservationConfirmation", user.id)
+    await this.sendPreRenderedTransactionalEmail({
+      user,
+      payload,
+      emailId: "ReservationConfirmation",
+    })
   }
 
   async sendReturnReminderEmail(
@@ -243,21 +237,6 @@ export class EmailService {
       emailId,
       user: { connect: { id: userId } },
     })
-  }
-
-  private getReservationConfirmationDataForProduct = async (
-    product: Product
-  ) => {
-    const images = await this.prisma.client.product({ id: product.id }).images()
-    return {
-      url: images?.[0]?.url,
-      brand: await this.prisma.client
-        .product({ id: product.id })
-        .brand()
-        .name(),
-      name: product.name,
-      price: product.retailPrice,
-    }
   }
 
   private async sendEmailWithReservableStyles({
