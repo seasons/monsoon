@@ -242,10 +242,24 @@ export class PhysicalProductService {
 
     // If we're just disconnecting a warehouse location, then let it be
     if (newData.warehouseLocation.disconnect) {
-      if (newData.inventoryStatus !== "NonReservable") {
-        throw new Error(
-          "If disconnecting a warehouse location from a physical product, you must set it to NonReservable"
-        )
+      switch (physProdBeforeUpdate.inventoryStatus) {
+        case "Stored":
+          if (
+            !!newData.inventoryStatus &&
+            newData.inventoryStatus !== "Stored"
+          ) {
+            throw new Error(
+              "If disconnecting a warehouse location from a stored physical product, you must keep it stored"
+            )
+          }
+          break
+        default:
+          if (newData.inventoryStatus !== "NonReservable") {
+            throw new Error(
+              "If disconnecting a warehouse location from an unstored physical product, you must set it to NonReservable"
+            )
+          }
+          break
       }
     } else {
       // If we're setting a warehouse location, apply constraints and checks
