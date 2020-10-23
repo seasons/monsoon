@@ -1,5 +1,5 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { CustomerService } from "@app/modules/User"
+import { CustomerService } from "@app/modules/User/services/customer.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PaymentPlanTier, User } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
@@ -555,6 +555,7 @@ export class PaymentService {
           create: billingInfo,
         },
         status: "Active",
+        admissions: { disconnect: true },
       },
       where: { id: prismaCustomer.id },
     })

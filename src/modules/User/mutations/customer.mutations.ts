@@ -56,13 +56,13 @@ export class CustomerMutationsResolver {
     @Customer() sessionCustomer,
     @Application() application
   ) {
-    const returnValue = await this.customerService.triageCustomer(
+    const { status } = await this.customerService.triageCustomer(
       {
         id: sessionCustomer.id,
       },
       application,
       false
     )
-    return returnValue
+    return status
   }
 }

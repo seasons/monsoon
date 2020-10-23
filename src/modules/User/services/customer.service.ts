@@ -3,34 +3,83 @@ import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { Customer, CustomerAdmissionsData } from "@app/prisma/prisma.binding"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
   BillingInfoUpdateDataInput,
+  CustomerAdmissionsDataWhereUniqueInput,
   CustomerStatus,
+  CustomerUpdateInput,
   CustomerWhereUniqueInput,
   ID_Input,
+  InAdmissableReason,
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
-import { pick } from "lodash"
+import { find, pick } from "lodash"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
 import { AuthService } from "./auth.service"
 
-type TriageCustomerResult = "Waitlisted" | "Authorized"
+type TriageCustomerStatusResult = "Waitlisted" | "Authorized"
 
-type WaitlistReason =
-  | "AutomaticAdmissionsFlagOff"
-  | "Unserviceable Zipcode"
-  | "Insufficient Inventory"
-  | "Exceeds Ops Threshold"
-  | "Unsupported Platform"
+type TriageCustomerResult = {
+  status: TriageCustomerStatusResult
+  waitlistReason?: InAdmissableReason
+}
+
+interface InadmissableAdmissionsDataWhereUniqueInputs {
+  withServiceableZipcode?: CustomerAdmissionsDataWhereUniqueInput
+  withUnserviceableZipcode?: CustomerAdmissionsDataWhereUniqueInput
+}
+
+interface AllAdmissionsDataWhereUniqueInputs {
+  admissable: CustomerAdmissionsDataWhereUniqueInput
+  AutomaticAdmissionsFlagOff: InadmissableAdmissionsDataWhereUniqueInputs
+  InsufficientInventory: InadmissableAdmissionsDataWhereUniqueInputs
+  OpsThresholdExceeded: InadmissableAdmissionsDataWhereUniqueInputs
+  UnserviceableZipcode: InadmissableAdmissionsDataWhereUniqueInputs
+  UnsupportedPlatform: InadmissableAdmissionsDataWhereUniqueInputs
+}
+
+type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
+  customer: Customer
+  dryRun: boolean
+  inServiceableZipcode?: boolean
+}
+
+type AdmissibleRecordWhereSubKey =
+  | "withServiceableZipcode"
+  | "withUnserviceableZipcode"
 
 @Injectable()
 export class CustomerService {
+  private admissionsDataWheres = {} as AllAdmissionsDataWhereUniqueInputs
+
+  triageCustomerInfo = `{
+    id
+    status
+    detail {
+      shippingAddress {
+        zipCode
+      }
+      topSizes
+      waistSizes
+    }
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+    admissions {
+      id
+    }
+  }`
+
   constructor(
     private readonly auth: AuthService,
     private readonly prisma: PrismaService,
@@ -276,34 +325,25 @@ export class CustomerService {
   async triageCustomer(
     where: CustomerWhereUniqueInput,
     application: ApplicationType,
-    dryRun: boolean
+    dryRun: boolean,
+    customer: Customer = {} as Customer
   ): Promise<TriageCustomerResult> {
-    const customer = await this.prisma.binding.query.customer(
-      { where },
-      `{
-        status
-        detail {
-          shippingAddress {
-            zipCode
-          }
-          topSizes
-          waistSizes
-        }
-        user {
-          id
-          firstName
-          lastName
-          email
-        }
-      }`
-    )
-
-    if (!["Created", "Invited", "Waitlisted"].includes(customer.status)) {
-      throw new ApolloError(
-        `Invalid customer status: ${customer.status}. Can only triage an "Invited" or "Created" or "Waitlisted" customer`
+    if (Object.keys(this.admissionsDataWheres).length === 0) {
+      await this.setAdmissionsDataWheres()
+    }
+    if (Object.keys(customer).length === 0) {
+      customer = await this.prisma.binding.query.customer(
+        { where },
+        this.triageCustomerInfo
       )
     }
-    let status = "Waitlisted" as TriageCustomerResult
+
+    if (!this.admissions.isTriageable(customer.status) && !dryRun) {
+      throw new ApolloError(
+        `Invalid customer status: ${customer.status}. Can not triage a ${customer.status} customer`
+      )
+    }
+    let status = "Waitlisted" as TriageCustomerStatusResult
 
     const triageFuncs = [
       {
@@ -318,10 +358,8 @@ export class CustomerService {
       },
       {
         func: async () =>
-          Promise.resolve(
-            this.admissions.hasSupportedPlatform(where, application)
-          ),
-        waitlistReason: "Unsupported Platform",
+          this.admissions.hasSupportedPlatform(where, application),
+        waitlistReason: "UnsupportedPlatform",
       },
       {
         func: async () =>
@@ -330,28 +368,38 @@ export class CustomerService {
               customer.detail.shippingAddress.zipCode
             )
           ),
-        waitlistReason: "Unserviceable Zipcode",
+        waitlistReason: "UnserviceableZipcode",
       },
       {
-        func: () => this.admissions.belowWeeklyNewActiveUsersOpsThreshold(),
-        waitlistReason: "Exceeds Ops Threshold",
+        func: async () =>
+          this.admissions.belowWeeklyNewActiveUsersOpsThreshold(),
+        waitlistReason: "OpsThresholdExceeded",
       },
       {
-        func: () =>
+        func: async () =>
           this.admissions.haveSufficientInventoryToServiceCustomer(where),
-        waitlistReason: "Insufficient Inventory",
+        waitlistReason: "InsufficientInventory",
       },
     ] as {
       func: () => Promise<TriageFuncResult>
-      waitlistReason: WaitlistReason
+      waitlistReason: InAdmissableReason
     }[]
     let triageDetail = {} as any
-    let reason: WaitlistReason
+    let reason: InAdmissableReason
     let admit = true
     let availableStyles = []
+    let inServiceableZipcode: boolean
     try {
       for (const { func, waitlistReason } of triageFuncs) {
         const { pass, detail } = await func()
+
+        // Store the result of the serviceable zipcode lookup to store it
+        // on the customer later
+        if (waitlistReason === "UnserviceableZipcode") {
+          inServiceableZipcode = pass
+        }
+
+        // Format the available styles for the subscribed email
         if (
           Object.keys(detail).includes("availableBottomStyles") &&
           Object.keys(detail).includes("availableTopStyles")
@@ -362,8 +410,10 @@ export class CustomerService {
           ]
         }
 
+        // Keep accumulating triage details
         triageDetail = { ...triageDetail, ...detail }
 
+        // Should we continue or not?
         admit = admit && pass
         if (!admit) {
           reason = waitlistReason
@@ -379,7 +429,7 @@ export class CustomerService {
       status = "Authorized"
     }
 
-    // If it's not a dry run, log events and update the customer
+    // If it's not a dry run, log events and send comms
     if (!dryRun) {
       if (admit) {
         this.segment.trackBecameAuthorized(customer.user.id, {
@@ -413,13 +463,138 @@ export class CustomerService {
         waitlistReason: !!reason ? reason : null,
         ...triageDetail,
       })
-
-      await this.prisma.client.updateCustomer({
-        where,
-        data: { status, authorizedAt: new Date() },
-      })
     }
 
-    return status
+    await this.updateCustomerAfterTriage({
+      customer,
+      status,
+      waitlistReason: reason,
+      inServiceableZipcode,
+      dryRun,
+    })
+
+    return { status, waitlistReason: reason }
+  }
+
+  private async updateCustomerAfterTriage({
+    customer,
+    status,
+    waitlistReason,
+    inServiceableZipcode,
+    dryRun,
+  }: UpdateCustomerAdmissionsDataInput) {
+    let data: CustomerUpdateInput = {}
+    let segmentPayload = {}
+
+    if (!dryRun) {
+      data = { status }
+    }
+    switch (status) {
+      case "Authorized":
+        if (!dryRun) {
+          data.authorizedAt = new Date()
+        }
+        data.admissions = { connect: this.admissionsDataWheres.admissable }
+        segmentPayload = { admissable: true, inServiceableZipcode: true }
+        break
+      case "Waitlisted":
+        if (inServiceableZipcode === undefined) {
+          ;({ pass: inServiceableZipcode } = this.admissions.zipcodeAllowed(
+            customer.detail?.shippingAddress?.zipCode
+          ))
+        }
+        // Handle the inserviceableZipcode
+        segmentPayload = {
+          admissable: true,
+          inServiceableZipcode,
+          waitlistReason,
+        }
+        data.admissions = {
+          connect: this.admissionsDataWheres[waitlistReason][
+            this.getZipcodeKey(inServiceableZipcode)
+          ],
+        }
+        break
+      default:
+        throw new Error(`Invalid status: ${status}`)
+    }
+    if (
+      !dryRun ||
+      (dryRun && this.shouldUpdateCustomerAdmissionsData(customer, data))
+    )
+      await this.prisma.client.updateCustomer({
+        where: { id: customer.id },
+        data,
+      })
+
+    this.segment.identify(customer.user.id, segmentPayload)
+  }
+
+  private shouldUpdateCustomerAdmissionsData(
+    customer: Customer,
+    data: CustomerUpdateInput
+  ) {
+    return customer.admissions?.id !== data.admissions.connect.id
+  }
+
+  private getZipcodeKey(
+    inServiceableZipcode: boolean
+  ): AdmissibleRecordWhereSubKey {
+    return inServiceableZipcode
+      ? "withServiceableZipcode"
+      : "withUnserviceableZipcode"
+  }
+
+  private getInAdmissableRecordsWheres(
+    allRecords: CustomerAdmissionsData[],
+    reason: InAdmissableReason
+  ) {
+    const subRecords = allRecords.filter(a => a.inAdmissableReason === reason)
+
+    const withServiceableZipcode = {
+      id: find(subRecords, a => a.inServiceableZipcode)?.id,
+    }
+    const withUnserviceableZipcode = {
+      id: find(subRecords, a => !a.inServiceableZipcode)?.id,
+    }
+
+    return {
+      [reason]: { withServiceableZipcode, withUnserviceableZipcode },
+    }
+  }
+
+  private async setAdmissionsDataWheres() {
+    const customerAdmissionsDataRecords = await this.prisma.client.customerAdmissionsDatas(
+      {}
+    )
+    if (customerAdmissionsDataRecords.length === 0) {
+      throw new Error("Customer Admissions Records uninitialized")
+    }
+
+    // admissable record
+    const inadmissableReasons = [
+      "AutomaticAdmissionsFlagOff",
+      "InsufficientInventory",
+      "OpsThresholdExceeded",
+      "UnserviceableZipcode",
+      "UnsupportedPlatform",
+      "Untriageable",
+    ] as InAdmissableReason[]
+
+    this.admissionsDataWheres = {
+      admissable: {
+        id: find(customerAdmissionsDataRecords, a => a.admissable)?.id,
+      },
+      ...(inadmissableReasons.reduce(
+        (acc, curval) => ({
+          ...acc,
+          ...this.getInAdmissableRecordsWheres(
+            customerAdmissionsDataRecords,
+            curval
+          ),
+        }),
+        {}
+      ) as Omit<AllAdmissionsDataWhereUniqueInputs, "admissable">),
+    }
   }
 }
