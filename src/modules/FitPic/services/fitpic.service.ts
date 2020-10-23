@@ -1,4 +1,4 @@
-import { ImageService } from "@app/modules/Image"
+import { ImageService } from "@app/modules/Image/services/image.service"
 import { IMGIX_BASE, S3_BASE } from "@app/modules/Image/services/image.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import {

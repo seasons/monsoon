@@ -1,5 +1,5 @@
 import { EmailModule } from "@modules/Email"
-import { ImageModule } from "@modules/Image"
+import { ImageModule } from "@modules/Image/image.module"
 import { ProductModule } from "@modules/Product"
 import { PushNotificationModule } from "@modules/PushNotification"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
