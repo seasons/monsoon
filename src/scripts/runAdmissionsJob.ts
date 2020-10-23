@@ -8,6 +8,7 @@ import { EmailDataProvider } from "../modules/Email/services/email.data.service"
 import { EmailService } from "../modules/Email/services/email.service"
 import { EmailUtilsService } from "../modules/Email/services/email.utils.service"
 import { ErrorService } from "../modules/Error/services/error.service"
+import { ImageService } from "../modules/Image/services/image.service"
 import { PusherService } from "../modules/PushNotification/services/pusher.service"
 import { PushNotificationDataProvider } from "../modules/PushNotification/services/pushNotification.data.service"
 import { PushNotificationService } from "../modules/PushNotification/services/pushNotification.service"
@@ -30,7 +31,8 @@ const run = async () => {
   const pn = new PushNotificationService(pusher, pndp, ps)
   const emaildp = new EmailDataProvider()
   const error = new ErrorService()
-  const emailutils = new EmailUtilsService(ps, error)
+  const image = new ImageService(ps)
+  const emailutils = new EmailUtilsService(ps, error, image)
   const email = new EmailService(ps, utils, emaildp, emailutils)
   const auth = new AuthService(ps, pn, email)
   const shipping = new ShippingService(ps, utils)

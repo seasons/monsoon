@@ -27227,6 +27227,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "InAdmissableReason",
+    embedded: false
+  },
+  {
     name: "Brand",
     embedded: false
   },
@@ -27380,10 +27384,6 @@ export const models: Model[] = [
   },
   {
     name: "BagItem",
-    embedded: false
-  },
-  {
-    name: "InAdmissableReason",
     embedded: false
   },
   {

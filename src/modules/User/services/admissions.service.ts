@@ -269,13 +269,18 @@ export class AdmissionsService {
         id
         type
         name
+        retailPrice
         images {
           url
         }
         variants {
           internalSize {
+            productType
             display
           }
+        }
+        brand {
+          name
         }
     }`
     )) as Product[]
