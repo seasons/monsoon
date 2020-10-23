@@ -29,9 +29,9 @@ export class FitPicService {
     const imageData = await this.image.uploadImage(image, {
       imageName: `${user.id}-${Date.now()}.jpg`,
     })
-    console.log("10. imageData", imageData)
+    console.log("11. imageData", imageData)
     const imgixUrl = imageData.url.replace(S3_BASE, IMGIX_BASE)
-    console.log("11. imgixUrl", imgixUrl)
+    console.log("12. imgixUrl", imgixUrl)
     const fitPic = await this.prisma.client.createFitPic({
       user: {
         connect: { id: user.id },
@@ -42,7 +42,7 @@ export class FitPicService {
         create: { ...imageData, url: imgixUrl },
       },
     })
-    console.log("12. fitPic", fitPic)
+    console.log("13. fitPic", fitPic)
 
     const updatedUser = await this.prisma.client.updateUser({
       data: {
@@ -51,8 +51,8 @@ export class FitPicService {
       where: { id: user.id },
     })
 
-    console.log("13. updatedUser", updatedUser)
-    console.log("14. fitPic.id", fitPic.id)
+    console.log("14. updatedUser", updatedUser)
+    console.log("15. fitPic.id", fitPic.id)
 
     return fitPic.id
   }
