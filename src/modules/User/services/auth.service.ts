@@ -416,9 +416,6 @@ export class AuthService {
       customerQueryInfo
     )
 
-    console.log(newCustomer)
-    console.log(referrerId)
-
     try {
       const referralLink = await this.createReferralLink(
         newCustomer.id,
