@@ -17,6 +17,7 @@ export interface Query {
     fitPicReports: <T = Array<FitPicReport | null>>(args: { where?: FitPicReportWhereInput | null, orderBy?: FitPicReportOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     interestedUsers: <T = Array<InterestedUser | null>>(args: { where?: InterestedUserWhereInput | null, orderBy?: InterestedUserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItems: <T = Array<BagItem | null>>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    customerAdmissionsDatas: <T = Array<CustomerAdmissionsData | null>>(args: { where?: CustomerAdmissionsDataWhereInput | null, orderBy?: CustomerAdmissionsDataOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerMemberships: <T = Array<CustomerMembership | null>>(args: { where?: CustomerMembershipWhereInput | null, orderBy?: CustomerMembershipOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pauseRequests: <T = Array<PauseRequest | null>>(args: { where?: PauseRequestWhereInput | null, orderBy?: PauseRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     recentlyViewedProducts: <T = Array<RecentlyViewedProduct | null>>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -71,6 +72,7 @@ export interface Query {
     fitPicReport: <T = FitPicReport | null>(args: { where: FitPicReportWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     interestedUser: <T = InterestedUser | null>(args: { where: InterestedUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     bagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    customerAdmissionsData: <T = CustomerAdmissionsData | null>(args: { where: CustomerAdmissionsDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerMembership: <T = CustomerMembership | null>(args: { where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     pauseRequest: <T = PauseRequest | null>(args: { where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     recentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -125,6 +127,7 @@ export interface Query {
     fitPicReportsConnection: <T = FitPicReportConnection>(args: { where?: FitPicReportWhereInput | null, orderBy?: FitPicReportOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     interestedUsersConnection: <T = InterestedUserConnection>(args: { where?: InterestedUserWhereInput | null, orderBy?: InterestedUserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItemsConnection: <T = BagItemConnection>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    customerAdmissionsDatasConnection: <T = CustomerAdmissionsDataConnection>(args: { where?: CustomerAdmissionsDataWhereInput | null, orderBy?: CustomerAdmissionsDataOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerMembershipsConnection: <T = CustomerMembershipConnection>(args: { where?: CustomerMembershipWhereInput | null, orderBy?: CustomerMembershipOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pauseRequestsConnection: <T = PauseRequestConnection>(args: { where?: PauseRequestWhereInput | null, orderBy?: PauseRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     recentlyViewedProductsConnection: <T = RecentlyViewedProductConnection>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -183,6 +186,7 @@ export interface Mutation {
     createFitPicReport: <T = FitPicReport>(args: { data: FitPicReportCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createInterestedUser: <T = InterestedUser>(args: { data: InterestedUserCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBagItem: <T = BagItem>(args: { data: BagItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createCustomerAdmissionsData: <T = CustomerAdmissionsData>(args: { data: CustomerAdmissionsDataCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerMembership: <T = CustomerMembership>(args: { data: CustomerMembershipCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPauseRequest: <T = PauseRequest>(args: { data: PauseRequestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { data: RecentlyViewedProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -237,6 +241,7 @@ export interface Mutation {
     updateFitPicReport: <T = FitPicReport | null>(args: { data: FitPicReportUpdateInput, where: FitPicReportWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateInterestedUser: <T = InterestedUser | null>(args: { data: InterestedUserUpdateInput, where: InterestedUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBagItem: <T = BagItem | null>(args: { data: BagItemUpdateInput, where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateCustomerAdmissionsData: <T = CustomerAdmissionsData | null>(args: { data: CustomerAdmissionsDataUpdateInput, where: CustomerAdmissionsDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerMembership: <T = CustomerMembership | null>(args: { data: CustomerMembershipUpdateInput, where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePauseRequest: <T = PauseRequest | null>(args: { data: PauseRequestUpdateInput, where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { data: RecentlyViewedProductUpdateInput, where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -291,6 +296,7 @@ export interface Mutation {
     deleteFitPicReport: <T = FitPicReport | null>(args: { where: FitPicReportWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteInterestedUser: <T = InterestedUser | null>(args: { where: InterestedUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteCustomerAdmissionsData: <T = CustomerAdmissionsData | null>(args: { where: CustomerAdmissionsDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerMembership: <T = CustomerMembership | null>(args: { where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePauseRequest: <T = PauseRequest | null>(args: { where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -345,6 +351,7 @@ export interface Mutation {
     upsertFitPicReport: <T = FitPicReport>(args: { where: FitPicReportWhereUniqueInput, create: FitPicReportCreateInput, update: FitPicReportUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertInterestedUser: <T = InterestedUser>(args: { where: InterestedUserWhereUniqueInput, create: InterestedUserCreateInput, update: InterestedUserUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBagItem: <T = BagItem>(args: { where: BagItemWhereUniqueInput, create: BagItemCreateInput, update: BagItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertCustomerAdmissionsData: <T = CustomerAdmissionsData>(args: { where: CustomerAdmissionsDataWhereUniqueInput, create: CustomerAdmissionsDataCreateInput, update: CustomerAdmissionsDataUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerMembership: <T = CustomerMembership>(args: { where: CustomerMembershipWhereUniqueInput, create: CustomerMembershipCreateInput, update: CustomerMembershipUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPauseRequest: <T = PauseRequest>(args: { where: PauseRequestWhereUniqueInput, create: PauseRequestCreateInput, update: PauseRequestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { where: RecentlyViewedProductWhereUniqueInput, create: RecentlyViewedProductCreateInput, update: RecentlyViewedProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -399,6 +406,7 @@ export interface Mutation {
     updateManyFitPicReports: <T = BatchPayload>(args: { data: FitPicReportUpdateManyMutationInput, where?: FitPicReportWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyInterestedUsers: <T = BatchPayload>(args: { data: InterestedUserUpdateManyMutationInput, where?: InterestedUserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBagItems: <T = BatchPayload>(args: { data: BagItemUpdateManyMutationInput, where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyCustomerAdmissionsDatas: <T = BatchPayload>(args: { data: CustomerAdmissionsDataUpdateManyMutationInput, where?: CustomerAdmissionsDataWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerMemberships: <T = BatchPayload>(args: { data: CustomerMembershipUpdateManyMutationInput, where?: CustomerMembershipWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPauseRequests: <T = BatchPayload>(args: { data: PauseRequestUpdateManyMutationInput, where?: PauseRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyRecentlyViewedProducts: <T = BatchPayload>(args: { data: RecentlyViewedProductUpdateManyMutationInput, where?: RecentlyViewedProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -451,6 +459,7 @@ export interface Mutation {
     deleteManyFitPicReports: <T = BatchPayload>(args: { where?: FitPicReportWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyInterestedUsers: <T = BatchPayload>(args: { where?: InterestedUserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBagItems: <T = BatchPayload>(args: { where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyCustomerAdmissionsDatas: <T = BatchPayload>(args: { where?: CustomerAdmissionsDataWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCustomerMemberships: <T = BatchPayload>(args: { where?: CustomerMembershipWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPauseRequests: <T = BatchPayload>(args: { where?: PauseRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyRecentlyViewedProducts: <T = BatchPayload>(args: { where?: RecentlyViewedProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -508,6 +517,7 @@ export interface Subscription {
     fitPicReport: <T = FitPicReportSubscriptionPayload | null>(args: { where?: FitPicReportSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     interestedUser: <T = InterestedUserSubscriptionPayload | null>(args: { where?: InterestedUserSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     bagItem: <T = BagItemSubscriptionPayload | null>(args: { where?: BagItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    customerAdmissionsData: <T = CustomerAdmissionsDataSubscriptionPayload | null>(args: { where?: CustomerAdmissionsDataSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customerMembership: <T = CustomerMembershipSubscriptionPayload | null>(args: { where?: CustomerMembershipSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     pauseRequest: <T = PauseRequestSubscriptionPayload | null>(args: { where?: PauseRequestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     recentlyViewedProduct: <T = RecentlyViewedProductSubscriptionPayload | null>(args: { where?: RecentlyViewedProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -565,6 +575,7 @@ export interface Exists {
   FitPicReport: (where?: FitPicReportWhereInput) => Promise<boolean>
   InterestedUser: (where?: InterestedUserWhereInput) => Promise<boolean>
   BagItem: (where?: BagItemWhereInput) => Promise<boolean>
+  CustomerAdmissionsData: (where?: CustomerAdmissionsDataWhereInput) => Promise<boolean>
   CustomerMembership: (where?: CustomerMembershipWhereInput) => Promise<boolean>
   PauseRequest: (where?: PauseRequestWhereInput) => Promise<boolean>
   RecentlyViewedProduct: (where?: RecentlyViewedProductWhereInput) => Promise<boolean>
@@ -1097,6 +1108,10 @@ type AggregateColor {
 }
 
 type AggregateCustomer {
+  count: Int!
+}
+
+type AggregateCustomerAdmissionsData {
   count: Int!
 }
 
@@ -5272,9 +5287,273 @@ type Customer implements Node {
   referrer: Customer
   referrees(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer!]
   emailedProducts(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  admissions: CustomerAdmissionsData
   authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type CustomerAdmissionsData implements Node {
+  id: ID!
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  customers(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type CustomerAdmissionsDataConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CustomerAdmissionsDataEdge]!
+  aggregate: AggregateCustomerAdmissionsData!
+}
+
+input CustomerAdmissionsDataCreateInput {
+  id: ID
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  customers: CustomerCreateManyWithoutAdmissionsInput
+}
+
+input CustomerAdmissionsDataCreateOneWithoutCustomersInput {
+  create: CustomerAdmissionsDataCreateWithoutCustomersInput
+  connect: CustomerAdmissionsDataWhereUniqueInput
+}
+
+input CustomerAdmissionsDataCreateWithoutCustomersInput {
+  id: ID
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+}
+
+"""An edge in a connection."""
+type CustomerAdmissionsDataEdge {
+  """The item at the end of the edge."""
+  node: CustomerAdmissionsData!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum CustomerAdmissionsDataOrderByInput {
+  id_ASC
+  id_DESC
+  inServiceableZipcode_ASC
+  inServiceableZipcode_DESC
+  admissable_ASC
+  admissable_DESC
+  inAdmissableReason_ASC
+  inAdmissableReason_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type CustomerAdmissionsDataPreviousValues {
+  id: ID!
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type CustomerAdmissionsDataSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerAdmissionsData
+  updatedFields: [String!]
+  previousValues: CustomerAdmissionsDataPreviousValues
+}
+
+input CustomerAdmissionsDataSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerAdmissionsDataSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerAdmissionsDataSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerAdmissionsDataSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CustomerAdmissionsDataWhereInput
+}
+
+input CustomerAdmissionsDataUpdateInput {
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason: InAdmissableReason
+  customers: CustomerUpdateManyWithoutAdmissionsInput
+}
+
+input CustomerAdmissionsDataUpdateManyMutationInput {
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason: InAdmissableReason
+}
+
+input CustomerAdmissionsDataUpdateOneWithoutCustomersInput {
+  create: CustomerAdmissionsDataCreateWithoutCustomersInput
+  connect: CustomerAdmissionsDataWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: CustomerAdmissionsDataUpdateWithoutCustomersDataInput
+  upsert: CustomerAdmissionsDataUpsertWithoutCustomersInput
+}
+
+input CustomerAdmissionsDataUpdateWithoutCustomersDataInput {
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason: InAdmissableReason
+}
+
+input CustomerAdmissionsDataUpsertWithoutCustomersInput {
+  update: CustomerAdmissionsDataUpdateWithoutCustomersDataInput!
+  create: CustomerAdmissionsDataCreateWithoutCustomersInput!
+}
+
+input CustomerAdmissionsDataWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerAdmissionsDataWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerAdmissionsDataWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerAdmissionsDataWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  inServiceableZipcode: Boolean
+
+  """All values that are not equal to given value."""
+  inServiceableZipcode_not: Boolean
+  admissable: Boolean
+
+  """All values that are not equal to given value."""
+  admissable_not: Boolean
+  inAdmissableReason: InAdmissableReason
+
+  """All values that are not equal to given value."""
+  inAdmissableReason_not: InAdmissableReason
+
+  """All values that are contained in given list."""
+  inAdmissableReason_in: [InAdmissableReason!]
+
+  """All values that are not contained in given list."""
+  inAdmissableReason_not_in: [InAdmissableReason!]
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  customers_every: CustomerWhereInput
+  customers_some: CustomerWhereInput
+  customers_none: CustomerWhereInput
+}
+
+input CustomerAdmissionsDataWhereUniqueInput {
+  id: ID
 }
 
 """A connection to a list of items."""
@@ -5303,6 +5582,12 @@ input CustomerCreateInput {
   referrer: CustomerCreateOneWithoutReferreesInput
   referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
+}
+
+input CustomerCreateManyWithoutAdmissionsInput {
+  create: [CustomerCreateWithoutAdmissionsInput!]
+  connect: [CustomerWhereUniqueInput!]
 }
 
 input CustomerCreateManyWithoutReferrerInput {
@@ -5335,6 +5620,24 @@ input CustomerCreateOneWithoutReservationsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerCreateWithoutAdmissionsInput {
+  id: ID
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+  user: UserCreateOneInput!
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
+  emailedProducts: ProductCreateManyInput
+}
+
 input CustomerCreateWithoutBagItemsInput {
   id: ID
   status: CustomerStatus
@@ -5350,6 +5653,7 @@ input CustomerCreateWithoutBagItemsInput {
   referrer: CustomerCreateOneWithoutReferreesInput
   referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
 }
 
 input CustomerCreateWithoutMembershipInput {
@@ -5367,6 +5671,7 @@ input CustomerCreateWithoutMembershipInput {
   referrer: CustomerCreateOneWithoutReferreesInput
   referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
 }
 
 input CustomerCreateWithoutReferreesInput {
@@ -5384,6 +5689,7 @@ input CustomerCreateWithoutReferreesInput {
   reservations: ReservationCreateManyWithoutCustomerInput
   referrer: CustomerCreateOneWithoutReferreesInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
 }
 
 input CustomerCreateWithoutReferrerInput {
@@ -5401,6 +5707,7 @@ input CustomerCreateWithoutReferrerInput {
   reservations: ReservationCreateManyWithoutCustomerInput
   referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -5418,6 +5725,7 @@ input CustomerCreateWithoutReservationsInput {
   referrer: CustomerCreateOneWithoutReferreesInput
   referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
 }
 
 type CustomerDetail implements Node {
@@ -7000,6 +7308,7 @@ input CustomerUpdateDataInput {
   referrer: CustomerUpdateOneWithoutReferreesInput
   referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
 }
 
 input CustomerUpdateInput {
@@ -7017,6 +7326,7 @@ input CustomerUpdateInput {
   referrer: CustomerUpdateOneWithoutReferreesInput
   referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
 }
 
 input CustomerUpdateManyDataInput {
@@ -7033,6 +7343,18 @@ input CustomerUpdateManyMutationInput {
   referralLink: String
   referrerId: String
   authorizedAt: DateTime
+}
+
+input CustomerUpdateManyWithoutAdmissionsInput {
+  create: [CustomerCreateWithoutAdmissionsInput!]
+  connect: [CustomerWhereUniqueInput!]
+  set: [CustomerWhereUniqueInput!]
+  disconnect: [CustomerWhereUniqueInput!]
+  delete: [CustomerWhereUniqueInput!]
+  update: [CustomerUpdateWithWhereUniqueWithoutAdmissionsInput!]
+  updateMany: [CustomerUpdateManyWithWhereNestedInput!]
+  deleteMany: [CustomerScalarWhereInput!]
+  upsert: [CustomerUpsertWithWhereUniqueWithoutAdmissionsInput!]
 }
 
 input CustomerUpdateManyWithoutReferrerInput {
@@ -7089,6 +7411,23 @@ input CustomerUpdateOneWithoutReferreesInput {
   upsert: CustomerUpsertWithoutReferreesInput
 }
 
+input CustomerUpdateWithoutAdmissionsDataInput {
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+}
+
 input CustomerUpdateWithoutBagItemsDataInput {
   status: CustomerStatus
   plan: Plan
@@ -7103,6 +7442,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
   referrer: CustomerUpdateOneWithoutReferreesInput
   referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
@@ -7119,6 +7459,7 @@ input CustomerUpdateWithoutMembershipDataInput {
   referrer: CustomerUpdateOneWithoutReferreesInput
   referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
 }
 
 input CustomerUpdateWithoutReferreesDataInput {
@@ -7135,6 +7476,7 @@ input CustomerUpdateWithoutReferreesDataInput {
   reservations: ReservationUpdateManyWithoutCustomerInput
   referrer: CustomerUpdateOneWithoutReferreesInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
 }
 
 input CustomerUpdateWithoutReferrerDataInput {
@@ -7151,6 +7493,7 @@ input CustomerUpdateWithoutReferrerDataInput {
   reservations: ReservationUpdateManyWithoutCustomerInput
   referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -7167,6 +7510,12 @@ input CustomerUpdateWithoutReservationsDataInput {
   referrer: CustomerUpdateOneWithoutReferreesInput
   referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
+}
+
+input CustomerUpdateWithWhereUniqueWithoutAdmissionsInput {
+  where: CustomerWhereUniqueInput!
+  data: CustomerUpdateWithoutAdmissionsDataInput!
 }
 
 input CustomerUpdateWithWhereUniqueWithoutReferrerInput {
@@ -7197,6 +7546,12 @@ input CustomerUpsertWithoutReferreesInput {
 input CustomerUpsertWithoutReservationsInput {
   update: CustomerUpdateWithoutReservationsDataInput!
   create: CustomerCreateWithoutReservationsInput!
+}
+
+input CustomerUpsertWithWhereUniqueWithoutAdmissionsInput {
+  where: CustomerWhereUniqueInput!
+  update: CustomerUpdateWithoutAdmissionsDataInput!
+  create: CustomerCreateWithoutAdmissionsInput!
 }
 
 input CustomerUpsertWithWhereUniqueWithoutReferrerInput {
@@ -7437,6 +7792,7 @@ input CustomerWhereInput {
   emailedProducts_every: ProductWhereInput
   emailedProducts_some: ProductWhereInput
   emailedProducts_none: ProductWhereInput
+  admissions: CustomerAdmissionsDataWhereInput
 }
 
 input CustomerWhereUniqueInput {
@@ -9561,6 +9917,15 @@ input ImageWhereUniqueInput {
   url: String
 }
 
+enum InAdmissableReason {
+  Untriageable
+  UnsupportedPlatform
+  AutomaticAdmissionsFlagOff
+  UnserviceableZipcode
+  InsufficientInventory
+  OpsThresholdExceeded
+}
+
 type InterestedUser implements Node {
   id: ID!
   email: String!
@@ -11075,6 +11440,7 @@ type Mutation {
   createFitPicReport(data: FitPicReportCreateInput!): FitPicReport!
   createInterestedUser(data: InterestedUserCreateInput!): InterestedUser!
   createBagItem(data: BagItemCreateInput!): BagItem!
+  createCustomerAdmissionsData(data: CustomerAdmissionsDataCreateInput!): CustomerAdmissionsData!
   createCustomerMembership(data: CustomerMembershipCreateInput!): CustomerMembership!
   createPauseRequest(data: PauseRequestCreateInput!): PauseRequest!
   createRecentlyViewedProduct(data: RecentlyViewedProductCreateInput!): RecentlyViewedProduct!
@@ -11129,6 +11495,7 @@ type Mutation {
   updateFitPicReport(data: FitPicReportUpdateInput!, where: FitPicReportWhereUniqueInput!): FitPicReport
   updateInterestedUser(data: InterestedUserUpdateInput!, where: InterestedUserWhereUniqueInput!): InterestedUser
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
+  updateCustomerAdmissionsData(data: CustomerAdmissionsDataUpdateInput!, where: CustomerAdmissionsDataWhereUniqueInput!): CustomerAdmissionsData
   updateCustomerMembership(data: CustomerMembershipUpdateInput!, where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   updatePauseRequest(data: PauseRequestUpdateInput!, where: PauseRequestWhereUniqueInput!): PauseRequest
   updateRecentlyViewedProduct(data: RecentlyViewedProductUpdateInput!, where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
@@ -11183,6 +11550,7 @@ type Mutation {
   deleteFitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
   deleteInterestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
+  deleteCustomerAdmissionsData(where: CustomerAdmissionsDataWhereUniqueInput!): CustomerAdmissionsData
   deleteCustomerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   deletePauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
   deleteRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
@@ -11237,6 +11605,7 @@ type Mutation {
   upsertFitPicReport(where: FitPicReportWhereUniqueInput!, create: FitPicReportCreateInput!, update: FitPicReportUpdateInput!): FitPicReport!
   upsertInterestedUser(where: InterestedUserWhereUniqueInput!, create: InterestedUserCreateInput!, update: InterestedUserUpdateInput!): InterestedUser!
   upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
+  upsertCustomerAdmissionsData(where: CustomerAdmissionsDataWhereUniqueInput!, create: CustomerAdmissionsDataCreateInput!, update: CustomerAdmissionsDataUpdateInput!): CustomerAdmissionsData!
   upsertCustomerMembership(where: CustomerMembershipWhereUniqueInput!, create: CustomerMembershipCreateInput!, update: CustomerMembershipUpdateInput!): CustomerMembership!
   upsertPauseRequest(where: PauseRequestWhereUniqueInput!, create: PauseRequestCreateInput!, update: PauseRequestUpdateInput!): PauseRequest!
   upsertRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!, create: RecentlyViewedProductCreateInput!, update: RecentlyViewedProductUpdateInput!): RecentlyViewedProduct!
@@ -11291,6 +11660,7 @@ type Mutation {
   updateManyFitPicReports(data: FitPicReportUpdateManyMutationInput!, where: FitPicReportWhereInput): BatchPayload!
   updateManyInterestedUsers(data: InterestedUserUpdateManyMutationInput!, where: InterestedUserWhereInput): BatchPayload!
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
+  updateManyCustomerAdmissionsDatas(data: CustomerAdmissionsDataUpdateManyMutationInput!, where: CustomerAdmissionsDataWhereInput): BatchPayload!
   updateManyCustomerMemberships(data: CustomerMembershipUpdateManyMutationInput!, where: CustomerMembershipWhereInput): BatchPayload!
   updateManyPauseRequests(data: PauseRequestUpdateManyMutationInput!, where: PauseRequestWhereInput): BatchPayload!
   updateManyRecentlyViewedProducts(data: RecentlyViewedProductUpdateManyMutationInput!, where: RecentlyViewedProductWhereInput): BatchPayload!
@@ -11343,6 +11713,7 @@ type Mutation {
   deleteManyFitPicReports(where: FitPicReportWhereInput): BatchPayload!
   deleteManyInterestedUsers(where: InterestedUserWhereInput): BatchPayload!
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
+  deleteManyCustomerAdmissionsDatas(where: CustomerAdmissionsDataWhereInput): BatchPayload!
   deleteManyCustomerMemberships(where: CustomerMembershipWhereInput): BatchPayload!
   deleteManyPauseRequests(where: PauseRequestWhereInput): BatchPayload!
   deleteManyRecentlyViewedProducts(where: RecentlyViewedProductWhereInput): BatchPayload!
@@ -20698,6 +21069,7 @@ type Query {
   fitPicReports(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPicReport]!
   interestedUsers(where: InterestedUserWhereInput, orderBy: InterestedUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InterestedUser]!
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
+  customerAdmissionsDatas(where: CustomerAdmissionsDataWhereInput, orderBy: CustomerAdmissionsDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerAdmissionsData]!
   customerMemberships(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerMembership]!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest]!
   recentlyViewedProducts(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [RecentlyViewedProduct]!
@@ -20752,6 +21124,7 @@ type Query {
   fitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
   interestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
   bagItem(where: BagItemWhereUniqueInput!): BagItem
+  customerAdmissionsData(where: CustomerAdmissionsDataWhereUniqueInput!): CustomerAdmissionsData
   customerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   pauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
   recentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
@@ -20806,6 +21179,7 @@ type Query {
   fitPicReportsConnection(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicReportConnection!
   interestedUsersConnection(where: InterestedUserWhereInput, orderBy: InterestedUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InterestedUserConnection!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
+  customerAdmissionsDatasConnection(where: CustomerAdmissionsDataWhereInput, orderBy: CustomerAdmissionsDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerAdmissionsDataConnection!
   customerMembershipsConnection(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerMembershipConnection!
   pauseRequestsConnection(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PauseRequestConnection!
   recentlyViewedProductsConnection(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RecentlyViewedProductConnection!
@@ -24334,6 +24708,7 @@ type Subscription {
   fitPicReport(where: FitPicReportSubscriptionWhereInput): FitPicReportSubscriptionPayload
   interestedUser(where: InterestedUserSubscriptionWhereInput): InterestedUserSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
+  customerAdmissionsData(where: CustomerAdmissionsDataSubscriptionWhereInput): CustomerAdmissionsDataSubscriptionPayload
   customerMembership(where: CustomerMembershipSubscriptionWhereInput): CustomerMembershipSubscriptionPayload
   pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
   recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
@@ -28254,6 +28629,19 @@ export type ColorOrderByInput =   'id_ASC' |
   'hexCode_ASC' |
   'hexCode_DESC'
 
+export type CustomerAdmissionsDataOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'inServiceableZipcode_ASC' |
+  'inServiceableZipcode_DESC' |
+  'admissable_ASC' |
+  'admissable_DESC' |
+  'inAdmissableReason_ASC' |
+  'inAdmissableReason_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
 export type CustomerDetailOrderByInput =   'id_ASC' |
   'id_DESC' |
   'phoneNumber_ASC' |
@@ -28397,6 +28785,13 @@ export type ImageOrderByInput =   'id_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
+
+export type InAdmissableReason =   'Untriageable' |
+  'UnsupportedPlatform' |
+  'AutomaticAdmissionsFlagOff' |
+  'UnserviceableZipcode' |
+  'InsufficientInventory' |
+  'OpsThresholdExceeded'
 
 export type InterestedUserOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -30875,6 +31270,121 @@ export interface ColorWhereUniqueInput {
   colorCode?: String | null
 }
 
+export interface CustomerAdmissionsDataCreateInput {
+  id?: ID_Input | null
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason?: InAdmissableReason | null
+  customers?: CustomerCreateManyWithoutAdmissionsInput | null
+}
+
+export interface CustomerAdmissionsDataCreateOneWithoutCustomersInput {
+  create?: CustomerAdmissionsDataCreateWithoutCustomersInput | null
+  connect?: CustomerAdmissionsDataWhereUniqueInput | null
+}
+
+export interface CustomerAdmissionsDataCreateWithoutCustomersInput {
+  id?: ID_Input | null
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason?: InAdmissableReason | null
+}
+
+export interface CustomerAdmissionsDataSubscriptionWhereInput {
+  AND?: CustomerAdmissionsDataSubscriptionWhereInput[] | CustomerAdmissionsDataSubscriptionWhereInput | null
+  OR?: CustomerAdmissionsDataSubscriptionWhereInput[] | CustomerAdmissionsDataSubscriptionWhereInput | null
+  NOT?: CustomerAdmissionsDataSubscriptionWhereInput[] | CustomerAdmissionsDataSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: CustomerAdmissionsDataWhereInput | null
+}
+
+export interface CustomerAdmissionsDataUpdateInput {
+  inServiceableZipcode?: Boolean | null
+  admissable?: Boolean | null
+  inAdmissableReason?: InAdmissableReason | null
+  customers?: CustomerUpdateManyWithoutAdmissionsInput | null
+}
+
+export interface CustomerAdmissionsDataUpdateManyMutationInput {
+  inServiceableZipcode?: Boolean | null
+  admissable?: Boolean | null
+  inAdmissableReason?: InAdmissableReason | null
+}
+
+export interface CustomerAdmissionsDataUpdateOneWithoutCustomersInput {
+  create?: CustomerAdmissionsDataCreateWithoutCustomersInput | null
+  connect?: CustomerAdmissionsDataWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: CustomerAdmissionsDataUpdateWithoutCustomersDataInput | null
+  upsert?: CustomerAdmissionsDataUpsertWithoutCustomersInput | null
+}
+
+export interface CustomerAdmissionsDataUpdateWithoutCustomersDataInput {
+  inServiceableZipcode?: Boolean | null
+  admissable?: Boolean | null
+  inAdmissableReason?: InAdmissableReason | null
+}
+
+export interface CustomerAdmissionsDataUpsertWithoutCustomersInput {
+  update: CustomerAdmissionsDataUpdateWithoutCustomersDataInput
+  create: CustomerAdmissionsDataCreateWithoutCustomersInput
+}
+
+export interface CustomerAdmissionsDataWhereInput {
+  AND?: CustomerAdmissionsDataWhereInput[] | CustomerAdmissionsDataWhereInput | null
+  OR?: CustomerAdmissionsDataWhereInput[] | CustomerAdmissionsDataWhereInput | null
+  NOT?: CustomerAdmissionsDataWhereInput[] | CustomerAdmissionsDataWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  inServiceableZipcode?: Boolean | null
+  inServiceableZipcode_not?: Boolean | null
+  admissable?: Boolean | null
+  admissable_not?: Boolean | null
+  inAdmissableReason?: InAdmissableReason | null
+  inAdmissableReason_not?: InAdmissableReason | null
+  inAdmissableReason_in?: InAdmissableReason[] | InAdmissableReason | null
+  inAdmissableReason_not_in?: InAdmissableReason[] | InAdmissableReason | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  customers_every?: CustomerWhereInput | null
+  customers_some?: CustomerWhereInput | null
+  customers_none?: CustomerWhereInput | null
+}
+
+export interface CustomerAdmissionsDataWhereUniqueInput {
+  id?: ID_Input | null
+}
+
 export interface CustomerCreateInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
@@ -30891,6 +31401,12 @@ export interface CustomerCreateInput {
   referrer?: CustomerCreateOneWithoutReferreesInput | null
   referrees?: CustomerCreateManyWithoutReferrerInput | null
   emailedProducts?: ProductCreateManyInput | null
+  admissions?: CustomerAdmissionsDataCreateOneWithoutCustomersInput | null
+}
+
+export interface CustomerCreateManyWithoutAdmissionsInput {
+  create?: CustomerCreateWithoutAdmissionsInput[] | CustomerCreateWithoutAdmissionsInput | null
+  connect?: CustomerWhereUniqueInput[] | CustomerWhereUniqueInput | null
 }
 
 export interface CustomerCreateManyWithoutReferrerInput {
@@ -30923,6 +31439,24 @@ export interface CustomerCreateOneWithoutReservationsInput {
   connect?: CustomerWhereUniqueInput | null
 }
 
+export interface CustomerCreateWithoutAdmissionsInput {
+  id?: ID_Input | null
+  status?: CustomerStatus | null
+  plan?: Plan | null
+  referralLink?: String | null
+  referrerId?: String | null
+  authorizedAt?: DateTime | null
+  user: UserCreateOneInput
+  detail?: CustomerDetailCreateOneInput | null
+  billingInfo?: BillingInfoCreateOneInput | null
+  membership?: CustomerMembershipCreateOneWithoutCustomerInput | null
+  bagItems?: BagItemCreateManyWithoutCustomerInput | null
+  reservations?: ReservationCreateManyWithoutCustomerInput | null
+  referrer?: CustomerCreateOneWithoutReferreesInput | null
+  referrees?: CustomerCreateManyWithoutReferrerInput | null
+  emailedProducts?: ProductCreateManyInput | null
+}
+
 export interface CustomerCreateWithoutBagItemsInput {
   id?: ID_Input | null
   status?: CustomerStatus | null
@@ -30938,6 +31472,7 @@ export interface CustomerCreateWithoutBagItemsInput {
   referrer?: CustomerCreateOneWithoutReferreesInput | null
   referrees?: CustomerCreateManyWithoutReferrerInput | null
   emailedProducts?: ProductCreateManyInput | null
+  admissions?: CustomerAdmissionsDataCreateOneWithoutCustomersInput | null
 }
 
 export interface CustomerCreateWithoutMembershipInput {
@@ -30955,6 +31490,7 @@ export interface CustomerCreateWithoutMembershipInput {
   referrer?: CustomerCreateOneWithoutReferreesInput | null
   referrees?: CustomerCreateManyWithoutReferrerInput | null
   emailedProducts?: ProductCreateManyInput | null
+  admissions?: CustomerAdmissionsDataCreateOneWithoutCustomersInput | null
 }
 
 export interface CustomerCreateWithoutReferreesInput {
@@ -30972,6 +31508,7 @@ export interface CustomerCreateWithoutReferreesInput {
   reservations?: ReservationCreateManyWithoutCustomerInput | null
   referrer?: CustomerCreateOneWithoutReferreesInput | null
   emailedProducts?: ProductCreateManyInput | null
+  admissions?: CustomerAdmissionsDataCreateOneWithoutCustomersInput | null
 }
 
 export interface CustomerCreateWithoutReferrerInput {
@@ -30989,6 +31526,7 @@ export interface CustomerCreateWithoutReferrerInput {
   reservations?: ReservationCreateManyWithoutCustomerInput | null
   referrees?: CustomerCreateManyWithoutReferrerInput | null
   emailedProducts?: ProductCreateManyInput | null
+  admissions?: CustomerAdmissionsDataCreateOneWithoutCustomersInput | null
 }
 
 export interface CustomerCreateWithoutReservationsInput {
@@ -31006,6 +31544,7 @@ export interface CustomerCreateWithoutReservationsInput {
   referrer?: CustomerCreateOneWithoutReferreesInput | null
   referrees?: CustomerCreateManyWithoutReferrerInput | null
   emailedProducts?: ProductCreateManyInput | null
+  admissions?: CustomerAdmissionsDataCreateOneWithoutCustomersInput | null
 }
 
 export interface CustomerDetailCreateInput {
@@ -31658,6 +32197,7 @@ export interface CustomerUpdateDataInput {
   referrer?: CustomerUpdateOneWithoutReferreesInput | null
   referrees?: CustomerUpdateManyWithoutReferrerInput | null
   emailedProducts?: ProductUpdateManyInput | null
+  admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomersInput | null
 }
 
 export interface CustomerUpdateInput {
@@ -31675,6 +32215,7 @@ export interface CustomerUpdateInput {
   referrer?: CustomerUpdateOneWithoutReferreesInput | null
   referrees?: CustomerUpdateManyWithoutReferrerInput | null
   emailedProducts?: ProductUpdateManyInput | null
+  admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomersInput | null
 }
 
 export interface CustomerUpdateManyDataInput {
@@ -31691,6 +32232,18 @@ export interface CustomerUpdateManyMutationInput {
   referralLink?: String | null
   referrerId?: String | null
   authorizedAt?: DateTime | null
+}
+
+export interface CustomerUpdateManyWithoutAdmissionsInput {
+  create?: CustomerCreateWithoutAdmissionsInput[] | CustomerCreateWithoutAdmissionsInput | null
+  connect?: CustomerWhereUniqueInput[] | CustomerWhereUniqueInput | null
+  set?: CustomerWhereUniqueInput[] | CustomerWhereUniqueInput | null
+  disconnect?: CustomerWhereUniqueInput[] | CustomerWhereUniqueInput | null
+  delete?: CustomerWhereUniqueInput[] | CustomerWhereUniqueInput | null
+  update?: CustomerUpdateWithWhereUniqueWithoutAdmissionsInput[] | CustomerUpdateWithWhereUniqueWithoutAdmissionsInput | null
+  updateMany?: CustomerUpdateManyWithWhereNestedInput[] | CustomerUpdateManyWithWhereNestedInput | null
+  deleteMany?: CustomerScalarWhereInput[] | CustomerScalarWhereInput | null
+  upsert?: CustomerUpsertWithWhereUniqueWithoutAdmissionsInput[] | CustomerUpsertWithWhereUniqueWithoutAdmissionsInput | null
 }
 
 export interface CustomerUpdateManyWithoutReferrerInput {
@@ -31747,6 +32300,23 @@ export interface CustomerUpdateOneWithoutReferreesInput {
   upsert?: CustomerUpsertWithoutReferreesInput | null
 }
 
+export interface CustomerUpdateWithoutAdmissionsDataInput {
+  status?: CustomerStatus | null
+  plan?: Plan | null
+  referralLink?: String | null
+  referrerId?: String | null
+  authorizedAt?: DateTime | null
+  user?: UserUpdateOneRequiredInput | null
+  detail?: CustomerDetailUpdateOneInput | null
+  billingInfo?: BillingInfoUpdateOneInput | null
+  membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
+  bagItems?: BagItemUpdateManyWithoutCustomerInput | null
+  reservations?: ReservationUpdateManyWithoutCustomerInput | null
+  referrer?: CustomerUpdateOneWithoutReferreesInput | null
+  referrees?: CustomerUpdateManyWithoutReferrerInput | null
+  emailedProducts?: ProductUpdateManyInput | null
+}
+
 export interface CustomerUpdateWithoutBagItemsDataInput {
   status?: CustomerStatus | null
   plan?: Plan | null
@@ -31761,6 +32331,7 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   referrer?: CustomerUpdateOneWithoutReferreesInput | null
   referrees?: CustomerUpdateManyWithoutReferrerInput | null
   emailedProducts?: ProductUpdateManyInput | null
+  admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomersInput | null
 }
 
 export interface CustomerUpdateWithoutMembershipDataInput {
@@ -31777,6 +32348,7 @@ export interface CustomerUpdateWithoutMembershipDataInput {
   referrer?: CustomerUpdateOneWithoutReferreesInput | null
   referrees?: CustomerUpdateManyWithoutReferrerInput | null
   emailedProducts?: ProductUpdateManyInput | null
+  admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomersInput | null
 }
 
 export interface CustomerUpdateWithoutReferreesDataInput {
@@ -31793,6 +32365,7 @@ export interface CustomerUpdateWithoutReferreesDataInput {
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
   referrer?: CustomerUpdateOneWithoutReferreesInput | null
   emailedProducts?: ProductUpdateManyInput | null
+  admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomersInput | null
 }
 
 export interface CustomerUpdateWithoutReferrerDataInput {
@@ -31809,6 +32382,7 @@ export interface CustomerUpdateWithoutReferrerDataInput {
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
   referrees?: CustomerUpdateManyWithoutReferrerInput | null
   emailedProducts?: ProductUpdateManyInput | null
+  admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomersInput | null
 }
 
 export interface CustomerUpdateWithoutReservationsDataInput {
@@ -31825,6 +32399,12 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   referrer?: CustomerUpdateOneWithoutReferreesInput | null
   referrees?: CustomerUpdateManyWithoutReferrerInput | null
   emailedProducts?: ProductUpdateManyInput | null
+  admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomersInput | null
+}
+
+export interface CustomerUpdateWithWhereUniqueWithoutAdmissionsInput {
+  where: CustomerWhereUniqueInput
+  data: CustomerUpdateWithoutAdmissionsDataInput
 }
 
 export interface CustomerUpdateWithWhereUniqueWithoutReferrerInput {
@@ -31855,6 +32435,12 @@ export interface CustomerUpsertWithoutReferreesInput {
 export interface CustomerUpsertWithoutReservationsInput {
   update: CustomerUpdateWithoutReservationsDataInput
   create: CustomerCreateWithoutReservationsInput
+}
+
+export interface CustomerUpsertWithWhereUniqueWithoutAdmissionsInput {
+  where: CustomerWhereUniqueInput
+  update: CustomerUpdateWithoutAdmissionsDataInput
+  create: CustomerCreateWithoutAdmissionsInput
 }
 
 export interface CustomerUpsertWithWhereUniqueWithoutReferrerInput {
@@ -31958,6 +32544,7 @@ export interface CustomerWhereInput {
   emailedProducts_every?: ProductWhereInput | null
   emailedProducts_some?: ProductWhereInput | null
   emailedProducts_none?: ProductWhereInput | null
+  admissions?: CustomerAdmissionsDataWhereInput | null
 }
 
 export interface CustomerWhereUniqueInput {
@@ -41353,6 +41940,10 @@ export interface AggregateCustomer {
   count: Int
 }
 
+export interface AggregateCustomerAdmissionsData {
+  count: Int
+}
+
 export interface AggregateCustomerDetail {
   count: Int
 }
@@ -41931,9 +42522,55 @@ export interface Customer extends Node {
   referrer?: Customer | null
   referrees?: Array<Customer> | null
   emailedProducts?: Array<Product> | null
+  admissions?: CustomerAdmissionsData | null
   authorizedAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
+}
+
+export interface CustomerAdmissionsData extends Node {
+  id: ID_Output
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason?: InAdmissableReason | null
+  customers?: Array<Customer> | null
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface CustomerAdmissionsDataConnection {
+  pageInfo: PageInfo
+  edges: Array<CustomerAdmissionsDataEdge | null>
+  aggregate: AggregateCustomerAdmissionsData
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface CustomerAdmissionsDataEdge {
+  node: CustomerAdmissionsData
+  cursor: String
+}
+
+export interface CustomerAdmissionsDataPreviousValues {
+  id: ID_Output
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason?: InAdmissableReason | null
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface CustomerAdmissionsDataSubscriptionPayload {
+  mutation: MutationType
+  node?: CustomerAdmissionsData | null
+  updatedFields?: Array<String> | null
+  previousValues?: CustomerAdmissionsDataPreviousValues | null
 }
 
 /*

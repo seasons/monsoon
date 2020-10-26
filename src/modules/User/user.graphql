@@ -33,7 +33,7 @@ type Mutation {
     lastName: String!
     details: CustomerDetailCreateInput
     referrerId: String
-  ): AuthPayload!
+  ): SignupPayload!
   login(email: String!, password: String!): AuthPayload!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
     @hasRole(roles: [Admin])
@@ -45,6 +45,15 @@ type Mutation {
 }
 
 type AuthPayload {
+  token: String!
+  refreshToken: String!
+  expiresIn: Int!
+  user: User!
+  customer: Customer!
+  beamsToken: String!
+}
+
+type SignupPayload {
   token: String!
   refreshToken: String!
   expiresIn: Int!

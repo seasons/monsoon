@@ -28,12 +28,7 @@ export class AuthMutationsResolver {
     @Args() { email, password, firstName, lastName, details, referrerId },
     @Application() application
   ) {
-    const {
-      user,
-      tokenData,
-      customer,
-      isValidReferral,
-    } = await this.auth.signupUser({
+    const { user, tokenData, customer, coupon } = await this.auth.signupUser({
       email: email.toLowerCase(),
       password,
       firstName,
@@ -74,7 +69,7 @@ export class AuthMutationsResolver {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
-      isValidReferral,
+      coupon,
       user,
       customer,
     }

@@ -1,4 +1,5 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
+import { CouponType } from "@app/modules/Payment/payment.types"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { CustomerDetail } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
@@ -8,7 +9,8 @@ import {
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
-import { head } from "lodash"
+import chargebee from "chargebee"
+import { camelCase, head, upperFirst } from "lodash"
 import request from "request"
 import zipcodes from "zipcodes"
 
@@ -102,7 +104,28 @@ export class AuthService {
 
     await this.email.sendSubmittedEmailEmail(user)
 
-    return { user, tokenData, customer, isValidReferral }
+    let coupon
+
+    if (isValidReferral) {
+      const couponID = process.env.REFERRAL_COUPON_ID
+      const chargebeeCoupon = await chargebee.coupon
+        .retrieve(couponID)
+        .request()
+      if (chargebeeCoupon.coupon.status === "active") {
+        coupon = {
+          id: couponID,
+          percentage: chargebeeCoupon.coupon.discount_percentage,
+          amount: chargebeeCoupon.coupon.discount_amount,
+          type: upperFirst(
+            camelCase(chargebeeCoupon.coupon.discount_type)
+          ) as CouponType,
+        }
+      } else {
+        throw new Error("Coupon expired")
+      }
+    }
+
+    return { user, tokenData, customer, coupon }
   }
 
   async loginUser({ email, password, requestUser }) {
