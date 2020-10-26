@@ -48,11 +48,10 @@ const fetchAndSetCustomerReferralLink = async (customerId, slashTag) => {
     slashtag: slashTag,
   }
 
-  // TODO: Update with seasons values from luc
   let requestHeaders = {
     "Content-Type": "application/json",
-    apikey: "281032559ec44bb5bdd7d4ff7f7f2339",
-    workspace: "7a7e56a2c493471d859e679fcabbf1cb",
+    apikey: process.env.REBRANDLY_API_KEY,
+    workspace: process.env.REBRANDLY_WORKSPACE_ID,
   }
 
   request(
@@ -64,9 +63,6 @@ const fetchAndSetCustomerReferralLink = async (customerId, slashTag) => {
     },
     (err, response, body) => {
       let link = JSON.parse(body)
-      console.log(
-        `Long URL was ${link.destination}, short URL is ${link.shortUrl}`
-      )
       ps.binding.mutation.updateCustomer({
         data: { referralLink: link.shortUrl },
         where: { id: customerId },

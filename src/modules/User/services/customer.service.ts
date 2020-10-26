@@ -328,9 +328,9 @@ export class CustomerService {
     dryRun: boolean,
     customer: Customer = {} as Customer
   ): Promise<TriageCustomerResult> {
-    // if (Object.keys(this.admissionsDataWheres).length === 0) {
-    //   await this.setAdmissionsDataWheres()
-    // }
+    if (Object.keys(this.admissionsDataWheres).length === 0) {
+      await this.setAdmissionsDataWheres()
+    }
     if (Object.keys(customer).length === 0) {
       customer = await this.prisma.binding.query.customer(
         { where },
@@ -568,7 +568,7 @@ export class CustomerService {
       {}
     )
     if (customerAdmissionsDataRecords.length === 0) {
-      // throw new Error("Customer Admissions Records uninitialized")
+      throw new Error("Customer Admissions Records uninitialized")
     }
 
     // admissable record
