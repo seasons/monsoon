@@ -1,4 +1,5 @@
 # import Reservation from "../Reservation/reservation.graphql"
+# import Coupon from "../Payment/payment.graphql"
 
 type Query {
   me: Me
@@ -31,6 +32,7 @@ type Mutation {
     firstName: String!
     lastName: String!
     details: CustomerDetailCreateInput
+    referrerId: String
   ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
@@ -49,6 +51,7 @@ type AuthPayload {
   user: User!
   customer: Customer!
   beamsToken: String!
+  coupon: Coupon
 }
 
 type ResetPasswordPayload {

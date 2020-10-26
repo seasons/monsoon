@@ -25,15 +25,21 @@ export class AuthMutationsResolver {
 
   @Mutation()
   async signup(
-    @Args() { email, password, firstName, lastName, details },
+    @Args() { email, password, firstName, lastName, details, referrerId },
     @Application() application
   ) {
-    const { user, tokenData, customer } = await this.auth.signupUser({
+    const {
+      user,
+      tokenData,
+      customer,
+      isValidReferral,
+    } = await this.auth.signupUser({
       email: email.toLowerCase(),
       password,
       firstName,
       lastName,
       details,
+      referrerId,
     })
 
     // Add them to segment and track their account creation event
@@ -68,6 +74,7 @@ export class AuthMutationsResolver {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
+      isValidReferral,
       user,
       customer,
     }

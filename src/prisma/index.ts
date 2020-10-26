@@ -2993,6 +2993,24 @@ export type ReservationReceiptItemOrderByInput =
   | "notes_ASC"
   | "notes_DESC";
 
+export type CustomerOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "status_ASC"
+  | "status_DESC"
+  | "plan_ASC"
+  | "plan_DESC"
+  | "referralLink_ASC"
+  | "referralLink_DESC"
+  | "referrerId_ASC"
+  | "referrerId_DESC"
+  | "authorizedAt_ASC"
+  | "authorizedAt_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
 export type BillingInfoOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -3104,22 +3122,6 @@ export type ColorOrderByInput =
   | "colorCode_DESC"
   | "hexCode_ASC"
   | "hexCode_DESC";
-
-export type CustomerOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "status_ASC"
-  | "status_DESC"
-  | "referralLink_ASC"
-  | "referralLink_DESC"
-  | "plan_ASC"
-  | "plan_DESC"
-  | "authorizedAt_ASC"
-  | "authorizedAt_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
 
 export type CustomerDetailOrderByInput =
   | "id_ASC"
@@ -5933,6 +5935,17 @@ export interface CustomerWhereInput {
   status_not_in?: Maybe<CustomerStatus[] | CustomerStatus>;
   detail?: Maybe<CustomerDetailWhereInput>;
   billingInfo?: Maybe<BillingInfoWhereInput>;
+  plan?: Maybe<Plan>;
+  plan_not?: Maybe<Plan>;
+  plan_in?: Maybe<Plan[] | Plan>;
+  plan_not_in?: Maybe<Plan[] | Plan>;
+  membership?: Maybe<CustomerMembershipWhereInput>;
+  bagItems_every?: Maybe<BagItemWhereInput>;
+  bagItems_some?: Maybe<BagItemWhereInput>;
+  bagItems_none?: Maybe<BagItemWhereInput>;
+  reservations_every?: Maybe<ReservationWhereInput>;
+  reservations_some?: Maybe<ReservationWhereInput>;
+  reservations_none?: Maybe<ReservationWhereInput>;
   referralLink?: Maybe<String>;
   referralLink_not?: Maybe<String>;
   referralLink_in?: Maybe<String[] | String>;
@@ -5947,17 +5960,24 @@ export interface CustomerWhereInput {
   referralLink_not_starts_with?: Maybe<String>;
   referralLink_ends_with?: Maybe<String>;
   referralLink_not_ends_with?: Maybe<String>;
-  plan?: Maybe<Plan>;
-  plan_not?: Maybe<Plan>;
-  plan_in?: Maybe<Plan[] | Plan>;
-  plan_not_in?: Maybe<Plan[] | Plan>;
-  membership?: Maybe<CustomerMembershipWhereInput>;
-  bagItems_every?: Maybe<BagItemWhereInput>;
-  bagItems_some?: Maybe<BagItemWhereInput>;
-  bagItems_none?: Maybe<BagItemWhereInput>;
-  reservations_every?: Maybe<ReservationWhereInput>;
-  reservations_some?: Maybe<ReservationWhereInput>;
-  reservations_none?: Maybe<ReservationWhereInput>;
+  referrerId?: Maybe<String>;
+  referrerId_not?: Maybe<String>;
+  referrerId_in?: Maybe<String[] | String>;
+  referrerId_not_in?: Maybe<String[] | String>;
+  referrerId_lt?: Maybe<String>;
+  referrerId_lte?: Maybe<String>;
+  referrerId_gt?: Maybe<String>;
+  referrerId_gte?: Maybe<String>;
+  referrerId_contains?: Maybe<String>;
+  referrerId_not_contains?: Maybe<String>;
+  referrerId_starts_with?: Maybe<String>;
+  referrerId_not_starts_with?: Maybe<String>;
+  referrerId_ends_with?: Maybe<String>;
+  referrerId_not_ends_with?: Maybe<String>;
+  referrer?: Maybe<CustomerWhereInput>;
+  referrees_every?: Maybe<CustomerWhereInput>;
+  referrees_some?: Maybe<CustomerWhereInput>;
+  referrees_none?: Maybe<CustomerWhereInput>;
   emailedProducts_every?: Maybe<ProductWhereInput>;
   emailedProducts_some?: Maybe<ProductWhereInput>;
   emailedProducts_none?: Maybe<ProductWhereInput>;
@@ -11644,10 +11664,13 @@ export interface CustomerCreateWithoutBagItemsInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailCreateOneInput>;
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
-  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerCreateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerCreateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
@@ -11926,10 +11949,13 @@ export interface CustomerCreateWithoutReservationsInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailCreateOneInput>;
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
-  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerCreateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerCreateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
@@ -11972,6 +11998,52 @@ export interface ProductVariantCreateInput {
   nonReservable: Int;
   offloaded: Int;
   stored: Int;
+}
+
+export interface CustomerCreateOneWithoutReferreesInput {
+  create?: Maybe<CustomerCreateWithoutReferreesInput>;
+  connect?: Maybe<CustomerWhereUniqueInput>;
+}
+
+export interface CustomerCreateWithoutReferreesInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneInput;
+  status?: Maybe<CustomerStatus>;
+  detail?: Maybe<CustomerDetailCreateOneInput>;
+  billingInfo?: Maybe<BillingInfoCreateOneInput>;
+  plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
+  bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
+  reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerCreateOneWithoutReferreesInput>;
+  emailedProducts?: Maybe<ProductCreateManyInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
+}
+
+export interface CustomerCreateManyWithoutReferrerInput {
+  create?: Maybe<
+    CustomerCreateWithoutReferrerInput[] | CustomerCreateWithoutReferrerInput
+  >;
+  connect?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
+}
+
+export interface CustomerCreateWithoutReferrerInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneInput;
+  status?: Maybe<CustomerStatus>;
+  detail?: Maybe<CustomerDetailCreateOneInput>;
+  billingInfo?: Maybe<BillingInfoCreateOneInput>;
+  plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
+  bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
+  reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrees?: Maybe<CustomerCreateManyWithoutReferrerInput>;
+  emailedProducts?: Maybe<ProductCreateManyInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ReservationReceiptCreateOneWithoutReservationInput {
@@ -12059,10 +12131,13 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
-  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
@@ -12587,10 +12662,13 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
-  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
@@ -12710,6 +12788,179 @@ export interface BagItemUpdateManyDataInput {
   position?: Maybe<Int>;
   saved?: Maybe<Boolean>;
   status?: Maybe<BagItemStatus>;
+}
+
+export interface CustomerUpdateOneWithoutReferreesInput {
+  create?: Maybe<CustomerCreateWithoutReferreesInput>;
+  update?: Maybe<CustomerUpdateWithoutReferreesDataInput>;
+  upsert?: Maybe<CustomerUpsertWithoutReferreesInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<CustomerWhereUniqueInput>;
+}
+
+export interface CustomerUpdateWithoutReferreesDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  status?: Maybe<CustomerStatus>;
+  detail?: Maybe<CustomerDetailUpdateOneInput>;
+  billingInfo?: Maybe<BillingInfoUpdateOneInput>;
+  plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
+  bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
+  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
+  emailedProducts?: Maybe<ProductUpdateManyInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
+}
+
+export interface CustomerUpsertWithoutReferreesInput {
+  update: CustomerUpdateWithoutReferreesDataInput;
+  create: CustomerCreateWithoutReferreesInput;
+}
+
+export interface CustomerUpdateManyWithoutReferrerInput {
+  create?: Maybe<
+    CustomerCreateWithoutReferrerInput[] | CustomerCreateWithoutReferrerInput
+  >;
+  delete?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
+  connect?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
+  set?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
+  disconnect?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
+  update?: Maybe<
+    | CustomerUpdateWithWhereUniqueWithoutReferrerInput[]
+    | CustomerUpdateWithWhereUniqueWithoutReferrerInput
+  >;
+  upsert?: Maybe<
+    | CustomerUpsertWithWhereUniqueWithoutReferrerInput[]
+    | CustomerUpsertWithWhereUniqueWithoutReferrerInput
+  >;
+  deleteMany?: Maybe<CustomerScalarWhereInput[] | CustomerScalarWhereInput>;
+  updateMany?: Maybe<
+    | CustomerUpdateManyWithWhereNestedInput[]
+    | CustomerUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface CustomerUpdateWithWhereUniqueWithoutReferrerInput {
+  where: CustomerWhereUniqueInput;
+  data: CustomerUpdateWithoutReferrerDataInput;
+}
+
+export interface CustomerUpdateWithoutReferrerDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  status?: Maybe<CustomerStatus>;
+  detail?: Maybe<CustomerDetailUpdateOneInput>;
+  billingInfo?: Maybe<BillingInfoUpdateOneInput>;
+  plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
+  bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
+  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
+  emailedProducts?: Maybe<ProductUpdateManyInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
+}
+
+export interface CustomerUpsertWithWhereUniqueWithoutReferrerInput {
+  where: CustomerWhereUniqueInput;
+  update: CustomerUpdateWithoutReferrerDataInput;
+  create: CustomerCreateWithoutReferrerInput;
+}
+
+export interface CustomerScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  status?: Maybe<CustomerStatus>;
+  status_not?: Maybe<CustomerStatus>;
+  status_in?: Maybe<CustomerStatus[] | CustomerStatus>;
+  status_not_in?: Maybe<CustomerStatus[] | CustomerStatus>;
+  plan?: Maybe<Plan>;
+  plan_not?: Maybe<Plan>;
+  plan_in?: Maybe<Plan[] | Plan>;
+  plan_not_in?: Maybe<Plan[] | Plan>;
+  referralLink?: Maybe<String>;
+  referralLink_not?: Maybe<String>;
+  referralLink_in?: Maybe<String[] | String>;
+  referralLink_not_in?: Maybe<String[] | String>;
+  referralLink_lt?: Maybe<String>;
+  referralLink_lte?: Maybe<String>;
+  referralLink_gt?: Maybe<String>;
+  referralLink_gte?: Maybe<String>;
+  referralLink_contains?: Maybe<String>;
+  referralLink_not_contains?: Maybe<String>;
+  referralLink_starts_with?: Maybe<String>;
+  referralLink_not_starts_with?: Maybe<String>;
+  referralLink_ends_with?: Maybe<String>;
+  referralLink_not_ends_with?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrerId_not?: Maybe<String>;
+  referrerId_in?: Maybe<String[] | String>;
+  referrerId_not_in?: Maybe<String[] | String>;
+  referrerId_lt?: Maybe<String>;
+  referrerId_lte?: Maybe<String>;
+  referrerId_gt?: Maybe<String>;
+  referrerId_gte?: Maybe<String>;
+  referrerId_contains?: Maybe<String>;
+  referrerId_not_contains?: Maybe<String>;
+  referrerId_starts_with?: Maybe<String>;
+  referrerId_not_starts_with?: Maybe<String>;
+  referrerId_ends_with?: Maybe<String>;
+  referrerId_not_ends_with?: Maybe<String>;
+  authorizedAt?: Maybe<DateTimeInput>;
+  authorizedAt_not?: Maybe<DateTimeInput>;
+  authorizedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  authorizedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  authorizedAt_lt?: Maybe<DateTimeInput>;
+  authorizedAt_lte?: Maybe<DateTimeInput>;
+  authorizedAt_gt?: Maybe<DateTimeInput>;
+  authorizedAt_gte?: Maybe<DateTimeInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<CustomerScalarWhereInput[] | CustomerScalarWhereInput>;
+  OR?: Maybe<CustomerScalarWhereInput[] | CustomerScalarWhereInput>;
+  NOT?: Maybe<CustomerScalarWhereInput[] | CustomerScalarWhereInput>;
+}
+
+export interface CustomerUpdateManyWithWhereNestedInput {
+  where: CustomerScalarWhereInput;
+  data: CustomerUpdateManyDataInput;
+}
+
+export interface CustomerUpdateManyDataInput {
+  status?: Maybe<CustomerStatus>;
+  plan?: Maybe<Plan>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerUpsertWithoutReservationsInput {
@@ -13565,11 +13816,14 @@ export interface CustomerCreateInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailCreateOneInput>;
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
-  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerCreateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerCreateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
@@ -13579,19 +13833,23 @@ export interface CustomerUpdateInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
-  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerUpdateManyMutationInput {
   status?: Maybe<CustomerStatus>;
-  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -13662,10 +13920,13 @@ export interface CustomerCreateWithoutMembershipInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailCreateOneInput>;
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
-  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerCreateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerCreateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
@@ -13689,10 +13950,13 @@ export interface CustomerUpdateWithoutMembershipDataInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
-  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
@@ -14940,11 +15204,14 @@ export interface CustomerUpdateDataInput {
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
-  referralLink?: Maybe<String>;
   plan?: Maybe<Plan>;
   membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
@@ -18995,8 +19262,9 @@ export interface BagItemNullablePromise
 export interface Customer {
   id: ID_Output;
   status?: CustomerStatus;
-  referralLink?: String;
   plan?: Plan;
+  referralLink?: String;
+  referrerId?: String;
   authorizedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -19008,7 +19276,6 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
   status: () => Promise<CustomerStatus>;
   detail: <T = CustomerDetailPromise>() => T;
   billingInfo: <T = BillingInfoPromise>() => T;
-  referralLink: () => Promise<String>;
   plan: () => Promise<Plan>;
   membership: <T = CustomerMembershipPromise>() => T;
   bagItems: <T = FragmentableArray<BagItem>>(args?: {
@@ -19023,6 +19290,18 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
   reservations: <T = FragmentableArray<Reservation>>(args?: {
     where?: ReservationWhereInput;
     orderBy?: ReservationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  referralLink: () => Promise<String>;
+  referrerId: () => Promise<String>;
+  referrer: <T = CustomerPromise>() => T;
+  referrees: <T = FragmentableArray<Customer>>(args?: {
+    where?: CustomerWhereInput;
+    orderBy?: CustomerOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -19051,7 +19330,6 @@ export interface CustomerSubscription
   status: () => Promise<AsyncIterator<CustomerStatus>>;
   detail: <T = CustomerDetailSubscription>() => T;
   billingInfo: <T = BillingInfoSubscription>() => T;
-  referralLink: () => Promise<AsyncIterator<String>>;
   plan: () => Promise<AsyncIterator<Plan>>;
   membership: <T = CustomerMembershipSubscription>() => T;
   bagItems: <T = Promise<AsyncIterator<BagItemSubscription>>>(args?: {
@@ -19066,6 +19344,18 @@ export interface CustomerSubscription
   reservations: <T = Promise<AsyncIterator<ReservationSubscription>>>(args?: {
     where?: ReservationWhereInput;
     orderBy?: ReservationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  referralLink: () => Promise<AsyncIterator<String>>;
+  referrerId: () => Promise<AsyncIterator<String>>;
+  referrer: <T = CustomerSubscription>() => T;
+  referrees: <T = Promise<AsyncIterator<CustomerSubscription>>>(args?: {
+    where?: CustomerWhereInput;
+    orderBy?: CustomerOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -19094,7 +19384,6 @@ export interface CustomerNullablePromise
   status: () => Promise<CustomerStatus>;
   detail: <T = CustomerDetailPromise>() => T;
   billingInfo: <T = BillingInfoPromise>() => T;
-  referralLink: () => Promise<String>;
   plan: () => Promise<Plan>;
   membership: <T = CustomerMembershipPromise>() => T;
   bagItems: <T = FragmentableArray<BagItem>>(args?: {
@@ -19109,6 +19398,18 @@ export interface CustomerNullablePromise
   reservations: <T = FragmentableArray<Reservation>>(args?: {
     where?: ReservationWhereInput;
     orderBy?: ReservationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  referralLink: () => Promise<String>;
+  referrerId: () => Promise<String>;
+  referrer: <T = CustomerPromise>() => T;
+  referrees: <T = FragmentableArray<Customer>>(args?: {
+    where?: CustomerWhereInput;
+    orderBy?: CustomerOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -24060,8 +24361,9 @@ export interface CustomerSubscriptionPayloadSubscription
 export interface CustomerPreviousValues {
   id: ID_Output;
   status?: CustomerStatus;
-  referralLink?: String;
   plan?: Plan;
+  referralLink?: String;
+  referrerId?: String;
   authorizedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -24072,8 +24374,9 @@ export interface CustomerPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   status: () => Promise<CustomerStatus>;
-  referralLink: () => Promise<String>;
   plan: () => Promise<Plan>;
+  referralLink: () => Promise<String>;
+  referrerId: () => Promise<String>;
   authorizedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -24084,8 +24387,9 @@ export interface CustomerPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   status: () => Promise<AsyncIterator<CustomerStatus>>;
-  referralLink: () => Promise<AsyncIterator<String>>;
   plan: () => Promise<AsyncIterator<Plan>>;
+  referralLink: () => Promise<AsyncIterator<String>>;
+  referrerId: () => Promise<AsyncIterator<String>>;
   authorizedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;

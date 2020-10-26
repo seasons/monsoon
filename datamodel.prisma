@@ -716,12 +716,15 @@ type Customer {
   detail: CustomerDetail
     @relation(name: "CustomerToCustomerDetail", onDelete: CASCADE)
   billingInfo: BillingInfo
-  referralLink: String @unique
   plan: Plan
   membership: CustomerMembership
     @relation(name: "CustomerToCustomerMembership", onDelete: CASCADE)
   bagItems: [BagItem] @relation(name: "CustomerToBagItem")
   reservations: [Reservation] @relation(name: "CustomerToReservation")
+  referralLink: String @unique
+  referrerId: String
+  referrer: Customer @relation(name: "CustomerReferrals", fields: [referrerId] references: [id])
+  referrees: [Customer] @relation(name: "CustomerReferrals")
 
   ## A list of all the products we've shown this person via email
   emailedProducts: [Product!]!

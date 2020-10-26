@@ -32,7 +32,7 @@ const run = async () => {
       const appendedNumber: number = (get(seenFirstNames, firstName) ?? 0) + 1
       seenFirstNames[firstName] = appendedNumber
       const slashTag = firstName + appendedNumber.toString()
-      fetchAndSetCustomerReferralLink(customer, slashTag)
+      fetchAndSetCustomerReferralLink(customer.id, slashTag)
     } catch (e) {
       console.log("error in try catch: ", e)
       console.log("error with customer: ", customer.id)
@@ -41,9 +41,9 @@ const run = async () => {
   }
 }
 
-const fetchAndSetCustomerReferralLink = async (customer, slashTag) => {
+const fetchAndSetCustomerReferralLink = async (customerId, slashTag) => {
   let linkRequest = {
-    destination: "https://www.seasons.nyc/signup?referral_id=" + slashTag,
+    destination: "https://www.seasons.nyc/signup?referrer_id=" + customerId,
     domain: { fullName: "rebrand.ly" },
     slashtag: slashTag,
   }
@@ -69,7 +69,7 @@ const fetchAndSetCustomerReferralLink = async (customer, slashTag) => {
       )
       ps.binding.mutation.updateCustomer({
         data: { referralLink: link.shortUrl },
-        where: { id: customer.id },
+        where: { id: customerId },
       })
     }
   )

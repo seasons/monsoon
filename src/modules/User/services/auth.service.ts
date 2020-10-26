@@ -41,12 +41,14 @@ export class AuthService {
     firstName,
     lastName,
     details,
+    referrerId,
   }: {
     email: string
     password: string
     firstName: string
     lastName: string
     details: CustomerDetailCreateInput
+    referrerId?: string
   }) {
     // 1. Register the user on Auth0
     let userAuth0ID
@@ -87,16 +89,20 @@ export class AuthService {
     })
 
     // 4. Create the customer in our database
-    const customer = await this.createPrismaCustomerForExistingUser(
+    const {
+      customer,
+      isValidReferral,
+    } = await this.createPrismaCustomerForExistingUser(
       user.id,
       details,
       "Created",
-      firstName + usersWithSameFirstName.length.toString()
+      firstName + usersWithSameFirstName.length.toString(),
+      referrerId
     )
 
     await this.email.sendSubmittedEmailEmail(user)
 
-    return { user, tokenData, customer }
+    return { user, tokenData, customer, isValidReferral }
   }
 
   async loginUser({ email, password, requestUser }) {
@@ -348,7 +354,8 @@ export class AuthService {
     userID,
     details,
     status,
-    referralSlashTag
+    referralSlashTag,
+    referrerId
   ) {
     if (details?.shippingAddress?.create?.zipCode) {
       const zipCode = details?.shippingAddress?.create?.zipCode
@@ -358,17 +365,7 @@ export class AuthService {
       details.shippingAddress.create.state = state
     }
 
-    const newCustomer = await this.prisma.binding.mutation.createCustomer(
-      {
-        data: {
-          user: {
-            connect: { id: userID },
-          },
-          detail: { create: details },
-          status: status || "Waitlisted",
-        },
-      },
-      `{
+    const customerQueryInfo = `{
       id
       status
       detail {
@@ -378,19 +375,71 @@ export class AuthService {
           city
         }
       }
+      referrer {
+        id
+      }
     }`
+
+    let newCustomer = await this.prisma.binding.mutation.createCustomer(
+      {
+        data: {
+          user: {
+            connect: { id: userID },
+          },
+          detail: { create: details },
+          status: status || "Waitlisted",
+        },
+      },
+      customerQueryInfo
     )
 
-    // Don't want to await on this
-    this.createReferralLink(newCustomer.id, referralSlashTag)
-    return newCustomer
+    console.log(newCustomer)
+    console.log(referrerId)
+
+    try {
+      const referralLink = await this.createReferralLink(
+        newCustomer.id,
+        referralSlashTag
+      )
+      let referrerIsValidCustomer = false
+      if (referrerId) {
+        referrerIsValidCustomer = await this.prisma.binding.query.customer({
+          where: { id: referrerId },
+        })
+      }
+
+      newCustomer = await this.prisma.binding.mutation.updateCustomer(
+        {
+          data: {
+            referralLink: referralLink.shortUrl,
+            referrer: {
+              connect: referrerIsValidCustomer ? { id: referrerId } : null,
+            },
+          },
+          where: { id: newCustomer.id },
+        },
+        customerQueryInfo
+      )
+    } catch (err) {
+      console.log(err)
+      // silently fail
+    }
+
+    return {
+      customer: newCustomer,
+      isValidReferral: newCustomer.referrer !== null,
+    }
   }
 
-  private async createReferralLink(customerId, referralSlashTag) {
+  private async createReferralLink(
+    customerId,
+    referralSlashTag
+  ): Promise<{
+    shortUrl: string
+  }> {
     let linkRequest = {
-      destination:
-        "https://www.seasons.nyc/signup?referral_id=" + referralSlashTag,
-      domain: { fullName: "szns.co" },
+      destination: "https://www.seasons.nyc/signup?referrer_id=" + customerId,
+      domain: { fullName: "rebrand.ly" },
       slashtag: referralSlashTag,
     }
 
@@ -399,22 +448,22 @@ export class AuthService {
       apikey: process.env.REBRANDLY_API_KEY,
       workspace: process.env.REBRANDLY_WORKSPACE_ID,
     }
-
-    request(
-      {
-        uri: "https://api.rebrandly.com/v1/links",
-        method: "POST",
-        body: JSON.stringify(linkRequest),
-        headers: requestHeaders,
-      },
-      (err, response, body) => {
-        let link = JSON.parse(body)
-        this.prisma.binding.mutation.updateCustomer({
-          data: { referralLink: link.shortUrl },
-          where: { id: customerId },
-        })
-      }
-    )
+    return new Promise((resolve, reject) => {
+      return request(
+        {
+          uri: "https://api.rebrandly.com/v1/links",
+          method: "POST",
+          body: JSON.stringify(linkRequest),
+          headers: requestHeaders,
+        },
+        (err, response, body) => {
+          if (err) {
+            reject(err)
+          }
+          resolve(JSON.parse(body))
+        }
+      )
+    })
   }
 
   private async getAuth0UserAccessToken(
