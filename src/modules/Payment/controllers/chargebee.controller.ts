@@ -1,4 +1,5 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
@@ -23,7 +24,8 @@ export class ChargebeeController {
   constructor(
     private readonly payment: PaymentService,
     private readonly segment: SegmentService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly error: ErrorService
   ) {}
 
   @Post()
@@ -95,8 +97,17 @@ export class ChargebeeController {
   private async chargebeeCustomerChanged(content: any) {
     const {
       customer: { id },
-      card,
+      card = {},
     } = content
-    await this.payment.chargebeeCustomerChanged(id, card)
+
+    // no card data on the payload
+    if (Object.keys(card).length > 0) {
+    } else {
+      await this.payment.chargebeeCustomerChanged(id, card)
+      this.error.setExtraContext(content, "chargebeePayload.content")
+      this.error.captureMessage(
+        `Chargebee customer_changed payload without card in content`
+      )
+    }
   }
 }
