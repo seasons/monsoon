@@ -1,4 +1,4 @@
-import { Loader } from "@app/modules/DataLoader"
+import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import {
   ReservationOrderByInput,
   ReservationWhereInput,

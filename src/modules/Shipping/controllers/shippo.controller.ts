@@ -95,6 +95,8 @@ export class ShippoController {
             `{
               id
               status
+              receivedAt
+              shippedAt
               sentPackage {
                 transactionID
               }
@@ -160,6 +162,19 @@ export class ShippoController {
           })
         }
 
+        let receivedAtData = {}
+        if (
+          reservationStatus === "Delivered" &&
+          reservation.receivedAt === null
+        ) {
+          receivedAtData = { receivedAt: new Date() }
+        }
+
+        let shippedAtData = {}
+        if (reservationStatus === "Shipped" && reservation.shippedAt === null) {
+          shippedAtData = { shippedAt: new Date(), shipped: true }
+        }
+
         await this.prisma.client.updateReservation({
           where: { id: reservation.id },
           data: {
@@ -170,12 +185,8 @@ export class ShippoController {
               },
             },
             phase,
-            ...(reservationStatus === "Delivered"
-              ? { receivedAt: new Date() }
-              : {}),
-            ...(reservationStatus === "Shipped"
-              ? { shippedAt: new Date(), shipped: true }
-              : {}),
+            ...receivedAtData,
+            ...shippedAtData,
             statusUpdatedAt: new Date(),
           },
         })

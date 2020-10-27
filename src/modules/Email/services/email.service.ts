@@ -189,15 +189,9 @@ export class EmailService {
   ) {
     const formattedProducts = await this.emailUtils.createGridPayload(products)
 
-    // TODO: When we update return date logic for west coast expansion,
-    // refactor this code to be in a more reusable location
-    const returnDate = new Date()
-    returnDate.setDate(new Date(reservation.createdAt).getDate() + 30)
-
     const payload = await RenderEmail.reservationConfirmation({
       products: formattedProducts,
       orderNumber: reservation.reservationNumber,
-      returnDate,
       trackingNumber,
       trackingURL: trackingUrl,
     })
@@ -212,16 +206,15 @@ export class EmailService {
     user: EmailUser,
     reservation: PrismaReservation
   ) {
-    await this.sendTransactionalEmail({
-      to: user.email,
-      data: this.data.returnReminder({
-        name: user.firstName,
-        returnDate: this.utils.formatReservationReturnDate(
-          new Date(reservation.createdAt)
-        ),
-      }),
+    const payload = await RenderEmail.returnReminder({
+      name: user.firstName,
+      returnDate: this.utils.getReservationReturnDate(reservation),
     })
-    await this.storeEmailReceipt("ReturnReminder", user.id)
+    await this.sendPreRenderedTransactionalEmail({
+      user,
+      payload,
+      emailId: "ReturnReminder",
+    })
   }
 
   async sendYouCanNowReserveAgainEmail(user: EmailUser) {

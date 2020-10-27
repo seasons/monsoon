@@ -2559,16 +2559,18 @@
     "@angular-devkit/core" "9.1.9"
     "@angular-devkit/schematics" "9.1.9"
 
-"@seasons/wind@^2.1.35":
-  version "2.1.35"
-  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.1.35.tgz#37bf0a7b38ab97687aef863bd21a539b8edf7cdc"
-  integrity sha512-HeIMQK01fkYJZEPLtwmpT4ohF49MtJ3Hf5AlkldVLBv4vOaZFeW3YJZN8rnPYUCAEtpOGzXpoR7/ETfZbtftyw==
+"@seasons/wind@^2.1.37":
+  version "2.1.37"
+  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.1.37.tgz#53064a38374f4219570fc4818cd2f9b9b9668040"
+  integrity sha512-c06J8WpYeRZyC34jo8Ztkm2Sn4uzXRGM5GsE7WmGMRVX6jMJWw+86P1478EJZMbiCF01dGbFVGTskhSsNJVhEg==
   dependencies:
     "@types/node" "^14.0.23"
+    child_process "^1.0.2"
     handlebars "^4.7.6"
     lodash "^4.17.20"
     mjml "^4.7.0-beta.1"
     moment "^2.29.1"
+    open "^7.3.0"
     prettier "^2.1.2"
 
 "@segment/loosely-validate-event@^2.0.0":
@@ -13236,6 +13238,14 @@ open@0.0.5:
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/open/-/open-0.0.5.tgz#42c3e18ec95466b6bf0dc42f3a2945c3f0cad8fc"
   integrity sha1-QsPhjslUZra/DcQvOilFw/DK2Pw=
+
+open@^7.3.0:
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/open/-/open-7.3.0.tgz#45461fdee46444f3645b6e14eb3ca94b82e1be69"
+  integrity sha512-mgLwQIx2F/ye9SmbrUkurZCnkoXyXyu9EbHtJZrICjVAJfyMArdHp3KkixGdZx1ZHFPNIwl0DDM1dFFqXbTLZw==
+  dependencies:
+    is-docker "^2.0.0"
+    is-wsl "^2.1.1"
 
 opencollective-postinstall@^2.0.2:
   version "2.0.3"

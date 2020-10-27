@@ -1,5 +1,6 @@
 import "module-alias/register"
 
+import { head } from "lodash"
 import Twilio from "twilio/lib/rest/Twilio"
 
 import { SegmentService } from "../modules/Analytics/services/segment.service"
@@ -50,8 +51,14 @@ const run = async () => {
     pn,
     sms
   )
-  const admissionsJobService = new AdmissionsScheduledJobs(ps, as, cs, error)
-  await admissionsJobService.updateAdmissionsFields()
+  // const admissionsJobService = new AdmissionsScheduledJobs(ps, as, cs, error)
+  // await admissionsJobService.updateAdmissionsFields()
+  const u = head(
+    await ps.client.customers({
+      where: { user: { email: "zinga@khalilahbeavers.com" } },
+    })
+  )
+  await cs.triageCustomer({ id: u.id }, "monsoon", true)
 }
 
 run()
