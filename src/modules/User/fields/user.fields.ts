@@ -14,22 +14,11 @@ export class UserFieldsResolver {
   ) {}
 
   @ResolveField()
-  async beamsToken(
-    @Parent() user,
-    @Loader({
-      params: {
-        query: "users",
-        info: `{id email}`,
-        formatData: a => a.email,
-      },
-    })
-    userEmailLoader: PrismaDataLoader<string>
-  ) {
+  async beamsToken(@Parent() user) {
     if (!user) {
       return ""
     }
-    const userEmail = await userEmailLoader.load(user.id)
-    return this.pushNotification.generateToken(userEmail)
+    return this.pushNotification.generateToken(user.email)
   }
 
   @ResolveField()
