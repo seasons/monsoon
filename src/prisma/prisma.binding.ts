@@ -10224,6 +10224,7 @@ input LabelWhereUniqueInput {
 }
 
 enum LetterSize {
+  XXS
   XS
   S
   M
@@ -28477,7 +28478,8 @@ export type LabelOrderByInput =   'id_ASC' |
   'trackingURL_ASC' |
   'trackingURL_DESC'
 
-export type LetterSize =   'XS' |
+export type LetterSize =   'XXS' |
+  'XS' |
   'S' |
   'M' |
   'L' |
