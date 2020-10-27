@@ -1,5 +1,5 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { CustomerService } from "@app/modules/User"
+import { CustomerService } from "@app/modules/User/services/customer.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PaymentPlanTier, User } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
@@ -22,18 +22,6 @@ import {
   TransactionsDataLoader,
 } from "../payment.types"
 import { PaymentUtilsService } from "./payment.utils.service"
-
-class CouponNotFound extends Error {
-  constructor() {
-    super("Coupon Not Found")
-  }
-}
-
-class CouponExpired extends Error {
-  constructor() {
-    super("Coupon Expired")
-  }
-}
 
 @Injectable()
 export class PaymentService {
@@ -567,6 +555,7 @@ export class PaymentService {
           create: billingInfo,
         },
         status: "Active",
+        admissions: { disconnect: true },
       },
       where: { id: prismaCustomer.id },
     })
@@ -725,18 +714,19 @@ export class PaymentService {
   async checkCoupon(couponID): Promise<Coupon> {
     try {
       const coupon = await chargebee.coupon.retrieve(couponID).request()
-      if (coupon.coupon.status == "active") {
+      if (coupon.coupon.status === "active") {
         return {
+          percentage: coupon.coupon.discount_percentage,
           amount: coupon.coupon.discount_amount,
           type: upperFirst(
             camelCase(coupon.coupon.discount_type)
           ) as CouponType,
         }
       } else {
-        throw new CouponExpired()
+        throw new Error("Coupon expired")
       }
     } catch {
-      throw new CouponNotFound()
+      throw new Error("Coupon not found")
     }
   }
 

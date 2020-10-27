@@ -1,4 +1,4 @@
-import { ImageModule } from "@modules/Image"
+import { ImageModule } from "@modules/Image/image.module"
 import { PushNotificationModule } from "@modules/PushNotification"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { Module } from "@nestjs/common"

@@ -1,7 +1,7 @@
 import { PaymentService } from "@app/modules/Payment/index"
 import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { AuthService } from "@modules/User"
+import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
 import { PrismaService } from "@prisma/prisma.service"

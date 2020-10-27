@@ -105,7 +105,8 @@ enum CouponType {
 }
 
 type Coupon {
-  amount: Int!
+  amount: Int
+  percentage: Int
   type: CouponType!
 }
 

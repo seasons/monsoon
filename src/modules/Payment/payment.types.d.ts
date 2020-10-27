@@ -74,6 +74,7 @@ export interface RefundInvoiceInput {
 
 export interface Coupon {
   amount: number
+  percentage: number
   type: CouponType
 }
 

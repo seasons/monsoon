@@ -1,28 +1,32 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { ImageService } from "@app/modules/Image/services/image.service"
 import { ID_Input, LetterSize, Product, User } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
-import { head, sampleSize, uniq } from "lodash"
+import { ProductGridItem } from "@seasons/wind"
+import { head, pick, sampleSize, uniq } from "lodash"
 
 import { PrismaService } from "../../../prisma/prisma.service"
 
-export interface ProductGridItem {
+export type MonsoonProductGridItem = ProductGridItem & {
   id: ID_Input
-  sizes: string
-  name: string
-  src: string
 }
 
 @Injectable()
 export class EmailUtilsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly image: ImageService
   ) {}
 
   productInfoForGridData = `
   id
   type
   name
+  brand {
+    name
+  }
+  retailPrice
   variants {
     internalSize {
         productType
@@ -34,7 +38,19 @@ export class EmailUtilsService {
   }
     `
 
-  async getXLatestProducts(numProducts: number): Promise<ProductGridItem[]> {
+  async createGridPayload(products: Product[]) {
+    const productsWithData = await this.prisma.binding.query.products(
+      {
+        where: { id_in: products.map(a => a.id) },
+      },
+      `{${this.productInfoForGridData}}`
+    )
+    return Promise.all(productsWithData.map(this.productToGridPayload))
+  }
+
+  async getXLatestProducts(
+    numProducts: number
+  ): Promise<MonsoonProductGridItem[]> {
     const xLatestProducts = await this.prisma.binding.query.products(
       {
         where: { status: "Available" },
@@ -43,14 +59,14 @@ export class EmailUtilsService {
       },
       `{${this.productInfoForGridData}}`
     )
-    return xLatestProducts.map(this.productToGridPayload)
+    return Promise.all(xLatestProducts.map(this.productToGridPayload))
   }
 
   async getXReservableProductsForUser(
     numProducts: number,
     user: User,
     products: Product[]
-  ): Promise<ProductGridItem[] | null> {
+  ): Promise<MonsoonProductGridItem[] | null> {
     let returnProducts = null
 
     // Filter out from products we've already emailed to the user
@@ -74,13 +90,14 @@ export class EmailUtilsService {
 
     // Of the remaining ones, try to get numProducts. If we can't, allow repeats
     if (reservableProductsWeHaventAlreadySent.length >= numProducts) {
-      returnProducts = sampleSize(
-        reservableProductsWeHaventAlreadySent,
-        numProducts
-      ).map(this.productToGridPayload)
+      returnProducts = await Promise.all(
+        sampleSize(reservableProductsWeHaventAlreadySent, numProducts).map(
+          this.productToGridPayload
+        )
+      )
     } else if (products.length >= numProducts) {
-      returnProducts = sampleSize(products, numProducts).map(
-        this.productToGridPayload
+      returnProducts = await Promise.all(
+        sampleSize(products, numProducts).map(this.productToGridPayload)
       )
     }
 
@@ -94,7 +111,9 @@ export class EmailUtilsService {
     return returnProducts
   }
 
-  productToGridPayload = (product: any) => {
+  productToGridPayload = async (
+    product: any
+  ): Promise<MonsoonProductGridItem> => {
     const letterSizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"]
     let sizes = uniq(
       product.variants?.map(b => b.internalSize?.display)
@@ -107,12 +126,24 @@ export class EmailUtilsService {
     if (product.type === "Bottom") {
       sizes = sizes.sort()
     }
-    return {
-      id: product.id,
+    const smallImageSrc = await this.image.resizeImage(
+      product.images?.[0].url,
+      "Small",
+      { fm: "jpg" }
+    )
+    const bigImageSrc = await this.image.resizeImage(
+      product.images?.[1].url,
+      "Small",
+      { fm: "jpg" }
+    )
+    const payload = {
+      ...pick(product, ["id", "name", "retailPrice"]),
       sizes: `${sizes}`.replace(/,/g, " "),
       //@ts-ignore
-      src: head(product.images)?.url,
-      name: product.name,
+      smallImageSrc,
+      bigImageSrc,
+      brand: product.brand?.name || "",
     }
+    return payload
   }
 }

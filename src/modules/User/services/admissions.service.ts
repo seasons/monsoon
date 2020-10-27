@@ -2,7 +2,7 @@ import * as fs from "fs"
 
 import { ApplicationType } from "@app/decorators/application.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerWhereUniqueInput, Product } from "@app/prisma"
+import { CustomerStatus, CustomerWhereUniqueInput, Product } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, intersection, uniqBy } from "lodash"
@@ -197,6 +197,11 @@ export class AdmissionsService {
     }
   }
 
+  // is a customer with the given status able to be triaged?
+  isTriageable(status: CustomerStatus) {
+    return ["Created", "Invited", "Waitlisted"].includes(status)
+  }
+
   private async availableStylesForCustomer(
     where: CustomerWhereUniqueInput,
     productType: "Top" | "Bottom"
@@ -264,13 +269,18 @@ export class AdmissionsService {
         id
         type
         name
+        retailPrice
         images {
           url
         }
         variants {
           internalSize {
+            productType
             display
           }
+        }
+        brand {
+          name
         }
     }`
     )) as Product[]

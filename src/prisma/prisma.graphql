@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Oct 15 2020 04:49:36 GMT-0400 (Eastern Daylight Time)
+# timestamp: Fri Oct 23 2020 16:05:57 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -634,6 +634,10 @@ type AggregateColor {
 }
 
 type AggregateCustomer {
+  count: Int!
+}
+
+type AggregateCustomerAdmissionsData {
   count: Int!
 }
 
@@ -6645,9 +6649,371 @@ type Customer implements Node {
     first: Int
     last: Int
   ): [Product!]
+  admissions: CustomerAdmissionsData
   authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type CustomerAdmissionsData implements Node {
+  id: ID!
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  customers(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Customer!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type CustomerAdmissionsDataConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [CustomerAdmissionsDataEdge]!
+  aggregate: AggregateCustomerAdmissionsData!
+}
+
+input CustomerAdmissionsDataCreateInput {
+  id: ID
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  customers: CustomerCreateManyWithoutAdmissionsInput
+}
+
+input CustomerAdmissionsDataCreateOneWithoutCustomersInput {
+  create: CustomerAdmissionsDataCreateWithoutCustomersInput
+  connect: CustomerAdmissionsDataWhereUniqueInput
+}
+
+input CustomerAdmissionsDataCreateWithoutCustomersInput {
+  id: ID
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+}
+
+"""
+An edge in a connection.
+"""
+type CustomerAdmissionsDataEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: CustomerAdmissionsData!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum CustomerAdmissionsDataOrderByInput {
+  id_ASC
+  id_DESC
+  inServiceableZipcode_ASC
+  inServiceableZipcode_DESC
+  admissable_ASC
+  admissable_DESC
+  inAdmissableReason_ASC
+  inAdmissableReason_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type CustomerAdmissionsDataPreviousValues {
+  id: ID!
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type CustomerAdmissionsDataSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerAdmissionsData
+  updatedFields: [String!]
+  previousValues: CustomerAdmissionsDataPreviousValues
+}
+
+input CustomerAdmissionsDataSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [CustomerAdmissionsDataSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [CustomerAdmissionsDataSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [CustomerAdmissionsDataSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CustomerAdmissionsDataWhereInput
+}
+
+input CustomerAdmissionsDataUpdateInput {
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason: InAdmissableReason
+  customers: CustomerUpdateManyWithoutAdmissionsInput
+}
+
+input CustomerAdmissionsDataUpdateManyMutationInput {
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason: InAdmissableReason
+}
+
+input CustomerAdmissionsDataUpdateOneWithoutCustomersInput {
+  create: CustomerAdmissionsDataCreateWithoutCustomersInput
+  connect: CustomerAdmissionsDataWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: CustomerAdmissionsDataUpdateWithoutCustomersDataInput
+  upsert: CustomerAdmissionsDataUpsertWithoutCustomersInput
+}
+
+input CustomerAdmissionsDataUpdateWithoutCustomersDataInput {
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason: InAdmissableReason
+}
+
+input CustomerAdmissionsDataUpsertWithoutCustomersInput {
+  update: CustomerAdmissionsDataUpdateWithoutCustomersDataInput!
+  create: CustomerAdmissionsDataCreateWithoutCustomersInput!
+}
+
+input CustomerAdmissionsDataWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [CustomerAdmissionsDataWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [CustomerAdmissionsDataWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [CustomerAdmissionsDataWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  inServiceableZipcode: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  inServiceableZipcode_not: Boolean
+  admissable: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  admissable_not: Boolean
+  inAdmissableReason: InAdmissableReason
+
+  """
+  All values that are not equal to given value.
+  """
+  inAdmissableReason_not: InAdmissableReason
+
+  """
+  All values that are contained in given list.
+  """
+  inAdmissableReason_in: [InAdmissableReason!]
+
+  """
+  All values that are not contained in given list.
+  """
+  inAdmissableReason_not_in: [InAdmissableReason!]
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+  customers_every: CustomerWhereInput
+  customers_some: CustomerWhereInput
+  customers_none: CustomerWhereInput
+}
+
+input CustomerAdmissionsDataWhereUniqueInput {
+  id: ID
 }
 
 """
@@ -6678,6 +7044,12 @@ input CustomerCreateInput {
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
+}
+
+input CustomerCreateManyWithoutAdmissionsInput {
+  create: [CustomerCreateWithoutAdmissionsInput!]
+  connect: [CustomerWhereUniqueInput!]
 }
 
 input CustomerCreateOneInput {
@@ -6700,6 +7072,20 @@ input CustomerCreateOneWithoutReservationsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerCreateWithoutAdmissionsInput {
+  id: ID
+  status: CustomerStatus
+  plan: Plan
+  authorizedAt: DateTime
+  user: UserCreateOneInput!
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+  emailedProducts: ProductCreateManyInput
+}
+
 input CustomerCreateWithoutBagItemsInput {
   id: ID
   status: CustomerStatus
@@ -6711,6 +7097,7 @@ input CustomerCreateWithoutBagItemsInput {
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
 }
 
 input CustomerCreateWithoutMembershipInput {
@@ -6724,6 +7111,7 @@ input CustomerCreateWithoutMembershipInput {
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -6737,6 +7125,7 @@ input CustomerCreateWithoutReservationsInput {
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
 }
 
 type CustomerDetail implements Node {
@@ -8599,6 +8988,229 @@ type CustomerPreviousValues {
   updatedAt: DateTime!
 }
 
+input CustomerScalarWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [CustomerScalarWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [CustomerScalarWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [CustomerScalarWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  status: CustomerStatus
+
+  """
+  All values that are not equal to given value.
+  """
+  status_not: CustomerStatus
+
+  """
+  All values that are contained in given list.
+  """
+  status_in: [CustomerStatus!]
+
+  """
+  All values that are not contained in given list.
+  """
+  status_not_in: [CustomerStatus!]
+  plan: Plan
+
+  """
+  All values that are not equal to given value.
+  """
+  plan_not: Plan
+
+  """
+  All values that are contained in given list.
+  """
+  plan_in: [Plan!]
+
+  """
+  All values that are not contained in given list.
+  """
+  plan_not_in: [Plan!]
+  authorizedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  authorizedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  authorizedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  authorizedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  authorizedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  authorizedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  authorizedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  authorizedAt_gte: DateTime
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+}
+
 enum CustomerStatus {
   Invited
   Created
@@ -8666,6 +9278,7 @@ input CustomerUpdateDataInput {
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
 }
 
 input CustomerUpdateInput {
@@ -8679,12 +9292,36 @@ input CustomerUpdateInput {
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
+}
+
+input CustomerUpdateManyDataInput {
+  status: CustomerStatus
+  plan: Plan
+  authorizedAt: DateTime
 }
 
 input CustomerUpdateManyMutationInput {
   status: CustomerStatus
   plan: Plan
   authorizedAt: DateTime
+}
+
+input CustomerUpdateManyWithoutAdmissionsInput {
+  create: [CustomerCreateWithoutAdmissionsInput!]
+  connect: [CustomerWhereUniqueInput!]
+  set: [CustomerWhereUniqueInput!]
+  disconnect: [CustomerWhereUniqueInput!]
+  delete: [CustomerWhereUniqueInput!]
+  update: [CustomerUpdateWithWhereUniqueWithoutAdmissionsInput!]
+  updateMany: [CustomerUpdateManyWithWhereNestedInput!]
+  deleteMany: [CustomerScalarWhereInput!]
+  upsert: [CustomerUpsertWithWhereUniqueWithoutAdmissionsInput!]
+}
+
+input CustomerUpdateManyWithWhereNestedInput {
+  where: CustomerScalarWhereInput!
+  data: CustomerUpdateManyDataInput!
 }
 
 input CustomerUpdateOneRequiredInput {
@@ -8715,6 +9352,19 @@ input CustomerUpdateOneRequiredWithoutReservationsInput {
   upsert: CustomerUpsertWithoutReservationsInput
 }
 
+input CustomerUpdateWithoutAdmissionsDataInput {
+  status: CustomerStatus
+  plan: Plan
+  authorizedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  emailedProducts: ProductUpdateManyInput
+}
+
 input CustomerUpdateWithoutBagItemsDataInput {
   status: CustomerStatus
   plan: Plan
@@ -8725,6 +9375,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
@@ -8737,6 +9388,7 @@ input CustomerUpdateWithoutMembershipDataInput {
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -8749,6 +9401,12 @@ input CustomerUpdateWithoutReservationsDataInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
+}
+
+input CustomerUpdateWithWhereUniqueWithoutAdmissionsInput {
+  where: CustomerWhereUniqueInput!
+  data: CustomerUpdateWithoutAdmissionsDataInput!
 }
 
 input CustomerUpsertNestedInput {
@@ -8769,6 +9427,12 @@ input CustomerUpsertWithoutMembershipInput {
 input CustomerUpsertWithoutReservationsInput {
   update: CustomerUpdateWithoutReservationsDataInput!
   create: CustomerCreateWithoutReservationsInput!
+}
+
+input CustomerUpsertWithWhereUniqueWithoutAdmissionsInput {
+  where: CustomerWhereUniqueInput!
+  update: CustomerUpdateWithoutAdmissionsDataInput!
+  create: CustomerCreateWithoutAdmissionsInput!
 }
 
 input CustomerWhereInput {
@@ -9005,6 +9669,7 @@ input CustomerWhereInput {
   emailedProducts_every: ProductWhereInput
   emailedProducts_some: ProductWhereInput
   emailedProducts_none: ProductWhereInput
+  admissions: CustomerAdmissionsDataWhereInput
 }
 
 input CustomerWhereUniqueInput {
@@ -12064,6 +12729,15 @@ input ImageWhereUniqueInput {
   url: String
 }
 
+enum InAdmissableReason {
+  Untriageable
+  UnsupportedPlatform
+  AutomaticAdmissionsFlagOff
+  UnserviceableZipcode
+  InsufficientInventory
+  OpsThresholdExceeded
+}
+
 type InterestedUser implements Node {
   id: ID!
   email: String!
@@ -14258,6 +14932,9 @@ type Mutation {
   createFitPicReport(data: FitPicReportCreateInput!): FitPicReport!
   createInterestedUser(data: InterestedUserCreateInput!): InterestedUser!
   createBagItem(data: BagItemCreateInput!): BagItem!
+  createCustomerAdmissionsData(
+    data: CustomerAdmissionsDataCreateInput!
+  ): CustomerAdmissionsData!
   createCustomerMembership(
     data: CustomerMembershipCreateInput!
   ): CustomerMembership!
@@ -14366,6 +15043,10 @@ type Mutation {
     data: BagItemUpdateInput!
     where: BagItemWhereUniqueInput!
   ): BagItem
+  updateCustomerAdmissionsData(
+    data: CustomerAdmissionsDataUpdateInput!
+    where: CustomerAdmissionsDataWhereUniqueInput!
+  ): CustomerAdmissionsData
   updateCustomerMembership(
     data: CustomerMembershipUpdateInput!
     where: CustomerMembershipWhereUniqueInput!
@@ -14535,6 +15216,9 @@ type Mutation {
   deleteFitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
   deleteInterestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
+  deleteCustomerAdmissionsData(
+    where: CustomerAdmissionsDataWhereUniqueInput!
+  ): CustomerAdmissionsData
   deleteCustomerMembership(
     where: CustomerMembershipWhereUniqueInput!
   ): CustomerMembership
@@ -14673,6 +15357,11 @@ type Mutation {
     create: BagItemCreateInput!
     update: BagItemUpdateInput!
   ): BagItem!
+  upsertCustomerAdmissionsData(
+    where: CustomerAdmissionsDataWhereUniqueInput!
+    create: CustomerAdmissionsDataCreateInput!
+    update: CustomerAdmissionsDataUpdateInput!
+  ): CustomerAdmissionsData!
   upsertCustomerMembership(
     where: CustomerMembershipWhereUniqueInput!
     create: CustomerMembershipCreateInput!
@@ -14930,6 +15619,10 @@ type Mutation {
     data: BagItemUpdateManyMutationInput!
     where: BagItemWhereInput
   ): BatchPayload!
+  updateManyCustomerAdmissionsDatas(
+    data: CustomerAdmissionsDataUpdateManyMutationInput!
+    where: CustomerAdmissionsDataWhereInput
+  ): BatchPayload!
   updateManyCustomerMemberships(
     data: CustomerMembershipUpdateManyMutationInput!
     where: CustomerMembershipWhereInput
@@ -15107,6 +15800,9 @@ type Mutation {
   deleteManyFitPicReports(where: FitPicReportWhereInput): BatchPayload!
   deleteManyInterestedUsers(where: InterestedUserWhereInput): BatchPayload!
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
+  deleteManyCustomerAdmissionsDatas(
+    where: CustomerAdmissionsDataWhereInput
+  ): BatchPayload!
   deleteManyCustomerMemberships(
     where: CustomerMembershipWhereInput
   ): BatchPayload!
@@ -28376,6 +29072,15 @@ type Query {
     first: Int
     last: Int
   ): [BagItem]!
+  customerAdmissionsDatas(
+    where: CustomerAdmissionsDataWhereInput
+    orderBy: CustomerAdmissionsDataOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [CustomerAdmissionsData]!
   customerMemberships(
     where: CustomerMembershipWhereInput
     orderBy: CustomerMembershipOrderByInput
@@ -28766,6 +29471,9 @@ type Query {
   fitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
   interestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
   bagItem(where: BagItemWhereUniqueInput!): BagItem
+  customerAdmissionsData(
+    where: CustomerAdmissionsDataWhereUniqueInput!
+  ): CustomerAdmissionsData
   customerMembership(
     where: CustomerMembershipWhereUniqueInput!
   ): CustomerMembership
@@ -28948,6 +29656,15 @@ type Query {
     first: Int
     last: Int
   ): BagItemConnection!
+  customerAdmissionsDatasConnection(
+    where: CustomerAdmissionsDataWhereInput
+    orderBy: CustomerAdmissionsDataOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CustomerAdmissionsDataConnection!
   customerMembershipsConnection(
     where: CustomerMembershipWhereInput
     orderBy: CustomerMembershipOrderByInput
@@ -34194,6 +34911,9 @@ type Subscription {
     where: InterestedUserSubscriptionWhereInput
   ): InterestedUserSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
+  customerAdmissionsData(
+    where: CustomerAdmissionsDataSubscriptionWhereInput
+  ): CustomerAdmissionsDataSubscriptionPayload
   customerMembership(
     where: CustomerMembershipSubscriptionWhereInput
   ): CustomerMembershipSubscriptionPayload
