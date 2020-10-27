@@ -58,7 +58,7 @@ export class MembershipScheduledJobs {
             latestReservation &&
             !["Completed", "Cancelled"].includes(latestReservation.status)
           ) {
-            const customer = this.prisma.client.pauseRequests({
+            const customer = await this.prisma.client.pauseRequests({
               where: {
                 id: customerId,
               },
@@ -72,7 +72,11 @@ export class MembershipScheduledJobs {
             }
 
             // Customer has an active reservation so we restart membership
-            this.payment.resumeSubscription(subscriptionId, null, customer)
+            await this.payment.resumeSubscription(
+              subscriptionId,
+              null,
+              customer
+            )
             this.logger.log(`Resumed customer subscription: ${customerId}`)
           } else {
             // Otherwise we can pause the membership if no active reservations
@@ -147,7 +151,7 @@ export class MembershipScheduledJobs {
           }
 
           this.logger.log(`Paused customer subscription: ${customer.id}`)
-          this.payment.resumeSubscription(subscriptionId, null, customer)
+          await this.payment.resumeSubscription(subscriptionId, null, customer)
         }
       } catch (e) {
         Sentry.captureException(JSON.stringify(e))
