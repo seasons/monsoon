@@ -102,8 +102,8 @@ export class ChargebeeController {
 
     // no card data on the payload
     if (Object.keys(card).length > 0) {
-    } else {
       await this.payment.chargebeeCustomerChanged(id, card)
+    } else {
       this.error.setExtraContext(content, "chargebeePayload.content")
       this.error.captureMessage(
         `Chargebee customer_changed payload without card in content`
