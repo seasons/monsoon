@@ -170,7 +170,8 @@ export class ShippoController {
               },
             },
             phase,
-            ...(reservationStatus === "Delivered"
+            ...(reservationStatus === "Delivered" &&
+            reservation.receivedAt !== null
               ? { receivedAt: new Date() }
               : {}),
             ...(reservationStatus === "Shipped"
