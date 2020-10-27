@@ -2537,7 +2537,7 @@ export type LocationType = "Office" | "Warehouse" | "Cleaner" | "Customer";
 
 export type ProductType = "Top" | "Bottom" | "Accessory" | "Shoe";
 
-export type LetterSize = "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL";
+export type LetterSize = "XXS" | "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL";
 
 export type BottomSizeType = "WxL" | "US" | "EU" | "JP" | "Letter";
 

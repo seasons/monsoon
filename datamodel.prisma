@@ -126,6 +126,7 @@ enum Rating {
 }
 
 enum LetterSize {
+  XXS
   XS
   S
   M

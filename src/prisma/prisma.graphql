@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Fri Oct 23 2020 16:05:57 GMT-0400 (Eastern Daylight Time)
+# timestamp: Tue Oct 27 2020 11:48:03 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -13666,6 +13666,7 @@ input LabelWhereUniqueInput {
 }
 
 enum LetterSize {
+  XXS
   XS
   S
   M

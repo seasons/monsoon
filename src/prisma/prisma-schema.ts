@@ -5527,6 +5527,7 @@ input LabelWhereUniqueInput {
 }
 
 enum LetterSize {
+  XXS
   XS
   S
   M
