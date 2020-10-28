@@ -32,6 +32,7 @@ server.use(
       "seedling-staging.herokuapp.com",
       /flare\.now\.sh$/,
       /seasons\.nyc$/,
+      /wearseasons\.com$/,
       /localhost/,
     ],
     credentials: true,

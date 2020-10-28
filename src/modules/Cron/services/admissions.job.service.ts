@@ -29,7 +29,9 @@ export class AdmissionsScheduledJobs {
       this.customer.triageCustomerInfo
     )
 
+    let i = 0
     for (const cust of customers) {
+      console.log(`${i++} of ${customers.length}`)
       try {
         if (
           this.admissions.isTriageable(cust.status) ||
