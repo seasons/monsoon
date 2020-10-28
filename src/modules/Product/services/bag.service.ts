@@ -23,7 +23,7 @@ export class BagService {
       .plan()
       .itemCount()
 
-    if (bag.length >= customerPlanItemCount) {
+    if (!!customerPlanItemCount && bag.length >= customerPlanItemCount) {
       throw new ApolloError("Bag is full", "514")
     }
 
