@@ -1,15 +1,15 @@
 import { Loader } from "@app/modules/DataLoader"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import moment from "moment"
+import urlencode from "urlencode"
 
 @Resolver("User")
 export class UserFieldsResolver {
   constructor(
     private readonly pushNotification: PushNotificationService,
-    private readonly prisma: PrismaService,
     private readonly utils: UtilsService
   ) {}
 
@@ -19,6 +19,26 @@ export class UserFieldsResolver {
       return ""
     }
     return this.pushNotification.generateToken(user.email)
+  }
+
+  @ResolveField()
+  async links(@Parent() user) {
+    return {
+      mixpanel: `https://mixpanel.com/report/2195096/view/361951/profile#distinct_id=${user.id}`,
+      intercom: `https://app.intercom.com/a/apps/dtqi42qh/users/segments/all-users?searchTerm=${user.email}`,
+      sendgrid:
+        `https://app.sendgrid.com/email_activity?filters=` +
+        urlencode(
+          `[{"val":["${
+            user.email
+          }"],"selectedFieldName":"to_email","comparisonType":"Contains"},{"val":["${moment()
+            .subtract(30, "days")
+            .format(`YYYY/MM/DD`)} - ${moment().format(
+            `YYYY/MM/DD`
+          )}"],"selectedFieldName":"last_event_time","comparisonType":"Between"}]`
+        ) +
+        `&isAndOperator=true&page=1`,
+    }
   }
 
   @ResolveField()
