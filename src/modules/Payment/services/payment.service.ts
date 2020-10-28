@@ -555,7 +555,6 @@ export class PaymentService {
           create: billingInfo,
         },
         status: "Active",
-        admissions: { disconnect: true },
       },
       where: { id: prismaCustomer.id },
     })
