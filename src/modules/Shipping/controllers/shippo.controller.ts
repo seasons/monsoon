@@ -70,11 +70,15 @@ export class ShippoController {
     this.logger.log("Received shippo event:")
     this.logger.log(result)
 
+    if (trackingStatus === null) {
+      return null
+    }
+
     const status = upperFirst(
-      camelCase(trackingStatus.status)
+      camelCase(trackingStatus?.status)
     ) as PackageTransitEventStatus
 
-    const subStatus = (isObject(trackingStatus.substatus)
+    const subStatus = (isObject(trackingStatus?.substatus)
       ? upperFirst(camelCase(trackingStatus?.substatus?.code))
       : "Other") as PackageTransitEventSubStatus
 
