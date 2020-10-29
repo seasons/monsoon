@@ -34,6 +34,7 @@ export class ReservationScheduledJobs {
       receivedAt
       status
       reminderSentAt
+      reservationNumber
       customer {
         user {
           id
