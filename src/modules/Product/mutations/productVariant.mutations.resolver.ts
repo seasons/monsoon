@@ -53,7 +53,7 @@ export class ProductVariantMutationsResolver {
   @Mutation()
   async upsertProductVariants(@Args() { productID, inputs }, @Info() info) {
     const product: PrismaBindingProduct = await this.prisma.binding.query.product(
-      { where: { id: productID } },
+      { where: { slug: productID } },
       `{
           id
           retailPrice
