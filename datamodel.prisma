@@ -126,6 +126,7 @@ enum Rating {
 }
 
 enum LetterSize {
+  XXS
   XS
   S
   M
@@ -703,8 +704,9 @@ type CustomerAdmissionsData {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
-  customers: [Customer!]!
+  customer: Customer!
     @relation(name: "CustomerToCustomerAdmissionsData", onDelete: SET_NULL)
+  authorizationsCount: Int!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -730,7 +732,11 @@ type Customer {
   emailedProducts: [Product!]!
     @relation(name: "CustomerToEmailedProducts", onDelete: SET_NULL)
   admissions: CustomerAdmissionsData
-    @relation(name: "CustomerToCustomerAdmissionsData", onDelete: SET_NULL)
+    @relation(
+      name: "CustomerToCustomerAdmissionsData"
+      link: INLINE
+      onDelete: SET_NULL
+    )
   authorizedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt

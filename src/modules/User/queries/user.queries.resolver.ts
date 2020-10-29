@@ -16,7 +16,7 @@ export class UserQueriesResolver {
   async user(@Args() args, @Info() info) {
     return await this.prisma.binding.query.user(
       args,
-      addFragmentToInfo(info, `fragment EnsureId on User {id}`)
+      addFragmentToInfo(info, `fragment EnsureIdAndEmail on User {id email}`)
     )
   }
 
@@ -24,7 +24,7 @@ export class UserQueriesResolver {
   async users(@Args() args, @Info() info) {
     return await this.prisma.binding.query.users(
       args,
-      addFragmentToInfo(info, `fragment EnsureId on User {id}`)
+      addFragmentToInfo(info, `fragment EnsureIdAndEmail on User {id email}`)
     )
   }
 

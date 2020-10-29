@@ -3,11 +3,12 @@ import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
-import { Customer, CustomerAdmissionsData } from "@app/prisma/prisma.binding"
+import { Customer } from "@app/prisma/prisma.binding"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
   BillingInfoUpdateDataInput,
+  CustomerAdmissionsDataCreateWithoutCustomerInput,
   CustomerAdmissionsDataWhereUniqueInput,
   CustomerStatus,
   CustomerUpdateInput,
@@ -19,7 +20,7 @@ import {
 import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
-import { find, pick } from "lodash"
+import { pick } from "lodash"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
 import { AuthService } from "./auth.service"
@@ -31,34 +32,14 @@ type TriageCustomerResult = {
   waitlistReason?: InAdmissableReason
 }
 
-interface InadmissableAdmissionsDataWhereUniqueInputs {
-  withServiceableZipcode?: CustomerAdmissionsDataWhereUniqueInput
-  withUnserviceableZipcode?: CustomerAdmissionsDataWhereUniqueInput
-}
-
-interface AllAdmissionsDataWhereUniqueInputs {
-  admissable: CustomerAdmissionsDataWhereUniqueInput
-  AutomaticAdmissionsFlagOff: InadmissableAdmissionsDataWhereUniqueInputs
-  InsufficientInventory: InadmissableAdmissionsDataWhereUniqueInputs
-  OpsThresholdExceeded: InadmissableAdmissionsDataWhereUniqueInputs
-  UnserviceableZipcode: InadmissableAdmissionsDataWhereUniqueInputs
-  UnsupportedPlatform: InadmissableAdmissionsDataWhereUniqueInputs
-}
-
 type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
   customer: Customer
   dryRun: boolean
   inServiceableZipcode?: boolean
 }
 
-type AdmissibleRecordWhereSubKey =
-  | "withServiceableZipcode"
-  | "withUnserviceableZipcode"
-
 @Injectable()
 export class CustomerService {
-  private admissionsDataWheres = {} as AllAdmissionsDataWhereUniqueInputs
-
   triageCustomerInfo = `{
     id
     status
@@ -74,9 +55,12 @@ export class CustomerService {
       firstName
       lastName
       email
+      emails {
+        emailId
+      }
     }
     admissions {
-      id
+      authorizationsCount
     }
   }`
 
@@ -262,10 +246,21 @@ export class CustomerService {
         user {
           id
           email
+          emails {
+            emailId
+          }
           firstName
           lastName
         }
+        detail {
+          shippingAddress {
+            zipCode
+          }
+        }
         status
+        admissions {
+          authorizationsCount
+        }
       }`
     )
 
@@ -274,7 +269,6 @@ export class CustomerService {
       data.status &&
       data.status === "Authorized"
     ) {
-      data = { ...data, authorizedAt: new Date() }
       const {
         pass: haveSufficientInventory,
         detail: { availableBottomStyles, availableTopStyles },
@@ -283,6 +277,39 @@ export class CustomerService {
       if (!haveSufficientInventory) {
         throw new Error("Can not authorize user. Insufficient inventory")
       }
+
+      const { pass: inServiceableZipcode } = this.admissions.zipcodeAllowed(
+        customer.detail.shippingAddress.zipCode
+      )
+
+      if (!inServiceableZipcode) {
+        throw new Error(`Can not authorize user. In nonserviceable zipcode`)
+      }
+
+      data = {
+        ...data,
+        authorizedAt: new Date(),
+        admissions: {
+          upsert: {
+            create: {
+              admissable: true,
+              inServiceableZipcode: true,
+              authorizationsCount: this.calculateNumAuthorizations(
+                customer,
+                data.status,
+                false
+              ),
+            },
+            update: {
+              authorizationsCount: this.calculateNumAuthorizations(
+                customer,
+                data.status,
+                false
+              ),
+            },
+          },
+        },
+      } as CustomerUpdateInput
 
       if (withContact) {
         // Normal users
@@ -328,9 +355,6 @@ export class CustomerService {
     dryRun: boolean,
     customer: Customer = {} as Customer
   ): Promise<TriageCustomerResult> {
-    if (Object.keys(this.admissionsDataWheres).length === 0) {
-      await this.setAdmissionsDataWheres()
-    }
     if (Object.keys(customer).length === 0) {
       customer = await this.prisma.binding.query.customer(
         { where },
@@ -484,7 +508,7 @@ export class CustomerService {
     dryRun,
   }: UpdateCustomerAdmissionsDataInput) {
     let data: CustomerUpdateInput = {}
-    let segmentPayload = {}
+    let admissionsUpsertData = {} as CustomerAdmissionsDataCreateWithoutCustomerInput
 
     if (!dryRun) {
       data = { status }
@@ -494,8 +518,15 @@ export class CustomerService {
         if (!dryRun) {
           data.authorizedAt = new Date()
         }
-        data.admissions = { connect: this.admissionsDataWheres.admissable }
-        segmentPayload = { admissable: true, inServiceableZipcode: true }
+        admissionsUpsertData = {
+          admissable: true,
+          inServiceableZipcode: true,
+          authorizationsCount: this.calculateNumAuthorizations(
+            customer,
+            status,
+            dryRun
+          ),
+        }
         break
       case "Waitlisted":
         if (inServiceableZipcode === undefined) {
@@ -504,15 +535,15 @@ export class CustomerService {
           ))
         }
         // Handle the inserviceableZipcode
-        segmentPayload = {
-          admissable: true,
+        admissionsUpsertData = {
+          admissable: false,
           inServiceableZipcode,
-          waitlistReason,
-        }
-        data.admissions = {
-          connect: this.admissionsDataWheres[waitlistReason][
-            this.getZipcodeKey(inServiceableZipcode)
-          ],
+          inAdmissableReason: waitlistReason,
+          authorizationsCount: this.calculateNumAuthorizations(
+            customer,
+            status,
+            dryRun
+          ),
         }
         break
       default:
@@ -520,81 +551,60 @@ export class CustomerService {
     }
     if (
       !dryRun ||
-      (dryRun && this.shouldUpdateCustomerAdmissionsData(customer, data))
-    )
+      (dryRun &&
+        this.shouldUpdateCustomerAdmissionsData(customer, admissionsUpsertData))
+    ) {
       await this.prisma.client.updateCustomer({
         where: { id: customer.id },
-        data,
+        data: {
+          ...data,
+          admissions: {
+            upsert: {
+              update: admissionsUpsertData,
+              create: admissionsUpsertData,
+            },
+          },
+        },
       })
-
-    this.segment.identify(customer.user.id, segmentPayload)
+      this.segment.identify(customer.user.id, admissionsUpsertData)
+    }
   }
 
   private shouldUpdateCustomerAdmissionsData(
     customer: Customer,
-    data: CustomerUpdateInput
+    upsertData: CustomerAdmissionsDataCreateWithoutCustomerInput
   ) {
-    return customer.admissions?.id !== data.admissions.connect.id
-  }
-
-  private getZipcodeKey(
-    inServiceableZipcode: boolean
-  ): AdmissibleRecordWhereSubKey {
-    return inServiceableZipcode
-      ? "withServiceableZipcode"
-      : "withUnserviceableZipcode"
-  }
-
-  private getInAdmissableRecordsWheres(
-    allRecords: CustomerAdmissionsData[],
-    reason: InAdmissableReason
-  ) {
-    const subRecords = allRecords.filter(a => a.inAdmissableReason === reason)
-
-    const withServiceableZipcode = {
-      id: find(subRecords, a => a.inServiceableZipcode)?.id,
-    }
-    const withUnserviceableZipcode = {
-      id: find(subRecords, a => !a.inServiceableZipcode)?.id,
-    }
-
-    return {
-      [reason]: { withServiceableZipcode, withUnserviceableZipcode },
-    }
-  }
-
-  private async setAdmissionsDataWheres() {
-    const customerAdmissionsDataRecords = await this.prisma.client.customerAdmissionsDatas(
-      {}
+    return (
+      customer?.admissions?.admissable !== upsertData.admissable ||
+      customer?.admissions?.authorizationsCount !==
+        upsertData.authorizationsCount ||
+      customer?.admissions?.inAdmissableReason !==
+        upsertData.inAdmissableReason ||
+      customer?.admissions?.inServiceableZipcode !==
+        upsertData.inServiceableZipcode
     )
-    if (customerAdmissionsDataRecords.length === 0) {
-      throw new Error("Customer Admissions Records uninitialized")
-    }
+  }
 
-    // admissable record
-    const inadmissableReasons = [
-      "AutomaticAdmissionsFlagOff",
-      "InsufficientInventory",
-      "OpsThresholdExceeded",
-      "UnserviceableZipcode",
-      "UnsupportedPlatform",
-      "Untriageable",
-    ] as InAdmissableReason[]
+  /* Start here */
+  private calculateNumAuthorizations(
+    customer: Customer,
+    status: CustomerStatus,
+    dryRun: boolean
+  ) {
+    const hasExistingAuthorizationsCount =
+      typeof customer?.admissions?.authorizationsCount === "number"
 
-    this.admissionsDataWheres = {
-      admissable: {
-        id: find(customerAdmissionsDataRecords, a => a.admissable)?.id,
-      },
-      ...(inadmissableReasons.reduce(
-        (acc, curval) => ({
-          ...acc,
-          ...this.getInAdmissableRecordsWheres(
-            customerAdmissionsDataRecords,
-            curval
-          ),
-        }),
-        {}
-      ) as Omit<AllAdmissionsDataWhereUniqueInputs, "admissable">),
+    const numCompleteAccountEmails =
+      customer.user?.emails?.filter(a => a.emailId === "CompleteAccount")
+        ?.length || 0
+
+    const baseline = hasExistingAuthorizationsCount
+      ? customer.admissions.authorizationsCount
+      : numCompleteAccountEmails
+
+    if (!dryRun && status === "Authorized") {
+      return baseline + 1
     }
+    return baseline
   }
 }

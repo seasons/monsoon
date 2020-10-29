@@ -53,7 +53,7 @@ export class ProductVariantMutationsResolver {
   @Mutation()
   async upsertProductVariants(@Args() { productID, inputs }, @Info() info) {
     const product: PrismaBindingProduct = await this.prisma.binding.query.product(
-      { where: { id: productID } },
+      { where: { slug: productID } },
       `{
           id
           retailPrice
@@ -65,8 +65,7 @@ export class ProductVariantMutationsResolver {
           }
         }`
     )
-    const { retailPrice, status, type } = product
-    if (!status || !type) {
+    if (!product || !product.status || !product.type) {
       return null
     }
 
@@ -81,9 +80,9 @@ export class ProductVariantMutationsResolver {
           variant: input,
           colorCode: product.color.colorCode,
           productID,
-          retailPrice,
-          status,
-          type,
+          retailPrice: product.retailPrice,
+          status: product.status,
+          type: product.type,
         })
       })
     )

@@ -2537,7 +2537,7 @@ export type LocationType = "Office" | "Warehouse" | "Cleaner" | "Customer";
 
 export type ProductType = "Top" | "Bottom" | "Accessory" | "Shoe";
 
-export type LetterSize = "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL";
+export type LetterSize = "XXS" | "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL";
 
 export type BottomSizeType = "WxL" | "US" | "EU" | "JP" | "Letter";
 
@@ -3189,6 +3189,8 @@ export type CustomerAdmissionsDataOrderByInput =
   | "admissable_DESC"
   | "inAdmissableReason_ASC"
   | "inAdmissableReason_DESC"
+  | "authorizationsCount_ASC"
+  | "authorizationsCount_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -6969,9 +6971,15 @@ export interface CustomerAdmissionsDataWhereInput {
   inAdmissableReason_not?: Maybe<InAdmissableReason>;
   inAdmissableReason_in?: Maybe<InAdmissableReason[] | InAdmissableReason>;
   inAdmissableReason_not_in?: Maybe<InAdmissableReason[] | InAdmissableReason>;
-  customers_every?: Maybe<CustomerWhereInput>;
-  customers_some?: Maybe<CustomerWhereInput>;
-  customers_none?: Maybe<CustomerWhereInput>;
+  customer?: Maybe<CustomerWhereInput>;
+  authorizationsCount?: Maybe<Int>;
+  authorizationsCount_not?: Maybe<Int>;
+  authorizationsCount_in?: Maybe<Int[] | Int>;
+  authorizationsCount_not_in?: Maybe<Int[] | Int>;
+  authorizationsCount_lt?: Maybe<Int>;
+  authorizationsCount_lte?: Maybe<Int>;
+  authorizationsCount_gt?: Maybe<Int>;
+  authorizationsCount_gte?: Maybe<Int>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -11801,7 +11809,7 @@ export interface CustomerCreateWithoutBagItemsInput {
   referrer?: Maybe<CustomerCreateOneWithoutReferreesInput>;
   referrees?: Maybe<CustomerCreateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomersInput>;
+  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -12087,7 +12095,7 @@ export interface CustomerCreateWithoutReservationsInput {
   referrer?: Maybe<CustomerCreateOneWithoutReferreesInput>;
   referrees?: Maybe<CustomerCreateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomersInput>;
+  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -12150,20 +12158,21 @@ export interface CustomerCreateWithoutReferreesInput {
   referrerId?: Maybe<String>;
   referrer?: Maybe<CustomerCreateOneWithoutReferreesInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomersInput>;
+  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
-export interface CustomerAdmissionsDataCreateOneWithoutCustomersInput {
-  create?: Maybe<CustomerAdmissionsDataCreateWithoutCustomersInput>;
+export interface CustomerAdmissionsDataCreateOneWithoutCustomerInput {
+  create?: Maybe<CustomerAdmissionsDataCreateWithoutCustomerInput>;
   connect?: Maybe<CustomerAdmissionsDataWhereUniqueInput>;
 }
 
-export interface CustomerAdmissionsDataCreateWithoutCustomersInput {
+export interface CustomerAdmissionsDataCreateWithoutCustomerInput {
   id?: Maybe<ID_Input>;
   inServiceableZipcode: Boolean;
   admissable: Boolean;
   inAdmissableReason?: Maybe<InAdmissableReason>;
+  authorizationsCount: Int;
 }
 
 export interface CustomerCreateManyWithoutReferrerInput {
@@ -12187,7 +12196,7 @@ export interface CustomerCreateWithoutReferrerInput {
   referrerId?: Maybe<String>;
   referrees?: Maybe<CustomerCreateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomersInput>;
+  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -12284,7 +12293,7 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
   referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomersInput>;
+  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -12816,7 +12825,7 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
   referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomersInput>;
+  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -12959,28 +12968,29 @@ export interface CustomerUpdateWithoutReferreesDataInput {
   referrerId?: Maybe<String>;
   referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomersInput>;
+  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
-export interface CustomerAdmissionsDataUpdateOneWithoutCustomersInput {
-  create?: Maybe<CustomerAdmissionsDataCreateWithoutCustomersInput>;
-  update?: Maybe<CustomerAdmissionsDataUpdateWithoutCustomersDataInput>;
-  upsert?: Maybe<CustomerAdmissionsDataUpsertWithoutCustomersInput>;
+export interface CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
+  create?: Maybe<CustomerAdmissionsDataCreateWithoutCustomerInput>;
+  update?: Maybe<CustomerAdmissionsDataUpdateWithoutCustomerDataInput>;
+  upsert?: Maybe<CustomerAdmissionsDataUpsertWithoutCustomerInput>;
   delete?: Maybe<Boolean>;
   disconnect?: Maybe<Boolean>;
   connect?: Maybe<CustomerAdmissionsDataWhereUniqueInput>;
 }
 
-export interface CustomerAdmissionsDataUpdateWithoutCustomersDataInput {
+export interface CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   inServiceableZipcode?: Maybe<Boolean>;
   admissable?: Maybe<Boolean>;
   inAdmissableReason?: Maybe<InAdmissableReason>;
+  authorizationsCount?: Maybe<Int>;
 }
 
-export interface CustomerAdmissionsDataUpsertWithoutCustomersInput {
-  update: CustomerAdmissionsDataUpdateWithoutCustomersDataInput;
-  create: CustomerAdmissionsDataCreateWithoutCustomersInput;
+export interface CustomerAdmissionsDataUpsertWithoutCustomerInput {
+  update: CustomerAdmissionsDataUpdateWithoutCustomerDataInput;
+  create: CustomerAdmissionsDataCreateWithoutCustomerInput;
 }
 
 export interface CustomerUpsertWithoutReferreesInput {
@@ -13029,7 +13039,7 @@ export interface CustomerUpdateWithoutReferrerDataInput {
   referrerId?: Maybe<String>;
   referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomersInput>;
+  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -13994,7 +14004,7 @@ export interface CustomerCreateInput {
   referrer?: Maybe<CustomerCreateOneWithoutReferreesInput>;
   referrees?: Maybe<CustomerCreateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomersInput>;
+  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -14012,7 +14022,7 @@ export interface CustomerUpdateInput {
   referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
   referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomersInput>;
+  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -14029,15 +14039,13 @@ export interface CustomerAdmissionsDataCreateInput {
   inServiceableZipcode: Boolean;
   admissable: Boolean;
   inAdmissableReason?: Maybe<InAdmissableReason>;
-  customers?: Maybe<CustomerCreateManyWithoutAdmissionsInput>;
+  customer: CustomerCreateOneWithoutAdmissionsInput;
+  authorizationsCount: Int;
 }
 
-export interface CustomerCreateManyWithoutAdmissionsInput {
-  create?: Maybe<
-    | CustomerCreateWithoutAdmissionsInput[]
-    | CustomerCreateWithoutAdmissionsInput
-  >;
-  connect?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
+export interface CustomerCreateOneWithoutAdmissionsInput {
+  create?: Maybe<CustomerCreateWithoutAdmissionsInput>;
+  connect?: Maybe<CustomerWhereUniqueInput>;
 }
 
 export interface CustomerCreateWithoutAdmissionsInput {
@@ -14062,36 +14070,15 @@ export interface CustomerAdmissionsDataUpdateInput {
   inServiceableZipcode?: Maybe<Boolean>;
   admissable?: Maybe<Boolean>;
   inAdmissableReason?: Maybe<InAdmissableReason>;
-  customers?: Maybe<CustomerUpdateManyWithoutAdmissionsInput>;
+  customer?: Maybe<CustomerUpdateOneRequiredWithoutAdmissionsInput>;
+  authorizationsCount?: Maybe<Int>;
 }
 
-export interface CustomerUpdateManyWithoutAdmissionsInput {
-  create?: Maybe<
-    | CustomerCreateWithoutAdmissionsInput[]
-    | CustomerCreateWithoutAdmissionsInput
-  >;
-  delete?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
-  connect?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
-  set?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
-  disconnect?: Maybe<CustomerWhereUniqueInput[] | CustomerWhereUniqueInput>;
-  update?: Maybe<
-    | CustomerUpdateWithWhereUniqueWithoutAdmissionsInput[]
-    | CustomerUpdateWithWhereUniqueWithoutAdmissionsInput
-  >;
-  upsert?: Maybe<
-    | CustomerUpsertWithWhereUniqueWithoutAdmissionsInput[]
-    | CustomerUpsertWithWhereUniqueWithoutAdmissionsInput
-  >;
-  deleteMany?: Maybe<CustomerScalarWhereInput[] | CustomerScalarWhereInput>;
-  updateMany?: Maybe<
-    | CustomerUpdateManyWithWhereNestedInput[]
-    | CustomerUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface CustomerUpdateWithWhereUniqueWithoutAdmissionsInput {
-  where: CustomerWhereUniqueInput;
-  data: CustomerUpdateWithoutAdmissionsDataInput;
+export interface CustomerUpdateOneRequiredWithoutAdmissionsInput {
+  create?: Maybe<CustomerCreateWithoutAdmissionsInput>;
+  update?: Maybe<CustomerUpdateWithoutAdmissionsDataInput>;
+  upsert?: Maybe<CustomerUpsertWithoutAdmissionsInput>;
+  connect?: Maybe<CustomerWhereUniqueInput>;
 }
 
 export interface CustomerUpdateWithoutAdmissionsDataInput {
@@ -14111,8 +14098,7 @@ export interface CustomerUpdateWithoutAdmissionsDataInput {
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
-export interface CustomerUpsertWithWhereUniqueWithoutAdmissionsInput {
-  where: CustomerWhereUniqueInput;
+export interface CustomerUpsertWithoutAdmissionsInput {
   update: CustomerUpdateWithoutAdmissionsDataInput;
   create: CustomerCreateWithoutAdmissionsInput;
 }
@@ -14121,6 +14107,7 @@ export interface CustomerAdmissionsDataUpdateManyMutationInput {
   inServiceableZipcode?: Maybe<Boolean>;
   admissable?: Maybe<Boolean>;
   inAdmissableReason?: Maybe<InAdmissableReason>;
+  authorizationsCount?: Maybe<Int>;
 }
 
 export interface CustomerDetailUpdateInput {
@@ -14198,7 +14185,7 @@ export interface CustomerCreateWithoutMembershipInput {
   referrer?: Maybe<CustomerCreateOneWithoutReferreesInput>;
   referrees?: Maybe<CustomerCreateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomersInput>;
+  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -14229,7 +14216,7 @@ export interface CustomerUpdateWithoutMembershipDataInput {
   referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
   referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomersInput>;
+  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -15485,7 +15472,7 @@ export interface CustomerUpdateDataInput {
   referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
   referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomersInput>;
+  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
 }
 
@@ -20537,6 +20524,7 @@ export interface CustomerAdmissionsData {
   inServiceableZipcode: Boolean;
   admissable: Boolean;
   inAdmissableReason?: InAdmissableReason;
+  authorizationsCount: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -20548,15 +20536,8 @@ export interface CustomerAdmissionsDataPromise
   inServiceableZipcode: () => Promise<Boolean>;
   admissable: () => Promise<Boolean>;
   inAdmissableReason: () => Promise<InAdmissableReason>;
-  customers: <T = FragmentableArray<Customer>>(args?: {
-    where?: CustomerWhereInput;
-    orderBy?: CustomerOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+  customer: <T = CustomerPromise>() => T;
+  authorizationsCount: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -20568,15 +20549,8 @@ export interface CustomerAdmissionsDataSubscription
   inServiceableZipcode: () => Promise<AsyncIterator<Boolean>>;
   admissable: () => Promise<AsyncIterator<Boolean>>;
   inAdmissableReason: () => Promise<AsyncIterator<InAdmissableReason>>;
-  customers: <T = Promise<AsyncIterator<CustomerSubscription>>>(args?: {
-    where?: CustomerWhereInput;
-    orderBy?: CustomerOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+  customer: <T = CustomerSubscription>() => T;
+  authorizationsCount: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -20588,15 +20562,8 @@ export interface CustomerAdmissionsDataNullablePromise
   inServiceableZipcode: () => Promise<Boolean>;
   admissable: () => Promise<Boolean>;
   inAdmissableReason: () => Promise<InAdmissableReason>;
-  customers: <T = FragmentableArray<Customer>>(args?: {
-    where?: CustomerWhereInput;
-    orderBy?: CustomerOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+  customer: <T = CustomerPromise>() => T;
+  authorizationsCount: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -24848,6 +24815,7 @@ export interface CustomerAdmissionsDataPreviousValues {
   inServiceableZipcode: Boolean;
   admissable: Boolean;
   inAdmissableReason?: InAdmissableReason;
+  authorizationsCount: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -24859,6 +24827,7 @@ export interface CustomerAdmissionsDataPreviousValuesPromise
   inServiceableZipcode: () => Promise<Boolean>;
   admissable: () => Promise<Boolean>;
   inAdmissableReason: () => Promise<InAdmissableReason>;
+  authorizationsCount: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -24870,6 +24839,7 @@ export interface CustomerAdmissionsDataPreviousValuesSubscription
   inServiceableZipcode: () => Promise<AsyncIterator<Boolean>>;
   admissable: () => Promise<AsyncIterator<Boolean>>;
   inAdmissableReason: () => Promise<AsyncIterator<InAdmissableReason>>;
+  authorizationsCount: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

@@ -1,5 +1,5 @@
-# source: http://localhost:4466/monsoon/dev
-# timestamp: Mon Oct 26 2020 04:48:01 GMT-0400 (Eastern Daylight Time)
+# source: https://monsoon-prisma-staging.herokuapp.com/monsoon/staging
+# timestamp: Thu Oct 29 2020 19:06:07 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -6640,18 +6640,6 @@ type Customer implements Node {
     first: Int
     last: Int
   ): [Reservation!]
-  referralLink: String
-  referrerId: String
-  referrer: Customer
-  referrees(
-    where: CustomerWhereInput
-    orderBy: CustomerOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Customer!]
   emailedProducts(
     where: ProductWhereInput
     orderBy: ProductOrderByInput
@@ -6672,15 +6660,8 @@ type CustomerAdmissionsData implements Node {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
-  customers(
-    where: CustomerWhereInput
-    orderBy: CustomerOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Customer!]
+  customer: Customer!
+  authorizationsCount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6706,19 +6687,21 @@ input CustomerAdmissionsDataCreateInput {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
-  customers: CustomerCreateManyWithoutAdmissionsInput
+  authorizationsCount: Int!
+  customer: CustomerCreateOneWithoutAdmissionsInput!
 }
 
-input CustomerAdmissionsDataCreateOneWithoutCustomersInput {
-  create: CustomerAdmissionsDataCreateWithoutCustomersInput
+input CustomerAdmissionsDataCreateOneWithoutCustomerInput {
+  create: CustomerAdmissionsDataCreateWithoutCustomerInput
   connect: CustomerAdmissionsDataWhereUniqueInput
 }
 
-input CustomerAdmissionsDataCreateWithoutCustomersInput {
+input CustomerAdmissionsDataCreateWithoutCustomerInput {
   id: ID
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  authorizationsCount: Int!
 }
 
 """
@@ -6745,6 +6728,8 @@ enum CustomerAdmissionsDataOrderByInput {
   admissable_DESC
   inAdmissableReason_ASC
   inAdmissableReason_DESC
+  authorizationsCount_ASC
+  authorizationsCount_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6756,6 +6741,7 @@ type CustomerAdmissionsDataPreviousValues {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  authorizationsCount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6809,33 +6795,36 @@ input CustomerAdmissionsDataUpdateInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
-  customers: CustomerUpdateManyWithoutAdmissionsInput
+  authorizationsCount: Int
+  customer: CustomerUpdateOneRequiredWithoutAdmissionsInput
 }
 
 input CustomerAdmissionsDataUpdateManyMutationInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  authorizationsCount: Int
 }
 
-input CustomerAdmissionsDataUpdateOneWithoutCustomersInput {
-  create: CustomerAdmissionsDataCreateWithoutCustomersInput
+input CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
+  create: CustomerAdmissionsDataCreateWithoutCustomerInput
   connect: CustomerAdmissionsDataWhereUniqueInput
   disconnect: Boolean
   delete: Boolean
-  update: CustomerAdmissionsDataUpdateWithoutCustomersDataInput
-  upsert: CustomerAdmissionsDataUpsertWithoutCustomersInput
+  update: CustomerAdmissionsDataUpdateWithoutCustomerDataInput
+  upsert: CustomerAdmissionsDataUpsertWithoutCustomerInput
 }
 
-input CustomerAdmissionsDataUpdateWithoutCustomersDataInput {
+input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  authorizationsCount: Int
 }
 
-input CustomerAdmissionsDataUpsertWithoutCustomersInput {
-  update: CustomerAdmissionsDataUpdateWithoutCustomersDataInput!
-  create: CustomerAdmissionsDataCreateWithoutCustomersInput!
+input CustomerAdmissionsDataUpsertWithoutCustomerInput {
+  update: CustomerAdmissionsDataUpdateWithoutCustomerDataInput!
+  create: CustomerAdmissionsDataCreateWithoutCustomerInput!
 }
 
 input CustomerAdmissionsDataWhereInput {
@@ -6947,6 +6936,42 @@ input CustomerAdmissionsDataWhereInput {
   All values that are not contained in given list.
   """
   inAdmissableReason_not_in: [InAdmissableReason!]
+  authorizationsCount: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  authorizationsCount_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  authorizationsCount_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  authorizationsCount_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  authorizationsCount_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  authorizationsCount_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  authorizationsCount_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  authorizationsCount_gte: Int
   createdAt: DateTime
 
   """
@@ -7019,9 +7044,7 @@ input CustomerAdmissionsDataWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
-  customers_every: CustomerWhereInput
-  customers_some: CustomerWhereInput
-  customers_none: CustomerWhereInput
+  customer: CustomerWhereInput
 }
 
 input CustomerAdmissionsDataWhereUniqueInput {
@@ -7048,8 +7071,6 @@ input CustomerCreateInput {
   id: ID
   status: CustomerStatus
   plan: Plan
-  referralLink: String
-  referrerId: String
   authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
@@ -7057,24 +7078,17 @@ input CustomerCreateInput {
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  referrer: CustomerCreateOneWithoutReferreesInput
-  referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
-  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
-}
-
-input CustomerCreateManyWithoutAdmissionsInput {
-  create: [CustomerCreateWithoutAdmissionsInput!]
-  connect: [CustomerWhereUniqueInput!]
-}
-
-input CustomerCreateManyWithoutReferrerInput {
-  create: [CustomerCreateWithoutReferrerInput!]
-  connect: [CustomerWhereUniqueInput!]
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateOneInput {
   create: CustomerCreateInput
+  connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateOneWithoutAdmissionsInput {
+  create: CustomerCreateWithoutAdmissionsInput
   connect: CustomerWhereUniqueInput
 }
 
@@ -7088,11 +7102,6 @@ input CustomerCreateOneWithoutMembershipInput {
   connect: CustomerWhereUniqueInput
 }
 
-input CustomerCreateOneWithoutReferreesInput {
-  create: CustomerCreateWithoutReferreesInput
-  connect: CustomerWhereUniqueInput
-}
-
 input CustomerCreateOneWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput
   connect: CustomerWhereUniqueInput
@@ -7102,8 +7111,6 @@ input CustomerCreateWithoutAdmissionsInput {
   id: ID
   status: CustomerStatus
   plan: Plan
-  referralLink: String
-  referrerId: String
   authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
@@ -7111,8 +7118,6 @@ input CustomerCreateWithoutAdmissionsInput {
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  referrer: CustomerCreateOneWithoutReferreesInput
-  referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
 }
 
@@ -7120,90 +7125,42 @@ input CustomerCreateWithoutBagItemsInput {
   id: ID
   status: CustomerStatus
   plan: Plan
-  referralLink: String
-  referrerId: String
   authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  referrer: CustomerCreateOneWithoutReferreesInput
-  referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
-  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutMembershipInput {
   id: ID
   status: CustomerStatus
   plan: Plan
-  referralLink: String
-  referrerId: String
   authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
-  referrer: CustomerCreateOneWithoutReferreesInput
-  referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
-  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
-}
-
-input CustomerCreateWithoutReferreesInput {
-  id: ID
-  status: CustomerStatus
-  plan: Plan
-  referralLink: String
-  referrerId: String
-  authorizedAt: DateTime
-  user: UserCreateOneInput!
-  detail: CustomerDetailCreateOneInput
-  billingInfo: BillingInfoCreateOneInput
-  membership: CustomerMembershipCreateOneWithoutCustomerInput
-  bagItems: BagItemCreateManyWithoutCustomerInput
-  reservations: ReservationCreateManyWithoutCustomerInput
-  referrer: CustomerCreateOneWithoutReferreesInput
-  emailedProducts: ProductCreateManyInput
-  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
-}
-
-input CustomerCreateWithoutReferrerInput {
-  id: ID
-  status: CustomerStatus
-  plan: Plan
-  referralLink: String
-  referrerId: String
-  authorizedAt: DateTime
-  user: UserCreateOneInput!
-  detail: CustomerDetailCreateOneInput
-  billingInfo: BillingInfoCreateOneInput
-  membership: CustomerMembershipCreateOneWithoutCustomerInput
-  bagItems: BagItemCreateManyWithoutCustomerInput
-  reservations: ReservationCreateManyWithoutCustomerInput
-  referrees: CustomerCreateManyWithoutReferrerInput
-  emailedProducts: ProductCreateManyInput
-  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReservationsInput {
   id: ID
   status: CustomerStatus
   plan: Plan
-  referralLink: String
-  referrerId: String
   authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
-  referrer: CustomerCreateOneWithoutReferreesInput
-  referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
-  admissions: CustomerAdmissionsDataCreateOneWithoutCustomersInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
 }
 
 type CustomerDetail implements Node {
@@ -9049,10 +9006,6 @@ enum CustomerOrderByInput {
   status_DESC
   plan_ASC
   plan_DESC
-  referralLink_ASC
-  referralLink_DESC
-  referrerId_ASC
-  referrerId_DESC
   authorizedAt_ASC
   authorizedAt_DESC
   createdAt_ASC
@@ -9065,366 +9018,9 @@ type CustomerPreviousValues {
   id: ID!
   status: CustomerStatus
   plan: Plan
-  referralLink: String
-  referrerId: String
   authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
-}
-
-input CustomerScalarWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [CustomerScalarWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [CustomerScalarWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [CustomerScalarWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  status: CustomerStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  status_not: CustomerStatus
-
-  """
-  All values that are contained in given list.
-  """
-  status_in: [CustomerStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  status_not_in: [CustomerStatus!]
-  plan: Plan
-
-  """
-  All values that are not equal to given value.
-  """
-  plan_not: Plan
-
-  """
-  All values that are contained in given list.
-  """
-  plan_in: [Plan!]
-
-  """
-  All values that are not contained in given list.
-  """
-  plan_not_in: [Plan!]
-  referralLink: String
-
-  """
-  All values that are not equal to given value.
-  """
-  referralLink_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  referralLink_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  referralLink_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  referralLink_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  referralLink_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  referralLink_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  referralLink_gte: String
-
-  """
-  All values containing the given string.
-  """
-  referralLink_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  referralLink_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  referralLink_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  referralLink_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  referralLink_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  referralLink_not_ends_with: String
-  referrerId: String
-
-  """
-  All values that are not equal to given value.
-  """
-  referrerId_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  referrerId_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  referrerId_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  referrerId_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  referrerId_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  referrerId_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  referrerId_gte: String
-
-  """
-  All values containing the given string.
-  """
-  referrerId_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  referrerId_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  referrerId_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  referrerId_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  referrerId_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  referrerId_not_ends_with: String
-  authorizedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  authorizedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  authorizedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  authorizedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  authorizedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  authorizedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  authorizedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  authorizedAt_gte: DateTime
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  updatedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  updatedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  updatedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  updatedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  updatedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  updatedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  updatedAt_gte: DateTime
 }
 
 enum CustomerStatus {
@@ -9486,8 +9082,6 @@ input CustomerSubscriptionWhereInput {
 input CustomerUpdateDataInput {
   status: CustomerStatus
   plan: Plan
-  referralLink: String
-  referrerId: String
   authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
@@ -9495,17 +9089,13 @@ input CustomerUpdateDataInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  referrer: CustomerUpdateOneWithoutReferreesInput
-  referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
-  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateInput {
   status: CustomerStatus
   plan: Plan
-  referralLink: String
-  referrerId: String
   authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
@@ -9513,55 +9103,14 @@ input CustomerUpdateInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  referrer: CustomerUpdateOneWithoutReferreesInput
-  referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
-  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
-}
-
-input CustomerUpdateManyDataInput {
-  status: CustomerStatus
-  plan: Plan
-  referralLink: String
-  referrerId: String
-  authorizedAt: DateTime
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateManyMutationInput {
   status: CustomerStatus
   plan: Plan
-  referralLink: String
-  referrerId: String
   authorizedAt: DateTime
-}
-
-input CustomerUpdateManyWithoutAdmissionsInput {
-  create: [CustomerCreateWithoutAdmissionsInput!]
-  connect: [CustomerWhereUniqueInput!]
-  set: [CustomerWhereUniqueInput!]
-  disconnect: [CustomerWhereUniqueInput!]
-  delete: [CustomerWhereUniqueInput!]
-  update: [CustomerUpdateWithWhereUniqueWithoutAdmissionsInput!]
-  updateMany: [CustomerUpdateManyWithWhereNestedInput!]
-  deleteMany: [CustomerScalarWhereInput!]
-  upsert: [CustomerUpsertWithWhereUniqueWithoutAdmissionsInput!]
-}
-
-input CustomerUpdateManyWithoutReferrerInput {
-  create: [CustomerCreateWithoutReferrerInput!]
-  connect: [CustomerWhereUniqueInput!]
-  set: [CustomerWhereUniqueInput!]
-  disconnect: [CustomerWhereUniqueInput!]
-  delete: [CustomerWhereUniqueInput!]
-  update: [CustomerUpdateWithWhereUniqueWithoutReferrerInput!]
-  updateMany: [CustomerUpdateManyWithWhereNestedInput!]
-  deleteMany: [CustomerScalarWhereInput!]
-  upsert: [CustomerUpsertWithWhereUniqueWithoutReferrerInput!]
-}
-
-input CustomerUpdateManyWithWhereNestedInput {
-  where: CustomerScalarWhereInput!
-  data: CustomerUpdateManyDataInput!
 }
 
 input CustomerUpdateOneRequiredInput {
@@ -9569,6 +9118,13 @@ input CustomerUpdateOneRequiredInput {
   connect: CustomerWhereUniqueInput
   update: CustomerUpdateDataInput
   upsert: CustomerUpsertNestedInput
+}
+
+input CustomerUpdateOneRequiredWithoutAdmissionsInput {
+  create: CustomerCreateWithoutAdmissionsInput
+  connect: CustomerWhereUniqueInput
+  update: CustomerUpdateWithoutAdmissionsDataInput
+  upsert: CustomerUpsertWithoutAdmissionsInput
 }
 
 input CustomerUpdateOneRequiredWithoutBagItemsInput {
@@ -9592,20 +9148,9 @@ input CustomerUpdateOneRequiredWithoutReservationsInput {
   upsert: CustomerUpsertWithoutReservationsInput
 }
 
-input CustomerUpdateOneWithoutReferreesInput {
-  create: CustomerCreateWithoutReferreesInput
-  connect: CustomerWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: CustomerUpdateWithoutReferreesDataInput
-  upsert: CustomerUpsertWithoutReferreesInput
-}
-
 input CustomerUpdateWithoutAdmissionsDataInput {
   status: CustomerStatus
   plan: Plan
-  referralLink: String
-  referrerId: String
   authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
@@ -9613,109 +9158,56 @@ input CustomerUpdateWithoutAdmissionsDataInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  referrer: CustomerUpdateOneWithoutReferreesInput
-  referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateWithoutBagItemsDataInput {
   status: CustomerStatus
   plan: Plan
-  referralLink: String
-  referrerId: String
   authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  referrer: CustomerUpdateOneWithoutReferreesInput
-  referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
-  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
   status: CustomerStatus
   plan: Plan
-  referralLink: String
-  referrerId: String
   authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
-  referrer: CustomerUpdateOneWithoutReferreesInput
-  referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
-  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
-}
-
-input CustomerUpdateWithoutReferreesDataInput {
-  status: CustomerStatus
-  plan: Plan
-  referralLink: String
-  referrerId: String
-  authorizedAt: DateTime
-  user: UserUpdateOneRequiredInput
-  detail: CustomerDetailUpdateOneInput
-  billingInfo: BillingInfoUpdateOneInput
-  membership: CustomerMembershipUpdateOneWithoutCustomerInput
-  bagItems: BagItemUpdateManyWithoutCustomerInput
-  reservations: ReservationUpdateManyWithoutCustomerInput
-  referrer: CustomerUpdateOneWithoutReferreesInput
-  emailedProducts: ProductUpdateManyInput
-  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
-}
-
-input CustomerUpdateWithoutReferrerDataInput {
-  status: CustomerStatus
-  plan: Plan
-  referralLink: String
-  referrerId: String
-  authorizedAt: DateTime
-  user: UserUpdateOneRequiredInput
-  detail: CustomerDetailUpdateOneInput
-  billingInfo: BillingInfoUpdateOneInput
-  membership: CustomerMembershipUpdateOneWithoutCustomerInput
-  bagItems: BagItemUpdateManyWithoutCustomerInput
-  reservations: ReservationUpdateManyWithoutCustomerInput
-  referrees: CustomerUpdateManyWithoutReferrerInput
-  emailedProducts: ProductUpdateManyInput
-  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
   status: CustomerStatus
   plan: Plan
-  referralLink: String
-  referrerId: String
   authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
-  referrer: CustomerUpdateOneWithoutReferreesInput
-  referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
-  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomersInput
-}
-
-input CustomerUpdateWithWhereUniqueWithoutAdmissionsInput {
-  where: CustomerWhereUniqueInput!
-  data: CustomerUpdateWithoutAdmissionsDataInput!
-}
-
-input CustomerUpdateWithWhereUniqueWithoutReferrerInput {
-  where: CustomerWhereUniqueInput!
-  data: CustomerUpdateWithoutReferrerDataInput!
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpsertNestedInput {
   update: CustomerUpdateDataInput!
   create: CustomerCreateInput!
+}
+
+input CustomerUpsertWithoutAdmissionsInput {
+  update: CustomerUpdateWithoutAdmissionsDataInput!
+  create: CustomerCreateWithoutAdmissionsInput!
 }
 
 input CustomerUpsertWithoutBagItemsInput {
@@ -9728,26 +9220,9 @@ input CustomerUpsertWithoutMembershipInput {
   create: CustomerCreateWithoutMembershipInput!
 }
 
-input CustomerUpsertWithoutReferreesInput {
-  update: CustomerUpdateWithoutReferreesDataInput!
-  create: CustomerCreateWithoutReferreesInput!
-}
-
 input CustomerUpsertWithoutReservationsInput {
   update: CustomerUpdateWithoutReservationsDataInput!
   create: CustomerCreateWithoutReservationsInput!
-}
-
-input CustomerUpsertWithWhereUniqueWithoutAdmissionsInput {
-  where: CustomerWhereUniqueInput!
-  update: CustomerUpdateWithoutAdmissionsDataInput!
-  create: CustomerCreateWithoutAdmissionsInput!
-}
-
-input CustomerUpsertWithWhereUniqueWithoutReferrerInput {
-  where: CustomerWhereUniqueInput!
-  update: CustomerUpdateWithoutReferrerDataInput!
-  create: CustomerCreateWithoutReferrerInput!
 }
 
 input CustomerWhereInput {
@@ -9863,138 +9338,6 @@ input CustomerWhereInput {
   All values that are not contained in given list.
   """
   plan_not_in: [Plan!]
-  referralLink: String
-
-  """
-  All values that are not equal to given value.
-  """
-  referralLink_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  referralLink_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  referralLink_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  referralLink_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  referralLink_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  referralLink_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  referralLink_gte: String
-
-  """
-  All values containing the given string.
-  """
-  referralLink_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  referralLink_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  referralLink_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  referralLink_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  referralLink_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  referralLink_not_ends_with: String
-  referrerId: String
-
-  """
-  All values that are not equal to given value.
-  """
-  referrerId_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  referrerId_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  referrerId_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  referrerId_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  referrerId_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  referrerId_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  referrerId_gte: String
-
-  """
-  All values containing the given string.
-  """
-  referrerId_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  referrerId_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  referrerId_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  referrerId_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  referrerId_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  referrerId_not_ends_with: String
   authorizedAt: DateTime
 
   """
@@ -10113,10 +9456,6 @@ input CustomerWhereInput {
   reservations_every: ReservationWhereInput
   reservations_some: ReservationWhereInput
   reservations_none: ReservationWhereInput
-  referrer: CustomerWhereInput
-  referrees_every: CustomerWhereInput
-  referrees_some: CustomerWhereInput
-  referrees_none: CustomerWhereInput
   emailedProducts_every: ProductWhereInput
   emailedProducts_some: ProductWhereInput
   emailedProducts_none: ProductWhereInput
@@ -10125,7 +9464,6 @@ input CustomerWhereInput {
 
 input CustomerWhereUniqueInput {
   id: ID
-  referralLink: String
 }
 
 scalar DateTime
@@ -14118,6 +13456,7 @@ input LabelWhereUniqueInput {
 }
 
 enum LetterSize {
+  XXS
   XS
   S
   M
