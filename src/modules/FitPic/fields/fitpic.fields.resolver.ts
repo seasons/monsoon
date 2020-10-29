@@ -1,4 +1,4 @@
-import { Loader } from "@app/modules/DataLoader"
+import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { FitPic } from "@app/prisma"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"

@@ -3,7 +3,7 @@ import * as fs from "fs"
 
 import { DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
-import { Location } from "@prisma/index"
+import { Location, Reservation } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
@@ -12,12 +12,14 @@ import moment from "moment"
 import { bottomSizeRegex } from "../../Product/constants"
 
 enum ProductSize {
+  XXS = "XXS",
   XS = "XS",
   S = "S",
   M = "M",
   L = "L",
   XL = "XL",
   XXL = "XXL",
+  XXXL = "XXXL",
 }
 
 @Injectable()
@@ -50,6 +52,9 @@ export class UtilsService {
     afterDate: Date
     numDays: number
   }): boolean {
+    if (beforeDate === null || afterDate === null) {
+      return false
+    }
     const before = moment(
       new Date(
         beforeDate.getFullYear(),
@@ -95,15 +100,29 @@ export class UtilsService {
     return prismaLocation
   }
 
-  formatReservationReturnDate(reservationCreatedAtDate: Date) {
-    const returnDate = new Date(reservationCreatedAtDate)
-    returnDate.setDate(reservationCreatedAtDate.getDate() + 30)
-    return returnDate.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
+  getReservationReturnDate(reservation: Reservation) {
+    let returnDate
+    let returnOffset
+    if (reservation.receivedAt !== null) {
+      returnDate = new Date(reservation.receivedAt)
+      returnOffset = 30
+    } else {
+      const daysSinceReservationCreated = moment().diff(
+        moment(reservation.createdAt),
+        "days"
+      )
+      if (daysSinceReservationCreated < 15) {
+        return null
+      } else {
+        // If for some reason we have not been able to set receivedAt 15 days in,
+        // default to 35 days after createdAt. This assumes a 5 day shipping time.
+        returnDate = new Date(reservation.createdAt)
+        returnOffset = 35
+      }
+    }
+    returnDate.setDate(returnDate.getDate() + returnOffset)
+
+    return returnDate
   }
 
   encryptUserIDHash(userID: string): string {
@@ -200,6 +219,8 @@ export class UtilsService {
 
   sizeNameToSizeCode(sizeName: ProductSize | string) {
     switch (sizeName) {
+      case ProductSize.XXS:
+        return "XS"
       case ProductSize.XS:
         return "XS"
       case ProductSize.S:
@@ -212,6 +233,8 @@ export class UtilsService {
         return "XL"
       case ProductSize.XXL:
         return "XXL"
+      case ProductSize.XXXL:
+        return "XXXL"
     }
 
     // If we get here, we're expecting a bottom with size WxL e.g 32x28 or 27x8

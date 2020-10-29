@@ -1,6 +1,6 @@
 import * as util from "util"
 
-import { DataLoaderInterceptor } from "@modules/DataLoader/index"
+import { DataLoaderInterceptor } from "@modules/DataLoader/interceptors/dataloader.interceptor"
 import { Module, forwardRef } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
 import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"

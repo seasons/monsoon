@@ -1,3 +1,5 @@
+import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
@@ -9,18 +11,22 @@ import { ReservationUtilsService } from "../services/reservation.utils.service"
 @Resolver("Reservation")
 export class ReservationFieldsResolver {
   constructor(
-    private readonly reservationUtils: ReservationUtilsService,
     private readonly reservationService: ReservationService,
+    private readonly utils: UtilsService,
     private readonly imageService: ImageService,
     private readonly prisma: PrismaService
   ) {}
 
   @ResolveField()
-  async returnAt(@Parent() parent) {
-    const reservation = await this.prisma.client.reservation({
-      id: parent.id,
+  async returnAt(
+    @Parent() parent,
+    @Loader({
+      params: { query: `reservations`, info: `{id createdAt receivedAt}` },
     })
-    return this.reservationUtils.returnDate(new Date(reservation?.createdAt))
+    reservationLoader
+  ) {
+    const reservation = await reservationLoader.load(parent.id)
+    return this.utils.getReservationReturnDate(reservation)
   }
 
   @ResolveField()

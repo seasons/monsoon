@@ -99,6 +99,8 @@ export class ShippoController {
             `{
               id
               status
+              receivedAt
+              shippedAt
               sentPackage {
                 transactionID
               }

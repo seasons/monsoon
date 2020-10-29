@@ -1,8 +1,7 @@
 import { User } from "@app/decorators"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
-import { PaymentPlan, Plan } from "@app/prisma"
-import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
-import { Loader } from "@modules/DataLoader"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import { Loader } from "@modules/DataLoader/decorators/dataloader.decorator"
 import {
   InvoicesForCustomersLoader,
   PaymentService,
@@ -11,7 +10,7 @@ import {
   InvoicesDataLoader,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, isObject } from "lodash"
 
