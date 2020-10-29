@@ -104,10 +104,18 @@ export class UtilsService {
       returnDate = new Date(reservation.receivedAt)
       returnOffset = 30
     } else {
-      // If for some reason we have not been able to set receivedAt,
-      // default to 35 days after createdAt. This assumes a 5 day shipping time.
-      returnDate = new Date(reservation.createdAt)
-      returnOffset = 35
+      const daysSinceReservationCreated = moment().diff(
+        moment(reservation.createdAt),
+        "days"
+      )
+      if (daysSinceReservationCreated < 15) {
+        return null
+      } else {
+        // If for some reason we have not been able to set receivedAt 15 days in,
+        // default to 35 days after createdAt. This assumes a 5 day shipping time.
+        returnDate = new Date(reservation.createdAt)
+        returnOffset = 35
+      }
     }
     returnDate.setDate(returnDate.getDate() + returnOffset)
 
