@@ -5,8 +5,6 @@ import { Injectable } from "@nestjs/common"
 import Handlebars from "handlebars"
 import mustache from "mustache"
 
-import { ReservedItem } from "../email.types"
-
 @Injectable()
 export class EmailDataProvider {
   reservationReturnConfirmation(reservationNumber, itemsReturned, userEmail) {
@@ -25,98 +23,6 @@ export class EmailDataProvider {
             },
           ],
         },
-      },
-    }
-  }
-
-  reservationConfirmation(
-    reservationNumber: number,
-    reservedItems: ReservedItem[],
-    returnDateFormatted: string,
-    trackingNumber?: string,
-    trackingUrl?: string
-  ) {
-    const paragraphs = [
-      {
-        html: "Sit back, relax and we'll let you know when it's on its way.",
-      },
-      trackingNumber && trackingUrl
-        ? {
-            html: `Your tracking number: <a href="${trackingUrl}">${trackingNumber}</a>`,
-          }
-        : null,
-    ]
-    return {
-      email: {
-        body: {
-          paragraphs: paragraphs,
-        },
-        prefooter: {
-          paragraphs: [
-            {
-              html: `Please return your items no later than ${returnDateFormatted}.`,
-            },
-            { html: `Here's what you'll need to do:` },
-            {
-              html:
-                `<ol style="margin:0px"><li>Place the items you’re returning into your bag - hangers included!</li>` +
-                `<li>Insert the return shipping label into the pouch on the outside of the bag.</li>` +
-                `<li>Drop off at your closest UPS pick up location.</li></ol>`,
-            },
-            {
-              html:
-                "Once we’ve received and processed your items, we’ll send you an email " +
-                "confirmation and your bag will be reset for you to place your next order!" +
-                " This typically takes about 2-3 business days.",
-            },
-            {
-              html: `If you have any questions, reach out to ${process.env.MAIN_CONTACT_EMAIL}`,
-            },
-          ],
-        },
-        title: "We've got your order",
-        reservedItems,
-        subject: `Order #${reservationNumber} | Your Reservation is Confirmed`,
-      },
-    }
-  }
-
-  completeAccount(firstName) {
-    return {
-      email: {
-        body: {
-          paragraphs: [
-            {
-              html: `Hey ${firstName}!`,
-            },
-            {
-              html:
-                `You're receiving this email because you created an account and joined our waitlist. ` +
-                `We really appreciate your patience and are excited to extend you an invite!`,
-            },
-            {
-              html:
-                `To choose your plan and start reserving, download or update the Seasons app below, login ` +
-                `and visit your profile. If you have any questions or need any help, contact us at ${process.env.MAIN_CONTACT_EMAIL}.`,
-            },
-            { html: "Thanks,<br>The Seasons Team" },
-            {
-              html:
-                `P.S. Due to demand, we may have to pass along your invite to the next person in line ` +
-                `if you don't finish signing up in the next 72 hours.`,
-            },
-          ],
-          button: { text: "Get the App", url: process.env.APP_URL },
-        },
-        prefooter: {
-          paragraphs: [
-            {
-              html: `If you have any questions, reach out to ${process.env.MAIN_CONTACT_EMAIL}.`,
-            },
-          ],
-        },
-        title: "You're in. Let's choose your plan",
-        subject: "You're in. Let's choose your plan",
       },
     }
   }
