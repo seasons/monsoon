@@ -70,11 +70,15 @@ export class ShippoController {
     this.logger.log("Received shippo event:")
     this.logger.log(result)
 
+    if (trackingStatus === null) {
+      return null
+    }
+
     const status = upperFirst(
-      camelCase(trackingStatus.status)
+      camelCase(trackingStatus?.status)
     ) as PackageTransitEventStatus
 
-    const subStatus = (isObject(trackingStatus.substatus)
+    const subStatus = (isObject(trackingStatus?.substatus)
       ? upperFirst(camelCase(trackingStatus?.substatus?.code))
       : "Other") as PackageTransitEventSubStatus
 
@@ -162,19 +166,6 @@ export class ShippoController {
           })
         }
 
-        let receivedAtData = {}
-        if (
-          reservationStatus === "Delivered" &&
-          reservation.receivedAt === null
-        ) {
-          receivedAtData = { receivedAt: new Date() }
-        }
-
-        let shippedAtData = {}
-        if (reservationStatus === "Shipped" && reservation.shippedAt === null) {
-          shippedAtData = { shippedAt: new Date(), shipped: true }
-        }
-
         await this.prisma.client.updateReservation({
           where: { id: reservation.id },
           data: {
@@ -185,8 +176,13 @@ export class ShippoController {
               },
             },
             phase,
-            ...receivedAtData,
-            ...shippedAtData,
+            ...(reservationStatus === "Delivered" &&
+            reservation.receivedAt !== null
+              ? { receivedAt: new Date() }
+              : {}),
+            ...(reservationStatus === "Shipped"
+              ? { shippedAt: new Date(), shipped: true }
+              : {}),
             statusUpdatedAt: new Date(),
           },
         })

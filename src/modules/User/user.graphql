@@ -63,6 +63,12 @@ type Me {
   savedItems: [BagItem!]
 }
 
+type UserLinks {
+  mixpanel: String!
+  sendgrid: String!
+  intercom: String!
+}
+
 type User {
   id: ID!
   auth0Id: String!
@@ -72,6 +78,7 @@ type User {
   fullName: String!
   role: UserRole!
   roles: [UserRole!]!
+  links: UserLinks
   customer: Customer
   createdAt: DateTime!
   updatedAt: DateTime!
