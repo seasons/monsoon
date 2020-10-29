@@ -52,6 +52,9 @@ export class UtilsService {
     afterDate: Date
     numDays: number
   }): boolean {
+    if (beforeDate === null || afterDate === null) {
+      return false
+    }
     const before = moment(
       new Date(
         beforeDate.getFullYear(),
