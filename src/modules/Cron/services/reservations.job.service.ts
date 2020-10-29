@@ -87,15 +87,15 @@ export class ReservationScheduledJobs {
   }
 
   private async returnNoticeNeeded(reservation: Reservation) {
+    const dueBackIn3Days = this.utils.isXDaysBefore({
+      beforeDate: new Date(), // now
+      afterDate: this.utils.getReservationReturnDate(
+        reservation as ClientReservation
+      ),
+      numDays: 3,
+    })
     return (
-      this.utils.isXDaysBefore({
-        beforeDate: this.utils.getReservationReturnDate(
-          reservation as ClientReservation
-        ),
-        // now
-        afterDate: new Date(),
-        numDays: 3,
-      }) &&
+      dueBackIn3Days &&
       !reservation.reminderSentAt &&
       reservation.customer.membership.plan.tier === "Essential" &&
       !["Cancelled", "Completed"].includes(reservation.status)
