@@ -1,5 +1,7 @@
 import "module-alias/register"
 
+import sgMail from "@sendgrid/mail"
+
 import { SegmentService } from "../../modules/Analytics/services/segment.service"
 import { AdmissionsScheduledJobs } from "../../modules/Cron/services/admissions.job.service"
 import { ReservationScheduledJobs } from "../../modules/Cron/services/reservations.job.service"
@@ -20,6 +22,8 @@ import { AuthService } from "../../modules/User/services/auth.service"
 import { CustomerService } from "../../modules/User/services/customer.service"
 import { UtilsService } from "../../modules/Utils/services/utils.service"
 import { PrismaService } from "../../prisma/prisma.service"
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const run = async () => {
   const ps = new PrismaService()

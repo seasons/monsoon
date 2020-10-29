@@ -24,20 +24,10 @@ const run = async () => {
     new EmailUtilsService(ps, new ErrorService(), new ImageService(ps))
   )
 
-  const r1 = head(
-    await ps.client.reservations({ where: { receivedAt_not: null } })
-  )
-  console.log(r1)
-  const r2 = head(await ps.client.reservations({ where: { receivedAt: null } }))
-  console.log(r2)
-  await emails.sendReturnReminderEmail(
-    await ps.client.user({ email: "faiyam@faiyamrahman.com" }),
-    r1
-  )
-  await emails.sendReturnReminderEmail(
-    await ps.client.user({ email: "faiyam@faiyamrahman.com" }),
-    r2
-  )
+  const r1 = head(await ps.client.reservations({}))
+  const u = await ps.client.user({ email: "faiyam+30days@seasons.nyc" })
+  await emails.sendReturnReminderEmail(u, r1)
+  await emails.sendSubmittedEmailEmail(u)
 }
 
 run()
