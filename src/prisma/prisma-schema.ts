@@ -2693,6 +2693,7 @@ type CustomerAdmissionsData {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean!
   customer: Customer!
   authorizationsCount: Int!
   createdAt: DateTime!
@@ -2710,6 +2711,7 @@ input CustomerAdmissionsDataCreateInput {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   customer: CustomerCreateOneWithoutAdmissionsInput!
   authorizationsCount: Int!
 }
@@ -2724,6 +2726,7 @@ input CustomerAdmissionsDataCreateWithoutCustomerInput {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int!
 }
 
@@ -2741,6 +2744,8 @@ enum CustomerAdmissionsDataOrderByInput {
   admissable_DESC
   inAdmissableReason_ASC
   inAdmissableReason_DESC
+  allAccessEnabled_ASC
+  allAccessEnabled_DESC
   authorizationsCount_ASC
   authorizationsCount_DESC
   createdAt_ASC
@@ -2754,6 +2759,7 @@ type CustomerAdmissionsDataPreviousValues {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean!
   authorizationsCount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -2781,6 +2787,7 @@ input CustomerAdmissionsDataUpdateInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   customer: CustomerUpdateOneRequiredWithoutAdmissionsInput
   authorizationsCount: Int
 }
@@ -2789,6 +2796,7 @@ input CustomerAdmissionsDataUpdateManyMutationInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int
 }
 
@@ -2805,6 +2813,7 @@ input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int
 }
 
@@ -2836,6 +2845,8 @@ input CustomerAdmissionsDataWhereInput {
   inAdmissableReason_not: InAdmissableReason
   inAdmissableReason_in: [InAdmissableReason!]
   inAdmissableReason_not_in: [InAdmissableReason!]
+  allAccessEnabled: Boolean
+  allAccessEnabled_not: Boolean
   customer: CustomerWhereInput
   authorizationsCount: Int
   authorizationsCount_not: Int

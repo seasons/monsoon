@@ -3185,6 +3185,8 @@ export type CustomerAdmissionsDataOrderByInput =
   | "admissable_DESC"
   | "inAdmissableReason_ASC"
   | "inAdmissableReason_DESC"
+  | "allAccessEnabled_ASC"
+  | "allAccessEnabled_DESC"
   | "authorizationsCount_ASC"
   | "authorizationsCount_DESC"
   | "createdAt_ASC"
@@ -6935,6 +6937,8 @@ export interface CustomerAdmissionsDataWhereInput {
   inAdmissableReason_not?: Maybe<InAdmissableReason>;
   inAdmissableReason_in?: Maybe<InAdmissableReason[] | InAdmissableReason>;
   inAdmissableReason_not_in?: Maybe<InAdmissableReason[] | InAdmissableReason>;
+  allAccessEnabled?: Maybe<Boolean>;
+  allAccessEnabled_not?: Maybe<Boolean>;
   customer?: Maybe<CustomerWhereInput>;
   authorizationsCount?: Maybe<Int>;
   authorizationsCount_not?: Maybe<Int>;
@@ -12104,6 +12108,7 @@ export interface CustomerAdmissionsDataCreateWithoutCustomerInput {
   inServiceableZipcode: Boolean;
   admissable: Boolean;
   inAdmissableReason?: Maybe<InAdmissableReason>;
+  allAccessEnabled?: Maybe<Boolean>;
   authorizationsCount: Int;
 }
 
@@ -12858,6 +12863,7 @@ export interface CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   inServiceableZipcode?: Maybe<Boolean>;
   admissable?: Maybe<Boolean>;
   inAdmissableReason?: Maybe<InAdmissableReason>;
+  allAccessEnabled?: Maybe<Boolean>;
   authorizationsCount?: Maybe<Int>;
 }
 
@@ -13753,6 +13759,7 @@ export interface CustomerAdmissionsDataCreateInput {
   inServiceableZipcode: Boolean;
   admissable: Boolean;
   inAdmissableReason?: Maybe<InAdmissableReason>;
+  allAccessEnabled?: Maybe<Boolean>;
   customer: CustomerCreateOneWithoutAdmissionsInput;
   authorizationsCount: Int;
 }
@@ -13780,6 +13787,7 @@ export interface CustomerAdmissionsDataUpdateInput {
   inServiceableZipcode?: Maybe<Boolean>;
   admissable?: Maybe<Boolean>;
   inAdmissableReason?: Maybe<InAdmissableReason>;
+  allAccessEnabled?: Maybe<Boolean>;
   customer?: Maybe<CustomerUpdateOneRequiredWithoutAdmissionsInput>;
   authorizationsCount?: Maybe<Int>;
 }
@@ -13813,6 +13821,7 @@ export interface CustomerAdmissionsDataUpdateManyMutationInput {
   inServiceableZipcode?: Maybe<Boolean>;
   admissable?: Maybe<Boolean>;
   inAdmissableReason?: Maybe<InAdmissableReason>;
+  allAccessEnabled?: Maybe<Boolean>;
   authorizationsCount?: Maybe<Int>;
 }
 
@@ -20180,6 +20189,7 @@ export interface CustomerAdmissionsData {
   inServiceableZipcode: Boolean;
   admissable: Boolean;
   inAdmissableReason?: InAdmissableReason;
+  allAccessEnabled: Boolean;
   authorizationsCount: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -20192,6 +20202,7 @@ export interface CustomerAdmissionsDataPromise
   inServiceableZipcode: () => Promise<Boolean>;
   admissable: () => Promise<Boolean>;
   inAdmissableReason: () => Promise<InAdmissableReason>;
+  allAccessEnabled: () => Promise<Boolean>;
   customer: <T = CustomerPromise>() => T;
   authorizationsCount: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -20205,6 +20216,7 @@ export interface CustomerAdmissionsDataSubscription
   inServiceableZipcode: () => Promise<AsyncIterator<Boolean>>;
   admissable: () => Promise<AsyncIterator<Boolean>>;
   inAdmissableReason: () => Promise<AsyncIterator<InAdmissableReason>>;
+  allAccessEnabled: () => Promise<AsyncIterator<Boolean>>;
   customer: <T = CustomerSubscription>() => T;
   authorizationsCount: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -20218,6 +20230,7 @@ export interface CustomerAdmissionsDataNullablePromise
   inServiceableZipcode: () => Promise<Boolean>;
   admissable: () => Promise<Boolean>;
   inAdmissableReason: () => Promise<InAdmissableReason>;
+  allAccessEnabled: () => Promise<Boolean>;
   customer: <T = CustomerPromise>() => T;
   authorizationsCount: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -24465,6 +24478,7 @@ export interface CustomerAdmissionsDataPreviousValues {
   inServiceableZipcode: Boolean;
   admissable: Boolean;
   inAdmissableReason?: InAdmissableReason;
+  allAccessEnabled: Boolean;
   authorizationsCount: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -24477,6 +24491,7 @@ export interface CustomerAdmissionsDataPreviousValuesPromise
   inServiceableZipcode: () => Promise<Boolean>;
   admissable: () => Promise<Boolean>;
   inAdmissableReason: () => Promise<InAdmissableReason>;
+  allAccessEnabled: () => Promise<Boolean>;
   authorizationsCount: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -24489,6 +24504,7 @@ export interface CustomerAdmissionsDataPreviousValuesSubscription
   inServiceableZipcode: () => Promise<AsyncIterator<Boolean>>;
   admissable: () => Promise<AsyncIterator<Boolean>>;
   inAdmissableReason: () => Promise<AsyncIterator<InAdmissableReason>>;
+  allAccessEnabled: () => Promise<AsyncIterator<Boolean>>;
   authorizationsCount: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
