@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Nov 04 2020 16:39:02 GMT-0500 (Eastern Standard Time)
+# timestamp: Fri Oct 30 2020 15:22:44 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -766,6 +766,14 @@ type AggregateReservationReceiptItem {
 }
 
 type AggregateSeason {
+  count: Int!
+}
+
+type AggregateShippingMethod {
+  count: Int!
+}
+
+type AggregateShippingOption {
   count: Int!
 }
 
@@ -6640,18 +6648,6 @@ type Customer implements Node {
     first: Int
     last: Int
   ): [Reservation!]
-  referralLink: String
-  referrerId: String
-  referrer: Customer
-  referrees(
-    where: CustomerWhereInput
-    orderBy: CustomerOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Customer!]
   emailedProducts(
     where: ProductWhereInput
     orderBy: ProductOrderByInput
@@ -9122,21 +9118,223 @@ type CustomerPreviousValues {
   updatedAt: DateTime!
 }
 
-input CustomerScalarWhereInput {
+enum CustomerStatus {
+  Invited
+  Created
+  Waitlisted
+  Authorized
+  Active
+  Suspended
+  Paused
+  Deactivated
+}
+
+type CustomerSubscriptionPayload {
+  mutation: MutationType!
+  node: Customer
+  updatedFields: [String!]
+  previousValues: CustomerPreviousValues
+}
+
+input CustomerSubscriptionWhereInput {
   """
   Logical AND on all given filters.
   """
-  AND: [CustomerScalarWhereInput!]
+  AND: [CustomerSubscriptionWhereInput!]
 
   """
   Logical OR on all given filters.
   """
-  OR: [CustomerScalarWhereInput!]
+  OR: [CustomerSubscriptionWhereInput!]
 
   """
   Logical NOT on all given filters combined by AND.
   """
-  NOT: [CustomerScalarWhereInput!]
+  NOT: [CustomerSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CustomerWhereInput
+}
+
+input CustomerUpdateDataInput {
+  status: CustomerStatus
+  plan: Plan
+  authorizedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+}
+
+input CustomerUpdateInput {
+  status: CustomerStatus
+  plan: Plan
+  authorizedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+}
+
+input CustomerUpdateManyMutationInput {
+  status: CustomerStatus
+  plan: Plan
+  authorizedAt: DateTime
+}
+
+input CustomerUpdateOneRequiredInput {
+  create: CustomerCreateInput
+  connect: CustomerWhereUniqueInput
+  update: CustomerUpdateDataInput
+  upsert: CustomerUpsertNestedInput
+}
+
+input CustomerUpdateOneRequiredWithoutAdmissionsInput {
+  create: CustomerCreateWithoutAdmissionsInput
+  connect: CustomerWhereUniqueInput
+  update: CustomerUpdateWithoutAdmissionsDataInput
+  upsert: CustomerUpsertWithoutAdmissionsInput
+}
+
+input CustomerUpdateOneRequiredWithoutBagItemsInput {
+  create: CustomerCreateWithoutBagItemsInput
+  connect: CustomerWhereUniqueInput
+  update: CustomerUpdateWithoutBagItemsDataInput
+  upsert: CustomerUpsertWithoutBagItemsInput
+}
+
+input CustomerUpdateOneRequiredWithoutMembershipInput {
+  create: CustomerCreateWithoutMembershipInput
+  connect: CustomerWhereUniqueInput
+  update: CustomerUpdateWithoutMembershipDataInput
+  upsert: CustomerUpsertWithoutMembershipInput
+}
+
+input CustomerUpdateOneRequiredWithoutReservationsInput {
+  create: CustomerCreateWithoutReservationsInput
+  connect: CustomerWhereUniqueInput
+  update: CustomerUpdateWithoutReservationsDataInput
+  upsert: CustomerUpsertWithoutReservationsInput
+}
+
+input CustomerUpdateWithoutAdmissionsDataInput {
+  status: CustomerStatus
+  plan: Plan
+  authorizedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  emailedProducts: ProductUpdateManyInput
+}
+
+input CustomerUpdateWithoutBagItemsDataInput {
+  status: CustomerStatus
+  plan: Plan
+  authorizedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+}
+
+input CustomerUpdateWithoutMembershipDataInput {
+  status: CustomerStatus
+  plan: Plan
+  authorizedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+}
+
+input CustomerUpdateWithoutReservationsDataInput {
+  status: CustomerStatus
+  plan: Plan
+  authorizedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+}
+
+input CustomerUpsertNestedInput {
+  update: CustomerUpdateDataInput!
+  create: CustomerCreateInput!
+}
+
+input CustomerUpsertWithoutAdmissionsInput {
+  update: CustomerUpdateWithoutAdmissionsDataInput!
+  create: CustomerCreateWithoutAdmissionsInput!
+}
+
+input CustomerUpsertWithoutBagItemsInput {
+  update: CustomerUpdateWithoutBagItemsDataInput!
+  create: CustomerCreateWithoutBagItemsInput!
+}
+
+input CustomerUpsertWithoutMembershipInput {
+  update: CustomerUpdateWithoutMembershipDataInput!
+  create: CustomerCreateWithoutMembershipInput!
+}
+
+input CustomerUpsertWithoutReservationsInput {
+  update: CustomerUpdateWithoutReservationsDataInput!
+  create: CustomerCreateWithoutReservationsInput!
+}
+
+input CustomerWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [CustomerWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [CustomerWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [CustomerWhereInput!]
   id: ID
 
   """
@@ -14192,6 +14390,15 @@ type Location implements Node {
     first: Int
     last: Int
   ): [PhysicalProduct!]
+  shippingOptions(
+    where: ShippingOptionWhereInput
+    orderBy: ShippingOptionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ShippingOption!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -14229,6 +14436,7 @@ input LocationCreateInput {
   lng: Float
   user: UserCreateOneInput
   physicalProducts: PhysicalProductCreateManyWithoutLocationInput
+  shippingOptions: ShippingOptionCreateManyWithoutDestinationInput
 }
 
 input LocationCreateOneInput {
@@ -14238,6 +14446,11 @@ input LocationCreateOneInput {
 
 input LocationCreateOneWithoutPhysicalProductsInput {
   create: LocationCreateWithoutPhysicalProductsInput
+  connect: LocationWhereUniqueInput
+}
+
+input LocationCreateOneWithoutShippingOptionsInput {
+  create: LocationCreateWithoutShippingOptionsInput
   connect: LocationWhereUniqueInput
 }
 
@@ -14257,6 +14470,26 @@ input LocationCreateWithoutPhysicalProductsInput {
   lat: Float
   lng: Float
   user: UserCreateOneInput
+  shippingOptions: ShippingOptionCreateManyWithoutDestinationInput
+}
+
+input LocationCreateWithoutShippingOptionsInput {
+  id: ID
+  slug: String
+  name: String
+  company: String
+  description: String
+  address1: String
+  address2: String
+  city: String
+  country: String
+  state: String
+  zipCode: String!
+  locationType: LocationType
+  lat: Float
+  lng: Float
+  user: UserCreateOneInput
+  physicalProducts: PhysicalProductCreateManyWithoutLocationInput
 }
 
 """
@@ -14396,6 +14629,7 @@ input LocationUpdateDataInput {
   lng: Float
   user: UserUpdateOneInput
   physicalProducts: PhysicalProductUpdateManyWithoutLocationInput
+  shippingOptions: ShippingOptionUpdateManyWithoutDestinationInput
 }
 
 input LocationUpdateInput {
@@ -14414,6 +14648,7 @@ input LocationUpdateInput {
   lng: Float
   user: UserUpdateOneInput
   physicalProducts: PhysicalProductUpdateManyWithoutLocationInput
+  shippingOptions: ShippingOptionUpdateManyWithoutDestinationInput
 }
 
 input LocationUpdateManyMutationInput {
@@ -14457,6 +14692,15 @@ input LocationUpdateOneWithoutPhysicalProductsInput {
   upsert: LocationUpsertWithoutPhysicalProductsInput
 }
 
+input LocationUpdateOneWithoutShippingOptionsInput {
+  create: LocationCreateWithoutShippingOptionsInput
+  connect: LocationWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: LocationUpdateWithoutShippingOptionsDataInput
+  upsert: LocationUpsertWithoutShippingOptionsInput
+}
+
 input LocationUpdateWithoutPhysicalProductsDataInput {
   slug: String
   name: String
@@ -14472,6 +14716,25 @@ input LocationUpdateWithoutPhysicalProductsDataInput {
   lat: Float
   lng: Float
   user: UserUpdateOneInput
+  shippingOptions: ShippingOptionUpdateManyWithoutDestinationInput
+}
+
+input LocationUpdateWithoutShippingOptionsDataInput {
+  slug: String
+  name: String
+  company: String
+  description: String
+  address1: String
+  address2: String
+  city: String
+  country: String
+  state: String
+  zipCode: String
+  locationType: LocationType
+  lat: Float
+  lng: Float
+  user: UserUpdateOneInput
+  physicalProducts: PhysicalProductUpdateManyWithoutLocationInput
 }
 
 input LocationUpsertNestedInput {
@@ -14482,6 +14745,11 @@ input LocationUpsertNestedInput {
 input LocationUpsertWithoutPhysicalProductsInput {
   update: LocationUpdateWithoutPhysicalProductsDataInput!
   create: LocationCreateWithoutPhysicalProductsInput!
+}
+
+input LocationUpsertWithoutShippingOptionsInput {
+  update: LocationUpdateWithoutShippingOptionsDataInput!
+  create: LocationCreateWithoutShippingOptionsInput!
 }
 
 input LocationWhereInput {
@@ -15389,6 +15657,9 @@ input LocationWhereInput {
   physicalProducts_every: PhysicalProductWhereInput
   physicalProducts_some: PhysicalProductWhereInput
   physicalProducts_none: PhysicalProductWhereInput
+  shippingOptions_every: ShippingOptionWhereInput
+  shippingOptions_some: ShippingOptionWhereInput
+  shippingOptions_none: ShippingOptionWhereInput
 }
 
 input LocationWhereUniqueInput {
@@ -15449,6 +15720,7 @@ type Mutation {
   createPackageTransitEvent(
     data: PackageTransitEventCreateInput!
   ): PackageTransitEvent!
+  createShippingOption(data: ShippingOptionCreateInput!): ShippingOption!
   createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
   createProductVariantWant(
     data: ProductVariantWantCreateInput!
@@ -15474,6 +15746,7 @@ type Mutation {
   createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
   createColor(data: ColorCreateInput!): Color!
   createTopSize(data: TopSizeCreateInput!): TopSize!
+  createShippingMethod(data: ShippingMethodCreateInput!): ShippingMethod!
   createCustomer(data: CustomerCreateInput!): Customer!
   createUserPushNotification(
     data: UserPushNotificationCreateInput!
@@ -15571,6 +15844,10 @@ type Mutation {
     data: PackageTransitEventUpdateInput!
     where: PackageTransitEventWhereUniqueInput!
   ): PackageTransitEvent
+  updateShippingOption(
+    data: ShippingOptionUpdateInput!
+    where: ShippingOptionWhereUniqueInput!
+  ): ShippingOption
   updateProductRequest(
     data: ProductRequestUpdateInput!
     where: ProductRequestWhereUniqueInput!
@@ -15633,6 +15910,10 @@ type Mutation {
     data: TopSizeUpdateInput!
     where: TopSizeWhereUniqueInput!
   ): TopSize
+  updateShippingMethod(
+    data: ShippingMethodUpdateInput!
+    where: ShippingMethodWhereUniqueInput!
+  ): ShippingMethod
   updateCustomer(
     data: CustomerUpdateInput!
     where: CustomerWhereUniqueInput!
@@ -15733,6 +16014,7 @@ type Mutation {
   deletePackageTransitEvent(
     where: PackageTransitEventWhereUniqueInput!
   ): PackageTransitEvent
+  deleteShippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   deleteProductVariantWant(
     where: ProductVariantWantWhereUniqueInput!
@@ -15764,6 +16046,7 @@ type Mutation {
   ): ProductFunction
   deleteColor(where: ColorWhereUniqueInput!): Color
   deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
+  deleteShippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
   deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteUserPushNotification(
     where: UserPushNotificationWhereUniqueInput!
@@ -15894,6 +16177,11 @@ type Mutation {
     create: PackageTransitEventCreateInput!
     update: PackageTransitEventUpdateInput!
   ): PackageTransitEvent!
+  upsertShippingOption(
+    where: ShippingOptionWhereUniqueInput!
+    create: ShippingOptionCreateInput!
+    update: ShippingOptionUpdateInput!
+  ): ShippingOption!
   upsertProductRequest(
     where: ProductRequestWhereUniqueInput!
     create: ProductRequestCreateInput!
@@ -15979,6 +16267,11 @@ type Mutation {
     create: TopSizeCreateInput!
     update: TopSizeUpdateInput!
   ): TopSize!
+  upsertShippingMethod(
+    where: ShippingMethodWhereUniqueInput!
+    create: ShippingMethodCreateInput!
+    update: ShippingMethodUpdateInput!
+  ): ShippingMethod!
   upsertCustomer(
     where: CustomerWhereUniqueInput!
     create: CustomerCreateInput!
@@ -16143,6 +16436,10 @@ type Mutation {
     data: PackageTransitEventUpdateManyMutationInput!
     where: PackageTransitEventWhereInput
   ): BatchPayload!
+  updateManyShippingOptions(
+    data: ShippingOptionUpdateManyMutationInput!
+    where: ShippingOptionWhereInput
+  ): BatchPayload!
   updateManyProductRequests(
     data: ProductRequestUpdateManyMutationInput!
     where: ProductRequestWhereInput
@@ -16206,6 +16503,10 @@ type Mutation {
   updateManyTopSizes(
     data: TopSizeUpdateManyMutationInput!
     where: TopSizeWhereInput
+  ): BatchPayload!
+  updateManyShippingMethods(
+    data: ShippingMethodUpdateManyMutationInput!
+    where: ShippingMethodWhereInput
   ): BatchPayload!
   updateManyCustomers(
     data: CustomerUpdateManyMutationInput!
@@ -16317,6 +16618,7 @@ type Mutation {
   deleteManyPackageTransitEvents(
     where: PackageTransitEventWhereInput
   ): BatchPayload!
+  deleteManyShippingOptions(where: ShippingOptionWhereInput): BatchPayload!
   deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
   deleteManyProductVariantWants(
     where: ProductVariantWantWhereInput
@@ -16342,6 +16644,7 @@ type Mutation {
   deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
   deleteManyColors(where: ColorWhereInput): BatchPayload!
   deleteManyTopSizes(where: TopSizeWhereInput): BatchPayload!
+  deleteManyShippingMethods(where: ShippingMethodWhereInput): BatchPayload!
   deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
   deleteManyUserPushNotifications(
     where: UserPushNotificationWhereInput
@@ -16394,6 +16697,7 @@ type Package implements Node {
   fromAddress: Location!
   toAddress: Location!
   weight: Float
+  cost: Int
   events(
     where: PackageTransitEventWhereInput
     orderBy: PackageTransitEventOrderByInput
@@ -16427,6 +16731,7 @@ input PackageCreateInput {
   id: ID
   transactionID: String!
   weight: Float
+  cost: Int
   items: PhysicalProductCreateManyInput
   shippingLabel: LabelCreateOneInput!
   fromAddress: LocationCreateOneInput!
@@ -16448,6 +16753,7 @@ input PackageCreateWithoutEventsInput {
   id: ID
   transactionID: String!
   weight: Float
+  cost: Int
   items: PhysicalProductCreateManyInput
   shippingLabel: LabelCreateOneInput!
   fromAddress: LocationCreateOneInput!
@@ -16476,6 +16782,8 @@ enum PackageOrderByInput {
   transactionID_DESC
   weight_ASC
   weight_DESC
+  cost_ASC
+  cost_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -16486,6 +16794,7 @@ type PackagePreviousValues {
   id: ID!
   transactionID: String!
   weight: Float
+  cost: Int
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -17188,6 +17497,7 @@ input PackageTransitEventWhereUniqueInput {
 input PackageUpdateDataInput {
   transactionID: String
   weight: Float
+  cost: Int
   items: PhysicalProductUpdateManyInput
   shippingLabel: LabelUpdateOneRequiredInput
   fromAddress: LocationUpdateOneRequiredInput
@@ -17198,6 +17508,7 @@ input PackageUpdateDataInput {
 input PackageUpdateInput {
   transactionID: String
   weight: Float
+  cost: Int
   items: PhysicalProductUpdateManyInput
   shippingLabel: LabelUpdateOneRequiredInput
   fromAddress: LocationUpdateOneRequiredInput
@@ -17208,6 +17519,7 @@ input PackageUpdateInput {
 input PackageUpdateManyMutationInput {
   transactionID: String
   weight: Float
+  cost: Int
 }
 
 input PackageUpdateOneInput {
@@ -17229,6 +17541,7 @@ input PackageUpdateOneRequiredWithoutEventsInput {
 input PackageUpdateWithoutEventsDataInput {
   transactionID: String
   weight: Float
+  cost: Int
   items: PhysicalProductUpdateManyInput
   shippingLabel: LabelUpdateOneRequiredInput
   fromAddress: LocationUpdateOneRequiredInput
@@ -17428,6 +17741,42 @@ input PackageWhereInput {
   All values greater than or equal the given value.
   """
   weight_gte: Float
+  cost: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  cost_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  cost_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  cost_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  cost_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  cost_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  cost_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  cost_gte: Int
   createdAt: DateTime
 
   """
@@ -29645,6 +29994,15 @@ type Query {
     first: Int
     last: Int
   ): [PackageTransitEvent]!
+  shippingOptions(
+    where: ShippingOptionWhereInput
+    orderBy: ShippingOptionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ShippingOption]!
   productRequests(
     where: ProductRequestWhereInput
     orderBy: ProductRequestOrderByInput
@@ -29798,6 +30156,15 @@ type Query {
     first: Int
     last: Int
   ): [TopSize]!
+  shippingMethods(
+    where: ShippingMethodWhereInput
+    orderBy: ShippingMethodOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ShippingMethod]!
   customers(
     where: CustomerWhereInput
     orderBy: CustomerOrderByInput
@@ -29988,6 +30355,7 @@ type Query {
   packageTransitEvent(
     where: PackageTransitEventWhereUniqueInput!
   ): PackageTransitEvent
+  shippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   productVariantWant(
     where: ProductVariantWantWhereUniqueInput!
@@ -30013,6 +30381,7 @@ type Query {
   productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
   color(where: ColorWhereUniqueInput!): Color
   topSize(where: TopSizeWhereUniqueInput!): TopSize
+  shippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
   customer(where: CustomerWhereUniqueInput!): Customer
   userPushNotification(
     where: UserPushNotificationWhereUniqueInput!
@@ -30229,6 +30598,15 @@ type Query {
     first: Int
     last: Int
   ): PackageTransitEventConnection!
+  shippingOptionsConnection(
+    where: ShippingOptionWhereInput
+    orderBy: ShippingOptionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ShippingOptionConnection!
   productRequestsConnection(
     where: ProductRequestWhereInput
     orderBy: ProductRequestOrderByInput
@@ -30382,6 +30760,15 @@ type Query {
     first: Int
     last: Int
   ): TopSizeConnection!
+  shippingMethodsConnection(
+    where: ShippingMethodWhereInput
+    orderBy: ShippingMethodOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ShippingMethodConnection!
   customersConnection(
     where: CustomerWhereInput
     orderBy: CustomerOrderByInput
@@ -33633,6 +34020,1041 @@ input SeasonWhereUniqueInput {
   id: ID
 }
 
+enum ShippingCode {
+  UPSGround
+  UPSSelect
+}
+
+type ShippingMethod implements Node {
+  id: ID!
+  code: ShippingCode!
+  displayText: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type ShippingMethodConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [ShippingMethodEdge]!
+  aggregate: AggregateShippingMethod!
+}
+
+input ShippingMethodCreateInput {
+  id: ID
+  code: ShippingCode!
+  displayText: String!
+}
+
+input ShippingMethodCreateOneInput {
+  create: ShippingMethodCreateInput
+  connect: ShippingMethodWhereUniqueInput
+}
+
+"""
+An edge in a connection.
+"""
+type ShippingMethodEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: ShippingMethod!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum ShippingMethodOrderByInput {
+  id_ASC
+  id_DESC
+  code_ASC
+  code_DESC
+  displayText_ASC
+  displayText_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ShippingMethodPreviousValues {
+  id: ID!
+  code: ShippingCode!
+  displayText: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ShippingMethodSubscriptionPayload {
+  mutation: MutationType!
+  node: ShippingMethod
+  updatedFields: [String!]
+  previousValues: ShippingMethodPreviousValues
+}
+
+input ShippingMethodSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ShippingMethodSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ShippingMethodSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ShippingMethodSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ShippingMethodWhereInput
+}
+
+input ShippingMethodUpdateDataInput {
+  code: ShippingCode
+  displayText: String
+}
+
+input ShippingMethodUpdateInput {
+  code: ShippingCode
+  displayText: String
+}
+
+input ShippingMethodUpdateManyMutationInput {
+  code: ShippingCode
+  displayText: String
+}
+
+input ShippingMethodUpdateOneInput {
+  create: ShippingMethodCreateInput
+  connect: ShippingMethodWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ShippingMethodUpdateDataInput
+  upsert: ShippingMethodUpsertNestedInput
+}
+
+input ShippingMethodUpsertNestedInput {
+  update: ShippingMethodUpdateDataInput!
+  create: ShippingMethodCreateInput!
+}
+
+input ShippingMethodWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ShippingMethodWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ShippingMethodWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ShippingMethodWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  code: ShippingCode
+
+  """
+  All values that are not equal to given value.
+  """
+  code_not: ShippingCode
+
+  """
+  All values that are contained in given list.
+  """
+  code_in: [ShippingCode!]
+
+  """
+  All values that are not contained in given list.
+  """
+  code_not_in: [ShippingCode!]
+  displayText: String
+
+  """
+  All values that are not equal to given value.
+  """
+  displayText_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  displayText_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  displayText_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  displayText_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  displayText_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  displayText_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  displayText_gte: String
+
+  """
+  All values containing the given string.
+  """
+  displayText_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  displayText_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  displayText_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  displayText_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  displayText_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  displayText_not_ends_with: String
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+}
+
+input ShippingMethodWhereUniqueInput {
+  id: ID
+}
+
+type ShippingOption implements Node {
+  id: ID!
+  origin: Location
+  destination: Location
+  shippingMethod: ShippingMethod
+  externalCost: Int
+  averageDuration: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type ShippingOptionConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [ShippingOptionEdge]!
+  aggregate: AggregateShippingOption!
+}
+
+input ShippingOptionCreateInput {
+  id: ID
+  externalCost: Int
+  averageDuration: Int
+  origin: LocationCreateOneInput
+  destination: LocationCreateOneWithoutShippingOptionsInput
+  shippingMethod: ShippingMethodCreateOneInput
+}
+
+input ShippingOptionCreateManyWithoutDestinationInput {
+  create: [ShippingOptionCreateWithoutDestinationInput!]
+  connect: [ShippingOptionWhereUniqueInput!]
+}
+
+input ShippingOptionCreateWithoutDestinationInput {
+  id: ID
+  externalCost: Int
+  averageDuration: Int
+  origin: LocationCreateOneInput
+  shippingMethod: ShippingMethodCreateOneInput
+}
+
+"""
+An edge in a connection.
+"""
+type ShippingOptionEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: ShippingOption!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum ShippingOptionOrderByInput {
+  id_ASC
+  id_DESC
+  externalCost_ASC
+  externalCost_DESC
+  averageDuration_ASC
+  averageDuration_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ShippingOptionPreviousValues {
+  id: ID!
+  externalCost: Int
+  averageDuration: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input ShippingOptionScalarWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ShippingOptionScalarWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ShippingOptionScalarWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ShippingOptionScalarWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  externalCost: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  externalCost_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  externalCost_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  externalCost_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  externalCost_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  externalCost_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  externalCost_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  externalCost_gte: Int
+  averageDuration: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  averageDuration_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  averageDuration_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  averageDuration_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  averageDuration_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  averageDuration_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  averageDuration_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  averageDuration_gte: Int
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+}
+
+type ShippingOptionSubscriptionPayload {
+  mutation: MutationType!
+  node: ShippingOption
+  updatedFields: [String!]
+  previousValues: ShippingOptionPreviousValues
+}
+
+input ShippingOptionSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ShippingOptionSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ShippingOptionSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ShippingOptionSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ShippingOptionWhereInput
+}
+
+input ShippingOptionUpdateInput {
+  externalCost: Int
+  averageDuration: Int
+  origin: LocationUpdateOneInput
+  destination: LocationUpdateOneWithoutShippingOptionsInput
+  shippingMethod: ShippingMethodUpdateOneInput
+}
+
+input ShippingOptionUpdateManyDataInput {
+  externalCost: Int
+  averageDuration: Int
+}
+
+input ShippingOptionUpdateManyMutationInput {
+  externalCost: Int
+  averageDuration: Int
+}
+
+input ShippingOptionUpdateManyWithoutDestinationInput {
+  create: [ShippingOptionCreateWithoutDestinationInput!]
+  connect: [ShippingOptionWhereUniqueInput!]
+  set: [ShippingOptionWhereUniqueInput!]
+  disconnect: [ShippingOptionWhereUniqueInput!]
+  delete: [ShippingOptionWhereUniqueInput!]
+  update: [ShippingOptionUpdateWithWhereUniqueWithoutDestinationInput!]
+  updateMany: [ShippingOptionUpdateManyWithWhereNestedInput!]
+  deleteMany: [ShippingOptionScalarWhereInput!]
+  upsert: [ShippingOptionUpsertWithWhereUniqueWithoutDestinationInput!]
+}
+
+input ShippingOptionUpdateManyWithWhereNestedInput {
+  where: ShippingOptionScalarWhereInput!
+  data: ShippingOptionUpdateManyDataInput!
+}
+
+input ShippingOptionUpdateWithoutDestinationDataInput {
+  externalCost: Int
+  averageDuration: Int
+  origin: LocationUpdateOneInput
+  shippingMethod: ShippingMethodUpdateOneInput
+}
+
+input ShippingOptionUpdateWithWhereUniqueWithoutDestinationInput {
+  where: ShippingOptionWhereUniqueInput!
+  data: ShippingOptionUpdateWithoutDestinationDataInput!
+}
+
+input ShippingOptionUpsertWithWhereUniqueWithoutDestinationInput {
+  where: ShippingOptionWhereUniqueInput!
+  update: ShippingOptionUpdateWithoutDestinationDataInput!
+  create: ShippingOptionCreateWithoutDestinationInput!
+}
+
+input ShippingOptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ShippingOptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ShippingOptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ShippingOptionWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  externalCost: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  externalCost_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  externalCost_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  externalCost_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  externalCost_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  externalCost_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  externalCost_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  externalCost_gte: Int
+  averageDuration: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  averageDuration_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  averageDuration_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  averageDuration_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  averageDuration_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  averageDuration_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  averageDuration_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  averageDuration_gte: Int
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+  origin: LocationWhereInput
+  destination: LocationWhereInput
+  shippingMethod: ShippingMethodWhereInput
+}
+
+input ShippingOptionWhereUniqueInput {
+  id: ID
+}
+
 type Size implements Node {
   id: ID!
   slug: String!
@@ -35430,6 +36852,9 @@ type Subscription {
   packageTransitEvent(
     where: PackageTransitEventSubscriptionWhereInput
   ): PackageTransitEventSubscriptionPayload
+  shippingOption(
+    where: ShippingOptionSubscriptionWhereInput
+  ): ShippingOptionSubscriptionPayload
   productRequest(
     where: ProductRequestSubscriptionWhereInput
   ): ProductRequestSubscriptionPayload
@@ -35473,6 +36898,9 @@ type Subscription {
   ): ProductFunctionSubscriptionPayload
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
+  shippingMethod(
+    where: ShippingMethodSubscriptionWhereInput
+  ): ShippingMethodSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   userPushNotification(
     where: UserPushNotificationSubscriptionWhereInput

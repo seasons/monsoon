@@ -23,8 +23,11 @@ type Query {
 }
 
 type Mutation {
-  reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
-    @hasRole(roles: [Customer])
+  reserveItems(
+    items: [ID!]!
+    options: ReserveItemsOptions
+    shippingCode: ShippingCode
+  ): Reservation @hasRole(roles: [Customer])
   checkItemsAvailability(items: [ID!]!): Boolean! @hasRole(roles: [Customer])
   updateReservationFeedback(
     feedbackID: ID!

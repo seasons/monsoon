@@ -22,6 +22,7 @@ import {
   ReservationStatus,
   ReservationUpdateInput,
   ReservationWhereUniqueInput,
+  ShippingCode,
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -63,9 +64,17 @@ export class ReservationService {
     private readonly reservationUtils: ReservationUtilsService
   ) {}
 
-  async reserveItems(items: string[], user: User, customer: Customer, info) {
+  async reserveItems(
+    items: string[],
+    shippingCode: ShippingCode,
+    user: User,
+    customer: Customer,
+    info
+  ) {
     let reservationReturnData
     const rollbackFuncs = []
+
+    console.log("shippingCode", shippingCode)
 
     const customerPlanItemCount = await this.prisma.client
       .customer({ id: customer.id })
