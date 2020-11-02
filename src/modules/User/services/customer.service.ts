@@ -20,6 +20,7 @@ import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { pick } from "lodash"
+import { DateTime } from "luxon"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
 import { AuthService } from "./auth.service"
@@ -288,16 +289,16 @@ export class CustomerService {
         throw new Error(`Can not authorize user. In nonserviceable zipcode`)
       }
 
-      const now = new Date()
+      const now = DateTime.local()
+      const nowDate = now.toISODate()
+      const twoDaysFromNow = now.plus({ days: 2 }).toISODate()
       data = {
         ...data,
-        authorizedAt: now,
+        authorizedAt: nowDate,
         admissions: {
           upsert: {
             create: {
-              authorizationWindowClosesAt: new Date(
-                now.getTime() + twoDaysInMilliSeconds
-              ),
+              authorizationWindowClosesAt: twoDaysFromNow,
               admissable: true,
               inServiceableZipcode: true,
               authorizationsCount: this.calculateNumAuthorizations(
@@ -531,9 +532,10 @@ export class CustomerService {
           ),
         }
         if (!dryRun) {
-          const now = new Date()
-          const twoDaysFromNow = new Date(now.getTime() + twoDaysInMilliSeconds)
-          data.authorizedAt = now
+          const now = DateTime.local()
+          const nowDate = now.toISODate()
+          const twoDaysFromNow = now.plus({ days: 2 }).toISODate()
+          data.authorizedAt = nowDate
           admissionsUpsertData.authorizationWindowClosesAt = twoDaysFromNow
         }
 
