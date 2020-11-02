@@ -308,6 +308,7 @@ export class CustomerService {
               ),
             },
             update: {
+              authorizationWindowClosesAt: twoDaysFromNow,
               authorizationsCount: this.calculateNumAuthorizations(
                 customer,
                 data.status,
