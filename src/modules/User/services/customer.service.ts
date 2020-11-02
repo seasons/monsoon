@@ -9,7 +9,6 @@ import { Injectable } from "@nestjs/common"
 import {
   BillingInfoUpdateDataInput,
   CustomerAdmissionsDataCreateWithoutCustomerInput,
-  CustomerAdmissionsDataWhereUniqueInput,
   CustomerStatus,
   CustomerUpdateInput,
   CustomerWhereUniqueInput,
@@ -37,6 +36,9 @@ type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
   dryRun: boolean
   inServiceableZipcode?: boolean
 }
+
+const twoDaysInMilliSeconds =
+  1000 /*sec*/ * 60 /*min*/ * 60 /*hour*/ * 24 /*day*/ * 2
 
 @Injectable()
 export class CustomerService {
@@ -286,12 +288,16 @@ export class CustomerService {
         throw new Error(`Can not authorize user. In nonserviceable zipcode`)
       }
 
+      const now = new Date()
       data = {
         ...data,
-        authorizedAt: new Date(),
+        authorizedAt: now,
         admissions: {
           upsert: {
             create: {
+              authorizationWindowClosesAt: new Date(
+                now.getTime() + twoDaysInMilliSeconds
+              ),
               admissable: true,
               inServiceableZipcode: true,
               authorizationsCount: this.calculateNumAuthorizations(
@@ -515,9 +521,6 @@ export class CustomerService {
     }
     switch (status) {
       case "Authorized":
-        if (!dryRun) {
-          data.authorizedAt = new Date()
-        }
         admissionsUpsertData = {
           admissable: true,
           inServiceableZipcode: true,
@@ -527,6 +530,13 @@ export class CustomerService {
             dryRun
           ),
         }
+        if (!dryRun) {
+          const now = new Date()
+          const twoDaysFromNow = new Date(now.getTime() + twoDaysInMilliSeconds)
+          data.authorizedAt = now
+          admissionsUpsertData.authorizationWindowClosesAt = twoDaysFromNow
+        }
+
         break
       case "Waitlisted":
         if (inServiceableZipcode === undefined) {

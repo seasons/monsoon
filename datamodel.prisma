@@ -709,7 +709,7 @@ type CustomerAdmissionsData {
   authorizationsCount: Int!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  authorizationWindowClosesAt: DateTime!
+  authorizationWindowClosesAt: DateTime
 }
 
 type Customer {
