@@ -188,4 +188,5 @@ type Reservation {
   createdAt: DateTime!
   updatedAt: DateTime!
   adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])
+  shippingOption: ShippingOption
 }

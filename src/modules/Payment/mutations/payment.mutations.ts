@@ -170,7 +170,26 @@ export class PaymentMutationsResolver {
       zip: billingPostalCode,
     })
     if (!billingAddressIsValid) {
-      throw new Error("Billing address is invalid")
+      throw new Error("Your billing address is invalid")
+    }
+
+    const {
+      city: shippingCity,
+      postalCode: shippingPostalCode,
+      state: shippingState,
+      street1: shippingStreet1,
+    } = shippingAddress
+    const {
+      isValid: shippingAddressIsValid,
+    } = await this.shippingService.shippoValidateAddress({
+      name: user.firstName,
+      street1: shippingStreet1,
+      city: shippingCity,
+      state: shippingState,
+      zip: shippingPostalCode,
+    })
+    if (!shippingAddressIsValid) {
+      throw new Error("Your shipping address is invalid")
     }
 
     // Update user's billing address on chargebee
@@ -202,6 +221,20 @@ export class PaymentMutationsResolver {
       customer,
       shippingAddress,
       phoneNumber
+    )
+
+    // Adds the customer's shipping options to their location record
+    const customerLocationID = await this.prisma.client
+      .customer({
+        id: customer.id,
+      })
+      .detail()
+      .shippingAddress()
+      .id()
+
+    this.customerService.addCustomerLocationShippingOptions(
+      shippingState,
+      customerLocationID
     )
 
     return null

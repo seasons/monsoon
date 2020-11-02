@@ -54,15 +54,21 @@ const updateCustomers = async () => {
 
   for (const customer of customers) {
     const shippingAddress = customer.detail?.shippingAddress
-    if (shippingAddress?.id && !shippingAddress?.shippingOptions) {
+    if (shippingAddress?.id && shippingAddress?.shippingOptions?.length === 0) {
       const shippingOptions = [] as ShippingOption[]
 
       const destinationState = shippingAddress.state
 
       // FIXME: We need to first run the script to ensure all locations are using state abbreviations
-      if (destinationState.length > 2 || originState.length > 2) {
+      if (
+        !destinationState ||
+        !originState ||
+        destinationState?.length > 2 ||
+        originState?.length > 2
+      ) {
         console.log("state length too long", shippingAddress.id)
       } else {
+        console.log("updating location")
         for (const method of shippingMethods) {
           const stateData =
             shippingOptionsData[method.code].from[originState].to[

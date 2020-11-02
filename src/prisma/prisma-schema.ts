@@ -12534,6 +12534,7 @@ type Reservation {
   lastLocation: Location
   createdAt: DateTime!
   updatedAt: DateTime!
+  shippingOption: ShippingOption
 }
 
 type ReservationConnection {
@@ -12560,6 +12561,7 @@ input ReservationCreateInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
 }
 
 input ReservationCreateManyWithoutCustomerInput {
@@ -12599,6 +12601,7 @@ input ReservationCreateWithoutCustomerInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
 }
 
 input ReservationCreateWithoutPackageEventsInput {
@@ -12618,6 +12621,7 @@ input ReservationCreateWithoutPackageEventsInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
 }
 
 input ReservationCreateWithoutReceiptInput {
@@ -12637,6 +12641,7 @@ input ReservationCreateWithoutReceiptInput {
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
   lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
 }
 
 type ReservationEdge {
@@ -13345,6 +13350,7 @@ input ReservationUpdateDataInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateInput {
@@ -13364,6 +13370,7 @@ input ReservationUpdateInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateManyDataInput {
@@ -13444,6 +13451,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateWithoutPackageEventsDataInput {
@@ -13462,6 +13470,7 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateWithoutReceiptDataInput {
@@ -13480,6 +13489,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
@@ -13601,6 +13611,7 @@ input ReservationWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  shippingOption: ShippingOptionWhereInput
   AND: [ReservationWhereInput!]
   OR: [ReservationWhereInput!]
   NOT: [ReservationWhereInput!]
@@ -13945,6 +13956,11 @@ input ShippingOptionCreateManyWithoutDestinationInput {
   connect: [ShippingOptionWhereUniqueInput!]
 }
 
+input ShippingOptionCreateOneInput {
+  create: ShippingOptionCreateInput
+  connect: ShippingOptionWhereUniqueInput
+}
+
 input ShippingOptionCreateWithoutDestinationInput {
   id: ID
   origin: LocationCreateOneInput
@@ -14049,6 +14065,14 @@ input ShippingOptionSubscriptionWhereInput {
   NOT: [ShippingOptionSubscriptionWhereInput!]
 }
 
+input ShippingOptionUpdateDataInput {
+  origin: LocationUpdateOneInput
+  destination: LocationUpdateOneWithoutShippingOptionsInput
+  shippingMethod: ShippingMethodUpdateOneInput
+  externalCost: Int
+  averageDuration: Int
+}
+
 input ShippingOptionUpdateInput {
   origin: LocationUpdateOneInput
   destination: LocationUpdateOneWithoutShippingOptionsInput
@@ -14084,6 +14108,15 @@ input ShippingOptionUpdateManyWithWhereNestedInput {
   data: ShippingOptionUpdateManyDataInput!
 }
 
+input ShippingOptionUpdateOneInput {
+  create: ShippingOptionCreateInput
+  update: ShippingOptionUpdateDataInput
+  upsert: ShippingOptionUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ShippingOptionWhereUniqueInput
+}
+
 input ShippingOptionUpdateWithoutDestinationDataInput {
   origin: LocationUpdateOneInput
   shippingMethod: ShippingMethodUpdateOneInput
@@ -14094,6 +14127,11 @@ input ShippingOptionUpdateWithoutDestinationDataInput {
 input ShippingOptionUpdateWithWhereUniqueWithoutDestinationInput {
   where: ShippingOptionWhereUniqueInput!
   data: ShippingOptionUpdateWithoutDestinationDataInput!
+}
+
+input ShippingOptionUpsertNestedInput {
+  update: ShippingOptionUpdateDataInput!
+  create: ShippingOptionCreateInput!
 }
 
 input ShippingOptionUpsertWithWhereUniqueWithoutDestinationInput {

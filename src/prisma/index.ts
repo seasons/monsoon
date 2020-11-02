@@ -6897,6 +6897,7 @@ export interface ReservationWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  shippingOption?: Maybe<ShippingOptionWhereInput>;
   AND?: Maybe<ReservationWhereInput[] | ReservationWhereInput>;
   OR?: Maybe<ReservationWhereInput[] | ReservationWhereInput>;
   NOT?: Maybe<ReservationWhereInput[] | ReservationWhereInput>;
@@ -12397,6 +12398,7 @@ export interface ReservationCreateWithoutCustomerInput {
   statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationCreateOneInput>;
+  shippingOption?: Maybe<ShippingOptionCreateOneInput>;
 }
 
 export interface PackageCreateOneInput {
@@ -12495,6 +12497,7 @@ export interface ReservationCreateWithoutPackageEventsInput {
   statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationCreateOneInput>;
+  shippingOption?: Maybe<ShippingOptionCreateOneInput>;
 }
 
 export interface CustomerCreateOneWithoutReservationsInput {
@@ -12651,6 +12654,44 @@ export interface ReservationReceiptItemCreateInput {
 export interface PhysicalProductCreateOneInput {
   create?: Maybe<PhysicalProductCreateInput>;
   connect?: Maybe<PhysicalProductWhereUniqueInput>;
+}
+
+export interface ShippingOptionCreateOneInput {
+  create?: Maybe<ShippingOptionCreateInput>;
+  connect?: Maybe<ShippingOptionWhereUniqueInput>;
+}
+
+export interface ShippingOptionCreateInput {
+  id?: Maybe<ID_Input>;
+  origin?: Maybe<LocationCreateOneInput>;
+  destination?: Maybe<LocationCreateOneWithoutShippingOptionsInput>;
+  shippingMethod?: Maybe<ShippingMethodCreateOneInput>;
+  externalCost?: Maybe<Int>;
+  averageDuration?: Maybe<Int>;
+}
+
+export interface LocationCreateOneWithoutShippingOptionsInput {
+  create?: Maybe<LocationCreateWithoutShippingOptionsInput>;
+  connect?: Maybe<LocationWhereUniqueInput>;
+}
+
+export interface LocationCreateWithoutShippingOptionsInput {
+  id?: Maybe<ID_Input>;
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  company?: Maybe<String>;
+  description?: Maybe<String>;
+  address1?: Maybe<String>;
+  address2?: Maybe<String>;
+  city?: Maybe<String>;
+  country?: Maybe<String>;
+  state?: Maybe<String>;
+  zipCode: String;
+  locationType?: Maybe<LocationType>;
+  user?: Maybe<UserCreateOneInput>;
+  lat?: Maybe<Float>;
+  lng?: Maybe<Float>;
+  physicalProducts?: Maybe<PhysicalProductCreateManyWithoutLocationInput>;
 }
 
 export interface PackageTransitEventCreateManyWithoutReservationInput {
@@ -13045,6 +13086,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
+  shippingOption?: Maybe<ShippingOptionUpdateOneInput>;
 }
 
 export interface PackageUpdateOneInput {
@@ -13226,6 +13268,7 @@ export interface ReservationUpdateWithoutPackageEventsDataInput {
   statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
+  shippingOption?: Maybe<ShippingOptionUpdateOneInput>;
 }
 
 export interface CustomerUpdateOneRequiredWithoutReservationsInput {
@@ -13710,6 +13753,60 @@ export interface ReservationReceiptItemUpdateManyDataInput {
 export interface ReservationReceiptUpsertWithoutReservationInput {
   update: ReservationReceiptUpdateWithoutReservationDataInput;
   create: ReservationReceiptCreateWithoutReservationInput;
+}
+
+export interface ShippingOptionUpdateOneInput {
+  create?: Maybe<ShippingOptionCreateInput>;
+  update?: Maybe<ShippingOptionUpdateDataInput>;
+  upsert?: Maybe<ShippingOptionUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ShippingOptionWhereUniqueInput>;
+}
+
+export interface ShippingOptionUpdateDataInput {
+  origin?: Maybe<LocationUpdateOneInput>;
+  destination?: Maybe<LocationUpdateOneWithoutShippingOptionsInput>;
+  shippingMethod?: Maybe<ShippingMethodUpdateOneInput>;
+  externalCost?: Maybe<Int>;
+  averageDuration?: Maybe<Int>;
+}
+
+export interface LocationUpdateOneWithoutShippingOptionsInput {
+  create?: Maybe<LocationCreateWithoutShippingOptionsInput>;
+  update?: Maybe<LocationUpdateWithoutShippingOptionsDataInput>;
+  upsert?: Maybe<LocationUpsertWithoutShippingOptionsInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<LocationWhereUniqueInput>;
+}
+
+export interface LocationUpdateWithoutShippingOptionsDataInput {
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  company?: Maybe<String>;
+  description?: Maybe<String>;
+  address1?: Maybe<String>;
+  address2?: Maybe<String>;
+  city?: Maybe<String>;
+  country?: Maybe<String>;
+  state?: Maybe<String>;
+  zipCode?: Maybe<String>;
+  locationType?: Maybe<LocationType>;
+  user?: Maybe<UserUpdateOneInput>;
+  lat?: Maybe<Float>;
+  lng?: Maybe<Float>;
+  physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutLocationInput>;
+}
+
+export interface LocationUpsertWithoutShippingOptionsInput {
+  update: LocationUpdateWithoutShippingOptionsDataInput;
+  create: LocationCreateWithoutShippingOptionsInput;
+}
+
+export interface ShippingOptionUpsertNestedInput {
+  update: ShippingOptionUpdateDataInput;
+  create: ShippingOptionCreateInput;
 }
 
 export interface ReservationUpsertWithoutPackageEventsInput {
@@ -15549,6 +15646,7 @@ export interface ReservationCreateInput {
   statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationCreateOneInput>;
+  shippingOption?: Maybe<ShippingOptionCreateOneInput>;
 }
 
 export interface ProductVariantFeedbackUpdateInput {
@@ -15725,6 +15823,7 @@ export interface ReservationUpdateDataInput {
   statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
+  shippingOption?: Maybe<ShippingOptionUpdateOneInput>;
 }
 
 export interface ReservationUpsertNestedInput {
@@ -15929,6 +16028,7 @@ export interface ReservationUpdateInput {
   statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
+  shippingOption?: Maybe<ShippingOptionUpdateOneInput>;
 }
 
 export interface ReservationUpdateManyMutationInput {
@@ -16117,6 +16217,7 @@ export interface ReservationCreateWithoutReceiptInput {
   reminderSentAt?: Maybe<DateTimeInput>;
   statusUpdatedAt?: Maybe<DateTimeInput>;
   lastLocation?: Maybe<LocationCreateOneInput>;
+  shippingOption?: Maybe<ShippingOptionCreateOneInput>;
 }
 
 export interface ReservationReceiptUpdateInput {
@@ -16147,6 +16248,7 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   reminderSentAt?: Maybe<DateTimeInput>;
   statusUpdatedAt?: Maybe<DateTimeInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
+  shippingOption?: Maybe<ShippingOptionUpdateOneInput>;
 }
 
 export interface ReservationUpsertWithoutReceiptInput {
@@ -16185,77 +16287,12 @@ export interface ShippingMethodUpdateManyMutationInput {
   displayText?: Maybe<String>;
 }
 
-export interface ShippingOptionCreateInput {
-  id?: Maybe<ID_Input>;
-  origin?: Maybe<LocationCreateOneInput>;
-  destination?: Maybe<LocationCreateOneWithoutShippingOptionsInput>;
-  shippingMethod?: Maybe<ShippingMethodCreateOneInput>;
-  externalCost?: Maybe<Int>;
-  averageDuration?: Maybe<Int>;
-}
-
-export interface LocationCreateOneWithoutShippingOptionsInput {
-  create?: Maybe<LocationCreateWithoutShippingOptionsInput>;
-  connect?: Maybe<LocationWhereUniqueInput>;
-}
-
-export interface LocationCreateWithoutShippingOptionsInput {
-  id?: Maybe<ID_Input>;
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-  company?: Maybe<String>;
-  description?: Maybe<String>;
-  address1?: Maybe<String>;
-  address2?: Maybe<String>;
-  city?: Maybe<String>;
-  country?: Maybe<String>;
-  state?: Maybe<String>;
-  zipCode: String;
-  locationType?: Maybe<LocationType>;
-  user?: Maybe<UserCreateOneInput>;
-  lat?: Maybe<Float>;
-  lng?: Maybe<Float>;
-  physicalProducts?: Maybe<PhysicalProductCreateManyWithoutLocationInput>;
-}
-
 export interface ShippingOptionUpdateInput {
   origin?: Maybe<LocationUpdateOneInput>;
   destination?: Maybe<LocationUpdateOneWithoutShippingOptionsInput>;
   shippingMethod?: Maybe<ShippingMethodUpdateOneInput>;
   externalCost?: Maybe<Int>;
   averageDuration?: Maybe<Int>;
-}
-
-export interface LocationUpdateOneWithoutShippingOptionsInput {
-  create?: Maybe<LocationCreateWithoutShippingOptionsInput>;
-  update?: Maybe<LocationUpdateWithoutShippingOptionsDataInput>;
-  upsert?: Maybe<LocationUpsertWithoutShippingOptionsInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<LocationWhereUniqueInput>;
-}
-
-export interface LocationUpdateWithoutShippingOptionsDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-  company?: Maybe<String>;
-  description?: Maybe<String>;
-  address1?: Maybe<String>;
-  address2?: Maybe<String>;
-  city?: Maybe<String>;
-  country?: Maybe<String>;
-  state?: Maybe<String>;
-  zipCode?: Maybe<String>;
-  locationType?: Maybe<LocationType>;
-  user?: Maybe<UserUpdateOneInput>;
-  lat?: Maybe<Float>;
-  lng?: Maybe<Float>;
-  physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutLocationInput>;
-}
-
-export interface LocationUpsertWithoutShippingOptionsInput {
-  update: LocationUpdateWithoutShippingOptionsDataInput;
-  create: LocationCreateWithoutShippingOptionsInput;
 }
 
 export interface ShippingOptionUpdateManyMutationInput {
@@ -20826,6 +20863,7 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
   lastLocation: <T = LocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  shippingOption: <T = ShippingOptionPromise>() => T;
 }
 
 export interface ReservationSubscription
@@ -20868,6 +20906,7 @@ export interface ReservationSubscription
   lastLocation: <T = LocationSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  shippingOption: <T = ShippingOptionSubscription>() => T;
 }
 
 export interface ReservationNullablePromise
@@ -20908,6 +20947,7 @@ export interface ReservationNullablePromise
   lastLocation: <T = LocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  shippingOption: <T = ShippingOptionPromise>() => T;
 }
 
 export interface Package {

@@ -1,3 +1,5 @@
+import fs from "fs"
+
 import { ApplicationType } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email"
@@ -15,6 +17,7 @@ import {
   CustomerWhereUniqueInput,
   ID_Input,
   InAdmissableReason,
+  ShippingOption,
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -83,15 +86,58 @@ export class CustomerService {
     })
   }
 
+  async addCustomerLocationShippingOptions(
+    destinationState,
+    shippingAddressID
+  ) {
+    const shippingMethods = await this.prisma.client.shippingMethods()
+    const warehouseLocation = await this.prisma.client.location({
+      slug:
+        process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+        "seasons-cleaners-official",
+    })
+    const shippingOptionsData = JSON.parse(
+      fs.readFileSync(
+        process.cwd() + "/src/modules/Shipping/shippingOptionsData.json",
+        "utf-8"
+      )
+    )
+    const originState = warehouseLocation.state
+    const shippingOptions = [] as ShippingOption[]
+
+    for (const method of shippingMethods) {
+      const stateData =
+        shippingOptionsData[method.code].from[originState].to[destinationState]
+
+      const shippingOption = await this.prisma.client.createShippingOption({
+        origin: { connect: { id: warehouseLocation.id } },
+        destination: { connect: { id: shippingAddressID } },
+        shippingMethod: { connect: { id: method.id } },
+        externalCost: stateData.price,
+        averageDuration: stateData.averageDuration,
+      })
+
+      shippingOptions.push(shippingOption)
+    }
+
+    await this.prisma.client.updateLocation({
+      where: { id: shippingAddressID },
+      data: {
+        shippingOptions: {
+          connect: shippingOptions.map(s => ({ id: s.id })),
+        },
+      },
+    })
+  }
+
   async addCustomerDetails({ details, status }, customer, user, info) {
-    // If any of these keys is present, the entire address must be present and valid.
     const groupedKeys = ["name", "address1", "address2", "city", "state"]
-    if (
+    const isUpdatingShippingAddress =
       details.shippingAddress?.create &&
       Object.keys(details.shippingAddress?.create)?.some(key =>
         groupedKeys.includes(key)
       )
-    ) {
+    if (isUpdatingShippingAddress) {
       const {
         name,
         address1: street1,
@@ -129,6 +175,21 @@ export class CustomerService {
       },
       where: { id: customer.id },
     })
+
+    if (isUpdatingShippingAddress) {
+      const state = details.shippingAddress?.create?.state
+      if (!state) {
+        throw new Error("State missing in shipping address update")
+      }
+      const shippingAddressID = await this.prisma.client
+        .customer({
+          id: customer.id,
+        })
+        .detail()
+        .shippingAddress()
+        .id()
+      this.addCustomerLocationShippingOptions(state, shippingAddressID)
+    }
 
     // If a status was passed, update the customer status in prisma
     if (!!status) {

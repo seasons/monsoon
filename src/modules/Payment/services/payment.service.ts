@@ -35,6 +35,61 @@ export class PaymentService {
     private readonly segment: SegmentService
   ) {}
 
+  async addShippingCharge(customer, shippingCode) {
+    try {
+      const customerWithShippingData = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+        {
+          id
+          membership {
+            id
+            subscriptionId
+          }
+          detail {
+            id
+            shippingAddress {
+              id
+              shippingOptions {
+                id
+                externalCost
+                shippingMethod {
+                  id
+                  code
+                }
+              }
+            }
+          }
+        }
+      `
+      )
+
+      const { membership, detail } = customerWithShippingData
+
+      const subscriptionID = membership.subscriptionId
+      const shippingOptions = detail?.shippingAddress?.shippingOptions
+      const shippingOption = shippingOptions.find(
+        option => option.shippingMethod.code === shippingCode
+      )
+      const externalCost = shippingOption.externalCost
+
+      if (externalCost !== 0) {
+        await chargebee.invoice
+          .charge_addon({
+            subscription_id: subscriptionID,
+            addon_id: shippingOption.shippingMethod.code?.toLowerCase(),
+            addon_unit_price: externalCost,
+            addon_quantity: 1,
+          })
+          .request()
+      }
+
+      return shippingOption.id
+    } catch (e) {
+      throw new Error(`Error adding shipping charge: ${e}`)
+    }
+  }
+
   async changeCustomerPlan(planID, customer) {
     const reservations = await this.prisma.client
       .customer({ id: customer.id })

@@ -1,6 +1,6 @@
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { Customer, ID_Input, Location, User } from "@prisma/index"
+import { Customer, ID_Input, Location, ShippingCode, User } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import shippo from "shippo"
 
@@ -34,7 +34,8 @@ export class ShippingService {
   async createReservationShippingLabels(
     newProductVariantsBeingReserved: ID_Input[],
     user: User,
-    customer: Customer
+    customer: Customer,
+    shippingCode: ShippingCode
   ): Promise<ShippoTransaction[]> {
     const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs(
       newProductVariantsBeingReserved as string[]
@@ -53,15 +54,20 @@ export class ShippingService {
       insuranceAmount
     )
 
+    let serviceLevelToken = "ups_ground"
+    if (!!shippingCode && shippingCode === "UPSSelect") {
+      serviceLevelToken = "ups_3_day_select"
+    }
+
     const seasonsToCustomerTransaction = await this.createShippingLabel({
       shipment: seasonsToShippoShipment,
       carrier_account: process.env.UPS_ACCOUNT_ID,
-      servicelevel_token: "ups_ground",
+      servicelevel_token: serviceLevelToken,
     })
     const customerToSeasonsTransaction = await this.createShippingLabel({
       shipment: customerToSeasonsShipment,
       carrier_account: process.env.UPS_ACCOUNT_ID,
-      servicelevel_token: "ups_ground",
+      servicelevel_token: serviceLevelToken,
     })
 
     return [seasonsToCustomerTransaction, customerToSeasonsTransaction]
