@@ -3,7 +3,6 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ID_Input, InventoryStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
-import * as Airtable from "airtable"
 
 import { ProductModuleDef } from "../product.module"
 import { ProductWithPhysicalProducts } from "../product.types"
@@ -11,11 +10,6 @@ import { ProductService } from "../services/product.service"
 import { ProductUtilsService } from "../services/product.utils.service"
 
 const ONE_MIN = 60000
-
-Airtable.configure({
-  endpointUrl: "https://api.airtable.com",
-  apiKey: process.env.AIRTABLE_KEY,
-})
 
 interface TestPhysicalProduct {
   id: ID_Input
