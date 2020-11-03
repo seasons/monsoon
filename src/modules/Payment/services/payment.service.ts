@@ -415,9 +415,8 @@ export class PaymentService {
         //   },
         //   where: { id: customer.id },
         // })
-      } else {
-        throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
       }
+      throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
     }
   }
 
