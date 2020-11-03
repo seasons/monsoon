@@ -1,4 +1,5 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
+import { CouponType } from "@app/modules/Payment/payment.types"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { CustomerDetail } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
@@ -8,7 +9,8 @@ import {
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
-import { head } from "lodash"
+import chargebee from "chargebee"
+import { camelCase, head, upperFirst } from "lodash"
 import request from "request"
 import zipcodes from "zipcodes"
 
@@ -41,12 +43,14 @@ export class AuthService {
     firstName,
     lastName,
     details,
+    referrerId,
   }: {
     email: string
     password: string
     firstName: string
     lastName: string
     details: CustomerDetailCreateInput
+    referrerId?: string
   }) {
     // 1. Register the user on Auth0
     let userAuth0ID
@@ -81,16 +85,47 @@ export class AuthService {
       lastName
     )
 
+    // There will be a race condition in the case where two members with the same first name sign up at the same time
+    const usersWithSameFirstName = await this.prisma.client.users({
+      where: { firstName },
+    })
+
     // 4. Create the customer in our database
-    const customer = await this.createPrismaCustomerForExistingUser(
+    const {
+      customer,
+      isValidReferral,
+    } = await this.createPrismaCustomerForExistingUser(
       user.id,
       details,
-      "Created"
+      "Created",
+      firstName + usersWithSameFirstName.length.toString(),
+      referrerId
     )
 
     await this.email.sendSubmittedEmailEmail(user)
 
-    return { user, tokenData, customer }
+    let coupon
+
+    if (isValidReferral) {
+      const couponID = process.env.REFERRAL_COUPON_ID
+      const chargebeeCoupon = await chargebee.coupon
+        .retrieve(couponID)
+        .request()
+      if (chargebeeCoupon.coupon.status === "active") {
+        coupon = {
+          id: couponID,
+          percentage: chargebeeCoupon.coupon.discount_percentage,
+          amount: chargebeeCoupon.coupon.discount_amount,
+          type: upperFirst(
+            camelCase(chargebeeCoupon.coupon.discount_type)
+          ) as CouponType,
+        }
+      } else {
+        throw new Error("Coupon expired")
+      }
+    }
+
+    return { user, tokenData, customer, coupon }
   }
 
   async loginUser({ email, password, requestUser }) {
@@ -338,7 +373,13 @@ export class AuthService {
     return user
   }
 
-  private async createPrismaCustomerForExistingUser(userID, details, status) {
+  private async createPrismaCustomerForExistingUser(
+    userID,
+    details,
+    status,
+    referralSlashTag,
+    referrerId
+  ) {
     if (details?.shippingAddress?.create?.zipCode) {
       const zipCode = details?.shippingAddress?.create?.zipCode
       const state = zipcodes.lookup(zipCode)?.state
@@ -347,17 +388,7 @@ export class AuthService {
       details.shippingAddress.create.state = state
     }
 
-    return await this.prisma.binding.mutation.createCustomer(
-      {
-        data: {
-          user: {
-            connect: { id: userID },
-          },
-          detail: { create: details },
-          status: status || "Waitlisted",
-        },
-      },
-      `{
+    const customerQueryInfo = `{
       id
       status
       detail {
@@ -367,8 +398,92 @@ export class AuthService {
           city
         }
       }
+      referrer {
+        id
+      }
     }`
+
+    let newCustomer = await this.prisma.binding.mutation.createCustomer(
+      {
+        data: {
+          user: {
+            connect: { id: userID },
+          },
+          detail: { create: details },
+          status: status || "Waitlisted",
+        },
+      },
+      customerQueryInfo
     )
+
+    try {
+      const referralLink = await this.createReferralLink(
+        newCustomer.id,
+        referralSlashTag
+      )
+      let referrerIsValidCustomer = false
+      if (referrerId) {
+        referrerIsValidCustomer = await this.prisma.binding.query.customer({
+          where: { id: referrerId },
+        })
+      }
+
+      newCustomer = await this.prisma.binding.mutation.updateCustomer(
+        {
+          data: {
+            referralLink: referralLink.shortUrl,
+            referrer: {
+              connect: referrerIsValidCustomer ? { id: referrerId } : null,
+            },
+          },
+          where: { id: newCustomer.id },
+        },
+        customerQueryInfo
+      )
+    } catch (err) {
+      console.log(err)
+      // silently fail
+    }
+
+    return {
+      customer: newCustomer,
+      isValidReferral: newCustomer.referrer !== null,
+    }
+  }
+
+  private async createReferralLink(
+    customerId,
+    referralSlashTag
+  ): Promise<{
+    shortUrl: string
+  }> {
+    let linkRequest = {
+      destination: "https://www.seasons.nyc/signup?referrer_id=" + customerId,
+      domain: { fullName: "rebrand.ly" },
+      slashtag: referralSlashTag,
+    }
+
+    let requestHeaders = {
+      "Content-Type": "application/json",
+      apikey: process.env.REBRANDLY_API_KEY,
+      workspace: process.env.REBRANDLY_WORKSPACE_ID,
+    }
+    return new Promise((resolve, reject) => {
+      return request(
+        {
+          uri: "https://api.rebrandly.com/v1/links",
+          method: "POST",
+          body: JSON.stringify(linkRequest),
+          headers: requestHeaders,
+        },
+        (err, response, body) => {
+          if (err) {
+            reject(err)
+          }
+          resolve(JSON.parse(body))
+        }
+      )
+    })
   }
 
   private async getAuth0UserAccessToken(

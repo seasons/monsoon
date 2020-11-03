@@ -1,7 +1,6 @@
 import { Customer, User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { Plan } from "@app/prisma"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
@@ -35,7 +34,8 @@ export class ChargebeeQueriesResolver {
       email,
       firstName,
       lastName,
-      phoneNumber
+      phoneNumber,
+      null // TODO: Add coupon to this query
     )
 
     const customerWithData = (await this.prisma.binding.query.customer(
@@ -72,7 +72,7 @@ export class ChargebeeQueriesResolver {
 
   @Query()
   async chargebeeCheckout(
-    @Args() { planID, email: passedEmail, userIDHash },
+    @Args() { planID, email: passedEmail, userIDHash, couponID },
     @Application() application
   ) {
     let user
@@ -98,7 +98,8 @@ export class ChargebeeQueriesResolver {
       email,
       firstName,
       lastName,
-      phoneNumber
+      phoneNumber,
+      couponID
     )
 
     const customerWithData = (await this.prisma.binding.query.customer(

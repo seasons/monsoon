@@ -448,7 +448,8 @@ export class PaymentService {
     email,
     firstName,
     lastName,
-    phoneNumber
+    phoneNumber,
+    couponId
   ) {
     return await new Promise((resolve, reject) => {
       chargebee.hosted_page
@@ -464,6 +465,7 @@ export class PaymentService {
             phone: phoneNumber,
           },
           redirect_url: "https://seasons.nyc/chargebee-mobile-checkout-success",
+          coupon_ids: !!couponId ? [couponId] : [],
         })
         .request((error, result) => {
           if (error) {
@@ -715,6 +717,7 @@ export class PaymentService {
       const coupon = await chargebee.coupon.retrieve(couponID).request()
       if (coupon.coupon.status === "active") {
         return {
+          id: couponID,
           percentage: coupon.coupon.discount_percentage,
           amount: coupon.coupon.discount_amount,
           type: upperFirst(

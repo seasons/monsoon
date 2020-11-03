@@ -2681,6 +2681,10 @@ type Customer {
   membership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
+  referralLink: String
+  referrerId: String
+  referrer: Customer
+  referrees(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer!]
   emailedProducts(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   admissions: CustomerAdmissionsData
   authorizedAt: DateTime
@@ -2886,9 +2890,18 @@ input CustomerCreateInput {
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
+}
+
+input CustomerCreateManyWithoutReferrerInput {
+  create: [CustomerCreateWithoutReferrerInput!]
+  connect: [CustomerWhereUniqueInput!]
 }
 
 input CustomerCreateOneInput {
@@ -2911,6 +2924,11 @@ input CustomerCreateOneWithoutMembershipInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerCreateOneWithoutReferreesInput {
+  create: CustomerCreateWithoutReferreesInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerCreateOneWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput
   connect: CustomerWhereUniqueInput
@@ -2926,6 +2944,10 @@ input CustomerCreateWithoutAdmissionsInput {
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
   authorizedAt: DateTime
 }
@@ -2939,6 +2961,10 @@ input CustomerCreateWithoutBagItemsInput {
   plan: Plan
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
@@ -2953,6 +2979,46 @@ input CustomerCreateWithoutMembershipInput {
   plan: Plan
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
+  emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
+  authorizedAt: DateTime
+}
+
+input CustomerCreateWithoutReferreesInput {
+  id: ID
+  user: UserCreateOneInput!
+  status: CustomerStatus
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  plan: Plan
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerCreateOneWithoutReferreesInput
+  emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
+  authorizedAt: DateTime
+}
+
+input CustomerCreateWithoutReferrerInput {
+  id: ID
+  user: UserCreateOneInput!
+  status: CustomerStatus
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  plan: Plan
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
@@ -2967,6 +3033,10 @@ input CustomerCreateWithoutReservationsInput {
   plan: Plan
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
@@ -3681,6 +3751,10 @@ enum CustomerOrderByInput {
   status_DESC
   plan_ASC
   plan_DESC
+  referralLink_ASC
+  referralLink_DESC
+  referrerId_ASC
+  referrerId_DESC
   authorizedAt_ASC
   authorizedAt_DESC
   createdAt_ASC
@@ -3693,9 +3767,91 @@ type CustomerPreviousValues {
   id: ID!
   status: CustomerStatus
   plan: Plan
+  referralLink: String
+  referrerId: String
   authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input CustomerScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  status: CustomerStatus
+  status_not: CustomerStatus
+  status_in: [CustomerStatus!]
+  status_not_in: [CustomerStatus!]
+  plan: Plan
+  plan_not: Plan
+  plan_in: [Plan!]
+  plan_not_in: [Plan!]
+  referralLink: String
+  referralLink_not: String
+  referralLink_in: [String!]
+  referralLink_not_in: [String!]
+  referralLink_lt: String
+  referralLink_lte: String
+  referralLink_gt: String
+  referralLink_gte: String
+  referralLink_contains: String
+  referralLink_not_contains: String
+  referralLink_starts_with: String
+  referralLink_not_starts_with: String
+  referralLink_ends_with: String
+  referralLink_not_ends_with: String
+  referrerId: String
+  referrerId_not: String
+  referrerId_in: [String!]
+  referrerId_not_in: [String!]
+  referrerId_lt: String
+  referrerId_lte: String
+  referrerId_gt: String
+  referrerId_gte: String
+  referrerId_contains: String
+  referrerId_not_contains: String
+  referrerId_starts_with: String
+  referrerId_not_starts_with: String
+  referrerId_ends_with: String
+  referrerId_not_ends_with: String
+  authorizedAt: DateTime
+  authorizedAt_not: DateTime
+  authorizedAt_in: [DateTime!]
+  authorizedAt_not_in: [DateTime!]
+  authorizedAt_lt: DateTime
+  authorizedAt_lte: DateTime
+  authorizedAt_gt: DateTime
+  authorizedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [CustomerScalarWhereInput!]
+  OR: [CustomerScalarWhereInput!]
+  NOT: [CustomerScalarWhereInput!]
 }
 
 enum CustomerStatus {
@@ -3736,6 +3892,10 @@ input CustomerUpdateDataInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
@@ -3750,15 +3910,46 @@ input CustomerUpdateInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  authorizedAt: DateTime
+}
+
+input CustomerUpdateManyDataInput {
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
   authorizedAt: DateTime
 }
 
 input CustomerUpdateManyMutationInput {
   status: CustomerStatus
   plan: Plan
+  referralLink: String
+  referrerId: String
   authorizedAt: DateTime
+}
+
+input CustomerUpdateManyWithoutReferrerInput {
+  create: [CustomerCreateWithoutReferrerInput!]
+  delete: [CustomerWhereUniqueInput!]
+  connect: [CustomerWhereUniqueInput!]
+  set: [CustomerWhereUniqueInput!]
+  disconnect: [CustomerWhereUniqueInput!]
+  update: [CustomerUpdateWithWhereUniqueWithoutReferrerInput!]
+  upsert: [CustomerUpsertWithWhereUniqueWithoutReferrerInput!]
+  deleteMany: [CustomerScalarWhereInput!]
+  updateMany: [CustomerUpdateManyWithWhereNestedInput!]
+}
+
+input CustomerUpdateManyWithWhereNestedInput {
+  where: CustomerScalarWhereInput!
+  data: CustomerUpdateManyDataInput!
 }
 
 input CustomerUpdateOneRequiredInput {
@@ -3796,6 +3987,15 @@ input CustomerUpdateOneRequiredWithoutReservationsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerUpdateOneWithoutReferreesInput {
+  create: CustomerCreateWithoutReferreesInput
+  update: CustomerUpdateWithoutReferreesDataInput
+  upsert: CustomerUpsertWithoutReferreesInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerUpdateWithoutAdmissionsDataInput {
   user: UserUpdateOneRequiredInput
   status: CustomerStatus
@@ -3805,6 +4005,10 @@ input CustomerUpdateWithoutAdmissionsDataInput {
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
   authorizedAt: DateTime
 }
@@ -3817,6 +4021,10 @@ input CustomerUpdateWithoutBagItemsDataInput {
   plan: Plan
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
@@ -3830,6 +4038,44 @@ input CustomerUpdateWithoutMembershipDataInput {
   plan: Plan
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  authorizedAt: DateTime
+}
+
+input CustomerUpdateWithoutReferreesDataInput {
+  user: UserUpdateOneRequiredInput
+  status: CustomerStatus
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  authorizedAt: DateTime
+}
+
+input CustomerUpdateWithoutReferrerDataInput {
+  user: UserUpdateOneRequiredInput
+  status: CustomerStatus
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
@@ -3843,9 +4089,18 @@ input CustomerUpdateWithoutReservationsDataInput {
   plan: Plan
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+}
+
+input CustomerUpdateWithWhereUniqueWithoutReferrerInput {
+  where: CustomerWhereUniqueInput!
+  data: CustomerUpdateWithoutReferrerDataInput!
 }
 
 input CustomerUpsertNestedInput {
@@ -3868,9 +4123,20 @@ input CustomerUpsertWithoutMembershipInput {
   create: CustomerCreateWithoutMembershipInput!
 }
 
+input CustomerUpsertWithoutReferreesInput {
+  update: CustomerUpdateWithoutReferreesDataInput!
+  create: CustomerCreateWithoutReferreesInput!
+}
+
 input CustomerUpsertWithoutReservationsInput {
   update: CustomerUpdateWithoutReservationsDataInput!
   create: CustomerCreateWithoutReservationsInput!
+}
+
+input CustomerUpsertWithWhereUniqueWithoutReferrerInput {
+  where: CustomerWhereUniqueInput!
+  update: CustomerUpdateWithoutReferrerDataInput!
+  create: CustomerCreateWithoutReferrerInput!
 }
 
 input CustomerWhereInput {
@@ -3906,6 +4172,38 @@ input CustomerWhereInput {
   reservations_every: ReservationWhereInput
   reservations_some: ReservationWhereInput
   reservations_none: ReservationWhereInput
+  referralLink: String
+  referralLink_not: String
+  referralLink_in: [String!]
+  referralLink_not_in: [String!]
+  referralLink_lt: String
+  referralLink_lte: String
+  referralLink_gt: String
+  referralLink_gte: String
+  referralLink_contains: String
+  referralLink_not_contains: String
+  referralLink_starts_with: String
+  referralLink_not_starts_with: String
+  referralLink_ends_with: String
+  referralLink_not_ends_with: String
+  referrerId: String
+  referrerId_not: String
+  referrerId_in: [String!]
+  referrerId_not_in: [String!]
+  referrerId_lt: String
+  referrerId_lte: String
+  referrerId_gt: String
+  referrerId_gte: String
+  referrerId_contains: String
+  referrerId_not_contains: String
+  referrerId_starts_with: String
+  referrerId_not_starts_with: String
+  referrerId_ends_with: String
+  referrerId_not_ends_with: String
+  referrer: CustomerWhereInput
+  referrees_every: CustomerWhereInput
+  referrees_some: CustomerWhereInput
+  referrees_none: CustomerWhereInput
   emailedProducts_every: ProductWhereInput
   emailedProducts_some: ProductWhereInput
   emailedProducts_none: ProductWhereInput
@@ -3941,6 +4239,7 @@ input CustomerWhereInput {
 
 input CustomerWhereUniqueInput {
   id: ID
+  referralLink: String
 }
 
 scalar DateTime

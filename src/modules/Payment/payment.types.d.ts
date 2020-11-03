@@ -73,6 +73,7 @@ export interface RefundInvoiceInput {
 }
 
 export interface Coupon {
+  id: string
   amount: number
   percentage: number
   type: CouponType

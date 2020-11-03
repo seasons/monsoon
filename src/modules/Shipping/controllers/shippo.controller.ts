@@ -99,6 +99,8 @@ export class ShippoController {
             `{
               id
               status
+              receivedAt
+              shippedAt
               sentPackage {
                 transactionID
               }
@@ -175,7 +177,7 @@ export class ShippoController {
             },
             phase,
             ...(reservationStatus === "Delivered" &&
-            reservation.receivedAt !== null
+            reservation.receivedAt === null
               ? { receivedAt: new Date() }
               : {}),
             ...(reservationStatus === "Shipped"

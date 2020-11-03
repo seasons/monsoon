@@ -49,60 +49,6 @@ export class EmailDataProvider {
     }
   }
 
-  welcomeToSeasons(firstName) {
-    return {
-      email: {
-        body: {
-          paragraphs: [
-            {
-              html:
-                `Hey ${firstName},<br><br>Thank you so much for signing up. We're excited ` +
-                `you're here. You'll be the first to know about` +
-                ` exclusive features, products and restocks.`,
-            },
-            {
-              html: `If you have any questions or feedback, we'd love to hear from you at ${process.env.MAIN_CONTACT_EMAIL}`,
-            },
-          ],
-        },
-        title: "Welcome to Seasons.",
-        subject: "Welcome to Seasons",
-      },
-    }
-  }
-
-  returnReminder({ name, returnDate }) {
-    return {
-      email: {
-        body: {
-          paragraphs: [
-            { html: `Hey ${name}!<br><br>It's time to return your items.` },
-            {
-              html: `Please <b>drop off</b> your bag no later than <b>${returnDate}</b>. Once we've received and processed your items, we'll send you an email confirmation and your bag will be reset for you to place your next order! This typically takes about 2-3 business days.`,
-            },
-            { html: `As a reminder, here's what you need to do:` },
-            {
-              html:
-                `<ol style="margin:0px"><li>Place the items you’re returning into your bag - hangers included!</li>` +
-                `<li>Insert the return shipping label into the pouch on the outside of the bag.</li>` +
-                `<li>Drop off at your closest UPS pick up location.</li></ol>`,
-            },
-            { html: "Thanks,<br>The Seasons Team" },
-          ],
-        },
-        prefooter: {
-          paragraphs: [
-            {
-              html: `If you have any questions, reach out to ${process.env.MAIN_CONTACT_EMAIL}.`,
-            },
-          ],
-        },
-        title: "It's time to return your items",
-        subject: "It's time to return your items",
-      },
-    }
-  }
-
   resetPassword(url: string) {
     return {
       email: {
@@ -119,34 +65,6 @@ export class EmailDataProvider {
             },
           ],
           button: { text: "Reset my password", url },
-        },
-      },
-    }
-  }
-
-  verifyEmail() {
-    return {
-      email: {
-        title: "Welcome to Seasons.",
-        body: {
-          subject: `Verify your email`,
-          paragraphs: [
-            {
-              html: `Hey {{user.given_name}}!`,
-            },
-            {
-              html:
-                "Welcome to Seasons, a members only subscription service to the most coveted menswear and streetwear brands. To make sure we have the right person, please verify your email by clicking on the button below.",
-            },
-          ],
-          button: { text: "Verify Email", url: "{{url}}" },
-        },
-        prefooter: {
-          paragraphs: [
-            {
-              html: `If you have any questions, reach out to ${process.env.MAIN_CONTACT_EMAIL}.`,
-            },
-          ],
         },
       },
     }
