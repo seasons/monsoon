@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Mon Nov 02 2020 14:01:25 GMT-0500 (Eastern Standard Time)
+# timestamp: Tue Nov 03 2020 13:54:07 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -6648,6 +6648,18 @@ type Customer implements Node {
     first: Int
     last: Int
   ): [Reservation!]
+  referralLink: String
+  referrerId: String
+  referrer: Customer
+  referrees(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Customer!]
   emailedProducts(
     where: ProductWhereInput
     orderBy: ProductOrderByInput
@@ -7190,6 +7202,7 @@ input CustomerCreateWithoutMembershipInput {
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
   referrer: CustomerCreateOneWithoutReferreesInput
@@ -9118,223 +9131,21 @@ type CustomerPreviousValues {
   updatedAt: DateTime!
 }
 
-enum CustomerStatus {
-  Invited
-  Created
-  Waitlisted
-  Authorized
-  Active
-  Suspended
-  Paused
-  Deactivated
-}
-
-type CustomerSubscriptionPayload {
-  mutation: MutationType!
-  node: Customer
-  updatedFields: [String!]
-  previousValues: CustomerPreviousValues
-}
-
-input CustomerSubscriptionWhereInput {
+input CustomerScalarWhereInput {
   """
   Logical AND on all given filters.
   """
-  AND: [CustomerSubscriptionWhereInput!]
+  AND: [CustomerScalarWhereInput!]
 
   """
   Logical OR on all given filters.
   """
-  OR: [CustomerSubscriptionWhereInput!]
+  OR: [CustomerScalarWhereInput!]
 
   """
   Logical NOT on all given filters combined by AND.
   """
-  NOT: [CustomerSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: CustomerWhereInput
-}
-
-input CustomerUpdateDataInput {
-  status: CustomerStatus
-  plan: Plan
-  authorizedAt: DateTime
-  user: UserUpdateOneRequiredInput
-  detail: CustomerDetailUpdateOneInput
-  billingInfo: BillingInfoUpdateOneInput
-  membership: CustomerMembershipUpdateOneWithoutCustomerInput
-  bagItems: BagItemUpdateManyWithoutCustomerInput
-  reservations: ReservationUpdateManyWithoutCustomerInput
-  emailedProducts: ProductUpdateManyInput
-  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
-}
-
-input CustomerUpdateInput {
-  status: CustomerStatus
-  plan: Plan
-  authorizedAt: DateTime
-  user: UserUpdateOneRequiredInput
-  detail: CustomerDetailUpdateOneInput
-  billingInfo: BillingInfoUpdateOneInput
-  membership: CustomerMembershipUpdateOneWithoutCustomerInput
-  bagItems: BagItemUpdateManyWithoutCustomerInput
-  reservations: ReservationUpdateManyWithoutCustomerInput
-  emailedProducts: ProductUpdateManyInput
-  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
-}
-
-input CustomerUpdateManyMutationInput {
-  status: CustomerStatus
-  plan: Plan
-  authorizedAt: DateTime
-}
-
-input CustomerUpdateOneRequiredInput {
-  create: CustomerCreateInput
-  connect: CustomerWhereUniqueInput
-  update: CustomerUpdateDataInput
-  upsert: CustomerUpsertNestedInput
-}
-
-input CustomerUpdateOneRequiredWithoutAdmissionsInput {
-  create: CustomerCreateWithoutAdmissionsInput
-  connect: CustomerWhereUniqueInput
-  update: CustomerUpdateWithoutAdmissionsDataInput
-  upsert: CustomerUpsertWithoutAdmissionsInput
-}
-
-input CustomerUpdateOneRequiredWithoutBagItemsInput {
-  create: CustomerCreateWithoutBagItemsInput
-  connect: CustomerWhereUniqueInput
-  update: CustomerUpdateWithoutBagItemsDataInput
-  upsert: CustomerUpsertWithoutBagItemsInput
-}
-
-input CustomerUpdateOneRequiredWithoutMembershipInput {
-  create: CustomerCreateWithoutMembershipInput
-  connect: CustomerWhereUniqueInput
-  update: CustomerUpdateWithoutMembershipDataInput
-  upsert: CustomerUpsertWithoutMembershipInput
-}
-
-input CustomerUpdateOneRequiredWithoutReservationsInput {
-  create: CustomerCreateWithoutReservationsInput
-  connect: CustomerWhereUniqueInput
-  update: CustomerUpdateWithoutReservationsDataInput
-  upsert: CustomerUpsertWithoutReservationsInput
-}
-
-input CustomerUpdateWithoutAdmissionsDataInput {
-  status: CustomerStatus
-  plan: Plan
-  authorizedAt: DateTime
-  user: UserUpdateOneRequiredInput
-  detail: CustomerDetailUpdateOneInput
-  billingInfo: BillingInfoUpdateOneInput
-  membership: CustomerMembershipUpdateOneWithoutCustomerInput
-  bagItems: BagItemUpdateManyWithoutCustomerInput
-  reservations: ReservationUpdateManyWithoutCustomerInput
-  emailedProducts: ProductUpdateManyInput
-}
-
-input CustomerUpdateWithoutBagItemsDataInput {
-  status: CustomerStatus
-  plan: Plan
-  authorizedAt: DateTime
-  user: UserUpdateOneRequiredInput
-  detail: CustomerDetailUpdateOneInput
-  billingInfo: BillingInfoUpdateOneInput
-  membership: CustomerMembershipUpdateOneWithoutCustomerInput
-  reservations: ReservationUpdateManyWithoutCustomerInput
-  emailedProducts: ProductUpdateManyInput
-  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
-}
-
-input CustomerUpdateWithoutMembershipDataInput {
-  status: CustomerStatus
-  plan: Plan
-  authorizedAt: DateTime
-  user: UserUpdateOneRequiredInput
-  detail: CustomerDetailUpdateOneInput
-  billingInfo: BillingInfoUpdateOneInput
-  bagItems: BagItemUpdateManyWithoutCustomerInput
-  reservations: ReservationUpdateManyWithoutCustomerInput
-  emailedProducts: ProductUpdateManyInput
-  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
-}
-
-input CustomerUpdateWithoutReservationsDataInput {
-  status: CustomerStatus
-  plan: Plan
-  authorizedAt: DateTime
-  user: UserUpdateOneRequiredInput
-  detail: CustomerDetailUpdateOneInput
-  billingInfo: BillingInfoUpdateOneInput
-  membership: CustomerMembershipUpdateOneWithoutCustomerInput
-  bagItems: BagItemUpdateManyWithoutCustomerInput
-  emailedProducts: ProductUpdateManyInput
-  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
-}
-
-input CustomerUpsertNestedInput {
-  update: CustomerUpdateDataInput!
-  create: CustomerCreateInput!
-}
-
-input CustomerUpsertWithoutAdmissionsInput {
-  update: CustomerUpdateWithoutAdmissionsDataInput!
-  create: CustomerCreateWithoutAdmissionsInput!
-}
-
-input CustomerUpsertWithoutBagItemsInput {
-  update: CustomerUpdateWithoutBagItemsDataInput!
-  create: CustomerCreateWithoutBagItemsInput!
-}
-
-input CustomerUpsertWithoutMembershipInput {
-  update: CustomerUpdateWithoutMembershipDataInput!
-  create: CustomerCreateWithoutMembershipInput!
-}
-
-input CustomerUpsertWithoutReservationsInput {
-  update: CustomerUpdateWithoutReservationsDataInput!
-  create: CustomerCreateWithoutReservationsInput!
-}
-
-input CustomerWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [CustomerWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [CustomerWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [CustomerWhereInput!]
+  NOT: [CustomerScalarWhereInput!]
   id: ID
 
   """
