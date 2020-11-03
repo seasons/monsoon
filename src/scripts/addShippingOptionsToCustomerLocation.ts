@@ -2,6 +2,8 @@ import "module-alias/register"
 
 import fs from "fs"
 
+import states from "us-state-converter"
+
 import { ShippingCode, ShippingOption } from "../prisma"
 import { PrismaService } from "../prisma/prisma.service"
 
@@ -16,6 +18,31 @@ const createShippingMethods = async () => {
       code: method as ShippingCode,
       displayText,
     })
+  }
+}
+
+const updateLocationStatesToAbbr = async () => {
+  const ps = new PrismaService()
+  const locations = await ps.client.locations()
+
+  for (const location of locations) {
+    const state = location.state
+    let abbr
+    if (!!state && state?.length > 2) {
+      abbr = states.abbr(state)
+      if (abbr) {
+        await ps.client.updateLocation({
+          where: { id: location.id },
+          data: {
+            state: abbr,
+          },
+        })
+      } else {
+        console.log("Error updating location", location.id)
+      }
+    } else if (!state) {
+      console.log("error with data", location.id)
+    }
   }
 }
 
@@ -57,18 +84,22 @@ const updateCustomers = async () => {
     if (shippingAddress?.id && shippingAddress?.shippingOptions?.length === 0) {
       const shippingOptions = [] as ShippingOption[]
 
-      const destinationState = shippingAddress.state
+      let destinationState = shippingAddress.state
 
-      // FIXME: We need to first run the script to ensure all locations are using state abbreviations
+      if (destinationState?.length > 2) {
+        // Resets location state to abbreviated
+        const abbr = states.abbr(destinationState)
+        destinationState = abbr
+      }
+
       if (
         !destinationState ||
         !originState ||
         destinationState?.length > 2 ||
         originState?.length > 2
       ) {
-        console.log("state length too long", shippingAddress.id)
+        console.log("incomplete data", customer.id)
       } else {
-        console.log("updating location")
         for (const method of shippingMethods) {
           const stateData =
             shippingOptionsData[method.code].from[originState].to[
@@ -89,6 +120,7 @@ const updateCustomers = async () => {
         await ps.client.updateLocation({
           where: { id: shippingAddress.id },
           data: {
+            state: destinationState,
             shippingOptions: {
               connect: shippingOptions.map(s => ({ id: s.id })),
             },
@@ -100,4 +132,5 @@ const updateCustomers = async () => {
 }
 
 // createShippingMethods()
-updateCustomers()
+// updateCustomers()
+updateLocationStatesToAbbr()

@@ -24,6 +24,7 @@ import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { pick } from "lodash"
+import states from "us-state-converter"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
 import { AuthService } from "./auth.service"
@@ -161,6 +162,15 @@ export class CustomerService {
       })
       if (!shippingAddressIsValid) {
         throw new Error("Shipping address is invalid")
+      }
+
+      if (!!state && state.length > 2) {
+        const abbreviatedState = states.abbr(state)
+        if (abbreviatedState) {
+          details.shippingAddress.create.state = abbreviatedState
+        } else {
+          throw new Error("Shipping address state is invalid")
+        }
       }
     }
 

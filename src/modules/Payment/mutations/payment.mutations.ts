@@ -7,6 +7,7 @@ import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { CustomerService } from "@modules/User/services/customer.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
+import states from "us-state-converter"
 
 @Resolver()
 export class PaymentMutationsResolver {
@@ -160,13 +161,22 @@ export class PaymentMutationsResolver {
       street1: billingStreet1,
       street2: billingStreet2,
     } = billingAddress
+    let abbreviatedBillingState = billingState
+
+    if (!!billingState && billingState.length > 2) {
+      const abbr = states.abbr(billingState)
+      if (abbr) {
+        abbreviatedBillingState = abbr
+      }
+    }
+
     const {
       isValid: billingAddressIsValid,
     } = await this.shippingService.shippoValidateAddress({
       name: user.firstName,
       street1: billingStreet1,
       city: billingCity,
-      state: billingState,
+      state: abbreviatedBillingState,
       zip: billingPostalCode,
     })
     if (!billingAddressIsValid) {
@@ -179,13 +189,22 @@ export class PaymentMutationsResolver {
       state: shippingState,
       street1: shippingStreet1,
     } = shippingAddress
+
+    let abbreviatedShippingState = shippingState
+    if (!!shippingState && shippingState.length > 2) {
+      const abbr = states.abbr(shippingState)
+      if (abbr) {
+        abbreviatedShippingState = abbr
+      }
+    }
+
     const {
       isValid: shippingAddressIsValid,
     } = await this.shippingService.shippoValidateAddress({
       name: user.firstName,
       street1: shippingStreet1,
       city: shippingCity,
-      state: shippingState,
+      state: abbreviatedShippingState,
       zip: shippingPostalCode,
     })
     if (!shippingAddressIsValid) {
@@ -198,7 +217,7 @@ export class PaymentMutationsResolver {
       billingStreet1,
       billingStreet2,
       billingCity,
-      billingState,
+      abbreviatedBillingState,
       billingPostalCode
     )
 
@@ -209,7 +228,7 @@ export class PaymentMutationsResolver {
       billingStreet1,
       billingStreet2,
       billingCity,
-      billingState,
+      abbreviatedBillingState,
       billingPostalCode
     )
 
@@ -219,7 +238,7 @@ export class PaymentMutationsResolver {
     await this.customerService.updateCustomerDetail(
       user,
       customer,
-      shippingAddress,
+      { ...shippingAddress, state: abbreviatedShippingState },
       phoneNumber
     )
 
