@@ -218,11 +218,12 @@ export class EmailService {
   }
 
   async sendYouCanNowReserveAgainEmail(user: EmailUser) {
-    await this.sendTransactionalEmail({
-      to: user.email,
-      data: this.data.freeToReserve(),
+    const payload = await RenderEmail.freeToReserve({})
+    await this.sendPreRenderedTransactionalEmail({
+      user,
+      payload,
+      emailId: "FreeToReserve",
     })
-    await this.storeEmailReceipt("FreeToReserve", user.id)
   }
 
   private async storeEmailReceipt(emailId: EmailId, userId: ID_Input) {
