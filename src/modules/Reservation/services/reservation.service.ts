@@ -137,7 +137,7 @@ export class ReservationService {
       )
       rollbackFuncs.push(rollbackBagItemsUpdate)
 
-      // Create one time charge for shipping addon if not ground
+      // Create one time charge for shipping addon
       let shippingOptionID
       if (!!shippingCode) {
         shippingOptionID = await this.payment.addShippingCharge(
