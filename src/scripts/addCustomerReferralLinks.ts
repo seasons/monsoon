@@ -32,7 +32,7 @@ const run = async () => {
       const appendedNumber: number = (get(seenFirstNames, firstName) ?? 0) + 1
       seenFirstNames[firstName] = appendedNumber
       const slashTag = firstName + appendedNumber.toString()
-      fetchAndSetCustomerReferralLink(customer.id, slashTag)
+      await fetchAndSetCustomerReferralLink(customer.id, slashTag)
     } catch (e) {
       console.log("error in try catch: ", e)
       console.log("error with customer: ", customer.id)

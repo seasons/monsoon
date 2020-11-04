@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Nov 03 2020 18:11:05 GMT-0500 (Eastern Standard Time)
+# timestamp: Wed Nov 04 2020 16:39:02 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -6672,6 +6672,7 @@ type CustomerAdmissionsData implements Node {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean!
   customer: Customer!
   authorizationsCount: Int!
   createdAt: DateTime!
@@ -6699,6 +6700,7 @@ input CustomerAdmissionsDataCreateInput {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int!
   customer: CustomerCreateOneWithoutAdmissionsInput!
 }
@@ -6713,6 +6715,7 @@ input CustomerAdmissionsDataCreateWithoutCustomerInput {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int!
 }
 
@@ -6740,6 +6743,8 @@ enum CustomerAdmissionsDataOrderByInput {
   admissable_DESC
   inAdmissableReason_ASC
   inAdmissableReason_DESC
+  allAccessEnabled_ASC
+  allAccessEnabled_DESC
   authorizationsCount_ASC
   authorizationsCount_DESC
   createdAt_ASC
@@ -6753,6 +6758,7 @@ type CustomerAdmissionsDataPreviousValues {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean!
   authorizationsCount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -6807,6 +6813,7 @@ input CustomerAdmissionsDataUpdateInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int
   customer: CustomerUpdateOneRequiredWithoutAdmissionsInput
 }
@@ -6815,6 +6822,7 @@ input CustomerAdmissionsDataUpdateManyMutationInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int
 }
 
@@ -6831,6 +6839,7 @@ input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int
 }
 
@@ -6948,6 +6957,12 @@ input CustomerAdmissionsDataWhereInput {
   All values that are not contained in given list.
   """
   inAdmissableReason_not_in: [InAdmissableReason!]
+  allAccessEnabled: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  allAccessEnabled_not: Boolean
   authorizationsCount: Int
 
   """

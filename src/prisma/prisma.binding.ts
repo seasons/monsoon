@@ -5298,6 +5298,7 @@ type CustomerAdmissionsData implements Node {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean!
   customer: Customer!
   authorizationsCount: Int!
   createdAt: DateTime!
@@ -5319,6 +5320,7 @@ input CustomerAdmissionsDataCreateInput {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int!
   customer: CustomerCreateOneWithoutAdmissionsInput!
 }
@@ -5333,6 +5335,7 @@ input CustomerAdmissionsDataCreateWithoutCustomerInput {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int!
 }
 
@@ -5354,6 +5357,8 @@ enum CustomerAdmissionsDataOrderByInput {
   admissable_DESC
   inAdmissableReason_ASC
   inAdmissableReason_DESC
+  allAccessEnabled_ASC
+  allAccessEnabled_DESC
   authorizationsCount_ASC
   authorizationsCount_DESC
   createdAt_ASC
@@ -5367,6 +5372,7 @@ type CustomerAdmissionsDataPreviousValues {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean!
   authorizationsCount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -5413,6 +5419,7 @@ input CustomerAdmissionsDataUpdateInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int
   customer: CustomerUpdateOneRequiredWithoutAdmissionsInput
 }
@@ -5421,6 +5428,7 @@ input CustomerAdmissionsDataUpdateManyMutationInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int
 }
 
@@ -5437,6 +5445,7 @@ input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int
 }
 
@@ -5512,6 +5521,10 @@ input CustomerAdmissionsDataWhereInput {
 
   """All values that are not contained in given list."""
   inAdmissableReason_not_in: [InAdmissableReason!]
+  allAccessEnabled: Boolean
+
+  """All values that are not equal to given value."""
+  allAccessEnabled_not: Boolean
   authorizationsCount: Int
 
   """All values that are not equal to given value."""
@@ -28656,6 +28669,8 @@ export type CustomerAdmissionsDataOrderByInput =   'id_ASC' |
   'admissable_DESC' |
   'inAdmissableReason_ASC' |
   'inAdmissableReason_DESC' |
+  'allAccessEnabled_ASC' |
+  'allAccessEnabled_DESC' |
   'authorizationsCount_ASC' |
   'authorizationsCount_DESC' |
   'createdAt_ASC' |
@@ -31297,6 +31312,7 @@ export interface CustomerAdmissionsDataCreateInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason?: InAdmissableReason | null
+  allAccessEnabled?: Boolean | null
   authorizationsCount: Int
   customer: CustomerCreateOneWithoutAdmissionsInput
 }
@@ -31311,6 +31327,7 @@ export interface CustomerAdmissionsDataCreateWithoutCustomerInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason?: InAdmissableReason | null
+  allAccessEnabled?: Boolean | null
   authorizationsCount: Int
 }
 
@@ -31329,6 +31346,7 @@ export interface CustomerAdmissionsDataUpdateInput {
   inServiceableZipcode?: Boolean | null
   admissable?: Boolean | null
   inAdmissableReason?: InAdmissableReason | null
+  allAccessEnabled?: Boolean | null
   authorizationsCount?: Int | null
   customer?: CustomerUpdateOneRequiredWithoutAdmissionsInput | null
 }
@@ -31337,6 +31355,7 @@ export interface CustomerAdmissionsDataUpdateManyMutationInput {
   inServiceableZipcode?: Boolean | null
   admissable?: Boolean | null
   inAdmissableReason?: InAdmissableReason | null
+  allAccessEnabled?: Boolean | null
   authorizationsCount?: Int | null
 }
 
@@ -31353,6 +31372,7 @@ export interface CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   inServiceableZipcode?: Boolean | null
   admissable?: Boolean | null
   inAdmissableReason?: InAdmissableReason | null
+  allAccessEnabled?: Boolean | null
   authorizationsCount?: Int | null
 }
 
@@ -31387,6 +31407,8 @@ export interface CustomerAdmissionsDataWhereInput {
   inAdmissableReason_not?: InAdmissableReason | null
   inAdmissableReason_in?: InAdmissableReason[] | InAdmissableReason | null
   inAdmissableReason_not_in?: InAdmissableReason[] | InAdmissableReason | null
+  allAccessEnabled?: Boolean | null
+  allAccessEnabled_not?: Boolean | null
   authorizationsCount?: Int | null
   authorizationsCount_not?: Int | null
   authorizationsCount_in?: Int[] | Int | null
@@ -42555,6 +42577,7 @@ export interface CustomerAdmissionsData extends Node {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason?: InAdmissableReason | null
+  allAccessEnabled: Boolean
   customer: Customer
   authorizationsCount: Int
   createdAt: DateTime
@@ -42585,6 +42608,7 @@ export interface CustomerAdmissionsDataPreviousValues {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason?: InAdmissableReason | null
+  allAccessEnabled: Boolean
   authorizationsCount: Int
   createdAt: DateTime
   updatedAt: DateTime
