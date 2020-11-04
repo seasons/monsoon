@@ -44,7 +44,7 @@ const run = async () => {
 const fetchAndSetCustomerReferralLink = async (customerId, slashTag) => {
   let linkRequest = {
     destination: "https://www.seasons.nyc/signup?referrer_id=" + customerId,
-    domain: { fullName: "rebrand.ly" },
+    domain: { fullName: "szns.co" },
     slashtag: slashTag,
   }
 
