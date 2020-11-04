@@ -22,17 +22,17 @@ const run = async () => {
   let count = 0
 
   for (const customer of customers) {
-    if (count === 10) {
+    console.log(`customer ${count} of ${customers.length}`)
+    if (count % 10 === 0) {
       // Because of rebrandly rate limiter
       await new Promise(resolve => setTimeout(resolve, 5000))
-      count = 0
     }
     try {
       const firstName = customer.user.firstName.trim()
       const appendedNumber: number = (get(seenFirstNames, firstName) ?? 0) + 1
       seenFirstNames[firstName] = appendedNumber
       const slashTag = firstName + appendedNumber.toString()
-      fetchAndSetCustomerReferralLink(customer.id, slashTag)
+      await fetchAndSetCustomerReferralLink(customer.id, slashTag)
     } catch (e) {
       console.log("error in try catch: ", e)
       console.log("error with customer: ", customer.id)
@@ -44,7 +44,7 @@ const run = async () => {
 const fetchAndSetCustomerReferralLink = async (customerId, slashTag) => {
   let linkRequest = {
     destination: "https://www.seasons.nyc/signup?referrer_id=" + customerId,
-    domain: { fullName: "rebrand.ly" },
+    domain: { fullName: "szns.co" },
     slashtag: slashTag,
   }
 

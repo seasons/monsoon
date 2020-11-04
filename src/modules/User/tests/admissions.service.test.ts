@@ -127,8 +127,8 @@ describe("Admissions Service", () => {
     it("admits Colorado with All Access Disabled", () =>
       expectAdmitWithAllAccessDisabled("80201"))
 
-    it("admits Florida with All Access Enabled", () =>
-      expectAdmitWithAllAccessEnabled("33124"))
+    it("admits Florida with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("33124"))
 
     it("does not admit Hawaii", () => expectNotAdmit("96801"))
 
