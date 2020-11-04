@@ -22,10 +22,10 @@ const run = async () => {
   let count = 0
 
   for (const customer of customers) {
-    if (count === 10) {
+    console.log(`customer ${count} of ${customers.length}`)
+    if (count % 10 === 0) {
       // Because of rebrandly rate limiter
       await new Promise(resolve => setTimeout(resolve, 5000))
-      count = 0
     }
     try {
       const firstName = customer.user.firstName.trim()
