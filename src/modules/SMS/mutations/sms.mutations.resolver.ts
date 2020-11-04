@@ -25,6 +25,7 @@ export class SMSMutationsResolver {
       customer,
       user
     )
+    console.log("??? SMS status", status)
     // analytics?
     return status
   }
