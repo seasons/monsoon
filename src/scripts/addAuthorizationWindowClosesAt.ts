@@ -6,6 +6,10 @@ import readlineSync from "readline-sync"
 import { Customer, CustomerStatus } from "../prisma/prisma.binding"
 import { PrismaService } from "../prisma/prisma.service"
 
+process.env.PRISMA_ENDPOINT = "http://localhost:4466/monsoon/dev"
+process.env.PRISMA_SECRET =
+  "6mFrM3ZRzg1q1JNnY5nHuKdFphquSB6w3WLESaYl3B3H8NzFYSVfuarx5pau8eaJT68rI2XxsSF1wHCf6xbFwuxnOeqxU0d3YFnK"
+
 const run = async () => {
   const ps = new PrismaService()
   const calculateNumAuthorizations = (
@@ -54,12 +58,13 @@ const run = async () => {
     }`
   )
   for (const cust of customers) {
-    const authorizedAt = new Date(
-      cust.user.emails.filter(
-        a => a.emailId === "CompleteAccount"
-      )?.[0].createdAt
+    const authorizedAt = cust.user.emails.filter(
+      a => a.emailId === "CompleteAccount"
+    )?.[0].createdAt
+
+    const authorizationWindowClosesAt = DateTime.fromJSDate(
+      new Date(authorizedAt)
     )
-    const authorizationWindowClosesAt = DateTime.fromJSDate(authorizedAt)
       .plus({
         days: 2,
       })
@@ -70,27 +75,29 @@ const run = async () => {
 
     if (!shouldProceed) {
       console.log(`Skipped ${cust.user.email}\n`)
-      return
+      continue
     }
+    console.log(authorizedAt, cust.id)
     await ps.client.updateCustomer({
       where: { id: cust.id },
       data: {
-        admissions: {
-          upsert: {
-            update: {
-              authorizationWindowClosesAt,
-            },
-            create: {
-              authorizationWindowClosesAt,
-              admissable: true,
-              inServiceableZipcode: true,
-              authorizationsCount: calculateNumAuthorizations(
-                cust,
-                "Authorized"
-              ),
-            },
-          },
-        },
+        authorizedAt,
+        // admissions: {
+        //   upsert: {
+        //     update: {
+        //       authorizationWindowClosesAt,
+        //     },
+        //     create: {
+        //       authorizationWindowClosesAt,
+        //       admissable: true,
+        //       inServiceableZipcode: true,
+        //       authorizationsCount: calculateNumAuthorizations(
+        //         cust,
+        //         "Authorized"
+        //       ),
+        //     },
+        //   },
+        // },
       },
     })
   }
