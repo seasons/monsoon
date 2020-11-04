@@ -36,6 +36,7 @@ type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
   customer: Customer
   dryRun: boolean
   inServiceableZipcode?: boolean
+  allAccessEnabled?: boolean
 }
 
 @Injectable()
@@ -413,14 +414,16 @@ export class CustomerService {
     let admit = true
     let availableStyles = []
     let inServiceableZipcode: boolean
+    let allAccessEnabled: boolean
     try {
       for (const { func, waitlistReason } of triageFuncs) {
         const { pass, detail } = await func()
 
-        // Store the result of the serviceable zipcode lookup to store it
+        // Store key results of the serviceable zipcode lookup to store it
         // on the customer later
         if (waitlistReason === "UnserviceableZipcode") {
           inServiceableZipcode = pass
+          ;({ allAccessEnabled } = detail)
         }
 
         // Format the available styles for the subscribed email
@@ -494,6 +497,7 @@ export class CustomerService {
       status,
       waitlistReason: reason,
       inServiceableZipcode,
+      allAccessEnabled,
       dryRun,
     })
 
@@ -505,6 +509,7 @@ export class CustomerService {
     status,
     waitlistReason,
     inServiceableZipcode,
+    allAccessEnabled,
     dryRun,
   }: UpdateCustomerAdmissionsDataInput) {
     let data: CustomerUpdateInput = {}
@@ -521,6 +526,7 @@ export class CustomerService {
         admissionsUpsertData = {
           admissable: true,
           inServiceableZipcode: true,
+          allAccessEnabled,
           authorizationsCount: this.calculateNumAuthorizations(
             customer,
             status,
@@ -530,7 +536,10 @@ export class CustomerService {
         break
       case "Waitlisted":
         if (inServiceableZipcode === undefined) {
-          ;({ pass: inServiceableZipcode } = this.admissions.zipcodeAllowed(
+          ;({
+            pass: inServiceableZipcode,
+            detail: { allAccessEnabled },
+          } = this.admissions.zipcodeAllowed(
             customer.detail?.shippingAddress?.zipCode
           ))
         }
@@ -538,6 +547,7 @@ export class CustomerService {
         admissionsUpsertData = {
           admissable: false,
           inServiceableZipcode,
+          allAccessEnabled,
           inAdmissableReason: waitlistReason,
           authorizationsCount: this.calculateNumAuthorizations(
             customer,
@@ -581,7 +591,8 @@ export class CustomerService {
       customer?.admissions?.inAdmissableReason !==
         upsertData.inAdmissableReason ||
       customer?.admissions?.inServiceableZipcode !==
-        upsertData.inServiceableZipcode
+        upsertData.inServiceableZipcode ||
+      customer?.admissions?.allAccessEnabled !== upsertData.allAccessEnabled
     )
   }
 
