@@ -251,7 +251,7 @@ export class PaymentMutationsResolver {
       .shippingAddress()
       .id()
 
-    this.customerService.addCustomerLocationShippingOptions(
+    await this.customerService.addCustomerLocationShippingOptions(
       shippingState,
       customerLocationID
     )
