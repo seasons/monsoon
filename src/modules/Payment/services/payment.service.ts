@@ -3,12 +3,14 @@ import { CustomerService } from "@app/modules/User/services/customer.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PaymentPlanTier, User } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
 import { camelCase, get, head, identity, snakeCase, upperFirst } from "lodash"
 import { DateTime } from "luxon"
+import states from "us-state-converter"
 
 import {
   BillingAddress,
@@ -26,6 +28,7 @@ import { PaymentUtilsService } from "./payment.utils.service"
 @Injectable()
 export class PaymentService {
   constructor(
+    private readonly shippingService: ShippingService,
     private readonly authService: AuthService,
     private readonly customerService: CustomerService,
     private readonly emailService: EmailService,
@@ -805,6 +808,116 @@ export class PaymentService {
       })
       .request()
     return true
+  }
+
+  async updatePaymentAndShipping(
+    billingAddress,
+    phoneNumber,
+    shippingAddress,
+    customer,
+    user
+  ) {
+    const {
+      city: billingCity,
+      postalCode: billingPostalCode,
+      state: billingState,
+      street1: billingStreet1,
+      street2: billingStreet2,
+    } = billingAddress
+    const getAbbreviatedState = originalState => {
+      if (!!originalState && originalState.length > 2) {
+        const abbr = states.abbr(originalState)
+        if (abbr) {
+          return abbr
+        } else {
+          return originalState
+        }
+      }
+    }
+
+    const abbreviatedBillingState = getAbbreviatedState(billingState)
+
+    const {
+      isValid: billingAddressIsValid,
+    } = await this.shippingService.shippoValidateAddress({
+      name: user.firstName,
+      street1: billingStreet1,
+      city: billingCity,
+      state: abbreviatedBillingState,
+      zip: billingPostalCode,
+    })
+    if (!billingAddressIsValid) {
+      throw new Error("Your billing address is invalid")
+    }
+
+    const {
+      city: shippingCity,
+      postalCode: shippingPostalCode,
+      state: shippingState,
+      street1: shippingStreet1,
+    } = shippingAddress
+
+    const abbreviatedShippingState = getAbbreviatedState(shippingState)
+
+    const {
+      isValid: shippingAddressIsValid,
+    } = await this.shippingService.shippoValidateAddress({
+      name: user.firstName,
+      street1: shippingStreet1,
+      city: shippingCity,
+      state: abbreviatedShippingState,
+      zip: shippingPostalCode,
+    })
+    if (!shippingAddressIsValid) {
+      throw new Error("Your shipping address is invalid")
+    }
+
+    // Update user's billing address on chargebee
+    await this.updateChargebeeBillingAddress(
+      user.id,
+      billingStreet1,
+      billingStreet2,
+      billingCity,
+      abbreviatedBillingState,
+      billingPostalCode
+    )
+
+    // Update customer's billing address
+    await this.updateCustomerBillingAddress(
+      user.id,
+      customer.id,
+      billingStreet1,
+      billingStreet2,
+      billingCity,
+      abbreviatedBillingState,
+      billingPostalCode
+    )
+
+    // Update customer's shipping address & phone number. Unlike before, will
+    // accept all valid addresses. Will NOT throw an error if the address is
+    // not in NYC.
+    await this.customerService.updateCustomerDetail(
+      user,
+      customer,
+      { ...shippingAddress, state: abbreviatedShippingState },
+      phoneNumber
+    )
+
+    // Adds the customer's shipping options to their location record
+    const customerLocationID = await this.prisma.client
+      .customer({
+        id: customer.id,
+      })
+      .detail()
+      .shippingAddress()
+      .id()
+
+    await this.customerService.addCustomerLocationShippingOptions(
+      shippingState,
+      customerLocationID
+    )
+
+    return null
   }
 
   /*
