@@ -27,28 +27,6 @@ export class EmailDataProvider {
     }
   }
 
-  freeToReserve() {
-    return {
-      email: {
-        body: {
-          paragraphs: [
-            {
-              html:
-                `Good news! Your items made it back to Seasons HQ and we've reset your bag.` +
-                ` You can now place a new reservation`,
-            },
-            {
-              html:
-                "If you have any questions, feel free to reply to this e-mail.",
-            },
-          ],
-        },
-        title: "We've received your return",
-        subject: "We've received your return",
-      },
-    }
-  }
-
   resetPassword(url: string) {
     return {
       email: {

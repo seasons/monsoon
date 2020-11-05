@@ -209,16 +209,16 @@ export class UserCommands {
     }
 
     // Give them valid billing data if appropriate
+    const customer = head(
+      await this.prisma.client.customers({
+        where: { user: { id: user.id } },
+      })
+    )
     if (["Active", "Suspended", "Paused"].includes(status)) {
       chargebee.configure({
         site: "seasons-test",
         api_key: "test_fmWkxemy4L3CP1ku1XwPlTYQyJVKajXx",
       })
-      const customer = head(
-        await this.prisma.client.customers({
-          where: { user: { id: user.id } },
-        })
-      )
       const card: Card = {
         number: "4242424242424242",
         expiryMonth: "04",
@@ -255,6 +255,28 @@ export class UserCommands {
           },
           status,
           user: { update: { roles: { set: roles } } },
+        },
+        where: { id: customer.id },
+      })
+    }
+
+    // Give them a valid admissions record if appropriate
+    if (["Active", "Waitlisted", "Paused", "Authorized"].includes(status)) {
+      const authorizationsCount = ["Active", "Authorized", "Paused"].includes(
+        status
+      )
+        ? 1
+        : 0
+      await this.prisma.client.updateCustomer({
+        data: {
+          admissions: {
+            create: {
+              allAccessEnabled: true,
+              admissable: true,
+              authorizationsCount,
+              inServiceableZipcode: true,
+            },
+          },
         },
         where: { id: customer.id },
       })

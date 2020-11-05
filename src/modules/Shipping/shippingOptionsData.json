@@ -1,0 +1,490 @@
+{
+  "UPSGround": {
+    "from": {
+      "NJ": {
+        "to": {
+          "AL": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "AK": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "AS": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "AZ": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "AR": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "CA": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "CO": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "CT": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "DE": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "DC": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "FM": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "FL": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "GA": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "GU": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "HI": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "ID": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "IL": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "IN": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "IA": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "KS": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "KY": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "LA": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "ME": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "MH": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "MD": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "MA": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "MI": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "MN": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "MS": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "MO": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "MT": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "NE": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "NV": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "NH": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "NJ": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "NM": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "NY": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "NC": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "ND": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "MP": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "OH": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "OK": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "OR": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "PW": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "PA": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "PR": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "RI": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "SC": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "SD": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "TN": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "TX": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "UT": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "VT": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "VI": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "VA": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "WA": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "WV": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "WI": {
+            "price": 0,
+            "averageDuration": 5
+          },
+          "WY": {
+            "price": 0,
+            "averageDuration": 5
+          }
+        }
+      }
+    }
+  },
+  "UPSSelect": {
+    "from": {
+      "NJ": {
+        "to": {
+          "AL": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "AK": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "AS": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "AZ": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "AR": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "CA": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "CO": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "CT": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "DE": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "DC": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "FM": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "FL": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "GA": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "GU": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "HI": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "ID": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "IL": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "IN": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "IA": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "KS": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "KY": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "LA": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "ME": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "MH": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "MD": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "MA": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "MI": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "MN": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "MS": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "MO": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "MT": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "NE": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "NV": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "NH": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "NJ": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "NM": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "NY": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "NC": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "ND": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "MP": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "OH": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "OK": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "OR": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "PW": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "PA": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "PR": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "RI": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "SC": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "SD": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "TN": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "TX": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "UT": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "VT": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "VI": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "VA": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "WA": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "WV": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "WI": {
+            "price": 995,
+            "averageDuration": 3
+          },
+          "WY": {
+            "price": 995,
+            "averageDuration": 3
+          }
+        }
+      }
+    }
+  }
+}
