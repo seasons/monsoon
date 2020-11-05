@@ -276,13 +276,13 @@ export class CustomerService {
       },
     } as CustomerUpdateInput
 
-    // If they already have an admissions record, update allAccessEnabled if needed
+    // If they already have an admissions record, update allAccessEnabled
     if (!!custWithData?.admissions?.id) {
       const {
         detail: { allAccessEnabled },
       } = this.admissions.zipcodeAllowed(shippingPostalCode)
-      data.admissions.update = {
-        allAccessEnabled,
+      data.admissions = {
+        update: { allAccessEnabled },
       }
     }
     return await this.prisma.client.updateCustomer({
