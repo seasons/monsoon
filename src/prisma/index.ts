@@ -3304,7 +3304,9 @@ export type CustomerAdmissionsDataOrderByInput =
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
-  | "updatedAt_DESC";
+  | "updatedAt_DESC"
+  | "authorizationWindowClosesAt_ASC"
+  | "authorizationWindowClosesAt_DESC";
 
 export type CustomerDetailOrderByInput =
   | "id_ASC"
@@ -7243,6 +7245,14 @@ export interface CustomerAdmissionsDataWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  authorizationWindowClosesAt?: Maybe<DateTimeInput>;
+  authorizationWindowClosesAt_not?: Maybe<DateTimeInput>;
+  authorizationWindowClosesAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  authorizationWindowClosesAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  authorizationWindowClosesAt_lt?: Maybe<DateTimeInput>;
+  authorizationWindowClosesAt_lte?: Maybe<DateTimeInput>;
+  authorizationWindowClosesAt_gt?: Maybe<DateTimeInput>;
+  authorizationWindowClosesAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<
     CustomerAdmissionsDataWhereInput[] | CustomerAdmissionsDataWhereInput
   >;
@@ -12602,6 +12612,7 @@ export interface CustomerAdmissionsDataCreateWithoutCustomerInput {
   inAdmissableReason?: Maybe<InAdmissableReason>;
   allAccessEnabled?: Maybe<Boolean>;
   authorizationsCount: Int;
+  authorizationWindowClosesAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerCreateManyWithoutReferrerInput {
@@ -13458,6 +13469,7 @@ export interface CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   inAdmissableReason?: Maybe<InAdmissableReason>;
   allAccessEnabled?: Maybe<Boolean>;
   authorizationsCount?: Maybe<Int>;
+  authorizationWindowClosesAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerAdmissionsDataUpsertWithoutCustomerInput {
@@ -14569,6 +14581,7 @@ export interface CustomerAdmissionsDataCreateInput {
   allAccessEnabled?: Maybe<Boolean>;
   customer: CustomerCreateOneWithoutAdmissionsInput;
   authorizationsCount: Int;
+  authorizationWindowClosesAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerCreateOneWithoutAdmissionsInput {
@@ -14601,6 +14614,7 @@ export interface CustomerAdmissionsDataUpdateInput {
   allAccessEnabled?: Maybe<Boolean>;
   customer?: Maybe<CustomerUpdateOneRequiredWithoutAdmissionsInput>;
   authorizationsCount?: Maybe<Int>;
+  authorizationWindowClosesAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerUpdateOneRequiredWithoutAdmissionsInput {
@@ -14638,6 +14652,7 @@ export interface CustomerAdmissionsDataUpdateManyMutationInput {
   inAdmissableReason?: Maybe<InAdmissableReason>;
   allAccessEnabled?: Maybe<Boolean>;
   authorizationsCount?: Maybe<Int>;
+  authorizationWindowClosesAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerDetailUpdateInput {
@@ -21250,6 +21265,7 @@ export interface CustomerAdmissionsData {
   authorizationsCount: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  authorizationWindowClosesAt?: DateTimeOutput;
 }
 
 export interface CustomerAdmissionsDataPromise
@@ -21264,6 +21280,7 @@ export interface CustomerAdmissionsDataPromise
   authorizationsCount: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  authorizationWindowClosesAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerAdmissionsDataSubscription
@@ -21278,6 +21295,7 @@ export interface CustomerAdmissionsDataSubscription
   authorizationsCount: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  authorizationWindowClosesAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface CustomerAdmissionsDataNullablePromise
@@ -21292,6 +21310,7 @@ export interface CustomerAdmissionsDataNullablePromise
   authorizationsCount: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  authorizationWindowClosesAt: () => Promise<DateTimeOutput>;
 }
 
 export interface BagItemConnection {
@@ -25657,6 +25676,7 @@ export interface CustomerAdmissionsDataPreviousValues {
   authorizationsCount: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  authorizationWindowClosesAt?: DateTimeOutput;
 }
 
 export interface CustomerAdmissionsDataPreviousValuesPromise
@@ -25670,6 +25690,7 @@ export interface CustomerAdmissionsDataPreviousValuesPromise
   authorizationsCount: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  authorizationWindowClosesAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerAdmissionsDataPreviousValuesSubscription
@@ -25683,6 +25704,7 @@ export interface CustomerAdmissionsDataPreviousValuesSubscription
   authorizationsCount: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  authorizationWindowClosesAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface CustomerDetailSubscriptionPayload {

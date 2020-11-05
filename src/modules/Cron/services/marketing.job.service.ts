@@ -46,6 +46,9 @@ export class MarketingScheduledJobs {
       `{
         id
         authorizedAt
+        admissions {
+          authorizationWindowClosesAt
+        }
         user {
           id
           email
@@ -60,12 +63,14 @@ export class MarketingScheduledJobs {
     for (const cust of customers) {
       const now = moment()
 
-      const twentyFoursPassed = moment(cust.authorizedAt)
-        .add(1, "d")
+      const twentyFourHoursLeft = moment(
+        cust.admissions?.authorizationWindowClosesAt
+      )
+        .subtract(1, "d")
         .isSameOrBefore(now)
-      const windowClosed = moment(cust.authorizedAt)
-        .add(2, "d")
-        .isSameOrBefore(now)
+      const windowClosed = moment(now).isAfter(
+        cust.admissions?.authorizationWindowClosesAt
+      )
 
       const receivedEmails = cust.user.emails.map(a => a.emailId)
       const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
@@ -93,7 +98,7 @@ export class MarketingScheduledJobs {
       }
 
       // Send 24 hour follow up email as needed
-      if (twentyFoursPassed && !twentyFourHourFollowupSent) {
+      if (twentyFourHoursLeft && !twentyFourHourFollowupSent) {
         const availableStyles = await this.admissions.getAvailableStyles({
           id: cust.id,
         })

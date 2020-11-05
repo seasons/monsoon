@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Nov 04 2020 21:37:31 GMT-0500 (Eastern Standard Time)
+# timestamp: Thu Nov 05 2020 14:45:48 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -6685,6 +6685,7 @@ type CustomerAdmissionsData implements Node {
   authorizationsCount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
+  authorizationWindowClosesAt: DateTime
 }
 
 """
@@ -6710,6 +6711,7 @@ input CustomerAdmissionsDataCreateInput {
   inAdmissableReason: InAdmissableReason
   allAccessEnabled: Boolean
   authorizationsCount: Int!
+  authorizationWindowClosesAt: DateTime
   customer: CustomerCreateOneWithoutAdmissionsInput!
 }
 
@@ -6725,6 +6727,7 @@ input CustomerAdmissionsDataCreateWithoutCustomerInput {
   inAdmissableReason: InAdmissableReason
   allAccessEnabled: Boolean
   authorizationsCount: Int!
+  authorizationWindowClosesAt: DateTime
 }
 
 """
@@ -6759,6 +6762,8 @@ enum CustomerAdmissionsDataOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  authorizationWindowClosesAt_ASC
+  authorizationWindowClosesAt_DESC
 }
 
 type CustomerAdmissionsDataPreviousValues {
@@ -6770,6 +6775,7 @@ type CustomerAdmissionsDataPreviousValues {
   authorizationsCount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
+  authorizationWindowClosesAt: DateTime
 }
 
 type CustomerAdmissionsDataSubscriptionPayload {
@@ -6823,6 +6829,7 @@ input CustomerAdmissionsDataUpdateInput {
   inAdmissableReason: InAdmissableReason
   allAccessEnabled: Boolean
   authorizationsCount: Int
+  authorizationWindowClosesAt: DateTime
   customer: CustomerUpdateOneRequiredWithoutAdmissionsInput
 }
 
@@ -6832,6 +6839,7 @@ input CustomerAdmissionsDataUpdateManyMutationInput {
   inAdmissableReason: InAdmissableReason
   allAccessEnabled: Boolean
   authorizationsCount: Int
+  authorizationWindowClosesAt: DateTime
 }
 
 input CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
@@ -6849,6 +6857,7 @@ input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   inAdmissableReason: InAdmissableReason
   allAccessEnabled: Boolean
   authorizationsCount: Int
+  authorizationWindowClosesAt: DateTime
 }
 
 input CustomerAdmissionsDataUpsertWithoutCustomerInput {
@@ -7079,6 +7088,42 @@ input CustomerAdmissionsDataWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
+  authorizationWindowClosesAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  authorizationWindowClosesAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  authorizationWindowClosesAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  authorizationWindowClosesAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  authorizationWindowClosesAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  authorizationWindowClosesAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  authorizationWindowClosesAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  authorizationWindowClosesAt_gte: DateTime
   customer: CustomerWhereInput
 }
 

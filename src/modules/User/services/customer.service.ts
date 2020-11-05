@@ -23,6 +23,7 @@ import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { pick } from "lodash"
+import { DateTime } from "luxon"
 import states from "us-state-converter"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
@@ -364,12 +365,16 @@ export class CustomerService {
         throw new Error(`Can not authorize user. In nonserviceable zipcode`)
       }
 
+      const now = DateTime.local()
+      const nowDate = now.toISOTime()
+      const twoDaysFromNow = now.plus({ days: 2 }).toISOTime()
       data = {
         ...data,
-        authorizedAt: new Date(),
+        authorizedAt: nowDate,
         admissions: {
           upsert: {
             create: {
+              authorizationWindowClosesAt: twoDaysFromNow,
               admissable: true,
               inServiceableZipcode: true,
               allAccessEnabled,
@@ -380,6 +385,7 @@ export class CustomerService {
               ),
             },
             update: {
+              authorizationWindowClosesAt: twoDaysFromNow,
               allAccessEnabled,
               authorizationsCount: this.calculateNumAuthorizations(
                 customer,
@@ -599,9 +605,6 @@ export class CustomerService {
     }
     switch (status) {
       case "Authorized":
-        if (!dryRun) {
-          data.authorizedAt = new Date()
-        }
         admissionsUpsertData = {
           admissable: true,
           inServiceableZipcode: true,
@@ -612,6 +615,14 @@ export class CustomerService {
             dryRun
           ),
         }
+        if (!dryRun) {
+          const now = DateTime.local()
+          const nowDate = now.toISODate()
+          const twoDaysFromNow = now.plus({ days: 2 }).toISODate()
+          data.authorizedAt = nowDate
+          admissionsUpsertData.authorizationWindowClosesAt = twoDaysFromNow
+        }
+
         break
       case "Waitlisted":
         if (inServiceableZipcode === undefined) {
