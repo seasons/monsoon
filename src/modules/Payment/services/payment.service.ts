@@ -850,28 +850,6 @@ export class PaymentService {
       throw new Error("Your billing address is invalid")
     }
 
-    const {
-      city: shippingCity,
-      postalCode: shippingPostalCode,
-      state: shippingState,
-      street1: shippingStreet1,
-    } = shippingAddress
-
-    const abbreviatedShippingState = getAbbreviatedState(shippingState)
-
-    const {
-      isValid: shippingAddressIsValid,
-    } = await this.shippingService.shippoValidateAddress({
-      name: user.firstName,
-      street1: shippingStreet1,
-      city: shippingCity,
-      state: abbreviatedShippingState,
-      zip: shippingPostalCode,
-    })
-    if (!shippingAddressIsValid) {
-      throw new Error("Your shipping address is invalid")
-    }
-
     // Update user's billing address on chargebee
     await this.updateChargebeeBillingAddress(
       user.id,
@@ -896,10 +874,11 @@ export class PaymentService {
     // Update customer's shipping address & phone number. Unlike before, will
     // accept all valid addresses. Will NOT throw an error if the address is
     // not in NYC.
+    const shippingState = getAbbreviatedState(shippingAddress.state)
     await this.customerService.updateCustomerDetail(
       user,
       customer,
-      { ...shippingAddress, state: abbreviatedShippingState },
+      { ...shippingAddress, state: shippingState },
       phoneNumber
     )
 
