@@ -276,13 +276,13 @@ export class CustomerService {
       },
     } as CustomerUpdateInput
 
-    // If they already have an admissions record, update allAccessEnabled if needed
+    // If they already have an admissions record, update allAccessEnabled
     if (!!custWithData?.admissions?.id) {
       const {
         detail: { allAccessEnabled },
       } = this.admissions.zipcodeAllowed(shippingPostalCode)
-      data.admissions.update = {
-        allAccessEnabled,
+      data.admissions = {
+        update: { allAccessEnabled },
       }
     }
     return await this.prisma.client.updateCustomer({
@@ -353,7 +353,10 @@ export class CustomerService {
         throw new Error("Can not authorize user. Insufficient inventory")
       }
 
-      const { pass: inServiceableZipcode } = this.admissions.zipcodeAllowed(
+      const {
+        pass: inServiceableZipcode,
+        detail: { allAccessEnabled },
+      } = this.admissions.zipcodeAllowed(
         customer.detail.shippingAddress.zipCode
       )
 
@@ -369,6 +372,7 @@ export class CustomerService {
             create: {
               admissable: true,
               inServiceableZipcode: true,
+              allAccessEnabled,
               authorizationsCount: this.calculateNumAuthorizations(
                 customer,
                 data.status,
@@ -376,6 +380,7 @@ export class CustomerService {
               ),
             },
             update: {
+              allAccessEnabled,
               authorizationsCount: this.calculateNumAuthorizations(
                 customer,
                 data.status,
