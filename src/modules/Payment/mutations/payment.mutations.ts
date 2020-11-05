@@ -148,7 +148,15 @@ export class PaymentMutationsResolver {
     @Args() { billingAddress, phoneNumber, shippingAddress },
     @Customer() customer,
     @User() user
-  ) {}
+  ) {
+    return await this.paymentService.updatePaymentAndShipping(
+      billingAddress,
+      phoneNumber,
+      shippingAddress,
+      customer,
+      user
+    )
+  }
 
   @Mutation()
   async refundInvoice(@Args() { input: args }) {
