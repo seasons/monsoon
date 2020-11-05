@@ -711,6 +711,7 @@ type CustomerAdmissionsData {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean! @default(value: true)
   customer: Customer!
     @relation(name: "CustomerToCustomerAdmissionsData", onDelete: SET_NULL)
   authorizationsCount: Int!

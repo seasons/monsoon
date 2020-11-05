@@ -244,6 +244,16 @@ export class UtilsService {
     return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
   }
 
+  /**
+   * Returns a JSON object containing the contents of the file located
+   * at the given path
+   *
+   * @param path path of the json file relative to the applications's root
+   */
+  parseJSONFile = (path: string) => {
+    return JSON.parse(fs.readFileSync(process.cwd() + `/${path}.json`, "utf-8"))
+  }
+
   private caseify = (obj: any, caseFunc: (str: string) => string): any => {
     // Need this to prevent strings from getting turned into objects
     if (typeof obj === "string") {

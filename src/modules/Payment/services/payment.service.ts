@@ -825,7 +825,13 @@ export class PaymentService {
       street2: billingStreet2,
     } = billingAddress
     const getAbbreviatedState = originalState => {
-      if (!!originalState && originalState.length > 2) {
+      if (!originalState) {
+        throw new Error(`Invalid state: ${originalState}`)
+      }
+      if (originalState.length === 2) {
+        return originalState
+      }
+      if (originalState.length > 2) {
         const abbr = states.abbr(originalState)
         if (abbr) {
           return abbr
@@ -833,6 +839,7 @@ export class PaymentService {
           return originalState
         }
       }
+      throw new Error(`Invalid state: ${originalState}`)
     }
 
     const abbreviatedBillingState = getAbbreviatedState(billingState)
@@ -848,28 +855,6 @@ export class PaymentService {
     })
     if (!billingAddressIsValid) {
       throw new Error("Your billing address is invalid")
-    }
-
-    const {
-      city: shippingCity,
-      postalCode: shippingPostalCode,
-      state: shippingState,
-      street1: shippingStreet1,
-    } = shippingAddress
-
-    const abbreviatedShippingState = getAbbreviatedState(shippingState)
-
-    const {
-      isValid: shippingAddressIsValid,
-    } = await this.shippingService.shippoValidateAddress({
-      name: user.firstName,
-      street1: shippingStreet1,
-      city: shippingCity,
-      state: abbreviatedShippingState,
-      zip: shippingPostalCode,
-    })
-    if (!shippingAddressIsValid) {
-      throw new Error("Your shipping address is invalid")
     }
 
     // Update user's billing address on chargebee
@@ -896,10 +881,11 @@ export class PaymentService {
     // Update customer's shipping address & phone number. Unlike before, will
     // accept all valid addresses. Will NOT throw an error if the address is
     // not in NYC.
+    const shippingState = getAbbreviatedState(shippingAddress.state)
     await this.customerService.updateCustomerDetail(
       user,
       customer,
-      { ...shippingAddress, state: abbreviatedShippingState },
+      { ...shippingAddress, state: shippingState },
       phoneNumber
     )
 

@@ -11,7 +11,6 @@ import { Injectable } from "@nestjs/common"
 import {
   BillingInfoUpdateDataInput,
   CustomerAdmissionsDataCreateWithoutCustomerInput,
-  CustomerAdmissionsDataWhereUniqueInput,
   CustomerStatus,
   CustomerUpdateInput,
   CustomerWhereUniqueInput,
@@ -40,6 +39,7 @@ type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
   customer: Customer
   dryRun: boolean
   inServiceableZipcode?: boolean
+  allAccessEnabled?: boolean
 }
 
 @Injectable()
@@ -221,6 +221,7 @@ export class CustomerService {
       street1: shippingStreet1,
       street2: shippingStreet2,
     } = shippingAddress
+
     const {
       isValid: shippingAddressIsValid,
     } = await this.shipping.shippoValidateAddress({
@@ -235,12 +236,8 @@ export class CustomerService {
     }
 
     // Update the user's shipping address
-    const detailID = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .id()
     const shippingAddressData = {
-      slug: `${user.firstName}-${user.lastName}-shipping-address`,
+      slug: `${user.firstName}-${user.lastName}-shipping-address-${Date.now()}`,
       name: `${user.firstName} ${user.lastName}`,
       city: shippingCity,
       zipCode: shippingPostalCode,
@@ -248,43 +245,50 @@ export class CustomerService {
       address1: shippingStreet1,
       address2: shippingStreet2,
     }
-    if (detailID) {
-      const shippingAddressID = await this.prisma.client
-        .customer({ id: customer.id })
-        .detail()
-        .shippingAddress()
-        .id()
-      const shippingAddress = await this.prisma.client.upsertLocation({
-        create: shippingAddressData,
-        update: shippingAddressData,
-        where: { id: shippingAddressID },
-      })
-      if (shippingAddress) {
-        await this.prisma.client.updateCustomerDetail({
-          data: {
+
+    const custWithData = await this.prisma.binding.query.customer(
+      {
+        where: { id: customer.id },
+      },
+      `{
+        admissions {
+          id
+        }
+      }`
+    )
+    const data = {
+      detail: {
+        upsert: {
+          create: {
             phoneNumber,
-            shippingAddress: { connect: { id: shippingAddress.id } },
+            shippingAddress: { create: shippingAddressData },
           },
-          where: { id: detailID },
-        })
-      }
-    } else {
-      await this.prisma.client.updateCustomer({
-        data: {
-          detail: {
-            create: {
-              phoneNumber,
-              shippingAddress: {
+          update: {
+            phoneNumber,
+            shippingAddress: {
+              upsert: {
                 create: shippingAddressData,
+                update: shippingAddressData,
               },
             },
           },
         },
-        where: { id: customer.id },
-      })
-    }
+      },
+    } as CustomerUpdateInput
 
-    return await this.prisma.client.customer({ id: customer.id })
+    // If they already have an admissions record, update allAccessEnabled if needed
+    if (!!custWithData?.admissions?.id) {
+      const {
+        detail: { allAccessEnabled },
+      } = this.admissions.zipcodeAllowed(shippingPostalCode)
+      data.admissions.update = {
+        allAccessEnabled,
+      }
+    }
+    return await this.prisma.client.updateCustomer({
+      where: { id: customer.id },
+      data,
+    })
   }
 
   async updateCustomerBillingInfo({
@@ -484,14 +488,16 @@ export class CustomerService {
     let admit = true
     let availableStyles = []
     let inServiceableZipcode: boolean
+    let allAccessEnabled: boolean
     try {
       for (const { func, waitlistReason } of triageFuncs) {
         const { pass, detail } = await func()
 
-        // Store the result of the serviceable zipcode lookup to store it
+        // Store key results of the serviceable zipcode lookup to store it
         // on the customer later
         if (waitlistReason === "UnserviceableZipcode") {
           inServiceableZipcode = pass
+          ;({ allAccessEnabled } = detail)
         }
 
         // Format the available styles for the subscribed email
@@ -565,6 +571,7 @@ export class CustomerService {
       status,
       waitlistReason: reason,
       inServiceableZipcode,
+      allAccessEnabled,
       dryRun,
     })
 
@@ -576,6 +583,7 @@ export class CustomerService {
     status,
     waitlistReason,
     inServiceableZipcode,
+    allAccessEnabled,
     dryRun,
   }: UpdateCustomerAdmissionsDataInput) {
     let data: CustomerUpdateInput = {}
@@ -592,6 +600,7 @@ export class CustomerService {
         admissionsUpsertData = {
           admissable: true,
           inServiceableZipcode: true,
+          allAccessEnabled,
           authorizationsCount: this.calculateNumAuthorizations(
             customer,
             status,
@@ -601,7 +610,10 @@ export class CustomerService {
         break
       case "Waitlisted":
         if (inServiceableZipcode === undefined) {
-          ;({ pass: inServiceableZipcode } = this.admissions.zipcodeAllowed(
+          ;({
+            pass: inServiceableZipcode,
+            detail: { allAccessEnabled },
+          } = this.admissions.zipcodeAllowed(
             customer.detail?.shippingAddress?.zipCode
           ))
         }
@@ -609,6 +621,7 @@ export class CustomerService {
         admissionsUpsertData = {
           admissable: false,
           inServiceableZipcode,
+          allAccessEnabled,
           inAdmissableReason: waitlistReason,
           authorizationsCount: this.calculateNumAuthorizations(
             customer,
@@ -652,7 +665,8 @@ export class CustomerService {
       customer?.admissions?.inAdmissableReason !==
         upsertData.inAdmissableReason ||
       customer?.admissions?.inServiceableZipcode !==
-        upsertData.inServiceableZipcode
+        upsertData.inServiceableZipcode ||
+      customer?.admissions?.allAccessEnabled !== upsertData.allAccessEnabled
     )
   }
 
