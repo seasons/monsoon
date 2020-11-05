@@ -3,8 +3,6 @@ import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/services/payment.service"
-import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { CustomerService } from "@modules/User/services/customer.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
 
@@ -12,9 +10,7 @@ import { pick } from "lodash"
 export class PaymentMutationsResolver {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly customerService: CustomerService,
     private readonly paymentService: PaymentService,
-    private readonly shippingService: ShippingService,
     private readonly segment: SegmentService,
     private readonly email: EmailService
   ) {}
@@ -153,58 +149,13 @@ export class PaymentMutationsResolver {
     @Customer() customer,
     @User() user
   ) {
-    const {
-      city: billingCity,
-      postalCode: billingPostalCode,
-      state: billingState,
-      street1: billingStreet1,
-      street2: billingStreet2,
-    } = billingAddress
-    const {
-      isValid: billingAddressIsValid,
-    } = await this.shippingService.shippoValidateAddress({
-      name: user.firstName,
-      street1: billingStreet1,
-      city: billingCity,
-      state: billingState,
-      zip: billingPostalCode,
-    })
-    if (!billingAddressIsValid) {
-      throw new Error("Billing address is invalid")
-    }
-
-    // Update user's billing address on chargebee
-    await this.paymentService.updateChargebeeBillingAddress(
-      user.id,
-      billingStreet1,
-      billingStreet2,
-      billingCity,
-      billingState,
-      billingPostalCode
-    )
-
-    // Update customer's billing address
-    await this.paymentService.updateCustomerBillingAddress(
-      user.id,
-      customer.id,
-      billingStreet1,
-      billingStreet2,
-      billingCity,
-      billingState,
-      billingPostalCode
-    )
-
-    // Update customer's shipping address & phone number. Unlike before, will
-    // accept all valid addresses. Will NOT throw an error if the address is
-    // not in NYC.
-    await this.customerService.updateCustomerDetail(
-      user,
-      customer,
+    return await this.paymentService.updatePaymentAndShipping(
+      billingAddress,
+      phoneNumber,
       shippingAddress,
-      phoneNumber
+      customer,
+      user
     )
-
-    return null
   }
 
   @Mutation()

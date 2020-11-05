@@ -233,6 +233,11 @@ enum InAdmissableReason {
   OpsThresholdExceeded
 }
 
+enum ShippingCode {
+  UPSGround
+  UPSSelect
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -326,6 +331,8 @@ type Location {
   lat: Float
   lng: Float
   physicalProducts: [PhysicalProduct!]!
+  shippingOptions: [ShippingOption!]
+    @relation(name: "ShippingOptionToDestinationLocation", onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -805,6 +812,7 @@ type Reservation {
   lastLocation: Location
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  shippingOption: ShippingOption @relation(link: INLINE, name: "ShippingMethodToReservation", onDelete: SET_NULL)
 }
 
 type ReservationFeedback {
@@ -875,6 +883,7 @@ type Package {
   fromAddress: Location! @relation(name: "SenderAddress")
   toAddress: Location! @relation(name: "RecipientAddress")
   weight: Float
+  cost: Int #cents
   events: [PackageTransitEvent!]
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -887,6 +896,27 @@ type PackageTransitEvent {
   package: Package!
   reservation: Reservation
   data: Json!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type ShippingMethod {
+  id: ID! @id
+  code: ShippingCode!
+  displayText: String!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type ShippingOption {
+  id: ID! @id
+  origin: Location
+    @relation(name: "ShippingOptionToOriginLocation", onDelete: SET_NULL) # defaults to warehouse location
+  destination: Location
+    @relation(name: "ShippingOptionToDestinationLocation", onDelete: SET_NULL)
+  shippingMethod: ShippingMethod
+  externalCost: Int
+  averageDuration: Int #days
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

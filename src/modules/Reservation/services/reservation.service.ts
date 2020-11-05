@@ -1,4 +1,5 @@
 import { RollbackError } from "@app/errors"
+import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { AdminActionLog } from "@app/prisma/prisma.binding"
 import { EmailService } from "@modules/Email/services/email.service"
@@ -22,6 +23,7 @@ import {
   ReservationStatus,
   ReservationUpdateInput,
   ReservationWhereUniqueInput,
+  ShippingCode,
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -54,6 +56,7 @@ export interface ReservationWithProductVariantData {
 export class ReservationService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly payment: PaymentService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
     private readonly physicalProductUtilsService: PhysicalProductUtilsService,
@@ -63,7 +66,13 @@ export class ReservationService {
     private readonly reservationUtils: ReservationUtilsService
   ) {}
 
-  async reserveItems(items: string[], user: User, customer: Customer, info) {
+  async reserveItems(
+    items: string[],
+    shippingCode: ShippingCode,
+    user: User,
+    customer: Customer,
+    info
+  ) {
     let reservationReturnData
     const rollbackFuncs = []
 
@@ -117,7 +126,8 @@ export class ReservationService {
       ] = await this.shippingService.createReservationShippingLabels(
         newProductVariantsBeingReserved,
         user,
-        customer
+        customer,
+        shippingCode
       )
 
       // Update relevant BagItems
@@ -126,6 +136,15 @@ export class ReservationService {
         newProductVariantsBeingReserved
       )
       rollbackFuncs.push(rollbackBagItemsUpdate)
+
+      // Create one time charge for shipping addon
+      let shippingOptionID
+      if (!!shippingCode) {
+        shippingOptionID = await this.payment.addShippingCharge(
+          customer,
+          shippingCode
+        )
+      }
 
       // Create reservation records in prisma
       const reservationData = await this.createReservationData(
@@ -138,7 +157,7 @@ export class ReservationService {
         ),
         physicalProductsBeingReserved,
         heldPhysicalProducts,
-        customerPlanItemCount
+        shippingOptionID
       )
       const [
         prismaReservation,
@@ -589,7 +608,7 @@ export class ReservationService {
     shipmentWeight: number,
     physicalProductsBeingReserved: PhysicalProduct[],
     heldPhysicalProducts: PhysicalProduct[],
-    customerPlanItemCount: number
+    shippingOptionID: string
   ): Promise<ReservationCreateInput> {
     const allPhysicalProductsInReservation = [
       ...physicalProductsBeingReserved,
@@ -611,6 +630,9 @@ export class ReservationService {
     const uniqueReservationNumber = await this.reservationUtils.getUniqueReservationNumber()
 
     return {
+      shippingOption: {
+        connect: { id: shippingOptionID },
+      },
       products: {
         connect: physicalProductSUIDs,
       },

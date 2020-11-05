@@ -21,7 +21,7 @@ export class ReservationMutationsResolver {
 
   @Mutation()
   async reserveItems(
-    @Args() { items },
+    @Args() { items, shippingCode },
     @User() user,
     @Customer() customer,
     @Info() info,
@@ -29,6 +29,7 @@ export class ReservationMutationsResolver {
   ) {
     const returnData = await this.reservation.reserveItems(
       items,
+      shippingCode,
       user,
       customer,
       addFragmentToInfo(info, `{products {seasonsUID}}`)

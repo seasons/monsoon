@@ -17296,6 +17296,11 @@ urlencode@^1.1.0:
   dependencies:
     iconv-lite "~0.4.11"
 
+us-state-converter@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/us-state-converter/-/us-state-converter-1.0.5.tgz#9166eb3e766885c7ecb9ecd54dd984f3c3d8bd87"
+  integrity sha512-9nH3y2vpmjm9vt0VyfAUS3809WMQ5NlWoruoRgxN4TjFeVlyqWXnrtbNCBwz/+C2twIWGwo9dgcsD75yI9w1AQ==
+
 use@^3.1.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.1.tgz#d50c8cac79a19fbc20f2911f56eb973f4e10070f"
