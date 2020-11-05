@@ -43,9 +43,6 @@ type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
   allAccessEnabled?: boolean
 }
 
-const twoDaysInMilliSeconds =
-  1000 /*sec*/ * 60 /*min*/ * 60 /*hour*/ * 24 /*day*/ * 2
-
 @Injectable()
 export class CustomerService {
   triageCustomerInfo = `{
@@ -369,8 +366,8 @@ export class CustomerService {
       }
 
       const now = DateTime.local()
-      const nowDate = now.toISODate()
-      const twoDaysFromNow = now.plus({ days: 2 }).toISODate()
+      const nowDate = now.toISOTime()
+      const twoDaysFromNow = now.plus({ days: 2 }).toISOTime()
       data = {
         ...data,
         authorizedAt: nowDate,

@@ -63,8 +63,10 @@ export class MarketingScheduledJobs {
     for (const cust of customers) {
       const now = moment()
 
-      const twentyFoursPassed = moment(cust.authorizedAt)
-        .add(1, "d")
+      const twentyFourHoursLeft = moment(
+        cust.admissions?.authorizationWindowClosesAt
+      )
+        .subtract(1, "d")
         .isSameOrBefore(now)
       const windowClosed = moment(now).isAfter(
         cust.admissions?.authorizationWindowClosesAt
@@ -96,7 +98,7 @@ export class MarketingScheduledJobs {
       }
 
       // Send 24 hour follow up email as needed
-      if (twentyFoursPassed && !twentyFourHourFollowupSent) {
+      if (twentyFourHoursLeft && !twentyFourHourFollowupSent) {
         const availableStyles = await this.admissions.getAvailableStyles({
           id: cust.id,
         })
