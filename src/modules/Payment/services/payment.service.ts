@@ -825,7 +825,13 @@ export class PaymentService {
       street2: billingStreet2,
     } = billingAddress
     const getAbbreviatedState = originalState => {
-      if (!!originalState && originalState.length > 2) {
+      if (!originalState) {
+        throw new Error(`Invalid state: ${originalState}`)
+      }
+      if (originalState.length === 2) {
+        return originalState
+      }
+      if (originalState.length > 2) {
         const abbr = states.abbr(originalState)
         if (abbr) {
           return abbr
@@ -833,6 +839,7 @@ export class PaymentService {
           return originalState
         }
       }
+      throw new Error(`Invalid state: ${originalState}`)
     }
 
     const abbreviatedBillingState = getAbbreviatedState(billingState)
