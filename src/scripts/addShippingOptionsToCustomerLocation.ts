@@ -30,7 +30,8 @@ const updateLocationStatesToAbbr = async () => {
     let abbr
     if (!!state && state?.length > 2) {
       abbr = states.abbr(state)
-      if (abbr) {
+      if (abbr && abbr.length === 2) {
+        console.log("Updating", abbr)
         await ps.client.updateLocation({
           where: { id: location.id },
           data: {
@@ -39,6 +40,7 @@ const updateLocationStatesToAbbr = async () => {
         })
       } else {
         console.log("Error updating location", location.id)
+        console.log("Error updating location", state)
       }
     } else if (!state) {
       console.log("error with data", location.id)
