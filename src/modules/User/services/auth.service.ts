@@ -98,9 +98,7 @@ export class AuthService {
       user.id,
       details,
       "Created",
-      // replace all non-aphabetical characters with an empty space so e.g "R.J." doesn't throw an error on rebrandly
-      firstName.replace(/[^a-z]/gi, "") +
-        (usersWithSameFirstName.length + 1).toString(),
+      firstName + usersWithSameFirstName.length.toString(),
       referrerId
     )
 
