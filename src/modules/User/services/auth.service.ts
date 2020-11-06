@@ -1,4 +1,5 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CouponType } from "@app/modules/Payment/payment.types"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { CustomerDetail } from "@app/prisma/prisma.binding"
@@ -34,7 +35,8 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly pushNotification: PushNotificationService,
-    private readonly email: EmailService
+    private readonly email: EmailService,
+    private readonly error: ErrorService
   ) {}
 
   async signupUser({
@@ -443,8 +445,11 @@ export class AuthService {
         customerQueryInfo
       )
     } catch (err) {
-      console.log(err)
-      // silently fail
+      this.error.setExtraContext(
+        { id: userID, status, referrerId, referralSlashTag },
+        "user"
+      )
+      this.error.captureError(err)
     }
 
     return {
