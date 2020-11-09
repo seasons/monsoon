@@ -13,7 +13,8 @@ const createShippingMethods = async () => {
   const methods = ["UPSGround", "UPSSelect"]
 
   for (const method of methods) {
-    const displayText = method === "UPSGround" ? "UPS Ground" : "UPS Select"
+    const displayText =
+      method === "UPSGround" ? "UPS Ground" : "3-day UPS Select"
     await ps.client.createShippingMethod({
       code: method as ShippingCode,
       displayText,
