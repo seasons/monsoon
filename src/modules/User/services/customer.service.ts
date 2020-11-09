@@ -366,8 +366,8 @@ export class CustomerService {
       }
 
       const now = DateTime.local()
-      const nowDate = now.toISOTime()
-      const twoDaysFromNow = now.plus({ days: 2 }).toISOTime()
+      const nowDate = now.toISO()
+      const twoDaysFromNow = now.plus({ days: 2 }).toISO()
       data = {
         ...data,
         authorizedAt: nowDate,
@@ -617,8 +617,8 @@ export class CustomerService {
         }
         if (!dryRun) {
           const now = DateTime.local()
-          const nowDate = now.toISODate()
-          const twoDaysFromNow = now.plus({ days: 2 }).toISODate()
+          const nowDate = now.toISO()
+          const twoDaysFromNow = now.plus({ days: 2 }).toISO()
           data.authorizedAt = nowDate
           admissionsUpsertData.authorizationWindowClosesAt = twoDaysFromNow
         }
