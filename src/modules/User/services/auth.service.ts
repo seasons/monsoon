@@ -466,7 +466,7 @@ export class AuthService {
   }> {
     let linkRequest = {
       destination: "https://www.seasons.nyc/signup?referrer_id=" + customerId,
-      domain: { fullName: "szns.co" },
+      domain: { fullName: process.env.REFERRAL_DOMAIN },
       slashtag: referralSlashTag,
     }
 
