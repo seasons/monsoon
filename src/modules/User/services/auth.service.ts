@@ -464,8 +464,12 @@ export class AuthService {
   ): Promise<{
     shortUrl: string
   }> {
+    const baseDomain =
+      process.env.NODE_ENV === "production"
+        ? "www.seasons.nyc"
+        : "staging.seasons.nyc"
     let linkRequest = {
-      destination: "https://www.seasons.nyc/signup?referrer_id=" + customerId,
+      destination: `https://${baseDomain}/signup?referrer_id=` + customerId,
       domain: { fullName: process.env.REFERRAL_DOMAIN },
       slashtag: referralSlashTag,
     }
@@ -484,6 +488,7 @@ export class AuthService {
           headers: requestHeaders,
         },
         (err, response, body) => {
+          console.log(body)
           if (err) {
             reject(err)
           }
