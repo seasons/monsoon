@@ -64,7 +64,7 @@ const run = async () => {
       .plus({
         days: 2,
       })
-      .toISOTime()
+      .toISO()
     const shouldProceed = readlineSync.keyInYN(
       `You are about to set authorizationWindowClosesAt on ${cust.user.email} to ${authorizationWindowClosesAt}. Proceed? y/n. `
     )
