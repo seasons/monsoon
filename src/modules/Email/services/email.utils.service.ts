@@ -127,12 +127,12 @@ export class EmailUtilsService {
       sizes = sizes.sort()
     }
     const smallImageSrc = await this.image.resizeImage(
-      product.images?.[0].url,
+      product.images?.[0]?.url,
       "Small",
       { fm: "jpg" }
     )
     const bigImageSrc = await this.image.resizeImage(
-      product.images?.[1].url,
+      product.images?.[1]?.url,
       "Small",
       { fm: "jpg" }
     )
