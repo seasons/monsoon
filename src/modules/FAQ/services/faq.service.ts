@@ -9,9 +9,9 @@ export class FAQService {
           title: "Frequently asked questions",
           subsections: [
             {
-              title: "Which cities are you in?",
+              title: "How often do you add new items?",
               text:
-                "We’re accepting members in select cities around the Northeast, Southeast, and Midwest.",
+                "We release new items every Friday and restock clean items on Mondays and Thursdays.",
             },
             {
               title: "What is a “Swap”?",
@@ -21,7 +21,7 @@ export class FAQService {
             {
               title: "How does shipping work?",
               text:
-                "Free shipping and returns are included in both plans. Shipping times average about 1-2 days in the NY metro area and 3-4 days for the rest of the midwest and East Coast.",
+                "Free ground shipping and returns are included in both plans. Ground shipping averages 1-2 days in the NY metro area, 3-4 days for the Midwest + Southeast, and 5-7 days on the West coast. For faster shipping times out west, upgrade to 3-day UPS select.",
             },
             {
               title: "What if something doesn’t fit?",
@@ -29,9 +29,9 @@ export class FAQService {
                 "Pack it up and send it back! We’ll make sure you get the right size or another item that fits. On an Essential plan? Any exchanges regarding size do not count towards your monthly swap.",
             },
             {
-              title: "How often do you add new items?",
+              title: "Which cities are you in?",
               text:
-                "We release new items every Friday and restock clean items on Mondays and Thursdays.",
+                "If you've been authorized to finish choosing your plan, we service your area!",
             },
           ],
         },
