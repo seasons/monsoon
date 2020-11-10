@@ -76,7 +76,7 @@ export class ChargebeeController {
 
     try {
       // If they don't have a billing info this means they've created their account
-      // user the deprecated ChargebeeHostedCheckout
+      // using the deprecated ChargebeeHostedCheckout
       if (!customerWithBillingAndUserData?.billingInfo?.id) {
         const user = customerWithBillingAndUserData.user
         this.segment.trackSubscribed(customer_id, {
