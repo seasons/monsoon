@@ -190,7 +190,7 @@ export class CustomerService {
     })
 
     if (isUpdatingShippingAddress) {
-      const state = details.shippingAddress?.create?.state
+      const state = details.shippingAddress?.create?.state?.toUpperCase()
       if (!state) {
         throw new Error("State missing in shipping address update")
       }
@@ -220,10 +220,17 @@ export class CustomerService {
     const {
       city: shippingCity,
       postalCode: shippingPostalCode,
-      state: shippingState,
       street1: shippingStreet1,
       street2: shippingStreet2,
     } = shippingAddress
+
+    let shippingState
+    const shippingAddressState = shippingAddress?.state
+    if (!!shippingAddressState && shippingAddressState.length > 2) {
+      shippingState = this.utils.abbreviateState(shippingAddressState)
+    } else {
+      shippingState = shippingAddressState.toUpperCase()
+    }
 
     const {
       isValid: shippingAddressIsValid,
@@ -244,7 +251,7 @@ export class CustomerService {
       name: `${user.firstName} ${user.lastName}`,
       city: shippingCity,
       zipCode: shippingPostalCode,
-      state: shippingState,
+      state: shippingState?.toUpperCase(),
       address1: shippingStreet1,
       address2: shippingStreet2,
     }

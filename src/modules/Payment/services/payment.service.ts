@@ -836,7 +836,7 @@ export class PaymentService {
         if (abbr) {
           return abbr
         } else {
-          return originalState
+          return originalState?.toUpperCase()
         }
       }
       throw new Error(`Invalid state: ${originalState}`)
