@@ -58,9 +58,7 @@ const run = async () => {
     }
     const authorizedAt = cust.authorizedAt
 
-    const authorizationWindowClosesAt = DateTime.fromJSDate(
-      new Date(authorizedAt)
-    )
+    const authorizationWindowClosesAt = DateTime.fromISO(authorizedAt as string)
       .plus({
         days: 2,
       })

@@ -26,11 +26,17 @@ const updateLocationStatesToAbbr = async () => {
   const ps = new PrismaService()
   const locations = await ps.client.locations()
 
+  let i = 0
   for (const location of locations) {
-    const state = location.state
+    // console.log(`loc ${i++} of ${locations.length}`)
+    const state = location.state?.trim()
     let abbr
     if (!!state && state?.length > 2) {
-      abbr = states.abbr(state)
+      if (state === "Oregon") {
+        abbr = "OR"
+      } else {
+        abbr = states.abbr(state)
+      }
       if (abbr && abbr.length === 2) {
         console.log("Updating", abbr)
         await ps.client.updateLocation({
@@ -135,5 +141,5 @@ const updateCustomers = async () => {
 }
 
 // createShippingMethods()
-// updateCustomers()
 updateLocationStatesToAbbr()
+// updateCustomers()
