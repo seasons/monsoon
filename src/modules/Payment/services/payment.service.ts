@@ -832,7 +832,7 @@ export class PaymentService {
         return originalState
       }
       if (originalState.length > 2) {
-        const abbr = states.abbr(originalState)
+        const abbr = this.utils.abbreviateState(originalState)
         if (abbr) {
           return abbr
         } else {

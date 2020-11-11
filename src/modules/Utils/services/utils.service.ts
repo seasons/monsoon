@@ -8,6 +8,7 @@ import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
 import moment from "moment"
+import states from "us-state-converter"
 
 import { bottomSizeRegex } from "../../Product/constants"
 
@@ -25,6 +26,21 @@ enum ProductSize {
 @Injectable()
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
+
+  abbreviateState(state: string) {
+    let abbr
+    const _state = state?.trim()
+
+    // this particular library doesn't handle Oregon for whichever reason.
+    // So we handle it independently
+    if (_state === "Oregon") {
+      abbr = "OR"
+    } else {
+      abbr = states.abbr(_state)
+    }
+
+    return abbr
+  }
 
   // Returns an ISO string for a date that's X days ago
   xDaysAgoISOString(x: number) {

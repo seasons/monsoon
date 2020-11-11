@@ -5,6 +5,7 @@ import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Customer } from "@app/prisma/prisma.binding"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
@@ -77,7 +78,8 @@ export class CustomerService {
     private readonly segment: SegmentService,
     private readonly email: EmailService,
     private readonly pushNotification: PushNotificationService,
-    private readonly sms: SMSService
+    private readonly sms: SMSService,
+    private readonly utils: UtilsService
   ) {}
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
@@ -166,7 +168,7 @@ export class CustomerService {
       }
 
       if (!!state && state.length > 2) {
-        const abbreviatedState = states.abbr(state)
+        const abbreviatedState = this.utils.abbreviateState(state)
         if (abbreviatedState) {
           details.shippingAddress.create.state = abbreviatedState
         } else {
