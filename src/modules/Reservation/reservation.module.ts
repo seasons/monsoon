@@ -1,5 +1,6 @@
 import { EmailModule } from "@modules/Email"
 import { ImageModule } from "@modules/Image/image.module"
+import { PaymentModule } from "@modules/Payment"
 import { ProductModule } from "@modules/Product"
 import { PushNotificationModule } from "@modules/PushNotification"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
@@ -25,6 +26,7 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
     ProductModule,
     PushNotificationModule,
     ShippingModule,
+    PaymentModule,
     AnalyticsModule,
     UtilsModule,
   ],

@@ -14,6 +14,14 @@ export interface TriageFuncResult {
   detail: any
 }
 
+export interface ZipcodeAllowedResult extends TriageFuncResult {
+  detail: {
+    zipcode: string
+    state: string
+    serviceableStates: string[]
+    allAccessEnabled: boolean
+  }
+}
 export interface ReservableInventoryForCustomerResultDetail {
   availableBottomStyles: Product[]
   availableTopStyles: Product[]
@@ -26,9 +34,13 @@ export interface HaveSufficientInventoryToServiceCustomerResult
   }
 }
 
+interface AdmissableStates {
+  allAccessEnabled: { true: string[]; false: string[] }
+}
+
 @Injectable()
 export class AdmissionsService {
-  serviceableStates: string[]
+  serviceableStates: AdmissableStates
 
   // We assume that each reservation is split 50/50 between tops and bottoms.
   // That's not really accurate, but it's good enough for now.
@@ -39,11 +51,8 @@ export class AdmissionsService {
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService
   ) {
-    ;({ states: this.serviceableStates } = JSON.parse(
-      fs.readFileSync(
-        process.cwd() + "/src/modules/User/admissableStates.json",
-        "utf-8"
-      )
+    ;({ states: this.serviceableStates } = this.utils.parseJSONFile(
+      "src/modules/User/admissableStates"
     ))
   }
 
@@ -72,10 +81,21 @@ export class AdmissionsService {
     }
   }
 
-  zipcodeAllowed(zipcode: string): TriageFuncResult {
+  zipcodeAllowed(zipcode: string): ZipcodeAllowedResult {
     const state = zipcodes.lookup(zipcode)?.state
-    const pass = this.serviceableStates.includes(state)
-    const detail = { zipcode, state, serviceableStates: this.serviceableStates }
+    const allServiceableStates = [
+      ...this.serviceableStates.allAccessEnabled.true,
+      ...this.serviceableStates.allAccessEnabled.false,
+    ]
+    const pass = allServiceableStates.includes(state)
+    const detail = {
+      zipcode,
+      state,
+      serviceableStates: allServiceableStates,
+      allAccessEnabled: this.serviceableStates.allAccessEnabled.true.includes(
+        state
+      ),
+    }
     return { pass, detail }
   }
 

@@ -3,6 +3,7 @@ import { PrismaModule } from "@prisma/prisma.module"
 
 import { AnalyticsModule } from "../Analytics/analytics.module"
 import { EmailModule } from "../Email/email.module"
+import { ErrorModule } from "../Error/error.module"
 import { PushNotificationModule } from "../PushNotification/pushNotification.module"
 import { ShippingModule } from "../Shipping/shipping.module"
 import { SMSModule } from "../SMS/sms.module"
@@ -28,6 +29,7 @@ import { CustomerService } from "./services/customer.service"
     UtilsModule,
     AnalyticsModule,
     SMSModule,
+    ErrorModule,
   ],
   providers: [
     AuthService,

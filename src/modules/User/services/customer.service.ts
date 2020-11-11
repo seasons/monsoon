@@ -1,3 +1,5 @@
+import fs from "fs"
+
 import { ApplicationType } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email"
@@ -9,18 +11,20 @@ import { Injectable } from "@nestjs/common"
 import {
   BillingInfoUpdateDataInput,
   CustomerAdmissionsDataCreateWithoutCustomerInput,
-  CustomerAdmissionsDataWhereUniqueInput,
   CustomerStatus,
   CustomerUpdateInput,
   CustomerWhereUniqueInput,
   ID_Input,
   InAdmissableReason,
+  ShippingOption,
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { pick } from "lodash"
+import { DateTime } from "luxon"
+import states from "us-state-converter"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
 import { AuthService } from "./auth.service"
@@ -36,6 +40,7 @@ type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
   customer: Customer
   dryRun: boolean
   inServiceableZipcode?: boolean
+  allAccessEnabled?: boolean
 }
 
 @Injectable()
@@ -83,15 +88,58 @@ export class CustomerService {
     })
   }
 
+  async addCustomerLocationShippingOptions(
+    destinationState,
+    shippingAddressID
+  ) {
+    const shippingMethods = await this.prisma.client.shippingMethods()
+    const warehouseLocation = await this.prisma.client.location({
+      slug:
+        process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+        "seasons-cleaners-official",
+    })
+    const shippingOptionsData = JSON.parse(
+      fs.readFileSync(
+        process.cwd() + "/src/modules/Shipping/shippingOptionsData.json",
+        "utf-8"
+      )
+    )
+    const originState = warehouseLocation.state
+    const shippingOptions = [] as ShippingOption[]
+
+    for (const method of shippingMethods) {
+      const stateData =
+        shippingOptionsData[method.code].from[originState].to[destinationState]
+
+      const shippingOption = await this.prisma.client.createShippingOption({
+        origin: { connect: { id: warehouseLocation.id } },
+        destination: { connect: { id: shippingAddressID } },
+        shippingMethod: { connect: { id: method.id } },
+        externalCost: stateData.price,
+        averageDuration: stateData.averageDuration,
+      })
+
+      shippingOptions.push(shippingOption)
+    }
+
+    await this.prisma.client.updateLocation({
+      where: { id: shippingAddressID },
+      data: {
+        shippingOptions: {
+          connect: shippingOptions.map(s => ({ id: s.id })),
+        },
+      },
+    })
+  }
+
   async addCustomerDetails({ details, status }, customer, user, info) {
-    // If any of these keys is present, the entire address must be present and valid.
     const groupedKeys = ["name", "address1", "address2", "city", "state"]
-    if (
+    const isUpdatingShippingAddress =
       details.shippingAddress?.create &&
       Object.keys(details.shippingAddress?.create)?.some(key =>
         groupedKeys.includes(key)
       )
-    ) {
+    if (isUpdatingShippingAddress) {
       const {
         name,
         address1: street1,
@@ -116,6 +164,15 @@ export class CustomerService {
       if (!shippingAddressIsValid) {
         throw new Error("Shipping address is invalid")
       }
+
+      if (!!state && state.length > 2) {
+        const abbreviatedState = states.abbr(state)
+        if (abbreviatedState) {
+          details.shippingAddress.create.state = abbreviatedState
+        } else {
+          throw new Error("Shipping address state is invalid")
+        }
+      }
     }
 
     await this.prisma.client.updateCustomer({
@@ -129,6 +186,21 @@ export class CustomerService {
       },
       where: { id: customer.id },
     })
+
+    if (isUpdatingShippingAddress) {
+      const state = details.shippingAddress?.create?.state
+      if (!state) {
+        throw new Error("State missing in shipping address update")
+      }
+      const shippingAddressID = await this.prisma.client
+        .customer({
+          id: customer.id,
+        })
+        .detail()
+        .shippingAddress()
+        .id()
+      this.addCustomerLocationShippingOptions(state, shippingAddressID)
+    }
 
     // If a status was passed, update the customer status in prisma
     if (!!status) {
@@ -150,6 +222,7 @@ export class CustomerService {
       street1: shippingStreet1,
       street2: shippingStreet2,
     } = shippingAddress
+
     const {
       isValid: shippingAddressIsValid,
     } = await this.shipping.shippoValidateAddress({
@@ -164,12 +237,8 @@ export class CustomerService {
     }
 
     // Update the user's shipping address
-    const detailID = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .id()
     const shippingAddressData = {
-      slug: `${user.firstName}-${user.lastName}-shipping-address`,
+      slug: `${user.firstName}-${user.lastName}-shipping-address-${Date.now()}`,
       name: `${user.firstName} ${user.lastName}`,
       city: shippingCity,
       zipCode: shippingPostalCode,
@@ -177,43 +246,50 @@ export class CustomerService {
       address1: shippingStreet1,
       address2: shippingStreet2,
     }
-    if (detailID) {
-      const shippingAddressID = await this.prisma.client
-        .customer({ id: customer.id })
-        .detail()
-        .shippingAddress()
-        .id()
-      const shippingAddress = await this.prisma.client.upsertLocation({
-        create: shippingAddressData,
-        update: shippingAddressData,
-        where: { id: shippingAddressID },
-      })
-      if (shippingAddress) {
-        await this.prisma.client.updateCustomerDetail({
-          data: {
+
+    const custWithData = await this.prisma.binding.query.customer(
+      {
+        where: { id: customer.id },
+      },
+      `{
+        admissions {
+          id
+        }
+      }`
+    )
+    const data = {
+      detail: {
+        upsert: {
+          create: {
             phoneNumber,
-            shippingAddress: { connect: { id: shippingAddress.id } },
+            shippingAddress: { create: shippingAddressData },
           },
-          where: { id: detailID },
-        })
-      }
-    } else {
-      await this.prisma.client.updateCustomer({
-        data: {
-          detail: {
-            create: {
-              phoneNumber,
-              shippingAddress: {
+          update: {
+            phoneNumber,
+            shippingAddress: {
+              upsert: {
                 create: shippingAddressData,
+                update: shippingAddressData,
               },
             },
           },
         },
-        where: { id: customer.id },
-      })
-    }
+      },
+    } as CustomerUpdateInput
 
-    return await this.prisma.client.customer({ id: customer.id })
+    // If they already have an admissions record, update allAccessEnabled
+    if (!!custWithData?.admissions?.id) {
+      const {
+        detail: { allAccessEnabled },
+      } = this.admissions.zipcodeAllowed(shippingPostalCode)
+      data.admissions = {
+        update: { allAccessEnabled },
+      }
+    }
+    return await this.prisma.client.updateCustomer({
+      where: { id: customer.id },
+      data,
+    })
   }
 
   async updateCustomerBillingInfo({
@@ -278,7 +354,10 @@ export class CustomerService {
         throw new Error("Can not authorize user. Insufficient inventory")
       }
 
-      const { pass: inServiceableZipcode } = this.admissions.zipcodeAllowed(
+      const {
+        pass: inServiceableZipcode,
+        detail: { allAccessEnabled },
+      } = this.admissions.zipcodeAllowed(
         customer.detail.shippingAddress.zipCode
       )
 
@@ -286,14 +365,19 @@ export class CustomerService {
         throw new Error(`Can not authorize user. In nonserviceable zipcode`)
       }
 
+      const now = DateTime.local()
+      const nowDate = now.toISO()
+      const twoDaysFromNow = now.plus({ days: 2 }).toISO()
       data = {
         ...data,
-        authorizedAt: new Date(),
+        authorizedAt: nowDate,
         admissions: {
           upsert: {
             create: {
+              authorizationWindowClosesAt: twoDaysFromNow,
               admissable: true,
               inServiceableZipcode: true,
+              allAccessEnabled,
               authorizationsCount: this.calculateNumAuthorizations(
                 customer,
                 data.status,
@@ -301,6 +385,8 @@ export class CustomerService {
               ),
             },
             update: {
+              authorizationWindowClosesAt: twoDaysFromNow,
+              allAccessEnabled,
               authorizationsCount: this.calculateNumAuthorizations(
                 customer,
                 data.status,
@@ -413,14 +499,16 @@ export class CustomerService {
     let admit = true
     let availableStyles = []
     let inServiceableZipcode: boolean
+    let allAccessEnabled: boolean
     try {
       for (const { func, waitlistReason } of triageFuncs) {
         const { pass, detail } = await func()
 
-        // Store the result of the serviceable zipcode lookup to store it
+        // Store key results of the serviceable zipcode lookup to store it
         // on the customer later
         if (waitlistReason === "UnserviceableZipcode") {
           inServiceableZipcode = pass
+          ;({ allAccessEnabled } = detail)
         }
 
         // Format the available styles for the subscribed email
@@ -494,6 +582,7 @@ export class CustomerService {
       status,
       waitlistReason: reason,
       inServiceableZipcode,
+      allAccessEnabled,
       dryRun,
     })
 
@@ -505,6 +594,7 @@ export class CustomerService {
     status,
     waitlistReason,
     inServiceableZipcode,
+    allAccessEnabled,
     dryRun,
   }: UpdateCustomerAdmissionsDataInput) {
     let data: CustomerUpdateInput = {}
@@ -515,22 +605,31 @@ export class CustomerService {
     }
     switch (status) {
       case "Authorized":
-        if (!dryRun) {
-          data.authorizedAt = new Date()
-        }
         admissionsUpsertData = {
           admissable: true,
           inServiceableZipcode: true,
+          allAccessEnabled,
           authorizationsCount: this.calculateNumAuthorizations(
             customer,
             status,
             dryRun
           ),
         }
+        if (!dryRun) {
+          const now = DateTime.local()
+          const nowDate = now.toISO()
+          const twoDaysFromNow = now.plus({ days: 2 }).toISO()
+          data.authorizedAt = nowDate
+          admissionsUpsertData.authorizationWindowClosesAt = twoDaysFromNow
+        }
+
         break
       case "Waitlisted":
         if (inServiceableZipcode === undefined) {
-          ;({ pass: inServiceableZipcode } = this.admissions.zipcodeAllowed(
+          ;({
+            pass: inServiceableZipcode,
+            detail: { allAccessEnabled },
+          } = this.admissions.zipcodeAllowed(
             customer.detail?.shippingAddress?.zipCode
           ))
         }
@@ -538,6 +637,7 @@ export class CustomerService {
         admissionsUpsertData = {
           admissable: false,
           inServiceableZipcode,
+          allAccessEnabled,
           inAdmissableReason: waitlistReason,
           authorizationsCount: this.calculateNumAuthorizations(
             customer,
@@ -581,7 +681,8 @@ export class CustomerService {
       customer?.admissions?.inAdmissableReason !==
         upsertData.inAdmissableReason ||
       customer?.admissions?.inServiceableZipcode !==
-        upsertData.inServiceableZipcode
+        upsertData.inServiceableZipcode ||
+      customer?.admissions?.allAccessEnabled !== upsertData.allAccessEnabled
     )
   }
 

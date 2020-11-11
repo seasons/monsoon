@@ -2559,10 +2559,10 @@
     "@angular-devkit/core" "9.1.9"
     "@angular-devkit/schematics" "9.1.9"
 
-"@seasons/wind@^2.1.39":
-  version "2.1.39"
-  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.1.39.tgz#34639ceae23badb16ee7eb224193929207f81430"
-  integrity sha512-2BHqC8NR4Fg/b5BK0kwOgj+NoZtKPqSnflQQBilTT70xVeZCiK9i+o9eGf+EdRdNoGEXflCrnxZQRcjspjYHCA==
+"@seasons/wind@^2.1.40":
+  version "2.1.40"
+  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.1.40.tgz#d6fb43b529ab2b4f41a98cea83627fa765a5304d"
+  integrity sha512-inu2j+f/24EmgxScj/swmVhcC6ZHdniaWbro/ujH5285Fv2ghcJw1EX4KKVjRr20USm2jnw7utjaRQz9GiK38A==
   dependencies:
     "@types/node" "^14.0.23"
     child_process "^1.0.2"
@@ -17295,6 +17295,11 @@ urlencode@^1.1.0:
   integrity sha1-HyuibwE8hfATP3o61v8nMK33y7c=
   dependencies:
     iconv-lite "~0.4.11"
+
+us-state-converter@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/us-state-converter/-/us-state-converter-1.0.5.tgz#9166eb3e766885c7ecb9ecd54dd984f3c3d8bd87"
+  integrity sha512-9nH3y2vpmjm9vt0VyfAUS3809WMQ5NlWoruoRgxN4TjFeVlyqWXnrtbNCBwz/+C2twIWGwo9dgcsD75yI9w1AQ==
 
 use@^3.1.0:
   version "3.1.1"
