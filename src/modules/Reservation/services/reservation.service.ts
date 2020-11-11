@@ -629,10 +629,7 @@ export class ReservationService {
     }
     const uniqueReservationNumber = await this.reservationUtils.getUniqueReservationNumber()
 
-    return {
-      shippingOption: {
-        connect: { id: shippingOptionID },
-      },
+    let createData = {
       products: {
         connect: physicalProductSUIDs,
       },
@@ -713,7 +710,13 @@ export class ReservationService {
       },
       shipped: false,
       status: "Queued",
+    } as ReservationCreateInput
+
+    if (!!shippingOptionID) {
+      createData.shippingOption = { connect: { id: shippingOptionID } }
     }
+
+    return createData
   }
 
   /* Returns [createdReservation, rollbackFunc] */
