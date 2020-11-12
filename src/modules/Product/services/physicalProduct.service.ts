@@ -87,10 +87,6 @@ export class PhysicalProductService {
     }
 
     if (this.changingInventoryStatus(newData, physProdBeforeUpdate)) {
-      if (physProdBeforeUpdate.inventoryStatus === "Stored") {
-        throw new ApolloError(unstoreErrorMessage)
-      }
-
       if (physProdBeforeUpdate.inventoryStatus === "Offloaded") {
         throw new ApolloError(
           "Can not un-offload a physical product. Learn to let go. Try a buddha board: https://tinyurl.com/yabmmcc7"
