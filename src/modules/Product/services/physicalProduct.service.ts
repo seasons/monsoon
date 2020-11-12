@@ -87,7 +87,10 @@ export class PhysicalProductService {
     }
 
     if (this.changingInventoryStatus(newData, physProdBeforeUpdate)) {
-      if (physProdBeforeUpdate.inventoryStatus === "Stored") {
+      if (
+        physProdBeforeUpdate.inventoryStatus === "Stored" &&
+        newData.inventoryStatus !== "Offloaded"
+      ) {
         throw new ApolloError(unstoreErrorMessage)
       }
 
