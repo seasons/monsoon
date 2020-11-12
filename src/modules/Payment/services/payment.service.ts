@@ -141,7 +141,7 @@ export class PaymentService {
         },
       })
     } catch (e) {
-      throw new Error(`Error updating to new plan: ${e}`)
+      throw new Error(`Error updating to new plan: ${e.message}`)
     }
   }
 
