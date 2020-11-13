@@ -1260,11 +1260,14 @@ type Brand {
   isPrimaryBrand: Boolean!
   logo: Json
   name: String!
+  designer: String
   basedIn: String
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   since: DateTime
   tier: BrandTier!
+  published: Boolean!
+  featured: Boolean!
   websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -1284,11 +1287,14 @@ input BrandCreateInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String!
+  designer: String
   basedIn: String
   products: ProductCreateManyWithoutBrandInput
   images: ImageCreateManyInput
   since: DateTime
   tier: BrandTier!
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
 }
 
@@ -1305,10 +1311,13 @@ input BrandCreateWithoutProductsInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String!
+  designer: String
   basedIn: String
   images: ImageCreateManyInput
   since: DateTime
   tier: BrandTier!
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
 }
 
@@ -1332,12 +1341,18 @@ enum BrandOrderByInput {
   logo_DESC
   name_ASC
   name_DESC
+  designer_ASC
+  designer_DESC
   basedIn_ASC
   basedIn_DESC
   since_ASC
   since_DESC
   tier_ASC
   tier_DESC
+  published_ASC
+  published_DESC
+  featured_ASC
+  featured_DESC
   websiteUrl_ASC
   websiteUrl_DESC
   createdAt_ASC
@@ -1354,9 +1369,12 @@ type BrandPreviousValues {
   isPrimaryBrand: Boolean!
   logo: Json
   name: String!
+  designer: String
   basedIn: String
   since: DateTime
   tier: BrandTier!
+  published: Boolean!
+  featured: Boolean!
   websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -1399,11 +1417,14 @@ input BrandUpdateInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  designer: String
   basedIn: String
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
   since: DateTime
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
 }
 
@@ -1414,9 +1435,12 @@ input BrandUpdateManyMutationInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  designer: String
   basedIn: String
   since: DateTime
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
 }
 
@@ -1434,10 +1458,13 @@ input BrandUpdateWithoutProductsDataInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  designer: String
   basedIn: String
   images: ImageUpdateManyInput
   since: DateTime
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
 }
 
@@ -1519,6 +1546,20 @@ input BrandWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  designer: String
+  designer_not: String
+  designer_in: [String!]
+  designer_not_in: [String!]
+  designer_lt: String
+  designer_lte: String
+  designer_gt: String
+  designer_gte: String
+  designer_contains: String
+  designer_not_contains: String
+  designer_starts_with: String
+  designer_not_starts_with: String
+  designer_ends_with: String
+  designer_not_ends_with: String
   basedIn: String
   basedIn_not: String
   basedIn_in: [String!]
@@ -1551,6 +1592,10 @@ input BrandWhereInput {
   tier_not: BrandTier
   tier_in: [BrandTier!]
   tier_not_in: [BrandTier!]
+  published: Boolean
+  published_not: Boolean
+  featured: Boolean
+  featured_not: Boolean
   websiteUrl: String
   websiteUrl_not: String
   websiteUrl_in: [String!]

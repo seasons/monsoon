@@ -2726,11 +2726,15 @@ type Brand implements Node {
   isPrimaryBrand: Boolean!
   logo: Json
   name: String!
+  designer: String
+  foundedIn: String
   basedIn: String
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   since: DateTime
   tier: BrandTier!
+  published: Boolean!
+  featured: Boolean!
   websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -2754,9 +2758,13 @@ input BrandCreateInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String!
+  designer: String
+  foundedIn: String
   basedIn: String
   since: DateTime
   tier: BrandTier!
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
   products: ProductCreateManyWithoutBrandInput
   images: ImageCreateManyInput
@@ -2775,9 +2783,13 @@ input BrandCreateWithoutProductsInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String!
+  designer: String
+  foundedIn: String
   basedIn: String
   since: DateTime
   tier: BrandTier!
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
   images: ImageCreateManyInput
 }
@@ -2806,12 +2818,20 @@ enum BrandOrderByInput {
   logo_DESC
   name_ASC
   name_DESC
+  designer_ASC
+  designer_DESC
+  foundedIn_ASC
+  foundedIn_DESC
   basedIn_ASC
   basedIn_DESC
   since_ASC
   since_DESC
   tier_ASC
   tier_DESC
+  published_ASC
+  published_DESC
+  featured_ASC
+  featured_DESC
   websiteUrl_ASC
   websiteUrl_DESC
   createdAt_ASC
@@ -2828,9 +2848,13 @@ type BrandPreviousValues {
   isPrimaryBrand: Boolean!
   logo: Json
   name: String!
+  designer: String
+  foundedIn: String
   basedIn: String
   since: DateTime
   tier: BrandTier!
+  published: Boolean!
+  featured: Boolean!
   websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -2892,9 +2916,13 @@ input BrandUpdateInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  designer: String
+  foundedIn: String
   basedIn: String
   since: DateTime
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
@@ -2907,9 +2935,13 @@ input BrandUpdateManyMutationInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  designer: String
+  foundedIn: String
   basedIn: String
   since: DateTime
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
 }
 
@@ -2927,9 +2959,13 @@ input BrandUpdateWithoutProductsDataInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  designer: String
+  foundedIn: String
   basedIn: String
   since: DateTime
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
   images: ImageUpdateManyInput
 }
@@ -3152,6 +3188,86 @@ input BrandWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
+  designer: String
+
+  """All values that are not equal to given value."""
+  designer_not: String
+
+  """All values that are contained in given list."""
+  designer_in: [String!]
+
+  """All values that are not contained in given list."""
+  designer_not_in: [String!]
+
+  """All values less than the given value."""
+  designer_lt: String
+
+  """All values less than or equal the given value."""
+  designer_lte: String
+
+  """All values greater than the given value."""
+  designer_gt: String
+
+  """All values greater than or equal the given value."""
+  designer_gte: String
+
+  """All values containing the given string."""
+  designer_contains: String
+
+  """All values not containing the given string."""
+  designer_not_contains: String
+
+  """All values starting with the given string."""
+  designer_starts_with: String
+
+  """All values not starting with the given string."""
+  designer_not_starts_with: String
+
+  """All values ending with the given string."""
+  designer_ends_with: String
+
+  """All values not ending with the given string."""
+  designer_not_ends_with: String
+  foundedIn: String
+
+  """All values that are not equal to given value."""
+  foundedIn_not: String
+
+  """All values that are contained in given list."""
+  foundedIn_in: [String!]
+
+  """All values that are not contained in given list."""
+  foundedIn_not_in: [String!]
+
+  """All values less than the given value."""
+  foundedIn_lt: String
+
+  """All values less than or equal the given value."""
+  foundedIn_lte: String
+
+  """All values greater than the given value."""
+  foundedIn_gt: String
+
+  """All values greater than or equal the given value."""
+  foundedIn_gte: String
+
+  """All values containing the given string."""
+  foundedIn_contains: String
+
+  """All values not containing the given string."""
+  foundedIn_not_contains: String
+
+  """All values starting with the given string."""
+  foundedIn_starts_with: String
+
+  """All values not starting with the given string."""
+  foundedIn_not_starts_with: String
+
+  """All values ending with the given string."""
+  foundedIn_ends_with: String
+
+  """All values not ending with the given string."""
+  foundedIn_not_ends_with: String
   basedIn: String
 
   """All values that are not equal to given value."""
@@ -3224,6 +3340,14 @@ input BrandWhereInput {
 
   """All values that are not contained in given list."""
   tier_not_in: [BrandTier!]
+  published: Boolean
+
+  """All values that are not equal to given value."""
+  published_not: Boolean
+  featured: Boolean
+
+  """All values that are not equal to given value."""
+  featured_not: Boolean
   websiteUrl: String
 
   """All values that are not equal to given value."""
@@ -29531,12 +29655,20 @@ export type BrandOrderByInput =   'id_ASC' |
   'logo_DESC' |
   'name_ASC' |
   'name_DESC' |
+  'designer_ASC' |
+  'designer_DESC' |
+  'foundedIn_ASC' |
+  'foundedIn_DESC' |
   'basedIn_ASC' |
   'basedIn_DESC' |
   'since_ASC' |
   'since_DESC' |
   'tier_ASC' |
   'tier_DESC' |
+  'published_ASC' |
+  'published_DESC' |
+  'featured_ASC' |
+  'featured_DESC' |
   'websiteUrl_ASC' |
   'websiteUrl_DESC' |
   'createdAt_ASC' |
@@ -31177,9 +31309,13 @@ export interface BrandCreateInput {
   isPrimaryBrand?: Boolean | null
   logo?: Json | null
   name: String
+  designer?: String | null
+  foundedIn?: String | null
   basedIn?: String | null
   since?: DateTime | null
   tier: BrandTier
+  published?: Boolean | null
+  featured?: Boolean | null
   websiteUrl?: String | null
   products?: ProductCreateManyWithoutBrandInput | null
   images?: ImageCreateManyInput | null
@@ -31198,9 +31334,13 @@ export interface BrandCreateWithoutProductsInput {
   isPrimaryBrand?: Boolean | null
   logo?: Json | null
   name: String
+  designer?: String | null
+  foundedIn?: String | null
   basedIn?: String | null
   since?: DateTime | null
   tier: BrandTier
+  published?: Boolean | null
+  featured?: Boolean | null
   websiteUrl?: String | null
   images?: ImageCreateManyInput | null
 }
@@ -31223,9 +31363,13 @@ export interface BrandUpdateInput {
   isPrimaryBrand?: Boolean | null
   logo?: Json | null
   name?: String | null
+  designer?: String | null
+  foundedIn?: String | null
   basedIn?: String | null
   since?: DateTime | null
   tier?: BrandTier | null
+  published?: Boolean | null
+  featured?: Boolean | null
   websiteUrl?: String | null
   products?: ProductUpdateManyWithoutBrandInput | null
   images?: ImageUpdateManyInput | null
@@ -31238,9 +31382,13 @@ export interface BrandUpdateManyMutationInput {
   isPrimaryBrand?: Boolean | null
   logo?: Json | null
   name?: String | null
+  designer?: String | null
+  foundedIn?: String | null
   basedIn?: String | null
   since?: DateTime | null
   tier?: BrandTier | null
+  published?: Boolean | null
+  featured?: Boolean | null
   websiteUrl?: String | null
 }
 
@@ -31258,9 +31406,13 @@ export interface BrandUpdateWithoutProductsDataInput {
   isPrimaryBrand?: Boolean | null
   logo?: Json | null
   name?: String | null
+  designer?: String | null
+  foundedIn?: String | null
   basedIn?: String | null
   since?: DateTime | null
   tier?: BrandTier | null
+  published?: Boolean | null
+  featured?: Boolean | null
   websiteUrl?: String | null
   images?: ImageUpdateManyInput | null
 }
@@ -31346,6 +31498,34 @@ export interface BrandWhereInput {
   name_not_starts_with?: String | null
   name_ends_with?: String | null
   name_not_ends_with?: String | null
+  designer?: String | null
+  designer_not?: String | null
+  designer_in?: String[] | String | null
+  designer_not_in?: String[] | String | null
+  designer_lt?: String | null
+  designer_lte?: String | null
+  designer_gt?: String | null
+  designer_gte?: String | null
+  designer_contains?: String | null
+  designer_not_contains?: String | null
+  designer_starts_with?: String | null
+  designer_not_starts_with?: String | null
+  designer_ends_with?: String | null
+  designer_not_ends_with?: String | null
+  foundedIn?: String | null
+  foundedIn_not?: String | null
+  foundedIn_in?: String[] | String | null
+  foundedIn_not_in?: String[] | String | null
+  foundedIn_lt?: String | null
+  foundedIn_lte?: String | null
+  foundedIn_gt?: String | null
+  foundedIn_gte?: String | null
+  foundedIn_contains?: String | null
+  foundedIn_not_contains?: String | null
+  foundedIn_starts_with?: String | null
+  foundedIn_not_starts_with?: String | null
+  foundedIn_ends_with?: String | null
+  foundedIn_not_ends_with?: String | null
   basedIn?: String | null
   basedIn_not?: String | null
   basedIn_in?: String[] | String | null
@@ -31372,6 +31552,10 @@ export interface BrandWhereInput {
   tier_not?: BrandTier | null
   tier_in?: BrandTier[] | BrandTier | null
   tier_not_in?: BrandTier[] | BrandTier | null
+  published?: Boolean | null
+  published_not?: Boolean | null
+  featured?: Boolean | null
+  featured_not?: Boolean | null
   websiteUrl?: String | null
   websiteUrl_not?: String | null
   websiteUrl_in?: String[] | String | null
@@ -43734,11 +43918,15 @@ export interface Brand extends Node {
   isPrimaryBrand: Boolean
   logo?: Json | null
   name: String
+  designer?: String | null
+  foundedIn?: String | null
   basedIn?: String | null
   products?: Array<Product> | null
   images?: Array<Image> | null
   since?: DateTime | null
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl?: String | null
   createdAt: DateTime
   updatedAt: DateTime
@@ -43771,9 +43959,13 @@ export interface BrandPreviousValues {
   isPrimaryBrand: Boolean
   logo?: Json | null
   name: String
+  designer?: String | null
+  foundedIn?: String | null
   basedIn?: String | null
   since?: DateTime | null
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl?: String | null
   createdAt: DateTime
   updatedAt: DateTime

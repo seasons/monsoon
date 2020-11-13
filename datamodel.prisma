@@ -246,11 +246,14 @@ type Brand {
   isPrimaryBrand: Boolean! @default(value: false)
   logo: Json
   name: String!
+  designer: String
   basedIn: String
   products: [Product!]!
   images: [Image!]
   since: DateTime
   tier: BrandTier!
+  published: Boolean! @default(value: true)
+  featured: Boolean! @default(value: false) 
   websiteUrl: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
