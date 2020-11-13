@@ -142,7 +142,15 @@ export class UserCommands {
         "Deactivated",
       ],
     })
-    status
+    status,
+    @Option({
+      name: "allAccessEnabled",
+      alias: "aa",
+      describe: "Whether or not the customer should have all access enabled",
+      type: "boolean",
+      default: "true",
+    })
+    allAccessEnabled
   ) {
     await this.scripts.updateConnections({
       prismaEnv,
@@ -271,7 +279,7 @@ export class UserCommands {
         data: {
           admissions: {
             create: {
-              allAccessEnabled: true,
+              allAccessEnabled,
               admissable: true,
               authorizationsCount,
               inServiceableZipcode: true,
