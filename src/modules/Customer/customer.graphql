@@ -22,7 +22,8 @@ type Query {
 
 type Mutation {
   addToBag(item: ID!): BagItem! @hasRole(roles: [Customer])
-  removeFromBag(item: ID!, saved: Boolean): BagItem! @hasRole(roles: [Customer])
+  removeFromBag(item: ID!, saved: Boolean, customer: ID): BagItem!
+    @hasRole(roles: [Customer])
   updateCustomer(
     data: CustomerUpdateInput!
     where: CustomerWhereUniqueInput!
