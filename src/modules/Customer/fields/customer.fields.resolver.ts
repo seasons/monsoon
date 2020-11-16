@@ -40,6 +40,43 @@ export class CustomerFieldsResolver {
   }
 
   @ResolveField()
+  async coupon(
+    @Parent() customer,
+    @Loader({
+      params: {
+        query: `customers`,
+        info: `{
+              id
+              membership {
+                id
+              }
+              referrer {
+                id
+              }
+            }
+            `,
+      },
+    })
+    prismaLoader: PrismaDataLoader<string>
+  ) {
+    let coupon
+    const custWithData = (await prismaLoader.load(customer.id)) as any
+
+    const wasReferred = custWithData?.referrer?.id
+    const hasNeverSubscribed = !custWithData?.membership?.id
+
+    if (wasReferred && hasNeverSubscribed) {
+      // TODO: If we ever need to query this field for N users at a time,
+      // cache this result so we don't hit a N+1 issue
+      coupon = await this.paymentService.checkCoupon(
+        process.env.REFERRAL_COUPON_ID
+      )
+    }
+
+    return coupon
+  }
+
+  @ResolveField()
   async shouldRequestFeedback(@User() user) {
     if (!user) return null
     const feedbacks = await this.prisma.binding.query.reservationFeedbacks(
