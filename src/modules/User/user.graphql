@@ -85,6 +85,7 @@ type User {
   id: ID!
   auth0Id: String!
   email: String!
+  emails: [EmailReceipt!]!
   firstName: String!
   lastName: String!
   fullName: String!
