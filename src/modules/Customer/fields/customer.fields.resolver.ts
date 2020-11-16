@@ -62,7 +62,7 @@ export class CustomerFieldsResolver {
     let coupon
     const custWithData = (await prismaLoader.load(customer.id)) as any
 
-    const wasReferred = custWithData?.referrer?.id
+    const wasReferred = !!custWithData?.referrer?.id
     const hasNeverSubscribed = !custWithData?.membership?.id
 
     if (wasReferred && hasNeverSubscribed) {
