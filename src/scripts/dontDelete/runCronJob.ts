@@ -4,6 +4,7 @@ import sgMail from "@sendgrid/mail"
 
 import { SegmentService } from "../../modules/Analytics/services/segment.service"
 import { AdmissionsScheduledJobs } from "../../modules/Cron/services/admissions.job.service"
+import { MarketingScheduledJobs } from "../../modules/Cron/services/marketing.job.service"
 import { ReservationScheduledJobs } from "../../modules/Cron/services/reservations.job.service"
 import { EmailDataProvider } from "../../modules/Email/services/email.data.service"
 import { EmailService } from "../../modules/Email/services/email.service"
@@ -37,7 +38,7 @@ const run = async () => {
   const image = new ImageService(ps)
   const emailutils = new EmailUtilsService(ps, error, image)
   const email = new EmailService(ps, utils, emaildp, emailutils)
-  const auth = new AuthService(ps, pn, email)
+  const auth = new AuthService(ps, pn, email, error)
   const shipping = new ShippingService(ps, utils)
   const segment = new SegmentService()
   const twilio = new TwilioService()
@@ -51,7 +52,8 @@ const run = async () => {
     segment,
     email,
     pn,
-    sms
+    sms,
+    utils
   )
   const admissionsJobService = new AdmissionsScheduledJobs(ps, as, cs, error)
   const reservationsJobService = new ReservationScheduledJobs(
@@ -61,7 +63,15 @@ const run = async () => {
     pn,
     utils
   )
-  await reservationsJobService.sendReturnNotifications()
+  const marketingJobService = new MarketingScheduledJobs(
+    null,
+    ps,
+    email,
+    as,
+    sms
+  )
+  // await reservationsJobService.sendReturnNotifications()
+  await marketingJobService.authWindowFollowups()
 }
 
 run()
