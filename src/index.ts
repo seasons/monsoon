@@ -34,6 +34,7 @@ server.use(
       /seasons\.nyc$/,
       /wearseasons\.com$/,
       /localhost/,
+      /vercel\.app/,
     ],
     credentials: true,
   }),
