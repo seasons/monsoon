@@ -2,7 +2,7 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CouponType } from "@app/modules/Payment/payment.types"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
-import { CustomerDetail } from "@app/prisma/prisma.binding"
+import { CustomerCreateInput, CustomerDetail } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import {
   CustomerDetailCreateInput,
@@ -21,6 +21,14 @@ const PW_STRENGTH_RULES_URL =
 interface SegmentReservedTraitsInCustomerDetail {
   phone?: string
   address?: any
+}
+
+interface UTMInput {
+  source: String
+  medium: String
+  term: String
+  content: String
+  campaign: String
 }
 
 interface Auth0User {
@@ -46,6 +54,7 @@ export class AuthService {
     lastName,
     details,
     referrerId,
+    utm,
   }: {
     email: string
     password: string
@@ -53,6 +62,7 @@ export class AuthService {
     lastName: string
     details: CustomerDetailCreateInput
     referrerId?: string
+    utm?: UTMInput
   }) {
     // 1. Register the user on Auth0
     let userAuth0ID
@@ -103,7 +113,8 @@ export class AuthService {
       // replace all non-aphabetical characters with an empty space so e.g "R.J." doesn't throw an error on rebrandly
       firstName.replace(/[^a-z]/gi, "") +
         (usersWithSameFirstName.length + 1).toString(),
-      referrerId
+      referrerId,
+      utm
     )
 
     await this.email.sendSubmittedEmailEmail(user)
@@ -382,7 +393,8 @@ export class AuthService {
     details,
     status,
     referralSlashTag,
-    referrerId
+    referrerId,
+    utm
   ) {
     if (details?.shippingAddress?.create?.zipCode) {
       const zipCode = details?.shippingAddress?.create?.zipCode
@@ -407,9 +419,20 @@ export class AuthService {
       }
     }`
 
+    let createData = {} as CustomerCreateInput
+    if (
+      !!utm?.source ||
+      !!utm?.medium ||
+      !!utm?.term ||
+      !!utm?.content ||
+      !!utm?.campaign
+    ) {
+      createData.utm = { create: utm }
+    }
     let newCustomer = await this.prisma.binding.mutation.createCustomer(
       {
         data: {
+          ...createData,
           user: {
             connect: { id: userID },
           },

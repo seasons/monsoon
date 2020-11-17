@@ -471,6 +471,10 @@ type AggregateUserPushNotificationInterest {
   count: Int!
 }
 
+type AggregateUTMData {
+  count: Int!
+}
+
 type AggregateWarehouseLocation {
   count: Int!
 }
@@ -2741,6 +2745,7 @@ type Customer {
   emailedProducts(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   admissions: CustomerAdmissionsData
   authorizedAt: DateTime
+  utm: UTMData
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2978,6 +2983,7 @@ input CustomerCreateInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateManyWithoutReferrerInput {
@@ -3015,6 +3021,11 @@ input CustomerCreateOneWithoutReservationsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerCreateOneWithoutUtmInput {
+  create: CustomerCreateWithoutUtmInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerCreateWithoutAdmissionsInput {
   id: ID
   user: UserCreateOneInput!
@@ -3031,6 +3042,7 @@ input CustomerCreateWithoutAdmissionsInput {
   referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
   authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutBagItemsInput {
@@ -3049,6 +3061,7 @@ input CustomerCreateWithoutBagItemsInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutMembershipInput {
@@ -3067,6 +3080,7 @@ input CustomerCreateWithoutMembershipInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReferreesInput {
@@ -3085,6 +3099,7 @@ input CustomerCreateWithoutReferreesInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReferrerInput {
@@ -3103,6 +3118,7 @@ input CustomerCreateWithoutReferrerInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -3114,6 +3130,26 @@ input CustomerCreateWithoutReservationsInput {
   plan: Plan
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
+  emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
+  authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
+}
+
+input CustomerCreateWithoutUtmInput {
+  id: ID
+  user: UserCreateOneInput!
+  status: CustomerStatus
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  plan: Plan
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
   referralLink: String
   referrerId: String
   referrer: CustomerCreateOneWithoutReferreesInput
@@ -3980,6 +4016,7 @@ input CustomerUpdateDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateInput {
@@ -3998,6 +4035,7 @@ input CustomerUpdateInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateManyDataInput {
@@ -4068,6 +4106,13 @@ input CustomerUpdateOneRequiredWithoutReservationsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerUpdateOneRequiredWithoutUtmInput {
+  create: CustomerCreateWithoutUtmInput
+  update: CustomerUpdateWithoutUtmDataInput
+  upsert: CustomerUpsertWithoutUtmInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerUpdateOneWithoutReferreesInput {
   create: CustomerCreateWithoutReferreesInput
   update: CustomerUpdateWithoutReferreesDataInput
@@ -4092,6 +4137,7 @@ input CustomerUpdateWithoutAdmissionsDataInput {
   referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutBagItemsDataInput {
@@ -4109,6 +4155,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
@@ -4126,6 +4173,7 @@ input CustomerUpdateWithoutMembershipDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutReferreesDataInput {
@@ -4143,6 +4191,7 @@ input CustomerUpdateWithoutReferreesDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutReferrerDataInput {
@@ -4160,6 +4209,7 @@ input CustomerUpdateWithoutReferrerDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -4170,6 +4220,25 @@ input CustomerUpdateWithoutReservationsDataInput {
   plan: Plan
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
+}
+
+input CustomerUpdateWithoutUtmDataInput {
+  user: UserUpdateOneRequiredInput
+  status: CustomerStatus
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
   referralLink: String
   referrerId: String
   referrer: CustomerUpdateOneWithoutReferreesInput
@@ -4212,6 +4281,11 @@ input CustomerUpsertWithoutReferreesInput {
 input CustomerUpsertWithoutReservationsInput {
   update: CustomerUpdateWithoutReservationsDataInput!
   create: CustomerCreateWithoutReservationsInput!
+}
+
+input CustomerUpsertWithoutUtmInput {
+  update: CustomerUpdateWithoutUtmDataInput!
+  create: CustomerCreateWithoutUtmInput!
 }
 
 input CustomerUpsertWithWhereUniqueWithoutReferrerInput {
@@ -4297,6 +4371,7 @@ input CustomerWhereInput {
   authorizedAt_lte: DateTime
   authorizedAt_gt: DateTime
   authorizedAt_gte: DateTime
+  utm: UTMDataWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -6703,6 +6778,12 @@ type Mutation {
   upsertTopSize(where: TopSizeWhereUniqueInput!, create: TopSizeCreateInput!, update: TopSizeUpdateInput!): TopSize!
   deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
   deleteManyTopSizes(where: TopSizeWhereInput): BatchPayload!
+  createUTMData(data: UTMDataCreateInput!): UTMData!
+  updateUTMData(data: UTMDataUpdateInput!, where: UTMDataWhereUniqueInput!): UTMData
+  updateManyUTMDatas(data: UTMDataUpdateManyMutationInput!, where: UTMDataWhereInput): BatchPayload!
+  upsertUTMData(where: UTMDataWhereUniqueInput!, create: UTMDataCreateInput!, update: UTMDataUpdateInput!): UTMData!
+  deleteUTMData(where: UTMDataWhereUniqueInput!): UTMData
+  deleteManyUTMDatas(where: UTMDataWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -12435,6 +12516,9 @@ type Query {
   topSize(where: TopSizeWhereUniqueInput!): TopSize
   topSizes(where: TopSizeWhereInput, orderBy: TopSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TopSize]!
   topSizesConnection(where: TopSizeWhereInput, orderBy: TopSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TopSizeConnection!
+  uTMData(where: UTMDataWhereUniqueInput!): UTMData
+  uTMDatas(where: UTMDataWhereInput, orderBy: UTMDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UTMData]!
+  uTMDatasConnection(where: UTMDataWhereInput, orderBy: UTMDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UTMDataConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
@@ -15031,6 +15115,7 @@ type Subscription {
   syncTiming(where: SyncTimingSubscriptionWhereInput): SyncTimingSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
+  uTMData(where: UTMDataSubscriptionWhereInput): UTMDataSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   userPushNotification(where: UserPushNotificationSubscriptionWhereInput): UserPushNotificationSubscriptionPayload
   userPushNotificationInterest(where: UserPushNotificationInterestSubscriptionWhereInput): UserPushNotificationInterestSubscriptionPayload
@@ -16559,6 +16644,251 @@ input UserWhereUniqueInput {
   id: ID
   auth0Id: String
   email: String
+}
+
+type UTMData {
+  id: ID!
+  customer: Customer!
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type UTMDataConnection {
+  pageInfo: PageInfo!
+  edges: [UTMDataEdge]!
+  aggregate: AggregateUTMData!
+}
+
+input UTMDataCreateInput {
+  id: ID
+  customer: CustomerCreateOneWithoutUtmInput!
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+input UTMDataCreateOneWithoutCustomerInput {
+  create: UTMDataCreateWithoutCustomerInput
+  connect: UTMDataWhereUniqueInput
+}
+
+input UTMDataCreateWithoutCustomerInput {
+  id: ID
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+type UTMDataEdge {
+  node: UTMData!
+  cursor: String!
+}
+
+enum UTMDataOrderByInput {
+  id_ASC
+  id_DESC
+  source_ASC
+  source_DESC
+  medium_ASC
+  medium_DESC
+  campaign_ASC
+  campaign_DESC
+  term_ASC
+  term_DESC
+  content_ASC
+  content_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type UTMDataPreviousValues {
+  id: ID!
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type UTMDataSubscriptionPayload {
+  mutation: MutationType!
+  node: UTMData
+  updatedFields: [String!]
+  previousValues: UTMDataPreviousValues
+}
+
+input UTMDataSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: UTMDataWhereInput
+  AND: [UTMDataSubscriptionWhereInput!]
+  OR: [UTMDataSubscriptionWhereInput!]
+  NOT: [UTMDataSubscriptionWhereInput!]
+}
+
+input UTMDataUpdateInput {
+  customer: CustomerUpdateOneRequiredWithoutUtmInput
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+input UTMDataUpdateManyMutationInput {
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+input UTMDataUpdateOneWithoutCustomerInput {
+  create: UTMDataCreateWithoutCustomerInput
+  update: UTMDataUpdateWithoutCustomerDataInput
+  upsert: UTMDataUpsertWithoutCustomerInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: UTMDataWhereUniqueInput
+}
+
+input UTMDataUpdateWithoutCustomerDataInput {
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+input UTMDataUpsertWithoutCustomerInput {
+  update: UTMDataUpdateWithoutCustomerDataInput!
+  create: UTMDataCreateWithoutCustomerInput!
+}
+
+input UTMDataWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  customer: CustomerWhereInput
+  source: String
+  source_not: String
+  source_in: [String!]
+  source_not_in: [String!]
+  source_lt: String
+  source_lte: String
+  source_gt: String
+  source_gte: String
+  source_contains: String
+  source_not_contains: String
+  source_starts_with: String
+  source_not_starts_with: String
+  source_ends_with: String
+  source_not_ends_with: String
+  medium: String
+  medium_not: String
+  medium_in: [String!]
+  medium_not_in: [String!]
+  medium_lt: String
+  medium_lte: String
+  medium_gt: String
+  medium_gte: String
+  medium_contains: String
+  medium_not_contains: String
+  medium_starts_with: String
+  medium_not_starts_with: String
+  medium_ends_with: String
+  medium_not_ends_with: String
+  campaign: String
+  campaign_not: String
+  campaign_in: [String!]
+  campaign_not_in: [String!]
+  campaign_lt: String
+  campaign_lte: String
+  campaign_gt: String
+  campaign_gte: String
+  campaign_contains: String
+  campaign_not_contains: String
+  campaign_starts_with: String
+  campaign_not_starts_with: String
+  campaign_ends_with: String
+  campaign_not_ends_with: String
+  term: String
+  term_not: String
+  term_in: [String!]
+  term_not_in: [String!]
+  term_lt: String
+  term_lte: String
+  term_gt: String
+  term_gte: String
+  term_contains: String
+  term_not_contains: String
+  term_starts_with: String
+  term_not_starts_with: String
+  term_ends_with: String
+  term_not_ends_with: String
+  content: String
+  content_not: String
+  content_in: [String!]
+  content_not_in: [String!]
+  content_lt: String
+  content_lte: String
+  content_gt: String
+  content_gte: String
+  content_contains: String
+  content_not_contains: String
+  content_starts_with: String
+  content_not_starts_with: String
+  content_ends_with: String
+  content_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [UTMDataWhereInput!]
+  OR: [UTMDataWhereInput!]
+  NOT: [UTMDataWhereInput!]
+}
+
+input UTMDataWhereUniqueInput {
+  id: ID
 }
 
 type WarehouseLocation {

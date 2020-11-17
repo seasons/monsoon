@@ -94,6 +94,7 @@ export interface Exists {
   syncTiming: (where?: SyncTimingWhereInput) => Promise<boolean>;
   tag: (where?: TagWhereInput) => Promise<boolean>;
   topSize: (where?: TopSizeWhereInput) => Promise<boolean>;
+  uTMData: (where?: UTMDataWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
   userPushNotification: (
     where?: UserPushNotificationWhereInput
@@ -1180,6 +1181,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => TopSizeConnectionPromise;
+  uTMData: (where: UTMDataWhereUniqueInput) => UTMDataNullablePromise;
+  uTMDatas: (args?: {
+    where?: UTMDataWhereInput;
+    orderBy?: UTMDataOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<UTMData>;
+  uTMDatasConnection: (args?: {
+    where?: UTMDataWhereInput;
+    orderBy?: UTMDataOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => UTMDataConnectionPromise;
   user: (where: UserWhereUniqueInput) => UserNullablePromise;
   users: (args?: {
     where?: UserWhereInput;
@@ -2289,6 +2309,22 @@ export interface Prisma {
   }) => TopSizePromise;
   deleteTopSize: (where: TopSizeWhereUniqueInput) => TopSizePromise;
   deleteManyTopSizes: (where?: TopSizeWhereInput) => BatchPayloadPromise;
+  createUTMData: (data: UTMDataCreateInput) => UTMDataPromise;
+  updateUTMData: (args: {
+    data: UTMDataUpdateInput;
+    where: UTMDataWhereUniqueInput;
+  }) => UTMDataPromise;
+  updateManyUTMDatas: (args: {
+    data: UTMDataUpdateManyMutationInput;
+    where?: UTMDataWhereInput;
+  }) => BatchPayloadPromise;
+  upsertUTMData: (args: {
+    where: UTMDataWhereUniqueInput;
+    create: UTMDataCreateInput;
+    update: UTMDataUpdateInput;
+  }) => UTMDataPromise;
+  deleteUTMData: (where: UTMDataWhereUniqueInput) => UTMDataPromise;
+  deleteManyUTMDatas: (where?: UTMDataWhereInput) => BatchPayloadPromise;
   createUser: (data: UserCreateInput) => UserPromise;
   updateUser: (args: {
     data: UserUpdateInput;
@@ -2558,6 +2594,9 @@ export interface Subscription {
   topSize: (
     where?: TopSizeSubscriptionWhereInput
   ) => TopSizeSubscriptionPayloadSubscription;
+  uTMData: (
+    where?: UTMDataSubscriptionWhereInput
+  ) => UTMDataSubscriptionPayloadSubscription;
   user: (
     where?: UserSubscriptionWhereInput
   ) => UserSubscriptionPayloadSubscription;
@@ -3609,6 +3648,24 @@ export type TopSizeOrderByInput =
   | "neck_DESC"
   | "length_ASC"
   | "length_DESC";
+
+export type UTMDataOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "source_ASC"
+  | "source_DESC"
+  | "medium_ASC"
+  | "medium_DESC"
+  | "campaign_ASC"
+  | "campaign_DESC"
+  | "term_ASC"
+  | "term_DESC"
+  | "content_ASC"
+  | "content_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type UserPushNotificationOrderByInput =
   | "id_ASC"
@@ -6325,6 +6382,7 @@ export interface CustomerWhereInput {
   authorizedAt_lte?: Maybe<DateTimeInput>;
   authorizedAt_gt?: Maybe<DateTimeInput>;
   authorizedAt_gte?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -7288,6 +7346,113 @@ export interface CustomerAdmissionsDataWhereInput {
   >;
 }
 
+export interface UTMDataWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  customer?: Maybe<CustomerWhereInput>;
+  source?: Maybe<String>;
+  source_not?: Maybe<String>;
+  source_in?: Maybe<String[] | String>;
+  source_not_in?: Maybe<String[] | String>;
+  source_lt?: Maybe<String>;
+  source_lte?: Maybe<String>;
+  source_gt?: Maybe<String>;
+  source_gte?: Maybe<String>;
+  source_contains?: Maybe<String>;
+  source_not_contains?: Maybe<String>;
+  source_starts_with?: Maybe<String>;
+  source_not_starts_with?: Maybe<String>;
+  source_ends_with?: Maybe<String>;
+  source_not_ends_with?: Maybe<String>;
+  medium?: Maybe<String>;
+  medium_not?: Maybe<String>;
+  medium_in?: Maybe<String[] | String>;
+  medium_not_in?: Maybe<String[] | String>;
+  medium_lt?: Maybe<String>;
+  medium_lte?: Maybe<String>;
+  medium_gt?: Maybe<String>;
+  medium_gte?: Maybe<String>;
+  medium_contains?: Maybe<String>;
+  medium_not_contains?: Maybe<String>;
+  medium_starts_with?: Maybe<String>;
+  medium_not_starts_with?: Maybe<String>;
+  medium_ends_with?: Maybe<String>;
+  medium_not_ends_with?: Maybe<String>;
+  campaign?: Maybe<String>;
+  campaign_not?: Maybe<String>;
+  campaign_in?: Maybe<String[] | String>;
+  campaign_not_in?: Maybe<String[] | String>;
+  campaign_lt?: Maybe<String>;
+  campaign_lte?: Maybe<String>;
+  campaign_gt?: Maybe<String>;
+  campaign_gte?: Maybe<String>;
+  campaign_contains?: Maybe<String>;
+  campaign_not_contains?: Maybe<String>;
+  campaign_starts_with?: Maybe<String>;
+  campaign_not_starts_with?: Maybe<String>;
+  campaign_ends_with?: Maybe<String>;
+  campaign_not_ends_with?: Maybe<String>;
+  term?: Maybe<String>;
+  term_not?: Maybe<String>;
+  term_in?: Maybe<String[] | String>;
+  term_not_in?: Maybe<String[] | String>;
+  term_lt?: Maybe<String>;
+  term_lte?: Maybe<String>;
+  term_gt?: Maybe<String>;
+  term_gte?: Maybe<String>;
+  term_contains?: Maybe<String>;
+  term_not_contains?: Maybe<String>;
+  term_starts_with?: Maybe<String>;
+  term_not_starts_with?: Maybe<String>;
+  term_ends_with?: Maybe<String>;
+  term_not_ends_with?: Maybe<String>;
+  content?: Maybe<String>;
+  content_not?: Maybe<String>;
+  content_in?: Maybe<String[] | String>;
+  content_not_in?: Maybe<String[] | String>;
+  content_lt?: Maybe<String>;
+  content_lte?: Maybe<String>;
+  content_gt?: Maybe<String>;
+  content_gte?: Maybe<String>;
+  content_contains?: Maybe<String>;
+  content_not_contains?: Maybe<String>;
+  content_starts_with?: Maybe<String>;
+  content_not_starts_with?: Maybe<String>;
+  content_ends_with?: Maybe<String>;
+  content_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<UTMDataWhereInput[] | UTMDataWhereInput>;
+  OR?: Maybe<UTMDataWhereInput[] | UTMDataWhereInput>;
+  NOT?: Maybe<UTMDataWhereInput[] | UTMDataWhereInput>;
+}
+
 export type BillingInfoWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -8179,6 +8344,10 @@ export type TagWhereUniqueInput = AtLeastOne<{
 }>;
 
 export type TopSizeWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type UTMDataWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
@@ -12276,6 +12445,7 @@ export interface CustomerCreateWithoutBagItemsInput {
   emailedProducts?: Maybe<ProductCreateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
 }
 
 export interface CustomerDetailCreateOneInput {
@@ -12565,6 +12735,7 @@ export interface CustomerCreateWithoutReservationsInput {
   emailedProducts?: Maybe<ProductCreateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
 }
 
 export interface BagItemCreateManyWithoutCustomerInput {
@@ -12628,6 +12799,7 @@ export interface CustomerCreateWithoutReferreesInput {
   emailedProducts?: Maybe<ProductCreateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
 }
 
 export interface CustomerAdmissionsDataCreateOneWithoutCustomerInput {
@@ -12643,6 +12815,20 @@ export interface CustomerAdmissionsDataCreateWithoutCustomerInput {
   allAccessEnabled?: Maybe<Boolean>;
   authorizationsCount: Int;
   authorizationWindowClosesAt?: Maybe<DateTimeInput>;
+}
+
+export interface UTMDataCreateOneWithoutCustomerInput {
+  create?: Maybe<UTMDataCreateWithoutCustomerInput>;
+  connect?: Maybe<UTMDataWhereUniqueInput>;
+}
+
+export interface UTMDataCreateWithoutCustomerInput {
+  id?: Maybe<ID_Input>;
+  source?: Maybe<String>;
+  medium?: Maybe<String>;
+  campaign?: Maybe<String>;
+  term?: Maybe<String>;
+  content?: Maybe<String>;
 }
 
 export interface CustomerCreateManyWithoutReferrerInput {
@@ -12668,6 +12854,7 @@ export interface CustomerCreateWithoutReferrerInput {
   emailedProducts?: Maybe<ProductCreateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
 }
 
 export interface ReservationReceiptCreateOneWithoutReservationInput {
@@ -12804,6 +12991,7 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
 }
 
 export interface CustomerDetailUpdateOneInput {
@@ -13339,6 +13527,7 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
 }
 
 export interface BagItemUpdateManyWithoutCustomerInput {
@@ -13482,6 +13671,7 @@ export interface CustomerUpdateWithoutReferreesDataInput {
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
 }
 
 export interface CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
@@ -13505,6 +13695,28 @@ export interface CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
 export interface CustomerAdmissionsDataUpsertWithoutCustomerInput {
   update: CustomerAdmissionsDataUpdateWithoutCustomerDataInput;
   create: CustomerAdmissionsDataCreateWithoutCustomerInput;
+}
+
+export interface UTMDataUpdateOneWithoutCustomerInput {
+  create?: Maybe<UTMDataCreateWithoutCustomerInput>;
+  update?: Maybe<UTMDataUpdateWithoutCustomerDataInput>;
+  upsert?: Maybe<UTMDataUpsertWithoutCustomerInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<UTMDataWhereUniqueInput>;
+}
+
+export interface UTMDataUpdateWithoutCustomerDataInput {
+  source?: Maybe<String>;
+  medium?: Maybe<String>;
+  campaign?: Maybe<String>;
+  term?: Maybe<String>;
+  content?: Maybe<String>;
+}
+
+export interface UTMDataUpsertWithoutCustomerInput {
+  update: UTMDataUpdateWithoutCustomerDataInput;
+  create: UTMDataCreateWithoutCustomerInput;
 }
 
 export interface CustomerUpsertWithoutReferreesInput {
@@ -13555,6 +13767,7 @@ export interface CustomerUpdateWithoutReferrerDataInput {
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
 }
 
 export interface CustomerUpsertWithWhereUniqueWithoutReferrerInput {
@@ -14584,6 +14797,7 @@ export interface CustomerCreateInput {
   emailedProducts?: Maybe<ProductCreateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
 }
 
 export interface CustomerUpdateInput {
@@ -14602,6 +14816,7 @@ export interface CustomerUpdateInput {
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
 }
 
 export interface CustomerUpdateManyMutationInput {
@@ -14644,6 +14859,7 @@ export interface CustomerCreateWithoutAdmissionsInput {
   referrees?: Maybe<CustomerCreateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductCreateManyInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
 }
 
 export interface CustomerAdmissionsDataUpdateInput {
@@ -14678,6 +14894,7 @@ export interface CustomerUpdateWithoutAdmissionsDataInput {
   referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
 }
 
 export interface CustomerUpsertWithoutAdmissionsInput {
@@ -14771,6 +14988,7 @@ export interface CustomerCreateWithoutMembershipInput {
   emailedProducts?: Maybe<ProductCreateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
 }
 
 export interface CustomerMembershipUpdateInput {
@@ -14802,6 +15020,7 @@ export interface CustomerUpdateWithoutMembershipDataInput {
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
 }
 
 export interface CustomerUpsertWithoutMembershipInput {
@@ -16063,6 +16282,7 @@ export interface CustomerUpdateDataInput {
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
 }
 
 export interface CustomerUpsertNestedInput {
@@ -16552,6 +16772,87 @@ export interface TopSizeUpdateManyMutationInput {
   chest?: Maybe<Float>;
   neck?: Maybe<Float>;
   length?: Maybe<Float>;
+}
+
+export interface UTMDataCreateInput {
+  id?: Maybe<ID_Input>;
+  customer: CustomerCreateOneWithoutUtmInput;
+  source?: Maybe<String>;
+  medium?: Maybe<String>;
+  campaign?: Maybe<String>;
+  term?: Maybe<String>;
+  content?: Maybe<String>;
+}
+
+export interface CustomerCreateOneWithoutUtmInput {
+  create?: Maybe<CustomerCreateWithoutUtmInput>;
+  connect?: Maybe<CustomerWhereUniqueInput>;
+}
+
+export interface CustomerCreateWithoutUtmInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneInput;
+  status?: Maybe<CustomerStatus>;
+  detail?: Maybe<CustomerDetailCreateOneInput>;
+  billingInfo?: Maybe<BillingInfoCreateOneInput>;
+  plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
+  bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
+  reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerCreateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerCreateManyWithoutReferrerInput>;
+  emailedProducts?: Maybe<ProductCreateManyInput>;
+  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
+}
+
+export interface UTMDataUpdateInput {
+  customer?: Maybe<CustomerUpdateOneRequiredWithoutUtmInput>;
+  source?: Maybe<String>;
+  medium?: Maybe<String>;
+  campaign?: Maybe<String>;
+  term?: Maybe<String>;
+  content?: Maybe<String>;
+}
+
+export interface CustomerUpdateOneRequiredWithoutUtmInput {
+  create?: Maybe<CustomerCreateWithoutUtmInput>;
+  update?: Maybe<CustomerUpdateWithoutUtmDataInput>;
+  upsert?: Maybe<CustomerUpsertWithoutUtmInput>;
+  connect?: Maybe<CustomerWhereUniqueInput>;
+}
+
+export interface CustomerUpdateWithoutUtmDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  status?: Maybe<CustomerStatus>;
+  detail?: Maybe<CustomerDetailUpdateOneInput>;
+  billingInfo?: Maybe<BillingInfoUpdateOneInput>;
+  plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
+  bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
+  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
+  emailedProducts?: Maybe<ProductUpdateManyInput>;
+  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
+}
+
+export interface CustomerUpsertWithoutUtmInput {
+  update: CustomerUpdateWithoutUtmDataInput;
+  create: CustomerCreateWithoutUtmInput;
+}
+
+export interface UTMDataUpdateManyMutationInput {
+  source?: Maybe<String>;
+  medium?: Maybe<String>;
+  campaign?: Maybe<String>;
+  term?: Maybe<String>;
+  content?: Maybe<String>;
 }
 
 export interface UserUpdateInput {
@@ -17800,6 +18101,17 @@ export interface TopSizeSubscriptionWhereInput {
   AND?: Maybe<TopSizeSubscriptionWhereInput[] | TopSizeSubscriptionWhereInput>;
   OR?: Maybe<TopSizeSubscriptionWhereInput[] | TopSizeSubscriptionWhereInput>;
   NOT?: Maybe<TopSizeSubscriptionWhereInput[] | TopSizeSubscriptionWhereInput>;
+}
+
+export interface UTMDataSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<UTMDataWhereInput>;
+  AND?: Maybe<UTMDataSubscriptionWhereInput[] | UTMDataSubscriptionWhereInput>;
+  OR?: Maybe<UTMDataSubscriptionWhereInput[] | UTMDataSubscriptionWhereInput>;
+  NOT?: Maybe<UTMDataSubscriptionWhereInput[] | UTMDataSubscriptionWhereInput>;
 }
 
 export interface UserSubscriptionWhereInput {
@@ -20380,6 +20692,7 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
   }) => T;
   admissions: <T = CustomerAdmissionsDataPromise>() => T;
   authorizedAt: () => Promise<DateTimeOutput>;
+  utm: <T = UTMDataPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -20435,6 +20748,7 @@ export interface CustomerSubscription
   }) => T;
   admissions: <T = CustomerAdmissionsDataSubscription>() => T;
   authorizedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  utm: <T = UTMDataSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -20490,6 +20804,7 @@ export interface CustomerNullablePromise
   }) => T;
   admissions: <T = CustomerAdmissionsDataPromise>() => T;
   authorizedAt: () => Promise<DateTimeOutput>;
+  utm: <T = UTMDataPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -21362,6 +21677,57 @@ export interface CustomerAdmissionsDataNullablePromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   authorizationWindowClosesAt: () => Promise<DateTimeOutput>;
+}
+
+export interface UTMData {
+  id: ID_Output;
+  source?: String;
+  medium?: String;
+  campaign?: String;
+  term?: String;
+  content?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface UTMDataPromise extends Promise<UTMData>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  customer: <T = CustomerPromise>() => T;
+  source: () => Promise<String>;
+  medium: () => Promise<String>;
+  campaign: () => Promise<String>;
+  term: () => Promise<String>;
+  content: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface UTMDataSubscription
+  extends Promise<AsyncIterator<UTMData>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  customer: <T = CustomerSubscription>() => T;
+  source: () => Promise<AsyncIterator<String>>;
+  medium: () => Promise<AsyncIterator<String>>;
+  campaign: () => Promise<AsyncIterator<String>>;
+  term: () => Promise<AsyncIterator<String>>;
+  content: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface UTMDataNullablePromise
+  extends Promise<UTMData | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  customer: <T = CustomerPromise>() => T;
+  source: () => Promise<String>;
+  medium: () => Promise<String>;
+  campaign: () => Promise<String>;
+  term: () => Promise<String>;
+  content: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface BagItemConnection {
@@ -24741,6 +25107,60 @@ export interface AggregateTopSizeSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface UTMDataConnection {
+  pageInfo: PageInfo;
+  edges: UTMDataEdge[];
+}
+
+export interface UTMDataConnectionPromise
+  extends Promise<UTMDataConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<UTMDataEdge>>() => T;
+  aggregate: <T = AggregateUTMDataPromise>() => T;
+}
+
+export interface UTMDataConnectionSubscription
+  extends Promise<AsyncIterator<UTMDataConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<UTMDataEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateUTMDataSubscription>() => T;
+}
+
+export interface UTMDataEdge {
+  node: UTMData;
+  cursor: String;
+}
+
+export interface UTMDataEdgePromise extends Promise<UTMDataEdge>, Fragmentable {
+  node: <T = UTMDataPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface UTMDataEdgeSubscription
+  extends Promise<AsyncIterator<UTMDataEdge>>,
+    Fragmentable {
+  node: <T = UTMDataSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateUTMData {
+  count: Int;
+}
+
+export interface AggregateUTMDataPromise
+  extends Promise<AggregateUTMData>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateUTMDataSubscription
+  extends Promise<AsyncIterator<AggregateUTMData>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface UserConnection {
   pageInfo: PageInfo;
   edges: UserEdge[];
@@ -28083,6 +28503,68 @@ export interface TopSizePreviousValuesSubscription
   length: () => Promise<AsyncIterator<Float>>;
 }
 
+export interface UTMDataSubscriptionPayload {
+  mutation: MutationType;
+  node: UTMData;
+  updatedFields: String[];
+  previousValues: UTMDataPreviousValues;
+}
+
+export interface UTMDataSubscriptionPayloadPromise
+  extends Promise<UTMDataSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = UTMDataPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = UTMDataPreviousValuesPromise>() => T;
+}
+
+export interface UTMDataSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<UTMDataSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = UTMDataSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = UTMDataPreviousValuesSubscription>() => T;
+}
+
+export interface UTMDataPreviousValues {
+  id: ID_Output;
+  source?: String;
+  medium?: String;
+  campaign?: String;
+  term?: String;
+  content?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface UTMDataPreviousValuesPromise
+  extends Promise<UTMDataPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  source: () => Promise<String>;
+  medium: () => Promise<String>;
+  campaign: () => Promise<String>;
+  term: () => Promise<String>;
+  content: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface UTMDataPreviousValuesSubscription
+  extends Promise<AsyncIterator<UTMDataPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  source: () => Promise<AsyncIterator<String>>;
+  medium: () => Promise<AsyncIterator<String>>;
+  campaign: () => Promise<AsyncIterator<String>>;
+  term: () => Promise<AsyncIterator<String>>;
+  content: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface UserSubscriptionPayload {
   mutation: MutationType;
   node: User;
@@ -28681,6 +29163,10 @@ export const models: Model[] = [
   },
   {
     name: "CustomerAdmissionsData",
+    embedded: false
+  },
+  {
+    name: "UTMData",
     embedded: false
   },
   {
