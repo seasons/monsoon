@@ -22,7 +22,6 @@ import {
 } from "../../../prisma/prisma.binding"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { UtilsService } from "../../Utils/services/utils.service"
-import { EmailDataProvider } from "./email.data.service"
 import {
   EmailUtilsService,
   MonsoonProductGridItem,
@@ -35,7 +34,6 @@ export class EmailService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
-    private readonly data: EmailDataProvider,
     private readonly emailUtils: EmailUtilsService
   ) {}
 
