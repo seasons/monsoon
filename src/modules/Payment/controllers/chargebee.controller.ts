@@ -3,6 +3,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
+import chargebee from "chargebee"
 import { head } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
@@ -62,6 +63,12 @@ export class ChargebeeController {
             lastName
             email
           }
+          referrer {
+            id
+            membership {
+              subscriptionId
+            }
+          }
         }
       `
       )
@@ -69,7 +76,7 @@ export class ChargebeeController {
 
     try {
       // If they don't have a billing info this means they've created their account
-      // user the deprecated ChargebeeHostedCheckout
+      // using the deprecated ChargebeeHostedCheckout
       if (!customerWithBillingAndUserData?.billingInfo?.id) {
         const user = customerWithBillingAndUserData.user
         this.segment.trackSubscribed(customer_id, {
@@ -88,6 +95,19 @@ export class ChargebeeController {
           plan_id,
           subscriptionID
         )
+
+        // If was referred, apply coupon for referrer
+        if (customerWithBillingAndUserData?.referrer?.id) {
+          await chargebee.subscription
+            .update(
+              customerWithBillingAndUserData?.referrer?.membership
+                ?.subscriptionId,
+              {
+                coupon_ids: [process.env.REFERRAL_COUPON_ID],
+              }
+            )
+            .request()
+        }
       }
     } catch (err) {
       Sentry.captureException(err)

@@ -1,7 +1,8 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CouponType } from "@app/modules/Payment/payment.types"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
-import { CustomerDetail } from "@app/prisma/prisma.binding"
+import { CustomerCreateInput, CustomerDetail } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import {
   CustomerDetailCreateInput,
@@ -22,6 +23,14 @@ interface SegmentReservedTraitsInCustomerDetail {
   address?: any
 }
 
+interface UTMInput {
+  source: String
+  medium: String
+  term: String
+  content: String
+  campaign: String
+}
+
 interface Auth0User {
   email: string
   family_name: string
@@ -34,7 +43,8 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly pushNotification: PushNotificationService,
-    private readonly email: EmailService
+    private readonly email: EmailService,
+    private readonly error: ErrorService
   ) {}
 
   async signupUser({
@@ -44,6 +54,7 @@ export class AuthService {
     lastName,
     details,
     referrerId,
+    utm,
   }: {
     email: string
     password: string
@@ -51,6 +62,7 @@ export class AuthService {
     lastName: string
     details: CustomerDetailCreateInput
     referrerId?: string
+    utm?: UTMInput
   }) {
     // 1. Register the user on Auth0
     let userAuth0ID
@@ -98,8 +110,11 @@ export class AuthService {
       user.id,
       details,
       "Created",
-      firstName + usersWithSameFirstName.length.toString(),
-      referrerId
+      // replace all non-aphabetical characters with an empty space so e.g "R.J." doesn't throw an error on rebrandly
+      firstName.replace(/[^a-z]/gi, "") +
+        (usersWithSameFirstName.length + 1).toString(),
+      referrerId,
+      utm
     )
 
     await this.email.sendSubmittedEmailEmail(user)
@@ -378,7 +393,8 @@ export class AuthService {
     details,
     status,
     referralSlashTag,
-    referrerId
+    referrerId,
+    utm
   ) {
     if (details?.shippingAddress?.create?.zipCode) {
       const zipCode = details?.shippingAddress?.create?.zipCode
@@ -403,9 +419,20 @@ export class AuthService {
       }
     }`
 
+    let createData = {} as CustomerCreateInput
+    if (
+      !!utm?.source ||
+      !!utm?.medium ||
+      !!utm?.term ||
+      !!utm?.content ||
+      !!utm?.campaign
+    ) {
+      createData.utm = { create: utm }
+    }
     let newCustomer = await this.prisma.binding.mutation.createCustomer(
       {
         data: {
+          ...createData,
           user: {
             connect: { id: userID },
           },
@@ -441,8 +468,11 @@ export class AuthService {
         customerQueryInfo
       )
     } catch (err) {
-      console.log(err)
-      // silently fail
+      this.error.setExtraContext(
+        { id: userID, status, referrerId, referralSlashTag },
+        "user"
+      )
+      this.error.captureError(err)
     }
 
     return {
@@ -457,9 +487,13 @@ export class AuthService {
   ): Promise<{
     shortUrl: string
   }> {
+    const baseDomain =
+      process.env.NODE_ENV === "production"
+        ? "www.seasons.nyc"
+        : "staging.seasons.nyc"
     let linkRequest = {
-      destination: "https://www.seasons.nyc/signup?referrer_id=" + customerId,
-      domain: { fullName: "rebrand.ly" },
+      destination: `https://${baseDomain}/signup?referrer_id=` + customerId,
+      domain: { fullName: process.env.REFERRAL_DOMAIN },
       slashtag: referralSlashTag,
     }
 
@@ -477,6 +511,7 @@ export class AuthService {
           headers: requestHeaders,
         },
         (err, response, body) => {
+          console.log(body)
           if (err) {
             reject(err)
           }

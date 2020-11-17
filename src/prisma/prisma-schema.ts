@@ -427,6 +427,14 @@ type AggregateSeason {
   count: Int!
 }
 
+type AggregateShippingMethod {
+  count: Int!
+}
+
+type AggregateShippingOption {
+  count: Int!
+}
+
 type AggregateSize {
   count: Int!
 }
@@ -460,6 +468,10 @@ type AggregateUserPushNotification {
 }
 
 type AggregateUserPushNotificationInterest {
+  count: Int!
+}
+
+type AggregateUTMData {
   count: Int!
 }
 
@@ -1252,11 +1264,14 @@ type Brand {
   isPrimaryBrand: Boolean!
   logo: Json
   name: String!
+  designer: String
   basedIn: String
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   since: DateTime
   tier: BrandTier!
+  published: Boolean!
+  featured: Boolean!
   websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -1276,11 +1291,14 @@ input BrandCreateInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String!
+  designer: String
   basedIn: String
   products: ProductCreateManyWithoutBrandInput
   images: ImageCreateManyInput
   since: DateTime
   tier: BrandTier!
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
 }
 
@@ -1297,10 +1315,13 @@ input BrandCreateWithoutProductsInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String!
+  designer: String
   basedIn: String
   images: ImageCreateManyInput
   since: DateTime
   tier: BrandTier!
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
 }
 
@@ -1324,12 +1345,18 @@ enum BrandOrderByInput {
   logo_DESC
   name_ASC
   name_DESC
+  designer_ASC
+  designer_DESC
   basedIn_ASC
   basedIn_DESC
   since_ASC
   since_DESC
   tier_ASC
   tier_DESC
+  published_ASC
+  published_DESC
+  featured_ASC
+  featured_DESC
   websiteUrl_ASC
   websiteUrl_DESC
   createdAt_ASC
@@ -1346,9 +1373,12 @@ type BrandPreviousValues {
   isPrimaryBrand: Boolean!
   logo: Json
   name: String!
+  designer: String
   basedIn: String
   since: DateTime
   tier: BrandTier!
+  published: Boolean!
+  featured: Boolean!
   websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -1391,11 +1421,14 @@ input BrandUpdateInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  designer: String
   basedIn: String
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
   since: DateTime
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
 }
 
@@ -1406,9 +1439,12 @@ input BrandUpdateManyMutationInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  designer: String
   basedIn: String
   since: DateTime
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
 }
 
@@ -1426,10 +1462,13 @@ input BrandUpdateWithoutProductsDataInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  designer: String
   basedIn: String
   images: ImageUpdateManyInput
   since: DateTime
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
 }
 
@@ -1511,6 +1550,20 @@ input BrandWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  designer: String
+  designer_not: String
+  designer_in: [String!]
+  designer_not_in: [String!]
+  designer_lt: String
+  designer_lte: String
+  designer_gt: String
+  designer_gte: String
+  designer_contains: String
+  designer_not_contains: String
+  designer_starts_with: String
+  designer_not_starts_with: String
+  designer_ends_with: String
+  designer_not_ends_with: String
   basedIn: String
   basedIn_not: String
   basedIn_in: [String!]
@@ -1543,6 +1596,10 @@ input BrandWhereInput {
   tier_not: BrandTier
   tier_in: [BrandTier!]
   tier_not_in: [BrandTier!]
+  published: Boolean
+  published_not: Boolean
+  featured: Boolean
+  featured_not: Boolean
   websiteUrl: String
   websiteUrl_not: String
   websiteUrl_in: [String!]
@@ -2688,6 +2745,7 @@ type Customer {
   emailedProducts(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   admissions: CustomerAdmissionsData
   authorizedAt: DateTime
+  utm: UTMData
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2697,10 +2755,12 @@ type CustomerAdmissionsData {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean!
   customer: Customer!
   authorizationsCount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
+  authorizationWindowClosesAt: DateTime
 }
 
 type CustomerAdmissionsDataConnection {
@@ -2714,8 +2774,10 @@ input CustomerAdmissionsDataCreateInput {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   customer: CustomerCreateOneWithoutAdmissionsInput!
   authorizationsCount: Int!
+  authorizationWindowClosesAt: DateTime
 }
 
 input CustomerAdmissionsDataCreateOneWithoutCustomerInput {
@@ -2728,7 +2790,9 @@ input CustomerAdmissionsDataCreateWithoutCustomerInput {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int!
+  authorizationWindowClosesAt: DateTime
 }
 
 type CustomerAdmissionsDataEdge {
@@ -2745,12 +2809,16 @@ enum CustomerAdmissionsDataOrderByInput {
   admissable_DESC
   inAdmissableReason_ASC
   inAdmissableReason_DESC
+  allAccessEnabled_ASC
+  allAccessEnabled_DESC
   authorizationsCount_ASC
   authorizationsCount_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  authorizationWindowClosesAt_ASC
+  authorizationWindowClosesAt_DESC
 }
 
 type CustomerAdmissionsDataPreviousValues {
@@ -2758,9 +2826,11 @@ type CustomerAdmissionsDataPreviousValues {
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean!
   authorizationsCount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
+  authorizationWindowClosesAt: DateTime
 }
 
 type CustomerAdmissionsDataSubscriptionPayload {
@@ -2785,15 +2855,19 @@ input CustomerAdmissionsDataUpdateInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   customer: CustomerUpdateOneRequiredWithoutAdmissionsInput
   authorizationsCount: Int
+  authorizationWindowClosesAt: DateTime
 }
 
 input CustomerAdmissionsDataUpdateManyMutationInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int
+  authorizationWindowClosesAt: DateTime
 }
 
 input CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
@@ -2809,7 +2883,9 @@ input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
   authorizationsCount: Int
+  authorizationWindowClosesAt: DateTime
 }
 
 input CustomerAdmissionsDataUpsertWithoutCustomerInput {
@@ -2840,6 +2916,8 @@ input CustomerAdmissionsDataWhereInput {
   inAdmissableReason_not: InAdmissableReason
   inAdmissableReason_in: [InAdmissableReason!]
   inAdmissableReason_not_in: [InAdmissableReason!]
+  allAccessEnabled: Boolean
+  allAccessEnabled_not: Boolean
   customer: CustomerWhereInput
   authorizationsCount: Int
   authorizationsCount_not: Int
@@ -2865,6 +2943,14 @@ input CustomerAdmissionsDataWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  authorizationWindowClosesAt: DateTime
+  authorizationWindowClosesAt_not: DateTime
+  authorizationWindowClosesAt_in: [DateTime!]
+  authorizationWindowClosesAt_not_in: [DateTime!]
+  authorizationWindowClosesAt_lt: DateTime
+  authorizationWindowClosesAt_lte: DateTime
+  authorizationWindowClosesAt_gt: DateTime
+  authorizationWindowClosesAt_gte: DateTime
   AND: [CustomerAdmissionsDataWhereInput!]
   OR: [CustomerAdmissionsDataWhereInput!]
   NOT: [CustomerAdmissionsDataWhereInput!]
@@ -2897,6 +2983,7 @@ input CustomerCreateInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateManyWithoutReferrerInput {
@@ -2934,6 +3021,11 @@ input CustomerCreateOneWithoutReservationsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerCreateOneWithoutUtmInput {
+  create: CustomerCreateWithoutUtmInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerCreateWithoutAdmissionsInput {
   id: ID
   user: UserCreateOneInput!
@@ -2950,6 +3042,7 @@ input CustomerCreateWithoutAdmissionsInput {
   referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
   authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutBagItemsInput {
@@ -2968,6 +3061,7 @@ input CustomerCreateWithoutBagItemsInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutMembershipInput {
@@ -2986,6 +3080,7 @@ input CustomerCreateWithoutMembershipInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReferreesInput {
@@ -3004,6 +3099,7 @@ input CustomerCreateWithoutReferreesInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReferrerInput {
@@ -3022,6 +3118,7 @@ input CustomerCreateWithoutReferrerInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -3033,6 +3130,26 @@ input CustomerCreateWithoutReservationsInput {
   plan: Plan
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
+  emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
+  authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
+}
+
+input CustomerCreateWithoutUtmInput {
+  id: ID
+  user: UserCreateOneInput!
+  status: CustomerStatus
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  plan: Plan
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
   referralLink: String
   referrerId: String
   referrer: CustomerCreateOneWithoutReferreesInput
@@ -3899,6 +4016,7 @@ input CustomerUpdateDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateInput {
@@ -3917,6 +4035,7 @@ input CustomerUpdateInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateManyDataInput {
@@ -3987,6 +4106,13 @@ input CustomerUpdateOneRequiredWithoutReservationsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerUpdateOneRequiredWithoutUtmInput {
+  create: CustomerCreateWithoutUtmInput
+  update: CustomerUpdateWithoutUtmDataInput
+  upsert: CustomerUpsertWithoutUtmInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerUpdateOneWithoutReferreesInput {
   create: CustomerCreateWithoutReferreesInput
   update: CustomerUpdateWithoutReferreesDataInput
@@ -4011,6 +4137,7 @@ input CustomerUpdateWithoutAdmissionsDataInput {
   referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutBagItemsDataInput {
@@ -4028,6 +4155,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
@@ -4045,6 +4173,7 @@ input CustomerUpdateWithoutMembershipDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutReferreesDataInput {
@@ -4062,6 +4191,7 @@ input CustomerUpdateWithoutReferreesDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutReferrerDataInput {
@@ -4079,6 +4209,7 @@ input CustomerUpdateWithoutReferrerDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -4089,6 +4220,25 @@ input CustomerUpdateWithoutReservationsDataInput {
   plan: Plan
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
+}
+
+input CustomerUpdateWithoutUtmDataInput {
+  user: UserUpdateOneRequiredInput
+  status: CustomerStatus
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
   referralLink: String
   referrerId: String
   referrer: CustomerUpdateOneWithoutReferreesInput
@@ -4131,6 +4281,11 @@ input CustomerUpsertWithoutReferreesInput {
 input CustomerUpsertWithoutReservationsInput {
   update: CustomerUpdateWithoutReservationsDataInput!
   create: CustomerCreateWithoutReservationsInput!
+}
+
+input CustomerUpsertWithoutUtmInput {
+  update: CustomerUpdateWithoutUtmDataInput!
+  create: CustomerCreateWithoutUtmInput!
 }
 
 input CustomerUpsertWithWhereUniqueWithoutReferrerInput {
@@ -4216,6 +4371,7 @@ input CustomerWhereInput {
   authorizedAt_lte: DateTime
   authorizedAt_gt: DateTime
   authorizedAt_gte: DateTime
+  utm: UTMDataWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -5794,6 +5950,7 @@ type Location {
   lat: Float
   lng: Float
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  shippingOptions(where: ShippingOptionWhereInput, orderBy: ShippingOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShippingOption!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5821,6 +5978,7 @@ input LocationCreateInput {
   lat: Float
   lng: Float
   physicalProducts: PhysicalProductCreateManyWithoutLocationInput
+  shippingOptions: ShippingOptionCreateManyWithoutDestinationInput
 }
 
 input LocationCreateOneInput {
@@ -5830,6 +5988,11 @@ input LocationCreateOneInput {
 
 input LocationCreateOneWithoutPhysicalProductsInput {
   create: LocationCreateWithoutPhysicalProductsInput
+  connect: LocationWhereUniqueInput
+}
+
+input LocationCreateOneWithoutShippingOptionsInput {
+  create: LocationCreateWithoutShippingOptionsInput
   connect: LocationWhereUniqueInput
 }
 
@@ -5849,6 +6012,26 @@ input LocationCreateWithoutPhysicalProductsInput {
   user: UserCreateOneInput
   lat: Float
   lng: Float
+  shippingOptions: ShippingOptionCreateManyWithoutDestinationInput
+}
+
+input LocationCreateWithoutShippingOptionsInput {
+  id: ID
+  slug: String
+  name: String
+  company: String
+  description: String
+  address1: String
+  address2: String
+  city: String
+  country: String
+  state: String
+  zipCode: String!
+  locationType: LocationType
+  user: UserCreateOneInput
+  lat: Float
+  lng: Float
+  physicalProducts: PhysicalProductCreateManyWithoutLocationInput
 }
 
 type LocationEdge {
@@ -5951,6 +6134,7 @@ input LocationUpdateDataInput {
   lat: Float
   lng: Float
   physicalProducts: PhysicalProductUpdateManyWithoutLocationInput
+  shippingOptions: ShippingOptionUpdateManyWithoutDestinationInput
 }
 
 input LocationUpdateInput {
@@ -5969,6 +6153,7 @@ input LocationUpdateInput {
   lat: Float
   lng: Float
   physicalProducts: PhysicalProductUpdateManyWithoutLocationInput
+  shippingOptions: ShippingOptionUpdateManyWithoutDestinationInput
 }
 
 input LocationUpdateManyMutationInput {
@@ -6012,6 +6197,15 @@ input LocationUpdateOneWithoutPhysicalProductsInput {
   connect: LocationWhereUniqueInput
 }
 
+input LocationUpdateOneWithoutShippingOptionsInput {
+  create: LocationCreateWithoutShippingOptionsInput
+  update: LocationUpdateWithoutShippingOptionsDataInput
+  upsert: LocationUpsertWithoutShippingOptionsInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: LocationWhereUniqueInput
+}
+
 input LocationUpdateWithoutPhysicalProductsDataInput {
   slug: String
   name: String
@@ -6027,6 +6221,25 @@ input LocationUpdateWithoutPhysicalProductsDataInput {
   user: UserUpdateOneInput
   lat: Float
   lng: Float
+  shippingOptions: ShippingOptionUpdateManyWithoutDestinationInput
+}
+
+input LocationUpdateWithoutShippingOptionsDataInput {
+  slug: String
+  name: String
+  company: String
+  description: String
+  address1: String
+  address2: String
+  city: String
+  country: String
+  state: String
+  zipCode: String
+  locationType: LocationType
+  user: UserUpdateOneInput
+  lat: Float
+  lng: Float
+  physicalProducts: PhysicalProductUpdateManyWithoutLocationInput
 }
 
 input LocationUpsertNestedInput {
@@ -6037,6 +6250,11 @@ input LocationUpsertNestedInput {
 input LocationUpsertWithoutPhysicalProductsInput {
   update: LocationUpdateWithoutPhysicalProductsDataInput!
   create: LocationCreateWithoutPhysicalProductsInput!
+}
+
+input LocationUpsertWithoutShippingOptionsInput {
+  update: LocationUpdateWithoutShippingOptionsDataInput!
+  create: LocationCreateWithoutShippingOptionsInput!
 }
 
 input LocationWhereInput {
@@ -6218,6 +6436,9 @@ input LocationWhereInput {
   physicalProducts_every: PhysicalProductWhereInput
   physicalProducts_some: PhysicalProductWhereInput
   physicalProducts_none: PhysicalProductWhereInput
+  shippingOptions_every: ShippingOptionWhereInput
+  shippingOptions_some: ShippingOptionWhereInput
+  shippingOptions_none: ShippingOptionWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -6509,6 +6730,18 @@ type Mutation {
   upsertSeason(where: SeasonWhereUniqueInput!, create: SeasonCreateInput!, update: SeasonUpdateInput!): Season!
   deleteSeason(where: SeasonWhereUniqueInput!): Season
   deleteManySeasons(where: SeasonWhereInput): BatchPayload!
+  createShippingMethod(data: ShippingMethodCreateInput!): ShippingMethod!
+  updateShippingMethod(data: ShippingMethodUpdateInput!, where: ShippingMethodWhereUniqueInput!): ShippingMethod
+  updateManyShippingMethods(data: ShippingMethodUpdateManyMutationInput!, where: ShippingMethodWhereInput): BatchPayload!
+  upsertShippingMethod(where: ShippingMethodWhereUniqueInput!, create: ShippingMethodCreateInput!, update: ShippingMethodUpdateInput!): ShippingMethod!
+  deleteShippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
+  deleteManyShippingMethods(where: ShippingMethodWhereInput): BatchPayload!
+  createShippingOption(data: ShippingOptionCreateInput!): ShippingOption!
+  updateShippingOption(data: ShippingOptionUpdateInput!, where: ShippingOptionWhereUniqueInput!): ShippingOption
+  updateManyShippingOptions(data: ShippingOptionUpdateManyMutationInput!, where: ShippingOptionWhereInput): BatchPayload!
+  upsertShippingOption(where: ShippingOptionWhereUniqueInput!, create: ShippingOptionCreateInput!, update: ShippingOptionUpdateInput!): ShippingOption!
+  deleteShippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
+  deleteManyShippingOptions(where: ShippingOptionWhereInput): BatchPayload!
   createSize(data: SizeCreateInput!): Size!
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
@@ -6545,6 +6778,12 @@ type Mutation {
   upsertTopSize(where: TopSizeWhereUniqueInput!, create: TopSizeCreateInput!, update: TopSizeUpdateInput!): TopSize!
   deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
   deleteManyTopSizes(where: TopSizeWhereInput): BatchPayload!
+  createUTMData(data: UTMDataCreateInput!): UTMData!
+  updateUTMData(data: UTMDataUpdateInput!, where: UTMDataWhereUniqueInput!): UTMData
+  updateManyUTMDatas(data: UTMDataUpdateManyMutationInput!, where: UTMDataWhereInput): BatchPayload!
+  upsertUTMData(where: UTMDataWhereUniqueInput!, create: UTMDataCreateInput!, update: UTMDataUpdateInput!): UTMData!
+  deleteUTMData(where: UTMDataWhereUniqueInput!): UTMData
+  deleteManyUTMDatas(where: UTMDataWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -6595,6 +6834,7 @@ type Package {
   fromAddress: Location!
   toAddress: Location!
   weight: Float
+  cost: Int
   events(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PackageTransitEvent!]
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -6614,6 +6854,7 @@ input PackageCreateInput {
   fromAddress: LocationCreateOneInput!
   toAddress: LocationCreateOneInput!
   weight: Float
+  cost: Int
   events: PackageTransitEventCreateManyWithoutPackageInput
 }
 
@@ -6635,6 +6876,7 @@ input PackageCreateWithoutEventsInput {
   fromAddress: LocationCreateOneInput!
   toAddress: LocationCreateOneInput!
   weight: Float
+  cost: Int
 }
 
 type PackageEdge {
@@ -6649,6 +6891,8 @@ enum PackageOrderByInput {
   transactionID_DESC
   weight_ASC
   weight_DESC
+  cost_ASC
+  cost_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6659,6 +6903,7 @@ type PackagePreviousValues {
   id: ID!
   transactionID: String!
   weight: Float
+  cost: Int
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -7005,6 +7250,7 @@ input PackageUpdateDataInput {
   fromAddress: LocationUpdateOneRequiredInput
   toAddress: LocationUpdateOneRequiredInput
   weight: Float
+  cost: Int
   events: PackageTransitEventUpdateManyWithoutPackageInput
 }
 
@@ -7015,12 +7261,14 @@ input PackageUpdateInput {
   fromAddress: LocationUpdateOneRequiredInput
   toAddress: LocationUpdateOneRequiredInput
   weight: Float
+  cost: Int
   events: PackageTransitEventUpdateManyWithoutPackageInput
 }
 
 input PackageUpdateManyMutationInput {
   transactionID: String
   weight: Float
+  cost: Int
 }
 
 input PackageUpdateOneInput {
@@ -7046,6 +7294,7 @@ input PackageUpdateWithoutEventsDataInput {
   fromAddress: LocationUpdateOneRequiredInput
   toAddress: LocationUpdateOneRequiredInput
   weight: Float
+  cost: Int
 }
 
 input PackageUpsertNestedInput {
@@ -7101,6 +7350,14 @@ input PackageWhereInput {
   weight_lte: Float
   weight_gt: Float
   weight_gte: Float
+  cost: Int
+  cost_not: Int
+  cost_in: [Int!]
+  cost_not_in: [Int!]
+  cost_lt: Int
+  cost_lte: Int
+  cost_gt: Int
+  cost_gte: Int
   events_every: PackageTransitEventWhereInput
   events_some: PackageTransitEventWhereInput
   events_none: PackageTransitEventWhereInput
@@ -12235,6 +12492,12 @@ type Query {
   season(where: SeasonWhereUniqueInput!): Season
   seasons(where: SeasonWhereInput, orderBy: SeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Season]!
   seasonsConnection(where: SeasonWhereInput, orderBy: SeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SeasonConnection!
+  shippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
+  shippingMethods(where: ShippingMethodWhereInput, orderBy: ShippingMethodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShippingMethod]!
+  shippingMethodsConnection(where: ShippingMethodWhereInput, orderBy: ShippingMethodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShippingMethodConnection!
+  shippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
+  shippingOptions(where: ShippingOptionWhereInput, orderBy: ShippingOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShippingOption]!
+  shippingOptionsConnection(where: ShippingOptionWhereInput, orderBy: ShippingOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShippingOptionConnection!
   size(where: SizeWhereUniqueInput!): Size
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
@@ -12253,6 +12516,9 @@ type Query {
   topSize(where: TopSizeWhereUniqueInput!): TopSize
   topSizes(where: TopSizeWhereInput, orderBy: TopSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TopSize]!
   topSizesConnection(where: TopSizeWhereInput, orderBy: TopSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TopSizeConnection!
+  uTMData(where: UTMDataWhereUniqueInput!): UTMData
+  uTMDatas(where: UTMDataWhereInput, orderBy: UTMDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UTMData]!
+  uTMDatasConnection(where: UTMDataWhereInput, orderBy: UTMDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UTMDataConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
@@ -12425,6 +12691,7 @@ type Reservation {
   lastLocation: Location
   createdAt: DateTime!
   updatedAt: DateTime!
+  shippingOption: ShippingOption
 }
 
 type ReservationConnection {
@@ -12451,6 +12718,7 @@ input ReservationCreateInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
 }
 
 input ReservationCreateManyWithoutCustomerInput {
@@ -12490,6 +12758,7 @@ input ReservationCreateWithoutCustomerInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
 }
 
 input ReservationCreateWithoutPackageEventsInput {
@@ -12509,6 +12778,7 @@ input ReservationCreateWithoutPackageEventsInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
 }
 
 input ReservationCreateWithoutReceiptInput {
@@ -12528,6 +12798,7 @@ input ReservationCreateWithoutReceiptInput {
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
   lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
 }
 
 type ReservationEdge {
@@ -13236,6 +13507,7 @@ input ReservationUpdateDataInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateInput {
@@ -13255,6 +13527,7 @@ input ReservationUpdateInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateManyDataInput {
@@ -13335,6 +13608,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateWithoutPackageEventsDataInput {
@@ -13353,6 +13627,7 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateWithoutReceiptDataInput {
@@ -13371,6 +13646,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
@@ -13492,6 +13768,7 @@ input ReservationWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  shippingOption: ShippingOptionWhereInput
   AND: [ReservationWhereInput!]
   OR: [ReservationWhereInput!]
   NOT: [ReservationWhereInput!]
@@ -13641,6 +13918,441 @@ input SeasonWhereInput {
 }
 
 input SeasonWhereUniqueInput {
+  id: ID
+}
+
+enum ShippingCode {
+  UPSGround
+  UPSSelect
+}
+
+type ShippingMethod {
+  id: ID!
+  code: ShippingCode!
+  displayText: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ShippingMethodConnection {
+  pageInfo: PageInfo!
+  edges: [ShippingMethodEdge]!
+  aggregate: AggregateShippingMethod!
+}
+
+input ShippingMethodCreateInput {
+  id: ID
+  code: ShippingCode!
+  displayText: String!
+}
+
+input ShippingMethodCreateOneInput {
+  create: ShippingMethodCreateInput
+  connect: ShippingMethodWhereUniqueInput
+}
+
+type ShippingMethodEdge {
+  node: ShippingMethod!
+  cursor: String!
+}
+
+enum ShippingMethodOrderByInput {
+  id_ASC
+  id_DESC
+  code_ASC
+  code_DESC
+  displayText_ASC
+  displayText_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ShippingMethodPreviousValues {
+  id: ID!
+  code: ShippingCode!
+  displayText: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ShippingMethodSubscriptionPayload {
+  mutation: MutationType!
+  node: ShippingMethod
+  updatedFields: [String!]
+  previousValues: ShippingMethodPreviousValues
+}
+
+input ShippingMethodSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ShippingMethodWhereInput
+  AND: [ShippingMethodSubscriptionWhereInput!]
+  OR: [ShippingMethodSubscriptionWhereInput!]
+  NOT: [ShippingMethodSubscriptionWhereInput!]
+}
+
+input ShippingMethodUpdateDataInput {
+  code: ShippingCode
+  displayText: String
+}
+
+input ShippingMethodUpdateInput {
+  code: ShippingCode
+  displayText: String
+}
+
+input ShippingMethodUpdateManyMutationInput {
+  code: ShippingCode
+  displayText: String
+}
+
+input ShippingMethodUpdateOneInput {
+  create: ShippingMethodCreateInput
+  update: ShippingMethodUpdateDataInput
+  upsert: ShippingMethodUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ShippingMethodWhereUniqueInput
+}
+
+input ShippingMethodUpsertNestedInput {
+  update: ShippingMethodUpdateDataInput!
+  create: ShippingMethodCreateInput!
+}
+
+input ShippingMethodWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  code: ShippingCode
+  code_not: ShippingCode
+  code_in: [ShippingCode!]
+  code_not_in: [ShippingCode!]
+  displayText: String
+  displayText_not: String
+  displayText_in: [String!]
+  displayText_not_in: [String!]
+  displayText_lt: String
+  displayText_lte: String
+  displayText_gt: String
+  displayText_gte: String
+  displayText_contains: String
+  displayText_not_contains: String
+  displayText_starts_with: String
+  displayText_not_starts_with: String
+  displayText_ends_with: String
+  displayText_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ShippingMethodWhereInput!]
+  OR: [ShippingMethodWhereInput!]
+  NOT: [ShippingMethodWhereInput!]
+}
+
+input ShippingMethodWhereUniqueInput {
+  id: ID
+}
+
+type ShippingOption {
+  id: ID!
+  origin: Location
+  destination: Location
+  shippingMethod: ShippingMethod
+  externalCost: Int
+  averageDuration: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ShippingOptionConnection {
+  pageInfo: PageInfo!
+  edges: [ShippingOptionEdge]!
+  aggregate: AggregateShippingOption!
+}
+
+input ShippingOptionCreateInput {
+  id: ID
+  origin: LocationCreateOneInput
+  destination: LocationCreateOneWithoutShippingOptionsInput
+  shippingMethod: ShippingMethodCreateOneInput
+  externalCost: Int
+  averageDuration: Int
+}
+
+input ShippingOptionCreateManyWithoutDestinationInput {
+  create: [ShippingOptionCreateWithoutDestinationInput!]
+  connect: [ShippingOptionWhereUniqueInput!]
+}
+
+input ShippingOptionCreateOneInput {
+  create: ShippingOptionCreateInput
+  connect: ShippingOptionWhereUniqueInput
+}
+
+input ShippingOptionCreateWithoutDestinationInput {
+  id: ID
+  origin: LocationCreateOneInput
+  shippingMethod: ShippingMethodCreateOneInput
+  externalCost: Int
+  averageDuration: Int
+}
+
+type ShippingOptionEdge {
+  node: ShippingOption!
+  cursor: String!
+}
+
+enum ShippingOptionOrderByInput {
+  id_ASC
+  id_DESC
+  externalCost_ASC
+  externalCost_DESC
+  averageDuration_ASC
+  averageDuration_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ShippingOptionPreviousValues {
+  id: ID!
+  externalCost: Int
+  averageDuration: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input ShippingOptionScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  externalCost: Int
+  externalCost_not: Int
+  externalCost_in: [Int!]
+  externalCost_not_in: [Int!]
+  externalCost_lt: Int
+  externalCost_lte: Int
+  externalCost_gt: Int
+  externalCost_gte: Int
+  averageDuration: Int
+  averageDuration_not: Int
+  averageDuration_in: [Int!]
+  averageDuration_not_in: [Int!]
+  averageDuration_lt: Int
+  averageDuration_lte: Int
+  averageDuration_gt: Int
+  averageDuration_gte: Int
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ShippingOptionScalarWhereInput!]
+  OR: [ShippingOptionScalarWhereInput!]
+  NOT: [ShippingOptionScalarWhereInput!]
+}
+
+type ShippingOptionSubscriptionPayload {
+  mutation: MutationType!
+  node: ShippingOption
+  updatedFields: [String!]
+  previousValues: ShippingOptionPreviousValues
+}
+
+input ShippingOptionSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ShippingOptionWhereInput
+  AND: [ShippingOptionSubscriptionWhereInput!]
+  OR: [ShippingOptionSubscriptionWhereInput!]
+  NOT: [ShippingOptionSubscriptionWhereInput!]
+}
+
+input ShippingOptionUpdateDataInput {
+  origin: LocationUpdateOneInput
+  destination: LocationUpdateOneWithoutShippingOptionsInput
+  shippingMethod: ShippingMethodUpdateOneInput
+  externalCost: Int
+  averageDuration: Int
+}
+
+input ShippingOptionUpdateInput {
+  origin: LocationUpdateOneInput
+  destination: LocationUpdateOneWithoutShippingOptionsInput
+  shippingMethod: ShippingMethodUpdateOneInput
+  externalCost: Int
+  averageDuration: Int
+}
+
+input ShippingOptionUpdateManyDataInput {
+  externalCost: Int
+  averageDuration: Int
+}
+
+input ShippingOptionUpdateManyMutationInput {
+  externalCost: Int
+  averageDuration: Int
+}
+
+input ShippingOptionUpdateManyWithoutDestinationInput {
+  create: [ShippingOptionCreateWithoutDestinationInput!]
+  delete: [ShippingOptionWhereUniqueInput!]
+  connect: [ShippingOptionWhereUniqueInput!]
+  set: [ShippingOptionWhereUniqueInput!]
+  disconnect: [ShippingOptionWhereUniqueInput!]
+  update: [ShippingOptionUpdateWithWhereUniqueWithoutDestinationInput!]
+  upsert: [ShippingOptionUpsertWithWhereUniqueWithoutDestinationInput!]
+  deleteMany: [ShippingOptionScalarWhereInput!]
+  updateMany: [ShippingOptionUpdateManyWithWhereNestedInput!]
+}
+
+input ShippingOptionUpdateManyWithWhereNestedInput {
+  where: ShippingOptionScalarWhereInput!
+  data: ShippingOptionUpdateManyDataInput!
+}
+
+input ShippingOptionUpdateOneInput {
+  create: ShippingOptionCreateInput
+  update: ShippingOptionUpdateDataInput
+  upsert: ShippingOptionUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ShippingOptionWhereUniqueInput
+}
+
+input ShippingOptionUpdateWithoutDestinationDataInput {
+  origin: LocationUpdateOneInput
+  shippingMethod: ShippingMethodUpdateOneInput
+  externalCost: Int
+  averageDuration: Int
+}
+
+input ShippingOptionUpdateWithWhereUniqueWithoutDestinationInput {
+  where: ShippingOptionWhereUniqueInput!
+  data: ShippingOptionUpdateWithoutDestinationDataInput!
+}
+
+input ShippingOptionUpsertNestedInput {
+  update: ShippingOptionUpdateDataInput!
+  create: ShippingOptionCreateInput!
+}
+
+input ShippingOptionUpsertWithWhereUniqueWithoutDestinationInput {
+  where: ShippingOptionWhereUniqueInput!
+  update: ShippingOptionUpdateWithoutDestinationDataInput!
+  create: ShippingOptionCreateWithoutDestinationInput!
+}
+
+input ShippingOptionWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  origin: LocationWhereInput
+  destination: LocationWhereInput
+  shippingMethod: ShippingMethodWhereInput
+  externalCost: Int
+  externalCost_not: Int
+  externalCost_in: [Int!]
+  externalCost_not_in: [Int!]
+  externalCost_lt: Int
+  externalCost_lte: Int
+  externalCost_gt: Int
+  externalCost_gte: Int
+  averageDuration: Int
+  averageDuration_not: Int
+  averageDuration_in: [Int!]
+  averageDuration_not_in: [Int!]
+  averageDuration_lt: Int
+  averageDuration_lte: Int
+  averageDuration_gt: Int
+  averageDuration_gte: Int
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ShippingOptionWhereInput!]
+  OR: [ShippingOptionWhereInput!]
+  NOT: [ShippingOptionWhereInput!]
+}
+
+input ShippingOptionWhereUniqueInput {
   id: ID
 }
 
@@ -14395,12 +15107,15 @@ type Subscription {
   reservationReceipt(where: ReservationReceiptSubscriptionWhereInput): ReservationReceiptSubscriptionPayload
   reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
   season(where: SeasonSubscriptionWhereInput): SeasonSubscriptionPayload
+  shippingMethod(where: ShippingMethodSubscriptionWhereInput): ShippingMethodSubscriptionPayload
+  shippingOption(where: ShippingOptionSubscriptionWhereInput): ShippingOptionSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
   syncTiming(where: SyncTimingSubscriptionWhereInput): SyncTimingSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
+  uTMData(where: UTMDataSubscriptionWhereInput): UTMDataSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   userPushNotification(where: UserPushNotificationSubscriptionWhereInput): UserPushNotificationSubscriptionPayload
   userPushNotificationInterest(where: UserPushNotificationInterestSubscriptionWhereInput): UserPushNotificationInterestSubscriptionPayload
@@ -15929,6 +16644,251 @@ input UserWhereUniqueInput {
   id: ID
   auth0Id: String
   email: String
+}
+
+type UTMData {
+  id: ID!
+  customer: Customer!
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type UTMDataConnection {
+  pageInfo: PageInfo!
+  edges: [UTMDataEdge]!
+  aggregate: AggregateUTMData!
+}
+
+input UTMDataCreateInput {
+  id: ID
+  customer: CustomerCreateOneWithoutUtmInput!
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+input UTMDataCreateOneWithoutCustomerInput {
+  create: UTMDataCreateWithoutCustomerInput
+  connect: UTMDataWhereUniqueInput
+}
+
+input UTMDataCreateWithoutCustomerInput {
+  id: ID
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+type UTMDataEdge {
+  node: UTMData!
+  cursor: String!
+}
+
+enum UTMDataOrderByInput {
+  id_ASC
+  id_DESC
+  source_ASC
+  source_DESC
+  medium_ASC
+  medium_DESC
+  campaign_ASC
+  campaign_DESC
+  term_ASC
+  term_DESC
+  content_ASC
+  content_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type UTMDataPreviousValues {
+  id: ID!
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type UTMDataSubscriptionPayload {
+  mutation: MutationType!
+  node: UTMData
+  updatedFields: [String!]
+  previousValues: UTMDataPreviousValues
+}
+
+input UTMDataSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: UTMDataWhereInput
+  AND: [UTMDataSubscriptionWhereInput!]
+  OR: [UTMDataSubscriptionWhereInput!]
+  NOT: [UTMDataSubscriptionWhereInput!]
+}
+
+input UTMDataUpdateInput {
+  customer: CustomerUpdateOneRequiredWithoutUtmInput
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+input UTMDataUpdateManyMutationInput {
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+input UTMDataUpdateOneWithoutCustomerInput {
+  create: UTMDataCreateWithoutCustomerInput
+  update: UTMDataUpdateWithoutCustomerDataInput
+  upsert: UTMDataUpsertWithoutCustomerInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: UTMDataWhereUniqueInput
+}
+
+input UTMDataUpdateWithoutCustomerDataInput {
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+input UTMDataUpsertWithoutCustomerInput {
+  update: UTMDataUpdateWithoutCustomerDataInput!
+  create: UTMDataCreateWithoutCustomerInput!
+}
+
+input UTMDataWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  customer: CustomerWhereInput
+  source: String
+  source_not: String
+  source_in: [String!]
+  source_not_in: [String!]
+  source_lt: String
+  source_lte: String
+  source_gt: String
+  source_gte: String
+  source_contains: String
+  source_not_contains: String
+  source_starts_with: String
+  source_not_starts_with: String
+  source_ends_with: String
+  source_not_ends_with: String
+  medium: String
+  medium_not: String
+  medium_in: [String!]
+  medium_not_in: [String!]
+  medium_lt: String
+  medium_lte: String
+  medium_gt: String
+  medium_gte: String
+  medium_contains: String
+  medium_not_contains: String
+  medium_starts_with: String
+  medium_not_starts_with: String
+  medium_ends_with: String
+  medium_not_ends_with: String
+  campaign: String
+  campaign_not: String
+  campaign_in: [String!]
+  campaign_not_in: [String!]
+  campaign_lt: String
+  campaign_lte: String
+  campaign_gt: String
+  campaign_gte: String
+  campaign_contains: String
+  campaign_not_contains: String
+  campaign_starts_with: String
+  campaign_not_starts_with: String
+  campaign_ends_with: String
+  campaign_not_ends_with: String
+  term: String
+  term_not: String
+  term_in: [String!]
+  term_not_in: [String!]
+  term_lt: String
+  term_lte: String
+  term_gt: String
+  term_gte: String
+  term_contains: String
+  term_not_contains: String
+  term_starts_with: String
+  term_not_starts_with: String
+  term_ends_with: String
+  term_not_ends_with: String
+  content: String
+  content_not: String
+  content_in: [String!]
+  content_not_in: [String!]
+  content_lt: String
+  content_lte: String
+  content_gt: String
+  content_gte: String
+  content_contains: String
+  content_not_contains: String
+  content_starts_with: String
+  content_not_starts_with: String
+  content_ends_with: String
+  content_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [UTMDataWhereInput!]
+  OR: [UTMDataWhereInput!]
+  NOT: [UTMDataWhereInput!]
+}
+
+input UTMDataWhereUniqueInput {
+  id: ID
 }
 
 type WarehouseLocation {

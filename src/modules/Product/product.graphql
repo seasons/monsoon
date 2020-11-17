@@ -229,6 +229,9 @@ type Brand {
   logo: Json
   name: String!
   basedIn: String
+  published: Boolean!
+  featured: Boolean!
+  designer: String
   products(
     where: ProductWhereInput
     orderBy: ProductOrderByInput
@@ -238,6 +241,7 @@ type Brand {
     first: Int
     last: Int
   ): [Product!]
+  # productsConnection is an added field
   productsConnection(
     sizes: [String!]
     category: String
@@ -337,6 +341,9 @@ input UpsertSeasonInput {
 input CustomBrandCreateInput {
   id: ID
   slug: String!
+  designer: String
+  published: Boolean
+  featured: Boolean
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
@@ -353,6 +360,9 @@ input CustomBrandCreateInput {
 
 input CustomBrandUpdateInput {
   slug: String
+  designer: String
+  published: Boolean
+  featured: Boolean
   brandCode: String
   description: String
   isPrimaryBrand: Boolean

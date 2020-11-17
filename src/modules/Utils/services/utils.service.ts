@@ -8,6 +8,7 @@ import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
 import moment from "moment"
+import states from "us-state-converter"
 
 import { bottomSizeRegex } from "../../Product/constants"
 
@@ -25,6 +26,21 @@ enum ProductSize {
 @Injectable()
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
+
+  abbreviateState(state: string) {
+    let abbr
+    const _state = state?.trim()
+
+    // this particular library doesn't handle Oregon for whichever reason.
+    // So we handle it independently
+    if (_state === "Oregon") {
+      abbr = "OR"
+    } else {
+      abbr = states.abbr(_state)
+    }
+
+    return abbr
+  }
 
   // Returns an ISO string for a date that's X days ago
   xDaysAgoISOString(x: number) {
@@ -242,6 +258,16 @@ export class UtilsService {
       throw new Error(`invalid sizeName: ${sizeName}`)
     }
     return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
+  }
+
+  /**
+   * Returns a JSON object containing the contents of the file located
+   * at the given path
+   *
+   * @param path path of the json file relative to the applications's root
+   */
+  parseJSONFile = (path: string) => {
+    return JSON.parse(fs.readFileSync(process.cwd() + `/${path}.json`, "utf-8"))
   }
 
   private caseify = (obj: any, caseFunc: (str: string) => string): any => {

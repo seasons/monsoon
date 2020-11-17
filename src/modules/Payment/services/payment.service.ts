@@ -3,12 +3,14 @@ import { CustomerService } from "@app/modules/User/services/customer.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PaymentPlanTier, User } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
 import { camelCase, get, head, identity, snakeCase, upperFirst } from "lodash"
 import { DateTime } from "luxon"
+import states from "us-state-converter"
 
 import {
   BillingAddress,
@@ -26,6 +28,7 @@ import { PaymentUtilsService } from "./payment.utils.service"
 @Injectable()
 export class PaymentService {
   constructor(
+    private readonly shippingService: ShippingService,
     private readonly authService: AuthService,
     private readonly customerService: CustomerService,
     private readonly emailService: EmailService,
@@ -34,6 +37,61 @@ export class PaymentService {
     private readonly utils: UtilsService,
     private readonly segment: SegmentService
   ) {}
+
+  async addShippingCharge(customer, shippingCode) {
+    try {
+      const customerWithShippingData = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+        {
+          id
+          membership {
+            id
+            subscriptionId
+          }
+          detail {
+            id
+            shippingAddress {
+              id
+              shippingOptions {
+                id
+                externalCost
+                shippingMethod {
+                  id
+                  code
+                }
+              }
+            }
+          }
+        }
+      `
+      )
+
+      const { membership, detail } = customerWithShippingData
+
+      const subscriptionID = membership.subscriptionId
+      const shippingOptions = detail?.shippingAddress?.shippingOptions
+      const shippingOption = shippingOptions.find(
+        option => option.shippingMethod.code === shippingCode
+      )
+      const externalCost = shippingOption.externalCost
+
+      if (externalCost !== 0) {
+        await chargebee.invoice
+          .charge_addon({
+            subscription_id: subscriptionID,
+            addon_id: shippingOption.shippingMethod.code?.toLowerCase(),
+            addon_unit_price: externalCost,
+            addon_quantity: 1,
+          })
+          .request()
+      }
+
+      return shippingOption.id
+    } catch (e) {
+      throw new Error(`Error adding shipping charge: ${e}`)
+    }
+  }
 
   async changeCustomerPlan(planID, customer) {
     const reservations = await this.prisma.client
@@ -83,7 +141,7 @@ export class PaymentService {
         },
       })
     } catch (e) {
-      throw new Error(`Error updating to new plan: ${e}`)
+      throw new Error(`Error updating to new plan: ${e.message}`)
     }
   }
 
@@ -415,9 +473,8 @@ export class PaymentService {
         //   },
         //   where: { id: customer.id },
         // })
-      } else {
-        throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
       }
+      throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
     }
   }
 
@@ -750,6 +807,102 @@ export class PaymentService {
       })
       .request()
     return true
+  }
+
+  async updatePaymentAndShipping(
+    billingAddress,
+    phoneNumber,
+    shippingAddress,
+    customer,
+    user
+  ) {
+    const {
+      city: billingCity,
+      postalCode: billingPostalCode,
+      state: billingState,
+      street1: billingStreet1,
+      street2: billingStreet2,
+    } = billingAddress
+    const getAbbreviatedState = originalState => {
+      if (!originalState) {
+        throw new Error(`Invalid state: ${originalState}`)
+      }
+      if (originalState.length === 2) {
+        return originalState
+      }
+      if (originalState.length > 2) {
+        const abbr = this.utils.abbreviateState(originalState)
+        if (abbr) {
+          return abbr
+        } else {
+          return originalState?.toUpperCase()
+        }
+      }
+      throw new Error(`Invalid state: ${originalState}`)
+    }
+
+    const abbreviatedBillingState = getAbbreviatedState(billingState)
+
+    const {
+      isValid: billingAddressIsValid,
+    } = await this.shippingService.shippoValidateAddress({
+      name: user.firstName,
+      street1: billingStreet1,
+      city: billingCity,
+      state: abbreviatedBillingState,
+      zip: billingPostalCode,
+    })
+    if (!billingAddressIsValid) {
+      throw new Error("Your billing address is invalid")
+    }
+
+    // Update user's billing address on chargebee
+    await this.updateChargebeeBillingAddress(
+      user.id,
+      billingStreet1,
+      billingStreet2,
+      billingCity,
+      abbreviatedBillingState,
+      billingPostalCode
+    )
+
+    // Update customer's billing address
+    await this.updateCustomerBillingAddress(
+      user.id,
+      customer.id,
+      billingStreet1,
+      billingStreet2,
+      billingCity,
+      abbreviatedBillingState,
+      billingPostalCode
+    )
+
+    // Update customer's shipping address & phone number. Unlike before, will
+    // accept all valid addresses. Will NOT throw an error if the address is
+    // not in NYC.
+    const shippingState = getAbbreviatedState(shippingAddress.state)
+    await this.customerService.updateCustomerDetail(
+      user,
+      customer,
+      { ...shippingAddress, state: shippingState },
+      phoneNumber
+    )
+
+    // Adds the customer's shipping options to their location record
+    const customerLocationID = await this.prisma.client
+      .customer({
+        id: customer.id,
+      })
+      .detail()
+      .shippingAddress()
+      .id()
+
+    await this.customerService.addCustomerLocationShippingOptions(
+      shippingState,
+      customerLocationID
+    )
+
+    return null
   }
 
   /*
