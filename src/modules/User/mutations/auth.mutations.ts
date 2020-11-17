@@ -25,7 +25,7 @@ export class AuthMutationsResolver {
 
   @Mutation()
   async signup(
-    @Args() { email, password, firstName, lastName, details, referrerId },
+    @Args() { email, password, firstName, lastName, details, referrerId, utm },
     @Application() application
   ) {
     const { user, tokenData, customer, coupon } = await this.auth.signupUser({
@@ -35,10 +35,18 @@ export class AuthMutationsResolver {
       lastName,
       details,
       referrerId,
+      utm,
     })
 
     // Add them to segment and track their account creation event
     const now = new Date()
+    const utmFormatted = {
+      utm_source: utm?.source,
+      utm_content: utm?.content,
+      utm_medium: utm?.medium,
+      utm_campaign: utm?.campaign,
+      utm_term: utm?.term,
+    }
     this.segment.identify(user.id, {
       ...this.auth.extractSegmentReservedTraitsFromCustomerDetail({
         ...details,
@@ -52,6 +60,7 @@ export class AuthMutationsResolver {
         "email",
         "auth0Id",
       ]),
+      ...utmFormatted,
       createdAt: now.toISOString(),
     })
 
@@ -63,6 +72,7 @@ export class AuthMutationsResolver {
       ...pick(user, ["firstName", "lastName", "email"]),
       customerID: customer.id,
       application,
+      ...utmFormatted,
     })
 
     return {

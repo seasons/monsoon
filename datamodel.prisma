@@ -253,7 +253,7 @@ type Brand {
   since: DateTime
   tier: BrandTier!
   published: Boolean! @default(value: true)
-  featured: Boolean! @default(value: false) 
+  featured: Boolean! @default(value: false)
   websiteUrl: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -723,6 +723,18 @@ type CustomerAdmissionsData {
   authorizationWindowClosesAt: DateTime
 }
 
+type UTMData {
+  id: ID! @id
+  customer: Customer! @relation(name: "CustomerToUTMData", onDelete: SET_NULL)
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type Customer {
   id: ID! @id
   user: User! @unique @relation(name: "CustomerToUser", onDelete: CASCADE)
@@ -737,7 +749,8 @@ type Customer {
   reservations: [Reservation] @relation(name: "CustomerToReservation")
   referralLink: String @unique
   referrerId: String
-  referrer: Customer @relation(name: "CustomerReferrals", fields: [referrerId] references: [id])
+  referrer: Customer
+    @relation(name: "CustomerReferrals", fields: [referrerId], references: [id])
   referrees: [Customer] @relation(name: "CustomerReferrals")
 
   ## A list of all the products we've shown this person via email
@@ -750,6 +763,8 @@ type Customer {
       onDelete: SET_NULL
     )
   authorizedAt: DateTime
+  utm: UTMData
+    @relation(name: "CustomerToUTMData", link: INLINE, onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -816,7 +831,12 @@ type Reservation {
   lastLocation: Location
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  shippingOption: ShippingOption @relation(link: INLINE, name: "ShippingMethodToReservation", onDelete: SET_NULL)
+  shippingOption: ShippingOption
+    @relation(
+      link: INLINE
+      name: "ShippingMethodToReservation"
+      onDelete: SET_NULL
+    )
 }
 
 type ReservationFeedback {

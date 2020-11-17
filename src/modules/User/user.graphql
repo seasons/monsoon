@@ -33,6 +33,7 @@ type Mutation {
     lastName: String!
     details: CustomerDetailCreateInput
     referrerId: String
+    utm: UTMInput
   ): SignupPayload!
   login(email: String!, password: String!): AuthPayload!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
@@ -42,6 +43,14 @@ type Mutation {
   resetPassword(email: String!): ResetPasswordPayload! # Do not put @isAuthenticated guard here because only users who can't login need to reset passwords!
   refreshToken(refreshToken: String!): String!
   createInterestedUser(email: String!, zipcode: String): InterestedUser!
+}
+
+input UTMInput {
+  source: String
+  medium: String
+  term: String
+  content: String
+  campaign: String
 }
 
 type AuthPayload {
