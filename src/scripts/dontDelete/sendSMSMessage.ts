@@ -14,18 +14,22 @@ const run = async () => {
   const sleep = async ms => {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
-  const userIdentifier = { email: "faiyam@faiyamrahman.com" }
-  await sms.sendSMSMessage({
-    to: userIdentifier,
-    body: `Chad, it's Seasons. Your 48 hours expires today at 9:51pm. Login and choose a plan to secure your membership: https://szns.co/app. `,
-    mediaUrls: [
-      "https://seasons-images.s3.amazonaws.com/email-images/AuthorizedHero.jpg",
-    ],
+
+  const u = await ps.client.user({ email: "faiyam@faiyamrahman.com" })
+  // await sms.sendSMSById({
+  //   to: { id: u.id },
+  //   renderData: { name: u.firstName },
+  //   smsId: "Rewaitlisted",
+  // })
+  await sms.sendSMSById({
+    to: { id: u.id },
+    renderData: { name: u.firstName },
+    smsId: "TwentyFourHourAuthorizationFollowup",
   })
-  await sleep(15000)
-  await sms.sendSMSMessage({
-    to: userIdentifier,
-    body: `If you need more time, or are having trouble choosing what you'd like for your first reservation, let us know at membership@seasons.nyc and we'll help you find the right first items.`,
+  await sms.sendSMSById({
+    to: { id: u.id },
+    renderData: { name: u.firstName },
+    smsId: "CompleteAccount",
   })
 }
 
