@@ -82,6 +82,24 @@ export class EmailService {
     })
   }
 
+  async sendReferralConfirmationEmail({
+    referrer,
+    referee,
+  }: {
+    referrer: EmailUser
+    referee: EmailUser
+  }) {
+    const payload = await RenderEmail.referralConfirmation({
+      referrerName: referrer.firstName,
+      refereeName: `${referee.firstName}`,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      user: referrer,
+      payload,
+      emailId: "ReferralConfirmation",
+    })
+  }
+
   async sendWaitlistedEmail(user: EmailUser) {
     const payload = await RenderEmail.waitlisted({
       name: user.firstName,

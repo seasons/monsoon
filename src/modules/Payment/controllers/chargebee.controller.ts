@@ -1,4 +1,5 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
@@ -26,7 +27,8 @@ export class ChargebeeController {
     private readonly payment: PaymentService,
     private readonly segment: SegmentService,
     private readonly prisma: PrismaService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly email: EmailService
   ) {}
 
   @Post()
@@ -65,6 +67,11 @@ export class ChargebeeController {
           }
           referrer {
             id
+            user {
+              id
+              email
+              firstName
+            }
             membership {
               subscriptionId
             }
@@ -96,8 +103,9 @@ export class ChargebeeController {
           subscriptionID
         )
 
-        // If was referred, apply coupon for referrer
+        // Handle if it was a referral
         if (customerWithBillingAndUserData?.referrer?.id) {
+          // Give the referrer a discount
           await chargebee.subscription
             .update(
               customerWithBillingAndUserData?.referrer?.membership
@@ -107,6 +115,11 @@ export class ChargebeeController {
               }
             )
             .request()
+          // Email the referrer
+          await this.email.sendReferralConfirmationEmail({
+            referrer: customerWithBillingAndUserData.referrer.user,
+            referee: customerWithBillingAndUserData.user,
+          })
         }
       }
     } catch (err) {
