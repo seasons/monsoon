@@ -2559,10 +2559,10 @@
     "@angular-devkit/core" "9.1.9"
     "@angular-devkit/schematics" "9.1.9"
 
-"@seasons/wind@^2.1.43":
-  version "2.1.43"
-  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.1.43.tgz#f1804487341bb082e57781eb353535e885c7996c"
-  integrity sha512-BWh+45MjoSCwUyK29KsMivS0/ZD5J8MYEwk88yb0ItxMDhxiLYKalaLLhYqDFXig6PRM+BjBF+ksWUbYwyMIRg==
+"@seasons/wind@^2.1.44":
+  version "2.1.44"
+  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.1.44.tgz#3c8dc5a73f735da2695e5eda1e456b57453185fa"
+  integrity sha512-9JE2DpVLEoLh1xIzIhD6K7ms2sq7RxSkKEV3oOZHzVkgzMAlzicDksA8acZuSHTMQjlvb0Sk5heIOZkkVif84Q==
   dependencies:
     "@types/node" "^14.0.23"
     child_process "^1.0.2"
@@ -2572,6 +2572,7 @@
     moment "^2.29.1"
     open "^7.3.0"
     prettier "^2.1.2"
+    replace-in-file "^6.1.0"
 
 "@segment/loosely-validate-event@^2.0.0":
   version "2.0.0"
@@ -14942,6 +14943,15 @@ repeat-string@^1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/repeat-string/-/repeat-string-1.6.1.tgz#8dcae470e1c88abc2d600fff4a776286da75e637"
   integrity sha1-jcrkcOHIirwtYA//Sndihtp15jc=
+
+replace-in-file@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/replace-in-file/-/replace-in-file-6.1.0.tgz#9f9ddd7bb70d6ad231d2ad692e1b646e73d06647"
+  integrity sha512-URzjyF3nucvejuY13HFd7O+Q6tFJRLKGHLYVvSh+LiZj3gFXzSYGnIkQflnJJulCAI2/RTZaZkpOtdVdW0EhQA==
+  dependencies:
+    chalk "^4.0.0"
+    glob "^7.1.6"
+    yargs "^15.3.1"
 
 replaceall@^0.1.6:
   version "0.1.6"
