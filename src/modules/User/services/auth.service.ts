@@ -489,8 +489,8 @@ export class AuthService {
   }> {
     const baseDomain =
       process.env.NODE_ENV === "production"
-        ? "www.seasons.nyc"
-        : "staging.seasons.nyc"
+        ? "www.wearseasons.com"
+        : "staging.wearseasons.com"
     let linkRequest = {
       destination: `https://${baseDomain}/signup?referrer_id=` + customerId,
       domain: { fullName: process.env.REFERRAL_DOMAIN },
