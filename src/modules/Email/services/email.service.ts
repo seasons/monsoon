@@ -14,10 +14,14 @@ import {
   Product,
   User,
 } from "../../../prisma"
-import { Customer, DateTime, Reservation } from "../../../prisma/prisma.binding"
+import {
+  Customer,
+  DateTime,
+  PhysicalProduct,
+  Reservation,
+} from "../../../prisma/prisma.binding"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { UtilsService } from "../../Utils/services/utils.service"
-import { EmailDataProvider } from "./email.data.service"
 import {
   EmailUtilsService,
   MonsoonProductGridItem,
@@ -30,7 +34,6 @@ export class EmailService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
-    private readonly data: EmailDataProvider,
     private readonly emailUtils: EmailUtilsService
   ) {}
 
@@ -176,26 +179,31 @@ export class EmailService {
 
   async sendAdminConfirmationEmail(
     user: EmailUser,
-    products: any[],
+    returnedPhysicalProducts: PhysicalProduct[],
     reservation: Reservation
   ) {
-    await this.sendTransactionalEmail({
-      to: process.env.OPERATIONS_ADMIN_EMAIL,
-      data: this.data.reservationReturnConfirmation(
-        reservation.reservationNumber,
-        products.map(p => p.seasonsUID),
-        user.email
-      ),
+    const payload = await RenderEmail.adminReservationReturnConfirmation({
+      name: user.firstName,
+      email: user.email,
+      reservationNumber: reservation.reservationNumber,
+      returnedItems: returnedPhysicalProducts.map(a => a.seasonsUID),
     })
-    await this.storeEmailReceipt("ReservationReturnConfirmation", user.id)
+    await this.sendPreRenderedTransactionalEmail({
+      user,
+      payload,
+      emailId: "ReservationReturnConfirmation",
+    })
   }
 
   async sendPriorityAccessEmail(user: EmailUser) {
-    await this.sendTransactionalEmail({
-      to: user.email,
-      data: this.data.priorityAccess({ name: user.firstName }),
+    const payload = await RenderEmail.priorityAccess({
+      name: user.firstName,
     })
-    await this.storeEmailReceipt("PriorityAccess", user.id)
+    await this.sendPreRenderedTransactionalEmail({
+      user,
+      payload,
+      emailId: "PriorityAccess",
+    })
   }
 
   async sendReservationConfirmationEmail(

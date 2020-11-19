@@ -22,10 +22,10 @@ export class HerokuCommands {
 
     const activeRelease = releases[0]
 
+    const hash = this.extractCommitHash(activeRelease)
+    console.log(`Current production commit for monsoon-production: ${hash}`)
     console.log(
-      `Current production commit for monsoon-production: ${this.extractCommitHash(
-        activeRelease
-      )}`
+      `View diff with master: http://github.com/seasons/monsoon/compare/${hash}..master`
     )
   }
 
