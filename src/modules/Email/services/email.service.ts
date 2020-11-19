@@ -292,25 +292,6 @@ export class EmailService {
     }
   }
 
-  private async sendTransactionalEmail({
-    to,
-    data,
-  }: {
-    to: string
-    data: any
-  }) {
-    const path = process.cwd()
-    const buffer = fs.readFileSync(path + "/" + "master-email.html")
-    const emailTemplate = buffer.toString()
-    const RenderedEmailTemplate = Handlebars.compile(emailTemplate)
-
-    await this.sendEmail({
-      to,
-      subject: data.email.subject,
-      html: RenderedEmailTemplate(data),
-    })
-  }
-
   private async sendPreRenderedTransactionalEmail({
     user,
     payload: { body, subject },
