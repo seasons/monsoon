@@ -1,4 +1,3 @@
-import { EmailModule } from "@modules/Email"
 import { ImageModule } from "@modules/Image/image.module"
 import { PaymentModule } from "@modules/Payment"
 import { ProductModule } from "@modules/Product"
@@ -8,6 +7,7 @@ import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
 import { AnalyticsModule } from "../Analytics/analytics.module"
+import { EmailModule } from "../Email/email.module"
 import { ReservationFeedbackMutationsResolver } from "../Reservation/mutations/reservationFeedback.mutations.resolver"
 import { ReservationFeedbackQueriesResolver } from "../Reservation/queries/reservationFeedback.queries.resolver"
 import { UtilsModule } from "../Utils/utils.module"

@@ -24,10 +24,44 @@ const run = async () => {
     new EmailUtilsService(ps, new ErrorService(), new ImageService(ps))
   )
 
-  const r1 = head(await ps.client.reservations({}))
-  const u = await ps.client.user({ email: "faiyam+30days@seasons.nyc" })
-  await emails.sendReturnReminderEmail(u, r1)
-  await emails.sendSubmittedEmailEmail(u)
+  try {
+    const customerWithBillingAndUserData: any = head(
+      await ps.binding.query.customers(
+        { where: { id: "ckhnw8k79001u08067tdrfiyr" } },
+        `
+        {
+          id
+          billingInfo {
+            id
+          }
+          user {
+            id
+            firstName
+            lastName
+            email
+          }
+          referrer {
+            id
+            user {
+              id
+              email
+              firstName
+            }
+            membership {
+              subscriptionId
+            }
+          }
+        }
+      `
+      )
+    )
+    await emails.sendReferralConfirmationEmail({
+      referrer: customerWithBillingAndUserData.referrer.user,
+      referee: customerWithBillingAndUserData.user,
+    })
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 run()

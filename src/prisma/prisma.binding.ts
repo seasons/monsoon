@@ -8069,6 +8069,7 @@ enum EmailId {
   Paused
   Rewaitlisted
   TwentyFourHourAuthorizationFollowup
+  ReferralConfirmation
 }
 
 type EmailReceipt implements Node {
@@ -30345,7 +30346,8 @@ export type EmailId =   'ReservationReturnConfirmation' |
   'Waitlisted' |
   'Paused' |
   'Rewaitlisted' |
-  'TwentyFourHourAuthorizationFollowup'
+  'TwentyFourHourAuthorizationFollowup' |
+  'ReferralConfirmation'
 
 export type EmailReceiptOrderByInput =   'id_ASC' |
   'id_DESC' |

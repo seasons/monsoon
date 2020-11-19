@@ -1,5 +1,5 @@
 import { DripSyncService } from "@app/modules/Drip/services/dripSync.service"
-import { EmailService } from "@app/modules/Email"
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { AdmissionsService } from "@app/modules/User/services/admissions.service"
 import { PrismaService } from "@app/prisma/prisma.service"

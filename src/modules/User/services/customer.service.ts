@@ -2,7 +2,7 @@ import fs from "fs"
 
 import { ApplicationType } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { EmailService } from "@app/modules/Email"
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"

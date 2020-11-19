@@ -85,6 +85,24 @@ export class EmailService {
     })
   }
 
+  async sendReferralConfirmationEmail({
+    referrer,
+    referee,
+  }: {
+    referrer: EmailUser
+    referee: EmailUser
+  }) {
+    const payload = await RenderEmail.referralConfirmation({
+      referrerName: referrer.firstName,
+      refereeName: `${referee.firstName}`,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      user: referrer,
+      payload,
+      emailId: "ReferralConfirmation",
+    })
+  }
+
   async sendWaitlistedEmail(user: EmailUser) {
     const payload = await RenderEmail.waitlisted({
       name: user.firstName,
@@ -272,25 +290,6 @@ export class EmailService {
     if (products !== null) {
       await this.addEmailedProductsToCustomer(user, products)
     }
-  }
-
-  private async sendTransactionalEmail({
-    to,
-    data,
-  }: {
-    to: string
-    data: any
-  }) {
-    const path = process.cwd()
-    const buffer = fs.readFileSync(path + "/" + "master-email.html")
-    const emailTemplate = buffer.toString()
-    const RenderedEmailTemplate = Handlebars.compile(emailTemplate)
-
-    await this.sendEmail({
-      to,
-      subject: data.email.subject,
-      html: RenderedEmailTemplate(data),
-    })
   }
 
   private async sendPreRenderedTransactionalEmail({

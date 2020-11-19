@@ -4414,6 +4414,7 @@ enum EmailId {
   Paused
   Rewaitlisted
   TwentyFourHourAuthorizationFollowup
+  ReferralConfirmation
 }
 
 type EmailReceipt {
