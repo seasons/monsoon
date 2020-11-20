@@ -160,6 +160,22 @@ export class AuthService {
     }
 
     const user = await this.prisma.client.user({ email })
+    const customer = head(
+      await this.prisma.binding.query.customers(
+        {
+          where: { user: { id: user?.id } },
+        },
+        // Hardcoded as per harvest needs. Ideally should read from INFO
+        `{
+        id
+        status
+        admissions {
+          id
+          admissable
+        }
+      }`
+      )
+    )
 
     // If the user is a Customer, make sure that the account has been approved
     if (!user) {
@@ -171,6 +187,7 @@ export class AuthService {
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
       user,
+      customer,
       beamsToken: this.pushNotification.generateToken(email),
     }
   }
