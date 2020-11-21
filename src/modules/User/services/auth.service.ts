@@ -2,6 +2,7 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CouponType } from "@app/modules/Payment/payment.types"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerCreateInput, CustomerDetail } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import {
@@ -44,7 +45,8 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly pushNotification: PushNotificationService,
     private readonly email: EmailService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly utils: UtilsService
   ) {}
 
   async signupUser({
@@ -55,6 +57,7 @@ export class AuthService {
     details,
     referrerId,
     utm,
+    info,
   }: {
     email: string
     password: string
@@ -63,6 +66,7 @@ export class AuthService {
     details: CustomerDetailCreateInput
     referrerId?: string
     utm?: UTMInput
+    info?: any
   }) {
     // 1. Register the user on Auth0
     let userAuth0ID
@@ -117,6 +121,7 @@ export class AuthService {
       utm
     )
 
+    // TODO: Ensure
     await this.email.sendSubmittedEmailEmail(user)
 
     let coupon
@@ -140,10 +145,38 @@ export class AuthService {
       }
     }
 
-    return { user, tokenData, customer, coupon }
+    let returnUser = user
+    let returnCust = customer
+    console.log(`return user before !!info clause`)
+    console.log(returnUser)
+    if (!!info) {
+      console.log(`in !!info clause`)
+      let userInfo = this.utils.getInfoStringAt(info, "user")
+      console.log(userInfo)
+      returnUser = await this.prisma.binding.query.user(
+        {
+          where: { id: user.id },
+        },
+        userInfo
+      )
+      console.log("queried return user")
+      console.log(userInfo)
+      console.log(returnUser)
+
+      let custInfo = this.utils.getInfoStringAt(info, "customer")
+      returnCust = await this.prisma.binding.query.customer(
+        {
+          where: { id: customer.id },
+        },
+        custInfo
+      )
+    }
+    console.log(`exit !!info clause`)
+
+    return { user: returnUser, tokenData, customer: returnCust, coupon }
   }
 
-  async loginUser({ email, password, requestUser }) {
+  async loginUser({ email, password, requestUser, info }) {
     if (!!requestUser) {
       throw new Error(`user is already logged in`)
     }
@@ -159,21 +192,19 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
-    const user = await this.prisma.client.user({ email })
+    const userInfo = this.utils.getInfoStringAt(info, "user")
+    const user = await this.prisma.binding.query.user(
+      { where: { email } },
+      userInfo
+    )
+
+    const custInfo = this.utils.getInfoStringAt(info, "customer")
     const customer = head(
       await this.prisma.binding.query.customers(
         {
           where: { user: { id: user?.id } },
         },
-        // Hardcoded as per harvest needs. Ideally should read from INFO
-        `{
-        id
-        status
-        admissions {
-          id
-          admissable
-        }
-      }`
+        custInfo
       )
     )
 
@@ -425,7 +456,9 @@ export class AuthService {
       id
       status
       detail {
+        id
         shippingAddress {
+          id
           zipCode
           state
           city

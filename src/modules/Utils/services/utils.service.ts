@@ -1,16 +1,20 @@
 import crypto from "crypto"
 import * as fs from "fs"
 
+import { CustomerFieldsResolver } from "@app/modules/Customer/fields/customer.fields.resolver"
+import { UserFieldsResolver } from "@app/modules/User/fields/user.fields"
 import { DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import { Location, Reservation } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
-import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
+import { camelCase, get, isObject, mapKeys, snakeCase } from "lodash"
 import moment from "moment"
 import states from "us-state-converter"
 
 import { bottomSizeRegex } from "../../Product/constants"
+
+const graphqlFields = require("graphql-fields")
 
 enum ProductSize {
   XXS = "XXS",
@@ -25,7 +29,7 @@ enum ProductSize {
 
 @Injectable()
 export class UtilsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private) {}
 
   abbreviateState(state: string) {
     let abbr
@@ -268,6 +272,60 @@ export class UtilsService {
    */
   parseJSONFile = (path: string) => {
     return JSON.parse(fs.readFileSync(process.cwd() + `/${path}.json`, "utf-8"))
+  }
+
+  // Get an info string for a field nested somewhere inside the info object
+  getInfoStringAt = (info, path: string) => {
+    if (typeof info === "string") {
+      throw new Error(`Unable to parse string info. Need to implement.`)
+    }
+
+    let fieldsToIgnore = []
+    if (["user", "customer"].includes(path)) {
+      fieldsToIgnore = this.getFieldsToIgnore(path as "user" | "customer")
+    }
+
+    const fields = graphqlFields(info)
+    const subField = get(fields, path)
+    if (subField === undefined) {
+      return null
+    }
+    return this.fieldsToInfoString(subField, fieldsToIgnore)
+  }
+
+  private getFieldsToIgnore = (field: "user" | "customer") => {
+    let fields
+    switch (field) {
+      case "user":
+        fields = Object.getOwnPropertyNames(new UserFieldsResolver(null, null))
+        break
+      case "customer":
+        fields = Object.getOwnPropertyNames(
+          new CustomerFieldsResolver(null, null)
+        )
+        break
+    }
+    return fields
+  }
+
+  private fieldsToInfoString = (fields: any, fieldsToIgnore: []) => {
+    // Base case
+    if (Object.keys(fields).length === 0) {
+      return ``
+    }
+
+    // Recursive case
+    let string = `{`
+    const keys = Object.keys(fields)
+    for (const key of keys) {
+      string += ` ${key}`
+      const subFields = this.fieldsToInfoString(fields[key], [])
+      if (subFields === "") {
+        continue
+      }
+      string += ` ${subFields}`
+    }
+    return string + ` }`
   }
 
   private caseify = (obj: any, caseFunc: (str: string) => string): any => {

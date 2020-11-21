@@ -1,7 +1,9 @@
 import { User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { PrismaService } from "@app/prisma/prisma.service"
+import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { fieldsMap } from "graphql-fields-list"
 import { pick } from "lodash"
 
 import { AuthService } from "../services/auth.service"
@@ -10,15 +12,17 @@ import { AuthService } from "../services/auth.service"
 export class AuthMutationsResolver {
   constructor(
     private readonly auth: AuthService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly prisma: PrismaService
   ) {}
 
   @Mutation()
-  async login(@Args() { email, password }, @User() requestUser) {
+  async login(@Args() { email, password }, @User() requestUser, @Info() info) {
     const data = await this.auth.loginUser({
       email: email.toLowerCase(),
       password,
       requestUser,
+      info,
     })
     return data
   }
@@ -26,7 +30,8 @@ export class AuthMutationsResolver {
   @Mutation()
   async signup(
     @Args() { email, password, firstName, lastName, details, referrerId, utm },
-    @Application() application
+    @Application() application,
+    @Info() info
   ) {
     const { user, tokenData, customer, coupon } = await this.auth.signupUser({
       email: email.toLowerCase(),
@@ -36,6 +41,7 @@ export class AuthMutationsResolver {
       details,
       referrerId,
       utm,
+      info,
     })
 
     // Add them to segment and track their account creation event
@@ -75,6 +81,7 @@ export class AuthMutationsResolver {
       ...utmFormatted,
     })
 
+    console.log(tokenData)
     return {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
