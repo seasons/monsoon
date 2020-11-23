@@ -89,7 +89,7 @@ export class PaymentService {
 
       return shippingOption.id
     } catch (e) {
-      throw new Error(`Error adding shipping charge: ${e}`)
+      throw new Error(e)
     }
   }
 
