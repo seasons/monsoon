@@ -7,6 +7,7 @@ import {
   PaymentService,
 } from "@modules/Payment/index"
 import {
+  CouponType,
   InvoicesDataLoader,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
@@ -53,6 +54,13 @@ export class CustomerFieldsResolver {
               referrer {
                 id
               }
+              utm {
+                source
+                medium
+                campaign
+                term
+                content
+              }
             }
             `,
       },
@@ -62,14 +70,23 @@ export class CustomerFieldsResolver {
     let coupon
     const custWithData = (await prismaLoader.load(customer.id)) as any
 
+    // Referral coupon
     const wasReferred = !!custWithData?.referrer?.id
     const hasNeverSubscribed = !custWithData?.membership?.id
-
     if (wasReferred && hasNeverSubscribed) {
       // TODO: If we ever need to query this field for N users at a time,
       // cache this result so we don't hit a N+1 issue
       coupon = await this.paymentService.checkCoupon(
         process.env.REFERRAL_COUPON_ID
+      )
+    }
+
+    // Throwing fits campaign
+    const isFromThrowingFits = custWithData?.utm?.source == "throwingfits"
+    const isTwentyFivePercentOff = custWithData?.utm?.term == "twentyfivep"
+    if (isFromThrowingFits && isTwentyFivePercentOff) {
+      coupon = await this.paymentService.checkCoupon(
+        process.env.THROWING_FITS_COUPON_ID
       )
     }
 
