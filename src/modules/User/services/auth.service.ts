@@ -119,28 +119,7 @@ export class AuthService {
 
     await this.email.sendSubmittedEmailEmail(user)
 
-    let coupon
-
-    if (isValidReferral) {
-      const couponID = process.env.REFERRAL_COUPON_ID
-      const chargebeeCoupon = await chargebee.coupon
-        .retrieve(couponID)
-        .request()
-      if (chargebeeCoupon.coupon.status === "active") {
-        coupon = {
-          id: couponID,
-          percentage: chargebeeCoupon.coupon.discount_percentage,
-          amount: chargebeeCoupon.coupon.discount_amount,
-          type: upperFirst(
-            camelCase(chargebeeCoupon.coupon.discount_type)
-          ) as CouponType,
-        }
-      } else {
-        throw new Error("Coupon expired")
-      }
-    }
-
-    return { user, tokenData, customer, coupon }
+    return { user, tokenData, customer }
   }
 
   async loginUser({ email, password, requestUser }) {
