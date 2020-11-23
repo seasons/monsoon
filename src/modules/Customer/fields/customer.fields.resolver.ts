@@ -90,7 +90,7 @@ export class CustomerFieldsResolver {
     if (
       utm?.source?.toLowerCase() === "throwingfits" &&
       utm?.medium?.toLowerCase() === "podcast" &&
-      utm?.campaign?.toLowerCase() === "tfq42020" &&
+      utm?.campaign?.toLowerCase() === "tfq42020"
     ) {
       coupon = await this.paymentService.checkCoupon(
         process.env.THROWING_FITS_COUPON_ID
