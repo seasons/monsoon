@@ -27,9 +27,13 @@ enum ProductSize {
   XXXL = "XXXL",
 }
 
+// TODO: As needed, support other types. We just need to update the code
+// that filtres out computed fields
+type InfoStringPath = "user" | "customer"
+
 @Injectable()
 export class UtilsService {
-  constructor(private readonly prisma: PrismaService, private) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   abbreviateState(state: string) {
     let abbr
@@ -275,14 +279,14 @@ export class UtilsService {
   }
 
   // Get an info string for a field nested somewhere inside the info object
-  getInfoStringAt = (info, path: string) => {
+  getInfoStringAt = (info, path: InfoStringPath) => {
     if (typeof info === "string") {
       throw new Error(`Unable to parse string info. Need to implement.`)
     }
 
     let fieldsToIgnore = []
     if (["user", "customer"].includes(path)) {
-      fieldsToIgnore = this.getFieldsToIgnore(path as "user" | "customer")
+      fieldsToIgnore = this.getFieldsToIgnore(path)
     }
 
     const fields = graphqlFields(info)
@@ -293,7 +297,7 @@ export class UtilsService {
     return this.fieldsToInfoString(subField, fieldsToIgnore)
   }
 
-  private getFieldsToIgnore = (field: "user" | "customer") => {
+  private getFieldsToIgnore = (field: InfoStringPath) => {
     let fields
     switch (field) {
       case "user":
@@ -308,7 +312,7 @@ export class UtilsService {
     return fields
   }
 
-  private fieldsToInfoString = (fields: any, fieldsToIgnore: []) => {
+  private fieldsToInfoString = (fields: any, fieldsToIgnore: string[]) => {
     // Base case
     if (Object.keys(fields).length === 0) {
       return ``
@@ -318,6 +322,9 @@ export class UtilsService {
     let string = `{`
     const keys = Object.keys(fields)
     for (const key of keys) {
+      if (fieldsToIgnore.includes(key)) {
+        continue
+      }
       string += ` ${key}`
       const subFields = this.fieldsToInfoString(fields[key], [])
       if (subFields === "") {

@@ -3,7 +3,6 @@ import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import { fieldsMap } from "graphql-fields-list"
 import { pick } from "lodash"
 
 import { AuthService } from "../services/auth.service"
@@ -12,8 +11,7 @@ import { AuthService } from "../services/auth.service"
 export class AuthMutationsResolver {
   constructor(
     private readonly auth: AuthService,
-    private readonly segment: SegmentService,
-    private readonly prisma: PrismaService
+    private readonly segment: SegmentService
   ) {}
 
   @Mutation()
