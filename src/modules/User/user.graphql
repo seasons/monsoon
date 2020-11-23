@@ -69,7 +69,6 @@ type SignupPayload {
   user: User!
   customer: Customer!
   beamsToken: String!
-  coupon: Coupon
 }
 
 type ResetPasswordPayload {
