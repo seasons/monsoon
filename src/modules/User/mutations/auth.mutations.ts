@@ -79,7 +79,6 @@ export class AuthMutationsResolver {
       ...utmFormatted,
     })
 
-    console.log(tokenData)
     return {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
