@@ -5,6 +5,7 @@ export enum SectionTitle {
   FeaturedCollection = "Featured collection",
   RecentlyViewed = "Recently viewed",
   Designers = "Designers",
+  Categories = "Browse By Style",
 }
 
 @Injectable()
@@ -24,6 +25,11 @@ export class HomepageService {
         type: "CollectionGroups",
         __typename: "HomepageSection",
         title: SectionTitle.FeaturedCollection,
+      },
+      {
+        type: "Categories",
+        __typename: "HomepageSection",
+        title: SectionTitle.Categories,
       },
       {
         type: "Brands",

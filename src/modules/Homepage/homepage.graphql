@@ -24,11 +24,17 @@ type HomepageSection {
   title: String
 }
 
-union HomepageResult = Product | Collection | Brand
+union HomepageResult =
+    Product
+  | Collection
+  | Brand
+  | Category
+  | HomepageProductRail
 
 enum HomePageSectionType {
   CollectionGroups
   Products
   HomepageProductRails
   Brands
+  Categories
 }
