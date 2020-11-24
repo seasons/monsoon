@@ -166,33 +166,39 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
+    let returnUser
     const userInfo = this.utils.getInfoStringAt(info, "user")
-    const user = await this.prisma.binding.query.user(
-      { where: { email } },
-      userInfo
-    )
-
-    const custInfo = this.utils.getInfoStringAt(info, "customer")
-    const customer = head(
-      await this.prisma.binding.query.customers(
-        {
-          where: { user: { id: user?.id } },
-        },
-        custInfo
+    if (!!userInfo) {
+      returnUser = await this.prisma.binding.query.user(
+        { where: { email } },
+        userInfo
       )
-    )
+    }
 
     // If the user is a Customer, make sure that the account has been approved
-    if (!user) {
+    if (!returnUser) {
       throw new Error("User record not found")
+    }
+
+    let returnCust
+    const custInfo = this.utils.getInfoStringAt(info, "customer")
+    if (!!custInfo) {
+      returnCust = head(
+        await this.prisma.binding.query.customers(
+          {
+            where: { user: { email } },
+          },
+          custInfo
+        )
+      )
     }
 
     return {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
-      user,
-      customer,
+      user: returnUser,
+      customer: returnCust,
       beamsToken: this.pushNotification.generateToken(email),
     }
   }
