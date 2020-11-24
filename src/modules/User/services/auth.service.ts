@@ -125,7 +125,6 @@ export class AuthService {
     let returnUser = user
     let returnCust = customer
     if (!!info) {
-      console.log(`in !!info clause`)
       let userInfo = this.utils.getInfoStringAt(info, "user")
       if (!!userInfo) {
         returnUser = await this.prisma.binding.query.user(
