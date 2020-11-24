@@ -297,16 +297,33 @@ export class UtilsService {
     return this.fieldsToInfoString(subField, fieldsToIgnore)
   }
 
-  private getFieldsToIgnore = (field: InfoStringPath) => {
-    let fields
+  private getFieldsToIgnore = (field: InfoStringPath | string) => {
+    let fields = []
+
+    // TODO: Ideally, these lists should come from the properties
+    // of the respective field resolver classes. If we move towards
+    // using this function more often, we should update that. We
+    // hardcode it for now because using the actual classes caused
+    // cyclical import errors
     switch (field) {
       case "user":
-        fields = Object.getOwnPropertyNames(new UserFieldsResolver(null, null))
+        fields = [
+          "beamsToken",
+          "links",
+          "fullName",
+          "customer",
+          "completeAccountURL",
+        ]
         break
       case "customer":
-        fields = Object.getOwnPropertyNames(
-          new CustomerFieldsResolver(null, null)
-        )
+        fields = [
+          "onboardingSteps",
+          "invoices",
+          "transactions",
+          "shouldRequestFeedback",
+          "coupon",
+          "paymentPlan",
+        ]
         break
     }
     return fields
@@ -326,7 +343,10 @@ export class UtilsService {
         continue
       }
       string += ` ${key}`
-      const subFields = this.fieldsToInfoString(fields[key], [])
+      const subFields = this.fieldsToInfoString(
+        fields[key],
+        this.getFieldsToIgnore(key)
+      )
       if (subFields === "") {
         continue
       }

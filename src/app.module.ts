@@ -1,5 +1,6 @@
 import * as util from "util"
 
+import { CustomerModule } from "@modules/Customer/customer.module"
 import { DataLoaderInterceptor } from "@modules/DataLoader/interceptors/dataloader.interceptor"
 import { Module, forwardRef } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
@@ -13,7 +14,6 @@ import {
   BlogModule,
   CollectionModule,
   CronModule,
-  CustomerModule,
   FAQModule,
   FitPicModule,
   HomepageModule,

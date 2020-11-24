@@ -101,12 +101,11 @@ export class AuthService {
       lastName
     )
 
+    // 4. Create the customer in our database
     // There will be a race condition in the case where two members with the same first name sign up at the same time
     const usersWithSameFirstName = await this.prisma.client.users({
       where: { firstName },
     })
-
-    // 4. Create the customer in our database
     const {
       customer,
       isValidReferral,
@@ -125,31 +124,28 @@ export class AuthService {
 
     let returnUser = user
     let returnCust = customer
-    console.log(`return user before !!info clause`)
-    console.log(returnUser)
     if (!!info) {
       console.log(`in !!info clause`)
       let userInfo = this.utils.getInfoStringAt(info, "user")
-      console.log(userInfo)
-      returnUser = await this.prisma.binding.query.user(
-        {
-          where: { id: user.id },
-        },
-        userInfo
-      )
-      console.log("queried return user")
-      console.log(userInfo)
-      console.log(returnUser)
+      if (!!userInfo) {
+        returnUser = await this.prisma.binding.query.user(
+          {
+            where: { id: user.id },
+          },
+          userInfo
+        )
+      }
 
       let custInfo = this.utils.getInfoStringAt(info, "customer")
-      returnCust = await this.prisma.binding.query.customer(
-        {
-          where: { id: customer.id },
-        },
-        custInfo
-      )
+      if (!!custInfo) {
+        returnCust = await this.prisma.binding.query.customer(
+          {
+            where: { id: customer.id },
+          },
+          custInfo
+        )
+      }
     }
-    console.log(`exit !!info clause`)
 
     return { user: returnUser, tokenData, customer: returnCust }
   }
