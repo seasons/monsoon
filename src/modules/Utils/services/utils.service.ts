@@ -1,20 +1,17 @@
 import crypto from "crypto"
 import * as fs from "fs"
 
-import { CustomerFieldsResolver } from "@app/modules/Customer/fields/customer.fields.resolver"
-import { UserFieldsResolver } from "@app/modules/User/fields/user.fields"
 import { DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import { Location, Reservation } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
+import graphqlFields from "graphql-fields"
 import { camelCase, get, isObject, mapKeys, snakeCase } from "lodash"
 import moment from "moment"
 import states from "us-state-converter"
 
 import { bottomSizeRegex } from "../../Product/constants"
-
-const graphqlFields = require("graphql-fields")
 
 enum ProductSize {
   XXS = "XXS",
@@ -28,7 +25,7 @@ enum ProductSize {
 }
 
 // TODO: As needed, support other types. We just need to update the code
-// that filtres out computed fields
+// that filters out computed fields
 type InfoStringPath = "user" | "customer"
 
 @Injectable()
