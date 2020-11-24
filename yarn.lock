@@ -8889,11 +8889,6 @@ graphql-extensions@^0.12.4:
     apollo-server-env "^2.4.5"
     apollo-server-types "^0.5.1"
 
-graphql-fields-list@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/graphql-fields-list/-/graphql-fields-list-2.2.0.tgz#152a852f4ed740bc9d3e1d27f190fd5928f440aa"
-  integrity sha512-vBMQ/5wakZeTGeUyTI/aNUXora0jgs2tMaVbhvJhX8631KNvV2myczr1IcFDB8ZvlLMB09tftA2KfaMDoGd1Jg==
-
 graphql-fields@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/graphql-fields/-/graphql-fields-2.0.3.tgz#5e68dff7afbb202be4f4f40623e983b22c96ab8f"
