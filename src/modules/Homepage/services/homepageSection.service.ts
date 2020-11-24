@@ -1,3 +1,4 @@
+import { IMGIX_BASE } from "@app/modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 
@@ -117,6 +118,48 @@ export class HomepageSectionService {
           }`
         )
         return brands
+
+      case SectionTitle.Categories:
+        const categorySlugs = [
+          "coats",
+          "jackets",
+          "hoodies-and-sweatshirts",
+          "shirts",
+          "pants",
+          "tees",
+        ]
+        const categoryImages = {
+          pants: "homepage-categories/Pants.jpg",
+          "hoodies-and-sweatshirts": "homepage-categories/Hoodies.jpg",
+          jackets: "homepage-categories/Jackets.jpg",
+          coats: "homepage-categories/Coats.jpg",
+          tees: "homepage-categories/Tees.jpg",
+          shirts: "homepage-categories/Shirts.jpg",
+        }
+        const categories = await this.prisma.binding.query.categories({
+          where: {
+            slug_in: categorySlugs,
+          },
+        })
+        return categories
+          .map(category => ({
+            ...category,
+            __typename: "Category",
+            name:
+              category.slug === "hoodies-and-sweatshirts"
+                ? "Hoodies"
+                : category.name,
+            image: [
+              {
+                url: IMGIX_BASE + categoryImages[category.slug],
+              },
+            ],
+          }))
+          .sort((catA, catB) => {
+            const catAIdx = categorySlugs.findIndex(slug => slug === catA.slug)
+            const catBIdx = categorySlugs.findIndex(slug => slug === catB.slug)
+            return catAIdx - catBIdx
+          })
 
       default:
         const rails = await this.prisma.binding.query.homepageProductRails(
