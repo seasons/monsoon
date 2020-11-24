@@ -188,10 +188,10 @@ export class EmailService {
       reservationNumber: reservation.reservationNumber,
       returnedItems: returnedPhysicalProducts.map(a => a.seasonsUID),
     })
-    await this.sendPreRenderedTransactionalEmail({
-      user,
-      payload,
-      emailId: "ReservationReturnConfirmation",
+    await this.sendEmail({
+      to: process.env.OPERATIONS_ADMIN_EMAIL,
+      subject: payload.subject,
+      html: payload.body,
     })
   }
 
