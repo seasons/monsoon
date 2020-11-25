@@ -28,15 +28,18 @@ const run = async () => {
       authorizationsCount
     }
   }`
-  const x = await ps.binding.query.customers(
-    {
-      where: {
-        status_in: ["Invited", "Created", "Waitlisted", "Authorized"],
+  try {
+    const x = await ps.binding.query.user(
+      {
+        where: {
+          id: "ckhqv491y026o09065zcro1a2",
+        },
       },
-    },
-    triageCustomerInfo
-  )
-  console.log(x)
+      `{id beamsToken}`
+    )
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 run()

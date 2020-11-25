@@ -2,6 +2,7 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CouponType } from "@app/modules/Payment/payment.types"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerCreateInput, CustomerDetail } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import {
@@ -44,7 +45,8 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly pushNotification: PushNotificationService,
     private readonly email: EmailService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly utils: UtilsService
   ) {}
 
   async signupUser({
@@ -55,6 +57,7 @@ export class AuthService {
     details,
     referrerId,
     utm,
+    info,
   }: {
     email: string
     password: string
@@ -63,6 +66,7 @@ export class AuthService {
     details: CustomerDetailCreateInput
     referrerId?: string
     utm?: UTMInput
+    info?: any
   }) {
     // 1. Register the user on Auth0
     let userAuth0ID
@@ -97,12 +101,11 @@ export class AuthService {
       lastName
     )
 
+    // 4. Create the customer in our database
     // There will be a race condition in the case where two members with the same first name sign up at the same time
     const usersWithSameFirstName = await this.prisma.client.users({
       where: { firstName },
     })
-
-    // 4. Create the customer in our database
     const {
       customer,
       isValidReferral,
@@ -119,10 +122,34 @@ export class AuthService {
 
     await this.email.sendSubmittedEmailEmail(user)
 
-    return { user, tokenData, customer }
+    let returnUser = user
+    let returnCust = customer
+    if (!!info) {
+      let userInfo = this.utils.getInfoStringAt(info, "user")
+      if (!!userInfo) {
+        returnUser = await this.prisma.binding.query.user(
+          {
+            where: { id: user.id },
+          },
+          userInfo
+        )
+      }
+
+      let custInfo = this.utils.getInfoStringAt(info, "customer")
+      if (!!custInfo) {
+        returnCust = await this.prisma.binding.query.customer(
+          {
+            where: { id: customer.id },
+          },
+          custInfo
+        )
+      }
+    }
+
+    return { user: returnUser, tokenData, customer: returnCust }
   }
 
-  async loginUser({ email, password, requestUser }) {
+  async loginUser({ email, password, requestUser, info }) {
     if (!!requestUser) {
       throw new Error(`user is already logged in`)
     }
@@ -138,18 +165,39 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
-    const user = await this.prisma.client.user({ email })
+    let returnUser
+    const userInfo = this.utils.getInfoStringAt(info, "user")
+    if (!!userInfo) {
+      returnUser = await this.prisma.binding.query.user(
+        { where: { email } },
+        userInfo
+      )
+    }
 
     // If the user is a Customer, make sure that the account has been approved
-    if (!user) {
+    if (!returnUser) {
       throw new Error("User record not found")
+    }
+
+    let returnCust
+    const custInfo = this.utils.getInfoStringAt(info, "customer")
+    if (!!custInfo) {
+      returnCust = head(
+        await this.prisma.binding.query.customers(
+          {
+            where: { user: { email } },
+          },
+          custInfo
+        )
+      )
     }
 
     return {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
-      user,
+      user: returnUser,
+      customer: returnCust,
       beamsToken: this.pushNotification.generateToken(email),
     }
   }
@@ -387,7 +435,9 @@ export class AuthService {
       id
       status
       detail {
+        id
         shippingAddress {
+          id
           zipCode
           state
           city

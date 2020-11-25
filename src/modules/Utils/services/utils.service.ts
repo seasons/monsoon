@@ -6,7 +6,8 @@ import { Injectable } from "@nestjs/common"
 import { Location, Reservation } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
-import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
+import graphqlFields from "graphql-fields"
+import { camelCase, get, isObject, mapKeys, snakeCase } from "lodash"
 import moment from "moment"
 import states from "us-state-converter"
 
@@ -22,6 +23,10 @@ enum ProductSize {
   XXL = "XXL",
   XXXL = "XXXL",
 }
+
+// TODO: As needed, support other types. We just need to update the code
+// that filters out computed fields
+type InfoStringPath = "user" | "customer"
 
 @Injectable()
 export class UtilsService {
@@ -268,6 +273,83 @@ export class UtilsService {
    */
   parseJSONFile = (path: string) => {
     return JSON.parse(fs.readFileSync(process.cwd() + `/${path}.json`, "utf-8"))
+  }
+
+  // Get an info string for a field nested somewhere inside the info object
+  getInfoStringAt = (info, path: InfoStringPath) => {
+    if (typeof info === "string") {
+      throw new Error(`Unable to parse string info. Need to implement.`)
+    }
+
+    let fieldsToIgnore = []
+    if (["user", "customer"].includes(path)) {
+      fieldsToIgnore = this.getFieldsToIgnore(path)
+    }
+
+    const fields = graphqlFields(info)
+    const subField = get(fields, path)
+    if (subField === undefined) {
+      return null
+    }
+    return this.fieldsToInfoString(subField, fieldsToIgnore)
+  }
+
+  private getFieldsToIgnore = (field: InfoStringPath | string) => {
+    let fields = []
+
+    // TODO: Ideally, these lists should come from the properties
+    // of the respective field resolver classes. If we move towards
+    // using this function more often, we should update that. We
+    // hardcode it for now because using the actual classes caused
+    // cyclical import errors
+    switch (field) {
+      case "user":
+        fields = [
+          "beamsToken",
+          "links",
+          "fullName",
+          "customer",
+          "completeAccountURL",
+        ]
+        break
+      case "customer":
+        fields = [
+          "onboardingSteps",
+          "invoices",
+          "transactions",
+          "shouldRequestFeedback",
+          "coupon",
+          "paymentPlan",
+        ]
+        break
+    }
+    return fields
+  }
+
+  private fieldsToInfoString = (fields: any, fieldsToIgnore: string[]) => {
+    // Base case
+    if (Object.keys(fields).length === 0) {
+      return ``
+    }
+
+    // Recursive case
+    let string = `{`
+    const keys = Object.keys(fields)
+    for (const key of keys) {
+      if (fieldsToIgnore.includes(key)) {
+        continue
+      }
+      string += ` ${key}`
+      const subFields = this.fieldsToInfoString(
+        fields[key],
+        this.getFieldsToIgnore(key)
+      )
+      if (subFields === "") {
+        continue
+      }
+      string += ` ${subFields}`
+    }
+    return string + ` }`
   }
 
   private caseify = (obj: any, caseFunc: (str: string) => string): any => {

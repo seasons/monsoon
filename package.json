@@ -94,6 +94,7 @@
     "faker": "^4.1.0",
     "graphql": "^14.5.7",
     "graphql-binding": "^2.5.2",
+    "graphql-fields": "^2.0.3",
     "graphql-import": "^0.7.1",
     "graphql-tools": "^4.0.5",
     "graphql-upload": "^10.0.0",
