@@ -1,4 +1,7 @@
-import { IMGIX_BASE } from "@app/modules/Image/services/image.service"
+import {
+  IMGIX_BASE,
+  ImageService,
+} from "@app/modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 
@@ -43,7 +46,10 @@ const ProductFragment = `
 
 @Injectable()
 export class HomepageSectionService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly image: ImageService
+  ) {}
 
   async getResultsForSection(sectionTitle: SectionTitle, args, customerId?) {
     switch (sectionTitle) {
@@ -122,44 +128,50 @@ export class HomepageSectionService {
       case SectionTitle.Categories:
         const categorySlugs = [
           "coats",
+          "hoodies",
           "jackets",
-          "hoodies-and-sweatshirts",
           "shirts",
           "pants",
           "tees",
+          "sweatshirts",
+          "shorts",
         ]
         const categoryImages = {
           pants: "homepage-categories/Pants.jpg",
-          "hoodies-and-sweatshirts": "homepage-categories/Hoodies.jpg",
+          hoodies: "homepage-categories/Hoodies.jpg",
           jackets: "homepage-categories/Jackets.jpg",
           coats: "homepage-categories/Coats.jpg",
           tees: "homepage-categories/Tees.jpg",
           shirts: "homepage-categories/Shirts.jpg",
+          sweatshirts: "homepage-categories/Sweatshirts.jpg",
+          shorts: "homepage-categories/Shorts.jpg",
         }
         const categories = await this.prisma.binding.query.categories({
           where: {
             slug_in: categorySlugs,
           },
         })
-        return categories
-          .map(category => ({
-            ...category,
-            __typename: "Category",
-            name:
-              category.slug === "hoodies-and-sweatshirts"
-                ? "Hoodies"
-                : category.name,
-            image: [
-              {
-                url: IMGIX_BASE + categoryImages[category.slug],
-              },
-            ],
-          }))
-          .sort((catA, catB) => {
-            const catAIdx = categorySlugs.findIndex(slug => slug === catA.slug)
-            const catBIdx = categorySlugs.findIndex(slug => slug === catB.slug)
-            return catAIdx - catBIdx
+        const categoriesWithImages = await Promise.all(
+          categories.map(category => {
+            const imageUrl = IMGIX_BASE + categoryImages[category.slug]
+            return this.image
+              .resizeImage(imageUrl, "Small", {})
+              .then(imageUrl => ({
+                ...category,
+                __typename: "Category",
+                image: [
+                  {
+                    url: imageUrl,
+                  },
+                ],
+              }))
           })
+        )
+        return categoriesWithImages.sort((catA, catB) => {
+          const catAIdx = categorySlugs.findIndex(slug => slug === catA.slug)
+          const catBIdx = categorySlugs.findIndex(slug => slug === catB.slug)
+          return catAIdx - catBIdx
+        })
 
       default:
         const rails = await this.prisma.binding.query.homepageProductRails(
