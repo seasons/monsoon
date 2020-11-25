@@ -9,7 +9,7 @@ import { BlogService } from "./services/blog.service"
 import { WebflowService } from "./services/webflow.service"
 
 @Module({
-  // controllers: [WebflowController],
+  controllers: [WebflowController],
   imports: [UtilsModule, PushNotificationModule, PrismaModule],
   providers: [BlogService, BlogQueriesResolver, WebflowService],
   exports: [BlogService],
