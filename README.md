@@ -212,3 +212,12 @@ data: {
 
 - [GraphQL Resolvers: Best Practices](https://medium.com/paypal-engineering/graphql-resolvers-best-practices-cd36fdbcef55)
 - [The ultimate guide to Schema Stitching in GraphQL](https://blog.hasura.io/the-ultimate-guide-to-schema-stitching-in-graphql-f30178ac0072/)
+
+## If you need to replace the DB
+
+In the event of a DEFCON 5 where we need to drop the current database and replace it with a replica, make sure to do the following afterwards in order to ensure complete the transition:
+
+1. Update the .pgpass and .env files in the [`monsoon-scripts` folder on s3](https://s3.console.aws.amazon.com/s3/buckets/monsoon-scripts?region=us-east-1&tab=objects)
+2. Update the [DB connection in looker](https://looker.seasons.nyc/admin/connections)
+3. Update the warehouse settings on [segment](https://app.segment.com/seasons/warehouses/96nhBHbiKBpL8JnEbPa99n/overview) to load into the new DB.
+4. Update the warehouse settings on [stitch](https://app.stitchdata.com/client/171943/pipeline/v2/destinations/268584/edit) (addresses chargebee, shippo, stripe)

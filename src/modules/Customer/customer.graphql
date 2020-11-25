@@ -109,6 +109,7 @@ type Customer {
   membership: CustomerMembership
   onboardingSteps: [OnboardingStep!]!
   admissions: CustomerAdmissionsData
+  utm: UTMData
   authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
