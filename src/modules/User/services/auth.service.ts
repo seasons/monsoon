@@ -166,12 +166,16 @@ export class AuthService {
     }
 
     let returnUser
-    const userInfo = this.utils.getInfoStringAt(info, "user")
+    const userInfo = this.utils.getInfoStringAt(info, "user") || `{id}`
     if (!!userInfo) {
       returnUser = await this.prisma.binding.query.user(
         { where: { email } },
         userInfo
       )
+    }
+
+    if (!returnUser) {
+      throw new Error(`user with email ${email} not found`)
     }
 
     let returnCust
