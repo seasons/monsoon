@@ -166,7 +166,7 @@ export class AuthService {
     }
 
     let returnUser
-    const userInfo = this.utils.getInfoStringAt(info, "user")
+    const userInfo = this.utils.getInfoStringAt(info, "user") || `{id}`
     if (!!userInfo) {
       returnUser = await this.prisma.binding.query.user(
         { where: { email } },
@@ -174,9 +174,8 @@ export class AuthService {
       )
     }
 
-    // If the user is a Customer, make sure that the account has been approved
     if (!returnUser) {
-      throw new Error("User record not found")
+      throw new Error(`user with email ${email} not found`)
     }
 
     let returnCust
