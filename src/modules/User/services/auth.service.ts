@@ -174,11 +174,6 @@ export class AuthService {
       )
     }
 
-    // If the user is a Customer, make sure that the account has been approved
-    if (!returnUser) {
-      throw new Error("User record not found")
-    }
-
     let returnCust
     const custInfo = this.utils.getInfoStringAt(info, "customer")
     if (!!custInfo) {
