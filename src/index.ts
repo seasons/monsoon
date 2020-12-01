@@ -4,10 +4,10 @@ import { NestFactory } from "@nestjs/core"
 import { ExpressAdapter } from "@nestjs/platform-express"
 import * as Sentry from "@sentry/node"
 import bodyParser from "body-parser"
-import cors from "cors"
 import express from "express"
 
 import { AppModule } from "./app.module"
+import { cors } from "./middleware/cors"
 import { checkJwt } from "./middleware/jwt"
 import { createGetUserMiddleware } from "./middleware/user"
 import { prisma } from "./prisma"
@@ -26,26 +26,24 @@ const handleErrors = (err, req, res, next) => {
 }
 
 server.use(
-  cors({
-    origin: [
-      /spring-staging\.herokuapp\.com/,
-      "seedling-staging.herokuapp.com",
-      /flare\.now\.sh$/,
-      /seasons\.nyc$/,
-      /wearseasons\.com$/,
-      /localhost/,
-      /vercel\.app/,
-    ],
-    credentials: true,
-  }),
+  cors(prisma),
   checkJwt,
   createGetUserMiddleware(prisma),
   bodyParser.json(),
   handleErrors
 )
 
+/**
+ * Explicitly handle cors preflight options ourselves, appropriate headers
+ * are set via cors middleware.
+ */
+server.options("*", (_req, res) => {
+  res.status(200).end()
+})
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server))
+
   await app.listen(process.env.PORT ? process.env.PORT : 4000, () =>
     console.log(`🚀 Server ready at ${process.env.PORT || 4000}`)
   )
