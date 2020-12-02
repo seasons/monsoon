@@ -89,7 +89,7 @@ export class PaymentService {
 
       return shippingOption.id
     } catch (e) {
-      throw new Error(e)
+      throw new Error(JSON.stringify(e))
     }
   }
 

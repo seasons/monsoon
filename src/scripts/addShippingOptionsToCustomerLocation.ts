@@ -85,61 +85,71 @@ const updateCustomers = async () => {
         }
       }
     }`
+
   const customers = await ps.binding.query.customers({}, customerData)
   const originState = warehouseLocation.state
 
+  let count = 0
+
   for (const customer of customers) {
-    const shippingAddress = customer.detail?.shippingAddress
-    if (shippingAddress?.id && shippingAddress?.shippingOptions?.length === 0) {
-      const shippingOptions = [] as ShippingOption[]
+    const shippingOptions = customer?.detail?.shippingAddress?.shippingOptions
+    count++
+    console.log(`updating ${count} of ${customers.length}`)
+    if (shippingOptions?.length > 2) {
+      const shippingAddress = customer.detail?.shippingAddress
+      console.log("fixing ", customer.id)
+      if (shippingAddress?.id) {
+        const shippingOptions = [] as ShippingOption[]
 
-      let destinationState = shippingAddress.state
+        let destinationState = shippingAddress.state
 
-      if (destinationState?.length > 2) {
-        // Resets location state to abbreviated
-        const abbr = states.abbr(destinationState)
-        destinationState = abbr
-      }
-
-      if (
-        !destinationState ||
-        !originState ||
-        destinationState?.length > 2 ||
-        originState?.length > 2
-      ) {
-        console.log("incomplete data", customer.id)
-      } else {
-        for (const method of shippingMethods) {
-          const stateData =
-            shippingOptionsData[method.code].from[originState].to[
-              destinationState
-            ]
-
-          const shippingOption = await ps.client.createShippingOption({
-            origin: { connect: { id: warehouseLocation.id } },
-            destination: { connect: { id: shippingAddress.id } },
-            shippingMethod: { connect: { id: method.id } },
-            externalCost: stateData.price,
-            averageDuration: stateData.averageDuration,
-          })
-
-          shippingOptions.push(shippingOption)
+        if (destinationState?.length > 2) {
+          // Resets location state to abbreviated
+          const abbr = states.abbr(destinationState)
+          destinationState = abbr
         }
 
-        await ps.client.updateLocation({
-          where: { id: shippingAddress.id },
-          data: {
-            state: destinationState,
-            shippingOptions: {
-              connect: shippingOptions.map(s => ({ id: s.id })),
+        if (
+          !destinationState ||
+          !originState ||
+          destinationState?.length > 2 ||
+          originState?.length > 2
+        ) {
+          console.log("incomplete data", customer.id)
+        } else {
+          for (const method of shippingMethods) {
+            const stateData =
+              shippingOptionsData[method.code].from[originState].to[
+                destinationState
+              ]
+
+            const shippingOption = await ps.client.createShippingOption({
+              origin: { connect: { id: warehouseLocation.id } },
+              destination: { connect: { id: shippingAddress.id } },
+              shippingMethod: { connect: { id: method.id } },
+              externalCost: stateData.price,
+              averageDuration: stateData.averageDuration,
+            })
+
+            shippingOptions.push(shippingOption)
+          }
+
+          console.log("shippingOptions to add: ", shippingOptions)
+
+          await ps.client.updateLocation({
+            where: { id: shippingAddress.id },
+            data: {
+              shippingOptions: {
+                set: shippingOptions.map(s => ({ id: s.id })),
+              },
             },
-          },
-        })
+          })
+        }
       }
     }
   }
 }
 
 // createShippingMethods()
-updateLocationStatesToAbbr()
-// updateCustomers()
+// updateLocationStatesToAbbr()
+updateCustomers()
