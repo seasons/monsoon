@@ -128,7 +128,7 @@ export class CustomerService {
       where: { id: shippingAddressID },
       data: {
         shippingOptions: {
-          connect: shippingOptions.map(s => ({ id: s.id })),
+          set: shippingOptions.map(s => ({ id: s.id })),
         },
       },
     })
