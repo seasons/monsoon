@@ -7,7 +7,7 @@ import bodyParser from "body-parser"
 import express from "express"
 
 import { AppModule } from "./app.module"
-import { cors } from "./middleware/cors"
+import { createCorsMiddleware } from "./middleware/cors"
 import { checkJwt } from "./middleware/jwt"
 import { createGetUserMiddleware } from "./middleware/user"
 import { prisma } from "./prisma"
@@ -25,23 +25,17 @@ const handleErrors = (err, req, res, next) => {
   }
 }
 
-server.use(
-  cors(prisma),
-  checkJwt,
-  createGetUserMiddleware(prisma),
-  bodyParser.json(),
-  handleErrors
-)
-
-/**
- * Explicitly handle cors preflight options ourselves, appropriate headers
- * are set via cors middleware.
- */
-server.options("*", (_req, res) => {
-  res.status(200).end()
-})
-
 async function bootstrap() {
+  const cors = await createCorsMiddleware(prisma)
+
+  server.use(
+    cors,
+    checkJwt,
+    createGetUserMiddleware(prisma),
+    bodyParser.json(),
+    handleErrors
+  )
+
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server))
 
   await app.listen(process.env.PORT ? process.env.PORT : 4000, () =>

@@ -59,7 +59,6 @@ console.log(scheduleModule)
     GraphQLModule.forRootAsync({
       useFactory: async () =>
         ({
-          cors: false,
           typeDefs: await importSchema("src/schema.graphql"),
           path: "/",
           installSubscriptionHandlers: true,
