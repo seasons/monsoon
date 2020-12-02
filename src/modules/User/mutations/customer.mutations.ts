@@ -1,9 +1,6 @@
 import { Customer, User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { EmailService } from "@app/modules/Email/services/email.service"
-import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
-import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { UserInputError } from "apollo-server"
 import { pick } from "lodash"
@@ -14,9 +11,6 @@ import { CustomerService } from "../services/customer.service"
 export class CustomerMutationsResolver {
   constructor(
     private readonly customerService: CustomerService,
-    private readonly prisma: PrismaService,
-    private readonly email: EmailService,
-    private readonly pushNotification: PushNotificationService,
     private readonly segment: SegmentService
   ) {}
 
@@ -54,7 +48,7 @@ export class CustomerMutationsResolver {
 
   @Mutation()
   async updateCustomer(@Args() args, @Info() info, @Application() application) {
-    return this.customerService.updateCustomer(args, info, application)
+    return await this.customerService.updateCustomer(args, info, application)
   }
 
   @Mutation()
@@ -62,12 +56,13 @@ export class CustomerMutationsResolver {
     @Customer() sessionCustomer,
     @Application() application
   ) {
-    const returnValue = await this.customerService.triageCustomer(
+    const { status } = await this.customerService.triageCustomer(
       {
         id: sessionCustomer.id,
       },
-      application
+      application,
+      false
     )
-    return returnValue
+    return status
   }
 }

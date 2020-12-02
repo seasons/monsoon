@@ -1,3 +1,4 @@
+import { ImageModule } from "@modules/Image/image.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
@@ -10,7 +11,7 @@ import { HomepageService } from "./services/homepage.service"
 import { HomepageSectionService } from "./services/homepageSection.service"
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, ImageModule],
   providers: [
     HomepageFieldsResolver,
     HomepageQueriesResolver,

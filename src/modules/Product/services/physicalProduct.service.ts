@@ -87,7 +87,10 @@ export class PhysicalProductService {
     }
 
     if (this.changingInventoryStatus(newData, physProdBeforeUpdate)) {
-      if (physProdBeforeUpdate.inventoryStatus === "Stored") {
+      if (
+        physProdBeforeUpdate.inventoryStatus === "Stored" &&
+        newData.inventoryStatus !== "Offloaded"
+      ) {
         throw new ApolloError(unstoreErrorMessage)
       }
 
@@ -116,15 +119,6 @@ export class PhysicalProductService {
     } as OffloadPhysicalProductIfNeededInput)
 
     await this.prisma.client.updatePhysicalProduct({ where, data: newData })
-
-    // Do this at the end so it only happens *after* any status changes have occured
-    if (this.changingInventoryStatus(newData, physProdBeforeUpdate)) {
-      await this.prisma.client.createPhysicalProductInventoryStatusChange({
-        old: physProdBeforeUpdate.inventoryStatus,
-        new: newData.inventoryStatus,
-        physicalProduct: { connect: where },
-      })
-    }
 
     return await this.prisma.binding.query.physicalProduct({ where }, info)
   }
@@ -251,10 +245,24 @@ export class PhysicalProductService {
 
     // If we're just disconnecting a warehouse location, then let it be
     if (newData.warehouseLocation.disconnect) {
-      if (newData.inventoryStatus !== "NonReservable") {
-        throw new Error(
-          "If disconnecting a warehouse location from a physical product, you must set it to NonReservable"
-        )
+      switch (physProdBeforeUpdate.inventoryStatus) {
+        case "Stored":
+          if (
+            !!newData.inventoryStatus &&
+            newData.inventoryStatus !== "Stored"
+          ) {
+            throw new Error(
+              "If disconnecting a warehouse location from a stored physical product, you must keep it stored"
+            )
+          }
+          break
+        default:
+          if (newData.inventoryStatus !== "NonReservable") {
+            throw new Error(
+              "If disconnecting a warehouse location from an unstored physical product, you must set it to NonReservable"
+            )
+          }
+          break
       }
     } else {
       // If we're setting a warehouse location, apply constraints and checks
@@ -432,9 +440,6 @@ export class PhysicalProductService {
       }
 
       // Core logic
-      // Note that we do not create a PhysicalProductInventoryStatusChange record here
-      // because this function is only called from the updatePhysicalProduct, where we
-      // do create that record.
       await this.updateVariantCountsIfNeeded({
         where,
         inventoryStatus: "Offloaded",

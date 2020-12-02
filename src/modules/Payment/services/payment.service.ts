@@ -1,18 +1,22 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { CustomerService } from "@app/modules/User"
+import { CustomerService } from "@app/modules/User/services/customer.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerStatus, PaymentPlanTier, Plan, User } from "@app/prisma"
+import { PaymentPlanTier, User } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
 import { camelCase, get, head, identity, snakeCase, upperFirst } from "lodash"
 import { DateTime } from "luxon"
+import states from "us-state-converter"
 
 import {
   BillingAddress,
   Card,
+  Coupon,
+  CouponType,
   Invoice,
   InvoicesDataLoader,
   RefundInvoiceInput,
@@ -24,6 +28,7 @@ import { PaymentUtilsService } from "./payment.utils.service"
 @Injectable()
 export class PaymentService {
   constructor(
+    private readonly shippingService: ShippingService,
     private readonly authService: AuthService,
     private readonly customerService: CustomerService,
     private readonly emailService: EmailService,
@@ -33,7 +38,75 @@ export class PaymentService {
     private readonly segment: SegmentService
   ) {}
 
+  async addShippingCharge(customer, shippingCode) {
+    try {
+      const customerWithShippingData = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+        {
+          id
+          membership {
+            id
+            subscriptionId
+          }
+          detail {
+            id
+            shippingAddress {
+              id
+              shippingOptions {
+                id
+                externalCost
+                shippingMethod {
+                  id
+                  code
+                }
+              }
+            }
+          }
+        }
+      `
+      )
+
+      const { membership, detail } = customerWithShippingData
+
+      const subscriptionID = membership.subscriptionId
+      const shippingOptions = detail?.shippingAddress?.shippingOptions
+      const shippingOption = shippingOptions.find(
+        option => option.shippingMethod.code === shippingCode
+      )
+      const externalCost = shippingOption.externalCost
+
+      if (externalCost !== 0) {
+        await chargebee.invoice
+          .charge_addon({
+            subscription_id: subscriptionID,
+            addon_id: shippingOption.shippingMethod.code?.toLowerCase(),
+            addon_unit_price: externalCost,
+            addon_quantity: 1,
+          })
+          .request()
+      }
+
+      return shippingOption.id
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
+
   async changeCustomerPlan(planID, customer) {
+    const reservations = await this.prisma.client
+      .customer({ id: customer.id })
+      .reservations({ orderBy: "createdAt_DESC" })
+    const latestReservation = head(reservations)
+    if (
+      latestReservation &&
+      !["Completed", "Cancelled"].includes(latestReservation.status)
+    ) {
+      throw new Error(
+        `You must return your current reservation before changing your plan.`
+      )
+    }
+
     try {
       const customerWithMembershipData = await this.prisma.binding.query.customer(
         { where: { id: customer.id } },
@@ -68,121 +141,166 @@ export class PaymentService {
         },
       })
     } catch (e) {
-      throw new Error(`Error updating to new plan: ${e}`)
+      throw new Error(`Error updating to new plan: ${e.message}`)
     }
   }
 
-  async applePayUpdatePaymentMethod(planID, token, customer) {
-    const customerWithUserData = await this.prisma.binding.query.customer(
-      { where: { id: customer.id } },
-      `
-        {
-          id
-          user {
+  async updatePaymentMethodWithStripeToken(planID, token, customer, tokenType) {
+    try {
+      const customerWithUserData = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+          {
             id
-            firstName
-            lastName
-            email
+            user {
+              id
+              firstName
+              lastName
+              email
+            }
+            billingInfo {
+              id
+            }
           }
-        }
-      `
-    )
+        `
+      )
 
-    const { user } = customerWithUserData
+      const { user, billingInfo } = customerWithUserData
 
-    const billingAddress = {
-      first_name: user.firstName || "",
-      last_name: user.lastName || "",
-      line1: token.card.addressLine1 || "",
-      line2: token.card?.addressLine2 || "",
-      city: token.card.addressCity || "",
-      state: token.card.addressState || "",
-      zip: token.card.addressZip || "",
-      country: token.card.addressCountry || "",
-    }
-
-    await chargebee.customer
-      .update_billing_info(user.id, {
-        billing_address: billingAddress,
-      })
-      .request()
-
-    const subscriptions = await chargebee.subscription
-      .list({
-        plan_id: { in: [planID] },
-        customer_id: { is: user.id },
-      })
-      .request()
-
-    const subscription = head(subscriptions.list) as any
-
-    await chargebee.subscription
-      .update(subscription.subscription.id, {
-        plan_id: planID,
-        payment_method: {
-          tmp_token: token.tokenId,
-          type: "apple_pay",
-        },
-      })
-      .request()
-  }
-
-  async applePayCheckout(planID, token, customer) {
-    const customerWithUserData = await this.prisma.binding.query.customer(
-      { where: { id: customer.id } },
-      `
-        {
-          id
-          user {
-            id
-            firstName
-            lastName
-            email
-          }
-        }
-      `
-    )
-
-    const { user } = customerWithUserData
-
-    const billingAddress = {
-      first_name: user.firstName || "",
-      last_name: user.lastName || "",
-      line1: token.card.addressLine1 || "",
-      line2: token.card?.addressLine2 || "",
-      city: token.card.addressCity || "",
-      state: token.card.addressState || "",
-      zip: token.card.addressZip || "",
-      country: token.card.addressCountry || "",
-    }
-
-    const createdCustomerResult = await chargebee.customer
-      .create({
-        id: user.id,
+      const billingAddress = {
         first_name: user.firstName || "",
         last_name: user.lastName || "",
-        email: user.email || "",
-        billing_address: billingAddress,
+        line1: token.card.addressLine1 || "",
+        line2: token.card?.addressLine2 || "",
+        city: token.card.addressCity || "",
+        state: token.card.addressState || "",
+        zip: token.card.addressZip || "",
+        country: token.card.addressCountry?.toUpperCase() || "",
+      }
+
+      await chargebee.customer
+        .update_billing_info(user.id, {
+          billing_address: billingAddress,
+        })
+        .request()
+
+      const subscriptions = await chargebee.subscription
+        .list({
+          plan_id: { in: [planID] },
+          customer_id: { is: user.id },
+        })
+        .request()
+
+      const subscription = head(subscriptions.list) as any
+
+      await chargebee.subscription
+        .update(subscription.subscription.id, {
+          plan_id: planID,
+          payment_method: {
+            tmp_token: token.tokenId,
+            type: tokenType ? tokenType : "apple_pay",
+          },
+        })
+        .request()
+
+      const last4 = token?.card?.last4
+      const brand = token?.card?.brand
+      const billingInfoID = billingInfo?.id
+
+      await this.prisma.client.updateBillingInfo({
+        where: { id: billingInfoID },
+        data: { brand, last_digits: last4 },
+      })
+    } catch (e) {
+      throw new Error(`Error updating your payment method ${e}`)
+    }
+  }
+
+  async stripeTokenCheckout(planID, token, customer, tokenType, couponID) {
+    const customerWithUserData = await this.prisma.binding.query.customer(
+      { where: { id: customer.id } },
+      `
+        {
+          id
+          user {
+            id
+            firstName
+            lastName
+            email
+          }
+        }
+      `
+    )
+
+    const { user } = customerWithUserData
+
+    const billingAddress = {
+      first_name: user.firstName || "",
+      last_name: user.lastName || "",
+      line1: token.card.addressLine1 || "",
+      line2: token.card?.addressLine2 || "",
+      city: token.card.addressCity || "",
+      state: token.card.addressState || "",
+      zip: token.card.addressZip || "",
+      country: token.card.addressCountry?.toUpperCase() || "",
+    }
+
+    let chargebeeCustomer
+    let existingCustomer
+
+    try {
+      // The customer may exist if their first card was declined
+      existingCustomer = await chargebee.customer.retrieve(user.id).request()
+    } catch (e) {
+      // continue
+    }
+
+    if (existingCustomer?.customer?.id) {
+      chargebeeCustomer = existingCustomer
+    } else {
+      chargebeeCustomer = await chargebee.customer
+        .create({
+          id: user.id,
+          first_name: user.firstName || "",
+          last_name: user.lastName || "",
+          email: user.email || "",
+          billing_address: billingAddress,
+        })
+        .request()
+    }
+
+    // Create the payment method. If one already exists, delete it
+    // and create a new one using the passed token.
+    let paymentSource
+    const customerPaymentSources = await chargebee.payment_source
+      .list({
+        "customer_id[is]": chargebeeCustomer.customer.id,
       })
       .request()
-
-    const paymentSource = await chargebee.payment_source
+    paymentSource = head(customerPaymentSources.list)
+    if (!!paymentSource) {
+      await chargebee.payment_source
+        .delete(paymentSource.payment_source.id)
+        .request()
+    }
+    paymentSource = await chargebee.payment_source
       .create_using_temp_token({
         tmp_token: token.tokenId,
-        type: "apple_pay",
-        customer_id: createdCustomerResult.customer.id,
+        type: tokenType ? tokenType : "apple_pay",
+        customer_id: chargebeeCustomer.customer.id,
       })
       .request()
 
     const subscription = await chargebee.subscription
-      .create_for_customer(createdCustomerResult.customer.id, {
+      .create_for_customer(chargebeeCustomer.customer.id, {
         plan_id: planID,
+        coupon_ids: !!couponID ? [couponID] : [],
       })
       .request()
 
     const subscriptionID = subscription.subscription.id
 
-    await this.chargebeeSubscriptionCreated(
+    await this.createPrismaSubscription(
       user.id,
       subscription.customer,
       paymentSource.payment_source.card,
@@ -355,9 +473,8 @@ export class PaymentService {
         //   },
         //   where: { id: customer.id },
         // })
-      } else {
-        throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
       }
+      throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
     }
   }
 
@@ -388,13 +505,14 @@ export class PaymentService {
     email,
     firstName,
     lastName,
-    phoneNumber
+    phoneNumber,
+    couponId
   ) {
     return await new Promise((resolve, reject) => {
       chargebee.hosted_page
         .checkout_new({
           subscription: {
-            plan_id: this.prismaPlanToChargebeePlanId(planId),
+            plan_id: planId,
           },
           customer: {
             id: userId,
@@ -404,6 +522,7 @@ export class PaymentService {
             phone: phoneNumber,
           },
           redirect_url: "https://seasons.nyc/chargebee-mobile-checkout-success",
+          coupon_ids: !!couponId ? [couponId] : [],
         })
         .request((error, result) => {
           if (error) {
@@ -464,7 +583,7 @@ export class PaymentService {
     }
   }
 
-  async chargebeeSubscriptionCreated(
+  async createPrismaSubscription(
     userID: string,
     chargebeeCustomer: any,
     card: any,
@@ -506,7 +625,7 @@ export class PaymentService {
     })
 
     // Send welcome to seasons email
-    await this.emailService.sendWelcomeToSeasonsEmail(prismaUser)
+    await this.emailService.sendSubscribedEmail(prismaUser)
   }
 
   async updateChargebeeBillingAddress(
@@ -650,6 +769,26 @@ export class PaymentService {
       ?.map(this.formatTransaction)
   }
 
+  async checkCoupon(couponID): Promise<Coupon> {
+    try {
+      const coupon = await chargebee.coupon.retrieve(couponID).request()
+      if (coupon.coupon.status === "active") {
+        return {
+          id: couponID,
+          percentage: coupon.coupon.discount_percentage,
+          amount: coupon.coupon.discount_amount,
+          type: upperFirst(
+            camelCase(coupon.coupon.discount_type)
+          ) as CouponType,
+        }
+      } else {
+        throw new Error("Coupon expired")
+      }
+    } catch {
+      throw new Error("Coupon not found")
+    }
+  }
+
   async refundInvoice({
     invoiceId,
     refundAmount,
@@ -668,6 +807,102 @@ export class PaymentService {
       })
       .request()
     return true
+  }
+
+  async updatePaymentAndShipping(
+    billingAddress,
+    phoneNumber,
+    shippingAddress,
+    customer,
+    user
+  ) {
+    const {
+      city: billingCity,
+      postalCode: billingPostalCode,
+      state: billingState,
+      street1: billingStreet1,
+      street2: billingStreet2,
+    } = billingAddress
+    const getAbbreviatedState = originalState => {
+      if (!originalState) {
+        throw new Error(`Invalid state: ${originalState}`)
+      }
+      if (originalState.length === 2) {
+        return originalState
+      }
+      if (originalState.length > 2) {
+        const abbr = this.utils.abbreviateState(originalState)
+        if (abbr) {
+          return abbr
+        } else {
+          return originalState?.toUpperCase()
+        }
+      }
+      throw new Error(`Invalid state: ${originalState}`)
+    }
+
+    const abbreviatedBillingState = getAbbreviatedState(billingState)
+
+    const {
+      isValid: billingAddressIsValid,
+    } = await this.shippingService.shippoValidateAddress({
+      name: user.firstName,
+      street1: billingStreet1,
+      city: billingCity,
+      state: abbreviatedBillingState,
+      zip: billingPostalCode,
+    })
+    if (!billingAddressIsValid) {
+      throw new Error("Your billing address is invalid")
+    }
+
+    // Update user's billing address on chargebee
+    await this.updateChargebeeBillingAddress(
+      user.id,
+      billingStreet1,
+      billingStreet2,
+      billingCity,
+      abbreviatedBillingState,
+      billingPostalCode
+    )
+
+    // Update customer's billing address
+    await this.updateCustomerBillingAddress(
+      user.id,
+      customer.id,
+      billingStreet1,
+      billingStreet2,
+      billingCity,
+      abbreviatedBillingState,
+      billingPostalCode
+    )
+
+    // Update customer's shipping address & phone number. Unlike before, will
+    // accept all valid addresses. Will NOT throw an error if the address is
+    // not in NYC.
+    const shippingState = getAbbreviatedState(shippingAddress.state)
+    await this.customerService.updateCustomerDetail(
+      user,
+      customer,
+      { ...shippingAddress, state: shippingState },
+      phoneNumber
+    )
+
+    // Adds the customer's shipping options to their location record
+    const customerLocationID = await this.prisma.client
+      .customer({
+        id: customer.id,
+      })
+      .detail()
+      .shippingAddress()
+      .id()
+
+    await this.customerService.addCustomerLocationShippingOptions(
+      shippingState,
+      customerLocationID
+    )
+
+    return null
   }
 
   /*

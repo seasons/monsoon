@@ -1,4 +1,5 @@
 # import Reservation from "../Reservation/reservation.graphql"
+# import Coupon from "../Payment/payment.graphql"
 
 type Query {
   me: Me
@@ -21,6 +22,7 @@ type Query {
     first: Int
     last: Int
   ): UserConnection! @hasRole(roles: [Admin])
+  zipcodeServiced(zipcode: String!): Boolean!
 }
 
 type Mutation {
@@ -30,7 +32,9 @@ type Mutation {
     firstName: String!
     lastName: String!
     details: CustomerDetailCreateInput
-  ): AuthPayload!
+    referrerId: String
+    utm: UTMInput
+  ): SignupPayload!
   login(email: String!, password: String!): AuthPayload!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
     @hasRole(roles: [Admin])
@@ -38,9 +42,27 @@ type Mutation {
     @isAuthenticated
   resetPassword(email: String!): ResetPasswordPayload! # Do not put @isAuthenticated guard here because only users who can't login need to reset passwords!
   refreshToken(refreshToken: String!): String!
+  createInterestedUser(email: String!, zipcode: String): InterestedUser!
+}
+
+input UTMInput {
+  source: String
+  medium: String
+  term: String
+  content: String
+  campaign: String
 }
 
 type AuthPayload {
+  token: String!
+  refreshToken: String!
+  expiresIn: Int!
+  user: User!
+  customer: Customer!
+  beamsToken: String!
+}
+
+type SignupPayload {
   token: String!
   refreshToken: String!
   expiresIn: Int!
@@ -61,15 +83,23 @@ type Me {
   savedItems: [BagItem!]
 }
 
+type UserLinks {
+  mixpanel: String!
+  sendgrid: String!
+  intercom: String!
+}
+
 type User {
   id: ID!
   auth0Id: String!
   email: String!
+  emails: [EmailReceipt!]!
   firstName: String!
   lastName: String!
   fullName: String!
   role: UserRole!
   roles: [UserRole!]!
+  links: UserLinks
   customer: Customer
   createdAt: DateTime!
   updatedAt: DateTime!

@@ -1,7 +1,6 @@
-import { ImageService } from "@app/modules/Image"
+import { ImageService } from "@app/modules/Image/services/image.service"
 import { IMGIX_BASE, S3_BASE } from "@app/modules/Image/services/image.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
-import { ShippingUtilsService } from "@app/modules/Shipping/services/shipping.utils.service"
 import {
   Customer,
   FitPicUpdateInput,
@@ -11,13 +10,13 @@ import {
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
+import zipcodes from "zipcodes"
 
 @Injectable()
 export class FitPicService {
   constructor(
     private readonly image: ImageService,
     private readonly prisma: PrismaService,
-    private readonly shippingUtils: ShippingUtilsService,
     private readonly pushNotification: PushNotificationService
   ) {}
 
@@ -26,11 +25,13 @@ export class FitPicService {
     user: User,
     customer: Customer
   ) {
+    console.log("1. uploading image", image)
     const imageData = await this.image.uploadImage(image, {
       imageName: `${user.id}-${Date.now()}.jpg`,
     })
+    console.log("11. imageData", imageData)
     const imgixUrl = imageData.url.replace(S3_BASE, IMGIX_BASE)
-
+    console.log("12. imgixUrl", imgixUrl)
     const fitPic = await this.prisma.client.createFitPic({
       user: {
         connect: { id: user.id },
@@ -41,13 +42,17 @@ export class FitPicService {
         create: { ...imageData, url: imgixUrl },
       },
     })
+    console.log("13. fitPic", fitPic)
 
-    await this.prisma.client.updateUser({
+    const updatedUser = await this.prisma.client.updateUser({
       data: {
         fitPics: { connect: [{ id: fitPic.id }] },
       },
       where: { id: user.id },
     })
+
+    console.log("14. updatedUser", updatedUser)
+    console.log("15. fitPic.id", fitPic.id)
 
     return fitPic.id
   }
@@ -105,14 +110,14 @@ export class FitPicService {
     ) {
       return location
     } else if (location?.create?.zipCode) {
-      const detail = await this.shippingUtils.getCityAndStateFromZipCode(
-        location.create.zipCode
-      )
+      const zipCode = location.create.zipCode
+      const state = zipcodes.lookup(zipCode)?.state
+      const city = zipcodes.lookup(zipCode)?.city
       return {
         create: {
           zipCode: location.create.zipCode,
-          city: detail.city,
-          state: detail.state,
+          city,
+          state,
         },
       }
     } else {

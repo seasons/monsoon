@@ -1,35 +1,85 @@
+import fs from "fs"
+
 import { ApplicationType } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { Customer } from "@app/prisma/prisma.binding"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
   BillingInfoUpdateDataInput,
+  CustomerAdmissionsDataCreateWithoutCustomerInput,
   CustomerStatus,
+  CustomerUpdateInput,
   CustomerWhereUniqueInput,
   ID_Input,
+  InAdmissableReason,
+  ShippingOption,
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
+import { pick } from "lodash"
+import { DateTime } from "luxon"
+import states from "us-state-converter"
 
-import { AdmissionsService } from "./admissions.service"
+import { AdmissionsService, TriageFuncResult } from "./admissions.service"
 import { AuthService } from "./auth.service"
 
-type TriageCustomerResult = "Waitlisted" | "Authorized"
+type TriageCustomerStatusResult = "Waitlisted" | "Authorized"
+
+type TriageCustomerResult = {
+  status: TriageCustomerStatusResult
+  waitlistReason?: InAdmissableReason
+}
+
+type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
+  customer: Customer
+  dryRun: boolean
+  inServiceableZipcode?: boolean
+  allAccessEnabled?: boolean
+}
 
 @Injectable()
 export class CustomerService {
+  triageCustomerInfo = `{
+    id
+    status
+    detail {
+      shippingAddress {
+        zipCode
+      }
+      topSizes
+      waistSizes
+    }
+    user {
+      id
+      firstName
+      lastName
+      email
+      emails {
+        emailId
+      }
+    }
+    admissions {
+      authorizationsCount
+    }
+  }`
+
   constructor(
     private readonly auth: AuthService,
     private readonly prisma: PrismaService,
     private readonly shipping: ShippingService,
     private readonly admissions: AdmissionsService,
+    private readonly segment: SegmentService,
     private readonly email: EmailService,
     private readonly pushNotification: PushNotificationService,
-    private readonly segment: SegmentService
+    private readonly sms: SMSService,
+    private readonly utils: UtilsService
   ) {}
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
@@ -40,15 +90,58 @@ export class CustomerService {
     })
   }
 
+  async addCustomerLocationShippingOptions(
+    destinationState,
+    shippingAddressID
+  ) {
+    const shippingMethods = await this.prisma.client.shippingMethods()
+    const warehouseLocation = await this.prisma.client.location({
+      slug:
+        process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+        "seasons-cleaners-official",
+    })
+    const shippingOptionsData = JSON.parse(
+      fs.readFileSync(
+        process.cwd() + "/src/modules/Shipping/shippingOptionsData.json",
+        "utf-8"
+      )
+    )
+    const originState = warehouseLocation.state
+    const shippingOptions = [] as ShippingOption[]
+
+    for (const method of shippingMethods) {
+      const stateData =
+        shippingOptionsData[method.code].from[originState].to[destinationState]
+
+      const shippingOption = await this.prisma.client.createShippingOption({
+        origin: { connect: { id: warehouseLocation.id } },
+        destination: { connect: { id: shippingAddressID } },
+        shippingMethod: { connect: { id: method.id } },
+        externalCost: stateData.price,
+        averageDuration: stateData.averageDuration,
+      })
+
+      shippingOptions.push(shippingOption)
+    }
+
+    await this.prisma.client.updateLocation({
+      where: { id: shippingAddressID },
+      data: {
+        shippingOptions: {
+          connect: shippingOptions.map(s => ({ id: s.id })),
+        },
+      },
+    })
+  }
+
   async addCustomerDetails({ details, status }, customer, user, info) {
-    // If any of these keys is present, the entire address must be present and valid.
     const groupedKeys = ["name", "address1", "address2", "city", "state"]
-    if (
+    const isUpdatingShippingAddress =
       details.shippingAddress?.create &&
       Object.keys(details.shippingAddress?.create)?.some(key =>
         groupedKeys.includes(key)
       )
-    ) {
+    if (isUpdatingShippingAddress) {
       const {
         name,
         address1: street1,
@@ -73,6 +166,15 @@ export class CustomerService {
       if (!shippingAddressIsValid) {
         throw new Error("Shipping address is invalid")
       }
+
+      if (!!state && state.length > 2) {
+        const abbreviatedState = this.utils.abbreviateState(state)
+        if (abbreviatedState) {
+          details.shippingAddress.create.state = abbreviatedState
+        } else {
+          throw new Error("Shipping address state is invalid")
+        }
+      }
     }
 
     await this.prisma.client.updateCustomer({
@@ -86,6 +188,21 @@ export class CustomerService {
       },
       where: { id: customer.id },
     })
+
+    if (isUpdatingShippingAddress) {
+      const state = details.shippingAddress?.create?.state?.toUpperCase()
+      if (!state) {
+        throw new Error("State missing in shipping address update")
+      }
+      const shippingAddressID = await this.prisma.client
+        .customer({
+          id: customer.id,
+        })
+        .detail()
+        .shippingAddress()
+        .id()
+      this.addCustomerLocationShippingOptions(state, shippingAddressID)
+    }
 
     // If a status was passed, update the customer status in prisma
     if (!!status) {
@@ -153,10 +270,18 @@ export class CustomerService {
     const {
       city: shippingCity,
       postalCode: shippingPostalCode,
-      state: shippingState,
       street1: shippingStreet1,
       street2: shippingStreet2,
     } = shippingAddress
+
+    let shippingState
+    const shippingAddressState = shippingAddress?.state
+    if (!!shippingAddressState && shippingAddressState.length > 2) {
+      shippingState = this.utils.abbreviateState(shippingAddressState)
+    } else {
+      shippingState = shippingAddressState.toUpperCase()
+    }
+
     const {
       isValid: shippingAddressIsValid,
     } = await this.shipping.shippoValidateAddress({
@@ -171,56 +296,59 @@ export class CustomerService {
     }
 
     // Update the user's shipping address
-    const detailID = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .id()
     const shippingAddressData = {
-      slug: `${user.firstName}-${user.lastName}-shipping-address`,
+      slug: `${user.firstName}-${user.lastName}-shipping-address-${Date.now()}`,
       name: `${user.firstName} ${user.lastName}`,
       city: shippingCity,
       zipCode: shippingPostalCode,
-      state: shippingState,
+      state: shippingState?.toUpperCase(),
       address1: shippingStreet1,
       address2: shippingStreet2,
     }
-    if (detailID) {
-      const shippingAddressID = await this.prisma.client
-        .customer({ id: customer.id })
-        .detail()
-        .shippingAddress()
-        .id()
-      const shippingAddress = await this.prisma.client.upsertLocation({
-        create: shippingAddressData,
-        update: shippingAddressData,
-        where: { id: shippingAddressID },
-      })
-      if (shippingAddress) {
-        await this.prisma.client.updateCustomerDetail({
-          data: {
+
+    const custWithData = await this.prisma.binding.query.customer(
+      {
+        where: { id: customer.id },
+      },
+      `{
+        admissions {
+          id
+        }
+      }`
+    )
+    const data = {
+      detail: {
+        upsert: {
+          create: {
             phoneNumber,
-            shippingAddress: { connect: { id: shippingAddress.id } },
+            shippingAddress: { create: shippingAddressData },
           },
-          where: { id: detailID },
-        })
-      }
-    } else {
-      await this.prisma.client.updateCustomer({
-        data: {
-          detail: {
-            create: {
-              phoneNumber,
-              shippingAddress: {
+          update: {
+            phoneNumber,
+            shippingAddress: {
+              upsert: {
                 create: shippingAddressData,
+                update: shippingAddressData,
               },
             },
           },
         },
-        where: { id: customer.id },
-      })
-    }
+      },
+    } as CustomerUpdateInput
 
-    return await this.prisma.client.customer({ id: customer.id })
+    // If they already have an admissions record, update allAccessEnabled
+    if (!!custWithData?.admissions?.id) {
+      const {
+        detail: { allAccessEnabled },
+      } = this.admissions.zipcodeAllowed(shippingPostalCode)
+      data.admissions = {
+        update: { allAccessEnabled },
+      }
+    }
+    return await this.prisma.client.updateCustomer({
+      where: { id: customer.id },
+      data,
+    })
   }
 
   async updateCustomerBillingInfo({
@@ -242,46 +370,234 @@ export class CustomerService {
     }
   }
 
-  async triageCustomer(
-    where: CustomerWhereUniqueInput,
-    application: ApplicationType
-  ): Promise<TriageCustomerResult> {
+  async updateCustomer(args, info, application: ApplicationType) {
+    let { where, data, withContact = true } = args
     const customer = await this.prisma.binding.query.customer(
-      { where },
+      {
+        where,
+      },
       `{
-        status
+        id
+        user {
+          id
+          email
+          emails {
+            emailId
+          }
+          firstName
+          lastName
+        }
         detail {
           shippingAddress {
             zipCode
           }
-          topSizes
-          waistSizes
         }
-        user {
-          id
-          firstName
-          lastName
+        status
+        admissions {
+          authorizationsCount
         }
       }`
     )
 
-    if (!["Created", "Invited"].includes(customer.status)) {
-      throw new ApolloError(
-        `Invalid customer status: ${customer.status}. Can only triage an "Invited" or "Created" customer`
+    if (
+      ["Waitlisted", "Invited"].includes(customer.status) &&
+      data.status &&
+      data.status === "Authorized"
+    ) {
+      const {
+        pass: haveSufficientInventory,
+        detail: { availableBottomStyles, availableTopStyles },
+      } = await this.admissions.haveSufficientInventoryToServiceCustomer(where)
+
+      if (!haveSufficientInventory) {
+        throw new Error("Can not authorize user. Insufficient inventory")
+      }
+
+      const {
+        pass: inServiceableZipcode,
+        detail: { allAccessEnabled },
+      } = this.admissions.zipcodeAllowed(
+        customer.detail.shippingAddress.zipCode
+      )
+
+      if (!inServiceableZipcode) {
+        throw new Error(`Can not authorize user. In nonserviceable zipcode`)
+      }
+
+      const now = DateTime.local()
+      const nowDate = now.toISO()
+      const twoDaysFromNow = now.plus({ days: 2 }).toISO()
+      data = {
+        ...data,
+        authorizedAt: nowDate,
+        admissions: {
+          upsert: {
+            create: {
+              authorizationWindowClosesAt: twoDaysFromNow,
+              admissable: true,
+              inServiceableZipcode: true,
+              allAccessEnabled,
+              authorizationsCount: this.calculateNumAuthorizations(
+                customer,
+                data.status,
+                false
+              ),
+            },
+            update: {
+              authorizationWindowClosesAt: twoDaysFromNow,
+              allAccessEnabled,
+              authorizationsCount: this.calculateNumAuthorizations(
+                customer,
+                data.status,
+                false
+              ),
+            },
+          },
+        },
+      } as CustomerUpdateInput
+
+      if (withContact) {
+        // Normal users
+        if (customer.status === "Waitlisted") {
+          await this.email.sendAuthorizedEmail(
+            customer.user as User,
+            "manual",
+            [...availableBottomStyles, ...availableTopStyles]
+          )
+        }
+        // Users we invited off the admin
+        if (customer.status === "Invited") {
+          await this.email.sendPriorityAccessEmail(customer.user as User)
+        }
+
+        // either kind of user
+        await this.pushNotification.pushNotifyUser({
+          email: customer.user.email,
+          pushNotifID: "CompleteAccount",
+        })
+        await this.sms.sendSMSById({
+          to: { id: customer.user.id },
+          renderData: { name: customer.user.firstName },
+          smsId: "CompleteAccount",
+        })
+      }
+
+      this.segment.trackBecameAuthorized(customer.user.id, {
+        previousStatus: customer.status,
+        firstName: customer.user.firstName,
+        lastName: customer.user.lastName,
+        email: customer.user.email,
+        method: "Manual",
+        application,
+      })
+    }
+    return this.prisma.binding.mutation.updateCustomer({ where, data }, info)
+  }
+
+  async triageCustomer(
+    where: CustomerWhereUniqueInput,
+    application: ApplicationType,
+    dryRun: boolean,
+    customer: Customer = {} as Customer
+  ): Promise<TriageCustomerResult> {
+    if (Object.keys(customer).length === 0) {
+      customer = await this.prisma.binding.query.customer(
+        { where },
+        this.triageCustomerInfo
       )
     }
 
-    let status = "Waitlisted" as TriageCustomerResult
+    if (!this.admissions.isTriageable(customer.status) && !dryRun) {
+      throw new ApolloError(
+        `Invalid customer status: ${customer.status}. Can not triage a ${customer.status} customer`
+      )
+    }
+    let status = "Waitlisted" as TriageCustomerStatusResult
+
+    const triageFuncs = [
+      {
+        func: async () =>
+          Promise.resolve({
+            pass: process.env.AUTOMATIC_ADMISSIONS === "true",
+            detail: {
+              automaticAdmissionsFlag: process.env.AUTOMATIC_ADMISSIONS,
+            },
+          }),
+        waitlistReason: "AutomaticAdmissionsFlagOff",
+      },
+      {
+        func: async () =>
+          Promise.resolve(
+            this.admissions.zipcodeAllowed(
+              customer.detail.shippingAddress.zipCode
+            )
+          ),
+        waitlistReason: "UnserviceableZipcode",
+      },
+      {
+        func: async () =>
+          this.admissions.belowWeeklyNewActiveUsersOpsThreshold(),
+        waitlistReason: "OpsThresholdExceeded",
+      },
+      {
+        func: async () =>
+          this.admissions.haveSufficientInventoryToServiceCustomer(where),
+        waitlistReason: "InsufficientInventory",
+      },
+    ] as {
+      func: () => Promise<TriageFuncResult>
+      waitlistReason: InAdmissableReason
+    }[]
+    let triageDetail = {} as any
+    let reason: InAdmissableReason
+    let admit = true
+    let availableStyles = []
+    let inServiceableZipcode: boolean
+    let allAccessEnabled: boolean
     try {
-      if (
-        process.env.AUTOMATIC_ADMISSIONS === "true" &&
-        this.admissions.zipcodeAllowed(
-          customer.detail.shippingAddress.zipCode
-        ) &&
-        (await this.admissions.belowWeeklyNewActiveUsersOpsThreshold()) &&
-        (await this.admissions.haveSufficientInventoryToServiceCustomer(where))
-      ) {
-        status = "Authorized"
+      for (const { func, waitlistReason } of triageFuncs) {
+        const { pass, detail } = await func()
+
+        // Store key results of the serviceable zipcode lookup to store it
+        // on the customer later
+        if (waitlistReason === "UnserviceableZipcode") {
+          inServiceableZipcode = pass
+          ;({ allAccessEnabled } = detail)
+        }
+
+        // Format the available styles for the subscribed email
+        if (
+          Object.keys(detail).includes("availableBottomStyles") &&
+          Object.keys(detail).includes("availableTopStyles")
+        ) {
+          availableStyles = [
+            ...detail.availableBottomStyles,
+            ...detail.availableTopStyles,
+          ]
+        }
+
+        // Keep accumulating triage details
+        triageDetail = { ...triageDetail, ...detail }
+
+        // Should we continue or not?
+        admit = admit && pass
+        if (!admit) {
+          reason = waitlistReason
+          break
+        }
+      }
+    } catch (err) {
+      admit = false
+      Sentry.captureException(err)
+    }
+
+    if (admit) {
+      status = "Authorized"
+    }
+
+    // If it's not a dry run, log events and send comms
+    if (!dryRun) {
+      if (admit) {
         this.segment.trackBecameAuthorized(customer.user.id, {
           previousStatus: customer.status,
           firstName: customer.user.firstName,
@@ -290,15 +606,160 @@ export class CustomerService {
           method: "Automatic",
           application,
         })
+
+        await this.email.sendAuthorizedEmail(
+          customer.user as User,
+          "automatic",
+          availableStyles
+        )
+      } else {
+        await this.email.sendWaitlistedEmail(customer.user as User)
       }
-    } catch (err) {
-      Sentry.captureException(err)
+
+      if (Object.keys(triageDetail).includes("availableBottomStyles")) {
+        triageDetail.availableBottomStyles =
+          triageDetail.availableBottomStyles.length
+      }
+      if (Object.keys(triageDetail).includes("availableTopStyles")) {
+        triageDetail.availableTopStyles = triageDetail.availableTopStyles.length
+      }
+      this.segment.track(customer.user.id, "Triaged", {
+        ...pick(customer.user, ["firstName", "lastName", "email"]),
+        decision: status,
+        waitlistReason: !!reason ? reason : null,
+        ...triageDetail,
+      })
     }
 
-    await this.prisma.client.updateCustomer({
-      where,
-      data: { status },
+    await this.updateCustomerAfterTriage({
+      customer,
+      status,
+      waitlistReason: reason,
+      inServiceableZipcode,
+      allAccessEnabled,
+      dryRun,
     })
-    return status
+
+    return { status, waitlistReason: reason }
+  }
+
+  private async updateCustomerAfterTriage({
+    customer,
+    status,
+    waitlistReason,
+    inServiceableZipcode,
+    allAccessEnabled,
+    dryRun,
+  }: UpdateCustomerAdmissionsDataInput) {
+    let data: CustomerUpdateInput = {}
+    let admissionsUpsertData = {} as CustomerAdmissionsDataCreateWithoutCustomerInput
+
+    if (!dryRun) {
+      data = { status }
+    }
+    switch (status) {
+      case "Authorized":
+        admissionsUpsertData = {
+          admissable: true,
+          inServiceableZipcode: true,
+          allAccessEnabled,
+          authorizationsCount: this.calculateNumAuthorizations(
+            customer,
+            status,
+            dryRun
+          ),
+        }
+        if (!dryRun) {
+          const now = DateTime.local()
+          const nowDate = now.toISO()
+          const twoDaysFromNow = now.plus({ days: 2 }).toISO()
+          data.authorizedAt = nowDate
+          admissionsUpsertData.authorizationWindowClosesAt = twoDaysFromNow
+        }
+
+        break
+      case "Waitlisted":
+        if (inServiceableZipcode === undefined) {
+          ;({
+            pass: inServiceableZipcode,
+            detail: { allAccessEnabled },
+          } = this.admissions.zipcodeAllowed(
+            customer.detail?.shippingAddress?.zipCode
+          ))
+        }
+        // Handle the inserviceableZipcode
+        admissionsUpsertData = {
+          admissable: false,
+          inServiceableZipcode,
+          allAccessEnabled,
+          inAdmissableReason: waitlistReason,
+          authorizationsCount: this.calculateNumAuthorizations(
+            customer,
+            status,
+            dryRun
+          ),
+        }
+        break
+      default:
+        throw new Error(`Invalid status: ${status}`)
+    }
+    if (
+      !dryRun ||
+      (dryRun &&
+        this.shouldUpdateCustomerAdmissionsData(customer, admissionsUpsertData))
+    ) {
+      await this.prisma.client.updateCustomer({
+        where: { id: customer.id },
+        data: {
+          ...data,
+          admissions: {
+            upsert: {
+              update: admissionsUpsertData,
+              create: admissionsUpsertData,
+            },
+          },
+        },
+      })
+      this.segment.identify(customer.user.id, admissionsUpsertData)
+    }
+  }
+
+  private shouldUpdateCustomerAdmissionsData(
+    customer: Customer,
+    upsertData: CustomerAdmissionsDataCreateWithoutCustomerInput
+  ) {
+    return (
+      customer?.admissions?.admissable !== upsertData.admissable ||
+      customer?.admissions?.authorizationsCount !==
+        upsertData.authorizationsCount ||
+      customer?.admissions?.inAdmissableReason !==
+        upsertData.inAdmissableReason ||
+      customer?.admissions?.inServiceableZipcode !==
+        upsertData.inServiceableZipcode ||
+      customer?.admissions?.allAccessEnabled !== upsertData.allAccessEnabled
+    )
+  }
+
+  /* Start here */
+  private calculateNumAuthorizations(
+    customer: Customer,
+    status: CustomerStatus,
+    dryRun: boolean
+  ) {
+    const hasExistingAuthorizationsCount =
+      typeof customer?.admissions?.authorizationsCount === "number"
+
+    const numCompleteAccountEmails =
+      customer.user?.emails?.filter(a => a.emailId === "CompleteAccount")
+        ?.length || 0
+
+    const baseline = hasExistingAuthorizationsCount
+      ? customer.admissions.authorizationsCount
+      : numCompleteAccountEmails
+
+    if (!dryRun && status === "Authorized") {
+      return baseline + 1
+    }
+    return baseline
   }
 }

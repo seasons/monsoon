@@ -1,11 +1,12 @@
-import { Module } from "@nestjs/common"
+import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
-import { AirtableModule } from "../Airtable/airtable.module"
 import { AnalyticsModule } from "../Analytics/analytics.module"
 import { EmailModule } from "../Email/email.module"
+import { ErrorModule } from "../Error/error.module"
 import { PushNotificationModule } from "../PushNotification/pushNotification.module"
 import { ShippingModule } from "../Shipping/shipping.module"
+import { SMSModule } from "../SMS/sms.module"
 import { UtilsModule } from "../Utils/utils.module"
 import { MeFieldsResolver } from "./fields/me.fields"
 import { UserFieldsResolver } from "./fields/user.fields"
@@ -20,7 +21,6 @@ import { CustomerService } from "./services/customer.service"
 
 @Module({
   imports: [
-    AirtableModule,
     EmailModule,
     PrismaModule,
     ShippingModule,
@@ -28,6 +28,8 @@ import { CustomerService } from "./services/customer.service"
     ShippingModule,
     UtilsModule,
     AnalyticsModule,
+    SMSModule,
+    ErrorModule,
   ],
   providers: [
     AuthService,
@@ -41,6 +43,6 @@ import { CustomerService } from "./services/customer.service"
     UserFieldsResolver,
     AdmissionsService,
   ],
-  exports: [AuthService, CustomerService],
+  exports: [AuthService, CustomerService, AdmissionsService],
 })
 export class UserModule {}

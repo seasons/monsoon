@@ -1,7 +1,6 @@
 import { Customer, User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { Plan } from "@app/prisma"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
@@ -35,7 +34,8 @@ export class ChargebeeQueriesResolver {
       email,
       firstName,
       lastName,
-      phoneNumber
+      phoneNumber,
+      null // TODO: Add coupon to this query
     )
 
     const customerWithData = (await this.prisma.binding.query.customer(
@@ -72,13 +72,22 @@ export class ChargebeeQueriesResolver {
 
   @Query()
   async chargebeeCheckout(
-    @Args() { planID, userIDHash },
+    @Args() { planID, email: passedEmail, userIDHash, couponID },
     @Application() application
   ) {
-    const userID = this.utils.decryptUserIDHash(userIDHash)
-    const user = await this.prisma.client.user({ id: userID })
+    let user
+
+    if (userIDHash) {
+      const userID = this.utils.decryptUserIDHash(userIDHash)
+      user = await this.prisma.client.user({ id: userID })
+    } else if (passedEmail) {
+      user = await this.prisma.client.user({ email: passedEmail })
+    } else {
+      throw new Error("Need to pass in either email or userIDHash")
+    }
+
     const { email, firstName, lastName } = user
-    const customer = await this.auth.getCustomerFromUserID(userID)
+    const customer = await this.auth.getCustomerFromUserID(user.id)
     const { phoneNumber } = await this.prisma.client
       .customer({ id: customer.id })
       .detail()
@@ -89,7 +98,8 @@ export class ChargebeeQueriesResolver {
       email,
       firstName,
       lastName,
-      phoneNumber
+      phoneNumber,
+      couponID
     )
 
     const customerWithData = (await this.prisma.binding.query.customer(

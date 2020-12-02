@@ -1,35 +1,45 @@
 import "module-alias/register"
 
-import { groupBy } from "lodash"
-
 import { PrismaService } from "../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
 
-  const allProducts = (await ps.binding.query.products(
-    {
-      where: {
-        AND: [{ type: "Top" }, { variants_some: { reservable_gte: 1 } }],
-      },
-    },
-    `{
+  const triageCustomerInfo = `{
     id
-    type
-    variants {
-      reservable
-      internalSize {
-        display
+    status
+    detail {
+      shippingAddress {
+        zipCode
+      }
+      topSizes
+      waistSizes
+    }
+    user {
+      id
+      firstName
+      lastName
+      email
+      emails {
+        emailId
       }
     }
+    admissions {
+      authorizationsCount
+    }
   }`
-  )) as any[]
-  debugger
-  const productsBySize = groupBy(
-    allProducts,
-    a => a.variants?.internalSize?.display
-  )
-  console.log(productsBySize)
+  try {
+    const x = await ps.binding.query.user(
+      {
+        where: {
+          id: "ckhqv491y026o09065zcro1a2",
+        },
+      },
+      `{id beamsToken}`
+    )
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 run()

@@ -8,6 +8,7 @@ import {
   BagItem,
   BottomSizeType,
   Customer,
+  CustomerWhereUniqueInput,
   ID_Input,
   InventoryStatus,
   LetterSize,
@@ -15,6 +16,7 @@ import {
   ProductFunction,
   ProductStatus,
   ProductType,
+  ProductVariant,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
   Tag,
@@ -366,6 +368,14 @@ export class ProductService {
   }
 
   async checkItemsAvailability(items, customer) {
+    const status = await this.prisma.client
+      .customer({ id: customer.id })
+      .status()
+
+    if (status !== "Active") {
+      throw new Error("Your account must be active to reserve items.")
+    }
+
     const reservedBagItems = await this.prisma.binding.query.bagItems(
       {
         where: {
@@ -404,10 +414,22 @@ export class ProductService {
 
     const { brandCode, styleCode } = skuData
 
-    return sizeNames.map(sizeName => {
+    const skus = sizeNames.map(sizeName => {
       const sizeCode = this.utils.sizeNameToSizeCode(sizeName)
       return `${brandCode}-${colorCode}-${sizeCode}-${styleCode}`
     })
+
+    // This check was added because Judy Turner had some colliding SKUs
+    // that most likely arose from a manual record delete. It's hard to say
+    // exactly what went wrong, so we just check for collisions
+    const collidingVariants = await this.prisma.client.productVariants({
+      where: { sku_in: skus },
+    })
+    if (collidingVariants.length > 0) {
+      throw new Error(`SKU collisions: ${collidingVariants.map(a => a.sku)}`)
+    }
+
+    return skus
   }
 
   async getGeneratedSeasonsUIDs({ brandID, colorCode, sizes }) {
@@ -427,6 +449,86 @@ export class ProductService {
         })
       })
       .flat()
+  }
+
+  getSizeKey(productType: "Top" | "Bottom") {
+    let sizesKey
+    let internalSizeWhereInputCreateFunc
+    switch (productType) {
+      case "Top":
+        sizesKey = "topSizes"
+        internalSizeWhereInputCreateFunc = sizes => ({
+          top: {
+            letter_in: sizes,
+          },
+        })
+        break
+      case "Bottom":
+        sizesKey = "waistSizes"
+        internalSizeWhereInputCreateFunc = sizes => ({
+          display_in: sizes.map(a => `${a}`), // typecasting,
+        })
+        break
+      default:
+        throw new Error(`Invalid product type: ${productType}`)
+    }
+
+    return { sizesKey, internalSizeWhereInputCreateFunc }
+  }
+
+  async availableProductVariantsForCustomer(
+    where: CustomerWhereUniqueInput,
+    info: GraphQLResolveInfo
+  ) {
+    const productTypes = ["Top", "Bottom"]
+    const customer = await this.prisma.binding.query.customer(
+      {
+        where,
+      },
+      `{
+        id
+        detail {
+          topSizes
+          waistSizes
+        }
+      }`
+    )
+
+    let productVariants = [] as ProductVariant[]
+
+    for (const productType of productTypes) {
+      const { sizesKey, internalSizeWhereInputCreateFunc } = this.getSizeKey(
+        productType as "Top" | "Bottom"
+      )
+
+      const preferredSizes = customer.detail[sizesKey]
+
+      const variantsOfType = (await this.prisma.binding.query.productVariants(
+        {
+          where: {
+            AND: [
+              {
+                internalSize: internalSizeWhereInputCreateFunc(preferredSizes),
+              },
+              { reservable_gte: 1 },
+              {
+                product: {
+                  AND: [
+                    { status: "Available" },
+                    { type: productType as ProductType },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+        info
+      )) as ProductVariant[]
+
+      productVariants = [...productVariants, ...variantsOfType]
+    }
+
+    return productVariants
   }
 
   async getSKUData({ brandID, colorCode }) {
@@ -504,13 +606,16 @@ export class ProductService {
           }
         }`
     )
-    // For now, throw an error if trying to unstore a product. We need to
-    // add code to handle this case properly.
+
+    // If they're unstoring, that should be all they're doing
     if (product.status === "Stored" && status !== "Stored") {
-      throw new ApolloError(
-        "Unable to unstore a product. Code needs to be written"
-      )
+      if (Object.keys(data).length !== 1) {
+        throw new Error(
+          "To reduce the surface area of potential errors, do not make other changes when unstoring a product"
+        )
+      }
     }
+
     if (
       !!status &&
       status === "Available" &&
@@ -520,15 +625,19 @@ export class ProductService {
         "Can not set product status to Available. Check that there are product variants and the photography status is done."
       )
     }
+
     if (!!status && status === "Available" && product.status !== "Available") {
       updateData.publishedAt = DateTime.local().toISO()
     }
+
     if (functions) {
       functionIDs = await this.upsertFunctions(functions)
     }
+
     if (tags) {
       tagIDs = await this.upsertTags(tags)
     }
+
     if (modelSizeName && modelSizeDisplay) {
       const modelSize = await this.productUtils.upsertModelSize({
         slug: product.slug,
@@ -539,9 +648,11 @@ export class ProductService {
       })
       modelSizeID = modelSize.id
     }
+
     if (season) {
       productSeason = await this.upsertProductSeason(season, product.slug)
     }
+
     if (images) {
       // Form appropriate image names
       const imageNames = images.map((_image, index) => {
@@ -559,7 +670,9 @@ export class ProductService {
         product.slug
       )
     }
+
     await this.storeProductIfNeeded(where, status)
+    await this.restoreProductIfNeeded(where, status)
     await this.prisma.client.updateProduct({
       where,
       data: {
@@ -573,13 +686,6 @@ export class ProductService {
         photographyStatus,
       },
     })
-    if (!!status) {
-      await this.prisma.client.createProductStatusChange({
-        old: product.status,
-        new: status,
-        product: { connect: { id: product.id } },
-      })
-    }
 
     return await this.prisma.binding.query.product({ where }, info)
   }
@@ -612,11 +718,6 @@ export class ProductService {
       await this.prisma.client.updateProduct({
         where: { id },
         data: { status: "Offloaded" },
-      })
-      await this.prisma.client.createProductStatusChange({
-        old: prodWithPhysicalProducts.status,
-        new: "Offloaded",
-        product: { connect: { id } },
       })
     }
   }
@@ -849,6 +950,76 @@ export class ProductService {
     return prismaTags.filter(Boolean).map((tag: Tag) => ({ id: tag.id }))
   }
 
+  private async restoreProductIfNeeded(
+    where: ProductWhereUniqueInput,
+    status: ProductStatus
+  ) {
+    const productBeforeUpdate = await this.prisma.binding.query.product(
+      {
+        where,
+      },
+      `{
+          id
+          status
+          variants {
+            id
+            physicalProducts {
+              inventoryStatus
+              seasonsUID
+            }
+          }
+        }`
+    )
+    if (status !== "Stored" && productBeforeUpdate.status === "Stored") {
+      // Update product status
+      if (status !== "NotAvailable") {
+        throw new Error(
+          "When restoring a product, must mark it as NotAvailable"
+        )
+      }
+      await this.prisma.client.updateProduct({
+        where: { id: productBeforeUpdate.id },
+        data: { status },
+      })
+
+      // Update statuses on downstream physical products
+      for (const {
+        inventoryStatus,
+        seasonsUID,
+      } of this.productUtils.physicalProductsForProduct(
+        productBeforeUpdate as ProductWithPhysicalProducts
+      )) {
+        if (!["Offloaded", "Reserved"].includes(inventoryStatus)) {
+          await this.prisma.client.updatePhysicalProduct({
+            where: { seasonsUID },
+            data: { inventoryStatus: "NonReservable" },
+          })
+        }
+      }
+
+      // Update counts on downstream product variants
+      for (const prodVar of productBeforeUpdate.variants) {
+        const numUnitsRestored = (
+          await this.prisma.client.physicalProducts({
+            where: {
+              AND: [
+                { productVariant: { id: prodVar.id } },
+                { inventoryStatus: "NonReservable" },
+              ],
+            },
+          })
+        ).length
+        await this.prisma.client.updateProductVariant({
+          where: { id: prodVar.id },
+          data: {
+            nonReservable: numUnitsRestored,
+            stored: 0,
+          },
+        })
+      }
+    }
+  }
+
   private async storeProductIfNeeded(
     where: ProductWhereUniqueInput,
     status: ProductStatus
@@ -875,8 +1046,6 @@ export class ProductService {
 
     if (status === "Stored" && productBeforeUpdate.status !== "Stored") {
       // Update product status
-      // Don't create a `ProductStatusChange` record here because this function should
-      // only be called from the `updateProduct` function, which handles the creation of that record.
       await this.prisma.client.updateProduct({
         where: { id: productBeforeUpdate.id },
         data: { status: "Stored" },
@@ -893,11 +1062,6 @@ export class ProductService {
           await this.prisma.client.updatePhysicalProduct({
             where: { seasonsUID },
             data: { inventoryStatus: "Stored" },
-          })
-          await this.prisma.client.createPhysicalProductInventoryStatusChange({
-            old: inventoryStatus,
-            new: "Stored",
-            physicalProduct: { connect: { seasonsUID } },
           })
         }
       }

@@ -1,3 +1,5 @@
+import * as util from "util"
+
 import { ApplicationType } from "@app/decorators/application.decorator"
 import { CustomerStatus, PaymentPlanTier } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
@@ -22,6 +24,7 @@ type TrackingEvent =
   | "Resumed Subscription"
   | "Entered Active Admin Queue"
   | "Exited Active Admin Queue"
+  | "Triaged"
 
 interface CommonTrackProperties {
   firstName: string
@@ -52,6 +55,7 @@ export class SegmentService {
     try {
       this.client.identify({ userId, traits })
     } catch (err) {
+      console.log(err)
       Sentry.captureException(err)
     }
   }
@@ -78,6 +82,12 @@ export class SegmentService {
         event,
         properties,
       })
+      if (process.env.NODE_ENV === "development") {
+        console.log(`tracked event`)
+        console.log(
+          util.inspect({ userId, event, properties }, { depth: null })
+        )
+      }
     } catch (err) {
       Sentry.captureException(err)
     }

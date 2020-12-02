@@ -1,16 +1,46 @@
 import * as fs from "fs"
 
+import { ApplicationType } from "@app/decorators/application.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerWhereUniqueInput } from "@app/prisma"
+import { CustomerStatus, CustomerWhereUniqueInput, Product } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, intersection, uniqBy } from "lodash"
 import moment from "moment"
 import zipcodes from "zipcodes"
 
+export interface TriageFuncResult {
+  pass: boolean
+  detail: any
+}
+
+export interface ZipcodeAllowedResult extends TriageFuncResult {
+  detail: {
+    zipcode: string
+    state: string
+    serviceableStates: string[]
+    allAccessEnabled: boolean
+  }
+}
+export interface ReservableInventoryForCustomerResultDetail {
+  availableBottomStyles: Product[]
+  availableTopStyles: Product[]
+}
+
+export interface HaveSufficientInventoryToServiceCustomerResult
+  extends TriageFuncResult {
+  detail: ReservableInventoryForCustomerResultDetail & {
+    inventoryThreshold: number
+  }
+}
+
+interface AdmissableStates {
+  allAccessEnabled: { true: string[]; false: string[] }
+}
+
 @Injectable()
 export class AdmissionsService {
-  serviceableStates: string[]
+  serviceableStates: AdmissableStates
 
   // We assume that each reservation is split 50/50 between tops and bottoms.
   // That's not really accurate, but it's good enough for now.
@@ -21,20 +51,58 @@ export class AdmissionsService {
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService
   ) {
-    ;({ states: this.serviceableStates } = JSON.parse(
-      fs.readFileSync(
-        process.cwd() + "/src/modules/User/admissableStates.json",
-        "utf-8"
-      )
+    ;({ states: this.serviceableStates } = this.utils.parseJSONFile(
+      "src/modules/User/admissableStates"
     ))
   }
 
-  zipcodeAllowed(zipcode: string): boolean {
-    const state = zipcodes.lookup(zipcode)?.state
-    return this.serviceableStates.includes(state)
+  async hasSupportedPlatform(
+    where: CustomerWhereUniqueInput,
+    application: ApplicationType
+  ): Promise<TriageFuncResult> {
+    const customer = await this.prisma.binding.query.customer(
+      {
+        where,
+      },
+      `{
+        id
+        detail {
+          phoneOS
+        }
+      }`
+    )
+
+    const phoneOS =
+      application === "harvest" ? "iOS" : customer?.detail?.phoneOS
+
+    return {
+      pass: phoneOS === "iOS",
+      detail: customer.detail,
+    }
   }
 
-  async belowWeeklyNewActiveUsersOpsThreshold(): Promise<boolean> {
+  zipcodeAllowed(zipcode: string): ZipcodeAllowedResult {
+    const state = zipcodes.lookup(zipcode)?.state
+    const allServiceableStates = [
+      ...this.serviceableStates.allAccessEnabled.true,
+      ...this.serviceableStates.allAccessEnabled.false,
+    ]
+    const pass = allServiceableStates.includes(state)
+    const detail = {
+      zipcode,
+      state,
+      serviceableStates: allServiceableStates,
+      allAccessEnabled: this.serviceableStates.allAccessEnabled.true.includes(
+        state
+      ),
+    }
+    return { pass, detail }
+  }
+
+  async belowWeeklyNewActiveUsersOpsThreshold(): Promise<TriageFuncResult> {
+    let pass = true
+    let detail = {}
+
     const emailsSent = await this.prisma.binding.query.emailReceipts(
       {
         where: {
@@ -76,52 +144,91 @@ export class AdmissionsService {
       .map(b => b.user.id)
       .filter(c => !usersActivatedPastWeek.includes(c))
 
-    if (
-      usersActivatedPastWeek.length >
-      parseInt(process.env.WEEKLY_NEW_USERS_THRESHOLD, 10)
-    ) {
-      return false
+    const weeklyNewUsersThreshold = parseInt(
+      process.env.WEEKLY_NEW_USERS_THRESHOLD,
+      10
+    )
+    const weeklyInvitationsThreshold = parseInt(
+      process.env.WEEKLY_INVITATIONS_THRESHOLD,
+      10
+    )
+    detail = {
+      usersActivatedPastWeek: usersActivatedPastWeek.length,
+      invitationsSentPastWeek: invitationsSentPastWeek.length,
+      weeklyNewUsersThreshold,
+      weeklyInvitationsThreshold,
     }
 
     if (
-      usersInvitedButNotActivatedPastWeek.length >
-      parseInt(process.env.WEEKLY_INVITATIONS_THRESHOLD, 10)
+      usersActivatedPastWeek.length > weeklyNewUsersThreshold ||
+      usersInvitedButNotActivatedPastWeek.length > weeklyInvitationsThreshold
     ) {
-      return false
+      pass = false
     }
 
-    return true
+    return { pass, detail }
+  }
+
+  async getAvailableStyles(
+    where: CustomerWhereUniqueInput
+  ): Promise<Product[]> {
+    const {
+      detail: { availableTopStyles, availableBottomStyles },
+    } = await this.haveSufficientInventoryToServiceCustomer(where)
+    return [...availableBottomStyles, ...availableTopStyles]
   }
 
   async haveSufficientInventoryToServiceCustomer(
     where: CustomerWhereUniqueInput
-  ): Promise<boolean> {
+  ): Promise<HaveSufficientInventoryToServiceCustomerResult> {
     const inventoryThreshold =
       parseInt(process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER, 10) || 15
-    const reservableInventoryForCustomer = await this.reservableInventoryForCustomer(
-      where
-    )
-    return reservableInventoryForCustomer > inventoryThreshold
+    const {
+      reservableStyles,
+      detail: reservableInventoryForCustomerDetail,
+    } = await this.reservableInventoryForCustomer(where)
+    const pass = reservableStyles > inventoryThreshold
+
+    return {
+      pass,
+      detail: { ...reservableInventoryForCustomerDetail, inventoryThreshold },
+    }
   }
 
   async reservableInventoryForCustomer(
     where: CustomerWhereUniqueInput
-  ): Promise<number> {
-    const availableTopStyles = await this.availableStylesForCustomer(
-      where,
-      "Top"
-    )
-    const availableBottomStyles = await this.availableStylesForCustomer(
-      where,
-      "Bottom"
-    )
-    return availableTopStyles + availableBottomStyles
+  ): Promise<{
+    reservableStyles: number
+    detail: ReservableInventoryForCustomerResultDetail
+  }> {
+    const {
+      reservableStyles: availableTopStyles,
+      adjustedReservableStyles: numAvailableAdjustedTopStyles,
+    } = await this.availableStylesForCustomer(where, "Top")
+    const {
+      reservableStyles: availableBottomStyles,
+      adjustedReservableStyles: numAvailableAdjustedBottomStyles,
+    } = await this.availableStylesForCustomer(where, "Bottom")
+
+    return {
+      reservableStyles:
+        numAvailableAdjustedTopStyles + numAvailableAdjustedBottomStyles,
+      detail: { availableBottomStyles, availableTopStyles },
+    }
+  }
+
+  // is a customer with the given status able to be triaged?
+  isTriageable(status: CustomerStatus) {
+    return ["Created", "Invited", "Waitlisted"].includes(status)
   }
 
   private async availableStylesForCustomer(
     where: CustomerWhereUniqueInput,
     productType: "Top" | "Bottom"
-  ): Promise<number> {
+  ): Promise<{
+    reservableStyles: Product[]
+    adjustedReservableStyles: number
+  }> {
     const customer = await this.prisma.binding.query.customer(
       {
         where,
@@ -157,25 +264,46 @@ export class AdmissionsService {
     }
 
     const preferredSizes = customer.detail[sizesKey]
-    const availableStyles = await this.prisma.binding.query.products({
-      where: {
-        AND: [
-          { type: productType },
-          {
-            variants_some: {
-              AND: [
-                {
-                  internalSize: internalSizeWhereInputCreateFunc(
-                    preferredSizes
-                  ),
-                },
-                { reservable_gte: 1 },
-              ],
+    const availableStyles = (await this.prisma.binding.query.products(
+      {
+        where: {
+          AND: [
+            { type: productType },
+            {
+              variants_some: {
+                AND: [
+                  {
+                    internalSize: internalSizeWhereInputCreateFunc(
+                      preferredSizes
+                    ),
+                  },
+                  { reservable_gte: 1 },
+                ],
+              },
             },
-          },
-        ],
+          ],
+        },
       },
-    })
+      // Need to query certain fields for the emails sent based on this data
+      `{
+        id
+        type
+        name
+        retailPrice
+        images {
+          url
+        }
+        variants {
+          internalSize {
+            productType
+            display
+          }
+        }
+        brand {
+          name
+        }
+    }`
+    )) as Product[]
 
     // Find the competing users. Note that we assume all active customers without an active
     // reservation may be a competing user, regardless of how long it's been since their last reservation
@@ -200,7 +328,10 @@ export class AdmissionsService {
     const numTrueAvailableStyles =
       availableStyles.length - numStylesForCompetingUsers
 
-    return Math.max(0, numTrueAvailableStyles)
+    return {
+      reservableStyles: availableStyles,
+      adjustedReservableStyles: Math.max(0, numTrueAvailableStyles),
+    }
   }
 
   private async pausedCustomersResumingThisWeek() {
@@ -229,12 +360,12 @@ export class AdmissionsService {
       }
 
       const latestPauseRequest = head(
-        pauseRequests.sort((a, b) => {
-          return moment(a.createdAt).isAfter(moment(b.createdAt)) ? -1 : 1
-        })
+        pauseRequests.sort((a, b) =>
+          this.utils.dateSort(a.createdAt, b.createdAt)
+        )
       )
       return this.utils.isLessThanXDaysFromNow(
-        latestPauseRequest.resumeDate as string,
+        latestPauseRequest?.resumeDate as string,
         7
       )
     })

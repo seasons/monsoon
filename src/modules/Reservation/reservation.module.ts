@@ -1,16 +1,16 @@
-import { AirtableModule } from "@modules/Airtable"
-import { EmailModule } from "@modules/Email"
-import { ImageModule } from "@modules/Image"
+import { ImageModule } from "@modules/Image/image.module"
+import { PaymentModule } from "@modules/Payment"
 import { ProductModule } from "@modules/Product"
 import { PushNotificationModule } from "@modules/PushNotification"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
-import { AdminModule } from "../Admin/admin.module"
 import { AnalyticsModule } from "../Analytics/analytics.module"
+import { EmailModule } from "../Email/email.module"
 import { ReservationFeedbackMutationsResolver } from "../Reservation/mutations/reservationFeedback.mutations.resolver"
 import { ReservationFeedbackQueriesResolver } from "../Reservation/queries/reservationFeedback.queries.resolver"
+import { UtilsModule } from "../Utils/utils.module"
 import { ReservationFieldsResolver } from "./fields/reservation.fields.resolver"
 import { ReservationMutationsResolver } from "./mutations/reservation.mutations.resolver"
 import { ReservationQueriesResolver } from "./queries/reservation.queries.resolver"
@@ -20,14 +20,15 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
 
 @Module({
   imports: [
-    AirtableModule,
     EmailModule,
     ImageModule,
     PrismaModule,
     ProductModule,
     PushNotificationModule,
     ShippingModule,
+    PaymentModule,
     AnalyticsModule,
+    UtilsModule,
   ],
   providers: [
     ReservationFeedbackMutationsResolver,

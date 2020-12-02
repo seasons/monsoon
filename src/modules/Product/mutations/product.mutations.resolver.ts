@@ -43,8 +43,15 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async removeFromBag(@Args() { item, saved }, @Customer() customer) {
-    return await this.bagService.removeFromBag(item, saved, customer)
+  async removeFromBag(
+    @Args() { item, saved, customer: passedCustomerID },
+    @Customer() customer
+  ) {
+    return await this.bagService.removeFromBag(
+      item,
+      saved,
+      !!passedCustomerID ? { id: passedCustomerID } : customer
+    )
   }
 
   @Mutation()

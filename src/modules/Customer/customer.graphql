@@ -22,10 +22,13 @@ type Query {
 
 type Mutation {
   addToBag(item: ID!): BagItem! @hasRole(roles: [Customer])
-  removeFromBag(item: ID!, saved: Boolean): BagItem! @hasRole(roles: [Customer])
+  removeFromBag(item: ID!, saved: Boolean, customer: ID): BagItem!
+    @hasRole(roles: [Customer])
   updateCustomer(
     data: CustomerUpdateInput!
     where: CustomerWhereUniqueInput!
+    # True if we want to notify the user upon salient changes. Defaults to true
+    withContact: Boolean
   ): Customer @hasRole(roles: [Admin])
   addCustomerDetails(
     details: CustomerDetailCreateInput!
@@ -73,7 +76,11 @@ type Customer {
   status: CustomerStatus
   detail: CustomerDetail
   billingInfo: BillingInfo
-
+  referralLink: String
+  referrerId: String
+  referrer: Customer
+  referrees: [Customer]
+  coupon: Coupon # id of any coupon to be applied to the customer
   # FIXME: When everyone is on iOS app version > 1.3, remove these two.
   plan: Plan @deprecated(reason: "replaced with customer.membership.plan")
   paymentPlan: PaymentPlan
@@ -101,11 +108,17 @@ type Customer {
   transactions: [Transaction]
   membership: CustomerMembership
   onboardingSteps: [OnboardingStep!]!
+  admissions: CustomerAdmissionsData
+  utm: UTMData
+  authorizedAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type CustomerMembership {
   id: ID!
   subscriptionId: String!
+  plan: PaymentPlan
   pauseRequests(
     where: PauseRequestWhereInput
     orderBy: PauseRequestOrderByInput

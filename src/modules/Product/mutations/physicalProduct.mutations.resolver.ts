@@ -1,5 +1,7 @@
+import { PhysicalProduct } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { head } from "lodash"
 
 import { PhysicalProductService } from "../services/physicalProduct.service"
 
@@ -25,5 +27,43 @@ export class PhysicalProductMutationsResolver {
       args,
       info
     )
+  }
+
+  @Mutation()
+  async updatePhysicalProductByBarcode(@Args() args, @Info() info) {
+    const { barcode, status } = args
+    const sequenceNumber = parseInt(barcode.replace("SZNS", ""), 10)
+
+    const physicalProduct: PhysicalProduct = head(
+      await this.prisma.binding.query.physicalProducts(
+        {
+          where: {
+            sequenceNumber,
+          },
+        },
+        `
+      {
+        id
+        seasonsUID
+        productStatus
+      }
+    `
+      )
+    )
+
+    let updatedPhysicalProduct
+
+    if (physicalProduct) {
+      updatedPhysicalProduct = await this.prisma.client.updatePhysicalProduct({
+        where: {
+          seasonsUID: physicalProduct.seasonsUID,
+        },
+        data: {
+          productStatus: status,
+        },
+      })
+    }
+
+    return updatedPhysicalProduct
   }
 }

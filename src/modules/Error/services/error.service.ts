@@ -8,10 +8,13 @@ export class ErrorService {
 
   constructor() {}
 
-  setUserContext(prismaUser: User) {
+  setUserContext(prismaUser: Pick<User, "id" | "email">) {
     if (this.shouldReportErrorsToSentry) {
       Sentry.configureScope(scope => {
-        scope.setUser({ id: prismaUser.id, email: prismaUser.email })
+        scope.setUser({
+          id: prismaUser?.id || "",
+          email: prismaUser?.email || "",
+        })
       })
     }
   }
@@ -29,6 +32,12 @@ export class ErrorService {
   captureError(err) {
     if (this.shouldReportErrorsToSentry) {
       Sentry.captureException(err)
+    }
+  }
+
+  captureMessage(message) {
+    if (this.shouldReportErrorsToSentry) {
+      Sentry.captureMessage(message)
     }
   }
 }

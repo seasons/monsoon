@@ -9,7 +9,7 @@ export interface MonsoonCommandOptions
 
 export interface UpdateEnvironmentInputs {
   prismaEnv: PrismaEnvironmentSetting
-  airtableEnv?: AirtableEnvironmentSetting
+  dripEnv?: "staging" | "production"
 }
 
 export interface UpdateConnectionsInputs extends UpdateEnvironmentInputs {
@@ -17,4 +17,3 @@ export interface UpdateConnectionsInputs extends UpdateEnvironmentInputs {
 }
 
 export type PrismaEnvironmentSetting = "local" | "staging" | string
-export type AirtableEnvironmentSetting = "staging" | "production" | string

@@ -1,7 +1,7 @@
 import { RollbackError } from "@app/errors"
+import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { AdminActionLog } from "@app/prisma/prisma.binding"
-import { AirtableService } from "@modules/Airtable"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
   PhysicalProductUtilsService,
@@ -9,14 +9,12 @@ import {
   ProductVariantService,
 } from "@modules/Product"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { ShippoTransaction } from "@modules/Shipping/shipping.types"
 import { Injectable } from "@nestjs/common"
 import {
   Customer,
   ID_Input,
   InventoryStatus,
   PhysicalProduct,
-  PhysicalProductPromise,
   PhysicalProductStatus,
   Product,
   ProductVariant,
@@ -25,6 +23,7 @@ import {
   ReservationStatus,
   ReservationUpdateInput,
   ReservationWhereUniqueInput,
+  ShippingCode,
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -57,17 +56,23 @@ export interface ReservationWithProductVariantData {
 export class ReservationService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly payment: PaymentService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
     private readonly physicalProductUtilsService: PhysicalProductUtilsService,
-    private readonly airtableService: AirtableService,
     private readonly shippingService: ShippingService,
     private readonly emails: EmailService,
     private readonly pushNotifs: PushNotificationService,
     private readonly reservationUtils: ReservationUtilsService
   ) {}
 
-  async reserveItems(items: string[], user: User, customer: Customer, info) {
+  async reserveItems(
+    items: string[],
+    shippingCode: ShippingCode,
+    user: User,
+    customer: Customer,
+    info
+  ) {
     let reservationReturnData
     const rollbackFuncs = []
 
@@ -121,7 +126,8 @@ export class ReservationService {
       ] = await this.shippingService.createReservationShippingLabels(
         newProductVariantsBeingReserved,
         user,
-        customer
+        customer,
+        shippingCode
       )
 
       // Update relevant BagItems
@@ -131,7 +137,16 @@ export class ReservationService {
       )
       rollbackFuncs.push(rollbackBagItemsUpdate)
 
-      // Create reservation records in prisma and airtable
+      // Create one time charge for shipping addon
+      let shippingOptionID
+      if (!!shippingCode) {
+        shippingOptionID = await this.payment.addShippingCharge(
+          customer,
+          shippingCode
+        )
+      }
+
+      // Create reservation records in prisma
       const reservationData = await this.createReservationData(
         seasonsToCustomerTransaction,
         customerToSeasonsTransaction,
@@ -142,28 +157,13 @@ export class ReservationService {
         ),
         physicalProductsBeingReserved,
         heldPhysicalProducts,
-        customerPlanItemCount
+        shippingOptionID
       )
       const [
         prismaReservation,
         rollbackPrismaReservationCreation,
       ] = await this.createPrismaReservation(reservationData)
       rollbackFuncs.push(rollbackPrismaReservationCreation)
-      try {
-        const [
-          ,
-          rollbackAirtableReservationCreation,
-        ] = await this.airtableService.createAirtableReservation(
-          user.email,
-          reservationData,
-          (seasonsToCustomerTransaction as ShippoTransaction).formatted_error,
-          (customerToSeasonsTransaction as ShippoTransaction).formatted_error
-        )
-        rollbackFuncs.push(rollbackAirtableReservationCreation)
-      } catch (err) {
-        console.log(err)
-        Sentry.captureException(err)
-      }
 
       // Send confirmation email
       await this.emails.sendReservationConfirmationEmail(
@@ -281,11 +281,6 @@ export class ReservationService {
             seasonsUID
           )
           return Promise.all([
-            this.prisma.client.createPhysicalProductInventoryStatusChange({
-              old: physProdBeforeUpdates.inventoryStatus,
-              new: updateData.inventoryStatus,
-              physicalProduct: { connect: { seasonsUID } },
-            }),
             this.productVariantService.updateCountsForStatusChange({
               id: physProdBeforeUpdates.productVariant.id,
               oldInventoryStatus: physProdBeforeUpdates.inventoryStatus,
@@ -613,7 +608,7 @@ export class ReservationService {
     shipmentWeight: number,
     physicalProductsBeingReserved: PhysicalProduct[],
     heldPhysicalProducts: PhysicalProduct[],
-    customerPlanItemCount: number
+    shippingOptionID: string
   ): Promise<ReservationCreateInput> {
     const allPhysicalProductsInReservation = [
       ...physicalProductsBeingReserved,
@@ -634,7 +629,7 @@ export class ReservationService {
     }
     const uniqueReservationNumber = await this.reservationUtils.getUniqueReservationNumber()
 
-    return {
+    let createData = {
       products: {
         connect: physicalProductSUIDs,
       },
@@ -715,7 +710,13 @@ export class ReservationService {
       },
       shipped: false,
       status: "Queued",
+    } as ReservationCreateInput
+
+    if (!!shippingOptionID) {
+      createData.shippingOption = { connect: { id: shippingOptionID } }
     }
+
+    return createData
   }
 
   /* Returns [createdReservation, rollbackFunc] */

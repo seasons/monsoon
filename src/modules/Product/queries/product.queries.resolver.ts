@@ -1,3 +1,4 @@
+import { Customer } from "@app/decorators"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
@@ -158,5 +159,15 @@ export class ProductQueriesResolver {
   @Query()
   async warehouseLocations(@Args() args, @Info() info) {
     return await this.prisma.binding.query.warehouseLocations(args, info)
+  }
+
+  @Query()
+  async surpriseProductVariants(@Customer() customer, @Info() info) {
+    const products = await this.productService.availableProductVariantsForCustomer(
+      { id: customer.id },
+      info
+    )
+
+    return products
   }
 }

@@ -148,6 +148,10 @@ type Mutation {
   ): Brand @hasRole(roles: [Admin])
   publishProducts(productIDs: [String!]): PublishProductsResponse!
     @hasRole(roles: [Admin])
+  updatePhysicalProductByBarcode(
+    barcode: String
+    status: PhysicalProductStatus
+  ): PhysicalProduct
 }
 
 type PublishProductsResponse {
@@ -214,6 +218,57 @@ type Product {
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedAt: DateTime
+}
+
+type Brand {
+  id: ID!
+  slug: String!
+  brandCode: String!
+  description: String
+  isPrimaryBrand: Boolean!
+  logo: Json
+  name: String!
+  basedIn: String
+  published: Boolean!
+  featured: Boolean!
+  designer: String
+  products(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product!]
+  # productsConnection is an added field
+  productsConnection(
+    sizes: [String!]
+    category: String
+    brand: String
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    sizes: [String!]
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductConnection!
+  images(
+    where: ImageWhereInput
+    orderBy: ImageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Image!]
+  since: DateTime
+  tier: BrandTier!
+  websiteUrl: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input UpsertProductInput {
@@ -286,6 +341,9 @@ input UpsertSeasonInput {
 input CustomBrandCreateInput {
   id: ID
   slug: String!
+  designer: String
+  published: Boolean
+  featured: Boolean
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
@@ -302,6 +360,9 @@ input CustomBrandCreateInput {
 
 input CustomBrandUpdateInput {
   slug: String
+  designer: String
+  published: Boolean
+  featured: Boolean
   brandCode: String
   description: String
   isPrimaryBrand: Boolean

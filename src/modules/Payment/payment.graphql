@@ -1,11 +1,13 @@
 type Query {
   chargebeeCheckout(
-    planID: PlanID!
-    userIDHash: String!
+    planID: String!
+    userIDHash: String
+    email: String
+    couponID: String
   ): ChargebeeHostedPagePayload
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
-  hostedChargebeeCheckout(planID: PlanID!): ChargebeeHostedPagePayload
+  hostedChargebeeCheckout(planID: String!): ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
   paymentPlans(
     where: PaymentPlanWhereInput
@@ -19,10 +21,17 @@ type Query {
 }
 
 type Mutation {
-  applePayCheckout(planID: String!, token: StripeToken!): Boolean
-    @hasRole(roles: [Customer])
-  applePayUpdatePaymentMethod(planID: String!, token: StripeToken!): Boolean
-    @hasRole(roles: [Customer])
+  applePayCheckout(
+    planID: String!
+    token: StripeToken!
+    tokenType: String
+    couponID: String
+  ): Boolean @hasRole(roles: [Customer])
+  applePayUpdatePaymentMethod(
+    planID: String!
+    token: StripeToken!
+    tokenType: String
+  ): Boolean @hasRole(roles: [Customer])
   changeCustomerPlan(planID: String!): Boolean @hasRole(roles: [Customer])
   updateResumeDate(date: DateTime): Boolean @hasRole(roles: [Customer])
   removeScheduledPause(subscriptionID: String!): Boolean
@@ -32,6 +41,7 @@ type Mutation {
   resumeSubscription(subscriptionID: String!, date: DateTime): Boolean
     @hasRole(roles: [Customer])
   refundInvoice(input: RefundInvoiceInput): Boolean! @hasRole(roles: [Admin])
+  checkCoupon(couponID: String!): Coupon
 }
 
 enum CreditNoteReasonCodeInput {
@@ -90,6 +100,18 @@ enum PlanID {
   Essential
 }
 
+enum CouponType {
+  FixedAmount
+  Percentage
+}
+
+type Coupon {
+  id: String!
+  amount: Int
+  percentage: Int
+  type: CouponType!
+}
+
 type Invoice {
   id: String!
   subscriptionId: String
@@ -144,7 +166,7 @@ input RefundInvoiceInput {
 input StripeToken {
   card: StripeTokenCard!
   created: Int!
-  extra: StripeTokenExtra!
+  extra: StripeTokenExtra
   livemode: Boolean!
   tokenId: String!
 }
@@ -152,7 +174,8 @@ input StripeToken {
 input StripeTokenCard {
   addressCity: String # "Brooklyn"
   addressCountry: String # "US"
-  addressLine1: String # "34 Havemeyer St↵Apt 5A"
+  addressLine1: String # "34 Havemeyer St"
+  addressLine2: String # "Apt 5A"
   addressState: String # "NY"
   addressZip: String # "11211"
   brand: String # "Visa"

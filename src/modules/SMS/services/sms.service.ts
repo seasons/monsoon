@@ -1,5 +1,8 @@
+import fs from "fs"
+
 import { Customer, User } from "@app/decorators"
-import { TwilioService, TwilioUtils } from "@app/modules/Twilio"
+import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
+import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
 import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
 import {
@@ -8,9 +11,13 @@ import {
   UserWhereUniqueInput,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
+import { LinksAndEmails } from "@seasons/wind"
 import { head } from "lodash"
+import mustache from "mustache"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
 import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
+
+import { SMSID, SMSPayload } from "../sms.types"
 
 const twilioStatusCallback = process.env.TWILIO_STATUS_CALLBACK
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
@@ -18,6 +25,7 @@ const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
 @Injectable()
 export class SMSService {
   private sid?: string
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly twilio: TwilioService,
@@ -131,6 +139,23 @@ export class SMSService {
     return this.twilioUtils.twilioToPrismaVerificationStatus(check.status)
   }
 
+  async sendSMSById({
+    to,
+    smsId,
+    renderData,
+  }: {
+    to: UserWhereUniqueInput
+    smsId: SMSID
+    renderData: any
+  }) {
+    const { body, mediaUrls } = this.getSMSData(smsId, renderData)
+    await this.sendSMSMessage({
+      to,
+      body,
+      mediaUrls,
+    })
+  }
+
   async sendSMSMessage(
     @Args()
     {
@@ -150,14 +175,23 @@ export class SMSService {
       )
     }
 
-    const phoneNumber = (head(
+    const cust = head(
       await this.prisma.binding.query.customers(
         { where: { user: to } },
-        `{ detail { phoneNumber } }`
+        `{ user { roles email } detail { phoneNumber } }`
       )
-    ) as { detail?: { phoneNumber?: string } })?.detail?.phoneNumber
+    ) as any
+
+    const phoneNumber = cust?.detail?.phoneNumber
     if (!phoneNumber) {
       throw new Error(`Could not find a phone number for the indicated user.`)
+    }
+
+    const shouldSend =
+      process.env.NODE_ENV === "production" ||
+      cust.user.email.includes("seasons.nyc")
+    if (!shouldSend) {
+      return "Undelivered"
     }
 
     // Send SMS message
@@ -200,5 +234,29 @@ export class SMSService {
       data: { status },
       where: { externalId },
     })
+  }
+
+  private getSMSData(smsID: SMSID, vars: any): SMSPayload {
+    let { body, mediaUrls } = JSON.parse(
+      fs.readFileSync(process.cwd() + "/src/modules/SMS/data.json", "utf-8")
+    )[smsID]
+
+    body = this.interpolateJSONObjectWithMustache(body, {
+      ...vars,
+      ...LinksAndEmails,
+    })
+    mediaUrls = this.interpolateJSONObjectWithMustache(mediaUrls, {
+      ...vars,
+      ...LinksAndEmails,
+    })
+
+    return {
+      body,
+      mediaUrls,
+    }
+  }
+
+  private interpolateJSONObjectWithMustache(obj: any, vars: any = {}) {
+    return JSON.parse(mustache.render(JSON.stringify(obj), vars))
   }
 }

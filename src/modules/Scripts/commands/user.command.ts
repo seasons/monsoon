@@ -1,10 +1,11 @@
 import { PaymentService } from "@app/modules/Payment/index"
 import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { AuthService } from "@modules/User"
+import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
 import { PrismaService } from "@prisma/prisma.service"
+import sgMail from "@sendgrid/mail"
 import chargebee from "chargebee"
 import faker from "faker"
 import { head } from "lodash"
@@ -16,6 +17,8 @@ import {
   PrismaEnvOption,
 } from "../scripts.decorators"
 import { ScriptsService } from "../services/scripts.service"
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 @Injectable()
 export class UserCommands {
@@ -139,7 +142,15 @@ export class UserCommands {
         "Deactivated",
       ],
     })
-    status
+    status,
+    @Option({
+      name: "allAccessEnabled",
+      alias: "aa",
+      describe: "Whether or not the customer should have all access enabled",
+      type: "boolean",
+      default: "true",
+    })
+    allAccessEnabled
   ) {
     await this.scripts.updateConnections({
       prismaEnv,
@@ -206,16 +217,16 @@ export class UserCommands {
     }
 
     // Give them valid billing data if appropriate
+    const customer = head(
+      await this.prisma.client.customers({
+        where: { user: { id: user.id } },
+      })
+    )
     if (["Active", "Suspended", "Paused"].includes(status)) {
       chargebee.configure({
         site: "seasons-test",
         api_key: "test_fmWkxemy4L3CP1ku1XwPlTYQyJVKajXx",
       })
-      const customer = head(
-        await this.prisma.client.customers({
-          where: { user: { id: user.id } },
-        })
-      )
       const card: Card = {
         number: "4242424242424242",
         expiryMonth: "04",
@@ -252,6 +263,28 @@ export class UserCommands {
           },
           status,
           user: { update: { roles: { set: roles } } },
+        },
+        where: { id: customer.id },
+      })
+    }
+
+    // Give them a valid admissions record if appropriate
+    if (["Active", "Waitlisted", "Paused", "Authorized"].includes(status)) {
+      const authorizationsCount = ["Active", "Authorized", "Paused"].includes(
+        status
+      )
+        ? 1
+        : 0
+      await this.prisma.client.updateCustomer({
+        data: {
+          admissions: {
+            create: {
+              allAccessEnabled,
+              admissable: true,
+              authorizationsCount,
+              inServiceableZipcode: true,
+            },
+          },
         },
         where: { id: customer.id },
       })

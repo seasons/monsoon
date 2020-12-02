@@ -1,12 +1,9 @@
 export { directiveResolvers } from "@app/directives"
 
-export { AirtableModule } from "@modules/Airtable"
 export { BlogModule } from "@modules/Blog"
 export { FitPicModule } from "./FitPic/fitpic.module"
 export { CollectionModule } from "@modules/Collection"
-export { CustomerModule } from "@modules/Customer"
 export { CronModule } from "./Cron/cron.module"
-export { EmailModule } from "./Email/email.module"
 export { FAQModule } from "./FAQ/faq.module"
 export { HomepageModule } from "./Homepage/homepage.module"
 export { ImageModule } from "./Image/image.module"

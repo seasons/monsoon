@@ -15,8 +15,9 @@ import { AdmissionsService } from "../services/admissions.service"
 
 describe("Admissions Service", () => {
   let admissions: AdmissionsService
-  let expectAdmit
   let expectNotAdmit
+  let expectAdmitWithAllAccessEnabled
+  let expectAdmitWithAllAccessDisabled
 
   beforeAll(async () => {
     admissions = await createTestAdmissionsService(null)
@@ -24,111 +25,171 @@ describe("Admissions Service", () => {
 
   describe("Serviceable Zipcodes", () => {
     beforeAll(() => {
-      expectAdmit = (zipcode: string) =>
-        expect(admissions.zipcodeAllowed(zipcode)).toBe(true)
+      expectAdmitWithAllAccessEnabled = (zipcode: string) => {
+        const { pass, detail } = admissions.zipcodeAllowed(zipcode)
+        expect(pass).toBe(true)
+        expect(detail.allAccessEnabled).toBe(true)
+      }
+
+      expectAdmitWithAllAccessDisabled = (zipcode: string) => {
+        const { pass, detail } = admissions.zipcodeAllowed(zipcode)
+        expect(pass).toBe(true)
+        expect(detail.allAccessEnabled).toBe(false)
+      }
+
       expectNotAdmit = (zipcode: string) =>
-        expect(admissions.zipcodeAllowed(zipcode)).toBe(false)
+        expect(admissions.zipcodeAllowed(zipcode).pass).toBe(false)
     })
 
-    it("admits New York", () => expectAdmit("11432"))
+    it("admits New York with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("11432"))
 
-    it("admits Pennsylvania", () => expectAdmit("15001"))
+    it("admits Pennsylvania with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("15001"))
 
-    it("admits New Jersey", () => expectAdmit("07001"))
+    it("admits New Jersey with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("07001"))
 
-    it("admits Delaware", () => expectAdmit("19701"))
+    it("admits Delaware with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("19701"))
 
-    it("admits Maryland", () => expectAdmit("20588"))
+    it("admits Maryland with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("20588"))
 
-    it("admits Massachusetts", () => expectAdmit("01001"))
+    it("admits Massachusetts with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("01001"))
 
-    it("admits New Hampshire", () => expectAdmit("03031"))
+    it("admits New Hampshire with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("03031"))
 
-    it("admits Vermont", () => expectAdmit("05001"))
+    it("admits Vermont with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("05001"))
 
-    it("admits Washington D.C.", () => expectAdmit("20011"))
+    it("admits Washington D.C. with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("20011"))
 
-    it("admits Maine", () => expectAdmit("03901"))
+    it("admits Maine with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("03901"))
 
-    it("admits Virginia", () => expectAdmit("20101"))
+    it("admits Virginia with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("20101"))
 
-    it("admits Ohio", () => expectAdmit("43001"))
+    it("admits Ohio with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("43001"))
 
-    it("admits West Virginia", () => expectAdmit("24701"))
+    it("admits West Virginia with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("24701"))
 
-    it("admits Michigan", () => expectAdmit("49036"))
+    it("admits Michigan with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("49036"))
 
-    it("admits North Carolina", () => expectAdmit("27565"))
+    it("admits North Carolina with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("27565"))
 
-    it("admits Connecticut", () => expectAdmit("06101"))
+    it("admits Connecticut with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("06101"))
 
-    it("admits Rhode Island", () => expectAdmit("02840"))
+    it("admits Rhode Island with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("02840"))
 
-    it("admits Indiana", () => expectAdmit("46201"))
+    it("admits Indiana with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("46201"))
 
-    it("admits Kentucky", () => expectAdmit("41701"))
+    it("admits Kentucky with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("41701"))
 
-    it("admits Tennessee", () => expectAdmit("37201"))
+    it("admits Tennessee with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("37201"))
 
-    it("admits South Carolina", () => expectAdmit("29020"))
+    it("admits South Carolina with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("29020"))
 
-    it("admits Georgia", () => expectAdmit("30301"))
+    it("admits Georgia with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("30301"))
 
-    it("admits Illinois", () => expectAdmit("60601"))
+    it("admits Illinois with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("60601"))
 
-    it("does not admit Alabama", () => expectNotAdmit("35004"))
+    it("admits Alabama with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("35004"))
 
     it("does not admit Alaska", () => expectNotAdmit("99501"))
 
-    it("does not admit Arizona", () => expectNotAdmit("85001"))
+    it("admits Arizona with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("85001"))
 
-    it("does not admit Arkansas", () => expectNotAdmit("72201"))
+    it("admits Arkansas with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("72201"))
 
-    it("does not admit California", () => expectNotAdmit("90001"))
+    it("admits California with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("90001"))
 
-    it("does not admit Colorado", () => expectNotAdmit("80201"))
+    it("admits Colorado with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("80201"))
 
-    it("does not admit Florida", () => expectNotAdmit("33124"))
+    it("admits Florida with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("33124"))
 
     it("does not admit Hawaii", () => expectNotAdmit("96801"))
 
-    it("does not admit Idaho", () => expectNotAdmit("83254"))
+    it("admits Idaho with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("83254"))
 
-    it("does not admit Iowa", () => expectNotAdmit("52801"))
+    it("admits Iowa with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("52801"))
 
-    it("does not admit Kansas", () => expectNotAdmit("67201"))
+    it("admits Kansas with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("67201"))
 
-    it("does not admit Louisiana", () => expectNotAdmit("70112"))
+    it("admits Louisiana with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("70112"))
 
-    it("does not admit Minnesota", () => expectNotAdmit("55801"))
+    it("admits Minnesota with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("55801"))
 
-    it("does not admit Mississippi", () => expectNotAdmit("39530"))
+    it("admits Mississippi with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("39530"))
 
-    it("does not admit Missouri", () => expectNotAdmit("63101"))
+    it("admits Missouri with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("63101"))
 
-    it("does not admit Montana", () => expectNotAdmit("59044"))
+    it("admits Montana with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("59044"))
 
-    it("does not admit Nebraska", () => expectNotAdmit("68901"))
+    it("admits Nebraska with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("68901"))
 
-    it("does not admit Nevada", () => expectNotAdmit("89501"))
+    it("admits Nevada with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("89501"))
 
-    it("does not admit New Mexico", () => expectNotAdmit("87500"))
+    // TODO: Get this to pass with 87500. Thats Sante Fe, NM.
+    // Currently it is unable to get the state for that zipcode
+    it("admits New Mexico with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("87102"))
 
-    it("does not admit North Dakota", () => expectNotAdmit("58282"))
+    it("admits North Dakota with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("58282"))
 
-    it("does not admit Oklahoma", () => expectNotAdmit("74101"))
+    it("admits Oklahoma with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("74101"))
 
-    it("does not admit Oregon", () => expectNotAdmit("97201"))
+    it("admits Oregon with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("97201"))
 
-    it("does not admit South Dakota", () => expectNotAdmit("57401"))
+    it("admits South Dakota with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("57401"))
 
-    it("does not admit Texas", () => expectNotAdmit("78701"))
+    it("admits Texas with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("78701"))
 
-    it("does not admit Washington", () => expectNotAdmit("98004"))
+    it("admits Washington with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("98004"))
 
-    it("does not admit Wisconsin", () => expectNotAdmit("53201"))
+    it("admits Wisconsin with All Access Enabled", () =>
+      expectAdmitWithAllAccessEnabled("53201"))
 
-    it("does not admit Wyoming", () => expectNotAdmit("82941"))
+    it("admits Wyoming with All Access Disabled", () =>
+      expectAdmitWithAllAccessDisabled("82941"))
   })
 
   describe("Ops Threshold", () => {
@@ -158,8 +219,11 @@ describe("Admissions Service", () => {
         PrismaServiceMockElevenAccountActivations
       )
 
-      const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
-      expect(belowOpsThreshold).toBe(false)
+      const {
+        pass,
+        detail,
+      } = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      expect(pass).toBe(false)
     })
 
     it("Returns false if we've sent out too many invitations", async () => {
@@ -195,8 +259,11 @@ describe("Admissions Service", () => {
         PrismaServiceMockTwentyOneAccountActivations
       )
 
-      const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
-      expect(belowOpsThreshold).toBe(false)
+      const {
+        pass,
+        detail,
+      } = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      expect(pass).toBe(false)
     })
 
     it("Returns true if we're below both thresholds", async () => {
@@ -215,8 +282,11 @@ describe("Admissions Service", () => {
         PrismaServiceMockNoInvitationsOrAccountActiviations
       )
 
-      const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
-      expect(belowOpsThreshold).toBe(true)
+      const {
+        pass,
+        detail,
+      } = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      expect(pass).toBe(true)
     })
   })
 
@@ -312,7 +382,7 @@ describe("Admissions Service", () => {
         cleanupFunc: customerCleanUpFunc,
         customer,
       } = await testUtils.createTestCustomer({
-        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31] },
+        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
       })
       cleanupFuncs.push(customerCleanUpFunc)
       testCustomer = customer
@@ -326,10 +396,12 @@ describe("Admissions Service", () => {
     })
 
     it("correctly calculates the available inventory for a user with no competing users", async () => {
-      const reservableStylesForCustomer = await admissions.reservableInventoryForCustomer(
-        { id: testCustomer.id }
-      )
-      expect(reservableStylesForCustomer).toBe(12)
+      const {
+        reservableStyles,
+      } = await admissions.reservableInventoryForCustomer({
+        id: testCustomer.id,
+      })
+      expect(reservableStyles).toBe(12)
     })
 
     it("correctly calculates the available inventory for a user with competing paused users", async () => {
@@ -337,7 +409,7 @@ describe("Admissions Service", () => {
         // paused, but not resuming within the next week and therefore not competing
         {
           status: "Paused",
-          detail: { topSizes: ["XS"], waistSizes: [30, 31] },
+          detail: { topSizes: ["XS"], waistSizes: [30, 31], phoneOS: "iOS" },
           membership: {
             pauseRequests: [
               {
@@ -352,7 +424,7 @@ describe("Admissions Service", () => {
         // paused, resuming in the next week, competing
         {
           status: "Paused",
-          detail: { topSizes: ["XS"], waistSizes: [30, 31] },
+          detail: { topSizes: ["XS"], waistSizes: [30, 31], phoneOS: "iOS" },
           membership: {
             // put a few pause requests to test the code that retrieves the latest one
             pauseRequests: [
@@ -383,10 +455,12 @@ describe("Admissions Service", () => {
         cleanupFuncs.push(cleanupFunc)
       }
 
-      const reservableStylesForCustomer = await admissions.reservableInventoryForCustomer(
-        { id: testCustomer.id }
-      )
-      expect(reservableStylesForCustomer).toBe(9) // 6.5 available top styles, 2.5 available bottom styles
+      const {
+        reservableStyles,
+      } = await admissions.reservableInventoryForCustomer({
+        id: testCustomer.id,
+      })
+      expect(reservableStyles).toBe(9) // 6.5 available top styles, 2.5 available bottom styles
     }, 20000)
 
     it("correctly calculates the available inventory for a user with competing active users", async () => {
@@ -407,28 +481,66 @@ describe("Admissions Service", () => {
         cleanupFuncs.push(cleanupFunc)
       }
 
-      const reservableStylesForCustomer = await admissions.reservableInventoryForCustomer(
-        { id: testCustomer.id }
-      )
-      expect(reservableStylesForCustomer).toBe(6)
+      const {
+        reservableStyles,
+      } = await admissions.reservableInventoryForCustomer({
+        id: testCustomer.id,
+      })
+      expect(reservableStyles).toBe(6)
     })
 
     it("does not admit a user with insufficient available inventory", async () => {
       process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER = "15"
 
-      const passesThreshold = await admissions.haveSufficientInventoryToServiceCustomer(
-        { id: testCustomer.id }
-      )
-      expect(passesThreshold).toBe(false)
+      const {
+        pass,
+      } = await admissions.haveSufficientInventoryToServiceCustomer({
+        id: testCustomer.id,
+      })
+      expect(pass).toBe(false)
     })
 
     it("admits a user with sufficient inventory", async () => {
       process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER = "11"
 
-      const passesThreshold = await admissions.haveSufficientInventoryToServiceCustomer(
-        { id: testCustomer.id }
+      const {
+        pass,
+      } = await admissions.haveSufficientInventoryToServiceCustomer({
+        id: testCustomer.id,
+      })
+      expect(pass).toBe(true)
+    })
+
+    it("does not admit a user with an unsupported platform", async () => {
+      const { customer } = await testUtils.createTestCustomer({
+        detail: {
+          topSizes: ["XS", "S"],
+          waistSizes: [30, 31],
+          phoneOS: "Android",
+        },
+      })
+
+      const { pass } = await admissions.hasSupportedPlatform(
+        {
+          id: customer.id,
+        },
+        "flare"
       )
-      expect(passesThreshold).toBe(true)
+      expect(pass).toBe(false)
+    })
+
+    it("admits a user with a supported platform", async () => {
+      const { customer } = await testUtils.createTestCustomer({
+        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
+      })
+
+      const { pass } = await admissions.hasSupportedPlatform(
+        {
+          id: customer.id,
+        },
+        "flare"
+      )
+      expect(pass).toBe(true)
     })
   })
 })

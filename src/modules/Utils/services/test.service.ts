@@ -146,6 +146,7 @@ export class TestUtilsService {
                 zipCode: "10013",
               },
             },
+            phoneOS: input.detail?.phoneOS,
           } as CustomerDetailCreateInput,
         }
       : {}

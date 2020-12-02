@@ -1,7 +1,10 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { EmailService } from "@app/modules/Email/services/email.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
+import chargebee from "chargebee"
 import { head } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
@@ -23,7 +26,9 @@ export class ChargebeeController {
   constructor(
     private readonly payment: PaymentService,
     private readonly segment: SegmentService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly error: ErrorService,
+    private readonly email: EmailService
   ) {}
 
   @Post()
@@ -60,6 +65,17 @@ export class ChargebeeController {
             lastName
             email
           }
+          referrer {
+            id
+            user {
+              id
+              email
+              firstName
+            }
+            membership {
+              subscriptionId
+            }
+          }
         }
       `
       )
@@ -67,7 +83,7 @@ export class ChargebeeController {
 
     try {
       // If they don't have a billing info this means they've created their account
-      // user the deprecated ChargebeeHostedCheckout
+      // using the deprecated ChargebeeHostedCheckout
       if (!customerWithBillingAndUserData?.billingInfo?.id) {
         const user = customerWithBillingAndUserData.user
         this.segment.trackSubscribed(customer_id, {
@@ -79,13 +95,32 @@ export class ChargebeeController {
           email: user?.email || "",
         })
         // Only create the billing info and send welcome email if user used chargebee checkout
-        await this.payment.chargebeeSubscriptionCreated(
+        await this.payment.createPrismaSubscription(
           customer_id,
           customer,
           card,
           plan_id,
           subscriptionID
         )
+
+        // Handle if it was a referral
+        if (customerWithBillingAndUserData?.referrer?.id) {
+          // Give the referrer a discount
+          await chargebee.subscription
+            .update(
+              customerWithBillingAndUserData?.referrer?.membership
+                ?.subscriptionId,
+              {
+                coupon_ids: [process.env.REFERRAL_COUPON_ID],
+              }
+            )
+            .request()
+          // Email the referrer
+          await this.email.sendReferralConfirmationEmail({
+            referrer: customerWithBillingAndUserData.referrer.user,
+            referee: customerWithBillingAndUserData.user,
+          })
+        }
       }
     } catch (err) {
       Sentry.captureException(err)
@@ -95,8 +130,17 @@ export class ChargebeeController {
   private async chargebeeCustomerChanged(content: any) {
     const {
       customer: { id },
-      card,
+      card = {},
     } = content
-    await this.payment.chargebeeCustomerChanged(id, card)
+
+    // no card data on the payload
+    if (Object.keys(card).length > 0) {
+      await this.payment.chargebeeCustomerChanged(id, card)
+    } else {
+      this.error.setExtraContext(content, "chargebeePayload.content")
+      this.error.captureMessage(
+        `Chargebee customer_changed payload without card in content`
+      )
+    }
   }
 }

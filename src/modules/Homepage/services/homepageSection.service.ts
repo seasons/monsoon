@@ -1,3 +1,7 @@
+import {
+  IMGIX_BASE,
+  ImageService,
+} from "@app/modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 
@@ -42,7 +46,10 @@ const ProductFragment = `
 
 @Injectable()
 export class HomepageSectionService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly image: ImageService
+  ) {}
 
   async getResultsForSection(sectionTitle: SectionTitle, args, customerId?) {
     switch (sectionTitle) {
@@ -77,31 +84,35 @@ export class HomepageSectionService {
             where: {
               slug_in: [
                 "acne-studios",
+                "amiri",
+                "auralee",
+                "bode",
+                "cactus-plant-flea-market",
+                "casablanca",
+                "cav-empt",
+                "comme-des-garcons",
+                "craig-green",
+                "daily-paper",
+                "deveaux",
+                "dries-van-noten",
+                "engineered-garments",
+                "gucci",
+                "heron-preston",
+                "jacquemus",
+                "john-elliott",
+                "judy-turner",
+                "kapital",
+                "landlord",
+                "martine-rose",
+                "noah",
+                "nanushka",
+                "our-legacy",
+                "palm-angels",
+                "prada",
+                "rhude",
+                "sacai",
                 "stone-island",
                 "stussy",
-                "comme-des-garcons",
-                "aime-leon-dore",
-                "john-elliot",
-                "noah",
-                "cavempt",
-                "fear-of-god",
-                "brain-dead",
-                "john-elliott",
-                "amiri",
-                "cav-empt",
-                "deveaux",
-                "gucci",
-                "prada",
-                "engineered-garments",
-                "craig-green",
-                "dries-van-noten",
-                "cactus-plant-flea-market",
-                "ambush",
-                "rhude",
-                "heron-preston",
-                "saturdays-nyc",
-                "y-3",
-                "our-legacy",
               ],
             },
           },
@@ -113,6 +124,54 @@ export class HomepageSectionService {
           }`
         )
         return brands
+
+      case SectionTitle.Categories:
+        const categorySlugs = [
+          "coats",
+          "hoodies",
+          "jackets",
+          "shirts",
+          "pants",
+          "tees",
+          "sweatshirts",
+          "shorts",
+        ]
+        const categoryImages = {
+          pants: "homepage-categories/Pants.jpg",
+          hoodies: "homepage-categories/Hoodies.jpg",
+          jackets: "homepage-categories/Jackets.jpg",
+          coats: "homepage-categories/Coats.jpg",
+          tees: "homepage-categories/Tees.jpg",
+          shirts: "homepage-categories/Shirts.jpg",
+          sweatshirts: "homepage-categories/Sweatshirts.jpg",
+          shorts: "homepage-categories/Shorts.jpg",
+        }
+        const categories = await this.prisma.binding.query.categories({
+          where: {
+            slug_in: categorySlugs,
+          },
+        })
+        const categoriesWithImages = await Promise.all(
+          categories.map(category => {
+            const imageUrl = IMGIX_BASE + categoryImages[category.slug]
+            return this.image
+              .resizeImage(imageUrl, "Small", {})
+              .then(imageUrl => ({
+                ...category,
+                __typename: "Category",
+                image: [
+                  {
+                    url: imageUrl,
+                  },
+                ],
+              }))
+          })
+        )
+        return categoriesWithImages.sort((catA, catB) => {
+          const catAIdx = categorySlugs.findIndex(slug => slug === catA.slug)
+          const catBIdx = categorySlugs.findIndex(slug => slug === catB.slug)
+          return catAIdx - catBIdx
+        })
 
       default:
         const rails = await this.prisma.binding.query.homepageProductRails(

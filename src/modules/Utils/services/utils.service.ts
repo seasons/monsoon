@@ -1,27 +1,51 @@
 import crypto from "crypto"
 import * as fs from "fs"
 
+import { DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
-import { Location } from "@prisma/index"
+import { Location, Reservation } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
-import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
+import graphqlFields from "graphql-fields"
+import { camelCase, get, isObject, mapKeys, snakeCase } from "lodash"
 import moment from "moment"
+import states from "us-state-converter"
 
 import { bottomSizeRegex } from "../../Product/constants"
 
 enum ProductSize {
+  XXS = "XXS",
   XS = "XS",
   S = "S",
   M = "M",
   L = "L",
   XL = "XL",
   XXL = "XXL",
+  XXXL = "XXXL",
 }
+
+// TODO: As needed, support other types. We just need to update the code
+// that filters out computed fields
+type InfoStringPath = "user" | "customer"
 
 @Injectable()
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
+
+  abbreviateState(state: string) {
+    let abbr
+    const _state = state?.trim()
+
+    // this particular library doesn't handle Oregon for whichever reason.
+    // So we handle it independently
+    if (_state === "Oregon") {
+      abbr = "OR"
+    } else {
+      abbr = states.abbr(_state)
+    }
+
+    return abbr
+  }
 
   // Returns an ISO string for a date that's X days ago
   xDaysAgoISOString(x: number) {
@@ -36,6 +60,10 @@ export class UtilsService {
     return Math.random().toString(36).slice(2)
   }
 
+  dateSort(dateOne: DateTime, dateTwo: DateTime) {
+    return moment(dateOne).isAfter(moment(dateTwo)) ? -1 : 1
+  }
+
   isXDaysBefore({
     beforeDate,
     afterDate,
@@ -45,6 +73,9 @@ export class UtilsService {
     afterDate: Date
     numDays: number
   }): boolean {
+    if (beforeDate === null || afterDate === null) {
+      return false
+    }
     const before = moment(
       new Date(
         beforeDate.getFullYear(),
@@ -90,15 +121,29 @@ export class UtilsService {
     return prismaLocation
   }
 
-  formatReservationReturnDate(reservationCreatedAtDate: Date) {
-    const returnDate = new Date(reservationCreatedAtDate)
-    returnDate.setDate(reservationCreatedAtDate.getDate() + 30)
-    return returnDate.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
+  getReservationReturnDate(reservation: Reservation) {
+    let returnDate
+    let returnOffset
+    if (reservation.receivedAt !== null) {
+      returnDate = new Date(reservation.receivedAt)
+      returnOffset = 30
+    } else {
+      const daysSinceReservationCreated = moment().diff(
+        moment(reservation.createdAt),
+        "days"
+      )
+      if (daysSinceReservationCreated < 15) {
+        return null
+      } else {
+        // If for some reason we have not been able to set receivedAt 15 days in,
+        // default to 35 days after createdAt. This assumes a 5 day shipping time.
+        returnDate = new Date(reservation.createdAt)
+        returnOffset = 35
+      }
+    }
+    returnDate.setDate(returnDate.getDate() + returnOffset)
+
+    return returnDate
   }
 
   encryptUserIDHash(userID: string): string {
@@ -195,6 +240,8 @@ export class UtilsService {
 
   sizeNameToSizeCode(sizeName: ProductSize | string) {
     switch (sizeName) {
+      case ProductSize.XXS:
+        return "XS"
       case ProductSize.XS:
         return "XS"
       case ProductSize.S:
@@ -207,6 +254,8 @@ export class UtilsService {
         return "XL"
       case ProductSize.XXL:
         return "XXL"
+      case ProductSize.XXXL:
+        return "XXXL"
     }
 
     // If we get here, we're expecting a bottom with size WxL e.g 32x28 or 27x8
@@ -214,6 +263,93 @@ export class UtilsService {
       throw new Error(`invalid sizeName: ${sizeName}`)
     }
     return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
+  }
+
+  /**
+   * Returns a JSON object containing the contents of the file located
+   * at the given path
+   *
+   * @param path path of the json file relative to the applications's root
+   */
+  parseJSONFile = (path: string) => {
+    return JSON.parse(fs.readFileSync(process.cwd() + `/${path}.json`, "utf-8"))
+  }
+
+  // Get an info string for a field nested somewhere inside the info object
+  getInfoStringAt = (info, path: InfoStringPath) => {
+    if (typeof info === "string") {
+      throw new Error(`Unable to parse string info. Need to implement.`)
+    }
+
+    let fieldsToIgnore = []
+    if (["user", "customer"].includes(path)) {
+      fieldsToIgnore = this.getFieldsToIgnore(path)
+    }
+
+    const fields = graphqlFields(info)
+    const subField = get(fields, path)
+    if (subField === undefined) {
+      return null
+    }
+    return this.fieldsToInfoString(subField, fieldsToIgnore)
+  }
+
+  private getFieldsToIgnore = (field: InfoStringPath | string) => {
+    let fields = []
+
+    // TODO: Ideally, these lists should come from the properties
+    // of the respective field resolver classes. If we move towards
+    // using this function more often, we should update that. We
+    // hardcode it for now because using the actual classes caused
+    // cyclical import errors
+    switch (field) {
+      case "user":
+        fields = [
+          "beamsToken",
+          "links",
+          "fullName",
+          "customer",
+          "completeAccountURL",
+        ]
+        break
+      case "customer":
+        fields = [
+          "onboardingSteps",
+          "invoices",
+          "transactions",
+          "shouldRequestFeedback",
+          "coupon",
+          "paymentPlan",
+        ]
+        break
+    }
+    return fields
+  }
+
+  private fieldsToInfoString = (fields: any, fieldsToIgnore: string[]) => {
+    // Base case
+    if (Object.keys(fields).length === 0) {
+      return ``
+    }
+
+    // Recursive case
+    let string = `{`
+    const keys = Object.keys(fields)
+    for (const key of keys) {
+      if (fieldsToIgnore.includes(key)) {
+        continue
+      }
+      string += ` ${key}`
+      const subFields = this.fieldsToInfoString(
+        fields[key],
+        this.getFieldsToIgnore(key)
+      )
+      if (subFields === "") {
+        continue
+      }
+      string += ` ${subFields}`
+    }
+    return string + ` }`
   }
 
   private caseify = (obj: any, caseFunc: (str: string) => string): any => {

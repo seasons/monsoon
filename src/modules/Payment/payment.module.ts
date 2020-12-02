@@ -1,4 +1,3 @@
-import { AirtableModule } from "@modules/Airtable/airtable.module"
 import { AnalyticsModule } from "@modules/Analytics/analytics.module"
 import { EmailModule } from "@modules/Email/email.module"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
@@ -7,6 +6,7 @@ import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
+import { ErrorModule } from "../Error/error.module"
 import { ChargebeeController } from "./controllers/chargebee.controller"
 import { InvoicesForCustomersLoader } from "./loaders/invoicesForCustomers.loaders"
 import { TransactionsLoader } from "./loaders/transactions.loaders"
@@ -21,7 +21,6 @@ import { PaymentUtilsService } from "./services/payment.utils.service"
 @Module({
   controllers: [ChargebeeController],
   imports: [
-    AirtableModule,
     EmailModule,
     PaymentModule,
     PrismaModule,
@@ -29,6 +28,7 @@ import { PaymentUtilsService } from "./services/payment.utils.service"
     UserModule,
     UtilsModule,
     AnalyticsModule,
+    ErrorModule,
   ],
   providers: [
     ChargebeeQueriesResolver,

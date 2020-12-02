@@ -1,6 +1,9 @@
+import { EmailService } from "@app/modules/Email/services/email.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
+import { CouponType } from "@app/modules/Payment/payment.types"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
-import { ShippingUtilsService } from "@app/modules/Shipping/services/shipping.utils.service"
-import { CustomerDetail } from "@app/prisma/prisma.binding"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { CustomerCreateInput, CustomerDetail } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import {
   CustomerDetailCreateInput,
@@ -8,9 +11,10 @@ import {
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
-import axios from "axios"
-import { head } from "lodash"
+import chargebee from "chargebee"
+import { camelCase, head, upperFirst } from "lodash"
 import request from "request"
+import zipcodes from "zipcodes"
 
 const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"
@@ -18,6 +22,14 @@ const PW_STRENGTH_RULES_URL =
 interface SegmentReservedTraitsInCustomerDetail {
   phone?: string
   address?: any
+}
+
+interface UTMInput {
+  source: String
+  medium: String
+  term: String
+  content: String
+  campaign: String
 }
 
 interface Auth0User {
@@ -32,7 +44,9 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly pushNotification: PushNotificationService,
-    private readonly shippingUtils: ShippingUtilsService
+    private readonly email: EmailService,
+    private readonly error: ErrorService,
+    private readonly utils: UtilsService
   ) {}
 
   async signupUser({
@@ -41,12 +55,18 @@ export class AuthService {
     firstName,
     lastName,
     details,
+    referrerId,
+    utm,
+    info,
   }: {
     email: string
     password: string
     firstName: string
     lastName: string
     details: CustomerDetailCreateInput
+    referrerId?: string
+    utm?: UTMInput
+    info?: any
   }) {
     // 1. Register the user on Auth0
     let userAuth0ID
@@ -73,7 +93,7 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
-    // 3. Create the user in our database and Airtable
+    // 3. Create the user in our database
     const user = await this.createPrismaUser(
       userAuth0ID,
       email,
@@ -82,16 +102,54 @@ export class AuthService {
     )
 
     // 4. Create the customer in our database
-    const customer = await this.createPrismaCustomerForExistingUser(
+    // There will be a race condition in the case where two members with the same first name sign up at the same time
+    const usersWithSameFirstName = await this.prisma.client.users({
+      where: { firstName },
+    })
+    const {
+      customer,
+      isValidReferral,
+    } = await this.createPrismaCustomerForExistingUser(
       user.id,
       details,
-      "Created"
+      "Created",
+      // replace all non-aphabetical characters with an empty space so e.g "R.J." doesn't throw an error on rebrandly
+      firstName.replace(/[^a-z]/gi, "") +
+        (usersWithSameFirstName.length + 1).toString(),
+      referrerId,
+      utm
     )
 
-    return { user, tokenData, customer }
+    await this.email.sendSubmittedEmailEmail(user)
+
+    let returnUser = user
+    let returnCust = customer
+    if (!!info) {
+      let userInfo = this.utils.getInfoStringAt(info, "user")
+      if (!!userInfo) {
+        returnUser = await this.prisma.binding.query.user(
+          {
+            where: { id: user.id },
+          },
+          userInfo
+        )
+      }
+
+      let custInfo = this.utils.getInfoStringAt(info, "customer")
+      if (!!custInfo) {
+        returnCust = await this.prisma.binding.query.customer(
+          {
+            where: { id: customer.id },
+          },
+          custInfo
+        )
+      }
+    }
+
+    return { user: returnUser, tokenData, customer: returnCust }
   }
 
-  async loginUser({ email, password, requestUser }) {
+  async loginUser({ email, password, requestUser, info }) {
     if (!!requestUser) {
       throw new Error(`user is already logged in`)
     }
@@ -107,18 +165,39 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
-    const user = await this.prisma.client.user({ email })
+    let returnUser
+    const userInfo = this.utils.getInfoStringAt(info, "user")
+    if (!!userInfo) {
+      returnUser = await this.prisma.binding.query.user(
+        { where: { email } },
+        userInfo
+      )
+    }
 
     // If the user is a Customer, make sure that the account has been approved
-    if (!user) {
+    if (!returnUser) {
       throw new Error("User record not found")
+    }
+
+    let returnCust
+    const custInfo = this.utils.getInfoStringAt(info, "customer")
+    if (!!custInfo) {
+      returnCust = head(
+        await this.prisma.binding.query.customers(
+          {
+            where: { user: { email } },
+          },
+          custInfo
+        )
+      )
     }
 
     return {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
-      user,
+      user: returnUser,
+      customer: returnCust,
       beamsToken: this.pushNotification.generateToken(email),
     }
   }
@@ -193,6 +272,15 @@ export class AuthService {
     const traits = {} as any
     if (!!detail?.phoneNumber) {
       traits.phone = detail.phoneNumber
+    }
+    const state = detail?.shippingAddress?.state
+    if (!!detail.shippingAddress) {
+      traits.address = {
+        city: detail.shippingAddress?.city,
+        postalCode: detail.shippingAddress?.zipCode,
+        state,
+      }
+      traits.state = state
     }
     return traits
   }
@@ -327,30 +415,138 @@ export class AuthService {
     return user
   }
 
-  private async createPrismaCustomerForExistingUser(userID, details, status) {
+  private async createPrismaCustomerForExistingUser(
+    userID,
+    details,
+    status,
+    referralSlashTag,
+    referrerId,
+    utm
+  ) {
     if (details?.shippingAddress?.create?.zipCode) {
-      try {
-        const {
-          city,
-          state,
-        } = (await this.shippingUtils.getCityAndStateFromZipCode(
-          details?.shippingAddress?.create?.zipCode
-        )) as any
-        details.shippingAddress.create.city = city
-        details.shippingAddress.create.state = state
-      } catch (error) {
-        throw new Error(
-          `Error looking up city and state from zipCode: ${error}`
-        )
-      }
+      const zipCode = details?.shippingAddress?.create?.zipCode
+      const state = zipcodes.lookup(zipCode)?.state
+      const city = zipcodes.lookup(zipCode)?.city
+      details.shippingAddress.create.city = city
+      details.shippingAddress.create.state = state
     }
 
-    return await this.prisma.client.createCustomer({
-      user: {
-        connect: { id: userID },
+    const customerQueryInfo = `{
+      id
+      status
+      detail {
+        id
+        shippingAddress {
+          id
+          zipCode
+          state
+          city
+        }
+      }
+      referrer {
+        id
+      }
+    }`
+
+    let createData = {} as CustomerCreateInput
+    if (
+      !!utm?.source ||
+      !!utm?.medium ||
+      !!utm?.term ||
+      !!utm?.content ||
+      !!utm?.campaign
+    ) {
+      createData.utm = { create: utm }
+    }
+    let newCustomer = await this.prisma.binding.mutation.createCustomer(
+      {
+        data: {
+          ...createData,
+          user: {
+            connect: { id: userID },
+          },
+          detail: { create: details },
+          status: status || "Waitlisted",
+        },
       },
-      detail: { create: details },
-      status: status || "Waitlisted",
+      customerQueryInfo
+    )
+
+    try {
+      const referralLink = await this.createReferralLink(
+        newCustomer.id,
+        referralSlashTag
+      )
+      let referrerIsValidCustomer = false
+      if (referrerId) {
+        referrerIsValidCustomer = await this.prisma.binding.query.customer({
+          where: { id: referrerId },
+        })
+      }
+
+      newCustomer = await this.prisma.binding.mutation.updateCustomer(
+        {
+          data: {
+            referralLink: referralLink.shortUrl,
+            referrer: {
+              connect: referrerIsValidCustomer ? { id: referrerId } : null,
+            },
+          },
+          where: { id: newCustomer.id },
+        },
+        customerQueryInfo
+      )
+    } catch (err) {
+      this.error.setExtraContext(
+        { id: userID, status, referrerId, referralSlashTag },
+        "user"
+      )
+      this.error.captureError(err)
+    }
+
+    return {
+      customer: newCustomer,
+      isValidReferral: newCustomer.referrer !== null,
+    }
+  }
+
+  private async createReferralLink(
+    customerId,
+    referralSlashTag
+  ): Promise<{
+    shortUrl: string
+  }> {
+    const baseDomain =
+      process.env.NODE_ENV === "production"
+        ? "www.wearseasons.com"
+        : "staging.wearseasons.com"
+    let linkRequest = {
+      destination: `https://${baseDomain}/signup?referrer_id=` + customerId,
+      domain: { fullName: process.env.REFERRAL_DOMAIN },
+      slashtag: referralSlashTag,
+    }
+
+    let requestHeaders = {
+      "Content-Type": "application/json",
+      apikey: process.env.REBRANDLY_API_KEY,
+      workspace: process.env.REBRANDLY_WORKSPACE_ID,
+    }
+    return new Promise((resolve, reject) => {
+      return request(
+        {
+          uri: "https://api.rebrandly.com/v1/links",
+          method: "POST",
+          body: JSON.stringify(linkRequest),
+          headers: requestHeaders,
+        },
+        (err, response, body) => {
+          console.log(body)
+          if (err) {
+            reject(err)
+          }
+          resolve(JSON.parse(body))
+        }
+      )
     })
   }
 

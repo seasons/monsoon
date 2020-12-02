@@ -1,17 +1,17 @@
 import { User } from "@app/decorators"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
-import { PaymentPlan, Plan } from "@app/prisma"
-import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
-import { Loader } from "@modules/DataLoader"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import { Loader } from "@modules/DataLoader/decorators/dataloader.decorator"
 import {
   InvoicesForCustomersLoader,
   PaymentService,
 } from "@modules/Payment/index"
 import {
+  CouponType,
   InvoicesDataLoader,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, isObject } from "lodash"
 
@@ -38,6 +38,66 @@ export class CustomerFieldsResolver {
       .customer({ id: customer.id })
       .membership()
       .plan()
+  }
+
+  @ResolveField()
+  async coupon(
+    @Parent() customer,
+    @Loader({
+      params: {
+        query: `customers`,
+        info: `{
+              id
+              membership {
+                id
+              }
+              referrer {
+                id
+              }
+              utm {
+                source
+                medium
+                campaign
+                term
+                content
+              }
+            }
+            `,
+      },
+    })
+    prismaLoader: PrismaDataLoader<string>
+  ) {
+    let coupon
+    const custWithData = (await prismaLoader.load(customer.id)) as any
+    const hasSubscribed = !!custWithData?.membership?.id
+
+    if (hasSubscribed) {
+      return null
+    }
+
+    // Referral coupon
+    const wasReferred = !!custWithData?.referrer?.id
+    if (wasReferred) {
+      // TODO: If we ever need to query this field for N users at a time,
+      // cache this result so we don't hit a N+1 issue
+      coupon = await this.paymentService.checkCoupon(
+        process.env.REFERRAL_COUPON_ID
+      )
+    }
+
+    // Throwing fits campaign
+    const utm = custWithData?.utm
+    if (
+      utm?.source?.toLowerCase() === "throwingfits" &&
+      utm?.medium?.toLowerCase() === "podcast" &&
+      utm?.campaign?.toLowerCase() === "tfq42020"
+    ) {
+      coupon = await this.paymentService.checkCoupon(
+        process.env.THROWING_FITS_COUPON_ID
+      )
+    }
+
+    return coupon
   }
 
   @ResolveField()

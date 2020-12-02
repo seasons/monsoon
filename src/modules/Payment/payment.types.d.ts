@@ -72,6 +72,13 @@ export interface RefundInvoiceInput {
   reasonCode?: CreditNoteReasonCode
 }
 
+export interface Coupon {
+  id: string
+  amount: number
+  percentage: number
+  type: CouponType
+}
+
 export type CreditNoteReasonCode =
   | "ProductUnsatisfactory"
   | "ServiceUnsatisfactory"
@@ -82,6 +89,7 @@ export type CreditNoteReasonCode =
 
 export type LoadableRecord = "invoice" | "transaction"
 export type PlanId = "all-access" | "essential"
+export type CouponType = "FixedAmount" | "Percentage"
 
 export interface BillingAddress {
   firstName: string

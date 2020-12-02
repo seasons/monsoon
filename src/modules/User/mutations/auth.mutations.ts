@@ -1,7 +1,8 @@
 import { User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { PrismaService } from "@app/prisma/prisma.service"
+import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
 
 import { AuthService } from "../services/auth.service"
@@ -14,19 +15,21 @@ export class AuthMutationsResolver {
   ) {}
 
   @Mutation()
-  async login(@Args() { email, password }, @User() requestUser) {
+  async login(@Args() { email, password }, @User() requestUser, @Info() info) {
     const data = await this.auth.loginUser({
       email: email.toLowerCase(),
       password,
       requestUser,
+      info,
     })
     return data
   }
 
   @Mutation()
   async signup(
-    @Args() { email, password, firstName, lastName, details },
-    @Application() application
+    @Args() { email, password, firstName, lastName, details, referrerId, utm },
+    @Application() application,
+    @Info() info
   ) {
     const { user, tokenData, customer } = await this.auth.signupUser({
       email: email.toLowerCase(),
@@ -34,12 +37,25 @@ export class AuthMutationsResolver {
       firstName,
       lastName,
       details,
+      referrerId,
+      utm,
+      info,
     })
 
     // Add them to segment and track their account creation event
     const now = new Date()
+    const utmFormatted = {
+      utm_source: utm?.source,
+      utm_content: utm?.content,
+      utm_medium: utm?.medium,
+      utm_campaign: utm?.campaign,
+      utm_term: utm?.term,
+    }
     this.segment.identify(user.id, {
-      ...this.auth.extractSegmentReservedTraitsFromCustomerDetail(details),
+      ...this.auth.extractSegmentReservedTraitsFromCustomerDetail({
+        ...details,
+        ...customer.detail,
+      }),
       ...pick(user, [
         "firstName",
         "lastName",
@@ -48,6 +64,7 @@ export class AuthMutationsResolver {
         "email",
         "auth0Id",
       ]),
+      ...utmFormatted,
       createdAt: now.toISOString(),
     })
 
@@ -59,6 +76,7 @@ export class AuthMutationsResolver {
       ...pick(user, ["firstName", "lastName", "email"]),
       customerID: customer.id,
       application,
+      ...utmFormatted,
     })
 
     return {

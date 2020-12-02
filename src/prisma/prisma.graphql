@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Fri Sep 25 2020 10:40:25 GMT-0400 (Eastern Daylight Time)
+# timestamp: Tue Nov 24 2020 11:00:44 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -637,6 +637,10 @@ type AggregateCustomer {
   count: Int!
 }
 
+type AggregateCustomerAdmissionsData {
+  count: Int!
+}
+
 type AggregateCustomerDetail {
   count: Int!
 }
@@ -662,6 +666,10 @@ type AggregateHomepageProductRail {
 }
 
 type AggregateImage {
+  count: Int!
+}
+
+type AggregateInterestedUser {
   count: Int!
 }
 
@@ -693,10 +701,6 @@ type AggregatePhysicalProduct {
   count: Int!
 }
 
-type AggregatePhysicalProductInventoryStatusChange {
-  count: Int!
-}
-
 type AggregateProduct {
   count: Int!
 }
@@ -718,10 +722,6 @@ type AggregateProductRequest {
 }
 
 type AggregateProductSeason {
-  count: Int!
-}
-
-type AggregateProductStatusChange {
   count: Int!
 }
 
@@ -769,6 +769,14 @@ type AggregateSeason {
   count: Int!
 }
 
+type AggregateShippingMethod {
+  count: Int!
+}
+
+type AggregateShippingOption {
+  count: Int!
+}
+
 type AggregateSize {
   count: Int!
 }
@@ -778,6 +786,10 @@ type AggregateSmsReceipt {
 }
 
 type AggregateStylePreferences {
+  count: Int!
+}
+
+type AggregateSyncTiming {
   count: Int!
 }
 
@@ -798,6 +810,10 @@ type AggregateUserPushNotification {
 }
 
 type AggregateUserPushNotificationInterest {
+  count: Int!
+}
+
+type AggregateUTMData {
   count: Int!
 }
 
@@ -2830,6 +2846,7 @@ type Brand implements Node {
   isPrimaryBrand: Boolean!
   logo: Json
   name: String!
+  designer: String
   basedIn: String
   products(
     where: ProductWhereInput
@@ -2851,6 +2868,8 @@ type Brand implements Node {
   ): [Image!]
   since: DateTime
   tier: BrandTier!
+  published: Boolean!
+  featured: Boolean!
   websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -2880,9 +2899,12 @@ input BrandCreateInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String!
+  designer: String
   basedIn: String
   since: DateTime
   tier: BrandTier!
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
   products: ProductCreateManyWithoutBrandInput
   images: ImageCreateManyInput
@@ -2901,9 +2923,12 @@ input BrandCreateWithoutProductsInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String!
+  designer: String
   basedIn: String
   since: DateTime
   tier: BrandTier!
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
   images: ImageCreateManyInput
 }
@@ -2938,12 +2963,18 @@ enum BrandOrderByInput {
   logo_DESC
   name_ASC
   name_DESC
+  designer_ASC
+  designer_DESC
   basedIn_ASC
   basedIn_DESC
   since_ASC
   since_DESC
   tier_ASC
   tier_DESC
+  published_ASC
+  published_DESC
+  featured_ASC
+  featured_DESC
   websiteUrl_ASC
   websiteUrl_DESC
   createdAt_ASC
@@ -2960,9 +2991,12 @@ type BrandPreviousValues {
   isPrimaryBrand: Boolean!
   logo: Json
   name: String!
+  designer: String
   basedIn: String
   since: DateTime
   tier: BrandTier!
+  published: Boolean!
+  featured: Boolean!
   websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3032,9 +3066,12 @@ input BrandUpdateInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  designer: String
   basedIn: String
   since: DateTime
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
@@ -3047,9 +3084,12 @@ input BrandUpdateManyMutationInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  designer: String
   basedIn: String
   since: DateTime
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
 }
 
@@ -3067,9 +3107,12 @@ input BrandUpdateWithoutProductsDataInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  designer: String
   basedIn: String
   since: DateTime
   tier: BrandTier
+  published: Boolean
+  featured: Boolean
   websiteUrl: String
   images: ImageUpdateManyInput
 }
@@ -3430,6 +3473,72 @@ input BrandWhereInput {
   All values not ending with the given string.
   """
   name_not_ends_with: String
+  designer: String
+
+  """
+  All values that are not equal to given value.
+  """
+  designer_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  designer_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  designer_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  designer_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  designer_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  designer_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  designer_gte: String
+
+  """
+  All values containing the given string.
+  """
+  designer_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  designer_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  designer_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  designer_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  designer_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  designer_not_ends_with: String
   basedIn: String
 
   """
@@ -3548,6 +3657,18 @@ input BrandWhereInput {
   All values that are not contained in given list.
   """
   tier_not_in: [BrandTier!]
+  published: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  published_not: Boolean
+  featured: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  featured_not: Boolean
   websiteUrl: String
 
   """
@@ -6636,6 +6757,488 @@ type Customer implements Node {
     first: Int
     last: Int
   ): [Reservation!]
+  referralLink: String
+  referrerId: String
+  referrer: Customer
+  referrees(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Customer!]
+  emailedProducts(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product!]
+  admissions: CustomerAdmissionsData
+  authorizedAt: DateTime
+  utm: UTMData
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type CustomerAdmissionsData implements Node {
+  id: ID!
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean!
+  customer: Customer!
+  authorizationsCount: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  authorizationWindowClosesAt: DateTime
+}
+
+"""
+A connection to a list of items.
+"""
+type CustomerAdmissionsDataConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [CustomerAdmissionsDataEdge]!
+  aggregate: AggregateCustomerAdmissionsData!
+}
+
+input CustomerAdmissionsDataCreateInput {
+  id: ID
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
+  authorizationsCount: Int!
+  authorizationWindowClosesAt: DateTime
+  customer: CustomerCreateOneWithoutAdmissionsInput!
+}
+
+input CustomerAdmissionsDataCreateOneWithoutCustomerInput {
+  create: CustomerAdmissionsDataCreateWithoutCustomerInput
+  connect: CustomerAdmissionsDataWhereUniqueInput
+}
+
+input CustomerAdmissionsDataCreateWithoutCustomerInput {
+  id: ID
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
+  authorizationsCount: Int!
+  authorizationWindowClosesAt: DateTime
+}
+
+"""
+An edge in a connection.
+"""
+type CustomerAdmissionsDataEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: CustomerAdmissionsData!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum CustomerAdmissionsDataOrderByInput {
+  id_ASC
+  id_DESC
+  inServiceableZipcode_ASC
+  inServiceableZipcode_DESC
+  admissable_ASC
+  admissable_DESC
+  inAdmissableReason_ASC
+  inAdmissableReason_DESC
+  allAccessEnabled_ASC
+  allAccessEnabled_DESC
+  authorizationsCount_ASC
+  authorizationsCount_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  authorizationWindowClosesAt_ASC
+  authorizationWindowClosesAt_DESC
+}
+
+type CustomerAdmissionsDataPreviousValues {
+  id: ID!
+  inServiceableZipcode: Boolean!
+  admissable: Boolean!
+  inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean!
+  authorizationsCount: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  authorizationWindowClosesAt: DateTime
+}
+
+type CustomerAdmissionsDataSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerAdmissionsData
+  updatedFields: [String!]
+  previousValues: CustomerAdmissionsDataPreviousValues
+}
+
+input CustomerAdmissionsDataSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [CustomerAdmissionsDataSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [CustomerAdmissionsDataSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [CustomerAdmissionsDataSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CustomerAdmissionsDataWhereInput
+}
+
+input CustomerAdmissionsDataUpdateInput {
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
+  authorizationsCount: Int
+  authorizationWindowClosesAt: DateTime
+  customer: CustomerUpdateOneRequiredWithoutAdmissionsInput
+}
+
+input CustomerAdmissionsDataUpdateManyMutationInput {
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
+  authorizationsCount: Int
+  authorizationWindowClosesAt: DateTime
+}
+
+input CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
+  create: CustomerAdmissionsDataCreateWithoutCustomerInput
+  connect: CustomerAdmissionsDataWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: CustomerAdmissionsDataUpdateWithoutCustomerDataInput
+  upsert: CustomerAdmissionsDataUpsertWithoutCustomerInput
+}
+
+input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
+  inServiceableZipcode: Boolean
+  admissable: Boolean
+  inAdmissableReason: InAdmissableReason
+  allAccessEnabled: Boolean
+  authorizationsCount: Int
+  authorizationWindowClosesAt: DateTime
+}
+
+input CustomerAdmissionsDataUpsertWithoutCustomerInput {
+  update: CustomerAdmissionsDataUpdateWithoutCustomerDataInput!
+  create: CustomerAdmissionsDataCreateWithoutCustomerInput!
+}
+
+input CustomerAdmissionsDataWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [CustomerAdmissionsDataWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [CustomerAdmissionsDataWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [CustomerAdmissionsDataWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  inServiceableZipcode: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  inServiceableZipcode_not: Boolean
+  admissable: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  admissable_not: Boolean
+  inAdmissableReason: InAdmissableReason
+
+  """
+  All values that are not equal to given value.
+  """
+  inAdmissableReason_not: InAdmissableReason
+
+  """
+  All values that are contained in given list.
+  """
+  inAdmissableReason_in: [InAdmissableReason!]
+
+  """
+  All values that are not contained in given list.
+  """
+  inAdmissableReason_not_in: [InAdmissableReason!]
+  allAccessEnabled: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  allAccessEnabled_not: Boolean
+  authorizationsCount: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  authorizationsCount_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  authorizationsCount_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  authorizationsCount_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  authorizationsCount_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  authorizationsCount_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  authorizationsCount_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  authorizationsCount_gte: Int
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+  authorizationWindowClosesAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  authorizationWindowClosesAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  authorizationWindowClosesAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  authorizationWindowClosesAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  authorizationWindowClosesAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  authorizationWindowClosesAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  authorizationWindowClosesAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  authorizationWindowClosesAt_gte: DateTime
+  customer: CustomerWhereInput
+}
+
+input CustomerAdmissionsDataWhereUniqueInput {
+  id: ID
 }
 
 """
@@ -6658,16 +7261,34 @@ input CustomerCreateInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
+  emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
+  utm: UTMDataCreateOneWithoutCustomerInput
+}
+
+input CustomerCreateManyWithoutReferrerInput {
+  create: [CustomerCreateWithoutReferrerInput!]
+  connect: [CustomerWhereUniqueInput!]
 }
 
 input CustomerCreateOneInput {
   create: CustomerCreateInput
+  connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateOneWithoutAdmissionsInput {
+  create: CustomerCreateWithoutAdmissionsInput
   connect: CustomerWhereUniqueInput
 }
 
@@ -6681,42 +7302,152 @@ input CustomerCreateOneWithoutMembershipInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerCreateOneWithoutReferreesInput {
+  create: CustomerCreateWithoutReferreesInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerCreateOneWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput
   connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateOneWithoutUtmInput {
+  create: CustomerCreateWithoutUtmInput
+  connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateWithoutAdmissionsInput {
+  id: ID
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+  user: UserCreateOneInput!
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
+  emailedProducts: ProductCreateManyInput
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutBagItemsInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
+  emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutMembershipInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
+  emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
+  utm: UTMDataCreateOneWithoutCustomerInput
+}
+
+input CustomerCreateWithoutReferreesInput {
+  id: ID
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+  user: UserCreateOneInput!
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+  referrer: CustomerCreateOneWithoutReferreesInput
+  emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
+  utm: UTMDataCreateOneWithoutCustomerInput
+}
+
+input CustomerCreateWithoutReferrerInput {
+  id: ID
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+  user: UserCreateOneInput!
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+  referrees: CustomerCreateManyWithoutReferrerInput
+  emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
+  utm: UTMDataCreateOneWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReservationsInput {
   id: ID
   status: CustomerStatus
   plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
+  emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
+  utm: UTMDataCreateOneWithoutCustomerInput
+}
+
+input CustomerCreateWithoutUtmInput {
+  id: ID
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+  user: UserCreateOneInput!
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
+  emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
 }
 
 type CustomerDetail implements Node {
@@ -8562,12 +9293,382 @@ enum CustomerOrderByInput {
   status_DESC
   plan_ASC
   plan_DESC
+  referralLink_ASC
+  referralLink_DESC
+  referrerId_ASC
+  referrerId_DESC
+  authorizedAt_ASC
+  authorizedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type CustomerPreviousValues {
   id: ID!
   status: CustomerStatus
   plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input CustomerScalarWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [CustomerScalarWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [CustomerScalarWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [CustomerScalarWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  status: CustomerStatus
+
+  """
+  All values that are not equal to given value.
+  """
+  status_not: CustomerStatus
+
+  """
+  All values that are contained in given list.
+  """
+  status_in: [CustomerStatus!]
+
+  """
+  All values that are not contained in given list.
+  """
+  status_not_in: [CustomerStatus!]
+  plan: Plan
+
+  """
+  All values that are not equal to given value.
+  """
+  plan_not: Plan
+
+  """
+  All values that are contained in given list.
+  """
+  plan_in: [Plan!]
+
+  """
+  All values that are not contained in given list.
+  """
+  plan_not_in: [Plan!]
+  referralLink: String
+
+  """
+  All values that are not equal to given value.
+  """
+  referralLink_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  referralLink_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  referralLink_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  referralLink_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  referralLink_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  referralLink_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  referralLink_gte: String
+
+  """
+  All values containing the given string.
+  """
+  referralLink_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  referralLink_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  referralLink_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  referralLink_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  referralLink_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  referralLink_not_ends_with: String
+  referrerId: String
+
+  """
+  All values that are not equal to given value.
+  """
+  referrerId_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  referrerId_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  referrerId_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  referrerId_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  referrerId_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  referrerId_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  referrerId_gte: String
+
+  """
+  All values containing the given string.
+  """
+  referrerId_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  referrerId_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  referrerId_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  referrerId_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  referrerId_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  referrerId_not_ends_with: String
+  authorizedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  authorizedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  authorizedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  authorizedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  authorizedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  authorizedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  authorizedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  authorizedAt_gte: DateTime
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
 }
 
 enum CustomerStatus {
@@ -8629,28 +9730,72 @@ input CustomerSubscriptionWhereInput {
 input CustomerUpdateDataInput {
   status: CustomerStatus
   plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateInput {
   status: CustomerStatus
   plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  utm: UTMDataUpdateOneWithoutCustomerInput
+}
+
+input CustomerUpdateManyDataInput {
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
 }
 
 input CustomerUpdateManyMutationInput {
   status: CustomerStatus
   plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+}
+
+input CustomerUpdateManyWithoutReferrerInput {
+  create: [CustomerCreateWithoutReferrerInput!]
+  connect: [CustomerWhereUniqueInput!]
+  set: [CustomerWhereUniqueInput!]
+  disconnect: [CustomerWhereUniqueInput!]
+  delete: [CustomerWhereUniqueInput!]
+  update: [CustomerUpdateWithWhereUniqueWithoutReferrerInput!]
+  updateMany: [CustomerUpdateManyWithWhereNestedInput!]
+  deleteMany: [CustomerScalarWhereInput!]
+  upsert: [CustomerUpsertWithWhereUniqueWithoutReferrerInput!]
+}
+
+input CustomerUpdateManyWithWhereNestedInput {
+  where: CustomerScalarWhereInput!
+  data: CustomerUpdateManyDataInput!
 }
 
 input CustomerUpdateOneRequiredInput {
@@ -8658,6 +9803,13 @@ input CustomerUpdateOneRequiredInput {
   connect: CustomerWhereUniqueInput
   update: CustomerUpdateDataInput
   upsert: CustomerUpsertNestedInput
+}
+
+input CustomerUpdateOneRequiredWithoutAdmissionsInput {
+  create: CustomerCreateWithoutAdmissionsInput
+  connect: CustomerWhereUniqueInput
+  update: CustomerUpdateWithoutAdmissionsDataInput
+  upsert: CustomerUpsertWithoutAdmissionsInput
 }
 
 input CustomerUpdateOneRequiredWithoutBagItemsInput {
@@ -8681,39 +9833,161 @@ input CustomerUpdateOneRequiredWithoutReservationsInput {
   upsert: CustomerUpsertWithoutReservationsInput
 }
 
+input CustomerUpdateOneRequiredWithoutUtmInput {
+  create: CustomerCreateWithoutUtmInput
+  connect: CustomerWhereUniqueInput
+  update: CustomerUpdateWithoutUtmDataInput
+  upsert: CustomerUpsertWithoutUtmInput
+}
+
+input CustomerUpdateOneWithoutReferreesInput {
+  create: CustomerCreateWithoutReferreesInput
+  connect: CustomerWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: CustomerUpdateWithoutReferreesDataInput
+  upsert: CustomerUpsertWithoutReferreesInput
+}
+
+input CustomerUpdateWithoutAdmissionsDataInput {
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+  utm: UTMDataUpdateOneWithoutCustomerInput
+}
+
 input CustomerUpdateWithoutBagItemsDataInput {
   status: CustomerStatus
   plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
   status: CustomerStatus
   plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  utm: UTMDataUpdateOneWithoutCustomerInput
 }
 
-input CustomerUpdateWithoutReservationsDataInput {
+input CustomerUpdateWithoutReferreesDataInput {
   status: CustomerStatus
   plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  utm: UTMDataUpdateOneWithoutCustomerInput
+}
+
+input CustomerUpdateWithoutReferrerDataInput {
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  utm: UTMDataUpdateOneWithoutCustomerInput
+}
+
+input CustomerUpdateWithoutReservationsDataInput {
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  utm: UTMDataUpdateOneWithoutCustomerInput
+}
+
+input CustomerUpdateWithoutUtmDataInput {
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+}
+
+input CustomerUpdateWithWhereUniqueWithoutReferrerInput {
+  where: CustomerWhereUniqueInput!
+  data: CustomerUpdateWithoutReferrerDataInput!
 }
 
 input CustomerUpsertNestedInput {
   update: CustomerUpdateDataInput!
   create: CustomerCreateInput!
+}
+
+input CustomerUpsertWithoutAdmissionsInput {
+  update: CustomerUpdateWithoutAdmissionsDataInput!
+  create: CustomerCreateWithoutAdmissionsInput!
 }
 
 input CustomerUpsertWithoutBagItemsInput {
@@ -8726,9 +10000,25 @@ input CustomerUpsertWithoutMembershipInput {
   create: CustomerCreateWithoutMembershipInput!
 }
 
+input CustomerUpsertWithoutReferreesInput {
+  update: CustomerUpdateWithoutReferreesDataInput!
+  create: CustomerCreateWithoutReferreesInput!
+}
+
 input CustomerUpsertWithoutReservationsInput {
   update: CustomerUpdateWithoutReservationsDataInput!
   create: CustomerCreateWithoutReservationsInput!
+}
+
+input CustomerUpsertWithoutUtmInput {
+  update: CustomerUpdateWithoutUtmDataInput!
+  create: CustomerCreateWithoutUtmInput!
+}
+
+input CustomerUpsertWithWhereUniqueWithoutReferrerInput {
+  where: CustomerWhereUniqueInput!
+  update: CustomerUpdateWithoutReferrerDataInput!
+  create: CustomerCreateWithoutReferrerInput!
 }
 
 input CustomerWhereInput {
@@ -8844,6 +10134,246 @@ input CustomerWhereInput {
   All values that are not contained in given list.
   """
   plan_not_in: [Plan!]
+  referralLink: String
+
+  """
+  All values that are not equal to given value.
+  """
+  referralLink_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  referralLink_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  referralLink_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  referralLink_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  referralLink_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  referralLink_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  referralLink_gte: String
+
+  """
+  All values containing the given string.
+  """
+  referralLink_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  referralLink_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  referralLink_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  referralLink_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  referralLink_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  referralLink_not_ends_with: String
+  referrerId: String
+
+  """
+  All values that are not equal to given value.
+  """
+  referrerId_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  referrerId_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  referrerId_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  referrerId_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  referrerId_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  referrerId_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  referrerId_gte: String
+
+  """
+  All values containing the given string.
+  """
+  referrerId_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  referrerId_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  referrerId_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  referrerId_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  referrerId_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  referrerId_not_ends_with: String
+  authorizedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  authorizedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  authorizedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  authorizedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  authorizedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  authorizedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  authorizedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  authorizedAt_gte: DateTime
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
   user: UserWhereInput
   detail: CustomerDetailWhereInput
   billingInfo: BillingInfoWhereInput
@@ -8854,10 +10384,20 @@ input CustomerWhereInput {
   reservations_every: ReservationWhereInput
   reservations_some: ReservationWhereInput
   reservations_none: ReservationWhereInput
+  referrer: CustomerWhereInput
+  referrees_every: CustomerWhereInput
+  referrees_some: CustomerWhereInput
+  referrees_none: CustomerWhereInput
+  emailedProducts_every: ProductWhereInput
+  emailedProducts_some: ProductWhereInput
+  emailedProducts_none: ProductWhereInput
+  admissions: CustomerAdmissionsDataWhereInput
+  utm: UTMDataWhereInput
 }
 
 input CustomerWhereUniqueInput {
   id: ID
+  referralLink: String
 }
 
 scalar DateTime
@@ -8869,7 +10409,14 @@ enum EmailId {
   FreeToReserve
   WelcomeToSeasons
   ReturnReminder
+  ResumeReminder
   PriorityAccess
+  SubmittedEmail
+  Waitlisted
+  Paused
+  Rewaitlisted
+  TwentyFourHourAuthorizationFollowup
+  ReferralConfirmation
 }
 
 type EmailReceipt implements Node {
@@ -8899,7 +10446,17 @@ type EmailReceiptConnection {
 input EmailReceiptCreateInput {
   id: ID
   emailId: EmailId!
-  user: UserCreateOneInput!
+  user: UserCreateOneWithoutEmailsInput!
+}
+
+input EmailReceiptCreateManyWithoutUserInput {
+  create: [EmailReceiptCreateWithoutUserInput!]
+  connect: [EmailReceiptWhereUniqueInput!]
+}
+
+input EmailReceiptCreateWithoutUserInput {
+  id: ID
+  emailId: EmailId!
 }
 
 """
@@ -8933,6 +10490,177 @@ type EmailReceiptPreviousValues {
   emailId: EmailId!
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input EmailReceiptScalarWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [EmailReceiptScalarWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [EmailReceiptScalarWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [EmailReceiptScalarWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  emailId: EmailId
+
+  """
+  All values that are not equal to given value.
+  """
+  emailId_not: EmailId
+
+  """
+  All values that are contained in given list.
+  """
+  emailId_in: [EmailId!]
+
+  """
+  All values that are not contained in given list.
+  """
+  emailId_not_in: [EmailId!]
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
 }
 
 type EmailReceiptSubscriptionPayload {
@@ -8982,11 +10710,47 @@ input EmailReceiptSubscriptionWhereInput {
 
 input EmailReceiptUpdateInput {
   emailId: EmailId
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneRequiredWithoutEmailsInput
+}
+
+input EmailReceiptUpdateManyDataInput {
+  emailId: EmailId
 }
 
 input EmailReceiptUpdateManyMutationInput {
   emailId: EmailId
+}
+
+input EmailReceiptUpdateManyWithoutUserInput {
+  create: [EmailReceiptCreateWithoutUserInput!]
+  connect: [EmailReceiptWhereUniqueInput!]
+  set: [EmailReceiptWhereUniqueInput!]
+  disconnect: [EmailReceiptWhereUniqueInput!]
+  delete: [EmailReceiptWhereUniqueInput!]
+  update: [EmailReceiptUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [EmailReceiptUpdateManyWithWhereNestedInput!]
+  deleteMany: [EmailReceiptScalarWhereInput!]
+  upsert: [EmailReceiptUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input EmailReceiptUpdateManyWithWhereNestedInput {
+  where: EmailReceiptScalarWhereInput!
+  data: EmailReceiptUpdateManyDataInput!
+}
+
+input EmailReceiptUpdateWithoutUserDataInput {
+  emailId: EmailId
+}
+
+input EmailReceiptUpdateWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput!
+  data: EmailReceiptUpdateWithoutUserDataInput!
+}
+
+input EmailReceiptUpsertWithWhereUniqueWithoutUserInput {
+  where: EmailReceiptWhereUniqueInput!
+  update: EmailReceiptUpdateWithoutUserDataInput!
+  create: EmailReceiptCreateWithoutUserInput!
 }
 
 input EmailReceiptWhereInput {
@@ -11690,6 +13454,427 @@ input ImageWhereUniqueInput {
   url: String
 }
 
+enum InAdmissableReason {
+  Untriageable
+  UnsupportedPlatform
+  AutomaticAdmissionsFlagOff
+  UnserviceableZipcode
+  InsufficientInventory
+  OpsThresholdExceeded
+}
+
+type InterestedUser implements Node {
+  id: ID!
+  email: String!
+  zipcode: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type InterestedUserConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [InterestedUserEdge]!
+  aggregate: AggregateInterestedUser!
+}
+
+input InterestedUserCreateInput {
+  id: ID
+  email: String!
+  zipcode: String
+}
+
+"""
+An edge in a connection.
+"""
+type InterestedUserEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: InterestedUser!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum InterestedUserOrderByInput {
+  id_ASC
+  id_DESC
+  email_ASC
+  email_DESC
+  zipcode_ASC
+  zipcode_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type InterestedUserPreviousValues {
+  id: ID!
+  email: String!
+  zipcode: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type InterestedUserSubscriptionPayload {
+  mutation: MutationType!
+  node: InterestedUser
+  updatedFields: [String!]
+  previousValues: InterestedUserPreviousValues
+}
+
+input InterestedUserSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [InterestedUserSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [InterestedUserSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [InterestedUserSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: InterestedUserWhereInput
+}
+
+input InterestedUserUpdateInput {
+  email: String
+  zipcode: String
+}
+
+input InterestedUserUpdateManyMutationInput {
+  email: String
+  zipcode: String
+}
+
+input InterestedUserWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [InterestedUserWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [InterestedUserWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [InterestedUserWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  email: String
+
+  """
+  All values that are not equal to given value.
+  """
+  email_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  email_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  email_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  email_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  email_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  email_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  email_gte: String
+
+  """
+  All values containing the given string.
+  """
+  email_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  email_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  email_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  email_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  email_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  email_not_ends_with: String
+  zipcode: String
+
+  """
+  All values that are not equal to given value.
+  """
+  zipcode_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  zipcode_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  zipcode_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  zipcode_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  zipcode_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  zipcode_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  zipcode_gte: String
+
+  """
+  All values containing the given string.
+  """
+  zipcode_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  zipcode_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  zipcode_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  zipcode_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  zipcode_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  zipcode_not_ends_with: String
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+}
+
+input InterestedUserWhereUniqueInput {
+  id: ID
+}
+
 enum InventoryStatus {
   NonReservable
   Reservable
@@ -12206,12 +14391,14 @@ input LabelWhereUniqueInput {
 }
 
 enum LetterSize {
+  XXS
   XS
   S
   M
   L
   XL
   XXL
+  XXXL
 }
 
 type Location implements Node {
@@ -12223,6 +14410,7 @@ type Location implements Node {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -12238,6 +14426,15 @@ type Location implements Node {
     first: Int
     last: Int
   ): [PhysicalProduct!]
+  shippingOptions(
+    where: ShippingOptionWhereInput
+    orderBy: ShippingOptionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ShippingOption!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -12267,6 +14464,7 @@ input LocationCreateInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -12274,6 +14472,7 @@ input LocationCreateInput {
   lng: Float
   user: UserCreateOneInput
   physicalProducts: PhysicalProductCreateManyWithoutLocationInput
+  shippingOptions: ShippingOptionCreateManyWithoutDestinationInput
 }
 
 input LocationCreateOneInput {
@@ -12286,6 +14485,11 @@ input LocationCreateOneWithoutPhysicalProductsInput {
   connect: LocationWhereUniqueInput
 }
 
+input LocationCreateOneWithoutShippingOptionsInput {
+  create: LocationCreateWithoutShippingOptionsInput
+  connect: LocationWhereUniqueInput
+}
+
 input LocationCreateWithoutPhysicalProductsInput {
   id: ID
   slug: String
@@ -12295,12 +14499,33 @@ input LocationCreateWithoutPhysicalProductsInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
   lat: Float
   lng: Float
   user: UserCreateOneInput
+  shippingOptions: ShippingOptionCreateManyWithoutDestinationInput
+}
+
+input LocationCreateWithoutShippingOptionsInput {
+  id: ID
+  slug: String
+  name: String
+  company: String
+  description: String
+  address1: String
+  address2: String
+  city: String
+  country: String
+  state: String
+  zipCode: String!
+  locationType: LocationType
+  lat: Float
+  lng: Float
+  user: UserCreateOneInput
+  physicalProducts: PhysicalProductCreateManyWithoutLocationInput
 }
 
 """
@@ -12335,6 +14560,8 @@ enum LocationOrderByInput {
   address2_DESC
   city_ASC
   city_DESC
+  country_ASC
+  country_DESC
   state_ASC
   state_DESC
   zipCode_ASC
@@ -12360,6 +14587,7 @@ type LocationPreviousValues {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String!
   locationType: LocationType
@@ -12429,6 +14657,7 @@ input LocationUpdateDataInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String
   locationType: LocationType
@@ -12436,6 +14665,7 @@ input LocationUpdateDataInput {
   lng: Float
   user: UserUpdateOneInput
   physicalProducts: PhysicalProductUpdateManyWithoutLocationInput
+  shippingOptions: ShippingOptionUpdateManyWithoutDestinationInput
 }
 
 input LocationUpdateInput {
@@ -12446,6 +14676,7 @@ input LocationUpdateInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String
   locationType: LocationType
@@ -12453,6 +14684,7 @@ input LocationUpdateInput {
   lng: Float
   user: UserUpdateOneInput
   physicalProducts: PhysicalProductUpdateManyWithoutLocationInput
+  shippingOptions: ShippingOptionUpdateManyWithoutDestinationInput
 }
 
 input LocationUpdateManyMutationInput {
@@ -12463,6 +14695,7 @@ input LocationUpdateManyMutationInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String
   locationType: LocationType
@@ -12495,6 +14728,15 @@ input LocationUpdateOneWithoutPhysicalProductsInput {
   upsert: LocationUpsertWithoutPhysicalProductsInput
 }
 
+input LocationUpdateOneWithoutShippingOptionsInput {
+  create: LocationCreateWithoutShippingOptionsInput
+  connect: LocationWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: LocationUpdateWithoutShippingOptionsDataInput
+  upsert: LocationUpsertWithoutShippingOptionsInput
+}
+
 input LocationUpdateWithoutPhysicalProductsDataInput {
   slug: String
   name: String
@@ -12503,12 +14745,32 @@ input LocationUpdateWithoutPhysicalProductsDataInput {
   address1: String
   address2: String
   city: String
+  country: String
   state: String
   zipCode: String
   locationType: LocationType
   lat: Float
   lng: Float
   user: UserUpdateOneInput
+  shippingOptions: ShippingOptionUpdateManyWithoutDestinationInput
+}
+
+input LocationUpdateWithoutShippingOptionsDataInput {
+  slug: String
+  name: String
+  company: String
+  description: String
+  address1: String
+  address2: String
+  city: String
+  country: String
+  state: String
+  zipCode: String
+  locationType: LocationType
+  lat: Float
+  lng: Float
+  user: UserUpdateOneInput
+  physicalProducts: PhysicalProductUpdateManyWithoutLocationInput
 }
 
 input LocationUpsertNestedInput {
@@ -12519,6 +14781,11 @@ input LocationUpsertNestedInput {
 input LocationUpsertWithoutPhysicalProductsInput {
   update: LocationUpdateWithoutPhysicalProductsDataInput!
   create: LocationCreateWithoutPhysicalProductsInput!
+}
+
+input LocationUpsertWithoutShippingOptionsInput {
+  update: LocationUpdateWithoutShippingOptionsDataInput!
+  create: LocationCreateWithoutShippingOptionsInput!
 }
 
 input LocationWhereInput {
@@ -13064,6 +15331,72 @@ input LocationWhereInput {
   All values not ending with the given string.
   """
   city_not_ends_with: String
+  country: String
+
+  """
+  All values that are not equal to given value.
+  """
+  country_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  country_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  country_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  country_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  country_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  country_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  country_gte: String
+
+  """
+  All values containing the given string.
+  """
+  country_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  country_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  country_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  country_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  country_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  country_not_ends_with: String
   state: String
 
   """
@@ -13360,6 +15693,9 @@ input LocationWhereInput {
   physicalProducts_every: PhysicalProductWhereInput
   physicalProducts_some: PhysicalProductWhereInput
   physicalProducts_none: PhysicalProductWhereInput
+  shippingOptions_every: ShippingOptionWhereInput
+  shippingOptions_some: ShippingOptionWhereInput
+  shippingOptions_none: ShippingOptionWhereInput
 }
 
 input LocationWhereUniqueInput {
@@ -13380,16 +15716,10 @@ type Mutation {
     data: HomepageProductRailCreateInput!
   ): HomepageProductRail!
   createTag(data: TagCreateInput!): Tag!
-  createProductStatusChange(
-    data: ProductStatusChangeCreateInput!
-  ): ProductStatusChange!
   createProductMaterialCategory(
     data: ProductMaterialCategoryCreateInput!
   ): ProductMaterialCategory!
   createProductModel(data: ProductModelCreateInput!): ProductModel!
-  createPhysicalProductInventoryStatusChange(
-    data: PhysicalProductInventoryStatusChangeCreateInput!
-  ): PhysicalProductInventoryStatusChange!
   createWarehouseLocationConstraint(
     data: WarehouseLocationConstraintCreateInput!
   ): WarehouseLocationConstraint!
@@ -13399,7 +15729,12 @@ type Mutation {
   createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
   createFitPic(data: FitPicCreateInput!): FitPic!
   createFitPicReport(data: FitPicReportCreateInput!): FitPicReport!
+  createInterestedUser(data: InterestedUserCreateInput!): InterestedUser!
   createBagItem(data: BagItemCreateInput!): BagItem!
+  createCustomerAdmissionsData(
+    data: CustomerAdmissionsDataCreateInput!
+  ): CustomerAdmissionsData!
+  createUTMData(data: UTMDataCreateInput!): UTMData!
   createCustomerMembership(
     data: CustomerMembershipCreateInput!
   ): CustomerMembership!
@@ -13428,6 +15763,7 @@ type Mutation {
   ): ProductVariantWant!
   createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
   createAdminActionLog(data: AdminActionLogCreateInput!): AdminActionLog!
+  createSyncTiming(data: SyncTimingCreateInput!): SyncTiming!
   createCollection(data: CollectionCreateInput!): Collection!
   createProductSeason(data: ProductSeasonCreateInput!): ProductSeason!
   createPushNotificationReceipt(
@@ -13446,6 +15782,7 @@ type Mutation {
   createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
   createColor(data: ColorCreateInput!): Color!
   createTopSize(data: TopSizeCreateInput!): TopSize!
+  createShippingMethod(data: ShippingMethodCreateInput!): ShippingMethod!
   createCustomer(data: CustomerCreateInput!): Customer!
   createUserPushNotification(
     data: UserPushNotificationCreateInput!
@@ -13462,6 +15799,7 @@ type Mutation {
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
   createProduct(data: ProductCreateInput!): Product!
+  createShippingOption(data: ShippingOptionCreateInput!): ShippingOption!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createReservation(data: ReservationCreateInput!): Reservation!
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
@@ -13474,10 +15812,6 @@ type Mutation {
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
   updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
-  updateProductStatusChange(
-    data: ProductStatusChangeUpdateInput!
-    where: ProductStatusChangeWhereUniqueInput!
-  ): ProductStatusChange
   updateProductMaterialCategory(
     data: ProductMaterialCategoryUpdateInput!
     where: ProductMaterialCategoryWhereUniqueInput!
@@ -13486,10 +15820,6 @@ type Mutation {
     data: ProductModelUpdateInput!
     where: ProductModelWhereUniqueInput!
   ): ProductModel
-  updatePhysicalProductInventoryStatusChange(
-    data: PhysicalProductInventoryStatusChangeUpdateInput!
-    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
-  ): PhysicalProductInventoryStatusChange
   updateWarehouseLocationConstraint(
     data: WarehouseLocationConstraintUpdateInput!
     where: WarehouseLocationConstraintWhereUniqueInput!
@@ -13507,10 +15837,22 @@ type Mutation {
     data: FitPicReportUpdateInput!
     where: FitPicReportWhereUniqueInput!
   ): FitPicReport
+  updateInterestedUser(
+    data: InterestedUserUpdateInput!
+    where: InterestedUserWhereUniqueInput!
+  ): InterestedUser
   updateBagItem(
     data: BagItemUpdateInput!
     where: BagItemWhereUniqueInput!
   ): BagItem
+  updateCustomerAdmissionsData(
+    data: CustomerAdmissionsDataUpdateInput!
+    where: CustomerAdmissionsDataWhereUniqueInput!
+  ): CustomerAdmissionsData
+  updateUTMData(
+    data: UTMDataUpdateInput!
+    where: UTMDataWhereUniqueInput!
+  ): UTMData
   updateCustomerMembership(
     data: CustomerMembershipUpdateInput!
     where: CustomerMembershipWhereUniqueInput!
@@ -13559,6 +15901,10 @@ type Mutation {
     data: AdminActionLogUpdateInput!
     where: AdminActionLogWhereUniqueInput!
   ): AdminActionLog
+  updateSyncTiming(
+    data: SyncTimingUpdateInput!
+    where: SyncTimingWhereUniqueInput!
+  ): SyncTiming
   updateCollection(
     data: CollectionUpdateInput!
     where: CollectionWhereUniqueInput!
@@ -13601,6 +15947,10 @@ type Mutation {
     data: TopSizeUpdateInput!
     where: TopSizeWhereUniqueInput!
   ): TopSize
+  updateShippingMethod(
+    data: ShippingMethodUpdateInput!
+    where: ShippingMethodWhereUniqueInput!
+  ): ShippingMethod
   updateCustomer(
     data: CustomerUpdateInput!
     where: CustomerWhereUniqueInput!
@@ -13645,6 +15995,10 @@ type Mutation {
     data: ProductUpdateInput!
     where: ProductWhereUniqueInput!
   ): Product
+  updateShippingOption(
+    data: ShippingOptionUpdateInput!
+    where: ShippingOptionWhereUniqueInput!
+  ): ShippingOption
   updateCustomerDetail(
     data: CustomerDetailUpdateInput!
     where: CustomerDetailWhereUniqueInput!
@@ -13661,16 +16015,10 @@ type Mutation {
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
   deleteTag(where: TagWhereUniqueInput!): Tag
-  deleteProductStatusChange(
-    where: ProductStatusChangeWhereUniqueInput!
-  ): ProductStatusChange
   deleteProductMaterialCategory(
     where: ProductMaterialCategoryWhereUniqueInput!
   ): ProductMaterialCategory
   deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
-  deletePhysicalProductInventoryStatusChange(
-    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
-  ): PhysicalProductInventoryStatusChange
   deleteWarehouseLocationConstraint(
     where: WarehouseLocationConstraintWhereUniqueInput!
   ): WarehouseLocationConstraint
@@ -13680,7 +16028,12 @@ type Mutation {
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   deleteFitPic(where: FitPicWhereUniqueInput!): FitPic
   deleteFitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
+  deleteInterestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
+  deleteCustomerAdmissionsData(
+    where: CustomerAdmissionsDataWhereUniqueInput!
+  ): CustomerAdmissionsData
+  deleteUTMData(where: UTMDataWhereUniqueInput!): UTMData
   deleteCustomerMembership(
     where: CustomerMembershipWhereUniqueInput!
   ): CustomerMembership
@@ -13711,6 +16064,7 @@ type Mutation {
     where: ActiveAdminUserWhereUniqueInput!
   ): ActiveAdminUser
   deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
+  deleteSyncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deleteProductSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
   deletePushNotificationReceipt(
@@ -13733,6 +16087,7 @@ type Mutation {
   ): ProductFunction
   deleteColor(where: ColorWhereUniqueInput!): Color
   deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
+  deleteShippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
   deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteUserPushNotification(
     where: UserPushNotificationWhereUniqueInput!
@@ -13751,6 +16106,7 @@ type Mutation {
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   deleteProduct(where: ProductWhereUniqueInput!): Product
+  deleteShippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
   upsertBrand(
@@ -13773,11 +16129,6 @@ type Mutation {
     create: TagCreateInput!
     update: TagUpdateInput!
   ): Tag!
-  upsertProductStatusChange(
-    where: ProductStatusChangeWhereUniqueInput!
-    create: ProductStatusChangeCreateInput!
-    update: ProductStatusChangeUpdateInput!
-  ): ProductStatusChange!
   upsertProductMaterialCategory(
     where: ProductMaterialCategoryWhereUniqueInput!
     create: ProductMaterialCategoryCreateInput!
@@ -13788,11 +16139,6 @@ type Mutation {
     create: ProductModelCreateInput!
     update: ProductModelUpdateInput!
   ): ProductModel!
-  upsertPhysicalProductInventoryStatusChange(
-    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
-    create: PhysicalProductInventoryStatusChangeCreateInput!
-    update: PhysicalProductInventoryStatusChangeUpdateInput!
-  ): PhysicalProductInventoryStatusChange!
   upsertWarehouseLocationConstraint(
     where: WarehouseLocationConstraintWhereUniqueInput!
     create: WarehouseLocationConstraintCreateInput!
@@ -13818,11 +16164,26 @@ type Mutation {
     create: FitPicReportCreateInput!
     update: FitPicReportUpdateInput!
   ): FitPicReport!
+  upsertInterestedUser(
+    where: InterestedUserWhereUniqueInput!
+    create: InterestedUserCreateInput!
+    update: InterestedUserUpdateInput!
+  ): InterestedUser!
   upsertBagItem(
     where: BagItemWhereUniqueInput!
     create: BagItemCreateInput!
     update: BagItemUpdateInput!
   ): BagItem!
+  upsertCustomerAdmissionsData(
+    where: CustomerAdmissionsDataWhereUniqueInput!
+    create: CustomerAdmissionsDataCreateInput!
+    update: CustomerAdmissionsDataUpdateInput!
+  ): CustomerAdmissionsData!
+  upsertUTMData(
+    where: UTMDataWhereUniqueInput!
+    create: UTMDataCreateInput!
+    update: UTMDataUpdateInput!
+  ): UTMData!
   upsertCustomerMembership(
     where: CustomerMembershipWhereUniqueInput!
     create: CustomerMembershipCreateInput!
@@ -13883,6 +16244,11 @@ type Mutation {
     create: AdminActionLogCreateInput!
     update: AdminActionLogUpdateInput!
   ): AdminActionLog!
+  upsertSyncTiming(
+    where: SyncTimingWhereUniqueInput!
+    create: SyncTimingCreateInput!
+    update: SyncTimingUpdateInput!
+  ): SyncTiming!
   upsertCollection(
     where: CollectionWhereUniqueInput!
     create: CollectionCreateInput!
@@ -13943,6 +16309,11 @@ type Mutation {
     create: TopSizeCreateInput!
     update: TopSizeUpdateInput!
   ): TopSize!
+  upsertShippingMethod(
+    where: ShippingMethodWhereUniqueInput!
+    create: ShippingMethodCreateInput!
+    update: ShippingMethodUpdateInput!
+  ): ShippingMethod!
   upsertCustomer(
     where: CustomerWhereUniqueInput!
     create: CustomerCreateInput!
@@ -14013,6 +16384,11 @@ type Mutation {
     create: ProductCreateInput!
     update: ProductUpdateInput!
   ): Product!
+  upsertShippingOption(
+    where: ShippingOptionWhereUniqueInput!
+    create: ShippingOptionCreateInput!
+    update: ShippingOptionUpdateInput!
+  ): ShippingOption!
   upsertCustomerDetail(
     where: CustomerDetailWhereUniqueInput!
     create: CustomerDetailCreateInput!
@@ -14039,10 +16415,6 @@ type Mutation {
     data: TagUpdateManyMutationInput!
     where: TagWhereInput
   ): BatchPayload!
-  updateManyProductStatusChanges(
-    data: ProductStatusChangeUpdateManyMutationInput!
-    where: ProductStatusChangeWhereInput
-  ): BatchPayload!
   updateManyProductMaterialCategories(
     data: ProductMaterialCategoryUpdateManyMutationInput!
     where: ProductMaterialCategoryWhereInput
@@ -14050,10 +16422,6 @@ type Mutation {
   updateManyProductModels(
     data: ProductModelUpdateManyMutationInput!
     where: ProductModelWhereInput
-  ): BatchPayload!
-  updateManyPhysicalProductInventoryStatusChanges(
-    data: PhysicalProductInventoryStatusChangeUpdateManyMutationInput!
-    where: PhysicalProductInventoryStatusChangeWhereInput
   ): BatchPayload!
   updateManyWarehouseLocationConstraints(
     data: WarehouseLocationConstraintUpdateManyMutationInput!
@@ -14075,9 +16443,21 @@ type Mutation {
     data: FitPicReportUpdateManyMutationInput!
     where: FitPicReportWhereInput
   ): BatchPayload!
+  updateManyInterestedUsers(
+    data: InterestedUserUpdateManyMutationInput!
+    where: InterestedUserWhereInput
+  ): BatchPayload!
   updateManyBagItems(
     data: BagItemUpdateManyMutationInput!
     where: BagItemWhereInput
+  ): BatchPayload!
+  updateManyCustomerAdmissionsDatas(
+    data: CustomerAdmissionsDataUpdateManyMutationInput!
+    where: CustomerAdmissionsDataWhereInput
+  ): BatchPayload!
+  updateManyUTMDatas(
+    data: UTMDataUpdateManyMutationInput!
+    where: UTMDataWhereInput
   ): BatchPayload!
   updateManyCustomerMemberships(
     data: CustomerMembershipUpdateManyMutationInput!
@@ -14118,6 +16498,10 @@ type Mutation {
   updateManyAdminActionLogs(
     data: AdminActionLogUpdateManyMutationInput!
     where: AdminActionLogWhereInput
+  ): BatchPayload!
+  updateManySyncTimings(
+    data: SyncTimingUpdateManyMutationInput!
+    where: SyncTimingWhereInput
   ): BatchPayload!
   updateManyCollections(
     data: CollectionUpdateManyMutationInput!
@@ -14166,6 +16550,10 @@ type Mutation {
   updateManyTopSizes(
     data: TopSizeUpdateManyMutationInput!
     where: TopSizeWhereInput
+  ): BatchPayload!
+  updateManyShippingMethods(
+    data: ShippingMethodUpdateManyMutationInput!
+    where: ShippingMethodWhereInput
   ): BatchPayload!
   updateManyCustomers(
     data: CustomerUpdateManyMutationInput!
@@ -14223,6 +16611,10 @@ type Mutation {
     data: ProductUpdateManyMutationInput!
     where: ProductWhereInput
   ): BatchPayload!
+  updateManyShippingOptions(
+    data: ShippingOptionUpdateManyMutationInput!
+    where: ShippingOptionWhereInput
+  ): BatchPayload!
   updateManyCustomerDetails(
     data: CustomerDetailUpdateManyMutationInput!
     where: CustomerDetailWhereInput
@@ -14237,16 +16629,10 @@ type Mutation {
     where: HomepageProductRailWhereInput
   ): BatchPayload!
   deleteManyTags(where: TagWhereInput): BatchPayload!
-  deleteManyProductStatusChanges(
-    where: ProductStatusChangeWhereInput
-  ): BatchPayload!
   deleteManyProductMaterialCategories(
     where: ProductMaterialCategoryWhereInput
   ): BatchPayload!
   deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
-  deleteManyPhysicalProductInventoryStatusChanges(
-    where: PhysicalProductInventoryStatusChangeWhereInput
-  ): BatchPayload!
   deleteManyWarehouseLocationConstraints(
     where: WarehouseLocationConstraintWhereInput
   ): BatchPayload!
@@ -14256,7 +16642,12 @@ type Mutation {
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
   deleteManyFitPics(where: FitPicWhereInput): BatchPayload!
   deleteManyFitPicReports(where: FitPicReportWhereInput): BatchPayload!
+  deleteManyInterestedUsers(where: InterestedUserWhereInput): BatchPayload!
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
+  deleteManyCustomerAdmissionsDatas(
+    where: CustomerAdmissionsDataWhereInput
+  ): BatchPayload!
+  deleteManyUTMDatas(where: UTMDataWhereInput): BatchPayload!
   deleteManyCustomerMemberships(
     where: CustomerMembershipWhereInput
   ): BatchPayload!
@@ -14285,6 +16676,7 @@ type Mutation {
   ): BatchPayload!
   deleteManyActiveAdminUsers(where: ActiveAdminUserWhereInput): BatchPayload!
   deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
+  deleteManySyncTimings(where: SyncTimingWhereInput): BatchPayload!
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   deleteManyProductSeasons(where: ProductSeasonWhereInput): BatchPayload!
   deleteManyPushNotificationReceipts(
@@ -14303,6 +16695,7 @@ type Mutation {
   deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
   deleteManyColors(where: ColorWhereInput): BatchPayload!
   deleteManyTopSizes(where: TopSizeWhereInput): BatchPayload!
+  deleteManyShippingMethods(where: ShippingMethodWhereInput): BatchPayload!
   deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
   deleteManyUserPushNotifications(
     where: UserPushNotificationWhereInput
@@ -14319,6 +16712,7 @@ type Mutation {
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
+  deleteManyShippingOptions(where: ShippingOptionWhereInput): BatchPayload!
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
 }
@@ -14355,6 +16749,7 @@ type Package implements Node {
   fromAddress: Location!
   toAddress: Location!
   weight: Float
+  cost: Int
   events(
     where: PackageTransitEventWhereInput
     orderBy: PackageTransitEventOrderByInput
@@ -14388,6 +16783,7 @@ input PackageCreateInput {
   id: ID
   transactionID: String!
   weight: Float
+  cost: Int
   items: PhysicalProductCreateManyInput
   shippingLabel: LabelCreateOneInput!
   fromAddress: LocationCreateOneInput!
@@ -14409,6 +16805,7 @@ input PackageCreateWithoutEventsInput {
   id: ID
   transactionID: String!
   weight: Float
+  cost: Int
   items: PhysicalProductCreateManyInput
   shippingLabel: LabelCreateOneInput!
   fromAddress: LocationCreateOneInput!
@@ -14437,6 +16834,8 @@ enum PackageOrderByInput {
   transactionID_DESC
   weight_ASC
   weight_DESC
+  cost_ASC
+  cost_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -14447,6 +16846,7 @@ type PackagePreviousValues {
   id: ID!
   transactionID: String!
   weight: Float
+  cost: Int
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -15149,6 +17549,7 @@ input PackageTransitEventWhereUniqueInput {
 input PackageUpdateDataInput {
   transactionID: String
   weight: Float
+  cost: Int
   items: PhysicalProductUpdateManyInput
   shippingLabel: LabelUpdateOneRequiredInput
   fromAddress: LocationUpdateOneRequiredInput
@@ -15159,6 +17560,7 @@ input PackageUpdateDataInput {
 input PackageUpdateInput {
   transactionID: String
   weight: Float
+  cost: Int
   items: PhysicalProductUpdateManyInput
   shippingLabel: LabelUpdateOneRequiredInput
   fromAddress: LocationUpdateOneRequiredInput
@@ -15169,6 +17571,7 @@ input PackageUpdateInput {
 input PackageUpdateManyMutationInput {
   transactionID: String
   weight: Float
+  cost: Int
 }
 
 input PackageUpdateOneInput {
@@ -15190,6 +17593,7 @@ input PackageUpdateOneRequiredWithoutEventsInput {
 input PackageUpdateWithoutEventsDataInput {
   transactionID: String
   weight: Float
+  cost: Int
   items: PhysicalProductUpdateManyInput
   shippingLabel: LabelUpdateOneRequiredInput
   fromAddress: LocationUpdateOneRequiredInput
@@ -15389,6 +17793,42 @@ input PackageWhereInput {
   All values greater than or equal the given value.
   """
   weight_gte: Float
+  cost: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  cost_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  cost_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  cost_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  cost_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  cost_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  cost_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  cost_gte: Int
   createdAt: DateTime
 
   """
@@ -16967,15 +19407,6 @@ type PhysicalProduct implements Node {
   location: Location
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
-  inventoryStatusChanges(
-    where: PhysicalProductInventoryStatusChangeWhereInput
-    orderBy: PhysicalProductInventoryStatusChangeOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [PhysicalProductInventoryStatusChange!]
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -17019,7 +19450,6 @@ input PhysicalProductCreateInput {
   unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -17048,28 +19478,6 @@ input PhysicalProductCreateOneInput {
   connect: PhysicalProductWhereUniqueInput
 }
 
-input PhysicalProductCreateOneWithoutInventoryStatusChangesInput {
-  create: PhysicalProductCreateWithoutInventoryStatusChangesInput
-  connect: PhysicalProductWhereUniqueInput
-}
-
-input PhysicalProductCreateWithoutInventoryStatusChangesInput {
-  id: ID
-  seasonsUID: String!
-  inventoryStatus: InventoryStatus!
-  productStatus: PhysicalProductStatus!
-  offloadMethod: PhysicalProductOffloadMethod
-  offloadNotes: String
-  sequenceNumber: Int!
-  barcoded: Boolean
-  dateOrdered: DateTime
-  dateReceived: DateTime
-  unitCost: Float
-  location: LocationCreateOneWithoutPhysicalProductsInput
-  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
-  warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
-}
-
 input PhysicalProductCreateWithoutLocationInput {
   id: ID
   seasonsUID: String!
@@ -17083,7 +19491,6 @@ input PhysicalProductCreateWithoutLocationInput {
   dateReceived: DateTime
   unitCost: Float
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -17100,7 +19507,6 @@ input PhysicalProductCreateWithoutProductVariantInput {
   dateReceived: DateTime
   unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -17118,7 +19524,6 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
 }
 
 """
@@ -17134,558 +19539,6 @@ type PhysicalProductEdge {
   A cursor for use in pagination.
   """
   cursor: String!
-}
-
-type PhysicalProductInventoryStatusChange implements Node {
-  id: ID!
-  old: InventoryStatus!
-  new: InventoryStatus!
-  physicalProduct: PhysicalProduct!
-  createdAt: DateTime!
-  updatedAt: DateTime
-}
-
-"""
-A connection to a list of items.
-"""
-type PhysicalProductInventoryStatusChangeConnection {
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  A list of edges.
-  """
-  edges: [PhysicalProductInventoryStatusChangeEdge]!
-  aggregate: AggregatePhysicalProductInventoryStatusChange!
-}
-
-input PhysicalProductInventoryStatusChangeCreateInput {
-  id: ID
-  old: InventoryStatus!
-  new: InventoryStatus!
-  physicalProduct: PhysicalProductCreateOneWithoutInventoryStatusChangesInput!
-}
-
-input PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput {
-  create: [PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!]
-  connect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
-}
-
-input PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput {
-  id: ID
-  old: InventoryStatus!
-  new: InventoryStatus!
-}
-
-"""
-An edge in a connection.
-"""
-type PhysicalProductInventoryStatusChangeEdge {
-  """
-  The item at the end of the edge.
-  """
-  node: PhysicalProductInventoryStatusChange!
-
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-}
-
-enum PhysicalProductInventoryStatusChangeOrderByInput {
-  id_ASC
-  id_DESC
-  old_ASC
-  old_DESC
-  new_ASC
-  new_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type PhysicalProductInventoryStatusChangePreviousValues {
-  id: ID!
-  old: InventoryStatus!
-  new: InventoryStatus!
-  createdAt: DateTime!
-  updatedAt: DateTime
-}
-
-input PhysicalProductInventoryStatusChangeScalarWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  old: InventoryStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  old_not: InventoryStatus
-
-  """
-  All values that are contained in given list.
-  """
-  old_in: [InventoryStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  old_not_in: [InventoryStatus!]
-  new: InventoryStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  new_not: InventoryStatus
-
-  """
-  All values that are contained in given list.
-  """
-  new_in: [InventoryStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  new_not_in: [InventoryStatus!]
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  updatedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  updatedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  updatedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  updatedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  updatedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  updatedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  updatedAt_gte: DateTime
-}
-
-type PhysicalProductInventoryStatusChangeSubscriptionPayload {
-  mutation: MutationType!
-  node: PhysicalProductInventoryStatusChange
-  updatedFields: [String!]
-  previousValues: PhysicalProductInventoryStatusChangePreviousValues
-}
-
-input PhysicalProductInventoryStatusChangeSubscriptionWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: PhysicalProductInventoryStatusChangeWhereInput
-}
-
-input PhysicalProductInventoryStatusChangeUpdateInput {
-  old: InventoryStatus
-  new: InventoryStatus
-  physicalProduct: PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput
-}
-
-input PhysicalProductInventoryStatusChangeUpdateManyDataInput {
-  old: InventoryStatus
-  new: InventoryStatus
-}
-
-input PhysicalProductInventoryStatusChangeUpdateManyMutationInput {
-  old: InventoryStatus
-  new: InventoryStatus
-}
-
-input PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput {
-  create: [PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!]
-  connect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
-  set: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
-  disconnect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
-  delete: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
-  update: [PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput!]
-  updateMany: [PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput!]
-  deleteMany: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
-  upsert: [PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput!]
-}
-
-input PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput {
-  where: PhysicalProductInventoryStatusChangeScalarWhereInput!
-  data: PhysicalProductInventoryStatusChangeUpdateManyDataInput!
-}
-
-input PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput {
-  old: InventoryStatus
-  new: InventoryStatus
-}
-
-input PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput {
-  where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
-  data: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput!
-}
-
-input PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput {
-  where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
-  update: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput!
-  create: PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!
-}
-
-input PhysicalProductInventoryStatusChangeWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [PhysicalProductInventoryStatusChangeWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [PhysicalProductInventoryStatusChangeWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [PhysicalProductInventoryStatusChangeWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  old: InventoryStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  old_not: InventoryStatus
-
-  """
-  All values that are contained in given list.
-  """
-  old_in: [InventoryStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  old_not_in: [InventoryStatus!]
-  new: InventoryStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  new_not: InventoryStatus
-
-  """
-  All values that are contained in given list.
-  """
-  new_in: [InventoryStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  new_not_in: [InventoryStatus!]
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  updatedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  updatedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  updatedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  updatedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  updatedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  updatedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  updatedAt_gte: DateTime
-  physicalProduct: PhysicalProductWhereInput
-}
-
-input PhysicalProductInventoryStatusChangeWhereUniqueInput {
-  id: ID
 }
 
 enum PhysicalProductOffloadMethod {
@@ -18294,7 +20147,6 @@ input PhysicalProductUpdateDataInput {
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -18311,7 +20163,6 @@ input PhysicalProductUpdateInput {
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -18401,29 +20252,6 @@ input PhysicalProductUpdateOneRequiredInput {
   upsert: PhysicalProductUpsertNestedInput
 }
 
-input PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput {
-  create: PhysicalProductCreateWithoutInventoryStatusChangesInput
-  connect: PhysicalProductWhereUniqueInput
-  update: PhysicalProductUpdateWithoutInventoryStatusChangesDataInput
-  upsert: PhysicalProductUpsertWithoutInventoryStatusChangesInput
-}
-
-input PhysicalProductUpdateWithoutInventoryStatusChangesDataInput {
-  seasonsUID: String
-  inventoryStatus: InventoryStatus
-  productStatus: PhysicalProductStatus
-  offloadMethod: PhysicalProductOffloadMethod
-  offloadNotes: String
-  sequenceNumber: Int
-  barcoded: Boolean
-  dateOrdered: DateTime
-  dateReceived: DateTime
-  unitCost: Float
-  location: LocationUpdateOneWithoutPhysicalProductsInput
-  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
-}
-
 input PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
@@ -18436,7 +20264,6 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   dateReceived: DateTime
   unitCost: Float
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -18452,7 +20279,6 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   dateReceived: DateTime
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -18469,7 +20295,6 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -18495,11 +20320,6 @@ input PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput {
 input PhysicalProductUpsertNestedInput {
   update: PhysicalProductUpdateDataInput!
   create: PhysicalProductCreateInput!
-}
-
-input PhysicalProductUpsertWithoutInventoryStatusChangesInput {
-  update: PhysicalProductUpdateWithoutInventoryStatusChangesDataInput!
-  create: PhysicalProductCreateWithoutInventoryStatusChangesInput!
 }
 
 input PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -19011,9 +20831,6 @@ input PhysicalProductWhereInput {
   updatedAt_gte: DateTime
   location: LocationWhereInput
   productVariant: ProductVariantWhereInput
-  inventoryStatusChanges_every: PhysicalProductInventoryStatusChangeWhereInput
-  inventoryStatusChanges_some: PhysicalProductInventoryStatusChangeWhereInput
-  inventoryStatusChanges_none: PhysicalProductInventoryStatusChangeWhereInput
   warehouseLocation: WarehouseLocationWhereInput
 }
 
@@ -19082,15 +20899,6 @@ type Product implements Node {
     last: Int
   ): [ProductVariant!]
   status: ProductStatus
-  statusChanges(
-    where: ProductStatusChangeWhereInput
-    orderBy: ProductStatusChangeOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [ProductStatusChange!]
   season: ProductSeason
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -19151,7 +20959,6 @@ input ProductCreateInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
 }
 
@@ -19190,11 +20997,6 @@ input ProductCreateOneInput {
   connect: ProductWhereUniqueInput
 }
 
-input ProductCreateOneWithoutStatusChangesInput {
-  create: ProductCreateWithoutStatusChangesInput
-  connect: ProductWhereUniqueInput
-}
-
 input ProductCreateOneWithoutVariantsInput {
   create: ProductCreateWithoutVariantsInput
   connect: ProductWhereUniqueInput
@@ -19229,7 +21031,6 @@ input ProductCreateWithoutBrandInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
 }
 
@@ -19258,7 +21059,6 @@ input ProductCreateWithoutCategoryInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
 }
 
@@ -19287,7 +21087,6 @@ input ProductCreateWithoutMaterialCategoryInput {
   tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
   variants: ProductVariantCreateManyWithoutProductInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
 }
 
@@ -19309,36 +21108,6 @@ input ProductCreateWithoutModelInput {
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   images: ImageCreateManyInput
-  modelSize: SizeCreateOneInput
-  color: ColorCreateOneInput!
-  secondaryColor: ColorCreateOneInput
-  tags: TagCreateManyWithoutProductsInput
-  functions: ProductFunctionCreateManyInput
-  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
-  variants: ProductVariantCreateManyWithoutProductInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
-  season: ProductSeasonCreateOneInput
-}
-
-input ProductCreateWithoutStatusChangesInput {
-  id: ID
-  slug: String!
-  name: String!
-  type: ProductType
-  description: String
-  externalURL: String
-  modelHeight: Int
-  retailPrice: Int
-  status: ProductStatus
-  architecture: ProductArchitecture
-  photographyStatus: PhotographyStatus
-  publishedAt: DateTime
-  innerMaterials: ProductCreateinnerMaterialsInput
-  outerMaterials: ProductCreateouterMaterialsInput
-  brand: BrandCreateOneWithoutProductsInput!
-  category: CategoryCreateOneWithoutProductsInput!
-  images: ImageCreateManyInput
-  model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
@@ -19374,7 +21143,6 @@ input ProductCreateWithoutTagsInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
 }
 
@@ -19403,7 +21171,6 @@ input ProductCreateWithoutVariantsInput {
   tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
-  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
 }
 
@@ -22282,558 +24049,6 @@ enum ProductStatus {
   Offloaded
 }
 
-type ProductStatusChange implements Node {
-  id: ID!
-  old: ProductStatus!
-  new: ProductStatus!
-  product: Product!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-"""
-A connection to a list of items.
-"""
-type ProductStatusChangeConnection {
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  A list of edges.
-  """
-  edges: [ProductStatusChangeEdge]!
-  aggregate: AggregateProductStatusChange!
-}
-
-input ProductStatusChangeCreateInput {
-  id: ID
-  old: ProductStatus!
-  new: ProductStatus!
-  product: ProductCreateOneWithoutStatusChangesInput!
-}
-
-input ProductStatusChangeCreateManyWithoutProductInput {
-  create: [ProductStatusChangeCreateWithoutProductInput!]
-  connect: [ProductStatusChangeWhereUniqueInput!]
-}
-
-input ProductStatusChangeCreateWithoutProductInput {
-  id: ID
-  old: ProductStatus!
-  new: ProductStatus!
-}
-
-"""
-An edge in a connection.
-"""
-type ProductStatusChangeEdge {
-  """
-  The item at the end of the edge.
-  """
-  node: ProductStatusChange!
-
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-}
-
-enum ProductStatusChangeOrderByInput {
-  id_ASC
-  id_DESC
-  old_ASC
-  old_DESC
-  new_ASC
-  new_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type ProductStatusChangePreviousValues {
-  id: ID!
-  old: ProductStatus!
-  new: ProductStatus!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-input ProductStatusChangeScalarWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [ProductStatusChangeScalarWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [ProductStatusChangeScalarWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [ProductStatusChangeScalarWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  old: ProductStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  old_not: ProductStatus
-
-  """
-  All values that are contained in given list.
-  """
-  old_in: [ProductStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  old_not_in: [ProductStatus!]
-  new: ProductStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  new_not: ProductStatus
-
-  """
-  All values that are contained in given list.
-  """
-  new_in: [ProductStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  new_not_in: [ProductStatus!]
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  updatedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  updatedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  updatedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  updatedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  updatedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  updatedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  updatedAt_gte: DateTime
-}
-
-type ProductStatusChangeSubscriptionPayload {
-  mutation: MutationType!
-  node: ProductStatusChange
-  updatedFields: [String!]
-  previousValues: ProductStatusChangePreviousValues
-}
-
-input ProductStatusChangeSubscriptionWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [ProductStatusChangeSubscriptionWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [ProductStatusChangeSubscriptionWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [ProductStatusChangeSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: ProductStatusChangeWhereInput
-}
-
-input ProductStatusChangeUpdateInput {
-  old: ProductStatus
-  new: ProductStatus
-  product: ProductUpdateOneRequiredWithoutStatusChangesInput
-}
-
-input ProductStatusChangeUpdateManyDataInput {
-  old: ProductStatus
-  new: ProductStatus
-}
-
-input ProductStatusChangeUpdateManyMutationInput {
-  old: ProductStatus
-  new: ProductStatus
-}
-
-input ProductStatusChangeUpdateManyWithoutProductInput {
-  create: [ProductStatusChangeCreateWithoutProductInput!]
-  connect: [ProductStatusChangeWhereUniqueInput!]
-  set: [ProductStatusChangeWhereUniqueInput!]
-  disconnect: [ProductStatusChangeWhereUniqueInput!]
-  delete: [ProductStatusChangeWhereUniqueInput!]
-  update: [ProductStatusChangeUpdateWithWhereUniqueWithoutProductInput!]
-  updateMany: [ProductStatusChangeUpdateManyWithWhereNestedInput!]
-  deleteMany: [ProductStatusChangeScalarWhereInput!]
-  upsert: [ProductStatusChangeUpsertWithWhereUniqueWithoutProductInput!]
-}
-
-input ProductStatusChangeUpdateManyWithWhereNestedInput {
-  where: ProductStatusChangeScalarWhereInput!
-  data: ProductStatusChangeUpdateManyDataInput!
-}
-
-input ProductStatusChangeUpdateWithoutProductDataInput {
-  old: ProductStatus
-  new: ProductStatus
-}
-
-input ProductStatusChangeUpdateWithWhereUniqueWithoutProductInput {
-  where: ProductStatusChangeWhereUniqueInput!
-  data: ProductStatusChangeUpdateWithoutProductDataInput!
-}
-
-input ProductStatusChangeUpsertWithWhereUniqueWithoutProductInput {
-  where: ProductStatusChangeWhereUniqueInput!
-  update: ProductStatusChangeUpdateWithoutProductDataInput!
-  create: ProductStatusChangeCreateWithoutProductInput!
-}
-
-input ProductStatusChangeWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [ProductStatusChangeWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [ProductStatusChangeWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [ProductStatusChangeWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  old: ProductStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  old_not: ProductStatus
-
-  """
-  All values that are contained in given list.
-  """
-  old_in: [ProductStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  old_not_in: [ProductStatus!]
-  new: ProductStatus
-
-  """
-  All values that are not equal to given value.
-  """
-  new_not: ProductStatus
-
-  """
-  All values that are contained in given list.
-  """
-  new_in: [ProductStatus!]
-
-  """
-  All values that are not contained in given list.
-  """
-  new_not_in: [ProductStatus!]
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  updatedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  updatedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  updatedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  updatedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  updatedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  updatedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  updatedAt_gte: DateTime
-  product: ProductWhereInput
-}
-
-input ProductStatusChangeWhereUniqueInput {
-  id: ID
-}
-
 type ProductSubscriptionPayload {
   mutation: MutationType!
   node: Product
@@ -22911,7 +24126,6 @@ input ProductUpdateDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -22944,7 +24158,6 @@ input ProductUpdateInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -23064,13 +24277,6 @@ input ProductUpdateOneRequiredInput {
   upsert: ProductUpsertNestedInput
 }
 
-input ProductUpdateOneRequiredWithoutStatusChangesInput {
-  create: ProductCreateWithoutStatusChangesInput
-  connect: ProductWhereUniqueInput
-  update: ProductUpdateWithoutStatusChangesDataInput
-  upsert: ProductUpsertWithoutStatusChangesInput
-}
-
 input ProductUpdateOneRequiredWithoutVariantsInput {
   create: ProductCreateWithoutVariantsInput
   connect: ProductWhereUniqueInput
@@ -23106,7 +24312,6 @@ input ProductUpdateWithoutBrandDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -23134,7 +24339,6 @@ input ProductUpdateWithoutCategoryDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -23162,7 +24366,6 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -23183,35 +24386,6 @@ input ProductUpdateWithoutModelDataInput {
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   images: ImageUpdateManyInput
-  modelSize: SizeUpdateOneInput
-  color: ColorUpdateOneRequiredInput
-  secondaryColor: ColorUpdateOneInput
-  tags: TagUpdateManyWithoutProductsInput
-  functions: ProductFunctionUpdateManyInput
-  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
-  variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
-  season: ProductSeasonUpdateOneInput
-}
-
-input ProductUpdateWithoutStatusChangesDataInput {
-  slug: String
-  name: String
-  type: ProductType
-  description: String
-  externalURL: String
-  modelHeight: Int
-  retailPrice: Int
-  status: ProductStatus
-  architecture: ProductArchitecture
-  photographyStatus: PhotographyStatus
-  publishedAt: DateTime
-  innerMaterials: ProductUpdateinnerMaterialsInput
-  outerMaterials: ProductUpdateouterMaterialsInput
-  brand: BrandUpdateOneRequiredWithoutProductsInput
-  category: CategoryUpdateOneRequiredWithoutProductsInput
-  images: ImageUpdateManyInput
-  model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
@@ -23246,7 +24420,6 @@ input ProductUpdateWithoutTagsDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -23274,7 +24447,6 @@ input ProductUpdateWithoutVariantsDataInput {
   tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
-  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
 }
 
@@ -23311,11 +24483,6 @@ input ProductUpdateWithWhereUniqueWithoutTagsInput {
 input ProductUpsertNestedInput {
   update: ProductUpdateDataInput!
   create: ProductCreateInput!
-}
-
-input ProductUpsertWithoutStatusChangesInput {
-  update: ProductUpdateWithoutStatusChangesDataInput!
-  create: ProductCreateWithoutStatusChangesInput!
 }
 
 input ProductUpsertWithoutVariantsInput {
@@ -26786,9 +27953,6 @@ input ProductWhereInput {
   variants_every: ProductVariantWhereInput
   variants_some: ProductVariantWhereInput
   variants_none: ProductVariantWhereInput
-  statusChanges_every: ProductStatusChangeWhereInput
-  statusChanges_some: ProductStatusChangeWhereInput
-  statusChanges_none: ProductStatusChangeWhereInput
   season: ProductSeasonWhereInput
 }
 
@@ -28720,15 +29884,6 @@ type Query {
     first: Int
     last: Int
   ): [Tag]!
-  productStatusChanges(
-    where: ProductStatusChangeWhereInput
-    orderBy: ProductStatusChangeOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [ProductStatusChange]!
   productMaterialCategories(
     where: ProductMaterialCategoryWhereInput
     orderBy: ProductMaterialCategoryOrderByInput
@@ -28747,15 +29902,6 @@ type Query {
     first: Int
     last: Int
   ): [ProductModel]!
-  physicalProductInventoryStatusChanges(
-    where: PhysicalProductInventoryStatusChangeWhereInput
-    orderBy: PhysicalProductInventoryStatusChangeOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [PhysicalProductInventoryStatusChange]!
   warehouseLocationConstraints(
     where: WarehouseLocationConstraintWhereInput
     orderBy: WarehouseLocationConstraintOrderByInput
@@ -28801,6 +29947,15 @@ type Query {
     first: Int
     last: Int
   ): [FitPicReport]!
+  interestedUsers(
+    where: InterestedUserWhereInput
+    orderBy: InterestedUserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [InterestedUser]!
   bagItems(
     where: BagItemWhereInput
     orderBy: BagItemOrderByInput
@@ -28810,6 +29965,24 @@ type Query {
     first: Int
     last: Int
   ): [BagItem]!
+  customerAdmissionsDatas(
+    where: CustomerAdmissionsDataWhereInput
+    orderBy: CustomerAdmissionsDataOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [CustomerAdmissionsData]!
+  uTMDatas(
+    where: UTMDataWhereInput
+    orderBy: UTMDataOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [UTMData]!
   customerMemberships(
     where: CustomerMembershipWhereInput
     orderBy: CustomerMembershipOrderByInput
@@ -28918,6 +30091,15 @@ type Query {
     first: Int
     last: Int
   ): [AdminActionLog]!
+  syncTimings(
+    where: SyncTimingWhereInput
+    orderBy: SyncTimingOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [SyncTiming]!
   collections(
     where: CollectionWhereInput
     orderBy: CollectionOrderByInput
@@ -29026,6 +30208,15 @@ type Query {
     first: Int
     last: Int
   ): [TopSize]!
+  shippingMethods(
+    where: ShippingMethodWhereInput
+    orderBy: ShippingMethodOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ShippingMethod]!
   customers(
     where: CustomerWhereInput
     orderBy: CustomerOrderByInput
@@ -29152,6 +30343,15 @@ type Query {
     first: Int
     last: Int
   ): [Product]!
+  shippingOptions(
+    where: ShippingOptionWhereInput
+    orderBy: ShippingOptionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ShippingOption]!
   customerDetails(
     where: CustomerDetailWhereInput
     orderBy: CustomerDetailOrderByInput
@@ -29176,16 +30376,10 @@ type Query {
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
   tag(where: TagWhereUniqueInput!): Tag
-  productStatusChange(
-    where: ProductStatusChangeWhereUniqueInput!
-  ): ProductStatusChange
   productMaterialCategory(
     where: ProductMaterialCategoryWhereUniqueInput!
   ): ProductMaterialCategory
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
-  physicalProductInventoryStatusChange(
-    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
-  ): PhysicalProductInventoryStatusChange
   warehouseLocationConstraint(
     where: WarehouseLocationConstraintWhereUniqueInput!
   ): WarehouseLocationConstraint
@@ -29195,7 +30389,12 @@ type Query {
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   fitPic(where: FitPicWhereUniqueInput!): FitPic
   fitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
+  interestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
   bagItem(where: BagItemWhereUniqueInput!): BagItem
+  customerAdmissionsData(
+    where: CustomerAdmissionsDataWhereUniqueInput!
+  ): CustomerAdmissionsData
+  uTMData(where: UTMDataWhereUniqueInput!): UTMData
   customerMembership(
     where: CustomerMembershipWhereUniqueInput!
   ): CustomerMembership
@@ -29224,6 +30423,7 @@ type Query {
   ): ProductVariantWant
   activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
   adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
+  syncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
   collection(where: CollectionWhereUniqueInput!): Collection
   productSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
   pushNotificationReceipt(
@@ -29242,6 +30442,7 @@ type Query {
   productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
   color(where: ColorWhereUniqueInput!): Color
   topSize(where: TopSizeWhereUniqueInput!): TopSize
+  shippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
   customer(where: CustomerWhereUniqueInput!): Customer
   userPushNotification(
     where: UserPushNotificationWhereUniqueInput!
@@ -29258,6 +30459,7 @@ type Query {
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   product(where: ProductWhereUniqueInput!): Product
+  shippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   reservation(where: ReservationWhereUniqueInput!): Reservation
   brandsConnection(
@@ -29296,15 +30498,6 @@ type Query {
     first: Int
     last: Int
   ): TagConnection!
-  productStatusChangesConnection(
-    where: ProductStatusChangeWhereInput
-    orderBy: ProductStatusChangeOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): ProductStatusChangeConnection!
   productMaterialCategoriesConnection(
     where: ProductMaterialCategoryWhereInput
     orderBy: ProductMaterialCategoryOrderByInput
@@ -29323,15 +30516,6 @@ type Query {
     first: Int
     last: Int
   ): ProductModelConnection!
-  physicalProductInventoryStatusChangesConnection(
-    where: PhysicalProductInventoryStatusChangeWhereInput
-    orderBy: PhysicalProductInventoryStatusChangeOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): PhysicalProductInventoryStatusChangeConnection!
   warehouseLocationConstraintsConnection(
     where: WarehouseLocationConstraintWhereInput
     orderBy: WarehouseLocationConstraintOrderByInput
@@ -29377,6 +30561,15 @@ type Query {
     first: Int
     last: Int
   ): FitPicReportConnection!
+  interestedUsersConnection(
+    where: InterestedUserWhereInput
+    orderBy: InterestedUserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): InterestedUserConnection!
   bagItemsConnection(
     where: BagItemWhereInput
     orderBy: BagItemOrderByInput
@@ -29386,6 +30579,24 @@ type Query {
     first: Int
     last: Int
   ): BagItemConnection!
+  customerAdmissionsDatasConnection(
+    where: CustomerAdmissionsDataWhereInput
+    orderBy: CustomerAdmissionsDataOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CustomerAdmissionsDataConnection!
+  uTMDatasConnection(
+    where: UTMDataWhereInput
+    orderBy: UTMDataOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): UTMDataConnection!
   customerMembershipsConnection(
     where: CustomerMembershipWhereInput
     orderBy: CustomerMembershipOrderByInput
@@ -29494,6 +30705,15 @@ type Query {
     first: Int
     last: Int
   ): AdminActionLogConnection!
+  syncTimingsConnection(
+    where: SyncTimingWhereInput
+    orderBy: SyncTimingOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): SyncTimingConnection!
   collectionsConnection(
     where: CollectionWhereInput
     orderBy: CollectionOrderByInput
@@ -29602,6 +30822,15 @@ type Query {
     first: Int
     last: Int
   ): TopSizeConnection!
+  shippingMethodsConnection(
+    where: ShippingMethodWhereInput
+    orderBy: ShippingMethodOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ShippingMethodConnection!
   customersConnection(
     where: CustomerWhereInput
     orderBy: CustomerOrderByInput
@@ -29728,6 +30957,15 @@ type Query {
     first: Int
     last: Int
   ): ProductConnection!
+  shippingOptionsConnection(
+    where: ShippingOptionWhereInput
+    orderBy: ShippingOptionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ShippingOptionConnection!
   customerDetailsConnection(
     where: CustomerDetailWhereInput
     orderBy: CustomerDetailOrderByInput
@@ -30122,6 +31360,7 @@ type Reservation implements Node {
   lastLocation: Location
   createdAt: DateTime!
   updatedAt: DateTime!
+  shippingOption: ShippingOption
 }
 
 """
@@ -30158,6 +31397,7 @@ input ReservationCreateInput {
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
 }
 
 input ReservationCreateManyWithoutCustomerInput {
@@ -30197,6 +31437,7 @@ input ReservationCreateWithoutCustomerInput {
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
 }
 
 input ReservationCreateWithoutPackageEventsInput {
@@ -30216,6 +31457,7 @@ input ReservationCreateWithoutPackageEventsInput {
   products: PhysicalProductCreateManyInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
 }
 
 input ReservationCreateWithoutReceiptInput {
@@ -30235,6 +31477,7 @@ input ReservationCreateWithoutReceiptInput {
   products: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
 }
 
 """
@@ -32008,6 +33251,7 @@ input ReservationUpdateDataInput {
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateInput {
@@ -32027,6 +33271,7 @@ input ReservationUpdateInput {
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateManyDataInput {
@@ -32107,6 +33352,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateWithoutPackageEventsDataInput {
@@ -32125,6 +33371,7 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   products: PhysicalProductUpdateManyInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateWithoutReceiptDataInput {
@@ -32143,6 +33390,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   products: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
 }
 
 input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
@@ -32554,6 +33802,7 @@ input ReservationWhereInput {
   packageEvents_none: PackageTransitEventWhereInput
   receipt: ReservationReceiptWhereInput
   lastLocation: LocationWhereInput
+  shippingOption: ShippingOptionWhereInput
 }
 
 input ReservationWhereUniqueInput {
@@ -32850,6 +34099,1068 @@ input SeasonWhereInput {
 }
 
 input SeasonWhereUniqueInput {
+  id: ID
+}
+
+enum ShippingCode {
+  UPSGround
+  UPSSelect
+}
+
+type ShippingMethod implements Node {
+  id: ID!
+  code: ShippingCode!
+  displayText: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type ShippingMethodConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [ShippingMethodEdge]!
+  aggregate: AggregateShippingMethod!
+}
+
+input ShippingMethodCreateInput {
+  id: ID
+  code: ShippingCode!
+  displayText: String!
+}
+
+input ShippingMethodCreateOneInput {
+  create: ShippingMethodCreateInput
+  connect: ShippingMethodWhereUniqueInput
+}
+
+"""
+An edge in a connection.
+"""
+type ShippingMethodEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: ShippingMethod!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum ShippingMethodOrderByInput {
+  id_ASC
+  id_DESC
+  code_ASC
+  code_DESC
+  displayText_ASC
+  displayText_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ShippingMethodPreviousValues {
+  id: ID!
+  code: ShippingCode!
+  displayText: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ShippingMethodSubscriptionPayload {
+  mutation: MutationType!
+  node: ShippingMethod
+  updatedFields: [String!]
+  previousValues: ShippingMethodPreviousValues
+}
+
+input ShippingMethodSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ShippingMethodSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ShippingMethodSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ShippingMethodSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ShippingMethodWhereInput
+}
+
+input ShippingMethodUpdateDataInput {
+  code: ShippingCode
+  displayText: String
+}
+
+input ShippingMethodUpdateInput {
+  code: ShippingCode
+  displayText: String
+}
+
+input ShippingMethodUpdateManyMutationInput {
+  code: ShippingCode
+  displayText: String
+}
+
+input ShippingMethodUpdateOneInput {
+  create: ShippingMethodCreateInput
+  connect: ShippingMethodWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ShippingMethodUpdateDataInput
+  upsert: ShippingMethodUpsertNestedInput
+}
+
+input ShippingMethodUpsertNestedInput {
+  update: ShippingMethodUpdateDataInput!
+  create: ShippingMethodCreateInput!
+}
+
+input ShippingMethodWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ShippingMethodWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ShippingMethodWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ShippingMethodWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  code: ShippingCode
+
+  """
+  All values that are not equal to given value.
+  """
+  code_not: ShippingCode
+
+  """
+  All values that are contained in given list.
+  """
+  code_in: [ShippingCode!]
+
+  """
+  All values that are not contained in given list.
+  """
+  code_not_in: [ShippingCode!]
+  displayText: String
+
+  """
+  All values that are not equal to given value.
+  """
+  displayText_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  displayText_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  displayText_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  displayText_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  displayText_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  displayText_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  displayText_gte: String
+
+  """
+  All values containing the given string.
+  """
+  displayText_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  displayText_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  displayText_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  displayText_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  displayText_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  displayText_not_ends_with: String
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+}
+
+input ShippingMethodWhereUniqueInput {
+  id: ID
+}
+
+type ShippingOption implements Node {
+  id: ID!
+  origin: Location
+  destination: Location
+  shippingMethod: ShippingMethod
+  externalCost: Int
+  averageDuration: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type ShippingOptionConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [ShippingOptionEdge]!
+  aggregate: AggregateShippingOption!
+}
+
+input ShippingOptionCreateInput {
+  id: ID
+  externalCost: Int
+  averageDuration: Int
+  origin: LocationCreateOneInput
+  destination: LocationCreateOneWithoutShippingOptionsInput
+  shippingMethod: ShippingMethodCreateOneInput
+}
+
+input ShippingOptionCreateManyWithoutDestinationInput {
+  create: [ShippingOptionCreateWithoutDestinationInput!]
+  connect: [ShippingOptionWhereUniqueInput!]
+}
+
+input ShippingOptionCreateOneInput {
+  create: ShippingOptionCreateInput
+  connect: ShippingOptionWhereUniqueInput
+}
+
+input ShippingOptionCreateWithoutDestinationInput {
+  id: ID
+  externalCost: Int
+  averageDuration: Int
+  origin: LocationCreateOneInput
+  shippingMethod: ShippingMethodCreateOneInput
+}
+
+"""
+An edge in a connection.
+"""
+type ShippingOptionEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: ShippingOption!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum ShippingOptionOrderByInput {
+  id_ASC
+  id_DESC
+  externalCost_ASC
+  externalCost_DESC
+  averageDuration_ASC
+  averageDuration_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ShippingOptionPreviousValues {
+  id: ID!
+  externalCost: Int
+  averageDuration: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input ShippingOptionScalarWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ShippingOptionScalarWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ShippingOptionScalarWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ShippingOptionScalarWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  externalCost: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  externalCost_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  externalCost_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  externalCost_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  externalCost_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  externalCost_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  externalCost_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  externalCost_gte: Int
+  averageDuration: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  averageDuration_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  averageDuration_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  averageDuration_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  averageDuration_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  averageDuration_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  averageDuration_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  averageDuration_gte: Int
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+}
+
+type ShippingOptionSubscriptionPayload {
+  mutation: MutationType!
+  node: ShippingOption
+  updatedFields: [String!]
+  previousValues: ShippingOptionPreviousValues
+}
+
+input ShippingOptionSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ShippingOptionSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ShippingOptionSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ShippingOptionSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ShippingOptionWhereInput
+}
+
+input ShippingOptionUpdateDataInput {
+  externalCost: Int
+  averageDuration: Int
+  origin: LocationUpdateOneInput
+  destination: LocationUpdateOneWithoutShippingOptionsInput
+  shippingMethod: ShippingMethodUpdateOneInput
+}
+
+input ShippingOptionUpdateInput {
+  externalCost: Int
+  averageDuration: Int
+  origin: LocationUpdateOneInput
+  destination: LocationUpdateOneWithoutShippingOptionsInput
+  shippingMethod: ShippingMethodUpdateOneInput
+}
+
+input ShippingOptionUpdateManyDataInput {
+  externalCost: Int
+  averageDuration: Int
+}
+
+input ShippingOptionUpdateManyMutationInput {
+  externalCost: Int
+  averageDuration: Int
+}
+
+input ShippingOptionUpdateManyWithoutDestinationInput {
+  create: [ShippingOptionCreateWithoutDestinationInput!]
+  connect: [ShippingOptionWhereUniqueInput!]
+  set: [ShippingOptionWhereUniqueInput!]
+  disconnect: [ShippingOptionWhereUniqueInput!]
+  delete: [ShippingOptionWhereUniqueInput!]
+  update: [ShippingOptionUpdateWithWhereUniqueWithoutDestinationInput!]
+  updateMany: [ShippingOptionUpdateManyWithWhereNestedInput!]
+  deleteMany: [ShippingOptionScalarWhereInput!]
+  upsert: [ShippingOptionUpsertWithWhereUniqueWithoutDestinationInput!]
+}
+
+input ShippingOptionUpdateManyWithWhereNestedInput {
+  where: ShippingOptionScalarWhereInput!
+  data: ShippingOptionUpdateManyDataInput!
+}
+
+input ShippingOptionUpdateOneInput {
+  create: ShippingOptionCreateInput
+  connect: ShippingOptionWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ShippingOptionUpdateDataInput
+  upsert: ShippingOptionUpsertNestedInput
+}
+
+input ShippingOptionUpdateWithoutDestinationDataInput {
+  externalCost: Int
+  averageDuration: Int
+  origin: LocationUpdateOneInput
+  shippingMethod: ShippingMethodUpdateOneInput
+}
+
+input ShippingOptionUpdateWithWhereUniqueWithoutDestinationInput {
+  where: ShippingOptionWhereUniqueInput!
+  data: ShippingOptionUpdateWithoutDestinationDataInput!
+}
+
+input ShippingOptionUpsertNestedInput {
+  update: ShippingOptionUpdateDataInput!
+  create: ShippingOptionCreateInput!
+}
+
+input ShippingOptionUpsertWithWhereUniqueWithoutDestinationInput {
+  where: ShippingOptionWhereUniqueInput!
+  update: ShippingOptionUpdateWithoutDestinationDataInput!
+  create: ShippingOptionCreateWithoutDestinationInput!
+}
+
+input ShippingOptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ShippingOptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ShippingOptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ShippingOptionWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  externalCost: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  externalCost_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  externalCost_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  externalCost_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  externalCost_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  externalCost_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  externalCost_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  externalCost_gte: Int
+  averageDuration: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  averageDuration_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  averageDuration_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  averageDuration_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  averageDuration_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  averageDuration_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  averageDuration_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  averageDuration_gte: Int
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+  origin: LocationWhereInput
+  destination: LocationWhereInput
+  shippingMethod: ShippingMethodWhereInput
+}
+
+input ShippingOptionWhereUniqueInput {
   id: ID
 }
 
@@ -34600,18 +36911,12 @@ type Subscription {
     where: HomepageProductRailSubscriptionWhereInput
   ): HomepageProductRailSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
-  productStatusChange(
-    where: ProductStatusChangeSubscriptionWhereInput
-  ): ProductStatusChangeSubscriptionPayload
   productMaterialCategory(
     where: ProductMaterialCategorySubscriptionWhereInput
   ): ProductMaterialCategorySubscriptionPayload
   productModel(
     where: ProductModelSubscriptionWhereInput
   ): ProductModelSubscriptionPayload
-  physicalProductInventoryStatusChange(
-    where: PhysicalProductInventoryStatusChangeSubscriptionWhereInput
-  ): PhysicalProductInventoryStatusChangeSubscriptionPayload
   warehouseLocationConstraint(
     where: WarehouseLocationConstraintSubscriptionWhereInput
   ): WarehouseLocationConstraintSubscriptionPayload
@@ -34625,7 +36930,14 @@ type Subscription {
   fitPicReport(
     where: FitPicReportSubscriptionWhereInput
   ): FitPicReportSubscriptionPayload
+  interestedUser(
+    where: InterestedUserSubscriptionWhereInput
+  ): InterestedUserSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
+  customerAdmissionsData(
+    where: CustomerAdmissionsDataSubscriptionWhereInput
+  ): CustomerAdmissionsDataSubscriptionPayload
+  uTMData(where: UTMDataSubscriptionWhereInput): UTMDataSubscriptionPayload
   customerMembership(
     where: CustomerMembershipSubscriptionWhereInput
   ): CustomerMembershipSubscriptionPayload
@@ -34662,6 +36974,9 @@ type Subscription {
   adminActionLog(
     where: AdminActionLogSubscriptionWhereInput
   ): AdminActionLogSubscriptionPayload
+  syncTiming(
+    where: SyncTimingSubscriptionWhereInput
+  ): SyncTimingSubscriptionPayload
   collection(
     where: CollectionSubscriptionWhereInput
   ): CollectionSubscriptionPayload
@@ -34690,6 +37005,9 @@ type Subscription {
   ): ProductFunctionSubscriptionPayload
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
+  shippingMethod(
+    where: ShippingMethodSubscriptionWhereInput
+  ): ShippingMethodSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   userPushNotification(
     where: UserPushNotificationSubscriptionWhereInput
@@ -34716,12 +37034,324 @@ type Subscription {
     where: PaymentPlanSubscriptionWhereInput
   ): PaymentPlanSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
+  shippingOption(
+    where: ShippingOptionSubscriptionWhereInput
+  ): ShippingOptionSubscriptionPayload
   customerDetail(
     where: CustomerDetailSubscriptionWhereInput
   ): CustomerDetailSubscriptionPayload
   reservation(
     where: ReservationSubscriptionWhereInput
   ): ReservationSubscriptionPayload
+}
+
+type SyncTiming implements Node {
+  id: ID!
+  dripSyncedAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type SyncTimingConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [SyncTimingEdge]!
+  aggregate: AggregateSyncTiming!
+}
+
+input SyncTimingCreateInput {
+  id: ID
+  dripSyncedAt: DateTime!
+}
+
+"""
+An edge in a connection.
+"""
+type SyncTimingEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: SyncTiming!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum SyncTimingOrderByInput {
+  id_ASC
+  id_DESC
+  dripSyncedAt_ASC
+  dripSyncedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type SyncTimingPreviousValues {
+  id: ID!
+  dripSyncedAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SyncTimingSubscriptionPayload {
+  mutation: MutationType!
+  node: SyncTiming
+  updatedFields: [String!]
+  previousValues: SyncTimingPreviousValues
+}
+
+input SyncTimingSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [SyncTimingSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [SyncTimingSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [SyncTimingSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: SyncTimingWhereInput
+}
+
+input SyncTimingUpdateInput {
+  dripSyncedAt: DateTime
+}
+
+input SyncTimingUpdateManyMutationInput {
+  dripSyncedAt: DateTime
+}
+
+input SyncTimingWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [SyncTimingWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [SyncTimingWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [SyncTimingWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  dripSyncedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  dripSyncedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  dripSyncedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  dripSyncedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  dripSyncedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  dripSyncedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  dripSyncedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  dripSyncedAt_gte: DateTime
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+}
+
+input SyncTimingWhereUniqueInput {
+  id: ID
 }
 
 type Tag implements Node {
@@ -35957,6 +38587,15 @@ type User implements Node {
     first: Int
     last: Int
   ): [PushNotificationReceipt!]
+  emails(
+    where: EmailReceiptWhereInput
+    orderBy: EmailReceiptOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [EmailReceipt!]
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
@@ -36010,6 +38649,7 @@ input UserCreateInput {
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
@@ -36025,6 +38665,11 @@ input UserCreateOneInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutEmailsInput {
+  create: UserCreateWithoutEmailsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateOneWithoutFitPicsInput {
   create: UserCreateWithoutFitPicsInput
   connect: UserWhereUniqueInput
@@ -36032,6 +38677,23 @@ input UserCreateOneWithoutFitPicsInput {
 
 input UserCreaterolesInput {
   set: [UserRole!]
+}
+
+input UserCreateWithoutEmailsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserCreaterolesInput
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  pushNotification: UserPushNotificationCreateOneInput
+  smsReceipts: SmsReceiptCreateManyInput
+  fitPics: FitPicCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutFitPicsInput {
@@ -36046,6 +38708,7 @@ input UserCreateWithoutFitPicsInput {
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
 }
@@ -36061,6 +38724,7 @@ input UserCreateWithoutPushNotificationsInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
+  emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
@@ -37443,6 +40107,7 @@ input UserUpdateDataInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
@@ -37459,6 +40124,7 @@ input UserUpdateInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
@@ -37521,6 +40187,13 @@ input UserUpdateOneRequiredInput {
   upsert: UserUpsertNestedInput
 }
 
+input UserUpdateOneRequiredWithoutEmailsInput {
+  create: UserCreateWithoutEmailsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutEmailsDataInput
+  upsert: UserUpsertWithoutEmailsInput
+}
+
 input UserUpdateOneRequiredWithoutFitPicsInput {
   create: UserCreateWithoutFitPicsInput
   connect: UserWhereUniqueInput
@@ -37530,6 +40203,22 @@ input UserUpdateOneRequiredWithoutFitPicsInput {
 
 input UserUpdaterolesInput {
   set: [UserRole!]
+}
+
+input UserUpdateWithoutEmailsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserUpdaterolesInput
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  pushNotification: UserPushNotificationUpdateOneInput
+  smsReceipts: SmsReceiptUpdateManyInput
+  fitPics: FitPicUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutFitPicsDataInput {
@@ -37543,6 +40232,7 @@ input UserUpdateWithoutFitPicsDataInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
 }
@@ -37557,6 +40247,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
+  emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
@@ -37570,6 +40261,11 @@ input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutEmailsInput {
+  update: UserUpdateWithoutEmailsDataInput!
+  create: UserCreateWithoutEmailsInput!
 }
 
 input UserUpsertWithoutFitPicsInput {
@@ -38079,6 +40775,9 @@ input UserWhereInput {
   pushNotifications_every: PushNotificationReceiptWhereInput
   pushNotifications_some: PushNotificationReceiptWhereInput
   pushNotifications_none: PushNotificationReceiptWhereInput
+  emails_every: EmailReceiptWhereInput
+  emails_some: EmailReceiptWhereInput
+  emails_none: EmailReceiptWhereInput
   pushNotification: UserPushNotificationWhereInput
   smsReceipts_every: SmsReceiptWhereInput
   smsReceipts_some: SmsReceiptWhereInput
@@ -38092,6 +40791,677 @@ input UserWhereUniqueInput {
   id: ID
   auth0Id: String
   email: String
+}
+
+type UTMData implements Node {
+  id: ID!
+  customer: Customer!
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type UTMDataConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [UTMDataEdge]!
+  aggregate: AggregateUTMData!
+}
+
+input UTMDataCreateInput {
+  id: ID
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+  customer: CustomerCreateOneWithoutUtmInput!
+}
+
+input UTMDataCreateOneWithoutCustomerInput {
+  create: UTMDataCreateWithoutCustomerInput
+  connect: UTMDataWhereUniqueInput
+}
+
+input UTMDataCreateWithoutCustomerInput {
+  id: ID
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+"""
+An edge in a connection.
+"""
+type UTMDataEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: UTMData!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum UTMDataOrderByInput {
+  id_ASC
+  id_DESC
+  source_ASC
+  source_DESC
+  medium_ASC
+  medium_DESC
+  campaign_ASC
+  campaign_DESC
+  term_ASC
+  term_DESC
+  content_ASC
+  content_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type UTMDataPreviousValues {
+  id: ID!
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type UTMDataSubscriptionPayload {
+  mutation: MutationType!
+  node: UTMData
+  updatedFields: [String!]
+  previousValues: UTMDataPreviousValues
+}
+
+input UTMDataSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [UTMDataSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [UTMDataSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [UTMDataSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: UTMDataWhereInput
+}
+
+input UTMDataUpdateInput {
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+  customer: CustomerUpdateOneRequiredWithoutUtmInput
+}
+
+input UTMDataUpdateManyMutationInput {
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+input UTMDataUpdateOneWithoutCustomerInput {
+  create: UTMDataCreateWithoutCustomerInput
+  connect: UTMDataWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: UTMDataUpdateWithoutCustomerDataInput
+  upsert: UTMDataUpsertWithoutCustomerInput
+}
+
+input UTMDataUpdateWithoutCustomerDataInput {
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+input UTMDataUpsertWithoutCustomerInput {
+  update: UTMDataUpdateWithoutCustomerDataInput!
+  create: UTMDataCreateWithoutCustomerInput!
+}
+
+input UTMDataWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [UTMDataWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [UTMDataWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [UTMDataWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  source: String
+
+  """
+  All values that are not equal to given value.
+  """
+  source_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  source_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  source_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  source_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  source_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  source_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  source_gte: String
+
+  """
+  All values containing the given string.
+  """
+  source_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  source_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  source_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  source_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  source_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  source_not_ends_with: String
+  medium: String
+
+  """
+  All values that are not equal to given value.
+  """
+  medium_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  medium_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  medium_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  medium_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  medium_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  medium_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  medium_gte: String
+
+  """
+  All values containing the given string.
+  """
+  medium_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  medium_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  medium_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  medium_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  medium_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  medium_not_ends_with: String
+  campaign: String
+
+  """
+  All values that are not equal to given value.
+  """
+  campaign_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  campaign_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  campaign_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  campaign_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  campaign_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  campaign_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  campaign_gte: String
+
+  """
+  All values containing the given string.
+  """
+  campaign_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  campaign_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  campaign_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  campaign_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  campaign_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  campaign_not_ends_with: String
+  term: String
+
+  """
+  All values that are not equal to given value.
+  """
+  term_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  term_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  term_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  term_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  term_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  term_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  term_gte: String
+
+  """
+  All values containing the given string.
+  """
+  term_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  term_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  term_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  term_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  term_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  term_not_ends_with: String
+  content: String
+
+  """
+  All values that are not equal to given value.
+  """
+  content_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  content_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  content_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  content_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  content_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  content_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  content_gte: String
+
+  """
+  All values containing the given string.
+  """
+  content_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  content_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  content_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  content_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  content_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  content_not_ends_with: String
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+  customer: CustomerWhereInput
+}
+
+input UTMDataWhereUniqueInput {
+  id: ID
 }
 
 type WarehouseLocation implements Node {

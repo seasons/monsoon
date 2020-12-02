@@ -1,39 +1,22 @@
-import { SyncError } from "@app/errors"
 import { PushNotificationService } from "@app/modules/PushNotification"
-import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import {
-  AirtableInventoryStatus,
-  AirtableProductVariantCounts,
-} from "@modules/Airtable/airtable.types"
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { Reservation as ClientReservation } from "@app/prisma/index"
+import { Reservation } from "@app/prisma/prisma.binding"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ErrorService } from "@modules/Error/services/error.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { InventoryStatus, ProductVariant, Reservation } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { head } from "lodash"
 import moment from "moment"
-
-type prismaProductVariantCounts = Pick<
-  ProductVariant,
-  "reservable" | "nonReservable" | "reserved"
->
-type productVariantCounts =
-  | prismaProductVariantCounts
-  | AirtableProductVariantCounts
 
 @Injectable()
 export class ReservationScheduledJobs {
   private readonly logger = new Logger(ReservationScheduledJobs.name)
 
   constructor(
-    private readonly airtableService: AirtableService,
     private readonly emailService: EmailService,
     private readonly prisma: PrismaService,
     private readonly errorService: ErrorService,
-    private readonly reservationService: ReservationService,
     private readonly pushNotifs: PushNotificationService,
     private readonly utils: UtilsService
   ) {}
@@ -41,9 +24,31 @@ export class ReservationScheduledJobs {
   @Cron(CronExpression.EVERY_6_HOURS)
   async sendReturnNotifications() {
     this.logger.log("Reservation Return Notifications Job ran")
-    const reservations = await this.prisma.client.reservations({
-      orderBy: "createdAt_DESC",
-    })
+    const reservations = await this.prisma.binding.query.reservations(
+      {
+        orderBy: "createdAt_DESC",
+      },
+      `{
+      id
+      createdAt
+      receivedAt
+      status
+      reminderSentAt
+      reservationNumber
+      customer {
+        user {
+          id
+          email
+          firstName
+        }
+        membership {
+          plan {
+            tier
+          }
+        }
+      }
+    }`
+    )
     const report = {
       reservationsForWhichRemindersWereSent: [],
       errors: [],
@@ -53,18 +58,14 @@ export class ReservationScheduledJobs {
         this.errorService.setExtraContext(reservation, "reservation")
 
         if (await this.returnNoticeNeeded(reservation)) {
-          const user = await this.prisma.client
-            .reservation({
-              id: reservation.id,
-            })
-            .customer()
-            .user()
-
-          await this.emailService.sendReturnReminderEmail(user, reservation)
+          await this.emailService.sendReturnReminderEmail(
+            reservation.customer.user,
+            reservation as ClientReservation
+          )
 
           const now = new Date()
           await this.pushNotifs.pushNotifyUser({
-            email: user.email,
+            email: reservation.customer.user.email,
             pushNotifID: "ReturnDue",
           })
           await this.prisma.client.updateReservation({
@@ -87,28 +88,17 @@ export class ReservationScheduledJobs {
   }
 
   private async returnNoticeNeeded(reservation: Reservation) {
-    const tier = await this.prisma.client
-      .reservation({
-        id: reservation.id,
-      })
-      .customer()
-      .membership()
-      .plan()
-      .tier()
-    const reservationCreatedAt = moment(reservation.createdAt)
+    const dueBackIn3Days = this.utils.isXDaysBefore({
+      beforeDate: new Date(), // now
+      afterDate: this.utils.getReservationReturnDate(
+        reservation as ClientReservation
+      ),
+      numDays: 3,
+    })
     return (
-      this.utils.isXDaysBefore({
-        beforeDate: new Date(
-          reservationCreatedAt.year(),
-          reservationCreatedAt.month(),
-          reservationCreatedAt.date()
-        ),
-        // now
-        afterDate: new Date(),
-        numDays: 27,
-      }) &&
+      dueBackIn3Days &&
       !reservation.reminderSentAt &&
-      tier === "Essential" &&
+      reservation.customer.membership.plan.tier === "Essential" &&
       !["Cancelled", "Completed"].includes(reservation.status)
     )
   }
