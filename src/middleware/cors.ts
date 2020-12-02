@@ -31,7 +31,15 @@ export const createCorsMiddleware = async (prisma: Prisma) => {
     where: { externalURL_not: "" },
   })
   const uniqueExternalOrigins = uniq(
-    productsWithExternalURLs.map(p => new URL(p.externalURL).origin)
+    productsWithExternalURLs
+      .map(p => {
+        try {
+          return new URL(p.externalURL).origin
+        } catch (_err) {
+          return null
+        }
+      })
+      .filter(Boolean)
   )
   const originAllowList = [...STATIC_ORIGINS, ...uniqueExternalOrigins]
 
