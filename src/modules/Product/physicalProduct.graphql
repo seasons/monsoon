@@ -46,6 +46,7 @@ type PhysicalProduct {
   id: ID!
   seasonsUID: String!
   location: Location
+  productVariant: ProductVariant
   warehouseLocation: WarehouseLocation
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!

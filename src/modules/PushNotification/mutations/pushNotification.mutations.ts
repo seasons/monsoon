@@ -31,7 +31,7 @@ export class PushNotificationMutationsResolver {
 
     // Send the notif
     const { id } = await this.pushNotifications.pushNotifyUser({
-      email: email,
+      email,
       pushNotifID: "Custom",
       vars: { title, body, route, uri, ...pick(record, ["id", "slug"]) },
     })

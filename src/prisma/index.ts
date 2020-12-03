@@ -57,6 +57,9 @@ export interface Exists {
     where?: ProductMaterialCategoryWhereInput
   ) => Promise<boolean>;
   productModel: (where?: ProductModelWhereInput) => Promise<boolean>;
+  productNotification: (
+    where?: ProductNotificationWhereInput
+  ) => Promise<boolean>;
   productRequest: (where?: ProductRequestWhereInput) => Promise<boolean>;
   productSeason: (where?: ProductSeasonWhereInput) => Promise<boolean>;
   productVariant: (where?: ProductVariantWhereInput) => Promise<boolean>;
@@ -752,6 +755,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ProductModelConnectionPromise;
+  productNotification: (
+    where: ProductNotificationWhereUniqueInput
+  ) => ProductNotificationNullablePromise;
+  productNotifications: (args?: {
+    where?: ProductNotificationWhereInput;
+    orderBy?: ProductNotificationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<ProductNotification>;
+  productNotificationsConnection: (args?: {
+    where?: ProductNotificationWhereInput;
+    orderBy?: ProductNotificationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ProductNotificationConnectionPromise;
   productRequest: (
     where: ProductRequestWhereUniqueInput
   ) => ProductRequestNullablePromise;
@@ -1893,6 +1917,28 @@ export interface Prisma {
   deleteManyProductModels: (
     where?: ProductModelWhereInput
   ) => BatchPayloadPromise;
+  createProductNotification: (
+    data: ProductNotificationCreateInput
+  ) => ProductNotificationPromise;
+  updateProductNotification: (args: {
+    data: ProductNotificationUpdateInput;
+    where: ProductNotificationWhereUniqueInput;
+  }) => ProductNotificationPromise;
+  updateManyProductNotifications: (args: {
+    data: ProductNotificationUpdateManyMutationInput;
+    where?: ProductNotificationWhereInput;
+  }) => BatchPayloadPromise;
+  upsertProductNotification: (args: {
+    where: ProductNotificationWhereUniqueInput;
+    create: ProductNotificationCreateInput;
+    update: ProductNotificationUpdateInput;
+  }) => ProductNotificationPromise;
+  deleteProductNotification: (
+    where: ProductNotificationWhereUniqueInput
+  ) => ProductNotificationPromise;
+  deleteManyProductNotifications: (
+    where?: ProductNotificationWhereInput
+  ) => BatchPayloadPromise;
   createProductRequest: (
     data: ProductRequestCreateInput
   ) => ProductRequestPromise;
@@ -2531,6 +2577,9 @@ export interface Subscription {
   productModel: (
     where?: ProductModelSubscriptionWhereInput
   ) => ProductModelSubscriptionPayloadSubscription;
+  productNotification: (
+    where?: ProductNotificationSubscriptionWhereInput
+  ) => ProductNotificationSubscriptionPayloadSubscription;
   productRequest: (
     where?: ProductRequestSubscriptionWhereInput
   ) => ProductRequestSubscriptionPayloadSubscription;
@@ -2853,6 +2902,8 @@ export type PhysicalProductOrderByInput =
   | "dateReceived_DESC"
   | "unitCost_ASC"
   | "unitCost_DESC"
+  | "sellable_ASC"
+  | "sellable_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -3521,6 +3572,24 @@ export type ProductModelOrderByInput =
   | "name_DESC"
   | "height_ASC"
   | "height_DESC";
+
+export type ProductNotificationType = "Restock" | "AvailableForPurchase";
+
+export type ProductNotificationOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "type_ASC"
+  | "type_DESC"
+  | "physicalProductID_ASC"
+  | "physicalProductID_DESC"
+  | "productVariantID_ASC"
+  | "productVariantID_DESC"
+  | "notified_ASC"
+  | "notified_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type ProductRequestOrderByInput =
   | "id_ASC"
@@ -4629,6 +4698,8 @@ export interface PhysicalProductWhereInput {
   unitCost_lte?: Maybe<Float>;
   unitCost_gt?: Maybe<Float>;
   unitCost_gte?: Maybe<Float>;
+  sellable?: Maybe<Boolean>;
+  sellable_not?: Maybe<Boolean>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -7851,6 +7922,81 @@ export type ProductModelWhereUniqueInput = AtLeastOne<{
   name?: Maybe<String>;
 }>;
 
+export type ProductNotificationWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface ProductNotificationWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  type?: Maybe<ProductNotificationType>;
+  type_not?: Maybe<ProductNotificationType>;
+  type_in?: Maybe<ProductNotificationType[] | ProductNotificationType>;
+  type_not_in?: Maybe<ProductNotificationType[] | ProductNotificationType>;
+  customer?: Maybe<CustomerWhereInput>;
+  physicalProductID?: Maybe<String>;
+  physicalProductID_not?: Maybe<String>;
+  physicalProductID_in?: Maybe<String[] | String>;
+  physicalProductID_not_in?: Maybe<String[] | String>;
+  physicalProductID_lt?: Maybe<String>;
+  physicalProductID_lte?: Maybe<String>;
+  physicalProductID_gt?: Maybe<String>;
+  physicalProductID_gte?: Maybe<String>;
+  physicalProductID_contains?: Maybe<String>;
+  physicalProductID_not_contains?: Maybe<String>;
+  physicalProductID_starts_with?: Maybe<String>;
+  physicalProductID_not_starts_with?: Maybe<String>;
+  physicalProductID_ends_with?: Maybe<String>;
+  physicalProductID_not_ends_with?: Maybe<String>;
+  productVariantID?: Maybe<String>;
+  productVariantID_not?: Maybe<String>;
+  productVariantID_in?: Maybe<String[] | String>;
+  productVariantID_not_in?: Maybe<String[] | String>;
+  productVariantID_lt?: Maybe<String>;
+  productVariantID_lte?: Maybe<String>;
+  productVariantID_gt?: Maybe<String>;
+  productVariantID_gte?: Maybe<String>;
+  productVariantID_contains?: Maybe<String>;
+  productVariantID_not_contains?: Maybe<String>;
+  productVariantID_starts_with?: Maybe<String>;
+  productVariantID_not_starts_with?: Maybe<String>;
+  productVariantID_ends_with?: Maybe<String>;
+  productVariantID_not_ends_with?: Maybe<String>;
+  notified?: Maybe<Boolean>;
+  notified_not?: Maybe<Boolean>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<ProductNotificationWhereInput[] | ProductNotificationWhereInput>;
+  OR?: Maybe<ProductNotificationWhereInput[] | ProductNotificationWhereInput>;
+  NOT?: Maybe<ProductNotificationWhereInput[] | ProductNotificationWhereInput>;
+}
+
 export type ProductRequestWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -8623,6 +8769,7 @@ export interface PhysicalProductCreateWithoutLocationInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  sellable?: Maybe<Boolean>;
 }
 
 export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
@@ -8923,6 +9070,7 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  sellable?: Maybe<Boolean>;
 }
 
 export interface LocationCreateOneWithoutPhysicalProductsInput {
@@ -10077,6 +10225,7 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  sellable?: Maybe<Boolean>;
 }
 
 export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
@@ -10743,6 +10892,7 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  sellable?: Maybe<Boolean>;
 }
 
 export interface LocationUpdateOneWithoutPhysicalProductsInput {
@@ -11176,6 +11326,8 @@ export interface PhysicalProductScalarWhereInput {
   unitCost_lte?: Maybe<Float>;
   unitCost_gt?: Maybe<Float>;
   unitCost_gte?: Maybe<Float>;
+  sellable?: Maybe<Boolean>;
+  sellable_not?: Maybe<Boolean>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -11219,6 +11371,7 @@ export interface PhysicalProductUpdateManyDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  sellable?: Maybe<Boolean>;
 }
 
 export interface ProductVariantUpsertWithWhereUniqueWithoutColorInput {
@@ -12657,6 +12810,7 @@ export interface PhysicalProductCreateInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  sellable?: Maybe<Boolean>;
 }
 
 export interface LabelCreateOneInput {
@@ -13398,6 +13552,7 @@ export interface PhysicalProductUpdateDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  sellable?: Maybe<Boolean>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -15457,6 +15612,7 @@ export interface PhysicalProductUpdateInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  sellable?: Maybe<Boolean>;
 }
 
 export interface PhysicalProductUpdateManyMutationInput {
@@ -15470,6 +15626,7 @@ export interface PhysicalProductUpdateManyMutationInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  sellable?: Maybe<Boolean>;
 }
 
 export interface ProductUpdateInput {
@@ -15760,6 +15917,66 @@ export interface ProductUpsertWithWhereUniqueWithoutModelInput {
 export interface ProductModelUpdateManyMutationInput {
   name?: Maybe<String>;
   height?: Maybe<Float>;
+}
+
+export interface ProductNotificationCreateInput {
+  id?: Maybe<ID_Input>;
+  type: ProductNotificationType;
+  customer: CustomerCreateOneInput;
+  physicalProductID?: Maybe<String>;
+  productVariantID?: Maybe<String>;
+  notified?: Maybe<Boolean>;
+}
+
+export interface CustomerCreateOneInput {
+  create?: Maybe<CustomerCreateInput>;
+  connect?: Maybe<CustomerWhereUniqueInput>;
+}
+
+export interface ProductNotificationUpdateInput {
+  type?: Maybe<ProductNotificationType>;
+  customer?: Maybe<CustomerUpdateOneRequiredInput>;
+  physicalProductID?: Maybe<String>;
+  productVariantID?: Maybe<String>;
+  notified?: Maybe<Boolean>;
+}
+
+export interface CustomerUpdateOneRequiredInput {
+  create?: Maybe<CustomerCreateInput>;
+  update?: Maybe<CustomerUpdateDataInput>;
+  upsert?: Maybe<CustomerUpsertNestedInput>;
+  connect?: Maybe<CustomerWhereUniqueInput>;
+}
+
+export interface CustomerUpdateDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  status?: Maybe<CustomerStatus>;
+  detail?: Maybe<CustomerDetailUpdateOneInput>;
+  billingInfo?: Maybe<BillingInfoUpdateOneInput>;
+  plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
+  bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
+  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
+  emailedProducts?: Maybe<ProductUpdateManyInput>;
+  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
+}
+
+export interface CustomerUpsertNestedInput {
+  update: CustomerUpdateDataInput;
+  create: CustomerCreateInput;
+}
+
+export interface ProductNotificationUpdateManyMutationInput {
+  type?: Maybe<ProductNotificationType>;
+  physicalProductID?: Maybe<String>;
+  productVariantID?: Maybe<String>;
+  notified?: Maybe<Boolean>;
 }
 
 export interface ProductRequestCreateInput {
@@ -16237,11 +16454,6 @@ export interface ProductCreateOneInput {
   connect?: Maybe<ProductWhereUniqueInput>;
 }
 
-export interface CustomerCreateOneInput {
-  create?: Maybe<CustomerCreateInput>;
-  connect?: Maybe<CustomerWhereUniqueInput>;
-}
-
 export interface RecentlyViewedProductUpdateInput {
   product?: Maybe<ProductUpdateOneRequiredInput>;
   customer?: Maybe<CustomerUpdateOneRequiredInput>;
@@ -16258,37 +16470,6 @@ export interface ProductUpdateOneRequiredInput {
 export interface ProductUpsertNestedInput {
   update: ProductUpdateDataInput;
   create: ProductCreateInput;
-}
-
-export interface CustomerUpdateOneRequiredInput {
-  create?: Maybe<CustomerCreateInput>;
-  update?: Maybe<CustomerUpdateDataInput>;
-  upsert?: Maybe<CustomerUpsertNestedInput>;
-  connect?: Maybe<CustomerWhereUniqueInput>;
-}
-
-export interface CustomerUpdateDataInput {
-  user?: Maybe<UserUpdateOneRequiredInput>;
-  status?: Maybe<CustomerStatus>;
-  detail?: Maybe<CustomerDetailUpdateOneInput>;
-  billingInfo?: Maybe<BillingInfoUpdateOneInput>;
-  plan?: Maybe<Plan>;
-  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
-  bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
-  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
-  referralLink?: Maybe<String>;
-  referrerId?: Maybe<String>;
-  referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
-  referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
-  emailedProducts?: Maybe<ProductUpdateManyInput>;
-  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
-  authorizedAt?: Maybe<DateTimeInput>;
-  utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
-}
-
-export interface CustomerUpsertNestedInput {
-  update: CustomerUpdateDataInput;
-  create: CustomerCreateInput;
 }
 
 export interface RecentlyViewedProductUpdateManyMutationInput {
@@ -16946,6 +17127,7 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  sellable?: Maybe<Boolean>;
 }
 
 export interface WarehouseLocationUpdateInput {
@@ -17015,6 +17197,7 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  sellable?: Maybe<Boolean>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput {
@@ -17729,6 +17912,26 @@ export interface ProductModelSubscriptionWhereInput {
   >;
   NOT?: Maybe<
     ProductModelSubscriptionWhereInput[] | ProductModelSubscriptionWhereInput
+  >;
+}
+
+export interface ProductNotificationSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ProductNotificationWhereInput>;
+  AND?: Maybe<
+    | ProductNotificationSubscriptionWhereInput[]
+    | ProductNotificationSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | ProductNotificationSubscriptionWhereInput[]
+    | ProductNotificationSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | ProductNotificationSubscriptionWhereInput[]
+    | ProductNotificationSubscriptionWhereInput
   >;
 }
 
@@ -19007,6 +19210,7 @@ export interface PhysicalProduct {
   dateOrdered?: DateTimeOutput;
   dateReceived?: DateTimeOutput;
   unitCost?: Float;
+  sellable?: Boolean;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -19028,6 +19232,7 @@ export interface PhysicalProductPromise
   dateOrdered: () => Promise<DateTimeOutput>;
   dateReceived: () => Promise<DateTimeOutput>;
   unitCost: () => Promise<Float>;
+  sellable: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -19049,6 +19254,7 @@ export interface PhysicalProductSubscription
   dateOrdered: () => Promise<AsyncIterator<DateTimeOutput>>;
   dateReceived: () => Promise<AsyncIterator<DateTimeOutput>>;
   unitCost: () => Promise<AsyncIterator<Float>>;
+  sellable: () => Promise<AsyncIterator<Boolean>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -19070,6 +19276,7 @@ export interface PhysicalProductNullablePromise
   dateOrdered: () => Promise<DateTimeOutput>;
   dateReceived: () => Promise<DateTimeOutput>;
   unitCost: () => Promise<Float>;
+  sellable: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -23576,6 +23783,113 @@ export interface AggregateProductModelSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface ProductNotification {
+  id: ID_Output;
+  type: ProductNotificationType;
+  physicalProductID?: String;
+  productVariantID?: String;
+  notified: Boolean;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface ProductNotificationPromise
+  extends Promise<ProductNotification>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  type: () => Promise<ProductNotificationType>;
+  customer: <T = CustomerPromise>() => T;
+  physicalProductID: () => Promise<String>;
+  productVariantID: () => Promise<String>;
+  notified: () => Promise<Boolean>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ProductNotificationSubscription
+  extends Promise<AsyncIterator<ProductNotification>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  type: () => Promise<AsyncIterator<ProductNotificationType>>;
+  customer: <T = CustomerSubscription>() => T;
+  physicalProductID: () => Promise<AsyncIterator<String>>;
+  productVariantID: () => Promise<AsyncIterator<String>>;
+  notified: () => Promise<AsyncIterator<Boolean>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface ProductNotificationNullablePromise
+  extends Promise<ProductNotification | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  type: () => Promise<ProductNotificationType>;
+  customer: <T = CustomerPromise>() => T;
+  physicalProductID: () => Promise<String>;
+  productVariantID: () => Promise<String>;
+  notified: () => Promise<Boolean>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ProductNotificationConnection {
+  pageInfo: PageInfo;
+  edges: ProductNotificationEdge[];
+}
+
+export interface ProductNotificationConnectionPromise
+  extends Promise<ProductNotificationConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ProductNotificationEdge>>() => T;
+  aggregate: <T = AggregateProductNotificationPromise>() => T;
+}
+
+export interface ProductNotificationConnectionSubscription
+  extends Promise<AsyncIterator<ProductNotificationConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ProductNotificationEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateProductNotificationSubscription>() => T;
+}
+
+export interface ProductNotificationEdge {
+  node: ProductNotification;
+  cursor: String;
+}
+
+export interface ProductNotificationEdgePromise
+  extends Promise<ProductNotificationEdge>,
+    Fragmentable {
+  node: <T = ProductNotificationPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ProductNotificationEdgeSubscription
+  extends Promise<AsyncIterator<ProductNotificationEdge>>,
+    Fragmentable {
+  node: <T = ProductNotificationSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateProductNotification {
+  count: Int;
+}
+
+export interface AggregateProductNotificationPromise
+  extends Promise<AggregateProductNotification>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateProductNotificationSubscription
+  extends Promise<AsyncIterator<AggregateProductNotification>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface ProductRequest {
   id: ID_Output;
   brand?: String;
@@ -27069,6 +27383,7 @@ export interface PhysicalProductPreviousValues {
   dateOrdered?: DateTimeOutput;
   dateReceived?: DateTimeOutput;
   unitCost?: Float;
+  sellable?: Boolean;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -27087,6 +27402,7 @@ export interface PhysicalProductPreviousValuesPromise
   dateOrdered: () => Promise<DateTimeOutput>;
   dateReceived: () => Promise<DateTimeOutput>;
   unitCost: () => Promise<Float>;
+  sellable: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -27105,6 +27421,7 @@ export interface PhysicalProductPreviousValuesSubscription
   dateOrdered: () => Promise<AsyncIterator<DateTimeOutput>>;
   dateReceived: () => Promise<AsyncIterator<DateTimeOutput>>;
   unitCost: () => Promise<AsyncIterator<Float>>;
+  sellable: () => Promise<AsyncIterator<Boolean>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -27333,6 +27650,65 @@ export interface ProductModelPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   height: () => Promise<AsyncIterator<Float>>;
+}
+
+export interface ProductNotificationSubscriptionPayload {
+  mutation: MutationType;
+  node: ProductNotification;
+  updatedFields: String[];
+  previousValues: ProductNotificationPreviousValues;
+}
+
+export interface ProductNotificationSubscriptionPayloadPromise
+  extends Promise<ProductNotificationSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ProductNotificationPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ProductNotificationPreviousValuesPromise>() => T;
+}
+
+export interface ProductNotificationSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ProductNotificationSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ProductNotificationSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ProductNotificationPreviousValuesSubscription>() => T;
+}
+
+export interface ProductNotificationPreviousValues {
+  id: ID_Output;
+  type: ProductNotificationType;
+  physicalProductID?: String;
+  productVariantID?: String;
+  notified: Boolean;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface ProductNotificationPreviousValuesPromise
+  extends Promise<ProductNotificationPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  type: () => Promise<ProductNotificationType>;
+  physicalProductID: () => Promise<String>;
+  productVariantID: () => Promise<String>;
+  notified: () => Promise<Boolean>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ProductNotificationPreviousValuesSubscription
+  extends Promise<AsyncIterator<ProductNotificationPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  type: () => Promise<AsyncIterator<ProductNotificationType>>;
+  physicalProductID: () => Promise<AsyncIterator<String>>;
+  productVariantID: () => Promise<AsyncIterator<String>>;
+  notified: () => Promise<AsyncIterator<Boolean>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface ProductRequestSubscriptionPayload {
@@ -29072,6 +29448,14 @@ export const models: Model[] = [
   },
   {
     name: "PhysicalProduct",
+    embedded: false
+  },
+  {
+    name: "ProductNotification",
+    embedded: false
+  },
+  {
+    name: "ProductNotificationType",
     embedded: false
   },
   {

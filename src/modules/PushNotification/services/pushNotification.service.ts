@@ -7,6 +7,7 @@ import { upperFirst } from "lodash"
 import {
   PushNotifyInterestInput,
   PushNotifyUserInput,
+  PushNotifyUsersInput,
 } from "../pushNotification.types"
 import { PusherService } from "./pusher.service"
 import { PushNotificationDataProvider } from "./pushNotification.data.service"
@@ -91,6 +92,43 @@ export class PushNotificationService {
     return receipt
   }
 
+  async pushNotifyUsers({
+    emails,
+    pushNotifID,
+    vars = {},
+    debug = false,
+  }: PushNotifyUsersInput) {
+    // Determine the target user
+    let targetEmails = [process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL]
+    if (!debug && process.env.NODE_ENV === "production") {
+      targetEmails = emails
+    }
+
+    // Send the notification
+    const { receiptPayload, notificationPayload } = this.data.getPushNotifData(
+      pushNotifID,
+      vars
+    )
+    await this.pusher.client.publishToUsers(
+      targetEmails,
+      notificationPayload as any
+    )
+
+    for (const email of targetEmails) {
+      // Create the receipt
+      const receipt = await this.prisma.client.createPushNotificationReceipt({
+        ...receiptPayload,
+        users: { connect: [{ email }] },
+      })
+
+      // Update the user's history
+      await this.prisma.client.updateUser({
+        where: { email },
+        data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
+      })
+    }
+  }
+
   async pushNotifyUser({
     email,
     pushNotifID,
@@ -110,6 +148,7 @@ export class PushNotificationService {
         }
       }`
     )
+
     if (!targetUser.pushNotification.status) {
       return null
     }

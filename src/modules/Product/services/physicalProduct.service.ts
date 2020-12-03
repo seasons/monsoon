@@ -1,3 +1,4 @@
+import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import {
   ID_Input,
   InventoryStatus,
@@ -40,6 +41,7 @@ const unstoreErrorMessage =
 export class PhysicalProductService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly pushNotification: PushNotificationService,
     private readonly productVariantService: ProductVariantService,
     private readonly productService: ProductService,
     private readonly physicalProductUtils: PhysicalProductUtilsService
@@ -64,6 +66,19 @@ export class PhysicalProductService {
       warehouseLocation {
         barcode
       }
+      productVariant {
+        id
+        reservable
+        product {
+          id
+          slug
+          name
+          brand {
+            id
+            name
+          }
+        }
+      }
     }`
     )) as PhysicalProduct & { warehouseLocation: WarehouseLocation }
 
@@ -76,6 +91,29 @@ export class PhysicalProductService {
         physProdBeforeUpdate,
         data,
       })
+
+      const productVariant = physProdBeforeUpdate?.productVariant
+      const reservable = productVariant?.reservable
+
+      if (
+        !newData.warehouseLocation.disconnect &&
+        physProdBeforeUpdate.inventoryStatus === "NonReservable" &&
+        reservable === 0
+      ) {
+        const product = productVariant?.product
+        const emails = []
+        // Send the notification
+        await this.pushNotification.pushNotifyUsers({
+          emails,
+          pushNotifID: "ProductRestock",
+          vars: {
+            id: product?.id,
+            slug: product?.slug,
+            productName: product?.name,
+            brandName: product?.brand?.name,
+          },
+        })
+      }
     } else if (
       !!physProdBeforeUpdate.warehouseLocation?.barcode &&
       !!newData.inventoryStatus &&
