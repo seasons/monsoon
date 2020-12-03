@@ -56,6 +56,13 @@ export class CustomerService {
       topSizes
       waistSizes
     }
+    utm {
+      source
+      medium
+      campaign
+      term
+      content
+    }
     user {
       id
       firstName
@@ -337,6 +344,13 @@ export class CustomerService {
           firstName
           lastName
         }
+        utm {
+          source
+          medium
+          campaign
+          term
+          content
+        }
         detail {
           shippingAddress {
             zipCode
@@ -432,6 +446,14 @@ export class CustomerService {
         })
       }
 
+      const utm = customer.utm
+      const utmFormatted = {
+        utm_source: utm?.source,
+        utm_content: utm?.content,
+        utm_medium: utm?.medium,
+        utm_campaign: utm?.campaign,
+        utm_term: utm?.term,
+      }
       this.segment.trackBecameAuthorized(customer.user.id, {
         previousStatus: customer.status,
         firstName: customer.user.firstName,
@@ -439,6 +461,7 @@ export class CustomerService {
         email: customer.user.email,
         method: "Manual",
         application,
+        ...utmFormatted,
       })
     }
     return this.prisma.binding.mutation.updateCustomer({ where, data }, info)
@@ -548,6 +571,14 @@ export class CustomerService {
     // If it's not a dry run, log events and send comms
     if (!dryRun) {
       if (admit) {
+        const utm = customer.utm
+        const utmFormatted = {
+          utm_source: utm?.source,
+          utm_content: utm?.content,
+          utm_medium: utm?.medium,
+          utm_campaign: utm?.campaign,
+          utm_term: utm?.term,
+        }
         this.segment.trackBecameAuthorized(customer.user.id, {
           previousStatus: customer.status,
           firstName: customer.user.firstName,
