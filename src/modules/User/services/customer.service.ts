@@ -56,6 +56,13 @@ export class CustomerService {
       topSizes
       waistSizes
     }
+    utm {
+      source
+      medium
+      campaign
+      term
+      content
+    }
     user {
       id
       firstName
@@ -337,6 +344,13 @@ export class CustomerService {
           firstName
           lastName
         }
+        utm {
+          source
+          medium
+          campaign
+          term
+          content
+        }
         detail {
           shippingAddress {
             zipCode
@@ -439,6 +453,7 @@ export class CustomerService {
         email: customer.user.email,
         method: "Manual",
         application,
+        ...this.utils.formatUTMForSegment(customer.utm),
       })
     }
     return this.prisma.binding.mutation.updateCustomer({ where, data }, info)
@@ -555,6 +570,7 @@ export class CustomerService {
           email: customer.user.email,
           method: "Automatic",
           application,
+          ...this.utils.formatUTMForSegment(customer.utm),
         })
 
         await this.email.sendAuthorizedEmail(

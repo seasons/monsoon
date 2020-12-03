@@ -228,6 +228,13 @@ export class PaymentService {
             lastName
             email
           }
+          utm {
+            source
+            medium
+            campaign
+            term
+            content
+          }
         }
       `
     )
@@ -315,6 +322,7 @@ export class PaymentService {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
   }
 

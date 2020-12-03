@@ -1,6 +1,7 @@
 import { User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
@@ -11,7 +12,8 @@ import { AuthService } from "../services/auth.service"
 export class AuthMutationsResolver {
   constructor(
     private readonly auth: AuthService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly utils: UtilsService
   ) {}
 
   @Mutation()
@@ -44,13 +46,6 @@ export class AuthMutationsResolver {
 
     // Add them to segment and track their account creation event
     const now = new Date()
-    const utmFormatted = {
-      utm_source: utm?.source,
-      utm_content: utm?.content,
-      utm_medium: utm?.medium,
-      utm_campaign: utm?.campaign,
-      utm_term: utm?.term,
-    }
     this.segment.identify(user.id, {
       ...this.auth.extractSegmentReservedTraitsFromCustomerDetail({
         ...details,
@@ -64,7 +59,7 @@ export class AuthMutationsResolver {
         "email",
         "auth0Id",
       ]),
-      ...utmFormatted,
+      ...this.utils.formatUTMForSegment(utm),
       createdAt: now.toISOString(),
     })
 
@@ -76,7 +71,7 @@ export class AuthMutationsResolver {
       ...pick(user, ["firstName", "lastName", "email"]),
       customerID: customer.id,
       application,
-      ...utmFormatted,
+      ...this.utils.formatUTMForSegment(utm),
     })
 
     return {
