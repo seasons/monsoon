@@ -8393,6 +8393,15 @@ input PhysicalProductUpdateManyWithWhereNestedInput {
   data: PhysicalProductUpdateManyDataInput!
 }
 
+input PhysicalProductUpdateOneInput {
+  create: PhysicalProductCreateInput
+  update: PhysicalProductUpdateDataInput
+  upsert: PhysicalProductUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: PhysicalProductWhereUniqueInput
+}
+
 input PhysicalProductUpdateOneRequiredInput {
   create: PhysicalProductCreateInput
   update: PhysicalProductUpdateDataInput
@@ -9396,8 +9405,8 @@ type ProductNotification {
   id: ID!
   type: ProductNotificationType!
   customer: Customer!
-  physicalProductID: String
-  productVariantID: String
+  physicalProduct: PhysicalProduct
+  productVariant: ProductVariant
   notified: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -9413,8 +9422,8 @@ input ProductNotificationCreateInput {
   id: ID
   type: ProductNotificationType!
   customer: CustomerCreateOneInput!
-  physicalProductID: String
-  productVariantID: String
+  physicalProduct: PhysicalProductCreateOneInput
+  productVariant: ProductVariantCreateOneInput
   notified: Boolean
 }
 
@@ -9428,10 +9437,6 @@ enum ProductNotificationOrderByInput {
   id_DESC
   type_ASC
   type_DESC
-  physicalProductID_ASC
-  physicalProductID_DESC
-  productVariantID_ASC
-  productVariantID_DESC
   notified_ASC
   notified_DESC
   createdAt_ASC
@@ -9443,8 +9448,6 @@ enum ProductNotificationOrderByInput {
 type ProductNotificationPreviousValues {
   id: ID!
   type: ProductNotificationType!
-  physicalProductID: String
-  productVariantID: String
   notified: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -9476,15 +9479,13 @@ enum ProductNotificationType {
 input ProductNotificationUpdateInput {
   type: ProductNotificationType
   customer: CustomerUpdateOneRequiredInput
-  physicalProductID: String
-  productVariantID: String
+  physicalProduct: PhysicalProductUpdateOneInput
+  productVariant: ProductVariantUpdateOneInput
   notified: Boolean
 }
 
 input ProductNotificationUpdateManyMutationInput {
   type: ProductNotificationType
-  physicalProductID: String
-  productVariantID: String
   notified: Boolean
 }
 
@@ -9508,34 +9509,8 @@ input ProductNotificationWhereInput {
   type_in: [ProductNotificationType!]
   type_not_in: [ProductNotificationType!]
   customer: CustomerWhereInput
-  physicalProductID: String
-  physicalProductID_not: String
-  physicalProductID_in: [String!]
-  physicalProductID_not_in: [String!]
-  physicalProductID_lt: String
-  physicalProductID_lte: String
-  physicalProductID_gt: String
-  physicalProductID_gte: String
-  physicalProductID_contains: String
-  physicalProductID_not_contains: String
-  physicalProductID_starts_with: String
-  physicalProductID_not_starts_with: String
-  physicalProductID_ends_with: String
-  physicalProductID_not_ends_with: String
-  productVariantID: String
-  productVariantID_not: String
-  productVariantID_in: [String!]
-  productVariantID_not_in: [String!]
-  productVariantID_lt: String
-  productVariantID_lte: String
-  productVariantID_gt: String
-  productVariantID_gte: String
-  productVariantID_contains: String
-  productVariantID_not_contains: String
-  productVariantID_starts_with: String
-  productVariantID_not_starts_with: String
-  productVariantID_ends_with: String
-  productVariantID_not_ends_with: String
+  physicalProduct: PhysicalProductWhereInput
+  productVariant: ProductVariantWhereInput
   notified: Boolean
   notified_not: Boolean
   createdAt: DateTime
@@ -11457,6 +11432,15 @@ input ProductVariantUpdateManyWithoutProductInput {
 input ProductVariantUpdateManyWithWhereNestedInput {
   where: ProductVariantScalarWhereInput!
   data: ProductVariantUpdateManyDataInput!
+}
+
+input ProductVariantUpdateOneInput {
+  create: ProductVariantCreateInput
+  update: ProductVariantUpdateDataInput
+  upsert: ProductVariantUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ProductVariantWhereUniqueInput
 }
 
 input ProductVariantUpdateOneRequiredInput {

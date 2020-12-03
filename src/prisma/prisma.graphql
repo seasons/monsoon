@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Dec 02 2020 17:31:01 GMT-0500 (Eastern Standard Time)
+# timestamp: Thu Dec 03 2020 14:44:49 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -20289,6 +20289,15 @@ input PhysicalProductUpdateManyWithWhereNestedInput {
   data: PhysicalProductUpdateManyDataInput!
 }
 
+input PhysicalProductUpdateOneInput {
+  create: PhysicalProductCreateInput
+  connect: PhysicalProductWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: PhysicalProductUpdateDataInput
+  upsert: PhysicalProductUpsertNestedInput
+}
+
 input PhysicalProductUpdateOneRequiredInput {
   create: PhysicalProductCreateInput
   connect: PhysicalProductWhereUniqueInput
@@ -22396,8 +22405,8 @@ type ProductNotification implements Node {
   id: ID!
   type: ProductNotificationType!
   customer: Customer!
-  physicalProductID: String
-  productVariantID: String
+  physicalProduct: PhysicalProduct
+  productVariant: ProductVariant
   notified: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -22422,10 +22431,10 @@ type ProductNotificationConnection {
 input ProductNotificationCreateInput {
   id: ID
   type: ProductNotificationType!
-  physicalProductID: String
-  productVariantID: String
   notified: Boolean
   customer: CustomerCreateOneInput!
+  physicalProduct: PhysicalProductCreateOneInput
+  productVariant: ProductVariantCreateOneInput
 }
 
 """
@@ -22448,10 +22457,6 @@ enum ProductNotificationOrderByInput {
   id_DESC
   type_ASC
   type_DESC
-  physicalProductID_ASC
-  physicalProductID_DESC
-  productVariantID_ASC
-  productVariantID_DESC
   notified_ASC
   notified_DESC
   createdAt_ASC
@@ -22463,8 +22468,6 @@ enum ProductNotificationOrderByInput {
 type ProductNotificationPreviousValues {
   id: ID!
   type: ProductNotificationType!
-  physicalProductID: String
-  productVariantID: String
   notified: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -22522,16 +22525,14 @@ enum ProductNotificationType {
 
 input ProductNotificationUpdateInput {
   type: ProductNotificationType
-  physicalProductID: String
-  productVariantID: String
   notified: Boolean
   customer: CustomerUpdateOneRequiredInput
+  physicalProduct: PhysicalProductUpdateOneInput
+  productVariant: ProductVariantUpdateOneInput
 }
 
 input ProductNotificationUpdateManyMutationInput {
   type: ProductNotificationType
-  physicalProductID: String
-  productVariantID: String
   notified: Boolean
 }
 
@@ -22632,138 +22633,6 @@ input ProductNotificationWhereInput {
   All values that are not contained in given list.
   """
   type_not_in: [ProductNotificationType!]
-  physicalProductID: String
-
-  """
-  All values that are not equal to given value.
-  """
-  physicalProductID_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  physicalProductID_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  physicalProductID_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  physicalProductID_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  physicalProductID_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  physicalProductID_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  physicalProductID_gte: String
-
-  """
-  All values containing the given string.
-  """
-  physicalProductID_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  physicalProductID_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  physicalProductID_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  physicalProductID_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  physicalProductID_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  physicalProductID_not_ends_with: String
-  productVariantID: String
-
-  """
-  All values that are not equal to given value.
-  """
-  productVariantID_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  productVariantID_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  productVariantID_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  productVariantID_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  productVariantID_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  productVariantID_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  productVariantID_gte: String
-
-  """
-  All values containing the given string.
-  """
-  productVariantID_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  productVariantID_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  productVariantID_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  productVariantID_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  productVariantID_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  productVariantID_not_ends_with: String
   notified: Boolean
 
   """
@@ -22843,6 +22712,8 @@ input ProductNotificationWhereInput {
   """
   updatedAt_gte: DateTime
   customer: CustomerWhereInput
+  physicalProduct: PhysicalProductWhereInput
+  productVariant: ProductVariantWhereInput
 }
 
 input ProductNotificationWhereUniqueInput {
@@ -26921,6 +26792,15 @@ input ProductVariantUpdateManyWithoutProductInput {
 input ProductVariantUpdateManyWithWhereNestedInput {
   where: ProductVariantScalarWhereInput!
   data: ProductVariantUpdateManyDataInput!
+}
+
+input ProductVariantUpdateOneInput {
+  create: ProductVariantCreateInput
+  connect: ProductVariantWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ProductVariantUpdateDataInput
+  upsert: ProductVariantUpsertNestedInput
 }
 
 input ProductVariantUpdateOneRequiredInput {

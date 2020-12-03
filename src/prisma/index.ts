@@ -3580,10 +3580,6 @@ export type ProductNotificationOrderByInput =
   | "id_DESC"
   | "type_ASC"
   | "type_DESC"
-  | "physicalProductID_ASC"
-  | "physicalProductID_DESC"
-  | "productVariantID_ASC"
-  | "productVariantID_DESC"
   | "notified_ASC"
   | "notified_DESC"
   | "createdAt_ASC"
@@ -7946,34 +7942,8 @@ export interface ProductNotificationWhereInput {
   type_in?: Maybe<ProductNotificationType[] | ProductNotificationType>;
   type_not_in?: Maybe<ProductNotificationType[] | ProductNotificationType>;
   customer?: Maybe<CustomerWhereInput>;
-  physicalProductID?: Maybe<String>;
-  physicalProductID_not?: Maybe<String>;
-  physicalProductID_in?: Maybe<String[] | String>;
-  physicalProductID_not_in?: Maybe<String[] | String>;
-  physicalProductID_lt?: Maybe<String>;
-  physicalProductID_lte?: Maybe<String>;
-  physicalProductID_gt?: Maybe<String>;
-  physicalProductID_gte?: Maybe<String>;
-  physicalProductID_contains?: Maybe<String>;
-  physicalProductID_not_contains?: Maybe<String>;
-  physicalProductID_starts_with?: Maybe<String>;
-  physicalProductID_not_starts_with?: Maybe<String>;
-  physicalProductID_ends_with?: Maybe<String>;
-  physicalProductID_not_ends_with?: Maybe<String>;
-  productVariantID?: Maybe<String>;
-  productVariantID_not?: Maybe<String>;
-  productVariantID_in?: Maybe<String[] | String>;
-  productVariantID_not_in?: Maybe<String[] | String>;
-  productVariantID_lt?: Maybe<String>;
-  productVariantID_lte?: Maybe<String>;
-  productVariantID_gt?: Maybe<String>;
-  productVariantID_gte?: Maybe<String>;
-  productVariantID_contains?: Maybe<String>;
-  productVariantID_not_contains?: Maybe<String>;
-  productVariantID_starts_with?: Maybe<String>;
-  productVariantID_not_starts_with?: Maybe<String>;
-  productVariantID_ends_with?: Maybe<String>;
-  productVariantID_not_ends_with?: Maybe<String>;
+  physicalProduct?: Maybe<PhysicalProductWhereInput>;
+  productVariant?: Maybe<ProductVariantWhereInput>;
   notified?: Maybe<Boolean>;
   notified_not?: Maybe<Boolean>;
   createdAt?: Maybe<DateTimeInput>;
@@ -15923,8 +15893,8 @@ export interface ProductNotificationCreateInput {
   id?: Maybe<ID_Input>;
   type: ProductNotificationType;
   customer: CustomerCreateOneInput;
-  physicalProductID?: Maybe<String>;
-  productVariantID?: Maybe<String>;
+  physicalProduct?: Maybe<PhysicalProductCreateOneInput>;
+  productVariant?: Maybe<ProductVariantCreateOneInput>;
   notified?: Maybe<Boolean>;
 }
 
@@ -15936,8 +15906,8 @@ export interface CustomerCreateOneInput {
 export interface ProductNotificationUpdateInput {
   type?: Maybe<ProductNotificationType>;
   customer?: Maybe<CustomerUpdateOneRequiredInput>;
-  physicalProductID?: Maybe<String>;
-  productVariantID?: Maybe<String>;
+  physicalProduct?: Maybe<PhysicalProductUpdateOneInput>;
+  productVariant?: Maybe<ProductVariantUpdateOneInput>;
   notified?: Maybe<Boolean>;
 }
 
@@ -15972,10 +15942,26 @@ export interface CustomerUpsertNestedInput {
   create: CustomerCreateInput;
 }
 
+export interface PhysicalProductUpdateOneInput {
+  create?: Maybe<PhysicalProductCreateInput>;
+  update?: Maybe<PhysicalProductUpdateDataInput>;
+  upsert?: Maybe<PhysicalProductUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<PhysicalProductWhereUniqueInput>;
+}
+
+export interface ProductVariantUpdateOneInput {
+  create?: Maybe<ProductVariantCreateInput>;
+  update?: Maybe<ProductVariantUpdateDataInput>;
+  upsert?: Maybe<ProductVariantUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ProductVariantWhereUniqueInput>;
+}
+
 export interface ProductNotificationUpdateManyMutationInput {
   type?: Maybe<ProductNotificationType>;
-  physicalProductID?: Maybe<String>;
-  productVariantID?: Maybe<String>;
   notified?: Maybe<Boolean>;
 }
 
@@ -23786,8 +23772,6 @@ export interface AggregateProductModelSubscription
 export interface ProductNotification {
   id: ID_Output;
   type: ProductNotificationType;
-  physicalProductID?: String;
-  productVariantID?: String;
   notified: Boolean;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -23799,8 +23783,8 @@ export interface ProductNotificationPromise
   id: () => Promise<ID_Output>;
   type: () => Promise<ProductNotificationType>;
   customer: <T = CustomerPromise>() => T;
-  physicalProductID: () => Promise<String>;
-  productVariantID: () => Promise<String>;
+  physicalProduct: <T = PhysicalProductPromise>() => T;
+  productVariant: <T = ProductVariantPromise>() => T;
   notified: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -23812,8 +23796,8 @@ export interface ProductNotificationSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   type: () => Promise<AsyncIterator<ProductNotificationType>>;
   customer: <T = CustomerSubscription>() => T;
-  physicalProductID: () => Promise<AsyncIterator<String>>;
-  productVariantID: () => Promise<AsyncIterator<String>>;
+  physicalProduct: <T = PhysicalProductSubscription>() => T;
+  productVariant: <T = ProductVariantSubscription>() => T;
   notified: () => Promise<AsyncIterator<Boolean>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -23825,8 +23809,8 @@ export interface ProductNotificationNullablePromise
   id: () => Promise<ID_Output>;
   type: () => Promise<ProductNotificationType>;
   customer: <T = CustomerPromise>() => T;
-  physicalProductID: () => Promise<String>;
-  productVariantID: () => Promise<String>;
+  physicalProduct: <T = PhysicalProductPromise>() => T;
+  productVariant: <T = ProductVariantPromise>() => T;
   notified: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -27680,8 +27664,6 @@ export interface ProductNotificationSubscriptionPayloadSubscription
 export interface ProductNotificationPreviousValues {
   id: ID_Output;
   type: ProductNotificationType;
-  physicalProductID?: String;
-  productVariantID?: String;
   notified: Boolean;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -27692,8 +27674,6 @@ export interface ProductNotificationPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   type: () => Promise<ProductNotificationType>;
-  physicalProductID: () => Promise<String>;
-  productVariantID: () => Promise<String>;
   notified: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -27704,8 +27684,6 @@ export interface ProductNotificationPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   type: () => Promise<AsyncIterator<ProductNotificationType>>;
-  physicalProductID: () => Promise<AsyncIterator<String>>;
-  productVariantID: () => Promise<AsyncIterator<String>>;
   notified: () => Promise<AsyncIterator<Boolean>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;

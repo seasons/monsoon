@@ -48,7 +48,6 @@ type PhysicalProduct {
   location: Location
   productVariant: ProductVariant
   warehouseLocation: WarehouseLocation
-  productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod

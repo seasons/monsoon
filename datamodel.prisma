@@ -461,8 +461,8 @@ type ProductNotification {
   id: ID! @id
   type: ProductNotificationType!
   customer: Customer! @relation(name: "CustomerToProductNotification")
-  physicalProductID: String
-  productVariantID: String
+  physicalProduct: PhysicalProduct @relation(name: "PhysicalProductToProductNotification")
+  productVariant: ProductVariant @relation(name: "ProductVariantToProductNotification")
   notified: Boolean! @default(value: false)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt

@@ -1,11 +1,14 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import {
+  Brand,
   ID_Input,
   InventoryStatus,
   PhysicalProduct,
   PhysicalProductOffloadMethod,
   PhysicalProductUpdateInput,
   PhysicalProductWhereUniqueInput,
+  Product,
+  ProductVariant,
   WarehouseLocation,
   WarehouseLocationType,
   WarehouseLocationWhereUniqueInput,
@@ -80,7 +83,10 @@ export class PhysicalProductService {
         }
       }
     }`
-    )) as PhysicalProduct & { warehouseLocation: WarehouseLocation }
+    )) as PhysicalProduct & {
+      warehouseLocation: WarehouseLocation
+      productVariant: ProductVariant
+    }
 
     let newData = cloneDeep(data)
 
@@ -92,7 +98,9 @@ export class PhysicalProductService {
         data,
       })
 
-      const productVariant = physProdBeforeUpdate?.productVariant
+      const productVariant = physProdBeforeUpdate?.productVariant as ProductVariant & {
+        product: Product
+      }
       const reservable = productVariant?.reservable
 
       if (
@@ -100,8 +108,26 @@ export class PhysicalProductService {
         physProdBeforeUpdate.inventoryStatus === "NonReservable" &&
         reservable === 0
       ) {
-        const product = productVariant?.product
+        const product = productVariant?.product as Product & {
+          brand: Brand
+        }
+
+        const notifications = await this.prisma.client.productNotifications({
+          where: { productVariant: { id: productVariant.id } },
+        })
+
         const emails = []
+
+        for (const notif of notifications) {
+          const email = await this.prisma.client
+            .productNotification({ id: notif.id })
+            .customer()
+            .user()
+            .email()
+
+          emails.push(email)
+        }
+
         // Send the notification
         await this.pushNotification.pushNotifyUsers({
           emails,

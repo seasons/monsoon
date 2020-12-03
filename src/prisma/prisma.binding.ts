@@ -14676,6 +14676,15 @@ input PhysicalProductUpdateManyWithWhereNestedInput {
   data: PhysicalProductUpdateManyDataInput!
 }
 
+input PhysicalProductUpdateOneInput {
+  create: PhysicalProductCreateInput
+  connect: PhysicalProductWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: PhysicalProductUpdateDataInput
+  upsert: PhysicalProductUpsertNestedInput
+}
+
 input PhysicalProductUpdateOneRequiredInput {
   create: PhysicalProductCreateInput
   connect: PhysicalProductWhereUniqueInput
@@ -16213,8 +16222,8 @@ type ProductNotification implements Node {
   id: ID!
   type: ProductNotificationType!
   customer: Customer!
-  physicalProductID: String
-  productVariantID: String
+  physicalProduct: PhysicalProduct
+  productVariant: ProductVariant
   notified: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -16233,10 +16242,10 @@ type ProductNotificationConnection {
 input ProductNotificationCreateInput {
   id: ID
   type: ProductNotificationType!
-  physicalProductID: String
-  productVariantID: String
   notified: Boolean
   customer: CustomerCreateOneInput!
+  physicalProduct: PhysicalProductCreateOneInput
+  productVariant: ProductVariantCreateOneInput
 }
 
 """An edge in a connection."""
@@ -16253,10 +16262,6 @@ enum ProductNotificationOrderByInput {
   id_DESC
   type_ASC
   type_DESC
-  physicalProductID_ASC
-  physicalProductID_DESC
-  productVariantID_ASC
-  productVariantID_DESC
   notified_ASC
   notified_DESC
   createdAt_ASC
@@ -16268,8 +16273,6 @@ enum ProductNotificationOrderByInput {
 type ProductNotificationPreviousValues {
   id: ID!
   type: ProductNotificationType!
-  physicalProductID: String
-  productVariantID: String
   notified: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -16319,16 +16322,14 @@ enum ProductNotificationType {
 
 input ProductNotificationUpdateInput {
   type: ProductNotificationType
-  physicalProductID: String
-  productVariantID: String
   notified: Boolean
   customer: CustomerUpdateOneRequiredInput
+  physicalProduct: PhysicalProductUpdateOneInput
+  productVariant: ProductVariantUpdateOneInput
 }
 
 input ProductNotificationUpdateManyMutationInput {
   type: ProductNotificationType
-  physicalProductID: String
-  productVariantID: String
   notified: Boolean
 }
 
@@ -16391,86 +16392,6 @@ input ProductNotificationWhereInput {
 
   """All values that are not contained in given list."""
   type_not_in: [ProductNotificationType!]
-  physicalProductID: String
-
-  """All values that are not equal to given value."""
-  physicalProductID_not: String
-
-  """All values that are contained in given list."""
-  physicalProductID_in: [String!]
-
-  """All values that are not contained in given list."""
-  physicalProductID_not_in: [String!]
-
-  """All values less than the given value."""
-  physicalProductID_lt: String
-
-  """All values less than or equal the given value."""
-  physicalProductID_lte: String
-
-  """All values greater than the given value."""
-  physicalProductID_gt: String
-
-  """All values greater than or equal the given value."""
-  physicalProductID_gte: String
-
-  """All values containing the given string."""
-  physicalProductID_contains: String
-
-  """All values not containing the given string."""
-  physicalProductID_not_contains: String
-
-  """All values starting with the given string."""
-  physicalProductID_starts_with: String
-
-  """All values not starting with the given string."""
-  physicalProductID_not_starts_with: String
-
-  """All values ending with the given string."""
-  physicalProductID_ends_with: String
-
-  """All values not ending with the given string."""
-  physicalProductID_not_ends_with: String
-  productVariantID: String
-
-  """All values that are not equal to given value."""
-  productVariantID_not: String
-
-  """All values that are contained in given list."""
-  productVariantID_in: [String!]
-
-  """All values that are not contained in given list."""
-  productVariantID_not_in: [String!]
-
-  """All values less than the given value."""
-  productVariantID_lt: String
-
-  """All values less than or equal the given value."""
-  productVariantID_lte: String
-
-  """All values greater than the given value."""
-  productVariantID_gt: String
-
-  """All values greater than or equal the given value."""
-  productVariantID_gte: String
-
-  """All values containing the given string."""
-  productVariantID_contains: String
-
-  """All values not containing the given string."""
-  productVariantID_not_contains: String
-
-  """All values starting with the given string."""
-  productVariantID_starts_with: String
-
-  """All values not starting with the given string."""
-  productVariantID_not_starts_with: String
-
-  """All values ending with the given string."""
-  productVariantID_ends_with: String
-
-  """All values not ending with the given string."""
-  productVariantID_not_ends_with: String
   notified: Boolean
 
   """All values that are not equal to given value."""
@@ -16520,6 +16441,8 @@ input ProductNotificationWhereInput {
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
   customer: CustomerWhereInput
+  physicalProduct: PhysicalProductWhereInput
+  productVariant: ProductVariantWhereInput
 }
 
 input ProductNotificationWhereUniqueInput {
@@ -19516,6 +19439,15 @@ input ProductVariantUpdateManyWithoutProductInput {
 input ProductVariantUpdateManyWithWhereNestedInput {
   where: ProductVariantScalarWhereInput!
   data: ProductVariantUpdateManyDataInput!
+}
+
+input ProductVariantUpdateOneInput {
+  create: ProductVariantCreateInput
+  connect: ProductVariantWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ProductVariantUpdateDataInput
+  upsert: ProductVariantUpsertNestedInput
 }
 
 input ProductVariantUpdateOneRequiredInput {
@@ -31039,10 +30971,6 @@ export type ProductNotificationOrderByInput =   'id_ASC' |
   'id_DESC' |
   'type_ASC' |
   'type_DESC' |
-  'physicalProductID_ASC' |
-  'physicalProductID_DESC' |
-  'productVariantID_ASC' |
-  'productVariantID_DESC' |
   'notified_ASC' |
   'notified_DESC' |
   'createdAt_ASC' |
@@ -37460,6 +37388,15 @@ export interface PhysicalProductUpdateManyWithWhereNestedInput {
   data: PhysicalProductUpdateManyDataInput
 }
 
+export interface PhysicalProductUpdateOneInput {
+  create?: PhysicalProductCreateInput | null
+  connect?: PhysicalProductWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: PhysicalProductUpdateDataInput | null
+  upsert?: PhysicalProductUpsertNestedInput | null
+}
+
 export interface PhysicalProductUpdateOneRequiredInput {
   create?: PhysicalProductCreateInput | null
   connect?: PhysicalProductWhereUniqueInput | null
@@ -38293,10 +38230,10 @@ export interface ProductModelWhereUniqueInput {
 export interface ProductNotificationCreateInput {
   id?: ID_Input | null
   type: ProductNotificationType
-  physicalProductID?: String | null
-  productVariantID?: String | null
   notified?: Boolean | null
   customer: CustomerCreateOneInput
+  physicalProduct?: PhysicalProductCreateOneInput | null
+  productVariant?: ProductVariantCreateOneInput | null
 }
 
 export interface ProductNotificationSubscriptionWhereInput {
@@ -38312,16 +38249,14 @@ export interface ProductNotificationSubscriptionWhereInput {
 
 export interface ProductNotificationUpdateInput {
   type?: ProductNotificationType | null
-  physicalProductID?: String | null
-  productVariantID?: String | null
   notified?: Boolean | null
   customer?: CustomerUpdateOneRequiredInput | null
+  physicalProduct?: PhysicalProductUpdateOneInput | null
+  productVariant?: ProductVariantUpdateOneInput | null
 }
 
 export interface ProductNotificationUpdateManyMutationInput {
   type?: ProductNotificationType | null
-  physicalProductID?: String | null
-  productVariantID?: String | null
   notified?: Boolean | null
 }
 
@@ -38347,34 +38282,6 @@ export interface ProductNotificationWhereInput {
   type_not?: ProductNotificationType | null
   type_in?: ProductNotificationType[] | ProductNotificationType | null
   type_not_in?: ProductNotificationType[] | ProductNotificationType | null
-  physicalProductID?: String | null
-  physicalProductID_not?: String | null
-  physicalProductID_in?: String[] | String | null
-  physicalProductID_not_in?: String[] | String | null
-  physicalProductID_lt?: String | null
-  physicalProductID_lte?: String | null
-  physicalProductID_gt?: String | null
-  physicalProductID_gte?: String | null
-  physicalProductID_contains?: String | null
-  physicalProductID_not_contains?: String | null
-  physicalProductID_starts_with?: String | null
-  physicalProductID_not_starts_with?: String | null
-  physicalProductID_ends_with?: String | null
-  physicalProductID_not_ends_with?: String | null
-  productVariantID?: String | null
-  productVariantID_not?: String | null
-  productVariantID_in?: String[] | String | null
-  productVariantID_not_in?: String[] | String | null
-  productVariantID_lt?: String | null
-  productVariantID_lte?: String | null
-  productVariantID_gt?: String | null
-  productVariantID_gte?: String | null
-  productVariantID_contains?: String | null
-  productVariantID_not_contains?: String | null
-  productVariantID_starts_with?: String | null
-  productVariantID_not_starts_with?: String | null
-  productVariantID_ends_with?: String | null
-  productVariantID_not_ends_with?: String | null
   notified?: Boolean | null
   notified_not?: Boolean | null
   createdAt?: DateTime | null
@@ -38394,6 +38301,8 @@ export interface ProductNotificationWhereInput {
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
   customer?: CustomerWhereInput | null
+  physicalProduct?: PhysicalProductWhereInput | null
+  productVariant?: ProductVariantWhereInput | null
 }
 
 export interface ProductNotificationWhereUniqueInput {
@@ -39948,6 +39857,15 @@ export interface ProductVariantUpdateManyWithoutProductInput {
 export interface ProductVariantUpdateManyWithWhereNestedInput {
   where: ProductVariantScalarWhereInput
   data: ProductVariantUpdateManyDataInput
+}
+
+export interface ProductVariantUpdateOneInput {
+  create?: ProductVariantCreateInput | null
+  connect?: ProductVariantWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: ProductVariantUpdateDataInput | null
+  upsert?: ProductVariantUpsertNestedInput | null
 }
 
 export interface ProductVariantUpdateOneRequiredInput {
@@ -46468,8 +46386,8 @@ export interface ProductNotification extends Node {
   id: ID_Output
   type: ProductNotificationType
   customer: Customer
-  physicalProductID?: String | null
-  productVariantID?: String | null
+  physicalProduct?: PhysicalProduct | null
+  productVariant?: ProductVariant | null
   notified: Boolean
   createdAt: DateTime
   updatedAt: DateTime
@@ -46497,8 +46415,6 @@ export interface ProductNotificationEdge {
 export interface ProductNotificationPreviousValues {
   id: ID_Output
   type: ProductNotificationType
-  physicalProductID?: String | null
-  productVariantID?: String | null
   notified: Boolean
   createdAt: DateTime
   updatedAt: DateTime
