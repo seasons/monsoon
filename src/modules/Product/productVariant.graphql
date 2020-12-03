@@ -46,6 +46,9 @@ type Query {
 type Mutation {
   addProductVariantWant(variantID: ID!): ProductVariantWant!
     @hasRole(roles: [Customer])
+    @deprecated(reason: "replaced with createRestockNotification")
+  createRestockNotification(variantID: ID!): ProductVariantWant!
+    @hasRole(roles: [Customer])
   updateProductVariant(input: UpdateVariantInput!): ProductVariant
     @hasRole(roles: [Admin])
   upsertProductVariants(
@@ -89,7 +92,8 @@ type ProductVariant {
   nonReservable: Int!
   isSaved: Boolean!
   isInBag: Boolean!
-  isWanted: Boolean!
+  hasRestockNotification: Boolean!
+  isWanted: Boolean! @deprecated(reason: "replaced with hasRestockNotification")
   createdAt: DateTime!
   updatedAt: DateTime!
 }

@@ -9407,7 +9407,7 @@ type ProductNotification {
   customer: Customer!
   physicalProduct: PhysicalProduct
   productVariant: ProductVariant
-  notified: Boolean!
+  shouldNotify: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -9424,7 +9424,7 @@ input ProductNotificationCreateInput {
   customer: CustomerCreateOneInput!
   physicalProduct: PhysicalProductCreateOneInput
   productVariant: ProductVariantCreateOneInput
-  notified: Boolean
+  shouldNotify: Boolean
 }
 
 type ProductNotificationEdge {
@@ -9437,8 +9437,8 @@ enum ProductNotificationOrderByInput {
   id_DESC
   type_ASC
   type_DESC
-  notified_ASC
-  notified_DESC
+  shouldNotify_ASC
+  shouldNotify_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -9448,7 +9448,7 @@ enum ProductNotificationOrderByInput {
 type ProductNotificationPreviousValues {
   id: ID!
   type: ProductNotificationType!
-  notified: Boolean!
+  shouldNotify: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -9481,12 +9481,12 @@ input ProductNotificationUpdateInput {
   customer: CustomerUpdateOneRequiredInput
   physicalProduct: PhysicalProductUpdateOneInput
   productVariant: ProductVariantUpdateOneInput
-  notified: Boolean
+  shouldNotify: Boolean
 }
 
 input ProductNotificationUpdateManyMutationInput {
   type: ProductNotificationType
-  notified: Boolean
+  shouldNotify: Boolean
 }
 
 input ProductNotificationWhereInput {
@@ -9511,8 +9511,8 @@ input ProductNotificationWhereInput {
   customer: CustomerWhereInput
   physicalProduct: PhysicalProductWhereInput
   productVariant: ProductVariantWhereInput
-  notified: Boolean
-  notified_not: Boolean
+  shouldNotify: Boolean
+  shouldNotify_not: Boolean
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

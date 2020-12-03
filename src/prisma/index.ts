@@ -3580,8 +3580,8 @@ export type ProductNotificationOrderByInput =
   | "id_DESC"
   | "type_ASC"
   | "type_DESC"
-  | "notified_ASC"
-  | "notified_DESC"
+  | "shouldNotify_ASC"
+  | "shouldNotify_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -7944,8 +7944,8 @@ export interface ProductNotificationWhereInput {
   customer?: Maybe<CustomerWhereInput>;
   physicalProduct?: Maybe<PhysicalProductWhereInput>;
   productVariant?: Maybe<ProductVariantWhereInput>;
-  notified?: Maybe<Boolean>;
-  notified_not?: Maybe<Boolean>;
+  shouldNotify?: Maybe<Boolean>;
+  shouldNotify_not?: Maybe<Boolean>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -15895,7 +15895,7 @@ export interface ProductNotificationCreateInput {
   customer: CustomerCreateOneInput;
   physicalProduct?: Maybe<PhysicalProductCreateOneInput>;
   productVariant?: Maybe<ProductVariantCreateOneInput>;
-  notified?: Maybe<Boolean>;
+  shouldNotify?: Maybe<Boolean>;
 }
 
 export interface CustomerCreateOneInput {
@@ -15908,7 +15908,7 @@ export interface ProductNotificationUpdateInput {
   customer?: Maybe<CustomerUpdateOneRequiredInput>;
   physicalProduct?: Maybe<PhysicalProductUpdateOneInput>;
   productVariant?: Maybe<ProductVariantUpdateOneInput>;
-  notified?: Maybe<Boolean>;
+  shouldNotify?: Maybe<Boolean>;
 }
 
 export interface CustomerUpdateOneRequiredInput {
@@ -15962,7 +15962,7 @@ export interface ProductVariantUpdateOneInput {
 
 export interface ProductNotificationUpdateManyMutationInput {
   type?: Maybe<ProductNotificationType>;
-  notified?: Maybe<Boolean>;
+  shouldNotify?: Maybe<Boolean>;
 }
 
 export interface ProductRequestCreateInput {
@@ -23772,7 +23772,7 @@ export interface AggregateProductModelSubscription
 export interface ProductNotification {
   id: ID_Output;
   type: ProductNotificationType;
-  notified: Boolean;
+  shouldNotify: Boolean;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -23785,7 +23785,7 @@ export interface ProductNotificationPromise
   customer: <T = CustomerPromise>() => T;
   physicalProduct: <T = PhysicalProductPromise>() => T;
   productVariant: <T = ProductVariantPromise>() => T;
-  notified: () => Promise<Boolean>;
+  shouldNotify: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -23798,7 +23798,7 @@ export interface ProductNotificationSubscription
   customer: <T = CustomerSubscription>() => T;
   physicalProduct: <T = PhysicalProductSubscription>() => T;
   productVariant: <T = ProductVariantSubscription>() => T;
-  notified: () => Promise<AsyncIterator<Boolean>>;
+  shouldNotify: () => Promise<AsyncIterator<Boolean>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -23811,7 +23811,7 @@ export interface ProductNotificationNullablePromise
   customer: <T = CustomerPromise>() => T;
   physicalProduct: <T = PhysicalProductPromise>() => T;
   productVariant: <T = ProductVariantPromise>() => T;
-  notified: () => Promise<Boolean>;
+  shouldNotify: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -27664,7 +27664,7 @@ export interface ProductNotificationSubscriptionPayloadSubscription
 export interface ProductNotificationPreviousValues {
   id: ID_Output;
   type: ProductNotificationType;
-  notified: Boolean;
+  shouldNotify: Boolean;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -27674,7 +27674,7 @@ export interface ProductNotificationPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   type: () => Promise<ProductNotificationType>;
-  notified: () => Promise<Boolean>;
+  shouldNotify: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -27684,7 +27684,7 @@ export interface ProductNotificationPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   type: () => Promise<AsyncIterator<ProductNotificationType>>;
-  notified: () => Promise<AsyncIterator<Boolean>>;
+  shouldNotify: () => Promise<AsyncIterator<Boolean>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

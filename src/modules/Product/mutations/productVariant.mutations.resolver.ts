@@ -1,4 +1,4 @@
-import { User } from "@app/decorators"
+import { Customer, User } from "@app/decorators"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { Product as PrismaBindingProduct } from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
@@ -15,6 +15,25 @@ export class ProductVariantMutationsResolver {
     private readonly productVariantService: ProductVariantService,
     private readonly physicalProductUtilsService: PhysicalProductUtilsService
   ) {}
+
+  @Mutation()
+  async createRestockNotification(@Args() { variantID }, @Customer() customer) {
+    if (!customer) throw new Error("Missing customer from context")
+
+    return await this.prisma.client.createProductNotification({
+      type: "Restock",
+      productVariant: {
+        connect: {
+          id: variantID,
+        },
+      },
+      customer: {
+        connect: {
+          id: customer.id,
+        },
+      },
+    })
+  }
 
   @Mutation()
   async addProductVariantWant(@Args() { variantID }, @User() user) {
