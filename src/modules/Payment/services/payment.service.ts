@@ -228,6 +228,13 @@ export class PaymentService {
             lastName
             email
           }
+          utm {
+            source
+            medium
+            campaign
+            term
+            content
+          }
         }
       `
     )
@@ -308,6 +315,14 @@ export class PaymentService {
       subscriptionID
     )
 
+    const utm = customerWithUserData.utm
+    const utmFormatted = {
+      utm_source: utm?.source,
+      utm_content: utm?.content,
+      utm_medium: utm?.medium,
+      utm_campaign: utm?.campaign,
+      utm_term: utm?.term,
+    }
     this.segment.trackSubscribed(user.id, {
       tier: this.getPaymentPlanTier(planID),
       planID,
@@ -315,6 +330,7 @@ export class PaymentService {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      ...utmFormatted,
     })
   }
 

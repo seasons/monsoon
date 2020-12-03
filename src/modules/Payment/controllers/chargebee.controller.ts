@@ -59,6 +59,13 @@ export class ChargebeeController {
           billingInfo {
             id
           }
+          utm {
+            source
+            medium
+            campaign
+            term
+            content
+          }
           user {
             id
             firstName
@@ -86,6 +93,14 @@ export class ChargebeeController {
       // using the deprecated ChargebeeHostedCheckout
       if (!customerWithBillingAndUserData?.billingInfo?.id) {
         const user = customerWithBillingAndUserData.user
+        const utm = customerWithBillingAndUserData.utm
+        const utmFormatted = {
+          utm_source: utm?.source,
+          utm_content: utm?.content,
+          utm_medium: utm?.medium,
+          utm_campaign: utm?.campaign,
+          utm_term: utm?.term,
+        }
         this.segment.trackSubscribed(customer_id, {
           tier: this.payment.getPaymentPlanTier(plan_id),
           planID: plan_id,
@@ -93,6 +108,7 @@ export class ChargebeeController {
           firstName: user?.firstName || "",
           lastName: user?.lastName || "",
           email: user?.email || "",
+          ...utmFormatted,
         })
         // Only create the billing info and send welcome email if user used chargebee checkout
         await this.payment.createPrismaSubscription(
