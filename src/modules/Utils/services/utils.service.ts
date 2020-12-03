@@ -1,9 +1,9 @@
 import crypto from "crypto"
 import * as fs from "fs"
 
-import { DateTime } from "@app/prisma/prisma.binding"
+import { UTMData as BindingUTMData, DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
-import { Location, Reservation } from "@prisma/index"
+import { Location, Reservation, UTMData } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import graphqlFields from "graphql-fields"
@@ -31,6 +31,14 @@ type InfoStringPath = "user" | "customer"
 @Injectable()
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
+
+  formatUTMForSegment = (utm: UTMData | BindingUTMData) => ({
+    utm_source: utm?.source,
+    utm_content: utm?.content,
+    utm_medium: utm?.medium,
+    utm_campaign: utm?.campaign,
+    utm_term: utm?.term,
+  })
 
   abbreviateState(state: string) {
     let abbr

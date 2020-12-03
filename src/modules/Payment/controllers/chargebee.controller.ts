@@ -1,6 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
@@ -28,7 +29,8 @@ export class ChargebeeController {
     private readonly segment: SegmentService,
     private readonly prisma: PrismaService,
     private readonly error: ErrorService,
-    private readonly email: EmailService
+    private readonly email: EmailService,
+    private readonly utils: UtilsService
   ) {}
 
   @Post()
@@ -93,14 +95,6 @@ export class ChargebeeController {
       // using the deprecated ChargebeeHostedCheckout
       if (!customerWithBillingAndUserData?.billingInfo?.id) {
         const user = customerWithBillingAndUserData.user
-        const utm = customerWithBillingAndUserData.utm
-        const utmFormatted = {
-          utm_source: utm?.source,
-          utm_content: utm?.content,
-          utm_medium: utm?.medium,
-          utm_campaign: utm?.campaign,
-          utm_term: utm?.term,
-        }
         this.segment.trackSubscribed(customer_id, {
           tier: this.payment.getPaymentPlanTier(plan_id),
           planID: plan_id,
@@ -108,7 +102,7 @@ export class ChargebeeController {
           firstName: user?.firstName || "",
           lastName: user?.lastName || "",
           email: user?.email || "",
-          ...utmFormatted,
+          ...this.utils.formatUTMForSegment(customerWithBillingAndUserData.utm),
         })
         // Only create the billing info and send welcome email if user used chargebee checkout
         await this.payment.createPrismaSubscription(
