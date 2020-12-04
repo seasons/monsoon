@@ -290,11 +290,12 @@ export class UserCommands {
       })
     }
 
-    this.logger.log(
-      `User with email: ${email}, password: ${password}, roles: ${roles}, status: ${status}` +
-        `successfully created on ${prismaEnv} prisma`
-    )
+    this.logger.log(`Success!`)
     this.logger.log(`Access token: ${tokenData.access_token}`)
+    this.logger.log(`Email: ${email}`)
+    this.logger.log(`Password: ${password}`)
+    this.logger.log(`Roles: ${roles}. Status: ${status}.`)
+    this.logger.log(`Env: ${prismaEnv}`)
   }
 
   private createTestUserBasics(email, password) {
