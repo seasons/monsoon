@@ -2,6 +2,7 @@ import { Customer, User } from "@app/decorators"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { Product as PrismaBindingProduct } from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
+import { head } from "lodash"
 
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
 import { ProductService } from "../services/product.service"
@@ -17,22 +18,50 @@ export class ProductVariantMutationsResolver {
   ) {}
 
   @Mutation()
-  async createRestockNotification(@Args() { variantID }, @Customer() customer) {
+  async upsertRestockNotification(
+    @Args() { variantID, shouldNotify },
+    @Customer() customer
+  ) {
     if (!customer) throw new Error("Missing customer from context")
 
-    return await this.prisma.client.createProductNotification({
-      type: "Restock",
-      productVariant: {
-        connect: {
-          id: variantID,
-        },
-      },
-      customer: {
-        connect: {
+    const restockNotifications = await this.prisma.client.productNotifications({
+      where: {
+        customer: {
           id: customer.id,
         },
+        AND: {
+          productVariant: {
+            id: variantID,
+          },
+        },
       },
+      orderBy: "createdAt_DESC",
     })
+
+    if (restockNotifications?.length > 0) {
+      const existingNotif = head(restockNotifications)
+
+      return await this.prisma.client.updateProductNotification({
+        where: { id: existingNotif.id },
+        data: {
+          shouldNotify,
+        },
+      })
+    } else {
+      return await this.prisma.client.createProductNotification({
+        type: "Restock",
+        productVariant: {
+          connect: {
+            id: variantID,
+          },
+        },
+        customer: {
+          connect: {
+            id: customer.id,
+          },
+        },
+      })
+    }
   }
 
   @Mutation()

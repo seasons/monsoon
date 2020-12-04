@@ -46,9 +46,11 @@ type Query {
 type Mutation {
   addProductVariantWant(variantID: ID!): ProductVariantWant!
     @hasRole(roles: [Customer])
-    @deprecated(reason: "replaced with createRestockNotification")
-  createRestockNotification(variantID: ID!): ProductVariantWant!
-    @hasRole(roles: [Customer])
+    @deprecated(reason: "replaced with upsertRestockNotification")
+  upsertRestockNotification(
+    variantID: ID!
+    shouldNotify: Boolean!
+  ): ProductVariantWant! @hasRole(roles: [Customer])
   updateProductVariant(input: UpdateVariantInput!): ProductVariant
     @hasRole(roles: [Admin])
   upsertProductVariants(
