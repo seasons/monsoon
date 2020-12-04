@@ -6,7 +6,6 @@ import { upperFirst } from "lodash"
 
 import {
   PushNotifyInterestInput,
-  PushNotifyUserInput,
   PushNotifyUsersInput,
 } from "../pushNotification.types"
 import { PusherService } from "./pusher.service"
@@ -114,6 +113,8 @@ export class PushNotificationService {
       notificationPayload as any
     )
 
+    const receipts = {}
+
     for (const email of targetEmails) {
       // Create the receipt
       const receipt = await this.prisma.client.createPushNotificationReceipt({
@@ -126,63 +127,11 @@ export class PushNotificationService {
         where: { email },
         data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
       })
-    }
-  }
 
-  async pushNotifyUser({
-    email,
-    pushNotifID,
-    vars = {},
-    debug = false,
-  }: PushNotifyUserInput) {
-    // Should we even run?
-    const targetUser = await this.prisma.binding.query.user(
-      {
-        where: { email },
-      },
-      `{
-        roles
-        pushNotification {
-          id
-          status
-        }
-      }`
-    )
-
-    if (!targetUser.pushNotification.status) {
-      return null
+      receipts[email] = receipt
     }
 
-    // Determine the target user
-    let targetEmail = process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL
-    const isAdmin = targetUser.roles.includes("Admin")
-    if (isAdmin || (!debug && process.env.NODE_ENV === "production")) {
-      targetEmail = email
-    }
-
-    // Send the notification
-    const { receiptPayload, notificationPayload } = this.data.getPushNotifData(
-      pushNotifID,
-      vars
-    )
-    await this.pusher.client.publishToUsers(
-      [targetEmail],
-      notificationPayload as any
-    )
-
-    // Create the receipt
-    const receipt = await this.prisma.client.createPushNotificationReceipt({
-      ...receiptPayload,
-      users: { connect: [{ email: targetEmail }] },
-    })
-
-    // Update the user's history
-    await this.prisma.client.updateUser({
-      where: { email: targetEmail },
-      data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
-    })
-
-    return receipt
+    return receipts
   }
 
   private getUpdateUserPushNotificationHistoryData = receiptID => ({

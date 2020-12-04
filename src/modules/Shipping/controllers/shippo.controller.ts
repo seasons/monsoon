@@ -298,8 +298,8 @@ export class ShippoController {
       )
 
       if (!receipt) {
-        await this.pushNotification.pushNotifyUser({
-          email: user.email,
+        await this.pushNotification.pushNotifyUsers({
+          emails: [user.email],
           pushNotifID,
           vars: {
             id: reservation.id,

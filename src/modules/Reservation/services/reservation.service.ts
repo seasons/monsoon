@@ -373,8 +373,8 @@ export class ReservationService {
       reservation as Reservation
     )
 
-    await this.pushNotifs.pushNotifyUser({
-      email: prismaUser.email,
+    await this.pushNotifs.pushNotifyUsers({
+      emails: [prismaUser.email],
       pushNotifID: "ResetBag",
     })
     await this.emails.sendYouCanNowReserveAgainEmail(prismaUser)

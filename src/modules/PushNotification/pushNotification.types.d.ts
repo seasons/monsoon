@@ -20,10 +20,6 @@ export interface NewBlogPostVars {
   uri: string
 }
 
-export interface PushNotifyUserInput extends PushNotifyFuncInput {
-  email: string
-}
-
 export interface PushNotifyUsersInput extends PushNotifyFuncInput {
   emails: string[]
 }

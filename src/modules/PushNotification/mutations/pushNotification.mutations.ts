@@ -30,11 +30,14 @@ export class PushNotificationMutationsResolver {
     }
 
     // Send the notif
-    const { id } = await this.pushNotifications.pushNotifyUser({
-      email,
+    const receipts = await this.pushNotifications.pushNotifyUsers({
+      emails: [email],
       pushNotifID: "Custom",
       vars: { title, body, route, uri, ...pick(record, ["id", "slug"]) },
     })
+
+    const id = receipts[email]
+
     return await this.prisma.binding.query.pushNotificationReceipt(
       {
         where: { id },
