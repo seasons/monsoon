@@ -51,8 +51,6 @@ const scheduleModule =
 // const scheduleModule =
 //   process.env.NODE_ENV === "development" ? [ScheduleModule.forRoot()] : []
 
-console.log(process.env.DYNO)
-console.log(scheduleModule)
 @Module({
   imports: [
     ...scheduleModule,
