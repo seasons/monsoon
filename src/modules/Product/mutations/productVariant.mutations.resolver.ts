@@ -59,7 +59,7 @@ export class ProductVariantMutationsResolver {
     }
 
     return await this.prisma.client.upsertProductNotification({
-      where: { id: existingNotification?.id || "" },
+      where: { id: existingNotification?.id },
       create: data,
       update: data,
     })

@@ -103,8 +103,9 @@ export class PhysicalProductService {
       }
       const reservable = productVariant?.reservable
 
+      // If the physical product is being stowed and is currently nonReservable send a notification to users
       if (
-        !newData.warehouseLocation.disconnect &&
+        newData.warehouseLocation.connect &&
         physProdBeforeUpdate.inventoryStatus === "NonReservable" &&
         reservable === 0
       ) {
@@ -112,21 +113,23 @@ export class PhysicalProductService {
           brand: Brand
         }
 
-        const notifications = await this.prisma.client.productNotifications({
-          where: { productVariant: { id: productVariant.id } },
-        })
+        const notifications = await this.prisma.binding.query.productNotifications(
+          {
+            where: { productVariant: { id: productVariant.id } },
+          },
+          `{
+            id
+            customer {
+              id
+              user {
+                id
+                email
+              }
+            }
+          }`
+        )
 
-        const emails = []
-
-        for (const notif of notifications) {
-          const email = await this.prisma.client
-            .productNotification({ id: notif.id })
-            .customer()
-            .user()
-            .email()
-
-          emails.push(email)
-        }
+        const emails = notifications.map(notif => notif.customer?.user?.email)
 
         // Send the notification
         await this.pushNotification.pushNotifyUsers({
