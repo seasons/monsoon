@@ -1,6 +1,9 @@
 import { Customer, User } from "@app/decorators"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import { Product as PrismaBindingProduct } from "@prisma/prisma.binding"
+import {
+  Product as PrismaBindingProduct,
+  ProductNotificationType,
+} from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
 
@@ -38,30 +41,28 @@ export class ProductVariantMutationsResolver {
       orderBy: "createdAt_DESC",
     })
 
-    if (restockNotifications?.length > 0) {
-      const existingNotif = head(restockNotifications)
+    const existingNotification = head(restockNotifications)
 
-      return await this.prisma.client.updateProductNotification({
-        where: { id: existingNotif.id },
-        data: {
-          shouldNotify,
+    const data = {
+      shouldNotify: shouldNotify ? shouldNotify : false,
+      type: "Restock" as ProductNotificationType,
+      productVariant: {
+        connect: {
+          id: variantID,
         },
-      })
-    } else {
-      return await this.prisma.client.createProductNotification({
-        type: "Restock",
-        productVariant: {
-          connect: {
-            id: variantID,
-          },
+      },
+      customer: {
+        connect: {
+          id: customer.id,
         },
-        customer: {
-          connect: {
-            id: customer.id,
-          },
-        },
-      })
+      },
     }
+
+    return await this.prisma.client.upsertProductNotification({
+      where: { id: existingNotification.id },
+      create: data,
+      update: data,
+    })
   }
 
   @Mutation()

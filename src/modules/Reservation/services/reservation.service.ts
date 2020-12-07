@@ -201,9 +201,7 @@ export class ReservationService {
   }
 
   async removeRestockNotifications(items, customer) {
-    const productVariantIDS = items.map(item => {
-      item.id
-    })
+    const productVariantIDS = items.map(item => item.id)
 
     const restockNotifications = await this.prisma.client.productNotifications({
       where: {
@@ -220,14 +218,12 @@ export class ReservationService {
     })
 
     if (restockNotifications?.length > 0) {
-      for (const notif of restockNotifications) {
-        await this.prisma.client.updateProductNotification({
-          where: { id: notif.id },
-          data: {
-            shouldNotify: false,
-          },
-        })
-      }
+      await this.prisma.client.updateManyProductNotifications({
+        where: { id_in: restockNotifications.map(notif => notif.id) },
+        data: {
+          shouldNotify: false,
+        },
+      })
     }
   }
 
