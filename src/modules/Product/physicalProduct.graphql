@@ -42,6 +42,14 @@ type Mutation {
   ): BatchPayload! @hasRole(roles: [Admin])
 }
 
+type PhysicalProductSellable {
+  id: ID!
+  new: Boolean!
+  newPrice: Float
+  used: Boolean!
+  usedPrice: Float
+}
+
 type PhysicalProduct {
   id: ID!
   seasonsUID: String!
@@ -58,6 +66,7 @@ type PhysicalProduct {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: PhysicalProductSellable
   reservations(orderBy: ReservationOrderByInput): [Reservation!]!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -66,6 +75,13 @@ type PhysicalProduct {
 input WarehouseLocationConnectWhereUniqueInput {
   connect: WarehouseLocationWhereUniqueInput
   disconnect: Boolean
+}
+
+input PhysicalProductSellableInput {
+  new: Boolean!
+  newPrice: Float
+  used: Boolean!
+  usedPrice: Float
 }
 
 input PhysicalProductUpdateInput {
@@ -83,6 +99,7 @@ input PhysicalProductUpdateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: PhysicalProductSellableInput
 }
 
 input UpsertPhysicalProductInput {
@@ -92,6 +109,7 @@ input UpsertPhysicalProductInput {
   productStatus: PhysicalProductStatus!
   seasonsUID: String!
   unitCost: Float
+  sellable: PhysicalProductSellableInput
 }
 
 input PhysicalProductSeasonsUIDsInput {

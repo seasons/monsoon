@@ -14,6 +14,10 @@ export class PhysicalProductMutationsResolver {
 
   @Mutation()
   async updatePhysicalProduct(@Args() { where, data }, @Info() info) {
+    if (data.sellable) {
+      data.sellable = { update: data.sellable }
+    }
+
     return await this.physicalProductService.updatePhysicalProduct({
       where,
       data,

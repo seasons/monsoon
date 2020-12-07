@@ -1,12 +1,8 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { PhysicalProduct } from "@app/prisma"
-import {
-  ReservationOrderByInput,
-  ReservationWhereInput,
-} from "@app/prisma/prisma.binding"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaDataLoader, PrismaLoader } from "@prisma/prisma.loader"
+import { PrismaDataLoader } from "@prisma/prisma.loader"
 
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
 

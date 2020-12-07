@@ -438,6 +438,14 @@ type ProductVariant {
   updatedAt: DateTime! @updatedAt
 }
 
+type PhysicalProductSellable {
+  id: ID! @id
+  new: Boolean! @default(value: false)
+  newPrice: Float
+  used: Boolean! @default(value: false)
+  usedPrice: Float
+}
+
 type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
@@ -453,7 +461,7 @@ type PhysicalProduct {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean @default(value: false)
+  sellable: PhysicalProductSellable
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
