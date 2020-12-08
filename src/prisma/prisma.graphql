@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Dec 08 2020 16:50:58 GMT-0500 (Eastern Standard Time)
+# timestamp: Tue Dec 08 2020 17:11:51 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -714,6 +714,10 @@ type AggregateProductMaterialCategory {
 }
 
 type AggregateProductModel {
+  count: Int!
+}
+
+type AggregateProductNotification {
   count: Int!
 }
 
@@ -15720,6 +15724,9 @@ type Mutation {
     data: ProductMaterialCategoryCreateInput!
   ): ProductMaterialCategory!
   createProductModel(data: ProductModelCreateInput!): ProductModel!
+  createProductNotification(
+    data: ProductNotificationCreateInput!
+  ): ProductNotification!
   createWarehouseLocationConstraint(
     data: WarehouseLocationConstraintCreateInput!
   ): WarehouseLocationConstraint!
@@ -15783,13 +15790,13 @@ type Mutation {
   createColor(data: ColorCreateInput!): Color!
   createTopSize(data: TopSizeCreateInput!): TopSize!
   createShippingMethod(data: ShippingMethodCreateInput!): ShippingMethod!
-  createCustomer(data: CustomerCreateInput!): Customer!
   createUserPushNotification(
     data: UserPushNotificationCreateInput!
   ): UserPushNotification!
   createCategory(data: CategoryCreateInput!): Category!
   createBottomSize(data: BottomSizeCreateInput!): BottomSize!
   createSeason(data: SeasonCreateInput!): Season!
+  createCustomer(data: CustomerCreateInput!): Customer!
   createLabel(data: LabelCreateInput!): Label!
   createUser(data: UserCreateInput!): User!
   createLocation(data: LocationCreateInput!): Location!
@@ -15820,6 +15827,10 @@ type Mutation {
     data: ProductModelUpdateInput!
     where: ProductModelWhereUniqueInput!
   ): ProductModel
+  updateProductNotification(
+    data: ProductNotificationUpdateInput!
+    where: ProductNotificationWhereUniqueInput!
+  ): ProductNotification
   updateWarehouseLocationConstraint(
     data: WarehouseLocationConstraintUpdateInput!
     where: WarehouseLocationConstraintWhereUniqueInput!
@@ -15951,10 +15962,6 @@ type Mutation {
     data: ShippingMethodUpdateInput!
     where: ShippingMethodWhereUniqueInput!
   ): ShippingMethod
-  updateCustomer(
-    data: CustomerUpdateInput!
-    where: CustomerWhereUniqueInput!
-  ): Customer
   updateUserPushNotification(
     data: UserPushNotificationUpdateInput!
     where: UserPushNotificationWhereUniqueInput!
@@ -15968,6 +15975,10 @@ type Mutation {
     where: BottomSizeWhereUniqueInput!
   ): BottomSize
   updateSeason(data: SeasonUpdateInput!, where: SeasonWhereUniqueInput!): Season
+  updateCustomer(
+    data: CustomerUpdateInput!
+    where: CustomerWhereUniqueInput!
+  ): Customer
   updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateLocation(
@@ -16019,6 +16030,9 @@ type Mutation {
     where: ProductMaterialCategoryWhereUniqueInput!
   ): ProductMaterialCategory
   deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
+  deleteProductNotification(
+    where: ProductNotificationWhereUniqueInput!
+  ): ProductNotification
   deleteWarehouseLocationConstraint(
     where: WarehouseLocationConstraintWhereUniqueInput!
   ): WarehouseLocationConstraint
@@ -16088,13 +16102,13 @@ type Mutation {
   deleteColor(where: ColorWhereUniqueInput!): Color
   deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
   deleteShippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
-  deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteUserPushNotification(
     where: UserPushNotificationWhereUniqueInput!
   ): UserPushNotification
   deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   deleteSeason(where: SeasonWhereUniqueInput!): Season
+  deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteLabel(where: LabelWhereUniqueInput!): Label
   deleteUser(where: UserWhereUniqueInput!): User
   deleteLocation(where: LocationWhereUniqueInput!): Location
@@ -16139,6 +16153,11 @@ type Mutation {
     create: ProductModelCreateInput!
     update: ProductModelUpdateInput!
   ): ProductModel!
+  upsertProductNotification(
+    where: ProductNotificationWhereUniqueInput!
+    create: ProductNotificationCreateInput!
+    update: ProductNotificationUpdateInput!
+  ): ProductNotification!
   upsertWarehouseLocationConstraint(
     where: WarehouseLocationConstraintWhereUniqueInput!
     create: WarehouseLocationConstraintCreateInput!
@@ -16314,11 +16333,6 @@ type Mutation {
     create: ShippingMethodCreateInput!
     update: ShippingMethodUpdateInput!
   ): ShippingMethod!
-  upsertCustomer(
-    where: CustomerWhereUniqueInput!
-    create: CustomerCreateInput!
-    update: CustomerUpdateInput!
-  ): Customer!
   upsertUserPushNotification(
     where: UserPushNotificationWhereUniqueInput!
     create: UserPushNotificationCreateInput!
@@ -16339,6 +16353,11 @@ type Mutation {
     create: SeasonCreateInput!
     update: SeasonUpdateInput!
   ): Season!
+  upsertCustomer(
+    where: CustomerWhereUniqueInput!
+    create: CustomerCreateInput!
+    update: CustomerUpdateInput!
+  ): Customer!
   upsertLabel(
     where: LabelWhereUniqueInput!
     create: LabelCreateInput!
@@ -16422,6 +16441,10 @@ type Mutation {
   updateManyProductModels(
     data: ProductModelUpdateManyMutationInput!
     where: ProductModelWhereInput
+  ): BatchPayload!
+  updateManyProductNotifications(
+    data: ProductNotificationUpdateManyMutationInput!
+    where: ProductNotificationWhereInput
   ): BatchPayload!
   updateManyWarehouseLocationConstraints(
     data: WarehouseLocationConstraintUpdateManyMutationInput!
@@ -16555,10 +16578,6 @@ type Mutation {
     data: ShippingMethodUpdateManyMutationInput!
     where: ShippingMethodWhereInput
   ): BatchPayload!
-  updateManyCustomers(
-    data: CustomerUpdateManyMutationInput!
-    where: CustomerWhereInput
-  ): BatchPayload!
   updateManyUserPushNotifications(
     data: UserPushNotificationUpdateManyMutationInput!
     where: UserPushNotificationWhereInput
@@ -16574,6 +16593,10 @@ type Mutation {
   updateManySeasons(
     data: SeasonUpdateManyMutationInput!
     where: SeasonWhereInput
+  ): BatchPayload!
+  updateManyCustomers(
+    data: CustomerUpdateManyMutationInput!
+    where: CustomerWhereInput
   ): BatchPayload!
   updateManyLabels(
     data: LabelUpdateManyMutationInput!
@@ -16633,6 +16656,9 @@ type Mutation {
     where: ProductMaterialCategoryWhereInput
   ): BatchPayload!
   deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
+  deleteManyProductNotifications(
+    where: ProductNotificationWhereInput
+  ): BatchPayload!
   deleteManyWarehouseLocationConstraints(
     where: WarehouseLocationConstraintWhereInput
   ): BatchPayload!
@@ -16696,13 +16722,13 @@ type Mutation {
   deleteManyColors(where: ColorWhereInput): BatchPayload!
   deleteManyTopSizes(where: TopSizeWhereInput): BatchPayload!
   deleteManyShippingMethods(where: ShippingMethodWhereInput): BatchPayload!
-  deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
   deleteManyUserPushNotifications(
     where: UserPushNotificationWhereInput
   ): BatchPayload!
   deleteManyCategories(where: CategoryWhereInput): BatchPayload!
   deleteManyBottomSizes(where: BottomSizeWhereInput): BatchPayload!
   deleteManySeasons(where: SeasonWhereInput): BatchPayload!
+  deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
   deleteManyLabels(where: LabelWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
@@ -19416,6 +19442,7 @@ type PhysicalProduct implements Node {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -19448,6 +19475,7 @@ input PhysicalProductCreateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
@@ -19490,6 +19518,7 @@ input PhysicalProductCreateWithoutLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -19506,6 +19535,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
   location: LocationCreateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -19522,6 +19552,7 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
@@ -19572,6 +19603,8 @@ enum PhysicalProductOrderByInput {
   dateReceived_DESC
   unitCost_ASC
   unitCost_DESC
+  sellable_ASC
+  sellable_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -19590,6 +19623,7 @@ type PhysicalProductPreviousValues {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -20005,6 +20039,12 @@ input PhysicalProductScalarWhereInput {
   All values greater than or equal the given value.
   """
   unitCost_gte: Float
+  sellable: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  sellable_not: Boolean
   createdAt: DateTime
 
   """
@@ -20145,6 +20185,7 @@ input PhysicalProductUpdateDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -20161,6 +20202,7 @@ input PhysicalProductUpdateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -20177,6 +20219,7 @@ input PhysicalProductUpdateManyDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
 }
 
 input PhysicalProductUpdateManyInput {
@@ -20202,6 +20245,7 @@ input PhysicalProductUpdateManyMutationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -20245,6 +20289,15 @@ input PhysicalProductUpdateManyWithWhereNestedInput {
   data: PhysicalProductUpdateManyDataInput!
 }
 
+input PhysicalProductUpdateOneInput {
+  create: PhysicalProductCreateInput
+  connect: PhysicalProductWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: PhysicalProductUpdateDataInput
+  upsert: PhysicalProductUpsertNestedInput
+}
+
 input PhysicalProductUpdateOneRequiredInput {
   create: PhysicalProductCreateInput
   connect: PhysicalProductWhereUniqueInput
@@ -20263,6 +20316,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -20278,6 +20332,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
   location: LocationUpdateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -20293,6 +20348,7 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
@@ -20757,6 +20813,12 @@ input PhysicalProductWhereInput {
   All values greater than or equal the given value.
   """
   unitCost_gte: Float
+  sellable: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  sellable_not: Boolean
   createdAt: DateTime
 
   """
@@ -22337,6 +22399,325 @@ input ProductModelWhereInput {
 input ProductModelWhereUniqueInput {
   id: ID
   name: String
+}
+
+type ProductNotification implements Node {
+  id: ID!
+  type: ProductNotificationType!
+  customer: Customer!
+  physicalProduct: PhysicalProduct
+  productVariant: ProductVariant
+  shouldNotify: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type ProductNotificationConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [ProductNotificationEdge]!
+  aggregate: AggregateProductNotification!
+}
+
+input ProductNotificationCreateInput {
+  id: ID
+  type: ProductNotificationType!
+  shouldNotify: Boolean
+  customer: CustomerCreateOneInput!
+  physicalProduct: PhysicalProductCreateOneInput
+  productVariant: ProductVariantCreateOneInput
+}
+
+"""
+An edge in a connection.
+"""
+type ProductNotificationEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: ProductNotification!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum ProductNotificationOrderByInput {
+  id_ASC
+  id_DESC
+  type_ASC
+  type_DESC
+  shouldNotify_ASC
+  shouldNotify_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ProductNotificationPreviousValues {
+  id: ID!
+  type: ProductNotificationType!
+  shouldNotify: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ProductNotificationSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductNotification
+  updatedFields: [String!]
+  previousValues: ProductNotificationPreviousValues
+}
+
+input ProductNotificationSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ProductNotificationSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ProductNotificationSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ProductNotificationSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ProductNotificationWhereInput
+}
+
+enum ProductNotificationType {
+  Restock
+  AvailableForPurchase
+}
+
+input ProductNotificationUpdateInput {
+  type: ProductNotificationType
+  shouldNotify: Boolean
+  customer: CustomerUpdateOneRequiredInput
+  physicalProduct: PhysicalProductUpdateOneInput
+  productVariant: ProductVariantUpdateOneInput
+}
+
+input ProductNotificationUpdateManyMutationInput {
+  type: ProductNotificationType
+  shouldNotify: Boolean
+}
+
+input ProductNotificationWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ProductNotificationWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ProductNotificationWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ProductNotificationWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  type: ProductNotificationType
+
+  """
+  All values that are not equal to given value.
+  """
+  type_not: ProductNotificationType
+
+  """
+  All values that are contained in given list.
+  """
+  type_in: [ProductNotificationType!]
+
+  """
+  All values that are not contained in given list.
+  """
+  type_not_in: [ProductNotificationType!]
+  shouldNotify: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  shouldNotify_not: Boolean
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+  customer: CustomerWhereInput
+  physicalProduct: PhysicalProductWhereInput
+  productVariant: ProductVariantWhereInput
+}
+
+input ProductNotificationWhereUniqueInput {
+  id: ID
 }
 
 enum ProductOrderByInput {
@@ -26413,6 +26794,15 @@ input ProductVariantUpdateManyWithWhereNestedInput {
   data: ProductVariantUpdateManyDataInput!
 }
 
+input ProductVariantUpdateOneInput {
+  create: ProductVariantCreateInput
+  connect: ProductVariantWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ProductVariantUpdateDataInput
+  upsert: ProductVariantUpsertNestedInput
+}
+
 input ProductVariantUpdateOneRequiredInput {
   create: ProductVariantCreateInput
   connect: ProductVariantWhereUniqueInput
@@ -29902,6 +30292,15 @@ type Query {
     first: Int
     last: Int
   ): [ProductModel]!
+  productNotifications(
+    where: ProductNotificationWhereInput
+    orderBy: ProductNotificationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductNotification]!
   warehouseLocationConstraints(
     where: WarehouseLocationConstraintWhereInput
     orderBy: WarehouseLocationConstraintOrderByInput
@@ -30217,15 +30616,6 @@ type Query {
     first: Int
     last: Int
   ): [ShippingMethod]!
-  customers(
-    where: CustomerWhereInput
-    orderBy: CustomerOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Customer]!
   userPushNotifications(
     where: UserPushNotificationWhereInput
     orderBy: UserPushNotificationOrderByInput
@@ -30262,6 +30652,15 @@ type Query {
     first: Int
     last: Int
   ): [Season]!
+  customers(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Customer]!
   labels(
     where: LabelWhereInput
     orderBy: LabelOrderByInput
@@ -30380,6 +30779,9 @@ type Query {
     where: ProductMaterialCategoryWhereUniqueInput!
   ): ProductMaterialCategory
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
+  productNotification(
+    where: ProductNotificationWhereUniqueInput!
+  ): ProductNotification
   warehouseLocationConstraint(
     where: WarehouseLocationConstraintWhereUniqueInput!
   ): WarehouseLocationConstraint
@@ -30443,13 +30845,13 @@ type Query {
   color(where: ColorWhereUniqueInput!): Color
   topSize(where: TopSizeWhereUniqueInput!): TopSize
   shippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
-  customer(where: CustomerWhereUniqueInput!): Customer
   userPushNotification(
     where: UserPushNotificationWhereUniqueInput!
   ): UserPushNotification
   category(where: CategoryWhereUniqueInput!): Category
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   season(where: SeasonWhereUniqueInput!): Season
+  customer(where: CustomerWhereUniqueInput!): Customer
   label(where: LabelWhereUniqueInput!): Label
   user(where: UserWhereUniqueInput!): User
   location(where: LocationWhereUniqueInput!): Location
@@ -30516,6 +30918,15 @@ type Query {
     first: Int
     last: Int
   ): ProductModelConnection!
+  productNotificationsConnection(
+    where: ProductNotificationWhereInput
+    orderBy: ProductNotificationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductNotificationConnection!
   warehouseLocationConstraintsConnection(
     where: WarehouseLocationConstraintWhereInput
     orderBy: WarehouseLocationConstraintOrderByInput
@@ -30831,15 +31242,6 @@ type Query {
     first: Int
     last: Int
   ): ShippingMethodConnection!
-  customersConnection(
-    where: CustomerWhereInput
-    orderBy: CustomerOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): CustomerConnection!
   userPushNotificationsConnection(
     where: UserPushNotificationWhereInput
     orderBy: UserPushNotificationOrderByInput
@@ -30876,6 +31278,15 @@ type Query {
     first: Int
     last: Int
   ): SeasonConnection!
+  customersConnection(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CustomerConnection!
   labelsConnection(
     where: LabelWhereInput
     orderBy: LabelOrderByInput
@@ -36917,6 +37328,9 @@ type Subscription {
   productModel(
     where: ProductModelSubscriptionWhereInput
   ): ProductModelSubscriptionPayload
+  productNotification(
+    where: ProductNotificationSubscriptionWhereInput
+  ): ProductNotificationSubscriptionPayload
   warehouseLocationConstraint(
     where: WarehouseLocationConstraintSubscriptionWhereInput
   ): WarehouseLocationConstraintSubscriptionPayload
@@ -37008,7 +37422,6 @@ type Subscription {
   shippingMethod(
     where: ShippingMethodSubscriptionWhereInput
   ): ShippingMethodSubscriptionPayload
-  customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   userPushNotification(
     where: UserPushNotificationSubscriptionWhereInput
   ): UserPushNotificationSubscriptionPayload
@@ -37017,6 +37430,7 @@ type Subscription {
     where: BottomSizeSubscriptionWhereInput
   ): BottomSizeSubscriptionPayload
   season(where: SeasonSubscriptionWhereInput): SeasonSubscriptionPayload
+  customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
