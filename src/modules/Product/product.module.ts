@@ -5,6 +5,9 @@ import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
+import { PusherService } from "../PushNotification/services/pusher.service"
+import { PushNotificationDataProvider } from "../PushNotification/services/pushNotification.data.service"
+import { PushNotificationService } from "../PushNotification/services/pushNotification.service"
 import { UserModule } from "../User/user.module"
 import { BrandFieldsResolver } from "./fields/brand.fields.resolver"
 import { PhysicalProductFieldsResolver } from "./fields/physicalProduct.fields.resolver"
@@ -41,6 +44,9 @@ export const ProductModuleDef = {
     BrandService,
     BrandQueriesResolver,
     BrandMutationsResolver,
+    PusherService,
+    PushNotificationService,
+    PushNotificationDataProvider,
     ProductRequestService,
     ProductRequestUtilsService,
     ProductService,

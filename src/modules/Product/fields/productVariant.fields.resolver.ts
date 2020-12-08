@@ -1,6 +1,7 @@
 import { Customer, User } from "@app/decorators"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
+import { head } from "lodash"
 
 @Resolver("ProductVariant")
 export class ProductVariantFieldsResolver {
@@ -42,6 +43,31 @@ export class ProductVariantFieldsResolver {
     })
 
     return bagItems.length > 0
+  }
+
+  @ResolveField()
+  async hasRestockNotification(@Parent() parent, @Customer() customer) {
+    if (!customer) return false
+
+    const restockNotifications = await this.prisma.client.productNotifications({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+        AND: {
+          productVariant: {
+            id: parent.id,
+          },
+        },
+      },
+      orderBy: "createdAt_DESC",
+    })
+
+    const firstNotification = head(restockNotifications)
+    const hasRestockNotification =
+      firstNotification && firstNotification?.shouldNotify === true
+
+    return !!hasRestockNotification
   }
 
   @ResolveField()

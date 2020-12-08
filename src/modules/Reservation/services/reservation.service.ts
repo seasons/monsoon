@@ -174,6 +174,8 @@ export class ReservationService {
         seasonsToCustomerTransaction.tracking_url_provider
       )
 
+      await this.removeRestockNotifications(items, customer)
+
       // Get return data
       reservationReturnData = await this.prisma.binding.query.reservation(
         { where: { id: prismaReservation.id } },
@@ -196,6 +198,33 @@ export class ReservationService {
     }
 
     return reservationReturnData
+  }
+
+  async removeRestockNotifications(items, customer) {
+    const productVariantIDS = items.map(item => item.id)
+
+    const restockNotifications = await this.prisma.client.productNotifications({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+        AND: {
+          productVariant: {
+            id_in: productVariantIDS,
+          },
+        },
+      },
+      orderBy: "createdAt_DESC",
+    })
+
+    if (restockNotifications?.length > 0) {
+      await this.prisma.client.updateManyProductNotifications({
+        where: { id_in: restockNotifications.map(notif => notif.id) },
+        data: {
+          shouldNotify: false,
+        },
+      })
+    }
   }
 
   async getReservation(reservationNumber: number) {
@@ -340,8 +369,8 @@ export class ReservationService {
       reservation as Reservation
     )
 
-    await this.pushNotifs.pushNotifyUser({
-      email: prismaUser.email,
+    await this.pushNotifs.pushNotifyUsers({
+      emails: [prismaUser.email],
       pushNotifID: "ResetBag",
     })
     await this.emails.sendYouCanNowReserveAgainEmail(prismaUser)

@@ -13,8 +13,14 @@ export class HomepageSectionFieldsResolver {
   async results(@Parent() section, @Args() args, @Customer() customer) {
     return await this.homepageSectionService.getResultsForSection(
       section?.title,
+      section?.tagData,
       args,
       customer?.id
     )
+  }
+
+  @ResolveField()
+  async tagData(@Parent() section) {
+    return section?.tagData
   }
 }
