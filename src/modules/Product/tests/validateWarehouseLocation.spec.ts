@@ -1,3 +1,8 @@
+import {
+  PushNotificationDataProvider,
+  PusherService,
+} from "@app/modules/PushNotification"
+import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Brand } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -25,9 +30,12 @@ describe("Validate Warehouse Location", () => {
       productUtilsService,
       physicalProductUtilsService
     )
+    const pusher = new PusherService()
+    const pushData = new PushNotificationDataProvider()
     utilsService = new UtilsService(prismaService)
     physicalProductsService = new PhysicalProductService(
       prismaService,
+      new PushNotificationService(pusher, pushData, prismaService),
       productVariantService,
       new ProductService(
         prismaService,

@@ -452,8 +452,25 @@ type PhysicalProduct {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type ProductNotification {
+  id: ID! @id
+  type: ProductNotificationType!
+  customer: Customer! @relation(name: "CustomerToProductNotification")
+  physicalProduct: PhysicalProduct @relation(name: "PhysicalProductToProductNotification")
+  productVariant: ProductVariant @relation(name: "ProductVariantToProductNotification")
+  shouldNotify: Boolean! @default(value: true)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+enum ProductNotificationType {
+  Restock
+  AvailableForPurchase
 }
 
 type WarehouseLocationConstraint {

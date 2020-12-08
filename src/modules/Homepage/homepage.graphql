@@ -22,6 +22,12 @@ type HomepageSection {
   type: HomePageSectionType!
   results: [HomepageResult!]!
   title: String
+  tagData: ProductsByTagTagData
+}
+
+type ProductsByTagTagData {
+  tagName: String
+  description: String
 }
 
 union HomepageResult =
@@ -34,6 +40,7 @@ union HomepageResult =
 enum HomePageSectionType {
   CollectionGroups
   Products
+  ProductsByTag
   HomepageProductRails
   Brands
   Categories

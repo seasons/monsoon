@@ -6,7 +6,7 @@ import { upperFirst } from "lodash"
 
 import {
   PushNotifyInterestInput,
-  PushNotifyUserInput,
+  PushNotifyUsersInput,
 } from "../pushNotification.types"
 import { PusherService } from "./pusher.service"
 import { PushNotificationDataProvider } from "./pushNotification.data.service"
@@ -91,34 +91,16 @@ export class PushNotificationService {
     return receipt
   }
 
-  async pushNotifyUser({
-    email,
+  async pushNotifyUsers({
+    emails,
     pushNotifID,
     vars = {},
     debug = false,
-  }: PushNotifyUserInput) {
-    // Should we even run?
-    const targetUser = await this.prisma.binding.query.user(
-      {
-        where: { email },
-      },
-      `{
-        roles
-        pushNotification {
-          id
-          status
-        }
-      }`
-    )
-    if (!targetUser.pushNotification.status) {
-      return null
-    }
-
+  }: PushNotifyUsersInput) {
     // Determine the target user
-    let targetEmail = process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL
-    const isAdmin = targetUser.roles.includes("Admin")
-    if (isAdmin || (!debug && process.env.NODE_ENV === "production")) {
-      targetEmail = email
+    let targetEmails = [process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL]
+    if (!debug && process.env.NODE_ENV === "production") {
+      targetEmails = emails
     }
 
     // Send the notification
@@ -127,23 +109,29 @@ export class PushNotificationService {
       vars
     )
     await this.pusher.client.publishToUsers(
-      [targetEmail],
+      targetEmails,
       notificationPayload as any
     )
 
-    // Create the receipt
-    const receipt = await this.prisma.client.createPushNotificationReceipt({
-      ...receiptPayload,
-      users: { connect: [{ email: targetEmail }] },
-    })
+    const receipts = {}
 
-    // Update the user's history
-    await this.prisma.client.updateUser({
-      where: { email: targetEmail },
-      data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
-    })
+    for (const email of targetEmails) {
+      // Create the receipt
+      const receipt = await this.prisma.client.createPushNotificationReceipt({
+        ...receiptPayload,
+        users: { connect: [{ email }] },
+      })
 
-    return receipt
+      // Update the user's history
+      await this.prisma.client.updateUser({
+        where: { email },
+        data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
+      })
+
+      receipts[email] = receipt
+    }
+
+    return receipts
   }
 
   private getUpdateUserPushNotificationHistoryData = receiptID => ({
