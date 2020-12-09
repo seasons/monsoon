@@ -1,4 +1,5 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PaymentPlanTier, User } from "@app/prisma"
@@ -43,7 +44,8 @@ export class PaymentService {
     private readonly paymentUtils: PaymentUtilsService,
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly error: ErrorService
   ) {}
 
   async addShippingCharge(customer, shippingCode) {
@@ -97,6 +99,9 @@ export class PaymentService {
 
       return shippingOption.id
     } catch (e) {
+      this.error.setExtraContext({ shippingCode })
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
       throw new Error(JSON.stringify(e))
     }
   }
@@ -149,6 +154,9 @@ export class PaymentService {
         },
       })
     } catch (e) {
+      this.error.setExtraContext({ planID })
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
       throw new Error(`Error updating to new plan: ${e.message}`)
     }
   }
@@ -220,6 +228,9 @@ export class PaymentService {
         data: { brand, last_digits: last4 },
       })
     } catch (e) {
+      this.error.setExtraContext({ planID, token, tokenType })
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
       throw new Error(`Error updating your payment method ${e}`)
     }
   }
@@ -396,6 +407,9 @@ export class PaymentService {
         resumeDate: resumeDateISO,
       })
     } catch (e) {
+      this.error.setExtraContext({ subscriptionId })
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
       throw new Error(`Error pausing subscription: ${e}`)
     }
   }
@@ -412,6 +426,9 @@ export class PaymentService {
         e?.api_error_code &&
         e?.api_error_code !== "invalid_state_for_request"
       ) {
+        this.error.setExtraContext({ subscriptionId })
+        this.error.setExtraContext(customer, "customer")
+        this.error.captureError(e)
         throw new Error(`Error removing scheduled pause: ${e}`)
       }
     }
