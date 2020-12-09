@@ -26,14 +26,19 @@ export class DripSyncService {
     const syncTimings = await this.getSyncTimingsRecord()
 
     const customers = await this.getCustomersWithDripData({
-      OR: [
-        { updatedAt_gte: syncTimings.dripSyncedAt },
-        { user: { updatedAt_gte: syncTimings.dripSyncedAt } },
-        { detail: { updatedAt_gte: syncTimings.dripSyncedAt } },
+      AND: [
+        { user: { email_not_contains: "seasons.nyc" } },
         {
-          detail: {
-            shippingAddress: { updatedAt_gte: syncTimings.dripSyncedAt },
-          },
+          OR: [
+            { updatedAt_gte: syncTimings.dripSyncedAt },
+            { user: { updatedAt_gte: syncTimings.dripSyncedAt } },
+            { detail: { updatedAt_gte: syncTimings.dripSyncedAt } },
+            {
+              detail: {
+                shippingAddress: { updatedAt_gte: syncTimings.dripSyncedAt },
+              },
+            },
+          ],
         },
       ],
     })
