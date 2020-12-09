@@ -1,7 +1,7 @@
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PrismaModule } from "@app/prisma/prisma.module"
 import { Module } from "@nestjs/common"
 
-import { ErrorService } from "../Error/services/error.service"
 import { PushNotificationMutationsResolver } from "./mutations/pushNotification.mutations"
 import { PushNotificationsQueriesResolver } from "./queries/pushNotifications.queries.resolver"
 import { PusherService } from "./services/pusher.service"
