@@ -9,7 +9,6 @@ const commonStaticOrigins = [
   /flare\.now\.sh$/,
   /seasons\.nyc$/,
   /wearseasons\.com$/,
-  /staging\.wearseasons\.com$/,
   /vercel\.app/,
   /shopifypreview\.com/,
 ]
