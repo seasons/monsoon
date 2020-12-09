@@ -1,3 +1,4 @@
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import {
   PushNotificationDataProvider,
   PusherService,
@@ -31,11 +32,12 @@ describe("Validate Warehouse Location", () => {
       physicalProductUtilsService
     )
     const pusher = new PusherService()
+    const error = new ErrorService()
     const pushData = new PushNotificationDataProvider()
     utilsService = new UtilsService(prismaService)
     physicalProductsService = new PhysicalProductService(
       prismaService,
-      new PushNotificationService(pusher, pushData, prismaService),
+      new PushNotificationService(pusher, pushData, prismaService, error),
       productVariantService,
       new ProductService(
         prismaService,
