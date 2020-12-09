@@ -1,4 +1,5 @@
 import { RollbackError } from "@app/errors"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { AdminActionLog } from "@app/prisma/prisma.binding"
@@ -63,7 +64,8 @@ export class ReservationService {
     private readonly shippingService: ShippingService,
     private readonly emails: EmailService,
     private readonly pushNotifs: PushNotificationService,
-    private readonly reservationUtils: ReservationUtilsService
+    private readonly reservationUtils: ReservationUtilsService,
+    private readonly error: ErrorService
   ) {}
 
   async reserveItems(
@@ -174,7 +176,13 @@ export class ReservationService {
         seasonsToCustomerTransaction.tracking_url_provider
       )
 
-      await this.removeRestockNotifications(items, customer)
+      try {
+        await this.removeRestockNotifications(items, customer)
+      } catch (err) {
+        this.error.setUserContext(user)
+        this.error.setExtraContext({ items })
+        this.error.captureError(err)
+      }
 
       // Get return data
       reservationReturnData = await this.prisma.binding.query.reservation(
