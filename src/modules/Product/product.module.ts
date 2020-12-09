@@ -1,4 +1,5 @@
 import { EmailModule } from "@modules/Email/email.module"
+import { ErrorModule } from "@modules/Error/error.module"
 import { ImageModule } from "@modules/Image/image.module"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { UtilsModule } from "@modules/Utils/utils.module"
@@ -33,6 +34,7 @@ import { ProductVariantService } from "./services/productVariant.service"
 export const ProductModuleDef = {
   imports: [
     EmailModule,
+    ErrorModule,
     ImageModule,
     PrismaModule,
     ShippingModule,
