@@ -1,3 +1,4 @@
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { UserPushNotificationInterestType } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
@@ -16,7 +17,8 @@ export class PushNotificationService {
   constructor(
     private readonly pusher: PusherService,
     private readonly data: PushNotificationDataProvider,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly error: ErrorService
   ) {}
 
   generateToken(email: string): Token {
@@ -97,41 +99,48 @@ export class PushNotificationService {
     vars = {},
     debug = false,
   }: PushNotifyUsersInput) {
-    // Determine the target user
-    let targetEmails = [process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL]
-    if (!debug && process.env.NODE_ENV === "production") {
-      targetEmails = emails
+    try {
+      // Determine the target user
+      let targetEmails = [process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL]
+      if (!debug && process.env.NODE_ENV === "production") {
+        targetEmails = emails
+      }
+
+      // Send the notification
+      const {
+        receiptPayload,
+        notificationPayload,
+      } = this.data.getPushNotifData(pushNotifID, vars)
+      await this.pusher.client.publishToUsers(
+        targetEmails,
+        notificationPayload as any
+      )
+
+      const receipts = {}
+
+      for (const email of targetEmails) {
+        // Create the receipt
+        const receipt = await this.prisma.client.createPushNotificationReceipt({
+          ...receiptPayload,
+          users: { connect: [{ email }] },
+        })
+
+        // Update the user's history
+        await this.prisma.client.updateUser({
+          where: { email },
+          data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
+        })
+
+        receipts[email] = receipt
+      }
+
+      return receipts
+    } catch (e) {
+      console.log("e", e)
+      this.error.setExtraContext({ emails, pushNotifID })
+      this.error.setExtraContext({ vars }, "vars")
+      this.error.captureError(e)
     }
-
-    // Send the notification
-    const { receiptPayload, notificationPayload } = this.data.getPushNotifData(
-      pushNotifID,
-      vars
-    )
-    await this.pusher.client.publishToUsers(
-      targetEmails,
-      notificationPayload as any
-    )
-
-    const receipts = {}
-
-    for (const email of targetEmails) {
-      // Create the receipt
-      const receipt = await this.prisma.client.createPushNotificationReceipt({
-        ...receiptPayload,
-        users: { connect: [{ email }] },
-      })
-
-      // Update the user's history
-      await this.prisma.client.updateUser({
-        where: { email },
-        data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
-      })
-
-      receipts[email] = receipt
-    }
-
-    return receipts
   }
 
   private getUpdateUserPushNotificationHistoryData = receiptID => ({

@@ -1,3 +1,4 @@
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PrismaModule } from "@app/prisma/prisma.module"
 import { Module } from "@nestjs/common"
 
@@ -10,6 +11,7 @@ import { PushNotificationService } from "./services/pushNotification.service"
 @Module({
   imports: [PrismaModule],
   providers: [
+    ErrorService,
     PusherService,
     PushNotificationService,
     PushNotificationDataProvider,
