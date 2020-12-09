@@ -3201,7 +3201,11 @@ export type BagItemOrderByInput =
   | "saved_ASC"
   | "saved_DESC"
   | "status_ASC"
-  | "status_DESC";
+  | "status_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type ReservationOrderByInput =
   | "id_ASC"
@@ -6953,6 +6957,22 @@ export interface BagItemWhereInput {
   status_not?: Maybe<BagItemStatus>;
   status_in?: Maybe<BagItemStatus[] | BagItemStatus>;
   status_not_in?: Maybe<BagItemStatus[] | BagItemStatus>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<BagItemWhereInput[] | BagItemWhereInput>;
   OR?: Maybe<BagItemWhereInput[] | BagItemWhereInput>;
   NOT?: Maybe<BagItemWhereInput[] | BagItemWhereInput>;
@@ -13757,6 +13777,22 @@ export interface BagItemScalarWhereInput {
   status_not?: Maybe<BagItemStatus>;
   status_in?: Maybe<BagItemStatus[] | BagItemStatus>;
   status_not_in?: Maybe<BagItemStatus[] | BagItemStatus>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>;
   OR?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>;
   NOT?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>;
@@ -20793,6 +20829,8 @@ export interface BagItem {
   position?: Int;
   saved?: Boolean;
   status: BagItemStatus;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface BagItemPromise extends Promise<BagItem>, Fragmentable {
@@ -20802,6 +20840,8 @@ export interface BagItemPromise extends Promise<BagItem>, Fragmentable {
   position: () => Promise<Int>;
   saved: () => Promise<Boolean>;
   status: () => Promise<BagItemStatus>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface BagItemSubscription
@@ -20813,6 +20853,8 @@ export interface BagItemSubscription
   position: () => Promise<AsyncIterator<Int>>;
   saved: () => Promise<AsyncIterator<Boolean>>;
   status: () => Promise<AsyncIterator<BagItemStatus>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface BagItemNullablePromise
@@ -20824,6 +20866,8 @@ export interface BagItemNullablePromise
   position: () => Promise<Int>;
   saved: () => Promise<Boolean>;
   status: () => Promise<BagItemStatus>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface Customer {
@@ -25893,6 +25937,8 @@ export interface BagItemPreviousValues {
   position?: Int;
   saved?: Boolean;
   status: BagItemStatus;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface BagItemPreviousValuesPromise
@@ -25902,6 +25948,8 @@ export interface BagItemPreviousValuesPromise
   position: () => Promise<Int>;
   saved: () => Promise<Boolean>;
   status: () => Promise<BagItemStatus>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface BagItemPreviousValuesSubscription
@@ -25911,6 +25959,8 @@ export interface BagItemPreviousValuesSubscription
   position: () => Promise<AsyncIterator<Int>>;
   saved: () => Promise<AsyncIterator<Boolean>>;
   status: () => Promise<AsyncIterator<BagItemStatus>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface BillingInfoSubscriptionPayload {

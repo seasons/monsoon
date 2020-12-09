@@ -494,6 +494,8 @@ type BagItem {
   position: Int
   saved: Boolean
   status: BagItemStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type BagItemConnection {
@@ -538,6 +540,10 @@ enum BagItemOrderByInput {
   saved_DESC
   status_ASC
   status_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type BagItemPreviousValues {
@@ -545,6 +551,8 @@ type BagItemPreviousValues {
   position: Int
   saved: Boolean
   status: BagItemStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input BagItemScalarWhereInput {
@@ -576,6 +584,22 @@ input BagItemScalarWhereInput {
   status_not: BagItemStatus
   status_in: [BagItemStatus!]
   status_not_in: [BagItemStatus!]
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [BagItemScalarWhereInput!]
   OR: [BagItemScalarWhereInput!]
   NOT: [BagItemScalarWhereInput!]
@@ -691,6 +715,22 @@ input BagItemWhereInput {
   status_not: BagItemStatus
   status_in: [BagItemStatus!]
   status_not_in: [BagItemStatus!]
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [BagItemWhereInput!]
   OR: [BagItemWhereInput!]
   NOT: [BagItemWhereInput!]

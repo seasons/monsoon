@@ -725,6 +725,8 @@ type BagItem {
   position: Int
   saved: Boolean
   status: BagItemStatus!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type CustomerAdmissionsData {

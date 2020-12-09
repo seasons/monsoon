@@ -1354,6 +1354,8 @@ type BagItem implements Node {
   position: Int
   saved: Boolean
   status: BagItemStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 """A connection to a list of items."""
@@ -1406,6 +1408,10 @@ enum BagItemOrderByInput {
   saved_DESC
   status_ASC
   status_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type BagItemPreviousValues {
@@ -1413,6 +1419,8 @@ type BagItemPreviousValues {
   position: Int
   saved: Boolean
   status: BagItemStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input BagItemScalarWhereInput {
@@ -1500,6 +1508,50 @@ input BagItemScalarWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [BagItemStatus!]
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 enum BagItemStatus {
@@ -1685,6 +1737,50 @@ input BagItemWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [BagItemStatus!]
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
   customer: CustomerWhereInput
   productVariant: ProductVariantWhereInput
 }
@@ -30391,7 +30487,11 @@ export type BagItemOrderByInput =   'id_ASC' |
   'saved_ASC' |
   'saved_DESC' |
   'status_ASC' |
-  'status_DESC'
+  'status_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
 export type BagItemStatus =   'Added' |
   'Reserved' |
@@ -31621,6 +31721,22 @@ export interface BagItemScalarWhereInput {
   status_not?: BagItemStatus | null
   status_in?: BagItemStatus[] | BagItemStatus | null
   status_not_in?: BagItemStatus[] | BagItemStatus | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
 }
 
 export interface BagItemSubscriptionWhereInput {
@@ -31721,6 +31837,22 @@ export interface BagItemWhereInput {
   status_not?: BagItemStatus | null
   status_in?: BagItemStatus[] | BagItemStatus | null
   status_not_in?: BagItemStatus[] | BagItemStatus | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
   customer?: CustomerWhereInput | null
   productVariant?: ProductVariantWhereInput | null
 }
@@ -44962,6 +45094,8 @@ export interface BagItem extends Node {
   position?: Int | null
   saved?: Boolean | null
   status: BagItemStatus
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 /*
@@ -44988,6 +45122,8 @@ export interface BagItemPreviousValues {
   position?: Int | null
   saved?: Boolean | null
   status: BagItemStatus
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 export interface BagItemSubscriptionPayload {
