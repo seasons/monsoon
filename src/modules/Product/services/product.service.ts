@@ -5,7 +5,6 @@ import { ImageService } from "@modules/Image/services/image.service"
 import { S3_BASE } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
-  BagItem,
   BottomSizeType,
   Customer,
   CustomerWhereUniqueInput,
@@ -329,7 +328,7 @@ export class ProductService {
       },
       info
     )
-    let bagItem: BagItem = head(bagItems)
+    let bagItem: any = head(bagItems)
 
     if (bagItem && !save) {
       await this.prisma.client.deleteBagItem({
