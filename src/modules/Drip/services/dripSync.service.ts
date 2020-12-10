@@ -23,19 +23,19 @@ export class DripSyncService {
   ) {}
 
   async syncCustomersDifferential() {
-    const syncTimings = await this.getSyncTimingsRecord()
+    const syncTimings = await this.utils.getSyncTimingsRecord("Drip")
 
     const customers = await this.getCustomersWithDripData({
       AND: [
         { user: { email_not_contains: "seasons.nyc" } },
         {
           OR: [
-            { updatedAt_gte: syncTimings.dripSyncedAt },
-            { user: { updatedAt_gte: syncTimings.dripSyncedAt } },
-            { detail: { updatedAt_gte: syncTimings.dripSyncedAt } },
+            { updatedAt_gte: syncTimings.syncedAt },
+            { user: { updatedAt_gte: syncTimings.syncedAt } },
+            { detail: { updatedAt_gte: syncTimings.syncedAt } },
             {
               detail: {
-                shippingAddress: { updatedAt_gte: syncTimings.dripSyncedAt },
+                shippingAddress: { updatedAt_gte: syncTimings.syncedAt },
               },
             },
           ],
@@ -218,21 +218,9 @@ export class DripSyncService {
   }
 
   private async updateDripSyncedAt() {
-    const syncTimings = await this.getSyncTimingsRecord()
-    await this.prisma.client.updateSyncTiming({
-      where: { id: syncTimings.id },
-      data: { dripSyncedAt: new Date() },
+    await this.prisma.client.createSyncTiming({
+      syncedAt: new Date(),
+      type: "Drip",
     })
-  }
-
-  private async getSyncTimingsRecord() {
-    const syncTimings = await this.prisma.client.syncTimings({})
-    if (syncTimings.length !== 1) {
-      throw new Error(
-        `SyncTimings table has ${syncTimings.length} records. Should have exactly 1`
-      )
-    }
-
-    return head(syncTimings)
   }
 }
