@@ -26294,7 +26294,8 @@ type Subscription {
 
 type SyncTiming implements Node {
   id: ID!
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -26311,7 +26312,8 @@ type SyncTimingConnection {
 
 input SyncTimingCreateInput {
   id: ID
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
 }
 
 """An edge in a connection."""
@@ -26326,8 +26328,10 @@ type SyncTimingEdge {
 enum SyncTimingOrderByInput {
   id_ASC
   id_DESC
-  dripSyncedAt_ASC
-  dripSyncedAt_DESC
+  type_ASC
+  type_DESC
+  syncedAt_ASC
+  syncedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -26336,7 +26340,8 @@ enum SyncTimingOrderByInput {
 
 type SyncTimingPreviousValues {
   id: ID!
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -26378,12 +26383,19 @@ input SyncTimingSubscriptionWhereInput {
   node: SyncTimingWhereInput
 }
 
+enum SyncTimingType {
+  Drip
+  Next
+}
+
 input SyncTimingUpdateInput {
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
 }
 
 input SyncTimingUpdateManyMutationInput {
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
 }
 
 input SyncTimingWhereInput {
@@ -26435,28 +26447,38 @@ input SyncTimingWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  dripSyncedAt: DateTime
+  type: SyncTimingType
 
   """All values that are not equal to given value."""
-  dripSyncedAt_not: DateTime
+  type_not: SyncTimingType
 
   """All values that are contained in given list."""
-  dripSyncedAt_in: [DateTime!]
+  type_in: [SyncTimingType!]
 
   """All values that are not contained in given list."""
-  dripSyncedAt_not_in: [DateTime!]
+  type_not_in: [SyncTimingType!]
+  syncedAt: DateTime
+
+  """All values that are not equal to given value."""
+  syncedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  syncedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  syncedAt_not_in: [DateTime!]
 
   """All values less than the given value."""
-  dripSyncedAt_lt: DateTime
+  syncedAt_lt: DateTime
 
   """All values less than or equal the given value."""
-  dripSyncedAt_lte: DateTime
+  syncedAt_lte: DateTime
 
   """All values greater than the given value."""
-  dripSyncedAt_gt: DateTime
+  syncedAt_gt: DateTime
 
   """All values greater than or equal the given value."""
-  dripSyncedAt_gte: DateTime
+  syncedAt_gte: DateTime
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -31384,12 +31406,17 @@ export type StylePreferencesOrderByInput =   'id_ASC' |
 
 export type SyncTimingOrderByInput =   'id_ASC' |
   'id_DESC' |
-  'dripSyncedAt_ASC' |
-  'dripSyncedAt_DESC' |
+  'type_ASC' |
+  'type_DESC' |
+  'syncedAt_ASC' |
+  'syncedAt_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
+
+export type SyncTimingType =   'Drip' |
+  'Next'
 
 export type TagOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -42908,7 +42935,8 @@ export interface StylePreferencesWhereUniqueInput {
 
 export interface SyncTimingCreateInput {
   id?: ID_Input | null
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
 }
 
 export interface SyncTimingSubscriptionWhereInput {
@@ -42923,11 +42951,13 @@ export interface SyncTimingSubscriptionWhereInput {
 }
 
 export interface SyncTimingUpdateInput {
-  dripSyncedAt?: DateTime | null
+  type?: SyncTimingType | null
+  syncedAt?: DateTime | null
 }
 
 export interface SyncTimingUpdateManyMutationInput {
-  dripSyncedAt?: DateTime | null
+  type?: SyncTimingType | null
+  syncedAt?: DateTime | null
 }
 
 export interface SyncTimingWhereInput {
@@ -42948,14 +42978,18 @@ export interface SyncTimingWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
-  dripSyncedAt?: DateTime | null
-  dripSyncedAt_not?: DateTime | null
-  dripSyncedAt_in?: DateTime[] | DateTime | null
-  dripSyncedAt_not_in?: DateTime[] | DateTime | null
-  dripSyncedAt_lt?: DateTime | null
-  dripSyncedAt_lte?: DateTime | null
-  dripSyncedAt_gt?: DateTime | null
-  dripSyncedAt_gte?: DateTime | null
+  type?: SyncTimingType | null
+  type_not?: SyncTimingType | null
+  type_in?: SyncTimingType[] | SyncTimingType | null
+  type_not_in?: SyncTimingType[] | SyncTimingType | null
+  syncedAt?: DateTime | null
+  syncedAt_not?: DateTime | null
+  syncedAt_in?: DateTime[] | DateTime | null
+  syncedAt_not_in?: DateTime[] | DateTime | null
+  syncedAt_lt?: DateTime | null
+  syncedAt_lte?: DateTime | null
+  syncedAt_gt?: DateTime | null
+  syncedAt_gte?: DateTime | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -47414,7 +47448,8 @@ export interface StylePreferencesSubscriptionPayload {
 
 export interface SyncTiming extends Node {
   id: ID_Output
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -47440,7 +47475,8 @@ export interface SyncTimingEdge {
 
 export interface SyncTimingPreviousValues {
   id: ID_Output
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
   createdAt: DateTime
   updatedAt: DateTime
 }

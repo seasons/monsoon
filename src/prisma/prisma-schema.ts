@@ -15354,7 +15354,8 @@ type Subscription {
 
 type SyncTiming {
   id: ID!
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -15367,7 +15368,8 @@ type SyncTimingConnection {
 
 input SyncTimingCreateInput {
   id: ID
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
 }
 
 type SyncTimingEdge {
@@ -15378,8 +15380,10 @@ type SyncTimingEdge {
 enum SyncTimingOrderByInput {
   id_ASC
   id_DESC
-  dripSyncedAt_ASC
-  dripSyncedAt_DESC
+  type_ASC
+  type_DESC
+  syncedAt_ASC
+  syncedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -15388,7 +15392,8 @@ enum SyncTimingOrderByInput {
 
 type SyncTimingPreviousValues {
   id: ID!
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -15411,12 +15416,19 @@ input SyncTimingSubscriptionWhereInput {
   NOT: [SyncTimingSubscriptionWhereInput!]
 }
 
+enum SyncTimingType {
+  Drip
+  Next
+}
+
 input SyncTimingUpdateInput {
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
 }
 
 input SyncTimingUpdateManyMutationInput {
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
 }
 
 input SyncTimingWhereInput {
@@ -15434,14 +15446,18 @@ input SyncTimingWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  dripSyncedAt: DateTime
-  dripSyncedAt_not: DateTime
-  dripSyncedAt_in: [DateTime!]
-  dripSyncedAt_not_in: [DateTime!]
-  dripSyncedAt_lt: DateTime
-  dripSyncedAt_lte: DateTime
-  dripSyncedAt_gt: DateTime
-  dripSyncedAt_gte: DateTime
+  type: SyncTimingType
+  type_not: SyncTimingType
+  type_in: [SyncTimingType!]
+  type_not_in: [SyncTimingType!]
+  syncedAt: DateTime
+  syncedAt_not: DateTime
+  syncedAt_in: [DateTime!]
+  syncedAt_not_in: [DateTime!]
+  syncedAt_lt: DateTime
+  syncedAt_lte: DateTime
+  syncedAt_gt: DateTime
+  syncedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

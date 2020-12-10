@@ -3693,11 +3693,15 @@ export type ShippingMethodOrderByInput =
 
 export type StylePreferencesOrderByInput = "id_ASC" | "id_DESC";
 
+export type SyncTimingType = "Drip" | "Next";
+
 export type SyncTimingOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "dripSyncedAt_ASC"
-  | "dripSyncedAt_DESC"
+  | "type_ASC"
+  | "type_DESC"
+  | "syncedAt_ASC"
+  | "syncedAt_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -8446,14 +8450,18 @@ export interface SyncTimingWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  dripSyncedAt?: Maybe<DateTimeInput>;
-  dripSyncedAt_not?: Maybe<DateTimeInput>;
-  dripSyncedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  dripSyncedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  dripSyncedAt_lt?: Maybe<DateTimeInput>;
-  dripSyncedAt_lte?: Maybe<DateTimeInput>;
-  dripSyncedAt_gt?: Maybe<DateTimeInput>;
-  dripSyncedAt_gte?: Maybe<DateTimeInput>;
+  type?: Maybe<SyncTimingType>;
+  type_not?: Maybe<SyncTimingType>;
+  type_in?: Maybe<SyncTimingType[] | SyncTimingType>;
+  type_not_in?: Maybe<SyncTimingType[] | SyncTimingType>;
+  syncedAt?: Maybe<DateTimeInput>;
+  syncedAt_not?: Maybe<DateTimeInput>;
+  syncedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  syncedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  syncedAt_lt?: Maybe<DateTimeInput>;
+  syncedAt_lte?: Maybe<DateTimeInput>;
+  syncedAt_gt?: Maybe<DateTimeInput>;
+  syncedAt_gte?: Maybe<DateTimeInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -16831,15 +16839,18 @@ export interface StylePreferencesUpdateManyMutationInput {
 
 export interface SyncTimingCreateInput {
   id?: Maybe<ID_Input>;
-  dripSyncedAt: DateTimeInput;
+  type: SyncTimingType;
+  syncedAt: DateTimeInput;
 }
 
 export interface SyncTimingUpdateInput {
-  dripSyncedAt?: Maybe<DateTimeInput>;
+  type?: Maybe<SyncTimingType>;
+  syncedAt?: Maybe<DateTimeInput>;
 }
 
 export interface SyncTimingUpdateManyMutationInput {
-  dripSyncedAt?: Maybe<DateTimeInput>;
+  type?: Maybe<SyncTimingType>;
+  syncedAt?: Maybe<DateTimeInput>;
 }
 
 export interface TagCreateInput {
@@ -25256,14 +25267,16 @@ export interface AggregateStylePreferencesSubscription
 
 export interface SyncTiming {
   id: ID_Output;
-  dripSyncedAt: DateTimeOutput;
+  type: SyncTimingType;
+  syncedAt: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
 
 export interface SyncTimingPromise extends Promise<SyncTiming>, Fragmentable {
   id: () => Promise<ID_Output>;
-  dripSyncedAt: () => Promise<DateTimeOutput>;
+  type: () => Promise<SyncTimingType>;
+  syncedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -25272,7 +25285,8 @@ export interface SyncTimingSubscription
   extends Promise<AsyncIterator<SyncTiming>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  dripSyncedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  type: () => Promise<AsyncIterator<SyncTimingType>>;
+  syncedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -25281,7 +25295,8 @@ export interface SyncTimingNullablePromise
   extends Promise<SyncTiming | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  dripSyncedAt: () => Promise<DateTimeOutput>;
+  type: () => Promise<SyncTimingType>;
+  syncedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -28773,7 +28788,8 @@ export interface SyncTimingSubscriptionPayloadSubscription
 
 export interface SyncTimingPreviousValues {
   id: ID_Output;
-  dripSyncedAt: DateTimeOutput;
+  type: SyncTimingType;
+  syncedAt: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -28782,7 +28798,8 @@ export interface SyncTimingPreviousValuesPromise
   extends Promise<SyncTimingPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  dripSyncedAt: () => Promise<DateTimeOutput>;
+  type: () => Promise<SyncTimingType>;
+  syncedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -28791,7 +28808,8 @@ export interface SyncTimingPreviousValuesSubscription
   extends Promise<AsyncIterator<SyncTimingPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  dripSyncedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  type: () => Promise<AsyncIterator<SyncTimingType>>;
+  syncedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -29684,6 +29702,10 @@ export const models: Model[] = [
   },
   {
     name: "AdminActionLog",
+    embedded: false
+  },
+  {
+    name: "SyncTimingType",
     embedded: false
   },
   {

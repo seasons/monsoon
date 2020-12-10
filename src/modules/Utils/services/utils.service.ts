@@ -3,11 +3,11 @@ import * as fs from "fs"
 
 import { UTMData as BindingUTMData, DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
-import { Location, Reservation, UTMData } from "@prisma/index"
+import { Location, Reservation, SyncTimingType, UTMData } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import graphqlFields from "graphql-fields"
-import { camelCase, get, isObject, mapKeys, snakeCase } from "lodash"
+import { camelCase, get, head, isObject, mapKeys, snakeCase } from "lodash"
 import moment from "moment"
 import states from "us-state-converter"
 
@@ -378,5 +378,22 @@ export class UtilsService {
       }
     }
     return a
+  }
+
+  async getSyncTimingsRecord(type: SyncTimingType) {
+    const syncTimings = await this.prisma.client.syncTimings({
+      where: {
+        type,
+      },
+      orderBy: "createdAt_DESC",
+    })
+
+    if (syncTimings.length === 0) {
+      throw new Error(
+        `No sync timing records found for type: ${type}. Please seed initial record`
+      )
+    }
+
+    return head(syncTimings)
   }
 }
