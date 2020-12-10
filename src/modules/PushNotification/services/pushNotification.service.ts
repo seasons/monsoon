@@ -117,21 +117,24 @@ export class PushNotificationService {
       )
 
       const receipts = {}
+      if (targetEmails?.length) {
+        for (const email of targetEmails) {
+          // Create the receipt
+          const receipt = await this.prisma.client.createPushNotificationReceipt(
+            {
+              ...receiptPayload,
+              users: { connect: [{ email }] },
+            }
+          )
 
-      for (const email of targetEmails) {
-        // Create the receipt
-        const receipt = await this.prisma.client.createPushNotificationReceipt({
-          ...receiptPayload,
-          users: { connect: [{ email }] },
-        })
+          // Update the user's history
+          await this.prisma.client.updateUser({
+            where: { email },
+            data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
+          })
 
-        // Update the user's history
-        await this.prisma.client.updateUser({
-          where: { email },
-          data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
-        })
-
-        receipts[email] = receipt
+          receipts[email] = receipt
+        }
       }
 
       return receipts
