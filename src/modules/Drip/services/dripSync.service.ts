@@ -25,6 +25,33 @@ export class DripSyncService {
   async syncCustomersDifferential() {
     const syncTimings = await this.utils.getSyncTimingsRecord("Drip")
 
+    // Interested Users to Update
+    const interestedUsers = await this.prisma.client.interestedUsers({
+      where: { createdAt_gte: syncTimings.syncedAt },
+    })
+    const interestedUsersTurnedCustomers = (
+      await this.prisma.client.users({
+        where: { email_in: interestedUsers.map(a => a.email) },
+      })
+    ).map(b => b.email)
+    const interestedUsersToUpdate = interestedUsers.filter(
+      a => !interestedUsersTurnedCustomers.includes(a.email)
+    )
+
+    const result = { errors: [], successes: [] }
+    for (const u of interestedUsersToUpdate) {
+      try {
+        await this.drip.client.createUpdateSubscriber({
+          zip: u.zipcode,
+          email: u.email,
+        })
+        result.successes.push(u.email)
+      } catch (err) {
+        result.errors.push(u.email)
+        this.error.captureError(err)
+      }
+    }
+
     const customers = await this.getCustomersWithDripData({
       AND: [
         { user: { email_not_contains: "seasons.nyc" } },
@@ -42,7 +69,7 @@ export class DripSyncService {
         },
       ],
     })
-    const result = { errors: [], successes: [] }
+
     for (const cust of customers) {
       const sub = this.customerToDripRecord(cust)
       try {
