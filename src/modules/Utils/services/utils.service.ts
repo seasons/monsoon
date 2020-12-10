@@ -388,6 +388,12 @@ export class UtilsService {
       orderBy: "createdAt_DESC",
     })
 
+    if (syncTimings.length === 0) {
+      throw new Error(
+        `No sync timing records found for type: ${type}. Please seed initial record`
+      )
+    }
+
     return head(syncTimings)
   }
 }
