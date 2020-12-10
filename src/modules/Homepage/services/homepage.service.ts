@@ -6,7 +6,7 @@ export enum SectionTitle {
   RecentlyViewed = "Recently viewed",
   Designers = "Designers",
   Categories = "Browse by style",
-  HolidayRail = "Holiday",
+  HolidayRail = "Holiday heat",
 }
 
 interface Section {
@@ -49,7 +49,7 @@ export class HomepageService {
         tagData: {
           tagName: "Holiday",
           description:
-            "Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Nullam quis risus eget urna mollis ornare vel eu leo. Nullam id dolor id nibh ultricies vehicula ut id elit.",
+            "Staying in for the holidays? Get cozy, flex on your roommates, 2020 is almost over — you earned it.",
         },
       },
       {
