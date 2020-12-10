@@ -27,7 +27,7 @@ export class DripSyncService {
 
     // Interested Users to Update
     const interestedUsers = await this.prisma.client.interestedUsers({
-      where: { createdAt_gte: syncTimings.dripSyncedAt },
+      where: { createdAt_gte: syncTimings.syncedAt },
     })
     const interestedUsersTurnedCustomers = (
       await this.prisma.client.users({
