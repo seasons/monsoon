@@ -180,6 +180,7 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
+  fit: ProductFit
   materialCategory: ProductMaterialCategory
   model: ProductModel
   modelHeight: Int
@@ -314,6 +315,7 @@ input CustomProductUpdateInput {
   color: ColorUpdateOneRequiredInput
   description: String
   externalURL: String
+  fit: ProductFit
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   model: ProductModelUpdateOneWithoutProductsInput
