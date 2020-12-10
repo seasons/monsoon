@@ -108,4 +108,8 @@ export class PhysicalProductUtilsService {
 
     return groupedSequenceNumbers
   }
+
+  sequenceNumberToBarcode(sequenceNumber: number) {
+    return `SZNS` + `${sequenceNumber}`.padStart(5, "0")
+  }
 }
