@@ -461,8 +461,10 @@ type ProductNotification {
   id: ID! @id
   type: ProductNotificationType!
   customer: Customer! @relation(name: "CustomerToProductNotification")
-  physicalProduct: PhysicalProduct @relation(name: "PhysicalProductToProductNotification")
-  productVariant: ProductVariant @relation(name: "ProductVariantToProductNotification")
+  physicalProduct: PhysicalProduct
+    @relation(name: "PhysicalProductToProductNotification")
+  productVariant: ProductVariant
+    @relation(name: "ProductVariantToProductNotification")
   shouldNotify: Boolean! @default(value: true)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -1067,9 +1069,15 @@ type AdminActionLog {
   statementOnly: Boolean!
 }
 
+enum SyncTimingType {
+  Drip
+  Next
+}
+
 type SyncTiming {
   id: ID! @id
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
