@@ -20,10 +20,6 @@ const CHARGEBEE_CUSTOMER_CHANGED = "customer_changed"
 const CHARGEBEE_SUBSCRIPTION_CREATED = "subscription_created"
 const CHARGEBEE_PAYMENT_SUCCEEDED = "payment_succeeded"
 
-/**
- * DEPRECATED
- * These hooks were necesarry for the the chargebee client checkout webview
- */
 @Controller("chargebee_events")
 export class ChargebeeController {
   constructor(
@@ -45,7 +41,6 @@ export class ChargebeeController {
         await this.chargebeeCustomerChanged(body.content)
         break
       case CHARGEBEE_PAYMENT_SUCCEEDED:
-        // transaction, customer, subscription (optional)
         await this.chargebeePaymentSucceeded(body.content)
         break
     }
