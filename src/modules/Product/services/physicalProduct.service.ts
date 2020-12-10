@@ -1,10 +1,14 @@
+import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import {
+  Brand,
   ID_Input,
   InventoryStatus,
   PhysicalProduct,
   PhysicalProductOffloadMethod,
   PhysicalProductUpdateInput,
   PhysicalProductWhereUniqueInput,
+  Product,
+  ProductVariant,
   WarehouseLocation,
   WarehouseLocationType,
   WarehouseLocationWhereUniqueInput,
@@ -40,6 +44,7 @@ const unstoreErrorMessage =
 export class PhysicalProductService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly pushNotification: PushNotificationService,
     private readonly productVariantService: ProductVariantService,
     private readonly productService: ProductService,
     private readonly physicalProductUtils: PhysicalProductUtilsService
@@ -64,8 +69,24 @@ export class PhysicalProductService {
       warehouseLocation {
         barcode
       }
+      productVariant {
+        id
+        reservable
+        product {
+          id
+          slug
+          name
+          brand {
+            id
+            name
+          }
+        }
+      }
     }`
-    )) as PhysicalProduct & { warehouseLocation: WarehouseLocation }
+    )) as PhysicalProduct & {
+      warehouseLocation: WarehouseLocation
+      productVariant: ProductVariant
+    }
 
     let newData = cloneDeep(data)
 
@@ -76,6 +97,52 @@ export class PhysicalProductService {
         physProdBeforeUpdate,
         data,
       })
+
+      const productVariant = physProdBeforeUpdate?.productVariant as ProductVariant & {
+        product: Product
+      }
+      const reservable = productVariant?.reservable
+
+      // If the physical product is being stowed and is currently nonReservable send a notification to users
+      if (
+        newData.warehouseLocation.connect &&
+        physProdBeforeUpdate.inventoryStatus === "NonReservable" &&
+        reservable === 0
+      ) {
+        const product = productVariant?.product as Product & {
+          brand: Brand
+        }
+
+        const notifications = await this.prisma.binding.query.productNotifications(
+          {
+            where: { productVariant: { id: productVariant.id } },
+          },
+          `{
+            id
+            customer {
+              id
+              user {
+                id
+                email
+              }
+            }
+          }`
+        )
+
+        const emails = notifications.map(notif => notif.customer?.user?.email)
+
+        // Send the notification
+        await this.pushNotification.pushNotifyUsers({
+          emails,
+          pushNotifID: "ProductRestock",
+          vars: {
+            id: product?.id,
+            slug: product?.slug,
+            productName: product?.name,
+            brandName: product?.brand?.name,
+          },
+        })
+      }
     } else if (
       !!physProdBeforeUpdate.warehouseLocation?.barcode &&
       !!newData.inventoryStatus &&

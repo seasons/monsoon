@@ -64,8 +64,8 @@ export class ReservationScheduledJobs {
           )
 
           const now = new Date()
-          await this.pushNotifs.pushNotifyUser({
-            email: reservation.customer.user.email,
+          await this.pushNotifs.pushNotifyUsers({
+            emails: [reservation.customer.user.email],
             pushNotifID: "ReturnDue",
           })
           await this.prisma.client.updateReservation({

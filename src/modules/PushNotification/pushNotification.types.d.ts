@@ -10,6 +10,7 @@ export type PushNotificationID =
   | "ResetBag"
   | "ReturnDue"
   | "PublishFitPic"
+  | "ProductRestock"
 export type PushNotificationInterest = "seasons-general-notifications"
 export type PushNotificationVars = NewBlogPostVars | {}
 
@@ -19,8 +20,8 @@ export interface NewBlogPostVars {
   uri: string
 }
 
-export interface PushNotifyUserInput extends PushNotifyFuncInput {
-  email: string
+export interface PushNotifyUsersInput extends PushNotifyFuncInput {
+  emails: string[]
 }
 
 export interface PushNotifyInterestInput extends PushNotifyFuncInput {

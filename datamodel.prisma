@@ -452,8 +452,27 @@ type PhysicalProduct {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type ProductNotification {
+  id: ID! @id
+  type: ProductNotificationType!
+  customer: Customer! @relation(name: "CustomerToProductNotification")
+  physicalProduct: PhysicalProduct
+    @relation(name: "PhysicalProductToProductNotification")
+  productVariant: ProductVariant
+    @relation(name: "ProductVariantToProductNotification")
+  shouldNotify: Boolean! @default(value: true)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+enum ProductNotificationType {
+  Restock
+  AvailableForPurchase
 }
 
 type WarehouseLocationConstraint {
@@ -708,6 +727,8 @@ type BagItem {
   position: Int
   saved: Boolean
   status: BagItemStatus!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type CustomerAdmissionsData {
@@ -1048,9 +1069,15 @@ type AdminActionLog {
   statementOnly: Boolean!
 }
 
+enum SyncTimingType {
+  Drip
+  Next
+}
+
 type SyncTiming {
   id: ID! @id
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

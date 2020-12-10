@@ -375,6 +375,10 @@ type AggregateProductModel {
   count: Int!
 }
 
+type AggregateProductNotification {
+  count: Int!
+}
+
 type AggregateProductRequest {
   count: Int!
 }
@@ -490,6 +494,8 @@ type BagItem {
   position: Int
   saved: Boolean
   status: BagItemStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type BagItemConnection {
@@ -534,6 +540,10 @@ enum BagItemOrderByInput {
   saved_DESC
   status_ASC
   status_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type BagItemPreviousValues {
@@ -541,6 +551,8 @@ type BagItemPreviousValues {
   position: Int
   saved: Boolean
   status: BagItemStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input BagItemScalarWhereInput {
@@ -572,6 +584,22 @@ input BagItemScalarWhereInput {
   status_not: BagItemStatus
   status_in: [BagItemStatus!]
   status_not_in: [BagItemStatus!]
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [BagItemScalarWhereInput!]
   OR: [BagItemScalarWhereInput!]
   NOT: [BagItemScalarWhereInput!]
@@ -687,6 +715,22 @@ input BagItemWhereInput {
   status_not: BagItemStatus
   status_in: [BagItemStatus!]
   status_not_in: [BagItemStatus!]
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [BagItemWhereInput!]
   OR: [BagItemWhereInput!]
   NOT: [BagItemWhereInput!]
@@ -6654,6 +6698,12 @@ type Mutation {
   upsertProductModel(where: ProductModelWhereUniqueInput!, create: ProductModelCreateInput!, update: ProductModelUpdateInput!): ProductModel!
   deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
   deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
+  createProductNotification(data: ProductNotificationCreateInput!): ProductNotification!
+  updateProductNotification(data: ProductNotificationUpdateInput!, where: ProductNotificationWhereUniqueInput!): ProductNotification
+  updateManyProductNotifications(data: ProductNotificationUpdateManyMutationInput!, where: ProductNotificationWhereInput): BatchPayload!
+  upsertProductNotification(where: ProductNotificationWhereUniqueInput!, create: ProductNotificationCreateInput!, update: ProductNotificationUpdateInput!): ProductNotification!
+  deleteProductNotification(where: ProductNotificationWhereUniqueInput!): ProductNotification
+  deleteManyProductNotifications(where: ProductNotificationWhereInput): BatchPayload!
   createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
   updateProductRequest(data: ProductRequestUpdateInput!, where: ProductRequestWhereUniqueInput!): ProductRequest
   updateManyProductRequests(data: ProductRequestUpdateManyMutationInput!, where: ProductRequestWhereInput): BatchPayload!
@@ -7962,6 +8012,7 @@ type PhysicalProduct {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -7987,6 +8038,7 @@ input PhysicalProductCreateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
 }
 
 input PhysicalProductCreateManyInput {
@@ -8028,6 +8080,7 @@ input PhysicalProductCreateWithoutLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -8044,6 +8097,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
 }
 
 input PhysicalProductCreateWithoutWarehouseLocationInput {
@@ -8060,6 +8114,7 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
 }
 
 type PhysicalProductEdge {
@@ -8098,6 +8153,8 @@ enum PhysicalProductOrderByInput {
   dateReceived_DESC
   unitCost_ASC
   unitCost_DESC
+  sellable_ASC
+  sellable_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -8116,6 +8173,7 @@ type PhysicalProductPreviousValues {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8209,6 +8267,8 @@ input PhysicalProductScalarWhereInput {
   unitCost_lte: Float
   unitCost_gt: Float
   unitCost_gte: Float
+  sellable: Boolean
+  sellable_not: Boolean
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -8272,6 +8332,7 @@ input PhysicalProductUpdateDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
 }
 
 input PhysicalProductUpdateInput {
@@ -8288,6 +8349,7 @@ input PhysicalProductUpdateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -8301,6 +8363,7 @@ input PhysicalProductUpdateManyDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
 }
 
 input PhysicalProductUpdateManyInput {
@@ -8326,6 +8389,7 @@ input PhysicalProductUpdateManyMutationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -8369,6 +8433,15 @@ input PhysicalProductUpdateManyWithWhereNestedInput {
   data: PhysicalProductUpdateManyDataInput!
 }
 
+input PhysicalProductUpdateOneInput {
+  create: PhysicalProductCreateInput
+  update: PhysicalProductUpdateDataInput
+  upsert: PhysicalProductUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: PhysicalProductWhereUniqueInput
+}
+
 input PhysicalProductUpdateOneRequiredInput {
   create: PhysicalProductCreateInput
   update: PhysicalProductUpdateDataInput
@@ -8389,6 +8462,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -8404,6 +8478,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
 }
 
 input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
@@ -8419,6 +8494,7 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: Boolean
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -8562,6 +8638,8 @@ input PhysicalProductWhereInput {
   unitCost_lte: Float
   unitCost_gt: Float
   unitCost_gte: Float
+  sellable: Boolean
+  sellable_not: Boolean
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -9361,6 +9439,143 @@ input ProductModelWhereInput {
 input ProductModelWhereUniqueInput {
   id: ID
   name: String
+}
+
+type ProductNotification {
+  id: ID!
+  type: ProductNotificationType!
+  customer: Customer!
+  physicalProduct: PhysicalProduct
+  productVariant: ProductVariant
+  shouldNotify: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ProductNotificationConnection {
+  pageInfo: PageInfo!
+  edges: [ProductNotificationEdge]!
+  aggregate: AggregateProductNotification!
+}
+
+input ProductNotificationCreateInput {
+  id: ID
+  type: ProductNotificationType!
+  customer: CustomerCreateOneInput!
+  physicalProduct: PhysicalProductCreateOneInput
+  productVariant: ProductVariantCreateOneInput
+  shouldNotify: Boolean
+}
+
+type ProductNotificationEdge {
+  node: ProductNotification!
+  cursor: String!
+}
+
+enum ProductNotificationOrderByInput {
+  id_ASC
+  id_DESC
+  type_ASC
+  type_DESC
+  shouldNotify_ASC
+  shouldNotify_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ProductNotificationPreviousValues {
+  id: ID!
+  type: ProductNotificationType!
+  shouldNotify: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ProductNotificationSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductNotification
+  updatedFields: [String!]
+  previousValues: ProductNotificationPreviousValues
+}
+
+input ProductNotificationSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ProductNotificationWhereInput
+  AND: [ProductNotificationSubscriptionWhereInput!]
+  OR: [ProductNotificationSubscriptionWhereInput!]
+  NOT: [ProductNotificationSubscriptionWhereInput!]
+}
+
+enum ProductNotificationType {
+  Restock
+  AvailableForPurchase
+}
+
+input ProductNotificationUpdateInput {
+  type: ProductNotificationType
+  customer: CustomerUpdateOneRequiredInput
+  physicalProduct: PhysicalProductUpdateOneInput
+  productVariant: ProductVariantUpdateOneInput
+  shouldNotify: Boolean
+}
+
+input ProductNotificationUpdateManyMutationInput {
+  type: ProductNotificationType
+  shouldNotify: Boolean
+}
+
+input ProductNotificationWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  type: ProductNotificationType
+  type_not: ProductNotificationType
+  type_in: [ProductNotificationType!]
+  type_not_in: [ProductNotificationType!]
+  customer: CustomerWhereInput
+  physicalProduct: PhysicalProductWhereInput
+  productVariant: ProductVariantWhereInput
+  shouldNotify: Boolean
+  shouldNotify_not: Boolean
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ProductNotificationWhereInput!]
+  OR: [ProductNotificationWhereInput!]
+  NOT: [ProductNotificationWhereInput!]
+}
+
+input ProductNotificationWhereUniqueInput {
+  id: ID
 }
 
 enum ProductOrderByInput {
@@ -11259,6 +11474,15 @@ input ProductVariantUpdateManyWithWhereNestedInput {
   data: ProductVariantUpdateManyDataInput!
 }
 
+input ProductVariantUpdateOneInput {
+  create: ProductVariantCreateInput
+  update: ProductVariantUpdateDataInput
+  upsert: ProductVariantUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ProductVariantWhereUniqueInput
+}
+
 input ProductVariantUpdateOneRequiredInput {
   create: ProductVariantCreateInput
   update: ProductVariantUpdateDataInput
@@ -12454,6 +12678,9 @@ type Query {
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
   productModels(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductModel]!
   productModelsConnection(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductModelConnection!
+  productNotification(where: ProductNotificationWhereUniqueInput!): ProductNotification
+  productNotifications(where: ProductNotificationWhereInput, orderBy: ProductNotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductNotification]!
+  productNotificationsConnection(where: ProductNotificationWhereInput, orderBy: ProductNotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductNotificationConnection!
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   productRequests(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRequest]!
   productRequestsConnection(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductRequestConnection!
@@ -15095,6 +15322,7 @@ type Subscription {
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
   productMaterialCategory(where: ProductMaterialCategorySubscriptionWhereInput): ProductMaterialCategorySubscriptionPayload
   productModel(where: ProductModelSubscriptionWhereInput): ProductModelSubscriptionPayload
+  productNotification(where: ProductNotificationSubscriptionWhereInput): ProductNotificationSubscriptionPayload
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
   productSeason(where: ProductSeasonSubscriptionWhereInput): ProductSeasonSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
@@ -15126,7 +15354,8 @@ type Subscription {
 
 type SyncTiming {
   id: ID!
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -15139,7 +15368,8 @@ type SyncTimingConnection {
 
 input SyncTimingCreateInput {
   id: ID
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
 }
 
 type SyncTimingEdge {
@@ -15150,8 +15380,10 @@ type SyncTimingEdge {
 enum SyncTimingOrderByInput {
   id_ASC
   id_DESC
-  dripSyncedAt_ASC
-  dripSyncedAt_DESC
+  type_ASC
+  type_DESC
+  syncedAt_ASC
+  syncedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -15160,7 +15392,8 @@ enum SyncTimingOrderByInput {
 
 type SyncTimingPreviousValues {
   id: ID!
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -15183,12 +15416,19 @@ input SyncTimingSubscriptionWhereInput {
   NOT: [SyncTimingSubscriptionWhereInput!]
 }
 
+enum SyncTimingType {
+  Drip
+  Next
+}
+
 input SyncTimingUpdateInput {
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
 }
 
 input SyncTimingUpdateManyMutationInput {
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
 }
 
 input SyncTimingWhereInput {
@@ -15206,14 +15446,18 @@ input SyncTimingWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  dripSyncedAt: DateTime
-  dripSyncedAt_not: DateTime
-  dripSyncedAt_in: [DateTime!]
-  dripSyncedAt_not_in: [DateTime!]
-  dripSyncedAt_lt: DateTime
-  dripSyncedAt_lte: DateTime
-  dripSyncedAt_gt: DateTime
-  dripSyncedAt_gte: DateTime
+  type: SyncTimingType
+  type_not: SyncTimingType
+  type_in: [SyncTimingType!]
+  type_not_in: [SyncTimingType!]
+  syncedAt: DateTime
+  syncedAt_not: DateTime
+  syncedAt_in: [DateTime!]
+  syncedAt_not_in: [DateTime!]
+  syncedAt_lt: DateTime
+  syncedAt_lte: DateTime
+  syncedAt_gt: DateTime
+  syncedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

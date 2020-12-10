@@ -112,6 +112,15 @@ type Query {
     first: Int
     last: Int
   ): [ProductModel]!
+  productNotifications(
+    where: ProductNotificationWhereInput
+    orderBy: ProductNotificationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductNotification]!
   productRequests(
     where: ProductRequestWhereInput
     orderBy: ProductRequestOrderByInput

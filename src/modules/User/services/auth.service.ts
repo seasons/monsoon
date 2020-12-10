@@ -71,9 +71,9 @@ export class AuthService {
     // 1. Register the user on Auth0
     let userAuth0ID
     try {
-      userAuth0ID = await this.createAuth0User(email, password, {
-        firstName,
-        lastName,
+      userAuth0ID = await this.createAuth0User(email.trim(), password, {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
       })
     } catch (err) {
       if (err.message.includes("400")) {
@@ -96,15 +96,15 @@ export class AuthService {
     // 3. Create the user in our database
     const user = await this.createPrismaUser(
       userAuth0ID,
-      email,
-      firstName,
-      lastName
+      email.trim(),
+      firstName.trim(),
+      lastName.trim()
     )
 
     // 4. Create the customer in our database
     // There will be a race condition in the case where two members with the same first name sign up at the same time
     const usersWithSameFirstName = await this.prisma.client.users({
-      where: { firstName },
+      where: { firstName: firstName.trim() },
     })
     const {
       customer,
@@ -114,8 +114,9 @@ export class AuthService {
       details,
       "Created",
       // replace all non-aphabetical characters with an empty space so e.g "R.J." doesn't throw an error on rebrandly
+      // We had to increment here by 4 after an early issue with collisions due to whitespace
       firstName.replace(/[^a-z]/gi, "") +
-        (usersWithSameFirstName.length + 1).toString(),
+        (usersWithSameFirstName.length + 4).toString(),
       referrerId,
       utm
     )
@@ -509,7 +510,7 @@ export class AuthService {
     }
   }
 
-  private async createReferralLink(
+  async createReferralLink(
     customerId,
     referralSlashTag
   ): Promise<{
@@ -539,8 +540,12 @@ export class AuthService {
           headers: requestHeaders,
         },
         (err, response, body) => {
-          console.log(body)
+          console.log("body", body)
           if (err) {
+            this.error.setExtraContext({ id: customerId }, "customer")
+            this.error.captureError(
+              `Error with referral link: ${JSON.stringify(err)}`
+            )
             reject(err)
           }
           resolve(JSON.parse(body))

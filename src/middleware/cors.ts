@@ -3,26 +3,22 @@ import { uniq } from "lodash"
 
 import { Prisma } from "../prisma"
 
+const commonStaticOrigins = [
+  /staging\.wearseasons\.com$/,
+  /spring-staging\.herokuapp\.com/,
+  /flare\.now\.sh$/,
+  /seasons\.nyc$/,
+  /wearseasons\.com$/,
+  /vercel\.app/,
+  /shopifypreview\.com/,
+]
+
 const STATIC_ORIGINS =
   process.env.NODE_ENV === "production"
-    ? [
-        /spring-staging\.herokuapp\.com/,
-        /seedling-staging\.herokuapp\.com/,
-        /flare\.now\.sh$/,
-        /seasons\.nyc$/,
-        /wearseasons\.com$/,
-        /vercel\.app/,
-        /shopifypreview\.com/,
-      ]
+    ? commonStaticOrigins
     : [
-        /spring-staging\.herokuapp\.com/,
-        /seedling-staging\.herokuapp\.com/,
-        /flare\.now\.sh$/,
-        /seasons\.nyc$/,
-        /wearseasons\.com$/,
+        ...commonStaticOrigins,
         /localhost/,
-        /vercel\.app/,
-        /shopifypreview\.com/,
         /null/, // requests from file:// URIs
       ]
 

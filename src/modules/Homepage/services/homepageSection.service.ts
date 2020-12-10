@@ -51,7 +51,28 @@ export class HomepageSectionService {
     private readonly image: ImageService
   ) {}
 
-  async getResultsForSection(sectionTitle: SectionTitle, args, customerId?) {
+  async getResultsForSection(
+    sectionTitle: SectionTitle,
+    tagData,
+    args,
+    customerId?
+  ) {
+    if (!!tagData?.tagName) {
+      return await this.prisma.binding.query.products(
+        {
+          where: {
+            AND: [
+              { tags_some: { name: tagData.tagName } },
+              { status: "Available" },
+            ],
+          },
+          orderBy: "updatedAt_DESC",
+          first: 10,
+        },
+        ProductFragment
+      )
+    }
+
     switch (sectionTitle) {
       case SectionTitle.FeaturedCollection:
         const collections = await this.prisma.client

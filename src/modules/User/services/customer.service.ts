@@ -435,8 +435,8 @@ export class CustomerService {
         }
 
         // either kind of user
-        await this.pushNotification.pushNotifyUser({
-          email: customer.user.email,
+        await this.pushNotification.pushNotifyUsers({
+          emails: [customer.user.email],
           pushNotifID: "CompleteAccount",
         })
         await this.sms.sendSMSById({

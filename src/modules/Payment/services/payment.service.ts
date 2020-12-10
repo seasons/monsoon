@@ -1,4 +1,5 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PaymentPlanTier, User } from "@app/prisma"
@@ -8,7 +9,15 @@ import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
-import { camelCase, get, head, identity, snakeCase, upperFirst } from "lodash"
+import {
+  camelCase,
+  get,
+  head,
+  identity,
+  pick,
+  snakeCase,
+  upperFirst,
+} from "lodash"
 import { DateTime } from "luxon"
 import states from "us-state-converter"
 
@@ -35,7 +44,8 @@ export class PaymentService {
     private readonly paymentUtils: PaymentUtilsService,
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly error: ErrorService
   ) {}
 
   async addShippingCharge(customer, shippingCode) {
@@ -89,6 +99,9 @@ export class PaymentService {
 
       return shippingOption.id
     } catch (e) {
+      this.error.setExtraContext({ shippingCode })
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
       throw new Error(JSON.stringify(e))
     }
   }
@@ -141,6 +154,9 @@ export class PaymentService {
         },
       })
     } catch (e) {
+      this.error.setExtraContext({ planID })
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
       throw new Error(`Error updating to new plan: ${e.message}`)
     }
   }
@@ -212,6 +228,9 @@ export class PaymentService {
         data: { brand, last_digits: last4 },
       })
     } catch (e) {
+      this.error.setExtraContext({ planID, token, tokenType })
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
       throw new Error(`Error updating your payment method ${e}`)
     }
   }
@@ -388,6 +407,9 @@ export class PaymentService {
         resumeDate: resumeDateISO,
       })
     } catch (e) {
+      this.error.setExtraContext({ subscriptionId })
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
       throw new Error(`Error pausing subscription: ${e}`)
     }
   }
@@ -404,6 +426,9 @@ export class PaymentService {
         e?.api_error_code &&
         e?.api_error_code !== "invalid_state_for_request"
       ) {
+        this.error.setExtraContext({ subscriptionId })
+        this.error.setExtraContext(customer, "customer")
+        this.error.captureError(e)
         throw new Error(`Error removing scheduled pause: ${e}`)
       }
     }
@@ -463,6 +488,41 @@ export class PaymentService {
             status: "Active",
           },
           where: { id: customer.id },
+        })
+
+        const customerWithData = await this.prisma.binding.mutation.updateCustomer(
+          {
+            data: {
+              status: "Active",
+            },
+            where: { id: customer.id },
+          },
+          `{
+            id
+            user {
+              id
+              firstName
+              lastName
+              email
+            }
+            membership {
+              id
+              plan {
+                id
+                tier
+                planID
+              }
+            }
+          }`
+        )
+
+        const tier = customerWithData?.membership?.plan?.tier
+        const planID = customerWithData?.membership?.plan?.planID
+
+        this.segment.track(customerWithData.user.id, "Resumed Subscription", {
+          ...pick(customerWithData.user, ["firstName", "lastName", "email"]),
+          planID,
+          tier,
         })
       }
     } catch (e) {
