@@ -207,11 +207,23 @@ export class PaymentService {
         })
         .request()
 
-      const subscription = head(subscriptions.list) as any
+      const subscription = (head(subscriptions.list) as any)?.subscription
+
+      // If chargebee account is paused
+      if (subscription.status === "paused") {
+        // chargeebee account is active
+        await chargebee.subscription
+          .resume(subscription.id, {
+            resume_option: "immediately",
+            charges_handling: "add_to_unbilled_charges",
+          })
+          .request()
+      }
 
       await chargebee.subscription
-        .update(subscription.subscription.id, {
+        .update(subscription.id, {
           plan_id: planID,
+          invoice_immediately: false,
           payment_method: {
             tmp_token: token.tokenId,
             type: tokenType ? tokenType : "apple_pay",
@@ -324,7 +336,7 @@ export class PaymentService {
       })
       .request()
 
-    const subscriptionID = subscription.subscription.id
+    const subscriptionID = subscription.id
 
     await this.createPrismaSubscription(
       user.id,
