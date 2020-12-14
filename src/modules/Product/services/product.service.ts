@@ -670,6 +670,8 @@ export class ProductService {
       )
     }
 
+    console.log("updateData", updateData)
+
     await this.storeProductIfNeeded(where, status)
     await this.restoreProductIfNeeded(where, status)
     await this.prisma.client.updateProduct({

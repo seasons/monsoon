@@ -355,7 +355,7 @@ type Product {
   slug: String! @unique
   name: String!
   brand: Brand!
-  fit: ProductFit
+  productFit: ProductFit
   category: Category!
   type: ProductType
   description: String

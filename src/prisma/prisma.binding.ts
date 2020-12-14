@@ -15204,6 +15204,7 @@ type Product implements Node {
   slug: String!
   name: String!
   brand: Brand!
+  productFit: ProductFit
   category: Category!
   type: ProductType
   description: String
@@ -15254,6 +15255,7 @@ input ProductCreateInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15327,6 +15329,7 @@ input ProductCreateWithoutBrandInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15355,6 +15358,7 @@ input ProductCreateWithoutCategoryInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15383,6 +15387,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15411,6 +15416,7 @@ input ProductCreateWithoutModelInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15439,6 +15445,7 @@ input ProductCreateWithoutTagsInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15467,6 +15474,7 @@ input ProductCreateWithoutVariantsInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15498,6 +15506,12 @@ type ProductEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+enum ProductFit {
+  RunsBig
+  TrueToSize
+  RunsSmall
 }
 
 type ProductFunction implements Node {
@@ -16552,6 +16566,8 @@ enum ProductOrderByInput {
   slug_DESC
   name_ASC
   name_DESC
+  productFit_ASC
+  productFit_DESC
   type_ASC
   type_DESC
   description_ASC
@@ -16580,6 +16596,7 @@ type ProductPreviousValues {
   id: ID!
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17280,6 +17297,16 @@ input ProductScalarWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
+  productFit: ProductFit
+
+  """All values that are not equal to given value."""
+  productFit_not: ProductFit
+
+  """All values that are contained in given list."""
+  productFit_in: [ProductFit!]
+
+  """All values that are not contained in given list."""
+  productFit_not_in: [ProductFit!]
   type: ProductType
 
   """All values that are not equal to given value."""
@@ -17746,6 +17773,7 @@ enum ProductType {
 input ProductUpdateDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17778,6 +17806,7 @@ input ProductUpdateinnerMaterialsInput {
 input ProductUpdateInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17806,6 +17835,7 @@ input ProductUpdateInput {
 input ProductUpdateManyDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17834,6 +17864,7 @@ input ProductUpdateManyInput {
 input ProductUpdateManyMutationInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17933,6 +17964,7 @@ input ProductUpdateouterMaterialsInput {
 input ProductUpdateWithoutBrandDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17960,6 +17992,7 @@ input ProductUpdateWithoutBrandDataInput {
 input ProductUpdateWithoutCategoryDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17987,6 +18020,7 @@ input ProductUpdateWithoutCategoryDataInput {
 input ProductUpdateWithoutMaterialCategoryDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -18014,6 +18048,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
 input ProductUpdateWithoutModelDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -18041,6 +18076,7 @@ input ProductUpdateWithoutModelDataInput {
 input ProductUpdateWithoutTagsDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -18068,6 +18104,7 @@ input ProductUpdateWithoutTagsDataInput {
 input ProductUpdateWithoutVariantsDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -20315,6 +20352,16 @@ input ProductWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
+  productFit: ProductFit
+
+  """All values that are not equal to given value."""
+  productFit_not: ProductFit
+
+  """All values that are contained in given list."""
+  productFit_in: [ProductFit!]
+
+  """All values that are not contained in given list."""
+  productFit_not_in: [ProductFit!]
   type: ProductType
 
   """All values that are not equal to given value."""
@@ -31070,6 +31117,10 @@ export type ProductArchitecture =   'Fashion' |
   'Showstopper' |
   'Staple'
 
+export type ProductFit =   'RunsBig' |
+  'TrueToSize' |
+  'RunsSmall'
+
 export type ProductFunctionOrderByInput =   'id_ASC' |
   'id_DESC' |
   'name_ASC' |
@@ -31109,6 +31160,8 @@ export type ProductOrderByInput =   'id_ASC' |
   'slug_DESC' |
   'name_ASC' |
   'name_DESC' |
+  'productFit_ASC' |
+  'productFit_DESC' |
   'type_ASC' |
   'type_DESC' |
   'description_ASC' |
@@ -37788,6 +37841,7 @@ export interface ProductCreateInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -37861,6 +37915,7 @@ export interface ProductCreateWithoutBrandInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -37889,6 +37944,7 @@ export interface ProductCreateWithoutCategoryInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -37917,6 +37973,7 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -37945,6 +38002,7 @@ export interface ProductCreateWithoutModelInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -37973,6 +38031,7 @@ export interface ProductCreateWithoutTagsInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -38001,6 +38060,7 @@ export interface ProductCreateWithoutVariantsInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -38720,6 +38780,10 @@ export interface ProductScalarWhereInput {
   name_not_starts_with?: String | null
   name_ends_with?: String | null
   name_not_ends_with?: String | null
+  productFit?: ProductFit | null
+  productFit_not?: ProductFit | null
+  productFit_in?: ProductFit[] | ProductFit | null
+  productFit_not_in?: ProductFit[] | ProductFit | null
   type?: ProductType | null
   type_not?: ProductType | null
   type_in?: ProductType[] | ProductType | null
@@ -38907,6 +38971,7 @@ export interface ProductSubscriptionWhereInput {
 export interface ProductUpdateDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -38939,6 +39004,7 @@ export interface ProductUpdateinnerMaterialsInput {
 export interface ProductUpdateInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -38967,6 +39033,7 @@ export interface ProductUpdateInput {
 export interface ProductUpdateManyDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -38995,6 +39062,7 @@ export interface ProductUpdateManyInput {
 export interface ProductUpdateManyMutationInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -39094,6 +39162,7 @@ export interface ProductUpdateouterMaterialsInput {
 export interface ProductUpdateWithoutBrandDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -39121,6 +39190,7 @@ export interface ProductUpdateWithoutBrandDataInput {
 export interface ProductUpdateWithoutCategoryDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -39148,6 +39218,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
 export interface ProductUpdateWithoutMaterialCategoryDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -39175,6 +39246,7 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
 export interface ProductUpdateWithoutModelDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -39202,6 +39274,7 @@ export interface ProductUpdateWithoutModelDataInput {
 export interface ProductUpdateWithoutTagsDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -39229,6 +39302,7 @@ export interface ProductUpdateWithoutTagsDataInput {
 export interface ProductUpdateWithoutVariantsDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -40379,6 +40453,10 @@ export interface ProductWhereInput {
   name_not_starts_with?: String | null
   name_ends_with?: String | null
   name_not_ends_with?: String | null
+  productFit?: ProductFit | null
+  productFit_not?: ProductFit | null
+  productFit_in?: ProductFit[] | ProductFit | null
+  productFit_not_in?: ProductFit[] | ProductFit | null
   type?: ProductType | null
   type_not?: ProductType | null
   type_in?: ProductType[] | ProductType | null
@@ -46392,6 +46470,7 @@ export interface Product extends Node {
   slug: String
   name: String
   brand: Brand
+  productFit?: ProductFit | null
   category: Category
   type?: ProductType | null
   description?: String | null
@@ -46601,6 +46680,7 @@ export interface ProductPreviousValues {
   id: ID_Output
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null

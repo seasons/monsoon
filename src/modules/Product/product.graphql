@@ -180,12 +180,12 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  fit: ProductFit
   materialCategory: ProductMaterialCategory
   model: ProductModel
   modelHeight: Int
   modelSize: Size
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   retailPrice: Int
   color: Color!
   season: ProductSeason
@@ -297,6 +297,7 @@ input UpsertProductInput {
   modelSizeName: String
   name: String!
   outerMaterials: [String!]!
+  productFit: ProductFit
   retailPrice: Int!
   season: UpsertSeasonInput
   photographyStatus: PhotographyStatus
@@ -315,7 +316,7 @@ input CustomProductUpdateInput {
   color: ColorUpdateOneRequiredInput
   description: String
   externalURL: String
-  fit: ProductFit
+  productFit: ProductFit
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   model: ProductModelUpdateOneWithoutProductsInput

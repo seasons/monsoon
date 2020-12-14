@@ -2958,8 +2958,8 @@ export type ProductOrderByInput =
   | "slug_DESC"
   | "name_ASC"
   | "name_DESC"
-  | "fit_ASC"
-  | "fit_DESC"
+  | "productFit_ASC"
+  | "productFit_DESC"
   | "type_ASC"
   | "type_DESC"
   | "description_ASC"
@@ -5185,10 +5185,10 @@ export interface ProductWhereInput {
   name_ends_with?: Maybe<String>;
   name_not_ends_with?: Maybe<String>;
   brand?: Maybe<BrandWhereInput>;
-  fit?: Maybe<ProductFit>;
-  fit_not?: Maybe<ProductFit>;
-  fit_in?: Maybe<ProductFit[] | ProductFit>;
-  fit_not_in?: Maybe<ProductFit[] | ProductFit>;
+  productFit?: Maybe<ProductFit>;
+  productFit_not?: Maybe<ProductFit>;
+  productFit_in?: Maybe<ProductFit[] | ProductFit>;
+  productFit_not_in?: Maybe<ProductFit[] | ProductFit>;
   category?: Maybe<CategoryWhereInput>;
   type?: Maybe<ProductType>;
   type_not?: Maybe<ProductType>;
@@ -8874,7 +8874,7 @@ export interface ProductCreateWithoutVariantsInput {
   slug: String;
   name: String;
   brand: BrandCreateOneWithoutProductsInput;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   category: CategoryCreateOneWithoutProductsInput;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
@@ -8972,7 +8972,7 @@ export interface ProductCreateWithoutCategoryInput {
   slug: String;
   name: String;
   brand: BrandCreateOneWithoutProductsInput;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
@@ -9294,7 +9294,7 @@ export interface ProductCreateInput {
   slug: String;
   name: String;
   brand: BrandCreateOneWithoutProductsInput;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   category: CategoryCreateOneWithoutProductsInput;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
@@ -10454,7 +10454,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   slug?: Maybe<String>;
   name?: Maybe<String>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
@@ -10732,7 +10732,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   slug?: Maybe<String>;
   name?: Maybe<String>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
@@ -11954,10 +11954,10 @@ export interface ProductScalarWhereInput {
   name_not_starts_with?: Maybe<String>;
   name_ends_with?: Maybe<String>;
   name_not_ends_with?: Maybe<String>;
-  fit?: Maybe<ProductFit>;
-  fit_not?: Maybe<ProductFit>;
-  fit_in?: Maybe<ProductFit[] | ProductFit>;
-  fit_not_in?: Maybe<ProductFit[] | ProductFit>;
+  productFit?: Maybe<ProductFit>;
+  productFit_not?: Maybe<ProductFit>;
+  productFit_in?: Maybe<ProductFit[] | ProductFit>;
+  productFit_not_in?: Maybe<ProductFit[] | ProductFit>;
   type?: Maybe<ProductType>;
   type_not?: Maybe<ProductType>;
   type_in?: Maybe<ProductType[] | ProductType>;
@@ -12055,7 +12055,7 @@ export interface ProductUpdateManyWithWhereNestedInput {
 export interface ProductUpdateManyDataInput {
   slug?: Maybe<String>;
   name?: Maybe<String>;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
@@ -12216,7 +12216,7 @@ export interface ProductUpdateDataInput {
   slug?: Maybe<String>;
   name?: Maybe<String>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
@@ -14611,7 +14611,7 @@ export interface ProductCreateWithoutBrandInput {
   id?: Maybe<ID_Input>;
   slug: String;
   name: String;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   category: CategoryCreateOneWithoutProductsInput;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
@@ -14687,7 +14687,7 @@ export interface ProductUpdateWithWhereUniqueWithoutBrandInput {
 export interface ProductUpdateWithoutBrandDataInput {
   slug?: Maybe<String>;
   name?: Maybe<String>;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
@@ -15668,7 +15668,7 @@ export interface ProductUpdateInput {
   slug?: Maybe<String>;
   name?: Maybe<String>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
@@ -15698,7 +15698,7 @@ export interface ProductUpdateInput {
 export interface ProductUpdateManyMutationInput {
   slug?: Maybe<String>;
   name?: Maybe<String>;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
@@ -15741,7 +15741,7 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   slug: String;
   name: String;
   brand: BrandCreateOneWithoutProductsInput;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   category: CategoryCreateOneWithoutProductsInput;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
@@ -15805,7 +15805,7 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
   slug?: Maybe<String>;
   name?: Maybe<String>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
@@ -15859,7 +15859,7 @@ export interface ProductCreateWithoutModelInput {
   slug: String;
   name: String;
   brand: BrandCreateOneWithoutProductsInput;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   category: CategoryCreateOneWithoutProductsInput;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
@@ -15923,7 +15923,7 @@ export interface ProductUpdateWithoutModelDataInput {
   slug?: Maybe<String>;
   name?: Maybe<String>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
@@ -16899,7 +16899,7 @@ export interface ProductCreateWithoutTagsInput {
   slug: String;
   name: String;
   brand: BrandCreateOneWithoutProductsInput;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   category: CategoryCreateOneWithoutProductsInput;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
@@ -16963,7 +16963,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   slug?: Maybe<String>;
   name?: Maybe<String>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  fit?: Maybe<ProductFit>;
+  productFit?: Maybe<ProductFit>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
@@ -19677,7 +19677,7 @@ export interface Product {
   id: ID_Output;
   slug: String;
   name: String;
-  fit?: ProductFit;
+  productFit?: ProductFit;
   type?: ProductType;
   description?: String;
   externalURL?: String;
@@ -19698,7 +19698,7 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
   slug: () => Promise<String>;
   name: () => Promise<String>;
   brand: <T = BrandPromise>() => T;
-  fit: () => Promise<ProductFit>;
+  productFit: () => Promise<ProductFit>;
   category: <T = CategoryPromise>() => T;
   type: () => Promise<ProductType>;
   description: () => Promise<String>;
@@ -19764,7 +19764,7 @@ export interface ProductSubscription
   slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
   brand: <T = BrandSubscription>() => T;
-  fit: () => Promise<AsyncIterator<ProductFit>>;
+  productFit: () => Promise<AsyncIterator<ProductFit>>;
   category: <T = CategorySubscription>() => T;
   type: () => Promise<AsyncIterator<ProductType>>;
   description: () => Promise<AsyncIterator<String>>;
@@ -19830,7 +19830,7 @@ export interface ProductNullablePromise
   slug: () => Promise<String>;
   name: () => Promise<String>;
   brand: <T = BrandPromise>() => T;
-  fit: () => Promise<ProductFit>;
+  productFit: () => Promise<ProductFit>;
   category: <T = CategoryPromise>() => T;
   type: () => Promise<ProductType>;
   description: () => Promise<String>;
@@ -27537,7 +27537,7 @@ export interface ProductPreviousValues {
   id: ID_Output;
   slug: String;
   name: String;
-  fit?: ProductFit;
+  productFit?: ProductFit;
   type?: ProductType;
   description?: String;
   externalURL?: String;
@@ -27559,7 +27559,7 @@ export interface ProductPreviousValuesPromise
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   name: () => Promise<String>;
-  fit: () => Promise<ProductFit>;
+  productFit: () => Promise<ProductFit>;
   type: () => Promise<ProductType>;
   description: () => Promise<String>;
   externalURL: () => Promise<String>;
@@ -27581,7 +27581,7 @@ export interface ProductPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
-  fit: () => Promise<AsyncIterator<ProductFit>>;
+  productFit: () => Promise<AsyncIterator<ProductFit>>;
   type: () => Promise<AsyncIterator<ProductType>>;
   description: () => Promise<AsyncIterator<String>>;
   externalURL: () => Promise<AsyncIterator<String>>;

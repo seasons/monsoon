@@ -8676,7 +8676,7 @@ type Product {
   slug: String!
   name: String!
   brand: Brand!
-  fit: ProductFit
+  productFit: ProductFit
   category: Category!
   type: ProductType
   description: String
@@ -8724,7 +8724,7 @@ input ProductCreateInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
-  fit: ProductFit
+  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
   type: ProductType
   description: String
@@ -8797,7 +8797,7 @@ input ProductCreateWithoutBrandInput {
   id: ID
   slug: String!
   name: String!
-  fit: ProductFit
+  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
   type: ProductType
   description: String
@@ -8827,7 +8827,7 @@ input ProductCreateWithoutCategoryInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
-  fit: ProductFit
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -8856,7 +8856,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
-  fit: ProductFit
+  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
   type: ProductType
   description: String
@@ -8885,7 +8885,7 @@ input ProductCreateWithoutModelInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
-  fit: ProductFit
+  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
   type: ProductType
   description: String
@@ -8914,7 +8914,7 @@ input ProductCreateWithoutTagsInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
-  fit: ProductFit
+  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
   type: ProductType
   description: String
@@ -8943,7 +8943,7 @@ input ProductCreateWithoutVariantsInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
-  fit: ProductFit
+  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
   type: ProductType
   description: String
@@ -9599,8 +9599,8 @@ enum ProductOrderByInput {
   slug_DESC
   name_ASC
   name_DESC
-  fit_ASC
-  fit_DESC
+  productFit_ASC
+  productFit_DESC
   type_ASC
   type_DESC
   description_ASC
@@ -9629,7 +9629,7 @@ type ProductPreviousValues {
   id: ID!
   slug: String!
   name: String!
-  fit: ProductFit
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -9964,10 +9964,10 @@ input ProductScalarWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  fit: ProductFit
-  fit_not: ProductFit
-  fit_in: [ProductFit!]
-  fit_not_in: [ProductFit!]
+  productFit: ProductFit
+  productFit_not: ProductFit
+  productFit_in: [ProductFit!]
+  productFit_not_in: [ProductFit!]
   type: ProductType
   type_not: ProductType
   type_in: [ProductType!]
@@ -10215,7 +10215,7 @@ input ProductUpdateDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  fit: ProductFit
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -10248,7 +10248,7 @@ input ProductUpdateInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  fit: ProductFit
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -10276,7 +10276,7 @@ input ProductUpdateInput {
 input ProductUpdateManyDataInput {
   slug: String
   name: String
-  fit: ProductFit
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -10305,7 +10305,7 @@ input ProductUpdateManyInput {
 input ProductUpdateManyMutationInput {
   slug: String
   name: String
-  fit: ProductFit
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -10405,7 +10405,7 @@ input ProductUpdateouterMaterialsInput {
 input ProductUpdateWithoutBrandDataInput {
   slug: String
   name: String
-  fit: ProductFit
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -10434,7 +10434,7 @@ input ProductUpdateWithoutCategoryDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  fit: ProductFit
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -10462,7 +10462,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  fit: ProductFit
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -10490,7 +10490,7 @@ input ProductUpdateWithoutModelDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  fit: ProductFit
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -10518,7 +10518,7 @@ input ProductUpdateWithoutTagsDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  fit: ProductFit
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -10546,7 +10546,7 @@ input ProductUpdateWithoutVariantsDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  fit: ProductFit
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -11901,10 +11901,10 @@ input ProductWhereInput {
   name_ends_with: String
   name_not_ends_with: String
   brand: BrandWhereInput
-  fit: ProductFit
-  fit_not: ProductFit
-  fit_in: [ProductFit!]
-  fit_not_in: [ProductFit!]
+  productFit: ProductFit
+  productFit_not: ProductFit
+  productFit_in: [ProductFit!]
+  productFit_not_in: [ProductFit!]
   category: CategoryWhereInput
   type: ProductType
   type_not: ProductType

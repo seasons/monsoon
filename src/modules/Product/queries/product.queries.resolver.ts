@@ -14,7 +14,7 @@ export class ProductQueriesResolver {
 
   @Query()
   async product(@Args() args, @Info() info, @Context() ctx) {
-    return await this.prisma.binding.query.product(
+    const product = await this.prisma.binding.query.product(
       args,
       addFragmentToInfo(
         info,
@@ -22,6 +22,8 @@ export class ProductQueriesResolver {
         `fragment EnsureId on Product { id }`
       )
     )
+    console.log("product", product)
+    return product
   }
 
   @Query()
