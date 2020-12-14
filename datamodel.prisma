@@ -355,6 +355,7 @@ type Product {
   slug: String! @unique
   name: String!
   brand: Brand!
+  productFit: ProductFit
   category: Category!
   type: ProductType
   description: String
@@ -468,6 +469,12 @@ type ProductNotification {
   shouldNotify: Boolean! @default(value: true)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+enum ProductFit {
+  RunsBig
+  TrueToSize
+  RunsSmall
 }
 
 enum ProductNotificationType {

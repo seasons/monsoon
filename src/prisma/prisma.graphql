@@ -1,5 +1,5 @@
-# source: https://monsoon-prisma-staging.herokuapp.com/monsoon/staging
-# timestamp: Thu Dec 10 2020 17:26:40 GMT-0500 (Eastern Standard Time)
+# source: http://localhost:4466/monsoon/dev
+# timestamp: Mon Dec 14 2020 12:27:26 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -21063,6 +21063,7 @@ type Product implements Node {
   slug: String!
   name: String!
   brand: Brand!
+  productFit: ProductFit
   category: Category!
   type: ProductType
   description: String
@@ -21151,6 +21152,7 @@ input ProductCreateInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -21224,6 +21226,7 @@ input ProductCreateWithoutBrandInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -21252,6 +21255,7 @@ input ProductCreateWithoutCategoryInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -21280,6 +21284,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -21308,6 +21313,7 @@ input ProductCreateWithoutModelInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -21336,6 +21342,7 @@ input ProductCreateWithoutTagsInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -21364,6 +21371,7 @@ input ProductCreateWithoutVariantsInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -21401,6 +21409,12 @@ type ProductEdge {
   A cursor for use in pagination.
   """
   cursor: String!
+}
+
+enum ProductFit {
+  RunsBig
+  TrueToSize
+  RunsSmall
 }
 
 type ProductFunction implements Node {
@@ -22879,6 +22893,8 @@ enum ProductOrderByInput {
   slug_DESC
   name_ASC
   name_DESC
+  productFit_ASC
+  productFit_DESC
   type_ASC
   type_DESC
   description_ASC
@@ -22907,6 +22923,7 @@ type ProductPreviousValues {
   id: ID!
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -23965,6 +23982,22 @@ input ProductScalarWhereInput {
   All values not ending with the given string.
   """
   name_not_ends_with: String
+  productFit: ProductFit
+
+  """
+  All values that are not equal to given value.
+  """
+  productFit_not: ProductFit
+
+  """
+  All values that are contained in given list.
+  """
+  productFit_in: [ProductFit!]
+
+  """
+  All values that are not contained in given list.
+  """
+  productFit_not_in: [ProductFit!]
   type: ProductType
 
   """
@@ -24637,6 +24670,7 @@ enum ProductType {
 input ProductUpdateDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -24669,6 +24703,7 @@ input ProductUpdateinnerMaterialsInput {
 input ProductUpdateInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -24697,6 +24732,7 @@ input ProductUpdateInput {
 input ProductUpdateManyDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -24725,6 +24761,7 @@ input ProductUpdateManyInput {
 input ProductUpdateManyMutationInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -24824,6 +24861,7 @@ input ProductUpdateouterMaterialsInput {
 input ProductUpdateWithoutBrandDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -24851,6 +24889,7 @@ input ProductUpdateWithoutBrandDataInput {
 input ProductUpdateWithoutCategoryDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -24878,6 +24917,7 @@ input ProductUpdateWithoutCategoryDataInput {
 input ProductUpdateWithoutMaterialCategoryDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -24905,6 +24945,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
 input ProductUpdateWithoutModelDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -24932,6 +24973,7 @@ input ProductUpdateWithoutModelDataInput {
 input ProductUpdateWithoutTagsDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -24959,6 +25001,7 @@ input ProductUpdateWithoutTagsDataInput {
 input ProductUpdateWithoutVariantsDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -28100,6 +28143,22 @@ input ProductWhereInput {
   All values not ending with the given string.
   """
   name_not_ends_with: String
+  productFit: ProductFit
+
+  """
+  All values that are not equal to given value.
+  """
+  productFit_not: ProductFit
+
+  """
+  All values that are contained in given list.
+  """
+  productFit_in: [ProductFit!]
+
+  """
+  All values that are not contained in given list.
+  """
+  productFit_not_in: [ProductFit!]
   type: ProductType
 
   """
