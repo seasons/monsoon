@@ -390,14 +390,14 @@ export class CustomerService {
 
       const now = DateTime.local()
       const nowDate = now.toISO()
-      const twoDaysFromNow = now.plus({ days: 2 }).toISO()
+      const sevenDaysFromNow = now.plus({ days: 7 }).toISO()
       data = {
         ...data,
         authorizedAt: nowDate,
         admissions: {
           upsert: {
             create: {
-              authorizationWindowClosesAt: twoDaysFromNow,
+              authorizationWindowClosesAt: sevenDaysFromNow,
               admissable: true,
               inServiceableZipcode: true,
               allAccessEnabled,
@@ -408,7 +408,7 @@ export class CustomerService {
               ),
             },
             update: {
-              authorizationWindowClosesAt: twoDaysFromNow,
+              authorizationWindowClosesAt: sevenDaysFromNow,
               allAccessEnabled,
               authorizationsCount: this.calculateNumAuthorizations(
                 customer,
@@ -638,9 +638,9 @@ export class CustomerService {
         if (!dryRun) {
           const now = DateTime.local()
           const nowDate = now.toISO()
-          const twoDaysFromNow = now.plus({ days: 2 }).toISO()
+          const sevenDaysFromNow = now.plus({ days: 2 }).toISO()
           data.authorizedAt = nowDate
-          admissionsUpsertData.authorizationWindowClosesAt = twoDaysFromNow
+          admissionsUpsertData.authorizationWindowClosesAt = sevenDaysFromNow
         }
 
         break
