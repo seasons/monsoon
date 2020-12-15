@@ -912,6 +912,19 @@ export class PaymentService {
       street2: shippingStreet2,
     } = shippingAddress
 
+    if (
+      !shippingCity ||
+      !shippingPostalCode ||
+      !shippingState ||
+      !shippingStreet1 ||
+      !billingCity ||
+      !billingPostalCode ||
+      !billingState ||
+      !billingStreet1
+    ) {
+      throw new Error("You're missing a required field")
+    }
+
     const getAbbreviatedState = originalState => {
       if (!originalState) {
         throw new Error(`Invalid state: ${originalState}`)
