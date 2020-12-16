@@ -638,7 +638,7 @@ export class CustomerService {
         if (!dryRun) {
           const now = DateTime.local()
           const nowDate = now.toISO()
-          const sevenDaysFromNow = now.plus({ days: 2 }).toISO()
+          const sevenDaysFromNow = now.plus({ days: 7 }).toISO()
           data.authorizedAt = nowDate
           admissionsUpsertData.authorizationWindowClosesAt = sevenDaysFromNow
         }
