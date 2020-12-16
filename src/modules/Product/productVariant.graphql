@@ -59,10 +59,16 @@ type Mutation {
   ): [ProductVariant!] @hasRole(roles: [Admin])
 }
 
+type ProductVariantDisplay {
+  long: String
+  short: String
+}
+
 type ProductVariant {
   id: ID!
   sku: String
   color: Color!
+  display: ProductVariantDisplay
   size: String
   internalSize: Size
   manufacturerSizes(
