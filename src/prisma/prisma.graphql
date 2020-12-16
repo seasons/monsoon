@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Mon Dec 14 2020 12:27:26 GMT-0500 (Eastern Standard Time)
+# timestamp: Tue Dec 15 2020 17:08:23 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -698,6 +698,10 @@ type AggregatePaymentPlan {
 }
 
 type AggregatePhysicalProduct {
+  count: Int!
+}
+
+type AggregatePhysicalProductSellable {
   count: Int!
 }
 
@@ -15935,6 +15939,9 @@ type Mutation {
   createReservationReceiptItem(
     data: ReservationReceiptItemCreateInput!
   ): ReservationReceiptItem!
+  createPhysicalProductSellable(
+    data: PhysicalProductSellableCreateInput!
+  ): PhysicalProductSellable!
   createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   createPackage(data: PackageCreateInput!): Package!
   createSize(data: SizeCreateInput!): Size!
@@ -16092,6 +16099,10 @@ type Mutation {
     data: ReservationReceiptItemUpdateInput!
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
+  updatePhysicalProductSellable(
+    data: PhysicalProductSellableUpdateInput!
+    where: PhysicalProductSellableWhereUniqueInput!
+  ): PhysicalProductSellable
   updateStylePreferences(
     data: StylePreferencesUpdateInput!
     where: StylePreferencesWhereUniqueInput!
@@ -16243,6 +16254,9 @@ type Mutation {
   deleteReservationReceiptItem(
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
+  deletePhysicalProductSellable(
+    where: PhysicalProductSellableWhereUniqueInput!
+  ): PhysicalProductSellable
   deleteStylePreferences(
     where: StylePreferencesWhereUniqueInput!
   ): StylePreferences
@@ -16450,6 +16464,11 @@ type Mutation {
     create: ReservationReceiptItemCreateInput!
     update: ReservationReceiptItemUpdateInput!
   ): ReservationReceiptItem!
+  upsertPhysicalProductSellable(
+    where: PhysicalProductSellableWhereUniqueInput!
+    create: PhysicalProductSellableCreateInput!
+    update: PhysicalProductSellableUpdateInput!
+  ): PhysicalProductSellable!
   upsertStylePreferences(
     where: StylePreferencesWhereUniqueInput!
     create: StylePreferencesCreateInput!
@@ -16702,6 +16721,10 @@ type Mutation {
     data: ReservationReceiptItemUpdateManyMutationInput!
     where: ReservationReceiptItemWhereInput
   ): BatchPayload!
+  updateManyPhysicalProductSellables(
+    data: PhysicalProductSellableUpdateManyMutationInput!
+    where: PhysicalProductSellableWhereInput
+  ): BatchPayload!
   updateManyStylePreferenceses(
     data: StylePreferencesUpdateManyMutationInput!
     where: StylePreferencesWhereInput
@@ -16866,6 +16889,9 @@ type Mutation {
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
   deleteManyReservationReceiptItems(
     where: ReservationReceiptItemWhereInput
+  ): BatchPayload!
+  deleteManyPhysicalProductSellables(
+    where: PhysicalProductSellableWhereInput
   ): BatchPayload!
   deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
@@ -19594,7 +19620,7 @@ type PhysicalProduct implements Node {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
+  sellable: PhysicalProductSellable
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -19627,10 +19653,10 @@ input PhysicalProductCreateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableCreateOneInput
 }
 
 input PhysicalProductCreateManyInput {
@@ -19670,9 +19696,9 @@ input PhysicalProductCreateWithoutLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableCreateOneInput
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -19687,9 +19713,9 @@ input PhysicalProductCreateWithoutProductVariantInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationCreateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableCreateOneInput
 }
 
 input PhysicalProductCreateWithoutWarehouseLocationInput {
@@ -19704,9 +19730,9 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  sellable: PhysicalProductSellableCreateOneInput
 }
 
 """
@@ -19755,8 +19781,6 @@ enum PhysicalProductOrderByInput {
   dateReceived_DESC
   unitCost_ASC
   unitCost_DESC
-  sellable_ASC
-  sellable_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -19775,7 +19799,6 @@ type PhysicalProductPreviousValues {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -20191,12 +20214,6 @@ input PhysicalProductScalarWhereInput {
   All values greater than or equal the given value.
   """
   unitCost_gte: Float
-  sellable: Boolean
-
-  """
-  All values that are not equal to given value.
-  """
-  sellable_not: Boolean
   createdAt: DateTime
 
   """
@@ -20271,6 +20288,330 @@ input PhysicalProductScalarWhereInput {
   updatedAt_gte: DateTime
 }
 
+type PhysicalProductSellable implements Node {
+  id: ID!
+  new: Boolean!
+  newPrice: Float
+  used: Boolean!
+  usedPrice: Float
+}
+
+"""
+A connection to a list of items.
+"""
+type PhysicalProductSellableConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [PhysicalProductSellableEdge]!
+  aggregate: AggregatePhysicalProductSellable!
+}
+
+input PhysicalProductSellableCreateInput {
+  id: ID
+  new: Boolean
+  newPrice: Float
+  used: Boolean
+  usedPrice: Float
+}
+
+input PhysicalProductSellableCreateOneInput {
+  create: PhysicalProductSellableCreateInput
+  connect: PhysicalProductSellableWhereUniqueInput
+}
+
+"""
+An edge in a connection.
+"""
+type PhysicalProductSellableEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: PhysicalProductSellable!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum PhysicalProductSellableOrderByInput {
+  id_ASC
+  id_DESC
+  new_ASC
+  new_DESC
+  newPrice_ASC
+  newPrice_DESC
+  used_ASC
+  used_DESC
+  usedPrice_ASC
+  usedPrice_DESC
+}
+
+type PhysicalProductSellablePreviousValues {
+  id: ID!
+  new: Boolean!
+  newPrice: Float
+  used: Boolean!
+  usedPrice: Float
+}
+
+type PhysicalProductSellableSubscriptionPayload {
+  mutation: MutationType!
+  node: PhysicalProductSellable
+  updatedFields: [String!]
+  previousValues: PhysicalProductSellablePreviousValues
+}
+
+input PhysicalProductSellableSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PhysicalProductSellableSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PhysicalProductSellableSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [PhysicalProductSellableSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PhysicalProductSellableWhereInput
+}
+
+input PhysicalProductSellableUpdateDataInput {
+  new: Boolean
+  newPrice: Float
+  used: Boolean
+  usedPrice: Float
+}
+
+input PhysicalProductSellableUpdateInput {
+  new: Boolean
+  newPrice: Float
+  used: Boolean
+  usedPrice: Float
+}
+
+input PhysicalProductSellableUpdateManyMutationInput {
+  new: Boolean
+  newPrice: Float
+  used: Boolean
+  usedPrice: Float
+}
+
+input PhysicalProductSellableUpdateOneInput {
+  create: PhysicalProductSellableCreateInput
+  connect: PhysicalProductSellableWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: PhysicalProductSellableUpdateDataInput
+  upsert: PhysicalProductSellableUpsertNestedInput
+}
+
+input PhysicalProductSellableUpsertNestedInput {
+  update: PhysicalProductSellableUpdateDataInput!
+  create: PhysicalProductSellableCreateInput!
+}
+
+input PhysicalProductSellableWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PhysicalProductSellableWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PhysicalProductSellableWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [PhysicalProductSellableWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  new: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  new_not: Boolean
+  newPrice: Float
+
+  """
+  All values that are not equal to given value.
+  """
+  newPrice_not: Float
+
+  """
+  All values that are contained in given list.
+  """
+  newPrice_in: [Float!]
+
+  """
+  All values that are not contained in given list.
+  """
+  newPrice_not_in: [Float!]
+
+  """
+  All values less than the given value.
+  """
+  newPrice_lt: Float
+
+  """
+  All values less than or equal the given value.
+  """
+  newPrice_lte: Float
+
+  """
+  All values greater than the given value.
+  """
+  newPrice_gt: Float
+
+  """
+  All values greater than or equal the given value.
+  """
+  newPrice_gte: Float
+  used: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  used_not: Boolean
+  usedPrice: Float
+
+  """
+  All values that are not equal to given value.
+  """
+  usedPrice_not: Float
+
+  """
+  All values that are contained in given list.
+  """
+  usedPrice_in: [Float!]
+
+  """
+  All values that are not contained in given list.
+  """
+  usedPrice_not_in: [Float!]
+
+  """
+  All values less than the given value.
+  """
+  usedPrice_lt: Float
+
+  """
+  All values less than or equal the given value.
+  """
+  usedPrice_lte: Float
+
+  """
+  All values greater than the given value.
+  """
+  usedPrice_gt: Float
+
+  """
+  All values greater than or equal the given value.
+  """
+  usedPrice_gte: Float
+}
+
+input PhysicalProductSellableWhereUniqueInput {
+  id: ID
+}
+
 enum PhysicalProductStatus {
   New
   Used
@@ -20337,10 +20678,10 @@ input PhysicalProductUpdateDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateInput {
@@ -20354,10 +20695,10 @@ input PhysicalProductUpdateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -20371,7 +20712,6 @@ input PhysicalProductUpdateManyDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
 }
 
 input PhysicalProductUpdateManyInput {
@@ -20397,7 +20737,6 @@ input PhysicalProductUpdateManyMutationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -20468,9 +20807,9 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -20484,9 +20823,9 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationUpdateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
@@ -20500,9 +20839,9 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -20965,12 +21304,6 @@ input PhysicalProductWhereInput {
   All values greater than or equal the given value.
   """
   unitCost_gte: Float
-  sellable: Boolean
-
-  """
-  All values that are not equal to given value.
-  """
-  sellable_not: Boolean
   createdAt: DateTime
 
   """
@@ -21046,6 +21379,7 @@ input PhysicalProductWhereInput {
   location: LocationWhereInput
   productVariant: ProductVariantWhereInput
   warehouseLocation: WarehouseLocationWhereInput
+  sellable: PhysicalProductSellableWhereInput
 }
 
 input PhysicalProductWhereUniqueInput {
@@ -30764,6 +31098,15 @@ type Query {
     first: Int
     last: Int
   ): [ReservationReceiptItem]!
+  physicalProductSellables(
+    where: PhysicalProductSellableWhereInput
+    orderBy: PhysicalProductSellableOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProductSellable]!
   stylePreferenceses(
     where: StylePreferencesWhereInput
     orderBy: StylePreferencesOrderByInput
@@ -31049,6 +31392,9 @@ type Query {
   reservationReceiptItem(
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
+  physicalProductSellable(
+    where: PhysicalProductSellableWhereUniqueInput!
+  ): PhysicalProductSellable
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   package(where: PackageWhereUniqueInput!): Package
   size(where: SizeWhereUniqueInput!): Size
@@ -31390,6 +31736,15 @@ type Query {
     first: Int
     last: Int
   ): ReservationReceiptItemConnection!
+  physicalProductSellablesConnection(
+    where: PhysicalProductSellableWhereInput
+    orderBy: PhysicalProductSellableOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PhysicalProductSellableConnection!
   stylePreferencesesConnection(
     where: StylePreferencesWhereInput
     orderBy: StylePreferencesOrderByInput
@@ -37620,6 +37975,9 @@ type Subscription {
   reservationReceiptItem(
     where: ReservationReceiptItemSubscriptionWhereInput
   ): ReservationReceiptItemSubscriptionPayload
+  physicalProductSellable(
+    where: PhysicalProductSellableSubscriptionWhereInput
+  ): PhysicalProductSellableSubscriptionPayload
   stylePreferences(
     where: StylePreferencesSubscriptionWhereInput
   ): StylePreferencesSubscriptionPayload
