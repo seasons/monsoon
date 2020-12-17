@@ -26,6 +26,7 @@ import {
   SearchModule,
   ShippingModule,
   SlackModule,
+  SyncModule,
   UserModule,
   directiveResolvers,
 } from "./modules"
@@ -96,8 +97,9 @@ const scheduleModule =
     SearchModule,
     ShippingModule,
     SlackModule,
-    TwilioModule,
+    SyncModule,
     SMSModule,
+    TwilioModule,
     UserModule,
     UtilsModule,
   ],
