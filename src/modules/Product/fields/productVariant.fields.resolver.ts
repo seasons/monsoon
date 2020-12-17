@@ -1,6 +1,7 @@
 import { Customer, User } from "@app/decorators"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { PhysicalProduct, PhysicalProductSellable } from "@app/prisma"
 import { ProductVariant } from "@app/prisma/prisma.binding"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
@@ -240,5 +241,65 @@ export class ProductVariantFieldsResolver {
     `
     )
     return productVariant?.internalSize?.display
+  }
+
+  @ResolveField()
+  async sellable(
+    @Parent() productVariant,
+    @Loader({
+      params: {
+        query: "physicalProducts",
+        formatWhere: ids => ({
+          productVariant: {
+            id_in: ids,
+          },
+        }),
+        getKeys: a => [a?.productVariant?.id],
+        info: `{
+            productVariant {
+              id
+            }
+            sellable {
+              new
+              newPrice
+              used
+              usedPrice
+            }
+          }
+        `,
+        keyToDataRelationship: "OneToMany",
+        fallbackValue: null,
+      },
+    })
+    physicalProductsLoader: PrismaDataLoader<
+      Array<PhysicalProduct & { sellable: PhysicalProductSellable }>
+    >
+  ) {
+    const physicalProducts =
+      (await physicalProductsLoader.load(productVariant.id)) || []
+
+    const maxComparator = key => (a, b) => {
+      const aValue = a?.sellable?.[key] || Number.MIN_VALUE
+      const bValue = b?.sellable?.[key] || Number.MIN_VALUE
+
+      return bValue - aValue
+    }
+
+    const newPhysicalProduct = [...physicalProducts]
+      .sort(maxComparator("newPrice"))
+      .shift()
+    const usedPhysicalProduct = [...physicalProducts]
+      .sort(maxComparator("usedPrice"))
+      .shift()
+    return {
+      id:
+        newPhysicalProduct && usedPhysicalProduct
+          ? `${newPhysicalProduct.id}-${usedPhysicalProduct.id}`
+          : productVariant.id,
+      new: physicalProducts.some(p => p?.sellable?.new),
+      newPrice: newPhysicalProduct?.sellable?.newPrice,
+      used: physicalProducts.some(p => p?.sellable?.used),
+      usedPrice: usedPhysicalProduct?.sellable?.usedPrice,
+    }
   }
 }

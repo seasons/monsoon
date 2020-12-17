@@ -51,6 +51,9 @@ export interface Exists {
   pauseRequest: (where?: PauseRequestWhereInput) => Promise<boolean>;
   paymentPlan: (where?: PaymentPlanWhereInput) => Promise<boolean>;
   physicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>;
+  physicalProductSellable: (
+    where?: PhysicalProductSellableWhereInput
+  ) => Promise<boolean>;
   product: (where?: ProductWhereInput) => Promise<boolean>;
   productFunction: (where?: ProductFunctionWhereInput) => Promise<boolean>;
   productMaterialCategory: (
@@ -673,6 +676,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => PhysicalProductConnectionPromise;
+  physicalProductSellable: (
+    where: PhysicalProductSellableWhereUniqueInput
+  ) => PhysicalProductSellableNullablePromise;
+  physicalProductSellables: (args?: {
+    where?: PhysicalProductSellableWhereInput;
+    orderBy?: PhysicalProductSellableOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<PhysicalProductSellable>;
+  physicalProductSellablesConnection: (args?: {
+    where?: PhysicalProductSellableWhereInput;
+    orderBy?: PhysicalProductSellableOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => PhysicalProductSellableConnectionPromise;
   product: (where: ProductWhereUniqueInput) => ProductNullablePromise;
   products: (args?: {
     where?: ProductWhereInput;
@@ -1837,6 +1861,28 @@ export interface Prisma {
   deleteManyPhysicalProducts: (
     where?: PhysicalProductWhereInput
   ) => BatchPayloadPromise;
+  createPhysicalProductSellable: (
+    data: PhysicalProductSellableCreateInput
+  ) => PhysicalProductSellablePromise;
+  updatePhysicalProductSellable: (args: {
+    data: PhysicalProductSellableUpdateInput;
+    where: PhysicalProductSellableWhereUniqueInput;
+  }) => PhysicalProductSellablePromise;
+  updateManyPhysicalProductSellables: (args: {
+    data: PhysicalProductSellableUpdateManyMutationInput;
+    where?: PhysicalProductSellableWhereInput;
+  }) => BatchPayloadPromise;
+  upsertPhysicalProductSellable: (args: {
+    where: PhysicalProductSellableWhereUniqueInput;
+    create: PhysicalProductSellableCreateInput;
+    update: PhysicalProductSellableUpdateInput;
+  }) => PhysicalProductSellablePromise;
+  deletePhysicalProductSellable: (
+    where: PhysicalProductSellableWhereUniqueInput
+  ) => PhysicalProductSellablePromise;
+  deleteManyPhysicalProductSellables: (
+    where?: PhysicalProductSellableWhereInput
+  ) => BatchPayloadPromise;
   createProduct: (data: ProductCreateInput) => ProductPromise;
   updateProduct: (args: {
     data: ProductUpdateInput;
@@ -2565,6 +2611,9 @@ export interface Subscription {
   physicalProduct: (
     where?: PhysicalProductSubscriptionWhereInput
   ) => PhysicalProductSubscriptionPayloadSubscription;
+  physicalProductSellable: (
+    where?: PhysicalProductSellableSubscriptionWhereInput
+  ) => PhysicalProductSellableSubscriptionPayloadSubscription;
   product: (
     where?: ProductSubscriptionWhereInput
   ) => ProductSubscriptionPayloadSubscription;
@@ -2904,8 +2953,6 @@ export type PhysicalProductOrderByInput =
   | "dateReceived_DESC"
   | "unitCost_ASC"
   | "unitCost_DESC"
-  | "sellable_ASC"
-  | "sellable_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -3564,6 +3611,18 @@ export type PaymentPlanOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type PhysicalProductSellableOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "new_ASC"
+  | "new_DESC"
+  | "newPrice_ASC"
+  | "newPrice_DESC"
+  | "used_ASC"
+  | "used_DESC"
+  | "usedPrice_ASC"
+  | "usedPrice_DESC";
 
 export type ProductMaterialCategoryOrderByInput =
   | "id_ASC"
@@ -4706,8 +4765,7 @@ export interface PhysicalProductWhereInput {
   unitCost_lte?: Maybe<Float>;
   unitCost_gt?: Maybe<Float>;
   unitCost_gte?: Maybe<Float>;
-  sellable?: Maybe<Boolean>;
-  sellable_not?: Maybe<Boolean>;
+  sellable?: Maybe<PhysicalProductSellableWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -5927,6 +5985,52 @@ export interface WarehouseLocationConstraintWhereInput {
   NOT?: Maybe<
     | WarehouseLocationConstraintWhereInput[]
     | WarehouseLocationConstraintWhereInput
+  >;
+}
+
+export interface PhysicalProductSellableWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  new?: Maybe<Boolean>;
+  new_not?: Maybe<Boolean>;
+  newPrice?: Maybe<Float>;
+  newPrice_not?: Maybe<Float>;
+  newPrice_in?: Maybe<Float[] | Float>;
+  newPrice_not_in?: Maybe<Float[] | Float>;
+  newPrice_lt?: Maybe<Float>;
+  newPrice_lte?: Maybe<Float>;
+  newPrice_gt?: Maybe<Float>;
+  newPrice_gte?: Maybe<Float>;
+  used?: Maybe<Boolean>;
+  used_not?: Maybe<Boolean>;
+  usedPrice?: Maybe<Float>;
+  usedPrice_not?: Maybe<Float>;
+  usedPrice_in?: Maybe<Float[] | Float>;
+  usedPrice_not_in?: Maybe<Float[] | Float>;
+  usedPrice_lt?: Maybe<Float>;
+  usedPrice_lte?: Maybe<Float>;
+  usedPrice_gt?: Maybe<Float>;
+  usedPrice_gte?: Maybe<Float>;
+  AND?: Maybe<
+    PhysicalProductSellableWhereInput[] | PhysicalProductSellableWhereInput
+  >;
+  OR?: Maybe<
+    PhysicalProductSellableWhereInput[] | PhysicalProductSellableWhereInput
+  >;
+  NOT?: Maybe<
+    PhysicalProductSellableWhereInput[] | PhysicalProductSellableWhereInput
   >;
 }
 
@@ -7930,6 +8034,10 @@ export type PhysicalProductWhereUniqueInput = AtLeastOne<{
   seasonsUID?: Maybe<String>;
 }>;
 
+export type PhysicalProductSellableWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type ProductWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
@@ -8775,7 +8883,7 @@ export interface PhysicalProductCreateWithoutLocationInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<Boolean>;
+  sellable?: Maybe<PhysicalProductSellableCreateOneInput>;
 }
 
 export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
@@ -9078,7 +9186,7 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<Boolean>;
+  sellable?: Maybe<PhysicalProductSellableCreateOneInput>;
 }
 
 export interface LocationCreateOneWithoutPhysicalProductsInput {
@@ -9181,6 +9289,19 @@ export interface CategoryCreateInput {
   visible?: Maybe<Boolean>;
   products?: Maybe<ProductCreateManyWithoutCategoryInput>;
   children?: Maybe<CategoryCreateManyWithoutChildrenInput>;
+}
+
+export interface PhysicalProductSellableCreateOneInput {
+  create?: Maybe<PhysicalProductSellableCreateInput>;
+  connect?: Maybe<PhysicalProductSellableWhereUniqueInput>;
+}
+
+export interface PhysicalProductSellableCreateInput {
+  id?: Maybe<ID_Input>;
+  new?: Maybe<Boolean>;
+  newPrice?: Maybe<Float>;
+  used?: Maybe<Boolean>;
+  usedPrice?: Maybe<Float>;
 }
 
 export interface TagCreateManyWithoutProductsInput {
@@ -10234,7 +10355,7 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<Boolean>;
+  sellable?: Maybe<PhysicalProductSellableUpdateOneInput>;
 }
 
 export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
@@ -10903,7 +11024,7 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<Boolean>;
+  sellable?: Maybe<PhysicalProductSellableUpdateOneInput>;
 }
 
 export interface LocationUpdateOneWithoutPhysicalProductsInput {
@@ -11238,6 +11359,27 @@ export interface WarehouseLocationUpsertWithoutPhysicalProductsInput {
   create: WarehouseLocationCreateWithoutPhysicalProductsInput;
 }
 
+export interface PhysicalProductSellableUpdateOneInput {
+  create?: Maybe<PhysicalProductSellableCreateInput>;
+  update?: Maybe<PhysicalProductSellableUpdateDataInput>;
+  upsert?: Maybe<PhysicalProductSellableUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<PhysicalProductSellableWhereUniqueInput>;
+}
+
+export interface PhysicalProductSellableUpdateDataInput {
+  new?: Maybe<Boolean>;
+  newPrice?: Maybe<Float>;
+  used?: Maybe<Boolean>;
+  usedPrice?: Maybe<Float>;
+}
+
+export interface PhysicalProductSellableUpsertNestedInput {
+  update: PhysicalProductSellableUpdateDataInput;
+  create: PhysicalProductSellableCreateInput;
+}
+
 export interface PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput {
   where: PhysicalProductWhereUniqueInput;
   update: PhysicalProductUpdateWithoutProductVariantDataInput;
@@ -11337,8 +11479,6 @@ export interface PhysicalProductScalarWhereInput {
   unitCost_lte?: Maybe<Float>;
   unitCost_gt?: Maybe<Float>;
   unitCost_gte?: Maybe<Float>;
-  sellable?: Maybe<Boolean>;
-  sellable_not?: Maybe<Boolean>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -11382,7 +11522,6 @@ export interface PhysicalProductUpdateManyDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<Boolean>;
 }
 
 export interface ProductVariantUpsertWithWhereUniqueWithoutColorInput {
@@ -12827,7 +12966,7 @@ export interface PhysicalProductCreateInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<Boolean>;
+  sellable?: Maybe<PhysicalProductSellableCreateOneInput>;
 }
 
 export interface LabelCreateOneInput {
@@ -13569,7 +13708,7 @@ export interface PhysicalProductUpdateDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<Boolean>;
+  sellable?: Maybe<PhysicalProductSellableUpdateOneInput>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -15647,7 +15786,7 @@ export interface PhysicalProductUpdateInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<Boolean>;
+  sellable?: Maybe<PhysicalProductSellableUpdateOneInput>;
 }
 
 export interface PhysicalProductUpdateManyMutationInput {
@@ -15661,7 +15800,20 @@ export interface PhysicalProductUpdateManyMutationInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<Boolean>;
+}
+
+export interface PhysicalProductSellableUpdateInput {
+  new?: Maybe<Boolean>;
+  newPrice?: Maybe<Float>;
+  used?: Maybe<Boolean>;
+  usedPrice?: Maybe<Float>;
+}
+
+export interface PhysicalProductSellableUpdateManyMutationInput {
+  new?: Maybe<Boolean>;
+  newPrice?: Maybe<Float>;
+  used?: Maybe<Boolean>;
+  usedPrice?: Maybe<Float>;
 }
 
 export interface ProductUpdateInput {
@@ -17189,7 +17341,7 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<Boolean>;
+  sellable?: Maybe<PhysicalProductSellableCreateOneInput>;
 }
 
 export interface WarehouseLocationUpdateInput {
@@ -17259,7 +17411,7 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<Boolean>;
+  sellable?: Maybe<PhysicalProductSellableUpdateOneInput>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput {
@@ -17906,6 +18058,26 @@ export interface PhysicalProductSubscriptionWhereInput {
   NOT?: Maybe<
     | PhysicalProductSubscriptionWhereInput[]
     | PhysicalProductSubscriptionWhereInput
+  >;
+}
+
+export interface PhysicalProductSellableSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<PhysicalProductSellableWhereInput>;
+  AND?: Maybe<
+    | PhysicalProductSellableSubscriptionWhereInput[]
+    | PhysicalProductSellableSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | PhysicalProductSellableSubscriptionWhereInput[]
+    | PhysicalProductSellableSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | PhysicalProductSellableSubscriptionWhereInput[]
+    | PhysicalProductSellableSubscriptionWhereInput
   >;
 }
 
@@ -19272,7 +19444,6 @@ export interface PhysicalProduct {
   dateOrdered?: DateTimeOutput;
   dateReceived?: DateTimeOutput;
   unitCost?: Float;
-  sellable?: Boolean;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -19294,7 +19465,7 @@ export interface PhysicalProductPromise
   dateOrdered: () => Promise<DateTimeOutput>;
   dateReceived: () => Promise<DateTimeOutput>;
   unitCost: () => Promise<Float>;
-  sellable: () => Promise<Boolean>;
+  sellable: <T = PhysicalProductSellablePromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -19316,7 +19487,7 @@ export interface PhysicalProductSubscription
   dateOrdered: () => Promise<AsyncIterator<DateTimeOutput>>;
   dateReceived: () => Promise<AsyncIterator<DateTimeOutput>>;
   unitCost: () => Promise<AsyncIterator<Float>>;
-  sellable: () => Promise<AsyncIterator<Boolean>>;
+  sellable: <T = PhysicalProductSellableSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -19338,7 +19509,7 @@ export interface PhysicalProductNullablePromise
   dateOrdered: () => Promise<DateTimeOutput>;
   dateReceived: () => Promise<DateTimeOutput>;
   unitCost: () => Promise<Float>;
-  sellable: () => Promise<Boolean>;
+  sellable: <T = PhysicalProductSellablePromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -20553,6 +20724,44 @@ export interface WarehouseLocationConstraintNullablePromise
   }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PhysicalProductSellable {
+  id: ID_Output;
+  new: Boolean;
+  newPrice?: Float;
+  used: Boolean;
+  usedPrice?: Float;
+}
+
+export interface PhysicalProductSellablePromise
+  extends Promise<PhysicalProductSellable>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  new: () => Promise<Boolean>;
+  newPrice: () => Promise<Float>;
+  used: () => Promise<Boolean>;
+  usedPrice: () => Promise<Float>;
+}
+
+export interface PhysicalProductSellableSubscription
+  extends Promise<AsyncIterator<PhysicalProductSellable>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  new: () => Promise<AsyncIterator<Boolean>>;
+  newPrice: () => Promise<AsyncIterator<Float>>;
+  used: () => Promise<AsyncIterator<Boolean>>;
+  usedPrice: () => Promise<AsyncIterator<Float>>;
+}
+
+export interface PhysicalProductSellableNullablePromise
+  extends Promise<PhysicalProductSellable | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  new: () => Promise<Boolean>;
+  newPrice: () => Promise<Float>;
+  used: () => Promise<Boolean>;
+  usedPrice: () => Promise<Float>;
 }
 
 export interface ShippingOption {
@@ -23629,6 +23838,64 @@ export interface AggregatePhysicalProductPromise
 
 export interface AggregatePhysicalProductSubscription
   extends Promise<AsyncIterator<AggregatePhysicalProduct>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface PhysicalProductSellableConnection {
+  pageInfo: PageInfo;
+  edges: PhysicalProductSellableEdge[];
+}
+
+export interface PhysicalProductSellableConnectionPromise
+  extends Promise<PhysicalProductSellableConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PhysicalProductSellableEdge>>() => T;
+  aggregate: <T = AggregatePhysicalProductSellablePromise>() => T;
+}
+
+export interface PhysicalProductSellableConnectionSubscription
+  extends Promise<AsyncIterator<PhysicalProductSellableConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<PhysicalProductSellableEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregatePhysicalProductSellableSubscription>() => T;
+}
+
+export interface PhysicalProductSellableEdge {
+  node: PhysicalProductSellable;
+  cursor: String;
+}
+
+export interface PhysicalProductSellableEdgePromise
+  extends Promise<PhysicalProductSellableEdge>,
+    Fragmentable {
+  node: <T = PhysicalProductSellablePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface PhysicalProductSellableEdgeSubscription
+  extends Promise<AsyncIterator<PhysicalProductSellableEdge>>,
+    Fragmentable {
+  node: <T = PhysicalProductSellableSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregatePhysicalProductSellable {
+  count: Int;
+}
+
+export interface AggregatePhysicalProductSellablePromise
+  extends Promise<AggregatePhysicalProductSellable>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePhysicalProductSellableSubscription
+  extends Promise<AsyncIterator<AggregatePhysicalProductSellable>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -27465,7 +27732,6 @@ export interface PhysicalProductPreviousValues {
   dateOrdered?: DateTimeOutput;
   dateReceived?: DateTimeOutput;
   unitCost?: Float;
-  sellable?: Boolean;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -27484,7 +27750,6 @@ export interface PhysicalProductPreviousValuesPromise
   dateOrdered: () => Promise<DateTimeOutput>;
   dateReceived: () => Promise<DateTimeOutput>;
   unitCost: () => Promise<Float>;
-  sellable: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -27503,9 +27768,63 @@ export interface PhysicalProductPreviousValuesSubscription
   dateOrdered: () => Promise<AsyncIterator<DateTimeOutput>>;
   dateReceived: () => Promise<AsyncIterator<DateTimeOutput>>;
   unitCost: () => Promise<AsyncIterator<Float>>;
-  sellable: () => Promise<AsyncIterator<Boolean>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface PhysicalProductSellableSubscriptionPayload {
+  mutation: MutationType;
+  node: PhysicalProductSellable;
+  updatedFields: String[];
+  previousValues: PhysicalProductSellablePreviousValues;
+}
+
+export interface PhysicalProductSellableSubscriptionPayloadPromise
+  extends Promise<PhysicalProductSellableSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = PhysicalProductSellablePromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = PhysicalProductSellablePreviousValuesPromise>() => T;
+}
+
+export interface PhysicalProductSellableSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PhysicalProductSellableSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = PhysicalProductSellableSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = PhysicalProductSellablePreviousValuesSubscription
+  >() => T;
+}
+
+export interface PhysicalProductSellablePreviousValues {
+  id: ID_Output;
+  new: Boolean;
+  newPrice?: Float;
+  used: Boolean;
+  usedPrice?: Float;
+}
+
+export interface PhysicalProductSellablePreviousValuesPromise
+  extends Promise<PhysicalProductSellablePreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  new: () => Promise<Boolean>;
+  newPrice: () => Promise<Float>;
+  used: () => Promise<Boolean>;
+  usedPrice: () => Promise<Float>;
+}
+
+export interface PhysicalProductSellablePreviousValuesSubscription
+  extends Promise<AsyncIterator<PhysicalProductSellablePreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  new: () => Promise<AsyncIterator<Boolean>>;
+  newPrice: () => Promise<AsyncIterator<Float>>;
+  used: () => Promise<AsyncIterator<Boolean>>;
+  usedPrice: () => Promise<AsyncIterator<Float>>;
 }
 
 export interface ProductSubscriptionPayload {
@@ -29526,6 +29845,10 @@ export const models: Model[] = [
   },
   {
     name: "ProductVariant",
+    embedded: false
+  },
+  {
+    name: "PhysicalProductSellable",
     embedded: false
   },
   {

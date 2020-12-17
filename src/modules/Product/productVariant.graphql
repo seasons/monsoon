@@ -64,6 +64,14 @@ type ProductVariantDisplay {
   short: String
 }
 
+type ProductVariantSellable {
+  id: ID!
+  new: Boolean!
+  newPrice: Float
+  used: Boolean!
+  usedPrice: Float
+}
+
 type ProductVariant {
   id: ID!
   sku: String
@@ -97,6 +105,7 @@ type ProductVariant {
   total: Int!
   reservable: Int!
   reserved: Int!
+  sellable: ProductVariantSellable!
   nonReservable: Int!
   isSaved: Boolean!
   isInBag: Boolean!
@@ -104,6 +113,13 @@ type ProductVariant {
   isWanted: Boolean! @deprecated(reason: "replaced with hasRestockNotification")
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input ProductVariantSellableInput {
+  new: Boolean!
+  newPrice: Float
+  used: Boolean!
+  usedPrice: Float
 }
 
 input UpsertVariantInput {
@@ -125,6 +141,7 @@ input UpsertVariantInput {
   weight: Float
   total: Int!
   physicalProducts: [UpsertPhysicalProductInput!]!
+  sellable: ProductVariantSellableInput
 }
 
 input UpdateVariantInput {
