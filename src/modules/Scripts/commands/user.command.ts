@@ -297,7 +297,7 @@ export class UserCommands {
     })
     await this.prisma.client.updateUser({
       where: { id: user.id },
-      data: { roles },
+      data: { roles: { set: roles } },
     })
 
     this.logger.log(`Success!`)
