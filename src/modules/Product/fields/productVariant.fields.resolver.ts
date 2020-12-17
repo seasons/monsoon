@@ -1,6 +1,7 @@
 import { Customer, User } from "@app/decorators"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import { ProductVariant } from "@app/prisma"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { ProductVariant } from "@app/prisma/prisma.binding"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
@@ -8,7 +9,10 @@ import { head } from "lodash"
 
 @Resolver("ProductVariant")
 export class ProductVariantFieldsResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly utils: UtilsService
+  ) {}
 
   @ResolveField()
   async display(
@@ -40,6 +44,7 @@ export class ProductVariantFieldsResolver {
             }
             bottom {
               id
+              type
               value
             }
           }
@@ -48,11 +53,9 @@ export class ProductVariantFieldsResolver {
     })
     productVariantLoader: PrismaDataLoader<ProductVariant>
   ) {
-    const loadedProductVariant = await productVariantLoader.load(parent.id)
+    const variant = await productVariantLoader.load(parent.id)
 
-    console.log("loadedProductVariant", loadedProductVariant)
-
-    const sizeToName = size => {
+    const shortToLongName = size => {
       switch (size) {
         case "XXS":
           return "XX-Small"
@@ -73,15 +76,40 @@ export class ProductVariantFieldsResolver {
       }
     }
 
+    const sizeConversion = this.utils.parseJSONFile(
+      "src/modules/Product/sizeConversion"
+    )
+
     let long = ""
     let short = ""
-    if (parent?.manufacturerSizes?.length > 0) {
-      long = sizeToName(parent?.manufacturerSizes[0].display)
-      short = sizeToName(parent?.manufacturerSizes[0].display)
-    } else if (parent?.internalSize?.display) {
-      long = sizeToName(parent?.internalSize?.display)
-      short = sizeToName(parent?.internalSize?.display)
+
+    const manufacturerSize = variant?.manufacturerSizes?.[0]
+    const manufacturerSizeBottomType =
+      variant?.manufacturerSizes?.[0]?.bottom?.type
+
+    if (
+      (!!manufacturerSize && manufacturerSizeBottomType === "EU") ||
+      manufacturerSizeBottomType === "JP"
+    ) {
+      const manufacturerToUSBottomSize =
+        sizeConversion.bottoms[manufacturerSize.bottom?.type][
+          manufacturerSize?.bottom?.value
+        ] || manufacturerSize?.bottom?.value
+      long = manufacturerToUSBottomSize
+      short = manufacturerToUSBottomSize
+    } else if (!!manufacturerSize) {
+      if (manufacturerSizeBottomType) {
+        long = shortToLongName(manufacturerSize.bottom?.value)
+        short = manufacturerSize.bottom?.value
+      } else {
+        long = shortToLongName(manufacturerSize.top?.letter)
+        short = manufacturerSize.top?.letter
+      }
+    } else if (variant?.internalSize?.display) {
+      long = shortToLongName(variant?.internalSize?.display)
+      short = variant?.internalSize?.display
     }
+
     return { long, short }
   }
 
