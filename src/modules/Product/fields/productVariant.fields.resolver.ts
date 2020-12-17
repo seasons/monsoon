@@ -86,6 +86,7 @@ export class ProductVariantFieldsResolver {
     const manufacturerSize = variant?.manufacturerSizes?.[0]
     const manufacturerSizeBottomType =
       variant?.manufacturerSizes?.[0]?.bottom?.type
+    const internalSize = variant?.internalSize
 
     if (
       (!!manufacturerSize && manufacturerSizeBottomType === "EU") ||
@@ -105,9 +106,17 @@ export class ProductVariantFieldsResolver {
         long = shortToLongName(manufacturerSize.top?.letter)
         short = manufacturerSize.top?.letter
       }
-    } else if (variant?.internalSize?.display) {
-      long = shortToLongName(variant?.internalSize?.display)
-      short = variant?.internalSize?.display
+    } else if (!!internalSize?.id) {
+      if (internalSize?.bottom?.value) {
+        long = shortToLongName(
+          internalSize.bottom?.value || internalSize.display || ""
+        )
+        short = internalSize.display
+      } else {
+        const letter = internalSize.top?.letter || internalSize.display || ""
+        long = shortToLongName(letter)
+        short = letter
+      }
     }
 
     return { long, short }
