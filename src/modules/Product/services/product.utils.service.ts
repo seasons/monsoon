@@ -47,16 +47,17 @@ export class ProductUtilsService {
   }
 
   async queryOptionsForProducts(args) {
+    console.log("args1", args)
     const category = args.category || "all"
     const brand = args.brand || "all"
     const orderBy = args.orderBy || "createdAt_DESC"
     const sizes = args.sizes || []
+
     // Add filtering by sizes in query
     const where = args.where || {}
     if (sizes && sizes.length > 0) {
       where.variants_some = { internalSize: { display_in: sizes } }
     }
-
     // If client wants to sort by name, we will assume that they
     // want to sort by brand name as well
     if (orderBy.includes("name_")) {
@@ -79,12 +80,66 @@ export class ProductUtilsService {
 
   private async filters(args) {
     let brandFilter = { where: {} }
+    let categoryFilter = { where: {} }
+    let variantsFilter = { where: {} }
+
+    let paramFilters = {}
+
     if (args.brand && args.brand !== "all") {
       brandFilter = {
         where: {
           brand: { slug: args.brand },
         },
       }
+    }
+
+    if (args.bottoms && args.tops) {
+      paramFilters = {
+        variants_some: {
+          AND: [
+            { reservable_not: 0 },
+            {
+              manufacturerSizes_some: {
+                OR: [
+                  { bottom: { value_in: args.bottoms } },
+                  { top: { letter_in: args.tops } },
+                ],
+              },
+            },
+          ],
+        },
+      }
+    } else if (args.bottoms) {
+      paramFilters = {
+        variants_some: {
+          manufacturerSizes_some: { bottom: { value_in: args.bottoms } },
+        },
+      }
+    } else if (args.tops) {
+      paramFilters = {
+        variants_some: {
+          manufacturerSizes_some: { top: { letter_in: args.tops } },
+        },
+      }
+    }
+
+    // First get all variants of size
+
+    if (args.availableOnly) {
+      paramFilters = {
+        ...paramFilters,
+        ...{
+          variants_some: {
+            reservable_not: 0,
+          },
+        },
+      }
+    }
+
+    variantsFilter = {
+      where: {
+        ...paramFilters,
+      },
     }
 
     if (args.category && args.category !== "all") {
@@ -119,24 +174,34 @@ export class ProductUtilsService {
 
       const children = getChildren(args.category)
 
-      return children?.length > 0
-        ? {
-            where: {
-              ...args.where,
-              ...brandFilter.where,
-              category: { slug_in: uniq(children) },
-            },
-          }
-        : {
-            where: {
-              ...args.where,
-              ...brandFilter.where,
-              category: { slug: args.category || "" },
-            },
-          }
-    } else {
-      return brandFilter
+      categoryFilter =
+        children?.length > 0
+          ? {
+              where: {
+                ...args.where,
+                ...brandFilter.where,
+                category: { slug_in: uniq(children) },
+              },
+            }
+          : {
+              where: {
+                ...args.where,
+                ...brandFilter.where,
+                category: { slug: args.category || "" },
+              },
+            }
     }
+
+    const whereFilter = {
+      where: {
+        ...brandFilter.where,
+        ...categoryFilter.where,
+        ...variantsFilter.where,
+      },
+    }
+
+    console.log("wherefilter", whereFilter)
+    return whereFilter
   }
   async getReservedBagItems(customer) {
     const reservedBagItems = await this.prisma.binding.query.bagItems(
