@@ -1,3 +1,4 @@
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
 import {
@@ -20,9 +21,74 @@ import {
 } from "../../../prisma"
 import { ProductWithPhysicalProducts } from "../product.types"
 
+interface SizeConversion {
+  tops: { JP: any; EU: any }
+  bottoms: { JP: any; EU: any }
+}
+
 @Injectable()
 export class ProductUtilsService {
-  constructor(private readonly prisma: PrismaService) {}
+  sizeConversion: SizeConversion
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly utils: UtilsService
+  ) {
+    this.sizeConversion = this.utils.parseJSONFile(
+      "src/modules/Product/sizeConversion"
+    )
+  }
+
+  async getVariantDisplayShort(
+    manufacturerSizeIDs,
+    internalSizeID
+  ): Promise<string> {
+    const query = `{
+      id
+      display
+      bottom {
+        id
+        value
+        type
+      }
+      top {
+        id
+        letter
+      }
+    }`
+    const internalSize = await this.prisma.binding.query.size(
+      {
+        where: { id: internalSizeID },
+      },
+      query
+    )
+
+    // If top exit early because we are only using internalSizes for tops
+    if (!!internalSize.top) return internalSize.top.letter
+
+    const manufacturerSizes = await this.prisma.binding.query.sizes(
+      {
+        where: { id_in: manufacturerSizeIDs },
+      },
+      query
+    )
+    const manufacturerSize = head(manufacturerSizes)
+
+    if (manufacturerSize) {
+      const manufacturerSizeBottomType = manufacturerSize.bottom.type
+      if (
+        manufacturerSizeBottomType === "EU" ||
+        manufacturerSizeBottomType === "JP"
+      ) {
+        return this.sizeConversion.bottoms[manufacturerSizeBottomType][
+          manufacturerSize?.display
+        ]
+      } else {
+        return manufacturerSize.display
+      }
+    } else {
+      return internalSize.display
+    }
+  }
 
   async getAllCategories(prod: Product): Promise<Category[]> {
     const thisCategory = await this.prisma.client

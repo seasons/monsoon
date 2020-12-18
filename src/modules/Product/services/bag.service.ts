@@ -33,9 +33,6 @@ export class BagService {
       .plan()
       .itemCount()
 
-    console.log("bag", bag)
-    console.log("item", item)
-
     if (bag.some(i => i.productVariant?.id === item)) {
       throw new ApolloError("Item already in bag", "515")
     }

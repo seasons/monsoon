@@ -8,15 +8,25 @@ import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
 
+interface SizeConversion {
+  tops: { JP: any; EU: any }
+  bottoms: { JP: any; EU: any }
+}
+
 @Resolver("ProductVariant")
 export class ProductVariantFieldsResolver {
+  sizeConversion: SizeConversion
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService
-  ) {}
+  ) {
+    this.sizeConversion = this.utils.parseJSONFile(
+      "src/modules/Product/sizeConversion"
+    )
+  }
 
   @ResolveField()
-  async display(
+  async displayLong(
     @Parent() parent,
     @Loader({
       params: {
@@ -26,7 +36,6 @@ export class ProductVariantFieldsResolver {
           id
           internalSize {
             id
-            display
             top {
               id
               letter
@@ -45,7 +54,6 @@ export class ProductVariantFieldsResolver {
             }
             bottom {
               id
-              type
               value
             }
           }
@@ -77,50 +85,18 @@ export class ProductVariantFieldsResolver {
       }
     }
 
-    const sizeConversion = this.utils.parseJSONFile(
-      "src/modules/Product/sizeConversion"
-    )
-
-    let long = ""
-    let short = ""
-
-    const manufacturerSize = variant?.manufacturerSizes?.[0]
-    const manufacturerSizeBottomType =
-      variant?.manufacturerSizes?.[0]?.bottom?.type
+    // If top exit early because we are only using internalSizes for tops
     const internalSize = variant?.internalSize
-
-    if (
-      (!!manufacturerSize && manufacturerSizeBottomType === "EU") ||
-      manufacturerSizeBottomType === "JP"
-    ) {
-      const manufacturerToUSBottomSize =
-        sizeConversion.bottoms[manufacturerSize.bottom?.type][
-          manufacturerSize?.bottom?.value
-        ] || manufacturerSize?.bottom?.value
-      long = manufacturerToUSBottomSize
-      short = manufacturerToUSBottomSize
-    } else if (!!manufacturerSize) {
-      if (manufacturerSizeBottomType) {
-        long = shortToLongName(manufacturerSize.bottom?.value)
-        short = manufacturerSize.bottom?.value
-      } else {
-        long = shortToLongName(manufacturerSize.top?.letter)
-        short = manufacturerSize.top?.letter
-      }
-    } else if (!!internalSize?.id) {
-      if (internalSize?.bottom?.value) {
-        long = shortToLongName(
-          internalSize.bottom?.value || internalSize.display || ""
-        )
-        short = internalSize.display
-      } else {
-        const letter = internalSize.top?.letter || internalSize.display || ""
-        long = shortToLongName(letter)
-        short = letter
-      }
+    if (!!internalSize.top) {
+      return shortToLongName(internalSize.top.letter)
     }
 
-    return { long, short }
+    const manufacturerSize = variant?.manufacturerSizes?.[0]
+    if (!!manufacturerSize) {
+      return shortToLongName(manufacturerSize?.bottom?.value)
+    } else {
+      return shortToLongName(internalSize.bottom?.value)
+    }
   }
 
   @ResolveField()

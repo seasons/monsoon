@@ -59,11 +59,6 @@ type Mutation {
   ): [ProductVariant!] @hasRole(roles: [Admin])
 }
 
-type ProductVariantDisplay {
-  long: String
-  short: String
-}
-
 type ProductVariantSellable {
   id: ID!
   new: Boolean!
@@ -72,12 +67,22 @@ type ProductVariantSellable {
   usedPrice: Float
 }
 
+type Size {
+  id: ID!
+  slug: String!
+  productType: ProductType
+  top: TopSize
+  bottom: BottomSize
+  display: String!
+}
+
 type ProductVariant {
   id: ID!
   sku: String
   color: Color!
-  display: ProductVariantDisplay
-  size: String
+  size: String @deprecated(reason: "replaced with displayShort")
+  displayShort: String
+  displayLong: String
   internalSize: Size
   manufacturerSizes(
     where: SizeWhereInput

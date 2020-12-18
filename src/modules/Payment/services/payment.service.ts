@@ -952,6 +952,7 @@ export class PaymentService {
     } = await this.shippingService.shippoValidateAddress({
       name: user.firstName,
       street1: billingStreet1,
+      street2: billingStreet2,
       city: billingCity,
       state: abbrBillingState,
       zip: billingPostalCode,
