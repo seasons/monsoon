@@ -18457,6 +18457,7 @@ input ProductUpsertWithWhereUniqueWithoutTagsInput {
 type ProductVariant implements Node {
   id: ID!
   sku: String
+  displayShort: String!
   color: Color!
   internalSize: Size
   manufacturerSizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size!]
@@ -18489,6 +18490,7 @@ type ProductVariantConnection {
 input ProductVariantCreateInput {
   id: ID
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -18529,6 +18531,7 @@ input ProductVariantCreateOneWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutColorInput {
   id: ID
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -18548,6 +18551,7 @@ input ProductVariantCreateWithoutColorInput {
 input ProductVariantCreateWithoutPhysicalProductsInput {
   id: ID
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -18567,6 +18571,7 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutProductInput {
   id: ID
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -19275,6 +19280,8 @@ enum ProductVariantOrderByInput {
   id_DESC
   sku_ASC
   sku_DESC
+  displayShort_ASC
+  displayShort_DESC
   weight_ASC
   weight_DESC
   height_ASC
@@ -19304,6 +19311,7 @@ enum ProductVariantOrderByInput {
 type ProductVariantPreviousValues {
   id: ID!
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -19407,6 +19415,46 @@ input ProductVariantScalarWhereInput {
 
   """All values not ending with the given string."""
   sku_not_ends_with: String
+  displayShort: String
+
+  """All values that are not equal to given value."""
+  displayShort_not: String
+
+  """All values that are contained in given list."""
+  displayShort_in: [String!]
+
+  """All values that are not contained in given list."""
+  displayShort_not_in: [String!]
+
+  """All values less than the given value."""
+  displayShort_lt: String
+
+  """All values less than or equal the given value."""
+  displayShort_lte: String
+
+  """All values greater than the given value."""
+  displayShort_gt: String
+
+  """All values greater than or equal the given value."""
+  displayShort_gte: String
+
+  """All values containing the given string."""
+  displayShort_contains: String
+
+  """All values not containing the given string."""
+  displayShort_not_contains: String
+
+  """All values starting with the given string."""
+  displayShort_starts_with: String
+
+  """All values not starting with the given string."""
+  displayShort_not_starts_with: String
+
+  """All values ending with the given string."""
+  displayShort_ends_with: String
+
+  """All values not ending with the given string."""
+  displayShort_not_ends_with: String
   weight: Float
 
   """All values that are not equal to given value."""
@@ -19730,6 +19778,7 @@ input ProductVariantSubscriptionWhereInput {
 
 input ProductVariantUpdateDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -19749,6 +19798,7 @@ input ProductVariantUpdateDataInput {
 
 input ProductVariantUpdateInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -19768,6 +19818,7 @@ input ProductVariantUpdateInput {
 
 input ProductVariantUpdateManyDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -19782,6 +19833,7 @@ input ProductVariantUpdateManyDataInput {
 
 input ProductVariantUpdateManyMutationInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -19848,6 +19900,7 @@ input ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
 
 input ProductVariantUpdateWithoutColorDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -19866,6 +19919,7 @@ input ProductVariantUpdateWithoutColorDataInput {
 
 input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -19884,6 +19938,7 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
 
 input ProductVariantUpdateWithoutProductDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -20174,6 +20229,46 @@ input ProductVariantWhereInput {
 
   """All values not ending with the given string."""
   sku_not_ends_with: String
+  displayShort: String
+
+  """All values that are not equal to given value."""
+  displayShort_not: String
+
+  """All values that are contained in given list."""
+  displayShort_in: [String!]
+
+  """All values that are not contained in given list."""
+  displayShort_not_in: [String!]
+
+  """All values less than the given value."""
+  displayShort_lt: String
+
+  """All values less than or equal the given value."""
+  displayShort_lte: String
+
+  """All values greater than the given value."""
+  displayShort_gt: String
+
+  """All values greater than or equal the given value."""
+  displayShort_gte: String
+
+  """All values containing the given string."""
+  displayShort_contains: String
+
+  """All values not containing the given string."""
+  displayShort_not_contains: String
+
+  """All values starting with the given string."""
+  displayShort_starts_with: String
+
+  """All values not starting with the given string."""
+  displayShort_not_starts_with: String
+
+  """All values ending with the given string."""
+  displayShort_ends_with: String
+
+  """All values not ending with the given string."""
+  displayShort_not_ends_with: String
   weight: Float
 
   """All values that are not equal to given value."""
@@ -31497,6 +31592,8 @@ export type ProductVariantOrderByInput =   'id_ASC' |
   'id_DESC' |
   'sku_ASC' |
   'sku_DESC' |
+  'displayShort_ASC' |
+  'displayShort_DESC' |
   'weight_ASC' |
   'weight_DESC' |
   'height_ASC' |
@@ -39766,6 +39863,7 @@ export interface ProductUpsertWithWhereUniqueWithoutTagsInput {
 export interface ProductVariantCreateInput {
   id?: ID_Input | null
   sku?: String | null
+  displayShort: String
   weight?: Float | null
   height?: Float | null
   productID: String
@@ -39806,6 +39904,7 @@ export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
 export interface ProductVariantCreateWithoutColorInput {
   id?: ID_Input | null
   sku?: String | null
+  displayShort: String
   weight?: Float | null
   height?: Float | null
   productID: String
@@ -39825,6 +39924,7 @@ export interface ProductVariantCreateWithoutColorInput {
 export interface ProductVariantCreateWithoutPhysicalProductsInput {
   id?: ID_Input | null
   sku?: String | null
+  displayShort: String
   weight?: Float | null
   height?: Float | null
   productID: String
@@ -39844,6 +39944,7 @@ export interface ProductVariantCreateWithoutPhysicalProductsInput {
 export interface ProductVariantCreateWithoutProductInput {
   id?: ID_Input | null
   sku?: String | null
+  displayShort: String
   weight?: Float | null
   height?: Float | null
   productID: String
@@ -40242,6 +40343,20 @@ export interface ProductVariantScalarWhereInput {
   sku_not_starts_with?: String | null
   sku_ends_with?: String | null
   sku_not_ends_with?: String | null
+  displayShort?: String | null
+  displayShort_not?: String | null
+  displayShort_in?: String[] | String | null
+  displayShort_not_in?: String[] | String | null
+  displayShort_lt?: String | null
+  displayShort_lte?: String | null
+  displayShort_gt?: String | null
+  displayShort_gte?: String | null
+  displayShort_contains?: String | null
+  displayShort_not_contains?: String | null
+  displayShort_starts_with?: String | null
+  displayShort_not_starts_with?: String | null
+  displayShort_ends_with?: String | null
+  displayShort_not_ends_with?: String | null
   weight?: Float | null
   weight_not?: Float | null
   weight_in?: Float[] | Float | null
@@ -40359,6 +40474,7 @@ export interface ProductVariantSubscriptionWhereInput {
 
 export interface ProductVariantUpdateDataInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -40378,6 +40494,7 @@ export interface ProductVariantUpdateDataInput {
 
 export interface ProductVariantUpdateInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -40397,6 +40514,7 @@ export interface ProductVariantUpdateInput {
 
 export interface ProductVariantUpdateManyDataInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -40411,6 +40529,7 @@ export interface ProductVariantUpdateManyDataInput {
 
 export interface ProductVariantUpdateManyMutationInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -40477,6 +40596,7 @@ export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
 
 export interface ProductVariantUpdateWithoutColorDataInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -40495,6 +40615,7 @@ export interface ProductVariantUpdateWithoutColorDataInput {
 
 export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -40513,6 +40634,7 @@ export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
 
 export interface ProductVariantUpdateWithoutProductDataInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -40649,6 +40771,20 @@ export interface ProductVariantWhereInput {
   sku_not_starts_with?: String | null
   sku_ends_with?: String | null
   sku_not_ends_with?: String | null
+  displayShort?: String | null
+  displayShort_not?: String | null
+  displayShort_in?: String[] | String | null
+  displayShort_not_in?: String[] | String | null
+  displayShort_lt?: String | null
+  displayShort_lte?: String | null
+  displayShort_gt?: String | null
+  displayShort_gte?: String | null
+  displayShort_contains?: String | null
+  displayShort_not_contains?: String | null
+  displayShort_starts_with?: String | null
+  displayShort_not_starts_with?: String | null
+  displayShort_ends_with?: String | null
+  displayShort_not_ends_with?: String | null
   weight?: Float | null
   weight_not?: Float | null
   weight_in?: Float[] | Float | null
@@ -47204,6 +47340,7 @@ export interface ProductSubscriptionPayload {
 export interface ProductVariant extends Node {
   id: ID_Output
   sku?: String | null
+  displayShort: String
   color: Color
   internalSize?: Size | null
   manufacturerSizes?: Array<Size> | null
@@ -47327,6 +47464,7 @@ export interface ProductVariantFeedbackSubscriptionPayload {
 export interface ProductVariantPreviousValues {
   id: ID_Output
   sku?: String | null
+  displayShort: String
   weight?: Float | null
   height?: Float | null
   productID: String

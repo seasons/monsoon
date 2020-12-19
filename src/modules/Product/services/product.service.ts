@@ -770,7 +770,13 @@ export class ProductService {
       type
     )
 
+    const displayShort = await this.productUtils.getVariantDisplayShort(
+      manufacturerSizeIDs,
+      internalSize.id
+    )
+
     const data = {
+      displayShort,
       productID,
       product: { connect: { slug: productID } },
       color: {

@@ -418,6 +418,7 @@ type ProductFunction {
 type ProductVariant {
   id: ID! @id
   sku: String @unique
+  displayShort: String!
   color: Color!
   internalSize: Size @relation(name: "ProductVariantSize")
   manufacturerSizes: [Size!] @relation(name: "ProductVariantManufacturerSize")
