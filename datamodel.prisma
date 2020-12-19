@@ -1057,7 +1057,6 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
-  displayLong: String
 }
 
 # Helper table for audit logs. Should only ever have 0 or 1 records.
