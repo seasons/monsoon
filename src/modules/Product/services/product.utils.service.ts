@@ -113,7 +113,6 @@ export class ProductUtilsService {
   }
 
   async queryOptionsForProducts(args) {
-    console.log("args1", args)
     const category = args.category || "all"
     const brand = args.brand || "all"
     const orderBy = args.orderBy || "createdAt_DESC"
