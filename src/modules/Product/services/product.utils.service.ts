@@ -217,12 +217,12 @@ export class ProductUtilsService {
           OR: [
             {
               manufacturerSizes_every: {
-                productType: "Tops",
+                productType: "Top",
               },
             },
             {
               internalSize: {
-                productType: "Tops",
+                productType: "Top",
               },
             },
           ],
