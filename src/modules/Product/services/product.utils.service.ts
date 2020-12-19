@@ -80,7 +80,7 @@ export class ProductUtilsService {
         manufacturerSizeBottomType === "JP"
       ) {
         return this.sizeConversion.bottoms[manufacturerSizeBottomType][
-          manufacturerSize?.display
+          manufacturerSize?.bottom.value
         ]
       } else {
         return manufacturerSize.display
