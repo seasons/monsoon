@@ -233,6 +233,10 @@ export class ProductUtilsService {
           AND: andArray,
         },
       }
+    } else if (args.availableOnly) {
+      paramFilters = {
+        variants_some: { reservable_not: 0 },
+      }
     }
 
     variantsFilter = {
