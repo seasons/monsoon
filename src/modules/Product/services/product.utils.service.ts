@@ -159,45 +159,79 @@ export class ProductUtilsService {
       }
     }
 
+    const andArray = []
+
+    if (args.availableOnly) {
+      andArray.push({ reservable_not: 0 })
+    }
+
     if (args.bottoms && args.tops) {
-      paramFilters = {
-        variants_some: {
-          AND: [
-            { reservable_not: 0 },
+      andArray.push(
+        { displayShort_in: [...args.bottoms, ...args.tops] },
+        {
+          OR: [
             {
               manufacturerSizes_some: {
-                OR: [
-                  { bottom: { value_in: args.bottoms } },
-                  { top: { letter_in: args.tops } },
-                ],
+                productType_in: ["Bottom", "Top"],
+              },
+            },
+            {
+              internalSize: {
+                productType_in: ["Bottom", "Top"],
               },
             },
           ],
+        }
+      )
+      paramFilters = {
+        variants_some: {
+          AND: andArray,
         },
       }
     } else if (args.bottoms) {
+      andArray.push(
+        { displayShort_in: args.bottoms },
+        {
+          OR: [
+            {
+              manufacturerSizes_every: {
+                productType: "Bottom",
+              },
+            },
+            {
+              internalSize: {
+                productType: "Bottom",
+              },
+            },
+          ],
+        }
+      )
       paramFilters = {
         variants_some: {
-          manufacturerSizes_some: { bottom: { value_in: args.bottoms } },
+          AND: andArray,
         },
       }
     } else if (args.tops) {
+      andArray.push(
+        { displayShort_in: args.tops },
+        {
+          OR: [
+            {
+              manufacturerSizes_every: {
+                productType: "Tops",
+              },
+            },
+            {
+              internalSize: {
+                productType: "Tops",
+              },
+            },
+          ],
+        }
+      )
       paramFilters = {
         variants_some: {
-          manufacturerSizes_some: { top: { letter_in: args.tops } },
-        },
-      }
-    }
-
-    // First get all variants of size
-
-    if (args.availableOnly) {
-      paramFilters = {
-        ...paramFilters,
-        ...{
-          variants_some: {
-            reservable_not: 0,
-          },
+          AND: andArray,
         },
       }
     }
