@@ -295,16 +295,13 @@ export class ProductUtilsService {
             }
     }
 
-    const whereFilter = {
+    return {
       where: {
         ...brandFilter.where,
         ...categoryFilter.where,
         ...variantsFilter.where,
       },
     }
-
-    console.log("wherefilter", whereFilter)
-    return whereFilter
   }
   async getReservedBagItems(customer) {
     const reservedBagItems = await this.prisma.binding.query.bagItems(
