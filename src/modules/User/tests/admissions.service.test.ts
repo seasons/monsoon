@@ -371,7 +371,6 @@ describe("Admissions Service", () => {
 
     beforeEach(async () => {
       for (const testProdToCreate of allTestProductsToCreate) {
-        console.log("testProdToCreate", testProdToCreate)
         const { cleanupFunc } = await testUtils.createTestProduct(
           testProdToCreate
         )
