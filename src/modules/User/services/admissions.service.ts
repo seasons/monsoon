@@ -243,21 +243,12 @@ export class AdmissionsService {
     )
 
     let sizesKey
-    let internalSizeWhereInputCreateFunc
     switch (productType) {
       case "Top":
         sizesKey = "topSizes"
-        internalSizeWhereInputCreateFunc = sizes => ({
-          top: {
-            letter_in: sizes,
-          },
-        })
         break
       case "Bottom":
         sizesKey = "waistSizes"
-        internalSizeWhereInputCreateFunc = sizes => ({
-          display_in: sizes.map(a => `${a}`), // typecasting,
-        })
         break
       default:
         throw new Error(`Invalid product type: ${productType}`)
@@ -273,9 +264,7 @@ export class AdmissionsService {
               variants_some: {
                 AND: [
                   {
-                    internalSize: internalSizeWhereInputCreateFunc(
-                      preferredSizes
-                    ),
+                    displayShort_in: preferredSizes,
                   },
                   { reservable_gte: 1 },
                 ],

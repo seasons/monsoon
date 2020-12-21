@@ -92,6 +92,7 @@ export class TestUtilsService {
             nonReservable: this.getInventoryStatusCount(v, "NonReservable"),
             offloaded: this.getInventoryStatusCount(v, "Offloaded"),
             stored: this.getInventoryStatusCount(v, "Stored"),
+            displayShort: "M",
             internalSize,
             physicalProducts: {
               create: v.physicalProducts.map(
