@@ -21,9 +21,12 @@ import {
 } from "../../../prisma"
 import { ProductWithPhysicalProducts } from "../product.types"
 
+type JPSize = "0" | "1" | "2" | "3" | "4"
+type EUSize = "28" | "30" | "32" | "34" | "36" | "38" | "40" | "42"
+
 interface SizeConversion {
-  tops: { JP: any; EU: any }
-  bottoms: { JP: any; EU: any }
+  tops: { JP: JPSize; EU: EUSize }
+  bottoms: { JP: JPSize; EU: EUSize }
 }
 
 @Injectable()
