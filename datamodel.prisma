@@ -419,7 +419,6 @@ type ProductVariant {
   id: ID! @id
   sku: String @unique
   displayShort: String!
-  type: ProductType!
   color: Color!
   internalSize: Size @relation(name: "ProductVariantSize")
   manufacturerSizes: [Size!] @relation(name: "ProductVariantManufacturerSize")
