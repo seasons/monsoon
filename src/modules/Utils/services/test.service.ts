@@ -74,7 +74,7 @@ export class TestUtilsService {
             nonReservable: this.getInventoryStatusCount(v, "NonReservable"),
             offloaded: this.getInventoryStatusCount(v, "Offloaded"),
             stored: this.getInventoryStatusCount(v, "Stored"),
-            displayShort: v.displayShort,
+            displayShort: v.displayShort ?? "M",
             physicalProducts: {
               create: v.physicalProducts.map(
                 (pp: CreateTestPhysicalProductInput) => ({
