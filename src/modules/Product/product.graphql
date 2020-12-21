@@ -73,6 +73,9 @@ type Query {
     last: Int
   ): [Product]!
   productsConnection(
+    tops: [String]
+    bottoms: [String]
+    availableOnly: Boolean
     sizes: [String!]
     category: String
     brand: String

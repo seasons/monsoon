@@ -2963,6 +2963,8 @@ export type ProductVariantOrderByInput =
   | "id_DESC"
   | "sku_ASC"
   | "sku_DESC"
+  | "displayShort_ASC"
+  | "displayShort_DESC"
   | "weight_ASC"
   | "weight_DESC"
   | "height_ASC"
@@ -4816,6 +4818,20 @@ export interface ProductVariantWhereInput {
   sku_not_starts_with?: Maybe<String>;
   sku_ends_with?: Maybe<String>;
   sku_not_ends_with?: Maybe<String>;
+  displayShort?: Maybe<String>;
+  displayShort_not?: Maybe<String>;
+  displayShort_in?: Maybe<String[] | String>;
+  displayShort_not_in?: Maybe<String[] | String>;
+  displayShort_lt?: Maybe<String>;
+  displayShort_lte?: Maybe<String>;
+  displayShort_gt?: Maybe<String>;
+  displayShort_gte?: Maybe<String>;
+  displayShort_contains?: Maybe<String>;
+  displayShort_not_contains?: Maybe<String>;
+  displayShort_starts_with?: Maybe<String>;
+  displayShort_not_starts_with?: Maybe<String>;
+  displayShort_ends_with?: Maybe<String>;
+  displayShort_not_ends_with?: Maybe<String>;
   color?: Maybe<ColorWhereInput>;
   internalSize?: Maybe<SizeWhereInput>;
   manufacturerSizes_every?: Maybe<SizeWhereInput>;
@@ -8894,6 +8910,7 @@ export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
 export interface ProductVariantCreateWithoutPhysicalProductsInput {
   id?: Maybe<ID_Input>;
   sku?: Maybe<String>;
+  displayShort: String;
   color: ColorCreateOneWithoutProductVariantsInput;
   internalSize?: Maybe<SizeCreateOneInput>;
   manufacturerSizes?: Maybe<SizeCreateManyInput>;
@@ -9144,6 +9161,7 @@ export interface ProductVariantCreateManyWithoutColorInput {
 export interface ProductVariantCreateWithoutColorInput {
   id?: Maybe<ID_Input>;
   sku?: Maybe<String>;
+  displayShort: String;
   internalSize?: Maybe<SizeCreateOneInput>;
   manufacturerSizes?: Maybe<SizeCreateManyInput>;
   weight?: Maybe<Float>;
@@ -9362,6 +9380,7 @@ export interface ProductVariantCreateManyWithoutProductInput {
 export interface ProductVariantCreateWithoutProductInput {
   id?: Maybe<ID_Input>;
   sku?: Maybe<String>;
+  displayShort: String;
   color: ColorCreateOneWithoutProductVariantsInput;
   internalSize?: Maybe<SizeCreateOneInput>;
   manufacturerSizes?: Maybe<SizeCreateManyInput>;
@@ -10367,6 +10386,7 @@ export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
 
 export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
   sku?: Maybe<String>;
+  displayShort?: Maybe<String>;
   color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>;
   internalSize?: Maybe<SizeUpdateOneInput>;
   manufacturerSizes?: Maybe<SizeUpdateManyInput>;
@@ -10954,6 +10974,7 @@ export interface ProductVariantUpdateWithWhereUniqueWithoutColorInput {
 
 export interface ProductVariantUpdateWithoutColorDataInput {
   sku?: Maybe<String>;
+  displayShort?: Maybe<String>;
   internalSize?: Maybe<SizeUpdateOneInput>;
   manufacturerSizes?: Maybe<SizeUpdateManyInput>;
   weight?: Maybe<Float>;
@@ -11559,6 +11580,20 @@ export interface ProductVariantScalarWhereInput {
   sku_not_starts_with?: Maybe<String>;
   sku_ends_with?: Maybe<String>;
   sku_not_ends_with?: Maybe<String>;
+  displayShort?: Maybe<String>;
+  displayShort_not?: Maybe<String>;
+  displayShort_in?: Maybe<String[] | String>;
+  displayShort_not_in?: Maybe<String[] | String>;
+  displayShort_lt?: Maybe<String>;
+  displayShort_lte?: Maybe<String>;
+  displayShort_gt?: Maybe<String>;
+  displayShort_gte?: Maybe<String>;
+  displayShort_contains?: Maybe<String>;
+  displayShort_not_contains?: Maybe<String>;
+  displayShort_starts_with?: Maybe<String>;
+  displayShort_not_starts_with?: Maybe<String>;
+  displayShort_ends_with?: Maybe<String>;
+  displayShort_not_ends_with?: Maybe<String>;
   weight?: Maybe<Float>;
   weight_not?: Maybe<Float>;
   weight_in?: Maybe<Float[] | Float>;
@@ -11677,6 +11712,7 @@ export interface ProductVariantUpdateManyWithWhereNestedInput {
 
 export interface ProductVariantUpdateManyDataInput {
   sku?: Maybe<String>;
+  displayShort?: Maybe<String>;
   weight?: Maybe<Float>;
   height?: Maybe<Float>;
   productID?: Maybe<String>;
@@ -11979,6 +12015,7 @@ export interface ProductVariantUpdateWithWhereUniqueWithoutProductInput {
 
 export interface ProductVariantUpdateWithoutProductDataInput {
   sku?: Maybe<String>;
+  displayShort?: Maybe<String>;
   color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>;
   internalSize?: Maybe<SizeUpdateOneInput>;
   manufacturerSizes?: Maybe<SizeUpdateManyInput>;
@@ -13072,6 +13109,7 @@ export interface ProductVariantCreateOneInput {
 export interface ProductVariantCreateInput {
   id?: Maybe<ID_Input>;
   sku?: Maybe<String>;
+  displayShort: String;
   color: ColorCreateOneWithoutProductVariantsInput;
   internalSize?: Maybe<SizeCreateOneInput>;
   manufacturerSizes?: Maybe<SizeCreateManyInput>;
@@ -13886,6 +13924,7 @@ export interface ProductVariantUpdateOneRequiredInput {
 
 export interface ProductVariantUpdateDataInput {
   sku?: Maybe<String>;
+  displayShort?: Maybe<String>;
   color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>;
   internalSize?: Maybe<SizeUpdateOneInput>;
   manufacturerSizes?: Maybe<SizeUpdateManyInput>;
@@ -16250,6 +16289,7 @@ export interface ProductSeasonUpdateManyMutationInput {
 
 export interface ProductVariantUpdateInput {
   sku?: Maybe<String>;
+  displayShort?: Maybe<String>;
   color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>;
   internalSize?: Maybe<SizeUpdateOneInput>;
   manufacturerSizes?: Maybe<SizeUpdateManyInput>;
@@ -16269,6 +16309,7 @@ export interface ProductVariantUpdateInput {
 
 export interface ProductVariantUpdateManyMutationInput {
   sku?: Maybe<String>;
+  displayShort?: Maybe<String>;
   weight?: Maybe<Float>;
   height?: Maybe<Float>;
   productID?: Maybe<String>;
@@ -19517,6 +19558,7 @@ export interface PhysicalProductNullablePromise
 export interface ProductVariant {
   id: ID_Output;
   sku?: String;
+  displayShort: String;
   weight?: Float;
   height?: Float;
   productID: String;
@@ -19536,6 +19578,7 @@ export interface ProductVariantPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   sku: () => Promise<String>;
+  displayShort: () => Promise<String>;
   color: <T = ColorPromise>() => T;
   internalSize: <T = SizePromise>() => T;
   manufacturerSizes: <T = FragmentableArray<Size>>(args?: {
@@ -19576,6 +19619,7 @@ export interface ProductVariantSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   sku: () => Promise<AsyncIterator<String>>;
+  displayShort: () => Promise<AsyncIterator<String>>;
   color: <T = ColorSubscription>() => T;
   internalSize: <T = SizeSubscription>() => T;
   manufacturerSizes: <T = Promise<AsyncIterator<SizeSubscription>>>(args?: {
@@ -19618,6 +19662,7 @@ export interface ProductVariantNullablePromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   sku: () => Promise<String>;
+  displayShort: () => Promise<String>;
   color: <T = ColorPromise>() => T;
   internalSize: <T = SizePromise>() => T;
   manufacturerSizes: <T = FragmentableArray<Size>>(args?: {
@@ -28252,6 +28297,7 @@ export interface ProductVariantSubscriptionPayloadSubscription
 export interface ProductVariantPreviousValues {
   id: ID_Output;
   sku?: String;
+  displayShort: String;
   weight?: Float;
   height?: Float;
   productID: String;
@@ -28271,6 +28317,7 @@ export interface ProductVariantPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   sku: () => Promise<String>;
+  displayShort: () => Promise<String>;
   weight: () => Promise<Float>;
   height: () => Promise<Float>;
   productID: () => Promise<String>;
@@ -28290,6 +28337,7 @@ export interface ProductVariantPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   sku: () => Promise<AsyncIterator<String>>;
+  displayShort: () => Promise<AsyncIterator<String>>;
   weight: () => Promise<AsyncIterator<Float>>;
   height: () => Promise<AsyncIterator<Float>>;
   productID: () => Promise<AsyncIterator<String>>;

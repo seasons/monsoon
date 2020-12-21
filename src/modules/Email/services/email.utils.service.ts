@@ -3,6 +3,7 @@ import { ImageService } from "@app/modules/Image/services/image.service"
 import { ID_Input, LetterSize, Product, User } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { ProductGridItem } from "@seasons/wind"
+import { String } from "aws-sdk/clients/apigateway"
 import { head, pick, sampleSize, uniq } from "lodash"
 
 import { PrismaService } from "../../../prisma/prisma.service"
@@ -28,10 +29,7 @@ export class EmailUtilsService {
   }
   retailPrice
   variants {
-    internalSize {
-        productType
-        display
-    }
+    displayShort
   }
   images {
     url
@@ -115,9 +113,7 @@ export class EmailUtilsService {
     product: any
   ): Promise<MonsoonProductGridItem> => {
     const letterSizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"]
-    let sizes = uniq(
-      product.variants?.map(b => b.internalSize?.display)
-    ) as LetterSize[]
+    let sizes = uniq(product.variants?.map(b => b.displayShort)) as string[]
     if (product.type === "Top") {
       sizes = sizes.sort((size1, size2) => {
         return letterSizes.indexOf(size1) - letterSizes.indexOf(size2)

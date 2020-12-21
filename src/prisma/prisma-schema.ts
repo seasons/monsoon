@@ -10801,6 +10801,7 @@ input ProductUpsertWithWhereUniqueWithoutTagsInput {
 type ProductVariant {
   id: ID!
   sku: String
+  displayShort: String!
   color: Color!
   internalSize: Size
   manufacturerSizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size!]
@@ -10829,6 +10830,7 @@ type ProductVariantConnection {
 input ProductVariantCreateInput {
   id: ID
   sku: String
+  displayShort: String!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -10869,6 +10871,7 @@ input ProductVariantCreateOneWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutColorInput {
   id: ID
   sku: String
+  displayShort: String!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
   weight: Float
@@ -10888,6 +10891,7 @@ input ProductVariantCreateWithoutColorInput {
 input ProductVariantCreateWithoutPhysicalProductsInput {
   id: ID
   sku: String
+  displayShort: String!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -10907,6 +10911,7 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutProductInput {
   id: ID
   sku: String
+  displayShort: String!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -11365,6 +11370,8 @@ enum ProductVariantOrderByInput {
   id_DESC
   sku_ASC
   sku_DESC
+  displayShort_ASC
+  displayShort_DESC
   weight_ASC
   weight_DESC
   height_ASC
@@ -11394,6 +11401,7 @@ enum ProductVariantOrderByInput {
 type ProductVariantPreviousValues {
   id: ID!
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -11437,6 +11445,20 @@ input ProductVariantScalarWhereInput {
   sku_not_starts_with: String
   sku_ends_with: String
   sku_not_ends_with: String
+  displayShort: String
+  displayShort_not: String
+  displayShort_in: [String!]
+  displayShort_not_in: [String!]
+  displayShort_lt: String
+  displayShort_lte: String
+  displayShort_gt: String
+  displayShort_gte: String
+  displayShort_contains: String
+  displayShort_not_contains: String
+  displayShort_starts_with: String
+  displayShort_not_starts_with: String
+  displayShort_ends_with: String
+  displayShort_not_ends_with: String
   weight: Float
   weight_not: Float
   weight_in: [Float!]
@@ -11564,6 +11586,7 @@ input ProductVariantSubscriptionWhereInput {
 
 input ProductVariantUpdateDataInput {
   sku: String
+  displayShort: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11583,6 +11606,7 @@ input ProductVariantUpdateDataInput {
 
 input ProductVariantUpdateInput {
   sku: String
+  displayShort: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11602,6 +11626,7 @@ input ProductVariantUpdateInput {
 
 input ProductVariantUpdateManyDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -11616,6 +11641,7 @@ input ProductVariantUpdateManyDataInput {
 
 input ProductVariantUpdateManyMutationInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -11682,6 +11708,7 @@ input ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
 
 input ProductVariantUpdateWithoutColorDataInput {
   sku: String
+  displayShort: String
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
   weight: Float
@@ -11700,6 +11727,7 @@ input ProductVariantUpdateWithoutColorDataInput {
 
 input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   sku: String
+  displayShort: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11718,6 +11746,7 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
 
 input ProductVariantUpdateWithoutProductDataInput {
   sku: String
+  displayShort: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11888,6 +11917,20 @@ input ProductVariantWhereInput {
   sku_not_starts_with: String
   sku_ends_with: String
   sku_not_ends_with: String
+  displayShort: String
+  displayShort_not: String
+  displayShort_in: [String!]
+  displayShort_not_in: [String!]
+  displayShort_lt: String
+  displayShort_lte: String
+  displayShort_gt: String
+  displayShort_gte: String
+  displayShort_contains: String
+  displayShort_not_contains: String
+  displayShort_starts_with: String
+  displayShort_not_starts_with: String
+  displayShort_ends_with: String
+  displayShort_not_ends_with: String
   color: ColorWhereInput
   internalSize: SizeWhereInput
   manufacturerSizes_every: SizeWhereInput

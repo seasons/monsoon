@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Dec 15 2020 17:08:23 GMT-0500 (Eastern Standard Time)
+# timestamp: Fri Dec 18 2020 15:44:48 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -25439,6 +25439,7 @@ input ProductUpsertWithWhereUniqueWithoutTagsInput {
 type ProductVariant implements Node {
   id: ID!
   sku: String
+  displayShort: String!
   color: Color!
   internalSize: Size
   manufacturerSizes(
@@ -25493,6 +25494,7 @@ type ProductVariantConnection {
 input ProductVariantCreateInput {
   id: ID
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -25533,6 +25535,7 @@ input ProductVariantCreateOneWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutColorInput {
   id: ID
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -25552,6 +25555,7 @@ input ProductVariantCreateWithoutColorInput {
 input ProductVariantCreateWithoutPhysicalProductsInput {
   id: ID
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -25571,6 +25575,7 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutProductInput {
   id: ID
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -26529,6 +26534,8 @@ enum ProductVariantOrderByInput {
   id_DESC
   sku_ASC
   sku_DESC
+  displayShort_ASC
+  displayShort_DESC
   weight_ASC
   weight_DESC
   height_ASC
@@ -26558,6 +26565,7 @@ enum ProductVariantOrderByInput {
 type ProductVariantPreviousValues {
   id: ID!
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -26719,6 +26727,72 @@ input ProductVariantScalarWhereInput {
   All values not ending with the given string.
   """
   sku_not_ends_with: String
+  displayShort: String
+
+  """
+  All values that are not equal to given value.
+  """
+  displayShort_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  displayShort_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  displayShort_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  displayShort_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  displayShort_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  displayShort_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  displayShort_gte: String
+
+  """
+  All values containing the given string.
+  """
+  displayShort_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  displayShort_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  displayShort_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  displayShort_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  displayShort_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  displayShort_not_ends_with: String
   weight: Float
 
   """
@@ -27230,6 +27304,7 @@ input ProductVariantSubscriptionWhereInput {
 
 input ProductVariantUpdateDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -27249,6 +27324,7 @@ input ProductVariantUpdateDataInput {
 
 input ProductVariantUpdateInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -27268,6 +27344,7 @@ input ProductVariantUpdateInput {
 
 input ProductVariantUpdateManyDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -27282,6 +27359,7 @@ input ProductVariantUpdateManyDataInput {
 
 input ProductVariantUpdateManyMutationInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -27348,6 +27426,7 @@ input ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
 
 input ProductVariantUpdateWithoutColorDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -27366,6 +27445,7 @@ input ProductVariantUpdateWithoutColorDataInput {
 
 input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -27384,6 +27464,7 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
 
 input ProductVariantUpdateWithoutProductDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -27786,6 +27867,72 @@ input ProductVariantWhereInput {
   All values not ending with the given string.
   """
   sku_not_ends_with: String
+  displayShort: String
+
+  """
+  All values that are not equal to given value.
+  """
+  displayShort_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  displayShort_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  displayShort_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  displayShort_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  displayShort_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  displayShort_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  displayShort_gte: String
+
+  """
+  All values containing the given string.
+  """
+  displayShort_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  displayShort_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  displayShort_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  displayShort_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  displayShort_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  displayShort_not_ends_with: String
   weight: Float
 
   """
