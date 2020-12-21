@@ -79,7 +79,7 @@ export class ProductUtilsService {
         manufacturerSizeBottomType === "EU" ||
         manufacturerSizeBottomType === "JP"
       ) {
-        return this.sizeConversion.bottoms[manufacturerSizeBottomType][
+        return this.sizeConversion.bottoms?.[manufacturerSizeBottomType][
           manufacturerSize?.bottom.value
         ]
       } else {

@@ -8,9 +8,12 @@ import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
 
+type EUSize = "44" | "46" | "48" | "50" | "52" | "54" | "56"
+type JPSize = "0" | "1" | "2" | "3" | "4"
+
 interface SizeConversion {
-  tops: { JP: any; EU: any }
-  bottoms: { JP: any; EU: any }
+  tops: { JP: JPSize; EU: EUSize }
+  bottoms: { JP: JPSize; EU: EUSize }
 }
 
 @Resolver("ProductVariant")

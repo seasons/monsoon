@@ -66,7 +66,7 @@ const run = async () => {
         manufacturerSizeBottomType === "JP"
       ) {
         displayShort =
-          sizeConversion.bottoms[manufacturerSizeBottomType][
+          sizeConversion.bottoms?.[manufacturerSizeBottomType][
             manufacturerSize?.bottom?.value
           ]
       } else {
