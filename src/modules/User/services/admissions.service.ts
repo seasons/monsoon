@@ -264,7 +264,9 @@ export class AdmissionsService {
               variants_some: {
                 AND: [
                   {
-                    displayShort_in: preferredSizes,
+                    displayShort_in: preferredSizes.map(size =>
+                      size.toString()
+                    ),
                   },
                   { reservable_gte: 1 },
                 ],
@@ -283,10 +285,7 @@ export class AdmissionsService {
           url
         }
         variants {
-          internalSize {
-            productType
-            display
-          }
+          displayShort
         }
         brand {
           name
