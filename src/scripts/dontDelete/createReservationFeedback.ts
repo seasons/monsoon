@@ -43,11 +43,12 @@ const run = async () => {
   const pushNotificationService = new PushNotificationService(
     pusher,
     pushNotifData,
-    ps
+    ps,
+    error
   )
   const emailUtils = new EmailUtilsService(ps, error, image)
-  const productUtils = new ProductUtilsService(ps)
   const utilsService = new UtilsService(ps)
+  const productUtils = new ProductUtilsService(ps, utilsService)
   const physicalProductUtilsService = new PhysicalProductUtilsService(
     ps,
     productUtils
@@ -62,7 +63,13 @@ const run = async () => {
   const admissionsService = new AdmissionsService(ps, utilsService)
   const segmentService = new SegmentService()
   const email = new EmailService(ps, utilsService, emailUtils)
-  const authService = new AuthService(ps, pushNotificationService, email, error)
+  const authService = new AuthService(
+    ps,
+    pushNotificationService,
+    email,
+    error,
+    utilsService
+  )
   const customerService = new CustomerService(
     authService,
     ps,
@@ -82,9 +89,15 @@ const run = async () => {
     paymentUtils,
     ps,
     utils,
-    segmentService
+    segmentService,
+    error
   )
-  const pushNotifs = new PushNotificationService(pusher, pushNotifData, ps)
+  const pushNotifs = new PushNotificationService(
+    pusher,
+    pushNotifData,
+    ps,
+    error
+  )
   const reservationUtils = new ReservationUtilsService(ps, shippingService)
   const reservationService = new ReservationService(
     ps,
@@ -95,10 +108,11 @@ const run = async () => {
     shippingService,
     email,
     pushNotifs,
-    reservationUtils
+    reservationUtils,
+    error
   )
 
-  const productVariantIDs = ["ck2zecdy20ue70734v3vpvigw"]
+  const productVariantIDs = ["ck2zeb50o0sg40734uiklm294"]
 
   const returnedPhysicalProducts = await ps.client.productVariants({
     where: {
@@ -106,9 +120,9 @@ const run = async () => {
     },
   })
 
-  const prismaUser = await ps.client.user({ id: "ckhw4wz1j001107707nvr0rvu" })
+  const prismaUser = await ps.client.user({ id: "ckizzh70v0ady0791f6pjjqmu" })
   const reservation = await ps.client.reservation({
-    id: "ckhwaveyk028h0770cmjuxcda",
+    id: "ck2zfwoud11xv07341va25mew",
   })
 
   await reservationService.createReservationFeedbacksForVariants(
