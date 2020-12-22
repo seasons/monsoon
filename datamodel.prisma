@@ -355,6 +355,7 @@ type Product {
   slug: String! @unique
   name: String!
   brand: Brand!
+  productFit: ProductFit
   category: Category!
   type: ProductType
   description: String
@@ -417,6 +418,7 @@ type ProductFunction {
 type ProductVariant {
   id: ID! @id
   sku: String @unique
+  displayShort: String!
   color: Color!
   internalSize: Size @relation(name: "ProductVariantSize")
   manufacturerSizes: [Size!] @relation(name: "ProductVariantManufacturerSize")
@@ -437,6 +439,14 @@ type ProductVariant {
   updatedAt: DateTime! @updatedAt
 }
 
+type PhysicalProductSellable {
+  id: ID! @id
+  new: Boolean! @default(value: false)
+  newPrice: Float
+  used: Boolean! @default(value: false)
+  usedPrice: Float
+}
+
 type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
@@ -452,7 +462,7 @@ type PhysicalProduct {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean @default(value: false)
+  sellable: PhysicalProductSellable
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -468,6 +478,12 @@ type ProductNotification {
   shouldNotify: Boolean! @default(value: true)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+enum ProductFit {
+  RunsBig
+  TrueToSize
+  RunsSmall
 }
 
 enum ProductNotificationType {

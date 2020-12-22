@@ -290,6 +290,16 @@ export class UserCommands {
       })
     }
 
+    // Make sure we always update these
+    await this.prisma.client.updateCustomer({
+      where: { id: customer.id },
+      data: { status },
+    })
+    await this.prisma.client.updateUser({
+      where: { id: user.id },
+      data: { roles: { set: roles } },
+    })
+
     this.logger.log(`Success!`)
     this.logger.log(`Access token: ${tokenData.access_token}`)
     this.logger.log(`Email: ${email}`)

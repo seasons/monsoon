@@ -6,7 +6,7 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
-import { head } from "lodash"
+import { head, pick } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
 
@@ -15,13 +15,11 @@ export type ChargebeeEvent = {
   event_type: string
 }
 
+// For a full list of webhook types, see https://apidocs.chargebee.com/docs/api/events#event_types
 const CHARGEBEE_CUSTOMER_CHANGED = "customer_changed"
 const CHARGEBEE_SUBSCRIPTION_CREATED = "subscription_created"
+const CHARGEBEE_PAYMENT_SUCCEEDED = "payment_succeeded"
 
-/**
- * DEPRECATED
- * These hooks were necesarry for the the chargebee client checkout webview
- */
 @Controller("chargebee_events")
 export class ChargebeeController {
   constructor(
@@ -42,7 +40,48 @@ export class ChargebeeController {
       case CHARGEBEE_CUSTOMER_CHANGED:
         await this.chargebeeCustomerChanged(body.content)
         break
+      case CHARGEBEE_PAYMENT_SUCCEEDED:
+        await this.chargebeePaymentSucceeded(body.content)
+        break
     }
+  }
+
+  private async chargebeePaymentSucceeded(content: any) {
+    const { subscription, customer, transaction } = content
+    const custWithData: any = head(
+      await this.prisma.binding.query.customers(
+        { where: { user: { id: customer.id } } },
+        `
+        {
+          user {
+            id
+            firstName
+            lastName
+            email
+          }
+          utm {
+            source
+            medium
+            campaign
+            term
+            content
+          }
+        }
+      `
+      )
+    )
+    this.segment.track(customer.id, "Completed Transaction", {
+      ...pick(custWithData.user, ["firstName", "lastName", "email"]),
+      transactionID: transaction.id,
+      ...(!!subscription
+        ? { coupons: subscription.coupons, subscriptionID: subscription.id }
+        : {}),
+      paymentMethod: transaction.payment_method,
+      gateway: transaction.gateway,
+      transactionType: transaction.type,
+      amount: transaction.amount,
+      ...this.utils.formatUTMForSegment(custWithData.utm),
+    })
   }
 
   private async chargebeeSubscriptionCreated(content: any) {

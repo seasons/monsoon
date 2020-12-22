@@ -39,6 +39,7 @@ export interface Query {
     userPushNotificationInterests: <T = Array<UserPushNotificationInterest | null>>(args: { where?: UserPushNotificationInterestWhereInput | null, orderBy?: UserPushNotificationInterestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoes: <T = Array<BillingInfo | null>>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItems: <T = Array<ReservationReceiptItem | null>>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    physicalProductSellables: <T = Array<PhysicalProductSellable | null>>(args: { where?: PhysicalProductSellableWhereInput | null, orderBy?: PhysicalProductSellableOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     stylePreferenceses: <T = Array<StylePreferences | null>>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packages: <T = Array<Package | null>>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizes: <T = Array<Size | null>>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -98,6 +99,7 @@ export interface Query {
     userPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     billingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    physicalProductSellable: <T = PhysicalProductSellable | null>(args: { where: PhysicalProductSellableWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     stylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     package: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     size: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -157,6 +159,7 @@ export interface Query {
     userPushNotificationInterestsConnection: <T = UserPushNotificationInterestConnection>(args: { where?: UserPushNotificationInterestWhereInput | null, orderBy?: UserPushNotificationInterestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoesConnection: <T = BillingInfoConnection>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItemsConnection: <T = ReservationReceiptItemConnection>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    physicalProductSellablesConnection: <T = PhysicalProductSellableConnection>(args: { where?: PhysicalProductSellableWhereInput | null, orderBy?: PhysicalProductSellableOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     stylePreferencesesConnection: <T = StylePreferencesConnection>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packagesConnection: <T = PackageConnection>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizesConnection: <T = SizeConnection>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -220,6 +223,7 @@ export interface Mutation {
     createUserPushNotificationInterest: <T = UserPushNotificationInterest>(args: { data: UserPushNotificationInterestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBillingInfo: <T = BillingInfo>(args: { data: BillingInfoCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createReservationReceiptItem: <T = ReservationReceiptItem>(args: { data: ReservationReceiptItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createPhysicalProductSellable: <T = PhysicalProductSellable>(args: { data: PhysicalProductSellableCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createStylePreferences: <T = StylePreferences>(args: { data: StylePreferencesCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPackage: <T = Package>(args: { data: PackageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSize: <T = Size>(args: { data: SizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -279,6 +283,7 @@ export interface Mutation {
     updateUserPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { data: UserPushNotificationInterestUpdateInput, where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBillingInfo: <T = BillingInfo | null>(args: { data: BillingInfoUpdateInput, where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { data: ReservationReceiptItemUpdateInput, where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updatePhysicalProductSellable: <T = PhysicalProductSellable | null>(args: { data: PhysicalProductSellableUpdateInput, where: PhysicalProductSellableWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateStylePreferences: <T = StylePreferences | null>(args: { data: StylePreferencesUpdateInput, where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePackage: <T = Package | null>(args: { data: PackageUpdateInput, where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSize: <T = Size | null>(args: { data: SizeUpdateInput, where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -338,6 +343,7 @@ export interface Mutation {
     deleteUserPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBillingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deletePhysicalProductSellable: <T = PhysicalProductSellable | null>(args: { where: PhysicalProductSellableWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteStylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePackage: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSize: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -397,6 +403,7 @@ export interface Mutation {
     upsertUserPushNotificationInterest: <T = UserPushNotificationInterest>(args: { where: UserPushNotificationInterestWhereUniqueInput, create: UserPushNotificationInterestCreateInput, update: UserPushNotificationInterestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBillingInfo: <T = BillingInfo>(args: { where: BillingInfoWhereUniqueInput, create: BillingInfoCreateInput, update: BillingInfoUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertReservationReceiptItem: <T = ReservationReceiptItem>(args: { where: ReservationReceiptItemWhereUniqueInput, create: ReservationReceiptItemCreateInput, update: ReservationReceiptItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertPhysicalProductSellable: <T = PhysicalProductSellable>(args: { where: PhysicalProductSellableWhereUniqueInput, create: PhysicalProductSellableCreateInput, update: PhysicalProductSellableUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertStylePreferences: <T = StylePreferences>(args: { where: StylePreferencesWhereUniqueInput, create: StylePreferencesCreateInput, update: StylePreferencesUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPackage: <T = Package>(args: { where: PackageWhereUniqueInput, create: PackageCreateInput, update: PackageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSize: <T = Size>(args: { where: SizeWhereUniqueInput, create: SizeCreateInput, update: SizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -454,6 +461,7 @@ export interface Mutation {
     updateManyUserPushNotificationInterests: <T = BatchPayload>(args: { data: UserPushNotificationInterestUpdateManyMutationInput, where?: UserPushNotificationInterestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBillingInfoes: <T = BatchPayload>(args: { data: BillingInfoUpdateManyMutationInput, where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyReservationReceiptItems: <T = BatchPayload>(args: { data: ReservationReceiptItemUpdateManyMutationInput, where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyPhysicalProductSellables: <T = BatchPayload>(args: { data: PhysicalProductSellableUpdateManyMutationInput, where?: PhysicalProductSellableWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyStylePreferenceses: <T = BatchPayload>(args: { data: StylePreferencesUpdateManyMutationInput, where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPackages: <T = BatchPayload>(args: { data: PackageUpdateManyMutationInput, where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySizes: <T = BatchPayload>(args: { data: SizeUpdateManyMutationInput, where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -513,6 +521,7 @@ export interface Mutation {
     deleteManyUserPushNotificationInterests: <T = BatchPayload>(args: { where?: UserPushNotificationInterestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBillingInfoes: <T = BatchPayload>(args: { where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyReservationReceiptItems: <T = BatchPayload>(args: { where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyPhysicalProductSellables: <T = BatchPayload>(args: { where?: PhysicalProductSellableWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyStylePreferenceses: <T = BatchPayload>(args: { where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPackages: <T = BatchPayload>(args: { where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySizes: <T = BatchPayload>(args: { where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -575,6 +584,7 @@ export interface Subscription {
     userPushNotificationInterest: <T = UserPushNotificationInterestSubscriptionPayload | null>(args: { where?: UserPushNotificationInterestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     billingInfo: <T = BillingInfoSubscriptionPayload | null>(args: { where?: BillingInfoSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     reservationReceiptItem: <T = ReservationReceiptItemSubscriptionPayload | null>(args: { where?: ReservationReceiptItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    physicalProductSellable: <T = PhysicalProductSellableSubscriptionPayload | null>(args: { where?: PhysicalProductSellableSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     stylePreferences: <T = StylePreferencesSubscriptionPayload | null>(args: { where?: StylePreferencesSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     package: <T = PackageSubscriptionPayload | null>(args: { where?: PackageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     size: <T = SizeSubscriptionPayload | null>(args: { where?: SizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -637,6 +647,7 @@ export interface Exists {
   UserPushNotificationInterest: (where?: UserPushNotificationInterestWhereInput) => Promise<boolean>
   BillingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>
   ReservationReceiptItem: (where?: ReservationReceiptItemWhereInput) => Promise<boolean>
+  PhysicalProductSellable: (where?: PhysicalProductSellableWhereInput) => Promise<boolean>
   StylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>
   Package: (where?: PackageWhereInput) => Promise<boolean>
   Size: (where?: SizeWhereInput) => Promise<boolean>
@@ -1216,6 +1227,10 @@ type AggregatePaymentPlan {
 }
 
 type AggregatePhysicalProduct {
+  count: Int!
+}
+
+type AggregatePhysicalProductSellable {
   count: Int!
 }
 
@@ -11893,6 +11908,7 @@ type Mutation {
   createUserPushNotificationInterest(data: UserPushNotificationInterestCreateInput!): UserPushNotificationInterest!
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
   createReservationReceiptItem(data: ReservationReceiptItemCreateInput!): ReservationReceiptItem!
+  createPhysicalProductSellable(data: PhysicalProductSellableCreateInput!): PhysicalProductSellable!
   createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   createPackage(data: PackageCreateInput!): Package!
   createSize(data: SizeCreateInput!): Size!
@@ -11952,6 +11968,7 @@ type Mutation {
   updateUserPushNotificationInterest(data: UserPushNotificationInterestUpdateInput!, where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
   updateReservationReceiptItem(data: ReservationReceiptItemUpdateInput!, where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
+  updatePhysicalProductSellable(data: PhysicalProductSellableUpdateInput!, where: PhysicalProductSellableWhereUniqueInput!): PhysicalProductSellable
   updateStylePreferences(data: StylePreferencesUpdateInput!, where: StylePreferencesWhereUniqueInput!): StylePreferences
   updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
@@ -12011,6 +12028,7 @@ type Mutation {
   deleteUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   deleteReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
+  deletePhysicalProductSellable(where: PhysicalProductSellableWhereUniqueInput!): PhysicalProductSellable
   deleteStylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   deletePackage(where: PackageWhereUniqueInput!): Package
   deleteSize(where: SizeWhereUniqueInput!): Size
@@ -12070,6 +12088,7 @@ type Mutation {
   upsertUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!, create: UserPushNotificationInterestCreateInput!, update: UserPushNotificationInterestUpdateInput!): UserPushNotificationInterest!
   upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
   upsertReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!, create: ReservationReceiptItemCreateInput!, update: ReservationReceiptItemUpdateInput!): ReservationReceiptItem!
+  upsertPhysicalProductSellable(where: PhysicalProductSellableWhereUniqueInput!, create: PhysicalProductSellableCreateInput!, update: PhysicalProductSellableUpdateInput!): PhysicalProductSellable!
   upsertStylePreferences(where: StylePreferencesWhereUniqueInput!, create: StylePreferencesCreateInput!, update: StylePreferencesUpdateInput!): StylePreferences!
   upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
@@ -12127,6 +12146,7 @@ type Mutation {
   updateManyUserPushNotificationInterests(data: UserPushNotificationInterestUpdateManyMutationInput!, where: UserPushNotificationInterestWhereInput): BatchPayload!
   updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
   updateManyReservationReceiptItems(data: ReservationReceiptItemUpdateManyMutationInput!, where: ReservationReceiptItemWhereInput): BatchPayload!
+  updateManyPhysicalProductSellables(data: PhysicalProductSellableUpdateManyMutationInput!, where: PhysicalProductSellableWhereInput): BatchPayload!
   updateManyStylePreferenceses(data: StylePreferencesUpdateManyMutationInput!, where: StylePreferencesWhereInput): BatchPayload!
   updateManyPackages(data: PackageUpdateManyMutationInput!, where: PackageWhereInput): BatchPayload!
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
@@ -12186,6 +12206,7 @@ type Mutation {
   deleteManyUserPushNotificationInterests(where: UserPushNotificationInterestWhereInput): BatchPayload!
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
   deleteManyReservationReceiptItems(where: ReservationReceiptItemWhereInput): BatchPayload!
+  deleteManyPhysicalProductSellables(where: PhysicalProductSellableWhereInput): BatchPayload!
   deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
   deleteManySizes(where: SizeWhereInput): BatchPayload!
@@ -14135,7 +14156,7 @@ type PhysicalProduct implements Node {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
+  sellable: PhysicalProductSellable
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -14162,10 +14183,10 @@ input PhysicalProductCreateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableCreateOneInput
 }
 
 input PhysicalProductCreateManyInput {
@@ -14205,9 +14226,9 @@ input PhysicalProductCreateWithoutLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableCreateOneInput
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -14222,9 +14243,9 @@ input PhysicalProductCreateWithoutProductVariantInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationCreateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableCreateOneInput
 }
 
 input PhysicalProductCreateWithoutWarehouseLocationInput {
@@ -14239,9 +14260,9 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  sellable: PhysicalProductSellableCreateOneInput
 }
 
 """An edge in a connection."""
@@ -14284,8 +14305,6 @@ enum PhysicalProductOrderByInput {
   dateReceived_DESC
   unitCost_ASC
   unitCost_DESC
-  sellable_ASC
-  sellable_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -14304,7 +14323,6 @@ type PhysicalProductPreviousValues {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -14560,10 +14578,6 @@ input PhysicalProductScalarWhereInput {
 
   """All values greater than or equal the given value."""
   unitCost_gte: Float
-  sellable: Boolean
-
-  """All values that are not equal to given value."""
-  sellable_not: Boolean
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -14608,6 +14622,246 @@ input PhysicalProductScalarWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+}
+
+type PhysicalProductSellable implements Node {
+  id: ID!
+  new: Boolean!
+  newPrice: Float
+  used: Boolean!
+  usedPrice: Float
+}
+
+"""A connection to a list of items."""
+type PhysicalProductSellableConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [PhysicalProductSellableEdge]!
+  aggregate: AggregatePhysicalProductSellable!
+}
+
+input PhysicalProductSellableCreateInput {
+  id: ID
+  new: Boolean
+  newPrice: Float
+  used: Boolean
+  usedPrice: Float
+}
+
+input PhysicalProductSellableCreateOneInput {
+  create: PhysicalProductSellableCreateInput
+  connect: PhysicalProductSellableWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type PhysicalProductSellableEdge {
+  """The item at the end of the edge."""
+  node: PhysicalProductSellable!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum PhysicalProductSellableOrderByInput {
+  id_ASC
+  id_DESC
+  new_ASC
+  new_DESC
+  newPrice_ASC
+  newPrice_DESC
+  used_ASC
+  used_DESC
+  usedPrice_ASC
+  usedPrice_DESC
+}
+
+type PhysicalProductSellablePreviousValues {
+  id: ID!
+  new: Boolean!
+  newPrice: Float
+  used: Boolean!
+  usedPrice: Float
+}
+
+type PhysicalProductSellableSubscriptionPayload {
+  mutation: MutationType!
+  node: PhysicalProductSellable
+  updatedFields: [String!]
+  previousValues: PhysicalProductSellablePreviousValues
+}
+
+input PhysicalProductSellableSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PhysicalProductSellableSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PhysicalProductSellableSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PhysicalProductSellableSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PhysicalProductSellableWhereInput
+}
+
+input PhysicalProductSellableUpdateDataInput {
+  new: Boolean
+  newPrice: Float
+  used: Boolean
+  usedPrice: Float
+}
+
+input PhysicalProductSellableUpdateInput {
+  new: Boolean
+  newPrice: Float
+  used: Boolean
+  usedPrice: Float
+}
+
+input PhysicalProductSellableUpdateManyMutationInput {
+  new: Boolean
+  newPrice: Float
+  used: Boolean
+  usedPrice: Float
+}
+
+input PhysicalProductSellableUpdateOneInput {
+  create: PhysicalProductSellableCreateInput
+  connect: PhysicalProductSellableWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: PhysicalProductSellableUpdateDataInput
+  upsert: PhysicalProductSellableUpsertNestedInput
+}
+
+input PhysicalProductSellableUpsertNestedInput {
+  update: PhysicalProductSellableUpdateDataInput!
+  create: PhysicalProductSellableCreateInput!
+}
+
+input PhysicalProductSellableWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PhysicalProductSellableWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PhysicalProductSellableWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PhysicalProductSellableWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  new: Boolean
+
+  """All values that are not equal to given value."""
+  new_not: Boolean
+  newPrice: Float
+
+  """All values that are not equal to given value."""
+  newPrice_not: Float
+
+  """All values that are contained in given list."""
+  newPrice_in: [Float!]
+
+  """All values that are not contained in given list."""
+  newPrice_not_in: [Float!]
+
+  """All values less than the given value."""
+  newPrice_lt: Float
+
+  """All values less than or equal the given value."""
+  newPrice_lte: Float
+
+  """All values greater than the given value."""
+  newPrice_gt: Float
+
+  """All values greater than or equal the given value."""
+  newPrice_gte: Float
+  used: Boolean
+
+  """All values that are not equal to given value."""
+  used_not: Boolean
+  usedPrice: Float
+
+  """All values that are not equal to given value."""
+  usedPrice_not: Float
+
+  """All values that are contained in given list."""
+  usedPrice_in: [Float!]
+
+  """All values that are not contained in given list."""
+  usedPrice_not_in: [Float!]
+
+  """All values less than the given value."""
+  usedPrice_lt: Float
+
+  """All values less than or equal the given value."""
+  usedPrice_lte: Float
+
+  """All values greater than the given value."""
+  usedPrice_gt: Float
+
+  """All values greater than or equal the given value."""
+  usedPrice_gte: Float
+}
+
+input PhysicalProductSellableWhereUniqueInput {
+  id: ID
 }
 
 enum PhysicalProductStatus {
@@ -14668,10 +14922,10 @@ input PhysicalProductUpdateDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateInput {
@@ -14685,10 +14939,10 @@ input PhysicalProductUpdateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -14702,7 +14956,6 @@ input PhysicalProductUpdateManyDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
 }
 
 input PhysicalProductUpdateManyInput {
@@ -14728,7 +14981,6 @@ input PhysicalProductUpdateManyMutationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -14799,9 +15051,9 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -14815,9 +15067,9 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationUpdateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
@@ -14831,9 +15083,9 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -15136,10 +15388,6 @@ input PhysicalProductWhereInput {
 
   """All values greater than or equal the given value."""
   unitCost_gte: Float
-  sellable: Boolean
-
-  """All values that are not equal to given value."""
-  sellable_not: Boolean
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -15187,6 +15435,7 @@ input PhysicalProductWhereInput {
   location: LocationWhereInput
   productVariant: ProductVariantWhereInput
   warehouseLocation: WarehouseLocationWhereInput
+  sellable: PhysicalProductSellableWhereInput
 }
 
 input PhysicalProductWhereUniqueInput {
@@ -15204,6 +15453,7 @@ type Product implements Node {
   slug: String!
   name: String!
   brand: Brand!
+  productFit: ProductFit
   category: Category!
   type: ProductType
   description: String
@@ -15254,6 +15504,7 @@ input ProductCreateInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15327,6 +15578,7 @@ input ProductCreateWithoutBrandInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15355,6 +15607,7 @@ input ProductCreateWithoutCategoryInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15383,6 +15636,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15411,6 +15665,7 @@ input ProductCreateWithoutModelInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15439,6 +15694,7 @@ input ProductCreateWithoutTagsInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15467,6 +15723,7 @@ input ProductCreateWithoutVariantsInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -15498,6 +15755,12 @@ type ProductEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+enum ProductFit {
+  RunsBig
+  TrueToSize
+  RunsSmall
 }
 
 type ProductFunction implements Node {
@@ -16552,6 +16815,8 @@ enum ProductOrderByInput {
   slug_DESC
   name_ASC
   name_DESC
+  productFit_ASC
+  productFit_DESC
   type_ASC
   type_DESC
   description_ASC
@@ -16580,6 +16845,7 @@ type ProductPreviousValues {
   id: ID!
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17280,6 +17546,16 @@ input ProductScalarWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
+  productFit: ProductFit
+
+  """All values that are not equal to given value."""
+  productFit_not: ProductFit
+
+  """All values that are contained in given list."""
+  productFit_in: [ProductFit!]
+
+  """All values that are not contained in given list."""
+  productFit_not_in: [ProductFit!]
   type: ProductType
 
   """All values that are not equal to given value."""
@@ -17746,6 +18022,7 @@ enum ProductType {
 input ProductUpdateDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17778,6 +18055,7 @@ input ProductUpdateinnerMaterialsInput {
 input ProductUpdateInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17806,6 +18084,7 @@ input ProductUpdateInput {
 input ProductUpdateManyDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17834,6 +18113,7 @@ input ProductUpdateManyInput {
 input ProductUpdateManyMutationInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17933,6 +18213,7 @@ input ProductUpdateouterMaterialsInput {
 input ProductUpdateWithoutBrandDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17960,6 +18241,7 @@ input ProductUpdateWithoutBrandDataInput {
 input ProductUpdateWithoutCategoryDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -17987,6 +18269,7 @@ input ProductUpdateWithoutCategoryDataInput {
 input ProductUpdateWithoutMaterialCategoryDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -18014,6 +18297,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
 input ProductUpdateWithoutModelDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -18041,6 +18325,7 @@ input ProductUpdateWithoutModelDataInput {
 input ProductUpdateWithoutTagsDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -18068,6 +18353,7 @@ input ProductUpdateWithoutTagsDataInput {
 input ProductUpdateWithoutVariantsDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -18171,6 +18457,7 @@ input ProductUpsertWithWhereUniqueWithoutTagsInput {
 type ProductVariant implements Node {
   id: ID!
   sku: String
+  displayShort: String!
   color: Color!
   internalSize: Size
   manufacturerSizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size!]
@@ -18203,6 +18490,7 @@ type ProductVariantConnection {
 input ProductVariantCreateInput {
   id: ID
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -18243,6 +18531,7 @@ input ProductVariantCreateOneWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutColorInput {
   id: ID
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -18262,6 +18551,7 @@ input ProductVariantCreateWithoutColorInput {
 input ProductVariantCreateWithoutPhysicalProductsInput {
   id: ID
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -18281,6 +18571,7 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutProductInput {
   id: ID
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -18989,6 +19280,8 @@ enum ProductVariantOrderByInput {
   id_DESC
   sku_ASC
   sku_DESC
+  displayShort_ASC
+  displayShort_DESC
   weight_ASC
   weight_DESC
   height_ASC
@@ -19018,6 +19311,7 @@ enum ProductVariantOrderByInput {
 type ProductVariantPreviousValues {
   id: ID!
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -19121,6 +19415,46 @@ input ProductVariantScalarWhereInput {
 
   """All values not ending with the given string."""
   sku_not_ends_with: String
+  displayShort: String
+
+  """All values that are not equal to given value."""
+  displayShort_not: String
+
+  """All values that are contained in given list."""
+  displayShort_in: [String!]
+
+  """All values that are not contained in given list."""
+  displayShort_not_in: [String!]
+
+  """All values less than the given value."""
+  displayShort_lt: String
+
+  """All values less than or equal the given value."""
+  displayShort_lte: String
+
+  """All values greater than the given value."""
+  displayShort_gt: String
+
+  """All values greater than or equal the given value."""
+  displayShort_gte: String
+
+  """All values containing the given string."""
+  displayShort_contains: String
+
+  """All values not containing the given string."""
+  displayShort_not_contains: String
+
+  """All values starting with the given string."""
+  displayShort_starts_with: String
+
+  """All values not starting with the given string."""
+  displayShort_not_starts_with: String
+
+  """All values ending with the given string."""
+  displayShort_ends_with: String
+
+  """All values not ending with the given string."""
+  displayShort_not_ends_with: String
   weight: Float
 
   """All values that are not equal to given value."""
@@ -19444,6 +19778,7 @@ input ProductVariantSubscriptionWhereInput {
 
 input ProductVariantUpdateDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -19463,6 +19798,7 @@ input ProductVariantUpdateDataInput {
 
 input ProductVariantUpdateInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -19482,6 +19818,7 @@ input ProductVariantUpdateInput {
 
 input ProductVariantUpdateManyDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -19496,6 +19833,7 @@ input ProductVariantUpdateManyDataInput {
 
 input ProductVariantUpdateManyMutationInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -19562,6 +19900,7 @@ input ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
 
 input ProductVariantUpdateWithoutColorDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -19580,6 +19919,7 @@ input ProductVariantUpdateWithoutColorDataInput {
 
 input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -19598,6 +19938,7 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
 
 input ProductVariantUpdateWithoutProductDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -19888,6 +20229,46 @@ input ProductVariantWhereInput {
 
   """All values not ending with the given string."""
   sku_not_ends_with: String
+  displayShort: String
+
+  """All values that are not equal to given value."""
+  displayShort_not: String
+
+  """All values that are contained in given list."""
+  displayShort_in: [String!]
+
+  """All values that are not contained in given list."""
+  displayShort_not_in: [String!]
+
+  """All values less than the given value."""
+  displayShort_lt: String
+
+  """All values less than or equal the given value."""
+  displayShort_lte: String
+
+  """All values greater than the given value."""
+  displayShort_gt: String
+
+  """All values greater than or equal the given value."""
+  displayShort_gte: String
+
+  """All values containing the given string."""
+  displayShort_contains: String
+
+  """All values not containing the given string."""
+  displayShort_not_contains: String
+
+  """All values starting with the given string."""
+  displayShort_starts_with: String
+
+  """All values not starting with the given string."""
+  displayShort_not_starts_with: String
+
+  """All values ending with the given string."""
+  displayShort_ends_with: String
+
+  """All values not ending with the given string."""
+  displayShort_not_ends_with: String
   weight: Float
 
   """All values that are not equal to given value."""
@@ -20315,6 +20696,16 @@ input ProductWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
+  productFit: ProductFit
+
+  """All values that are not equal to given value."""
+  productFit_not: ProductFit
+
+  """All values that are contained in given list."""
+  productFit_in: [ProductFit!]
+
+  """All values that are not contained in given list."""
+  productFit_not_in: [ProductFit!]
   type: ProductType
 
   """All values that are not equal to given value."""
@@ -21850,6 +22241,7 @@ type Query {
   userPushNotificationInterests(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserPushNotificationInterest]!
   billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
   reservationReceiptItems(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem]!
+  physicalProductSellables(where: PhysicalProductSellableWhereInput, orderBy: PhysicalProductSellableOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductSellable]!
   stylePreferenceses(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StylePreferences]!
   packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
@@ -21909,6 +22301,7 @@ type Query {
   userPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   reservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
+  physicalProductSellable(where: PhysicalProductSellableWhereUniqueInput!): PhysicalProductSellable
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   package(where: PackageWhereUniqueInput!): Package
   size(where: SizeWhereUniqueInput!): Size
@@ -21968,6 +22361,7 @@ type Query {
   userPushNotificationInterestsConnection(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserPushNotificationInterestConnection!
   billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
   reservationReceiptItemsConnection(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationReceiptItemConnection!
+  physicalProductSellablesConnection(where: PhysicalProductSellableWhereInput, orderBy: PhysicalProductSellableOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductSellableConnection!
   stylePreferencesesConnection(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StylePreferencesConnection!
   packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
@@ -26266,6 +26660,7 @@ type Subscription {
   userPushNotificationInterest(where: UserPushNotificationInterestSubscriptionWhereInput): UserPushNotificationInterestSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
+  physicalProductSellable(where: PhysicalProductSellableSubscriptionWhereInput): PhysicalProductSellableSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
@@ -26294,7 +26689,8 @@ type Subscription {
 
 type SyncTiming implements Node {
   id: ID!
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -26311,7 +26707,8 @@ type SyncTimingConnection {
 
 input SyncTimingCreateInput {
   id: ID
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
 }
 
 """An edge in a connection."""
@@ -26326,8 +26723,10 @@ type SyncTimingEdge {
 enum SyncTimingOrderByInput {
   id_ASC
   id_DESC
-  dripSyncedAt_ASC
-  dripSyncedAt_DESC
+  type_ASC
+  type_DESC
+  syncedAt_ASC
+  syncedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -26336,7 +26735,8 @@ enum SyncTimingOrderByInput {
 
 type SyncTimingPreviousValues {
   id: ID!
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -26378,12 +26778,19 @@ input SyncTimingSubscriptionWhereInput {
   node: SyncTimingWhereInput
 }
 
+enum SyncTimingType {
+  Drip
+  Next
+}
+
 input SyncTimingUpdateInput {
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
 }
 
 input SyncTimingUpdateManyMutationInput {
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
 }
 
 input SyncTimingWhereInput {
@@ -26435,28 +26842,38 @@ input SyncTimingWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  dripSyncedAt: DateTime
+  type: SyncTimingType
 
   """All values that are not equal to given value."""
-  dripSyncedAt_not: DateTime
+  type_not: SyncTimingType
 
   """All values that are contained in given list."""
-  dripSyncedAt_in: [DateTime!]
+  type_in: [SyncTimingType!]
 
   """All values that are not contained in given list."""
-  dripSyncedAt_not_in: [DateTime!]
+  type_not_in: [SyncTimingType!]
+  syncedAt: DateTime
+
+  """All values that are not equal to given value."""
+  syncedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  syncedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  syncedAt_not_in: [DateTime!]
 
   """All values less than the given value."""
-  dripSyncedAt_lt: DateTime
+  syncedAt_lt: DateTime
 
   """All values less than or equal the given value."""
-  dripSyncedAt_lte: DateTime
+  syncedAt_lte: DateTime
 
   """All values greater than the given value."""
-  dripSyncedAt_gt: DateTime
+  syncedAt_gt: DateTime
 
   """All values greater than or equal the given value."""
-  dripSyncedAt_gte: DateTime
+  syncedAt_gte: DateTime
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -31026,12 +31443,21 @@ export type PhysicalProductOrderByInput =   'id_ASC' |
   'dateReceived_DESC' |
   'unitCost_ASC' |
   'unitCost_DESC' |
-  'sellable_ASC' |
-  'sellable_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
+
+export type PhysicalProductSellableOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'new_ASC' |
+  'new_DESC' |
+  'newPrice_ASC' |
+  'newPrice_DESC' |
+  'used_ASC' |
+  'used_DESC' |
+  'usedPrice_ASC' |
+  'usedPrice_DESC'
 
 export type PhysicalProductStatus =   'New' |
   'Used' |
@@ -31047,6 +31473,10 @@ export type Plan =   'AllAccess' |
 export type ProductArchitecture =   'Fashion' |
   'Showstopper' |
   'Staple'
+
+export type ProductFit =   'RunsBig' |
+  'TrueToSize' |
+  'RunsSmall'
 
 export type ProductFunctionOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -31087,6 +31517,8 @@ export type ProductOrderByInput =   'id_ASC' |
   'slug_DESC' |
   'name_ASC' |
   'name_DESC' |
+  'productFit_ASC' |
+  'productFit_DESC' |
   'type_ASC' |
   'type_DESC' |
   'description_ASC' |
@@ -31160,6 +31592,8 @@ export type ProductVariantOrderByInput =   'id_ASC' |
   'id_DESC' |
   'sku_ASC' |
   'sku_DESC' |
+  'displayShort_ASC' |
+  'displayShort_DESC' |
   'weight_ASC' |
   'weight_DESC' |
   'height_ASC' |
@@ -31384,12 +31818,17 @@ export type StylePreferencesOrderByInput =   'id_ASC' |
 
 export type SyncTimingOrderByInput =   'id_ASC' |
   'id_DESC' |
-  'dripSyncedAt_ASC' |
-  'dripSyncedAt_DESC' |
+  'type_ASC' |
+  'type_DESC' |
+  'syncedAt_ASC' |
+  'syncedAt_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
+
+export type SyncTimingType =   'Drip' |
+  'Next'
 
 export type TagOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -37200,10 +37639,10 @@ export interface PhysicalProductCreateInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
-  sellable?: Boolean | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
+  sellable?: PhysicalProductSellableCreateOneInput | null
 }
 
 export interface PhysicalProductCreateManyInput {
@@ -37243,9 +37682,9 @@ export interface PhysicalProductCreateWithoutLocationInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
-  sellable?: Boolean | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
+  sellable?: PhysicalProductSellableCreateOneInput | null
 }
 
 export interface PhysicalProductCreateWithoutProductVariantInput {
@@ -37260,9 +37699,9 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
-  sellable?: Boolean | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
+  sellable?: PhysicalProductSellableCreateOneInput | null
 }
 
 export interface PhysicalProductCreateWithoutWarehouseLocationInput {
@@ -37277,9 +37716,9 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
-  sellable?: Boolean | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
+  sellable?: PhysicalProductSellableCreateOneInput | null
 }
 
 export interface PhysicalProductScalarWhereInput {
@@ -37374,8 +37813,6 @@ export interface PhysicalProductScalarWhereInput {
   unitCost_lte?: Float | null
   unitCost_gt?: Float | null
   unitCost_gte?: Float | null
-  sellable?: Boolean | null
-  sellable_not?: Boolean | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -37392,6 +37829,109 @@ export interface PhysicalProductScalarWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
+}
+
+export interface PhysicalProductSellableCreateInput {
+  id?: ID_Input | null
+  new?: Boolean | null
+  newPrice?: Float | null
+  used?: Boolean | null
+  usedPrice?: Float | null
+}
+
+export interface PhysicalProductSellableCreateOneInput {
+  create?: PhysicalProductSellableCreateInput | null
+  connect?: PhysicalProductSellableWhereUniqueInput | null
+}
+
+export interface PhysicalProductSellableSubscriptionWhereInput {
+  AND?: PhysicalProductSellableSubscriptionWhereInput[] | PhysicalProductSellableSubscriptionWhereInput | null
+  OR?: PhysicalProductSellableSubscriptionWhereInput[] | PhysicalProductSellableSubscriptionWhereInput | null
+  NOT?: PhysicalProductSellableSubscriptionWhereInput[] | PhysicalProductSellableSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: PhysicalProductSellableWhereInput | null
+}
+
+export interface PhysicalProductSellableUpdateDataInput {
+  new?: Boolean | null
+  newPrice?: Float | null
+  used?: Boolean | null
+  usedPrice?: Float | null
+}
+
+export interface PhysicalProductSellableUpdateInput {
+  new?: Boolean | null
+  newPrice?: Float | null
+  used?: Boolean | null
+  usedPrice?: Float | null
+}
+
+export interface PhysicalProductSellableUpdateManyMutationInput {
+  new?: Boolean | null
+  newPrice?: Float | null
+  used?: Boolean | null
+  usedPrice?: Float | null
+}
+
+export interface PhysicalProductSellableUpdateOneInput {
+  create?: PhysicalProductSellableCreateInput | null
+  connect?: PhysicalProductSellableWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: PhysicalProductSellableUpdateDataInput | null
+  upsert?: PhysicalProductSellableUpsertNestedInput | null
+}
+
+export interface PhysicalProductSellableUpsertNestedInput {
+  update: PhysicalProductSellableUpdateDataInput
+  create: PhysicalProductSellableCreateInput
+}
+
+export interface PhysicalProductSellableWhereInput {
+  AND?: PhysicalProductSellableWhereInput[] | PhysicalProductSellableWhereInput | null
+  OR?: PhysicalProductSellableWhereInput[] | PhysicalProductSellableWhereInput | null
+  NOT?: PhysicalProductSellableWhereInput[] | PhysicalProductSellableWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  new?: Boolean | null
+  new_not?: Boolean | null
+  newPrice?: Float | null
+  newPrice_not?: Float | null
+  newPrice_in?: Float[] | Float | null
+  newPrice_not_in?: Float[] | Float | null
+  newPrice_lt?: Float | null
+  newPrice_lte?: Float | null
+  newPrice_gt?: Float | null
+  newPrice_gte?: Float | null
+  used?: Boolean | null
+  used_not?: Boolean | null
+  usedPrice?: Float | null
+  usedPrice_not?: Float | null
+  usedPrice_in?: Float[] | Float | null
+  usedPrice_not_in?: Float[] | Float | null
+  usedPrice_lt?: Float | null
+  usedPrice_lte?: Float | null
+  usedPrice_gt?: Float | null
+  usedPrice_gte?: Float | null
+}
+
+export interface PhysicalProductSellableWhereUniqueInput {
+  id?: ID_Input | null
 }
 
 export interface PhysicalProductSubscriptionWhereInput {
@@ -37416,10 +37956,10 @@ export interface PhysicalProductUpdateDataInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
-  sellable?: Boolean | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
+  sellable?: PhysicalProductSellableUpdateOneInput | null
 }
 
 export interface PhysicalProductUpdateInput {
@@ -37433,10 +37973,10 @@ export interface PhysicalProductUpdateInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
-  sellable?: Boolean | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
+  sellable?: PhysicalProductSellableUpdateOneInput | null
 }
 
 export interface PhysicalProductUpdateManyDataInput {
@@ -37450,7 +37990,6 @@ export interface PhysicalProductUpdateManyDataInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
-  sellable?: Boolean | null
 }
 
 export interface PhysicalProductUpdateManyInput {
@@ -37476,7 +38015,6 @@ export interface PhysicalProductUpdateManyMutationInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
-  sellable?: Boolean | null
 }
 
 export interface PhysicalProductUpdateManyWithoutLocationInput {
@@ -37547,9 +38085,9 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
-  sellable?: Boolean | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
+  sellable?: PhysicalProductSellableUpdateOneInput | null
 }
 
 export interface PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -37563,9 +38101,9 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
-  sellable?: Boolean | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
+  sellable?: PhysicalProductSellableUpdateOneInput | null
 }
 
 export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
@@ -37579,9 +38117,9 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
-  sellable?: Boolean | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
+  sellable?: PhysicalProductSellableUpdateOneInput | null
 }
 
 export interface PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -37725,8 +38263,6 @@ export interface PhysicalProductWhereInput {
   unitCost_lte?: Float | null
   unitCost_gt?: Float | null
   unitCost_gte?: Float | null
-  sellable?: Boolean | null
-  sellable_not?: Boolean | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -37746,6 +38282,7 @@ export interface PhysicalProductWhereInput {
   location?: LocationWhereInput | null
   productVariant?: ProductVariantWhereInput | null
   warehouseLocation?: WarehouseLocationWhereInput | null
+  sellable?: PhysicalProductSellableWhereInput | null
 }
 
 export interface PhysicalProductWhereUniqueInput {
@@ -37761,6 +38298,7 @@ export interface ProductCreateInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -37834,6 +38372,7 @@ export interface ProductCreateWithoutBrandInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -37862,6 +38401,7 @@ export interface ProductCreateWithoutCategoryInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -37890,6 +38430,7 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -37918,6 +38459,7 @@ export interface ProductCreateWithoutModelInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -37946,6 +38488,7 @@ export interface ProductCreateWithoutTagsInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -37974,6 +38517,7 @@ export interface ProductCreateWithoutVariantsInput {
   id?: ID_Input | null
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -38693,6 +39237,10 @@ export interface ProductScalarWhereInput {
   name_not_starts_with?: String | null
   name_ends_with?: String | null
   name_not_ends_with?: String | null
+  productFit?: ProductFit | null
+  productFit_not?: ProductFit | null
+  productFit_in?: ProductFit[] | ProductFit | null
+  productFit_not_in?: ProductFit[] | ProductFit | null
   type?: ProductType | null
   type_not?: ProductType | null
   type_in?: ProductType[] | ProductType | null
@@ -38880,6 +39428,7 @@ export interface ProductSubscriptionWhereInput {
 export interface ProductUpdateDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -38912,6 +39461,7 @@ export interface ProductUpdateinnerMaterialsInput {
 export interface ProductUpdateInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -38940,6 +39490,7 @@ export interface ProductUpdateInput {
 export interface ProductUpdateManyDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -38968,6 +39519,7 @@ export interface ProductUpdateManyInput {
 export interface ProductUpdateManyMutationInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -39067,6 +39619,7 @@ export interface ProductUpdateouterMaterialsInput {
 export interface ProductUpdateWithoutBrandDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -39094,6 +39647,7 @@ export interface ProductUpdateWithoutBrandDataInput {
 export interface ProductUpdateWithoutCategoryDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -39121,6 +39675,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
 export interface ProductUpdateWithoutMaterialCategoryDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -39148,6 +39703,7 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
 export interface ProductUpdateWithoutModelDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -39175,6 +39731,7 @@ export interface ProductUpdateWithoutModelDataInput {
 export interface ProductUpdateWithoutTagsDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -39202,6 +39759,7 @@ export interface ProductUpdateWithoutTagsDataInput {
 export interface ProductUpdateWithoutVariantsDataInput {
   slug?: String | null
   name?: String | null
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -39305,6 +39863,7 @@ export interface ProductUpsertWithWhereUniqueWithoutTagsInput {
 export interface ProductVariantCreateInput {
   id?: ID_Input | null
   sku?: String | null
+  displayShort: String
   weight?: Float | null
   height?: Float | null
   productID: String
@@ -39345,6 +39904,7 @@ export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
 export interface ProductVariantCreateWithoutColorInput {
   id?: ID_Input | null
   sku?: String | null
+  displayShort: String
   weight?: Float | null
   height?: Float | null
   productID: String
@@ -39364,6 +39924,7 @@ export interface ProductVariantCreateWithoutColorInput {
 export interface ProductVariantCreateWithoutPhysicalProductsInput {
   id?: ID_Input | null
   sku?: String | null
+  displayShort: String
   weight?: Float | null
   height?: Float | null
   productID: String
@@ -39383,6 +39944,7 @@ export interface ProductVariantCreateWithoutPhysicalProductsInput {
 export interface ProductVariantCreateWithoutProductInput {
   id?: ID_Input | null
   sku?: String | null
+  displayShort: String
   weight?: Float | null
   height?: Float | null
   productID: String
@@ -39781,6 +40343,20 @@ export interface ProductVariantScalarWhereInput {
   sku_not_starts_with?: String | null
   sku_ends_with?: String | null
   sku_not_ends_with?: String | null
+  displayShort?: String | null
+  displayShort_not?: String | null
+  displayShort_in?: String[] | String | null
+  displayShort_not_in?: String[] | String | null
+  displayShort_lt?: String | null
+  displayShort_lte?: String | null
+  displayShort_gt?: String | null
+  displayShort_gte?: String | null
+  displayShort_contains?: String | null
+  displayShort_not_contains?: String | null
+  displayShort_starts_with?: String | null
+  displayShort_not_starts_with?: String | null
+  displayShort_ends_with?: String | null
+  displayShort_not_ends_with?: String | null
   weight?: Float | null
   weight_not?: Float | null
   weight_in?: Float[] | Float | null
@@ -39898,6 +40474,7 @@ export interface ProductVariantSubscriptionWhereInput {
 
 export interface ProductVariantUpdateDataInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -39917,6 +40494,7 @@ export interface ProductVariantUpdateDataInput {
 
 export interface ProductVariantUpdateInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -39936,6 +40514,7 @@ export interface ProductVariantUpdateInput {
 
 export interface ProductVariantUpdateManyDataInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -39950,6 +40529,7 @@ export interface ProductVariantUpdateManyDataInput {
 
 export interface ProductVariantUpdateManyMutationInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -40016,6 +40596,7 @@ export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
 
 export interface ProductVariantUpdateWithoutColorDataInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -40034,6 +40615,7 @@ export interface ProductVariantUpdateWithoutColorDataInput {
 
 export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -40052,6 +40634,7 @@ export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
 
 export interface ProductVariantUpdateWithoutProductDataInput {
   sku?: String | null
+  displayShort?: String | null
   weight?: Float | null
   height?: Float | null
   productID?: String | null
@@ -40188,6 +40771,20 @@ export interface ProductVariantWhereInput {
   sku_not_starts_with?: String | null
   sku_ends_with?: String | null
   sku_not_ends_with?: String | null
+  displayShort?: String | null
+  displayShort_not?: String | null
+  displayShort_in?: String[] | String | null
+  displayShort_not_in?: String[] | String | null
+  displayShort_lt?: String | null
+  displayShort_lte?: String | null
+  displayShort_gt?: String | null
+  displayShort_gte?: String | null
+  displayShort_contains?: String | null
+  displayShort_not_contains?: String | null
+  displayShort_starts_with?: String | null
+  displayShort_not_starts_with?: String | null
+  displayShort_ends_with?: String | null
+  displayShort_not_ends_with?: String | null
   weight?: Float | null
   weight_not?: Float | null
   weight_in?: Float[] | Float | null
@@ -40352,6 +40949,10 @@ export interface ProductWhereInput {
   name_not_starts_with?: String | null
   name_ends_with?: String | null
   name_not_ends_with?: String | null
+  productFit?: ProductFit | null
+  productFit_not?: ProductFit | null
+  productFit_in?: ProductFit[] | ProductFit | null
+  productFit_not_in?: ProductFit[] | ProductFit | null
   type?: ProductType | null
   type_not?: ProductType | null
   type_in?: ProductType[] | ProductType | null
@@ -42908,7 +43509,8 @@ export interface StylePreferencesWhereUniqueInput {
 
 export interface SyncTimingCreateInput {
   id?: ID_Input | null
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
 }
 
 export interface SyncTimingSubscriptionWhereInput {
@@ -42923,11 +43525,13 @@ export interface SyncTimingSubscriptionWhereInput {
 }
 
 export interface SyncTimingUpdateInput {
-  dripSyncedAt?: DateTime | null
+  type?: SyncTimingType | null
+  syncedAt?: DateTime | null
 }
 
 export interface SyncTimingUpdateManyMutationInput {
-  dripSyncedAt?: DateTime | null
+  type?: SyncTimingType | null
+  syncedAt?: DateTime | null
 }
 
 export interface SyncTimingWhereInput {
@@ -42948,14 +43552,18 @@ export interface SyncTimingWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
-  dripSyncedAt?: DateTime | null
-  dripSyncedAt_not?: DateTime | null
-  dripSyncedAt_in?: DateTime[] | DateTime | null
-  dripSyncedAt_not_in?: DateTime[] | DateTime | null
-  dripSyncedAt_lt?: DateTime | null
-  dripSyncedAt_lte?: DateTime | null
-  dripSyncedAt_gt?: DateTime | null
-  dripSyncedAt_gte?: DateTime | null
+  type?: SyncTimingType | null
+  type_not?: SyncTimingType | null
+  type_in?: SyncTimingType[] | SyncTimingType | null
+  type_not_in?: SyncTimingType[] | SyncTimingType | null
+  syncedAt?: DateTime | null
+  syncedAt_not?: DateTime | null
+  syncedAt_in?: DateTime[] | DateTime | null
+  syncedAt_not_in?: DateTime[] | DateTime | null
+  syncedAt_lt?: DateTime | null
+  syncedAt_lte?: DateTime | null
+  syncedAt_gt?: DateTime | null
+  syncedAt_gte?: DateTime | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -44959,6 +45567,10 @@ export interface AggregatePhysicalProduct {
   count: Int
 }
 
+export interface AggregatePhysicalProductSellable {
+  count: Int
+}
+
 export interface AggregateProduct {
   count: Int
 }
@@ -46305,7 +46917,7 @@ export interface PhysicalProduct extends Node {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
-  sellable?: Boolean | null
+  sellable?: PhysicalProductSellable | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -46341,9 +46953,50 @@ export interface PhysicalProductPreviousValues {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
-  sellable?: Boolean | null
   createdAt: DateTime
   updatedAt: DateTime
+}
+
+export interface PhysicalProductSellable extends Node {
+  id: ID_Output
+  new: Boolean
+  newPrice?: Float | null
+  used: Boolean
+  usedPrice?: Float | null
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface PhysicalProductSellableConnection {
+  pageInfo: PageInfo
+  edges: Array<PhysicalProductSellableEdge | null>
+  aggregate: AggregatePhysicalProductSellable
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface PhysicalProductSellableEdge {
+  node: PhysicalProductSellable
+  cursor: String
+}
+
+export interface PhysicalProductSellablePreviousValues {
+  id: ID_Output
+  new: Boolean
+  newPrice?: Float | null
+  used: Boolean
+  usedPrice?: Float | null
+}
+
+export interface PhysicalProductSellableSubscriptionPayload {
+  mutation: MutationType
+  node?: PhysicalProductSellable | null
+  updatedFields?: Array<String> | null
+  previousValues?: PhysicalProductSellablePreviousValues | null
 }
 
 export interface PhysicalProductSubscriptionPayload {
@@ -46358,6 +47011,7 @@ export interface Product extends Node {
   slug: String
   name: String
   brand: Brand
+  productFit?: ProductFit | null
   category: Category
   type?: ProductType | null
   description?: String | null
@@ -46567,6 +47221,7 @@ export interface ProductPreviousValues {
   id: ID_Output
   slug: String
   name: String
+  productFit?: ProductFit | null
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
@@ -46685,6 +47340,7 @@ export interface ProductSubscriptionPayload {
 export interface ProductVariant extends Node {
   id: ID_Output
   sku?: String | null
+  displayShort: String
   color: Color
   internalSize?: Size | null
   manufacturerSizes?: Array<Size> | null
@@ -46808,6 +47464,7 @@ export interface ProductVariantFeedbackSubscriptionPayload {
 export interface ProductVariantPreviousValues {
   id: ID_Output
   sku?: String | null
+  displayShort: String
   weight?: Float | null
   height?: Float | null
   productID: String
@@ -47414,7 +48071,8 @@ export interface StylePreferencesSubscriptionPayload {
 
 export interface SyncTiming extends Node {
   id: ID_Output
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -47440,7 +48098,8 @@ export interface SyncTimingEdge {
 
 export interface SyncTimingPreviousValues {
   id: ID_Output
-  dripSyncedAt: DateTime
+  type: SyncTimingType
+  syncedAt: DateTime
   createdAt: DateTime
   updatedAt: DateTime
 }

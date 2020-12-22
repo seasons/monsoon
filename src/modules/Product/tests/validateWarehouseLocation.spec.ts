@@ -21,7 +21,11 @@ describe("Validate Warehouse Location", () => {
   beforeAll(async done => {
     // Instantiate test service
     prismaService = new PrismaService()
-    let productUtilsService = new ProductUtilsService(prismaService)
+    utilsService = new UtilsService(prismaService)
+    let productUtilsService = new ProductUtilsService(
+      prismaService,
+      utilsService
+    )
     let physicalProductUtilsService = new PhysicalProductUtilsService(
       prismaService,
       productUtilsService
@@ -34,7 +38,6 @@ describe("Validate Warehouse Location", () => {
     const pusher = new PusherService()
     const error = new ErrorService()
     const pushData = new PushNotificationDataProvider()
-    utilsService = new UtilsService(prismaService)
     physicalProductsService = new PhysicalProductService(
       prismaService,
       new PushNotificationService(pusher, pushData, prismaService, error),

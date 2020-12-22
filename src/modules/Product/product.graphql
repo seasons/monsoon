@@ -73,6 +73,9 @@ type Query {
     last: Int
   ): [Product]!
   productsConnection(
+    tops: [String]
+    bottoms: [String]
+    availableOnly: Boolean
     sizes: [String!]
     category: String
     brand: String
@@ -185,6 +188,7 @@ type Product {
   modelHeight: Int
   modelSize: Size
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   retailPrice: Int
   color: Color!
   season: ProductSeason
@@ -296,6 +300,7 @@ input UpsertProductInput {
   modelSizeName: String
   name: String!
   outerMaterials: [String!]!
+  productFit: ProductFit
   retailPrice: Int!
   season: UpsertSeasonInput
   photographyStatus: PhotographyStatus
@@ -314,6 +319,7 @@ input CustomProductUpdateInput {
   color: ColorUpdateOneRequiredInput
   description: String
   externalURL: String
+  productFit: ProductFit
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   model: ProductModelUpdateOneWithoutProductsInput

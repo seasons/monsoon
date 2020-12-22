@@ -359,6 +359,10 @@ type AggregatePhysicalProduct {
   count: Int!
 }
 
+type AggregatePhysicalProductSellable {
+  count: Int!
+}
+
 type AggregateProduct {
   count: Int!
 }
@@ -6674,6 +6678,12 @@ type Mutation {
   upsertPhysicalProduct(where: PhysicalProductWhereUniqueInput!, create: PhysicalProductCreateInput!, update: PhysicalProductUpdateInput!): PhysicalProduct!
   deletePhysicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
+  createPhysicalProductSellable(data: PhysicalProductSellableCreateInput!): PhysicalProductSellable!
+  updatePhysicalProductSellable(data: PhysicalProductSellableUpdateInput!, where: PhysicalProductSellableWhereUniqueInput!): PhysicalProductSellable
+  updateManyPhysicalProductSellables(data: PhysicalProductSellableUpdateManyMutationInput!, where: PhysicalProductSellableWhereInput): BatchPayload!
+  upsertPhysicalProductSellable(where: PhysicalProductSellableWhereUniqueInput!, create: PhysicalProductSellableCreateInput!, update: PhysicalProductSellableUpdateInput!): PhysicalProductSellable!
+  deletePhysicalProductSellable(where: PhysicalProductSellableWhereUniqueInput!): PhysicalProductSellable
+  deleteManyPhysicalProductSellables(where: PhysicalProductSellableWhereInput): BatchPayload!
   createProduct(data: ProductCreateInput!): Product!
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
@@ -8012,7 +8022,7 @@ type PhysicalProduct {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
+  sellable: PhysicalProductSellable
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8038,7 +8048,7 @@ input PhysicalProductCreateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
+  sellable: PhysicalProductSellableCreateOneInput
 }
 
 input PhysicalProductCreateManyInput {
@@ -8080,7 +8090,7 @@ input PhysicalProductCreateWithoutLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
+  sellable: PhysicalProductSellableCreateOneInput
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -8097,7 +8107,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
+  sellable: PhysicalProductSellableCreateOneInput
 }
 
 input PhysicalProductCreateWithoutWarehouseLocationInput {
@@ -8114,7 +8124,7 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
+  sellable: PhysicalProductSellableCreateOneInput
 }
 
 type PhysicalProductEdge {
@@ -8153,8 +8163,6 @@ enum PhysicalProductOrderByInput {
   dateReceived_DESC
   unitCost_ASC
   unitCost_DESC
-  sellable_ASC
-  sellable_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -8173,7 +8181,6 @@ type PhysicalProductPreviousValues {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8267,8 +8274,6 @@ input PhysicalProductScalarWhereInput {
   unitCost_lte: Float
   unitCost_gt: Float
   unitCost_gte: Float
-  sellable: Boolean
-  sellable_not: Boolean
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -8288,6 +8293,156 @@ input PhysicalProductScalarWhereInput {
   AND: [PhysicalProductScalarWhereInput!]
   OR: [PhysicalProductScalarWhereInput!]
   NOT: [PhysicalProductScalarWhereInput!]
+}
+
+type PhysicalProductSellable {
+  id: ID!
+  new: Boolean!
+  newPrice: Float
+  used: Boolean!
+  usedPrice: Float
+}
+
+type PhysicalProductSellableConnection {
+  pageInfo: PageInfo!
+  edges: [PhysicalProductSellableEdge]!
+  aggregate: AggregatePhysicalProductSellable!
+}
+
+input PhysicalProductSellableCreateInput {
+  id: ID
+  new: Boolean
+  newPrice: Float
+  used: Boolean
+  usedPrice: Float
+}
+
+input PhysicalProductSellableCreateOneInput {
+  create: PhysicalProductSellableCreateInput
+  connect: PhysicalProductSellableWhereUniqueInput
+}
+
+type PhysicalProductSellableEdge {
+  node: PhysicalProductSellable!
+  cursor: String!
+}
+
+enum PhysicalProductSellableOrderByInput {
+  id_ASC
+  id_DESC
+  new_ASC
+  new_DESC
+  newPrice_ASC
+  newPrice_DESC
+  used_ASC
+  used_DESC
+  usedPrice_ASC
+  usedPrice_DESC
+}
+
+type PhysicalProductSellablePreviousValues {
+  id: ID!
+  new: Boolean!
+  newPrice: Float
+  used: Boolean!
+  usedPrice: Float
+}
+
+type PhysicalProductSellableSubscriptionPayload {
+  mutation: MutationType!
+  node: PhysicalProductSellable
+  updatedFields: [String!]
+  previousValues: PhysicalProductSellablePreviousValues
+}
+
+input PhysicalProductSellableSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: PhysicalProductSellableWhereInput
+  AND: [PhysicalProductSellableSubscriptionWhereInput!]
+  OR: [PhysicalProductSellableSubscriptionWhereInput!]
+  NOT: [PhysicalProductSellableSubscriptionWhereInput!]
+}
+
+input PhysicalProductSellableUpdateDataInput {
+  new: Boolean
+  newPrice: Float
+  used: Boolean
+  usedPrice: Float
+}
+
+input PhysicalProductSellableUpdateInput {
+  new: Boolean
+  newPrice: Float
+  used: Boolean
+  usedPrice: Float
+}
+
+input PhysicalProductSellableUpdateManyMutationInput {
+  new: Boolean
+  newPrice: Float
+  used: Boolean
+  usedPrice: Float
+}
+
+input PhysicalProductSellableUpdateOneInput {
+  create: PhysicalProductSellableCreateInput
+  update: PhysicalProductSellableUpdateDataInput
+  upsert: PhysicalProductSellableUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: PhysicalProductSellableWhereUniqueInput
+}
+
+input PhysicalProductSellableUpsertNestedInput {
+  update: PhysicalProductSellableUpdateDataInput!
+  create: PhysicalProductSellableCreateInput!
+}
+
+input PhysicalProductSellableWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  new: Boolean
+  new_not: Boolean
+  newPrice: Float
+  newPrice_not: Float
+  newPrice_in: [Float!]
+  newPrice_not_in: [Float!]
+  newPrice_lt: Float
+  newPrice_lte: Float
+  newPrice_gt: Float
+  newPrice_gte: Float
+  used: Boolean
+  used_not: Boolean
+  usedPrice: Float
+  usedPrice_not: Float
+  usedPrice_in: [Float!]
+  usedPrice_not_in: [Float!]
+  usedPrice_lt: Float
+  usedPrice_lte: Float
+  usedPrice_gt: Float
+  usedPrice_gte: Float
+  AND: [PhysicalProductSellableWhereInput!]
+  OR: [PhysicalProductSellableWhereInput!]
+  NOT: [PhysicalProductSellableWhereInput!]
+}
+
+input PhysicalProductSellableWhereUniqueInput {
+  id: ID
 }
 
 enum PhysicalProductStatus {
@@ -8332,7 +8487,7 @@ input PhysicalProductUpdateDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateInput {
@@ -8349,7 +8504,7 @@ input PhysicalProductUpdateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -8363,7 +8518,6 @@ input PhysicalProductUpdateManyDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
 }
 
 input PhysicalProductUpdateManyInput {
@@ -8389,7 +8543,6 @@ input PhysicalProductUpdateManyMutationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -8462,7 +8615,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -8478,7 +8631,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
@@ -8494,7 +8647,7 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: Boolean
+  sellable: PhysicalProductSellableUpdateOneInput
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -8638,8 +8791,7 @@ input PhysicalProductWhereInput {
   unitCost_lte: Float
   unitCost_gt: Float
   unitCost_gte: Float
-  sellable: Boolean
-  sellable_not: Boolean
+  sellable: PhysicalProductSellableWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -8676,6 +8828,7 @@ type Product {
   slug: String!
   name: String!
   brand: Brand!
+  productFit: ProductFit
   category: Category!
   type: ProductType
   description: String
@@ -8723,6 +8876,7 @@ input ProductCreateInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
+  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
   type: ProductType
   description: String
@@ -8795,6 +8949,7 @@ input ProductCreateWithoutBrandInput {
   id: ID
   slug: String!
   name: String!
+  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
   type: ProductType
   description: String
@@ -8824,6 +8979,7 @@ input ProductCreateWithoutCategoryInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -8852,6 +9008,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
+  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
   type: ProductType
   description: String
@@ -8880,6 +9037,7 @@ input ProductCreateWithoutModelInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
+  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
   type: ProductType
   description: String
@@ -8908,6 +9066,7 @@ input ProductCreateWithoutTagsInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
+  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
   type: ProductType
   description: String
@@ -8936,6 +9095,7 @@ input ProductCreateWithoutVariantsInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
+  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
   type: ProductType
   description: String
@@ -8962,6 +9122,12 @@ input ProductCreateWithoutVariantsInput {
 type ProductEdge {
   node: Product!
   cursor: String!
+}
+
+enum ProductFit {
+  RunsBig
+  TrueToSize
+  RunsSmall
 }
 
 type ProductFunction {
@@ -9585,6 +9751,8 @@ enum ProductOrderByInput {
   slug_DESC
   name_ASC
   name_DESC
+  productFit_ASC
+  productFit_DESC
   type_ASC
   type_DESC
   description_ASC
@@ -9613,6 +9781,7 @@ type ProductPreviousValues {
   id: ID!
   slug: String!
   name: String!
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -9947,6 +10116,10 @@ input ProductScalarWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  productFit: ProductFit
+  productFit_not: ProductFit
+  productFit_in: [ProductFit!]
+  productFit_not_in: [ProductFit!]
   type: ProductType
   type_not: ProductType
   type_in: [ProductType!]
@@ -10194,6 +10367,7 @@ input ProductUpdateDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -10226,6 +10400,7 @@ input ProductUpdateInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -10253,6 +10428,7 @@ input ProductUpdateInput {
 input ProductUpdateManyDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -10281,6 +10457,7 @@ input ProductUpdateManyInput {
 input ProductUpdateManyMutationInput {
   slug: String
   name: String
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -10380,6 +10557,7 @@ input ProductUpdateouterMaterialsInput {
 input ProductUpdateWithoutBrandDataInput {
   slug: String
   name: String
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -10408,6 +10586,7 @@ input ProductUpdateWithoutCategoryDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
+  productFit: ProductFit
   type: ProductType
   description: String
   externalURL: String
@@ -10435,6 +10614,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -10462,6 +10642,7 @@ input ProductUpdateWithoutModelDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -10489,6 +10670,7 @@ input ProductUpdateWithoutTagsDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -10516,6 +10698,7 @@ input ProductUpdateWithoutVariantsDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
+  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
@@ -10618,6 +10801,7 @@ input ProductUpsertWithWhereUniqueWithoutTagsInput {
 type ProductVariant {
   id: ID!
   sku: String
+  displayShort: String!
   color: Color!
   internalSize: Size
   manufacturerSizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size!]
@@ -10646,6 +10830,7 @@ type ProductVariantConnection {
 input ProductVariantCreateInput {
   id: ID
   sku: String
+  displayShort: String!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -10686,6 +10871,7 @@ input ProductVariantCreateOneWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutColorInput {
   id: ID
   sku: String
+  displayShort: String!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
   weight: Float
@@ -10705,6 +10891,7 @@ input ProductVariantCreateWithoutColorInput {
 input ProductVariantCreateWithoutPhysicalProductsInput {
   id: ID
   sku: String
+  displayShort: String!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -10724,6 +10911,7 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutProductInput {
   id: ID
   sku: String
+  displayShort: String!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -11182,6 +11370,8 @@ enum ProductVariantOrderByInput {
   id_DESC
   sku_ASC
   sku_DESC
+  displayShort_ASC
+  displayShort_DESC
   weight_ASC
   weight_DESC
   height_ASC
@@ -11211,6 +11401,7 @@ enum ProductVariantOrderByInput {
 type ProductVariantPreviousValues {
   id: ID!
   sku: String
+  displayShort: String!
   weight: Float
   height: Float
   productID: String!
@@ -11254,6 +11445,20 @@ input ProductVariantScalarWhereInput {
   sku_not_starts_with: String
   sku_ends_with: String
   sku_not_ends_with: String
+  displayShort: String
+  displayShort_not: String
+  displayShort_in: [String!]
+  displayShort_not_in: [String!]
+  displayShort_lt: String
+  displayShort_lte: String
+  displayShort_gt: String
+  displayShort_gte: String
+  displayShort_contains: String
+  displayShort_not_contains: String
+  displayShort_starts_with: String
+  displayShort_not_starts_with: String
+  displayShort_ends_with: String
+  displayShort_not_ends_with: String
   weight: Float
   weight_not: Float
   weight_in: [Float!]
@@ -11381,6 +11586,7 @@ input ProductVariantSubscriptionWhereInput {
 
 input ProductVariantUpdateDataInput {
   sku: String
+  displayShort: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11400,6 +11606,7 @@ input ProductVariantUpdateDataInput {
 
 input ProductVariantUpdateInput {
   sku: String
+  displayShort: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11419,6 +11626,7 @@ input ProductVariantUpdateInput {
 
 input ProductVariantUpdateManyDataInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -11433,6 +11641,7 @@ input ProductVariantUpdateManyDataInput {
 
 input ProductVariantUpdateManyMutationInput {
   sku: String
+  displayShort: String
   weight: Float
   height: Float
   productID: String
@@ -11499,6 +11708,7 @@ input ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
 
 input ProductVariantUpdateWithoutColorDataInput {
   sku: String
+  displayShort: String
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
   weight: Float
@@ -11517,6 +11727,7 @@ input ProductVariantUpdateWithoutColorDataInput {
 
 input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   sku: String
+  displayShort: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11535,6 +11746,7 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
 
 input ProductVariantUpdateWithoutProductDataInput {
   sku: String
+  displayShort: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11705,6 +11917,20 @@ input ProductVariantWhereInput {
   sku_not_starts_with: String
   sku_ends_with: String
   sku_not_ends_with: String
+  displayShort: String
+  displayShort_not: String
+  displayShort_in: [String!]
+  displayShort_not_in: [String!]
+  displayShort_lt: String
+  displayShort_lte: String
+  displayShort_gt: String
+  displayShort_gte: String
+  displayShort_contains: String
+  displayShort_not_contains: String
+  displayShort_starts_with: String
+  displayShort_not_starts_with: String
+  displayShort_ends_with: String
+  displayShort_not_ends_with: String
   color: ColorWhereInput
   internalSize: SizeWhereInput
   manufacturerSizes_every: SizeWhereInput
@@ -11870,6 +12096,10 @@ input ProductWhereInput {
   name_ends_with: String
   name_not_ends_with: String
   brand: BrandWhereInput
+  productFit: ProductFit
+  productFit_not: ProductFit
+  productFit_in: [ProductFit!]
+  productFit_not_in: [ProductFit!]
   category: CategoryWhereInput
   type: ProductType
   type_not: ProductType
@@ -12666,6 +12896,9 @@ type Query {
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
+  physicalProductSellable(where: PhysicalProductSellableWhereUniqueInput!): PhysicalProductSellable
+  physicalProductSellables(where: PhysicalProductSellableWhereInput, orderBy: PhysicalProductSellableOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductSellable]!
+  physicalProductSellablesConnection(where: PhysicalProductSellableWhereInput, orderBy: PhysicalProductSellableOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductSellableConnection!
   product(where: ProductWhereUniqueInput!): Product
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
@@ -15318,6 +15551,7 @@ type Subscription {
   pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
   paymentPlan(where: PaymentPlanSubscriptionWhereInput): PaymentPlanSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
+  physicalProductSellable(where: PhysicalProductSellableSubscriptionWhereInput): PhysicalProductSellableSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
   productMaterialCategory(where: ProductMaterialCategorySubscriptionWhereInput): ProductMaterialCategorySubscriptionPayload

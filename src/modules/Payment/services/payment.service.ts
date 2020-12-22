@@ -903,6 +903,28 @@ export class PaymentService {
       street1: billingStreet1,
       street2: billingStreet2,
     } = billingAddress
+
+    const {
+      city: shippingCity,
+      postalCode: shippingPostalCode,
+      state: shippingState,
+      street1: shippingStreet1,
+      street2: shippingStreet2,
+    } = shippingAddress
+
+    if (
+      !shippingCity ||
+      !shippingPostalCode ||
+      !shippingState ||
+      !shippingStreet1 ||
+      !billingCity ||
+      !billingPostalCode ||
+      !billingState ||
+      !billingStreet1
+    ) {
+      throw new Error("You're missing a required field")
+    }
+
     const getAbbreviatedState = originalState => {
       if (!originalState) {
         throw new Error(`Invalid state: ${originalState}`)
@@ -921,19 +943,41 @@ export class PaymentService {
       throw new Error(`Invalid state: ${originalState}`)
     }
 
-    const abbreviatedBillingState = getAbbreviatedState(billingState)
+    const abbrBillingState = !!billingState
+      ? getAbbreviatedState(billingState)
+      : ""
 
     const {
       isValid: billingAddressIsValid,
     } = await this.shippingService.shippoValidateAddress({
       name: user.firstName,
       street1: billingStreet1,
+      street2: billingStreet2,
       city: billingCity,
-      state: abbreviatedBillingState,
+      state: abbrBillingState,
       zip: billingPostalCode,
     })
+
     if (!billingAddressIsValid) {
       throw new Error("Your billing address is invalid")
+    }
+
+    const abbrShippingState = !!shippingState
+      ? getAbbreviatedState(shippingState)
+      : ""
+
+    const {
+      isValid: shippingAddressIsValid,
+    } = await this.shippingService.shippoValidateAddress({
+      name: user.firstName,
+      street1: shippingStreet1,
+      city: shippingCity,
+      state: abbrShippingState,
+      zip: shippingPostalCode,
+    })
+
+    if (!shippingAddressIsValid) {
+      throw new Error("Your shipping address is invalid")
     }
 
     // Update user's billing address on chargebee
@@ -942,7 +986,7 @@ export class PaymentService {
       billingStreet1,
       billingStreet2,
       billingCity,
-      abbreviatedBillingState,
+      abbrBillingState,
       billingPostalCode
     )
 
@@ -953,18 +997,18 @@ export class PaymentService {
       billingStreet1,
       billingStreet2,
       billingCity,
-      abbreviatedBillingState,
+      abbrBillingState,
       billingPostalCode
     )
 
     // Update customer's shipping address & phone number. Unlike before, will
     // accept all valid addresses. Will NOT throw an error if the address is
     // not in NYC.
-    const shippingState = getAbbreviatedState(shippingAddress.state)
+
     await this.customerService.updateCustomerDetail(
       user,
       customer,
-      { ...shippingAddress, state: shippingState },
+      { ...shippingAddress, state: abbrShippingState },
       phoneNumber
     )
 
