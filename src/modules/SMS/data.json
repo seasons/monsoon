@@ -16,5 +16,11 @@
     "mediaUrls": [
       "https://seasons-images.s3.amazonaws.com/email-images/WaitlistedHero.jpg"
     ]
+  },
+  "ResumeReminder": {
+    "body": "Hi {{{name}}}, it's Seasons. Your account is set to resume on {{{resumeDate}}}. \n\nReply 1 to extend your pause by 1 month, 3 to extend it by 3 months, or resume to restart it immediately. \n\nIf you have any questions, please contact us at {{{contactEmail}}}.",
+    "mediaUrls": [
+      "https://seasons-images.s3.amazonaws.com/email-images/UpdateHero.jpg"
+    ]
   }
 }

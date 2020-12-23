@@ -149,7 +149,7 @@ export class SMSService {
     renderData: any
   }) {
     const { body, mediaUrls } = this.getSMSData(smsId, renderData)
-    await this.sendSMSMessage({
+    return await this.sendSMSMessage({
       to,
       body,
       mediaUrls,
@@ -226,7 +226,8 @@ export class SMSService {
     })
 
     // Return status
-    return this.twilioUtils.twilioToPrismaSmsStatus(status)
+    const smsStatus = this.twilioUtils.twilioToPrismaSmsStatus(status)
+    return smsStatus
   }
 
   async handleSMSStatusUpdate(externalId: string, status: SmsStatus) {

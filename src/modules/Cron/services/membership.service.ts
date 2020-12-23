@@ -1,5 +1,5 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
-import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/index"
 import { Injectable, Logger } from "@nestjs/common"
@@ -7,6 +7,7 @@ import { Cron, CronExpression } from "@nestjs/schedule"
 import * as Sentry from "@sentry/node"
 import { head } from "lodash"
 import { DateTime } from "luxon"
+import moment from "moment"
 
 @Injectable()
 export class MembershipScheduledJobs {
@@ -15,8 +16,8 @@ export class MembershipScheduledJobs {
   constructor(
     private readonly prisma: PrismaService,
     private readonly payment: PaymentService,
-    private readonly pushNotification: PushNotificationService,
-    private readonly email: EmailService
+    private readonly email: EmailService,
+    private readonly sms: SMSService
   ) {}
 
   @Cron(CronExpression.EVERY_6_HOURS)
@@ -101,7 +102,7 @@ export class MembershipScheduledJobs {
   }
 
   @Cron(CronExpression.EVERY_6_HOURS)
-  async restartMembership() {
+  async manageMembershipResumes() {
     const pausedCustomers = await this.prisma.client.customers({
       where: {
         status: "Paused",
@@ -123,12 +124,7 @@ export class MembershipScheduledJobs {
         const pauseRequest = head(pauseRequests)
         const resumeDate = DateTime.fromISO(pauseRequest?.resumeDate)
 
-        await this.sendReminderPushNotificationAndEmail(
-          customer,
-          pauseRequest,
-          resumeDate
-        )
-
+        // If it's time to auto-resume, do so.
         if (!!pauseRequest && resumeDate <= DateTime.local()) {
           const customerWithMembership = (await this.prisma.binding.query.pauseRequest(
             { where: { id: pauseRequest.id } },
@@ -152,6 +148,18 @@ export class MembershipScheduledJobs {
 
           this.logger.log(`Paused customer subscription: ${customer.id}`)
           await this.payment.resumeSubscription(subscriptionId, null, customer)
+
+          continue
+        }
+
+        // If it's 2 days before their resume date, remind them.
+        if (
+          !!pauseRequest &&
+          resumeDate.minus({ days: 2 }) <= DateTime.local()
+        ) {
+          await this.sendReminderComms(customer, pauseRequest, resumeDate)
+
+          continue
         }
       } catch (e) {
         Sentry.captureException(JSON.stringify(e))
@@ -159,48 +167,20 @@ export class MembershipScheduledJobs {
     }
   }
 
-  async sendReminderPushNotificationAndEmail(
-    customer,
-    pauseRequest,
-    resumeDate
-  ) {
-    // Send reminder two days before customer membership is set to resume
-    if (!!pauseRequest && resumeDate.minus({ days: 2 }) <= DateTime.local()) {
-      const user = await this.prisma.client.customer({ id: customer.id }).user()
+  async sendReminderComms(customer, pauseRequest, resumeDate) {
+    const user = await this.prisma.client.customer({ id: customer.id }).user()
 
-      const notificationID = "ResumeReminder"
-      const notificationVars = {
-        date: resumeDate,
-      }
-
-      // Check if user has been notified already
-      const pauseRequests = await this.prisma.client.pauseRequests({
-        where: {
-          membership: {
-            customer: {
-              id: customer.id,
-            },
-          },
+    if (!pauseRequest.notified) {
+      await this.sms.sendSMSById({
+        to: { id: user.id },
+        renderData: {
+          name: user.firstName,
+          resumeDate: moment(pauseRequest.resumeDate).format("dddd, MMMM Do"),
         },
-        orderBy: "createdAt_DESC",
+        smsId: "ResumeReminder",
       })
 
-      const pauseRequest = head(pauseRequests)
-
-      if (!pauseRequest.notified) {
-        await this.prisma.client.updatePauseRequest({
-          where: { id: pauseRequest.id },
-          data: { notified: true },
-        })
-
-        await this.pushNotification.pushNotifyUsers({
-          emails: [user.email],
-          pushNotifID: notificationID,
-          vars: notificationVars,
-        })
-
-        await this.email.sendResumeReminderEmail(user, pauseRequest.resumeDate)
-      }
+      await this.email.sendResumeReminderEmail(user, pauseRequest.resumeDate)
     }
   }
 }
