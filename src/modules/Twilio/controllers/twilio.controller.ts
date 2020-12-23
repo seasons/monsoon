@@ -7,6 +7,9 @@ import { TwilioUtils } from "../services/twilio.utils.service"
 
 type TwilioEvent = {
   MessageSid: string
+  AccountSid: string
+  From: string
+  To: string
   SmsStatus: MessageStatus
 }
 
@@ -19,11 +22,19 @@ export class TwilioController {
 
   @Post()
   async handlePost(@Body() body: TwilioEvent) {
-    await this.prisma.client.updateManySmsReceipts({
-      data: {
-        status: this.twilioUtils.twilioToPrismaSmsStatus(body.SmsStatus),
-      },
-      where: { externalId: body.MessageSid },
-    })
+    switch (body.To) {
+      case process.env.TWILIO_PHONE_NUMBER:
+        console.log("Message from customer")
+        break
+      default:
+        if (!!body.SmsStatus && body.From === process.env.TWILIO_PHONE_NUMBER) {
+          await this.prisma.client.updateManySmsReceipts({
+            data: {
+              status: this.twilioUtils.twilioToPrismaSmsStatus(body.SmsStatus),
+            },
+            where: { externalId: body.MessageSid },
+          })
+        }
+    }
   }
 }
