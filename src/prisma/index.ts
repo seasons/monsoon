@@ -3508,7 +3508,9 @@ export type CustomerMembershipOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "subscriptionId_ASC"
-  | "subscriptionId_DESC";
+  | "subscriptionId_DESC"
+  | "giftId_ASC"
+  | "giftId_DESC";
 
 export type HomepageProductRailOrderByInput =
   | "id_ASC"
@@ -6378,6 +6380,20 @@ export interface CustomerMembershipWhereInput {
   pauseRequests_every?: Maybe<PauseRequestWhereInput>;
   pauseRequests_some?: Maybe<PauseRequestWhereInput>;
   pauseRequests_none?: Maybe<PauseRequestWhereInput>;
+  giftId?: Maybe<String>;
+  giftId_not?: Maybe<String>;
+  giftId_in?: Maybe<String[] | String>;
+  giftId_not_in?: Maybe<String[] | String>;
+  giftId_lt?: Maybe<String>;
+  giftId_lte?: Maybe<String>;
+  giftId_gt?: Maybe<String>;
+  giftId_gte?: Maybe<String>;
+  giftId_contains?: Maybe<String>;
+  giftId_not_contains?: Maybe<String>;
+  giftId_starts_with?: Maybe<String>;
+  giftId_not_starts_with?: Maybe<String>;
+  giftId_ends_with?: Maybe<String>;
+  giftId_not_ends_with?: Maybe<String>;
   AND?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
   OR?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
   NOT?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
@@ -12897,6 +12913,7 @@ export interface CustomerMembershipCreateWithoutCustomerInput {
   plan?: Maybe<PaymentPlanCreateOneInput>;
   subscriptionId: String;
   pauseRequests?: Maybe<PauseRequestCreateManyWithoutMembershipInput>;
+  giftId?: Maybe<String>;
 }
 
 export interface PaymentPlanCreateOneInput {
@@ -13472,6 +13489,7 @@ export interface CustomerMembershipUpdateWithoutCustomerDataInput {
   plan?: Maybe<PaymentPlanUpdateOneInput>;
   subscriptionId?: Maybe<String>;
   pauseRequests?: Maybe<PauseRequestUpdateManyWithoutMembershipInput>;
+  giftId?: Maybe<String>;
 }
 
 export interface PaymentPlanUpdateOneInput {
@@ -15334,6 +15352,7 @@ export interface CustomerMembershipCreateInput {
   subscriptionId: String;
   customer: CustomerCreateOneWithoutMembershipInput;
   pauseRequests?: Maybe<PauseRequestCreateManyWithoutMembershipInput>;
+  giftId?: Maybe<String>;
 }
 
 export interface CustomerCreateOneWithoutMembershipInput {
@@ -15365,6 +15384,7 @@ export interface CustomerMembershipUpdateInput {
   subscriptionId?: Maybe<String>;
   customer?: Maybe<CustomerUpdateOneRequiredWithoutMembershipInput>;
   pauseRequests?: Maybe<PauseRequestUpdateManyWithoutMembershipInput>;
+  giftId?: Maybe<String>;
 }
 
 export interface CustomerUpdateOneRequiredWithoutMembershipInput {
@@ -15399,6 +15419,7 @@ export interface CustomerUpsertWithoutMembershipInput {
 
 export interface CustomerMembershipUpdateManyMutationInput {
   subscriptionId?: Maybe<String>;
+  giftId?: Maybe<String>;
 }
 
 export interface EmailReceiptCreateInput {
@@ -15748,6 +15769,7 @@ export interface CustomerMembershipCreateWithoutPauseRequestsInput {
   plan?: Maybe<PaymentPlanCreateOneInput>;
   subscriptionId: String;
   customer: CustomerCreateOneWithoutMembershipInput;
+  giftId?: Maybe<String>;
 }
 
 export interface PauseRequestUpdateInput {
@@ -15771,6 +15793,7 @@ export interface CustomerMembershipUpdateWithoutPauseRequestsDataInput {
   plan?: Maybe<PaymentPlanUpdateOneInput>;
   subscriptionId?: Maybe<String>;
   customer?: Maybe<CustomerUpdateOneRequiredWithoutMembershipInput>;
+  giftId?: Maybe<String>;
 }
 
 export interface CustomerMembershipUpsertWithoutPauseRequestsInput {
@@ -21574,6 +21597,7 @@ export interface BillingInfoNullablePromise
 export interface CustomerMembership {
   id: ID_Output;
   subscriptionId: String;
+  giftId?: String;
 }
 
 export interface CustomerMembershipPromise
@@ -21592,6 +21616,7 @@ export interface CustomerMembershipPromise
     first?: Int;
     last?: Int;
   }) => T;
+  giftId: () => Promise<String>;
 }
 
 export interface CustomerMembershipSubscription
@@ -21610,6 +21635,7 @@ export interface CustomerMembershipSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  giftId: () => Promise<AsyncIterator<String>>;
 }
 
 export interface CustomerMembershipNullablePromise
@@ -21628,6 +21654,7 @@ export interface CustomerMembershipNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  giftId: () => Promise<String>;
 }
 
 export interface PaymentPlan {
@@ -27031,6 +27058,7 @@ export interface CustomerMembershipSubscriptionPayloadSubscription
 export interface CustomerMembershipPreviousValues {
   id: ID_Output;
   subscriptionId: String;
+  giftId?: String;
 }
 
 export interface CustomerMembershipPreviousValuesPromise
@@ -27038,6 +27066,7 @@ export interface CustomerMembershipPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   subscriptionId: () => Promise<String>;
+  giftId: () => Promise<String>;
 }
 
 export interface CustomerMembershipPreviousValuesSubscription
@@ -27045,6 +27074,7 @@ export interface CustomerMembershipPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   subscriptionId: () => Promise<AsyncIterator<String>>;
+  giftId: () => Promise<AsyncIterator<String>>;
 }
 
 export interface EmailReceiptSubscriptionPayload {
