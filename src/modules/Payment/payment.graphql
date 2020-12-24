@@ -5,6 +5,7 @@ type Query {
     email: String
     couponID: String
   ): ChargebeeHostedPagePayload
+  chargebeeGiftCheckout(planID: String!): ChargebeeHostedPagePayload
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
   hostedChargebeeCheckout(planID: String!): ChargebeeHostedPagePayload
@@ -18,6 +19,7 @@ type Query {
     first: Int
     last: Int
   ): [PaymentPlan]
+  gift(id: String!): ChargebeeGift
 }
 
 type Mutation {
@@ -153,6 +155,11 @@ type ChargebeeHostedPagePayload {
   type: String!
   updated_at: DateTime!
   url: String!
+}
+
+type ChargebeeGift {
+  gift: JSON
+  subscription: JSON
 }
 
 input RefundInvoiceInput {
