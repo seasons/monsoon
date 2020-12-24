@@ -9,6 +9,7 @@ import { ScheduleModule } from "@nestjs/schedule"
 import sgMail from "@sendgrid/mail"
 import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
+import GraphQLJSON from "graphql-type-json"
 
 import {
   BlogModule,
@@ -76,6 +77,9 @@ const scheduleModule =
           formatError: error => {
             console.error(util.inspect(error, { depth: null }))
             return error
+          },
+          resolvers: {
+            JSON: GraphQLJSON,
           },
         } as GqlModuleOptions),
     }),
