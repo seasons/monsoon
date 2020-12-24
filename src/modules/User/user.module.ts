@@ -22,7 +22,6 @@ import { CustomerService } from "./services/customer.service"
 
 @Module({
   imports: [
-    forwardRef(() => PaymentModule),
     EmailModule,
     PrismaModule,
     ShippingModule,
@@ -32,6 +31,7 @@ import { CustomerService } from "./services/customer.service"
     AnalyticsModule,
     SMSModule,
     ErrorModule,
+    forwardRef(() => PaymentModule),
   ],
   providers: [
     AuthService,
