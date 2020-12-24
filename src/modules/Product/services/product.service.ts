@@ -818,7 +818,10 @@ export class ProductService {
         update: {
           ...physProdData,
           sellable: {
-            update: physProdData.sellable || variant.sellable,
+            upsert: {
+              update: physProdData.sellable || variant.sellable,
+              create: physProdData.sellable || variant.sellable,
+            },
           },
         },
       })
