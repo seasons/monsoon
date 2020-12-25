@@ -167,7 +167,7 @@ export class ProductUtilsService {
       andArray.push({ reservable_not: 0 })
     }
 
-    if (args.bottoms && args.tops) {
+    if (args.bottoms?.length > 0 && args.tops?.length > 0) {
       andArray.push(
         { displayShort_in: [...args.bottoms, ...args.tops] },
         {
@@ -190,7 +190,7 @@ export class ProductUtilsService {
           AND: andArray,
         },
       }
-    } else if (args.bottoms) {
+    } else if (args.bottoms?.length > 0) {
       andArray.push(
         { displayShort_in: args.bottoms },
         {
@@ -213,7 +213,7 @@ export class ProductUtilsService {
           AND: andArray,
         },
       }
-    } else if (args.tops) {
+    } else if (args.tops?.length > 0) {
       andArray.push(
         { displayShort_in: args.tops },
         {
