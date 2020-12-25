@@ -819,6 +819,7 @@ type CustomerMembership {
     )
   pauseRequests: [PauseRequest]
     @relation(name: "CustomerMembershipToPauseRequest", onDelete: CASCADE)
+  giftId: String
 }
 
 type PauseRequest {

@@ -3742,6 +3742,7 @@ type CustomerMembership {
   subscriptionId: String!
   customer: Customer!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
+  giftId: String
 }
 
 type CustomerMembershipConnection {
@@ -3756,6 +3757,7 @@ input CustomerMembershipCreateInput {
   subscriptionId: String!
   customer: CustomerCreateOneWithoutMembershipInput!
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
+  giftId: String
 }
 
 input CustomerMembershipCreateOneWithoutCustomerInput {
@@ -3773,6 +3775,7 @@ input CustomerMembershipCreateWithoutCustomerInput {
   plan: PaymentPlanCreateOneInput
   subscriptionId: String!
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
+  giftId: String
 }
 
 input CustomerMembershipCreateWithoutPauseRequestsInput {
@@ -3780,6 +3783,7 @@ input CustomerMembershipCreateWithoutPauseRequestsInput {
   plan: PaymentPlanCreateOneInput
   subscriptionId: String!
   customer: CustomerCreateOneWithoutMembershipInput!
+  giftId: String
 }
 
 type CustomerMembershipEdge {
@@ -3792,11 +3796,14 @@ enum CustomerMembershipOrderByInput {
   id_DESC
   subscriptionId_ASC
   subscriptionId_DESC
+  giftId_ASC
+  giftId_DESC
 }
 
 type CustomerMembershipPreviousValues {
   id: ID!
   subscriptionId: String!
+  giftId: String
 }
 
 type CustomerMembershipSubscriptionPayload {
@@ -3822,10 +3829,12 @@ input CustomerMembershipUpdateInput {
   subscriptionId: String
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
+  giftId: String
 }
 
 input CustomerMembershipUpdateManyMutationInput {
   subscriptionId: String
+  giftId: String
 }
 
 input CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
@@ -3848,12 +3857,14 @@ input CustomerMembershipUpdateWithoutCustomerDataInput {
   plan: PaymentPlanUpdateOneInput
   subscriptionId: String
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
+  giftId: String
 }
 
 input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
   plan: PaymentPlanUpdateOneInput
   subscriptionId: String
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
+  giftId: String
 }
 
 input CustomerMembershipUpsertWithoutCustomerInput {
@@ -3900,6 +3911,20 @@ input CustomerMembershipWhereInput {
   pauseRequests_every: PauseRequestWhereInput
   pauseRequests_some: PauseRequestWhereInput
   pauseRequests_none: PauseRequestWhereInput
+  giftId: String
+  giftId_not: String
+  giftId_in: [String!]
+  giftId_not_in: [String!]
+  giftId_lt: String
+  giftId_lte: String
+  giftId_gt: String
+  giftId_gte: String
+  giftId_contains: String
+  giftId_not_contains: String
+  giftId_starts_with: String
+  giftId_not_starts_with: String
+  giftId_ends_with: String
+  giftId_not_ends_with: String
   AND: [CustomerMembershipWhereInput!]
   OR: [CustomerMembershipWhereInput!]
   NOT: [CustomerMembershipWhereInput!]
