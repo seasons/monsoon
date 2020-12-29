@@ -8,6 +8,7 @@ import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.se
 import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
 import {
+  CustomerStatus,
   SmsStatus,
   UserVerificationStatus,
   UserWhereUniqueInput,
@@ -251,9 +252,8 @@ export class SMSService {
     const twiml = new Twilio.twiml.MessagingResponse()
     const genericError = `We're sorry, but we're having technical difficulties. Please contact ${process.env.MAIN_CONTACT_EMAIL}`
 
-    const lowercaseContent = body.Body.toLowerCase()
-    const now = DateTime.local()
     let smsCust
+    const lowercaseContent = body.Body.toLowerCase().replace(/"/g, "")
     switch (lowercaseContent) {
       case "1":
       case "2":
@@ -281,45 +281,55 @@ export class SMSService {
           break
         }
 
-        const pauseRequest = smsCust.membership?.pauseRequests?.[0]
-        if (!pauseRequest) {
-          twiml.message(genericError)
-          break
-        }
+        const status = smsCust.status as CustomerStatus
+        switch (status) {
+          case "Active":
+            twiml.message(
+              `Your account is already active.\n\nIf this is unexpected, please contact ${process.env.MAIN_CONTACT_EMAIL} for assistance.`
+            )
+            break
+          case "Deactivated":
+            twiml.message(
+              `Your account is currently deactivated.\n\nTo reactivate, please contact ${process.env.MAIN_CONTACT_EMAIL}.`
+            )
+            break
+          case "Paused":
+            const pauseRequest = smsCust.membership?.pauseRequests?.[0]
+            if (!pauseRequest) {
+              twiml.message(genericError)
+              break
+            }
 
-        if (smsCust.status === "Active") {
-          twiml.message(
-            `Sorry, your account has already been reactivated.\n\n If this is unexpected, please contact ${process.env.MAIN_CONTACT_EMAIL} for assistance.`
-          )
-          break
-        }
+            const resumeDateMoment = moment(pauseRequest.resumeDate as string)
+            const now = moment()
+            if (resumeDateMoment.diff(now, "days") < 30) {
+              const numMonthsToExtend = Number(lowercaseContent)
+              const newResumeDate = moment(
+                pauseRequest.resumeDate as string
+              ).add(numMonthsToExtend, "months")
 
-        // TODO: Is this the status people take up when they cancel?
-        if (smsCust.status === "Deactivated") {
-          twiml.message(
-            `Sorry, your account has already been cancelled.\n\n If this is unexpected, please contact ${process.env.MAIN_CONTACT_EMAIL} for assistance.`
-          )
-          break
-        }
+              await this.paymentUtils.updateResumeDate(
+                newResumeDate.toISOString(),
+                smsCust
+              )
 
-        // TODO: Add a check here to ensure we don't extend an already extended pause request.
-        if (smsCust.status === "Paused") {
-          const newResumeDate = moment(pauseRequest.resumeDate as string).add(
-            Number(lowercaseContent),
-            "months"
-          )
-
-          await this.paymentUtils.updateResumeDate(
-            newResumeDate.toISOString(),
-            smsCust
-          )
-
-          twiml.message(
-            `Your pause has been extended by ${lowercaseContent} months! Your new resume date is ${newResumeDate.format(
-              "dddd, MMMM Do"
-            )}.`
-          )
-          break
+              twiml.message(
+                `Your pause has been extended by ${lowercaseContent} month${
+                  numMonthsToExtend === 1 ? "" : "s"
+                }! Your new resume date is ${this.formatResumeDate(
+                  newResumeDate
+                )}.`
+              )
+            } else {
+              twiml.message(
+                `You are scheduled to resume on ${this.formatResumeDate(
+                  resumeDateMoment
+                )}. We'll reach out then to ask if you'd like to resume or extend your pause.`
+              )
+            }
+            break
+          default:
+            twiml.message(genericError)
         }
         break
       case "resume":
@@ -367,6 +377,8 @@ export class SMSService {
     // TODO: Add a try catch around the whole thing and apply a generic error message if we hit it
     return twiml.toString()
   }
+
+  private formatResumeDate = date => date.format("dddd, MMMM Do")
 
   private async getSMSUser(from: string, smsId: SMSID, info: string) {
     const possibleCustomers = await this.prisma.binding.query.customers(
