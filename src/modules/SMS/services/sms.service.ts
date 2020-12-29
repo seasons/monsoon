@@ -3,6 +3,8 @@ import fs from "fs"
 import { Customer, User } from "@app/decorators"
 import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
 import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
+import { TwilioEvent } from "@app/modules/Twilio/twilio.types"
+import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
 import {
@@ -13,7 +15,10 @@ import {
 import { PrismaService } from "@prisma/prisma.service"
 import { LinksAndEmails } from "@seasons/wind"
 import { head } from "lodash"
+import { DateTime } from "luxon"
+import moment from "moment"
 import mustache from "mustache"
+import Twilio from "twilio"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
 import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
 
@@ -29,7 +34,8 @@ export class SMSService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly twilio: TwilioService,
-    private readonly twilioUtils: TwilioUtils
+    private readonly twilioUtils: TwilioUtils,
+    private readonly paymentUtils: PaymentUtilsService
   ) {
     this.setupService()
   }
@@ -153,6 +159,7 @@ export class SMSService {
       to,
       body,
       mediaUrls,
+      smsId,
     })
   }
 
@@ -162,10 +169,12 @@ export class SMSService {
       body,
       mediaUrls,
       to,
+      smsId,
     }: {
       body: string
       mediaUrls?: string[]
       to: UserWhereUniqueInput
+      smsId?: SMSID
     }
   ): Promise<SmsStatus> {
     // Ensure there are not too many media URLs
@@ -216,6 +225,7 @@ export class SMSService {
       externalId: sid,
       mediaUrls: { set: mediaUrls },
       status: this.twilioUtils.twilioToPrismaSmsStatus(status),
+      smsId,
     })
 
     await this.prisma.client.updateUser({
@@ -235,6 +245,117 @@ export class SMSService {
       data: { status },
       where: { externalId },
     })
+  }
+
+  async handleSMSResponse(body: TwilioEvent) {
+    const twiml = new Twilio.twiml.MessagingResponse()
+    const genericError = `We're sorry, but we're having technical difficulties. Please contact ${process.env.MAIN_CONTACT_EMAIL}`
+
+    const lowercaseContent = body.Body.toLowerCase()
+    const now = DateTime.local()
+    switch (lowercaseContent) {
+      case "1":
+      case "2":
+      case "3":
+        const possibleCustomers = await this.prisma.binding.query.customers(
+          {
+            where: {
+              AND: [
+                {
+                  user: {
+                    smsReceipts_some: { smsId: "ResumeReminder" },
+                  },
+                },
+                { detail: { phoneNumber: body.From } },
+              ],
+            },
+          },
+          `
+            {
+              id
+              status
+              membership {
+                id
+                pauseRequests(orderBy: createdAt_DESC) {
+                  id
+                  resumeDate
+                }
+              }
+            }
+          `
+        )
+        const customerWithMembership = head(possibleCustomers) as any
+
+        if (!customerWithMembership) {
+          twiml.message(genericError)
+          break
+        }
+
+        const pauseRequest =
+          customerWithMembership.membership?.pauseRequests?.[0]
+        if (!pauseRequest) {
+          twiml.message(genericError)
+          break
+        }
+
+        if (customerWithMembership.status === "Active") {
+          twiml.message(
+            `Sorry, your account has already been reactivated.\n\n If this is unexpected, please contact ${process.env.MAIN_CONTACT_EMAIL} for assistance.`
+          )
+          break
+        }
+
+        // TODO: Is this the status people take up when they cancel?
+        if (customerWithMembership.status === "Deactivated") {
+          twiml.message(
+            `Sorry, your account has already been cancelled.\n\n If this is unexpected, please contact ${process.env.MAIN_CONTACT_EMAIL} for assistance.`
+          )
+          break
+        }
+
+        // TODO: Add a check here to ensure we don't extend an already extended pause request.
+        if (customerWithMembership.status === "Paused") {
+          const newResumeDate = moment(pauseRequest.resumeDate as string).add(
+            Number(lowercaseContent),
+            "months"
+          )
+
+          await this.paymentUtils.updateResumeDate(
+            newResumeDate.toISOString(),
+            customerWithMembership
+          )
+
+          twiml.message(
+            `Your pause has been extended by ${lowercaseContent} months! Your new resume date is ${newResumeDate.format(
+              "dddd, MMMM Do"
+            )}.`
+          )
+          break
+        }
+        break
+      case "resume":
+        // TODO: Actually resume their membership
+        // If they received a resume reminder and it's not too late, resume their membership immediately.
+        // If they received a resume reminder and it's too late, tell them as much
+        // If they did not receive a resume reminder, do nothing.
+        twiml.message(
+          `Your membership has been resumed!. You're free to place your next reservation.`
+        )
+        break
+      case "stop":
+        // TODO: Unsubscribe them from SMS messages
+        twiml.message(
+          `Sorry to see you go! You've been unsubscribed from all Seasons SMS messages.`
+        )
+        break
+      default:
+        twiml.message(
+          `Sorry, we don't recognize that response. Please try again or contact ${process.env.MAIN_CONTACT_EMAIL}`
+        )
+    }
+
+    // TODO: Add a try catch around the whole thing and apply a generic error message if we hit it
+    return twiml.toString()
   }
 
   private getSMSData(smsID: SMSID, vars: any): SMSPayload {

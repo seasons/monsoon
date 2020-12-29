@@ -1,6 +1,7 @@
 import { Customer, User } from "@app/decorators"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
+import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
@@ -12,7 +13,8 @@ export class PaymentMutationsResolver {
     private readonly prisma: PrismaService,
     private readonly paymentService: PaymentService,
     private readonly segment: SegmentService,
-    private readonly email: EmailService
+    private readonly email: EmailService,
+    private readonly paymentUtils: PaymentUtilsService
   ) {}
 
   @Mutation()
@@ -52,7 +54,7 @@ export class PaymentMutationsResolver {
 
   @Mutation()
   async updateResumeDate(@Args() { date }, @Customer() customer) {
-    await this.paymentService.updateResumeDate(date, customer)
+    await this.paymentUtils.updateResumeDate(date, customer)
     return true
   }
 

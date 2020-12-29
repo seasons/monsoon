@@ -16,13 +16,11 @@ import { ChargebeeQueriesResolver } from "./queries/chargebee.queries.resolver"
 import { PaymentQueriesResolver } from "./queries/payment.queries.resolver"
 import { LoaderUtilsService } from "./services/loader.utils.service"
 import { PaymentService } from "./services/payment.service"
-import { PaymentUtilsService } from "./services/payment.utils.service"
 
 @Module({
   controllers: [ChargebeeController],
   imports: [
     EmailModule,
-    PaymentModule,
     PrismaModule,
     ShippingModule,
     UserModule,
@@ -37,7 +35,6 @@ import { PaymentUtilsService } from "./services/payment.utils.service"
     PaymentQueriesResolver,
     PaymentMutationsResolver,
     PaymentService,
-    PaymentUtilsService,
     TransactionsLoader,
     TransactionsForCustomersLoader,
   ],

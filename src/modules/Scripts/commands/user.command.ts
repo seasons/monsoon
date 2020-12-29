@@ -151,7 +151,15 @@ export class UserCommands {
       type: "boolean",
       default: "true",
     })
-    allAccessEnabled
+    allAccessEnabled,
+    @Option({
+      name: "phone number",
+      describe: `Phone Number for the user`,
+      type: "string",
+      alias: "pn",
+      default: "16463502715",
+    })
+    phoneNumber
   ) {
     await this.scripts.updateConnections({
       prismaEnv,
@@ -192,7 +200,7 @@ export class UserCommands {
         firstName,
         lastName,
         details: {
-          phoneNumber: "+16463502715",
+          phoneNumber: `+${phoneNumber}`,
           height: 40 + faker.random.number(32),
           weight: { set: [150, 160] },
           bodyType: "Athletic",

@@ -25861,6 +25861,7 @@ type SmsReceipt implements Node {
   body: String!
   mediaUrls: [String!]!
   status: SmsStatus!
+  smsId: String
   sentAt: DateTime!
   updatedAt: DateTime!
 }
@@ -25880,6 +25881,7 @@ input SmsReceiptCreateInput {
   externalId: String
   body: String!
   status: SmsStatus!
+  smsId: String
   mediaUrls: SmsReceiptCreatemediaUrlsInput
 }
 
@@ -25910,6 +25912,8 @@ enum SmsReceiptOrderByInput {
   body_DESC
   status_ASC
   status_DESC
+  smsId_ASC
+  smsId_DESC
   sentAt_ASC
   sentAt_DESC
   updatedAt_ASC
@@ -25922,6 +25926,7 @@ type SmsReceiptPreviousValues {
   body: String!
   mediaUrls: [String!]!
   status: SmsStatus!
+  smsId: String
   sentAt: DateTime!
   updatedAt: DateTime!
 }
@@ -26065,6 +26070,46 @@ input SmsReceiptScalarWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [SmsStatus!]
+  smsId: String
+
+  """All values that are not equal to given value."""
+  smsId_not: String
+
+  """All values that are contained in given list."""
+  smsId_in: [String!]
+
+  """All values that are not contained in given list."""
+  smsId_not_in: [String!]
+
+  """All values less than the given value."""
+  smsId_lt: String
+
+  """All values less than or equal the given value."""
+  smsId_lte: String
+
+  """All values greater than the given value."""
+  smsId_gt: String
+
+  """All values greater than or equal the given value."""
+  smsId_gte: String
+
+  """All values containing the given string."""
+  smsId_contains: String
+
+  """All values not containing the given string."""
+  smsId_not_contains: String
+
+  """All values starting with the given string."""
+  smsId_starts_with: String
+
+  """All values not starting with the given string."""
+  smsId_not_starts_with: String
+
+  """All values ending with the given string."""
+  smsId_ends_with: String
+
+  """All values not ending with the given string."""
+  smsId_not_ends_with: String
   sentAt: DateTime
 
   """All values that are not equal to given value."""
@@ -26152,6 +26197,7 @@ input SmsReceiptUpdateDataInput {
   externalId: String
   body: String
   status: SmsStatus
+  smsId: String
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
 }
 
@@ -26159,6 +26205,7 @@ input SmsReceiptUpdateInput {
   externalId: String
   body: String
   status: SmsStatus
+  smsId: String
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
 }
 
@@ -26166,6 +26213,7 @@ input SmsReceiptUpdateManyDataInput {
   externalId: String
   body: String
   status: SmsStatus
+  smsId: String
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
 }
 
@@ -26185,6 +26233,7 @@ input SmsReceiptUpdateManyMutationInput {
   externalId: String
   body: String
   status: SmsStatus
+  smsId: String
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
 }
 
@@ -26347,6 +26396,46 @@ input SmsReceiptWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [SmsStatus!]
+  smsId: String
+
+  """All values that are not equal to given value."""
+  smsId_not: String
+
+  """All values that are contained in given list."""
+  smsId_in: [String!]
+
+  """All values that are not contained in given list."""
+  smsId_not_in: [String!]
+
+  """All values less than the given value."""
+  smsId_lt: String
+
+  """All values less than or equal the given value."""
+  smsId_lte: String
+
+  """All values greater than the given value."""
+  smsId_gt: String
+
+  """All values greater than or equal the given value."""
+  smsId_gte: String
+
+  """All values containing the given string."""
+  smsId_contains: String
+
+  """All values not containing the given string."""
+  smsId_not_contains: String
+
+  """All values starting with the given string."""
+  smsId_starts_with: String
+
+  """All values not starting with the given string."""
+  smsId_not_starts_with: String
+
+  """All values ending with the given string."""
+  smsId_ends_with: String
+
+  """All values not ending with the given string."""
+  smsId_not_ends_with: String
   sentAt: DateTime
 
   """All values that are not equal to given value."""
@@ -31795,6 +31884,8 @@ export type SmsReceiptOrderByInput =   'id_ASC' |
   'body_DESC' |
   'status_ASC' |
   'status_DESC' |
+  'smsId_ASC' |
+  'smsId_DESC' |
   'sentAt_ASC' |
   'sentAt_DESC' |
   'updatedAt_ASC' |
@@ -43169,6 +43260,7 @@ export interface SmsReceiptCreateInput {
   externalId?: String | null
   body: String
   status: SmsStatus
+  smsId?: String | null
   mediaUrls?: SmsReceiptCreatemediaUrlsInput | null
 }
 
@@ -43231,6 +43323,20 @@ export interface SmsReceiptScalarWhereInput {
   status_not?: SmsStatus | null
   status_in?: SmsStatus[] | SmsStatus | null
   status_not_in?: SmsStatus[] | SmsStatus | null
+  smsId?: String | null
+  smsId_not?: String | null
+  smsId_in?: String[] | String | null
+  smsId_not_in?: String[] | String | null
+  smsId_lt?: String | null
+  smsId_lte?: String | null
+  smsId_gt?: String | null
+  smsId_gte?: String | null
+  smsId_contains?: String | null
+  smsId_not_contains?: String | null
+  smsId_starts_with?: String | null
+  smsId_not_starts_with?: String | null
+  smsId_ends_with?: String | null
+  smsId_not_ends_with?: String | null
   sentAt?: DateTime | null
   sentAt_not?: DateTime | null
   sentAt_in?: DateTime[] | DateTime | null
@@ -43264,6 +43370,7 @@ export interface SmsReceiptUpdateDataInput {
   externalId?: String | null
   body?: String | null
   status?: SmsStatus | null
+  smsId?: String | null
   mediaUrls?: SmsReceiptUpdatemediaUrlsInput | null
 }
 
@@ -43271,6 +43378,7 @@ export interface SmsReceiptUpdateInput {
   externalId?: String | null
   body?: String | null
   status?: SmsStatus | null
+  smsId?: String | null
   mediaUrls?: SmsReceiptUpdatemediaUrlsInput | null
 }
 
@@ -43278,6 +43386,7 @@ export interface SmsReceiptUpdateManyDataInput {
   externalId?: String | null
   body?: String | null
   status?: SmsStatus | null
+  smsId?: String | null
   mediaUrls?: SmsReceiptUpdatemediaUrlsInput | null
 }
 
@@ -43297,6 +43406,7 @@ export interface SmsReceiptUpdateManyMutationInput {
   externalId?: String | null
   body?: String | null
   status?: SmsStatus | null
+  smsId?: String | null
   mediaUrls?: SmsReceiptUpdatemediaUrlsInput | null
 }
 
@@ -43370,6 +43480,20 @@ export interface SmsReceiptWhereInput {
   status_not?: SmsStatus | null
   status_in?: SmsStatus[] | SmsStatus | null
   status_not_in?: SmsStatus[] | SmsStatus | null
+  smsId?: String | null
+  smsId_not?: String | null
+  smsId_in?: String[] | String | null
+  smsId_not_in?: String[] | String | null
+  smsId_lt?: String | null
+  smsId_lte?: String | null
+  smsId_gt?: String | null
+  smsId_gte?: String | null
+  smsId_contains?: String | null
+  smsId_not_contains?: String | null
+  smsId_starts_with?: String | null
+  smsId_not_starts_with?: String | null
+  smsId_ends_with?: String | null
+  smsId_not_ends_with?: String | null
   sentAt?: DateTime | null
   sentAt_not?: DateTime | null
   sentAt_in?: DateTime[] | DateTime | null
@@ -47987,6 +48111,7 @@ export interface SmsReceipt extends Node {
   body: String
   mediaUrls: Array<String>
   status: SmsStatus
+  smsId?: String | null
   sentAt: DateTime
   updatedAt: DateTime
 }
@@ -48016,6 +48141,7 @@ export interface SmsReceiptPreviousValues {
   body: String
   mediaUrls: Array<String>
   status: SmsStatus
+  smsId?: String | null
   sentAt: DateTime
   updatedAt: DateTime
 }

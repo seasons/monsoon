@@ -1,6 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
+import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PaymentPlanTier, User } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
@@ -32,7 +33,6 @@ import {
   Transaction,
   TransactionsDataLoader,
 } from "../payment.types"
-import { PaymentUtilsService } from "./payment.utils.service"
 
 @Injectable()
 export class PaymentService {
@@ -354,30 +354,6 @@ export class PaymentService {
       lastName: user.lastName,
       email: user.email,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
-    })
-  }
-
-  async updateResumeDate(date, customer) {
-    const customerWithMembership = await this.prisma.binding.query.customer(
-      { where: { id: customer.id } },
-      `
-        {
-          id
-          membership {
-            id
-            pauseRequests(orderBy: createdAt_DESC) {
-              id
-            }
-          }
-        }
-      `
-    )
-
-    const pauseRequest = customerWithMembership.membership?.pauseRequests?.[0]
-
-    await this.prisma.client.updatePauseRequest({
-      where: { id: pauseRequest?.id || "" },
-      data: { resumeDate: date },
     })
   }
 
