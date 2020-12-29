@@ -2,15 +2,13 @@ import { User } from "@app/decorators"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Loader } from "@modules/DataLoader/decorators/dataloader.decorator"
-import {
-  InvoicesForCustomersLoader,
-  PaymentService,
-} from "@modules/Payment/index"
+import { InvoicesForCustomersLoader } from "@modules/Payment/loaders/invoicesForCustomers.loaders"
 import {
   CouponType,
   InvoicesDataLoader,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
+import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, isObject } from "lodash"
