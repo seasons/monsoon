@@ -364,12 +364,6 @@ export class SMSService {
             twiml.message(genericError)
         }
         break
-      case "stop":
-        // TODO: Unsubscribe them from SMS messages
-        twiml.message(
-          `Sorry to see you go! You've been unsubscribed from all Seasons SMS messages.`
-        )
-        break
       default:
         twiml.message(
           `Sorry, we don't recognize that response. Please try again or contact ${process.env.MAIN_CONTACT_EMAIL}`
