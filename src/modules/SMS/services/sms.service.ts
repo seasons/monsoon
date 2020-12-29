@@ -253,6 +253,7 @@ export class SMSService {
     const genericError = `We're sorry, but we're having technical difficulties. Please contact ${process.env.MAIN_CONTACT_EMAIL}`
 
     let smsCust
+    let status
     const lowercaseContent = body.Body.toLowerCase().replace(/"/g, "")
     switch (lowercaseContent) {
       case "1":
@@ -281,7 +282,7 @@ export class SMSService {
           break
         }
 
-        const status = smsCust.status as CustomerStatus
+        status = smsCust.status as CustomerStatus
         switch (status) {
           case "Active":
             twiml.message(
@@ -351,16 +352,17 @@ export class SMSService {
           break
         }
 
-        await this.paymentUtils.resumeSubscription(null, null, smsCust)
-        twiml.message(
-          `Your membership has been resumed!. You're free to place your next reservation.`
-        )
-
-        // TODO: Handle edge cases. Too late, etc.
-        // If they received a resume reminder and it's not too late, resume their membership immediately.
-        // If they received a resume reminder and it's too late, tell them as much
-        // If they did not receive a resume reminder, do nothing.
-
+        status = smsCust.status as CustomerStatus
+        switch (status) {
+          case "Paused":
+            await this.paymentUtils.resumeSubscription(null, null, smsCust)
+            twiml.message(
+              `Your membership has been resumed!. You're free to place your next reservation.`
+            )
+            break
+          default:
+            twiml.message(genericError)
+        }
         break
       case "stop":
         // TODO: Unsubscribe them from SMS messages
