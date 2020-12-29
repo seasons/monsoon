@@ -18,7 +18,6 @@ import { AdmissionsScheduledJobs } from "./services/admissions.job.service"
 import { DataScheduledJobs } from "./services/data.job.service"
 import { MarketingScheduledJobs } from "./services/marketing.job.service"
 import { MembershipScheduledJobs } from "./services/membership.service"
-import { PaymentScheduledJobs } from "./services/payment.job.service"
 import { ReservationScheduledJobs } from "./services/reservations.job.service"
 import { SearchScheduledJobs } from "./services/search.job.service"
 
@@ -44,7 +43,6 @@ import { SearchScheduledJobs } from "./services/search.job.service"
     DataScheduledJobs,
     MarketingScheduledJobs,
     MembershipScheduledJobs,
-    PaymentScheduledJobs,
     SearchScheduledJobs,
     AdmissionsScheduledJobs,
   ],
