@@ -1,12 +1,17 @@
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
-import { get } from "lodash"
+import { get, head, pick } from "lodash"
+import { DateTime } from "luxon"
 
 @Injectable()
 export class PaymentUtilsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly segment: SegmentService
+  ) {}
 
   async updateResumeDate(date, customer) {
     const customerWithMembership = await this.prisma.binding.query.customer(
@@ -76,5 +81,99 @@ export class PaymentUtilsService {
       throw new Error(JSON.stringify(error))
     })
     return cardInfo
+  }
+
+  async resumeSubscription(subscriptionId, date, customer) {
+    const resumeDate = !!date
+      ? { specific_date: DateTime.fromISO(date).toSeconds() }
+      : "immediately"
+
+    const pauseRequest = head(
+      await this.prisma.client.pauseRequests({
+        where: {
+          membership: {
+            customer: {
+              id: customer.id,
+            },
+          },
+        },
+      })
+    )
+
+    try {
+      const result = await chargebee.subscription
+        .resume(subscriptionId, {
+          resume_option: resumeDate,
+          unpaid_invoices_handling: "schedule_payment_collection",
+        })
+        .request()
+
+      if (result) {
+        await this.prisma.client.updatePauseRequest({
+          where: { id: pauseRequest.id },
+          data: { pausePending: false },
+        })
+
+        await this.prisma.client.updateCustomer({
+          data: {
+            status: "Active",
+          },
+          where: { id: customer.id },
+        })
+
+        const customerWithData = await this.prisma.binding.mutation.updateCustomer(
+          {
+            data: {
+              status: "Active",
+            },
+            where: { id: customer.id },
+          },
+          `{
+            id
+            user {
+              id
+              firstName
+              lastName
+              email
+            }
+            membership {
+              id
+              plan {
+                id
+                tier
+                planID
+              }
+            }
+          }`
+        )
+
+        const tier = customerWithData?.membership?.plan?.tier
+        const planID = customerWithData?.membership?.plan?.planID
+
+        this.segment.track(customerWithData.user.id, "Resumed Subscription", {
+          ...pick(customerWithData.user, ["firstName", "lastName", "email"]),
+          planID,
+          tier,
+        })
+      }
+    } catch (e) {
+      if (
+        e?.api_error_code &&
+        e?.api_error_code === "payment_processing_failed"
+      ) {
+        // FIXME: Need to fix this status for with whatever field we're using in payment failed cases
+        // await this.prisma.client.updatePauseRequest({
+        //   where: { id: pauseRequest.id },
+        //   data: { pausePending: false },
+        // })
+        // await this.prisma.client.updateCustomer({
+        //   data: {
+        //     status: "PaymentFailed",
+        //   },
+        //   where: { id: customer.id },
+        // })
+      }
+      throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
+    }
   }
 }

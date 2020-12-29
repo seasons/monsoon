@@ -1,5 +1,6 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/index"
 import { Injectable, Logger } from "@nestjs/common"
@@ -15,6 +16,7 @@ export class MembershipScheduledJobs {
 
   constructor(
     private readonly prisma: PrismaService,
+    private readonly paymentUtils: PaymentUtilsService,
     private readonly payment: PaymentService,
     private readonly email: EmailService,
     private readonly sms: SMSService
@@ -73,7 +75,7 @@ export class MembershipScheduledJobs {
             }
 
             // Customer has an active reservation so we restart membership
-            await this.payment.resumeSubscription(
+            await this.paymentUtils.resumeSubscription(
               subscriptionId,
               null,
               customer
@@ -147,7 +149,11 @@ export class MembershipScheduledJobs {
           }
 
           this.logger.log(`Paused customer subscription: ${customer.id}`)
-          await this.payment.resumeSubscription(subscriptionId, null, customer)
+          await this.paymentUtils.resumeSubscription(
+            subscriptionId,
+            null,
+            customer
+          )
 
           continue
         }

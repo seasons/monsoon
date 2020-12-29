@@ -253,52 +253,41 @@ export class SMSService {
 
     const lowercaseContent = body.Body.toLowerCase()
     const now = DateTime.local()
+    let smsCust
     switch (lowercaseContent) {
       case "1":
       case "2":
       case "3":
-        const possibleCustomers = await this.prisma.binding.query.customers(
-          {
-            where: {
-              AND: [
-                {
-                  user: {
-                    smsReceipts_some: { smsId: "ResumeReminder" },
-                  },
-                },
-                { detail: { phoneNumber: body.From } },
-              ],
-            },
-          },
-          `
-            {
+        smsCust = await this.getSMSUser(
+          body.From,
+          "ResumeReminder",
+          `{
+            id
+            status
+            membership {
               id
-              status
-              membership {
+              subscriptionId
+              pauseRequests(orderBy: createdAt_DESC) {
                 id
-                pauseRequests(orderBy: createdAt_DESC) {
-                  id
-                  resumeDate
-                }
+                resumeDate
               }
             }
-          `
+          }
+        `
         )
-        const customerWithMembership = head(possibleCustomers) as any
 
-        if (!customerWithMembership) {
+        if (!smsCust) {
           twiml.message(genericError)
           break
         }
 
-        const pauseRequest =
-          customerWithMembership.membership?.pauseRequests?.[0]
+        const pauseRequest = smsCust.membership?.pauseRequests?.[0]
         if (!pauseRequest) {
           twiml.message(genericError)
           break
         }
 
-        if (customerWithMembership.status === "Active") {
+        if (smsCust.status === "Active") {
           twiml.message(
             `Sorry, your account has already been reactivated.\n\n If this is unexpected, please contact ${process.env.MAIN_CONTACT_EMAIL} for assistance.`
           )
@@ -306,7 +295,7 @@ export class SMSService {
         }
 
         // TODO: Is this the status people take up when they cancel?
-        if (customerWithMembership.status === "Deactivated") {
+        if (smsCust.status === "Deactivated") {
           twiml.message(
             `Sorry, your account has already been cancelled.\n\n If this is unexpected, please contact ${process.env.MAIN_CONTACT_EMAIL} for assistance.`
           )
@@ -314,7 +303,7 @@ export class SMSService {
         }
 
         // TODO: Add a check here to ensure we don't extend an already extended pause request.
-        if (customerWithMembership.status === "Paused") {
+        if (smsCust.status === "Paused") {
           const newResumeDate = moment(pauseRequest.resumeDate as string).add(
             Number(lowercaseContent),
             "months"
@@ -322,7 +311,7 @@ export class SMSService {
 
           await this.paymentUtils.updateResumeDate(
             newResumeDate.toISOString(),
-            customerWithMembership
+            smsCust
           )
 
           twiml.message(
@@ -334,13 +323,34 @@ export class SMSService {
         }
         break
       case "resume":
-        // TODO: Actually resume their membership
-        // If they received a resume reminder and it's not too late, resume their membership immediately.
-        // If they received a resume reminder and it's too late, tell them as much
-        // If they did not receive a resume reminder, do nothing.
+        smsCust = await this.getSMSUser(
+          body.From,
+          "ResumeReminder",
+          `{
+            id
+            membership {
+              id
+              subscriptionId
+            }
+          }
+        `
+        )
+
+        if (!smsCust) {
+          twiml.message(genericError)
+          break
+        }
+
+        await this.paymentUtils.resumeSubscription(null, null, smsCust)
         twiml.message(
           `Your membership has been resumed!. You're free to place your next reservation.`
         )
+
+        // TODO: Handle edge cases. Too late, etc.
+        // If they received a resume reminder and it's not too late, resume their membership immediately.
+        // If they received a resume reminder and it's too late, tell them as much
+        // If they did not receive a resume reminder, do nothing.
+
         break
       case "stop":
         // TODO: Unsubscribe them from SMS messages
@@ -356,6 +366,27 @@ export class SMSService {
 
     // TODO: Add a try catch around the whole thing and apply a generic error message if we hit it
     return twiml.toString()
+  }
+
+  private async getSMSUser(from: string, smsId: SMSID, info: string) {
+    const possibleCustomers = await this.prisma.binding.query.customers(
+      {
+        where: {
+          AND: [
+            {
+              user: {
+                smsReceipts_some: { smsId },
+              },
+            },
+            { detail: { phoneNumber: from } },
+          ],
+        },
+      },
+      info
+    )
+    const cust = head(possibleCustomers) as any
+
+    return cust
   }
 
   private getSMSData(smsID: SMSID, vars: any): SMSPayload {

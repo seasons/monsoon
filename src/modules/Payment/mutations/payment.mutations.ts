@@ -109,7 +109,7 @@ export class PaymentMutationsResolver {
     @Args() { subscriptionID, date },
     @Customer() customer
   ) {
-    await this.paymentService.resumeSubscription(subscriptionID, date, customer)
+    await this.paymentUtils.resumeSubscription(subscriptionID, date, customer)
     return true
   }
 
