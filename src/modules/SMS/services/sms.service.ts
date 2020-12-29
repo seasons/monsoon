@@ -407,7 +407,7 @@ export class SMSService {
                 smsReceipts_some: { smsId },
               },
             },
-            { detail: { phoneNumber: from } },
+            { detail: { phoneNumber_contains: from.slice(2) } },
           ],
         },
       },
