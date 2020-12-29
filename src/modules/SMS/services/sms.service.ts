@@ -1,6 +1,7 @@
 import fs from "fs"
 
 import { Customer, User } from "@app/decorators"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
 import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
 import { TwilioEvent } from "@app/modules/Twilio/twilio.types"
@@ -36,7 +37,8 @@ export class SMSService {
     private readonly prisma: PrismaService,
     private readonly twilio: TwilioService,
     private readonly twilioUtils: TwilioUtils,
-    private readonly paymentUtils: PaymentUtilsService
+    private readonly paymentUtils: PaymentUtilsService,
+    private readonly error: ErrorService
   ) {
     this.setupService()
   }
@@ -252,125 +254,130 @@ export class SMSService {
     const twiml = new Twilio.twiml.MessagingResponse()
     const genericError = `We're sorry, but we're having technical difficulties. Please contact ${process.env.MAIN_CONTACT_EMAIL}`
 
-    let smsCust
-    let status
-    const lowercaseContent = body.Body.toLowerCase().replace(/"/g, "")
-    switch (lowercaseContent) {
-      case "1":
-      case "2":
-      case "3":
-        smsCust = await this.getSMSUser(
-          body.From,
-          "ResumeReminder",
-          `{
-            id
-            status
-            membership {
+    try {
+      let smsCust
+      let status
+      const lowercaseContent = body.Body.toLowerCase().replace(/"/g, "")
+      switch (lowercaseContent) {
+        case "1":
+        case "2":
+        case "3":
+          smsCust = await this.getSMSUser(
+            body.From,
+            "ResumeReminder",
+            `{
               id
-              subscriptionId
-              pauseRequests(orderBy: createdAt_DESC) {
+              status
+              membership {
                 id
-                resumeDate
+                subscriptionId
+                pauseRequests(orderBy: createdAt_DESC) {
+                  id
+                  resumeDate
+                }
               }
             }
+          `
+          )
+
+          if (!smsCust) {
+            twiml.message(genericError)
+            break
           }
-        `
-        )
 
-        if (!smsCust) {
-          twiml.message(genericError)
-          break
-        }
-
-        status = smsCust.status as CustomerStatus
-        switch (status) {
-          case "Active":
-            twiml.message(
-              `Your account is already active.\n\nIf this is unexpected, please contact ${process.env.MAIN_CONTACT_EMAIL} for assistance.`
-            )
-            break
-          case "Deactivated":
-            twiml.message(
-              `Your account is currently deactivated.\n\nTo reactivate, please contact ${process.env.MAIN_CONTACT_EMAIL}.`
-            )
-            break
-          case "Paused":
-            const pauseRequest = smsCust.membership?.pauseRequests?.[0]
-            if (!pauseRequest) {
-              twiml.message(genericError)
+          status = smsCust.status as CustomerStatus
+          switch (status) {
+            case "Active":
+              twiml.message(
+                `Your account is already active.\n\nIf this is unexpected, please contact ${process.env.MAIN_CONTACT_EMAIL} for assistance.`
+              )
               break
-            }
-
-            const resumeDateMoment = moment(pauseRequest.resumeDate as string)
-            const now = moment()
-            if (resumeDateMoment.diff(now, "days") < 30) {
-              const numMonthsToExtend = Number(lowercaseContent)
-              const newResumeDate = moment(
-                pauseRequest.resumeDate as string
-              ).add(numMonthsToExtend, "months")
-
-              await this.paymentUtils.updateResumeDate(
-                newResumeDate.toISOString(),
-                smsCust
-              )
-
+            case "Deactivated":
               twiml.message(
-                `Your pause has been extended by ${lowercaseContent} month${
-                  numMonthsToExtend === 1 ? "" : "s"
-                }! Your new resume date is ${this.formatResumeDate(
-                  newResumeDate
-                )}.`
+                `Your account is currently deactivated.\n\nTo reactivate, please contact ${process.env.MAIN_CONTACT_EMAIL}.`
               )
-            } else {
-              twiml.message(
-                `You are scheduled to resume on ${this.formatResumeDate(
-                  resumeDateMoment
-                )}. We'll reach out then to ask if you'd like to resume or extend your pause.`
-              )
-            }
-            break
-          default:
-            twiml.message(genericError)
-        }
-        break
-      case "resume":
-        smsCust = await this.getSMSUser(
-          body.From,
-          "ResumeReminder",
-          `{
-            id
-            membership {
-              id
-              subscriptionId
-            }
+              break
+            case "Paused":
+              const pauseRequest = smsCust.membership?.pauseRequests?.[0]
+              if (!pauseRequest) {
+                twiml.message(genericError)
+                break
+              }
+
+              const resumeDateMoment = moment(pauseRequest.resumeDate as string)
+              const now = moment()
+              if (resumeDateMoment.diff(now, "days") < 30) {
+                const numMonthsToExtend = Number(lowercaseContent)
+                const newResumeDate = moment(
+                  pauseRequest.resumeDate as string
+                ).add(numMonthsToExtend, "months")
+
+                await this.paymentUtils.updateResumeDate(
+                  newResumeDate.toISOString(),
+                  smsCust
+                )
+
+                twiml.message(
+                  `Your pause has been extended by ${lowercaseContent} month${
+                    numMonthsToExtend === 1 ? "" : "s"
+                  }! Your new resume date is ${this.formatResumeDate(
+                    newResumeDate
+                  )}.`
+                )
+              } else {
+                twiml.message(
+                  `You are scheduled to resume on ${this.formatResumeDate(
+                    resumeDateMoment
+                  )}. We'll reach out then to ask if you'd like to resume or extend your pause.`
+                )
+              }
+              break
+            default:
+              twiml.message(genericError)
           }
-        `
-        )
-
-        if (!smsCust) {
-          twiml.message(genericError)
           break
-        }
+        case "resume":
+          smsCust = await this.getSMSUser(
+            body.From,
+            "ResumeReminder",
+            `{
+              id
+              membership {
+                id
+                subscriptionId
+              }
+            }
+          `
+          )
 
-        status = smsCust.status as CustomerStatus
-        switch (status) {
-          case "Paused":
-            await this.paymentUtils.resumeSubscription(null, null, smsCust)
-            twiml.message(
-              `Your membership has been resumed!. You're free to place your next reservation.`
-            )
-            break
-          default:
+          if (!smsCust) {
             twiml.message(genericError)
-        }
-        break
-      default:
-        twiml.message(
-          `Sorry, we don't recognize that response. Please try again or contact ${process.env.MAIN_CONTACT_EMAIL}`
-        )
+            break
+          }
+
+          status = smsCust.status as CustomerStatus
+          switch (status) {
+            case "Paused":
+              await this.paymentUtils.resumeSubscription(null, null, smsCust)
+              twiml.message(
+                `Your membership has been resumed!. You're free to place your next reservation.`
+              )
+              break
+            default:
+              twiml.message(genericError)
+          }
+          break
+        default:
+          twiml.message(
+            `Sorry, we don't recognize that response. Please try again or contact ${process.env.MAIN_CONTACT_EMAIL}`
+          )
+      }
+    } catch (err) {
+      this.error.setExtraContext(body, "twilioEvent")
+      this.error.captureError(err)
+      twiml.message(genericError)
     }
 
-    // TODO: Add a try catch around the whole thing and apply a generic error message if we hit it
     return twiml.toString()
   }
 
