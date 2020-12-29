@@ -187,6 +187,10 @@ export class MembershipScheduledJobs {
       })
 
       await this.email.sendResumeReminderEmail(user, pauseRequest.resumeDate)
+      await this.prisma.client.updatePauseRequest({
+        where: { id: pauseRequest.id },
+        data: { notified: true },
+      })
     }
   }
 }
