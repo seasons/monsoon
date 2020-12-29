@@ -367,6 +367,20 @@ export class SMSService {
               twiml.message(genericError)
           }
           break
+        case "stop":
+        case "stopall":
+        case "unsubscribe":
+        case "cancel":
+        case "end":
+        case "quit":
+        case "start":
+        case "yes":
+        case "unstop":
+        case "help":
+        case "info":
+          // Twilio handles these reserved keywords. Do nothing.
+          // https://support.twilio.com/hc/en-us/articles/223134027-Twilio-support-for-opt-out-keywords-SMS-STOP-filtering-
+          break
         default:
           twiml.message(
             `Sorry, we don't recognize that response. Please try again or contact ${process.env.MAIN_CONTACT_EMAIL}`

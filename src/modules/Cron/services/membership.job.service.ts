@@ -163,7 +163,7 @@ export class MembershipScheduledJobs {
           !!pauseRequest &&
           resumeDate.minus({ days: 2 }) <= DateTime.local()
         ) {
-          await this.sendReminderComms(customer, pauseRequest, resumeDate)
+          await this.sendReminderComms(customer, pauseRequest)
 
           continue
         }
@@ -173,7 +173,7 @@ export class MembershipScheduledJobs {
     }
   }
 
-  async sendReminderComms(customer, pauseRequest, resumeDate) {
+  async sendReminderComms(customer, pauseRequest) {
     const user = await this.prisma.client.customer({ id: customer.id }).user()
 
     if (!pauseRequest.notified) {
