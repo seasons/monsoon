@@ -25,7 +25,6 @@ import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { pick } from "lodash"
 import { DateTime } from "luxon"
-import states from "us-state-converter"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
 import { AuthService } from "./auth.service"

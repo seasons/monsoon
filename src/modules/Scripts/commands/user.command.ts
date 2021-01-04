@@ -1,5 +1,5 @@
-import { PaymentService } from "@app/modules/Payment/index"
 import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
+import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable, Logger } from "@nestjs/common"

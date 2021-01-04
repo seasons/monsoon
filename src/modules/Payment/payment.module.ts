@@ -3,7 +3,7 @@ import { EmailModule } from "@modules/Email/email.module"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { UserModule } from "@modules/User/user.module"
 import { UtilsModule } from "@modules/Utils/utils.module"
-import { Module } from "@nestjs/common"
+import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
 import { ErrorModule } from "../Error/error.module"
@@ -25,7 +25,7 @@ import { PaymentUtilsService } from "./services/payment.utils.service"
     PaymentModule,
     PrismaModule,
     ShippingModule,
-    UserModule,
+    forwardRef(() => UserModule),
     UtilsModule,
     AnalyticsModule,
     ErrorModule,
