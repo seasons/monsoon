@@ -1,7 +1,7 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
-import { PaymentService } from "@modules/Payment/index"
+import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import * as Sentry from "@sentry/node"
