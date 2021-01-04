@@ -1,4 +1,5 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PaymentPlanTier, User } from "@app/prisma"
@@ -8,7 +9,15 @@ import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
-import { camelCase, get, head, identity, snakeCase, upperFirst } from "lodash"
+import {
+  camelCase,
+  get,
+  head,
+  identity,
+  pick,
+  snakeCase,
+  upperFirst,
+} from "lodash"
 import { DateTime } from "luxon"
 import states from "us-state-converter"
 
@@ -35,7 +44,8 @@ export class PaymentService {
     private readonly paymentUtils: PaymentUtilsService,
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly error: ErrorService
   ) {}
 
   async addShippingCharge(customer, shippingCode) {
@@ -89,7 +99,10 @@ export class PaymentService {
 
       return shippingOption.id
     } catch (e) {
-      throw new Error(e)
+      this.error.setExtraContext({ shippingCode })
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
+      throw new Error(JSON.stringify(e))
     }
   }
 
@@ -141,6 +154,9 @@ export class PaymentService {
         },
       })
     } catch (e) {
+      this.error.setExtraContext({ planID })
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
       throw new Error(`Error updating to new plan: ${e.message}`)
     }
   }
@@ -191,11 +207,23 @@ export class PaymentService {
         })
         .request()
 
-      const subscription = head(subscriptions.list) as any
+      const subscription = (head(subscriptions.list) as any)?.subscription
+
+      // If chargebee account is paused
+      if (subscription.status === "paused") {
+        // chargeebee account is active
+        await chargebee.subscription
+          .resume(subscription.id, {
+            resume_option: "immediately",
+            charges_handling: "add_to_unbilled_charges",
+          })
+          .request()
+      }
 
       await chargebee.subscription
-        .update(subscription.subscription.id, {
+        .update(subscription.id, {
           plan_id: planID,
+          invoice_immediately: false,
           payment_method: {
             tmp_token: token.tokenId,
             type: tokenType ? tokenType : "apple_pay",
@@ -212,6 +240,9 @@ export class PaymentService {
         data: { brand, last_digits: last4 },
       })
     } catch (e) {
+      this.error.setExtraContext({ planID, token, tokenType })
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
       throw new Error(`Error updating your payment method ${e}`)
     }
   }
@@ -227,6 +258,13 @@ export class PaymentService {
             firstName
             lastName
             email
+          }
+          utm {
+            source
+            medium
+            campaign
+            term
+            content
           }
         }
       `
@@ -298,7 +336,7 @@ export class PaymentService {
       })
       .request()
 
-    const subscriptionID = subscription.subscription.id
+    const subscriptionID = subscription.id
 
     await this.createPrismaSubscription(
       user.id,
@@ -315,6 +353,7 @@ export class PaymentService {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
   }
 
@@ -380,6 +419,9 @@ export class PaymentService {
         resumeDate: resumeDateISO,
       })
     } catch (e) {
+      this.error.setExtraContext({ subscriptionId })
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
       throw new Error(`Error pausing subscription: ${e}`)
     }
   }
@@ -396,6 +438,9 @@ export class PaymentService {
         e?.api_error_code &&
         e?.api_error_code !== "invalid_state_for_request"
       ) {
+        this.error.setExtraContext({ subscriptionId })
+        this.error.setExtraContext(customer, "customer")
+        this.error.captureError(e)
         throw new Error(`Error removing scheduled pause: ${e}`)
       }
     }
@@ -456,6 +501,41 @@ export class PaymentService {
           },
           where: { id: customer.id },
         })
+
+        const customerWithData = await this.prisma.binding.mutation.updateCustomer(
+          {
+            data: {
+              status: "Active",
+            },
+            where: { id: customer.id },
+          },
+          `{
+            id
+            user {
+              id
+              firstName
+              lastName
+              email
+            }
+            membership {
+              id
+              plan {
+                id
+                tier
+                planID
+              }
+            }
+          }`
+        )
+
+        const tier = customerWithData?.membership?.plan?.tier
+        const planID = customerWithData?.membership?.plan?.planID
+
+        this.segment.track(customerWithData.user.id, "Resumed Subscription", {
+          ...pick(customerWithData.user, ["firstName", "lastName", "email"]),
+          planID,
+          tier,
+        })
       }
     } catch (e) {
       if (
@@ -499,6 +579,30 @@ export class PaymentService {
       .request()
   }
 
+  async getGift(id) {
+    return await chargebee.gift.retrieve(id).request()
+  }
+
+  async getGiftCheckoutPage(planId) {
+    return await new Promise((resolve, reject) => {
+      chargebee.hosted_page
+        .checkout_gift({
+          subscription: {
+            plan_id: planId,
+          },
+        })
+        .request((error, result) => {
+          if (error) {
+            reject(error)
+          } else {
+            resolve(result.hosted_page)
+          }
+        })
+    }).catch(error => {
+      throw new Error(JSON.stringify(error))
+    })
+  }
+
   async getHostedCheckoutPage(
     planId,
     userId,
@@ -521,7 +625,8 @@ export class PaymentService {
             last_name: lastName,
             phone: phoneNumber,
           },
-          redirect_url: "https://seasons.nyc/chargebee-mobile-checkout-success",
+          redirect_url:
+            "https://wearseasons.com/chargebee-mobile-checkout-success",
           coupon_ids: !!couponId ? [couponId] : [],
         })
         .request((error, result) => {
@@ -588,7 +693,8 @@ export class PaymentService {
     chargebeeCustomer: any,
     card: any,
     planID: string,
-    subscriptionID: string
+    subscriptionID: string,
+    giftID?: string
   ) {
     // Retrieve plan and billing data
     const billingInfo = this.paymentUtils.createBillingInfoObject(
@@ -621,6 +727,7 @@ export class PaymentService {
     await this.prisma.client.createCustomerMembership({
       customer: { connect: { id: prismaCustomer.id } },
       subscriptionId: subscriptionID,
+      giftId: giftID,
       plan: { connect: { planID } },
     })
 
@@ -823,6 +930,28 @@ export class PaymentService {
       street1: billingStreet1,
       street2: billingStreet2,
     } = billingAddress
+
+    const {
+      city: shippingCity,
+      postalCode: shippingPostalCode,
+      state: shippingState,
+      street1: shippingStreet1,
+      street2: shippingStreet2,
+    } = shippingAddress
+
+    if (
+      !shippingCity ||
+      !shippingPostalCode ||
+      !shippingState ||
+      !shippingStreet1 ||
+      !billingCity ||
+      !billingPostalCode ||
+      !billingState ||
+      !billingStreet1
+    ) {
+      throw new Error("You're missing a required field")
+    }
+
     const getAbbreviatedState = originalState => {
       if (!originalState) {
         throw new Error(`Invalid state: ${originalState}`)
@@ -841,19 +970,41 @@ export class PaymentService {
       throw new Error(`Invalid state: ${originalState}`)
     }
 
-    const abbreviatedBillingState = getAbbreviatedState(billingState)
+    const abbrBillingState = !!billingState
+      ? getAbbreviatedState(billingState)
+      : ""
 
     const {
       isValid: billingAddressIsValid,
     } = await this.shippingService.shippoValidateAddress({
       name: user.firstName,
       street1: billingStreet1,
+      street2: billingStreet2,
       city: billingCity,
-      state: abbreviatedBillingState,
+      state: abbrBillingState,
       zip: billingPostalCode,
     })
+
     if (!billingAddressIsValid) {
       throw new Error("Your billing address is invalid")
+    }
+
+    const abbrShippingState = !!shippingState
+      ? getAbbreviatedState(shippingState)
+      : ""
+
+    const {
+      isValid: shippingAddressIsValid,
+    } = await this.shippingService.shippoValidateAddress({
+      name: user.firstName,
+      street1: shippingStreet1,
+      city: shippingCity,
+      state: abbrShippingState,
+      zip: shippingPostalCode,
+    })
+
+    if (!shippingAddressIsValid) {
+      throw new Error("Your shipping address is invalid")
     }
 
     // Update user's billing address on chargebee
@@ -862,7 +1013,7 @@ export class PaymentService {
       billingStreet1,
       billingStreet2,
       billingCity,
-      abbreviatedBillingState,
+      abbrBillingState,
       billingPostalCode
     )
 
@@ -873,18 +1024,18 @@ export class PaymentService {
       billingStreet1,
       billingStreet2,
       billingCity,
-      abbreviatedBillingState,
+      abbrBillingState,
       billingPostalCode
     )
 
     // Update customer's shipping address & phone number. Unlike before, will
     // accept all valid addresses. Will NOT throw an error if the address is
     // not in NYC.
-    const shippingState = getAbbreviatedState(shippingAddress.state)
+
     await this.customerService.updateCustomerDetail(
       user,
       customer,
-      { ...shippingAddress, state: shippingState },
+      { ...shippingAddress, state: abbrShippingState },
       phoneNumber
     )
 

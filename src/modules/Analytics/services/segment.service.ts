@@ -25,6 +25,7 @@ type TrackingEvent =
   | "Entered Active Admin Queue"
   | "Exited Active Admin Queue"
   | "Triaged"
+  | "Completed Transaction"
 
 interface CommonTrackProperties {
   firstName: string

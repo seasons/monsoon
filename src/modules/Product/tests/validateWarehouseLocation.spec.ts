@@ -1,3 +1,9 @@
+import { ErrorService } from "@app/modules/Error/services/error.service"
+import {
+  PushNotificationDataProvider,
+  PusherService,
+} from "@app/modules/PushNotification"
+import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Brand } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -15,7 +21,11 @@ describe("Validate Warehouse Location", () => {
   beforeAll(async done => {
     // Instantiate test service
     prismaService = new PrismaService()
-    let productUtilsService = new ProductUtilsService(prismaService)
+    utilsService = new UtilsService(prismaService)
+    let productUtilsService = new ProductUtilsService(
+      prismaService,
+      utilsService
+    )
     let physicalProductUtilsService = new PhysicalProductUtilsService(
       prismaService,
       productUtilsService
@@ -25,9 +35,12 @@ describe("Validate Warehouse Location", () => {
       productUtilsService,
       physicalProductUtilsService
     )
-    utilsService = new UtilsService(prismaService)
+    const pusher = new PusherService()
+    const error = new ErrorService()
+    const pushData = new PushNotificationDataProvider()
     physicalProductsService = new PhysicalProductService(
       prismaService,
+      new PushNotificationService(pusher, pushData, prismaService, error),
       productVariantService,
       new ProductService(
         prismaService,

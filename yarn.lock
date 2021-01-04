@@ -9020,6 +9020,11 @@ graphql-tools@^4.0.5:
     iterall "^1.1.3"
     uuid "^3.1.0"
 
+graphql-type-json@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/graphql-type-json/-/graphql-type-json-0.3.2.tgz#f53a851dbfe07bd1c8157d24150064baab41e115"
+  integrity sha512-J+vjof74oMlCWXSvt0DOf2APEdZOCdubEvGDUAlqH//VBYcOYsGgRW7Xzorr44LvkjiuvecWc8fChxuZZbChtg==
+
 graphql-upload@^10.0.0:
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/graphql-upload/-/graphql-upload-10.0.0.tgz#1020c8ac6208c8cdf9de1f6ad9000eab7467e00f"
@@ -10996,6 +11001,11 @@ jsonata@^1.8.3:
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/jsonata/-/jsonata-1.8.3.tgz#4d0c7337166e813689485e4fe7c7b5f067df3f80"
   integrity sha512-r6ztI6ohbpRo77AxBm6vMs3aHZi2L2PaakW7TCPwSkeGcuAZ/SxXGLWH2Npwqq5+YBM/fg/g0EXg/pI9HvXQ8Q==
+
+jsonexport@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/jsonexport/-/jsonexport-3.0.1.tgz#918980b7506aa9377eec95cceee99d488b5d7317"
+  integrity sha512-lxDoAZxmWDt1wa4S75CUYe/ZASdmOYyhV7iYbF4npTWxrDv19ofZpJMGbt20W5Orx0hYuid65zGHpt6rRW0Z3A==
 
 jsonfile@^2.1.0:
   version "2.4.0"

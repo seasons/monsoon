@@ -8,6 +8,7 @@ import { PrismaModule } from "@prisma/prisma.module"
 
 import { AnalyticsModule } from "../Analytics/analytics.module"
 import { EmailModule } from "../Email/email.module"
+import { ErrorModule } from "../Error/error.module"
 import { ReservationFeedbackMutationsResolver } from "../Reservation/mutations/reservationFeedback.mutations.resolver"
 import { ReservationFeedbackQueriesResolver } from "../Reservation/queries/reservationFeedback.queries.resolver"
 import { UtilsModule } from "../Utils/utils.module"
@@ -29,6 +30,7 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
     PaymentModule,
     AnalyticsModule,
     UtilsModule,
+    ErrorModule,
   ],
   providers: [
     ReservationFeedbackMutationsResolver,

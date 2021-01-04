@@ -80,6 +80,7 @@ export class MeFieldsResolver {
           },
           saved: true,
         },
+        orderBy: "updatedAt_DESC",
       },
       info
     )

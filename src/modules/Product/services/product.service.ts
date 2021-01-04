@@ -5,7 +5,6 @@ import { ImageService } from "@modules/Image/services/image.service"
 import { S3_BASE } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
-  BagItem,
   BottomSizeType,
   Customer,
   CustomerWhereUniqueInput,
@@ -329,7 +328,7 @@ export class ProductService {
       },
       info
     )
-    let bagItem: BagItem = head(bagItems)
+    let bagItem: any = head(bagItems)
 
     if (bagItem && !save) {
       await this.prisma.client.deleteBagItem({
@@ -771,7 +770,13 @@ export class ProductService {
       type
     )
 
+    const displayShort = await this.productUtils.getVariantDisplayShort(
+      manufacturerSizeIDs,
+      internalSize.id
+    )
+
     const data = {
+      displayShort,
       productID,
       product: { connect: { slug: productID } },
       color: {
@@ -806,8 +811,19 @@ export class ProductService {
           ...physProdData,
           sequenceNumber,
           productVariant: { connect: { id: prodVar.id } },
+          sellable: {
+            create: physProdData.sellable || variant.sellable,
+          },
         },
-        update: physProdData,
+        update: {
+          ...physProdData,
+          sellable: {
+            upsert: {
+              update: physProdData.sellable || variant.sellable,
+              create: physProdData.sellable || variant.sellable,
+            },
+          },
+        },
       })
     })
 

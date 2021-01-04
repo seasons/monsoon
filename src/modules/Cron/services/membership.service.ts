@@ -193,8 +193,8 @@ export class MembershipScheduledJobs {
           data: { notified: true },
         })
 
-        await this.pushNotification.pushNotifyUser({
-          email: user.email,
+        await this.pushNotification.pushNotifyUsers({
+          emails: [user.email],
           pushNotifID: notificationID,
           vars: notificationVars,
         })

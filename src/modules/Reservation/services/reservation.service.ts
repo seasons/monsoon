@@ -1,4 +1,5 @@
 import { RollbackError } from "@app/errors"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { AdminActionLog } from "@app/prisma/prisma.binding"
@@ -63,7 +64,8 @@ export class ReservationService {
     private readonly shippingService: ShippingService,
     private readonly emails: EmailService,
     private readonly pushNotifs: PushNotificationService,
-    private readonly reservationUtils: ReservationUtilsService
+    private readonly reservationUtils: ReservationUtilsService,
+    private readonly error: ErrorService
   ) {}
 
   async reserveItems(
@@ -174,6 +176,14 @@ export class ReservationService {
         seasonsToCustomerTransaction.tracking_url_provider
       )
 
+      try {
+        await this.removeRestockNotifications(items, customer)
+      } catch (err) {
+        this.error.setUserContext(user)
+        this.error.setExtraContext({ items })
+        this.error.captureError(err)
+      }
+
       // Get return data
       reservationReturnData = await this.prisma.binding.query.reservation(
         { where: { id: prismaReservation.id } },
@@ -196,6 +206,31 @@ export class ReservationService {
     }
 
     return reservationReturnData
+  }
+
+  async removeRestockNotifications(items, customer) {
+    const restockNotifications = await this.prisma.client.productNotifications({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+        AND: {
+          productVariant: {
+            id_in: items,
+          },
+        },
+      },
+      orderBy: "createdAt_DESC",
+    })
+
+    if (restockNotifications?.length > 0) {
+      await this.prisma.client.updateManyProductNotifications({
+        where: { id_in: restockNotifications.map(notif => notif.id) },
+        data: {
+          shouldNotify: false,
+        },
+      })
+    }
   }
 
   async getReservation(reservationNumber: number) {
@@ -340,8 +375,8 @@ export class ReservationService {
       reservation as Reservation
     )
 
-    await this.pushNotifs.pushNotifyUser({
-      email: prismaUser.email,
+    await this.pushNotifs.pushNotifyUsers({
+      emails: [prismaUser.email],
       pushNotifID: "ResetBag",
     })
     await this.emails.sendYouCanNowReserveAgainEmail(prismaUser)

@@ -23,14 +23,9 @@ export interface CreateTestTopSizeInput {
   letter?: LetterSize
 }
 
-export interface CreateTestSizeInput {
-  display: String
-  top?: CreateTestTopSizeInput
-}
-
 export interface CreateTestProductVariantInput {
   physicalProducts: CreateTestPhysicalProductInput[]
-  internalSize?: CreateTestSizeInput
+  displayShort?: String
 }
 
 export interface CreateTestProductInput {

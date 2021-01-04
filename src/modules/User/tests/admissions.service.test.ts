@@ -334,7 +334,7 @@ describe("Admissions Service", () => {
         type: "Bottom",
         variants: [
           {
-            internalSize: { display: "30" },
+            displayShort: "30",
             physicalProducts: [
               { inventoryStatus: "Reservable" },
               { inventoryStatus: "NonReservable" },
@@ -588,14 +588,14 @@ const createEmailReceipts = (
 
 const createTestProductCreateInput = (
   type: ProductType,
-  sizeString: String | LetterSize,
+  sizeString: string,
   inventoryStatus: InventoryStatus
 ) => {
-  let input = {
+  const input = {
     type,
     variants: [
       {
-        internalSize: { display: sizeString },
+        displayShort: sizeString,
         physicalProducts: [{ inventoryStatus }],
       },
     ],
@@ -603,7 +603,6 @@ const createTestProductCreateInput = (
 
   switch (type) {
     case "Top":
-      input.variants[0].internalSize.top = { letter: sizeString as LetterSize }
       break
     case "Bottom":
       break

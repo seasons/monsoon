@@ -105,35 +105,9 @@ export class PaymentMutationsResolver {
   @Mutation()
   async resumeSubscription(
     @Args() { subscriptionID, date },
-    @Customer() customer,
-    @User() user
+    @Customer() customer
   ) {
     await this.paymentService.resumeSubscription(subscriptionID, date, customer)
-    const customerWithData = (await this.prisma.binding.query.customer(
-      {
-        where: { id: customer.id },
-      },
-      `{
-      id
-      membership {
-        id
-        plan {
-          id
-          tier
-          planID
-        }
-      }
-    }`
-    )) as any
-
-    const tier = customerWithData?.membership?.plan?.tier
-    const planID = customerWithData?.membership?.plan?.planID
-
-    this.segment.track(user.id, "Resumed Subscription", {
-      ...pick(user, ["firstName", "lastName", "email"]),
-      planID,
-      tier,
-    })
     return true
   }
 

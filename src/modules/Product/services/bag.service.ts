@@ -8,20 +8,34 @@ export class BagService {
   constructor(private readonly prisma: PrismaService) {}
 
   async addToBag(item, customer) {
-    const bag = await this.prisma.client.bagItems({
-      where: {
-        customer: {
-          id: customer.id,
+    const bag = await this.prisma.binding.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          saved: false,
         },
-        saved: false,
       },
-    })
+      `
+      {
+        id
+        productVariant {
+          id
+        }
+      }
+    `
+    )
 
     const customerPlanItemCount = await this.prisma.client
       .customer({ id: customer.id })
       .membership()
       .plan()
       .itemCount()
+
+    if (bag.some(i => i.productVariant?.id === item)) {
+      throw new ApolloError("Item already in bag", "515")
+    }
 
     if (!!customerPlanItemCount && bag.length >= customerPlanItemCount) {
       throw new ApolloError("Bag is full", "514")

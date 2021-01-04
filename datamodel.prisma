@@ -355,6 +355,7 @@ type Product {
   slug: String! @unique
   name: String!
   brand: Brand!
+  productFit: ProductFit
   category: Category!
   type: ProductType
   description: String
@@ -417,6 +418,7 @@ type ProductFunction {
 type ProductVariant {
   id: ID! @id
   sku: String @unique
+  displayShort: String!
   color: Color!
   internalSize: Size @relation(name: "ProductVariantSize")
   manufacturerSizes: [Size!] @relation(name: "ProductVariantManufacturerSize")
@@ -437,6 +439,14 @@ type ProductVariant {
   updatedAt: DateTime! @updatedAt
 }
 
+type PhysicalProductSellable {
+  id: ID! @id
+  new: Boolean! @default(value: false)
+  newPrice: Float
+  used: Boolean! @default(value: false)
+  usedPrice: Float
+}
+
 type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
@@ -452,8 +462,33 @@ type PhysicalProduct {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  sellable: PhysicalProductSellable
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type ProductNotification {
+  id: ID! @id
+  type: ProductNotificationType!
+  customer: Customer! @relation(name: "CustomerToProductNotification")
+  physicalProduct: PhysicalProduct
+    @relation(name: "PhysicalProductToProductNotification")
+  productVariant: ProductVariant
+    @relation(name: "ProductVariantToProductNotification")
+  shouldNotify: Boolean! @default(value: true)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+enum ProductFit {
+  RunsBig
+  TrueToSize
+  RunsSmall
+}
+
+enum ProductNotificationType {
+  Restock
+  AvailableForPurchase
 }
 
 type WarehouseLocationConstraint {
@@ -708,6 +743,8 @@ type BagItem {
   position: Int
   saved: Boolean
   status: BagItemStatus!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type CustomerAdmissionsData {
@@ -782,6 +819,7 @@ type CustomerMembership {
     )
   pauseRequests: [PauseRequest]
     @relation(name: "CustomerMembershipToPauseRequest", onDelete: CASCADE)
+  giftId: String
 }
 
 type PauseRequest {
@@ -1048,9 +1086,15 @@ type AdminActionLog {
   statementOnly: Boolean!
 }
 
+enum SyncTimingType {
+  Drip
+  Next
+}
+
 type SyncTiming {
   id: ID! @id
-  dripSyncedAt: DateTime!
+  type: SyncTimingType!
+  syncedAt: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

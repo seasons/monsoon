@@ -1,15 +1,17 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import {
-  ReservationOrderByInput,
-  ReservationWhereInput,
-} from "@app/prisma/prisma.binding"
+import { PhysicalProduct } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaDataLoader, PrismaLoader } from "@prisma/prisma.loader"
+import { PrismaDataLoader } from "@prisma/prisma.loader"
+
+import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
 
 @Resolver("PhysicalProduct")
 export class PhysicalProductFieldsResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly physicalProductUtils: PhysicalProductUtilsService
+  ) {}
 
   @ResolveField()
   async barcode(
@@ -18,12 +20,16 @@ export class PhysicalProductFieldsResolver {
       params: {
         query: "physicalProducts",
         info: `{ id sequenceNumber }`,
-        formatData: a => `SZNS` + `${a.sequenceNumber}`.padStart(5, "0"),
       },
     })
-    physicalProductsLoader: PrismaDataLoader<string>
+    physicalProductsLoader: PrismaDataLoader<PhysicalProduct>
   ) {
-    return await physicalProductsLoader.load(physicalProduct.id)
+    const loadedPhysicalProduct = await physicalProductsLoader.load(
+      physicalProduct.id
+    )
+    return this.physicalProductUtils.sequenceNumberToBarcode(
+      loadedPhysicalProduct.sequenceNumber
+    )
   }
 
   @ResolveField()

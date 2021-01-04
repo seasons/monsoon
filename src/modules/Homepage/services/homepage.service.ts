@@ -5,7 +5,18 @@ export enum SectionTitle {
   FeaturedCollection = "Featured collection",
   RecentlyViewed = "Recently viewed",
   Designers = "Designers",
-  Categories = "Browse By Style",
+  Categories = "Browse by style",
+  HolidayRail = "Holiday cozy collection",
+}
+
+interface Section {
+  type: string
+  __typename: string
+  title: string
+  tagData?: {
+    description?: string
+    tagName: string
+  }
 }
 
 @Injectable()
@@ -20,7 +31,7 @@ export class HomepageService {
       }`
     )
 
-    const sections: any = [
+    const sections: Section[] = [
       {
         type: "CollectionGroups",
         __typename: "HomepageSection",
@@ -30,6 +41,16 @@ export class HomepageService {
         type: "Categories",
         __typename: "HomepageSection",
         title: SectionTitle.Categories,
+      },
+      {
+        type: "ProductsByTag",
+        __typename: "HomepageSection",
+        title: SectionTitle.HolidayRail,
+        tagData: {
+          tagName: "Holiday",
+          description:
+            "Staying in for the holidays? Get cozy, flex on your roommates, 2020 is almost over — you earned it.",
+        },
       },
       {
         type: "Brands",

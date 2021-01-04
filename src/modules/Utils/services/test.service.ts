@@ -61,24 +61,6 @@ export class TestUtilsService {
       images: {},
       variants: {
         create: variants.map((v: CreateTestProductVariantInput) => {
-          const internalSize = !!v.internalSize
-            ? {
-                create: {
-                  slug: this.utils.randomString(),
-                  productType: type,
-                  ...(type === "Top"
-                    ? {
-                        top: {
-                          create: { letter: v.internalSize?.top?.letter },
-                        },
-                      }
-                    : {}),
-                  ...(type === "Bottom" ? {} : {}),
-                  display: v.internalSize.display,
-                } as SizeCreateOneInput,
-              }
-            : {}
-
           return {
             color: {
               connect: {
@@ -92,7 +74,7 @@ export class TestUtilsService {
             nonReservable: this.getInventoryStatusCount(v, "NonReservable"),
             offloaded: this.getInventoryStatusCount(v, "Offloaded"),
             stored: this.getInventoryStatusCount(v, "Stored"),
-            internalSize,
+            displayShort: v.displayShort ?? "M",
             physicalProducts: {
               create: v.physicalProducts.map(
                 (pp: CreateTestPhysicalProductInput) => ({

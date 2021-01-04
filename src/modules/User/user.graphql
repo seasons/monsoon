@@ -34,6 +34,7 @@ type Mutation {
     details: CustomerDetailCreateInput
     referrerId: String
     utm: UTMInput
+    giftId: String
   ): SignupPayload!
   login(email: String!, password: String!): AuthPayload!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User

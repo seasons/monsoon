@@ -84,8 +84,8 @@ export class FitPicService {
     // notify user if they were just approved for the first time
     if (oldStatus === "Submitted" && data.status === "Published") {
       try {
-        await this.pushNotification.pushNotifyUser({
-          email: submitterEmail,
+        await this.pushNotification.pushNotifyUsers({
+          emails: [submitterEmail],
           pushNotifID: "PublishFitPic",
         })
       } catch (error) {

@@ -56,6 +56,13 @@ export class CustomerService {
       topSizes
       waistSizes
     }
+    utm {
+      source
+      medium
+      campaign
+      term
+      content
+    }
     user {
       id
       firstName
@@ -128,7 +135,7 @@ export class CustomerService {
       where: { id: shippingAddressID },
       data: {
         shippingOptions: {
-          connect: shippingOptions.map(s => ({ id: s.id })),
+          set: shippingOptions.map(s => ({ id: s.id })),
         },
       },
     })
@@ -387,6 +394,13 @@ export class CustomerService {
           firstName
           lastName
         }
+        utm {
+          source
+          medium
+          campaign
+          term
+          content
+        }
         detail {
           shippingAddress {
             zipCode
@@ -426,14 +440,14 @@ export class CustomerService {
 
       const now = DateTime.local()
       const nowDate = now.toISO()
-      const twoDaysFromNow = now.plus({ days: 2 }).toISO()
+      const sevenDaysFromNow = now.plus({ days: 7 }).toISO()
       data = {
         ...data,
         authorizedAt: nowDate,
         admissions: {
           upsert: {
             create: {
-              authorizationWindowClosesAt: twoDaysFromNow,
+              authorizationWindowClosesAt: sevenDaysFromNow,
               admissable: true,
               inServiceableZipcode: true,
               allAccessEnabled,
@@ -444,7 +458,7 @@ export class CustomerService {
               ),
             },
             update: {
-              authorizationWindowClosesAt: twoDaysFromNow,
+              authorizationWindowClosesAt: sevenDaysFromNow,
               allAccessEnabled,
               authorizationsCount: this.calculateNumAuthorizations(
                 customer,
@@ -471,8 +485,8 @@ export class CustomerService {
         }
 
         // either kind of user
-        await this.pushNotification.pushNotifyUser({
-          email: customer.user.email,
+        await this.pushNotification.pushNotifyUsers({
+          emails: [customer.user.email],
           pushNotifID: "CompleteAccount",
         })
         await this.sms.sendSMSById({
@@ -489,6 +503,7 @@ export class CustomerService {
         email: customer.user.email,
         method: "Manual",
         application,
+        ...this.utils.formatUTMForSegment(customer.utm),
       })
     }
     return this.prisma.binding.mutation.updateCustomer({ where, data }, info)
@@ -605,6 +620,7 @@ export class CustomerService {
           email: customer.user.email,
           method: "Automatic",
           application,
+          ...this.utils.formatUTMForSegment(customer.utm),
         })
 
         await this.email.sendAuthorizedEmail(
@@ -672,9 +688,9 @@ export class CustomerService {
         if (!dryRun) {
           const now = DateTime.local()
           const nowDate = now.toISO()
-          const twoDaysFromNow = now.plus({ days: 2 }).toISO()
+          const sevenDaysFromNow = now.plus({ days: 7 }).toISO()
           data.authorizedAt = nowDate
-          admissionsUpsertData.authorizationWindowClosesAt = twoDaysFromNow
+          admissionsUpsertData.authorizationWindowClosesAt = sevenDaysFromNow
         }
 
         break
