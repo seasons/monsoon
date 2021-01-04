@@ -71,6 +71,16 @@ export class ChargebeeQueriesResolver {
   }
 
   @Query()
+  async chargebeeGiftCheckout(@Args() { planID }, @Application() application) {
+    return await this.payment.getGiftCheckoutPage(planID)
+  }
+
+  @Query()
+  async gift(@Args() { id }) {
+    return await this.payment.getGift(id)
+  }
+
+  @Query()
   async chargebeeCheckout(
     @Args() { planID, email: passedEmail, userIDHash, couponID },
     @Application() application

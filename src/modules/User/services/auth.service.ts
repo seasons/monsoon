@@ -1,18 +1,18 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { CouponType } from "@app/modules/Payment/payment.types"
+import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerCreateInput, CustomerDetail } from "@app/prisma/prisma.binding"
-import { Injectable } from "@nestjs/common"
+import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import {
   CustomerDetailCreateInput,
   UserPushNotificationInterestType,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
-import chargebee from "chargebee"
-import { camelCase, head, upperFirst } from "lodash"
+import { head } from "lodash"
+import { DateTime } from "luxon"
 import request from "request"
 import zipcodes from "zipcodes"
 
@@ -46,7 +46,9 @@ export class AuthService {
     private readonly pushNotification: PushNotificationService,
     private readonly email: EmailService,
     private readonly error: ErrorService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    @Inject(forwardRef(() => PaymentService))
+    private readonly payment: PaymentService
   ) {}
 
   async signupUser({
@@ -58,6 +60,7 @@ export class AuthService {
     referrerId,
     utm,
     info,
+    giftId,
   }: {
     email: string
     password: string
@@ -67,6 +70,7 @@ export class AuthService {
     referrerId?: string
     utm?: UTMInput
     info?: any
+    giftId?: string
   }) {
     // 1. Register the user on Auth0
     let userAuth0ID
@@ -120,6 +124,30 @@ export class AuthService {
       referrerId,
       utm
     )
+
+    // 5. In the case of a gift subscription
+    // We will already have a subscription for that user based on email so assign it to that new customer
+    if (!!giftId) {
+      const giftData = await this.payment.getGift(giftId)
+      const { gift, subscription } = giftData
+
+      const nextMonth = DateTime.local().plus({ months: 1 })
+      // Only create the billing info and send welcome email if user used chargebee checkout
+      await this.payment.createPrismaSubscription(
+        user.id,
+        gift.gift_receiver.customer_id,
+        {
+          brand: "gift",
+          name: gift.gifter.signature,
+          last4: "0000",
+          expiry_month: nextMonth.month,
+          expiry_year: nextMonth.year,
+        },
+        subscription.plan_id.replace("-gift", ""),
+        subscription.id,
+        giftId
+      )
+    }
 
     await this.email.sendSubmittedEmailEmail(user)
 

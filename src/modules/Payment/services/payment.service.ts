@@ -461,6 +461,30 @@ export class PaymentService {
       .request()
   }
 
+  async getGift(id) {
+    return await chargebee.gift.retrieve(id).request()
+  }
+
+  async getGiftCheckoutPage(planId) {
+    return await new Promise((resolve, reject) => {
+      chargebee.hosted_page
+        .checkout_gift({
+          subscription: {
+            plan_id: planId,
+          },
+        })
+        .request((error, result) => {
+          if (error) {
+            reject(error)
+          } else {
+            resolve(result.hosted_page)
+          }
+        })
+    }).catch(error => {
+      throw new Error(JSON.stringify(error))
+    })
+  }
+
   async getHostedCheckoutPage(
     planId,
     userId,
@@ -483,7 +507,8 @@ export class PaymentService {
             last_name: lastName,
             phone: phoneNumber,
           },
-          redirect_url: "https://seasons.nyc/chargebee-mobile-checkout-success",
+          redirect_url:
+            "https://wearseasons.com/chargebee-mobile-checkout-success",
           coupon_ids: !!couponId ? [couponId] : [],
         })
         .request((error, result) => {
@@ -550,7 +575,8 @@ export class PaymentService {
     chargebeeCustomer: any,
     card: any,
     planID: string,
-    subscriptionID: string
+    subscriptionID: string,
+    giftID?: string
   ) {
     // Retrieve plan and billing data
     const billingInfo = this.paymentUtils.createBillingInfoObject(
@@ -583,6 +609,7 @@ export class PaymentService {
     await this.prisma.client.createCustomerMembership({
       customer: { connect: { id: prismaCustomer.id } },
       subscriptionId: subscriptionID,
+      giftId: giftID,
       plan: { connect: { planID } },
     })
 

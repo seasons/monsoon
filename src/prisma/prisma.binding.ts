@@ -7098,6 +7098,7 @@ type CustomerMembership implements Node {
   subscriptionId: String!
   customer: Customer!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
+  giftId: String
 }
 
 """A connection to a list of items."""
@@ -7113,6 +7114,7 @@ type CustomerMembershipConnection {
 input CustomerMembershipCreateInput {
   id: ID
   subscriptionId: String!
+  giftId: String
   plan: PaymentPlanCreateOneInput
   customer: CustomerCreateOneWithoutMembershipInput!
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
@@ -7131,6 +7133,7 @@ input CustomerMembershipCreateOneWithoutPauseRequestsInput {
 input CustomerMembershipCreateWithoutCustomerInput {
   id: ID
   subscriptionId: String!
+  giftId: String
   plan: PaymentPlanCreateOneInput
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
@@ -7138,6 +7141,7 @@ input CustomerMembershipCreateWithoutCustomerInput {
 input CustomerMembershipCreateWithoutPauseRequestsInput {
   id: ID
   subscriptionId: String!
+  giftId: String
   plan: PaymentPlanCreateOneInput
   customer: CustomerCreateOneWithoutMembershipInput!
 }
@@ -7156,11 +7160,14 @@ enum CustomerMembershipOrderByInput {
   id_DESC
   subscriptionId_ASC
   subscriptionId_DESC
+  giftId_ASC
+  giftId_DESC
 }
 
 type CustomerMembershipPreviousValues {
   id: ID!
   subscriptionId: String!
+  giftId: String
 }
 
 type CustomerMembershipSubscriptionPayload {
@@ -7202,6 +7209,7 @@ input CustomerMembershipSubscriptionWhereInput {
 
 input CustomerMembershipUpdateInput {
   subscriptionId: String
+  giftId: String
   plan: PaymentPlanUpdateOneInput
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
@@ -7209,6 +7217,7 @@ input CustomerMembershipUpdateInput {
 
 input CustomerMembershipUpdateManyMutationInput {
   subscriptionId: String
+  giftId: String
 }
 
 input CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
@@ -7229,12 +7238,14 @@ input CustomerMembershipUpdateOneWithoutCustomerInput {
 
 input CustomerMembershipUpdateWithoutCustomerDataInput {
   subscriptionId: String
+  giftId: String
   plan: PaymentPlanUpdateOneInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
 }
 
 input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
   subscriptionId: String
+  giftId: String
   plan: PaymentPlanUpdateOneInput
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
 }
@@ -7338,6 +7349,46 @@ input CustomerMembershipWhereInput {
 
   """All values not ending with the given string."""
   subscriptionId_not_ends_with: String
+  giftId: String
+
+  """All values that are not equal to given value."""
+  giftId_not: String
+
+  """All values that are contained in given list."""
+  giftId_in: [String!]
+
+  """All values that are not contained in given list."""
+  giftId_not_in: [String!]
+
+  """All values less than the given value."""
+  giftId_lt: String
+
+  """All values less than or equal the given value."""
+  giftId_lte: String
+
+  """All values greater than the given value."""
+  giftId_gt: String
+
+  """All values greater than or equal the given value."""
+  giftId_gte: String
+
+  """All values containing the given string."""
+  giftId_contains: String
+
+  """All values not containing the given string."""
+  giftId_not_contains: String
+
+  """All values starting with the given string."""
+  giftId_starts_with: String
+
+  """All values not starting with the given string."""
+  giftId_not_starts_with: String
+
+  """All values ending with the given string."""
+  giftId_ends_with: String
+
+  """All values not ending with the given string."""
+  giftId_not_ends_with: String
   plan: PaymentPlanWhereInput
   customer: CustomerWhereInput
   pauseRequests_every: PauseRequestWhereInput
@@ -31209,7 +31260,9 @@ export type CustomerDetailOrderByInput =   'id_ASC' |
 export type CustomerMembershipOrderByInput =   'id_ASC' |
   'id_DESC' |
   'subscriptionId_ASC' |
-  'subscriptionId_DESC'
+  'subscriptionId_DESC' |
+  'giftId_ASC' |
+  'giftId_DESC'
 
 export type CustomerOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -34695,6 +34748,7 @@ export interface CustomerDetailWhereUniqueInput {
 export interface CustomerMembershipCreateInput {
   id?: ID_Input | null
   subscriptionId: String
+  giftId?: String | null
   plan?: PaymentPlanCreateOneInput | null
   customer: CustomerCreateOneWithoutMembershipInput
   pauseRequests?: PauseRequestCreateManyWithoutMembershipInput | null
@@ -34713,6 +34767,7 @@ export interface CustomerMembershipCreateOneWithoutPauseRequestsInput {
 export interface CustomerMembershipCreateWithoutCustomerInput {
   id?: ID_Input | null
   subscriptionId: String
+  giftId?: String | null
   plan?: PaymentPlanCreateOneInput | null
   pauseRequests?: PauseRequestCreateManyWithoutMembershipInput | null
 }
@@ -34720,6 +34775,7 @@ export interface CustomerMembershipCreateWithoutCustomerInput {
 export interface CustomerMembershipCreateWithoutPauseRequestsInput {
   id?: ID_Input | null
   subscriptionId: String
+  giftId?: String | null
   plan?: PaymentPlanCreateOneInput | null
   customer: CustomerCreateOneWithoutMembershipInput
 }
@@ -34737,6 +34793,7 @@ export interface CustomerMembershipSubscriptionWhereInput {
 
 export interface CustomerMembershipUpdateInput {
   subscriptionId?: String | null
+  giftId?: String | null
   plan?: PaymentPlanUpdateOneInput | null
   customer?: CustomerUpdateOneRequiredWithoutMembershipInput | null
   pauseRequests?: PauseRequestUpdateManyWithoutMembershipInput | null
@@ -34744,6 +34801,7 @@ export interface CustomerMembershipUpdateInput {
 
 export interface CustomerMembershipUpdateManyMutationInput {
   subscriptionId?: String | null
+  giftId?: String | null
 }
 
 export interface CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
@@ -34764,12 +34822,14 @@ export interface CustomerMembershipUpdateOneWithoutCustomerInput {
 
 export interface CustomerMembershipUpdateWithoutCustomerDataInput {
   subscriptionId?: String | null
+  giftId?: String | null
   plan?: PaymentPlanUpdateOneInput | null
   pauseRequests?: PauseRequestUpdateManyWithoutMembershipInput | null
 }
 
 export interface CustomerMembershipUpdateWithoutPauseRequestsDataInput {
   subscriptionId?: String | null
+  giftId?: String | null
   plan?: PaymentPlanUpdateOneInput | null
   customer?: CustomerUpdateOneRequiredWithoutMembershipInput | null
 }
@@ -34816,6 +34876,20 @@ export interface CustomerMembershipWhereInput {
   subscriptionId_not_starts_with?: String | null
   subscriptionId_ends_with?: String | null
   subscriptionId_not_ends_with?: String | null
+  giftId?: String | null
+  giftId_not?: String | null
+  giftId_in?: String[] | String | null
+  giftId_not_in?: String[] | String | null
+  giftId_lt?: String | null
+  giftId_lte?: String | null
+  giftId_gt?: String | null
+  giftId_gte?: String | null
+  giftId_contains?: String | null
+  giftId_not_contains?: String | null
+  giftId_starts_with?: String | null
+  giftId_not_starts_with?: String | null
+  giftId_ends_with?: String | null
+  giftId_not_ends_with?: String | null
   plan?: PaymentPlanWhereInput | null
   customer?: CustomerWhereInput | null
   pauseRequests_every?: PauseRequestWhereInput | null
@@ -46402,6 +46476,7 @@ export interface CustomerMembership extends Node {
   subscriptionId: String
   customer: Customer
   pauseRequests?: Array<PauseRequest> | null
+  giftId?: String | null
 }
 
 /*
@@ -46426,6 +46501,7 @@ export interface CustomerMembershipEdge {
 export interface CustomerMembershipPreviousValues {
   id: ID_Output
   subscriptionId: String
+  giftId?: String | null
 }
 
 export interface CustomerMembershipSubscriptionPayload {

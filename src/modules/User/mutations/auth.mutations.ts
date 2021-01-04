@@ -29,7 +29,8 @@ export class AuthMutationsResolver {
 
   @Mutation()
   async signup(
-    @Args() { email, password, firstName, lastName, details, referrerId, utm },
+    @Args()
+    { email, password, firstName, lastName, details, referrerId, giftId, utm },
     @Application() application,
     @Info() info
   ) {
@@ -42,6 +43,7 @@ export class AuthMutationsResolver {
       referrerId,
       utm,
       info,
+      giftId,
     })
 
     // Add them to segment and track their account creation event
