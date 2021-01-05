@@ -63,6 +63,18 @@ export class MarketingScheduledJobs {
     for (const cust of customers) {
       const now = moment()
 
+      const oneDayPassed = moment(cust.authorizedAt)
+        .add(1, "d")
+        .isSameOrAfter(now)
+      const twoDaysPassed = moment(cust.authorizedAt)
+        .add(2, "d")
+        .isSameOrAfter(now)
+      const threeDaysPassed = moment(cust.authorizedAt)
+        .add(3, "d")
+        .isSameOrAfter(now)
+      const fourDaysPassed = moment(cust.authorizedAt)
+        .add(4, "d")
+        .isSameOrAfter(now)
       const twentyFourHoursLeft = moment(
         cust.admissions?.authorizationWindowClosesAt
       )
@@ -73,10 +85,22 @@ export class MarketingScheduledJobs {
       )
 
       const receivedEmails = cust.user.emails.map(a => a.emailId)
-      const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
-      const twentyFourHourFollowupSent = receivedEmails.includes(
-        "TwentyFourHourAuthorizationFollowup"
+      const dayTwoFollowupSent = receivedEmails.includes(
+        "DayTwoAuthorizationFollowup"
       )
+      const dayThreeFollowupSent = receivedEmails.includes(
+        "DayThreeAuthorizationFollowup"
+      )
+      const dayFourFollowupSent = receivedEmails.includes(
+        "DayFourAuthorizationFollowup"
+      )
+      const dayFiveFollowupSent = receivedEmails.includes(
+        "DayFiveAuthorizationFollowup"
+      )
+      const daySixFollowupSent = receivedEmails.includes(
+        "DaySixAuthorizationFollowup"
+      )
+      const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
 
       // Send rewaitlist email as needed
       if (windowClosed && !rewaitlistEmailSent) {
@@ -97,8 +121,8 @@ export class MarketingScheduledJobs {
         break
       }
 
-      // Send 24 hour follow up email as needed
-      if (twentyFourHoursLeft && !twentyFourHourFollowupSent) {
+      // Send 24 hour followup (day 6) email as needed
+      if (twentyFourHoursLeft && !daySixFollowupSent) {
         const availableStyles = await this.admissions.getAvailableStyles({
           id: cust.id,
         })
@@ -112,6 +136,30 @@ export class MarketingScheduledJobs {
           smsId: "TwentyFourHourAuthorizationFollowup",
         })
         twentyFourHourFollowupsSent.push(cust.user.email)
+        break
+      }
+
+      // Send day 5 email as needed
+      if (fourDaysPassed && !dayFiveFollowupSent) {
+        // TODO: Send email
+        break
+      }
+
+      // Send day 4 email as needed
+      if (threeDaysPassed && !dayFourFollowupSent) {
+        // TODO: Send email
+        break
+      }
+
+      // Send day 2 email as needed
+      if (twoDaysPassed && !dayThreeFollowupSent) {
+        // TODO: Send email
+        break
+      }
+
+      // Send day 2 email as needed
+      if (oneDayPassed && !dayTwoFollowupSent) {
+        // TODO: Send email
         break
       }
     }
