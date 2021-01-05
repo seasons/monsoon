@@ -330,12 +330,24 @@ export class PaymentService {
       })
       .request()
 
-    const subscription = await chargebee.subscription
-      .create_for_customer(chargebeeCustomer.customer.id, {
-        plan_id: planID,
-        coupon_ids: !!couponID ? [couponID] : [],
+    let subscription
+    const existingSubscriptions = await chargebee.subscription
+      .list({
+        limit: 1,
+        customer_id: { is: chargebeeCustomer.customer.id },
       })
       .request()
+
+    if (existingSubscriptions?.list?.length > 0) {
+      subscription = existingSubscriptions.list[0].subscription
+    } else {
+      subscription = await chargebee.subscription
+        .create_for_customer(chargebeeCustomer.customer.id, {
+          plan_id: planID,
+          coupon_ids: !!couponID ? [couponID] : [],
+        })
+        .request()
+    }
 
     const subscriptionID = subscription.id
 
