@@ -223,7 +223,7 @@ export class ProductVariantFieldsResolver {
   }
 
   @ResolveField()
-  async sellable(
+  async price(
     @Parent() productVariant,
     @Loader({
       params: {
@@ -238,9 +238,9 @@ export class ProductVariantFieldsResolver {
             productVariant {
               id
             }
-            sellable {
-              new
-              newPrice
+            price {
+              buyNew
+              buyNewPrice
               used
               usedPrice
             }

@@ -164,6 +164,13 @@ type PublishProductsResponse {
   status: String!
 }
 
+type ExternalShopifyProduct {
+  id: ID!
+
+  # https://shopify.dev/docs/admin-api/graphql/reference/products-and-collections/product#handle-2021-01
+  handle: String!
+}
+
 type Product {
   id: ID!
   slug: String!
@@ -174,6 +181,7 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
+  externalShopifyProduct: ExternalShopifyProduct
   materialCategory: ProductMaterialCategory
   model: ProductModel
   modelHeight: Int
@@ -224,6 +232,12 @@ type Product {
   publishedAt: DateTime
 }
 
+type BrandExternalShopifyIntegration {
+  # {shopName}.myshopify.com
+  shopName: String!
+  enabled: Boolean!
+}
+
 type Brand {
   id: ID!
   slug: String!
@@ -272,8 +286,13 @@ type Brand {
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
+  externalShopifyIntegration: BrandExternalShopifyIntegration
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input ExternalShopifyProductInput {
+  handle: String!
 }
 
 input UpsertProductInput {
@@ -301,6 +320,7 @@ input UpsertProductInput {
   tags: [String!]!
   type: ProductType!
   variants: [UpsertVariantInput!]!
+  externalShopifyProduct: ExternalShopifyProductInput
 }
 
 input CustomProductUpdateInput {
@@ -335,6 +355,7 @@ input CustomProductUpdateInput {
   modelSizeDisplay: String
   modelSizeName: String
   tags: [String!]
+  externalShopifyProduct: ExternalShopifyProductInput
 }
 
 input UpsertSeasonInput {
@@ -343,6 +364,12 @@ input UpsertSeasonInput {
   internalSeasonYear: Int
   vendorSeasonSeasonCode: String
   vendorSeasonYear: Int
+}
+
+input BrandExternalShopifyIntegration {
+  # {shopName}.myshopify.com
+  shopName: String!
+  enabled: Boolean!
 }
 
 input CustomBrandCreateInput {
@@ -363,6 +390,7 @@ input CustomBrandCreateInput {
   products: ProductCreateManyWithoutBrandInput
   # Custom fields
   images: [Upload!]
+  externalShopifyIntegration: ExternalShopifyIntegrationInput
 }
 
 input CustomBrandUpdateInput {
@@ -382,4 +410,5 @@ input CustomBrandUpdateInput {
   websiteUrl: String
   # Custom fields
   images: [Upload!]
+  externalShopifyIntegration: ExternalShopifyIntegrationInput
 }

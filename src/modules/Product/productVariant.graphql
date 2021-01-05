@@ -59,12 +59,18 @@ type Mutation {
   ): [ProductVariant!] @hasRole(roles: [Admin])
 }
 
-type ProductVariantSellable {
+type ProductVariantPrice {
   id: ID!
-  new: Boolean!
-  newPrice: Float
-  used: Boolean!
-  usedPrice: Float
+  retailPrice: Float
+  buyNewEnabled: Boolean!
+
+  # ExternalShopifyProductVariant is the source of truth.
+  buyNewPrice: Float
+  buyNewAvailableForSale: Boolean
+
+  # PhysicalProduct is the source of truth.
+  buyUsedEnabled: Boolean!
+  buyUsedPrice: Float
 }
 
 type Size {
@@ -74,6 +80,25 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
+}
+
+type ExternalShopifySelectedOption {
+  id: ID!
+  name: String!
+  value: String!
+}
+
+type ExternalShopifyProductVariant {
+  id: ID!
+
+  # For the first mapping, match on selected options. We can then use the
+  # externalID retrieved from Shopify speed up subsequent lookups.
+  selectedOptions: [ExternalShopifySelectedOption!]!
+  externalID: ID
+
+  cachedPrice: Float
+  cachedAvailableForSale: Boolean
+  cacheExpiresAt: DateTime
 }
 
 type ProductVariant {
@@ -97,7 +122,6 @@ type ProductVariant {
   height: Float
   productID: String!
   product: Product!
-  retailPrice: Float
   physicalProducts(
     where: PhysicalProductWhereInput
     orderBy: PhysicalProductOrderByInput
@@ -110,7 +134,9 @@ type ProductVariant {
   total: Int!
   reservable: Int!
   reserved: Int!
-  sellable: ProductVariantSellable!
+  externalShopifyProductVariant: ExternalShopifyProductVariant
+  price: ProductVariantPrice!
+  retailPrice: Float @deprecated(reason: "replaced with price.retailPrice")
   nonReservable: Int!
   isSaved: Boolean!
   isInBag: Boolean!
@@ -120,11 +146,19 @@ type ProductVariant {
   updatedAt: DateTime!
 }
 
-input ProductVariantSellableInput {
-  new: Boolean!
-  newPrice: Float
-  used: Boolean!
-  usedPrice: Float
+input ProductVariantPriceInput {
+  buyUsedPrice: Float
+  buyUsedEnabled: Boolean!
+  buyNewEnabled: Boolean!
+}
+
+input ExternalShopifySelectedOptionInput {
+  name: String!
+  value: String!
+}
+
+input ExternalShopifyProductVariantInput {
+  selectedOptions: [ExternalShopifySelectedOption!]!
 }
 
 input UpsertVariantInput {
@@ -146,7 +180,8 @@ input UpsertVariantInput {
   weight: Float
   total: Int!
   physicalProducts: [UpsertPhysicalProductInput!]!
-  sellable: ProductVariantSellableInput
+  price: ProductVariantPriceInput
+  externalShopifyProductVariant: ExternalShopifyProductVariantInput
 }
 
 input UpdateVariantInput {
@@ -165,6 +200,8 @@ input UpdateVariantInput {
   rise: Float
   hem: Float
   inseam: Float
+  price: ProductVariantPriceInput
+  externalShopifyProductVariant: ExternalShopifyProductVariantInput
 }
 
 input ProductVariantSKUsInput {

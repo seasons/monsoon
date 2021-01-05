@@ -54,4 +54,10 @@ export class PhysicalProductFieldsResolver {
   ) {
     return reservationsLoader.load(physicalProduct.id)
   }
+
+  @ResolveField()
+  async price(@Parent() physicalProduct) {
+    // TODO: maintain price.buyNewPrice, price.buyNewVendorHasStock cache
+    return physicalProduct.price
+  }
 }
