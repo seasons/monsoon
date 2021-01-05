@@ -7,7 +7,7 @@ import { PaymentPlanTier, User } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { AuthService } from "@modules/User/services/auth.service"
-import { Injectable } from "@nestjs/common"
+import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
 import {
@@ -38,6 +38,7 @@ import {
 export class PaymentService {
   constructor(
     private readonly shippingService: ShippingService,
+    @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
     private readonly customerService: CustomerService,
     private readonly emailService: EmailService,

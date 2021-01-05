@@ -8,7 +8,7 @@ import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Customer } from "@app/prisma/prisma.binding"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { Injectable } from "@nestjs/common"
+import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import {
   BillingInfoUpdateDataInput,
   CustomerAdmissionsDataCreateWithoutCustomerInput,
@@ -25,7 +25,6 @@ import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { pick } from "lodash"
 import { DateTime } from "luxon"
-import states from "us-state-converter"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
 import { AuthService } from "./auth.service"
@@ -78,6 +77,7 @@ export class CustomerService {
   }`
 
   constructor(
+    @Inject(forwardRef(() => AuthService))
     private readonly auth: AuthService,
     private readonly prisma: PrismaService,
     private readonly shipping: ShippingService,
