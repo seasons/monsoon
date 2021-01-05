@@ -1,7 +1,12 @@
+import { EmailService } from "@app/modules/Email/services/email.service"
+import { EmailUtilsService } from "@app/modules/Email/services/email.utils.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
+import { ImageService } from "@app/modules/Image/services/image.service"
 import { PusherService } from "@app/modules/PushNotification/services/pusher.service"
 import { PushNotificationDataProvider } from "@app/modules/PushNotification/services/pushNotification.data.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ShippingUtilsService } from "@app/modules/Shipping/services/shipping.utils.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 
 import { AuthService } from "../services/auth.service"
@@ -15,16 +20,32 @@ describe("Auth Service", () => {
     prisma = new PrismaService()
     const pusherService = new PusherService()
     const pushNotificationsDataProvider = new PushNotificationDataProvider()
+    const errorService = new ErrorService()
     const pushNotificationsService = new PushNotificationService(
       pusherService,
       pushNotificationsDataProvider,
-      prisma
+      prisma,
+      errorService
     )
     shippingUtilsService = new ShippingUtilsService()
+    const utilsService = new UtilsService(prisma)
+    const emailUtilsService = new EmailUtilsService(
+      prisma,
+      errorService,
+      new ImageService(prisma)
+    )
+    const emailService = new EmailService(
+      prisma,
+      utilsService,
+      emailUtilsService
+    )
     auth = new AuthService(
       prisma,
       pushNotificationsService,
-      shippingUtilsService
+      emailService,
+      errorService,
+      utilsService,
+      paymentService
     )
   })
 

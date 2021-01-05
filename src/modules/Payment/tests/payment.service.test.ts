@@ -1,11 +1,15 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { EmailDataProvider } from "@app/modules/Email/services/email.data.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
+import { EmailUtilsService } from "@app/modules/Email/services/email.utils.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
+import { ImageService } from "@app/modules/Image/services/image.service"
 import { PusherService } from "@app/modules/PushNotification/services/pusher.service"
 import { PushNotificationDataProvider } from "@app/modules/PushNotification/services/pushNotification.data.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
-import { ShippingUtilsService } from "@app/modules/Shipping/services/shipping.utils.service"
+import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
+import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
 import { AdmissionsService } from "@app/modules/User/services/admissions.service"
 import { AuthService } from "@app/modules/User/services/auth.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
@@ -72,44 +76,59 @@ describe("Payment Service", () => {
     prisma = new PrismaService()
     const pusherService = new PusherService()
     const pushNotificationsDataProvider = new PushNotificationDataProvider()
+    const errorService = new ErrorService()
     const pushNotificationsService = new PushNotificationService(
       pusherService,
       pushNotificationsDataProvider,
-      prisma
-    )
-    const shippingUtilsService = new ShippingUtilsService()
-    const authService = new AuthService(
       prisma,
-      pushNotificationsService,
-      shippingUtilsService
+      errorService
     )
     const utilsService = new UtilsService(prisma)
-    const shippingService = new ShippingService(prisma, utilsService)
-    const admissionsService = new AdmissionsService(prisma, utilsService)
-    const segmentService = new SegmentService()
+    const emailUtilsService = new EmailUtilsService(
+      prisma,
+      errorService,
+      new ImageService(prisma)
+    )
     const emailService = new EmailService(
       prisma,
       utilsService,
-      new EmailDataProvider()
+      emailUtilsService
     )
+    const authService = new AuthService(
+      prisma,
+      pushNotificationsService,
+      emailService,
+      errorService,
+      utilsService,
+      paymentService
+    )
+
+    const shippingService = new ShippingService(prisma, utilsService)
+    const admissionsService = new AdmissionsService(prisma, utilsService)
+    const segmentService = new SegmentService()
+
     const customerService = new CustomerService(
       authService,
       prisma,
       shippingService,
       admissionsService,
+      segmentService,
       emailService,
       pushNotificationsService,
-      segmentService
+      new SMSService(prisma, new TwilioService(), new TwilioUtils()),
+      utilsService
     )
     const paymentUtilsService = new PaymentUtilsService()
     paymentService = new PaymentService(
+      shippingService,
       authService,
       customerService,
       emailService,
       paymentUtilsService,
       prisma,
       utilsService,
-      segmentService
+      segmentService,
+      errorService
     )
     testUtils = new TestUtilsService(prisma, new UtilsService(prisma))
   })
@@ -151,7 +170,13 @@ describe("Payment Service", () => {
             ChargebeeMockFunction.SubscriptionCreateForCustomer
           )
         )
-      await paymentService.applePayCheckout(planID, token, customer)
+      await paymentService.stripeTokenCheckout(
+        planID,
+        token,
+        customer,
+        "apple_pay",
+        process.env.REFERRAL_COUPON_ID
+      )
 
       const newCustomer = await prisma.binding.query.customer(
         { where: { id: customer.id } },

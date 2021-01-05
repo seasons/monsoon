@@ -1,6 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailDataProvider } from "@app/modules/Email/services/email.data.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PusherService } from "@app/modules/PushNotification/services/pusher.service"
 import { PushNotificationDataProvider } from "@app/modules/PushNotification/services/pushNotification.data.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
@@ -30,10 +31,12 @@ describe("Customer Service", () => {
     testUtils = new TestUtilsService(prisma, new UtilsService(prisma))
     const pusherService = new PusherService()
     const pushNotificationsDataProvider = new PushNotificationDataProvider()
+    const errorService = new ErrorService()
     const pushNotificationsService = new PushNotificationService(
       pusherService,
       pushNotificationsDataProvider,
-      prisma
+      prisma,
+      errorService
     )
     shippingUtilsService = new ShippingUtilsService()
     const auth = new AuthService(
