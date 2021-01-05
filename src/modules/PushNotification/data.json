@@ -22,15 +22,6 @@
       "route": "Account"
     }
   },
-  "ResumeReminder": {
-    "alert": {
-      "title": "Your membership will resume in 2 days",
-      "body": "Tap here to extend your pause by a month or resume early"
-    },
-    "data": {
-      "route": "Account"
-    }
-  },
   "ReservationShipped": {
     "alert": {
       "title": "Your reservation has been shipped",

@@ -7098,6 +7098,7 @@ type CustomerMembership implements Node {
   subscriptionId: String!
   customer: Customer!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
+  giftId: String
 }
 
 """A connection to a list of items."""
@@ -7113,6 +7114,7 @@ type CustomerMembershipConnection {
 input CustomerMembershipCreateInput {
   id: ID
   subscriptionId: String!
+  giftId: String
   plan: PaymentPlanCreateOneInput
   customer: CustomerCreateOneWithoutMembershipInput!
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
@@ -7131,6 +7133,7 @@ input CustomerMembershipCreateOneWithoutPauseRequestsInput {
 input CustomerMembershipCreateWithoutCustomerInput {
   id: ID
   subscriptionId: String!
+  giftId: String
   plan: PaymentPlanCreateOneInput
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
@@ -7138,6 +7141,7 @@ input CustomerMembershipCreateWithoutCustomerInput {
 input CustomerMembershipCreateWithoutPauseRequestsInput {
   id: ID
   subscriptionId: String!
+  giftId: String
   plan: PaymentPlanCreateOneInput
   customer: CustomerCreateOneWithoutMembershipInput!
 }
@@ -7156,11 +7160,14 @@ enum CustomerMembershipOrderByInput {
   id_DESC
   subscriptionId_ASC
   subscriptionId_DESC
+  giftId_ASC
+  giftId_DESC
 }
 
 type CustomerMembershipPreviousValues {
   id: ID!
   subscriptionId: String!
+  giftId: String
 }
 
 type CustomerMembershipSubscriptionPayload {
@@ -7202,6 +7209,7 @@ input CustomerMembershipSubscriptionWhereInput {
 
 input CustomerMembershipUpdateInput {
   subscriptionId: String
+  giftId: String
   plan: PaymentPlanUpdateOneInput
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
@@ -7209,6 +7217,7 @@ input CustomerMembershipUpdateInput {
 
 input CustomerMembershipUpdateManyMutationInput {
   subscriptionId: String
+  giftId: String
 }
 
 input CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
@@ -7229,12 +7238,14 @@ input CustomerMembershipUpdateOneWithoutCustomerInput {
 
 input CustomerMembershipUpdateWithoutCustomerDataInput {
   subscriptionId: String
+  giftId: String
   plan: PaymentPlanUpdateOneInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
 }
 
 input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
   subscriptionId: String
+  giftId: String
   plan: PaymentPlanUpdateOneInput
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
 }
@@ -7338,6 +7349,46 @@ input CustomerMembershipWhereInput {
 
   """All values not ending with the given string."""
   subscriptionId_not_ends_with: String
+  giftId: String
+
+  """All values that are not equal to given value."""
+  giftId_not: String
+
+  """All values that are contained in given list."""
+  giftId_in: [String!]
+
+  """All values that are not contained in given list."""
+  giftId_not_in: [String!]
+
+  """All values less than the given value."""
+  giftId_lt: String
+
+  """All values less than or equal the given value."""
+  giftId_lte: String
+
+  """All values greater than the given value."""
+  giftId_gt: String
+
+  """All values greater than or equal the given value."""
+  giftId_gte: String
+
+  """All values containing the given string."""
+  giftId_contains: String
+
+  """All values not containing the given string."""
+  giftId_not_contains: String
+
+  """All values starting with the given string."""
+  giftId_starts_with: String
+
+  """All values not starting with the given string."""
+  giftId_not_starts_with: String
+
+  """All values ending with the given string."""
+  giftId_ends_with: String
+
+  """All values not ending with the given string."""
+  giftId_not_ends_with: String
   plan: PaymentPlanWhereInput
   customer: CustomerWhereInput
   pauseRequests_every: PauseRequestWhereInput
@@ -25861,6 +25912,7 @@ type SmsReceipt implements Node {
   body: String!
   mediaUrls: [String!]!
   status: SmsStatus!
+  smsId: String
   sentAt: DateTime!
   updatedAt: DateTime!
 }
@@ -25880,6 +25932,7 @@ input SmsReceiptCreateInput {
   externalId: String
   body: String!
   status: SmsStatus!
+  smsId: String
   mediaUrls: SmsReceiptCreatemediaUrlsInput
 }
 
@@ -25910,6 +25963,8 @@ enum SmsReceiptOrderByInput {
   body_DESC
   status_ASC
   status_DESC
+  smsId_ASC
+  smsId_DESC
   sentAt_ASC
   sentAt_DESC
   updatedAt_ASC
@@ -25922,6 +25977,7 @@ type SmsReceiptPreviousValues {
   body: String!
   mediaUrls: [String!]!
   status: SmsStatus!
+  smsId: String
   sentAt: DateTime!
   updatedAt: DateTime!
 }
@@ -26065,6 +26121,46 @@ input SmsReceiptScalarWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [SmsStatus!]
+  smsId: String
+
+  """All values that are not equal to given value."""
+  smsId_not: String
+
+  """All values that are contained in given list."""
+  smsId_in: [String!]
+
+  """All values that are not contained in given list."""
+  smsId_not_in: [String!]
+
+  """All values less than the given value."""
+  smsId_lt: String
+
+  """All values less than or equal the given value."""
+  smsId_lte: String
+
+  """All values greater than the given value."""
+  smsId_gt: String
+
+  """All values greater than or equal the given value."""
+  smsId_gte: String
+
+  """All values containing the given string."""
+  smsId_contains: String
+
+  """All values not containing the given string."""
+  smsId_not_contains: String
+
+  """All values starting with the given string."""
+  smsId_starts_with: String
+
+  """All values not starting with the given string."""
+  smsId_not_starts_with: String
+
+  """All values ending with the given string."""
+  smsId_ends_with: String
+
+  """All values not ending with the given string."""
+  smsId_not_ends_with: String
   sentAt: DateTime
 
   """All values that are not equal to given value."""
@@ -26152,6 +26248,7 @@ input SmsReceiptUpdateDataInput {
   externalId: String
   body: String
   status: SmsStatus
+  smsId: String
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
 }
 
@@ -26159,6 +26256,7 @@ input SmsReceiptUpdateInput {
   externalId: String
   body: String
   status: SmsStatus
+  smsId: String
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
 }
 
@@ -26166,6 +26264,7 @@ input SmsReceiptUpdateManyDataInput {
   externalId: String
   body: String
   status: SmsStatus
+  smsId: String
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
 }
 
@@ -26185,6 +26284,7 @@ input SmsReceiptUpdateManyMutationInput {
   externalId: String
   body: String
   status: SmsStatus
+  smsId: String
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
 }
 
@@ -26347,6 +26447,46 @@ input SmsReceiptWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [SmsStatus!]
+  smsId: String
+
+  """All values that are not equal to given value."""
+  smsId_not: String
+
+  """All values that are contained in given list."""
+  smsId_in: [String!]
+
+  """All values that are not contained in given list."""
+  smsId_not_in: [String!]
+
+  """All values less than the given value."""
+  smsId_lt: String
+
+  """All values less than or equal the given value."""
+  smsId_lte: String
+
+  """All values greater than the given value."""
+  smsId_gt: String
+
+  """All values greater than or equal the given value."""
+  smsId_gte: String
+
+  """All values containing the given string."""
+  smsId_contains: String
+
+  """All values not containing the given string."""
+  smsId_not_contains: String
+
+  """All values starting with the given string."""
+  smsId_starts_with: String
+
+  """All values not starting with the given string."""
+  smsId_not_starts_with: String
+
+  """All values ending with the given string."""
+  smsId_ends_with: String
+
+  """All values not ending with the given string."""
+  smsId_not_ends_with: String
   sentAt: DateTime
 
   """All values that are not equal to given value."""
@@ -31120,7 +31260,9 @@ export type CustomerDetailOrderByInput =   'id_ASC' |
 export type CustomerMembershipOrderByInput =   'id_ASC' |
   'id_DESC' |
   'subscriptionId_ASC' |
-  'subscriptionId_DESC'
+  'subscriptionId_DESC' |
+  'giftId_ASC' |
+  'giftId_DESC'
 
 export type CustomerOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -31795,6 +31937,8 @@ export type SmsReceiptOrderByInput =   'id_ASC' |
   'body_DESC' |
   'status_ASC' |
   'status_DESC' |
+  'smsId_ASC' |
+  'smsId_DESC' |
   'sentAt_ASC' |
   'sentAt_DESC' |
   'updatedAt_ASC' |
@@ -34604,6 +34748,7 @@ export interface CustomerDetailWhereUniqueInput {
 export interface CustomerMembershipCreateInput {
   id?: ID_Input | null
   subscriptionId: String
+  giftId?: String | null
   plan?: PaymentPlanCreateOneInput | null
   customer: CustomerCreateOneWithoutMembershipInput
   pauseRequests?: PauseRequestCreateManyWithoutMembershipInput | null
@@ -34622,6 +34767,7 @@ export interface CustomerMembershipCreateOneWithoutPauseRequestsInput {
 export interface CustomerMembershipCreateWithoutCustomerInput {
   id?: ID_Input | null
   subscriptionId: String
+  giftId?: String | null
   plan?: PaymentPlanCreateOneInput | null
   pauseRequests?: PauseRequestCreateManyWithoutMembershipInput | null
 }
@@ -34629,6 +34775,7 @@ export interface CustomerMembershipCreateWithoutCustomerInput {
 export interface CustomerMembershipCreateWithoutPauseRequestsInput {
   id?: ID_Input | null
   subscriptionId: String
+  giftId?: String | null
   plan?: PaymentPlanCreateOneInput | null
   customer: CustomerCreateOneWithoutMembershipInput
 }
@@ -34646,6 +34793,7 @@ export interface CustomerMembershipSubscriptionWhereInput {
 
 export interface CustomerMembershipUpdateInput {
   subscriptionId?: String | null
+  giftId?: String | null
   plan?: PaymentPlanUpdateOneInput | null
   customer?: CustomerUpdateOneRequiredWithoutMembershipInput | null
   pauseRequests?: PauseRequestUpdateManyWithoutMembershipInput | null
@@ -34653,6 +34801,7 @@ export interface CustomerMembershipUpdateInput {
 
 export interface CustomerMembershipUpdateManyMutationInput {
   subscriptionId?: String | null
+  giftId?: String | null
 }
 
 export interface CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
@@ -34673,12 +34822,14 @@ export interface CustomerMembershipUpdateOneWithoutCustomerInput {
 
 export interface CustomerMembershipUpdateWithoutCustomerDataInput {
   subscriptionId?: String | null
+  giftId?: String | null
   plan?: PaymentPlanUpdateOneInput | null
   pauseRequests?: PauseRequestUpdateManyWithoutMembershipInput | null
 }
 
 export interface CustomerMembershipUpdateWithoutPauseRequestsDataInput {
   subscriptionId?: String | null
+  giftId?: String | null
   plan?: PaymentPlanUpdateOneInput | null
   customer?: CustomerUpdateOneRequiredWithoutMembershipInput | null
 }
@@ -34725,6 +34876,20 @@ export interface CustomerMembershipWhereInput {
   subscriptionId_not_starts_with?: String | null
   subscriptionId_ends_with?: String | null
   subscriptionId_not_ends_with?: String | null
+  giftId?: String | null
+  giftId_not?: String | null
+  giftId_in?: String[] | String | null
+  giftId_not_in?: String[] | String | null
+  giftId_lt?: String | null
+  giftId_lte?: String | null
+  giftId_gt?: String | null
+  giftId_gte?: String | null
+  giftId_contains?: String | null
+  giftId_not_contains?: String | null
+  giftId_starts_with?: String | null
+  giftId_not_starts_with?: String | null
+  giftId_ends_with?: String | null
+  giftId_not_ends_with?: String | null
   plan?: PaymentPlanWhereInput | null
   customer?: CustomerWhereInput | null
   pauseRequests_every?: PauseRequestWhereInput | null
@@ -43169,6 +43334,7 @@ export interface SmsReceiptCreateInput {
   externalId?: String | null
   body: String
   status: SmsStatus
+  smsId?: String | null
   mediaUrls?: SmsReceiptCreatemediaUrlsInput | null
 }
 
@@ -43231,6 +43397,20 @@ export interface SmsReceiptScalarWhereInput {
   status_not?: SmsStatus | null
   status_in?: SmsStatus[] | SmsStatus | null
   status_not_in?: SmsStatus[] | SmsStatus | null
+  smsId?: String | null
+  smsId_not?: String | null
+  smsId_in?: String[] | String | null
+  smsId_not_in?: String[] | String | null
+  smsId_lt?: String | null
+  smsId_lte?: String | null
+  smsId_gt?: String | null
+  smsId_gte?: String | null
+  smsId_contains?: String | null
+  smsId_not_contains?: String | null
+  smsId_starts_with?: String | null
+  smsId_not_starts_with?: String | null
+  smsId_ends_with?: String | null
+  smsId_not_ends_with?: String | null
   sentAt?: DateTime | null
   sentAt_not?: DateTime | null
   sentAt_in?: DateTime[] | DateTime | null
@@ -43264,6 +43444,7 @@ export interface SmsReceiptUpdateDataInput {
   externalId?: String | null
   body?: String | null
   status?: SmsStatus | null
+  smsId?: String | null
   mediaUrls?: SmsReceiptUpdatemediaUrlsInput | null
 }
 
@@ -43271,6 +43452,7 @@ export interface SmsReceiptUpdateInput {
   externalId?: String | null
   body?: String | null
   status?: SmsStatus | null
+  smsId?: String | null
   mediaUrls?: SmsReceiptUpdatemediaUrlsInput | null
 }
 
@@ -43278,6 +43460,7 @@ export interface SmsReceiptUpdateManyDataInput {
   externalId?: String | null
   body?: String | null
   status?: SmsStatus | null
+  smsId?: String | null
   mediaUrls?: SmsReceiptUpdatemediaUrlsInput | null
 }
 
@@ -43297,6 +43480,7 @@ export interface SmsReceiptUpdateManyMutationInput {
   externalId?: String | null
   body?: String | null
   status?: SmsStatus | null
+  smsId?: String | null
   mediaUrls?: SmsReceiptUpdatemediaUrlsInput | null
 }
 
@@ -43370,6 +43554,20 @@ export interface SmsReceiptWhereInput {
   status_not?: SmsStatus | null
   status_in?: SmsStatus[] | SmsStatus | null
   status_not_in?: SmsStatus[] | SmsStatus | null
+  smsId?: String | null
+  smsId_not?: String | null
+  smsId_in?: String[] | String | null
+  smsId_not_in?: String[] | String | null
+  smsId_lt?: String | null
+  smsId_lte?: String | null
+  smsId_gt?: String | null
+  smsId_gte?: String | null
+  smsId_contains?: String | null
+  smsId_not_contains?: String | null
+  smsId_starts_with?: String | null
+  smsId_not_starts_with?: String | null
+  smsId_ends_with?: String | null
+  smsId_not_ends_with?: String | null
   sentAt?: DateTime | null
   sentAt_not?: DateTime | null
   sentAt_in?: DateTime[] | DateTime | null
@@ -46278,6 +46476,7 @@ export interface CustomerMembership extends Node {
   subscriptionId: String
   customer: Customer
   pauseRequests?: Array<PauseRequest> | null
+  giftId?: String | null
 }
 
 /*
@@ -46302,6 +46501,7 @@ export interface CustomerMembershipEdge {
 export interface CustomerMembershipPreviousValues {
   id: ID_Output
   subscriptionId: String
+  giftId?: String | null
 }
 
 export interface CustomerMembershipSubscriptionPayload {
@@ -47987,6 +48187,7 @@ export interface SmsReceipt extends Node {
   body: String
   mediaUrls: Array<String>
   status: SmsStatus
+  smsId?: String | null
   sentAt: DateTime
   updatedAt: DateTime
 }
@@ -48016,6 +48217,7 @@ export interface SmsReceiptPreviousValues {
   body: String
   mediaUrls: Array<String>
   status: SmsStatus
+  smsId?: String | null
   sentAt: DateTime
   updatedAt: DateTime
 }

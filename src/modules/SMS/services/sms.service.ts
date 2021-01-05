@@ -1,11 +1,15 @@
 import fs from "fs"
 
 import { Customer, User } from "@app/decorators"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
 import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
+import { TwilioEvent } from "@app/modules/Twilio/twilio.types"
+import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
 import {
+  CustomerStatus,
   SmsStatus,
   UserVerificationStatus,
   UserWhereUniqueInput,
@@ -13,7 +17,10 @@ import {
 import { PrismaService } from "@prisma/prisma.service"
 import { LinksAndEmails } from "@seasons/wind"
 import { head } from "lodash"
+import { DateTime } from "luxon"
+import moment from "moment"
 import mustache from "mustache"
+import Twilio from "twilio"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
 import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
 
@@ -29,7 +36,9 @@ export class SMSService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly twilio: TwilioService,
-    private readonly twilioUtils: TwilioUtils
+    private readonly twilioUtils: TwilioUtils,
+    private readonly paymentUtils: PaymentUtilsService,
+    private readonly error: ErrorService
   ) {
     this.setupService()
   }
@@ -149,10 +158,11 @@ export class SMSService {
     renderData: any
   }) {
     const { body, mediaUrls } = this.getSMSData(smsId, renderData)
-    await this.sendSMSMessage({
+    return await this.sendSMSMessage({
       to,
       body,
       mediaUrls,
+      smsId,
     })
   }
 
@@ -162,10 +172,12 @@ export class SMSService {
       body,
       mediaUrls,
       to,
+      smsId,
     }: {
       body: string
       mediaUrls?: string[]
       to: UserWhereUniqueInput
+      smsId?: SMSID
     }
   ): Promise<SmsStatus> {
     // Ensure there are not too many media URLs
@@ -216,6 +228,7 @@ export class SMSService {
       externalId: sid,
       mediaUrls: { set: mediaUrls },
       status: this.twilioUtils.twilioToPrismaSmsStatus(status),
+      smsId,
     })
 
     await this.prisma.client.updateUser({
@@ -226,7 +239,8 @@ export class SMSService {
     })
 
     // Return status
-    return this.twilioUtils.twilioToPrismaSmsStatus(status)
+    const smsStatus = this.twilioUtils.twilioToPrismaSmsStatus(status)
+    return smsStatus
   }
 
   async handleSMSStatusUpdate(externalId: string, status: SmsStatus) {
@@ -234,6 +248,174 @@ export class SMSService {
       data: { status },
       where: { externalId },
     })
+  }
+
+  async handleSMSResponse(body: TwilioEvent) {
+    const twiml = new Twilio.twiml.MessagingResponse()
+    const genericError = `We're sorry, but we're having technical difficulties. Please contact ${process.env.MAIN_CONTACT_EMAIL}`
+
+    try {
+      let smsCust
+      let status
+      const lowercaseContent = body.Body.toLowerCase().replace(/"/g, "")
+      switch (lowercaseContent) {
+        case "1":
+        case "2":
+        case "3":
+          smsCust = await this.getSMSUser(
+            body.From,
+            "ResumeReminder",
+            `{
+              id
+              status
+              membership {
+                id
+                subscriptionId
+                pauseRequests(orderBy: createdAt_DESC) {
+                  id
+                  resumeDate
+                }
+              }
+            }
+          `
+          )
+
+          if (!smsCust) {
+            twiml.message(genericError)
+            break
+          }
+
+          status = smsCust.status as CustomerStatus
+          switch (status) {
+            case "Active":
+              twiml.message(
+                `Your account is already active.\n\nIf this is unexpected, please contact ${process.env.MAIN_CONTACT_EMAIL} for assistance.`
+              )
+              break
+            case "Deactivated":
+              twiml.message(
+                `Your account is currently deactivated.\n\nTo reactivate, please contact ${process.env.MAIN_CONTACT_EMAIL}.`
+              )
+              break
+            case "Paused":
+              const pauseRequest = smsCust.membership?.pauseRequests?.[0]
+              if (!pauseRequest) {
+                twiml.message(genericError)
+                break
+              }
+
+              const resumeDateMoment = moment(pauseRequest.resumeDate as string)
+              const now = moment()
+              if (resumeDateMoment.diff(now, "days") < 30) {
+                const numMonthsToExtend = Number(lowercaseContent)
+                const newResumeDate = moment(
+                  pauseRequest.resumeDate as string
+                ).add(numMonthsToExtend, "months")
+
+                await this.paymentUtils.updateResumeDate(
+                  newResumeDate.toISOString(),
+                  smsCust
+                )
+
+                twiml.message(
+                  `Your pause has been extended by ${lowercaseContent} month${
+                    numMonthsToExtend === 1 ? "" : "s"
+                  }! Your new resume date is ${this.formatResumeDate(
+                    newResumeDate
+                  )}.`
+                )
+              } else {
+                twiml.message(
+                  `You are scheduled to resume on ${this.formatResumeDate(
+                    resumeDateMoment
+                  )}. We'll reach out then to ask if you'd like to resume or extend your pause.`
+                )
+              }
+              break
+            default:
+              twiml.message(genericError)
+          }
+          break
+        case "resume":
+          smsCust = await this.getSMSUser(
+            body.From,
+            "ResumeReminder",
+            `{
+              id
+              membership {
+                id
+                subscriptionId
+              }
+            }
+          `
+          )
+
+          if (!smsCust) {
+            twiml.message(genericError)
+            break
+          }
+
+          status = smsCust.status as CustomerStatus
+          switch (status) {
+            case "Paused":
+              await this.paymentUtils.resumeSubscription(null, null, smsCust)
+              twiml.message(
+                `Your membership has been resumed!. You're free to place your next reservation.`
+              )
+              break
+            default:
+              twiml.message(genericError)
+          }
+          break
+        case "stop":
+        case "stopall":
+        case "unsubscribe":
+        case "cancel":
+        case "end":
+        case "quit":
+        case "start":
+        case "yes":
+        case "unstop":
+        case "help":
+        case "info":
+          // Twilio handles these reserved keywords. Do nothing.
+          // https://support.twilio.com/hc/en-us/articles/223134027-Twilio-support-for-opt-out-keywords-SMS-STOP-filtering-
+          break
+        default:
+          twiml.message(
+            `Sorry, we don't recognize that response. Please try again or contact ${process.env.MAIN_CONTACT_EMAIL}`
+          )
+      }
+    } catch (err) {
+      this.error.setExtraContext(body, "twilioEvent")
+      this.error.captureError(err)
+      twiml.message(genericError)
+    }
+
+    return twiml.toString()
+  }
+
+  private formatResumeDate = date => date.format("dddd, MMMM Do")
+
+  private async getSMSUser(from: string, smsId: SMSID, info: string) {
+    const possibleCustomers = await this.prisma.binding.query.customers(
+      {
+        where: {
+          AND: [
+            {
+              user: {
+                smsReceipts_some: { smsId },
+              },
+            },
+            { detail: { phoneNumber_contains: from.slice(2) } },
+          ],
+        },
+      },
+      info
+    )
+    const cust = head(possibleCustomers) as any
+
+    return cust
   }
 
   private getSMSData(smsID: SMSID, vars: any): SMSPayload {

@@ -15104,6 +15104,7 @@ type SmsReceipt {
   body: String!
   mediaUrls: [String!]!
   status: SmsStatus!
+  smsId: String
   sentAt: DateTime!
   updatedAt: DateTime!
 }
@@ -15120,6 +15121,7 @@ input SmsReceiptCreateInput {
   body: String!
   mediaUrls: SmsReceiptCreatemediaUrlsInput
   status: SmsStatus!
+  smsId: String
 }
 
 input SmsReceiptCreateManyInput {
@@ -15145,6 +15147,8 @@ enum SmsReceiptOrderByInput {
   body_DESC
   status_ASC
   status_DESC
+  smsId_ASC
+  smsId_DESC
   sentAt_ASC
   sentAt_DESC
   updatedAt_ASC
@@ -15157,6 +15161,7 @@ type SmsReceiptPreviousValues {
   body: String!
   mediaUrls: [String!]!
   status: SmsStatus!
+  smsId: String
   sentAt: DateTime!
   updatedAt: DateTime!
 }
@@ -15208,6 +15213,20 @@ input SmsReceiptScalarWhereInput {
   status_not: SmsStatus
   status_in: [SmsStatus!]
   status_not_in: [SmsStatus!]
+  smsId: String
+  smsId_not: String
+  smsId_in: [String!]
+  smsId_not_in: [String!]
+  smsId_lt: String
+  smsId_lte: String
+  smsId_gt: String
+  smsId_gte: String
+  smsId_contains: String
+  smsId_not_contains: String
+  smsId_starts_with: String
+  smsId_not_starts_with: String
+  smsId_ends_with: String
+  smsId_not_ends_with: String
   sentAt: DateTime
   sentAt_not: DateTime
   sentAt_in: [DateTime!]
@@ -15252,6 +15271,7 @@ input SmsReceiptUpdateDataInput {
   body: String
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
   status: SmsStatus
+  smsId: String
 }
 
 input SmsReceiptUpdateInput {
@@ -15259,6 +15279,7 @@ input SmsReceiptUpdateInput {
   body: String
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
   status: SmsStatus
+  smsId: String
 }
 
 input SmsReceiptUpdateManyDataInput {
@@ -15266,6 +15287,7 @@ input SmsReceiptUpdateManyDataInput {
   body: String
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
   status: SmsStatus
+  smsId: String
 }
 
 input SmsReceiptUpdateManyInput {
@@ -15285,6 +15307,7 @@ input SmsReceiptUpdateManyMutationInput {
   body: String
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
   status: SmsStatus
+  smsId: String
 }
 
 input SmsReceiptUpdateManyWithWhereNestedInput {
@@ -15354,6 +15377,20 @@ input SmsReceiptWhereInput {
   status_not: SmsStatus
   status_in: [SmsStatus!]
   status_not_in: [SmsStatus!]
+  smsId: String
+  smsId_not: String
+  smsId_in: [String!]
+  smsId_not_in: [String!]
+  smsId_lt: String
+  smsId_lte: String
+  smsId_gt: String
+  smsId_gte: String
+  smsId_contains: String
+  smsId_not_contains: String
+  smsId_starts_with: String
+  smsId_not_starts_with: String
+  smsId_ends_with: String
+  smsId_not_ends_with: String
   sentAt: DateTime
   sentAt_not: DateTime
   sentAt_in: [DateTime!]

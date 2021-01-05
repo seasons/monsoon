@@ -17,7 +17,7 @@ import { SMSModule } from "../SMS/sms.module"
 import { AdmissionsScheduledJobs } from "./services/admissions.job.service"
 import { DataScheduledJobs } from "./services/data.job.service"
 import { MarketingScheduledJobs } from "./services/marketing.job.service"
-import { MembershipScheduledJobs } from "./services/membership.service"
+import { MembershipScheduledJobs } from "./services/membership.job.service"
 import { ReservationScheduledJobs } from "./services/reservations.job.service"
 import { SearchScheduledJobs } from "./services/search.job.service"
 
