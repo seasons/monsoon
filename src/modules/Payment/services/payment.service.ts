@@ -330,18 +330,18 @@ export class PaymentService {
       })
       .request()
 
-    const subscription = await chargebee.subscription
+    const payload = await chargebee.subscription
       .create_for_customer(chargebeeCustomer.customer.id, {
         plan_id: planID,
         coupon_ids: !!couponID ? [couponID] : [],
       })
       .request()
 
-    const subscriptionID = subscription.id
+    const subscriptionID = payload.subscription.id
 
     await this.createPrismaSubscription(
       user.id,
-      subscription.customer,
+      payload.customer,
       paymentSource.payment_source.card,
       planID,
       subscriptionID
