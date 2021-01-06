@@ -249,6 +249,7 @@ type ExternalShopifyIntegration {
   id: ID! @id
   shopName: String!
   enabled: String!
+  accessToken: String
 }
 
 type Brand {
@@ -365,11 +366,6 @@ type Tag {
   updatedAt: DateTime! @updatedAt
 }
 
-type ExternalShopifyProduct {
-  id: ID! @id
-  handle: String!
-}
-
 type Product {
   id: ID! @id
   slug: String! @unique
@@ -380,7 +376,8 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProduct: ExternalShopifyProduct
+  externalShopifyProductHandle: String 
+  buyNewEnabled: Boolean! @default(value: false)
   images: [Image!]
   modelHeight: Int
   retailPrice: Int
@@ -439,18 +436,17 @@ type ProductFunction {
 type ProductVariantPrice {
   id: ID! @id
   retailPrice: Float
-  buyNewEnabled: Boolean!
 }
 
-type ExternalShopifySelectedOption {
+type ShopifySelectedOption {
   id: ID! @id
   name: String!
   value: String!
 }
 
-type ExternalShopifyProductVariant {
+type ShopifyProductVariant {
   id: ID! @id
-  selectedOptions: [ExternalShopifySelectedOption!]!
+  selectedOptions: [ShopifySelectedOption!]!
   externalID: ID
   cachedPrice: Float
   cachedAvailableForSale: Boolean
@@ -470,7 +466,7 @@ type ProductVariant {
   product: Product! @relation(onDelete: SET_NULL)
   retailPrice: Float
   price: ProductVariantPrice
-  externalShopifyProductVariant: ExternalShopifyProductVariant
+  shopifyProductVariant: ShopifyProductVariant
   physicalProducts: [PhysicalProduct!]!
     @relation(link: TABLE, onDelete: CASCADE)
   total: Int!

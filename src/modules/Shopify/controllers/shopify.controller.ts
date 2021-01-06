@@ -39,16 +39,28 @@ export class ShopifyController {
       shop,
     })
 
-    await this.prisma.client.updateBrand({
-      data: {
-        externalShopifyIntegration: {
-          accessToken,
-        },
-      },
+    const brand = await this.prisma.client.brands({
       where: {
         externalShopifyIntegration: {
           shopName: shop,
         },
+      },
+    })
+
+    if (!brand || brand.length === 0) {
+      res.status(403).send("No matching shop found.")
+    }
+
+    await this.prisma.client.updateBrand({
+      data: {
+        externalShopifyIntegration: {
+          update: {
+            accessToken,
+          },
+        },
+      },
+      where: {
+        id: brand[0].id,
       },
     })
 

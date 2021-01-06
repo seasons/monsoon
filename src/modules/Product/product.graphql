@@ -164,13 +164,6 @@ type PublishProductsResponse {
   status: String!
 }
 
-type ExternalShopifyProduct {
-  id: ID!
-
-  # https://shopify.dev/docs/admin-api/graphql/reference/products-and-collections/product#handle-2021-01
-  handle: String!
-}
-
 type Product {
   id: ID!
   slug: String!
@@ -181,7 +174,8 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProduct: ExternalShopifyProduct
+  externalShopifyProductHandle: String
+  buyNewEnabled: Boolean!
   materialCategory: ProductMaterialCategory
   model: ProductModel
   modelHeight: Int
@@ -236,6 +230,7 @@ type BrandExternalShopifyIntegration {
   # {shopName}.myshopify.com
   shopName: String!
   enabled: Boolean!
+  accessToken: String
 }
 
 type Brand {
@@ -291,10 +286,6 @@ type Brand {
   updatedAt: DateTime!
 }
 
-input ExternalShopifyProductInput {
-  handle: String!
-}
-
 input UpsertProductInput {
   architecture: String
   bottomSizeType: BottomSizeType
@@ -320,7 +311,7 @@ input UpsertProductInput {
   tags: [String!]!
   type: ProductType!
   variants: [UpsertVariantInput!]!
-  externalShopifyProduct: ExternalShopifyProductInput
+  externalShopifyProductHandle: String
 }
 
 input CustomProductUpdateInput {
@@ -370,6 +361,7 @@ input BrandExternalShopifyIntegration {
   # {shopName}.myshopify.com
   shopName: String!
   enabled: Boolean!
+  accessToken: String
 }
 
 input CustomBrandCreateInput {

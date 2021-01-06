@@ -62,7 +62,6 @@ type Mutation {
 type ProductVariantPrice {
   id: ID!
   retailPrice: Float
-  buyNewEnabled: Boolean!
 
   # ExternalShopifyProductVariant is the source of truth.
   buyNewPrice: Float
@@ -82,18 +81,18 @@ type Size {
   display: String!
 }
 
-type ExternalShopifySelectedOption {
+type ShopifySelectedOption {
   id: ID!
   name: String!
   value: String!
 }
 
-type ExternalShopifyProductVariant {
+type ShopifyProductVariant {
   id: ID!
 
   # For the first mapping, match on selected options. We can then use the
   # externalID retrieved from Shopify speed up subsequent lookups.
-  selectedOptions: [ExternalShopifySelectedOption!]!
+  selectedOptions: [ShopifySelectedOption!]!
   externalID: ID
 
   cachedPrice: Float
@@ -134,7 +133,7 @@ type ProductVariant {
   total: Int!
   reservable: Int!
   reserved: Int!
-  externalShopifyProductVariant: ExternalShopifyProductVariant
+  shopifyProductVariant: ShopifyProductVariant
   price: ProductVariantPrice!
   retailPrice: Float @deprecated(reason: "replaced with price.retailPrice")
   nonReservable: Int!
@@ -152,13 +151,13 @@ input ProductVariantPriceInput {
   buyNewEnabled: Boolean!
 }
 
-input ExternalShopifySelectedOptionInput {
+input ShopifySelectedOptionInput {
   name: String!
   value: String!
 }
 
-input ExternalShopifyProductVariantInput {
-  selectedOptions: [ExternalShopifySelectedOption!]!
+input ShopifyProductVariantInput {
+  selectedOptions: [ShopifySelectedOption!]!
 }
 
 input UpsertVariantInput {
@@ -181,7 +180,7 @@ input UpsertVariantInput {
   total: Int!
   physicalProducts: [UpsertPhysicalProductInput!]!
   price: ProductVariantPriceInput
-  externalShopifyProductVariant: ExternalShopifyProductVariantInput
+  shopifyProductVariant: ShopifyProductVariantInput
 }
 
 input UpdateVariantInput {
@@ -201,7 +200,7 @@ input UpdateVariantInput {
   hem: Float
   inseam: Float
   price: ProductVariantPriceInput
-  externalShopifyProductVariant: ExternalShopifyProductVariantInput
+  shopifyProductVariant: ShopifyProductVariantInput
 }
 
 input ProductVariantSKUsInput {
