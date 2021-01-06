@@ -267,7 +267,7 @@ export class CustomerService {
       {
         where: { id: customer.id },
       },
-      `{∑
+      `{
         admissions {
           id
         }
