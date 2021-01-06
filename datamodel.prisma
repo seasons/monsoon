@@ -481,7 +481,7 @@ type ProductVariant {
 
 type PhysicalProductPrice {
   id: ID! @id
-  buyUsed: Boolean! @default(value: false)
+  buyUsedEnabled: Boolean! @default(value: false)
   buyUsedPrice: Float
 }
 

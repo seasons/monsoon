@@ -3845,8 +3845,8 @@ export type PaymentPlanOrderByInput =
 export type PhysicalProductPriceOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "buyUsed_ASC"
-  | "buyUsed_DESC"
+  | "buyUsedEnabled_ASC"
+  | "buyUsedEnabled_DESC"
   | "buyUsedPrice_ASC"
   | "buyUsedPrice_DESC";
 
@@ -6508,8 +6508,8 @@ export interface PhysicalProductPriceWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  buyUsed?: Maybe<Boolean>;
-  buyUsed_not?: Maybe<Boolean>;
+  buyUsedEnabled?: Maybe<Boolean>;
+  buyUsedEnabled_not?: Maybe<Boolean>;
   buyUsedPrice?: Maybe<Float>;
   buyUsedPrice_not?: Maybe<Float>;
   buyUsedPrice_in?: Maybe<Float[] | Float>;
@@ -9878,7 +9878,7 @@ export interface PhysicalProductPriceCreateOneInput {
 
 export interface PhysicalProductPriceCreateInput {
   id?: Maybe<ID_Input>;
-  buyUsed?: Maybe<Boolean>;
+  buyUsedEnabled?: Maybe<Boolean>;
   buyUsedPrice?: Maybe<Float>;
 }
 
@@ -12160,7 +12160,7 @@ export interface PhysicalProductPriceUpdateOneInput {
 }
 
 export interface PhysicalProductPriceUpdateDataInput {
-  buyUsed?: Maybe<Boolean>;
+  buyUsedEnabled?: Maybe<Boolean>;
   buyUsedPrice?: Maybe<Float>;
 }
 
@@ -16657,12 +16657,12 @@ export interface PhysicalProductUpdateManyMutationInput {
 }
 
 export interface PhysicalProductPriceUpdateInput {
-  buyUsed?: Maybe<Boolean>;
+  buyUsedEnabled?: Maybe<Boolean>;
   buyUsedPrice?: Maybe<Float>;
 }
 
 export interface PhysicalProductPriceUpdateManyMutationInput {
-  buyUsed?: Maybe<Boolean>;
+  buyUsedEnabled?: Maybe<Boolean>;
   buyUsedPrice?: Maybe<Float>;
 }
 
@@ -21897,7 +21897,7 @@ export interface WarehouseLocationConstraintNullablePromise
 
 export interface PhysicalProductPrice {
   id: ID_Output;
-  buyUsed: Boolean;
+  buyUsedEnabled: Boolean;
   buyUsedPrice?: Float;
 }
 
@@ -21905,7 +21905,7 @@ export interface PhysicalProductPricePromise
   extends Promise<PhysicalProductPrice>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  buyUsed: () => Promise<Boolean>;
+  buyUsedEnabled: () => Promise<Boolean>;
   buyUsedPrice: () => Promise<Float>;
 }
 
@@ -21913,7 +21913,7 @@ export interface PhysicalProductPriceSubscription
   extends Promise<AsyncIterator<PhysicalProductPrice>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  buyUsed: () => Promise<AsyncIterator<Boolean>>;
+  buyUsedEnabled: () => Promise<AsyncIterator<Boolean>>;
   buyUsedPrice: () => Promise<AsyncIterator<Float>>;
 }
 
@@ -21921,7 +21921,7 @@ export interface PhysicalProductPriceNullablePromise
   extends Promise<PhysicalProductPrice | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  buyUsed: () => Promise<Boolean>;
+  buyUsedEnabled: () => Promise<Boolean>;
   buyUsedPrice: () => Promise<Float>;
 }
 
@@ -29285,7 +29285,7 @@ export interface PhysicalProductPriceSubscriptionPayloadSubscription
 
 export interface PhysicalProductPricePreviousValues {
   id: ID_Output;
-  buyUsed: Boolean;
+  buyUsedEnabled: Boolean;
   buyUsedPrice?: Float;
 }
 
@@ -29293,7 +29293,7 @@ export interface PhysicalProductPricePreviousValuesPromise
   extends Promise<PhysicalProductPricePreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  buyUsed: () => Promise<Boolean>;
+  buyUsedEnabled: () => Promise<Boolean>;
   buyUsedPrice: () => Promise<Float>;
 }
 
@@ -29301,7 +29301,7 @@ export interface PhysicalProductPricePreviousValuesSubscription
   extends Promise<AsyncIterator<PhysicalProductPricePreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  buyUsed: () => Promise<AsyncIterator<Boolean>>;
+  buyUsedEnabled: () => Promise<AsyncIterator<Boolean>>;
   buyUsedPrice: () => Promise<AsyncIterator<Float>>;
 }
 

@@ -8420,7 +8420,7 @@ type PhysicalProductPreviousValues {
 
 type PhysicalProductPrice {
   id: ID!
-  buyUsed: Boolean!
+  buyUsedEnabled: Boolean!
   buyUsedPrice: Float
 }
 
@@ -8432,7 +8432,7 @@ type PhysicalProductPriceConnection {
 
 input PhysicalProductPriceCreateInput {
   id: ID
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice: Float
 }
 
@@ -8449,15 +8449,15 @@ type PhysicalProductPriceEdge {
 enum PhysicalProductPriceOrderByInput {
   id_ASC
   id_DESC
-  buyUsed_ASC
-  buyUsed_DESC
+  buyUsedEnabled_ASC
+  buyUsedEnabled_DESC
   buyUsedPrice_ASC
   buyUsedPrice_DESC
 }
 
 type PhysicalProductPricePreviousValues {
   id: ID!
-  buyUsed: Boolean!
+  buyUsedEnabled: Boolean!
   buyUsedPrice: Float
 }
 
@@ -8480,17 +8480,17 @@ input PhysicalProductPriceSubscriptionWhereInput {
 }
 
 input PhysicalProductPriceUpdateDataInput {
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice: Float
 }
 
 input PhysicalProductPriceUpdateInput {
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice: Float
 }
 
 input PhysicalProductPriceUpdateManyMutationInput {
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice: Float
 }
 
@@ -8523,8 +8523,8 @@ input PhysicalProductPriceWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  buyUsed: Boolean
-  buyUsed_not: Boolean
+  buyUsedEnabled: Boolean
+  buyUsedEnabled_not: Boolean
   buyUsedPrice: Float
   buyUsedPrice_not: Float
   buyUsedPrice_in: [Float!]

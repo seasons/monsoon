@@ -51,10 +51,10 @@ export class ShopifyService {
 
   async getAccessToken({
     shop,
-    accessCode,
+    authorizationCode,
   }: {
     shop: string
-    accessCode: string
+    authorizationCode: string
   }): Promise<AccessToken> {
     return new Promise((resolve, reject) => {
       request(
@@ -64,7 +64,7 @@ export class ShopifyService {
           body: {
             client_id: SHOPIFY_API_KEY,
             client_secret: SHOPIFY_API_SECRET_KEY,
-            code: accessCode,
+            code: authorizationCode,
           },
           json: true,
         },
@@ -75,6 +75,84 @@ export class ShopifyService {
           return resolve(response.toJSON().body)
         }
       )
+    })
+  }
+
+  async cacheProductVariant(productVariantId) {
+    const productVariant = await this.prisma.binding.query.productVariant(
+      {
+        where: {
+          id: productVariantId,
+        },
+      },
+      `{
+      product {
+        externalShopifyProductHandle
+        brand {
+          externalShopifyIntegration {
+            enabled
+            shopName
+            accessToken
+          }
+        }
+      }
+      shopifyProductVariant {
+        selectedOptions {
+          name
+          value
+        }
+        externalID
+      }
+    }`
+    )
+
+    const { enabled, shopName, accessToken } = productVariant?.brand || {}
+    const {
+      externalID,
+      selectedOptions,
+    } = productVariant?.shopifyProductVariant
+    const { externalShopifyProductHandle } = productVariant?.product
+
+    if (
+      !enabled ||
+      !shopName ||
+      !accessToken ||
+      !selectedOptions ||
+      !externalShopifyProductHandle
+    ) {
+      return Promise.reject(
+        "Missing data required for Shopify product mapping."
+      )
+    }
+
+    const [query, resolveQuery] = externalID
+      ? [
+          `query {
+        productVariant(id: "${externalID}") {
+          availableForSale
+          price
+        }
+      }`,
+          data => data?.productVariant,
+        ]
+      : [
+          `query {
+          product(handle: "${externalShopifyProductHandle}") {
+            productVariant
+          }
+        }`,
+          data => data,
+        ]
+
+    const data = await new Promise((resolve, reject) => {
+      request({
+        uri: `https://${shop}.myshopify.com/admin/oauth/access_token`,
+        method: "POST",
+        headers: {
+          "X-Shopify-Access-Token": accessToken,
+        },
+        body: query,
+      })
     })
   }
 }

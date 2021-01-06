@@ -14724,7 +14724,7 @@ type PhysicalProductPreviousValues {
 
 type PhysicalProductPrice implements Node {
   id: ID!
-  buyUsed: Boolean!
+  buyUsedEnabled: Boolean!
   buyUsedPrice: Float
 }
 
@@ -14740,7 +14740,7 @@ type PhysicalProductPriceConnection {
 
 input PhysicalProductPriceCreateInput {
   id: ID
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice: Float
 }
 
@@ -14761,15 +14761,15 @@ type PhysicalProductPriceEdge {
 enum PhysicalProductPriceOrderByInput {
   id_ASC
   id_DESC
-  buyUsed_ASC
-  buyUsed_DESC
+  buyUsedEnabled_ASC
+  buyUsedEnabled_DESC
   buyUsedPrice_ASC
   buyUsedPrice_DESC
 }
 
 type PhysicalProductPricePreviousValues {
   id: ID!
-  buyUsed: Boolean!
+  buyUsedEnabled: Boolean!
   buyUsedPrice: Float
 }
 
@@ -14811,17 +14811,17 @@ input PhysicalProductPriceSubscriptionWhereInput {
 }
 
 input PhysicalProductPriceUpdateDataInput {
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice: Float
 }
 
 input PhysicalProductPriceUpdateInput {
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice: Float
 }
 
 input PhysicalProductPriceUpdateManyMutationInput {
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice: Float
 }
 
@@ -14888,10 +14888,10 @@ input PhysicalProductPriceWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
 
   """All values that are not equal to given value."""
-  buyUsed_not: Boolean
+  buyUsedEnabled_not: Boolean
   buyUsedPrice: Float
 
   """All values that are not equal to given value."""
@@ -32948,8 +32948,8 @@ export type PhysicalProductOrderByInput =   'id_ASC' |
 
 export type PhysicalProductPriceOrderByInput =   'id_ASC' |
   'id_DESC' |
-  'buyUsed_ASC' |
-  'buyUsed_DESC' |
+  'buyUsedEnabled_ASC' |
+  'buyUsedEnabled_DESC' |
   'buyUsedPrice_ASC' |
   'buyUsedPrice_DESC'
 
@@ -39382,7 +39382,7 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
 
 export interface PhysicalProductPriceCreateInput {
   id?: ID_Input | null
-  buyUsed?: Boolean | null
+  buyUsedEnabled?: Boolean | null
   buyUsedPrice?: Float | null
 }
 
@@ -39403,17 +39403,17 @@ export interface PhysicalProductPriceSubscriptionWhereInput {
 }
 
 export interface PhysicalProductPriceUpdateDataInput {
-  buyUsed?: Boolean | null
+  buyUsedEnabled?: Boolean | null
   buyUsedPrice?: Float | null
 }
 
 export interface PhysicalProductPriceUpdateInput {
-  buyUsed?: Boolean | null
+  buyUsedEnabled?: Boolean | null
   buyUsedPrice?: Float | null
 }
 
 export interface PhysicalProductPriceUpdateManyMutationInput {
-  buyUsed?: Boolean | null
+  buyUsedEnabled?: Boolean | null
   buyUsedPrice?: Float | null
 }
 
@@ -39449,8 +39449,8 @@ export interface PhysicalProductPriceWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
-  buyUsed?: Boolean | null
-  buyUsed_not?: Boolean | null
+  buyUsedEnabled?: Boolean | null
+  buyUsedEnabled_not?: Boolean | null
   buyUsedPrice?: Float | null
   buyUsedPrice_not?: Float | null
   buyUsedPrice_in?: Float[] | Float | null
@@ -49151,7 +49151,7 @@ export interface PhysicalProductPreviousValues {
 
 export interface PhysicalProductPrice extends Node {
   id: ID_Output
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice?: Float | null
 }
 
@@ -49176,7 +49176,7 @@ export interface PhysicalProductPriceEdge {
 
 export interface PhysicalProductPricePreviousValues {
   id: ID_Output
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice?: Float | null
 }
 

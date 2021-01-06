@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Jan 12 2021 14:51:19 GMT-0500 (Eastern Standard Time)
+# timestamp: Tue Jan 12 2021 14:53:06 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -20340,7 +20340,7 @@ type PhysicalProductPreviousValues {
 
 type PhysicalProductPrice implements Node {
   id: ID!
-  buyUsed: Boolean!
+  buyUsedEnabled: Boolean!
   buyUsedPrice: Float
 }
 
@@ -20362,7 +20362,7 @@ type PhysicalProductPriceConnection {
 
 input PhysicalProductPriceCreateInput {
   id: ID
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice: Float
 }
 
@@ -20389,15 +20389,15 @@ type PhysicalProductPriceEdge {
 enum PhysicalProductPriceOrderByInput {
   id_ASC
   id_DESC
-  buyUsed_ASC
-  buyUsed_DESC
+  buyUsedEnabled_ASC
+  buyUsedEnabled_DESC
   buyUsedPrice_ASC
   buyUsedPrice_DESC
 }
 
 type PhysicalProductPricePreviousValues {
   id: ID!
-  buyUsed: Boolean!
+  buyUsedEnabled: Boolean!
   buyUsedPrice: Float
 }
 
@@ -20447,17 +20447,17 @@ input PhysicalProductPriceSubscriptionWhereInput {
 }
 
 input PhysicalProductPriceUpdateDataInput {
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice: Float
 }
 
 input PhysicalProductPriceUpdateInput {
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice: Float
 }
 
 input PhysicalProductPriceUpdateManyMutationInput {
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
   buyUsedPrice: Float
 }
 
@@ -20556,12 +20556,12 @@ input PhysicalProductPriceWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
-  buyUsed: Boolean
+  buyUsedEnabled: Boolean
 
   """
   All values that are not equal to given value.
   """
-  buyUsed_not: Boolean
+  buyUsedEnabled_not: Boolean
   buyUsedPrice: Float
 
   """
