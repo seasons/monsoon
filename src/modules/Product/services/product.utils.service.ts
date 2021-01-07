@@ -398,7 +398,6 @@ export class ProductUtilsService {
         ? `brand: { slug_in: ${brands} },`
         : ""
 
-    console.log("brandsQuery", brandsQuery)
     const _brands = await this.prisma.binding.query.brands(
       { orderBy },
       `
