@@ -3,7 +3,6 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { EmailUtilsService } from "@app/modules/Email/services/email.utils.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ImageService } from "@app/modules/Image/services/image.service"
-import { PaymentService, PaymentUtilsService } from "@app/modules/Payment"
 import {
   PushNotificationDataProvider,
   PusherService,
@@ -13,8 +12,10 @@ import { ShippingService } from "@app/modules/Shipping/services/shipping.service
 import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
 import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
+import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
+import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Test } from "@nestjs/testing"
 
 import { AdmissionsService } from "../services/admissions.service"
@@ -66,6 +67,9 @@ describe("Auth Service", () => {
 
       jest.spyOn(auth, "createAuth0User").mockResolvedValue(auth0Id)
       jest
+        .spyOn(auth, "createReferralLink")
+        .mockResolvedValue({ shortUrl: "szns.co/Test1" })
+      jest
         .spyOn<any, any>(auth, "getAuth0UserAccessToken")
         .mockResolvedValue("token")
 
@@ -73,7 +77,7 @@ describe("Auth Service", () => {
       const lastName = "User"
       const email = "test@seasons.nyc"
       const phoneOS = "iOS"
-      const phoneNumber = "646-350-2715"
+      const phoneNumber = "6463502715"
       const zipCode = "10013"
 
       const { user, customer } = await auth.signupUser({
@@ -103,7 +107,7 @@ describe("Auth Service", () => {
 
       // Customer Fields
       expect(customer.status).toEqual("Created")
-      expect(customer.plan).toBeNull()
+      expect(customer.plan).toBeUndefined()
 
       // Customer Details Fields
       const customerDetails = await prisma.client.customerDetail({ id: "1" })
@@ -117,11 +121,12 @@ describe("Auth Service", () => {
       cleanupFunc = async () => {
         const userNotifInterests = await prisma.client.userPushNotificationInterests()
         const userNotifs = await prisma.client.userPushNotifications()
+        const emailReceipts = await prisma.client.emailReceipts()
 
         await prisma.client.deleteManyUserPushNotificationInterests({
           id_in: userNotifInterests.map(interest => interest.id),
         })
-
+        await prisma.client.deleteEmailReceipt({ id: emailReceipts[0].id })
         await prisma.client.deleteUserPushNotification({ id: userNotifs[0].id })
         await prisma.client.deleteLocation({ id: "2" })
         await prisma.client.deleteCustomerDetail({ id: "1" })

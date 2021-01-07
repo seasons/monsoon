@@ -8,7 +8,7 @@ import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Customer } from "@app/prisma/prisma.binding"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { Injectable } from "@nestjs/common"
+import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import {
   BillingInfoUpdateDataInput,
   CustomerAdmissionsDataCreateWithoutCustomerInput,
@@ -77,6 +77,7 @@ export class CustomerService {
   }`
 
   constructor(
+    @Inject(forwardRef(() => AuthService))
     private readonly auth: AuthService,
     private readonly prisma: PrismaService,
     private readonly shipping: ShippingService,
@@ -272,15 +273,16 @@ export class CustomerService {
         }
       }`
     )
+    const sanitizedPhoneNumber = phoneNumber.replace(/-/g, "")
     const data = {
       detail: {
         upsert: {
           create: {
-            phoneNumber,
+            phoneNumber: sanitizedPhoneNumber,
             shippingAddress: { create: shippingAddressData },
           },
           update: {
-            phoneNumber,
+            phoneNumber: sanitizedPhoneNumber,
             shippingAddress: {
               upsert: {
                 create: shippingAddressData,

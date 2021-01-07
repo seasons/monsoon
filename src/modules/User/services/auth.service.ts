@@ -110,7 +110,6 @@ export class AuthService {
     const usersWithSameFirstName = await this.prisma.client.users({
       where: { firstName: firstName.trim() },
     })
-    console.log("hello")
     const { customer } = await this.createPrismaCustomerForExistingUser(
       user.id,
       details,
@@ -122,7 +121,6 @@ export class AuthService {
       referrerId,
       utm
     )
-    console.log(1)
 
     // 5. In the case of a gift subscription
     // We will already have a subscription for that user based on email so assign it to that new customer
@@ -456,6 +454,9 @@ export class AuthService {
       const city = zipcodes.lookup(zipCode)?.city
       details.shippingAddress.create.city = city
       details.shippingAddress.create.state = state
+    }
+    if (details?.phoneNumber) {
+      details.phoneNumber = details.phoneNumber.replace(/-/g, "")
     }
 
     const customerQueryInfo = `{

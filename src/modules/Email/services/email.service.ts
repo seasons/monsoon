@@ -1,9 +1,6 @@
-import fs from "fs"
-
 import { Injectable } from "@nestjs/common"
 import RenderEmail from "@seasons/wind"
 import sgMail from "@sendgrid/mail"
-import Handlebars from "handlebars"
 import { head } from "lodash"
 import nodemailer from "nodemailer"
 
@@ -328,7 +325,7 @@ export class EmailService {
     }
     if (process.env.NODE_ENV === "production" || to.includes("seasons.nyc")) {
       sgMail.send(msg)
-    } else {
+    } else if (process.env.NODE_ENV !== "test") {
       await nodemailerTransport.sendMail({
         from: "membership@seasons.nyc",
         ...msg,
