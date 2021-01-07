@@ -1,9 +1,6 @@
-import fs from "fs"
-
 import { Injectable } from "@nestjs/common"
 import RenderEmail from "@seasons/wind"
 import sgMail from "@sendgrid/mail"
-import Handlebars from "handlebars"
 import { head } from "lodash"
 import nodemailer from "nodemailer"
 
@@ -73,6 +70,18 @@ export class EmailService {
       availableStyles,
       renderEmailFunc: "authorized24HourFollowup",
       emailId: "TwentyFourHourAuthorizationFollowup",
+    })
+  }
+
+  async sendAuthorizedDayThreeFollowup(
+    user: EmailUser,
+    availableStyles: Product[]
+  ) {
+    await this.sendEmailWithReservableStyles({
+      user,
+      availableStyles,
+      renderEmailFunc: "authorizedDayThreeFollowup",
+      emailId: "DayThreeAuthorizationFollowup",
     })
   }
 
@@ -268,7 +277,11 @@ export class EmailService {
   }: {
     user: EmailUser
     availableStyles: Product[]
-    renderEmailFunc: "authorized" | "authorized24HourFollowup" | "rewaitlisted"
+    renderEmailFunc:
+      | "authorized"
+      | "authorized24HourFollowup"
+      | "rewaitlisted"
+      | "authorizedDayThreeFollowup"
     emailId: EmailId
     renderData?: any
   }) {
@@ -287,7 +300,7 @@ export class EmailService {
       payload,
       emailId,
     })
-    if (products !== null) {
+    if (products?.length > 0) {
       await this.addEmailedProductsToCustomer(user, products)
     }
   }

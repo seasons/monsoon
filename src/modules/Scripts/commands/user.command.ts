@@ -195,6 +195,8 @@ export class UserCommands {
           phoneNumber: "+16463502715",
           height: 40 + faker.random.number(32),
           weight: { set: [150, 160] },
+          waistSizes: { set: [28, 29, 20] },
+          topSizes: { set: ["XS", "S"] },
           bodyType: "Athletic",
           shippingAddress: {
             create: {
@@ -289,6 +291,9 @@ export class UserCommands {
       )
         ? 1
         : 0
+      const authorizationWindowClosesAt = DateTime.local()
+        .plus({ days: 7 })
+        .toISO()
       await this.prisma.client.updateCustomer({
         data: {
           admissions: {
@@ -297,8 +302,10 @@ export class UserCommands {
               admissable: true,
               authorizationsCount,
               inServiceableZipcode: true,
+              authorizationWindowClosesAt,
             },
           },
+          authorizedAt: DateTime.local().toISO(),
         },
         where: { id: customer.id },
       })

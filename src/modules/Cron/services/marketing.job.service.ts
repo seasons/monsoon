@@ -65,16 +65,16 @@ export class MarketingScheduledJobs {
 
       const oneDayPassed = moment(cust.authorizedAt)
         .add(1, "d")
-        .isSameOrAfter(now)
+        .isSameOrBefore(now)
       const twoDaysPassed = moment(cust.authorizedAt)
         .add(2, "d")
-        .isSameOrAfter(now)
+        .isSameOrBefore(now)
       const threeDaysPassed = moment(cust.authorizedAt)
         .add(3, "d")
-        .isSameOrAfter(now)
+        .isSameOrBefore(now)
       const fourDaysPassed = moment(cust.authorizedAt)
         .add(4, "d")
-        .isSameOrAfter(now)
+        .isSameOrBefore(now)
       const twentyFourHoursLeft = moment(
         cust.admissions?.authorizationWindowClosesAt
       )
@@ -139,25 +139,31 @@ export class MarketingScheduledJobs {
         break
       }
 
-      // Send day 5 email as needed
+      // Send day 5 email if needed
       if (fourDaysPassed && !dayFiveFollowupSent) {
         // TODO: Send email
         break
       }
 
-      // Send day 4 email as needed
+      // Send day 4 email if needed
       if (threeDaysPassed && !dayFourFollowupSent) {
         // TODO: Send email
         break
       }
 
-      // Send day 2 email as needed
+      // Send day 3 email if needed
       if (twoDaysPassed && !dayThreeFollowupSent) {
-        // TODO: Send email
+        const availableStyles = await this.admissions.getAvailableStyles({
+          id: cust.id,
+        })
+        await this.email.sendAuthorizedDayThreeFollowup(
+          cust.user,
+          availableStyles
+        )
         break
       }
 
-      // Send day 2 email as needed
+      // Send day 2 email if needed
       if (oneDayPassed && !dayTwoFollowupSent) {
         // TODO: Send email
         break
