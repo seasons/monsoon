@@ -151,7 +151,7 @@ describe("Customer Service", () => {
         await prisma.client.deleteManyEmailReceipts({
           user: { id: newCustomer.user.id },
         })
-        cleanupFunc()
+        await cleanupFunc()
       }
     )
   })
@@ -207,7 +207,7 @@ describe("Customer Service", () => {
 
         expect(newCustomer.status).toEqual(status ? status : "Created")
 
-        cleanupFunc()
+        await cleanupFunc()
       }
     )
   })
@@ -215,8 +215,8 @@ describe("Customer Service", () => {
   describe("Triage Customer", () => {
     let cleanupFunc
 
-    afterEach(() => {
-      cleanupFunc()
+    afterEach(async () => {
+      await cleanupFunc()
     })
 
     it("Throws on status not triageable", async () => {
