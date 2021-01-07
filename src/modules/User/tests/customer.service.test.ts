@@ -1,65 +1,65 @@
-import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { EmailDataProvider } from "@app/modules/Email/services/email.data.service"
+import { CustomerModuleDef } from "@app/modules/Customer/customer.module"
 import { EmailService } from "@app/modules/Email/services/email.service"
-import { ErrorService } from "@app/modules/Error/services/error.service"
-import { PusherService } from "@app/modules/PushNotification/services/pusher.service"
-import { PushNotificationDataProvider } from "@app/modules/PushNotification/services/pushNotification.data.service"
-import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
-import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
-import { ShippingUtilsService } from "@app/modules/Shipping/services/shipping.utils.service"
+import { PushNotificationService } from "@app/modules/PushNotification"
+import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
+import { Test } from "@nestjs/testing"
 import { ApolloError } from "apollo-server"
 
 import { AdmissionsService } from "../services/admissions.service"
-import { AuthService } from "../services/auth.service"
 import { CustomerService } from "../services/customer.service"
 
 describe("Customer Service", () => {
   let customerService: CustomerService
   let prisma: PrismaService
-  let emailService: EmailService
-  let shippingUtilsService: ShippingUtilsService
   let testUtils: TestUtilsService
   let admissionsService: AdmissionsService
+  let smsService: SMSService
+  let emailService: EmailService
+  let pushNotificationsService: PushNotificationService
+
+  const mockServiceableZipCodesCheck = () => {
+    jest.spyOn(admissionsService, "zipcodeAllowed").mockReturnValue({
+      pass: true,
+      detail: {
+        zipcode: "10004",
+        state: "NY",
+        allAccessEnabled: true,
+        serviceableStates: [],
+      },
+    })
+  }
+
+  const mockSufficientInventoryCheck = () => {
+    jest
+      .spyOn(admissionsService, "haveSufficientInventoryToServiceCustomer")
+      .mockResolvedValue({
+        pass: true,
+        detail: {
+          availableBottomStyles: [],
+          availableTopStyles: [],
+          inventoryThreshold: 1,
+        },
+      })
+  }
 
   beforeAll(async () => {
-    prisma = new PrismaService()
-    const utilsService = new UtilsService(prisma)
-    testUtils = new TestUtilsService(prisma, new UtilsService(prisma))
-    const pusherService = new PusherService()
-    const pushNotificationsDataProvider = new PushNotificationDataProvider()
-    const errorService = new ErrorService()
-    const pushNotificationsService = new PushNotificationService(
-      pusherService,
-      pushNotificationsDataProvider,
-      prisma,
-      errorService
-    )
-    shippingUtilsService = new ShippingUtilsService()
-    const auth = new AuthService(
-      prisma,
-      pushNotificationsService,
-      shippingUtilsService
-    )
-    const shippingService = new ShippingService(prisma, utilsService)
-    admissionsService = new AdmissionsService(prisma, utilsService)
-    const segmentService = new SegmentService()
-    emailService = new EmailService(
-      prisma,
-      utilsService,
-      new EmailDataProvider()
-    )
-    customerService = new CustomerService(
-      auth,
-      prisma,
-      shippingService,
-      admissionsService,
-      emailService,
-      pushNotificationsService,
-      segmentService
+    const moduleRef = await Test.createTestingModule(
+      CustomerModuleDef
+    ).compile()
+
+    customerService = moduleRef.get<CustomerService>(CustomerService)
+    prisma = moduleRef.get<PrismaService>(PrismaService)
+    admissionsService = moduleRef.get<AdmissionsService>(AdmissionsService)
+    const utilsService = moduleRef.get<UtilsService>(UtilsService)
+    testUtils = new TestUtilsService(prisma, utilsService)
+    smsService = moduleRef.get<SMSService>(SMSService)
+    emailService = moduleRef.get<EmailService>(EmailService)
+    pushNotificationsService = moduleRef.get<PushNotificationService>(
+      PushNotificationService
     )
   })
 
@@ -73,12 +73,18 @@ describe("Customer Service", () => {
     ])(
       "Successfully updates customer details: (old status: %p, authorized: %p)",
       async (oldStatus, authorized) => {
-        jest
-          .spyOn<any, any>(emailService, "sendTransactionalEmail")
-          .mockResolvedValue(null)
+        mockServiceableZipCodesCheck()
+        mockSufficientInventoryCheck()
+        const sendAuthorizedEmail = jest
+          .spyOn(emailService, "sendAuthorizedEmail")
+          .mockResolvedValue()
+        const pushNotifyUsers = jest
+          .spyOn(pushNotificationsService, "pushNotifyUsers")
+          .mockResolvedValue({})
 
         const { customer, cleanupFunc } = await testUtils.createTestCustomer(
           {
+            detail: {},
             status: oldStatus as CustomerStatus,
           },
           `{
@@ -88,6 +94,11 @@ describe("Customer Service", () => {
             }
           }`
         )
+
+        const sendSMSFunc = jest
+          .spyOn(smsService, "sendSMSById")
+          .mockResolvedValue("Delivered")
+          .mockClear()
 
         const newPlan = "Essential"
         const newCustomer = await customerService.updateCustomer(
@@ -106,6 +117,7 @@ describe("Customer Service", () => {
           plan
           user {
             id
+            email
           }
         }`,
           null
@@ -113,13 +125,8 @@ describe("Customer Service", () => {
 
         if (authorized) {
           if (oldStatus == "Waitlisted") {
-            const emailReceipts = await prisma.client.emailReceipts({
-              where: {
-                user: { id: newCustomer.user.id },
-              },
-            })
-            expect(emailReceipts.length).toEqual(1)
-            expect(emailReceipts[0].emailId).toEqual("CompleteAccount")
+            // Had some issues hooking up the RenderEmail stuff from wind
+            expect(sendAuthorizedEmail).toBeCalledTimes(1)
           } else if (oldStatus == "Invited") {
             const emailReceipts = await prisma.client.emailReceipts({
               where: {
@@ -129,13 +136,11 @@ describe("Customer Service", () => {
             expect(emailReceipts.length).toEqual(1)
             expect(emailReceipts[0].emailId).toEqual("PriorityAccess")
           }
-          const notifReceipts = await prisma.client.pushNotificationReceipts({
-            where: {
-              users_some: { id: newCustomer.user.id },
-            },
+          expect(sendSMSFunc).toBeCalledTimes(1)
+          expect(pushNotifyUsers).toBeCalledWith({
+            emails: [newCustomer.user.email],
+            pushNotifID: "CompleteAccount",
           })
-          expect(notifReceipts.length).toEqual(1)
-          expect(notifReceipts[0].notificationKey).toEqual("CompleteAccount")
         }
 
         expect(newCustomer.plan).toEqual(newPlan)
@@ -159,10 +164,6 @@ describe("Customer Service", () => {
         const height = 72
         const topSizes = ["L", "XL"]
         const waistSizes = [32, 34]
-
-        jest
-          .spyOn(shippingUtilsService, "getCityAndStateFromZipCode")
-          .mockResolvedValue({ city: "New York", state: "NY" })
 
         const { customer, cleanupFunc } = await testUtils.createTestCustomer(
           { status: "Created" },
@@ -218,12 +219,12 @@ describe("Customer Service", () => {
       cleanupFunc()
     })
 
-    it("Throws on status not Created or Invited", async () => {
+    it("Throws on status not triageable", async () => {
       const {
         customer,
         cleanupFunc: customerCleanupFunc,
       } = await testUtils.createTestCustomer(
-        { status: "Waitlisted" },
+        { detail: {}, status: "Authorized" },
         `{
         id
         user {
@@ -232,7 +233,7 @@ describe("Customer Service", () => {
       }`
       )
       expect(
-        customerService.triageCustomer({ id: customer.id }, null)
+        customerService.triageCustomer({ id: customer.id }, null, false)
       ).rejects.toThrowError(ApolloError)
 
       cleanupFunc = customerCleanupFunc
@@ -241,11 +242,9 @@ describe("Customer Service", () => {
     it("Updates customer to Authorized", async () => {
       jest
         .spyOn(admissionsService, "belowWeeklyNewActiveUsersOpsThreshold")
-        .mockResolvedValue(true)
-      jest
-        .spyOn(admissionsService, "haveSufficientInventoryToServiceCustomer")
-        .mockResolvedValue(true)
-      jest.spyOn(admissionsService, "zipcodeAllowed").mockReturnValue(true)
+        .mockResolvedValue({ pass: true, detail: "" })
+      mockServiceableZipCodesCheck()
+      mockSufficientInventoryCheck()
 
       const {
         customer,
@@ -263,9 +262,10 @@ describe("Customer Service", () => {
 
       const result = await customerService.triageCustomer(
         { id: customer.id },
-        null
+        null,
+        true
       )
-      expect(result).toEqual("Authorized")
+      expect(result.status).toEqual("Authorized")
 
       cleanupFunc = customerCleanupFunc
     })

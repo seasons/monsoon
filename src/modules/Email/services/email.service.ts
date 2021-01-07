@@ -325,7 +325,7 @@ export class EmailService {
     }
     if (process.env.NODE_ENV === "production" || to.includes("seasons.nyc")) {
       sgMail.send(msg)
-    } else if (process.env.NODE_ENV !== "test") {
+    } else {
       await nodemailerTransport.sendMail({
         from: "membership@seasons.nyc",
         ...msg,

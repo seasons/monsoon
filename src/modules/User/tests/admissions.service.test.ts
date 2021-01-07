@@ -5,7 +5,7 @@ import {
   CreateTestCustomerInput,
   CreateTestProductInput,
 } from "@app/modules/Utils/utils.types"
-import { EmailId, InventoryStatus, LetterSize, ProductType } from "@app/prisma"
+import { EmailId, InventoryStatus, ProductType } from "@app/prisma"
 import { PrismaModule } from "@app/prisma/prisma.module"
 import { Test } from "@nestjs/testing"
 import { fill } from "lodash"
@@ -512,13 +512,17 @@ describe("Admissions Service", () => {
     })
 
     it("does not admit a user with an unsupported platform", async () => {
-      const { customer } = await testUtils.createTestCustomer({
+      const {
+        customer,
+        cleanupFunc: customerCleanupFunc,
+      } = await testUtils.createTestCustomer({
         detail: {
           topSizes: ["XS", "S"],
           waistSizes: [30, 31],
           phoneOS: "Android",
         },
       })
+      cleanupFuncs.push(customerCleanupFunc)
 
       const { pass } = await admissions.hasSupportedPlatform(
         {
@@ -530,9 +534,13 @@ describe("Admissions Service", () => {
     })
 
     it("admits a user with a supported platform", async () => {
-      const { customer } = await testUtils.createTestCustomer({
+      const {
+        customer,
+        cleanupFunc: customerCleanupFunc,
+      } = await testUtils.createTestCustomer({
         detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
       })
+      cleanupFuncs.push(customerCleanupFunc)
 
       const { pass } = await admissions.hasSupportedPlatform(
         {

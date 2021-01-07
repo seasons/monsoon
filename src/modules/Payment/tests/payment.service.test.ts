@@ -1,25 +1,11 @@
-import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { EmailService } from "@app/modules/Email/services/email.service"
-import { EmailUtilsService } from "@app/modules/Email/services/email.utils.service"
-import { ErrorService } from "@app/modules/Error/services/error.service"
-import { ImageService } from "@app/modules/Image/services/image.service"
-import { PusherService } from "@app/modules/PushNotification/services/pusher.service"
-import { PushNotificationDataProvider } from "@app/modules/PushNotification/services/pushNotification.data.service"
-import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
-import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
-import { SMSService } from "@app/modules/SMS/services/sms.service"
-import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
-import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
-import { AdmissionsService } from "@app/modules/User/services/admissions.service"
-import { AuthService } from "@app/modules/User/services/auth.service"
-import { CustomerService } from "@app/modules/User/services/customer.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
+import { Test } from "@nestjs/testing"
 import chargebee from "chargebee"
 
+import { PaymentModuleDef } from "../payment.module"
 import { PaymentService } from "../services/payment.service"
-import { PaymentUtilsService } from "../services/payment.utils.service"
 
 enum ChargebeeMockFunction {
   CustomerCreate,
@@ -73,67 +59,15 @@ describe("Payment Service", () => {
   let testUtils: TestUtilsService
 
   beforeAll(async () => {
-    prisma = new PrismaService()
-    const pusherService = new PusherService()
-    const pushNotificationsDataProvider = new PushNotificationDataProvider()
-    const errorService = new ErrorService()
-    const pushNotificationsService = new PushNotificationService(
-      pusherService,
-      pushNotificationsDataProvider,
-      prisma,
-      errorService
-    )
-    const utilsService = new UtilsService(prisma)
-    const emailUtilsService = new EmailUtilsService(
-      prisma,
-      errorService,
-      new ImageService(prisma)
-    )
-    const emailService = new EmailService(
-      prisma,
-      utilsService,
-      emailUtilsService
-    )
-    const authService = new AuthService(
-      prisma,
-      pushNotificationsService,
-      emailService,
-      errorService,
-      utilsService,
-      paymentService
-    )
+    const moduleRef = await Test.createTestingModule(PaymentModuleDef).compile()
 
-    const shippingService = new ShippingService(prisma, utilsService)
-    const admissionsService = new AdmissionsService(prisma, utilsService)
-    const segmentService = new SegmentService()
-
-    const customerService = new CustomerService(
-      authService,
-      prisma,
-      shippingService,
-      admissionsService,
-      segmentService,
-      emailService,
-      pushNotificationsService,
-      new SMSService(prisma, new TwilioService(), new TwilioUtils()),
-      utilsService
-    )
-    const paymentUtilsService = new PaymentUtilsService()
-    paymentService = new PaymentService(
-      shippingService,
-      authService,
-      customerService,
-      emailService,
-      paymentUtilsService,
-      prisma,
-      utilsService,
-      segmentService,
-      errorService
-    )
-    testUtils = new TestUtilsService(prisma, new UtilsService(prisma))
+    prisma = moduleRef.get<PrismaService>(PrismaService)
+    const utilsService = moduleRef.get<UtilsService>(UtilsService)
+    testUtils = new TestUtilsService(prisma, utilsService)
+    paymentService = moduleRef.get<PaymentService>(PaymentService)
   })
 
-  describe.only("ApplePay Checkout", () => {
+  describe("ApplePay Checkout", () => {
     it("Successfully updates customer details", async () => {
       await setupPaymentPlans()
       const planID = "essential"

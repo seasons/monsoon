@@ -25,6 +25,7 @@ import { CustomerService } from "../services/customer.service"
 describe("Auth Service", () => {
   let auth: AuthService
   let prisma: PrismaService
+  let emailService: EmailService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -53,6 +54,7 @@ describe("Auth Service", () => {
 
     auth = moduleRef.get<AuthService>(AuthService)
     prisma = moduleRef.get<PrismaService>(PrismaService)
+    emailService = moduleRef.get<EmailService>(EmailService)
   })
 
   describe("Signup User", () => {
@@ -72,6 +74,7 @@ describe("Auth Service", () => {
       jest
         .spyOn<any, any>(auth, "getAuth0UserAccessToken")
         .mockResolvedValue("token")
+      jest.spyOn(emailService, "sendSubmittedEmailEmail").mockResolvedValue()
 
       const firstName = "Test"
       const lastName = "User"
@@ -121,12 +124,10 @@ describe("Auth Service", () => {
       cleanupFunc = async () => {
         const userNotifInterests = await prisma.client.userPushNotificationInterests()
         const userNotifs = await prisma.client.userPushNotifications()
-        const emailReceipts = await prisma.client.emailReceipts()
 
         await prisma.client.deleteManyUserPushNotificationInterests({
           id_in: userNotifInterests.map(interest => interest.id),
         })
-        await prisma.client.deleteEmailReceipt({ id: emailReceipts[0].id })
         await prisma.client.deleteUserPushNotification({ id: userNotifs[0].id })
         await prisma.client.deleteLocation({ id: "2" })
         await prisma.client.deleteCustomerDetail({ id: "1" })

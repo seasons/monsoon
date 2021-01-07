@@ -3,7 +3,6 @@ import {
   InventoryStatus,
   PhysicalProductStatus,
   ProductCreateInput,
-  SizeCreateOneInput,
   UserPushNotificationInterestType,
 } from "@app/prisma"
 import { PrismaService } from "@prisma/prisma.service"
@@ -113,6 +112,11 @@ export class TestUtilsService {
     input: CreateTestCustomerInput,
     info = `{
       id
+      detail {
+        shippingAddress {
+          id
+        }
+      }
       user {
         id
       }
@@ -154,7 +158,7 @@ export class TestUtilsService {
           user: {
             create: {
               auth0Id: this.utils.randomString(),
-              email: input.email || this.utils.randomString(),
+              email: this.utils.randomString() + "@seasons.nyc",
               firstName: this.utils.randomString(),
               lastName: this.utils.randomString(),
             },
@@ -222,10 +226,18 @@ export class TestUtilsService {
     )
 
     const cleanupFunc = async () => {
+      await this.prisma.client.deleteManyCustomerAdmissionsDatas({
+        customer: { id: customer.id },
+      })
       await this.prisma.client.deleteManyUserPushNotificationInterests({
         user: { id: customer.user.id },
       })
       await this.prisma.client.deleteUserPushNotification({ id: pushNotif.id })
+      if (!!customer.detail?.shippingAddress?.id) {
+        await this.prisma.client.deleteLocation({
+          id: customer.detail.shippingAddress.id,
+        })
+      }
       await this.prisma.client.deleteCustomer({ id: customer.id })
     }
     return { cleanupFunc, customer }

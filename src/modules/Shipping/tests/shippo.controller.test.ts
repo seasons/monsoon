@@ -1,7 +1,6 @@
-import { AppModule } from "@app/app.module"
+import { PushNotificationService } from "@app/modules/PushNotification"
 import { PushNotificationModule } from "@app/modules/PushNotification/pushNotification.module"
 import { INestApplication } from "@nestjs/common"
-import { ContextIdFactory } from "@nestjs/core"
 import { Test } from "@nestjs/testing"
 import request from "supertest"
 
@@ -59,8 +58,7 @@ class PrismaServiceMock {
 
 describe("Shippo Controller", () => {
   let app: INestApplication
-  let shippoController: ShippoController
-  let prismaService: PrismaService
+  let pushNotificationsService: PushNotificationService
 
   beforeEach(async () => {
     const PrismaServiceProvider = {
@@ -77,13 +75,17 @@ describe("Shippo Controller", () => {
       .compile()
 
     app = moduleRef.createNestApplication()
-    shippoController = moduleRef.get<ShippoController>(ShippoController)
-    prismaService = moduleRef.get<PrismaService>(PrismaService)
+    pushNotificationsService = moduleRef.get<PushNotificationService>(
+      PushNotificationService
+    )
 
     await app.init()
   })
 
   it("processes PackageDeparted event", done => {
+    jest
+      .spyOn(pushNotificationsService, "pushNotifyUsers")
+      .mockResolvedValue({})
     return request(app.getHttpServer())
       .post("/shippo_events")
       .send(PackageDeparted)
