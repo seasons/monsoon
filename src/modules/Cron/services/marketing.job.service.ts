@@ -39,9 +39,8 @@ export class MarketingScheduledJobs {
         where: {
           AND: [
             // october 5 is 2020 is when we started manually enforcing the auth window
-            // { user: { createdAt_gte: new Date(2020, 9, 5) } },
-            // { status: "Authorized" },
-            { user: { email: "faiyam+e@faiyamrahman.com" } },
+            { user: { createdAt_gte: new Date(2020, 9, 5) } },
+            { status: "Authorized" },
           ],
         },
       },
