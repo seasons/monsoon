@@ -61,15 +61,15 @@ export class EmailService {
     })
   }
 
-  async sendAuthorized24HourFollowup(
+  async sendAuthorizedDaySixFollowup(
     user: EmailUser,
     availableStyles: Product[]
   ) {
     await this.sendEmailWithReservableStyles({
       user,
       availableStyles,
-      renderEmailFunc: "authorized24HourFollowup",
-      emailId: "TwentyFourHourAuthorizationFollowup",
+      renderEmailFunc: "authorizedDaySixFollowup",
+      emailId: "DaySixAuthorizationFollowup",
     })
   }
 
@@ -279,9 +279,9 @@ export class EmailService {
     availableStyles: Product[]
     renderEmailFunc:
       | "authorized"
-      | "authorized24HourFollowup"
-      | "rewaitlisted"
       | "authorizedDayThreeFollowup"
+      | "authorizedDaySixFollowup"
+      | "rewaitlisted"
     emailId: EmailId
     renderData?: any
   }) {

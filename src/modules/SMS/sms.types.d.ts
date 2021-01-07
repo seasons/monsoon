@@ -1,6 +1,6 @@
 export type SMSID =
   | "CompleteAccount"
-  | "TwentyFourHourAuthorizationFollowup"
+  | "TwentyFourHourLeftAuthorizationFollowup"
   | "Rewaitlisted"
 
 export type SMSPayload = {
