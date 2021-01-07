@@ -9,6 +9,7 @@ import sgMail from "@sendgrid/mail"
 import chargebee from "chargebee"
 import faker from "faker"
 import { head } from "lodash"
+import { DateTime } from "luxon"
 import { Command, Option, Positional } from "nestjs-command"
 
 import {
@@ -250,6 +251,19 @@ export class UserCommands {
                 },
               },
               subscriptionId: subscription.subscription.id,
+              ...(status === "Paused"
+                ? {
+                    pauseRequests: {
+                      create: {
+                        pausePending: false,
+                        pauseDate: DateTime.local().toISO(),
+                        resumeDate: DateTime.local()
+                          .plus({ months: 1 })
+                          .toISO(),
+                      },
+                    },
+                  }
+                : {}),
             },
           },
           billingInfo: {
