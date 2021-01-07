@@ -1,52 +1,57 @@
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { EmailUtilsService } from "@app/modules/Email/services/email.utils.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ImageService } from "@app/modules/Image/services/image.service"
-import { PusherService } from "@app/modules/PushNotification/services/pusher.service"
-import { PushNotificationDataProvider } from "@app/modules/PushNotification/services/pushNotification.data.service"
+import { PaymentService, PaymentUtilsService } from "@app/modules/Payment"
+import {
+  PushNotificationDataProvider,
+  PusherService,
+} from "@app/modules/PushNotification"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
-import { ShippingUtilsService } from "@app/modules/Shipping/services/shipping.utils.service"
+import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
+import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
+import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
+import { Test } from "@nestjs/testing"
 
+import { AdmissionsService } from "../services/admissions.service"
 import { AuthService } from "../services/auth.service"
+import { CustomerService } from "../services/customer.service"
 
 describe("Auth Service", () => {
   let auth: AuthService
   let prisma: PrismaService
-  let shippingUtilsService: ShippingUtilsService
 
   beforeAll(async () => {
-    prisma = new PrismaService()
-    const pusherService = new PusherService()
-    const pushNotificationsDataProvider = new PushNotificationDataProvider()
-    const errorService = new ErrorService()
-    const pushNotificationsService = new PushNotificationService(
-      pusherService,
-      pushNotificationsDataProvider,
-      prisma,
-      errorService
-    )
-    shippingUtilsService = new ShippingUtilsService()
-    const utilsService = new UtilsService(prisma)
-    const emailUtilsService = new EmailUtilsService(
-      prisma,
-      errorService,
-      new ImageService(prisma)
-    )
-    const emailService = new EmailService(
-      prisma,
-      utilsService,
-      emailUtilsService
-    )
-    auth = new AuthService(
-      prisma,
-      pushNotificationsService,
-      emailService,
-      errorService,
-      utilsService,
-      paymentService
-    )
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        PrismaService,
+        PushNotificationService,
+        EmailService,
+        ErrorService,
+        UtilsService,
+        PaymentService,
+        PusherService,
+        PushNotificationDataProvider,
+        EmailUtilsService,
+        ShippingService,
+        CustomerService,
+        PaymentUtilsService,
+        SegmentService,
+        ImageService,
+        AdmissionsService,
+        SMSService,
+        TwilioService,
+        TwilioUtils,
+      ],
+    }).compile()
+
+    auth = moduleRef.get<AuthService>(AuthService)
+    prisma = moduleRef.get<PrismaService>(PrismaService)
   })
 
   describe("Signup User", () => {
@@ -63,9 +68,6 @@ describe("Auth Service", () => {
       jest
         .spyOn<any, any>(auth, "getAuth0UserAccessToken")
         .mockResolvedValue("token")
-      jest
-        .spyOn(shippingUtilsService, "getCityAndStateFromZipCode")
-        .mockResolvedValue({ city: "New York", state: "NY" })
 
       const firstName = "Test"
       const lastName = "User"
