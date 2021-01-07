@@ -2738,6 +2738,11 @@ export type EmailId =
   | "Paused"
   | "Rewaitlisted"
   | "TwentyFourHourAuthorizationFollowup"
+  | "DayTwoAuthorizationFollowup"
+  | "DayThreeAuthorizationFollowup"
+  | "DayFourAuthorizationFollowup"
+  | "DayFiveAuthorizationFollowup"
+  | "DaySixAuthorizationFollowup"
   | "ReferralConfirmation";
 
 export type UserPushNotificationInterestType =

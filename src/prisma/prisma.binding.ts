@@ -8246,6 +8246,11 @@ enum EmailId {
   Paused
   Rewaitlisted
   TwentyFourHourAuthorizationFollowup
+  DayTwoAuthorizationFollowup
+  DayThreeAuthorizationFollowup
+  DayFourAuthorizationFollowup
+  DayFiveAuthorizationFollowup
+  DaySixAuthorizationFollowup
   ReferralConfirmation
 }
 
@@ -31303,6 +31308,11 @@ export type EmailId =   'ReservationReturnConfirmation' |
   'Paused' |
   'Rewaitlisted' |
   'TwentyFourHourAuthorizationFollowup' |
+  'DayTwoAuthorizationFollowup' |
+  'DayThreeAuthorizationFollowup' |
+  'DayFourAuthorizationFollowup' |
+  'DayFiveAuthorizationFollowup' |
+  'DaySixAuthorizationFollowup' |
   'ReferralConfirmation'
 
 export type EmailReceiptOrderByInput =   'id_ASC' |

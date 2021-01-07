@@ -5,7 +5,7 @@
       "https://seasons-images.s3.amazonaws.com/email-images/AuthorizedHero.jpg"
     ]
   },
-  "TwentyFourHourAuthorizationFollowup": {
+  "TwentyFourHourLeftAuthorizationFollowup": {
     "body": "Hi {{{name}}}, you have 24 hours left to secure your spot! Remember, if we don’t hear from you, we’ll pass along your invite to the next person in line and you’ll be waitlisted. {{{webChoosePlanLink}}}.\n\nIf you need help finding your first reservation, follow this link {{{stylistLink}}} to book some one on one time with our stylist.",
     "mediaUrls": [
       "https://seasons-images.s3.amazonaws.com/email-images/Authorized24HourFollowupHero.jpg"

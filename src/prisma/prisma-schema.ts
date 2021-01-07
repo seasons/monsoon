@@ -4487,6 +4487,11 @@ enum EmailId {
   Paused
   Rewaitlisted
   TwentyFourHourAuthorizationFollowup
+  DayTwoAuthorizationFollowup
+  DayThreeAuthorizationFollowup
+  DayFourAuthorizationFollowup
+  DayFiveAuthorizationFollowup
+  DaySixAuthorizationFollowup
   ReferralConfirmation
 }
 
