@@ -569,6 +569,7 @@ type SmsReceipt {
   mediaUrls: [String!] @scalarList(strategy: RELATION)
   # status = delivery status
   status: SmsStatus!
+  smsId: String
   sentAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

@@ -1,6 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
+import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PaymentPlanTier, User } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
@@ -32,7 +33,6 @@ import {
   Transaction,
   TransactionsDataLoader,
 } from "../payment.types"
-import { PaymentUtilsService } from "./payment.utils.service"
 
 @Injectable()
 export class PaymentService {
@@ -330,18 +330,18 @@ export class PaymentService {
       })
       .request()
 
-    const subscription = await chargebee.subscription
+    const payload = await chargebee.subscription
       .create_for_customer(chargebeeCustomer.customer.id, {
         plan_id: planID,
         coupon_ids: !!couponID ? [couponID] : [],
       })
       .request()
 
-    const subscriptionID = subscription.id
+    const subscriptionID = payload.subscription.id
 
     await this.createPrismaSubscription(
       user.id,
-      subscription.customer,
+      payload.customer,
       paymentSource.payment_source.card,
       planID,
       subscriptionID
@@ -355,30 +355,6 @@ export class PaymentService {
       lastName: user.lastName,
       email: user.email,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
-    })
-  }
-
-  async updateResumeDate(date, customer) {
-    const customerWithMembership = await this.prisma.binding.query.customer(
-      { where: { id: customer.id } },
-      `
-        {
-          id
-          membership {
-            id
-            pauseRequests(orderBy: createdAt_DESC) {
-              id
-            }
-          }
-        }
-      `
-    )
-
-    const pauseRequest = customerWithMembership.membership?.pauseRequests?.[0]
-
-    await this.prisma.client.updatePauseRequest({
-      where: { id: pauseRequest?.id || "" },
-      data: { resumeDate: date },
     })
   }
 
@@ -463,100 +439,6 @@ export class PaymentService {
       where: { id: pauseRequest.id },
       data: { pausePending: false },
     })
-  }
-
-  async resumeSubscription(subscriptionId, date, customer) {
-    const resumeDate = !!date
-      ? { specific_date: DateTime.fromISO(date).toSeconds() }
-      : "immediately"
-
-    const pauseRequest = head(
-      await this.prisma.client.pauseRequests({
-        where: {
-          membership: {
-            customer: {
-              id: customer.id,
-            },
-          },
-        },
-      })
-    )
-
-    try {
-      const result = await chargebee.subscription
-        .resume(subscriptionId, {
-          resume_option: resumeDate,
-          unpaid_invoices_handling: "schedule_payment_collection",
-        })
-        .request()
-
-      if (result) {
-        await this.prisma.client.updatePauseRequest({
-          where: { id: pauseRequest.id },
-          data: { pausePending: false },
-        })
-
-        await this.prisma.client.updateCustomer({
-          data: {
-            status: "Active",
-          },
-          where: { id: customer.id },
-        })
-
-        const customerWithData = await this.prisma.binding.mutation.updateCustomer(
-          {
-            data: {
-              status: "Active",
-            },
-            where: { id: customer.id },
-          },
-          `{
-            id
-            user {
-              id
-              firstName
-              lastName
-              email
-            }
-            membership {
-              id
-              plan {
-                id
-                tier
-                planID
-              }
-            }
-          }`
-        )
-
-        const tier = customerWithData?.membership?.plan?.tier
-        const planID = customerWithData?.membership?.plan?.planID
-
-        this.segment.track(customerWithData.user.id, "Resumed Subscription", {
-          ...pick(customerWithData.user, ["firstName", "lastName", "email"]),
-          planID,
-          tier,
-        })
-      }
-    } catch (e) {
-      if (
-        e?.api_error_code &&
-        e?.api_error_code === "payment_processing_failed"
-      ) {
-        // FIXME: Need to fix this status for with whatever field we're using in payment failed cases
-        // await this.prisma.client.updatePauseRequest({
-        //   where: { id: pauseRequest.id },
-        //   data: { pausePending: false },
-        // })
-        // await this.prisma.client.updateCustomer({
-        //   data: {
-        //     status: "PaymentFailed",
-        //   },
-        //   where: { id: customer.id },
-        // })
-      }
-      throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
-    }
   }
 
   async createSubscription(

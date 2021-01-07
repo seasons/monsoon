@@ -1,6 +1,7 @@
 import { PrismaModule } from "@app/prisma/prisma.module"
 import { Module } from "@nestjs/common"
 
+import { ErrorModule } from "../Error/error.module"
 import { PushNotificationModule } from "../PushNotification"
 import { UtilsModule } from "../Utils/utils.module"
 import { WebflowController } from "./controllers/webflow.controller"
@@ -9,8 +10,8 @@ import { BlogService } from "./services/blog.service"
 import { WebflowService } from "./services/webflow.service"
 
 @Module({
-  // controllers: [WebflowController],
-  imports: [UtilsModule, PushNotificationModule, PrismaModule],
+  controllers: [WebflowController],
+  imports: [UtilsModule, PushNotificationModule, PrismaModule, ErrorModule],
   providers: [BlogService, BlogQueriesResolver, WebflowService],
   exports: [BlogService],
 })

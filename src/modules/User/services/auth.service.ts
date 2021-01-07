@@ -458,6 +458,9 @@ export class AuthService {
       details.shippingAddress.create.city = city
       details.shippingAddress.create.state = state
     }
+    if (details?.phoneNumber) {
+      details.phoneNumber = details.phoneNumber.replace(/-/g, "")
+    }
 
     const customerQueryInfo = `{
       id

@@ -273,15 +273,16 @@ export class CustomerService {
         }
       }`
     )
+    const sanitizedPhoneNumber = phoneNumber.replace(/-/g, "")
     const data = {
       detail: {
         upsert: {
           create: {
-            phoneNumber,
+            phoneNumber: sanitizedPhoneNumber,
             shippingAddress: { create: shippingAddressData },
           },
           update: {
-            phoneNumber,
+            phoneNumber: sanitizedPhoneNumber,
             shippingAddress: {
               upsert: {
                 create: shippingAddressData,

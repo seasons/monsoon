@@ -118,6 +118,7 @@ export class ProductUtilsService {
   async queryOptionsForProducts(args) {
     const category = args.category || "all"
     const brand = args.brand || "all"
+    const brands = args.brands || [brand]
     const orderBy = args.orderBy || "createdAt_DESC"
     const sizes = args.sizes || []
 
@@ -129,7 +130,7 @@ export class ProductUtilsService {
     // If client wants to sort by name, we will assume that they
     // want to sort by brand name as well
     if (orderBy.includes("name_")) {
-      return await this.productsAlphabetically(category, orderBy, sizes, brand)
+      return await this.productsAlphabetically(category, orderBy, sizes, brands)
     }
 
     const filters = await this.filters(args)
@@ -157,6 +158,14 @@ export class ProductUtilsService {
       brandFilter = {
         where: {
           brand: { slug: args.brand },
+        },
+      }
+    }
+
+    if (args.brands?.length > 0 && !args.brands?.includes("all")) {
+      brandFilter = {
+        where: {
+          brand: { slug_in: args.brands },
         },
       }
     }
@@ -382,9 +391,14 @@ export class ProductUtilsService {
     category: string,
     orderBy: BrandOrderByInput,
     sizes: [string],
-    brand: string
+    brands: [string]
   ) {
-    const brands = await this.prisma.binding.query.brands(
+    const brandsQuery =
+      brands.length > 0 && brands?.[0] !== "all"
+        ? `brand: { slug_in: ${brands} },`
+        : ""
+
+    const _brands = await this.prisma.binding.query.brands(
       { orderBy },
       `
       {
@@ -393,7 +407,7 @@ export class ProductUtilsService {
           orderBy: name_ASC,
           where: {
             ${category !== "all" ? `category: { slug: "${category}" },` : ""}
-            ${brand !== "all" ? `brand: { slug: "${brand}" },` : ""}
+            ${brandsQuery}
             status: Available,
             variants_some: { size_in: [${sizes}] }
           }
@@ -429,7 +443,7 @@ export class ProductUtilsService {
       }
       `
     )
-    const products = brands.map(b => b.products).flat()
+    const products = _brands.map(b => b.products).flat()
     return products
   }
 

@@ -79,6 +79,7 @@ type Query {
     sizes: [String!]
     category: String
     brand: String
+    brands: [String]
     where: ProductWhereInput
     orderBy: ProductOrderByInput
     skip: Int
@@ -259,6 +260,7 @@ type Brand {
     sizes: [String!]
     category: String
     brand: String
+    brands: [String]
     where: ProductWhereInput
     orderBy: ProductOrderByInput
     skip: Int

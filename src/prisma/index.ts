@@ -2920,6 +2920,8 @@ export type SmsReceiptOrderByInput =
   | "body_DESC"
   | "status_ASC"
   | "status_DESC"
+  | "smsId_ASC"
+  | "smsId_DESC"
   | "sentAt_ASC"
   | "sentAt_DESC"
   | "updatedAt_ASC"
@@ -4311,6 +4313,20 @@ export interface SmsReceiptWhereInput {
   status_not?: Maybe<SmsStatus>;
   status_in?: Maybe<SmsStatus[] | SmsStatus>;
   status_not_in?: Maybe<SmsStatus[] | SmsStatus>;
+  smsId?: Maybe<String>;
+  smsId_not?: Maybe<String>;
+  smsId_in?: Maybe<String[] | String>;
+  smsId_not_in?: Maybe<String[] | String>;
+  smsId_lt?: Maybe<String>;
+  smsId_lte?: Maybe<String>;
+  smsId_gt?: Maybe<String>;
+  smsId_gte?: Maybe<String>;
+  smsId_contains?: Maybe<String>;
+  smsId_not_contains?: Maybe<String>;
+  smsId_starts_with?: Maybe<String>;
+  smsId_not_starts_with?: Maybe<String>;
+  smsId_ends_with?: Maybe<String>;
+  smsId_not_ends_with?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
   sentAt_not?: Maybe<DateTimeInput>;
   sentAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -8835,6 +8851,7 @@ export interface SmsReceiptCreateInput {
   body: String;
   mediaUrls?: Maybe<SmsReceiptCreatemediaUrlsInput>;
   status: SmsStatus;
+  smsId?: Maybe<String>;
 }
 
 export interface SmsReceiptCreatemediaUrlsInput {
@@ -10151,6 +10168,7 @@ export interface SmsReceiptUpdateDataInput {
   body?: Maybe<String>;
   mediaUrls?: Maybe<SmsReceiptUpdatemediaUrlsInput>;
   status?: Maybe<SmsStatus>;
+  smsId?: Maybe<String>;
 }
 
 export interface SmsReceiptUpdatemediaUrlsInput {
@@ -10210,6 +10228,20 @@ export interface SmsReceiptScalarWhereInput {
   status_not?: Maybe<SmsStatus>;
   status_in?: Maybe<SmsStatus[] | SmsStatus>;
   status_not_in?: Maybe<SmsStatus[] | SmsStatus>;
+  smsId?: Maybe<String>;
+  smsId_not?: Maybe<String>;
+  smsId_in?: Maybe<String[] | String>;
+  smsId_not_in?: Maybe<String[] | String>;
+  smsId_lt?: Maybe<String>;
+  smsId_lte?: Maybe<String>;
+  smsId_gt?: Maybe<String>;
+  smsId_gte?: Maybe<String>;
+  smsId_contains?: Maybe<String>;
+  smsId_not_contains?: Maybe<String>;
+  smsId_starts_with?: Maybe<String>;
+  smsId_not_starts_with?: Maybe<String>;
+  smsId_ends_with?: Maybe<String>;
+  smsId_not_ends_with?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
   sentAt_not?: Maybe<DateTimeInput>;
   sentAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -10241,6 +10273,7 @@ export interface SmsReceiptUpdateManyDataInput {
   body?: Maybe<String>;
   mediaUrls?: Maybe<SmsReceiptUpdatemediaUrlsInput>;
   status?: Maybe<SmsStatus>;
+  smsId?: Maybe<String>;
 }
 
 export interface FitPicUpdateManyWithoutUserInput {
@@ -17062,6 +17095,7 @@ export interface SmsReceiptUpdateInput {
   body?: Maybe<String>;
   mediaUrls?: Maybe<SmsReceiptUpdatemediaUrlsInput>;
   status?: Maybe<SmsStatus>;
+  smsId?: Maybe<String>;
 }
 
 export interface SmsReceiptUpdateManyMutationInput {
@@ -17069,6 +17103,7 @@ export interface SmsReceiptUpdateManyMutationInput {
   body?: Maybe<String>;
   mediaUrls?: Maybe<SmsReceiptUpdatemediaUrlsInput>;
   status?: Maybe<SmsStatus>;
+  smsId?: Maybe<String>;
 }
 
 export interface StylePreferencesUpdateInput {
@@ -19179,6 +19214,7 @@ export interface SmsReceipt {
   body: String;
   mediaUrls: String[];
   status: SmsStatus;
+  smsId?: String;
   sentAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -19189,6 +19225,7 @@ export interface SmsReceiptPromise extends Promise<SmsReceipt>, Fragmentable {
   body: () => Promise<String>;
   mediaUrls: () => Promise<String[]>;
   status: () => Promise<SmsStatus>;
+  smsId: () => Promise<String>;
   sentAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -19201,6 +19238,7 @@ export interface SmsReceiptSubscription
   body: () => Promise<AsyncIterator<String>>;
   mediaUrls: () => Promise<AsyncIterator<String[]>>;
   status: () => Promise<AsyncIterator<SmsStatus>>;
+  smsId: () => Promise<AsyncIterator<String>>;
   sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -19213,6 +19251,7 @@ export interface SmsReceiptNullablePromise
   body: () => Promise<String>;
   mediaUrls: () => Promise<String[]>;
   status: () => Promise<SmsStatus>;
+  smsId: () => Promise<String>;
   sentAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -29118,6 +29157,7 @@ export interface SmsReceiptPreviousValues {
   body: String;
   mediaUrls: String[];
   status: SmsStatus;
+  smsId?: String;
   sentAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -29130,6 +29170,7 @@ export interface SmsReceiptPreviousValuesPromise
   body: () => Promise<String>;
   mediaUrls: () => Promise<String[]>;
   status: () => Promise<SmsStatus>;
+  smsId: () => Promise<String>;
   sentAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -29142,6 +29183,7 @@ export interface SmsReceiptPreviousValuesSubscription
   body: () => Promise<AsyncIterator<String>>;
   mediaUrls: () => Promise<AsyncIterator<String[]>>;
   status: () => Promise<AsyncIterator<SmsStatus>>;
+  smsId: () => Promise<AsyncIterator<String>>;
   sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

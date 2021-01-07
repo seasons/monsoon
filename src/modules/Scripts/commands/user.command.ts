@@ -151,7 +151,15 @@ export class UserCommands {
       type: "boolean",
       default: "true",
     })
-    allAccessEnabled
+    allAccessEnabled,
+    @Option({
+      name: "phone number",
+      describe: `Phone Number for the user`,
+      type: "string",
+      alias: "pn",
+      default: "16463502715",
+    })
+    phoneNumber
   ) {
     await this.scripts.updateConnections({
       prismaEnv,
@@ -192,7 +200,7 @@ export class UserCommands {
         firstName,
         lastName,
         details: {
-          phoneNumber: "+16463502715",
+          phoneNumber: `+${phoneNumber}`,
           height: 40 + faker.random.number(32),
           weight: { set: [150, 160] },
           waistSizes: { set: [28, 29, 20] },
@@ -308,6 +316,29 @@ export class UserCommands {
           authorizedAt: DateTime.local().toISO(),
         },
         where: { id: customer.id },
+      })
+    }
+
+    // Give them a valid pause request if appropriate
+    if (status === "Paused") {
+      const pauseDateISO = DateTime.local().toISO()
+      const resumeDateISO = DateTime.local().plus({ days: 30 }).toISO()
+      await this.prisma.client.updateCustomer({
+        where: { id: customer.id },
+        data: {
+          membership: {
+            update: {
+              pauseRequests: {
+                create: {
+                  pausePending: false,
+                  pauseDate: pauseDateISO,
+                  resumeDate: resumeDateISO,
+                  notified: false,
+                },
+              },
+            },
+          },
+        },
       })
     }
 
