@@ -3417,10 +3417,12 @@ export type CollectionOrderByInput =
   | "title_DESC"
   | "subTitle_ASC"
   | "subTitle_DESC"
-  | "descriptionTop_ASC"
-  | "descriptionTop_DESC"
-  | "descriptionBottom_ASC"
-  | "descriptionBottom_DESC";
+  | "published_ASC"
+  | "published_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type CollectionGroupOrderByInput =
   | "id_ASC"
@@ -7787,37 +7789,27 @@ export interface CollectionWhereInput {
   subTitle_not_starts_with?: Maybe<String>;
   subTitle_ends_with?: Maybe<String>;
   subTitle_not_ends_with?: Maybe<String>;
-  descriptionTop?: Maybe<String>;
-  descriptionTop_not?: Maybe<String>;
-  descriptionTop_in?: Maybe<String[] | String>;
-  descriptionTop_not_in?: Maybe<String[] | String>;
-  descriptionTop_lt?: Maybe<String>;
-  descriptionTop_lte?: Maybe<String>;
-  descriptionTop_gt?: Maybe<String>;
-  descriptionTop_gte?: Maybe<String>;
-  descriptionTop_contains?: Maybe<String>;
-  descriptionTop_not_contains?: Maybe<String>;
-  descriptionTop_starts_with?: Maybe<String>;
-  descriptionTop_not_starts_with?: Maybe<String>;
-  descriptionTop_ends_with?: Maybe<String>;
-  descriptionTop_not_ends_with?: Maybe<String>;
-  descriptionBottom?: Maybe<String>;
-  descriptionBottom_not?: Maybe<String>;
-  descriptionBottom_in?: Maybe<String[] | String>;
-  descriptionBottom_not_in?: Maybe<String[] | String>;
-  descriptionBottom_lt?: Maybe<String>;
-  descriptionBottom_lte?: Maybe<String>;
-  descriptionBottom_gt?: Maybe<String>;
-  descriptionBottom_gte?: Maybe<String>;
-  descriptionBottom_contains?: Maybe<String>;
-  descriptionBottom_not_contains?: Maybe<String>;
-  descriptionBottom_starts_with?: Maybe<String>;
-  descriptionBottom_not_starts_with?: Maybe<String>;
-  descriptionBottom_ends_with?: Maybe<String>;
-  descriptionBottom_not_ends_with?: Maybe<String>;
   products_every?: Maybe<ProductWhereInput>;
   products_some?: Maybe<ProductWhereInput>;
   products_none?: Maybe<ProductWhereInput>;
+  published?: Maybe<Boolean>;
+  published_not?: Maybe<Boolean>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<CollectionWhereInput[] | CollectionWhereInput>;
   OR?: Maybe<CollectionWhereInput[] | CollectionWhereInput>;
   NOT?: Maybe<CollectionWhereInput[] | CollectionWhereInput>;
@@ -14986,12 +14978,16 @@ export interface CategoryUpdateManyMutationInput {
 export interface CollectionCreateInput {
   id?: Maybe<ID_Input>;
   slug: String;
-  images: Json;
+  images?: Maybe<Json>;
   title?: Maybe<String>;
   subTitle?: Maybe<String>;
-  descriptionTop?: Maybe<String>;
-  descriptionBottom?: Maybe<String>;
+  descriptions?: Maybe<CollectionCreatedescriptionsInput>;
   products?: Maybe<ProductCreateManyInput>;
+  published?: Maybe<Boolean>;
+}
+
+export interface CollectionCreatedescriptionsInput {
+  set?: Maybe<String[] | String>;
 }
 
 export interface CollectionUpdateInput {
@@ -14999,9 +14995,13 @@ export interface CollectionUpdateInput {
   images?: Maybe<Json>;
   title?: Maybe<String>;
   subTitle?: Maybe<String>;
-  descriptionTop?: Maybe<String>;
-  descriptionBottom?: Maybe<String>;
+  descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
   products?: Maybe<ProductUpdateManyInput>;
+  published?: Maybe<Boolean>;
+}
+
+export interface CollectionUpdatedescriptionsInput {
+  set?: Maybe<String[] | String>;
 }
 
 export interface CollectionUpdateManyMutationInput {
@@ -15009,8 +15009,8 @@ export interface CollectionUpdateManyMutationInput {
   images?: Maybe<Json>;
   title?: Maybe<String>;
   subTitle?: Maybe<String>;
-  descriptionTop?: Maybe<String>;
-  descriptionBottom?: Maybe<String>;
+  descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
+  published?: Maybe<Boolean>;
 }
 
 export interface CollectionGroupCreateInput {
@@ -15064,9 +15064,9 @@ export interface CollectionUpdateDataInput {
   images?: Maybe<Json>;
   title?: Maybe<String>;
   subTitle?: Maybe<String>;
-  descriptionTop?: Maybe<String>;
-  descriptionBottom?: Maybe<String>;
+  descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
   products?: Maybe<ProductUpdateManyInput>;
+  published?: Maybe<Boolean>;
 }
 
 export interface CollectionUpsertWithWhereUniqueNestedInput {
@@ -15132,34 +15132,24 @@ export interface CollectionScalarWhereInput {
   subTitle_not_starts_with?: Maybe<String>;
   subTitle_ends_with?: Maybe<String>;
   subTitle_not_ends_with?: Maybe<String>;
-  descriptionTop?: Maybe<String>;
-  descriptionTop_not?: Maybe<String>;
-  descriptionTop_in?: Maybe<String[] | String>;
-  descriptionTop_not_in?: Maybe<String[] | String>;
-  descriptionTop_lt?: Maybe<String>;
-  descriptionTop_lte?: Maybe<String>;
-  descriptionTop_gt?: Maybe<String>;
-  descriptionTop_gte?: Maybe<String>;
-  descriptionTop_contains?: Maybe<String>;
-  descriptionTop_not_contains?: Maybe<String>;
-  descriptionTop_starts_with?: Maybe<String>;
-  descriptionTop_not_starts_with?: Maybe<String>;
-  descriptionTop_ends_with?: Maybe<String>;
-  descriptionTop_not_ends_with?: Maybe<String>;
-  descriptionBottom?: Maybe<String>;
-  descriptionBottom_not?: Maybe<String>;
-  descriptionBottom_in?: Maybe<String[] | String>;
-  descriptionBottom_not_in?: Maybe<String[] | String>;
-  descriptionBottom_lt?: Maybe<String>;
-  descriptionBottom_lte?: Maybe<String>;
-  descriptionBottom_gt?: Maybe<String>;
-  descriptionBottom_gte?: Maybe<String>;
-  descriptionBottom_contains?: Maybe<String>;
-  descriptionBottom_not_contains?: Maybe<String>;
-  descriptionBottom_starts_with?: Maybe<String>;
-  descriptionBottom_not_starts_with?: Maybe<String>;
-  descriptionBottom_ends_with?: Maybe<String>;
-  descriptionBottom_not_ends_with?: Maybe<String>;
+  published?: Maybe<Boolean>;
+  published_not?: Maybe<Boolean>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<CollectionScalarWhereInput[] | CollectionScalarWhereInput>;
   OR?: Maybe<CollectionScalarWhereInput[] | CollectionScalarWhereInput>;
   NOT?: Maybe<CollectionScalarWhereInput[] | CollectionScalarWhereInput>;
@@ -15175,8 +15165,8 @@ export interface CollectionUpdateManyDataInput {
   images?: Maybe<Json>;
   title?: Maybe<String>;
   subTitle?: Maybe<String>;
-  descriptionTop?: Maybe<String>;
-  descriptionBottom?: Maybe<String>;
+  descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
+  published?: Maybe<Boolean>;
 }
 
 export interface CollectionGroupUpdateManyMutationInput {
@@ -22611,11 +22601,13 @@ export interface AggregateCategorySubscription
 export interface Collection {
   id: ID_Output;
   slug: String;
-  images: Json;
+  images?: Json;
   title?: String;
   subTitle?: String;
-  descriptionTop?: String;
-  descriptionBottom?: String;
+  descriptions: String[];
+  published: Boolean;
+  createdAt: DateTimeOutput;
+  updatedAt?: DateTimeOutput;
 }
 
 export interface CollectionPromise extends Promise<Collection>, Fragmentable {
@@ -22624,8 +22616,7 @@ export interface CollectionPromise extends Promise<Collection>, Fragmentable {
   images: () => Promise<Json>;
   title: () => Promise<String>;
   subTitle: () => Promise<String>;
-  descriptionTop: () => Promise<String>;
-  descriptionBottom: () => Promise<String>;
+  descriptions: () => Promise<String[]>;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
@@ -22635,6 +22626,9 @@ export interface CollectionPromise extends Promise<Collection>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  published: () => Promise<Boolean>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CollectionSubscription
@@ -22645,8 +22639,7 @@ export interface CollectionSubscription
   images: () => Promise<AsyncIterator<Json>>;
   title: () => Promise<AsyncIterator<String>>;
   subTitle: () => Promise<AsyncIterator<String>>;
-  descriptionTop: () => Promise<AsyncIterator<String>>;
-  descriptionBottom: () => Promise<AsyncIterator<String>>;
+  descriptions: () => Promise<AsyncIterator<String[]>>;
   products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
@@ -22656,6 +22649,9 @@ export interface CollectionSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  published: () => Promise<AsyncIterator<Boolean>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface CollectionNullablePromise
@@ -22666,8 +22662,7 @@ export interface CollectionNullablePromise
   images: () => Promise<Json>;
   title: () => Promise<String>;
   subTitle: () => Promise<String>;
-  descriptionTop: () => Promise<String>;
-  descriptionBottom: () => Promise<String>;
+  descriptions: () => Promise<String[]>;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
@@ -22677,6 +22672,9 @@ export interface CollectionNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  published: () => Promise<Boolean>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CollectionConnection {
@@ -26701,11 +26699,13 @@ export interface CollectionSubscriptionPayloadSubscription
 export interface CollectionPreviousValues {
   id: ID_Output;
   slug: String;
-  images: Json;
+  images?: Json;
   title?: String;
   subTitle?: String;
-  descriptionTop?: String;
-  descriptionBottom?: String;
+  descriptions: String[];
+  published: Boolean;
+  createdAt: DateTimeOutput;
+  updatedAt?: DateTimeOutput;
 }
 
 export interface CollectionPreviousValuesPromise
@@ -26716,8 +26716,10 @@ export interface CollectionPreviousValuesPromise
   images: () => Promise<Json>;
   title: () => Promise<String>;
   subTitle: () => Promise<String>;
-  descriptionTop: () => Promise<String>;
-  descriptionBottom: () => Promise<String>;
+  descriptions: () => Promise<String[]>;
+  published: () => Promise<Boolean>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CollectionPreviousValuesSubscription
@@ -26728,8 +26730,10 @@ export interface CollectionPreviousValuesSubscription
   images: () => Promise<AsyncIterator<Json>>;
   title: () => Promise<AsyncIterator<String>>;
   subTitle: () => Promise<AsyncIterator<String>>;
-  descriptionTop: () => Promise<AsyncIterator<String>>;
-  descriptionBottom: () => Promise<AsyncIterator<String>>;
+  descriptions: () => Promise<AsyncIterator<String[]>>;
+  published: () => Promise<AsyncIterator<Boolean>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface CollectionGroupSubscriptionPayload {

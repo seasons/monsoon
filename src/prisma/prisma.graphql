@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Mon Jan 04 2021 13:30:32 GMT-0600 (Central Standard Time)
+# timestamp: Fri Jan 08 2021 12:33:04 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -4906,11 +4906,10 @@ input CategoryWhereUniqueInput {
 type Collection implements Node {
   id: ID!
   slug: String!
-  images: Json!
+  images: Json
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  descriptions: [String!]!
   products(
     where: ProductWhereInput
     orderBy: ProductOrderByInput
@@ -4920,6 +4919,9 @@ type Collection implements Node {
     first: Int
     last: Int
   ): [Product!]
+  published: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime
 }
 
 """
@@ -4938,14 +4940,18 @@ type CollectionConnection {
   aggregate: AggregateCollection!
 }
 
+input CollectionCreatedescriptionsInput {
+  set: [String!]
+}
+
 input CollectionCreateInput {
   id: ID
   slug: String!
-  images: Json!
+  images: Json
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  published: Boolean
+  descriptions: CollectionCreatedescriptionsInput
   products: ProductCreateManyInput
 }
 
@@ -5370,20 +5376,24 @@ enum CollectionOrderByInput {
   title_DESC
   subTitle_ASC
   subTitle_DESC
-  descriptionTop_ASC
-  descriptionTop_DESC
-  descriptionBottom_ASC
-  descriptionBottom_DESC
+  published_ASC
+  published_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type CollectionPreviousValues {
   id: ID!
   slug: String!
-  images: Json!
+  images: Json
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  descriptions: [String!]!
+  published: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime
 }
 
 input CollectionScalarWhereInput {
@@ -5665,138 +5675,84 @@ input CollectionScalarWhereInput {
   All values not ending with the given string.
   """
   subTitle_not_ends_with: String
-  descriptionTop: String
+  published: Boolean
 
   """
   All values that are not equal to given value.
   """
-  descriptionTop_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  descriptionTop_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  descriptionTop_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  descriptionTop_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  descriptionTop_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  descriptionTop_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  descriptionTop_gte: String
-
-  """
-  All values containing the given string.
-  """
-  descriptionTop_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  descriptionTop_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  descriptionTop_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  descriptionTop_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  descriptionTop_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  descriptionTop_not_ends_with: String
-  descriptionBottom: String
+  published_not: Boolean
+  createdAt: DateTime
 
   """
   All values that are not equal to given value.
   """
-  descriptionBottom_not: String
+  createdAt_not: DateTime
 
   """
   All values that are contained in given list.
   """
-  descriptionBottom_in: [String!]
+  createdAt_in: [DateTime!]
 
   """
   All values that are not contained in given list.
   """
-  descriptionBottom_not_in: [String!]
+  createdAt_not_in: [DateTime!]
 
   """
   All values less than the given value.
   """
-  descriptionBottom_lt: String
+  createdAt_lt: DateTime
 
   """
   All values less than or equal the given value.
   """
-  descriptionBottom_lte: String
+  createdAt_lte: DateTime
 
   """
   All values greater than the given value.
   """
-  descriptionBottom_gt: String
+  createdAt_gt: DateTime
 
   """
   All values greater than or equal the given value.
   """
-  descriptionBottom_gte: String
+  createdAt_gte: DateTime
+  updatedAt: DateTime
 
   """
-  All values containing the given string.
+  All values that are not equal to given value.
   """
-  descriptionBottom_contains: String
+  updatedAt_not: DateTime
 
   """
-  All values not containing the given string.
+  All values that are contained in given list.
   """
-  descriptionBottom_not_contains: String
+  updatedAt_in: [DateTime!]
 
   """
-  All values starting with the given string.
+  All values that are not contained in given list.
   """
-  descriptionBottom_starts_with: String
+  updatedAt_not_in: [DateTime!]
 
   """
-  All values not starting with the given string.
+  All values less than the given value.
   """
-  descriptionBottom_not_starts_with: String
+  updatedAt_lt: DateTime
 
   """
-  All values ending with the given string.
+  All values less than or equal the given value.
   """
-  descriptionBottom_ends_with: String
+  updatedAt_lte: DateTime
 
   """
-  All values not ending with the given string.
+  All values greater than the given value.
   """
-  descriptionBottom_not_ends_with: String
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
 }
 
 type CollectionSubscriptionPayload {
@@ -5849,9 +5805,13 @@ input CollectionUpdateDataInput {
   images: Json
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  published: Boolean
+  descriptions: CollectionUpdatedescriptionsInput
   products: ProductUpdateManyInput
+}
+
+input CollectionUpdatedescriptionsInput {
+  set: [String!]
 }
 
 input CollectionUpdateInput {
@@ -5859,8 +5819,8 @@ input CollectionUpdateInput {
   images: Json
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  published: Boolean
+  descriptions: CollectionUpdatedescriptionsInput
   products: ProductUpdateManyInput
 }
 
@@ -5869,8 +5829,8 @@ input CollectionUpdateManyDataInput {
   images: Json
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  published: Boolean
+  descriptions: CollectionUpdatedescriptionsInput
 }
 
 input CollectionUpdateManyInput {
@@ -5890,8 +5850,8 @@ input CollectionUpdateManyMutationInput {
   images: Json
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  published: Boolean
+  descriptions: CollectionUpdatedescriptionsInput
 }
 
 input CollectionUpdateManyWithWhereNestedInput {
@@ -6189,138 +6149,84 @@ input CollectionWhereInput {
   All values not ending with the given string.
   """
   subTitle_not_ends_with: String
-  descriptionTop: String
+  published: Boolean
 
   """
   All values that are not equal to given value.
   """
-  descriptionTop_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  descriptionTop_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  descriptionTop_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  descriptionTop_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  descriptionTop_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  descriptionTop_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  descriptionTop_gte: String
-
-  """
-  All values containing the given string.
-  """
-  descriptionTop_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  descriptionTop_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  descriptionTop_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  descriptionTop_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  descriptionTop_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  descriptionTop_not_ends_with: String
-  descriptionBottom: String
+  published_not: Boolean
+  createdAt: DateTime
 
   """
   All values that are not equal to given value.
   """
-  descriptionBottom_not: String
+  createdAt_not: DateTime
 
   """
   All values that are contained in given list.
   """
-  descriptionBottom_in: [String!]
+  createdAt_in: [DateTime!]
 
   """
   All values that are not contained in given list.
   """
-  descriptionBottom_not_in: [String!]
+  createdAt_not_in: [DateTime!]
 
   """
   All values less than the given value.
   """
-  descriptionBottom_lt: String
+  createdAt_lt: DateTime
 
   """
   All values less than or equal the given value.
   """
-  descriptionBottom_lte: String
+  createdAt_lte: DateTime
 
   """
   All values greater than the given value.
   """
-  descriptionBottom_gt: String
+  createdAt_gt: DateTime
 
   """
   All values greater than or equal the given value.
   """
-  descriptionBottom_gte: String
+  createdAt_gte: DateTime
+  updatedAt: DateTime
 
   """
-  All values containing the given string.
+  All values that are not equal to given value.
   """
-  descriptionBottom_contains: String
+  updatedAt_not: DateTime
 
   """
-  All values not containing the given string.
+  All values that are contained in given list.
   """
-  descriptionBottom_not_contains: String
+  updatedAt_in: [DateTime!]
 
   """
-  All values starting with the given string.
+  All values that are not contained in given list.
   """
-  descriptionBottom_starts_with: String
+  updatedAt_not_in: [DateTime!]
 
   """
-  All values not starting with the given string.
+  All values less than the given value.
   """
-  descriptionBottom_not_starts_with: String
+  updatedAt_lt: DateTime
 
   """
-  All values ending with the given string.
+  All values less than or equal the given value.
   """
-  descriptionBottom_ends_with: String
+  updatedAt_lte: DateTime
 
   """
-  All values not ending with the given string.
+  All values greater than the given value.
   """
-  descriptionBottom_not_ends_with: String
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput

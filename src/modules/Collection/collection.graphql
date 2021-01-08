@@ -1,0 +1,15 @@
+type Mutation {
+  upsertCollection(data: CollectionUpsertInput!): Collection!
+    @hasRole(roles: [Admin])
+}
+
+input CollectionUpsertInput {
+  id: ID
+  slug: String
+  images: Json
+  title: String
+  subTitle: String
+  descriptions: CollectionCreatedescriptionsInput
+  productIDs: [String]
+  published: Boolean
+}
