@@ -3411,8 +3411,6 @@ export type CollectionOrderByInput =
   | "id_DESC"
   | "slug_ASC"
   | "slug_DESC"
-  | "images_ASC"
-  | "images_DESC"
   | "title_ASC"
   | "title_DESC"
   | "subTitle_ASC"
@@ -7761,6 +7759,9 @@ export interface CollectionWhereInput {
   slug_not_starts_with?: Maybe<String>;
   slug_ends_with?: Maybe<String>;
   slug_not_ends_with?: Maybe<String>;
+  images_every?: Maybe<ImageWhereInput>;
+  images_some?: Maybe<ImageWhereInput>;
+  images_none?: Maybe<ImageWhereInput>;
   title?: Maybe<String>;
   title_not?: Maybe<String>;
   title_in?: Maybe<String[] | String>;
@@ -14978,7 +14979,7 @@ export interface CategoryUpdateManyMutationInput {
 export interface CollectionCreateInput {
   id?: Maybe<ID_Input>;
   slug: String;
-  images?: Maybe<Json>;
+  images?: Maybe<ImageCreateManyInput>;
   title?: Maybe<String>;
   subTitle?: Maybe<String>;
   descriptions?: Maybe<CollectionCreatedescriptionsInput>;
@@ -14992,7 +14993,7 @@ export interface CollectionCreatedescriptionsInput {
 
 export interface CollectionUpdateInput {
   slug?: Maybe<String>;
-  images?: Maybe<Json>;
+  images?: Maybe<ImageUpdateManyInput>;
   title?: Maybe<String>;
   subTitle?: Maybe<String>;
   descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
@@ -15006,7 +15007,6 @@ export interface CollectionUpdatedescriptionsInput {
 
 export interface CollectionUpdateManyMutationInput {
   slug?: Maybe<String>;
-  images?: Maybe<Json>;
   title?: Maybe<String>;
   subTitle?: Maybe<String>;
   descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
@@ -15061,7 +15061,7 @@ export interface CollectionUpdateWithWhereUniqueNestedInput {
 
 export interface CollectionUpdateDataInput {
   slug?: Maybe<String>;
-  images?: Maybe<Json>;
+  images?: Maybe<ImageUpdateManyInput>;
   title?: Maybe<String>;
   subTitle?: Maybe<String>;
   descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
@@ -15162,7 +15162,6 @@ export interface CollectionUpdateManyWithWhereNestedInput {
 
 export interface CollectionUpdateManyDataInput {
   slug?: Maybe<String>;
-  images?: Maybe<Json>;
   title?: Maybe<String>;
   subTitle?: Maybe<String>;
   descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
@@ -22601,7 +22600,6 @@ export interface AggregateCategorySubscription
 export interface Collection {
   id: ID_Output;
   slug: String;
-  images?: Json;
   title?: String;
   subTitle?: String;
   descriptions: String[];
@@ -22613,7 +22611,15 @@ export interface Collection {
 export interface CollectionPromise extends Promise<Collection>, Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
-  images: () => Promise<Json>;
+  images: <T = FragmentableArray<Image>>(args?: {
+    where?: ImageWhereInput;
+    orderBy?: ImageOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   title: () => Promise<String>;
   subTitle: () => Promise<String>;
   descriptions: () => Promise<String[]>;
@@ -22636,7 +22642,15 @@ export interface CollectionSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
-  images: () => Promise<AsyncIterator<Json>>;
+  images: <T = Promise<AsyncIterator<ImageSubscription>>>(args?: {
+    where?: ImageWhereInput;
+    orderBy?: ImageOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   title: () => Promise<AsyncIterator<String>>;
   subTitle: () => Promise<AsyncIterator<String>>;
   descriptions: () => Promise<AsyncIterator<String[]>>;
@@ -22659,7 +22673,15 @@ export interface CollectionNullablePromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
-  images: () => Promise<Json>;
+  images: <T = FragmentableArray<Image>>(args?: {
+    where?: ImageWhereInput;
+    orderBy?: ImageOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   title: () => Promise<String>;
   subTitle: () => Promise<String>;
   descriptions: () => Promise<String[]>;
@@ -26699,7 +26721,6 @@ export interface CollectionSubscriptionPayloadSubscription
 export interface CollectionPreviousValues {
   id: ID_Output;
   slug: String;
-  images?: Json;
   title?: String;
   subTitle?: String;
   descriptions: String[];
@@ -26713,7 +26734,6 @@ export interface CollectionPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
-  images: () => Promise<Json>;
   title: () => Promise<String>;
   subTitle: () => Promise<String>;
   descriptions: () => Promise<String[]>;
@@ -26727,7 +26747,6 @@ export interface CollectionPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
-  images: () => Promise<AsyncIterator<Json>>;
   title: () => Promise<AsyncIterator<String>>;
   subTitle: () => Promise<AsyncIterator<String>>;
   descriptions: () => Promise<AsyncIterator<String[]>>;

@@ -284,7 +284,7 @@ type Color {
 type Collection {
   id: ID! @id
   slug: String! @unique
-  images: Json
+  images: [Image!]
   title: String
   subTitle: String
   descriptions: [String]! @scalarList(strategy: RELATION)

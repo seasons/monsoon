@@ -2068,7 +2068,7 @@ input CategoryWhereUniqueInput {
 type Collection {
   id: ID!
   slug: String!
-  images: Json
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   title: String
   subTitle: String
   descriptions: [String!]!
@@ -2091,7 +2091,7 @@ input CollectionCreatedescriptionsInput {
 input CollectionCreateInput {
   id: ID
   slug: String!
-  images: Json
+  images: ImageCreateManyInput
   title: String
   subTitle: String
   descriptions: CollectionCreatedescriptionsInput
@@ -2254,8 +2254,6 @@ enum CollectionOrderByInput {
   id_DESC
   slug_ASC
   slug_DESC
-  images_ASC
-  images_DESC
   title_ASC
   title_DESC
   subTitle_ASC
@@ -2271,7 +2269,6 @@ enum CollectionOrderByInput {
 type CollectionPreviousValues {
   id: ID!
   slug: String!
-  images: Json
   title: String
   subTitle: String
   descriptions: [String!]!
@@ -2380,7 +2377,7 @@ input CollectionSubscriptionWhereInput {
 
 input CollectionUpdateDataInput {
   slug: String
-  images: Json
+  images: ImageUpdateManyInput
   title: String
   subTitle: String
   descriptions: CollectionUpdatedescriptionsInput
@@ -2394,7 +2391,7 @@ input CollectionUpdatedescriptionsInput {
 
 input CollectionUpdateInput {
   slug: String
-  images: Json
+  images: ImageUpdateManyInput
   title: String
   subTitle: String
   descriptions: CollectionUpdatedescriptionsInput
@@ -2404,7 +2401,6 @@ input CollectionUpdateInput {
 
 input CollectionUpdateManyDataInput {
   slug: String
-  images: Json
   title: String
   subTitle: String
   descriptions: CollectionUpdatedescriptionsInput
@@ -2425,7 +2421,6 @@ input CollectionUpdateManyInput {
 
 input CollectionUpdateManyMutationInput {
   slug: String
-  images: Json
   title: String
   subTitle: String
   descriptions: CollectionUpdatedescriptionsInput
@@ -2477,6 +2472,9 @@ input CollectionWhereInput {
   slug_not_starts_with: String
   slug_ends_with: String
   slug_not_ends_with: String
+  images_every: ImageWhereInput
+  images_some: ImageWhereInput
+  images_none: ImageWhereInput
   title: String
   title_not: String
   title_in: [String!]
