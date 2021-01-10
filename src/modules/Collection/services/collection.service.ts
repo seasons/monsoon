@@ -28,11 +28,6 @@ export class CollectionService {
       subTitle: data.subTitle,
       descriptions: data.descriptions,
       published: data.published,
-      products: data.productIDs && {
-        connect: data.productIDs?.map(id => {
-          return { id }
-        }),
-      },
     }
 
     return this.prisma.client.upsertCollection({
@@ -41,10 +36,20 @@ export class CollectionService {
         slug,
         ...upsertData,
         images: imageIDs && { connect: imageIDs },
+        products: data.productIDs && {
+          connect: data.productIDs?.map(id => {
+            return { id }
+          }),
+        },
       },
       update: {
         ...upsertData,
         images: imageIDs && { set: imageIDs },
+        products: data.productIDs && {
+          set: data.productIDs?.map(id => {
+            return { id }
+          }),
+        },
       },
     })
   }
