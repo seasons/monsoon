@@ -7,6 +7,7 @@ export class CollectionQueriesResolver {
 
   @Query()
   async collections(@Args() args, @Info() info) {
+    console.log("args ????", args)
     return await this.prisma.binding.query.collections(args, info)
   }
 

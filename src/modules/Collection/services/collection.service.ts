@@ -28,7 +28,6 @@ export class CollectionService {
       subTitle: data.subTitle,
       descriptions: data.descriptions,
       published: data.published,
-      images: imageIDs && { set: imageIDs },
       products: data.productIDs && {
         connect: data.productIDs?.map(id => {
           return { id }
@@ -41,8 +40,12 @@ export class CollectionService {
       create: {
         slug,
         ...upsertData,
+        images: imageIDs && { connect: imageIDs },
       },
-      update: upsertData,
+      update: {
+        ...upsertData,
+        images: imageIDs && { set: imageIDs },
+      },
     })
   }
 }

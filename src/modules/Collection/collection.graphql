@@ -6,7 +6,7 @@ type Mutation {
 input CollectionUpsertInput {
   id: ID
   slug: String
-  images: ImageCreateManyInput
+  images: [Upload!]
   title: String
   subTitle: String
   descriptions: CollectionCreatedescriptionsInput
