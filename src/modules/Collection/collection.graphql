@@ -13,3 +13,25 @@ input CollectionUpsertInput {
   productIDs: [String]
   published: Boolean
 }
+
+type Query {
+  collection(where: CollectionWhereUniqueInput!): Collection
+  collections(
+    where: CollectionWhereInput
+    orderBy: CollectionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Collection]!
+  collectionsConnection(
+    where: CollectionWhereInput
+    orderBy: CollectionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CollectionConnection!
+}

@@ -4175,7 +4175,7 @@ input CategoryWhereUniqueInput {
 type Collection implements Node {
   id: ID!
   slug: String!
-  images: Json
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   title: String
   subTitle: String
   descriptions: [String!]!
@@ -4202,11 +4202,11 @@ input CollectionCreatedescriptionsInput {
 input CollectionCreateInput {
   id: ID
   slug: String!
-  images: Json
   title: String
   subTitle: String
   published: Boolean
   descriptions: CollectionCreatedescriptionsInput
+  images: ImageCreateManyInput
   products: ProductCreateManyInput
 }
 
@@ -4493,8 +4493,6 @@ enum CollectionOrderByInput {
   id_DESC
   slug_ASC
   slug_DESC
-  images_ASC
-  images_DESC
   title_ASC
   title_DESC
   subTitle_ASC
@@ -4510,7 +4508,6 @@ enum CollectionOrderByInput {
 type CollectionPreviousValues {
   id: ID!
   slug: String!
-  images: Json
   title: String
   subTitle: String
   descriptions: [String!]!
@@ -4777,11 +4774,11 @@ input CollectionSubscriptionWhereInput {
 
 input CollectionUpdateDataInput {
   slug: String
-  images: Json
   title: String
   subTitle: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
+  images: ImageUpdateManyInput
   products: ProductUpdateManyInput
 }
 
@@ -4791,17 +4788,16 @@ input CollectionUpdatedescriptionsInput {
 
 input CollectionUpdateInput {
   slug: String
-  images: Json
   title: String
   subTitle: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
+  images: ImageUpdateManyInput
   products: ProductUpdateManyInput
 }
 
 input CollectionUpdateManyDataInput {
   slug: String
-  images: Json
   title: String
   subTitle: String
   published: Boolean
@@ -4822,7 +4818,6 @@ input CollectionUpdateManyInput {
 
 input CollectionUpdateManyMutationInput {
   slug: String
-  images: Json
   title: String
   subTitle: String
   published: Boolean
@@ -5062,6 +5057,9 @@ input CollectionWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  images_every: ImageWhereInput
+  images_some: ImageWhereInput
+  images_none: ImageWhereInput
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
@@ -31125,8 +31123,6 @@ export type CollectionOrderByInput =   'id_ASC' |
   'id_DESC' |
   'slug_ASC' |
   'slug_DESC' |
-  'images_ASC' |
-  'images_DESC' |
   'title_ASC' |
   'title_DESC' |
   'subTitle_ASC' |
@@ -33393,11 +33389,11 @@ export interface CollectionCreatedescriptionsInput {
 export interface CollectionCreateInput {
   id?: ID_Input | null
   slug: String
-  images?: Json | null
   title?: String | null
   subTitle?: String | null
   published?: Boolean | null
   descriptions?: CollectionCreatedescriptionsInput | null
+  images?: ImageCreateManyInput | null
   products?: ProductCreateManyInput | null
 }
 
@@ -33595,11 +33591,11 @@ export interface CollectionSubscriptionWhereInput {
 
 export interface CollectionUpdateDataInput {
   slug?: String | null
-  images?: Json | null
   title?: String | null
   subTitle?: String | null
   published?: Boolean | null
   descriptions?: CollectionUpdatedescriptionsInput | null
+  images?: ImageUpdateManyInput | null
   products?: ProductUpdateManyInput | null
 }
 
@@ -33609,17 +33605,16 @@ export interface CollectionUpdatedescriptionsInput {
 
 export interface CollectionUpdateInput {
   slug?: String | null
-  images?: Json | null
   title?: String | null
   subTitle?: String | null
   published?: Boolean | null
   descriptions?: CollectionUpdatedescriptionsInput | null
+  images?: ImageUpdateManyInput | null
   products?: ProductUpdateManyInput | null
 }
 
 export interface CollectionUpdateManyDataInput {
   slug?: String | null
-  images?: Json | null
   title?: String | null
   subTitle?: String | null
   published?: Boolean | null
@@ -33640,7 +33635,6 @@ export interface CollectionUpdateManyInput {
 
 export interface CollectionUpdateManyMutationInput {
   slug?: String | null
-  images?: Json | null
   title?: String | null
   subTitle?: String | null
   published?: Boolean | null
@@ -33741,6 +33735,9 @@ export interface CollectionWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
+  images_every?: ImageWhereInput | null
+  images_some?: ImageWhereInput | null
+  images_none?: ImageWhereInput | null
   products_every?: ProductWhereInput | null
   products_some?: ProductWhereInput | null
   products_none?: ProductWhereInput | null
@@ -46110,7 +46107,7 @@ export interface CategorySubscriptionPayload {
 export interface Collection extends Node {
   id: ID_Output
   slug: String
-  images?: Json | null
+  images?: Array<Image> | null
   title?: String | null
   subTitle?: String | null
   descriptions: Array<String>
@@ -46183,7 +46180,6 @@ export interface CollectionGroupSubscriptionPayload {
 export interface CollectionPreviousValues {
   id: ID_Output
   slug: String
-  images?: Json | null
   title?: String | null
   subTitle?: String | null
   descriptions: Array<String>

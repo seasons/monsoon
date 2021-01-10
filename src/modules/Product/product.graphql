@@ -40,16 +40,6 @@ type Query {
     first: Int
     last: Int
   ): CategoryConnection!
-  collection(where: CollectionWhereUniqueInput!): Collection
-  collections(
-    where: CollectionWhereInput
-    orderBy: CollectionOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Collection]!
   colors(
     where: ColorWhereInput
     orderBy: ColorOrderByInput
