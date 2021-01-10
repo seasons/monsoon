@@ -5,10 +5,7 @@ import { ImageService } from "../services/image.service"
 
 @Resolver("Image")
 export class ImageResolver {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly imageService: ImageService
-  ) {}
+  constructor(private readonly imageService: ImageService) {}
 
   @ResolveField()
   async resized(
@@ -22,8 +19,6 @@ export class ImageResolver {
       h: height,
     })
 
-    return {
-      url,
-    }
+    return url
   }
 }
