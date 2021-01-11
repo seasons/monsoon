@@ -548,6 +548,7 @@ export class CustomerService {
         // Should we continue or not?
         admit = admit && pass
         if (!admit) {
+          console.log(reason)
           reason = waitlistReason
           break
         }
