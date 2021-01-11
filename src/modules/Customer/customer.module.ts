@@ -6,12 +6,13 @@ import { CustomerDetailFieldsResolver } from "./fields/customerDetail.fields.res
 import { CustomerQueriesResolver } from "./queries/customer.queries.resolver"
 import { PaymentModule } from ".."
 
-@Module({
+export const CustomerModuleDef = {
   imports: [PrismaModule, forwardRef(() => PaymentModule)],
   providers: [
     CustomerQueriesResolver,
     CustomerFieldsResolver,
     CustomerDetailFieldsResolver,
   ],
-})
+}
+@Module(CustomerModuleDef)
 export class CustomerModule {}
