@@ -289,12 +289,14 @@ type Color {
 type Collection {
   id: ID! @id
   slug: String! @unique
-  images: Json!
+  images: [Image!]
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  descriptions: [String]! @scalarList(strategy: RELATION)
   products: [Product!]!
+  published: Boolean! @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime @updatedAt
 }
 
 type CollectionGroup {
