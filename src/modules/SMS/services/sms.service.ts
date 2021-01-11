@@ -55,6 +55,7 @@ export class SMSService {
     @Customer() customer,
     @User() user
   ): Promise<boolean> {
+    console.log(2)
     if (!this.sid) {
       throw new Error("Twilio service not set up yet. Please try again.")
     }
@@ -105,6 +106,7 @@ export class SMSService {
     @Customer() customer,
     @User() user
   ): Promise<UserVerificationStatus> {
+    console.log(3)
     if (!this.sid) {
       throw new Error("Twilio service not set up yet. Please try again.")
     }
@@ -156,6 +158,7 @@ export class SMSService {
     smsId: SMSID
     renderData: any
   }) {
+    console.log(4)
     const { body, mediaUrls } = this.getSMSData(smsId, renderData)
     return await this.sendSMSMessage({
       to,
@@ -179,6 +182,7 @@ export class SMSService {
       smsId?: SMSID
     }
   ): Promise<SmsStatus> {
+    console.log(5)
     // Ensure there are not too many media URLs
     if (mediaUrls?.length > 10) {
       throw new Error(
@@ -251,6 +255,7 @@ export class SMSService {
   }
 
   async handleSMSResponse(body: TwilioEvent) {
+    console.log(6)
     const twiml = new Twilio.twiml.MessagingResponse()
     const genericError = `We're sorry, but we're having technical difficulties. Please contact ${process.env.MAIN_CONTACT_EMAIL}`
 
