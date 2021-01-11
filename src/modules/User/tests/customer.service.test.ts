@@ -55,6 +55,12 @@ describe.only("Customer Service", () => {
       })
   }
 
+  const mockbelowWeeklyNewActiveUsersOpsThreshold = () => {
+    jest
+      .spyOn(admissionsService, "belowWeeklyNewActiveUsersOpsThreshold")
+      .mockResolvedValue({ pass: true, detail: "passes" })
+  }
+
   beforeAll(async () => {
     jest.spyOn(SMSService.prototype as any, "setupService").mockImplementation()
     const moduleRef = await Test.createTestingModule(
@@ -246,11 +252,9 @@ describe.only("Customer Service", () => {
     })
 
     it("Updates customer to Authorized", async () => {
-      jest
-        .spyOn(admissionsService, "belowWeeklyNewActiveUsersOpsThreshold")
-        .mockResolvedValue({ pass: true, detail: "" })
       mockServiceableZipCodesCheck()
       mockSufficientInventoryCheck()
+      mockbelowWeeklyNewActiveUsersOpsThreshold()
 
       const {
         customer,
