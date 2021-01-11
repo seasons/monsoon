@@ -43,7 +43,6 @@ export class SMSService {
   }
 
   private async setupService() {
-    console.log("f")
     const service = await this.twilio.client.verify.services.create({
       friendlyName: "Seasons",
       codeLength: 6,

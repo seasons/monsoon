@@ -6,8 +6,5 @@ const authToken = process.env.TWILIO_AUTH_TOKEN
 
 @Injectable()
 export class TwilioService {
-  constructor() {
-    console.log("h")
-  }
   client = Twilio(accountSid, authToken)
 }

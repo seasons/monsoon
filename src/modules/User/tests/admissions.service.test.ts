@@ -1,3 +1,4 @@
+import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { UtilsModule } from "@app/modules/Utils/utils.module"
@@ -20,6 +21,7 @@ describe("Admissions Service", () => {
   let expectAdmitWithAllAccessDisabled
 
   beforeAll(async () => {
+    jest.spyOn(SMSService.prototype as any, "setupService").mockImplementation()
     admissions = await createTestAdmissionsService(null)
   })
 

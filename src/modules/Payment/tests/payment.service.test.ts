@@ -1,3 +1,4 @@
+import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -59,6 +60,7 @@ describe("Payment Service", () => {
   let testUtils: TestUtilsService
 
   beforeAll(async () => {
+    jest.spyOn(SMSService.prototype as any, "setupService").mockImplementation()
     const moduleRef = await Test.createTestingModule(PaymentModuleDef).compile()
 
     prisma = moduleRef.get<PrismaService>(PrismaService)

@@ -1,5 +1,6 @@
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { PushNotificationModule } from "@app/modules/PushNotification/pushNotification.module"
+import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { INestApplication } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
 import request from "supertest"
@@ -61,6 +62,7 @@ describe("Shippo Controller", () => {
   let pushNotificationsService: PushNotificationService
 
   beforeEach(async () => {
+    jest.spyOn(SMSService.prototype as any, "setupService").mockImplementation()
     const PrismaServiceProvider = {
       provide: PrismaService,
       useClass: PrismaServiceMock,
