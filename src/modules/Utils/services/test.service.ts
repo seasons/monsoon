@@ -169,6 +169,11 @@ export class TestUtilsService {
       },
       `{
         id
+        detail {
+          shippingAddress {
+            id
+          }
+        }
         user {
           id
         }
