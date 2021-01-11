@@ -12,7 +12,6 @@ export class SMSController {
 
   @Post()
   async handlePost(@Body() body: TwilioEvent) {
-    console.log(1)
     switch (body.To) {
       case process.env.TWILIO_PHONE_NUMBER:
         return await this.sms.handleSMSResponse(body)

@@ -523,7 +523,6 @@ export class CustomerService {
     try {
       for (const { func, waitlistReason } of triageFuncs) {
         const { pass, detail } = await func()
-        console.log(pass, detail)
 
         // Store key results of the serviceable zipcode lookup to store it
         // on the customer later
@@ -548,7 +547,6 @@ export class CustomerService {
 
         // Should we continue or not?
         admit = admit && pass
-        console.log(admit, pass)
         if (!admit) {
           reason = waitlistReason
           break
