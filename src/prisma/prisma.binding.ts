@@ -8630,8 +8630,9 @@ input EmailReceiptWhereUniqueInput {
 type ExternalShopifyIntegration implements Node {
   id: ID!
   shopName: String!
-  enabled: String!
+  enabled: Boolean!
   accessToken: String
+  nonce: String
 }
 
 """A connection to a list of items."""
@@ -8647,8 +8648,9 @@ type ExternalShopifyIntegrationConnection {
 input ExternalShopifyIntegrationCreateInput {
   id: ID
   shopName: String!
-  enabled: String!
+  enabled: Boolean!
   accessToken: String
+  nonce: String
 }
 
 input ExternalShopifyIntegrationCreateOneInput {
@@ -8674,13 +8676,16 @@ enum ExternalShopifyIntegrationOrderByInput {
   enabled_DESC
   accessToken_ASC
   accessToken_DESC
+  nonce_ASC
+  nonce_DESC
 }
 
 type ExternalShopifyIntegrationPreviousValues {
   id: ID!
   shopName: String!
-  enabled: String!
+  enabled: Boolean!
   accessToken: String
+  nonce: String
 }
 
 type ExternalShopifyIntegrationSubscriptionPayload {
@@ -8722,20 +8727,23 @@ input ExternalShopifyIntegrationSubscriptionWhereInput {
 
 input ExternalShopifyIntegrationUpdateDataInput {
   shopName: String
-  enabled: String
+  enabled: Boolean
   accessToken: String
+  nonce: String
 }
 
 input ExternalShopifyIntegrationUpdateInput {
   shopName: String
-  enabled: String
+  enabled: Boolean
   accessToken: String
+  nonce: String
 }
 
 input ExternalShopifyIntegrationUpdateManyMutationInput {
   shopName: String
-  enabled: String
+  enabled: Boolean
   accessToken: String
+  nonce: String
 }
 
 input ExternalShopifyIntegrationUpdateOneInput {
@@ -8841,46 +8849,10 @@ input ExternalShopifyIntegrationWhereInput {
 
   """All values not ending with the given string."""
   shopName_not_ends_with: String
-  enabled: String
+  enabled: Boolean
 
   """All values that are not equal to given value."""
-  enabled_not: String
-
-  """All values that are contained in given list."""
-  enabled_in: [String!]
-
-  """All values that are not contained in given list."""
-  enabled_not_in: [String!]
-
-  """All values less than the given value."""
-  enabled_lt: String
-
-  """All values less than or equal the given value."""
-  enabled_lte: String
-
-  """All values greater than the given value."""
-  enabled_gt: String
-
-  """All values greater than or equal the given value."""
-  enabled_gte: String
-
-  """All values containing the given string."""
-  enabled_contains: String
-
-  """All values not containing the given string."""
-  enabled_not_contains: String
-
-  """All values starting with the given string."""
-  enabled_starts_with: String
-
-  """All values not starting with the given string."""
-  enabled_not_starts_with: String
-
-  """All values ending with the given string."""
-  enabled_ends_with: String
-
-  """All values not ending with the given string."""
-  enabled_not_ends_with: String
+  enabled_not: Boolean
   accessToken: String
 
   """All values that are not equal to given value."""
@@ -8921,10 +8893,51 @@ input ExternalShopifyIntegrationWhereInput {
 
   """All values not ending with the given string."""
   accessToken_not_ends_with: String
+  nonce: String
+
+  """All values that are not equal to given value."""
+  nonce_not: String
+
+  """All values that are contained in given list."""
+  nonce_in: [String!]
+
+  """All values that are not contained in given list."""
+  nonce_not_in: [String!]
+
+  """All values less than the given value."""
+  nonce_lt: String
+
+  """All values less than or equal the given value."""
+  nonce_lte: String
+
+  """All values greater than the given value."""
+  nonce_gt: String
+
+  """All values greater than or equal the given value."""
+  nonce_gte: String
+
+  """All values containing the given string."""
+  nonce_contains: String
+
+  """All values not containing the given string."""
+  nonce_not_contains: String
+
+  """All values starting with the given string."""
+  nonce_starts_with: String
+
+  """All values not starting with the given string."""
+  nonce_not_starts_with: String
+
+  """All values ending with the given string."""
+  nonce_ends_with: String
+
+  """All values not ending with the given string."""
+  nonce_not_ends_with: String
 }
 
 input ExternalShopifyIntegrationWhereUniqueInput {
   id: ID
+  shopName: String
 }
 
 type FitPic implements Node {
@@ -32668,7 +32681,9 @@ export type ExternalShopifyIntegrationOrderByInput =   'id_ASC' |
   'enabled_ASC' |
   'enabled_DESC' |
   'accessToken_ASC' |
-  'accessToken_DESC'
+  'accessToken_DESC' |
+  'nonce_ASC' |
+  'nonce_DESC'
 
 export type FitPicOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -36923,8 +36938,9 @@ export interface EmailReceiptWhereUniqueInput {
 export interface ExternalShopifyIntegrationCreateInput {
   id?: ID_Input | null
   shopName: String
-  enabled: String
+  enabled: Boolean
   accessToken?: String | null
+  nonce?: String | null
 }
 
 export interface ExternalShopifyIntegrationCreateOneInput {
@@ -36945,20 +36961,23 @@ export interface ExternalShopifyIntegrationSubscriptionWhereInput {
 
 export interface ExternalShopifyIntegrationUpdateDataInput {
   shopName?: String | null
-  enabled?: String | null
+  enabled?: Boolean | null
   accessToken?: String | null
+  nonce?: String | null
 }
 
 export interface ExternalShopifyIntegrationUpdateInput {
   shopName?: String | null
-  enabled?: String | null
+  enabled?: Boolean | null
   accessToken?: String | null
+  nonce?: String | null
 }
 
 export interface ExternalShopifyIntegrationUpdateManyMutationInput {
   shopName?: String | null
-  enabled?: String | null
+  enabled?: Boolean | null
   accessToken?: String | null
+  nonce?: String | null
 }
 
 export interface ExternalShopifyIntegrationUpdateOneInput {
@@ -37007,20 +37026,8 @@ export interface ExternalShopifyIntegrationWhereInput {
   shopName_not_starts_with?: String | null
   shopName_ends_with?: String | null
   shopName_not_ends_with?: String | null
-  enabled?: String | null
-  enabled_not?: String | null
-  enabled_in?: String[] | String | null
-  enabled_not_in?: String[] | String | null
-  enabled_lt?: String | null
-  enabled_lte?: String | null
-  enabled_gt?: String | null
-  enabled_gte?: String | null
-  enabled_contains?: String | null
-  enabled_not_contains?: String | null
-  enabled_starts_with?: String | null
-  enabled_not_starts_with?: String | null
-  enabled_ends_with?: String | null
-  enabled_not_ends_with?: String | null
+  enabled?: Boolean | null
+  enabled_not?: Boolean | null
   accessToken?: String | null
   accessToken_not?: String | null
   accessToken_in?: String[] | String | null
@@ -37035,10 +37042,25 @@ export interface ExternalShopifyIntegrationWhereInput {
   accessToken_not_starts_with?: String | null
   accessToken_ends_with?: String | null
   accessToken_not_ends_with?: String | null
+  nonce?: String | null
+  nonce_not?: String | null
+  nonce_in?: String[] | String | null
+  nonce_not_in?: String[] | String | null
+  nonce_lt?: String | null
+  nonce_lte?: String | null
+  nonce_gt?: String | null
+  nonce_gte?: String | null
+  nonce_contains?: String | null
+  nonce_not_contains?: String | null
+  nonce_starts_with?: String | null
+  nonce_not_starts_with?: String | null
+  nonce_ends_with?: String | null
+  nonce_not_ends_with?: String | null
 }
 
 export interface ExternalShopifyIntegrationWhereUniqueInput {
   id?: ID_Input | null
+  shopName?: String | null
 }
 
 export interface FitPicCreateInput {
@@ -48525,8 +48547,9 @@ export interface EmailReceiptSubscriptionPayload {
 export interface ExternalShopifyIntegration extends Node {
   id: ID_Output
   shopName: String
-  enabled: String
+  enabled: Boolean
   accessToken?: String | null
+  nonce?: String | null
 }
 
 /*
@@ -48551,8 +48574,9 @@ export interface ExternalShopifyIntegrationEdge {
 export interface ExternalShopifyIntegrationPreviousValues {
   id: ID_Output
   shopName: String
-  enabled: String
+  enabled: Boolean
   accessToken?: String | null
+  nonce?: String | null
 }
 
 export interface ExternalShopifyIntegrationSubscriptionPayload {

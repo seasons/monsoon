@@ -3736,7 +3736,9 @@ export type ExternalShopifyIntegrationOrderByInput =
   | "enabled_ASC"
   | "enabled_DESC"
   | "accessToken_ASC"
-  | "accessToken_DESC";
+  | "accessToken_DESC"
+  | "nonce_ASC"
+  | "nonce_DESC";
 
 export type HomepageProductRailOrderByInput =
   | "id_ASC"
@@ -5833,20 +5835,8 @@ export interface ExternalShopifyIntegrationWhereInput {
   shopName_not_starts_with?: Maybe<String>;
   shopName_ends_with?: Maybe<String>;
   shopName_not_ends_with?: Maybe<String>;
-  enabled?: Maybe<String>;
-  enabled_not?: Maybe<String>;
-  enabled_in?: Maybe<String[] | String>;
-  enabled_not_in?: Maybe<String[] | String>;
-  enabled_lt?: Maybe<String>;
-  enabled_lte?: Maybe<String>;
-  enabled_gt?: Maybe<String>;
-  enabled_gte?: Maybe<String>;
-  enabled_contains?: Maybe<String>;
-  enabled_not_contains?: Maybe<String>;
-  enabled_starts_with?: Maybe<String>;
-  enabled_not_starts_with?: Maybe<String>;
-  enabled_ends_with?: Maybe<String>;
-  enabled_not_ends_with?: Maybe<String>;
+  enabled?: Maybe<Boolean>;
+  enabled_not?: Maybe<Boolean>;
   accessToken?: Maybe<String>;
   accessToken_not?: Maybe<String>;
   accessToken_in?: Maybe<String[] | String>;
@@ -5861,6 +5851,20 @@ export interface ExternalShopifyIntegrationWhereInput {
   accessToken_not_starts_with?: Maybe<String>;
   accessToken_ends_with?: Maybe<String>;
   accessToken_not_ends_with?: Maybe<String>;
+  nonce?: Maybe<String>;
+  nonce_not?: Maybe<String>;
+  nonce_in?: Maybe<String[] | String>;
+  nonce_not_in?: Maybe<String[] | String>;
+  nonce_lt?: Maybe<String>;
+  nonce_lte?: Maybe<String>;
+  nonce_gt?: Maybe<String>;
+  nonce_gte?: Maybe<String>;
+  nonce_contains?: Maybe<String>;
+  nonce_not_contains?: Maybe<String>;
+  nonce_starts_with?: Maybe<String>;
+  nonce_not_starts_with?: Maybe<String>;
+  nonce_ends_with?: Maybe<String>;
+  nonce_not_ends_with?: Maybe<String>;
   AND?: Maybe<
     | ExternalShopifyIntegrationWhereInput[]
     | ExternalShopifyIntegrationWhereInput
@@ -8368,6 +8372,7 @@ export type EmailReceiptWhereUniqueInput = AtLeastOne<{
 
 export type ExternalShopifyIntegrationWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  shopName?: Maybe<String>;
 }>;
 
 export type FitPicWhereUniqueInput = AtLeastOne<{
@@ -9567,8 +9572,9 @@ export interface ExternalShopifyIntegrationCreateOneInput {
 export interface ExternalShopifyIntegrationCreateInput {
   id?: Maybe<ID_Input>;
   shopName: String;
-  enabled: String;
+  enabled: Boolean;
   accessToken?: Maybe<String>;
+  nonce?: Maybe<String>;
 }
 
 export interface CategoryCreateOneWithoutProductsInput {
@@ -11379,8 +11385,9 @@ export interface ExternalShopifyIntegrationUpdateOneInput {
 
 export interface ExternalShopifyIntegrationUpdateDataInput {
   shopName?: Maybe<String>;
-  enabled?: Maybe<String>;
+  enabled?: Maybe<Boolean>;
   accessToken?: Maybe<String>;
+  nonce?: Maybe<String>;
 }
 
 export interface ExternalShopifyIntegrationUpsertNestedInput {
@@ -16269,14 +16276,16 @@ export interface EmailReceiptUpdateManyMutationInput {
 
 export interface ExternalShopifyIntegrationUpdateInput {
   shopName?: Maybe<String>;
-  enabled?: Maybe<String>;
+  enabled?: Maybe<Boolean>;
   accessToken?: Maybe<String>;
+  nonce?: Maybe<String>;
 }
 
 export interface ExternalShopifyIntegrationUpdateManyMutationInput {
   shopName?: Maybe<String>;
-  enabled?: Maybe<String>;
+  enabled?: Maybe<Boolean>;
   accessToken?: Maybe<String>;
+  nonce?: Maybe<String>;
 }
 
 export interface FitPicCreateInput {
@@ -21209,8 +21218,9 @@ export interface BrandNullablePromise
 export interface ExternalShopifyIntegration {
   id: ID_Output;
   shopName: String;
-  enabled: String;
+  enabled: Boolean;
   accessToken?: String;
+  nonce?: String;
 }
 
 export interface ExternalShopifyIntegrationPromise
@@ -21218,8 +21228,9 @@ export interface ExternalShopifyIntegrationPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   shopName: () => Promise<String>;
-  enabled: () => Promise<String>;
+  enabled: () => Promise<Boolean>;
   accessToken: () => Promise<String>;
+  nonce: () => Promise<String>;
 }
 
 export interface ExternalShopifyIntegrationSubscription
@@ -21227,8 +21238,9 @@ export interface ExternalShopifyIntegrationSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   shopName: () => Promise<AsyncIterator<String>>;
-  enabled: () => Promise<AsyncIterator<String>>;
+  enabled: () => Promise<AsyncIterator<Boolean>>;
   accessToken: () => Promise<AsyncIterator<String>>;
+  nonce: () => Promise<AsyncIterator<String>>;
 }
 
 export interface ExternalShopifyIntegrationNullablePromise
@@ -21236,8 +21248,9 @@ export interface ExternalShopifyIntegrationNullablePromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   shopName: () => Promise<String>;
-  enabled: () => Promise<String>;
+  enabled: () => Promise<Boolean>;
   accessToken: () => Promise<String>;
+  nonce: () => Promise<String>;
 }
 
 export interface Category {
@@ -28516,8 +28529,9 @@ export interface ExternalShopifyIntegrationSubscriptionPayloadSubscription
 export interface ExternalShopifyIntegrationPreviousValues {
   id: ID_Output;
   shopName: String;
-  enabled: String;
+  enabled: Boolean;
   accessToken?: String;
+  nonce?: String;
 }
 
 export interface ExternalShopifyIntegrationPreviousValuesPromise
@@ -28525,8 +28539,9 @@ export interface ExternalShopifyIntegrationPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   shopName: () => Promise<String>;
-  enabled: () => Promise<String>;
+  enabled: () => Promise<Boolean>;
   accessToken: () => Promise<String>;
+  nonce: () => Promise<String>;
 }
 
 export interface ExternalShopifyIntegrationPreviousValuesSubscription
@@ -28534,8 +28549,9 @@ export interface ExternalShopifyIntegrationPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   shopName: () => Promise<AsyncIterator<String>>;
-  enabled: () => Promise<AsyncIterator<String>>;
+  enabled: () => Promise<AsyncIterator<Boolean>>;
   accessToken: () => Promise<AsyncIterator<String>>;
+  nonce: () => Promise<AsyncIterator<String>>;
 }
 
 export interface FitPicSubscriptionPayload {

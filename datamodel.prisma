@@ -247,9 +247,10 @@ enum ShippingCode {
 
 type ExternalShopifyIntegration {
   id: ID! @id
-  shopName: String!
-  enabled: String!
+  shopName: String! @unique
+  enabled: Boolean!
   accessToken: String
+  nonce: String
 }
 
 type Brand {

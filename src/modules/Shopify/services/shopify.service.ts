@@ -1,4 +1,5 @@
 import crypto from "crypto"
+import querystring from "querystring"
 
 import {
   Brand,
@@ -17,22 +18,67 @@ import { PrismaService } from "../../../prisma/prisma.service"
 const {
   SHOPIFY_API_KEY,
   SHOPIFY_API_SECRET_KEY,
-  SHOPIFY_APP_NONCE,
+  SHOPIFY_OAUTH_REDIRECT_URL,
 } = process.env
 
-const VALID_SHOPIFY_HOSTNAME = /\A(https|http)\:\/\/[a-zA-Z0-9][a-zA-Z0-9\-]*\.myshopify\.com\//
 const PRODUCT_VARIANT_CACHE_SECONDS = 60 * 30 // 30 minutes
-
-type AccessToken = {
-  accessToken: string
-  scope: string
-}
 
 @Injectable()
 export class ShopifyService {
   constructor(private readonly prisma: PrismaService) {}
 
-  isValidAuthorizationCode({
+  getShopName = (shop: string) => {
+    const matches = shop.match(/(.*)\.myshopify\.com/)
+
+    return matches && matches.length === 2 ? matches[1] : shop
+  }
+
+  async getOAuthURL({ shop }: { shop: string }): Promise<string> {
+    const shopName = this.getShopName(shop)
+    const nonce: string = await new Promise((resolve, reject) => {
+      crypto.randomBytes(48, (error, buffer) => {
+        if (error) {
+          reject(error)
+          return
+        }
+
+        resolve(buffer.toString("hex"))
+      })
+    })
+
+    await this.prisma.client.updateExternalShopifyIntegration({
+      where: {
+        shopName,
+      },
+      data: { nonce },
+    })
+
+    const query = querystring.stringify({
+      client_id: SHOPIFY_API_KEY,
+      scope: ["read_products", "write_draft_orders"].join(","),
+      redirect_uri: SHOPIFY_OAUTH_REDIRECT_URL,
+      state: nonce,
+    })
+
+    return `https://${shopName}.myshopify.com/admin/oauth/authorize?${query}`
+  }
+
+  isValidHMAC({
+    hmac,
+    params,
+  }: {
+    hmac: string
+    params: { [key: string]: string }
+  }): boolean {
+    const ownHMAC = crypto
+      .createHmac("sha256", SHOPIFY_API_SECRET_KEY)
+      .update(querystring.stringify(params))
+      .digest("hex")
+
+    return ownHMAC === hmac
+  }
+
+  async isValidAuthorizationCode({
     authorizationCode,
     hmac,
     timestamp,
@@ -45,16 +91,21 @@ export class ShopifyService {
     nonce: string
     shop: string
   }) {
-    const queryWithoutHmac = `code=${authorizationCode}&shop=${shop}&state=${nonce}&timestamp=${timestamp}`
-    const ownHmac = crypto
-      .createHmac("sha256", SHOPIFY_API_SECRET_KEY)
-      .update(queryWithoutHmac)
-      .digest("hex")
+    const isValidHMAC = this.isValidHMAC({
+      hmac,
+      params: { code: authorizationCode, shop, state: nonce, timestamp },
+    })
+
+    const externalShopifyIntegration = await this.prisma.client.externalShopifyIntegration(
+      {
+        shopName: this.getShopName(shop),
+      }
+    )
 
     return (
-      nonce === SHOPIFY_APP_NONCE &&
-      VALID_SHOPIFY_HOSTNAME.test(shop) &&
-      ownHmac === hmac
+      externalShopifyIntegration &&
+      nonce === externalShopifyIntegration.nonce &&
+      isValidHMAC
     )
   }
 
@@ -64,11 +115,13 @@ export class ShopifyService {
   }: {
     shop: string
     authorizationCode: string
-  }): Promise<AccessToken> {
+  }): Promise<string> {
     return new Promise((resolve, reject) => {
       request(
         {
-          uri: `https://${shop}.myshopify.com/admin/oauth/access_token`,
+          uri: `https://${this.getShopName(
+            shop
+          )}.myshopify.com/admin/oauth/access_token`,
           method: "POST",
           body: {
             client_id: SHOPIFY_API_KEY,
@@ -77,11 +130,11 @@ export class ShopifyService {
           },
           json: true,
         },
-        (err, response) => {
+        (err, _response, body) => {
           if (err) {
             return reject(err)
           }
-          return resolve(response.toJSON().body)
+          return resolve(body.access_token)
         }
       )
     })

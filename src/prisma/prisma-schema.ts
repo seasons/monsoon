@@ -4714,8 +4714,9 @@ input EmailReceiptWhereUniqueInput {
 type ExternalShopifyIntegration {
   id: ID!
   shopName: String!
-  enabled: String!
+  enabled: Boolean!
   accessToken: String
+  nonce: String
 }
 
 type ExternalShopifyIntegrationConnection {
@@ -4727,8 +4728,9 @@ type ExternalShopifyIntegrationConnection {
 input ExternalShopifyIntegrationCreateInput {
   id: ID
   shopName: String!
-  enabled: String!
+  enabled: Boolean!
   accessToken: String
+  nonce: String
 }
 
 input ExternalShopifyIntegrationCreateOneInput {
@@ -4750,13 +4752,16 @@ enum ExternalShopifyIntegrationOrderByInput {
   enabled_DESC
   accessToken_ASC
   accessToken_DESC
+  nonce_ASC
+  nonce_DESC
 }
 
 type ExternalShopifyIntegrationPreviousValues {
   id: ID!
   shopName: String!
-  enabled: String!
+  enabled: Boolean!
   accessToken: String
+  nonce: String
 }
 
 type ExternalShopifyIntegrationSubscriptionPayload {
@@ -4779,20 +4784,23 @@ input ExternalShopifyIntegrationSubscriptionWhereInput {
 
 input ExternalShopifyIntegrationUpdateDataInput {
   shopName: String
-  enabled: String
+  enabled: Boolean
   accessToken: String
+  nonce: String
 }
 
 input ExternalShopifyIntegrationUpdateInput {
   shopName: String
-  enabled: String
+  enabled: Boolean
   accessToken: String
+  nonce: String
 }
 
 input ExternalShopifyIntegrationUpdateManyMutationInput {
   shopName: String
-  enabled: String
+  enabled: Boolean
   accessToken: String
+  nonce: String
 }
 
 input ExternalShopifyIntegrationUpdateOneInput {
@@ -4838,20 +4846,8 @@ input ExternalShopifyIntegrationWhereInput {
   shopName_not_starts_with: String
   shopName_ends_with: String
   shopName_not_ends_with: String
-  enabled: String
-  enabled_not: String
-  enabled_in: [String!]
-  enabled_not_in: [String!]
-  enabled_lt: String
-  enabled_lte: String
-  enabled_gt: String
-  enabled_gte: String
-  enabled_contains: String
-  enabled_not_contains: String
-  enabled_starts_with: String
-  enabled_not_starts_with: String
-  enabled_ends_with: String
-  enabled_not_ends_with: String
+  enabled: Boolean
+  enabled_not: Boolean
   accessToken: String
   accessToken_not: String
   accessToken_in: [String!]
@@ -4866,6 +4862,20 @@ input ExternalShopifyIntegrationWhereInput {
   accessToken_not_starts_with: String
   accessToken_ends_with: String
   accessToken_not_ends_with: String
+  nonce: String
+  nonce_not: String
+  nonce_in: [String!]
+  nonce_not_in: [String!]
+  nonce_lt: String
+  nonce_lte: String
+  nonce_gt: String
+  nonce_gte: String
+  nonce_contains: String
+  nonce_not_contains: String
+  nonce_starts_with: String
+  nonce_not_starts_with: String
+  nonce_ends_with: String
+  nonce_not_ends_with: String
   AND: [ExternalShopifyIntegrationWhereInput!]
   OR: [ExternalShopifyIntegrationWhereInput!]
   NOT: [ExternalShopifyIntegrationWhereInput!]
@@ -4873,6 +4883,7 @@ input ExternalShopifyIntegrationWhereInput {
 
 input ExternalShopifyIntegrationWhereUniqueInput {
   id: ID
+  shopName: String
 }
 
 type FitPic {

@@ -1,6 +1,6 @@
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Controller, Get, Query, Res } from "@nestjs/common"
-import { Response } from "express"
+import { Controller, Get, Query, Req, Res } from "@nestjs/common"
+import { Request, Response } from "express"
 
 import { ShopifyService } from "../services/shopify.service"
 
@@ -11,9 +11,35 @@ export class ShopifyController {
     private readonly shopify: ShopifyService
   ) {}
 
+  // https://shopify.dev/tutorials/authenticate-with-oauth#step-2-ask-for-permission
+  @Get("install")
+  async shopifyInstall(
+    @Query("hmac") hmac: string,
+    @Query("shop") shop: string,
+    @Query("timestamp") timestamp: string,
+    @Req() req: Request,
+    @Res() res: Response
+  ) {
+    const isValidHMAC = this.shopify.isValidHMAC({
+      hmac,
+      params: { shop, timestamp },
+    })
+
+    if (!isValidHMAC) {
+      res.status(401).send("HMAC is invalid.")
+      return
+    }
+
+    const oauthURL = await this.shopify.getOAuthURL({
+      shop,
+    })
+
+    return res.redirect(oauthURL)
+  }
+
   // https://shopify.dev/tutorials/authenticate-with-oauth#step-3-confirm-installation
-  @Get("oauth_redirect")
-  async shopifyAppInstallation(
+  @Get("oauth-redirect")
+  async shopifyOAuthRedirect(
     @Query("code") authorizationCode: string,
     @Query("hmac") hmac: string,
     @Query("timestamp") timestamp: string,
@@ -21,7 +47,7 @@ export class ShopifyController {
     @Query("shop") shop: string,
     @Res() res: Response
   ) {
-    const isValid = this.shopify.isValidAuthorizationCode({
+    const isValid = await this.shopify.isValidAuthorizationCode({
       authorizationCode,
       hmac,
       timestamp,
@@ -34,33 +60,16 @@ export class ShopifyController {
       return
     }
 
-    const { accessToken } = await this.shopify.getAccessToken({
+    const accessToken = await this.shopify.getAccessToken({
       authorizationCode,
       shop,
     })
 
-    const brand = await this.prisma.client.brands({
-      where: {
-        externalShopifyIntegration: {
-          shopName: shop,
-        },
-      },
-    })
-
-    if (!brand || brand.length === 0) {
-      res.status(403).send("No matching shop found.")
-    }
-
-    await this.prisma.client.updateBrand({
+    await this.prisma.client.updateExternalShopifyIntegration({
+      where: { shopName: this.shopify.getShopName(shop) },
       data: {
-        externalShopifyIntegration: {
-          update: {
-            accessToken,
-          },
-        },
-      },
-      where: {
-        id: brand[0].id,
+        nonce: null,
+        accessToken,
       },
     })
 
