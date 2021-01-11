@@ -157,64 +157,65 @@ enum PhotographyStatus {
 }
 
 enum EmailId {
-  ReservationReturnConfirmation
-  ReservationConfirmation
   CompleteAccount
-  FreeToReserve
-  WelcomeToSeasons
-  ReturnReminder
-  ResumeReminder
-  PriorityAccess
-  SubmittedEmail
-  Waitlisted
-  Paused
-  Rewaitlisted
-  TwentyFourHourAuthorizationFollowup
-  DayTwoAuthorizationFollowup
-  DayThreeAuthorizationFollowup
-  DayFourAuthorizationFollowup
   DayFiveAuthorizationFollowup
+  DayFourAuthorizationFollowup
   DaySixAuthorizationFollowup
+  DayThreeAuthorizationFollowup
+  DayTwoAuthorizationFollowup
+  FreeToReserve
+  Paused
+  PriorityAccess
   ReferralConfirmation
+  ReservationConfirmation
+  ReservationReturnConfirmation
+  ResumeConfirmation
+  ResumeReminder
+  ReturnReminder
+  Rewaitlisted
+  SubmittedEmail
+  TwentyFourHourAuthorizationFollowup
+  Waitlisted
+  WelcomeToSeasons
 }
 
 enum PackageTransitEventStatus {
-  PreTransit
-  Transit
   Delivered
-  Returned
   Failure
+  PreTransit
+  Returned
+  Transit
   Unknown
 }
 
 enum PackageTransitEventSubStatus {
-  InformationReceived
   AddressIssue
   ContactCarrier
   Delayed
+  Delivered
   DeliveryAttempted
   DeliveryRescheduled
   DeliveryScheduled
+  InformationReceived
   LocationInaccessible
   NoticeLeft
+  Other
   OutForDelivery
   PackageAccepted
   PackageArrived
   PackageDamaged
   PackageDeparted
+  PackageDisposed
   PackageForwarded
   PackageHeld
+  PackageLost
   PackageProcessed
   PackageProcessing
-  PickupAvailable
-  RescheduleDelivery
-  Delivered
-  ReturnToSender
   PackageUnclaimed
   PackageUndeliverable
-  PackageDisposed
-  PackageLost
-  Other
+  PickupAvailable
+  RescheduleDelivery
+  ReturnToSender
 }
 
 enum ReservationPhase {
@@ -223,11 +224,11 @@ enum ReservationPhase {
 }
 
 enum UserPushNotificationInterestType {
-  General
-  Blog
   Bag
-  NewProduct
+  Blog
   Brand
+  General
+  NewProduct
 }
 
 enum InAdmissableReason {

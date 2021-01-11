@@ -133,6 +133,11 @@ export class MembershipScheduledJobs {
             `
               {
                 id
+                user {
+                  id
+                  firstName
+                  lastName
+                }
                 membership {
                   id
                   subscriptionId
@@ -155,6 +160,9 @@ export class MembershipScheduledJobs {
             customer
           )
 
+          await this.email.sendResumeConfirmationEmail(
+            customerWithMembership.user
+          )
           continue
         }
 
