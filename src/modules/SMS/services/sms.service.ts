@@ -17,7 +17,6 @@ import {
 import { PrismaService } from "@prisma/prisma.service"
 import { LinksAndEmails } from "@seasons/wind"
 import { head } from "lodash"
-import { DateTime } from "luxon"
 import moment from "moment"
 import mustache from "mustache"
 import Twilio from "twilio"
@@ -205,6 +204,7 @@ export class SMSService {
     if (!shouldSend) {
       return "Undelivered"
     }
+    console.log("sending via twilio")
 
     // Send SMS message
     const {

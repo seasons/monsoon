@@ -12,7 +12,7 @@ import { ApolloError } from "apollo-server"
 import { AdmissionsService } from "../services/admissions.service"
 import { CustomerService } from "../services/customer.service"
 
-describe("Customer Service", () => {
+describe.only("Customer Service", () => {
   let customerService: CustomerService
   let prisma: PrismaService
   let testUtils: TestUtilsService
@@ -97,7 +97,10 @@ describe("Customer Service", () => {
 
         const sendSMSFunc = jest
           .spyOn(smsService, "sendSMSById")
-          .mockResolvedValue("Delivered")
+          .mockImplementation(async ({ to, smsId, renderData }) => {
+            console.log("sending via mock")
+            return "Delivered"
+          })
           .mockClear()
 
         const newPlan = "Essential"
