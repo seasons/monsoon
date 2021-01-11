@@ -36,7 +36,7 @@ export class PushNotificationMutationsResolver {
       vars: { title, body, route, uri, ...pick(record, ["id", "slug"]) },
     })
 
-    const id = receipts[email]
+    const { id } = receipts[email]
 
     return await this.prisma.binding.query.pushNotificationReceipt(
       {

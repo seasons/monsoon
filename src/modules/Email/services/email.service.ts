@@ -61,15 +61,27 @@ export class EmailService {
     })
   }
 
-  async sendAuthorized24HourFollowup(
+  async sendAuthorizedDaySixFollowup(
     user: EmailUser,
     availableStyles: Product[]
   ) {
     await this.sendEmailWithReservableStyles({
       user,
       availableStyles,
-      renderEmailFunc: "authorized24HourFollowup",
-      emailId: "TwentyFourHourAuthorizationFollowup",
+      renderEmailFunc: "authorizedDaySixFollowup",
+      emailId: "DaySixAuthorizationFollowup",
+    })
+  }
+
+  async sendAuthorizedDayThreeFollowup(
+    user: EmailUser,
+    availableStyles: Product[]
+  ) {
+    await this.sendEmailWithReservableStyles({
+      user,
+      availableStyles,
+      renderEmailFunc: "authorizedDayThreeFollowup",
+      emailId: "DayThreeAuthorizationFollowup",
     })
   }
 
@@ -265,7 +277,11 @@ export class EmailService {
   }: {
     user: EmailUser
     availableStyles: Product[]
-    renderEmailFunc: "authorized" | "authorized24HourFollowup" | "rewaitlisted"
+    renderEmailFunc:
+      | "authorized"
+      | "authorizedDayThreeFollowup"
+      | "authorizedDaySixFollowup"
+      | "rewaitlisted"
     emailId: EmailId
     renderData?: any
   }) {
@@ -284,7 +300,7 @@ export class EmailService {
       payload,
       emailId,
     })
-    if (products !== null) {
+    if (products?.length > 0) {
       await this.addEmailedProductsToCustomer(user, products)
     }
   }

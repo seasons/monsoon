@@ -4175,12 +4175,14 @@ input CategoryWhereUniqueInput {
 type Collection implements Node {
   id: ID!
   slug: String!
-  images: Json!
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  descriptions: [String!]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  published: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime
 }
 
 """A connection to a list of items."""
@@ -4193,14 +4195,18 @@ type CollectionConnection {
   aggregate: AggregateCollection!
 }
 
+input CollectionCreatedescriptionsInput {
+  set: [String!]
+}
+
 input CollectionCreateInput {
   id: ID
   slug: String!
-  images: Json!
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  published: Boolean
+  descriptions: CollectionCreatedescriptionsInput
+  images: ImageCreateManyInput
   products: ProductCreateManyInput
 }
 
@@ -4487,26 +4493,27 @@ enum CollectionOrderByInput {
   id_DESC
   slug_ASC
   slug_DESC
-  images_ASC
-  images_DESC
   title_ASC
   title_DESC
   subTitle_ASC
   subTitle_DESC
-  descriptionTop_ASC
-  descriptionTop_DESC
-  descriptionBottom_ASC
-  descriptionBottom_DESC
+  published_ASC
+  published_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type CollectionPreviousValues {
   id: ID!
   slug: String!
-  images: Json!
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  descriptions: [String!]!
+  published: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime
 }
 
 input CollectionScalarWhereInput {
@@ -4678,86 +4685,54 @@ input CollectionScalarWhereInput {
 
   """All values not ending with the given string."""
   subTitle_not_ends_with: String
-  descriptionTop: String
+  published: Boolean
 
   """All values that are not equal to given value."""
-  descriptionTop_not: String
-
-  """All values that are contained in given list."""
-  descriptionTop_in: [String!]
-
-  """All values that are not contained in given list."""
-  descriptionTop_not_in: [String!]
-
-  """All values less than the given value."""
-  descriptionTop_lt: String
-
-  """All values less than or equal the given value."""
-  descriptionTop_lte: String
-
-  """All values greater than the given value."""
-  descriptionTop_gt: String
-
-  """All values greater than or equal the given value."""
-  descriptionTop_gte: String
-
-  """All values containing the given string."""
-  descriptionTop_contains: String
-
-  """All values not containing the given string."""
-  descriptionTop_not_contains: String
-
-  """All values starting with the given string."""
-  descriptionTop_starts_with: String
-
-  """All values not starting with the given string."""
-  descriptionTop_not_starts_with: String
-
-  """All values ending with the given string."""
-  descriptionTop_ends_with: String
-
-  """All values not ending with the given string."""
-  descriptionTop_not_ends_with: String
-  descriptionBottom: String
+  published_not: Boolean
+  createdAt: DateTime
 
   """All values that are not equal to given value."""
-  descriptionBottom_not: String
+  createdAt_not: DateTime
 
   """All values that are contained in given list."""
-  descriptionBottom_in: [String!]
+  createdAt_in: [DateTime!]
 
   """All values that are not contained in given list."""
-  descriptionBottom_not_in: [String!]
+  createdAt_not_in: [DateTime!]
 
   """All values less than the given value."""
-  descriptionBottom_lt: String
+  createdAt_lt: DateTime
 
   """All values less than or equal the given value."""
-  descriptionBottom_lte: String
+  createdAt_lte: DateTime
 
   """All values greater than the given value."""
-  descriptionBottom_gt: String
+  createdAt_gt: DateTime
 
   """All values greater than or equal the given value."""
-  descriptionBottom_gte: String
+  createdAt_gte: DateTime
+  updatedAt: DateTime
 
-  """All values containing the given string."""
-  descriptionBottom_contains: String
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
 
-  """All values not containing the given string."""
-  descriptionBottom_not_contains: String
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
 
-  """All values starting with the given string."""
-  descriptionBottom_starts_with: String
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
 
-  """All values not starting with the given string."""
-  descriptionBottom_not_starts_with: String
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
 
-  """All values ending with the given string."""
-  descriptionBottom_ends_with: String
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
 
-  """All values not ending with the given string."""
-  descriptionBottom_not_ends_with: String
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 type CollectionSubscriptionPayload {
@@ -4799,31 +4774,34 @@ input CollectionSubscriptionWhereInput {
 
 input CollectionUpdateDataInput {
   slug: String
-  images: Json
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  published: Boolean
+  descriptions: CollectionUpdatedescriptionsInput
+  images: ImageUpdateManyInput
   products: ProductUpdateManyInput
+}
+
+input CollectionUpdatedescriptionsInput {
+  set: [String!]
 }
 
 input CollectionUpdateInput {
   slug: String
-  images: Json
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  published: Boolean
+  descriptions: CollectionUpdatedescriptionsInput
+  images: ImageUpdateManyInput
   products: ProductUpdateManyInput
 }
 
 input CollectionUpdateManyDataInput {
   slug: String
-  images: Json
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  published: Boolean
+  descriptions: CollectionUpdatedescriptionsInput
 }
 
 input CollectionUpdateManyInput {
@@ -4840,11 +4818,10 @@ input CollectionUpdateManyInput {
 
 input CollectionUpdateManyMutationInput {
   slug: String
-  images: Json
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  published: Boolean
+  descriptions: CollectionUpdatedescriptionsInput
 }
 
 input CollectionUpdateManyWithWhereNestedInput {
@@ -5032,86 +5009,57 @@ input CollectionWhereInput {
 
   """All values not ending with the given string."""
   subTitle_not_ends_with: String
-  descriptionTop: String
+  published: Boolean
 
   """All values that are not equal to given value."""
-  descriptionTop_not: String
-
-  """All values that are contained in given list."""
-  descriptionTop_in: [String!]
-
-  """All values that are not contained in given list."""
-  descriptionTop_not_in: [String!]
-
-  """All values less than the given value."""
-  descriptionTop_lt: String
-
-  """All values less than or equal the given value."""
-  descriptionTop_lte: String
-
-  """All values greater than the given value."""
-  descriptionTop_gt: String
-
-  """All values greater than or equal the given value."""
-  descriptionTop_gte: String
-
-  """All values containing the given string."""
-  descriptionTop_contains: String
-
-  """All values not containing the given string."""
-  descriptionTop_not_contains: String
-
-  """All values starting with the given string."""
-  descriptionTop_starts_with: String
-
-  """All values not starting with the given string."""
-  descriptionTop_not_starts_with: String
-
-  """All values ending with the given string."""
-  descriptionTop_ends_with: String
-
-  """All values not ending with the given string."""
-  descriptionTop_not_ends_with: String
-  descriptionBottom: String
+  published_not: Boolean
+  createdAt: DateTime
 
   """All values that are not equal to given value."""
-  descriptionBottom_not: String
+  createdAt_not: DateTime
 
   """All values that are contained in given list."""
-  descriptionBottom_in: [String!]
+  createdAt_in: [DateTime!]
 
   """All values that are not contained in given list."""
-  descriptionBottom_not_in: [String!]
+  createdAt_not_in: [DateTime!]
 
   """All values less than the given value."""
-  descriptionBottom_lt: String
+  createdAt_lt: DateTime
 
   """All values less than or equal the given value."""
-  descriptionBottom_lte: String
+  createdAt_lte: DateTime
 
   """All values greater than the given value."""
-  descriptionBottom_gt: String
+  createdAt_gt: DateTime
 
   """All values greater than or equal the given value."""
-  descriptionBottom_gte: String
+  createdAt_gte: DateTime
+  updatedAt: DateTime
 
-  """All values containing the given string."""
-  descriptionBottom_contains: String
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
 
-  """All values not containing the given string."""
-  descriptionBottom_not_contains: String
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
 
-  """All values starting with the given string."""
-  descriptionBottom_starts_with: String
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
 
-  """All values not starting with the given string."""
-  descriptionBottom_not_starts_with: String
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
 
-  """All values ending with the given string."""
-  descriptionBottom_ends_with: String
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
 
-  """All values not ending with the given string."""
-  descriptionBottom_not_ends_with: String
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  images_every: ImageWhereInput
+  images_some: ImageWhereInput
+  images_none: ImageWhereInput
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
@@ -8246,6 +8194,11 @@ enum EmailId {
   Paused
   Rewaitlisted
   TwentyFourHourAuthorizationFollowup
+  DayTwoAuthorizationFollowup
+  DayThreeAuthorizationFollowup
+  DayFourAuthorizationFollowup
+  DayFiveAuthorizationFollowup
+  DaySixAuthorizationFollowup
   ReferralConfirmation
 }
 
@@ -31175,16 +31128,16 @@ export type CollectionOrderByInput =   'id_ASC' |
   'id_DESC' |
   'slug_ASC' |
   'slug_DESC' |
-  'images_ASC' |
-  'images_DESC' |
   'title_ASC' |
   'title_DESC' |
   'subTitle_ASC' |
   'subTitle_DESC' |
-  'descriptionTop_ASC' |
-  'descriptionTop_DESC' |
-  'descriptionBottom_ASC' |
-  'descriptionBottom_DESC'
+  'published_ASC' |
+  'published_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
 export type ColorOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -31303,6 +31256,11 @@ export type EmailId =   'ReservationReturnConfirmation' |
   'Paused' |
   'Rewaitlisted' |
   'TwentyFourHourAuthorizationFollowup' |
+  'DayTwoAuthorizationFollowup' |
+  'DayThreeAuthorizationFollowup' |
+  'DayFourAuthorizationFollowup' |
+  'DayFiveAuthorizationFollowup' |
+  'DaySixAuthorizationFollowup' |
   'ReferralConfirmation'
 
 export type EmailReceiptOrderByInput =   'id_ASC' |
@@ -33434,14 +33392,18 @@ export interface CategoryWhereUniqueInput {
   name?: String | null
 }
 
+export interface CollectionCreatedescriptionsInput {
+  set?: String[] | String | null
+}
+
 export interface CollectionCreateInput {
   id?: ID_Input | null
   slug: String
-  images: Json
   title?: String | null
   subTitle?: String | null
-  descriptionTop?: String | null
-  descriptionBottom?: String | null
+  published?: Boolean | null
+  descriptions?: CollectionCreatedescriptionsInput | null
+  images?: ImageCreateManyInput | null
   products?: ProductCreateManyInput | null
 }
 
@@ -33606,34 +33568,24 @@ export interface CollectionScalarWhereInput {
   subTitle_not_starts_with?: String | null
   subTitle_ends_with?: String | null
   subTitle_not_ends_with?: String | null
-  descriptionTop?: String | null
-  descriptionTop_not?: String | null
-  descriptionTop_in?: String[] | String | null
-  descriptionTop_not_in?: String[] | String | null
-  descriptionTop_lt?: String | null
-  descriptionTop_lte?: String | null
-  descriptionTop_gt?: String | null
-  descriptionTop_gte?: String | null
-  descriptionTop_contains?: String | null
-  descriptionTop_not_contains?: String | null
-  descriptionTop_starts_with?: String | null
-  descriptionTop_not_starts_with?: String | null
-  descriptionTop_ends_with?: String | null
-  descriptionTop_not_ends_with?: String | null
-  descriptionBottom?: String | null
-  descriptionBottom_not?: String | null
-  descriptionBottom_in?: String[] | String | null
-  descriptionBottom_not_in?: String[] | String | null
-  descriptionBottom_lt?: String | null
-  descriptionBottom_lte?: String | null
-  descriptionBottom_gt?: String | null
-  descriptionBottom_gte?: String | null
-  descriptionBottom_contains?: String | null
-  descriptionBottom_not_contains?: String | null
-  descriptionBottom_starts_with?: String | null
-  descriptionBottom_not_starts_with?: String | null
-  descriptionBottom_ends_with?: String | null
-  descriptionBottom_not_ends_with?: String | null
+  published?: Boolean | null
+  published_not?: Boolean | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
 }
 
 export interface CollectionSubscriptionWhereInput {
@@ -33649,31 +33601,34 @@ export interface CollectionSubscriptionWhereInput {
 
 export interface CollectionUpdateDataInput {
   slug?: String | null
-  images?: Json | null
   title?: String | null
   subTitle?: String | null
-  descriptionTop?: String | null
-  descriptionBottom?: String | null
+  published?: Boolean | null
+  descriptions?: CollectionUpdatedescriptionsInput | null
+  images?: ImageUpdateManyInput | null
   products?: ProductUpdateManyInput | null
+}
+
+export interface CollectionUpdatedescriptionsInput {
+  set?: String[] | String | null
 }
 
 export interface CollectionUpdateInput {
   slug?: String | null
-  images?: Json | null
   title?: String | null
   subTitle?: String | null
-  descriptionTop?: String | null
-  descriptionBottom?: String | null
+  published?: Boolean | null
+  descriptions?: CollectionUpdatedescriptionsInput | null
+  images?: ImageUpdateManyInput | null
   products?: ProductUpdateManyInput | null
 }
 
 export interface CollectionUpdateManyDataInput {
   slug?: String | null
-  images?: Json | null
   title?: String | null
   subTitle?: String | null
-  descriptionTop?: String | null
-  descriptionBottom?: String | null
+  published?: Boolean | null
+  descriptions?: CollectionUpdatedescriptionsInput | null
 }
 
 export interface CollectionUpdateManyInput {
@@ -33690,11 +33645,10 @@ export interface CollectionUpdateManyInput {
 
 export interface CollectionUpdateManyMutationInput {
   slug?: String | null
-  images?: Json | null
   title?: String | null
   subTitle?: String | null
-  descriptionTop?: String | null
-  descriptionBottom?: String | null
+  published?: Boolean | null
+  descriptions?: CollectionUpdatedescriptionsInput | null
 }
 
 export interface CollectionUpdateManyWithWhereNestedInput {
@@ -33773,34 +33727,27 @@ export interface CollectionWhereInput {
   subTitle_not_starts_with?: String | null
   subTitle_ends_with?: String | null
   subTitle_not_ends_with?: String | null
-  descriptionTop?: String | null
-  descriptionTop_not?: String | null
-  descriptionTop_in?: String[] | String | null
-  descriptionTop_not_in?: String[] | String | null
-  descriptionTop_lt?: String | null
-  descriptionTop_lte?: String | null
-  descriptionTop_gt?: String | null
-  descriptionTop_gte?: String | null
-  descriptionTop_contains?: String | null
-  descriptionTop_not_contains?: String | null
-  descriptionTop_starts_with?: String | null
-  descriptionTop_not_starts_with?: String | null
-  descriptionTop_ends_with?: String | null
-  descriptionTop_not_ends_with?: String | null
-  descriptionBottom?: String | null
-  descriptionBottom_not?: String | null
-  descriptionBottom_in?: String[] | String | null
-  descriptionBottom_not_in?: String[] | String | null
-  descriptionBottom_lt?: String | null
-  descriptionBottom_lte?: String | null
-  descriptionBottom_gt?: String | null
-  descriptionBottom_gte?: String | null
-  descriptionBottom_contains?: String | null
-  descriptionBottom_not_contains?: String | null
-  descriptionBottom_starts_with?: String | null
-  descriptionBottom_not_starts_with?: String | null
-  descriptionBottom_ends_with?: String | null
-  descriptionBottom_not_ends_with?: String | null
+  published?: Boolean | null
+  published_not?: Boolean | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  images_every?: ImageWhereInput | null
+  images_some?: ImageWhereInput | null
+  images_none?: ImageWhereInput | null
   products_every?: ProductWhereInput | null
   products_some?: ProductWhereInput | null
   products_none?: ProductWhereInput | null
@@ -46170,12 +46117,14 @@ export interface CategorySubscriptionPayload {
 export interface Collection extends Node {
   id: ID_Output
   slug: String
-  images: Json
+  images?: Array<Image> | null
   title?: String | null
   subTitle?: String | null
-  descriptionTop?: String | null
-  descriptionBottom?: String | null
+  descriptions: Array<String>
   products?: Array<Product> | null
+  published: Boolean
+  createdAt: DateTime
+  updatedAt?: DateTime | null
 }
 
 /*
@@ -46241,11 +46190,12 @@ export interface CollectionGroupSubscriptionPayload {
 export interface CollectionPreviousValues {
   id: ID_Output
   slug: String
-  images: Json
   title?: String | null
   subTitle?: String | null
-  descriptionTop?: String | null
-  descriptionBottom?: String | null
+  descriptions: Array<String>
+  published: Boolean
+  createdAt: DateTime
+  updatedAt?: DateTime | null
 }
 
 export interface CollectionSubscriptionPayload {

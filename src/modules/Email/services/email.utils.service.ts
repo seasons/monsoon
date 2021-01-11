@@ -65,7 +65,7 @@ export class EmailUtilsService {
     user: User,
     products: Product[]
   ): Promise<MonsoonProductGridItem[] | null> {
-    let returnProducts = null
+    let returnProducts = []
 
     // Filter out from products we've already emailed to the user
     const customer = head(
@@ -99,7 +99,7 @@ export class EmailUtilsService {
       )
     }
 
-    if (returnProducts === null) {
+    if (returnProducts.length === 0) {
       this.error.setUserContext(user)
       this.error.captureMessage(
         `Unable to find ${numProducts} reservable products for email`

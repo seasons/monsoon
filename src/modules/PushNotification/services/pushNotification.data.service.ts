@@ -27,7 +27,9 @@ export class PushNotificationDataProvider {
     )[pushNotifID]
 
     alert = this.interpolateJSONObjectWithMustache(alert, vars)
-    data = this.interpolateJSONObjectWithMustache(data, vars)
+    if (!!data) {
+      data = this.interpolateJSONObjectWithMustache(data, vars)
+    }
 
     this.enforceLengths(alert)
 

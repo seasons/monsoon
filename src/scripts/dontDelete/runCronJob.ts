@@ -29,23 +29,25 @@ import { PrismaService } from "../../prisma/prisma.service"
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const run = async () => {
+  const error = new ErrorService()
   const ps = new PrismaService()
   const utils = new UtilsService(ps)
   const as = new AdmissionsService(ps, utils)
   const pusher = new PusherService()
   const pndp = new PushNotificationDataProvider()
-  const error = new ErrorService()
   const pn = new PushNotificationService(pusher, pndp, ps, error)
+
+  let payment
   const image = new ImageService(ps)
   const emailutils = new EmailUtilsService(ps, error, image)
   const email = new EmailService(ps, utils, emailutils)
-  const auth = new AuthService(ps, pn, email, error, utils)
-  const shipping = new ShippingService(ps, utils)
+  let auth = new AuthService(ps, pn, email, error, utils, payment)
   const segment = new SegmentService()
   const twilio = new TwilioService()
   const twilioUtils = new TwilioUtils()
   const paymentUtils = new PaymentUtilsService(ps, segment)
   const sms = new SMSService(ps, twilio, twilioUtils, paymentUtils, error)
+  const shipping = new ShippingService(ps, utils)
   const cs = new CustomerService(
     auth,
     ps,
@@ -57,7 +59,7 @@ const run = async () => {
     sms,
     utils
   )
-  const paymentService = new PaymentService(
+  payment = new PaymentService(
     shipping,
     auth,
     cs,
@@ -86,7 +88,7 @@ const run = async () => {
   const membershipService = new MembershipScheduledJobs(
     ps,
     paymentUtils,
-    paymentService,
+    payment,
     email,
     sms
   )

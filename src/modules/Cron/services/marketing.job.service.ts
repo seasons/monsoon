@@ -30,7 +30,8 @@ export class MarketingScheduledJobs {
   @Cron(CronExpression.EVERY_10_MINUTES)
   async authWindowFollowups() {
     this.logger.log("Run auth window followups job")
-    const twentyFourHourFollowupsSent = []
+    const daySixFollowupsSent = []
+    const dayThreeFollowupsSent = []
     const windowsClosed = []
 
     const customers = await this.prisma.binding.query.customers(
@@ -63,20 +64,43 @@ export class MarketingScheduledJobs {
     for (const cust of customers) {
       const now = moment()
 
-      const twentyFourHoursLeft = moment(
-        cust.admissions?.authorizationWindowClosesAt
-      )
-        .subtract(1, "d")
+      const oneDayPassed = moment(cust.authorizedAt)
+        .add(1, "d")
+        .isSameOrBefore(now)
+      const twoDaysPassed = moment(cust.authorizedAt)
+        .add(2, "d")
+        .isSameOrBefore(now)
+      const threeDaysPassed = moment(cust.authorizedAt)
+        .add(3, "d")
+        .isSameOrBefore(now)
+      const fourDaysPassed = moment(cust.authorizedAt)
+        .add(4, "d")
+        .isSameOrBefore(now)
+      const fiveDaysPassed = moment(cust.authorizedAt)
+        .add(5, "d")
         .isSameOrBefore(now)
       const windowClosed = moment(now).isAfter(
         cust.admissions?.authorizationWindowClosesAt
       )
 
       const receivedEmails = cust.user.emails.map(a => a.emailId)
-      const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
-      const twentyFourHourFollowupSent = receivedEmails.includes(
-        "TwentyFourHourAuthorizationFollowup"
+      const dayTwoFollowupSent = receivedEmails.includes(
+        "DayTwoAuthorizationFollowup"
       )
+      const dayThreeFollowupSent = receivedEmails.includes(
+        "DayThreeAuthorizationFollowup"
+      )
+      const dayFourFollowupSent = receivedEmails.includes(
+        "DayFourAuthorizationFollowup"
+      )
+      const dayFiveFollowupSent = receivedEmails.includes(
+        "DayFiveAuthorizationFollowup"
+      )
+      const daySixFollowupSent =
+        receivedEmails.includes("DaySixAuthorizationFollowup") ||
+        receivedEmails.includes("TwentyFourHourAuthorizationFollowup") // previous, deprecated email id. Maintain for backwards compatibility.
+
+      const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
 
       // Send rewaitlist email as needed
       if (windowClosed && !rewaitlistEmailSent) {
@@ -97,25 +121,60 @@ export class MarketingScheduledJobs {
         break
       }
 
-      // Send 24 hour follow up email as needed
-      if (twentyFourHoursLeft && !twentyFourHourFollowupSent) {
+      // Send day 6 email as needed
+      if (fiveDaysPassed && !daySixFollowupSent) {
         const availableStyles = await this.admissions.getAvailableStyles({
           id: cust.id,
         })
-        await this.email.sendAuthorized24HourFollowup(
+        await this.email.sendAuthorizedDaySixFollowup(
           cust.user,
           availableStyles
         )
         await this.sms.sendSMSById({
           to: { id: cust.user.id },
           renderData: { name: cust.user.firstName },
-          smsId: "TwentyFourHourAuthorizationFollowup",
+          smsId: "TwentyFourHourLeftAuthorizationFollowup",
         })
-        twentyFourHourFollowupsSent.push(cust.user.email)
+        daySixFollowupsSent.push(cust.user.email)
+        break
+      }
+
+      // Send day 5 email if needed
+      if (fourDaysPassed && !dayFiveFollowupSent) {
+        // TODO: Send email
+        break
+      }
+
+      // Send day 4 email if needed
+      if (threeDaysPassed && !dayFourFollowupSent) {
+        // TODO: Send email
+        break
+      }
+
+      // Send day 3 email if needed
+      if (twoDaysPassed && !dayThreeFollowupSent) {
+        const availableStyles = await this.admissions.getAvailableStyles({
+          id: cust.id,
+        })
+        await this.email.sendAuthorizedDayThreeFollowup(
+          cust.user,
+          availableStyles
+        )
+        dayThreeFollowupsSent.push(cust.user.email)
+        break
+      }
+
+      // Send day 2 email if needed
+      if (oneDayPassed && !dayTwoFollowupSent) {
+        // TODO: Send email
         break
       }
     }
     this.logger.log("Auth window followups job finished")
-    this.logger.log({ twentyFourHourFollowupsSent, windowsClosed })
+    this.logger.log({
+      dayThreeFollowupsSent,
+      daySixFollowupsSent,
+      windowsClosed,
+    })
   }
 }

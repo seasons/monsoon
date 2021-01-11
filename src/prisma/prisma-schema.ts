@@ -2068,12 +2068,14 @@ input CategoryWhereUniqueInput {
 type Collection {
   id: ID!
   slug: String!
-  images: Json!
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  descriptions: [String!]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  published: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime
 }
 
 type CollectionConnection {
@@ -2082,15 +2084,19 @@ type CollectionConnection {
   aggregate: AggregateCollection!
 }
 
+input CollectionCreatedescriptionsInput {
+  set: [String!]
+}
+
 input CollectionCreateInput {
   id: ID
   slug: String!
-  images: Json!
+  images: ImageCreateManyInput
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  descriptions: CollectionCreatedescriptionsInput
   products: ProductCreateManyInput
+  published: Boolean
 }
 
 input CollectionCreateManyInput {
@@ -2248,26 +2254,27 @@ enum CollectionOrderByInput {
   id_DESC
   slug_ASC
   slug_DESC
-  images_ASC
-  images_DESC
   title_ASC
   title_DESC
   subTitle_ASC
   subTitle_DESC
-  descriptionTop_ASC
-  descriptionTop_DESC
-  descriptionBottom_ASC
-  descriptionBottom_DESC
+  published_ASC
+  published_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type CollectionPreviousValues {
   id: ID!
   slug: String!
-  images: Json!
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  descriptions: [String!]!
+  published: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime
 }
 
 input CollectionScalarWhereInput {
@@ -2327,34 +2334,24 @@ input CollectionScalarWhereInput {
   subTitle_not_starts_with: String
   subTitle_ends_with: String
   subTitle_not_ends_with: String
-  descriptionTop: String
-  descriptionTop_not: String
-  descriptionTop_in: [String!]
-  descriptionTop_not_in: [String!]
-  descriptionTop_lt: String
-  descriptionTop_lte: String
-  descriptionTop_gt: String
-  descriptionTop_gte: String
-  descriptionTop_contains: String
-  descriptionTop_not_contains: String
-  descriptionTop_starts_with: String
-  descriptionTop_not_starts_with: String
-  descriptionTop_ends_with: String
-  descriptionTop_not_ends_with: String
-  descriptionBottom: String
-  descriptionBottom_not: String
-  descriptionBottom_in: [String!]
-  descriptionBottom_not_in: [String!]
-  descriptionBottom_lt: String
-  descriptionBottom_lte: String
-  descriptionBottom_gt: String
-  descriptionBottom_gte: String
-  descriptionBottom_contains: String
-  descriptionBottom_not_contains: String
-  descriptionBottom_starts_with: String
-  descriptionBottom_not_starts_with: String
-  descriptionBottom_ends_with: String
-  descriptionBottom_not_ends_with: String
+  published: Boolean
+  published_not: Boolean
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [CollectionScalarWhereInput!]
   OR: [CollectionScalarWhereInput!]
   NOT: [CollectionScalarWhereInput!]
@@ -2380,31 +2377,34 @@ input CollectionSubscriptionWhereInput {
 
 input CollectionUpdateDataInput {
   slug: String
-  images: Json
+  images: ImageUpdateManyInput
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  descriptions: CollectionUpdatedescriptionsInput
   products: ProductUpdateManyInput
+  published: Boolean
+}
+
+input CollectionUpdatedescriptionsInput {
+  set: [String!]
 }
 
 input CollectionUpdateInput {
   slug: String
-  images: Json
+  images: ImageUpdateManyInput
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  descriptions: CollectionUpdatedescriptionsInput
   products: ProductUpdateManyInput
+  published: Boolean
 }
 
 input CollectionUpdateManyDataInput {
   slug: String
-  images: Json
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  descriptions: CollectionUpdatedescriptionsInput
+  published: Boolean
 }
 
 input CollectionUpdateManyInput {
@@ -2421,11 +2421,10 @@ input CollectionUpdateManyInput {
 
 input CollectionUpdateManyMutationInput {
   slug: String
-  images: Json
   title: String
   subTitle: String
-  descriptionTop: String
-  descriptionBottom: String
+  descriptions: CollectionUpdatedescriptionsInput
+  published: Boolean
 }
 
 input CollectionUpdateManyWithWhereNestedInput {
@@ -2473,6 +2472,9 @@ input CollectionWhereInput {
   slug_not_starts_with: String
   slug_ends_with: String
   slug_not_ends_with: String
+  images_every: ImageWhereInput
+  images_some: ImageWhereInput
+  images_none: ImageWhereInput
   title: String
   title_not: String
   title_in: [String!]
@@ -2501,37 +2503,27 @@ input CollectionWhereInput {
   subTitle_not_starts_with: String
   subTitle_ends_with: String
   subTitle_not_ends_with: String
-  descriptionTop: String
-  descriptionTop_not: String
-  descriptionTop_in: [String!]
-  descriptionTop_not_in: [String!]
-  descriptionTop_lt: String
-  descriptionTop_lte: String
-  descriptionTop_gt: String
-  descriptionTop_gte: String
-  descriptionTop_contains: String
-  descriptionTop_not_contains: String
-  descriptionTop_starts_with: String
-  descriptionTop_not_starts_with: String
-  descriptionTop_ends_with: String
-  descriptionTop_not_ends_with: String
-  descriptionBottom: String
-  descriptionBottom_not: String
-  descriptionBottom_in: [String!]
-  descriptionBottom_not_in: [String!]
-  descriptionBottom_lt: String
-  descriptionBottom_lte: String
-  descriptionBottom_gt: String
-  descriptionBottom_gte: String
-  descriptionBottom_contains: String
-  descriptionBottom_not_contains: String
-  descriptionBottom_starts_with: String
-  descriptionBottom_not_starts_with: String
-  descriptionBottom_ends_with: String
-  descriptionBottom_not_ends_with: String
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
+  published: Boolean
+  published_not: Boolean
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [CollectionWhereInput!]
   OR: [CollectionWhereInput!]
   NOT: [CollectionWhereInput!]
@@ -4487,6 +4479,11 @@ enum EmailId {
   Paused
   Rewaitlisted
   TwentyFourHourAuthorizationFollowup
+  DayTwoAuthorizationFollowup
+  DayThreeAuthorizationFollowup
+  DayFourAuthorizationFollowup
+  DayFiveAuthorizationFollowup
+  DaySixAuthorizationFollowup
   ReferralConfirmation
 }
 
