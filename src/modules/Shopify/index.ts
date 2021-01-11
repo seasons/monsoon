@@ -1,1 +1,1 @@
-export { OAuthModule } from "./oauth.module"
+export { ShopifyModule } from "./shopify.module"

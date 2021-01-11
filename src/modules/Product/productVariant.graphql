@@ -159,7 +159,7 @@ input ShopifySelectedOptionInput {
 }
 
 input ShopifyProductVariantInput {
-  selectedOptions: [ShopifySelectedOption!]!
+  selectedOptions: [ShopifySelectedOptionInput!]!
 }
 
 input UpsertVariantInput {

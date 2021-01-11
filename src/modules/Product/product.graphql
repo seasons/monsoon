@@ -226,7 +226,7 @@ type Product {
   publishedAt: DateTime
 }
 
-type BrandExternalShopifyIntegration {
+type ExternalShopifyIntegration {
   # {shopName}.myshopify.com
   shopName: String!
   enabled: Boolean!
@@ -281,7 +281,7 @@ type Brand {
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
-  externalShopifyIntegration: BrandExternalShopifyIntegration
+  externalShopifyIntegration: ExternalShopifyIntegration
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -346,7 +346,7 @@ input CustomProductUpdateInput {
   modelSizeDisplay: String
   modelSizeName: String
   tags: [String!]
-  externalShopifyProduct: ExternalShopifyProductInput
+  externalShopifyProductHandle: String
 }
 
 input UpsertSeasonInput {
@@ -357,8 +357,7 @@ input UpsertSeasonInput {
   vendorSeasonYear: Int
 }
 
-input BrandExternalShopifyIntegration {
-  # {shopName}.myshopify.com
+input ExternalShopifyIntegrationInput {
   shopName: String!
   enabled: Boolean!
   accessToken: String

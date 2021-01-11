@@ -1,7 +1,13 @@
 import crypto from "crypto"
-import util from "util"
 
-import { ShopifyProductVariant } from "@app/prisma"
+import {
+  Brand,
+  ExternalShopifyIntegration,
+  Product,
+  ProductVariant,
+  ShopifyProductVariant,
+  ShopifySelectedOption,
+} from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { DateTime } from "luxon"
 import request from "request"
@@ -203,7 +209,16 @@ export class ShopifyService {
   async cacheProductVariant(
     productVariantId: string
   ): Promise<ShopifyProductVariant> {
-    const productVariant = await this.prisma.binding.query.productVariant(
+    const productVariant: ProductVariant & {
+      shopifyProductVariant: ShopifyProductVariant & {
+        selectedOptions: Array<ShopifySelectedOption>
+      }
+      product: Product & {
+        brand: Brand & {
+          externalShopifyIntegration: ExternalShopifyIntegration
+        }
+      }
+    } = await this.prisma.binding.query.productVariant(
       {
         where: {
           id: productVariantId,
@@ -231,7 +246,8 @@ export class ShopifyService {
     }`
     )
 
-    const { enabled, shopName, accessToken } = productVariant?.brand || {}
+    const { enabled, shopName, accessToken } =
+      productVariant?.product?.brand?.externalShopifyIntegration || {}
     const {
       id: internalShopifyProductVariantId,
       externalID,
