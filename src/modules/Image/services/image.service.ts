@@ -39,23 +39,18 @@ type ImageSizeMap = {
 const sizes: ImageSizeMap = {
   Thumb: {
     w: 208,
-    fit: "clip",
   },
   Small: {
     w: 288,
-    fit: "clip",
   },
   Medium: {
     w: 372,
-    fit: "clip",
   },
   Large: {
     w: 560,
-    fit: "clip",
   },
   XLarge: {
     w: 702,
-    fit: "clip",
   },
 }
 
@@ -79,7 +74,6 @@ export class ImageService {
         updatedAt && Math.floor(new Date(updatedAt).getTime() / 1000)
       const options: ImageResizerOptions = pickBy(
         {
-          fit: "clip",
           retina: true,
           fm: "webp",
           updatedAt: updatedAtTimestamp,
@@ -89,7 +83,12 @@ export class ImageService {
       )
 
       const { retina, ...remainingOptions } = options
-      const size = sizes[sizeName]
+      const selectedSize = sizes[sizeName ?? "Medium"]
+      const size = {
+        ...selectedSize,
+        w: options.w ?? selectedSize.w,
+        h: options.h ?? selectedSize.h,
+      }
       const params: any = pickBy(
         {
           ...remainingOptions,
