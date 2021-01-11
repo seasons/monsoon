@@ -33,6 +33,15 @@ describe.only("Customer Service", () => {
     })
   }
 
+  const mockSMSFunction = () => {
+    const sendSMSFunc = jest
+      .spyOn(smsService, "sendSMSById")
+      .mockResolvedValue("Delivered")
+      .mockClear()
+
+    return sendSMSFunc
+  }
+
   const mockSufficientInventoryCheck = () => {
     jest
       .spyOn(admissionsService, "haveSufficientInventoryToServiceCustomer")
@@ -47,6 +56,7 @@ describe.only("Customer Service", () => {
   }
 
   beforeAll(async () => {
+    jest.spyOn(SMSService.prototype as any, "setupService").mockImplementation()
     const moduleRef = await Test.createTestingModule(
       CustomerModuleDef
     ).compile()
@@ -75,6 +85,7 @@ describe.only("Customer Service", () => {
       async (oldStatus, authorized) => {
         mockServiceableZipCodesCheck()
         mockSufficientInventoryCheck()
+        const sendSMSFunc = mockSMSFunction()
         const sendAuthorizedEmail = jest
           .spyOn(emailService, "sendAuthorizedEmail")
           .mockResolvedValue()
@@ -94,14 +105,6 @@ describe.only("Customer Service", () => {
             }
           }`
         )
-
-        const sendSMSFunc = jest
-          .spyOn(smsService, "sendSMSById")
-          .mockImplementation(async ({ to, smsId, renderData }) => {
-            console.log("sending via mock")
-            return "Delivered"
-          })
-          .mockClear()
 
         const newPlan = "Essential"
         const newCustomer = await customerService.updateCustomer(
