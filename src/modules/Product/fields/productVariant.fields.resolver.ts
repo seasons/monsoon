@@ -2,7 +2,14 @@ import { Customer, User } from "@app/decorators"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PhysicalProduct, PhysicalProductPrice, Product } from "@app/prisma"
+import {
+  Brand,
+  ExternalShopifyIntegration,
+  PhysicalProduct,
+  PhysicalProductPrice,
+  Product,
+  ShopifyProductVariant,
+} from "@app/prisma"
 import { ProductVariant } from "@app/prisma/prisma.binding"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
@@ -226,60 +233,64 @@ export class ProductVariantFieldsResolver {
 
   @ResolveField()
   async price(
-    @Parent() productVariant,
+    @Parent() productVariant: Pick<ProductVariant, "id">,
     @Loader({
       params: {
-        query: "physicalProducts",
-        formatWhere: ids => ({
-          productVariant: {
-            id_in: ids,
-          },
-        }),
-        getKeys: a => [a?.productVariant?.id],
-        info: `{
-            productVariant {
-              id
-            }
+        query: "productVariants",
+        info: `{ 
+          id
+          physicalProducts {
             price {
               buyUsedPrice
               buyUsedEnabled
             }
           }
-        `,
-        keyToDataRelationship: "OneToMany",
-        fallbackValue: null,
-      },
-    })
-    physicalProductsLoader: PrismaDataLoader<
-      Array<PhysicalProduct & { price: PhysicalProductPrice }>
-    >,
-    @Loader({
-      params: {
-        query: "products",
-        formatWhere: ids => ({
-          id_in: ids,
-        }),
-        getKeys: a => a.productVariants.map(b => b.id),
-        info: `{ 
-          productVariants { id } 
-          buyNewEnabled
-          externalShopifyProductHandle
-          brand {
-            externalShopifyIntegration {
-              enabled
+          product {
+            buyNewEnabled
+            externalShopifyProductHandle
+            brand {
+              externalShopifyIntegration {
+                enabled
+              }
             }
           }
+          shopifyProductVariant {
+            cacheExpiresAt
+            cachedAvailableForSale
+            cachedPrice
+          }
         }`,
-        keyToDataRelationship: "OneToMany",
       },
     })
-    productLoader: PrismaDataLoader<
-      Product & { brand: { externalShopifyIntegration: { enabled: boolean } } }
-    >
+    productVariantLoader: PrismaDataLoader<{
+      physicalProducts: Array<{
+        price: Pick<PhysicalProductPrice, "buyUsedPrice" | "buyUsedEnabled">
+      }>
+      product: Pick<
+        Product,
+        "buyNewEnabled" | "externalShopifyProductHandle"
+      > & {
+        brand: {
+          externalShopifyIntegration?: Pick<
+            ExternalShopifyIntegration,
+            "enabled"
+          >
+        }
+      }
+      shopifyProductVariant: Pick<
+        ShopifyProductVariant,
+        "cacheExpiresAt" | "cachedAvailableForSale" | "cachedPrice"
+      >
+    }>
   ) {
-    const physicalProducts =
-      (await physicalProductsLoader.load(productVariant.id)) || []
-    const product = await productLoader.load(productVariant.productId)
+    const productVariantResult = await productVariantLoader.load(
+      productVariant.id
+    )
+    const {
+      physicalProducts,
+      product,
+      shopifyProductVariant,
+    } = productVariantResult
 
     const usedPhysicalProduct = [...physicalProducts]
       .sort((a, b) => {
@@ -300,8 +311,8 @@ export class ProductVariantFieldsResolver {
       cachedAvailableForSale: buyNewAvailableForSale,
       cachedPrice: buyNewPrice,
     } = await (product?.brand?.externalShopifyIntegration?.enabled
-      ? productVariant.shopifyProductVariant?.cacheExpiresAt > Date.now()
-        ? Promise.resolve(productVariant.shopifyProductVariant)
+      ? Date.parse(shopifyProductVariant?.cacheExpiresAt) > Date.now()
+        ? Promise.resolve(shopifyProductVariant)
         : this.shopify.cacheProductVariant(productVariant.id)
       : Promise.resolve({ cachedAvailableForSale: false, cachedPrice: null }))
 

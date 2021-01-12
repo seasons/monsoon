@@ -149,22 +149,25 @@ export class ShopifyService {
     query: string
     accessToken: string
   }): Promise<{ availableForSale: boolean; price: string }> {
+    console.log(shopName, accessToken, query)
+
     return new Promise((resolve, reject) => {
       request(
         {
-          uri: `https://${shopName}.myshopify.com/admin/oauth/access_token`,
+          uri: `https://${shopName}.myshopify.com/admin/api/2021-01/graphql.json`,
           method: "POST",
           headers: {
             "X-Shopify-Access-Token": accessToken,
           },
-          body: query.trim(),
+          body: { query: query.trim() },
+          json: true,
         },
-        (error, _response, body) => {
+        (error, response, body) => {
           if (error) {
             reject(error)
             return
           }
-          resolve(body)
+          resolve(body.data)
         }
       )
     })
@@ -179,13 +182,12 @@ export class ShopifyService {
     accessToken: string
     shopName: string
   }) {
-    const query = `
-      query {
-        productVariant(id: "${externalId}") {
-          availableForSale
-          price
-        }
-      }`
+    const query = `{
+      productVariant(id: "${externalId}") {
+        availableForSale
+        price
+      }
+    }`
 
     const data: any = await this.queryShopify({ query, shopName, accessToken })
     const productVariant = data?.productVariant
@@ -210,28 +212,29 @@ export class ShopifyService {
     accessToken: string
     shopName: string
   }): Promise<{ availableForSale: boolean; price: string }> {
-    const query = `
-      query {
-        product(handle: "${productHandle}") {
-          variants(first: 100) {
-            edges {
-              node {
-                id
-                availableForSale
-                price
-                options {
-                  name
-                  values
-                }
+    const query = `{
+      productByHandle(handle: "${productHandle}") {
+        variants(first: 100) {
+          edges {
+            node {
+              id
+              availableForSale
+              price
+              selectedOptions {
+                name
+                value
               }
             }
           }
         }
-      }`
+      }
+    }`
 
     const data: any = await this.queryShopify({ query, shopName, accessToken })
 
-    const { node: shopifyProductVariant } = data?.product?.variants.edges.find(
+    const {
+      node: shopifyProductVariant,
+    } = data?.productByHandle?.variants.edges.find(
       ({ node: shopifyProductVariant }) => {
         return selectedOptions.every(({ name, value }) => {
           return shopifyProductVariant.options.find(option => {
