@@ -26113,7 +26113,7 @@ input ShippingOptionWhereUniqueInput {
 type ShopifyProductVariant implements Node {
   id: ID!
   selectedOptions(where: ShopifySelectedOptionWhereInput, orderBy: ShopifySelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifySelectedOption!]
-  externalID: ID
+  externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
@@ -26131,7 +26131,7 @@ type ShopifyProductVariantConnection {
 
 input ShopifyProductVariantCreateInput {
   id: ID
-  externalID: ID
+  externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
@@ -26155,8 +26155,8 @@ type ShopifyProductVariantEdge {
 enum ShopifyProductVariantOrderByInput {
   id_ASC
   id_DESC
-  externalID_ASC
-  externalID_DESC
+  externalId_ASC
+  externalId_DESC
   cachedPrice_ASC
   cachedPrice_DESC
   cachedAvailableForSale_ASC
@@ -26167,7 +26167,7 @@ enum ShopifyProductVariantOrderByInput {
 
 type ShopifyProductVariantPreviousValues {
   id: ID!
-  externalID: ID
+  externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
@@ -26211,7 +26211,7 @@ input ShopifyProductVariantSubscriptionWhereInput {
 }
 
 input ShopifyProductVariantUpdateDataInput {
-  externalID: ID
+  externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
@@ -26219,7 +26219,7 @@ input ShopifyProductVariantUpdateDataInput {
 }
 
 input ShopifyProductVariantUpdateInput {
-  externalID: ID
+  externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
@@ -26227,7 +26227,7 @@ input ShopifyProductVariantUpdateInput {
 }
 
 input ShopifyProductVariantUpdateManyMutationInput {
-  externalID: ID
+  externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
@@ -26296,46 +26296,46 @@ input ShopifyProductVariantWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  externalID: ID
+  externalId: String
 
   """All values that are not equal to given value."""
-  externalID_not: ID
+  externalId_not: String
 
   """All values that are contained in given list."""
-  externalID_in: [ID!]
+  externalId_in: [String!]
 
   """All values that are not contained in given list."""
-  externalID_not_in: [ID!]
+  externalId_not_in: [String!]
 
   """All values less than the given value."""
-  externalID_lt: ID
+  externalId_lt: String
 
   """All values less than or equal the given value."""
-  externalID_lte: ID
+  externalId_lte: String
 
   """All values greater than the given value."""
-  externalID_gt: ID
+  externalId_gt: String
 
   """All values greater than or equal the given value."""
-  externalID_gte: ID
+  externalId_gte: String
 
   """All values containing the given string."""
-  externalID_contains: ID
+  externalId_contains: String
 
   """All values not containing the given string."""
-  externalID_not_contains: ID
+  externalId_not_contains: String
 
   """All values starting with the given string."""
-  externalID_starts_with: ID
+  externalId_starts_with: String
 
   """All values not starting with the given string."""
-  externalID_not_starts_with: ID
+  externalId_not_starts_with: String
 
   """All values ending with the given string."""
-  externalID_ends_with: ID
+  externalId_ends_with: String
 
   """All values not ending with the given string."""
-  externalID_not_ends_with: ID
+  externalId_not_ends_with: String
   cachedPrice: Float
 
   """All values that are not equal to given value."""
@@ -33298,8 +33298,8 @@ export type ShippingOptionOrderByInput =   'id_ASC' |
 
 export type ShopifyProductVariantOrderByInput =   'id_ASC' |
   'id_DESC' |
-  'externalID_ASC' |
-  'externalID_DESC' |
+  'externalId_ASC' |
+  'externalId_DESC' |
   'cachedPrice_ASC' |
   'cachedPrice_DESC' |
   'cachedAvailableForSale_ASC' |
@@ -44783,7 +44783,7 @@ export interface ShippingOptionWhereUniqueInput {
 
 export interface ShopifyProductVariantCreateInput {
   id?: ID_Input | null
-  externalID?: ID_Input | null
+  externalId?: String | null
   cachedPrice?: Float | null
   cachedAvailableForSale?: Boolean | null
   cacheExpiresAt?: DateTime | null
@@ -44807,7 +44807,7 @@ export interface ShopifyProductVariantSubscriptionWhereInput {
 }
 
 export interface ShopifyProductVariantUpdateDataInput {
-  externalID?: ID_Input | null
+  externalId?: String | null
   cachedPrice?: Float | null
   cachedAvailableForSale?: Boolean | null
   cacheExpiresAt?: DateTime | null
@@ -44815,7 +44815,7 @@ export interface ShopifyProductVariantUpdateDataInput {
 }
 
 export interface ShopifyProductVariantUpdateInput {
-  externalID?: ID_Input | null
+  externalId?: String | null
   cachedPrice?: Float | null
   cachedAvailableForSale?: Boolean | null
   cacheExpiresAt?: DateTime | null
@@ -44823,7 +44823,7 @@ export interface ShopifyProductVariantUpdateInput {
 }
 
 export interface ShopifyProductVariantUpdateManyMutationInput {
-  externalID?: ID_Input | null
+  externalId?: String | null
   cachedPrice?: Float | null
   cachedAvailableForSale?: Boolean | null
   cacheExpiresAt?: DateTime | null
@@ -44861,20 +44861,20 @@ export interface ShopifyProductVariantWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
-  externalID?: ID_Input | null
-  externalID_not?: ID_Input | null
-  externalID_in?: ID_Output[] | ID_Output | null
-  externalID_not_in?: ID_Output[] | ID_Output | null
-  externalID_lt?: ID_Input | null
-  externalID_lte?: ID_Input | null
-  externalID_gt?: ID_Input | null
-  externalID_gte?: ID_Input | null
-  externalID_contains?: ID_Input | null
-  externalID_not_contains?: ID_Input | null
-  externalID_starts_with?: ID_Input | null
-  externalID_not_starts_with?: ID_Input | null
-  externalID_ends_with?: ID_Input | null
-  externalID_not_ends_with?: ID_Input | null
+  externalId?: String | null
+  externalId_not?: String | null
+  externalId_in?: String[] | String | null
+  externalId_not_in?: String[] | String | null
+  externalId_lt?: String | null
+  externalId_lte?: String | null
+  externalId_gt?: String | null
+  externalId_gte?: String | null
+  externalId_contains?: String | null
+  externalId_not_contains?: String | null
+  externalId_starts_with?: String | null
+  externalId_not_starts_with?: String | null
+  externalId_ends_with?: String | null
+  externalId_not_ends_with?: String | null
   cachedPrice?: Float | null
   cachedPrice_not?: Float | null
   cachedPrice_in?: Float[] | Float | null
@@ -50196,7 +50196,7 @@ export interface ShippingOptionSubscriptionPayload {
 export interface ShopifyProductVariant extends Node {
   id: ID_Output
   selectedOptions?: Array<ShopifySelectedOption> | null
-  externalID?: ID_Output | null
+  externalId?: String | null
   cachedPrice?: Float | null
   cachedAvailableForSale?: Boolean | null
   cacheExpiresAt?: DateTime | null
@@ -50223,7 +50223,7 @@ export interface ShopifyProductVariantEdge {
 
 export interface ShopifyProductVariantPreviousValues {
   id: ID_Output
-  externalID?: ID_Output | null
+  externalId?: String | null
   cachedPrice?: Float | null
   cachedAvailableForSale?: Boolean | null
   cacheExpiresAt?: DateTime | null

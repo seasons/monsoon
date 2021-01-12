@@ -448,7 +448,7 @@ type ShopifySelectedOption {
 type ShopifyProductVariant {
   id: ID! @id
   selectedOptions: [ShopifySelectedOption!]!
-  externalID: ID
+  externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime

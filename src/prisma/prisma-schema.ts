@@ -15260,7 +15260,7 @@ input ShippingOptionWhereUniqueInput {
 type ShopifyProductVariant {
   id: ID!
   selectedOptions(where: ShopifySelectedOptionWhereInput, orderBy: ShopifySelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifySelectedOption!]
-  externalID: ID
+  externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
@@ -15275,7 +15275,7 @@ type ShopifyProductVariantConnection {
 input ShopifyProductVariantCreateInput {
   id: ID
   selectedOptions: ShopifySelectedOptionCreateManyInput
-  externalID: ID
+  externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
@@ -15294,8 +15294,8 @@ type ShopifyProductVariantEdge {
 enum ShopifyProductVariantOrderByInput {
   id_ASC
   id_DESC
-  externalID_ASC
-  externalID_DESC
+  externalId_ASC
+  externalId_DESC
   cachedPrice_ASC
   cachedPrice_DESC
   cachedAvailableForSale_ASC
@@ -15306,7 +15306,7 @@ enum ShopifyProductVariantOrderByInput {
 
 type ShopifyProductVariantPreviousValues {
   id: ID!
-  externalID: ID
+  externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
@@ -15332,7 +15332,7 @@ input ShopifyProductVariantSubscriptionWhereInput {
 
 input ShopifyProductVariantUpdateDataInput {
   selectedOptions: ShopifySelectedOptionUpdateManyInput
-  externalID: ID
+  externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
@@ -15340,14 +15340,14 @@ input ShopifyProductVariantUpdateDataInput {
 
 input ShopifyProductVariantUpdateInput {
   selectedOptions: ShopifySelectedOptionUpdateManyInput
-  externalID: ID
+  externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
 }
 
 input ShopifyProductVariantUpdateManyMutationInput {
-  externalID: ID
+  externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
@@ -15385,20 +15385,20 @@ input ShopifyProductVariantWhereInput {
   selectedOptions_every: ShopifySelectedOptionWhereInput
   selectedOptions_some: ShopifySelectedOptionWhereInput
   selectedOptions_none: ShopifySelectedOptionWhereInput
-  externalID: ID
-  externalID_not: ID
-  externalID_in: [ID!]
-  externalID_not_in: [ID!]
-  externalID_lt: ID
-  externalID_lte: ID
-  externalID_gt: ID
-  externalID_gte: ID
-  externalID_contains: ID
-  externalID_not_contains: ID
-  externalID_starts_with: ID
-  externalID_not_starts_with: ID
-  externalID_ends_with: ID
-  externalID_not_ends_with: ID
+  externalId: String
+  externalId_not: String
+  externalId_in: [String!]
+  externalId_not_in: [String!]
+  externalId_lt: String
+  externalId_lte: String
+  externalId_gt: String
+  externalId_gte: String
+  externalId_contains: String
+  externalId_not_contains: String
+  externalId_starts_with: String
+  externalId_not_starts_with: String
+  externalId_ends_with: String
+  externalId_not_ends_with: String
   cachedPrice: Float
   cachedPrice_not: Float
   cachedPrice_in: [Float!]

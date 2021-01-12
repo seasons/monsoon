@@ -3991,8 +3991,8 @@ export type ShippingMethodOrderByInput =
 export type ShopifyProductVariantOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "externalID_ASC"
-  | "externalID_DESC"
+  | "externalId_ASC"
+  | "externalId_DESC"
   | "cachedPrice_ASC"
   | "cachedPrice_DESC"
   | "cachedAvailableForSale_ASC"
@@ -6255,20 +6255,20 @@ export interface ShopifyProductVariantWhereInput {
   selectedOptions_every?: Maybe<ShopifySelectedOptionWhereInput>;
   selectedOptions_some?: Maybe<ShopifySelectedOptionWhereInput>;
   selectedOptions_none?: Maybe<ShopifySelectedOptionWhereInput>;
-  externalID?: Maybe<ID_Input>;
-  externalID_not?: Maybe<ID_Input>;
-  externalID_in?: Maybe<ID_Input[] | ID_Input>;
-  externalID_not_in?: Maybe<ID_Input[] | ID_Input>;
-  externalID_lt?: Maybe<ID_Input>;
-  externalID_lte?: Maybe<ID_Input>;
-  externalID_gt?: Maybe<ID_Input>;
-  externalID_gte?: Maybe<ID_Input>;
-  externalID_contains?: Maybe<ID_Input>;
-  externalID_not_contains?: Maybe<ID_Input>;
-  externalID_starts_with?: Maybe<ID_Input>;
-  externalID_not_starts_with?: Maybe<ID_Input>;
-  externalID_ends_with?: Maybe<ID_Input>;
-  externalID_not_ends_with?: Maybe<ID_Input>;
+  externalId?: Maybe<String>;
+  externalId_not?: Maybe<String>;
+  externalId_in?: Maybe<String[] | String>;
+  externalId_not_in?: Maybe<String[] | String>;
+  externalId_lt?: Maybe<String>;
+  externalId_lte?: Maybe<String>;
+  externalId_gt?: Maybe<String>;
+  externalId_gte?: Maybe<String>;
+  externalId_contains?: Maybe<String>;
+  externalId_not_contains?: Maybe<String>;
+  externalId_starts_with?: Maybe<String>;
+  externalId_not_starts_with?: Maybe<String>;
+  externalId_ends_with?: Maybe<String>;
+  externalId_not_ends_with?: Maybe<String>;
   cachedPrice?: Maybe<Float>;
   cachedPrice_not?: Maybe<Float>;
   cachedPrice_in?: Maybe<Float[] | Float>;
@@ -9724,7 +9724,7 @@ export interface ShopifyProductVariantCreateOneInput {
 export interface ShopifyProductVariantCreateInput {
   id?: Maybe<ID_Input>;
   selectedOptions?: Maybe<ShopifySelectedOptionCreateManyInput>;
-  externalID?: Maybe<ID_Input>;
+  externalId?: Maybe<String>;
   cachedPrice?: Maybe<Float>;
   cachedAvailableForSale?: Maybe<Boolean>;
   cacheExpiresAt?: Maybe<DateTimeInput>;
@@ -11636,7 +11636,7 @@ export interface ShopifyProductVariantUpdateOneInput {
 
 export interface ShopifyProductVariantUpdateDataInput {
   selectedOptions?: Maybe<ShopifySelectedOptionUpdateManyInput>;
-  externalID?: Maybe<ID_Input>;
+  externalId?: Maybe<String>;
   cachedPrice?: Maybe<Float>;
   cachedAvailableForSale?: Maybe<Boolean>;
   cacheExpiresAt?: Maybe<DateTimeInput>;
@@ -17859,14 +17859,14 @@ export interface ShippingOptionUpdateManyMutationInput {
 
 export interface ShopifyProductVariantUpdateInput {
   selectedOptions?: Maybe<ShopifySelectedOptionUpdateManyInput>;
-  externalID?: Maybe<ID_Input>;
+  externalId?: Maybe<String>;
   cachedPrice?: Maybe<Float>;
   cachedAvailableForSale?: Maybe<Boolean>;
   cacheExpiresAt?: Maybe<DateTimeInput>;
 }
 
 export interface ShopifyProductVariantUpdateManyMutationInput {
-  externalID?: Maybe<ID_Input>;
+  externalId?: Maybe<String>;
   cachedPrice?: Maybe<Float>;
   cachedAvailableForSale?: Maybe<Boolean>;
   cacheExpiresAt?: Maybe<DateTimeInput>;
@@ -21643,7 +21643,7 @@ export interface ProductVariantPriceNullablePromise
 
 export interface ShopifyProductVariant {
   id: ID_Output;
-  externalID?: ID_Output;
+  externalId?: String;
   cachedPrice?: Float;
   cachedAvailableForSale?: Boolean;
   cacheExpiresAt?: DateTimeOutput;
@@ -21662,7 +21662,7 @@ export interface ShopifyProductVariantPromise
     first?: Int;
     last?: Int;
   }) => T;
-  externalID: () => Promise<ID_Output>;
+  externalId: () => Promise<String>;
   cachedPrice: () => Promise<Float>;
   cachedAvailableForSale: () => Promise<Boolean>;
   cacheExpiresAt: () => Promise<DateTimeOutput>;
@@ -21683,7 +21683,7 @@ export interface ShopifyProductVariantSubscription
     first?: Int;
     last?: Int;
   }) => T;
-  externalID: () => Promise<AsyncIterator<ID_Output>>;
+  externalId: () => Promise<AsyncIterator<String>>;
   cachedPrice: () => Promise<AsyncIterator<Float>>;
   cachedAvailableForSale: () => Promise<AsyncIterator<Boolean>>;
   cacheExpiresAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -21702,7 +21702,7 @@ export interface ShopifyProductVariantNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
-  externalID: () => Promise<ID_Output>;
+  externalId: () => Promise<String>;
   cachedPrice: () => Promise<Float>;
   cachedAvailableForSale: () => Promise<Boolean>;
   cacheExpiresAt: () => Promise<DateTimeOutput>;
@@ -30528,7 +30528,7 @@ export interface ShopifyProductVariantSubscriptionPayloadSubscription
 
 export interface ShopifyProductVariantPreviousValues {
   id: ID_Output;
-  externalID?: ID_Output;
+  externalId?: String;
   cachedPrice?: Float;
   cachedAvailableForSale?: Boolean;
   cacheExpiresAt?: DateTimeOutput;
@@ -30538,7 +30538,7 @@ export interface ShopifyProductVariantPreviousValuesPromise
   extends Promise<ShopifyProductVariantPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  externalID: () => Promise<ID_Output>;
+  externalId: () => Promise<String>;
   cachedPrice: () => Promise<Float>;
   cachedAvailableForSale: () => Promise<Boolean>;
   cacheExpiresAt: () => Promise<DateTimeOutput>;
@@ -30548,7 +30548,7 @@ export interface ShopifyProductVariantPreviousValuesSubscription
   extends Promise<AsyncIterator<ShopifyProductVariantPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  externalID: () => Promise<AsyncIterator<ID_Output>>;
+  externalId: () => Promise<AsyncIterator<String>>;
   cachedPrice: () => Promise<AsyncIterator<Float>>;
   cachedAvailableForSale: () => Promise<AsyncIterator<Boolean>>;
   cacheExpiresAt: () => Promise<AsyncIterator<DateTimeOutput>>;

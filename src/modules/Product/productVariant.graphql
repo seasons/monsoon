@@ -95,7 +95,7 @@ type ShopifyProductVariant {
   # For the first mapping, match on selected options. We can then use the
   # externalID retrieved from Shopify speed up subsequent lookups.
   selectedOptions: [ShopifySelectedOption!]!
-  externalID: ID
+  externalId: String
 
   cachedPrice: Float
   cachedAvailableForSale: Boolean
