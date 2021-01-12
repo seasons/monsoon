@@ -14,6 +14,7 @@ type Image {
   height: Int
   width: Int
   title: String
+  resized(width: Int, height: Int, size: ImageSize): String
   createdAt: DateTime!
   updatedAt: DateTime!
 }

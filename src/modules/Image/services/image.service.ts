@@ -39,23 +39,18 @@ type ImageSizeMap = {
 const sizes: ImageSizeMap = {
   Thumb: {
     w: 208,
-    fit: "clip",
   },
   Small: {
     w: 288,
-    fit: "clip",
   },
   Medium: {
     w: 372,
-    fit: "clip",
   },
   Large: {
     w: 560,
-    fit: "clip",
   },
   XLarge: {
     w: 702,
-    fit: "clip",
   },
 }
 
@@ -79,7 +74,6 @@ export class ImageService {
         updatedAt && Math.floor(new Date(updatedAt).getTime() / 1000)
       const options: ImageResizerOptions = pickBy(
         {
-          fit: "clip",
           retina: true,
           fm: "webp",
           updatedAt: updatedAtTimestamp,
@@ -89,7 +83,12 @@ export class ImageService {
       )
 
       const { retina, ...remainingOptions } = options
-      const size = sizes[sizeName]
+      const selectedSize = sizes[sizeName ?? "Medium"]
+      const size = {
+        ...selectedSize,
+        w: options.w ?? selectedSize.w,
+        h: options.h ?? selectedSize.h,
+      }
       const params: any = pickBy(
         {
           ...remainingOptions,
@@ -129,13 +128,9 @@ export class ImageService {
     options: { imageName?: string }
   ): Promise<ImageData> {
     const file = await image
-    console.log("2. file", file)
     const { createReadStream, filename } = file
-    console.log("3. createReadStream", createReadStream, " filename", filename)
     const fileStream = createReadStream()
-    console.log("4. fileStream", fileStream)
     const name = options.imageName || filename
-    console.log("5. name", name)
     // Here stream it to S3
     const uploadParams = {
       ACL: "public-read",
@@ -143,11 +138,8 @@ export class ImageService {
       Key: name,
       Body: fileStream,
     }
-    console.log("6. uploadParams", uploadParams)
     const result = await this.s3.upload(uploadParams).promise()
-    console.log("7. result", result)
     const url = result.Location
-    console.log("8. url", url)
     // Get image size
     const { width, height } = await new Promise((resolve, reject) => {
       request({ url, encoding: null }, async (err, res, body) => {
@@ -164,11 +156,7 @@ export class ImageService {
       })
     })
 
-    console.log("9. width ", width, " height ", height)
-
     fileStream.destroy()
-
-    console.log("10. fileStream.destroy()")
 
     return {
       height,

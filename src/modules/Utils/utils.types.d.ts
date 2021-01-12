@@ -55,6 +55,7 @@ export interface CreateTestCustomerMembershipInput {
   pauseRequests: CreateTestPauseRequestInput[]
 }
 export interface CreateTestCustomerInput {
+  email?: string
   detail?: CreateTestCustomerDetailInput
   status?: CustomerStatus
   membership?: CreateTestCustomerMembershipInput

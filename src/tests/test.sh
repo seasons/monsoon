@@ -25,4 +25,4 @@ then
   sh alter_db.sh -p $POSTGRES_PASSWORD -t $POSTGRES_TABLE -d $POSTGRES_DATABASE &>/dev/null
 fi
 yarn prisma reset -f -e .env.testing;
-yarn jest --verbose "$@";
+yarn jest --verbose -i "$@";

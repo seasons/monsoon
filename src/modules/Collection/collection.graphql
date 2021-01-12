@@ -1,0 +1,37 @@
+type Mutation {
+  upsertCollection(data: CollectionUpsertInput!): Collection!
+    @hasRole(roles: [Admin])
+}
+
+input CollectionUpsertInput {
+  id: ID
+  slug: String
+  images: [Upload!]
+  title: String
+  subTitle: String
+  descriptions: CollectionCreatedescriptionsInput
+  productIDs: [String]
+  published: Boolean
+}
+
+type Query {
+  collection(where: CollectionWhereUniqueInput!): Collection
+  collections(
+    where: CollectionWhereInput
+    orderBy: CollectionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Collection]!
+  collectionsConnection(
+    where: CollectionWhereInput
+    orderBy: CollectionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CollectionConnection!
+}

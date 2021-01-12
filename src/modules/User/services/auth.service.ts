@@ -110,10 +110,7 @@ export class AuthService {
     const usersWithSameFirstName = await this.prisma.client.users({
       where: { firstName: firstName.trim() },
     })
-    const {
-      customer,
-      isValidReferral,
-    } = await this.createPrismaCustomerForExistingUser(
+    const { customer } = await this.createPrismaCustomerForExistingUser(
       user.id,
       details,
       "Created",
@@ -474,9 +471,6 @@ export class AuthService {
           city
         }
       }
-      referrer {
-        id
-      }
     }`
 
     let createData = {} as CustomerCreateInput
@@ -537,7 +531,6 @@ export class AuthService {
 
     return {
       customer: newCustomer,
-      isValidReferral: newCustomer.referrer !== null,
     }
   }
 

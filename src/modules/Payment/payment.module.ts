@@ -17,7 +17,7 @@ import { PaymentQueriesResolver } from "./queries/payment.queries.resolver"
 import { LoaderUtilsService } from "./services/loader.utils.service"
 import { PaymentService } from "./services/payment.service"
 
-@Module({
+export const PaymentModuleDef = {
   controllers: [ChargebeeController],
   imports: [
     EmailModule,
@@ -39,5 +39,6 @@ import { PaymentService } from "./services/payment.service"
     TransactionsForCustomersLoader,
   ],
   exports: [PaymentService],
-})
+}
+@Module(PaymentModuleDef)
 export class PaymentModule {}
