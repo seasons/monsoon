@@ -45,6 +45,7 @@ type FitPic {
   products: [Product!]
   reports: [FitPicReport!]! @hasRole(roles: [Admin])
   status: FitPicStatus!
+  user: User!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
