@@ -28,7 +28,6 @@ import { SMSID, SMSPayload } from "../sms.types"
 
 const twilioStatusCallback = process.env.TWILIO_STATUS_CALLBACK
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
-
 @Injectable()
 export class SMSService {
   private sid?: string
@@ -330,10 +329,32 @@ export class SMSService {
                     newResumeDate
                   )}.`
                 )
-                sendCorrespondingEmailFunc = this.email.sendPausedEmail(
-                  smsCust,
-                  true
-                )
+                sendCorrespondingEmailFunc = async () => {
+                  const custWithUpdatedResumeDate = await this.prisma.binding.query.customer(
+                    { where: { id: smsCust.id } },
+                    `{
+                      id
+                      user {
+                        id
+                        email
+                        firstName
+                        lastName
+                      }
+                      membership {
+                        id
+                        pauseRequests {
+                          id
+                          createdAt
+                          resumeDate
+                        }
+                      }
+                    }`
+                  )
+                  return await this.email.sendPausedEmail(
+                    custWithUpdatedResumeDate,
+                    true
+                  )
+                }
               } else {
                 twiml.message(
                   `You are scheduled to resume on ${this.formatResumeDate(
@@ -352,6 +373,13 @@ export class SMSService {
             "ResumeReminder",
             `{
               id
+              status
+              user {
+                id
+                email
+                firstName
+                lastName
+              }
               membership {
                 id
                 subscriptionId
@@ -368,10 +396,13 @@ export class SMSService {
           status = smsCust.status as CustomerStatus
           switch (status) {
             case "Paused":
-              await this.paymentUtils.resumeSubscription(null, null, smsCust)
-              sendCorrespondingEmailFunc = this.email.sendResumeConfirmationEmail(
-                smsCust.user
+              await this.paymentUtils.resumeSubscription(
+                smsCust.membership.subscriptionId,
+                null,
+                smsCust
               )
+              sendCorrespondingEmailFunc = async () =>
+                await this.email.sendResumeConfirmationEmail(smsCust.user)
               twiml.message(
                 `Your membership has been resumed!. You're free to place your next reservation.`
               )
@@ -424,6 +455,7 @@ export class SMSService {
             { detail: { phoneNumber_contains: from.slice(2) } },
           ],
         },
+        orderBy: "createdAt_DESC",
       },
       info
     )

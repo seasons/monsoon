@@ -3,7 +3,13 @@ import * as fs from "fs"
 
 import { UTMData as BindingUTMData, DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
-import { Location, Reservation, SyncTimingType, UTMData } from "@prisma/index"
+import {
+  Location,
+  PauseRequest,
+  Reservation,
+  SyncTimingType,
+  UTMData,
+} from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import graphqlFields from "graphql-fields"
@@ -358,6 +364,16 @@ export class UtilsService {
       string += ` ${subFields}`
     }
     return string + ` }`
+  }
+
+  getLatestPauseReqest = (customer): PauseRequest => {
+    const latestPauseRequest = head(
+      customer.membership.pauseRequests.sort((a, b) =>
+        this.dateSort(a.createdAt, b.createdAt)
+      )
+    ) as PauseRequest
+
+    return latestPauseRequest
   }
 
   private caseify = (obj: any, caseFunc: (str: string) => string): any => {

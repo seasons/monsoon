@@ -149,11 +149,8 @@ export class EmailService {
   }
 
   async sendPausedEmail(customer: Customer, isExtension: boolean) {
-    const latestPauseRequest = head(
-      customer.membership.pauseRequests.sort((a, b) =>
-        this.utils.dateSort(a.createdAt, b.createdAt)
-      )
-    )
+    const latestPauseRequest = this.utils.getLatestPauseReqest(customer)
+
     const payload = await RenderEmail.paused({
       name: customer.user.firstName,
       isExtension,

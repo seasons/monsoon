@@ -46,7 +46,14 @@ const run = async () => {
   const twilio = new TwilioService()
   const twilioUtils = new TwilioUtils()
   const paymentUtils = new PaymentUtilsService(ps, segment)
-  const sms = new SMSService(ps, twilio, twilioUtils, paymentUtils, error)
+  const sms = new SMSService(
+    ps,
+    twilio,
+    twilioUtils,
+    paymentUtils,
+    error,
+    email
+  )
   const shipping = new ShippingService(ps, utils)
   const cs = new CustomerService(
     auth,
@@ -88,9 +95,9 @@ const run = async () => {
   const membershipService = new MembershipScheduledJobs(
     ps,
     paymentUtils,
-    payment,
     email,
-    sms
+    sms,
+    utils
   )
   // await reservationsJobService.sendReturnNotifications()
   // await marketingJobService.authWindowFollowups()
