@@ -85,13 +85,16 @@ export class CustomerFieldsResolver {
 
     // Throwing fits campaign
     const utm = custWithData?.utm
-    if (
-      utm?.source?.toLowerCase() === "throwingfits" &&
-      utm?.medium?.toLowerCase() === "podcast" &&
-      utm?.campaign?.toLowerCase() === "tfq42020"
-    ) {
+    if (utm?.source?.toLowerCase() === "throwingfits") {
       coupon = await this.paymentService.checkCoupon(
         process.env.THROWING_FITS_COUPON_ID
+      )
+    }
+
+    // lean luxe campaign
+    if (utm?.source?.toLowerCase() === "leanluxe") {
+      coupon = await this.paymentService.checkCoupon(
+        process.env.LEAN_LUXE_COUPON_ID
       )
     }
 
