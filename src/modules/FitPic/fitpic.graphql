@@ -2,7 +2,7 @@ type Mutation {
   submitFitPic(
     image: Upload!
     location: LocationCreateOneInput
-    instagramhandle: String
+    instagramHandle: String
   ): ID! @hasRole(roles: [Admin, Customer])
   reportFitPic(id: ID!): Boolean! @hasRole(roles: [Admin, Customer])
 
@@ -44,7 +44,7 @@ type FitPic {
     size: ImageSize
     options: ImageOptionsInput
   ): Image!
-  instagramhandle: String
+  includeInstagramHandle: Boolean!
   location: Location
   products: [Product!]
   reports: [FitPicReport!]! @hasRole(roles: [Admin])

@@ -1,5 +1,5 @@
-# source: https://monsoon-prisma-staging.herokuapp.com/monsoon/staging
-# timestamp: Tue Jan 12 2021 11:20:11 GMT-0800 (Pacific Standard Time)
+# source: http://localhost:4466/monsoon/dev
+# timestamp: Tue Jan 12 2021 15:40:41 GMT-0800 (Pacific Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -11161,7 +11161,7 @@ input EmailReceiptWhereUniqueInput {
 type FitPic implements Node {
   id: ID!
   image: Image!
-  instagramHandle: String
+  includeInstagramHandle: Boolean!
   location: Location
   products(
     where: ProductWhereInput
@@ -11205,7 +11205,7 @@ type FitPicConnection {
 
 input FitPicCreateInput {
   id: ID
-  instagramHandle: String
+  includeInstagramHandle: Boolean
   status: FitPicStatus
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
@@ -11226,7 +11226,7 @@ input FitPicCreateOneWithoutReportsInput {
 
 input FitPicCreateWithoutReportsInput {
   id: ID
-  instagramHandle: String
+  includeInstagramHandle: Boolean
   status: FitPicStatus
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
@@ -11236,7 +11236,7 @@ input FitPicCreateWithoutReportsInput {
 
 input FitPicCreateWithoutUserInput {
   id: ID
-  instagramHandle: String
+  includeInstagramHandle: Boolean
   status: FitPicStatus
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
@@ -11262,8 +11262,8 @@ type FitPicEdge {
 enum FitPicOrderByInput {
   id_ASC
   id_DESC
-  instagramHandle_ASC
-  instagramHandle_DESC
+  includeInstagramHandle_ASC
+  includeInstagramHandle_DESC
   status_ASC
   status_DESC
   createdAt_ASC
@@ -11274,7 +11274,7 @@ enum FitPicOrderByInput {
 
 type FitPicPreviousValues {
   id: ID!
-  instagramHandle: String
+  includeInstagramHandle: Boolean!
   status: FitPicStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -11882,72 +11882,12 @@ input FitPicScalarWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
-  instagramHandle: String
+  includeInstagramHandle: Boolean
 
   """
   All values that are not equal to given value.
   """
-  instagramHandle_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  instagramHandle_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  instagramHandle_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  instagramHandle_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  instagramHandle_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  instagramHandle_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  instagramHandle_gte: String
-
-  """
-  All values containing the given string.
-  """
-  instagramHandle_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  instagramHandle_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  instagramHandle_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  instagramHandle_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  instagramHandle_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  instagramHandle_not_ends_with: String
+  includeInstagramHandle_not: Boolean
   status: FitPicStatus
 
   """
@@ -12090,7 +12030,7 @@ input FitPicSubscriptionWhereInput {
 }
 
 input FitPicUpdateInput {
-  instagramHandle: String
+  includeInstagramHandle: Boolean
   status: FitPicStatus
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
@@ -12100,12 +12040,12 @@ input FitPicUpdateInput {
 }
 
 input FitPicUpdateManyDataInput {
-  instagramHandle: String
+  includeInstagramHandle: Boolean
   status: FitPicStatus
 }
 
 input FitPicUpdateManyMutationInput {
-  instagramHandle: String
+  includeInstagramHandle: Boolean
   status: FitPicStatus
 }
 
@@ -12134,7 +12074,7 @@ input FitPicUpdateOneRequiredWithoutReportsInput {
 }
 
 input FitPicUpdateWithoutReportsDataInput {
-  instagramHandle: String
+  includeInstagramHandle: Boolean
   status: FitPicStatus
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
@@ -12143,7 +12083,7 @@ input FitPicUpdateWithoutReportsDataInput {
 }
 
 input FitPicUpdateWithoutUserDataInput {
-  instagramHandle: String
+  includeInstagramHandle: Boolean
   status: FitPicStatus
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
@@ -12248,72 +12188,12 @@ input FitPicWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
-  instagramHandle: String
+  includeInstagramHandle: Boolean
 
   """
   All values that are not equal to given value.
   """
-  instagramHandle_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  instagramHandle_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  instagramHandle_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  instagramHandle_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  instagramHandle_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  instagramHandle_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  instagramHandle_gte: String
-
-  """
-  All values containing the given string.
-  """
-  instagramHandle_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  instagramHandle_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  instagramHandle_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  instagramHandle_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  instagramHandle_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  instagramHandle_not_ends_with: String
+  includeInstagramHandle_not: Boolean
   status: FitPicStatus
 
   """

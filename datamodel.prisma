@@ -649,7 +649,7 @@ enum FitPicStatus {
 type FitPic {
   id: ID! @id
   image: Image!
-  instagramHandle: String
+  includeInstagramHandle: Boolean! @default(value: false)
   location: Location
   products: [Product!] @scalarList(strategy: RELATION)
   reports: [FitPicReport!]!
