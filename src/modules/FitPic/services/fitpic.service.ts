@@ -1,5 +1,8 @@
-import { ImageService } from "@app/modules/Image/services/image.service"
-import { IMGIX_BASE, S3_BASE } from "@app/modules/Image/services/image.service"
+import {
+  IMGIX_BASE,
+  ImageService,
+  S3_BASE,
+} from "@app/modules/Image/services/image.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import {
   Customer,
@@ -21,7 +24,15 @@ export class FitPicService {
   ) {}
 
   async submitFitPic(
-    { image, location }: { image: any; location: LocationCreateOneInput },
+    {
+      image,
+      location,
+      instagramHandle,
+    }: {
+      image: any
+      location: LocationCreateOneInput
+      instagramHandle: string
+    },
     user: User,
     customer: Customer
   ) {
@@ -38,14 +49,19 @@ export class FitPicService {
         // override the imageData url with the imgixUrl
         create: { ...imageData, url: imgixUrl },
       },
+      instagramHandle,
     })
 
-    const updatedUser = await this.prisma.client.updateUser({
+    await this.prisma.client.updateUser({
       data: {
         fitPics: { connect: [{ id: fitPic.id }] },
       },
       where: { id: user.id },
     })
+
+    if (!!instagramHandle) {
+      await this.updateCustomerInstagramHandle({ instagramHandle, customer })
+    }
 
     return fitPic.id
   }
@@ -87,6 +103,24 @@ export class FitPicService {
     }
 
     return true
+  }
+
+  private async updateCustomerInstagramHandle({
+    instagramHandle,
+    customer,
+  }: {
+    instagramHandle: string
+    customer: Customer
+  }) {
+    const customerDetailID = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+      .id()
+
+    await this.prisma.client.updateCustomerDetail({
+      data: { instagramHandle },
+      where: { id: customerDetailID },
+    })
   }
 
   private async getLocation({

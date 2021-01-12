@@ -2931,6 +2931,8 @@ export type SmsReceiptOrderByInput =
 export type FitPicOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "instagramHandle_ASC"
+  | "instagramHandle_DESC"
   | "status_ASC"
   | "status_DESC"
   | "createdAt_ASC"
@@ -3507,6 +3509,8 @@ export type CustomerDetailOrderByInput =
   | "phoneOS_DESC"
   | "insureShipment_ASC"
   | "insureShipment_DESC"
+  | "instagramHandle_ASC"
+  | "instagramHandle_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -4365,6 +4369,20 @@ export interface FitPicWhereInput {
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
   image?: Maybe<ImageWhereInput>;
+  instagramHandle?: Maybe<String>;
+  instagramHandle_not?: Maybe<String>;
+  instagramHandle_in?: Maybe<String[] | String>;
+  instagramHandle_not_in?: Maybe<String[] | String>;
+  instagramHandle_lt?: Maybe<String>;
+  instagramHandle_lte?: Maybe<String>;
+  instagramHandle_gt?: Maybe<String>;
+  instagramHandle_gte?: Maybe<String>;
+  instagramHandle_contains?: Maybe<String>;
+  instagramHandle_not_contains?: Maybe<String>;
+  instagramHandle_starts_with?: Maybe<String>;
+  instagramHandle_not_starts_with?: Maybe<String>;
+  instagramHandle_ends_with?: Maybe<String>;
+  instagramHandle_not_ends_with?: Maybe<String>;
   location?: Maybe<LocationWhereInput>;
   products_every?: Maybe<ProductWhereInput>;
   products_some?: Maybe<ProductWhereInput>;
@@ -6877,6 +6895,20 @@ export interface CustomerDetailWhereInput {
   phoneOS_not_ends_with?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
   insureShipment_not?: Maybe<Boolean>;
+  instagramHandle?: Maybe<String>;
+  instagramHandle_not?: Maybe<String>;
+  instagramHandle_in?: Maybe<String[] | String>;
+  instagramHandle_not_in?: Maybe<String[] | String>;
+  instagramHandle_lt?: Maybe<String>;
+  instagramHandle_lte?: Maybe<String>;
+  instagramHandle_gt?: Maybe<String>;
+  instagramHandle_gte?: Maybe<String>;
+  instagramHandle_contains?: Maybe<String>;
+  instagramHandle_not_contains?: Maybe<String>;
+  instagramHandle_starts_with?: Maybe<String>;
+  instagramHandle_not_starts_with?: Maybe<String>;
+  instagramHandle_ends_with?: Maybe<String>;
+  instagramHandle_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -8860,6 +8892,7 @@ export interface FitPicCreateManyWithoutUserInput {
 export interface FitPicCreateWithoutUserInput {
   id?: Maybe<ID_Input>;
   image: ImageCreateOneInput;
+  instagramHandle?: Maybe<String>;
   location?: Maybe<LocationCreateOneInput>;
   products?: Maybe<ProductCreateManyInput>;
   reports?: Maybe<FitPicReportCreateManyWithoutReportedInput>;
@@ -10298,6 +10331,7 @@ export interface FitPicUpdateWithWhereUniqueWithoutUserInput {
 
 export interface FitPicUpdateWithoutUserDataInput {
   image?: Maybe<ImageUpdateOneRequiredInput>;
+  instagramHandle?: Maybe<String>;
   location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<ProductUpdateManyInput>;
   reports?: Maybe<FitPicReportUpdateManyWithoutReportedInput>;
@@ -12589,6 +12623,20 @@ export interface FitPicScalarWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  instagramHandle?: Maybe<String>;
+  instagramHandle_not?: Maybe<String>;
+  instagramHandle_in?: Maybe<String[] | String>;
+  instagramHandle_not_in?: Maybe<String[] | String>;
+  instagramHandle_lt?: Maybe<String>;
+  instagramHandle_lte?: Maybe<String>;
+  instagramHandle_gt?: Maybe<String>;
+  instagramHandle_gte?: Maybe<String>;
+  instagramHandle_contains?: Maybe<String>;
+  instagramHandle_not_contains?: Maybe<String>;
+  instagramHandle_starts_with?: Maybe<String>;
+  instagramHandle_not_starts_with?: Maybe<String>;
+  instagramHandle_ends_with?: Maybe<String>;
+  instagramHandle_not_ends_with?: Maybe<String>;
   status?: Maybe<FitPicStatus>;
   status_not?: Maybe<FitPicStatus>;
   status_in?: Maybe<FitPicStatus[] | FitPicStatus>;
@@ -12620,6 +12668,7 @@ export interface FitPicUpdateManyWithWhereNestedInput {
 }
 
 export interface FitPicUpdateManyDataInput {
+  instagramHandle?: Maybe<String>;
   status?: Maybe<FitPicStatus>;
 }
 
@@ -12872,6 +12921,7 @@ export interface CustomerDetailCreateInput {
   shippingAddress?: Maybe<LocationCreateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
+  instagramHandle?: Maybe<String>;
 }
 
 export interface CustomerDetailCreateweightInput {
@@ -13424,6 +13474,7 @@ export interface CustomerDetailUpdateDataInput {
   shippingAddress?: Maybe<LocationUpdateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
+  instagramHandle?: Maybe<String>;
 }
 
 export interface CustomerDetailUpdateweightInput {
@@ -15349,6 +15400,7 @@ export interface CustomerDetailUpdateInput {
   shippingAddress?: Maybe<LocationUpdateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
+  instagramHandle?: Maybe<String>;
 }
 
 export interface CustomerDetailUpdateManyMutationInput {
@@ -15372,6 +15424,7 @@ export interface CustomerDetailUpdateManyMutationInput {
   commuteStyle?: Maybe<String>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
+  instagramHandle?: Maybe<String>;
 }
 
 export interface CustomerMembershipCreateInput {
@@ -15518,6 +15571,7 @@ export interface EmailReceiptUpdateManyMutationInput {
 export interface FitPicCreateInput {
   id?: Maybe<ID_Input>;
   image: ImageCreateOneInput;
+  instagramHandle?: Maybe<String>;
   location?: Maybe<LocationCreateOneInput>;
   products?: Maybe<ProductCreateManyInput>;
   reports?: Maybe<FitPicReportCreateManyWithoutReportedInput>;
@@ -15549,6 +15603,7 @@ export interface UserCreateWithoutFitPicsInput {
 
 export interface FitPicUpdateInput {
   image?: Maybe<ImageUpdateOneRequiredInput>;
+  instagramHandle?: Maybe<String>;
   location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<ProductUpdateManyInput>;
   reports?: Maybe<FitPicReportUpdateManyWithoutReportedInput>;
@@ -15585,6 +15640,7 @@ export interface UserUpsertWithoutFitPicsInput {
 }
 
 export interface FitPicUpdateManyMutationInput {
+  instagramHandle?: Maybe<String>;
   status?: Maybe<FitPicStatus>;
 }
 
@@ -15603,6 +15659,7 @@ export interface FitPicCreateOneWithoutReportsInput {
 export interface FitPicCreateWithoutReportsInput {
   id?: Maybe<ID_Input>;
   image: ImageCreateOneInput;
+  instagramHandle?: Maybe<String>;
   location?: Maybe<LocationCreateOneInput>;
   products?: Maybe<ProductCreateManyInput>;
   status?: Maybe<FitPicStatus>;
@@ -15624,6 +15681,7 @@ export interface FitPicUpdateOneRequiredWithoutReportsInput {
 
 export interface FitPicUpdateWithoutReportsDataInput {
   image?: Maybe<ImageUpdateOneRequiredInput>;
+  instagramHandle?: Maybe<String>;
   location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<ProductUpdateManyInput>;
   status?: Maybe<FitPicStatus>;
@@ -19248,6 +19306,7 @@ export interface SmsReceiptNullablePromise
 
 export interface FitPic {
   id: ID_Output;
+  instagramHandle?: String;
   status: FitPicStatus;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -19256,6 +19315,7 @@ export interface FitPic {
 export interface FitPicPromise extends Promise<FitPic>, Fragmentable {
   id: () => Promise<ID_Output>;
   image: <T = ImagePromise>() => T;
+  instagramHandle: () => Promise<String>;
   location: <T = LocationPromise>() => T;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
@@ -19286,6 +19346,7 @@ export interface FitPicSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   image: <T = ImageSubscription>() => T;
+  instagramHandle: () => Promise<AsyncIterator<String>>;
   location: <T = LocationSubscription>() => T;
   products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
     where?: ProductWhereInput;
@@ -19316,6 +19377,7 @@ export interface FitPicNullablePromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   image: <T = ImagePromise>() => T;
+  instagramHandle: () => Promise<String>;
   location: <T = LocationPromise>() => T;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
@@ -21424,6 +21486,7 @@ export interface CustomerDetail {
   commuteStyle?: String;
   phoneOS?: String;
   insureShipment: Boolean;
+  instagramHandle?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -21454,6 +21517,7 @@ export interface CustomerDetailPromise
   shippingAddress: <T = LocationPromise>() => T;
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
+  instagramHandle: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -21484,6 +21548,7 @@ export interface CustomerDetailSubscription
   shippingAddress: <T = LocationSubscription>() => T;
   phoneOS: () => Promise<AsyncIterator<String>>;
   insureShipment: () => Promise<AsyncIterator<Boolean>>;
+  instagramHandle: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -21514,6 +21579,7 @@ export interface CustomerDetailNullablePromise
   shippingAddress: <T = LocationPromise>() => T;
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
+  instagramHandle: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -27038,6 +27104,7 @@ export interface CustomerDetailPreviousValues {
   commuteStyle?: String;
   phoneOS?: String;
   insureShipment: Boolean;
+  instagramHandle?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -27066,6 +27133,7 @@ export interface CustomerDetailPreviousValuesPromise
   commuteStyle: () => Promise<String>;
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
+  instagramHandle: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -27094,6 +27162,7 @@ export interface CustomerDetailPreviousValuesSubscription
   commuteStyle: () => Promise<AsyncIterator<String>>;
   phoneOS: () => Promise<AsyncIterator<String>>;
   insureShipment: () => Promise<AsyncIterator<Boolean>>;
+  instagramHandle: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -27222,6 +27291,7 @@ export interface FitPicSubscriptionPayloadSubscription
 
 export interface FitPicPreviousValues {
   id: ID_Output;
+  instagramHandle?: String;
   status: FitPicStatus;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -27231,6 +27301,7 @@ export interface FitPicPreviousValuesPromise
   extends Promise<FitPicPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  instagramHandle: () => Promise<String>;
   status: () => Promise<FitPicStatus>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -27240,6 +27311,7 @@ export interface FitPicPreviousValuesSubscription
   extends Promise<AsyncIterator<FitPicPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  instagramHandle: () => Promise<AsyncIterator<String>>;
   status: () => Promise<AsyncIterator<FitPicStatus>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
