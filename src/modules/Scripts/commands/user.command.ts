@@ -313,7 +313,8 @@ export class UserCommands {
               authorizationWindowClosesAt,
             },
           },
-          authorizedAt: DateTime.local().toISO(),
+          authorizedAt:
+            status !== "Waitlisted" ? DateTime.local().toISO() : null,
         },
         where: { id: customer.id },
       })
