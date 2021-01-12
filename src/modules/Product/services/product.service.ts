@@ -812,15 +812,15 @@ export class ProductService {
           sequenceNumber,
           productVariant: { connect: { id: prodVar.id } },
           sellable: {
-            create: physProdData.sellable || variant.sellable,
+            create: physProdData.price || variant.price,
           },
         },
         update: {
           ...physProdData,
-          sellable: {
+          price: {
             upsert: {
-              update: physProdData.sellable || variant.sellable,
-              create: physProdData.sellable || variant.sellable,
+              update: physProdData.price || variant.price,
+              create: physProdData.price || variant.price,
             },
           },
         },

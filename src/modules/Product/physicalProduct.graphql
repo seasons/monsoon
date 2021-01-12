@@ -78,7 +78,6 @@ input WarehouseLocationConnectWhereUniqueInput {
 input PhysicalProductPriceInput {
   buyUsedPrice: Float
   buyUsedEnabled: Boolean!
-  buyNewEnabled: Boolean!
 }
 
 input PhysicalProductUpdateInput {
