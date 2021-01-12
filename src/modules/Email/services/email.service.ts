@@ -35,16 +35,11 @@ export class EmailService {
   ) {}
 
   async sendSubmittedEmailEmail(user: EmailUser) {
-    const products = await this.emailUtils.getXLatestProducts(4)
-    const payload = await RenderEmail.createdAccount({
-      products,
-    })
-    await this.sendPreRenderedTransactionalEmail({
+    await this.sendEmailWithLatestProducts({
       user,
-      payload,
+      renderEmailFunc: "createdAccount",
       emailId: "SubmittedEmail",
     })
-    await this.addEmailedProductsToCustomer(user, products)
   }
 
   async sendAuthorizedEmail(
@@ -153,14 +148,12 @@ export class EmailService {
     })
   }
 
-  async sendPausedEmail(customer: Customer) {
-    const latestPauseRequest = head(
-      customer.membership.pauseRequests.sort((a, b) =>
-        this.utils.dateSort(a.createdAt, b.createdAt)
-      )
-    )
+  async sendPausedEmail(customer: Customer, isExtension: boolean) {
+    const latestPauseRequest = this.utils.getLatestPauseReqest(customer)
+
     const payload = await RenderEmail.paused({
       name: customer.user.firstName,
+      isExtension,
       resumeDate: latestPauseRequest.resumeDate,
     })
 
@@ -172,18 +165,20 @@ export class EmailService {
   }
 
   async sendResumeReminderEmail(user: EmailUser, resumeDate: DateTime) {
-    const products = await this.emailUtils.getXLatestProducts(4)
-    const payload = await RenderEmail.resumeReminder({
-      name: user.firstName,
-      resumeDate: resumeDate,
-      products,
-    })
-    await this.sendPreRenderedTransactionalEmail({
+    await this.sendEmailWithLatestProducts({
       user,
-      payload,
+      renderEmailFunc: "resumeReminder",
       emailId: "ResumeReminder",
+      renderData: { resumeDate },
     })
-    await this.addEmailedProductsToCustomer(user, products)
+  }
+
+  async sendResumeConfirmationEmail(user: EmailUser) {
+    await this.sendEmailWithLatestProducts({
+      user,
+      renderEmailFunc: "resumeConfirmation",
+      emailId: "ResumeConfirmation",
+    })
   }
 
   async sendAdminConfirmationEmail(
@@ -266,6 +261,31 @@ export class EmailService {
       emailId,
       user: { connect: { id: userId } },
     })
+  }
+
+  private async sendEmailWithLatestProducts({
+    user,
+    renderEmailFunc,
+    emailId,
+    renderData = {},
+  }: {
+    user: EmailUser
+    renderEmailFunc: "createdAccount" | "resumeReminder" | "resumeConfirmation"
+    emailId: EmailId
+    renderData?: any
+  }) {
+    const products = await this.emailUtils.getXLatestProducts(4)
+    const payload = await RenderEmail[renderEmailFunc]({
+      name: `${user.firstName}`,
+      products,
+      ...renderData,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      user,
+      payload,
+      emailId,
+    })
+    await this.addEmailedProductsToCustomer(user, products)
   }
 
   private async sendEmailWithReservableStyles({

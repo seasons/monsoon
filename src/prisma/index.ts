@@ -2725,32 +2725,33 @@ export type UserRole = "Admin" | "Customer" | "Partner" | "Marketer";
 export type PushNotificationStatus = "Blocked" | "Granted" | "Denied";
 
 export type EmailId =
-  | "ReservationReturnConfirmation"
-  | "ReservationConfirmation"
   | "CompleteAccount"
-  | "FreeToReserve"
-  | "WelcomeToSeasons"
-  | "ReturnReminder"
-  | "ResumeReminder"
-  | "PriorityAccess"
-  | "SubmittedEmail"
-  | "Waitlisted"
-  | "Paused"
-  | "Rewaitlisted"
-  | "TwentyFourHourAuthorizationFollowup"
-  | "DayTwoAuthorizationFollowup"
-  | "DayThreeAuthorizationFollowup"
-  | "DayFourAuthorizationFollowup"
   | "DayFiveAuthorizationFollowup"
+  | "DayFourAuthorizationFollowup"
   | "DaySixAuthorizationFollowup"
-  | "ReferralConfirmation";
+  | "DayThreeAuthorizationFollowup"
+  | "DayTwoAuthorizationFollowup"
+  | "FreeToReserve"
+  | "Paused"
+  | "PriorityAccess"
+  | "ReferralConfirmation"
+  | "ReservationConfirmation"
+  | "ReservationReturnConfirmation"
+  | "ResumeConfirmation"
+  | "ResumeReminder"
+  | "ReturnReminder"
+  | "Rewaitlisted"
+  | "SubmittedEmail"
+  | "TwentyFourHourAuthorizationFollowup"
+  | "Waitlisted"
+  | "WelcomeToSeasons";
 
 export type UserPushNotificationInterestType =
-  | "General"
-  | "Blog"
   | "Bag"
-  | "NewProduct"
-  | "Brand";
+  | "Blog"
+  | "Brand"
+  | "General"
+  | "NewProduct";
 
 export type UserVerificationStatus = "Approved" | "Denied" | "Pending";
 
@@ -3180,41 +3181,41 @@ export type PaymentPlanTier = "Essential" | "AllAccess";
 export type BagItemStatus = "Added" | "Reserved" | "Received";
 
 export type PackageTransitEventStatus =
-  | "PreTransit"
-  | "Transit"
   | "Delivered"
-  | "Returned"
   | "Failure"
+  | "PreTransit"
+  | "Returned"
+  | "Transit"
   | "Unknown";
 
 export type PackageTransitEventSubStatus =
-  | "InformationReceived"
   | "AddressIssue"
   | "ContactCarrier"
   | "Delayed"
+  | "Delivered"
   | "DeliveryAttempted"
   | "DeliveryRescheduled"
   | "DeliveryScheduled"
+  | "InformationReceived"
   | "LocationInaccessible"
   | "NoticeLeft"
+  | "Other"
   | "OutForDelivery"
   | "PackageAccepted"
   | "PackageArrived"
   | "PackageDamaged"
   | "PackageDeparted"
+  | "PackageDisposed"
   | "PackageForwarded"
   | "PackageHeld"
+  | "PackageLost"
   | "PackageProcessed"
   | "PackageProcessing"
-  | "PickupAvailable"
-  | "RescheduleDelivery"
-  | "Delivered"
-  | "ReturnToSender"
   | "PackageUnclaimed"
   | "PackageUndeliverable"
-  | "PackageDisposed"
-  | "PackageLost"
-  | "Other";
+  | "PickupAvailable"
+  | "RescheduleDelivery"
+  | "ReturnToSender";
 
 export type ReservationPhase = "BusinessToCustomer" | "CustomerToBusiness";
 
