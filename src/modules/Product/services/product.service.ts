@@ -811,7 +811,7 @@ export class ProductService {
           ...physProdData,
           sequenceNumber,
           productVariant: { connect: { id: prodVar.id } },
-          sellable: {
+          price: {
             create: physProdData.price || variant.price,
           },
         },

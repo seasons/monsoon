@@ -67,10 +67,11 @@ type ProductVariantPrice {
   buyNewPrice: Float
   buyNewAvailableForSale: Boolean
 
+  # Product is the source of truth.
+  buyNewEnabled: Boolean!
+
   # PhysicalProduct is the source of truth.
   buyUsedPrice: Float
-
-  # Product is the source of truth.
   buyUsedEnabled: Boolean!
 }
 
