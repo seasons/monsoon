@@ -1,6 +1,7 @@
 import fs from "fs"
 
 import { Customer, User } from "@app/decorators"
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
 import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
@@ -27,7 +28,6 @@ import { SMSID, SMSPayload } from "../sms.types"
 
 const twilioStatusCallback = process.env.TWILIO_STATUS_CALLBACK
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
-
 @Injectable()
 export class SMSService {
   private sid?: string
@@ -37,7 +37,8 @@ export class SMSService {
     private readonly twilio: TwilioService,
     private readonly twilioUtils: TwilioUtils,
     private readonly paymentUtils: PaymentUtilsService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly email: EmailService
   ) {
     this.setupService()
   }
@@ -253,6 +254,7 @@ export class SMSService {
     const twiml = new Twilio.twiml.MessagingResponse()
     const genericError = `We're sorry, but we're having technical difficulties. Please contact ${process.env.MAIN_CONTACT_EMAIL}`
 
+    let sendCorrespondingEmailFunc
     try {
       let smsCust
       let status
@@ -267,6 +269,11 @@ export class SMSService {
             `{
               id
               status
+              user {
+                firstName
+                email
+                id
+              }
               membership {
                 id
                 subscriptionId
@@ -278,7 +285,6 @@ export class SMSService {
             }
           `
           )
-
           if (!smsCust) {
             twiml.message(genericError)
             break
@@ -323,6 +329,32 @@ export class SMSService {
                     newResumeDate
                   )}.`
                 )
+                sendCorrespondingEmailFunc = async () => {
+                  const custWithUpdatedResumeDate = await this.prisma.binding.query.customer(
+                    { where: { id: smsCust.id } },
+                    `{
+                      id
+                      user {
+                        id
+                        email
+                        firstName
+                        lastName
+                      }
+                      membership {
+                        id
+                        pauseRequests {
+                          id
+                          createdAt
+                          resumeDate
+                        }
+                      }
+                    }`
+                  )
+                  return await this.email.sendPausedEmail(
+                    custWithUpdatedResumeDate,
+                    true
+                  )
+                }
               } else {
                 twiml.message(
                   `You are scheduled to resume on ${this.formatResumeDate(
@@ -341,6 +373,13 @@ export class SMSService {
             "ResumeReminder",
             `{
               id
+              status
+              user {
+                id
+                email
+                firstName
+                lastName
+              }
               membership {
                 id
                 subscriptionId
@@ -357,7 +396,13 @@ export class SMSService {
           status = smsCust.status as CustomerStatus
           switch (status) {
             case "Paused":
-              await this.paymentUtils.resumeSubscription(null, null, smsCust)
+              await this.paymentUtils.resumeSubscription(
+                smsCust.membership.subscriptionId,
+                null,
+                smsCust
+              )
+              sendCorrespondingEmailFunc = async () =>
+                await this.email.sendResumeConfirmationEmail(smsCust.user)
               twiml.message(
                 `Your membership has been resumed!. You're free to place your next reservation.`
               )
@@ -391,6 +436,7 @@ export class SMSService {
       twiml.message(genericError)
     }
 
+    await sendCorrespondingEmailFunc?.()
     return twiml.toString()
   }
 
@@ -409,6 +455,7 @@ export class SMSService {
             { detail: { phoneNumber_contains: from.slice(2) } },
           ],
         },
+        orderBy: "createdAt_DESC",
       },
       info
     )

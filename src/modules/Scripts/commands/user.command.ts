@@ -319,29 +319,6 @@ export class UserCommands {
       })
     }
 
-    // Give them a valid pause request if appropriate
-    if (status === "Paused") {
-      const pauseDateISO = DateTime.local().toISO()
-      const resumeDateISO = DateTime.local().plus({ days: 30 }).toISO()
-      await this.prisma.client.updateCustomer({
-        where: { id: customer.id },
-        data: {
-          membership: {
-            update: {
-              pauseRequests: {
-                create: {
-                  pausePending: false,
-                  pauseDate: pauseDateISO,
-                  resumeDate: resumeDateISO,
-                  notified: false,
-                },
-              },
-            },
-          },
-        },
-      })
-    }
-
     // Make sure we always update these
     await this.prisma.client.updateCustomer({
       where: { id: customer.id },

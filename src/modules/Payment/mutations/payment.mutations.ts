@@ -90,7 +90,7 @@ export class PaymentMutationsResolver {
       }
     }`
     )) as any
-    await this.email.sendPausedEmail(customerWithData)
+    await this.email.sendPausedEmail(customerWithData, false)
 
     const tier = customerWithData?.membership?.plan?.tier
     const planID = customerWithData?.membership?.plan?.planID

@@ -4466,25 +4466,26 @@ input CustomerWhereUniqueInput {
 scalar DateTime
 
 enum EmailId {
-  ReservationReturnConfirmation
-  ReservationConfirmation
   CompleteAccount
-  FreeToReserve
-  WelcomeToSeasons
-  ReturnReminder
-  ResumeReminder
-  PriorityAccess
-  SubmittedEmail
-  Waitlisted
-  Paused
-  Rewaitlisted
-  TwentyFourHourAuthorizationFollowup
-  DayTwoAuthorizationFollowup
-  DayThreeAuthorizationFollowup
-  DayFourAuthorizationFollowup
   DayFiveAuthorizationFollowup
+  DayFourAuthorizationFollowup
   DaySixAuthorizationFollowup
+  DayThreeAuthorizationFollowup
+  DayTwoAuthorizationFollowup
+  FreeToReserve
+  Paused
+  PriorityAccess
   ReferralConfirmation
+  ReservationConfirmation
+  ReservationReturnConfirmation
+  ResumeConfirmation
+  ResumeReminder
+  ReturnReminder
+  Rewaitlisted
+  SubmittedEmail
+  TwentyFourHourAuthorizationFollowup
+  Waitlisted
+  WelcomeToSeasons
 }
 
 type EmailReceipt {
@@ -7135,11 +7136,11 @@ input PackageTransitEventScalarWhereInput {
 }
 
 enum PackageTransitEventStatus {
-  PreTransit
-  Transit
   Delivered
-  Returned
   Failure
+  PreTransit
+  Returned
+  Transit
   Unknown
 }
 
@@ -7162,33 +7163,33 @@ input PackageTransitEventSubscriptionWhereInput {
 }
 
 enum PackageTransitEventSubStatus {
-  InformationReceived
   AddressIssue
   ContactCarrier
   Delayed
+  Delivered
   DeliveryAttempted
   DeliveryRescheduled
   DeliveryScheduled
+  InformationReceived
   LocationInaccessible
   NoticeLeft
+  Other
   OutForDelivery
   PackageAccepted
   PackageArrived
   PackageDamaged
   PackageDeparted
+  PackageDisposed
   PackageForwarded
   PackageHeld
+  PackageLost
   PackageProcessed
   PackageProcessing
-  PickupAvailable
-  RescheduleDelivery
-  Delivered
-  ReturnToSender
   PackageUnclaimed
   PackageUndeliverable
-  PackageDisposed
-  PackageLost
-  Other
+  PickupAvailable
+  RescheduleDelivery
+  ReturnToSender
 }
 
 input PackageTransitEventUpdateInput {
@@ -16531,11 +16532,11 @@ input UserPushNotificationInterestSubscriptionWhereInput {
 }
 
 enum UserPushNotificationInterestType {
-  General
-  Blog
   Bag
-  NewProduct
+  Blog
   Brand
+  General
+  NewProduct
 }
 
 input UserPushNotificationInterestUpdateDataInput {

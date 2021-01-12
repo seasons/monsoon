@@ -1,6 +1,7 @@
-import { Module, forwardRef } from "@nestjs/common"
+import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
+import { EmailModule } from "../Email/email.module"
 import { ErrorModule } from "../Error/error.module"
 import { TwilioModule } from "../Twilio/twilio.module"
 import { UtilsModule } from "../Utils/utils.module"
@@ -10,7 +11,7 @@ import { SMSService } from "./services/sms.service"
 
 @Module({
   controllers: [SMSController],
-  imports: [PrismaModule, TwilioModule, UtilsModule, ErrorModule],
+  imports: [PrismaModule, TwilioModule, UtilsModule, ErrorModule, EmailModule],
   providers: [SMSMutationsResolver, SMSService],
   exports: [SMSService],
 })
