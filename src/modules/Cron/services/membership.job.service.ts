@@ -136,7 +136,7 @@ export class MembershipScheduledJobs {
     )
     for (const customer of pausedCustomers) {
       try {
-        const pauseRequest = this.utils.getLatestPauseReqest(customer)
+        const pauseRequest = this.utils.getLatestPauseRequest(customer)
         const resumeDate = DateTime.fromISO(pauseRequest?.resumeDate)
 
         // If it's time to auto-resume, do so.

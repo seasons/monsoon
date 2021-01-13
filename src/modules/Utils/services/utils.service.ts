@@ -366,7 +366,7 @@ export class UtilsService {
     return string + ` }`
   }
 
-  getLatestPauseReqest = (customer): PauseRequest => {
+  getLatestPauseRequest = (customer): PauseRequest => {
     const latestPauseRequest = head(
       customer.membership.pauseRequests.sort((a, b) =>
         this.dateSort(a.createdAt, b.createdAt)
