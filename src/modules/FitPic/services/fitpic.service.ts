@@ -28,10 +28,12 @@ export class FitPicService {
       image,
       location,
       instagramHandle,
+      includeInstagramHandle,
     }: {
       image: any
       location: LocationCreateOneInput
       instagramHandle: string
+      includeInstagramHandle: boolean
     },
     user: User,
     customer: Customer
@@ -49,7 +51,7 @@ export class FitPicService {
         // override the imageData url with the imgixUrl
         create: { ...imageData, url: imgixUrl },
       },
-      includeInstagramHandle: !!instagramHandle,
+      includeInstagramHandle,
     })
 
     await this.prisma.client.updateUser({

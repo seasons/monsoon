@@ -3,6 +3,7 @@ type Mutation {
     image: Upload!
     location: LocationCreateOneInput
     instagramHandle: String
+    includeInstagramHandle: Boolean
   ): ID! @hasRole(roles: [Admin, Customer])
   reportFitPic(id: ID!): Boolean! @hasRole(roles: [Admin, Customer])
 
