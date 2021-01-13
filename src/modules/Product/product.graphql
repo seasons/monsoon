@@ -289,6 +289,7 @@ input UpsertProductInput {
   architecture: String
   bottomSizeType: BottomSizeType
   brandID: String!
+  buyNewEnabled: Boolean
   categoryName: String!
   colorCode: String!
   description: String!
@@ -344,6 +345,7 @@ input CustomProductUpdateInput {
   modelSizeDisplay: String
   modelSizeName: String
   tags: [String!]
+  buyNewEnabled: Boolean
 }
 
 input UpsertSeasonInput {

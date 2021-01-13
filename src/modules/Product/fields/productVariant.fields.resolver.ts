@@ -301,22 +301,33 @@ export class ProductVariantFieldsResolver {
      * persist the updated cache. Noop if shopify integration is disabled
      * for the brand.
      */
-    const {
-      cachedAvailableForSale: buyNewAvailableForSale,
-      cachedPrice: buyNewPrice,
-    } = await (product?.brand?.externalShopifyIntegration?.enabled
-      ? Date.parse(shopifyProductVariant?.cacheExpiresAt) > Date.now()
-        ? Promise.resolve(shopifyProductVariant)
-        : this.shopify.cacheProductVariant(productVariant.id)
-      : Promise.resolve({ cachedAvailableForSale: false, cachedPrice: null }))
+    let shopifyCacheData = {}
+    try {
+      const {
+        cachedAvailableForSale: buyNewAvailableForSale,
+        cachedPrice: buyNewPrice,
+      } = await (product?.brand?.externalShopifyIntegration?.enabled
+        ? Date.parse(shopifyProductVariant?.cacheExpiresAt) > Date.now()
+          ? Promise.resolve(shopifyProductVariant)
+          : this.shopify.cacheProductVariant(productVariant.id)
+        : Promise.resolve({ cachedAvailableForSale: false, cachedPrice: null }))
+      shopifyCacheData = {
+        buyNewAvailableForSale,
+        buyNewPrice,
+      }
+    } catch (e) {
+      shopifyCacheData = {
+        buyNewAvailableForSale: false,
+        buyNewPrice: null,
+      }
+    }
 
     return {
       id: productVariant.id,
       buyUsedEnabled: physicalProducts.some(p => p?.price?.buyUsedEnabled),
       buyUsedPrice: usedPhysicalProduct?.price?.buyUsedPrice,
       buyNewEnabled: product.buyNewEnabled,
-      buyNewAvailableForSale,
-      buyNewPrice,
+      ...shopifyCacheData,
     }
   }
 }

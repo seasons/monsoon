@@ -241,10 +241,8 @@ export class ShopifyService {
 
     const { enabled, shopName, accessToken } =
       productVariant?.product?.brand?.externalShopifyIntegration || {}
-    const {
-      id: internalShopifyProductVariantId,
-      externalId,
-    } = productVariant?.shopifyProductVariant
+    const { id: internalShopifyProductVariantId, externalId } =
+      productVariant?.shopifyProductVariant || {}
 
     if (!enabled || !shopName || !accessToken || !externalId) {
       return Promise.reject(

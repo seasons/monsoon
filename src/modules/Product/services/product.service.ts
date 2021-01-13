@@ -254,6 +254,7 @@ export class ProductService {
         "season",
         "architecture",
         "photographyStatus",
+        "buyNewEnabled",
       ]),
       season: productSeason && { connect: { id: productSeason.id } },
       brand: {
