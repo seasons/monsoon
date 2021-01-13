@@ -183,7 +183,13 @@ export class ProductVariantService {
   }
 
   async updateProductVariant(input, info): Promise<ProductVariant> {
-    const { id, productType, weight, manufacturerSizeNames } = input
+    const {
+      id,
+      productType,
+      weight,
+      manufacturerSizeNames,
+      shopifyProductVariant,
+    } = input
     const prodVarSize = await this.prisma.client
       .productVariant({ id })
       .internalSize()
@@ -230,6 +236,15 @@ export class ProductVariantService {
       )
       data.manufacturerSizes = {
         connect: manufacturerSizeIDs,
+      }
+    }
+
+    if (shopifyProductVariant) {
+      data.shopifyProductVariant = {
+        upsert: {
+          create: { externalId: shopifyProductVariant.externalId },
+          update: { externalId: shopifyProductVariant.externalId },
+        },
       }
     }
 

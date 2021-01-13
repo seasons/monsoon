@@ -7,7 +7,6 @@ import {
   Product,
   ProductVariant,
   ShopifyProductVariant,
-  ShopifySelectedOption,
 } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { DateTime } from "luxon"
@@ -185,7 +184,7 @@ export class ShopifyService {
     externalId: string
   }> {
     const query = `{
-      productVariant(id: "${externalId}") {
+      productVariant(id: "gid://shopify/ProductVariant/${externalId}") {
         availableForSale
         price
       }
@@ -204,72 +203,17 @@ export class ShopifyService {
     }
   }
 
-  async getShopifyProductVariantBySelectedOptions({
-    productHandle,
-    selectedOptions,
-    accessToken,
-    shopName,
-  }: {
-    productHandle: string
-    selectedOptions: Array<{ name: string; value: string }>
-    accessToken: string
-    shopName: string
-  }): Promise<{
-    availableForSale: boolean
-    price: number
-    externalId: string
-  }> {
-    const query = `{
-      productByHandle(handle: "${productHandle}") {
-        variants(first: 100) {
-          edges {
-            node {
-              id
-              availableForSale
-              price
-              selectedOptions {
-                name
-                value
-              }
-            }
-          }
-        }
-      }
-    }`
-
-    const data: any = await this.queryShopify({ query, shopName, accessToken })
-
-    const shopifyProductVariant = data?.productByHandle?.variants.edges.find(
-      ({ node: shopifyProductVariant }) => {
-        return selectedOptions.every(({ name, value }) => {
-          return shopifyProductVariant.selectedOptions.find(option => {
-            return option.name === name && option.value === value
-          })
-        })
-      }
-    )
-
-    if (!shopifyProductVariant) {
-      throw new Error("Unable to match shopify product variant.")
-    }
-
-    return {
-      externalId: shopifyProductVariant.node.id,
-      availableForSale: shopifyProductVariant.node.availableForSale,
-      price: parseFloat(shopifyProductVariant.node.price),
-    }
-  }
-
   async cacheProductVariant(
     productVariantId: string
   ): Promise<ShopifyProductVariant> {
     const productVariant: ProductVariant & {
-      shopifyProductVariant: ShopifyProductVariant & {
-        selectedOptions: Array<ShopifySelectedOption>
-      }
-      product: Product & {
-        brand: Brand & {
-          externalShopifyIntegration: ExternalShopifyIntegration
+      shopifyProductVariant: Pick<ShopifyProductVariant, "id" | "externalId">
+      product: {
+        brand: {
+          externalShopifyIntegration: Pick<
+            ExternalShopifyIntegration,
+            "enabled" | "shopName" | "accessToken"
+          >
         }
       }
     } = await this.prisma.binding.query.productVariant(
@@ -280,7 +224,6 @@ export class ShopifyService {
       },
       `{
       product {
-        externalShopifyProductHandle
         brand {
           externalShopifyIntegration {
             enabled
@@ -291,10 +234,6 @@ export class ShopifyService {
       }
       shopifyProductVariant {
         id
-        selectedOptions {
-          name
-          value
-        }
         externalId
       }
     }`
@@ -305,34 +244,21 @@ export class ShopifyService {
     const {
       id: internalShopifyProductVariantId,
       externalId,
-      selectedOptions,
     } = productVariant?.shopifyProductVariant
-    const { externalShopifyProductHandle } = productVariant?.product
 
-    if (
-      !enabled ||
-      !shopName ||
-      !accessToken ||
-      !selectedOptions ||
-      !externalShopifyProductHandle
-    ) {
+    if (!enabled || !shopName || !accessToken || !externalId) {
       return Promise.reject(
         "Missing data required for Shopify product mapping."
       )
     }
 
-    const externalShopifyProductVariant = externalId
-      ? await this.getShopifyProductVariantByExternalId({
-          externalId: externalId,
-          accessToken,
-          shopName,
-        })
-      : await this.getShopifyProductVariantBySelectedOptions({
-          productHandle: externalShopifyProductHandle,
-          selectedOptions,
-          accessToken,
-          shopName,
-        })
+    const externalShopifyProductVariant = await this.getShopifyProductVariantByExternalId(
+      {
+        externalId: externalId,
+        accessToken,
+        shopName,
+      }
+    )
 
     return this.prisma.client.updateShopifyProductVariant({
       where: { id: internalShopifyProductVariantId },

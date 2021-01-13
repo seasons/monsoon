@@ -174,7 +174,6 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean!
   materialCategory: ProductMaterialCategory
   model: ProductModel
@@ -311,7 +310,6 @@ input UpsertProductInput {
   tags: [String!]!
   type: ProductType!
   variants: [UpsertVariantInput!]!
-  externalShopifyProductHandle: String
 }
 
 input CustomProductUpdateInput {
@@ -346,7 +344,6 @@ input CustomProductUpdateInput {
   modelSizeDisplay: String
   modelSizeName: String
   tags: [String!]
-  externalShopifyProductHandle: String
 }
 
 input UpsertSeasonInput {

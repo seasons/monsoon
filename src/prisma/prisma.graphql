@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Jan 12 2021 14:57:46 GMT-0500 (Eastern Standard Time)
+# timestamp: Wed Jan 13 2021 11:05:05 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -794,10 +794,6 @@ type AggregateShippingOption {
 }
 
 type AggregateShopifyProductVariant {
-  count: Int!
-}
-
-type AggregateShopifySelectedOption {
   count: Int!
 }
 
@@ -16401,9 +16397,6 @@ type Mutation {
   createShopifyProductVariant(
     data: ShopifyProductVariantCreateInput!
   ): ShopifyProductVariant!
-  createShopifySelectedOption(
-    data: ShopifySelectedOptionCreateInput!
-  ): ShopifySelectedOption!
   createReservationReceiptItem(
     data: ReservationReceiptItemCreateInput!
   ): ReservationReceiptItem!
@@ -16573,10 +16566,6 @@ type Mutation {
     data: ShopifyProductVariantUpdateInput!
     where: ShopifyProductVariantWhereUniqueInput!
   ): ShopifyProductVariant
-  updateShopifySelectedOption(
-    data: ShopifySelectedOptionUpdateInput!
-    where: ShopifySelectedOptionWhereUniqueInput!
-  ): ShopifySelectedOption
   updateReservationReceiptItem(
     data: ReservationReceiptItemUpdateInput!
     where: ReservationReceiptItemWhereUniqueInput!
@@ -16744,9 +16733,6 @@ type Mutation {
   deleteShopifyProductVariant(
     where: ShopifyProductVariantWhereUniqueInput!
   ): ShopifyProductVariant
-  deleteShopifySelectedOption(
-    where: ShopifySelectedOptionWhereUniqueInput!
-  ): ShopifySelectedOption
   deleteReservationReceiptItem(
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
@@ -16966,11 +16952,6 @@ type Mutation {
     create: ShopifyProductVariantCreateInput!
     update: ShopifyProductVariantUpdateInput!
   ): ShopifyProductVariant!
-  upsertShopifySelectedOption(
-    where: ShopifySelectedOptionWhereUniqueInput!
-    create: ShopifySelectedOptionCreateInput!
-    update: ShopifySelectedOptionUpdateInput!
-  ): ShopifySelectedOption!
   upsertReservationReceiptItem(
     where: ReservationReceiptItemWhereUniqueInput!
     create: ReservationReceiptItemCreateInput!
@@ -17243,10 +17224,6 @@ type Mutation {
     data: ShopifyProductVariantUpdateManyMutationInput!
     where: ShopifyProductVariantWhereInput
   ): BatchPayload!
-  updateManyShopifySelectedOptions(
-    data: ShopifySelectedOptionUpdateManyMutationInput!
-    where: ShopifySelectedOptionWhereInput
-  ): BatchPayload!
   updateManyReservationReceiptItems(
     data: ReservationReceiptItemUpdateManyMutationInput!
     where: ReservationReceiptItemWhereInput
@@ -17427,9 +17404,6 @@ type Mutation {
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
   deleteManyShopifyProductVariants(
     where: ShopifyProductVariantWhereInput
-  ): BatchPayload!
-  deleteManyShopifySelectedOptions(
-    where: ShopifySelectedOptionWhereInput
   ): BatchPayload!
   deleteManyReservationReceiptItems(
     where: ReservationReceiptItemWhereInput
@@ -21894,7 +21868,6 @@ type Product implements Node {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean!
   images(
     where: ImageWhereInput
@@ -21984,7 +21957,6 @@ input ProductCreateInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -22060,7 +22032,6 @@ input ProductCreateWithoutBrandInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -22091,7 +22062,6 @@ input ProductCreateWithoutCategoryInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -22122,7 +22092,6 @@ input ProductCreateWithoutMaterialCategoryInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -22153,7 +22122,6 @@ input ProductCreateWithoutModelInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -22184,7 +22152,6 @@ input ProductCreateWithoutTagsInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -22215,7 +22182,6 @@ input ProductCreateWithoutVariantsInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -23743,8 +23709,6 @@ enum ProductOrderByInput {
   description_DESC
   externalURL_ASC
   externalURL_DESC
-  externalShopifyProductHandle_ASC
-  externalShopifyProductHandle_DESC
   buyNewEnabled_ASC
   buyNewEnabled_DESC
   modelHeight_ASC
@@ -23773,7 +23737,6 @@ type ProductPreviousValues {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean!
   modelHeight: Int
   retailPrice: Int
@@ -24994,72 +24957,6 @@ input ProductScalarWhereInput {
   All values not ending with the given string.
   """
   externalURL_not_ends_with: String
-  externalShopifyProductHandle: String
-
-  """
-  All values that are not equal to given value.
-  """
-  externalShopifyProductHandle_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  externalShopifyProductHandle_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  externalShopifyProductHandle_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  externalShopifyProductHandle_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  externalShopifyProductHandle_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  externalShopifyProductHandle_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  externalShopifyProductHandle_gte: String
-
-  """
-  All values containing the given string.
-  """
-  externalShopifyProductHandle_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  externalShopifyProductHandle_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  externalShopifyProductHandle_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  externalShopifyProductHandle_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  externalShopifyProductHandle_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  externalShopifyProductHandle_not_ends_with: String
   buyNewEnabled: Boolean
 
   """
@@ -25594,7 +25491,6 @@ input ProductUpdateDataInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -25629,7 +25525,6 @@ input ProductUpdateInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -25660,7 +25555,6 @@ input ProductUpdateManyDataInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -25691,7 +25585,6 @@ input ProductUpdateManyMutationInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -25793,7 +25686,6 @@ input ProductUpdateWithoutBrandDataInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -25823,7 +25715,6 @@ input ProductUpdateWithoutCategoryDataInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -25853,7 +25744,6 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -25883,7 +25773,6 @@ input ProductUpdateWithoutModelDataInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -25913,7 +25802,6 @@ input ProductUpdateWithoutTagsDataInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -25943,7 +25831,6 @@ input ProductUpdateWithoutVariantsDataInput {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String
   buyNewEnabled: Boolean
   modelHeight: Int
   retailPrice: Int
@@ -29668,72 +29555,6 @@ input ProductWhereInput {
   All values not ending with the given string.
   """
   externalURL_not_ends_with: String
-  externalShopifyProductHandle: String
-
-  """
-  All values that are not equal to given value.
-  """
-  externalShopifyProductHandle_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  externalShopifyProductHandle_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  externalShopifyProductHandle_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  externalShopifyProductHandle_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  externalShopifyProductHandle_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  externalShopifyProductHandle_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  externalShopifyProductHandle_gte: String
-
-  """
-  All values containing the given string.
-  """
-  externalShopifyProductHandle_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  externalShopifyProductHandle_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  externalShopifyProductHandle_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  externalShopifyProductHandle_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  externalShopifyProductHandle_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  externalShopifyProductHandle_not_ends_with: String
   buyNewEnabled: Boolean
 
   """
@@ -32197,15 +32018,6 @@ type Query {
     first: Int
     last: Int
   ): [ShopifyProductVariant]!
-  shopifySelectedOptions(
-    where: ShopifySelectedOptionWhereInput
-    orderBy: ShopifySelectedOptionOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [ShopifySelectedOption]!
   reservationReceiptItems(
     where: ReservationReceiptItemWhereInput
     orderBy: ReservationReceiptItemOrderByInput
@@ -32527,9 +32339,6 @@ type Query {
   shopifyProductVariant(
     where: ShopifyProductVariantWhereUniqueInput!
   ): ShopifyProductVariant
-  shopifySelectedOption(
-    where: ShopifySelectedOptionWhereUniqueInput!
-  ): ShopifySelectedOption
   reservationReceiptItem(
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
@@ -32883,15 +32692,6 @@ type Query {
     first: Int
     last: Int
   ): ShopifyProductVariantConnection!
-  shopifySelectedOptionsConnection(
-    where: ShopifySelectedOptionWhereInput
-    orderBy: ShopifySelectedOptionOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): ShopifySelectedOptionConnection!
   reservationReceiptItemsConnection(
     where: ReservationReceiptItemWhereInput
     orderBy: ReservationReceiptItemOrderByInput
@@ -37326,15 +37126,6 @@ input ShippingOptionWhereUniqueInput {
 
 type ShopifyProductVariant implements Node {
   id: ID!
-  selectedOptions(
-    where: ShopifySelectedOptionWhereInput
-    orderBy: ShopifySelectedOptionOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [ShopifySelectedOption!]
   externalId: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
@@ -37363,7 +37154,6 @@ input ShopifyProductVariantCreateInput {
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
-  selectedOptions: ShopifySelectedOptionCreateManyInput
 }
 
 input ShopifyProductVariantCreateOneInput {
@@ -37457,7 +37247,6 @@ input ShopifyProductVariantUpdateDataInput {
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
-  selectedOptions: ShopifySelectedOptionUpdateManyInput
 }
 
 input ShopifyProductVariantUpdateInput {
@@ -37465,7 +37254,6 @@ input ShopifyProductVariantUpdateInput {
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
-  selectedOptions: ShopifySelectedOptionUpdateManyInput
 }
 
 input ShopifyProductVariantUpdateManyMutationInput {
@@ -37714,603 +37502,11 @@ input ShopifyProductVariantWhereInput {
   All values greater than or equal the given value.
   """
   cacheExpiresAt_gte: DateTime
-  selectedOptions_every: ShopifySelectedOptionWhereInput
-  selectedOptions_some: ShopifySelectedOptionWhereInput
-  selectedOptions_none: ShopifySelectedOptionWhereInput
 }
 
 input ShopifyProductVariantWhereUniqueInput {
   id: ID
-}
-
-type ShopifySelectedOption implements Node {
-  id: ID!
-  name: String!
-  value: String!
-}
-
-"""
-A connection to a list of items.
-"""
-type ShopifySelectedOptionConnection {
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  A list of edges.
-  """
-  edges: [ShopifySelectedOptionEdge]!
-  aggregate: AggregateShopifySelectedOption!
-}
-
-input ShopifySelectedOptionCreateInput {
-  id: ID
-  name: String!
-  value: String!
-}
-
-input ShopifySelectedOptionCreateManyInput {
-  create: [ShopifySelectedOptionCreateInput!]
-  connect: [ShopifySelectedOptionWhereUniqueInput!]
-}
-
-"""
-An edge in a connection.
-"""
-type ShopifySelectedOptionEdge {
-  """
-  The item at the end of the edge.
-  """
-  node: ShopifySelectedOption!
-
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-}
-
-enum ShopifySelectedOptionOrderByInput {
-  id_ASC
-  id_DESC
-  name_ASC
-  name_DESC
-  value_ASC
-  value_DESC
-}
-
-type ShopifySelectedOptionPreviousValues {
-  id: ID!
-  name: String!
-  value: String!
-}
-
-input ShopifySelectedOptionScalarWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [ShopifySelectedOptionScalarWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [ShopifySelectedOptionScalarWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [ShopifySelectedOptionScalarWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  name: String
-
-  """
-  All values that are not equal to given value.
-  """
-  name_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  name_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  name_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  name_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  name_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  name_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  name_gte: String
-
-  """
-  All values containing the given string.
-  """
-  name_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  name_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  name_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  name_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  name_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  name_not_ends_with: String
-  value: String
-
-  """
-  All values that are not equal to given value.
-  """
-  value_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  value_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  value_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  value_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  value_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  value_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  value_gte: String
-
-  """
-  All values containing the given string.
-  """
-  value_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  value_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  value_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  value_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  value_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  value_not_ends_with: String
-}
-
-type ShopifySelectedOptionSubscriptionPayload {
-  mutation: MutationType!
-  node: ShopifySelectedOption
-  updatedFields: [String!]
-  previousValues: ShopifySelectedOptionPreviousValues
-}
-
-input ShopifySelectedOptionSubscriptionWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [ShopifySelectedOptionSubscriptionWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [ShopifySelectedOptionSubscriptionWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [ShopifySelectedOptionSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: ShopifySelectedOptionWhereInput
-}
-
-input ShopifySelectedOptionUpdateDataInput {
-  name: String
-  value: String
-}
-
-input ShopifySelectedOptionUpdateInput {
-  name: String
-  value: String
-}
-
-input ShopifySelectedOptionUpdateManyDataInput {
-  name: String
-  value: String
-}
-
-input ShopifySelectedOptionUpdateManyInput {
-  create: [ShopifySelectedOptionCreateInput!]
-  connect: [ShopifySelectedOptionWhereUniqueInput!]
-  set: [ShopifySelectedOptionWhereUniqueInput!]
-  disconnect: [ShopifySelectedOptionWhereUniqueInput!]
-  delete: [ShopifySelectedOptionWhereUniqueInput!]
-  update: [ShopifySelectedOptionUpdateWithWhereUniqueNestedInput!]
-  updateMany: [ShopifySelectedOptionUpdateManyWithWhereNestedInput!]
-  deleteMany: [ShopifySelectedOptionScalarWhereInput!]
-  upsert: [ShopifySelectedOptionUpsertWithWhereUniqueNestedInput!]
-}
-
-input ShopifySelectedOptionUpdateManyMutationInput {
-  name: String
-  value: String
-}
-
-input ShopifySelectedOptionUpdateManyWithWhereNestedInput {
-  where: ShopifySelectedOptionScalarWhereInput!
-  data: ShopifySelectedOptionUpdateManyDataInput!
-}
-
-input ShopifySelectedOptionUpdateWithWhereUniqueNestedInput {
-  where: ShopifySelectedOptionWhereUniqueInput!
-  data: ShopifySelectedOptionUpdateDataInput!
-}
-
-input ShopifySelectedOptionUpsertWithWhereUniqueNestedInput {
-  where: ShopifySelectedOptionWhereUniqueInput!
-  update: ShopifySelectedOptionUpdateDataInput!
-  create: ShopifySelectedOptionCreateInput!
-}
-
-input ShopifySelectedOptionWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [ShopifySelectedOptionWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [ShopifySelectedOptionWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [ShopifySelectedOptionWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  name: String
-
-  """
-  All values that are not equal to given value.
-  """
-  name_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  name_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  name_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  name_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  name_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  name_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  name_gte: String
-
-  """
-  All values containing the given string.
-  """
-  name_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  name_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  name_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  name_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  name_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  name_not_ends_with: String
-  value: String
-
-  """
-  All values that are not equal to given value.
-  """
-  value_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  value_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  value_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  value_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  value_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  value_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  value_gte: String
-
-  """
-  All values containing the given string.
-  """
-  value_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  value_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  value_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  value_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  value_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  value_not_ends_with: String
-}
-
-input ShopifySelectedOptionWhereUniqueInput {
-  id: ID
+  externalId: String
 }
 
 type Size implements Node {
@@ -40288,9 +39484,6 @@ type Subscription {
   shopifyProductVariant(
     where: ShopifyProductVariantSubscriptionWhereInput
   ): ShopifyProductVariantSubscriptionPayload
-  shopifySelectedOption(
-    where: ShopifySelectedOptionSubscriptionWhereInput
-  ): ShopifySelectedOptionSubscriptionPayload
   reservationReceiptItem(
     where: ReservationReceiptItemSubscriptionWhereInput
   ): ReservationReceiptItemSubscriptionPayload

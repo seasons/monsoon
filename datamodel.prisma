@@ -377,7 +377,6 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  externalShopifyProductHandle: String 
   buyNewEnabled: Boolean! @default(value: false)
   images: [Image!]
   modelHeight: Int
@@ -439,16 +438,9 @@ type ProductVariantPrice {
   retailPrice: Float
 }
 
-type ShopifySelectedOption {
-  id: ID! @id
-  name: String!
-  value: String!
-}
-
 type ShopifyProductVariant {
   id: ID! @id
-  selectedOptions: [ShopifySelectedOption!]!
-  externalId: String
+  externalId: String @unique
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime

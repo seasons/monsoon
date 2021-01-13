@@ -775,6 +775,14 @@ export class ProductService {
       internalSize.id
     )
 
+    const shopifyProductVariantData = variant.shopifyProductVariant
+      ? {
+          shopifyProductVariant: {
+            create: variant.shopifyProductVariant,
+          },
+        }
+      : {}
+
     const data = {
       displayShort,
       productID,
@@ -794,6 +802,7 @@ export class ProductService {
       nonReservable: status === "NotAvailable" ? variant.total : 0,
       offloaded: 0,
       stored: 0,
+      ...shopifyProductVariantData,
       ...pick(variant, ["weight", "total", "sku"]),
     }
 

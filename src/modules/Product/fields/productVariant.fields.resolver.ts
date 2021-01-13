@@ -3,9 +3,7 @@ import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
-  Brand,
   ExternalShopifyIntegration,
-  PhysicalProduct,
   PhysicalProductPrice,
   Product,
   ShopifyProductVariant,
@@ -247,7 +245,6 @@ export class ProductVariantFieldsResolver {
           }
           product {
             buyNewEnabled
-            externalShopifyProductHandle
             brand {
               externalShopifyIntegration {
                 enabled
@@ -266,10 +263,7 @@ export class ProductVariantFieldsResolver {
       physicalProducts: Array<{
         price: Pick<PhysicalProductPrice, "buyUsedPrice" | "buyUsedEnabled">
       }>
-      product: Pick<
-        Product,
-        "buyNewEnabled" | "externalShopifyProductHandle"
-      > & {
+      product: Pick<Product, "buyNewEnabled"> & {
         brand: {
           externalShopifyIntegration?: Pick<
             ExternalShopifyIntegration,
