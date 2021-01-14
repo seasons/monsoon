@@ -6102,6 +6102,7 @@ type CustomerDetail implements Node {
   shippingAddress: Location
   phoneOS: String
   insureShipment: Boolean!
+  instagramHandle: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6135,6 +6136,7 @@ input CustomerDetailCreateInput {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
+  instagramHandle: String
   weight: CustomerDetailCreateweightInput
   topSizes: CustomerDetailCreatetopSizesInput
   waistSizes: CustomerDetailCreatewaistSizesInput
@@ -6205,6 +6207,8 @@ enum CustomerDetailOrderByInput {
   phoneOS_DESC
   insureShipment_ASC
   insureShipment_DESC
+  instagramHandle_ASC
+  instagramHandle_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6233,6 +6237,7 @@ type CustomerDetailPreviousValues {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean!
+  instagramHandle: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6292,6 +6297,7 @@ input CustomerDetailUpdateDataInput {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
+  instagramHandle: String
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
@@ -6317,6 +6323,7 @@ input CustomerDetailUpdateInput {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
+  instagramHandle: String
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
@@ -6342,6 +6349,7 @@ input CustomerDetailUpdateManyMutationInput {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
+  instagramHandle: String
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
@@ -7030,6 +7038,46 @@ input CustomerDetailWhereInput {
 
   """All values that are not equal to given value."""
   insureShipment_not: Boolean
+  instagramHandle: String
+
+  """All values that are not equal to given value."""
+  instagramHandle_not: String
+
+  """All values that are contained in given list."""
+  instagramHandle_in: [String!]
+
+  """All values that are not contained in given list."""
+  instagramHandle_not_in: [String!]
+
+  """All values less than the given value."""
+  instagramHandle_lt: String
+
+  """All values less than or equal the given value."""
+  instagramHandle_lte: String
+
+  """All values greater than the given value."""
+  instagramHandle_gt: String
+
+  """All values greater than or equal the given value."""
+  instagramHandle_gte: String
+
+  """All values containing the given string."""
+  instagramHandle_contains: String
+
+  """All values not containing the given string."""
+  instagramHandle_not_contains: String
+
+  """All values starting with the given string."""
+  instagramHandle_starts_with: String
+
+  """All values not starting with the given string."""
+  instagramHandle_not_starts_with: String
+
+  """All values ending with the given string."""
+  instagramHandle_ends_with: String
+
+  """All values not ending with the given string."""
+  instagramHandle_not_ends_with: String
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -8928,6 +8976,7 @@ input ExternalShopifyIntegrationWhereUniqueInput {
 type FitPic implements Node {
   id: ID!
   image: Image!
+  includeInstagramHandle: Boolean!
   location: Location
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   reports(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPicReport!]
@@ -8949,6 +8998,7 @@ type FitPicConnection {
 
 input FitPicCreateInput {
   id: ID
+  includeInstagramHandle: Boolean
   status: FitPicStatus
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
@@ -8969,6 +9019,7 @@ input FitPicCreateOneWithoutReportsInput {
 
 input FitPicCreateWithoutReportsInput {
   id: ID
+  includeInstagramHandle: Boolean
   status: FitPicStatus
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
@@ -8978,6 +9029,7 @@ input FitPicCreateWithoutReportsInput {
 
 input FitPicCreateWithoutUserInput {
   id: ID
+  includeInstagramHandle: Boolean
   status: FitPicStatus
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
@@ -8997,6 +9049,8 @@ type FitPicEdge {
 enum FitPicOrderByInput {
   id_ASC
   id_DESC
+  includeInstagramHandle_ASC
+  includeInstagramHandle_DESC
   status_ASC
   status_DESC
   createdAt_ASC
@@ -9007,6 +9061,7 @@ enum FitPicOrderByInput {
 
 type FitPicPreviousValues {
   id: ID!
+  includeInstagramHandle: Boolean!
   status: FitPicStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -9430,6 +9485,10 @@ input FitPicScalarWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  includeInstagramHandle: Boolean
+
+  """All values that are not equal to given value."""
+  includeInstagramHandle_not: Boolean
   status: FitPicStatus
 
   """All values that are not equal to given value."""
@@ -9530,6 +9589,7 @@ input FitPicSubscriptionWhereInput {
 }
 
 input FitPicUpdateInput {
+  includeInstagramHandle: Boolean
   status: FitPicStatus
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
@@ -9539,10 +9599,12 @@ input FitPicUpdateInput {
 }
 
 input FitPicUpdateManyDataInput {
+  includeInstagramHandle: Boolean
   status: FitPicStatus
 }
 
 input FitPicUpdateManyMutationInput {
+  includeInstagramHandle: Boolean
   status: FitPicStatus
 }
 
@@ -9571,6 +9633,7 @@ input FitPicUpdateOneRequiredWithoutReportsInput {
 }
 
 input FitPicUpdateWithoutReportsDataInput {
+  includeInstagramHandle: Boolean
   status: FitPicStatus
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
@@ -9579,6 +9642,7 @@ input FitPicUpdateWithoutReportsDataInput {
 }
 
 input FitPicUpdateWithoutUserDataInput {
+  includeInstagramHandle: Boolean
   status: FitPicStatus
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
@@ -9651,6 +9715,10 @@ input FitPicWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  includeInstagramHandle: Boolean
+
+  """All values that are not equal to given value."""
+  includeInstagramHandle_not: Boolean
   status: FitPicStatus
 
   """All values that are not equal to given value."""
@@ -32072,6 +32140,8 @@ export type CustomerDetailOrderByInput =   'id_ASC' |
   'phoneOS_DESC' |
   'insureShipment_ASC' |
   'insureShipment_DESC' |
+  'instagramHandle_ASC' |
+  'instagramHandle_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -32153,6 +32223,8 @@ export type ExternalShopifyIntegrationOrderByInput =   'id_ASC' |
 
 export type FitPicOrderByInput =   'id_ASC' |
   'id_DESC' |
+  'includeInstagramHandle_ASC' |
+  'includeInstagramHandle_DESC' |
   'status_ASC' |
   'status_DESC' |
   'createdAt_ASC' |
@@ -35200,6 +35272,7 @@ export interface CustomerDetailCreateInput {
   commuteStyle?: String | null
   phoneOS?: String | null
   insureShipment?: Boolean | null
+  instagramHandle?: String | null
   weight?: CustomerDetailCreateweightInput | null
   topSizes?: CustomerDetailCreatetopSizesInput | null
   waistSizes?: CustomerDetailCreatewaistSizesInput | null
@@ -35253,6 +35326,7 @@ export interface CustomerDetailUpdateDataInput {
   commuteStyle?: String | null
   phoneOS?: String | null
   insureShipment?: Boolean | null
+  instagramHandle?: String | null
   weight?: CustomerDetailUpdateweightInput | null
   topSizes?: CustomerDetailUpdatetopSizesInput | null
   waistSizes?: CustomerDetailUpdatewaistSizesInput | null
@@ -35278,6 +35352,7 @@ export interface CustomerDetailUpdateInput {
   commuteStyle?: String | null
   phoneOS?: String | null
   insureShipment?: Boolean | null
+  instagramHandle?: String | null
   weight?: CustomerDetailUpdateweightInput | null
   topSizes?: CustomerDetailUpdatetopSizesInput | null
   waistSizes?: CustomerDetailUpdatewaistSizesInput | null
@@ -35303,6 +35378,7 @@ export interface CustomerDetailUpdateManyMutationInput {
   commuteStyle?: String | null
   phoneOS?: String | null
   insureShipment?: Boolean | null
+  instagramHandle?: String | null
   weight?: CustomerDetailUpdateweightInput | null
   topSizes?: CustomerDetailUpdatetopSizesInput | null
   waistSizes?: CustomerDetailUpdatewaistSizesInput | null
@@ -35566,6 +35642,20 @@ export interface CustomerDetailWhereInput {
   phoneOS_not_ends_with?: String | null
   insureShipment?: Boolean | null
   insureShipment_not?: Boolean | null
+  instagramHandle?: String | null
+  instagramHandle_not?: String | null
+  instagramHandle_in?: String[] | String | null
+  instagramHandle_not_in?: String[] | String | null
+  instagramHandle_lt?: String | null
+  instagramHandle_lte?: String | null
+  instagramHandle_gt?: String | null
+  instagramHandle_gte?: String | null
+  instagramHandle_contains?: String | null
+  instagramHandle_not_contains?: String | null
+  instagramHandle_starts_with?: String | null
+  instagramHandle_not_starts_with?: String | null
+  instagramHandle_ends_with?: String | null
+  instagramHandle_not_ends_with?: String | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -36522,6 +36612,7 @@ export interface ExternalShopifyIntegrationWhereUniqueInput {
 
 export interface FitPicCreateInput {
   id?: ID_Input | null
+  includeInstagramHandle?: Boolean | null
   status?: FitPicStatus | null
   image: ImageCreateOneInput
   location?: LocationCreateOneInput | null
@@ -36542,6 +36633,7 @@ export interface FitPicCreateOneWithoutReportsInput {
 
 export interface FitPicCreateWithoutReportsInput {
   id?: ID_Input | null
+  includeInstagramHandle?: Boolean | null
   status?: FitPicStatus | null
   image: ImageCreateOneInput
   location?: LocationCreateOneInput | null
@@ -36551,6 +36643,7 @@ export interface FitPicCreateWithoutReportsInput {
 
 export interface FitPicCreateWithoutUserInput {
   id?: ID_Input | null
+  includeInstagramHandle?: Boolean | null
   status?: FitPicStatus | null
   image: ImageCreateOneInput
   location?: LocationCreateOneInput | null
@@ -36738,6 +36831,8 @@ export interface FitPicScalarWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
+  includeInstagramHandle?: Boolean | null
+  includeInstagramHandle_not?: Boolean | null
   status?: FitPicStatus | null
   status_not?: FitPicStatus | null
   status_in?: FitPicStatus[] | FitPicStatus | null
@@ -36772,6 +36867,7 @@ export interface FitPicSubscriptionWhereInput {
 }
 
 export interface FitPicUpdateInput {
+  includeInstagramHandle?: Boolean | null
   status?: FitPicStatus | null
   image?: ImageUpdateOneRequiredInput | null
   location?: LocationUpdateOneInput | null
@@ -36781,10 +36877,12 @@ export interface FitPicUpdateInput {
 }
 
 export interface FitPicUpdateManyDataInput {
+  includeInstagramHandle?: Boolean | null
   status?: FitPicStatus | null
 }
 
 export interface FitPicUpdateManyMutationInput {
+  includeInstagramHandle?: Boolean | null
   status?: FitPicStatus | null
 }
 
@@ -36813,6 +36911,7 @@ export interface FitPicUpdateOneRequiredWithoutReportsInput {
 }
 
 export interface FitPicUpdateWithoutReportsDataInput {
+  includeInstagramHandle?: Boolean | null
   status?: FitPicStatus | null
   image?: ImageUpdateOneRequiredInput | null
   location?: LocationUpdateOneInput | null
@@ -36821,6 +36920,7 @@ export interface FitPicUpdateWithoutReportsDataInput {
 }
 
 export interface FitPicUpdateWithoutUserDataInput {
+  includeInstagramHandle?: Boolean | null
   status?: FitPicStatus | null
   image?: ImageUpdateOneRequiredInput | null
   location?: LocationUpdateOneInput | null
@@ -36862,6 +36962,8 @@ export interface FitPicWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
+  includeInstagramHandle?: Boolean | null
+  includeInstagramHandle_not?: Boolean | null
   status?: FitPicStatus | null
   status_not?: FitPicStatus | null
   status_in?: FitPicStatus[] | FitPicStatus | null
@@ -47612,6 +47714,7 @@ export interface CustomerDetail extends Node {
   shippingAddress?: Location | null
   phoneOS?: String | null
   insureShipment: Boolean
+  instagramHandle?: String | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -47657,6 +47760,7 @@ export interface CustomerDetailPreviousValues {
   commuteStyle?: String | null
   phoneOS?: String | null
   insureShipment: Boolean
+  instagramHandle?: String | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -47822,6 +47926,7 @@ export interface ExternalShopifyIntegrationSubscriptionPayload {
 export interface FitPic extends Node {
   id: ID_Output
   image: Image
+  includeInstagramHandle: Boolean
   location?: Location | null
   products?: Array<Product> | null
   reports?: Array<FitPicReport> | null
@@ -47852,6 +47957,7 @@ export interface FitPicEdge {
 
 export interface FitPicPreviousValues {
   id: ID_Output
+  includeInstagramHandle: Boolean
   status: FitPicStatus
   createdAt: DateTime
   updatedAt: DateTime

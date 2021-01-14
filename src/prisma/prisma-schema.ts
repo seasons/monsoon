@@ -3241,6 +3241,7 @@ type CustomerDetail {
   shippingAddress: Location
   phoneOS: String
   insureShipment: Boolean!
+  instagramHandle: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3275,6 +3276,7 @@ input CustomerDetailCreateInput {
   shippingAddress: LocationCreateOneInput
   phoneOS: String
   insureShipment: Boolean
+  instagramHandle: String
 }
 
 input CustomerDetailCreateOneInput {
@@ -3336,6 +3338,8 @@ enum CustomerDetailOrderByInput {
   phoneOS_DESC
   insureShipment_ASC
   insureShipment_DESC
+  instagramHandle_ASC
+  instagramHandle_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -3364,6 +3368,7 @@ type CustomerDetailPreviousValues {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean!
+  instagramHandle: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3409,6 +3414,7 @@ input CustomerDetailUpdateDataInput {
   shippingAddress: LocationUpdateOneInput
   phoneOS: String
   insureShipment: Boolean
+  instagramHandle: String
 }
 
 input CustomerDetailUpdateInput {
@@ -3434,6 +3440,7 @@ input CustomerDetailUpdateInput {
   shippingAddress: LocationUpdateOneInput
   phoneOS: String
   insureShipment: Boolean
+  instagramHandle: String
 }
 
 input CustomerDetailUpdateManyMutationInput {
@@ -3457,6 +3464,7 @@ input CustomerDetailUpdateManyMutationInput {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
+  instagramHandle: String
 }
 
 input CustomerDetailUpdateOneInput {
@@ -3716,6 +3724,20 @@ input CustomerDetailWhereInput {
   phoneOS_not_ends_with: String
   insureShipment: Boolean
   insureShipment_not: Boolean
+  instagramHandle: String
+  instagramHandle_not: String
+  instagramHandle_in: [String!]
+  instagramHandle_not_in: [String!]
+  instagramHandle_lt: String
+  instagramHandle_lte: String
+  instagramHandle_gt: String
+  instagramHandle_gte: String
+  instagramHandle_contains: String
+  instagramHandle_not_contains: String
+  instagramHandle_starts_with: String
+  instagramHandle_not_starts_with: String
+  instagramHandle_ends_with: String
+  instagramHandle_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -4885,6 +4907,7 @@ input ExternalShopifyIntegrationWhereUniqueInput {
 type FitPic {
   id: ID!
   image: Image!
+  includeInstagramHandle: Boolean!
   location: Location
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   reports(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPicReport!]
@@ -4903,6 +4926,7 @@ type FitPicConnection {
 input FitPicCreateInput {
   id: ID
   image: ImageCreateOneInput!
+  includeInstagramHandle: Boolean
   location: LocationCreateOneInput
   products: ProductCreateManyInput
   reports: FitPicReportCreateManyWithoutReportedInput
@@ -4923,6 +4947,7 @@ input FitPicCreateOneWithoutReportsInput {
 input FitPicCreateWithoutReportsInput {
   id: ID
   image: ImageCreateOneInput!
+  includeInstagramHandle: Boolean
   location: LocationCreateOneInput
   products: ProductCreateManyInput
   status: FitPicStatus
@@ -4932,6 +4957,7 @@ input FitPicCreateWithoutReportsInput {
 input FitPicCreateWithoutUserInput {
   id: ID
   image: ImageCreateOneInput!
+  includeInstagramHandle: Boolean
   location: LocationCreateOneInput
   products: ProductCreateManyInput
   reports: FitPicReportCreateManyWithoutReportedInput
@@ -4946,6 +4972,8 @@ type FitPicEdge {
 enum FitPicOrderByInput {
   id_ASC
   id_DESC
+  includeInstagramHandle_ASC
+  includeInstagramHandle_DESC
   status_ASC
   status_DESC
   createdAt_ASC
@@ -4956,6 +4984,7 @@ enum FitPicOrderByInput {
 
 type FitPicPreviousValues {
   id: ID!
+  includeInstagramHandle: Boolean!
   status: FitPicStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -5188,6 +5217,8 @@ input FitPicScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  includeInstagramHandle: Boolean
+  includeInstagramHandle_not: Boolean
   status: FitPicStatus
   status_not: FitPicStatus
   status_in: [FitPicStatus!]
@@ -5239,6 +5270,7 @@ input FitPicSubscriptionWhereInput {
 
 input FitPicUpdateInput {
   image: ImageUpdateOneRequiredInput
+  includeInstagramHandle: Boolean
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
   reports: FitPicReportUpdateManyWithoutReportedInput
@@ -5247,10 +5279,12 @@ input FitPicUpdateInput {
 }
 
 input FitPicUpdateManyDataInput {
+  includeInstagramHandle: Boolean
   status: FitPicStatus
 }
 
 input FitPicUpdateManyMutationInput {
+  includeInstagramHandle: Boolean
   status: FitPicStatus
 }
 
@@ -5280,6 +5314,7 @@ input FitPicUpdateOneRequiredWithoutReportsInput {
 
 input FitPicUpdateWithoutReportsDataInput {
   image: ImageUpdateOneRequiredInput
+  includeInstagramHandle: Boolean
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
   status: FitPicStatus
@@ -5288,6 +5323,7 @@ input FitPicUpdateWithoutReportsDataInput {
 
 input FitPicUpdateWithoutUserDataInput {
   image: ImageUpdateOneRequiredInput
+  includeInstagramHandle: Boolean
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
   reports: FitPicReportUpdateManyWithoutReportedInput
@@ -5326,6 +5362,8 @@ input FitPicWhereInput {
   id_ends_with: ID
   id_not_ends_with: ID
   image: ImageWhereInput
+  includeInstagramHandle: Boolean
+  includeInstagramHandle_not: Boolean
   location: LocationWhereInput
   products_every: ProductWhereInput
   products_some: ProductWhereInput
