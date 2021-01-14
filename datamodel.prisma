@@ -478,6 +478,24 @@ type PhysicalProductPrice {
   buyUsedPrice: Float
 }
 
+enum PhysicalProductDamageType {
+  BarcodeMissing
+  ButtonMissing
+  Stain
+  Smell
+  Tear
+  Other
+}
+
+type PhysicalProductQualityReport {
+  id: ID! @id
+  damageType: PhysicalProductDamageType
+  notes: String
+  physicalProduct: PhysicalProduct!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
@@ -494,6 +512,7 @@ type PhysicalProduct {
   dateReceived: DateTime
   unitCost: Float
   price: PhysicalProductPrice
+  reports: [PhysicalProductQualityReport!]!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
