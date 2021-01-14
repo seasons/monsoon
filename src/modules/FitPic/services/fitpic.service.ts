@@ -27,17 +27,19 @@ export class FitPicService {
     {
       image,
       location,
-      instagramHandle,
-      includeInstagramHandle,
+      options,
     }: {
       image: any
       location: LocationCreateOneInput
-      instagramHandle: string
-      includeInstagramHandle: boolean
+      options: {
+        instagramHandle: string
+        includeInstagramHandle: boolean
+      }
     },
     user: User,
     customer: Customer
   ) {
+    const { instagramHandle, includeInstagramHandle } = options
     const imageData = await this.image.uploadImage(image, {
       imageName: `${user.id}-${Date.now()}.jpg`,
     })
