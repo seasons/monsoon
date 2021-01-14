@@ -391,6 +391,10 @@ type AggregateProductSeason {
   count: Int!
 }
 
+type AggregateProductTier {
+  count: Int!
+}
+
 type AggregateProductVariant {
   count: Int!
 }
@@ -6787,6 +6791,12 @@ type Mutation {
   upsertProductSeason(where: ProductSeasonWhereUniqueInput!, create: ProductSeasonCreateInput!, update: ProductSeasonUpdateInput!): ProductSeason!
   deleteProductSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
   deleteManyProductSeasons(where: ProductSeasonWhereInput): BatchPayload!
+  createProductTier(data: ProductTierCreateInput!): ProductTier!
+  updateProductTier(data: ProductTierUpdateInput!, where: ProductTierWhereUniqueInput!): ProductTier
+  updateManyProductTiers(data: ProductTierUpdateManyMutationInput!, where: ProductTierWhereInput): BatchPayload!
+  upsertProductTier(where: ProductTierWhereUniqueInput!, create: ProductTierCreateInput!, update: ProductTierUpdateInput!): ProductTier!
+  deleteProductTier(where: ProductTierWhereUniqueInput!): ProductTier
+  deleteManyProductTiers(where: ProductTierWhereInput): BatchPayload!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   updateProductVariant(data: ProductVariantUpdateInput!, where: ProductVariantWhereUniqueInput!): ProductVariant
   updateManyProductVariants(data: ProductVariantUpdateManyMutationInput!, where: ProductVariantWhereInput): BatchPayload!
@@ -8886,32 +8896,33 @@ enum Plan {
 
 type Product {
   id: ID!
-  slug: String!
-  name: String!
+  architecture: ProductArchitecture
   brand: Brand!
-  productFit: ProductFit
   category: Category!
-  type: ProductType
+  color: Color!
   description: String
   externalURL: String
-  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModel
-  modelSize: Size
-  color: Color!
-  secondaryColor: Color
-  tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag!]
   functions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction!]
-  materialCategory: ProductMaterialCategory
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   innerMaterials: [String!]!
+  materialCategory: ProductMaterialCategory
+  model: ProductModel
+  modelHeight: Int
+  modelSize: Size
+  name: String!
   outerMaterials: [String!]!
-  variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
-  status: ProductStatus
-  season: ProductSeason
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeason
+  secondaryColor: Color
+  slug: String!
+  status: ProductStatus
+  tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag!]
+  tier: ProductTier
+  type: ProductType
+  variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8934,32 +8945,33 @@ input ProductCreateinnerMaterialsInput {
 
 input ProductCreateInput {
   id: ID
-  slug: String!
-  name: String!
+  architecture: ProductArchitecture
   brand: BrandCreateOneWithoutProductsInput!
-  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
-  type: ProductType
+  color: ColorCreateOneInput!
   description: String
   externalURL: String
-  images: ImageCreateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModelCreateOneWithoutProductsInput
-  modelSize: SizeCreateOneInput
-  color: ColorCreateOneInput!
-  secondaryColor: ColorCreateOneInput
-  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
-  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  model: ProductModelCreateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeCreateOneInput
+  name: String!
   outerMaterials: ProductCreateouterMaterialsInput
-  variants: ProductVariantCreateManyWithoutProductInput
-  status: ProductStatus
-  season: ProductSeasonCreateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonCreateOneInput
+  secondaryColor: ColorCreateOneInput
+  slug: String!
+  status: ProductStatus
+  tags: TagCreateManyWithoutProductsInput
+  tier: ProductTierCreateOneInput
+  type: ProductType
+  variants: ProductVariantCreateManyWithoutProductInput
 }
 
 input ProductCreateManyInput {
@@ -9008,176 +9020,182 @@ input ProductCreateouterMaterialsInput {
 
 input ProductCreateWithoutBrandInput {
   id: ID
-  slug: String!
-  name: String!
-  productFit: ProductFit
+  architecture: ProductArchitecture
   category: CategoryCreateOneWithoutProductsInput!
-  type: ProductType
+  color: ColorCreateOneInput!
   description: String
   externalURL: String
-  images: ImageCreateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModelCreateOneWithoutProductsInput
-  modelSize: SizeCreateOneInput
-  color: ColorCreateOneInput!
-  secondaryColor: ColorCreateOneInput
-  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
-  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  model: ProductModelCreateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeCreateOneInput
+  name: String!
   outerMaterials: ProductCreateouterMaterialsInput
-  variants: ProductVariantCreateManyWithoutProductInput
-  status: ProductStatus
-  season: ProductSeasonCreateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonCreateOneInput
+  secondaryColor: ColorCreateOneInput
+  slug: String!
+  status: ProductStatus
+  tags: TagCreateManyWithoutProductsInput
+  tier: ProductTierCreateOneInput
+  type: ProductType
+  variants: ProductVariantCreateManyWithoutProductInput
 }
 
 input ProductCreateWithoutCategoryInput {
   id: ID
-  slug: String!
-  name: String!
+  architecture: ProductArchitecture
   brand: BrandCreateOneWithoutProductsInput!
-  productFit: ProductFit
-  type: ProductType
+  color: ColorCreateOneInput!
   description: String
   externalURL: String
-  images: ImageCreateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModelCreateOneWithoutProductsInput
-  modelSize: SizeCreateOneInput
-  color: ColorCreateOneInput!
-  secondaryColor: ColorCreateOneInput
-  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
-  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  model: ProductModelCreateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeCreateOneInput
+  name: String!
   outerMaterials: ProductCreateouterMaterialsInput
-  variants: ProductVariantCreateManyWithoutProductInput
-  status: ProductStatus
-  season: ProductSeasonCreateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonCreateOneInput
+  secondaryColor: ColorCreateOneInput
+  slug: String!
+  status: ProductStatus
+  tags: TagCreateManyWithoutProductsInput
+  tier: ProductTierCreateOneInput
+  type: ProductType
+  variants: ProductVariantCreateManyWithoutProductInput
 }
 
 input ProductCreateWithoutMaterialCategoryInput {
   id: ID
-  slug: String!
-  name: String!
+  architecture: ProductArchitecture
   brand: BrandCreateOneWithoutProductsInput!
-  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
-  type: ProductType
+  color: ColorCreateOneInput!
   description: String
   externalURL: String
-  images: ImageCreateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModelCreateOneWithoutProductsInput
-  modelSize: SizeCreateOneInput
-  color: ColorCreateOneInput!
-  secondaryColor: ColorCreateOneInput
-  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
+  images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
+  model: ProductModelCreateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeCreateOneInput
+  name: String!
   outerMaterials: ProductCreateouterMaterialsInput
-  variants: ProductVariantCreateManyWithoutProductInput
-  status: ProductStatus
-  season: ProductSeasonCreateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonCreateOneInput
+  secondaryColor: ColorCreateOneInput
+  slug: String!
+  status: ProductStatus
+  tags: TagCreateManyWithoutProductsInput
+  tier: ProductTierCreateOneInput
+  type: ProductType
+  variants: ProductVariantCreateManyWithoutProductInput
 }
 
 input ProductCreateWithoutModelInput {
   id: ID
-  slug: String!
-  name: String!
+  architecture: ProductArchitecture
   brand: BrandCreateOneWithoutProductsInput!
-  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
-  type: ProductType
+  color: ColorCreateOneInput!
   description: String
   externalURL: String
-  images: ImageCreateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  modelSize: SizeCreateOneInput
-  color: ColorCreateOneInput!
-  secondaryColor: ColorCreateOneInput
-  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
-  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeCreateOneInput
+  name: String!
   outerMaterials: ProductCreateouterMaterialsInput
-  variants: ProductVariantCreateManyWithoutProductInput
-  status: ProductStatus
-  season: ProductSeasonCreateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonCreateOneInput
+  secondaryColor: ColorCreateOneInput
+  slug: String!
+  status: ProductStatus
+  tags: TagCreateManyWithoutProductsInput
+  tier: ProductTierCreateOneInput
+  type: ProductType
+  variants: ProductVariantCreateManyWithoutProductInput
 }
 
 input ProductCreateWithoutTagsInput {
   id: ID
-  slug: String!
-  name: String!
+  architecture: ProductArchitecture
   brand: BrandCreateOneWithoutProductsInput!
-  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
-  type: ProductType
+  color: ColorCreateOneInput!
   description: String
   externalURL: String
-  images: ImageCreateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModelCreateOneWithoutProductsInput
-  modelSize: SizeCreateOneInput
-  color: ColorCreateOneInput!
-  secondaryColor: ColorCreateOneInput
   functions: ProductFunctionCreateManyInput
-  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  model: ProductModelCreateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeCreateOneInput
+  name: String!
   outerMaterials: ProductCreateouterMaterialsInput
-  variants: ProductVariantCreateManyWithoutProductInput
-  status: ProductStatus
-  season: ProductSeasonCreateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonCreateOneInput
+  secondaryColor: ColorCreateOneInput
+  slug: String!
+  status: ProductStatus
+  tier: ProductTierCreateOneInput
+  type: ProductType
+  variants: ProductVariantCreateManyWithoutProductInput
 }
 
 input ProductCreateWithoutVariantsInput {
   id: ID
-  slug: String!
-  name: String!
+  architecture: ProductArchitecture
   brand: BrandCreateOneWithoutProductsInput!
-  productFit: ProductFit
   category: CategoryCreateOneWithoutProductsInput!
-  type: ProductType
+  color: ColorCreateOneInput!
   description: String
   externalURL: String
-  images: ImageCreateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModelCreateOneWithoutProductsInput
-  modelSize: SizeCreateOneInput
-  color: ColorCreateOneInput!
-  secondaryColor: ColorCreateOneInput
-  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
-  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  model: ProductModelCreateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeCreateOneInput
+  name: String!
   outerMaterials: ProductCreateouterMaterialsInput
-  status: ProductStatus
-  season: ProductSeasonCreateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonCreateOneInput
+  secondaryColor: ColorCreateOneInput
+  slug: String!
+  status: ProductStatus
+  tags: TagCreateManyWithoutProductsInput
+  tier: ProductTierCreateOneInput
+  type: ProductType
 }
 
 type ProductEdge {
@@ -9808,30 +9826,30 @@ input ProductNotificationWhereUniqueInput {
 enum ProductOrderByInput {
   id_ASC
   id_DESC
-  slug_ASC
-  slug_DESC
-  name_ASC
-  name_DESC
-  productFit_ASC
-  productFit_DESC
-  type_ASC
-  type_DESC
+  architecture_ASC
+  architecture_DESC
   description_ASC
   description_DESC
   externalURL_ASC
   externalURL_DESC
   modelHeight_ASC
   modelHeight_DESC
-  retailPrice_ASC
-  retailPrice_DESC
-  status_ASC
-  status_DESC
-  architecture_ASC
-  architecture_DESC
+  name_ASC
+  name_DESC
   photographyStatus_ASC
   photographyStatus_DESC
+  productFit_ASC
+  productFit_DESC
   publishedAt_ASC
   publishedAt_DESC
+  retailPrice_ASC
+  retailPrice_DESC
+  slug_ASC
+  slug_DESC
+  status_ASC
+  status_DESC
+  type_ASC
+  type_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -9840,20 +9858,20 @@ enum ProductOrderByInput {
 
 type ProductPreviousValues {
   id: ID!
-  slug: String!
-  name: String!
-  productFit: ProductFit
-  type: ProductType
+  architecture: ProductArchitecture
   description: String
   externalURL: String
-  modelHeight: Int
-  retailPrice: Int
   innerMaterials: [String!]!
+  modelHeight: Int
+  name: String!
   outerMaterials: [String!]!
-  status: ProductStatus
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  slug: String!
+  status: ProductStatus
+  type: ProductType
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -10149,42 +10167,10 @@ input ProductScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  slug: String
-  slug_not: String
-  slug_in: [String!]
-  slug_not_in: [String!]
-  slug_lt: String
-  slug_lte: String
-  slug_gt: String
-  slug_gte: String
-  slug_contains: String
-  slug_not_contains: String
-  slug_starts_with: String
-  slug_not_starts_with: String
-  slug_ends_with: String
-  slug_not_ends_with: String
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
-  productFit: ProductFit
-  productFit_not: ProductFit
-  productFit_in: [ProductFit!]
-  productFit_not_in: [ProductFit!]
-  type: ProductType
-  type_not: ProductType
-  type_in: [ProductType!]
-  type_not_in: [ProductType!]
+  architecture: ProductArchitecture
+  architecture_not: ProductArchitecture
+  architecture_in: [ProductArchitecture!]
+  architecture_not_in: [ProductArchitecture!]
   description: String
   description_not: String
   description_in: [String!]
@@ -10221,26 +10207,28 @@ input ProductScalarWhereInput {
   modelHeight_lte: Int
   modelHeight_gt: Int
   modelHeight_gte: Int
-  retailPrice: Int
-  retailPrice_not: Int
-  retailPrice_in: [Int!]
-  retailPrice_not_in: [Int!]
-  retailPrice_lt: Int
-  retailPrice_lte: Int
-  retailPrice_gt: Int
-  retailPrice_gte: Int
-  status: ProductStatus
-  status_not: ProductStatus
-  status_in: [ProductStatus!]
-  status_not_in: [ProductStatus!]
-  architecture: ProductArchitecture
-  architecture_not: ProductArchitecture
-  architecture_in: [ProductArchitecture!]
-  architecture_not_in: [ProductArchitecture!]
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
   photographyStatus: PhotographyStatus
   photographyStatus_not: PhotographyStatus
   photographyStatus_in: [PhotographyStatus!]
   photographyStatus_not_in: [PhotographyStatus!]
+  productFit: ProductFit
+  productFit_not: ProductFit
+  productFit_in: [ProductFit!]
+  productFit_not_in: [ProductFit!]
   publishedAt: DateTime
   publishedAt_not: DateTime
   publishedAt_in: [DateTime!]
@@ -10249,6 +10237,36 @@ input ProductScalarWhereInput {
   publishedAt_lte: DateTime
   publishedAt_gt: DateTime
   publishedAt_gte: DateTime
+  retailPrice: Int
+  retailPrice_not: Int
+  retailPrice_in: [Int!]
+  retailPrice_not_in: [Int!]
+  retailPrice_lt: Int
+  retailPrice_lte: Int
+  retailPrice_gt: Int
+  retailPrice_gte: Int
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
+  status: ProductStatus
+  status_not: ProductStatus
+  status_in: [ProductStatus!]
+  status_not_in: [ProductStatus!]
+  type: ProductType
+  type_not: ProductType
+  type_in: [ProductType!]
+  type_not_in: [ProductType!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -10417,6 +10435,161 @@ input ProductSubscriptionWhereInput {
   NOT: [ProductSubscriptionWhereInput!]
 }
 
+type ProductTier {
+  id: ID!
+  tier: ProductTierName!
+  price: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ProductTierConnection {
+  pageInfo: PageInfo!
+  edges: [ProductTierEdge]!
+  aggregate: AggregateProductTier!
+}
+
+input ProductTierCreateInput {
+  id: ID
+  tier: ProductTierName!
+  price: Int!
+}
+
+input ProductTierCreateOneInput {
+  create: ProductTierCreateInput
+  connect: ProductTierWhereUniqueInput
+}
+
+type ProductTierEdge {
+  node: ProductTier!
+  cursor: String!
+}
+
+enum ProductTierName {
+  Standard
+  Luxury
+}
+
+enum ProductTierOrderByInput {
+  id_ASC
+  id_DESC
+  tier_ASC
+  tier_DESC
+  price_ASC
+  price_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ProductTierPreviousValues {
+  id: ID!
+  tier: ProductTierName!
+  price: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ProductTierSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductTier
+  updatedFields: [String!]
+  previousValues: ProductTierPreviousValues
+}
+
+input ProductTierSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ProductTierWhereInput
+  AND: [ProductTierSubscriptionWhereInput!]
+  OR: [ProductTierSubscriptionWhereInput!]
+  NOT: [ProductTierSubscriptionWhereInput!]
+}
+
+input ProductTierUpdateDataInput {
+  tier: ProductTierName
+  price: Int
+}
+
+input ProductTierUpdateInput {
+  tier: ProductTierName
+  price: Int
+}
+
+input ProductTierUpdateManyMutationInput {
+  tier: ProductTierName
+  price: Int
+}
+
+input ProductTierUpdateOneInput {
+  create: ProductTierCreateInput
+  update: ProductTierUpdateDataInput
+  upsert: ProductTierUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ProductTierWhereUniqueInput
+}
+
+input ProductTierUpsertNestedInput {
+  update: ProductTierUpdateDataInput!
+  create: ProductTierCreateInput!
+}
+
+input ProductTierWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  tier: ProductTierName
+  tier_not: ProductTierName
+  tier_in: [ProductTierName!]
+  tier_not_in: [ProductTierName!]
+  price: Int
+  price_not: Int
+  price_in: [Int!]
+  price_not_in: [Int!]
+  price_lt: Int
+  price_lte: Int
+  price_gt: Int
+  price_gte: Int
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ProductTierWhereInput!]
+  OR: [ProductTierWhereInput!]
+  NOT: [ProductTierWhereInput!]
+}
+
+input ProductTierWhereUniqueInput {
+  id: ID
+}
+
 enum ProductType {
   Top
   Bottom
@@ -10425,32 +10598,33 @@ enum ProductType {
 }
 
 input ProductUpdateDataInput {
-  slug: String
-  name: String
+  architecture: ProductArchitecture
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
-  type: ProductType
+  color: ColorUpdateOneRequiredInput
   description: String
   externalURL: String
-  images: ImageUpdateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModelUpdateOneWithoutProductsInput
-  modelSize: SizeUpdateOneInput
-  color: ColorUpdateOneRequiredInput
-  secondaryColor: ColorUpdateOneInput
-  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
-  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  model: ProductModelUpdateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeUpdateOneInput
+  name: String
   outerMaterials: ProductUpdateouterMaterialsInput
-  variants: ProductVariantUpdateManyWithoutProductInput
-  status: ProductStatus
-  season: ProductSeasonUpdateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonUpdateOneInput
+  secondaryColor: ColorUpdateOneInput
+  slug: String
+  status: ProductStatus
+  tags: TagUpdateManyWithoutProductsInput
+  tier: ProductTierUpdateOneInput
+  type: ProductType
+  variants: ProductVariantUpdateManyWithoutProductInput
 }
 
 input ProductUpdateinnerMaterialsInput {
@@ -10458,49 +10632,50 @@ input ProductUpdateinnerMaterialsInput {
 }
 
 input ProductUpdateInput {
-  slug: String
-  name: String
+  architecture: ProductArchitecture
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
-  type: ProductType
+  color: ColorUpdateOneRequiredInput
   description: String
   externalURL: String
-  images: ImageUpdateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModelUpdateOneWithoutProductsInput
-  modelSize: SizeUpdateOneInput
-  color: ColorUpdateOneRequiredInput
-  secondaryColor: ColorUpdateOneInput
-  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
-  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  model: ProductModelUpdateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeUpdateOneInput
+  name: String
   outerMaterials: ProductUpdateouterMaterialsInput
-  variants: ProductVariantUpdateManyWithoutProductInput
-  status: ProductStatus
-  season: ProductSeasonUpdateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonUpdateOneInput
+  secondaryColor: ColorUpdateOneInput
+  slug: String
+  status: ProductStatus
+  tags: TagUpdateManyWithoutProductsInput
+  tier: ProductTierUpdateOneInput
+  type: ProductType
+  variants: ProductVariantUpdateManyWithoutProductInput
 }
 
 input ProductUpdateManyDataInput {
-  slug: String
-  name: String
-  productFit: ProductFit
-  type: ProductType
+  architecture: ProductArchitecture
   description: String
   externalURL: String
-  modelHeight: Int
-  retailPrice: Int
   innerMaterials: ProductUpdateinnerMaterialsInput
+  modelHeight: Int
+  name: String
   outerMaterials: ProductUpdateouterMaterialsInput
-  status: ProductStatus
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  slug: String
+  status: ProductStatus
+  type: ProductType
 }
 
 input ProductUpdateManyInput {
@@ -10516,20 +10691,20 @@ input ProductUpdateManyInput {
 }
 
 input ProductUpdateManyMutationInput {
-  slug: String
-  name: String
-  productFit: ProductFit
-  type: ProductType
+  architecture: ProductArchitecture
   description: String
   externalURL: String
-  modelHeight: Int
-  retailPrice: Int
   innerMaterials: ProductUpdateinnerMaterialsInput
+  modelHeight: Int
+  name: String
   outerMaterials: ProductUpdateouterMaterialsInput
-  status: ProductStatus
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  slug: String
+  status: ProductStatus
+  type: ProductType
 }
 
 input ProductUpdateManyWithoutBrandInput {
@@ -10616,171 +10791,177 @@ input ProductUpdateouterMaterialsInput {
 }
 
 input ProductUpdateWithoutBrandDataInput {
-  slug: String
-  name: String
-  productFit: ProductFit
+  architecture: ProductArchitecture
   category: CategoryUpdateOneRequiredWithoutProductsInput
-  type: ProductType
+  color: ColorUpdateOneRequiredInput
   description: String
   externalURL: String
-  images: ImageUpdateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModelUpdateOneWithoutProductsInput
-  modelSize: SizeUpdateOneInput
-  color: ColorUpdateOneRequiredInput
-  secondaryColor: ColorUpdateOneInput
-  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
-  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  model: ProductModelUpdateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeUpdateOneInput
+  name: String
   outerMaterials: ProductUpdateouterMaterialsInput
-  variants: ProductVariantUpdateManyWithoutProductInput
-  status: ProductStatus
-  season: ProductSeasonUpdateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonUpdateOneInput
+  secondaryColor: ColorUpdateOneInput
+  slug: String
+  status: ProductStatus
+  tags: TagUpdateManyWithoutProductsInput
+  tier: ProductTierUpdateOneInput
+  type: ProductType
+  variants: ProductVariantUpdateManyWithoutProductInput
 }
 
 input ProductUpdateWithoutCategoryDataInput {
-  slug: String
-  name: String
+  architecture: ProductArchitecture
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  productFit: ProductFit
-  type: ProductType
+  color: ColorUpdateOneRequiredInput
   description: String
   externalURL: String
-  images: ImageUpdateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModelUpdateOneWithoutProductsInput
-  modelSize: SizeUpdateOneInput
-  color: ColorUpdateOneRequiredInput
-  secondaryColor: ColorUpdateOneInput
-  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
-  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  model: ProductModelUpdateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeUpdateOneInput
+  name: String
   outerMaterials: ProductUpdateouterMaterialsInput
-  variants: ProductVariantUpdateManyWithoutProductInput
-  status: ProductStatus
-  season: ProductSeasonUpdateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonUpdateOneInput
+  secondaryColor: ColorUpdateOneInput
+  slug: String
+  status: ProductStatus
+  tags: TagUpdateManyWithoutProductsInput
+  tier: ProductTierUpdateOneInput
+  type: ProductType
+  variants: ProductVariantUpdateManyWithoutProductInput
 }
 
 input ProductUpdateWithoutMaterialCategoryDataInput {
-  slug: String
-  name: String
+  architecture: ProductArchitecture
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
-  type: ProductType
+  color: ColorUpdateOneRequiredInput
   description: String
   externalURL: String
-  images: ImageUpdateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModelUpdateOneWithoutProductsInput
-  modelSize: SizeUpdateOneInput
-  color: ColorUpdateOneRequiredInput
-  secondaryColor: ColorUpdateOneInput
-  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
+  images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
+  model: ProductModelUpdateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeUpdateOneInput
+  name: String
   outerMaterials: ProductUpdateouterMaterialsInput
-  variants: ProductVariantUpdateManyWithoutProductInput
-  status: ProductStatus
-  season: ProductSeasonUpdateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonUpdateOneInput
+  secondaryColor: ColorUpdateOneInput
+  slug: String
+  status: ProductStatus
+  tags: TagUpdateManyWithoutProductsInput
+  tier: ProductTierUpdateOneInput
+  type: ProductType
+  variants: ProductVariantUpdateManyWithoutProductInput
 }
 
 input ProductUpdateWithoutModelDataInput {
-  slug: String
-  name: String
+  architecture: ProductArchitecture
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
-  type: ProductType
+  color: ColorUpdateOneRequiredInput
   description: String
   externalURL: String
-  images: ImageUpdateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  modelSize: SizeUpdateOneInput
-  color: ColorUpdateOneRequiredInput
-  secondaryColor: ColorUpdateOneInput
-  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
-  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeUpdateOneInput
+  name: String
   outerMaterials: ProductUpdateouterMaterialsInput
-  variants: ProductVariantUpdateManyWithoutProductInput
-  status: ProductStatus
-  season: ProductSeasonUpdateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonUpdateOneInput
+  secondaryColor: ColorUpdateOneInput
+  slug: String
+  status: ProductStatus
+  tags: TagUpdateManyWithoutProductsInput
+  tier: ProductTierUpdateOneInput
+  type: ProductType
+  variants: ProductVariantUpdateManyWithoutProductInput
 }
 
 input ProductUpdateWithoutTagsDataInput {
-  slug: String
-  name: String
+  architecture: ProductArchitecture
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
-  type: ProductType
+  color: ColorUpdateOneRequiredInput
   description: String
   externalURL: String
-  images: ImageUpdateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModelUpdateOneWithoutProductsInput
-  modelSize: SizeUpdateOneInput
-  color: ColorUpdateOneRequiredInput
-  secondaryColor: ColorUpdateOneInput
   functions: ProductFunctionUpdateManyInput
-  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  model: ProductModelUpdateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeUpdateOneInput
+  name: String
   outerMaterials: ProductUpdateouterMaterialsInput
-  variants: ProductVariantUpdateManyWithoutProductInput
-  status: ProductStatus
-  season: ProductSeasonUpdateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonUpdateOneInput
+  secondaryColor: ColorUpdateOneInput
+  slug: String
+  status: ProductStatus
+  tier: ProductTierUpdateOneInput
+  type: ProductType
+  variants: ProductVariantUpdateManyWithoutProductInput
 }
 
 input ProductUpdateWithoutVariantsDataInput {
-  slug: String
-  name: String
+  architecture: ProductArchitecture
   brand: BrandUpdateOneRequiredWithoutProductsInput
-  productFit: ProductFit
   category: CategoryUpdateOneRequiredWithoutProductsInput
-  type: ProductType
+  color: ColorUpdateOneRequiredInput
   description: String
   externalURL: String
-  images: ImageUpdateManyInput
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModelUpdateOneWithoutProductsInput
-  modelSize: SizeUpdateOneInput
-  color: ColorUpdateOneRequiredInput
-  secondaryColor: ColorUpdateOneInput
-  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
-  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  model: ProductModelUpdateOneWithoutProductsInput
+  modelHeight: Int
+  modelSize: SizeUpdateOneInput
+  name: String
   outerMaterials: ProductUpdateouterMaterialsInput
-  status: ProductStatus
-  season: ProductSeasonUpdateOneInput
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeasonUpdateOneInput
+  secondaryColor: ColorUpdateOneInput
+  slug: String
+  status: ProductStatus
+  tags: TagUpdateManyWithoutProductsInput
+  tier: ProductTierUpdateOneInput
+  type: ProductType
 }
 
 input ProductUpdateWithWhereUniqueNestedInput {
@@ -12128,44 +12309,13 @@ input ProductWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  slug: String
-  slug_not: String
-  slug_in: [String!]
-  slug_not_in: [String!]
-  slug_lt: String
-  slug_lte: String
-  slug_gt: String
-  slug_gte: String
-  slug_contains: String
-  slug_not_contains: String
-  slug_starts_with: String
-  slug_not_starts_with: String
-  slug_ends_with: String
-  slug_not_ends_with: String
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
+  architecture: ProductArchitecture
+  architecture_not: ProductArchitecture
+  architecture_in: [ProductArchitecture!]
+  architecture_not_in: [ProductArchitecture!]
   brand: BrandWhereInput
-  productFit: ProductFit
-  productFit_not: ProductFit
-  productFit_in: [ProductFit!]
-  productFit_not_in: [ProductFit!]
   category: CategoryWhereInput
-  type: ProductType
-  type_not: ProductType
-  type_in: [ProductType!]
-  type_not_in: [ProductType!]
+  color: ColorWhereInput
   description: String
   description_not: String
   description_in: [String!]
@@ -12194,9 +12344,14 @@ input ProductWhereInput {
   externalURL_not_starts_with: String
   externalURL_ends_with: String
   externalURL_not_ends_with: String
+  functions_every: ProductFunctionWhereInput
+  functions_some: ProductFunctionWhereInput
+  functions_none: ProductFunctionWhereInput
   images_every: ImageWhereInput
   images_some: ImageWhereInput
   images_none: ImageWhereInput
+  materialCategory: ProductMaterialCategoryWhereInput
+  model: ProductModelWhereInput
   modelHeight: Int
   modelHeight_not: Int
   modelHeight_in: [Int!]
@@ -12205,41 +12360,29 @@ input ProductWhereInput {
   modelHeight_lte: Int
   modelHeight_gt: Int
   modelHeight_gte: Int
-  retailPrice: Int
-  retailPrice_not: Int
-  retailPrice_in: [Int!]
-  retailPrice_not_in: [Int!]
-  retailPrice_lt: Int
-  retailPrice_lte: Int
-  retailPrice_gt: Int
-  retailPrice_gte: Int
-  model: ProductModelWhereInput
   modelSize: SizeWhereInput
-  color: ColorWhereInput
-  secondaryColor: ColorWhereInput
-  tags_every: TagWhereInput
-  tags_some: TagWhereInput
-  tags_none: TagWhereInput
-  functions_every: ProductFunctionWhereInput
-  functions_some: ProductFunctionWhereInput
-  functions_none: ProductFunctionWhereInput
-  materialCategory: ProductMaterialCategoryWhereInput
-  variants_every: ProductVariantWhereInput
-  variants_some: ProductVariantWhereInput
-  variants_none: ProductVariantWhereInput
-  status: ProductStatus
-  status_not: ProductStatus
-  status_in: [ProductStatus!]
-  status_not_in: [ProductStatus!]
-  season: ProductSeasonWhereInput
-  architecture: ProductArchitecture
-  architecture_not: ProductArchitecture
-  architecture_in: [ProductArchitecture!]
-  architecture_not_in: [ProductArchitecture!]
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
   photographyStatus: PhotographyStatus
   photographyStatus_not: PhotographyStatus
   photographyStatus_in: [PhotographyStatus!]
   photographyStatus_not_in: [PhotographyStatus!]
+  productFit: ProductFit
+  productFit_not: ProductFit
+  productFit_in: [ProductFit!]
+  productFit_not_in: [ProductFit!]
   publishedAt: DateTime
   publishedAt_not: DateTime
   publishedAt_in: [DateTime!]
@@ -12248,6 +12391,45 @@ input ProductWhereInput {
   publishedAt_lte: DateTime
   publishedAt_gt: DateTime
   publishedAt_gte: DateTime
+  retailPrice: Int
+  retailPrice_not: Int
+  retailPrice_in: [Int!]
+  retailPrice_not_in: [Int!]
+  retailPrice_lt: Int
+  retailPrice_lte: Int
+  retailPrice_gt: Int
+  retailPrice_gte: Int
+  season: ProductSeasonWhereInput
+  secondaryColor: ColorWhereInput
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
+  status: ProductStatus
+  status_not: ProductStatus
+  status_in: [ProductStatus!]
+  status_not_in: [ProductStatus!]
+  tags_every: TagWhereInput
+  tags_some: TagWhereInput
+  tags_none: TagWhereInput
+  tier: ProductTierWhereInput
+  type: ProductType
+  type_not: ProductType
+  type_in: [ProductType!]
+  type_not_in: [ProductType!]
+  variants_every: ProductVariantWhereInput
+  variants_some: ProductVariantWhereInput
+  variants_none: ProductVariantWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -12981,6 +13163,9 @@ type Query {
   productSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
   productSeasons(where: ProductSeasonWhereInput, orderBy: ProductSeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductSeason]!
   productSeasonsConnection(where: ProductSeasonWhereInput, orderBy: ProductSeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductSeasonConnection!
+  productTier(where: ProductTierWhereUniqueInput!): ProductTier
+  productTiers(where: ProductTierWhereInput, orderBy: ProductTierOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductTier]!
+  productTiersConnection(where: ProductTierWhereInput, orderBy: ProductTierOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductTierConnection!
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
   productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
@@ -15657,6 +15842,7 @@ type Subscription {
   productNotification(where: ProductNotificationSubscriptionWhereInput): ProductNotificationSubscriptionPayload
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
   productSeason(where: ProductSeasonSubscriptionWhereInput): ProductSeasonSubscriptionPayload
+  productTier(where: ProductTierSubscriptionWhereInput): ProductTierSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
   productVariantFeedback(where: ProductVariantFeedbackSubscriptionWhereInput): ProductVariantFeedbackSubscriptionPayload
   productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionSubscriptionWhereInput): ProductVariantFeedbackQuestionSubscriptionPayload
