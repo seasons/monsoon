@@ -1,13 +1,37 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { FitPic } from "@app/prisma"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("FitPic")
 export class FitPicFieldsResolver {
-  constructor(private readonly imageService: ImageService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly imageService: ImageService
+  ) {}
+
+  @ResolveField()
+  async customer(
+    @Parent() fitpic: FitPic,
+    @Loader({
+      params: {
+        query: "fitPics",
+        info: "{ id user { id } }",
+      },
+    })
+    userLoader: PrismaDataLoader<any>
+  ) {
+    const fp = await userLoader.load(fitpic.id)
+    console.log(fp)
+    const customerArray = await this.prisma.client.customers({
+      where: { user: { id: fp.user.id } },
+    })
+    console.log(customerArray)
+    return customerArray.length > 0 ? customerArray[0] : null
+  }
 
   @ResolveField()
   async author(

@@ -57,4 +57,5 @@ type FitPic {
   user: User!
   createdAt: DateTime!
   updatedAt: DateTime!
+  customer: Customer!
 }
