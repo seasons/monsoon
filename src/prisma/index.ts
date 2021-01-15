@@ -35,6 +35,9 @@ export interface Exists {
     where?: CustomerMembershipWhereInput
   ) => Promise<boolean>;
   emailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>;
+  externalShopifyIntegration: (
+    where?: ExternalShopifyIntegrationWhereInput
+  ) => Promise<boolean>;
   fitPic: (where?: FitPicWhereInput) => Promise<boolean>;
   fitPicReport: (where?: FitPicReportWhereInput) => Promise<boolean>;
   homepageProductRail: (
@@ -51,8 +54,8 @@ export interface Exists {
   pauseRequest: (where?: PauseRequestWhereInput) => Promise<boolean>;
   paymentPlan: (where?: PaymentPlanWhereInput) => Promise<boolean>;
   physicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>;
-  physicalProductSellable: (
-    where?: PhysicalProductSellableWhereInput
+  physicalProductPrice: (
+    where?: PhysicalProductPriceWhereInput
   ) => Promise<boolean>;
   product: (where?: ProductWhereInput) => Promise<boolean>;
   productFunction: (where?: ProductFunctionWhereInput) => Promise<boolean>;
@@ -72,6 +75,9 @@ export interface Exists {
   ) => Promise<boolean>;
   productVariantFeedbackQuestion: (
     where?: ProductVariantFeedbackQuestionWhereInput
+  ) => Promise<boolean>;
+  productVariantPrice: (
+    where?: ProductVariantPriceWhereInput
   ) => Promise<boolean>;
   productVariantWant: (
     where?: ProductVariantWantWhereInput
@@ -95,6 +101,9 @@ export interface Exists {
   season: (where?: SeasonWhereInput) => Promise<boolean>;
   shippingMethod: (where?: ShippingMethodWhereInput) => Promise<boolean>;
   shippingOption: (where?: ShippingOptionWhereInput) => Promise<boolean>;
+  shopifyProductVariant: (
+    where?: ShopifyProductVariantWhereInput
+  ) => Promise<boolean>;
   size: (where?: SizeWhereInput) => Promise<boolean>;
   smsReceipt: (where?: SmsReceiptWhereInput) => Promise<boolean>;
   stylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>;
@@ -435,6 +444,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => EmailReceiptConnectionPromise;
+  externalShopifyIntegration: (
+    where: ExternalShopifyIntegrationWhereUniqueInput
+  ) => ExternalShopifyIntegrationNullablePromise;
+  externalShopifyIntegrations: (args?: {
+    where?: ExternalShopifyIntegrationWhereInput;
+    orderBy?: ExternalShopifyIntegrationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<ExternalShopifyIntegration>;
+  externalShopifyIntegrationsConnection: (args?: {
+    where?: ExternalShopifyIntegrationWhereInput;
+    orderBy?: ExternalShopifyIntegrationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ExternalShopifyIntegrationConnectionPromise;
   fitPic: (where: FitPicWhereUniqueInput) => FitPicNullablePromise;
   fitPics: (args?: {
     where?: FitPicWhereInput;
@@ -677,27 +707,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => PhysicalProductConnectionPromise;
-  physicalProductSellable: (
-    where: PhysicalProductSellableWhereUniqueInput
-  ) => PhysicalProductSellableNullablePromise;
-  physicalProductSellables: (args?: {
-    where?: PhysicalProductSellableWhereInput;
-    orderBy?: PhysicalProductSellableOrderByInput;
+  physicalProductPrice: (
+    where: PhysicalProductPriceWhereUniqueInput
+  ) => PhysicalProductPriceNullablePromise;
+  physicalProductPrices: (args?: {
+    where?: PhysicalProductPriceWhereInput;
+    orderBy?: PhysicalProductPriceOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
-  }) => FragmentableArray<PhysicalProductSellable>;
-  physicalProductSellablesConnection: (args?: {
-    where?: PhysicalProductSellableWhereInput;
-    orderBy?: PhysicalProductSellableOrderByInput;
+  }) => FragmentableArray<PhysicalProductPrice>;
+  physicalProductPricesConnection: (args?: {
+    where?: PhysicalProductPriceWhereInput;
+    orderBy?: PhysicalProductPriceOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
-  }) => PhysicalProductSellableConnectionPromise;
+  }) => PhysicalProductPriceConnectionPromise;
   product: (where: ProductWhereUniqueInput) => ProductNullablePromise;
   products: (args?: {
     where?: ProductWhereInput;
@@ -927,6 +957,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ProductVariantFeedbackQuestionConnectionPromise;
+  productVariantPrice: (
+    where: ProductVariantPriceWhereUniqueInput
+  ) => ProductVariantPriceNullablePromise;
+  productVariantPrices: (args?: {
+    where?: ProductVariantPriceWhereInput;
+    orderBy?: ProductVariantPriceOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<ProductVariantPrice>;
+  productVariantPricesConnection: (args?: {
+    where?: ProductVariantPriceWhereInput;
+    orderBy?: ProductVariantPriceOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ProductVariantPriceConnectionPromise;
   productVariantWant: (
     where: ProductVariantWantWhereUniqueInput
   ) => ProductVariantWantNullablePromise;
@@ -1135,6 +1186,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ShippingOptionConnectionPromise;
+  shopifyProductVariant: (
+    where: ShopifyProductVariantWhereUniqueInput
+  ) => ShopifyProductVariantNullablePromise;
+  shopifyProductVariants: (args?: {
+    where?: ShopifyProductVariantWhereInput;
+    orderBy?: ShopifyProductVariantOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<ShopifyProductVariant>;
+  shopifyProductVariantsConnection: (args?: {
+    where?: ShopifyProductVariantWhereInput;
+    orderBy?: ShopifyProductVariantOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ShopifyProductVariantConnectionPromise;
   size: (where: SizeWhereUniqueInput) => SizeNullablePromise;
   sizes: (args?: {
     where?: SizeWhereInput;
@@ -1657,6 +1729,28 @@ export interface Prisma {
   deleteManyEmailReceipts: (
     where?: EmailReceiptWhereInput
   ) => BatchPayloadPromise;
+  createExternalShopifyIntegration: (
+    data: ExternalShopifyIntegrationCreateInput
+  ) => ExternalShopifyIntegrationPromise;
+  updateExternalShopifyIntegration: (args: {
+    data: ExternalShopifyIntegrationUpdateInput;
+    where: ExternalShopifyIntegrationWhereUniqueInput;
+  }) => ExternalShopifyIntegrationPromise;
+  updateManyExternalShopifyIntegrations: (args: {
+    data: ExternalShopifyIntegrationUpdateManyMutationInput;
+    where?: ExternalShopifyIntegrationWhereInput;
+  }) => BatchPayloadPromise;
+  upsertExternalShopifyIntegration: (args: {
+    where: ExternalShopifyIntegrationWhereUniqueInput;
+    create: ExternalShopifyIntegrationCreateInput;
+    update: ExternalShopifyIntegrationUpdateInput;
+  }) => ExternalShopifyIntegrationPromise;
+  deleteExternalShopifyIntegration: (
+    where: ExternalShopifyIntegrationWhereUniqueInput
+  ) => ExternalShopifyIntegrationPromise;
+  deleteManyExternalShopifyIntegrations: (
+    where?: ExternalShopifyIntegrationWhereInput
+  ) => BatchPayloadPromise;
   createFitPic: (data: FitPicCreateInput) => FitPicPromise;
   updateFitPic: (args: {
     data: FitPicUpdateInput;
@@ -1883,27 +1977,27 @@ export interface Prisma {
   deleteManyPhysicalProducts: (
     where?: PhysicalProductWhereInput
   ) => BatchPayloadPromise;
-  createPhysicalProductSellable: (
-    data: PhysicalProductSellableCreateInput
-  ) => PhysicalProductSellablePromise;
-  updatePhysicalProductSellable: (args: {
-    data: PhysicalProductSellableUpdateInput;
-    where: PhysicalProductSellableWhereUniqueInput;
-  }) => PhysicalProductSellablePromise;
-  updateManyPhysicalProductSellables: (args: {
-    data: PhysicalProductSellableUpdateManyMutationInput;
-    where?: PhysicalProductSellableWhereInput;
+  createPhysicalProductPrice: (
+    data: PhysicalProductPriceCreateInput
+  ) => PhysicalProductPricePromise;
+  updatePhysicalProductPrice: (args: {
+    data: PhysicalProductPriceUpdateInput;
+    where: PhysicalProductPriceWhereUniqueInput;
+  }) => PhysicalProductPricePromise;
+  updateManyPhysicalProductPrices: (args: {
+    data: PhysicalProductPriceUpdateManyMutationInput;
+    where?: PhysicalProductPriceWhereInput;
   }) => BatchPayloadPromise;
-  upsertPhysicalProductSellable: (args: {
-    where: PhysicalProductSellableWhereUniqueInput;
-    create: PhysicalProductSellableCreateInput;
-    update: PhysicalProductSellableUpdateInput;
-  }) => PhysicalProductSellablePromise;
-  deletePhysicalProductSellable: (
-    where: PhysicalProductSellableWhereUniqueInput
-  ) => PhysicalProductSellablePromise;
-  deleteManyPhysicalProductSellables: (
-    where?: PhysicalProductSellableWhereInput
+  upsertPhysicalProductPrice: (args: {
+    where: PhysicalProductPriceWhereUniqueInput;
+    create: PhysicalProductPriceCreateInput;
+    update: PhysicalProductPriceUpdateInput;
+  }) => PhysicalProductPricePromise;
+  deletePhysicalProductPrice: (
+    where: PhysicalProductPriceWhereUniqueInput
+  ) => PhysicalProductPricePromise;
+  deleteManyPhysicalProductPrices: (
+    where?: PhysicalProductPriceWhereInput
   ) => BatchPayloadPromise;
   createProduct: (data: ProductCreateInput) => ProductPromise;
   updateProduct: (args: {
@@ -2133,6 +2227,28 @@ export interface Prisma {
   deleteManyProductVariantFeedbackQuestions: (
     where?: ProductVariantFeedbackQuestionWhereInput
   ) => BatchPayloadPromise;
+  createProductVariantPrice: (
+    data: ProductVariantPriceCreateInput
+  ) => ProductVariantPricePromise;
+  updateProductVariantPrice: (args: {
+    data: ProductVariantPriceUpdateInput;
+    where: ProductVariantPriceWhereUniqueInput;
+  }) => ProductVariantPricePromise;
+  updateManyProductVariantPrices: (args: {
+    data: ProductVariantPriceUpdateManyMutationInput;
+    where?: ProductVariantPriceWhereInput;
+  }) => BatchPayloadPromise;
+  upsertProductVariantPrice: (args: {
+    where: ProductVariantPriceWhereUniqueInput;
+    create: ProductVariantPriceCreateInput;
+    update: ProductVariantPriceUpdateInput;
+  }) => ProductVariantPricePromise;
+  deleteProductVariantPrice: (
+    where: ProductVariantPriceWhereUniqueInput
+  ) => ProductVariantPricePromise;
+  deleteManyProductVariantPrices: (
+    where?: ProductVariantPriceWhereInput
+  ) => BatchPayloadPromise;
   createProductVariantWant: (
     data: ProductVariantWantCreateInput
   ) => ProductVariantWantPromise;
@@ -2338,6 +2454,28 @@ export interface Prisma {
   ) => ShippingOptionPromise;
   deleteManyShippingOptions: (
     where?: ShippingOptionWhereInput
+  ) => BatchPayloadPromise;
+  createShopifyProductVariant: (
+    data: ShopifyProductVariantCreateInput
+  ) => ShopifyProductVariantPromise;
+  updateShopifyProductVariant: (args: {
+    data: ShopifyProductVariantUpdateInput;
+    where: ShopifyProductVariantWhereUniqueInput;
+  }) => ShopifyProductVariantPromise;
+  updateManyShopifyProductVariants: (args: {
+    data: ShopifyProductVariantUpdateManyMutationInput;
+    where?: ShopifyProductVariantWhereInput;
+  }) => BatchPayloadPromise;
+  upsertShopifyProductVariant: (args: {
+    where: ShopifyProductVariantWhereUniqueInput;
+    create: ShopifyProductVariantCreateInput;
+    update: ShopifyProductVariantUpdateInput;
+  }) => ShopifyProductVariantPromise;
+  deleteShopifyProductVariant: (
+    where: ShopifyProductVariantWhereUniqueInput
+  ) => ShopifyProductVariantPromise;
+  deleteManyShopifyProductVariants: (
+    where?: ShopifyProductVariantWhereInput
   ) => BatchPayloadPromise;
   createSize: (data: SizeCreateInput) => SizePromise;
   updateSize: (args: {
@@ -2615,6 +2753,9 @@ export interface Subscription {
   emailReceipt: (
     where?: EmailReceiptSubscriptionWhereInput
   ) => EmailReceiptSubscriptionPayloadSubscription;
+  externalShopifyIntegration: (
+    where?: ExternalShopifyIntegrationSubscriptionWhereInput
+  ) => ExternalShopifyIntegrationSubscriptionPayloadSubscription;
   fitPic: (
     where?: FitPicSubscriptionWhereInput
   ) => FitPicSubscriptionPayloadSubscription;
@@ -2651,9 +2792,9 @@ export interface Subscription {
   physicalProduct: (
     where?: PhysicalProductSubscriptionWhereInput
   ) => PhysicalProductSubscriptionPayloadSubscription;
-  physicalProductSellable: (
-    where?: PhysicalProductSellableSubscriptionWhereInput
-  ) => PhysicalProductSellableSubscriptionPayloadSubscription;
+  physicalProductPrice: (
+    where?: PhysicalProductPriceSubscriptionWhereInput
+  ) => PhysicalProductPriceSubscriptionPayloadSubscription;
   product: (
     where?: ProductSubscriptionWhereInput
   ) => ProductSubscriptionPayloadSubscription;
@@ -2687,6 +2828,9 @@ export interface Subscription {
   productVariantFeedbackQuestion: (
     where?: ProductVariantFeedbackQuestionSubscriptionWhereInput
   ) => ProductVariantFeedbackQuestionSubscriptionPayloadSubscription;
+  productVariantPrice: (
+    where?: ProductVariantPriceSubscriptionWhereInput
+  ) => ProductVariantPriceSubscriptionPayloadSubscription;
   productVariantWant: (
     where?: ProductVariantWantSubscriptionWhereInput
   ) => ProductVariantWantSubscriptionPayloadSubscription;
@@ -2717,6 +2861,9 @@ export interface Subscription {
   shippingOption: (
     where?: ShippingOptionSubscriptionWhereInput
   ) => ShippingOptionSubscriptionPayloadSubscription;
+  shopifyProductVariant: (
+    where?: ShopifyProductVariantSubscriptionWhereInput
+  ) => ShopifyProductVariantSubscriptionPayloadSubscription;
   size: (
     where?: SizeSubscriptionWhereInput
   ) => SizeSubscriptionPayloadSubscription;
@@ -3064,6 +3211,8 @@ export type ProductOrderByInput =
   | "description_DESC"
   | "externalURL_ASC"
   | "externalURL_DESC"
+  | "buyNewEnabled_ASC"
+  | "buyNewEnabled_DESC"
   | "modelHeight_ASC"
   | "modelHeight_DESC"
   | "name_ASC"
@@ -3569,6 +3718,18 @@ export type CustomerMembershipOrderByInput =
   | "giftId_ASC"
   | "giftId_DESC";
 
+export type ExternalShopifyIntegrationOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "shopName_ASC"
+  | "shopName_DESC"
+  | "enabled_ASC"
+  | "enabled_DESC"
+  | "accessToken_ASC"
+  | "accessToken_DESC"
+  | "nonce_ASC"
+  | "nonce_DESC";
+
 export type HomepageProductRailOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -3673,17 +3834,13 @@ export type PaymentPlanOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type PhysicalProductSellableOrderByInput =
+export type PhysicalProductPriceOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "new_ASC"
-  | "new_DESC"
-  | "newPrice_ASC"
-  | "newPrice_DESC"
-  | "used_ASC"
-  | "used_DESC"
-  | "usedPrice_ASC"
-  | "usedPrice_DESC";
+  | "buyUsedEnabled_ASC"
+  | "buyUsedEnabled_DESC"
+  | "buyUsedPrice_ASC"
+  | "buyUsedPrice_DESC";
 
 export type ProductMaterialCategoryOrderByInput =
   | "id_ASC"
@@ -3769,6 +3926,12 @@ export type ProductVariantFeedbackOrderByInput =
   | "isCompleted_ASC"
   | "isCompleted_DESC";
 
+export type ProductVariantPriceOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "retailPrice_ASC"
+  | "retailPrice_DESC";
+
 export type ProductVariantWantOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -3826,6 +3989,18 @@ export type ShippingMethodOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type ShopifyProductVariantOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "externalId_ASC"
+  | "externalId_DESC"
+  | "cachedPrice_ASC"
+  | "cachedPrice_DESC"
+  | "cachedAvailableForSale_ASC"
+  | "cachedAvailableForSale_DESC"
+  | "cacheExpiresAt_ASC"
+  | "cacheExpiresAt_DESC";
 
 export type StylePreferencesOrderByInput = "id_ASC" | "id_DESC";
 
@@ -4854,7 +5029,7 @@ export interface PhysicalProductWhereInput {
   unitCost_lte?: Maybe<Float>;
   unitCost_gt?: Maybe<Float>;
   unitCost_gte?: Maybe<Float>;
-  sellable?: Maybe<PhysicalProductSellableWhereInput>;
+  price?: Maybe<PhysicalProductPriceWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -4963,6 +5138,8 @@ export interface ProductVariantWhereInput {
   retailPrice_lte?: Maybe<Float>;
   retailPrice_gt?: Maybe<Float>;
   retailPrice_gte?: Maybe<Float>;
+  price?: Maybe<ProductVariantPriceWhereInput>;
+  shopifyProductVariant?: Maybe<ShopifyProductVariantWhereInput>;
   physicalProducts_every?: Maybe<PhysicalProductWhereInput>;
   physicalProducts_some?: Maybe<PhysicalProductWhereInput>;
   physicalProducts_none?: Maybe<PhysicalProductWhereInput>;
@@ -5355,6 +5532,8 @@ export interface ProductWhereInput {
   functions_every?: Maybe<ProductFunctionWhereInput>;
   functions_some?: Maybe<ProductFunctionWhereInput>;
   functions_none?: Maybe<ProductFunctionWhereInput>;
+  buyNewEnabled?: Maybe<Boolean>;
+  buyNewEnabled_not?: Maybe<Boolean>;
   images_every?: Maybe<ImageWhereInput>;
   images_some?: Maybe<ImageWhereInput>;
   images_none?: Maybe<ImageWhereInput>;
@@ -5612,9 +5791,83 @@ export interface BrandWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationWhereInput>;
   AND?: Maybe<BrandWhereInput[] | BrandWhereInput>;
   OR?: Maybe<BrandWhereInput[] | BrandWhereInput>;
   NOT?: Maybe<BrandWhereInput[] | BrandWhereInput>;
+}
+
+export interface ExternalShopifyIntegrationWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  shopName?: Maybe<String>;
+  shopName_not?: Maybe<String>;
+  shopName_in?: Maybe<String[] | String>;
+  shopName_not_in?: Maybe<String[] | String>;
+  shopName_lt?: Maybe<String>;
+  shopName_lte?: Maybe<String>;
+  shopName_gt?: Maybe<String>;
+  shopName_gte?: Maybe<String>;
+  shopName_contains?: Maybe<String>;
+  shopName_not_contains?: Maybe<String>;
+  shopName_starts_with?: Maybe<String>;
+  shopName_not_starts_with?: Maybe<String>;
+  shopName_ends_with?: Maybe<String>;
+  shopName_not_ends_with?: Maybe<String>;
+  enabled?: Maybe<Boolean>;
+  enabled_not?: Maybe<Boolean>;
+  accessToken?: Maybe<String>;
+  accessToken_not?: Maybe<String>;
+  accessToken_in?: Maybe<String[] | String>;
+  accessToken_not_in?: Maybe<String[] | String>;
+  accessToken_lt?: Maybe<String>;
+  accessToken_lte?: Maybe<String>;
+  accessToken_gt?: Maybe<String>;
+  accessToken_gte?: Maybe<String>;
+  accessToken_contains?: Maybe<String>;
+  accessToken_not_contains?: Maybe<String>;
+  accessToken_starts_with?: Maybe<String>;
+  accessToken_not_starts_with?: Maybe<String>;
+  accessToken_ends_with?: Maybe<String>;
+  accessToken_not_ends_with?: Maybe<String>;
+  nonce?: Maybe<String>;
+  nonce_not?: Maybe<String>;
+  nonce_in?: Maybe<String[] | String>;
+  nonce_not_in?: Maybe<String[] | String>;
+  nonce_lt?: Maybe<String>;
+  nonce_lte?: Maybe<String>;
+  nonce_gt?: Maybe<String>;
+  nonce_gte?: Maybe<String>;
+  nonce_contains?: Maybe<String>;
+  nonce_not_contains?: Maybe<String>;
+  nonce_starts_with?: Maybe<String>;
+  nonce_not_starts_with?: Maybe<String>;
+  nonce_ends_with?: Maybe<String>;
+  nonce_not_ends_with?: Maybe<String>;
+  AND?: Maybe<
+    | ExternalShopifyIntegrationWhereInput[]
+    | ExternalShopifyIntegrationWhereInput
+  >;
+  OR?: Maybe<
+    | ExternalShopifyIntegrationWhereInput[]
+    | ExternalShopifyIntegrationWhereInput
+  >;
+  NOT?: Maybe<
+    | ExternalShopifyIntegrationWhereInput[]
+    | ExternalShopifyIntegrationWhereInput
+  >;
 }
 
 export interface CategoryWhereInput {
@@ -5995,6 +6248,92 @@ export interface ProductTierWhereInput {
   NOT?: Maybe<ProductTierWhereInput[] | ProductTierWhereInput>;
 }
 
+export interface ProductVariantPriceWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  retailPrice?: Maybe<Float>;
+  retailPrice_not?: Maybe<Float>;
+  retailPrice_in?: Maybe<Float[] | Float>;
+  retailPrice_not_in?: Maybe<Float[] | Float>;
+  retailPrice_lt?: Maybe<Float>;
+  retailPrice_lte?: Maybe<Float>;
+  retailPrice_gt?: Maybe<Float>;
+  retailPrice_gte?: Maybe<Float>;
+  AND?: Maybe<ProductVariantPriceWhereInput[] | ProductVariantPriceWhereInput>;
+  OR?: Maybe<ProductVariantPriceWhereInput[] | ProductVariantPriceWhereInput>;
+  NOT?: Maybe<ProductVariantPriceWhereInput[] | ProductVariantPriceWhereInput>;
+}
+
+export interface ShopifyProductVariantWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  externalId?: Maybe<String>;
+  externalId_not?: Maybe<String>;
+  externalId_in?: Maybe<String[] | String>;
+  externalId_not_in?: Maybe<String[] | String>;
+  externalId_lt?: Maybe<String>;
+  externalId_lte?: Maybe<String>;
+  externalId_gt?: Maybe<String>;
+  externalId_gte?: Maybe<String>;
+  externalId_contains?: Maybe<String>;
+  externalId_not_contains?: Maybe<String>;
+  externalId_starts_with?: Maybe<String>;
+  externalId_not_starts_with?: Maybe<String>;
+  externalId_ends_with?: Maybe<String>;
+  externalId_not_ends_with?: Maybe<String>;
+  cachedPrice?: Maybe<Float>;
+  cachedPrice_not?: Maybe<Float>;
+  cachedPrice_in?: Maybe<Float[] | Float>;
+  cachedPrice_not_in?: Maybe<Float[] | Float>;
+  cachedPrice_lt?: Maybe<Float>;
+  cachedPrice_lte?: Maybe<Float>;
+  cachedPrice_gt?: Maybe<Float>;
+  cachedPrice_gte?: Maybe<Float>;
+  cachedAvailableForSale?: Maybe<Boolean>;
+  cachedAvailableForSale_not?: Maybe<Boolean>;
+  cacheExpiresAt?: Maybe<DateTimeInput>;
+  cacheExpiresAt_not?: Maybe<DateTimeInput>;
+  cacheExpiresAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  cacheExpiresAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  cacheExpiresAt_lt?: Maybe<DateTimeInput>;
+  cacheExpiresAt_lte?: Maybe<DateTimeInput>;
+  cacheExpiresAt_gt?: Maybe<DateTimeInput>;
+  cacheExpiresAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    ShopifyProductVariantWhereInput[] | ShopifyProductVariantWhereInput
+  >;
+  OR?: Maybe<
+    ShopifyProductVariantWhereInput[] | ShopifyProductVariantWhereInput
+  >;
+  NOT?: Maybe<
+    ShopifyProductVariantWhereInput[] | ShopifyProductVariantWhereInput
+  >;
+}
+
 export interface WarehouseLocationWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
@@ -6140,7 +6479,7 @@ export interface WarehouseLocationConstraintWhereInput {
   >;
 }
 
-export interface PhysicalProductSellableWhereInput {
+export interface PhysicalProductPriceWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -6155,34 +6494,22 @@ export interface PhysicalProductSellableWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  new?: Maybe<Boolean>;
-  new_not?: Maybe<Boolean>;
-  newPrice?: Maybe<Float>;
-  newPrice_not?: Maybe<Float>;
-  newPrice_in?: Maybe<Float[] | Float>;
-  newPrice_not_in?: Maybe<Float[] | Float>;
-  newPrice_lt?: Maybe<Float>;
-  newPrice_lte?: Maybe<Float>;
-  newPrice_gt?: Maybe<Float>;
-  newPrice_gte?: Maybe<Float>;
-  used?: Maybe<Boolean>;
-  used_not?: Maybe<Boolean>;
-  usedPrice?: Maybe<Float>;
-  usedPrice_not?: Maybe<Float>;
-  usedPrice_in?: Maybe<Float[] | Float>;
-  usedPrice_not_in?: Maybe<Float[] | Float>;
-  usedPrice_lt?: Maybe<Float>;
-  usedPrice_lte?: Maybe<Float>;
-  usedPrice_gt?: Maybe<Float>;
-  usedPrice_gte?: Maybe<Float>;
+  buyUsedEnabled?: Maybe<Boolean>;
+  buyUsedEnabled_not?: Maybe<Boolean>;
+  buyUsedPrice?: Maybe<Float>;
+  buyUsedPrice_not?: Maybe<Float>;
+  buyUsedPrice_in?: Maybe<Float[] | Float>;
+  buyUsedPrice_not_in?: Maybe<Float[] | Float>;
+  buyUsedPrice_lt?: Maybe<Float>;
+  buyUsedPrice_lte?: Maybe<Float>;
+  buyUsedPrice_gt?: Maybe<Float>;
+  buyUsedPrice_gte?: Maybe<Float>;
   AND?: Maybe<
-    PhysicalProductSellableWhereInput[] | PhysicalProductSellableWhereInput
+    PhysicalProductPriceWhereInput[] | PhysicalProductPriceWhereInput
   >;
-  OR?: Maybe<
-    PhysicalProductSellableWhereInput[] | PhysicalProductSellableWhereInput
-  >;
+  OR?: Maybe<PhysicalProductPriceWhereInput[] | PhysicalProductPriceWhereInput>;
   NOT?: Maybe<
-    PhysicalProductSellableWhereInput[] | PhysicalProductSellableWhereInput
+    PhysicalProductPriceWhereInput[] | PhysicalProductPriceWhereInput
   >;
 }
 
@@ -8039,6 +8366,11 @@ export type EmailReceiptWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type ExternalShopifyIntegrationWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  shopName?: Maybe<String>;
+}>;
+
 export type FitPicWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -8207,7 +8539,7 @@ export type PhysicalProductWhereUniqueInput = AtLeastOne<{
   seasonsUID?: Maybe<String>;
 }>;
 
-export type PhysicalProductSellableWhereUniqueInput = AtLeastOne<{
+export type PhysicalProductPriceWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
@@ -8594,6 +8926,10 @@ export type ProductVariantFeedbackQuestionWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type ProductVariantPriceWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type ProductVariantWantWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -8709,6 +9045,11 @@ export type ShippingMethodWhereUniqueInput = AtLeastOne<{
 
 export type ShippingOptionWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+}>;
+
+export type ShopifyProductVariantWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  externalId?: Maybe<String>;
 }>;
 
 export type SizeWhereUniqueInput = AtLeastOne<{
@@ -9062,7 +9403,7 @@ export interface PhysicalProductCreateWithoutLocationInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<PhysicalProductSellableCreateOneInput>;
+  price?: Maybe<PhysicalProductPriceCreateOneInput>;
 }
 
 export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
@@ -9082,6 +9423,8 @@ export interface ProductVariantCreateWithoutPhysicalProductsInput {
   productID: String;
   product: ProductCreateOneWithoutVariantsInput;
   retailPrice?: Maybe<Float>;
+  price?: Maybe<ProductVariantPriceCreateOneInput>;
+  shopifyProductVariant?: Maybe<ShopifyProductVariantCreateOneInput>;
   total: Int;
   reservable: Int;
   reserved: Int;
@@ -9166,6 +9509,7 @@ export interface ProductCreateWithoutVariantsInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   materialCategory?: Maybe<
@@ -9210,11 +9554,25 @@ export interface BrandCreateWithoutProductsInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
+  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationCreateOneInput>;
 }
 
 export interface ImageCreateManyInput {
   create?: Maybe<ImageCreateInput[] | ImageCreateInput>;
   connect?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>;
+}
+
+export interface ExternalShopifyIntegrationCreateOneInput {
+  create?: Maybe<ExternalShopifyIntegrationCreateInput>;
+  connect?: Maybe<ExternalShopifyIntegrationWhereUniqueInput>;
+}
+
+export interface ExternalShopifyIntegrationCreateInput {
+  id?: Maybe<ID_Input>;
+  shopName: String;
+  enabled: Boolean;
+  accessToken?: Maybe<String>;
+  nonce?: Maybe<String>;
 }
 
 export interface CategoryCreateOneWithoutProductsInput {
@@ -9264,6 +9622,7 @@ export interface ProductCreateWithoutCategoryInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   materialCategory?: Maybe<
@@ -9323,6 +9682,8 @@ export interface ProductVariantCreateWithoutColorInput {
   productID: String;
   product: ProductCreateOneWithoutVariantsInput;
   retailPrice?: Maybe<Float>;
+  price?: Maybe<ProductVariantPriceCreateOneInput>;
+  shopifyProductVariant?: Maybe<ShopifyProductVariantCreateOneInput>;
   physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>;
   total: Int;
   reservable: Int;
@@ -9330,6 +9691,29 @@ export interface ProductVariantCreateWithoutColorInput {
   nonReservable: Int;
   offloaded: Int;
   stored: Int;
+}
+
+export interface ProductVariantPriceCreateOneInput {
+  create?: Maybe<ProductVariantPriceCreateInput>;
+  connect?: Maybe<ProductVariantPriceWhereUniqueInput>;
+}
+
+export interface ProductVariantPriceCreateInput {
+  id?: Maybe<ID_Input>;
+  retailPrice?: Maybe<Float>;
+}
+
+export interface ShopifyProductVariantCreateOneInput {
+  create?: Maybe<ShopifyProductVariantCreateInput>;
+  connect?: Maybe<ShopifyProductVariantWhereUniqueInput>;
+}
+
+export interface ShopifyProductVariantCreateInput {
+  id?: Maybe<ID_Input>;
+  externalId?: Maybe<String>;
+  cachedPrice?: Maybe<Float>;
+  cachedAvailableForSale?: Maybe<Boolean>;
+  cacheExpiresAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductCreateManyWithoutProductVariantInput {
@@ -9358,7 +9742,7 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<PhysicalProductSellableCreateOneInput>;
+  price?: Maybe<PhysicalProductPriceCreateOneInput>;
 }
 
 export interface LocationCreateOneWithoutPhysicalProductsInput {
@@ -9463,17 +9847,15 @@ export interface CategoryCreateInput {
   children?: Maybe<CategoryCreateManyWithoutChildrenInput>;
 }
 
-export interface PhysicalProductSellableCreateOneInput {
-  create?: Maybe<PhysicalProductSellableCreateInput>;
-  connect?: Maybe<PhysicalProductSellableWhereUniqueInput>;
+export interface PhysicalProductPriceCreateOneInput {
+  create?: Maybe<PhysicalProductPriceCreateInput>;
+  connect?: Maybe<PhysicalProductPriceWhereUniqueInput>;
 }
 
-export interface PhysicalProductSellableCreateInput {
+export interface PhysicalProductPriceCreateInput {
   id?: Maybe<ID_Input>;
-  new?: Maybe<Boolean>;
-  newPrice?: Maybe<Float>;
-  used?: Maybe<Boolean>;
-  usedPrice?: Maybe<Float>;
+  buyUsedEnabled?: Maybe<Boolean>;
+  buyUsedPrice?: Maybe<Float>;
 }
 
 export interface ProductFunctionCreateManyInput {
@@ -9591,6 +9973,8 @@ export interface ProductVariantCreateWithoutProductInput {
   height?: Maybe<Float>;
   productID: String;
   retailPrice?: Maybe<Float>;
+  price?: Maybe<ProductVariantPriceCreateOneInput>;
+  shopifyProductVariant?: Maybe<ShopifyProductVariantCreateOneInput>;
   physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>;
   total: Int;
   reservable: Int;
@@ -9614,6 +9998,7 @@ export interface ProductCreateInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   materialCategory?: Maybe<
@@ -10568,7 +10953,7 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<PhysicalProductSellableUpdateOneInput>;
+  price?: Maybe<PhysicalProductPriceUpdateOneInput>;
 }
 
 export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
@@ -10589,6 +10974,8 @@ export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
   productID?: Maybe<String>;
   product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>;
   retailPrice?: Maybe<Float>;
+  price?: Maybe<ProductVariantPriceUpdateOneInput>;
+  shopifyProductVariant?: Maybe<ShopifyProductVariantUpdateOneInput>;
   total?: Maybe<Int>;
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
@@ -10793,6 +11180,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
@@ -10838,6 +11226,7 @@ export interface BrandUpdateWithoutProductsDataInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
+  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
 }
 
 export interface ImageUpdateManyInput {
@@ -10978,6 +11367,27 @@ export interface ImageUpdateManyDataInput {
   title?: Maybe<String>;
 }
 
+export interface ExternalShopifyIntegrationUpdateOneInput {
+  create?: Maybe<ExternalShopifyIntegrationCreateInput>;
+  update?: Maybe<ExternalShopifyIntegrationUpdateDataInput>;
+  upsert?: Maybe<ExternalShopifyIntegrationUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ExternalShopifyIntegrationWhereUniqueInput>;
+}
+
+export interface ExternalShopifyIntegrationUpdateDataInput {
+  shopName?: Maybe<String>;
+  enabled?: Maybe<Boolean>;
+  accessToken?: Maybe<String>;
+  nonce?: Maybe<String>;
+}
+
+export interface ExternalShopifyIntegrationUpsertNestedInput {
+  update: ExternalShopifyIntegrationUpdateDataInput;
+  create: ExternalShopifyIntegrationCreateInput;
+}
+
 export interface BrandUpsertWithoutProductsInput {
   update: BrandUpdateWithoutProductsDataInput;
   create: BrandCreateWithoutProductsInput;
@@ -11071,6 +11481,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
@@ -11159,6 +11570,8 @@ export interface ProductVariantUpdateWithoutColorDataInput {
   productID?: Maybe<String>;
   product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>;
   retailPrice?: Maybe<Float>;
+  price?: Maybe<ProductVariantPriceUpdateOneInput>;
+  shopifyProductVariant?: Maybe<ShopifyProductVariantUpdateOneInput>;
   physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>;
   total?: Maybe<Int>;
   reservable?: Maybe<Int>;
@@ -11166,6 +11579,45 @@ export interface ProductVariantUpdateWithoutColorDataInput {
   nonReservable?: Maybe<Int>;
   offloaded?: Maybe<Int>;
   stored?: Maybe<Int>;
+}
+
+export interface ProductVariantPriceUpdateOneInput {
+  create?: Maybe<ProductVariantPriceCreateInput>;
+  update?: Maybe<ProductVariantPriceUpdateDataInput>;
+  upsert?: Maybe<ProductVariantPriceUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ProductVariantPriceWhereUniqueInput>;
+}
+
+export interface ProductVariantPriceUpdateDataInput {
+  retailPrice?: Maybe<Float>;
+}
+
+export interface ProductVariantPriceUpsertNestedInput {
+  update: ProductVariantPriceUpdateDataInput;
+  create: ProductVariantPriceCreateInput;
+}
+
+export interface ShopifyProductVariantUpdateOneInput {
+  create?: Maybe<ShopifyProductVariantCreateInput>;
+  update?: Maybe<ShopifyProductVariantUpdateDataInput>;
+  upsert?: Maybe<ShopifyProductVariantUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ShopifyProductVariantWhereUniqueInput>;
+}
+
+export interface ShopifyProductVariantUpdateDataInput {
+  externalId?: Maybe<String>;
+  cachedPrice?: Maybe<Float>;
+  cachedAvailableForSale?: Maybe<Boolean>;
+  cacheExpiresAt?: Maybe<DateTimeInput>;
+}
+
+export interface ShopifyProductVariantUpsertNestedInput {
+  update: ShopifyProductVariantUpdateDataInput;
+  create: ShopifyProductVariantCreateInput;
 }
 
 export interface PhysicalProductUpdateManyWithoutProductVariantInput {
@@ -11222,7 +11674,7 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<PhysicalProductSellableUpdateOneInput>;
+  price?: Maybe<PhysicalProductPriceUpdateOneInput>;
 }
 
 export interface LocationUpdateOneWithoutPhysicalProductsInput {
@@ -11557,25 +12009,23 @@ export interface WarehouseLocationUpsertWithoutPhysicalProductsInput {
   create: WarehouseLocationCreateWithoutPhysicalProductsInput;
 }
 
-export interface PhysicalProductSellableUpdateOneInput {
-  create?: Maybe<PhysicalProductSellableCreateInput>;
-  update?: Maybe<PhysicalProductSellableUpdateDataInput>;
-  upsert?: Maybe<PhysicalProductSellableUpsertNestedInput>;
+export interface PhysicalProductPriceUpdateOneInput {
+  create?: Maybe<PhysicalProductPriceCreateInput>;
+  update?: Maybe<PhysicalProductPriceUpdateDataInput>;
+  upsert?: Maybe<PhysicalProductPriceUpsertNestedInput>;
   delete?: Maybe<Boolean>;
   disconnect?: Maybe<Boolean>;
-  connect?: Maybe<PhysicalProductSellableWhereUniqueInput>;
+  connect?: Maybe<PhysicalProductPriceWhereUniqueInput>;
 }
 
-export interface PhysicalProductSellableUpdateDataInput {
-  new?: Maybe<Boolean>;
-  newPrice?: Maybe<Float>;
-  used?: Maybe<Boolean>;
-  usedPrice?: Maybe<Float>;
+export interface PhysicalProductPriceUpdateDataInput {
+  buyUsedEnabled?: Maybe<Boolean>;
+  buyUsedPrice?: Maybe<Float>;
 }
 
-export interface PhysicalProductSellableUpsertNestedInput {
-  update: PhysicalProductSellableUpdateDataInput;
-  create: PhysicalProductSellableCreateInput;
+export interface PhysicalProductPriceUpsertNestedInput {
+  update: PhysicalProductPriceUpdateDataInput;
+  create: PhysicalProductPriceCreateInput;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput {
@@ -12281,6 +12731,8 @@ export interface ProductVariantUpdateWithoutProductDataInput {
   height?: Maybe<Float>;
   productID?: Maybe<String>;
   retailPrice?: Maybe<Float>;
+  price?: Maybe<ProductVariantPriceUpdateOneInput>;
+  shopifyProductVariant?: Maybe<ShopifyProductVariantUpdateOneInput>;
   physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>;
   total?: Maybe<Int>;
   reservable?: Maybe<Int>;
@@ -12349,6 +12801,8 @@ export interface ProductScalarWhereInput {
   externalURL_not_starts_with?: Maybe<String>;
   externalURL_ends_with?: Maybe<String>;
   externalURL_not_ends_with?: Maybe<String>;
+  buyNewEnabled?: Maybe<Boolean>;
+  buyNewEnabled_not?: Maybe<Boolean>;
   modelHeight?: Maybe<Int>;
   modelHeight_not?: Maybe<Int>;
   modelHeight_in?: Maybe<Int[] | Int>;
@@ -12447,6 +12901,7 @@ export interface ProductUpdateManyDataInput {
   architecture?: Maybe<ProductArchitecture>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  buyNewEnabled?: Maybe<Boolean>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   modelHeight?: Maybe<Int>;
   name?: Maybe<String>;
@@ -12611,6 +13066,7 @@ export interface ProductUpdateDataInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
@@ -13224,7 +13680,7 @@ export interface PhysicalProductCreateInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<PhysicalProductSellableCreateOneInput>;
+  price?: Maybe<PhysicalProductPriceCreateOneInput>;
 }
 
 export interface LabelCreateOneInput {
@@ -13339,6 +13795,8 @@ export interface ProductVariantCreateInput {
   productID: String;
   product: ProductCreateOneWithoutVariantsInput;
   retailPrice?: Maybe<Float>;
+  price?: Maybe<ProductVariantPriceCreateOneInput>;
+  shopifyProductVariant?: Maybe<ShopifyProductVariantCreateOneInput>;
   physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>;
   total: Int;
   reservable: Int;
@@ -13969,7 +14427,7 @@ export interface PhysicalProductUpdateDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<PhysicalProductSellableUpdateOneInput>;
+  price?: Maybe<PhysicalProductPriceUpdateOneInput>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -14156,6 +14614,8 @@ export interface ProductVariantUpdateDataInput {
   productID?: Maybe<String>;
   product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>;
   retailPrice?: Maybe<Float>;
+  price?: Maybe<ProductVariantPriceUpdateOneInput>;
+  shopifyProductVariant?: Maybe<ShopifyProductVariantUpdateOneInput>;
   physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>;
   total?: Maybe<Int>;
   reservable?: Maybe<Int>;
@@ -14999,6 +15459,7 @@ export interface BrandCreateInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
+  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationCreateOneInput>;
 }
 
 export interface ProductCreateManyWithoutBrandInput {
@@ -15016,6 +15477,7 @@ export interface ProductCreateWithoutBrandInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   materialCategory?: Maybe<
@@ -15056,6 +15518,7 @@ export interface BrandUpdateInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
+  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
 }
 
 export interface ProductUpdateManyWithoutBrandInput {
@@ -15093,6 +15556,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
@@ -15692,6 +16156,20 @@ export interface EmailReceiptUpdateManyMutationInput {
   emailId?: Maybe<EmailId>;
 }
 
+export interface ExternalShopifyIntegrationUpdateInput {
+  shopName?: Maybe<String>;
+  enabled?: Maybe<Boolean>;
+  accessToken?: Maybe<String>;
+  nonce?: Maybe<String>;
+}
+
+export interface ExternalShopifyIntegrationUpdateManyMutationInput {
+  shopName?: Maybe<String>;
+  enabled?: Maybe<Boolean>;
+  accessToken?: Maybe<String>;
+  nonce?: Maybe<String>;
+}
+
 export interface FitPicCreateInput {
   id?: Maybe<ID_Input>;
   image: ImageCreateOneInput;
@@ -16058,7 +16536,7 @@ export interface PhysicalProductUpdateInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<PhysicalProductSellableUpdateOneInput>;
+  price?: Maybe<PhysicalProductPriceUpdateOneInput>;
 }
 
 export interface PhysicalProductUpdateManyMutationInput {
@@ -16074,18 +16552,14 @@ export interface PhysicalProductUpdateManyMutationInput {
   unitCost?: Maybe<Float>;
 }
 
-export interface PhysicalProductSellableUpdateInput {
-  new?: Maybe<Boolean>;
-  newPrice?: Maybe<Float>;
-  used?: Maybe<Boolean>;
-  usedPrice?: Maybe<Float>;
+export interface PhysicalProductPriceUpdateInput {
+  buyUsedEnabled?: Maybe<Boolean>;
+  buyUsedPrice?: Maybe<Float>;
 }
 
-export interface PhysicalProductSellableUpdateManyMutationInput {
-  new?: Maybe<Boolean>;
-  newPrice?: Maybe<Float>;
-  used?: Maybe<Boolean>;
-  usedPrice?: Maybe<Float>;
+export interface PhysicalProductPriceUpdateManyMutationInput {
+  buyUsedEnabled?: Maybe<Boolean>;
+  buyUsedPrice?: Maybe<Float>;
 }
 
 export interface ProductUpdateInput {
@@ -16096,6 +16570,7 @@ export interface ProductUpdateInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
@@ -16124,6 +16599,7 @@ export interface ProductUpdateManyMutationInput {
   architecture?: Maybe<ProductArchitecture>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  buyNewEnabled?: Maybe<Boolean>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   modelHeight?: Maybe<Int>;
   name?: Maybe<String>;
@@ -16170,6 +16646,7 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
@@ -16235,6 +16712,7 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
@@ -16290,6 +16768,7 @@ export interface ProductCreateWithoutModelInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   materialCategory?: Maybe<
@@ -16355,6 +16834,7 @@ export interface ProductUpdateWithoutModelDataInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
@@ -16546,6 +17026,8 @@ export interface ProductVariantUpdateInput {
   productID?: Maybe<String>;
   product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>;
   retailPrice?: Maybe<Float>;
+  price?: Maybe<ProductVariantPriceUpdateOneInput>;
+  shopifyProductVariant?: Maybe<ShopifyProductVariantUpdateOneInput>;
   physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>;
   total?: Maybe<Int>;
   reservable?: Maybe<Int>;
@@ -16894,6 +17376,14 @@ export interface ProductVariantFeedbackQuestionUpdateManyMutationInput {
   question?: Maybe<String>;
   responses?: Maybe<ProductVariantFeedbackQuestionUpdateresponsesInput>;
   type?: Maybe<QuestionType>;
+}
+
+export interface ProductVariantPriceUpdateInput {
+  retailPrice?: Maybe<Float>;
+}
+
+export interface ProductVariantPriceUpdateManyMutationInput {
+  retailPrice?: Maybe<Float>;
 }
 
 export interface ProductVariantWantCreateInput {
@@ -17263,6 +17753,20 @@ export interface ShippingOptionUpdateManyMutationInput {
   averageDuration?: Maybe<Int>;
 }
 
+export interface ShopifyProductVariantUpdateInput {
+  externalId?: Maybe<String>;
+  cachedPrice?: Maybe<Float>;
+  cachedAvailableForSale?: Maybe<Boolean>;
+  cacheExpiresAt?: Maybe<DateTimeInput>;
+}
+
+export interface ShopifyProductVariantUpdateManyMutationInput {
+  externalId?: Maybe<String>;
+  cachedPrice?: Maybe<Float>;
+  cachedAvailableForSale?: Maybe<Boolean>;
+  cacheExpiresAt?: Maybe<DateTimeInput>;
+}
+
 export interface SizeUpdateInput {
   slug?: Maybe<String>;
   productType?: Maybe<ProductType>;
@@ -17346,6 +17850,7 @@ export interface ProductCreateWithoutTagsInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   materialCategory?: Maybe<
@@ -17411,6 +17916,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
@@ -17634,7 +18140,7 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<PhysicalProductSellableCreateOneInput>;
+  price?: Maybe<PhysicalProductPriceCreateOneInput>;
 }
 
 export interface WarehouseLocationUpdateInput {
@@ -17704,7 +18210,7 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
-  sellable?: Maybe<PhysicalProductSellableUpdateOneInput>;
+  price?: Maybe<PhysicalProductPriceUpdateOneInput>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput {
@@ -18164,6 +18670,26 @@ export interface EmailReceiptSubscriptionWhereInput {
   >;
 }
 
+export interface ExternalShopifyIntegrationSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ExternalShopifyIntegrationWhereInput>;
+  AND?: Maybe<
+    | ExternalShopifyIntegrationSubscriptionWhereInput[]
+    | ExternalShopifyIntegrationSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | ExternalShopifyIntegrationSubscriptionWhereInput[]
+    | ExternalShopifyIntegrationSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | ExternalShopifyIntegrationSubscriptionWhereInput[]
+    | ExternalShopifyIntegrationSubscriptionWhereInput
+  >;
+}
+
 export interface FitPicSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -18354,23 +18880,23 @@ export interface PhysicalProductSubscriptionWhereInput {
   >;
 }
 
-export interface PhysicalProductSellableSubscriptionWhereInput {
+export interface PhysicalProductPriceSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
   updatedFields_contains_every?: Maybe<String[] | String>;
   updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<PhysicalProductSellableWhereInput>;
+  node?: Maybe<PhysicalProductPriceWhereInput>;
   AND?: Maybe<
-    | PhysicalProductSellableSubscriptionWhereInput[]
-    | PhysicalProductSellableSubscriptionWhereInput
+    | PhysicalProductPriceSubscriptionWhereInput[]
+    | PhysicalProductPriceSubscriptionWhereInput
   >;
   OR?: Maybe<
-    | PhysicalProductSellableSubscriptionWhereInput[]
-    | PhysicalProductSellableSubscriptionWhereInput
+    | PhysicalProductPriceSubscriptionWhereInput[]
+    | PhysicalProductPriceSubscriptionWhereInput
   >;
   NOT?: Maybe<
-    | PhysicalProductSellableSubscriptionWhereInput[]
-    | PhysicalProductSellableSubscriptionWhereInput
+    | PhysicalProductPriceSubscriptionWhereInput[]
+    | PhysicalProductPriceSubscriptionWhereInput
   >;
 }
 
@@ -18576,6 +19102,26 @@ export interface ProductVariantFeedbackQuestionSubscriptionWhereInput {
   >;
 }
 
+export interface ProductVariantPriceSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ProductVariantPriceWhereInput>;
+  AND?: Maybe<
+    | ProductVariantPriceSubscriptionWhereInput[]
+    | ProductVariantPriceSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | ProductVariantPriceSubscriptionWhereInput[]
+    | ProductVariantPriceSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | ProductVariantPriceSubscriptionWhereInput[]
+    | ProductVariantPriceSubscriptionWhereInput
+  >;
+}
+
 export interface ProductVariantWantSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -18761,6 +19307,26 @@ export interface ShippingOptionSubscriptionWhereInput {
   NOT?: Maybe<
     | ShippingOptionSubscriptionWhereInput[]
     | ShippingOptionSubscriptionWhereInput
+  >;
+}
+
+export interface ShopifyProductVariantSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ShopifyProductVariantWhereInput>;
+  AND?: Maybe<
+    | ShopifyProductVariantSubscriptionWhereInput[]
+    | ShopifyProductVariantSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | ShopifyProductVariantSubscriptionWhereInput[]
+    | ShopifyProductVariantSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | ShopifyProductVariantSubscriptionWhereInput[]
+    | ShopifyProductVariantSubscriptionWhereInput
   >;
 }
 
@@ -19783,7 +20349,7 @@ export interface PhysicalProductPromise
   dateOrdered: () => Promise<DateTimeOutput>;
   dateReceived: () => Promise<DateTimeOutput>;
   unitCost: () => Promise<Float>;
-  sellable: <T = PhysicalProductSellablePromise>() => T;
+  price: <T = PhysicalProductPricePromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -19805,7 +20371,7 @@ export interface PhysicalProductSubscription
   dateOrdered: () => Promise<AsyncIterator<DateTimeOutput>>;
   dateReceived: () => Promise<AsyncIterator<DateTimeOutput>>;
   unitCost: () => Promise<AsyncIterator<Float>>;
-  sellable: <T = PhysicalProductSellableSubscription>() => T;
+  price: <T = PhysicalProductPriceSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -19827,7 +20393,7 @@ export interface PhysicalProductNullablePromise
   dateOrdered: () => Promise<DateTimeOutput>;
   dateReceived: () => Promise<DateTimeOutput>;
   unitCost: () => Promise<Float>;
-  sellable: <T = PhysicalProductSellablePromise>() => T;
+  price: <T = PhysicalProductPricePromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -19872,6 +20438,8 @@ export interface ProductVariantPromise
   productID: () => Promise<String>;
   product: <T = ProductPromise>() => T;
   retailPrice: () => Promise<Float>;
+  price: <T = ProductVariantPricePromise>() => T;
+  shopifyProductVariant: <T = ShopifyProductVariantPromise>() => T;
   physicalProducts: <T = FragmentableArray<PhysicalProduct>>(args?: {
     where?: PhysicalProductWhereInput;
     orderBy?: PhysicalProductOrderByInput;
@@ -19913,6 +20481,8 @@ export interface ProductVariantSubscription
   productID: () => Promise<AsyncIterator<String>>;
   product: <T = ProductSubscription>() => T;
   retailPrice: () => Promise<AsyncIterator<Float>>;
+  price: <T = ProductVariantPriceSubscription>() => T;
+  shopifyProductVariant: <T = ShopifyProductVariantSubscription>() => T;
   physicalProducts: <
     T = Promise<AsyncIterator<PhysicalProductSubscription>>
   >(args?: {
@@ -19956,6 +20526,8 @@ export interface ProductVariantNullablePromise
   productID: () => Promise<String>;
   product: <T = ProductPromise>() => T;
   retailPrice: () => Promise<Float>;
+  price: <T = ProductVariantPricePromise>() => T;
+  shopifyProductVariant: <T = ShopifyProductVariantPromise>() => T;
   physicalProducts: <T = FragmentableArray<PhysicalProduct>>(args?: {
     where?: PhysicalProductWhereInput;
     orderBy?: PhysicalProductOrderByInput;
@@ -20171,6 +20743,7 @@ export interface Product {
   architecture?: ProductArchitecture;
   description?: String;
   externalURL?: String;
+  buyNewEnabled: Boolean;
   innerMaterials: String[];
   modelHeight?: Int;
   name: String;
@@ -20203,6 +20776,7 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  buyNewEnabled: () => Promise<Boolean>;
   images: <T = FragmentableArray<Image>>(args?: {
     where?: ImageWhereInput;
     orderBy?: ImageOrderByInput;
@@ -20270,6 +20844,7 @@ export interface ProductSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  buyNewEnabled: () => Promise<AsyncIterator<Boolean>>;
   images: <T = Promise<AsyncIterator<ImageSubscription>>>(args?: {
     where?: ImageWhereInput;
     orderBy?: ImageOrderByInput;
@@ -20337,6 +20912,7 @@ export interface ProductNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  buyNewEnabled: () => Promise<Boolean>;
   images: <T = FragmentableArray<Image>>(args?: {
     where?: ImageWhereInput;
     orderBy?: ImageOrderByInput;
@@ -20439,6 +21015,7 @@ export interface BrandPromise extends Promise<Brand>, Fragmentable {
   websiteUrl: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  externalShopifyIntegration: <T = ExternalShopifyIntegrationPromise>() => T;
 }
 
 export interface BrandSubscription
@@ -20478,6 +21055,9 @@ export interface BrandSubscription
   websiteUrl: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  externalShopifyIntegration: <
+    T = ExternalShopifyIntegrationSubscription
+  >() => T;
 }
 
 export interface BrandNullablePromise
@@ -20517,6 +21097,45 @@ export interface BrandNullablePromise
   websiteUrl: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  externalShopifyIntegration: <T = ExternalShopifyIntegrationPromise>() => T;
+}
+
+export interface ExternalShopifyIntegration {
+  id: ID_Output;
+  shopName: String;
+  enabled: Boolean;
+  accessToken?: String;
+  nonce?: String;
+}
+
+export interface ExternalShopifyIntegrationPromise
+  extends Promise<ExternalShopifyIntegration>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  shopName: () => Promise<String>;
+  enabled: () => Promise<Boolean>;
+  accessToken: () => Promise<String>;
+  nonce: () => Promise<String>;
+}
+
+export interface ExternalShopifyIntegrationSubscription
+  extends Promise<AsyncIterator<ExternalShopifyIntegration>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  shopName: () => Promise<AsyncIterator<String>>;
+  enabled: () => Promise<AsyncIterator<Boolean>>;
+  accessToken: () => Promise<AsyncIterator<String>>;
+  nonce: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ExternalShopifyIntegrationNullablePromise
+  extends Promise<ExternalShopifyIntegration | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  shopName: () => Promise<String>;
+  enabled: () => Promise<Boolean>;
+  accessToken: () => Promise<String>;
+  nonce: () => Promise<String>;
 }
 
 export interface Category {
@@ -20917,6 +21536,70 @@ export interface ProductTierNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
+export interface ProductVariantPrice {
+  id: ID_Output;
+  retailPrice?: Float;
+}
+
+export interface ProductVariantPricePromise
+  extends Promise<ProductVariantPrice>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  retailPrice: () => Promise<Float>;
+}
+
+export interface ProductVariantPriceSubscription
+  extends Promise<AsyncIterator<ProductVariantPrice>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  retailPrice: () => Promise<AsyncIterator<Float>>;
+}
+
+export interface ProductVariantPriceNullablePromise
+  extends Promise<ProductVariantPrice | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  retailPrice: () => Promise<Float>;
+}
+
+export interface ShopifyProductVariant {
+  id: ID_Output;
+  externalId?: String;
+  cachedPrice?: Float;
+  cachedAvailableForSale?: Boolean;
+  cacheExpiresAt?: DateTimeOutput;
+}
+
+export interface ShopifyProductVariantPromise
+  extends Promise<ShopifyProductVariant>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  externalId: () => Promise<String>;
+  cachedPrice: () => Promise<Float>;
+  cachedAvailableForSale: () => Promise<Boolean>;
+  cacheExpiresAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ShopifyProductVariantSubscription
+  extends Promise<AsyncIterator<ShopifyProductVariant>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  externalId: () => Promise<AsyncIterator<String>>;
+  cachedPrice: () => Promise<AsyncIterator<Float>>;
+  cachedAvailableForSale: () => Promise<AsyncIterator<Boolean>>;
+  cacheExpiresAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface ShopifyProductVariantNullablePromise
+  extends Promise<ShopifyProductVariant | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  externalId: () => Promise<String>;
+  cachedPrice: () => Promise<Float>;
+  cachedAvailableForSale: () => Promise<Boolean>;
+  cacheExpiresAt: () => Promise<DateTimeOutput>;
+}
+
 export interface WarehouseLocation {
   id: ID_Output;
   type: WarehouseLocationType;
@@ -21087,42 +21770,34 @@ export interface WarehouseLocationConstraintNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface PhysicalProductSellable {
+export interface PhysicalProductPrice {
   id: ID_Output;
-  new: Boolean;
-  newPrice?: Float;
-  used: Boolean;
-  usedPrice?: Float;
+  buyUsedEnabled: Boolean;
+  buyUsedPrice?: Float;
 }
 
-export interface PhysicalProductSellablePromise
-  extends Promise<PhysicalProductSellable>,
+export interface PhysicalProductPricePromise
+  extends Promise<PhysicalProductPrice>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  new: () => Promise<Boolean>;
-  newPrice: () => Promise<Float>;
-  used: () => Promise<Boolean>;
-  usedPrice: () => Promise<Float>;
+  buyUsedEnabled: () => Promise<Boolean>;
+  buyUsedPrice: () => Promise<Float>;
 }
 
-export interface PhysicalProductSellableSubscription
-  extends Promise<AsyncIterator<PhysicalProductSellable>>,
+export interface PhysicalProductPriceSubscription
+  extends Promise<AsyncIterator<PhysicalProductPrice>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  new: () => Promise<AsyncIterator<Boolean>>;
-  newPrice: () => Promise<AsyncIterator<Float>>;
-  used: () => Promise<AsyncIterator<Boolean>>;
-  usedPrice: () => Promise<AsyncIterator<Float>>;
+  buyUsedEnabled: () => Promise<AsyncIterator<Boolean>>;
+  buyUsedPrice: () => Promise<AsyncIterator<Float>>;
 }
 
-export interface PhysicalProductSellableNullablePromise
-  extends Promise<PhysicalProductSellable | null>,
+export interface PhysicalProductPriceNullablePromise
+  extends Promise<PhysicalProductPrice | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  new: () => Promise<Boolean>;
-  newPrice: () => Promise<Float>;
-  used: () => Promise<Boolean>;
-  usedPrice: () => Promise<Float>;
+  buyUsedEnabled: () => Promise<Boolean>;
+  buyUsedPrice: () => Promise<Float>;
 }
 
 export interface ShippingOption {
@@ -23479,6 +24154,64 @@ export interface AggregateEmailReceiptSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface ExternalShopifyIntegrationConnection {
+  pageInfo: PageInfo;
+  edges: ExternalShopifyIntegrationEdge[];
+}
+
+export interface ExternalShopifyIntegrationConnectionPromise
+  extends Promise<ExternalShopifyIntegrationConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ExternalShopifyIntegrationEdge>>() => T;
+  aggregate: <T = AggregateExternalShopifyIntegrationPromise>() => T;
+}
+
+export interface ExternalShopifyIntegrationConnectionSubscription
+  extends Promise<AsyncIterator<ExternalShopifyIntegrationConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ExternalShopifyIntegrationEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateExternalShopifyIntegrationSubscription>() => T;
+}
+
+export interface ExternalShopifyIntegrationEdge {
+  node: ExternalShopifyIntegration;
+  cursor: String;
+}
+
+export interface ExternalShopifyIntegrationEdgePromise
+  extends Promise<ExternalShopifyIntegrationEdge>,
+    Fragmentable {
+  node: <T = ExternalShopifyIntegrationPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ExternalShopifyIntegrationEdgeSubscription
+  extends Promise<AsyncIterator<ExternalShopifyIntegrationEdge>>,
+    Fragmentable {
+  node: <T = ExternalShopifyIntegrationSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateExternalShopifyIntegration {
+  count: Int;
+}
+
+export interface AggregateExternalShopifyIntegrationPromise
+  extends Promise<AggregateExternalShopifyIntegration>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateExternalShopifyIntegrationSubscription
+  extends Promise<AsyncIterator<AggregateExternalShopifyIntegration>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface FitPicConnection {
   pageInfo: PageInfo;
   edges: FitPicEdge[];
@@ -24242,60 +24975,60 @@ export interface AggregatePhysicalProductSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface PhysicalProductSellableConnection {
+export interface PhysicalProductPriceConnection {
   pageInfo: PageInfo;
-  edges: PhysicalProductSellableEdge[];
+  edges: PhysicalProductPriceEdge[];
 }
 
-export interface PhysicalProductSellableConnectionPromise
-  extends Promise<PhysicalProductSellableConnection>,
+export interface PhysicalProductPriceConnectionPromise
+  extends Promise<PhysicalProductPriceConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<PhysicalProductSellableEdge>>() => T;
-  aggregate: <T = AggregatePhysicalProductSellablePromise>() => T;
+  edges: <T = FragmentableArray<PhysicalProductPriceEdge>>() => T;
+  aggregate: <T = AggregatePhysicalProductPricePromise>() => T;
 }
 
-export interface PhysicalProductSellableConnectionSubscription
-  extends Promise<AsyncIterator<PhysicalProductSellableConnection>>,
+export interface PhysicalProductPriceConnectionSubscription
+  extends Promise<AsyncIterator<PhysicalProductPriceConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <
-    T = Promise<AsyncIterator<PhysicalProductSellableEdgeSubscription>>
+    T = Promise<AsyncIterator<PhysicalProductPriceEdgeSubscription>>
   >() => T;
-  aggregate: <T = AggregatePhysicalProductSellableSubscription>() => T;
+  aggregate: <T = AggregatePhysicalProductPriceSubscription>() => T;
 }
 
-export interface PhysicalProductSellableEdge {
-  node: PhysicalProductSellable;
+export interface PhysicalProductPriceEdge {
+  node: PhysicalProductPrice;
   cursor: String;
 }
 
-export interface PhysicalProductSellableEdgePromise
-  extends Promise<PhysicalProductSellableEdge>,
+export interface PhysicalProductPriceEdgePromise
+  extends Promise<PhysicalProductPriceEdge>,
     Fragmentable {
-  node: <T = PhysicalProductSellablePromise>() => T;
+  node: <T = PhysicalProductPricePromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface PhysicalProductSellableEdgeSubscription
-  extends Promise<AsyncIterator<PhysicalProductSellableEdge>>,
+export interface PhysicalProductPriceEdgeSubscription
+  extends Promise<AsyncIterator<PhysicalProductPriceEdge>>,
     Fragmentable {
-  node: <T = PhysicalProductSellableSubscription>() => T;
+  node: <T = PhysicalProductPriceSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregatePhysicalProductSellable {
+export interface AggregatePhysicalProductPrice {
   count: Int;
 }
 
-export interface AggregatePhysicalProductSellablePromise
-  extends Promise<AggregatePhysicalProductSellable>,
+export interface AggregatePhysicalProductPricePromise
+  extends Promise<AggregatePhysicalProductPrice>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregatePhysicalProductSellableSubscription
-  extends Promise<AsyncIterator<AggregatePhysicalProductSellable>>,
+export interface AggregatePhysicalProductPriceSubscription
+  extends Promise<AsyncIterator<AggregatePhysicalProductPrice>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -25213,6 +25946,64 @@ export interface AggregateProductVariantFeedbackQuestionSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface ProductVariantPriceConnection {
+  pageInfo: PageInfo;
+  edges: ProductVariantPriceEdge[];
+}
+
+export interface ProductVariantPriceConnectionPromise
+  extends Promise<ProductVariantPriceConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ProductVariantPriceEdge>>() => T;
+  aggregate: <T = AggregateProductVariantPricePromise>() => T;
+}
+
+export interface ProductVariantPriceConnectionSubscription
+  extends Promise<AsyncIterator<ProductVariantPriceConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ProductVariantPriceEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateProductVariantPriceSubscription>() => T;
+}
+
+export interface ProductVariantPriceEdge {
+  node: ProductVariantPrice;
+  cursor: String;
+}
+
+export interface ProductVariantPriceEdgePromise
+  extends Promise<ProductVariantPriceEdge>,
+    Fragmentable {
+  node: <T = ProductVariantPricePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ProductVariantPriceEdgeSubscription
+  extends Promise<AsyncIterator<ProductVariantPriceEdge>>,
+    Fragmentable {
+  node: <T = ProductVariantPriceSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateProductVariantPrice {
+  count: Int;
+}
+
+export interface AggregateProductVariantPricePromise
+  extends Promise<AggregateProductVariantPrice>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateProductVariantPriceSubscription
+  extends Promise<AsyncIterator<AggregateProductVariantPrice>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface ProductVariantWant {
   id: ID_Output;
   isFulfilled: Boolean;
@@ -25851,6 +26642,64 @@ export interface AggregateShippingOptionPromise
 
 export interface AggregateShippingOptionSubscription
   extends Promise<AsyncIterator<AggregateShippingOption>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ShopifyProductVariantConnection {
+  pageInfo: PageInfo;
+  edges: ShopifyProductVariantEdge[];
+}
+
+export interface ShopifyProductVariantConnectionPromise
+  extends Promise<ShopifyProductVariantConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ShopifyProductVariantEdge>>() => T;
+  aggregate: <T = AggregateShopifyProductVariantPromise>() => T;
+}
+
+export interface ShopifyProductVariantConnectionSubscription
+  extends Promise<AsyncIterator<ShopifyProductVariantConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ShopifyProductVariantEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateShopifyProductVariantSubscription>() => T;
+}
+
+export interface ShopifyProductVariantEdge {
+  node: ShopifyProductVariant;
+  cursor: String;
+}
+
+export interface ShopifyProductVariantEdgePromise
+  extends Promise<ShopifyProductVariantEdge>,
+    Fragmentable {
+  node: <T = ShopifyProductVariantPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ShopifyProductVariantEdgeSubscription
+  extends Promise<AsyncIterator<ShopifyProductVariantEdge>>,
+    Fragmentable {
+  node: <T = ShopifyProductVariantSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateShopifyProductVariant {
+  count: Int;
+}
+
+export interface AggregateShopifyProductVariantPromise
+  extends Promise<AggregateShopifyProductVariant>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateShopifyProductVariantSubscription
+  extends Promise<AsyncIterator<AggregateShopifyProductVariant>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -27517,6 +28366,61 @@ export interface EmailReceiptPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface ExternalShopifyIntegrationSubscriptionPayload {
+  mutation: MutationType;
+  node: ExternalShopifyIntegration;
+  updatedFields: String[];
+  previousValues: ExternalShopifyIntegrationPreviousValues;
+}
+
+export interface ExternalShopifyIntegrationSubscriptionPayloadPromise
+  extends Promise<ExternalShopifyIntegrationSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ExternalShopifyIntegrationPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ExternalShopifyIntegrationPreviousValuesPromise>() => T;
+}
+
+export interface ExternalShopifyIntegrationSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ExternalShopifyIntegrationSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ExternalShopifyIntegrationSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = ExternalShopifyIntegrationPreviousValuesSubscription
+  >() => T;
+}
+
+export interface ExternalShopifyIntegrationPreviousValues {
+  id: ID_Output;
+  shopName: String;
+  enabled: Boolean;
+  accessToken?: String;
+  nonce?: String;
+}
+
+export interface ExternalShopifyIntegrationPreviousValuesPromise
+  extends Promise<ExternalShopifyIntegrationPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  shopName: () => Promise<String>;
+  enabled: () => Promise<Boolean>;
+  accessToken: () => Promise<String>;
+  nonce: () => Promise<String>;
+}
+
+export interface ExternalShopifyIntegrationPreviousValuesSubscription
+  extends Promise<AsyncIterator<ExternalShopifyIntegrationPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  shopName: () => Promise<AsyncIterator<String>>;
+  enabled: () => Promise<AsyncIterator<Boolean>>;
+  accessToken: () => Promise<AsyncIterator<String>>;
+  nonce: () => Promise<AsyncIterator<String>>;
+}
+
 export interface FitPicSubscriptionPayload {
   mutation: MutationType;
   node: FitPic;
@@ -28240,59 +29144,51 @@ export interface PhysicalProductPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface PhysicalProductSellableSubscriptionPayload {
+export interface PhysicalProductPriceSubscriptionPayload {
   mutation: MutationType;
-  node: PhysicalProductSellable;
+  node: PhysicalProductPrice;
   updatedFields: String[];
-  previousValues: PhysicalProductSellablePreviousValues;
+  previousValues: PhysicalProductPricePreviousValues;
 }
 
-export interface PhysicalProductSellableSubscriptionPayloadPromise
-  extends Promise<PhysicalProductSellableSubscriptionPayload>,
+export interface PhysicalProductPriceSubscriptionPayloadPromise
+  extends Promise<PhysicalProductPriceSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = PhysicalProductSellablePromise>() => T;
+  node: <T = PhysicalProductPricePromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = PhysicalProductSellablePreviousValuesPromise>() => T;
+  previousValues: <T = PhysicalProductPricePreviousValuesPromise>() => T;
 }
 
-export interface PhysicalProductSellableSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<PhysicalProductSellableSubscriptionPayload>>,
+export interface PhysicalProductPriceSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PhysicalProductPriceSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = PhysicalProductSellableSubscription>() => T;
+  node: <T = PhysicalProductPriceSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <
-    T = PhysicalProductSellablePreviousValuesSubscription
-  >() => T;
+  previousValues: <T = PhysicalProductPricePreviousValuesSubscription>() => T;
 }
 
-export interface PhysicalProductSellablePreviousValues {
+export interface PhysicalProductPricePreviousValues {
   id: ID_Output;
-  new: Boolean;
-  newPrice?: Float;
-  used: Boolean;
-  usedPrice?: Float;
+  buyUsedEnabled: Boolean;
+  buyUsedPrice?: Float;
 }
 
-export interface PhysicalProductSellablePreviousValuesPromise
-  extends Promise<PhysicalProductSellablePreviousValues>,
+export interface PhysicalProductPricePreviousValuesPromise
+  extends Promise<PhysicalProductPricePreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  new: () => Promise<Boolean>;
-  newPrice: () => Promise<Float>;
-  used: () => Promise<Boolean>;
-  usedPrice: () => Promise<Float>;
+  buyUsedEnabled: () => Promise<Boolean>;
+  buyUsedPrice: () => Promise<Float>;
 }
 
-export interface PhysicalProductSellablePreviousValuesSubscription
-  extends Promise<AsyncIterator<PhysicalProductSellablePreviousValues>>,
+export interface PhysicalProductPricePreviousValuesSubscription
+  extends Promise<AsyncIterator<PhysicalProductPricePreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  new: () => Promise<AsyncIterator<Boolean>>;
-  newPrice: () => Promise<AsyncIterator<Float>>;
-  used: () => Promise<AsyncIterator<Boolean>>;
-  usedPrice: () => Promise<AsyncIterator<Float>>;
+  buyUsedEnabled: () => Promise<AsyncIterator<Boolean>>;
+  buyUsedPrice: () => Promise<AsyncIterator<Float>>;
 }
 
 export interface ProductSubscriptionPayload {
@@ -28325,6 +29221,7 @@ export interface ProductPreviousValues {
   architecture?: ProductArchitecture;
   description?: String;
   externalURL?: String;
+  buyNewEnabled: Boolean;
   innerMaterials: String[];
   modelHeight?: Int;
   name: String;
@@ -28347,6 +29244,7 @@ export interface ProductPreviousValuesPromise
   architecture: () => Promise<ProductArchitecture>;
   description: () => Promise<String>;
   externalURL: () => Promise<String>;
+  buyNewEnabled: () => Promise<Boolean>;
   innerMaterials: () => Promise<String[]>;
   modelHeight: () => Promise<Int>;
   name: () => Promise<String>;
@@ -28369,6 +29267,7 @@ export interface ProductPreviousValuesSubscription
   architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
   description: () => Promise<AsyncIterator<String>>;
   externalURL: () => Promise<AsyncIterator<String>>;
+  buyNewEnabled: () => Promise<AsyncIterator<Boolean>>;
   innerMaterials: () => Promise<AsyncIterator<String[]>>;
   modelHeight: () => Promise<AsyncIterator<Int>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -28931,6 +29830,50 @@ export interface ProductVariantFeedbackQuestionPreviousValuesSubscription
   type: () => Promise<AsyncIterator<QuestionType>>;
 }
 
+export interface ProductVariantPriceSubscriptionPayload {
+  mutation: MutationType;
+  node: ProductVariantPrice;
+  updatedFields: String[];
+  previousValues: ProductVariantPricePreviousValues;
+}
+
+export interface ProductVariantPriceSubscriptionPayloadPromise
+  extends Promise<ProductVariantPriceSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ProductVariantPricePromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ProductVariantPricePreviousValuesPromise>() => T;
+}
+
+export interface ProductVariantPriceSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ProductVariantPriceSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ProductVariantPriceSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ProductVariantPricePreviousValuesSubscription>() => T;
+}
+
+export interface ProductVariantPricePreviousValues {
+  id: ID_Output;
+  retailPrice?: Float;
+}
+
+export interface ProductVariantPricePreviousValuesPromise
+  extends Promise<ProductVariantPricePreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  retailPrice: () => Promise<Float>;
+}
+
+export interface ProductVariantPricePreviousValuesSubscription
+  extends Promise<AsyncIterator<ProductVariantPricePreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  retailPrice: () => Promise<AsyncIterator<Float>>;
+}
+
 export interface ProductVariantWantSubscriptionPayload {
   mutation: MutationType;
   node: ProductVariantWant;
@@ -29476,6 +30419,59 @@ export interface ShippingOptionPreviousValuesSubscription
   averageDuration: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface ShopifyProductVariantSubscriptionPayload {
+  mutation: MutationType;
+  node: ShopifyProductVariant;
+  updatedFields: String[];
+  previousValues: ShopifyProductVariantPreviousValues;
+}
+
+export interface ShopifyProductVariantSubscriptionPayloadPromise
+  extends Promise<ShopifyProductVariantSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ShopifyProductVariantPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ShopifyProductVariantPreviousValuesPromise>() => T;
+}
+
+export interface ShopifyProductVariantSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ShopifyProductVariantSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ShopifyProductVariantSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ShopifyProductVariantPreviousValuesSubscription>() => T;
+}
+
+export interface ShopifyProductVariantPreviousValues {
+  id: ID_Output;
+  externalId?: String;
+  cachedPrice?: Float;
+  cachedAvailableForSale?: Boolean;
+  cacheExpiresAt?: DateTimeOutput;
+}
+
+export interface ShopifyProductVariantPreviousValuesPromise
+  extends Promise<ShopifyProductVariantPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  externalId: () => Promise<String>;
+  cachedPrice: () => Promise<Float>;
+  cachedAvailableForSale: () => Promise<Boolean>;
+  cacheExpiresAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ShopifyProductVariantPreviousValuesSubscription
+  extends Promise<AsyncIterator<ShopifyProductVariantPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  externalId: () => Promise<AsyncIterator<String>>;
+  cachedPrice: () => Promise<AsyncIterator<Float>>;
+  cachedAvailableForSale: () => Promise<AsyncIterator<Boolean>>;
+  cacheExpiresAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface SizeSubscriptionPayload {
@@ -30315,6 +31311,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "ExternalShopifyIntegration",
+    embedded: false
+  },
+  {
     name: "Brand",
     embedded: false
   },
@@ -30379,11 +31379,19 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "ProductVariantPrice",
+    embedded: false
+  },
+  {
+    name: "ShopifyProductVariant",
+    embedded: false
+  },
+  {
     name: "ProductVariant",
     embedded: false
   },
   {
-    name: "PhysicalProductSellable",
+    name: "PhysicalProductPrice",
     embedded: false
   },
   {

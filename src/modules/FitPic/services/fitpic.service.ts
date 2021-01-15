@@ -27,13 +27,13 @@ export class FitPicService {
     {
       image,
       location,
-      options,
+      options = {},
     }: {
       image: any
       location: LocationCreateOneInput
       options: {
-        instagramHandle: string
-        includeInstagramHandle: boolean
+        instagramHandle?: string
+        includeInstagramHandle?: boolean
       }
     },
     user: User,

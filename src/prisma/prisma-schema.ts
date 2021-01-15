@@ -311,6 +311,10 @@ type AggregateEmailReceipt {
   count: Int!
 }
 
+type AggregateExternalShopifyIntegration {
+  count: Int!
+}
+
 type AggregateFitPic {
   count: Int!
 }
@@ -359,7 +363,7 @@ type AggregatePhysicalProduct {
   count: Int!
 }
 
-type AggregatePhysicalProductSellable {
+type AggregatePhysicalProductPrice {
   count: Int!
 }
 
@@ -407,6 +411,10 @@ type AggregateProductVariantFeedbackQuestion {
   count: Int!
 }
 
+type AggregateProductVariantPrice {
+  count: Int!
+}
+
 type AggregateProductVariantWant {
   count: Int!
 }
@@ -444,6 +452,10 @@ type AggregateShippingMethod {
 }
 
 type AggregateShippingOption {
+  count: Int!
+}
+
+type AggregateShopifyProductVariant {
   count: Int!
 }
 
@@ -1327,6 +1339,7 @@ type Brand {
   websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
+  externalShopifyIntegration: ExternalShopifyIntegration
 }
 
 type BrandConnection {
@@ -1352,6 +1365,7 @@ input BrandCreateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
 }
 
 input BrandCreateOneWithoutProductsInput {
@@ -1375,6 +1389,7 @@ input BrandCreateWithoutProductsInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
 }
 
 type BrandEdge {
@@ -1482,6 +1497,7 @@ input BrandUpdateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
 }
 
 input BrandUpdateManyMutationInput {
@@ -1522,6 +1538,7 @@ input BrandUpdateWithoutProductsDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
 }
 
 input BrandUpsertWithoutProductsInput {
@@ -1682,6 +1699,7 @@ input BrandWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  externalShopifyIntegration: ExternalShopifyIntegrationWhereInput
   AND: [BrandWhereInput!]
   OR: [BrandWhereInput!]
   NOT: [BrandWhereInput!]
@@ -4715,6 +4733,181 @@ input EmailReceiptWhereUniqueInput {
   id: ID
 }
 
+type ExternalShopifyIntegration {
+  id: ID!
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  nonce: String
+}
+
+type ExternalShopifyIntegrationConnection {
+  pageInfo: PageInfo!
+  edges: [ExternalShopifyIntegrationEdge]!
+  aggregate: AggregateExternalShopifyIntegration!
+}
+
+input ExternalShopifyIntegrationCreateInput {
+  id: ID
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  nonce: String
+}
+
+input ExternalShopifyIntegrationCreateOneInput {
+  create: ExternalShopifyIntegrationCreateInput
+  connect: ExternalShopifyIntegrationWhereUniqueInput
+}
+
+type ExternalShopifyIntegrationEdge {
+  node: ExternalShopifyIntegration!
+  cursor: String!
+}
+
+enum ExternalShopifyIntegrationOrderByInput {
+  id_ASC
+  id_DESC
+  shopName_ASC
+  shopName_DESC
+  enabled_ASC
+  enabled_DESC
+  accessToken_ASC
+  accessToken_DESC
+  nonce_ASC
+  nonce_DESC
+}
+
+type ExternalShopifyIntegrationPreviousValues {
+  id: ID!
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  nonce: String
+}
+
+type ExternalShopifyIntegrationSubscriptionPayload {
+  mutation: MutationType!
+  node: ExternalShopifyIntegration
+  updatedFields: [String!]
+  previousValues: ExternalShopifyIntegrationPreviousValues
+}
+
+input ExternalShopifyIntegrationSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ExternalShopifyIntegrationWhereInput
+  AND: [ExternalShopifyIntegrationSubscriptionWhereInput!]
+  OR: [ExternalShopifyIntegrationSubscriptionWhereInput!]
+  NOT: [ExternalShopifyIntegrationSubscriptionWhereInput!]
+}
+
+input ExternalShopifyIntegrationUpdateDataInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  nonce: String
+}
+
+input ExternalShopifyIntegrationUpdateInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  nonce: String
+}
+
+input ExternalShopifyIntegrationUpdateManyMutationInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  nonce: String
+}
+
+input ExternalShopifyIntegrationUpdateOneInput {
+  create: ExternalShopifyIntegrationCreateInput
+  update: ExternalShopifyIntegrationUpdateDataInput
+  upsert: ExternalShopifyIntegrationUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ExternalShopifyIntegrationWhereUniqueInput
+}
+
+input ExternalShopifyIntegrationUpsertNestedInput {
+  update: ExternalShopifyIntegrationUpdateDataInput!
+  create: ExternalShopifyIntegrationCreateInput!
+}
+
+input ExternalShopifyIntegrationWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  shopName: String
+  shopName_not: String
+  shopName_in: [String!]
+  shopName_not_in: [String!]
+  shopName_lt: String
+  shopName_lte: String
+  shopName_gt: String
+  shopName_gte: String
+  shopName_contains: String
+  shopName_not_contains: String
+  shopName_starts_with: String
+  shopName_not_starts_with: String
+  shopName_ends_with: String
+  shopName_not_ends_with: String
+  enabled: Boolean
+  enabled_not: Boolean
+  accessToken: String
+  accessToken_not: String
+  accessToken_in: [String!]
+  accessToken_not_in: [String!]
+  accessToken_lt: String
+  accessToken_lte: String
+  accessToken_gt: String
+  accessToken_gte: String
+  accessToken_contains: String
+  accessToken_not_contains: String
+  accessToken_starts_with: String
+  accessToken_not_starts_with: String
+  accessToken_ends_with: String
+  accessToken_not_ends_with: String
+  nonce: String
+  nonce_not: String
+  nonce_in: [String!]
+  nonce_not_in: [String!]
+  nonce_lt: String
+  nonce_lte: String
+  nonce_gt: String
+  nonce_gte: String
+  nonce_contains: String
+  nonce_not_contains: String
+  nonce_starts_with: String
+  nonce_not_starts_with: String
+  nonce_ends_with: String
+  nonce_not_ends_with: String
+  AND: [ExternalShopifyIntegrationWhereInput!]
+  OR: [ExternalShopifyIntegrationWhereInput!]
+  NOT: [ExternalShopifyIntegrationWhereInput!]
+}
+
+input ExternalShopifyIntegrationWhereUniqueInput {
+  id: ID
+  shopName: String
+}
+
 type FitPic {
   id: ID!
   image: Image!
@@ -6671,6 +6864,12 @@ type Mutation {
   upsertEmailReceipt(where: EmailReceiptWhereUniqueInput!, create: EmailReceiptCreateInput!, update: EmailReceiptUpdateInput!): EmailReceipt!
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
+  createExternalShopifyIntegration(data: ExternalShopifyIntegrationCreateInput!): ExternalShopifyIntegration!
+  updateExternalShopifyIntegration(data: ExternalShopifyIntegrationUpdateInput!, where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
+  updateManyExternalShopifyIntegrations(data: ExternalShopifyIntegrationUpdateManyMutationInput!, where: ExternalShopifyIntegrationWhereInput): BatchPayload!
+  upsertExternalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!, create: ExternalShopifyIntegrationCreateInput!, update: ExternalShopifyIntegrationUpdateInput!): ExternalShopifyIntegration!
+  deleteExternalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
+  deleteManyExternalShopifyIntegrations(where: ExternalShopifyIntegrationWhereInput): BatchPayload!
   createFitPic(data: FitPicCreateInput!): FitPic!
   updateFitPic(data: FitPicUpdateInput!, where: FitPicWhereUniqueInput!): FitPic
   updateManyFitPics(data: FitPicUpdateManyMutationInput!, where: FitPicWhereInput): BatchPayload!
@@ -6743,12 +6942,12 @@ type Mutation {
   upsertPhysicalProduct(where: PhysicalProductWhereUniqueInput!, create: PhysicalProductCreateInput!, update: PhysicalProductUpdateInput!): PhysicalProduct!
   deletePhysicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
-  createPhysicalProductSellable(data: PhysicalProductSellableCreateInput!): PhysicalProductSellable!
-  updatePhysicalProductSellable(data: PhysicalProductSellableUpdateInput!, where: PhysicalProductSellableWhereUniqueInput!): PhysicalProductSellable
-  updateManyPhysicalProductSellables(data: PhysicalProductSellableUpdateManyMutationInput!, where: PhysicalProductSellableWhereInput): BatchPayload!
-  upsertPhysicalProductSellable(where: PhysicalProductSellableWhereUniqueInput!, create: PhysicalProductSellableCreateInput!, update: PhysicalProductSellableUpdateInput!): PhysicalProductSellable!
-  deletePhysicalProductSellable(where: PhysicalProductSellableWhereUniqueInput!): PhysicalProductSellable
-  deleteManyPhysicalProductSellables(where: PhysicalProductSellableWhereInput): BatchPayload!
+  createPhysicalProductPrice(data: PhysicalProductPriceCreateInput!): PhysicalProductPrice!
+  updatePhysicalProductPrice(data: PhysicalProductPriceUpdateInput!, where: PhysicalProductPriceWhereUniqueInput!): PhysicalProductPrice
+  updateManyPhysicalProductPrices(data: PhysicalProductPriceUpdateManyMutationInput!, where: PhysicalProductPriceWhereInput): BatchPayload!
+  upsertPhysicalProductPrice(where: PhysicalProductPriceWhereUniqueInput!, create: PhysicalProductPriceCreateInput!, update: PhysicalProductPriceUpdateInput!): PhysicalProductPrice!
+  deletePhysicalProductPrice(where: PhysicalProductPriceWhereUniqueInput!): PhysicalProductPrice
+  deleteManyPhysicalProductPrices(where: PhysicalProductPriceWhereInput): BatchPayload!
   createProduct(data: ProductCreateInput!): Product!
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
@@ -6815,6 +7014,12 @@ type Mutation {
   upsertProductVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!, create: ProductVariantFeedbackQuestionCreateInput!, update: ProductVariantFeedbackQuestionUpdateInput!): ProductVariantFeedbackQuestion!
   deleteProductVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
   deleteManyProductVariantFeedbackQuestions(where: ProductVariantFeedbackQuestionWhereInput): BatchPayload!
+  createProductVariantPrice(data: ProductVariantPriceCreateInput!): ProductVariantPrice!
+  updateProductVariantPrice(data: ProductVariantPriceUpdateInput!, where: ProductVariantPriceWhereUniqueInput!): ProductVariantPrice
+  updateManyProductVariantPrices(data: ProductVariantPriceUpdateManyMutationInput!, where: ProductVariantPriceWhereInput): BatchPayload!
+  upsertProductVariantPrice(where: ProductVariantPriceWhereUniqueInput!, create: ProductVariantPriceCreateInput!, update: ProductVariantPriceUpdateInput!): ProductVariantPrice!
+  deleteProductVariantPrice(where: ProductVariantPriceWhereUniqueInput!): ProductVariantPrice
+  deleteManyProductVariantPrices(where: ProductVariantPriceWhereInput): BatchPayload!
   createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
   updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
@@ -6874,6 +7079,12 @@ type Mutation {
   upsertShippingOption(where: ShippingOptionWhereUniqueInput!, create: ShippingOptionCreateInput!, update: ShippingOptionUpdateInput!): ShippingOption!
   deleteShippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   deleteManyShippingOptions(where: ShippingOptionWhereInput): BatchPayload!
+  createShopifyProductVariant(data: ShopifyProductVariantCreateInput!): ShopifyProductVariant!
+  updateShopifyProductVariant(data: ShopifyProductVariantUpdateInput!, where: ShopifyProductVariantWhereUniqueInput!): ShopifyProductVariant
+  updateManyShopifyProductVariants(data: ShopifyProductVariantUpdateManyMutationInput!, where: ShopifyProductVariantWhereInput): BatchPayload!
+  upsertShopifyProductVariant(where: ShopifyProductVariantWhereUniqueInput!, create: ShopifyProductVariantCreateInput!, update: ShopifyProductVariantUpdateInput!): ShopifyProductVariant!
+  deleteShopifyProductVariant(where: ShopifyProductVariantWhereUniqueInput!): ShopifyProductVariant
+  deleteManyShopifyProductVariants(where: ShopifyProductVariantWhereInput): BatchPayload!
   createSize(data: SizeCreateInput!): Size!
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
@@ -8093,7 +8304,7 @@ type PhysicalProduct {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: PhysicalProductSellable
+  price: PhysicalProductPrice
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8119,7 +8330,7 @@ input PhysicalProductCreateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: PhysicalProductSellableCreateOneInput
+  price: PhysicalProductPriceCreateOneInput
 }
 
 input PhysicalProductCreateManyInput {
@@ -8161,7 +8372,7 @@ input PhysicalProductCreateWithoutLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: PhysicalProductSellableCreateOneInput
+  price: PhysicalProductPriceCreateOneInput
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -8178,7 +8389,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: PhysicalProductSellableCreateOneInput
+  price: PhysicalProductPriceCreateOneInput
 }
 
 input PhysicalProductCreateWithoutWarehouseLocationInput {
@@ -8195,7 +8406,7 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: PhysicalProductSellableCreateOneInput
+  price: PhysicalProductPriceCreateOneInput
 }
 
 type PhysicalProductEdge {
@@ -8254,6 +8465,130 @@ type PhysicalProductPreviousValues {
   unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type PhysicalProductPrice {
+  id: ID!
+  buyUsedEnabled: Boolean!
+  buyUsedPrice: Float
+}
+
+type PhysicalProductPriceConnection {
+  pageInfo: PageInfo!
+  edges: [PhysicalProductPriceEdge]!
+  aggregate: AggregatePhysicalProductPrice!
+}
+
+input PhysicalProductPriceCreateInput {
+  id: ID
+  buyUsedEnabled: Boolean
+  buyUsedPrice: Float
+}
+
+input PhysicalProductPriceCreateOneInput {
+  create: PhysicalProductPriceCreateInput
+  connect: PhysicalProductPriceWhereUniqueInput
+}
+
+type PhysicalProductPriceEdge {
+  node: PhysicalProductPrice!
+  cursor: String!
+}
+
+enum PhysicalProductPriceOrderByInput {
+  id_ASC
+  id_DESC
+  buyUsedEnabled_ASC
+  buyUsedEnabled_DESC
+  buyUsedPrice_ASC
+  buyUsedPrice_DESC
+}
+
+type PhysicalProductPricePreviousValues {
+  id: ID!
+  buyUsedEnabled: Boolean!
+  buyUsedPrice: Float
+}
+
+type PhysicalProductPriceSubscriptionPayload {
+  mutation: MutationType!
+  node: PhysicalProductPrice
+  updatedFields: [String!]
+  previousValues: PhysicalProductPricePreviousValues
+}
+
+input PhysicalProductPriceSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: PhysicalProductPriceWhereInput
+  AND: [PhysicalProductPriceSubscriptionWhereInput!]
+  OR: [PhysicalProductPriceSubscriptionWhereInput!]
+  NOT: [PhysicalProductPriceSubscriptionWhereInput!]
+}
+
+input PhysicalProductPriceUpdateDataInput {
+  buyUsedEnabled: Boolean
+  buyUsedPrice: Float
+}
+
+input PhysicalProductPriceUpdateInput {
+  buyUsedEnabled: Boolean
+  buyUsedPrice: Float
+}
+
+input PhysicalProductPriceUpdateManyMutationInput {
+  buyUsedEnabled: Boolean
+  buyUsedPrice: Float
+}
+
+input PhysicalProductPriceUpdateOneInput {
+  create: PhysicalProductPriceCreateInput
+  update: PhysicalProductPriceUpdateDataInput
+  upsert: PhysicalProductPriceUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: PhysicalProductPriceWhereUniqueInput
+}
+
+input PhysicalProductPriceUpsertNestedInput {
+  update: PhysicalProductPriceUpdateDataInput!
+  create: PhysicalProductPriceCreateInput!
+}
+
+input PhysicalProductPriceWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  buyUsedEnabled: Boolean
+  buyUsedEnabled_not: Boolean
+  buyUsedPrice: Float
+  buyUsedPrice_not: Float
+  buyUsedPrice_in: [Float!]
+  buyUsedPrice_not_in: [Float!]
+  buyUsedPrice_lt: Float
+  buyUsedPrice_lte: Float
+  buyUsedPrice_gt: Float
+  buyUsedPrice_gte: Float
+  AND: [PhysicalProductPriceWhereInput!]
+  OR: [PhysicalProductPriceWhereInput!]
+  NOT: [PhysicalProductPriceWhereInput!]
+}
+
+input PhysicalProductPriceWhereUniqueInput {
+  id: ID
 }
 
 input PhysicalProductScalarWhereInput {
@@ -8366,156 +8701,6 @@ input PhysicalProductScalarWhereInput {
   NOT: [PhysicalProductScalarWhereInput!]
 }
 
-type PhysicalProductSellable {
-  id: ID!
-  new: Boolean!
-  newPrice: Float
-  used: Boolean!
-  usedPrice: Float
-}
-
-type PhysicalProductSellableConnection {
-  pageInfo: PageInfo!
-  edges: [PhysicalProductSellableEdge]!
-  aggregate: AggregatePhysicalProductSellable!
-}
-
-input PhysicalProductSellableCreateInput {
-  id: ID
-  new: Boolean
-  newPrice: Float
-  used: Boolean
-  usedPrice: Float
-}
-
-input PhysicalProductSellableCreateOneInput {
-  create: PhysicalProductSellableCreateInput
-  connect: PhysicalProductSellableWhereUniqueInput
-}
-
-type PhysicalProductSellableEdge {
-  node: PhysicalProductSellable!
-  cursor: String!
-}
-
-enum PhysicalProductSellableOrderByInput {
-  id_ASC
-  id_DESC
-  new_ASC
-  new_DESC
-  newPrice_ASC
-  newPrice_DESC
-  used_ASC
-  used_DESC
-  usedPrice_ASC
-  usedPrice_DESC
-}
-
-type PhysicalProductSellablePreviousValues {
-  id: ID!
-  new: Boolean!
-  newPrice: Float
-  used: Boolean!
-  usedPrice: Float
-}
-
-type PhysicalProductSellableSubscriptionPayload {
-  mutation: MutationType!
-  node: PhysicalProductSellable
-  updatedFields: [String!]
-  previousValues: PhysicalProductSellablePreviousValues
-}
-
-input PhysicalProductSellableSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: PhysicalProductSellableWhereInput
-  AND: [PhysicalProductSellableSubscriptionWhereInput!]
-  OR: [PhysicalProductSellableSubscriptionWhereInput!]
-  NOT: [PhysicalProductSellableSubscriptionWhereInput!]
-}
-
-input PhysicalProductSellableUpdateDataInput {
-  new: Boolean
-  newPrice: Float
-  used: Boolean
-  usedPrice: Float
-}
-
-input PhysicalProductSellableUpdateInput {
-  new: Boolean
-  newPrice: Float
-  used: Boolean
-  usedPrice: Float
-}
-
-input PhysicalProductSellableUpdateManyMutationInput {
-  new: Boolean
-  newPrice: Float
-  used: Boolean
-  usedPrice: Float
-}
-
-input PhysicalProductSellableUpdateOneInput {
-  create: PhysicalProductSellableCreateInput
-  update: PhysicalProductSellableUpdateDataInput
-  upsert: PhysicalProductSellableUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: PhysicalProductSellableWhereUniqueInput
-}
-
-input PhysicalProductSellableUpsertNestedInput {
-  update: PhysicalProductSellableUpdateDataInput!
-  create: PhysicalProductSellableCreateInput!
-}
-
-input PhysicalProductSellableWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  new: Boolean
-  new_not: Boolean
-  newPrice: Float
-  newPrice_not: Float
-  newPrice_in: [Float!]
-  newPrice_not_in: [Float!]
-  newPrice_lt: Float
-  newPrice_lte: Float
-  newPrice_gt: Float
-  newPrice_gte: Float
-  used: Boolean
-  used_not: Boolean
-  usedPrice: Float
-  usedPrice_not: Float
-  usedPrice_in: [Float!]
-  usedPrice_not_in: [Float!]
-  usedPrice_lt: Float
-  usedPrice_lte: Float
-  usedPrice_gt: Float
-  usedPrice_gte: Float
-  AND: [PhysicalProductSellableWhereInput!]
-  OR: [PhysicalProductSellableWhereInput!]
-  NOT: [PhysicalProductSellableWhereInput!]
-}
-
-input PhysicalProductSellableWhereUniqueInput {
-  id: ID
-}
-
 enum PhysicalProductStatus {
   New
   Used
@@ -8558,7 +8743,7 @@ input PhysicalProductUpdateDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: PhysicalProductSellableUpdateOneInput
+  price: PhysicalProductPriceUpdateOneInput
 }
 
 input PhysicalProductUpdateInput {
@@ -8575,7 +8760,7 @@ input PhysicalProductUpdateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: PhysicalProductSellableUpdateOneInput
+  price: PhysicalProductPriceUpdateOneInput
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -8686,7 +8871,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: PhysicalProductSellableUpdateOneInput
+  price: PhysicalProductPriceUpdateOneInput
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -8702,7 +8887,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: PhysicalProductSellableUpdateOneInput
+  price: PhysicalProductPriceUpdateOneInput
 }
 
 input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
@@ -8718,7 +8903,7 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: PhysicalProductSellableUpdateOneInput
+  price: PhysicalProductPriceUpdateOneInput
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -8862,7 +9047,7 @@ input PhysicalProductWhereInput {
   unitCost_lte: Float
   unitCost_gt: Float
   unitCost_gte: Float
-  sellable: PhysicalProductSellableWhereInput
+  price: PhysicalProductPriceWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -8903,6 +9088,7 @@ type Product {
   description: String
   externalURL: String
   functions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction!]
+  buyNewEnabled: Boolean!
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   innerMaterials: [String!]!
   materialCategory: ProductMaterialCategory
@@ -8952,6 +9138,7 @@ input ProductCreateInput {
   description: String
   externalURL: String
   functions: ProductFunctionCreateManyInput
+  buyNewEnabled: Boolean
   images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
@@ -9026,6 +9213,7 @@ input ProductCreateWithoutBrandInput {
   description: String
   externalURL: String
   functions: ProductFunctionCreateManyInput
+  buyNewEnabled: Boolean
   images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
@@ -9056,6 +9244,7 @@ input ProductCreateWithoutCategoryInput {
   description: String
   externalURL: String
   functions: ProductFunctionCreateManyInput
+  buyNewEnabled: Boolean
   images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
@@ -9087,6 +9276,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   description: String
   externalURL: String
   functions: ProductFunctionCreateManyInput
+  buyNewEnabled: Boolean
   images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   model: ProductModelCreateOneWithoutProductsInput
@@ -9117,6 +9307,7 @@ input ProductCreateWithoutModelInput {
   description: String
   externalURL: String
   functions: ProductFunctionCreateManyInput
+  buyNewEnabled: Boolean
   images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
@@ -9147,6 +9338,7 @@ input ProductCreateWithoutTagsInput {
   description: String
   externalURL: String
   functions: ProductFunctionCreateManyInput
+  buyNewEnabled: Boolean
   images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
@@ -9177,6 +9369,7 @@ input ProductCreateWithoutVariantsInput {
   description: String
   externalURL: String
   functions: ProductFunctionCreateManyInput
+  buyNewEnabled: Boolean
   images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
@@ -9832,6 +10025,8 @@ enum ProductOrderByInput {
   description_DESC
   externalURL_ASC
   externalURL_DESC
+  buyNewEnabled_ASC
+  buyNewEnabled_DESC
   modelHeight_ASC
   modelHeight_DESC
   name_ASC
@@ -9861,6 +10056,7 @@ type ProductPreviousValues {
   architecture: ProductArchitecture
   description: String
   externalURL: String
+  buyNewEnabled: Boolean!
   innerMaterials: [String!]!
   modelHeight: Int
   name: String!
@@ -10199,6 +10395,8 @@ input ProductScalarWhereInput {
   externalURL_not_starts_with: String
   externalURL_ends_with: String
   externalURL_not_ends_with: String
+  buyNewEnabled: Boolean
+  buyNewEnabled_not: Boolean
   modelHeight: Int
   modelHeight_not: Int
   modelHeight_in: [Int!]
@@ -10605,6 +10803,7 @@ input ProductUpdateDataInput {
   description: String
   externalURL: String
   functions: ProductFunctionUpdateManyInput
+  buyNewEnabled: Boolean
   images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
@@ -10639,6 +10838,7 @@ input ProductUpdateInput {
   description: String
   externalURL: String
   functions: ProductFunctionUpdateManyInput
+  buyNewEnabled: Boolean
   images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
@@ -10665,6 +10865,7 @@ input ProductUpdateManyDataInput {
   architecture: ProductArchitecture
   description: String
   externalURL: String
+  buyNewEnabled: Boolean
   innerMaterials: ProductUpdateinnerMaterialsInput
   modelHeight: Int
   name: String
@@ -10694,6 +10895,7 @@ input ProductUpdateManyMutationInput {
   architecture: ProductArchitecture
   description: String
   externalURL: String
+  buyNewEnabled: Boolean
   innerMaterials: ProductUpdateinnerMaterialsInput
   modelHeight: Int
   name: String
@@ -10797,6 +10999,7 @@ input ProductUpdateWithoutBrandDataInput {
   description: String
   externalURL: String
   functions: ProductFunctionUpdateManyInput
+  buyNewEnabled: Boolean
   images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
@@ -10826,6 +11029,7 @@ input ProductUpdateWithoutCategoryDataInput {
   description: String
   externalURL: String
   functions: ProductFunctionUpdateManyInput
+  buyNewEnabled: Boolean
   images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
@@ -10856,6 +11060,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   description: String
   externalURL: String
   functions: ProductFunctionUpdateManyInput
+  buyNewEnabled: Boolean
   images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   model: ProductModelUpdateOneWithoutProductsInput
@@ -10885,6 +11090,7 @@ input ProductUpdateWithoutModelDataInput {
   description: String
   externalURL: String
   functions: ProductFunctionUpdateManyInput
+  buyNewEnabled: Boolean
   images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
@@ -10914,6 +11120,7 @@ input ProductUpdateWithoutTagsDataInput {
   description: String
   externalURL: String
   functions: ProductFunctionUpdateManyInput
+  buyNewEnabled: Boolean
   images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
@@ -10943,6 +11150,7 @@ input ProductUpdateWithoutVariantsDataInput {
   description: String
   externalURL: String
   functions: ProductFunctionUpdateManyInput
+  buyNewEnabled: Boolean
   images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
@@ -11052,6 +11260,8 @@ type ProductVariant {
   productID: String!
   product: Product!
   retailPrice: Float
+  price: ProductVariantPrice
+  shopifyProductVariant: ShopifyProductVariant
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   total: Int!
   reservable: Int!
@@ -11081,6 +11291,8 @@ input ProductVariantCreateInput {
   productID: String!
   product: ProductCreateOneWithoutVariantsInput!
   retailPrice: Float
+  price: ProductVariantPriceCreateOneInput
+  shopifyProductVariant: ShopifyProductVariantCreateOneInput
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
   total: Int!
   reservable: Int!
@@ -11121,6 +11333,8 @@ input ProductVariantCreateWithoutColorInput {
   productID: String!
   product: ProductCreateOneWithoutVariantsInput!
   retailPrice: Float
+  price: ProductVariantPriceCreateOneInput
+  shopifyProductVariant: ShopifyProductVariantCreateOneInput
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
   total: Int!
   reservable: Int!
@@ -11142,6 +11356,8 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
   productID: String!
   product: ProductCreateOneWithoutVariantsInput!
   retailPrice: Float
+  price: ProductVariantPriceCreateOneInput
+  shopifyProductVariant: ShopifyProductVariantCreateOneInput
   total: Int!
   reservable: Int!
   reserved: Int!
@@ -11161,6 +11377,8 @@ input ProductVariantCreateWithoutProductInput {
   height: Float
   productID: String!
   retailPrice: Float
+  price: ProductVariantPriceCreateOneInput
+  shopifyProductVariant: ShopifyProductVariantCreateOneInput
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
   total: Int!
   reservable: Int!
@@ -11658,6 +11876,120 @@ type ProductVariantPreviousValues {
   updatedAt: DateTime!
 }
 
+type ProductVariantPrice {
+  id: ID!
+  retailPrice: Float
+}
+
+type ProductVariantPriceConnection {
+  pageInfo: PageInfo!
+  edges: [ProductVariantPriceEdge]!
+  aggregate: AggregateProductVariantPrice!
+}
+
+input ProductVariantPriceCreateInput {
+  id: ID
+  retailPrice: Float
+}
+
+input ProductVariantPriceCreateOneInput {
+  create: ProductVariantPriceCreateInput
+  connect: ProductVariantPriceWhereUniqueInput
+}
+
+type ProductVariantPriceEdge {
+  node: ProductVariantPrice!
+  cursor: String!
+}
+
+enum ProductVariantPriceOrderByInput {
+  id_ASC
+  id_DESC
+  retailPrice_ASC
+  retailPrice_DESC
+}
+
+type ProductVariantPricePreviousValues {
+  id: ID!
+  retailPrice: Float
+}
+
+type ProductVariantPriceSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductVariantPrice
+  updatedFields: [String!]
+  previousValues: ProductVariantPricePreviousValues
+}
+
+input ProductVariantPriceSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ProductVariantPriceWhereInput
+  AND: [ProductVariantPriceSubscriptionWhereInput!]
+  OR: [ProductVariantPriceSubscriptionWhereInput!]
+  NOT: [ProductVariantPriceSubscriptionWhereInput!]
+}
+
+input ProductVariantPriceUpdateDataInput {
+  retailPrice: Float
+}
+
+input ProductVariantPriceUpdateInput {
+  retailPrice: Float
+}
+
+input ProductVariantPriceUpdateManyMutationInput {
+  retailPrice: Float
+}
+
+input ProductVariantPriceUpdateOneInput {
+  create: ProductVariantPriceCreateInput
+  update: ProductVariantPriceUpdateDataInput
+  upsert: ProductVariantPriceUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ProductVariantPriceWhereUniqueInput
+}
+
+input ProductVariantPriceUpsertNestedInput {
+  update: ProductVariantPriceUpdateDataInput!
+  create: ProductVariantPriceCreateInput!
+}
+
+input ProductVariantPriceWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  retailPrice: Float
+  retailPrice_not: Float
+  retailPrice_in: [Float!]
+  retailPrice_not_in: [Float!]
+  retailPrice_lt: Float
+  retailPrice_lte: Float
+  retailPrice_gt: Float
+  retailPrice_gte: Float
+  AND: [ProductVariantPriceWhereInput!]
+  OR: [ProductVariantPriceWhereInput!]
+  NOT: [ProductVariantPriceWhereInput!]
+}
+
+input ProductVariantPriceWhereUniqueInput {
+  id: ID
+}
+
 input ProductVariantScalarWhereInput {
   id: ID
   id_not: ID
@@ -11837,6 +12169,8 @@ input ProductVariantUpdateDataInput {
   productID: String
   product: ProductUpdateOneRequiredWithoutVariantsInput
   retailPrice: Float
+  price: ProductVariantPriceUpdateOneInput
+  shopifyProductVariant: ShopifyProductVariantUpdateOneInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
   total: Int
   reservable: Int
@@ -11857,6 +12191,8 @@ input ProductVariantUpdateInput {
   productID: String
   product: ProductUpdateOneRequiredWithoutVariantsInput
   retailPrice: Float
+  price: ProductVariantPriceUpdateOneInput
+  shopifyProductVariant: ShopifyProductVariantUpdateOneInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
   total: Int
   reservable: Int
@@ -11958,6 +12294,8 @@ input ProductVariantUpdateWithoutColorDataInput {
   productID: String
   product: ProductUpdateOneRequiredWithoutVariantsInput
   retailPrice: Float
+  price: ProductVariantPriceUpdateOneInput
+  shopifyProductVariant: ShopifyProductVariantUpdateOneInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
   total: Int
   reservable: Int
@@ -11978,6 +12316,8 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   productID: String
   product: ProductUpdateOneRequiredWithoutVariantsInput
   retailPrice: Float
+  price: ProductVariantPriceUpdateOneInput
+  shopifyProductVariant: ShopifyProductVariantUpdateOneInput
   total: Int
   reservable: Int
   reserved: Int
@@ -11996,6 +12336,8 @@ input ProductVariantUpdateWithoutProductDataInput {
   height: Float
   productID: String
   retailPrice: Float
+  price: ProductVariantPriceUpdateOneInput
+  shopifyProductVariant: ShopifyProductVariantUpdateOneInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
   total: Int
   reservable: Int
@@ -12217,6 +12559,8 @@ input ProductVariantWhereInput {
   retailPrice_lte: Float
   retailPrice_gt: Float
   retailPrice_gte: Float
+  price: ProductVariantPriceWhereInput
+  shopifyProductVariant: ShopifyProductVariantWhereInput
   physicalProducts_every: PhysicalProductWhereInput
   physicalProducts_some: PhysicalProductWhereInput
   physicalProducts_none: PhysicalProductWhereInput
@@ -12347,6 +12691,8 @@ input ProductWhereInput {
   functions_every: ProductFunctionWhereInput
   functions_some: ProductFunctionWhereInput
   functions_none: ProductFunctionWhereInput
+  buyNewEnabled: Boolean
+  buyNewEnabled_not: Boolean
   images_every: ImageWhereInput
   images_some: ImageWhereInput
   images_none: ImageWhereInput
@@ -13103,6 +13449,9 @@ type Query {
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
+  externalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
+  externalShopifyIntegrations(where: ExternalShopifyIntegrationWhereInput, orderBy: ExternalShopifyIntegrationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExternalShopifyIntegration]!
+  externalShopifyIntegrationsConnection(where: ExternalShopifyIntegrationWhereInput, orderBy: ExternalShopifyIntegrationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExternalShopifyIntegrationConnection!
   fitPic(where: FitPicWhereUniqueInput!): FitPic
   fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic]!
   fitPicsConnection(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicConnection!
@@ -13139,9 +13488,9 @@ type Query {
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
-  physicalProductSellable(where: PhysicalProductSellableWhereUniqueInput!): PhysicalProductSellable
-  physicalProductSellables(where: PhysicalProductSellableWhereInput, orderBy: PhysicalProductSellableOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductSellable]!
-  physicalProductSellablesConnection(where: PhysicalProductSellableWhereInput, orderBy: PhysicalProductSellableOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductSellableConnection!
+  physicalProductPrice(where: PhysicalProductPriceWhereUniqueInput!): PhysicalProductPrice
+  physicalProductPrices(where: PhysicalProductPriceWhereInput, orderBy: PhysicalProductPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductPrice]!
+  physicalProductPricesConnection(where: PhysicalProductPriceWhereInput, orderBy: PhysicalProductPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductPriceConnection!
   product(where: ProductWhereUniqueInput!): Product
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
@@ -13175,6 +13524,9 @@ type Query {
   productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
   productVariantFeedbackQuestions(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedbackQuestion]!
   productVariantFeedbackQuestionsConnection(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantFeedbackQuestionConnection!
+  productVariantPrice(where: ProductVariantPriceWhereUniqueInput!): ProductVariantPrice
+  productVariantPrices(where: ProductVariantPriceWhereInput, orderBy: ProductVariantPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantPrice]!
+  productVariantPricesConnection(where: ProductVariantPriceWhereInput, orderBy: ProductVariantPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantPriceConnection!
   productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   productVariantWants(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantWant]!
   productVariantWantsConnection(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantWantConnection!
@@ -13205,6 +13557,9 @@ type Query {
   shippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   shippingOptions(where: ShippingOptionWhereInput, orderBy: ShippingOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShippingOption]!
   shippingOptionsConnection(where: ShippingOptionWhereInput, orderBy: ShippingOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShippingOptionConnection!
+  shopifyProductVariant(where: ShopifyProductVariantWhereUniqueInput!): ShopifyProductVariant
+  shopifyProductVariants(where: ShopifyProductVariantWhereInput, orderBy: ShopifyProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariant]!
+  shopifyProductVariantsConnection(where: ShopifyProductVariantWhereInput, orderBy: ShopifyProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShopifyProductVariantConnection!
   size(where: SizeWhereUniqueInput!): Size
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
@@ -15063,6 +15418,169 @@ input ShippingOptionWhereUniqueInput {
   id: ID
 }
 
+type ShopifyProductVariant {
+  id: ID!
+  externalId: String
+  cachedPrice: Float
+  cachedAvailableForSale: Boolean
+  cacheExpiresAt: DateTime
+}
+
+type ShopifyProductVariantConnection {
+  pageInfo: PageInfo!
+  edges: [ShopifyProductVariantEdge]!
+  aggregate: AggregateShopifyProductVariant!
+}
+
+input ShopifyProductVariantCreateInput {
+  id: ID
+  externalId: String
+  cachedPrice: Float
+  cachedAvailableForSale: Boolean
+  cacheExpiresAt: DateTime
+}
+
+input ShopifyProductVariantCreateOneInput {
+  create: ShopifyProductVariantCreateInput
+  connect: ShopifyProductVariantWhereUniqueInput
+}
+
+type ShopifyProductVariantEdge {
+  node: ShopifyProductVariant!
+  cursor: String!
+}
+
+enum ShopifyProductVariantOrderByInput {
+  id_ASC
+  id_DESC
+  externalId_ASC
+  externalId_DESC
+  cachedPrice_ASC
+  cachedPrice_DESC
+  cachedAvailableForSale_ASC
+  cachedAvailableForSale_DESC
+  cacheExpiresAt_ASC
+  cacheExpiresAt_DESC
+}
+
+type ShopifyProductVariantPreviousValues {
+  id: ID!
+  externalId: String
+  cachedPrice: Float
+  cachedAvailableForSale: Boolean
+  cacheExpiresAt: DateTime
+}
+
+type ShopifyProductVariantSubscriptionPayload {
+  mutation: MutationType!
+  node: ShopifyProductVariant
+  updatedFields: [String!]
+  previousValues: ShopifyProductVariantPreviousValues
+}
+
+input ShopifyProductVariantSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ShopifyProductVariantWhereInput
+  AND: [ShopifyProductVariantSubscriptionWhereInput!]
+  OR: [ShopifyProductVariantSubscriptionWhereInput!]
+  NOT: [ShopifyProductVariantSubscriptionWhereInput!]
+}
+
+input ShopifyProductVariantUpdateDataInput {
+  externalId: String
+  cachedPrice: Float
+  cachedAvailableForSale: Boolean
+  cacheExpiresAt: DateTime
+}
+
+input ShopifyProductVariantUpdateInput {
+  externalId: String
+  cachedPrice: Float
+  cachedAvailableForSale: Boolean
+  cacheExpiresAt: DateTime
+}
+
+input ShopifyProductVariantUpdateManyMutationInput {
+  externalId: String
+  cachedPrice: Float
+  cachedAvailableForSale: Boolean
+  cacheExpiresAt: DateTime
+}
+
+input ShopifyProductVariantUpdateOneInput {
+  create: ShopifyProductVariantCreateInput
+  update: ShopifyProductVariantUpdateDataInput
+  upsert: ShopifyProductVariantUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ShopifyProductVariantWhereUniqueInput
+}
+
+input ShopifyProductVariantUpsertNestedInput {
+  update: ShopifyProductVariantUpdateDataInput!
+  create: ShopifyProductVariantCreateInput!
+}
+
+input ShopifyProductVariantWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  externalId: String
+  externalId_not: String
+  externalId_in: [String!]
+  externalId_not_in: [String!]
+  externalId_lt: String
+  externalId_lte: String
+  externalId_gt: String
+  externalId_gte: String
+  externalId_contains: String
+  externalId_not_contains: String
+  externalId_starts_with: String
+  externalId_not_starts_with: String
+  externalId_ends_with: String
+  externalId_not_ends_with: String
+  cachedPrice: Float
+  cachedPrice_not: Float
+  cachedPrice_in: [Float!]
+  cachedPrice_not_in: [Float!]
+  cachedPrice_lt: Float
+  cachedPrice_lte: Float
+  cachedPrice_gt: Float
+  cachedPrice_gte: Float
+  cachedAvailableForSale: Boolean
+  cachedAvailableForSale_not: Boolean
+  cacheExpiresAt: DateTime
+  cacheExpiresAt_not: DateTime
+  cacheExpiresAt_in: [DateTime!]
+  cacheExpiresAt_not_in: [DateTime!]
+  cacheExpiresAt_lt: DateTime
+  cacheExpiresAt_lte: DateTime
+  cacheExpiresAt_gt: DateTime
+  cacheExpiresAt_gte: DateTime
+  AND: [ShopifyProductVariantWhereInput!]
+  OR: [ShopifyProductVariantWhereInput!]
+  NOT: [ShopifyProductVariantWhereInput!]
+}
+
+input ShopifyProductVariantWhereUniqueInput {
+  id: ID
+  externalId: String
+}
+
 type Size {
   id: ID!
   slug: String!
@@ -15822,6 +16340,7 @@ type Subscription {
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   customerMembership(where: CustomerMembershipSubscriptionWhereInput): CustomerMembershipSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
+  externalShopifyIntegration(where: ExternalShopifyIntegrationSubscriptionWhereInput): ExternalShopifyIntegrationSubscriptionPayload
   fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload
   fitPicReport(where: FitPicReportSubscriptionWhereInput): FitPicReportSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
@@ -15834,7 +16353,7 @@ type Subscription {
   pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
   paymentPlan(where: PaymentPlanSubscriptionWhereInput): PaymentPlanSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
-  physicalProductSellable(where: PhysicalProductSellableSubscriptionWhereInput): PhysicalProductSellableSubscriptionPayload
+  physicalProductPrice(where: PhysicalProductPriceSubscriptionWhereInput): PhysicalProductPriceSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
   productMaterialCategory(where: ProductMaterialCategorySubscriptionWhereInput): ProductMaterialCategorySubscriptionPayload
@@ -15846,6 +16365,7 @@ type Subscription {
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
   productVariantFeedback(where: ProductVariantFeedbackSubscriptionWhereInput): ProductVariantFeedbackSubscriptionPayload
   productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionSubscriptionWhereInput): ProductVariantFeedbackQuestionSubscriptionPayload
+  productVariantPrice(where: ProductVariantPriceSubscriptionWhereInput): ProductVariantPriceSubscriptionPayload
   productVariantWant(where: ProductVariantWantSubscriptionWhereInput): ProductVariantWantSubscriptionPayload
   pushNotificationReceipt(where: PushNotificationReceiptSubscriptionWhereInput): PushNotificationReceiptSubscriptionPayload
   recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
@@ -15856,6 +16376,7 @@ type Subscription {
   season(where: SeasonSubscriptionWhereInput): SeasonSubscriptionPayload
   shippingMethod(where: ShippingMethodSubscriptionWhereInput): ShippingMethodSubscriptionPayload
   shippingOption(where: ShippingOptionSubscriptionWhereInput): ShippingOptionSubscriptionPayload
+  shopifyProductVariant(where: ShopifyProductVariantSubscriptionWhereInput): ShopifyProductVariantSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload

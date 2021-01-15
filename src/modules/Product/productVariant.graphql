@@ -59,12 +59,20 @@ type Mutation {
   ): [ProductVariant!] @hasRole(roles: [Admin])
 }
 
-type ProductVariantSellable {
+type ProductVariantPrice {
   id: ID!
-  new: Boolean!
-  newPrice: Float
-  used: Boolean!
-  usedPrice: Float
+  retailPrice: Float
+
+  # ExternalShopifyProductVariant is the source of truth.
+  buyNewPrice: Float
+  buyNewAvailableForSale: Boolean
+
+  # Product is the source of truth.
+  buyNewEnabled: Boolean!
+
+  # PhysicalProduct is the source of truth.
+  buyUsedPrice: Float
+  buyUsedEnabled: Boolean!
 }
 
 type Size {
@@ -74,6 +82,14 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
+}
+
+type ShopifyProductVariant {
+  id: ID!
+  externalId: String
+  cachedPrice: Float
+  cachedAvailableForSale: Boolean
+  cacheExpiresAt: DateTime
 }
 
 type ProductVariant {
@@ -97,7 +113,6 @@ type ProductVariant {
   height: Float
   productID: String!
   product: Product!
-  retailPrice: Float
   physicalProducts(
     where: PhysicalProductWhereInput
     orderBy: PhysicalProductOrderByInput
@@ -110,7 +125,9 @@ type ProductVariant {
   total: Int!
   reservable: Int!
   reserved: Int!
-  sellable: ProductVariantSellable!
+  shopifyProductVariant: ShopifyProductVariant
+  price: ProductVariantPrice!
+  retailPrice: Float @deprecated(reason: "replaced with price.retailPrice")
   nonReservable: Int!
   isSaved: Boolean!
   isInBag: Boolean!
@@ -120,11 +137,14 @@ type ProductVariant {
   updatedAt: DateTime!
 }
 
-input ProductVariantSellableInput {
-  new: Boolean!
-  newPrice: Float
-  used: Boolean!
-  usedPrice: Float
+input ProductVariantPriceInput {
+  buyUsedPrice: Float
+  buyUsedEnabled: Boolean!
+  buyNewEnabled: Boolean!
+}
+
+input ShopifyProductVariantInput {
+  externalId: String
 }
 
 input UpsertVariantInput {
@@ -146,7 +166,8 @@ input UpsertVariantInput {
   weight: Float
   total: Int!
   physicalProducts: [UpsertPhysicalProductInput!]!
-  sellable: ProductVariantSellableInput
+  price: ProductVariantPriceInput
+  shopifyProductVariant: ShopifyProductVariantInput
 }
 
 input UpdateVariantInput {
@@ -165,6 +186,8 @@ input UpdateVariantInput {
   rise: Float
   hem: Float
   inseam: Float
+  price: ProductVariantPriceInput
+  shopifyProductVariant: ShopifyProductVariantInput
 }
 
 input ProductVariantSKUsInput {
