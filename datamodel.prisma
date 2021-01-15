@@ -245,6 +245,14 @@ enum ShippingCode {
   UPSSelect
 }
 
+type ExternalShopifyIntegration {
+  id: ID! @id
+  shopName: String! @unique
+  enabled: Boolean!
+  accessToken: String
+  nonce: String
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -264,6 +272,7 @@ type Brand {
   websiteUrl: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  externalShopifyIntegration: ExternalShopifyIntegration
 }
 
 type Category {
@@ -368,6 +377,7 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
+  buyNewEnabled: Boolean! @default(value: false)
   images: [Image!]
   modelHeight: Int
   retailPrice: Int
@@ -423,6 +433,19 @@ type ProductFunction {
   name: String @unique
 }
 
+type ProductVariantPrice {
+  id: ID! @id
+  retailPrice: Float
+}
+
+type ShopifyProductVariant {
+  id: ID! @id
+  externalId: String @unique
+  cachedPrice: Float
+  cachedAvailableForSale: Boolean
+  cacheExpiresAt: DateTime
+}
+
 type ProductVariant {
   id: ID! @id
   sku: String @unique
@@ -435,6 +458,8 @@ type ProductVariant {
   productID: String!
   product: Product! @relation(onDelete: SET_NULL)
   retailPrice: Float
+  price: ProductVariantPrice
+  shopifyProductVariant: ShopifyProductVariant
   physicalProducts: [PhysicalProduct!]!
     @relation(link: TABLE, onDelete: CASCADE)
   total: Int!
@@ -447,12 +472,10 @@ type ProductVariant {
   updatedAt: DateTime! @updatedAt
 }
 
-type PhysicalProductSellable {
+type PhysicalProductPrice {
   id: ID! @id
-  new: Boolean! @default(value: false)
-  newPrice: Float
-  used: Boolean! @default(value: false)
-  usedPrice: Float
+  buyUsedEnabled: Boolean! @default(value: false)
+  buyUsedPrice: Float
 }
 
 type PhysicalProduct {
@@ -470,7 +493,7 @@ type PhysicalProduct {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
-  sellable: PhysicalProductSellable
+  price: PhysicalProductPrice
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

@@ -174,6 +174,7 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
+  buyNewEnabled: Boolean!
   materialCategory: ProductMaterialCategory
   model: ProductModel
   modelHeight: Int
@@ -224,6 +225,13 @@ type Product {
   publishedAt: DateTime
 }
 
+type ExternalShopifyIntegration {
+  # {shopName}.myshopify.com
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+}
+
 type Brand {
   id: ID!
   slug: String!
@@ -272,6 +280,7 @@ type Brand {
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
+  externalShopifyIntegration: ExternalShopifyIntegration
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -280,6 +289,7 @@ input UpsertProductInput {
   architecture: String
   bottomSizeType: BottomSizeType
   brandID: String!
+  buyNewEnabled: Boolean
   categoryName: String!
   colorCode: String!
   description: String!
@@ -335,6 +345,7 @@ input CustomProductUpdateInput {
   modelSizeDisplay: String
   modelSizeName: String
   tags: [String!]
+  buyNewEnabled: Boolean
 }
 
 input UpsertSeasonInput {
@@ -343,6 +354,12 @@ input UpsertSeasonInput {
   internalSeasonYear: Int
   vendorSeasonSeasonCode: String
   vendorSeasonYear: Int
+}
+
+input ExternalShopifyIntegrationInput {
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
 }
 
 input CustomBrandCreateInput {
@@ -363,6 +380,7 @@ input CustomBrandCreateInput {
   products: ProductCreateManyWithoutBrandInput
   # Custom fields
   images: [Upload!]
+  externalShopifyIntegration: ExternalShopifyIntegrationInput
 }
 
 input CustomBrandUpdateInput {
@@ -382,4 +400,5 @@ input CustomBrandUpdateInput {
   websiteUrl: String
   # Custom fields
   images: [Upload!]
+  externalShopifyIntegration: ExternalShopifyIntegrationInput
 }
