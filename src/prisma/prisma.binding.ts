@@ -4181,6 +4181,7 @@ type Collection implements Node {
   descriptions: [String!]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   published: Boolean!
+  placements: [CollectionPlacement!]!
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -4206,6 +4207,7 @@ input CollectionCreateInput {
   subTitle: String
   published: Boolean
   descriptions: CollectionCreatedescriptionsInput
+  placements: CollectionCreateplacementsInput
   images: ImageCreateManyInput
   products: ProductCreateManyInput
 }
@@ -4213,6 +4215,10 @@ input CollectionCreateInput {
 input CollectionCreateManyInput {
   create: [CollectionCreateInput!]
   connect: [CollectionWhereUniqueInput!]
+}
+
+input CollectionCreateplacementsInput {
+  set: [CollectionPlacement!]
 }
 
 """An edge in a connection."""
@@ -4505,6 +4511,10 @@ enum CollectionOrderByInput {
   updatedAt_DESC
 }
 
+enum CollectionPlacement {
+  Homepage
+}
+
 type CollectionPreviousValues {
   id: ID!
   slug: String!
@@ -4512,6 +4522,7 @@ type CollectionPreviousValues {
   subTitle: String
   descriptions: [String!]!
   published: Boolean!
+  placements: [CollectionPlacement!]!
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -4778,6 +4789,7 @@ input CollectionUpdateDataInput {
   subTitle: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
+  placements: CollectionUpdateplacementsInput
   images: ImageUpdateManyInput
   products: ProductUpdateManyInput
 }
@@ -4792,6 +4804,7 @@ input CollectionUpdateInput {
   subTitle: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
+  placements: CollectionUpdateplacementsInput
   images: ImageUpdateManyInput
   products: ProductUpdateManyInput
 }
@@ -4802,6 +4815,7 @@ input CollectionUpdateManyDataInput {
   subTitle: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
+  placements: CollectionUpdateplacementsInput
 }
 
 input CollectionUpdateManyInput {
@@ -4822,11 +4836,16 @@ input CollectionUpdateManyMutationInput {
   subTitle: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
+  placements: CollectionUpdateplacementsInput
 }
 
 input CollectionUpdateManyWithWhereNestedInput {
   where: CollectionScalarWhereInput!
   data: CollectionUpdateManyDataInput!
+}
+
+input CollectionUpdateplacementsInput {
+  set: [CollectionPlacement!]
 }
 
 input CollectionUpdateWithWhereUniqueNestedInput {
@@ -31208,6 +31227,8 @@ export type CollectionOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
 
+export type CollectionPlacement =   'Homepage'
+
 export type ColorOrderByInput =   'id_ASC' |
   'id_DESC' |
   'slug_ASC' |
@@ -33477,6 +33498,7 @@ export interface CollectionCreateInput {
   subTitle?: String | null
   published?: Boolean | null
   descriptions?: CollectionCreatedescriptionsInput | null
+  placements?: CollectionCreateplacementsInput | null
   images?: ImageCreateManyInput | null
   products?: ProductCreateManyInput | null
 }
@@ -33484,6 +33506,10 @@ export interface CollectionCreateInput {
 export interface CollectionCreateManyInput {
   create?: CollectionCreateInput[] | CollectionCreateInput | null
   connect?: CollectionWhereUniqueInput[] | CollectionWhereUniqueInput | null
+}
+
+export interface CollectionCreateplacementsInput {
+  set?: CollectionPlacement[] | CollectionPlacement | null
 }
 
 export interface CollectionGroupCreateInput {
@@ -33679,6 +33705,7 @@ export interface CollectionUpdateDataInput {
   subTitle?: String | null
   published?: Boolean | null
   descriptions?: CollectionUpdatedescriptionsInput | null
+  placements?: CollectionUpdateplacementsInput | null
   images?: ImageUpdateManyInput | null
   products?: ProductUpdateManyInput | null
 }
@@ -33693,6 +33720,7 @@ export interface CollectionUpdateInput {
   subTitle?: String | null
   published?: Boolean | null
   descriptions?: CollectionUpdatedescriptionsInput | null
+  placements?: CollectionUpdateplacementsInput | null
   images?: ImageUpdateManyInput | null
   products?: ProductUpdateManyInput | null
 }
@@ -33703,6 +33731,7 @@ export interface CollectionUpdateManyDataInput {
   subTitle?: String | null
   published?: Boolean | null
   descriptions?: CollectionUpdatedescriptionsInput | null
+  placements?: CollectionUpdateplacementsInput | null
 }
 
 export interface CollectionUpdateManyInput {
@@ -33723,11 +33752,16 @@ export interface CollectionUpdateManyMutationInput {
   subTitle?: String | null
   published?: Boolean | null
   descriptions?: CollectionUpdatedescriptionsInput | null
+  placements?: CollectionUpdateplacementsInput | null
 }
 
 export interface CollectionUpdateManyWithWhereNestedInput {
   where: CollectionScalarWhereInput
   data: CollectionUpdateManyDataInput
+}
+
+export interface CollectionUpdateplacementsInput {
+  set?: CollectionPlacement[] | CollectionPlacement | null
 }
 
 export interface CollectionUpdateWithWhereUniqueNestedInput {
@@ -46227,6 +46261,7 @@ export interface Collection extends Node {
   descriptions: Array<String>
   products?: Array<Product> | null
   published: Boolean
+  placements: Array<CollectionPlacement>
   createdAt: DateTime
   updatedAt?: DateTime | null
 }
@@ -46298,6 +46333,7 @@ export interface CollectionPreviousValues {
   subTitle?: String | null
   descriptions: Array<String>
   published: Boolean
+  placements: Array<CollectionPlacement>
   createdAt: DateTime
   updatedAt?: DateTime | null
 }

@@ -2074,6 +2074,7 @@ type Collection {
   descriptions: [String!]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   published: Boolean!
+  placements: [CollectionPlacement!]!
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -2097,11 +2098,16 @@ input CollectionCreateInput {
   descriptions: CollectionCreatedescriptionsInput
   products: ProductCreateManyInput
   published: Boolean
+  placements: CollectionCreateplacementsInput
 }
 
 input CollectionCreateManyInput {
   create: [CollectionCreateInput!]
   connect: [CollectionWhereUniqueInput!]
+}
+
+input CollectionCreateplacementsInput {
+  set: [CollectionPlacement!]
 }
 
 type CollectionEdge {
@@ -2266,6 +2272,10 @@ enum CollectionOrderByInput {
   updatedAt_DESC
 }
 
+enum CollectionPlacement {
+  Homepage
+}
+
 type CollectionPreviousValues {
   id: ID!
   slug: String!
@@ -2273,6 +2283,7 @@ type CollectionPreviousValues {
   subTitle: String
   descriptions: [String!]!
   published: Boolean!
+  placements: [CollectionPlacement!]!
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -2383,6 +2394,7 @@ input CollectionUpdateDataInput {
   descriptions: CollectionUpdatedescriptionsInput
   products: ProductUpdateManyInput
   published: Boolean
+  placements: CollectionUpdateplacementsInput
 }
 
 input CollectionUpdatedescriptionsInput {
@@ -2397,6 +2409,7 @@ input CollectionUpdateInput {
   descriptions: CollectionUpdatedescriptionsInput
   products: ProductUpdateManyInput
   published: Boolean
+  placements: CollectionUpdateplacementsInput
 }
 
 input CollectionUpdateManyDataInput {
@@ -2405,6 +2418,7 @@ input CollectionUpdateManyDataInput {
   subTitle: String
   descriptions: CollectionUpdatedescriptionsInput
   published: Boolean
+  placements: CollectionUpdateplacementsInput
 }
 
 input CollectionUpdateManyInput {
@@ -2425,11 +2439,16 @@ input CollectionUpdateManyMutationInput {
   subTitle: String
   descriptions: CollectionUpdatedescriptionsInput
   published: Boolean
+  placements: CollectionUpdateplacementsInput
 }
 
 input CollectionUpdateManyWithWhereNestedInput {
   where: CollectionScalarWhereInput!
   data: CollectionUpdateManyDataInput!
+}
+
+input CollectionUpdateplacementsInput {
+  set: [CollectionPlacement!]
 }
 
 input CollectionUpdateWithWhereUniqueNestedInput {

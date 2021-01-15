@@ -12,6 +12,7 @@ input CollectionUpsertInput {
   descriptions: CollectionCreatedescriptionsInput
   productIDs: [String]
   published: Boolean
+  placements: [String]
 }
 
 type Query {

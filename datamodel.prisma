@@ -296,8 +296,13 @@ type Collection {
   descriptions: [String]! @scalarList(strategy: RELATION)
   products: [Product!]!
   published: Boolean! @default(value: false)
+  placements: [CollectionPlacement!] @scalarList(strategy: RELATION)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime @updatedAt
+}
+
+enum CollectionPlacement {
+  Homepage
 }
 
 type CollectionGroup {

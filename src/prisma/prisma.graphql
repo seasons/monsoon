@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Jan 12 2021 15:40:41 GMT-0800 (Pacific Standard Time)
+# timestamp: Fri Jan 15 2021 12:14:19 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -4928,6 +4928,7 @@ type Collection implements Node {
     last: Int
   ): [Product!]
   published: Boolean!
+  placements: [CollectionPlacement!]!
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -4959,6 +4960,7 @@ input CollectionCreateInput {
   subTitle: String
   published: Boolean
   descriptions: CollectionCreatedescriptionsInput
+  placements: CollectionCreateplacementsInput
   images: ImageCreateManyInput
   products: ProductCreateManyInput
 }
@@ -4966,6 +4968,10 @@ input CollectionCreateInput {
 input CollectionCreateManyInput {
   create: [CollectionCreateInput!]
   connect: [CollectionWhereUniqueInput!]
+}
+
+input CollectionCreateplacementsInput {
+  set: [CollectionPlacement!]
 }
 
 """
@@ -5390,6 +5396,10 @@ enum CollectionOrderByInput {
   updatedAt_DESC
 }
 
+enum CollectionPlacement {
+  Homepage
+}
+
 type CollectionPreviousValues {
   id: ID!
   slug: String!
@@ -5397,6 +5407,7 @@ type CollectionPreviousValues {
   subTitle: String
   descriptions: [String!]!
   published: Boolean!
+  placements: [CollectionPlacement!]!
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -5811,6 +5822,7 @@ input CollectionUpdateDataInput {
   subTitle: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
+  placements: CollectionUpdateplacementsInput
   images: ImageUpdateManyInput
   products: ProductUpdateManyInput
 }
@@ -5825,6 +5837,7 @@ input CollectionUpdateInput {
   subTitle: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
+  placements: CollectionUpdateplacementsInput
   images: ImageUpdateManyInput
   products: ProductUpdateManyInput
 }
@@ -5835,6 +5848,7 @@ input CollectionUpdateManyDataInput {
   subTitle: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
+  placements: CollectionUpdateplacementsInput
 }
 
 input CollectionUpdateManyInput {
@@ -5855,11 +5869,16 @@ input CollectionUpdateManyMutationInput {
   subTitle: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
+  placements: CollectionUpdateplacementsInput
 }
 
 input CollectionUpdateManyWithWhereNestedInput {
   where: CollectionScalarWhereInput!
   data: CollectionUpdateManyDataInput!
+}
+
+input CollectionUpdateplacementsInput {
+  set: [CollectionPlacement!]
 }
 
 input CollectionUpdateWithWhereUniqueNestedInput {

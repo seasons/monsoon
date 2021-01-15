@@ -3414,6 +3414,8 @@ export type BrandOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type CollectionPlacement = "Homepage";
+
 export type CollectionOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -15018,10 +15020,15 @@ export interface CollectionCreateInput {
   descriptions?: Maybe<CollectionCreatedescriptionsInput>;
   products?: Maybe<ProductCreateManyInput>;
   published?: Maybe<Boolean>;
+  placements?: Maybe<CollectionCreateplacementsInput>;
 }
 
 export interface CollectionCreatedescriptionsInput {
   set?: Maybe<String[] | String>;
+}
+
+export interface CollectionCreateplacementsInput {
+  set?: Maybe<CollectionPlacement[] | CollectionPlacement>;
 }
 
 export interface CollectionUpdateInput {
@@ -15032,10 +15039,15 @@ export interface CollectionUpdateInput {
   descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
   products?: Maybe<ProductUpdateManyInput>;
   published?: Maybe<Boolean>;
+  placements?: Maybe<CollectionUpdateplacementsInput>;
 }
 
 export interface CollectionUpdatedescriptionsInput {
   set?: Maybe<String[] | String>;
+}
+
+export interface CollectionUpdateplacementsInput {
+  set?: Maybe<CollectionPlacement[] | CollectionPlacement>;
 }
 
 export interface CollectionUpdateManyMutationInput {
@@ -15044,6 +15056,7 @@ export interface CollectionUpdateManyMutationInput {
   subTitle?: Maybe<String>;
   descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
   published?: Maybe<Boolean>;
+  placements?: Maybe<CollectionUpdateplacementsInput>;
 }
 
 export interface CollectionGroupCreateInput {
@@ -15100,6 +15113,7 @@ export interface CollectionUpdateDataInput {
   descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
   products?: Maybe<ProductUpdateManyInput>;
   published?: Maybe<Boolean>;
+  placements?: Maybe<CollectionUpdateplacementsInput>;
 }
 
 export interface CollectionUpsertWithWhereUniqueNestedInput {
@@ -15199,6 +15213,7 @@ export interface CollectionUpdateManyDataInput {
   subTitle?: Maybe<String>;
   descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
   published?: Maybe<Boolean>;
+  placements?: Maybe<CollectionUpdateplacementsInput>;
 }
 
 export interface CollectionGroupUpdateManyMutationInput {
@@ -22652,6 +22667,7 @@ export interface Collection {
   subTitle?: String;
   descriptions: String[];
   published: Boolean;
+  placements: CollectionPlacement[];
   createdAt: DateTimeOutput;
   updatedAt?: DateTimeOutput;
 }
@@ -22681,6 +22697,7 @@ export interface CollectionPromise extends Promise<Collection>, Fragmentable {
     last?: Int;
   }) => T;
   published: () => Promise<Boolean>;
+  placements: () => Promise<CollectionPlacement[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -22712,6 +22729,7 @@ export interface CollectionSubscription
     last?: Int;
   }) => T;
   published: () => Promise<AsyncIterator<Boolean>>;
+  placements: () => Promise<AsyncIterator<CollectionPlacement[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -22743,6 +22761,7 @@ export interface CollectionNullablePromise
     last?: Int;
   }) => T;
   published: () => Promise<Boolean>;
+  placements: () => Promise<CollectionPlacement[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -26773,6 +26792,7 @@ export interface CollectionPreviousValues {
   subTitle?: String;
   descriptions: String[];
   published: Boolean;
+  placements: CollectionPlacement[];
   createdAt: DateTimeOutput;
   updatedAt?: DateTimeOutput;
 }
@@ -26786,6 +26806,7 @@ export interface CollectionPreviousValuesPromise
   subTitle: () => Promise<String>;
   descriptions: () => Promise<String[]>;
   published: () => Promise<Boolean>;
+  placements: () => Promise<CollectionPlacement[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -26799,6 +26820,7 @@ export interface CollectionPreviousValuesSubscription
   subTitle: () => Promise<AsyncIterator<String>>;
   descriptions: () => Promise<AsyncIterator<String[]>>;
   published: () => Promise<AsyncIterator<Boolean>>;
+  placements: () => Promise<AsyncIterator<CollectionPlacement[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -29994,6 +30016,10 @@ export const models: Model[] = [
   },
   {
     name: "Collection",
+    embedded: false
+  },
+  {
+    name: "CollectionPlacement",
     embedded: false
   },
   {
