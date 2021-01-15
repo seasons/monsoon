@@ -4,7 +4,7 @@ import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
-import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("FitPic")
 export class FitPicFieldsResolver {
@@ -16,6 +16,7 @@ export class FitPicFieldsResolver {
   @ResolveField()
   async customer(
     @Parent() fitpic: FitPic,
+    @Info() info: any,
     @Loader({
       params: {
         query: "fitPics",
@@ -25,11 +26,12 @@ export class FitPicFieldsResolver {
     userLoader: PrismaDataLoader<any>
   ) {
     const fp = await userLoader.load(fitpic.id)
-    console.log(fp)
-    const customerArray = await this.prisma.client.customers({
-      where: { user: { id: fp.user.id } },
-    })
-    console.log(customerArray)
+    const customerArray = await this.prisma.binding.query.customers(
+      {
+        where: { user: { id: fp.user.id } },
+      },
+      info
+    )
     return customerArray.length > 0 ? customerArray[0] : null
   }
 
