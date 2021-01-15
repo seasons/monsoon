@@ -25,6 +25,7 @@ type Query {
     before: String
     first: Int
     last: Int
+    placements: [String!]
   ): [Collection]!
   collectionsConnection(
     where: CollectionWhereInput
