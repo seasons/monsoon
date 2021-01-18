@@ -1,7 +1,13 @@
 import { Customer, User } from "@app/decorators"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
+import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PhysicalProduct, PhysicalProductSellable } from "@app/prisma"
+import {
+  ExternalShopifyIntegration,
+  PhysicalProductPrice,
+  Product,
+  ShopifyProductVariant,
+} from "@app/prisma"
 import { ProductVariant } from "@app/prisma/prisma.binding"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
@@ -21,7 +27,8 @@ export class ProductVariantFieldsResolver {
   sizeConversion: SizeConversion
   constructor(
     private readonly prisma: PrismaService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly shopify: ShopifyService
   ) {
     this.sizeConversion = this.utils.parseJSONFile(
       "src/modules/Product/sizeConversion"
@@ -223,62 +230,104 @@ export class ProductVariantFieldsResolver {
   }
 
   @ResolveField()
-  async sellable(
-    @Parent() productVariant,
+  async price(
+    @Parent() productVariant: Pick<ProductVariant, "id">,
     @Loader({
       params: {
-        query: "physicalProducts",
-        formatWhere: ids => ({
-          productVariant: {
-            id_in: ids,
-          },
-        }),
-        getKeys: a => [a?.productVariant?.id],
-        info: `{
-            productVariant {
-              id
-            }
-            sellable {
-              new
-              newPrice
-              used
-              usedPrice
+        query: "productVariants",
+        info: `{ 
+          id
+          physicalProducts {
+            price {
+              buyUsedPrice
+              buyUsedEnabled
             }
           }
-        `,
-        keyToDataRelationship: "OneToMany",
-        fallbackValue: null,
+          product {
+            buyNewEnabled
+            brand {
+              externalShopifyIntegration {
+                enabled
+              }
+            }
+          }
+          shopifyProductVariant {
+            cacheExpiresAt
+            cachedAvailableForSale
+            cachedPrice
+          }
+        }`,
       },
     })
-    physicalProductsLoader: PrismaDataLoader<
-      Array<PhysicalProduct & { sellable: PhysicalProductSellable }>
-    >
+    productVariantLoader: PrismaDataLoader<{
+      physicalProducts: Array<{
+        price: Pick<PhysicalProductPrice, "buyUsedPrice" | "buyUsedEnabled">
+      }>
+      product: Pick<Product, "buyNewEnabled"> & {
+        brand: {
+          externalShopifyIntegration?: Pick<
+            ExternalShopifyIntegration,
+            "enabled"
+          >
+        }
+      }
+      shopifyProductVariant: Pick<
+        ShopifyProductVariant,
+        "cacheExpiresAt" | "cachedAvailableForSale" | "cachedPrice"
+      >
+    }>
   ) {
-    const physicalProducts =
-      (await physicalProductsLoader.load(productVariant.id)) || []
+    const productVariantResult = await productVariantLoader.load(
+      productVariant.id
+    )
+    const {
+      physicalProducts,
+      product,
+      shopifyProductVariant,
+    } = productVariantResult
 
-    const maxComparator = key => (a, b) => {
-      const aValue = a?.sellable?.[key] || Number.MIN_VALUE
-      const bValue = b?.sellable?.[key] || Number.MIN_VALUE
+    const usedPhysicalProduct = [...physicalProducts]
+      .sort((a, b) => {
+        const aValue = a?.price?.buyUsedPrice || Number.MIN_VALUE
+        const bValue = b?.price?.buyUsedPrice || Number.MIN_VALUE
 
-      return bValue - aValue
+        return bValue - aValue
+      })
+      .shift()
+
+    /**
+     * If external shopify integration is enabled, use the cached shopify
+     * product variant if it is valid, otherwise re-fetch from shopify and
+     * persist the updated cache. Noop if shopify integration is disabled
+     * for the brand.
+     */
+    let shopifyCacheData = {}
+    try {
+      const {
+        cachedAvailableForSale: buyNewAvailableForSale,
+        cachedPrice: buyNewPrice,
+      } = await (product?.brand?.externalShopifyIntegration?.enabled
+        ? Date.parse(shopifyProductVariant?.cacheExpiresAt) > Date.now()
+          ? Promise.resolve(shopifyProductVariant)
+          : this.shopify.cacheProductVariant(productVariant.id)
+        : Promise.resolve({ cachedAvailableForSale: false, cachedPrice: null }))
+      shopifyCacheData = {
+        buyNewAvailableForSale,
+        buyNewPrice,
+      }
+    } catch (e) {
+      shopifyCacheData = {
+        buyNewAvailableForSale: false,
+        buyNewPrice: null,
+      }
     }
 
-    const newPhysicalProduct = [...physicalProducts]
-      .sort(maxComparator("newPrice"))
-      .shift()
-    const usedPhysicalProduct = [...physicalProducts]
-      .sort(maxComparator("usedPrice"))
-      .shift()
     return {
-      id:
-        newPhysicalProduct && usedPhysicalProduct
-          ? `${newPhysicalProduct.id}-${usedPhysicalProduct.id}`
-          : productVariant.id,
-      new: physicalProducts.some(p => p?.sellable?.new),
-      newPrice: newPhysicalProduct?.sellable?.newPrice,
-      used: physicalProducts.some(p => p?.sellable?.used),
-      usedPrice: usedPhysicalProduct?.sellable?.usedPrice,
+      id: productVariant.id,
+      buyUsedEnabled: physicalProducts.some(p => p?.price?.buyUsedEnabled),
+      buyUsedPrice: usedPhysicalProduct?.price?.buyUsedPrice,
+      buyNewEnabled: product.buyNewEnabled,
+      ...shopifyCacheData,
     }
   }
 }

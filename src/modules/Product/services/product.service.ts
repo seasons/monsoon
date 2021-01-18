@@ -254,6 +254,7 @@ export class ProductService {
         "season",
         "architecture",
         "photographyStatus",
+        "buyNewEnabled",
       ]),
       season: productSeason && { connect: { id: productSeason.id } },
       brand: {
@@ -775,6 +776,14 @@ export class ProductService {
       internalSize.id
     )
 
+    const shopifyProductVariantData = variant.shopifyProductVariant
+      ? {
+          shopifyProductVariant: {
+            create: variant.shopifyProductVariant,
+          },
+        }
+      : {}
+
     const data = {
       displayShort,
       productID,
@@ -794,6 +803,7 @@ export class ProductService {
       nonReservable: status === "NotAvailable" ? variant.total : 0,
       offloaded: 0,
       stored: 0,
+      ...shopifyProductVariantData,
       ...pick(variant, ["weight", "total", "sku"]),
     }
 
@@ -811,16 +821,16 @@ export class ProductService {
           ...physProdData,
           sequenceNumber,
           productVariant: { connect: { id: prodVar.id } },
-          sellable: {
-            create: physProdData.sellable || variant.sellable,
+          price: {
+            create: physProdData.price || variant.price,
           },
         },
         update: {
           ...physProdData,
-          sellable: {
+          price: {
             upsert: {
-              update: physProdData.sellable || variant.sellable,
-              create: physProdData.sellable || variant.sellable,
+              update: physProdData.price || variant.price,
+              create: physProdData.price || variant.price,
             },
           },
         },
