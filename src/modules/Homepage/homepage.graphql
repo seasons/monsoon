@@ -21,7 +21,6 @@ type ProductsByTagTagData {
 union HomepageResult = Product | Collection | Brand | Category
 
 enum HomePageSectionType {
-  CollectionGroups
   Products
   ProductsByTag
   Brands

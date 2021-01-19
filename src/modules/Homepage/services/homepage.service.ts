@@ -26,11 +26,6 @@ export class HomepageService {
   async getHomepageSections(customer) {
     const sections: Section[] = [
       {
-        type: "CollectionGroups",
-        __typename: "HomepageSection",
-        title: SectionTitle.FeaturedCollection,
-      },
-      {
         type: "Categories",
         __typename: "HomepageSection",
         title: SectionTitle.Categories,

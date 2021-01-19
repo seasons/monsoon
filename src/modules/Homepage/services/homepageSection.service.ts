@@ -74,12 +74,6 @@ export class HomepageSectionService {
     }
 
     switch (sectionTitle) {
-      case SectionTitle.FeaturedCollection:
-        const collections = await this.prisma.client
-          .collectionGroup({ slug: "homepage-1" })
-          .collections()
-        return collections
-
       case SectionTitle.RecentlyViewed:
         if (!customerId) {
           return []

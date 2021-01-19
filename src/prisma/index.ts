@@ -24,7 +24,6 @@ export interface Exists {
   brand: (where?: BrandWhereInput) => Promise<boolean>;
   category: (where?: CategoryWhereInput) => Promise<boolean>;
   collection: (where?: CollectionWhereInput) => Promise<boolean>;
-  collectionGroup: (where?: CollectionGroupWhereInput) => Promise<boolean>;
   color: (where?: ColorWhereInput) => Promise<boolean>;
   customer: (where?: CustomerWhereInput) => Promise<boolean>;
   customerAdmissionsData: (
@@ -40,9 +39,6 @@ export interface Exists {
   ) => Promise<boolean>;
   fitPic: (where?: FitPicWhereInput) => Promise<boolean>;
   fitPicReport: (where?: FitPicReportWhereInput) => Promise<boolean>;
-  homepageProductRail: (
-    where?: HomepageProductRailWhereInput
-  ) => Promise<boolean>;
   image: (where?: ImageWhereInput) => Promise<boolean>;
   interestedUser: (where?: InterestedUserWhereInput) => Promise<boolean>;
   label: (where?: LabelWhereInput) => Promise<boolean>;
@@ -68,6 +64,7 @@ export interface Exists {
   ) => Promise<boolean>;
   productRequest: (where?: ProductRequestWhereInput) => Promise<boolean>;
   productSeason: (where?: ProductSeasonWhereInput) => Promise<boolean>;
+  productTier: (where?: ProductTierWhereInput) => Promise<boolean>;
   productVariant: (where?: ProductVariantWhereInput) => Promise<boolean>;
   productVariantFeedback: (
     where?: ProductVariantFeedbackWhereInput
@@ -300,27 +297,6 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => CollectionConnectionPromise;
-  collectionGroup: (
-    where: CollectionGroupWhereUniqueInput
-  ) => CollectionGroupNullablePromise;
-  collectionGroups: (args?: {
-    where?: CollectionGroupWhereInput;
-    orderBy?: CollectionGroupOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => FragmentableArray<CollectionGroup>;
-  collectionGroupsConnection: (args?: {
-    where?: CollectionGroupWhereInput;
-    orderBy?: CollectionGroupOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => CollectionGroupConnectionPromise;
   color: (where: ColorWhereUniqueInput) => ColorNullablePromise;
   colors: (args?: {
     where?: ColorWhereInput;
@@ -504,27 +480,6 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => FitPicReportConnectionPromise;
-  homepageProductRail: (
-    where: HomepageProductRailWhereUniqueInput
-  ) => HomepageProductRailNullablePromise;
-  homepageProductRails: (args?: {
-    where?: HomepageProductRailWhereInput;
-    orderBy?: HomepageProductRailOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => FragmentableArray<HomepageProductRail>;
-  homepageProductRailsConnection: (args?: {
-    where?: HomepageProductRailWhereInput;
-    orderBy?: HomepageProductRailOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => HomepageProductRailConnectionPromise;
   image: (where: ImageWhereUniqueInput) => ImageNullablePromise;
   images: (args?: {
     where?: ImageWhereInput;
@@ -872,6 +827,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ProductSeasonConnectionPromise;
+  productTier: (
+    where: ProductTierWhereUniqueInput
+  ) => ProductTierNullablePromise;
+  productTiers: (args?: {
+    where?: ProductTierWhereInput;
+    orderBy?: ProductTierOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<ProductTier>;
+  productTiersConnection: (args?: {
+    where?: ProductTierWhereInput;
+    orderBy?: ProductTierOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ProductTierConnectionPromise;
   productVariant: (
     where: ProductVariantWhereUniqueInput
   ) => ProductVariantNullablePromise;
@@ -1567,28 +1543,6 @@ export interface Prisma {
   }) => CollectionPromise;
   deleteCollection: (where: CollectionWhereUniqueInput) => CollectionPromise;
   deleteManyCollections: (where?: CollectionWhereInput) => BatchPayloadPromise;
-  createCollectionGroup: (
-    data: CollectionGroupCreateInput
-  ) => CollectionGroupPromise;
-  updateCollectionGroup: (args: {
-    data: CollectionGroupUpdateInput;
-    where: CollectionGroupWhereUniqueInput;
-  }) => CollectionGroupPromise;
-  updateManyCollectionGroups: (args: {
-    data: CollectionGroupUpdateManyMutationInput;
-    where?: CollectionGroupWhereInput;
-  }) => BatchPayloadPromise;
-  upsertCollectionGroup: (args: {
-    where: CollectionGroupWhereUniqueInput;
-    create: CollectionGroupCreateInput;
-    update: CollectionGroupUpdateInput;
-  }) => CollectionGroupPromise;
-  deleteCollectionGroup: (
-    where: CollectionGroupWhereUniqueInput
-  ) => CollectionGroupPromise;
-  deleteManyCollectionGroups: (
-    where?: CollectionGroupWhereInput
-  ) => BatchPayloadPromise;
   createColor: (data: ColorCreateInput) => ColorPromise;
   updateColor: (args: {
     data: ColorUpdateInput;
@@ -1764,28 +1718,6 @@ export interface Prisma {
   ) => FitPicReportPromise;
   deleteManyFitPicReports: (
     where?: FitPicReportWhereInput
-  ) => BatchPayloadPromise;
-  createHomepageProductRail: (
-    data: HomepageProductRailCreateInput
-  ) => HomepageProductRailPromise;
-  updateHomepageProductRail: (args: {
-    data: HomepageProductRailUpdateInput;
-    where: HomepageProductRailWhereUniqueInput;
-  }) => HomepageProductRailPromise;
-  updateManyHomepageProductRails: (args: {
-    data: HomepageProductRailUpdateManyMutationInput;
-    where?: HomepageProductRailWhereInput;
-  }) => BatchPayloadPromise;
-  upsertHomepageProductRail: (args: {
-    where: HomepageProductRailWhereUniqueInput;
-    create: HomepageProductRailCreateInput;
-    update: HomepageProductRailUpdateInput;
-  }) => HomepageProductRailPromise;
-  deleteHomepageProductRail: (
-    where: HomepageProductRailWhereUniqueInput
-  ) => HomepageProductRailPromise;
-  deleteManyHomepageProductRails: (
-    where?: HomepageProductRailWhereInput
   ) => BatchPayloadPromise;
   createImage: (data: ImageCreateInput) => ImagePromise;
   updateImage: (args: {
@@ -2120,6 +2052,24 @@ export interface Prisma {
   ) => ProductSeasonPromise;
   deleteManyProductSeasons: (
     where?: ProductSeasonWhereInput
+  ) => BatchPayloadPromise;
+  createProductTier: (data: ProductTierCreateInput) => ProductTierPromise;
+  updateProductTier: (args: {
+    data: ProductTierUpdateInput;
+    where: ProductTierWhereUniqueInput;
+  }) => ProductTierPromise;
+  updateManyProductTiers: (args: {
+    data: ProductTierUpdateManyMutationInput;
+    where?: ProductTierWhereInput;
+  }) => BatchPayloadPromise;
+  upsertProductTier: (args: {
+    where: ProductTierWhereUniqueInput;
+    create: ProductTierCreateInput;
+    update: ProductTierUpdateInput;
+  }) => ProductTierPromise;
+  deleteProductTier: (where: ProductTierWhereUniqueInput) => ProductTierPromise;
+  deleteManyProductTiers: (
+    where?: ProductTierWhereInput
   ) => BatchPayloadPromise;
   createProductVariant: (
     data: ProductVariantCreateInput
@@ -2692,9 +2642,6 @@ export interface Subscription {
   collection: (
     where?: CollectionSubscriptionWhereInput
   ) => CollectionSubscriptionPayloadSubscription;
-  collectionGroup: (
-    where?: CollectionGroupSubscriptionWhereInput
-  ) => CollectionGroupSubscriptionPayloadSubscription;
   color: (
     where?: ColorSubscriptionWhereInput
   ) => ColorSubscriptionPayloadSubscription;
@@ -2722,9 +2669,6 @@ export interface Subscription {
   fitPicReport: (
     where?: FitPicReportSubscriptionWhereInput
   ) => FitPicReportSubscriptionPayloadSubscription;
-  homepageProductRail: (
-    where?: HomepageProductRailSubscriptionWhereInput
-  ) => HomepageProductRailSubscriptionPayloadSubscription;
   image: (
     where?: ImageSubscriptionWhereInput
   ) => ImageSubscriptionPayloadSubscription;
@@ -2776,6 +2720,9 @@ export interface Subscription {
   productSeason: (
     where?: ProductSeasonSubscriptionWhereInput
   ) => ProductSeasonSubscriptionPayloadSubscription;
+  productTier: (
+    where?: ProductTierSubscriptionWhereInput
+  ) => ProductTierSubscriptionPayloadSubscription;
   productVariant: (
     where?: ProductVariantSubscriptionWhereInput
   ) => ProductVariantSubscriptionPayloadSubscription;
@@ -2926,6 +2873,8 @@ export type LetterSize = "XXS" | "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL";
 
 export type BottomSizeType = "WxL" | "US" | "EU" | "JP" | "Letter";
 
+export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple";
+
 export type BrandTier =
   | "Tier0"
   | "Tier1"
@@ -2937,7 +2886,16 @@ export type BrandTier =
   | "Local"
   | "Discovery";
 
+export type PhotographyStatus =
+  | "Done"
+  | "InProgress"
+  | "ReadyForEditing"
+  | "ReadyToShoot"
+  | "Steam";
+
 export type ProductFit = "RunsBig" | "TrueToSize" | "RunsSmall";
+
+export type SeasonCode = "FW" | "SS" | "PS" | "PF" | "HO" | "AW";
 
 export type ProductStatus =
   | "Available"
@@ -2945,16 +2903,7 @@ export type ProductStatus =
   | "Stored"
   | "Offloaded";
 
-export type SeasonCode = "FW" | "SS" | "PS" | "PF" | "HO" | "AW";
-
-export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple";
-
-export type PhotographyStatus =
-  | "Done"
-  | "InProgress"
-  | "ReadyForEditing"
-  | "ReadyToShoot"
-  | "Steam";
+export type ProductTierName = "Standard" | "Luxury";
 
 export type InventoryStatus =
   | "NonReservable"
@@ -3160,14 +3109,8 @@ export type SizeOrderByInput =
 export type ProductOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "productFit_ASC"
-  | "productFit_DESC"
-  | "type_ASC"
-  | "type_DESC"
+  | "architecture_ASC"
+  | "architecture_DESC"
   | "description_ASC"
   | "description_DESC"
   | "externalURL_ASC"
@@ -3176,16 +3119,22 @@ export type ProductOrderByInput =
   | "buyNewEnabled_DESC"
   | "modelHeight_ASC"
   | "modelHeight_DESC"
-  | "retailPrice_ASC"
-  | "retailPrice_DESC"
-  | "status_ASC"
-  | "status_DESC"
-  | "architecture_ASC"
-  | "architecture_DESC"
+  | "name_ASC"
+  | "name_DESC"
   | "photographyStatus_ASC"
   | "photographyStatus_DESC"
+  | "productFit_ASC"
+  | "productFit_DESC"
   | "publishedAt_ASC"
   | "publishedAt_DESC"
+  | "retailPrice_ASC"
+  | "retailPrice_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
+  | "status_ASC"
+  | "status_DESC"
+  | "type_ASC"
+  | "type_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -3225,6 +3174,14 @@ export type CategoryOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type ProductFunctionOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC";
+
+export type SeasonString = "Spring" | "Summer" | "Winter" | "Fall";
+
 export type TagOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -3236,14 +3193,6 @@ export type TagOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
-
-export type ProductFunctionOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "name_ASC"
-  | "name_DESC";
-
-export type SeasonString = "Spring" | "Summer" | "Winter" | "Fall";
 
 export type WarehouseLocationConstraintOrderByInput =
   | "id_ASC"
@@ -3581,16 +3530,6 @@ export type CollectionOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type CollectionGroupOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "title_ASC"
-  | "title_DESC"
-  | "collectionCount_ASC"
-  | "collectionCount_DESC";
-
 export type ColorOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -3686,14 +3625,6 @@ export type ExternalShopifyIntegrationOrderByInput =
   | "accessToken_DESC"
   | "nonce_ASC"
   | "nonce_DESC";
-
-export type HomepageProductRailOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC";
 
 export type InterestedUserOrderByInput =
   | "id_ASC"
@@ -3852,6 +3783,18 @@ export type ProductRequestOrderByInput =
   | "url_DESC";
 
 export type ProductSeasonOrderByInput = "id_ASC" | "id_DESC";
+
+export type ProductTierOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "tier_ASC"
+  | "tier_DESC"
+  | "price_ASC"
+  | "price_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type QuestionType = "MultipleChoice" | "FreeResponse";
 
@@ -5439,44 +5382,13 @@ export interface ProductWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  slug?: Maybe<String>;
-  slug_not?: Maybe<String>;
-  slug_in?: Maybe<String[] | String>;
-  slug_not_in?: Maybe<String[] | String>;
-  slug_lt?: Maybe<String>;
-  slug_lte?: Maybe<String>;
-  slug_gt?: Maybe<String>;
-  slug_gte?: Maybe<String>;
-  slug_contains?: Maybe<String>;
-  slug_not_contains?: Maybe<String>;
-  slug_starts_with?: Maybe<String>;
-  slug_not_starts_with?: Maybe<String>;
-  slug_ends_with?: Maybe<String>;
-  slug_not_ends_with?: Maybe<String>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
+  architecture_not?: Maybe<ProductArchitecture>;
+  architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
+  architecture_not_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
   brand?: Maybe<BrandWhereInput>;
-  productFit?: Maybe<ProductFit>;
-  productFit_not?: Maybe<ProductFit>;
-  productFit_in?: Maybe<ProductFit[] | ProductFit>;
-  productFit_not_in?: Maybe<ProductFit[] | ProductFit>;
   category?: Maybe<CategoryWhereInput>;
-  type?: Maybe<ProductType>;
-  type_not?: Maybe<ProductType>;
-  type_in?: Maybe<ProductType[] | ProductType>;
-  type_not_in?: Maybe<ProductType[] | ProductType>;
+  color?: Maybe<ColorWhereInput>;
   description?: Maybe<String>;
   description_not?: Maybe<String>;
   description_in?: Maybe<String[] | String>;
@@ -5505,11 +5417,16 @@ export interface ProductWhereInput {
   externalURL_not_starts_with?: Maybe<String>;
   externalURL_ends_with?: Maybe<String>;
   externalURL_not_ends_with?: Maybe<String>;
+  functions_every?: Maybe<ProductFunctionWhereInput>;
+  functions_some?: Maybe<ProductFunctionWhereInput>;
+  functions_none?: Maybe<ProductFunctionWhereInput>;
   buyNewEnabled?: Maybe<Boolean>;
   buyNewEnabled_not?: Maybe<Boolean>;
   images_every?: Maybe<ImageWhereInput>;
   images_some?: Maybe<ImageWhereInput>;
   images_none?: Maybe<ImageWhereInput>;
+  materialCategory?: Maybe<ProductMaterialCategoryWhereInput>;
+  model?: Maybe<ProductModelWhereInput>;
   modelHeight?: Maybe<Int>;
   modelHeight_not?: Maybe<Int>;
   modelHeight_in?: Maybe<Int[] | Int>;
@@ -5518,41 +5435,29 @@ export interface ProductWhereInput {
   modelHeight_lte?: Maybe<Int>;
   modelHeight_gt?: Maybe<Int>;
   modelHeight_gte?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  retailPrice_not?: Maybe<Int>;
-  retailPrice_in?: Maybe<Int[] | Int>;
-  retailPrice_not_in?: Maybe<Int[] | Int>;
-  retailPrice_lt?: Maybe<Int>;
-  retailPrice_lte?: Maybe<Int>;
-  retailPrice_gt?: Maybe<Int>;
-  retailPrice_gte?: Maybe<Int>;
-  model?: Maybe<ProductModelWhereInput>;
   modelSize?: Maybe<SizeWhereInput>;
-  color?: Maybe<ColorWhereInput>;
-  secondaryColor?: Maybe<ColorWhereInput>;
-  tags_every?: Maybe<TagWhereInput>;
-  tags_some?: Maybe<TagWhereInput>;
-  tags_none?: Maybe<TagWhereInput>;
-  functions_every?: Maybe<ProductFunctionWhereInput>;
-  functions_some?: Maybe<ProductFunctionWhereInput>;
-  functions_none?: Maybe<ProductFunctionWhereInput>;
-  materialCategory?: Maybe<ProductMaterialCategoryWhereInput>;
-  variants_every?: Maybe<ProductVariantWhereInput>;
-  variants_some?: Maybe<ProductVariantWhereInput>;
-  variants_none?: Maybe<ProductVariantWhereInput>;
-  status?: Maybe<ProductStatus>;
-  status_not?: Maybe<ProductStatus>;
-  status_in?: Maybe<ProductStatus[] | ProductStatus>;
-  status_not_in?: Maybe<ProductStatus[] | ProductStatus>;
-  season?: Maybe<ProductSeasonWhereInput>;
-  architecture?: Maybe<ProductArchitecture>;
-  architecture_not?: Maybe<ProductArchitecture>;
-  architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
-  architecture_not_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
   photographyStatus?: Maybe<PhotographyStatus>;
   photographyStatus_not?: Maybe<PhotographyStatus>;
   photographyStatus_in?: Maybe<PhotographyStatus[] | PhotographyStatus>;
   photographyStatus_not_in?: Maybe<PhotographyStatus[] | PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
+  productFit_not?: Maybe<ProductFit>;
+  productFit_in?: Maybe<ProductFit[] | ProductFit>;
+  productFit_not_in?: Maybe<ProductFit[] | ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
   publishedAt_not?: Maybe<DateTimeInput>;
   publishedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -5561,6 +5466,45 @@ export interface ProductWhereInput {
   publishedAt_lte?: Maybe<DateTimeInput>;
   publishedAt_gt?: Maybe<DateTimeInput>;
   publishedAt_gte?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  retailPrice_not?: Maybe<Int>;
+  retailPrice_in?: Maybe<Int[] | Int>;
+  retailPrice_not_in?: Maybe<Int[] | Int>;
+  retailPrice_lt?: Maybe<Int>;
+  retailPrice_lte?: Maybe<Int>;
+  retailPrice_gt?: Maybe<Int>;
+  retailPrice_gte?: Maybe<Int>;
+  season?: Maybe<ProductSeasonWhereInput>;
+  secondaryColor?: Maybe<ColorWhereInput>;
+  slug?: Maybe<String>;
+  slug_not?: Maybe<String>;
+  slug_in?: Maybe<String[] | String>;
+  slug_not_in?: Maybe<String[] | String>;
+  slug_lt?: Maybe<String>;
+  slug_lte?: Maybe<String>;
+  slug_gt?: Maybe<String>;
+  slug_gte?: Maybe<String>;
+  slug_contains?: Maybe<String>;
+  slug_not_contains?: Maybe<String>;
+  slug_starts_with?: Maybe<String>;
+  slug_not_starts_with?: Maybe<String>;
+  slug_ends_with?: Maybe<String>;
+  slug_not_ends_with?: Maybe<String>;
+  status?: Maybe<ProductStatus>;
+  status_not?: Maybe<ProductStatus>;
+  status_in?: Maybe<ProductStatus[] | ProductStatus>;
+  status_not_in?: Maybe<ProductStatus[] | ProductStatus>;
+  tags_every?: Maybe<TagWhereInput>;
+  tags_some?: Maybe<TagWhereInput>;
+  tags_none?: Maybe<TagWhereInput>;
+  tier?: Maybe<ProductTierWhereInput>;
+  type?: Maybe<ProductType>;
+  type_not?: Maybe<ProductType>;
+  type_in?: Maybe<ProductType[] | ProductType>;
+  type_not_in?: Maybe<ProductType[] | ProductType>;
+  variants_every?: Maybe<ProductVariantWhereInput>;
+  variants_some?: Maybe<ProductVariantWhereInput>;
+  variants_none?: Maybe<ProductVariantWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -5892,118 +5836,6 @@ export interface CategoryWhereInput {
   NOT?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
 }
 
-export interface ProductModelWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  height?: Maybe<Float>;
-  height_not?: Maybe<Float>;
-  height_in?: Maybe<Float[] | Float>;
-  height_not_in?: Maybe<Float[] | Float>;
-  height_lt?: Maybe<Float>;
-  height_lte?: Maybe<Float>;
-  height_gt?: Maybe<Float>;
-  height_gte?: Maybe<Float>;
-  products_every?: Maybe<ProductWhereInput>;
-  products_some?: Maybe<ProductWhereInput>;
-  products_none?: Maybe<ProductWhereInput>;
-  AND?: Maybe<ProductModelWhereInput[] | ProductModelWhereInput>;
-  OR?: Maybe<ProductModelWhereInput[] | ProductModelWhereInput>;
-  NOT?: Maybe<ProductModelWhereInput[] | ProductModelWhereInput>;
-}
-
-export interface TagWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  description?: Maybe<String>;
-  description_not?: Maybe<String>;
-  description_in?: Maybe<String[] | String>;
-  description_not_in?: Maybe<String[] | String>;
-  description_lt?: Maybe<String>;
-  description_lte?: Maybe<String>;
-  description_gt?: Maybe<String>;
-  description_gte?: Maybe<String>;
-  description_contains?: Maybe<String>;
-  description_not_contains?: Maybe<String>;
-  description_starts_with?: Maybe<String>;
-  description_not_starts_with?: Maybe<String>;
-  description_ends_with?: Maybe<String>;
-  description_not_ends_with?: Maybe<String>;
-  products_every?: Maybe<ProductWhereInput>;
-  products_some?: Maybe<ProductWhereInput>;
-  products_none?: Maybe<ProductWhereInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<TagWhereInput[] | TagWhereInput>;
-  OR?: Maybe<TagWhereInput[] | TagWhereInput>;
-  NOT?: Maybe<TagWhereInput[] | TagWhereInput>;
-}
-
 export interface ProductFunctionWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
@@ -6090,6 +5922,51 @@ export interface ProductMaterialCategoryWhereInput {
   >;
 }
 
+export interface ProductModelWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  height?: Maybe<Float>;
+  height_not?: Maybe<Float>;
+  height_in?: Maybe<Float[] | Float>;
+  height_not_in?: Maybe<Float[] | Float>;
+  height_lt?: Maybe<Float>;
+  height_lte?: Maybe<Float>;
+  height_gt?: Maybe<Float>;
+  height_gte?: Maybe<Float>;
+  products_every?: Maybe<ProductWhereInput>;
+  products_some?: Maybe<ProductWhereInput>;
+  products_none?: Maybe<ProductWhereInput>;
+  AND?: Maybe<ProductModelWhereInput[] | ProductModelWhereInput>;
+  OR?: Maybe<ProductModelWhereInput[] | ProductModelWhereInput>;
+  NOT?: Maybe<ProductModelWhereInput[] | ProductModelWhereInput>;
+}
+
 export interface ProductSeasonWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
@@ -6142,6 +6019,121 @@ export interface SeasonWhereInput {
   AND?: Maybe<SeasonWhereInput[] | SeasonWhereInput>;
   OR?: Maybe<SeasonWhereInput[] | SeasonWhereInput>;
   NOT?: Maybe<SeasonWhereInput[] | SeasonWhereInput>;
+}
+
+export interface TagWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  description?: Maybe<String>;
+  description_not?: Maybe<String>;
+  description_in?: Maybe<String[] | String>;
+  description_not_in?: Maybe<String[] | String>;
+  description_lt?: Maybe<String>;
+  description_lte?: Maybe<String>;
+  description_gt?: Maybe<String>;
+  description_gte?: Maybe<String>;
+  description_contains?: Maybe<String>;
+  description_not_contains?: Maybe<String>;
+  description_starts_with?: Maybe<String>;
+  description_not_starts_with?: Maybe<String>;
+  description_ends_with?: Maybe<String>;
+  description_not_ends_with?: Maybe<String>;
+  products_every?: Maybe<ProductWhereInput>;
+  products_some?: Maybe<ProductWhereInput>;
+  products_none?: Maybe<ProductWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<TagWhereInput[] | TagWhereInput>;
+  OR?: Maybe<TagWhereInput[] | TagWhereInput>;
+  NOT?: Maybe<TagWhereInput[] | TagWhereInput>;
+}
+
+export interface ProductTierWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  tier?: Maybe<ProductTierName>;
+  tier_not?: Maybe<ProductTierName>;
+  tier_in?: Maybe<ProductTierName[] | ProductTierName>;
+  tier_not_in?: Maybe<ProductTierName[] | ProductTierName>;
+  price?: Maybe<Int>;
+  price_not?: Maybe<Int>;
+  price_in?: Maybe<Int[] | Int>;
+  price_not_in?: Maybe<Int[] | Int>;
+  price_lt?: Maybe<Int>;
+  price_lte?: Maybe<Int>;
+  price_gt?: Maybe<Int>;
+  price_gte?: Maybe<Int>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<ProductTierWhereInput[] | ProductTierWhereInput>;
+  OR?: Maybe<ProductTierWhereInput[] | ProductTierWhereInput>;
+  NOT?: Maybe<ProductTierWhereInput[] | ProductTierWhereInput>;
 }
 
 export interface ProductVariantPriceWhereInput {
@@ -8171,70 +8163,6 @@ export interface CollectionWhereInput {
   NOT?: Maybe<CollectionWhereInput[] | CollectionWhereInput>;
 }
 
-export type CollectionGroupWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  slug?: Maybe<String>;
-}>;
-
-export interface CollectionGroupWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  slug?: Maybe<String>;
-  slug_not?: Maybe<String>;
-  slug_in?: Maybe<String[] | String>;
-  slug_not_in?: Maybe<String[] | String>;
-  slug_lt?: Maybe<String>;
-  slug_lte?: Maybe<String>;
-  slug_gt?: Maybe<String>;
-  slug_gte?: Maybe<String>;
-  slug_contains?: Maybe<String>;
-  slug_not_contains?: Maybe<String>;
-  slug_starts_with?: Maybe<String>;
-  slug_not_starts_with?: Maybe<String>;
-  slug_ends_with?: Maybe<String>;
-  slug_not_ends_with?: Maybe<String>;
-  title?: Maybe<String>;
-  title_not?: Maybe<String>;
-  title_in?: Maybe<String[] | String>;
-  title_not_in?: Maybe<String[] | String>;
-  title_lt?: Maybe<String>;
-  title_lte?: Maybe<String>;
-  title_gt?: Maybe<String>;
-  title_gte?: Maybe<String>;
-  title_contains?: Maybe<String>;
-  title_not_contains?: Maybe<String>;
-  title_starts_with?: Maybe<String>;
-  title_not_starts_with?: Maybe<String>;
-  title_ends_with?: Maybe<String>;
-  title_not_ends_with?: Maybe<String>;
-  collectionCount?: Maybe<Int>;
-  collectionCount_not?: Maybe<Int>;
-  collectionCount_in?: Maybe<Int[] | Int>;
-  collectionCount_not_in?: Maybe<Int[] | Int>;
-  collectionCount_lt?: Maybe<Int>;
-  collectionCount_lte?: Maybe<Int>;
-  collectionCount_gt?: Maybe<Int>;
-  collectionCount_gte?: Maybe<Int>;
-  collections_every?: Maybe<CollectionWhereInput>;
-  collections_some?: Maybe<CollectionWhereInput>;
-  collections_none?: Maybe<CollectionWhereInput>;
-  AND?: Maybe<CollectionGroupWhereInput[] | CollectionGroupWhereInput>;
-  OR?: Maybe<CollectionGroupWhereInput[] | CollectionGroupWhereInput>;
-  NOT?: Maybe<CollectionGroupWhereInput[] | CollectionGroupWhereInput>;
-}
-
 export type ColorWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
@@ -8274,62 +8202,6 @@ export type FitPicWhereUniqueInput = AtLeastOne<{
 export type FitPicReportWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
-
-export type HomepageProductRailWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  slug?: Maybe<String>;
-}>;
-
-export interface HomepageProductRailWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  slug?: Maybe<String>;
-  slug_not?: Maybe<String>;
-  slug_in?: Maybe<String[] | String>;
-  slug_not_in?: Maybe<String[] | String>;
-  slug_lt?: Maybe<String>;
-  slug_lte?: Maybe<String>;
-  slug_gt?: Maybe<String>;
-  slug_gte?: Maybe<String>;
-  slug_contains?: Maybe<String>;
-  slug_not_contains?: Maybe<String>;
-  slug_starts_with?: Maybe<String>;
-  slug_not_starts_with?: Maybe<String>;
-  slug_ends_with?: Maybe<String>;
-  slug_not_ends_with?: Maybe<String>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  products_every?: Maybe<ProductWhereInput>;
-  products_some?: Maybe<ProductWhereInput>;
-  products_none?: Maybe<ProductWhereInput>;
-  AND?: Maybe<HomepageProductRailWhereInput[] | HomepageProductRailWhereInput>;
-  OR?: Maybe<HomepageProductRailWhereInput[] | HomepageProductRailWhereInput>;
-  NOT?: Maybe<HomepageProductRailWhereInput[] | HomepageProductRailWhereInput>;
-}
 
 export type ImageWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -8654,6 +8526,10 @@ export interface ProductRequestWhereInput {
 }
 
 export type ProductSeasonWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type ProductTierWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
@@ -9394,34 +9270,35 @@ export interface ProductCreateOneWithoutVariantsInput {
 
 export interface ProductCreateWithoutVariantsInput {
   id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
+  architecture?: Maybe<ProductArchitecture>;
   brand: BrandCreateOneWithoutProductsInput;
-  productFit?: Maybe<ProductFit>;
   category: CategoryCreateOneWithoutProductsInput;
-  type?: Maybe<ProductType>;
+  color: ColorCreateOneInput;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionCreateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeCreateOneInput>;
-  color: ColorCreateOneInput;
-  secondaryColor?: Maybe<ColorCreateOneInput>;
-  tags?: Maybe<TagCreateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionCreateManyInput>;
+  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   materialCategory?: Maybe<
     ProductMaterialCategoryCreateOneWithoutProductsInput
   >;
-  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeCreateOneInput>;
+  name: String;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonCreateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
+  secondaryColor?: Maybe<ColorCreateOneInput>;
+  slug: String;
+  status?: Maybe<ProductStatus>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
+  tier?: Maybe<ProductTierCreateOneInput>;
+  type?: Maybe<ProductType>;
 }
 
 export interface BrandCreateOneWithoutProductsInput {
@@ -9507,45 +9384,35 @@ export interface ProductCreateManyWithoutCategoryInput {
 
 export interface ProductCreateWithoutCategoryInput {
   id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
+  architecture?: Maybe<ProductArchitecture>;
   brand: BrandCreateOneWithoutProductsInput;
-  productFit?: Maybe<ProductFit>;
-  type?: Maybe<ProductType>;
+  color: ColorCreateOneInput;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionCreateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeCreateOneInput>;
-  color: ColorCreateOneInput;
-  secondaryColor?: Maybe<ColorCreateOneInput>;
-  tags?: Maybe<TagCreateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionCreateManyInput>;
+  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   materialCategory?: Maybe<
     ProductMaterialCategoryCreateOneWithoutProductsInput
   >;
-  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
-  outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonCreateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
-  photographyStatus?: Maybe<PhotographyStatus>;
-  publishedAt?: Maybe<DateTimeInput>;
-}
-
-export interface ProductModelCreateOneWithoutProductsInput {
-  create?: Maybe<ProductModelCreateWithoutProductsInput>;
-  connect?: Maybe<ProductModelWhereUniqueInput>;
-}
-
-export interface ProductModelCreateWithoutProductsInput {
-  id?: Maybe<ID_Input>;
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeCreateOneInput>;
   name: String;
-  height: Float;
+  outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
+  publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
+  secondaryColor?: Maybe<ColorCreateOneInput>;
+  slug: String;
+  status?: Maybe<ProductStatus>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
+  tier?: Maybe<ProductTierCreateOneInput>;
+  type?: Maybe<ProductType>;
+  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
 }
 
 export interface ColorCreateOneInput {
@@ -9759,19 +9626,6 @@ export interface PhysicalProductPriceCreateInput {
   buyUsedPrice?: Maybe<Float>;
 }
 
-export interface TagCreateManyWithoutProductsInput {
-  create?: Maybe<
-    TagCreateWithoutProductsInput[] | TagCreateWithoutProductsInput
-  >;
-  connect?: Maybe<TagWhereUniqueInput[] | TagWhereUniqueInput>;
-}
-
-export interface TagCreateWithoutProductsInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  description?: Maybe<String>;
-}
-
 export interface ProductFunctionCreateManyInput {
   create?: Maybe<ProductFunctionCreateInput[] | ProductFunctionCreateInput>;
   connect?: Maybe<
@@ -9782,6 +9636,10 @@ export interface ProductFunctionCreateManyInput {
 export interface ProductFunctionCreateInput {
   id?: Maybe<ID_Input>;
   name?: Maybe<String>;
+}
+
+export interface ProductCreateinnerMaterialsInput {
+  set?: Maybe<String[] | String>;
 }
 
 export interface ProductMaterialCategoryCreateOneWithoutProductsInput {
@@ -9796,12 +9654,70 @@ export interface ProductMaterialCategoryCreateWithoutProductsInput {
   category: CategoryCreateOneInput;
 }
 
-export interface ProductCreateinnerMaterialsInput {
-  set?: Maybe<String[] | String>;
+export interface ProductModelCreateOneWithoutProductsInput {
+  create?: Maybe<ProductModelCreateWithoutProductsInput>;
+  connect?: Maybe<ProductModelWhereUniqueInput>;
+}
+
+export interface ProductModelCreateWithoutProductsInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  height: Float;
 }
 
 export interface ProductCreateouterMaterialsInput {
   set?: Maybe<String[] | String>;
+}
+
+export interface ProductSeasonCreateOneInput {
+  create?: Maybe<ProductSeasonCreateInput>;
+  connect?: Maybe<ProductSeasonWhereUniqueInput>;
+}
+
+export interface ProductSeasonCreateInput {
+  id?: Maybe<ID_Input>;
+  vendorSeason?: Maybe<SeasonCreateOneInput>;
+  internalSeason?: Maybe<SeasonCreateOneInput>;
+  wearableSeasons?: Maybe<ProductSeasonCreatewearableSeasonsInput>;
+}
+
+export interface SeasonCreateOneInput {
+  create?: Maybe<SeasonCreateInput>;
+  connect?: Maybe<SeasonWhereUniqueInput>;
+}
+
+export interface SeasonCreateInput {
+  id?: Maybe<ID_Input>;
+  year?: Maybe<Int>;
+  seasonCode?: Maybe<SeasonCode>;
+}
+
+export interface ProductSeasonCreatewearableSeasonsInput {
+  set?: Maybe<SeasonString[] | SeasonString>;
+}
+
+export interface TagCreateManyWithoutProductsInput {
+  create?: Maybe<
+    TagCreateWithoutProductsInput[] | TagCreateWithoutProductsInput
+  >;
+  connect?: Maybe<TagWhereUniqueInput[] | TagWhereUniqueInput>;
+}
+
+export interface TagCreateWithoutProductsInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  description?: Maybe<String>;
+}
+
+export interface ProductTierCreateOneInput {
+  create?: Maybe<ProductTierCreateInput>;
+  connect?: Maybe<ProductTierWhereUniqueInput>;
+}
+
+export interface ProductTierCreateInput {
+  id?: Maybe<ID_Input>;
+  tier: ProductTierName;
+  price: Int;
 }
 
 export interface ProductVariantCreateManyWithoutProductInput {
@@ -9836,33 +9752,6 @@ export interface ProductVariantCreateWithoutProductInput {
   stored: Int;
 }
 
-export interface ProductSeasonCreateOneInput {
-  create?: Maybe<ProductSeasonCreateInput>;
-  connect?: Maybe<ProductSeasonWhereUniqueInput>;
-}
-
-export interface ProductSeasonCreateInput {
-  id?: Maybe<ID_Input>;
-  vendorSeason?: Maybe<SeasonCreateOneInput>;
-  internalSeason?: Maybe<SeasonCreateOneInput>;
-  wearableSeasons?: Maybe<ProductSeasonCreatewearableSeasonsInput>;
-}
-
-export interface SeasonCreateOneInput {
-  create?: Maybe<SeasonCreateInput>;
-  connect?: Maybe<SeasonWhereUniqueInput>;
-}
-
-export interface SeasonCreateInput {
-  id?: Maybe<ID_Input>;
-  year?: Maybe<Int>;
-  seasonCode?: Maybe<SeasonCode>;
-}
-
-export interface ProductSeasonCreatewearableSeasonsInput {
-  set?: Maybe<SeasonString[] | SeasonString>;
-}
-
 export interface ProductCreateManyInput {
   create?: Maybe<ProductCreateInput[] | ProductCreateInput>;
   connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
@@ -9870,35 +9759,36 @@ export interface ProductCreateManyInput {
 
 export interface ProductCreateInput {
   id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
+  architecture?: Maybe<ProductArchitecture>;
   brand: BrandCreateOneWithoutProductsInput;
-  productFit?: Maybe<ProductFit>;
   category: CategoryCreateOneWithoutProductsInput;
-  type?: Maybe<ProductType>;
+  color: ColorCreateOneInput;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionCreateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeCreateOneInput>;
-  color: ColorCreateOneInput;
-  secondaryColor?: Maybe<ColorCreateOneInput>;
-  tags?: Maybe<TagCreateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionCreateManyInput>;
+  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   materialCategory?: Maybe<
     ProductMaterialCategoryCreateOneWithoutProductsInput
   >;
-  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeCreateOneInput>;
+  name: String;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonCreateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
+  secondaryColor?: Maybe<ColorCreateOneInput>;
+  slug: String;
+  status?: Maybe<ProductStatus>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
+  tier?: Maybe<ProductTierCreateOneInput>;
+  type?: Maybe<ProductType>;
+  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
 }
 
 export interface FitPicReportCreateManyWithoutReportedInput {
@@ -11051,34 +10941,35 @@ export interface ProductUpdateOneRequiredWithoutVariantsInput {
 }
 
 export interface ProductUpdateWithoutVariantsDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  productFit?: Maybe<ProductFit>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
-  type?: Maybe<ProductType>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeUpdateOneInput>;
-  color?: Maybe<ColorUpdateOneRequiredInput>;
-  secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
-  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonUpdateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  slug?: Maybe<String>;
+  status?: Maybe<ProductStatus>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
+  tier?: Maybe<ProductTierUpdateOneInput>;
+  type?: Maybe<ProductType>;
 }
 
 export interface BrandUpdateOneRequiredWithoutProductsInput {
@@ -11352,53 +11243,35 @@ export interface ProductUpdateWithWhereUniqueWithoutCategoryInput {
 }
 
 export interface ProductUpdateWithoutCategoryDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  productFit?: Maybe<ProductFit>;
-  type?: Maybe<ProductType>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeUpdateOneInput>;
-  color?: Maybe<ColorUpdateOneRequiredInput>;
-  secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
-  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
-  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonUpdateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
-  photographyStatus?: Maybe<PhotographyStatus>;
-  publishedAt?: Maybe<DateTimeInput>;
-}
-
-export interface ProductModelUpdateOneWithoutProductsInput {
-  create?: Maybe<ProductModelCreateWithoutProductsInput>;
-  update?: Maybe<ProductModelUpdateWithoutProductsDataInput>;
-  upsert?: Maybe<ProductModelUpsertWithoutProductsInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<ProductModelWhereUniqueInput>;
-}
-
-export interface ProductModelUpdateWithoutProductsDataInput {
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
   name?: Maybe<String>;
-  height?: Maybe<Float>;
-}
-
-export interface ProductModelUpsertWithoutProductsInput {
-  update: ProductModelUpdateWithoutProductsDataInput;
-  create: ProductModelCreateWithoutProductsInput;
+  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
+  publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  slug?: Maybe<String>;
+  status?: Maybe<ProductStatus>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
+  tier?: Maybe<ProductTierUpdateOneInput>;
+  type?: Maybe<ProductType>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
 }
 
 export interface ColorUpdateOneRequiredInput {
@@ -12252,6 +12125,191 @@ export interface ColorUpsertNestedInput {
   create: ColorCreateInput;
 }
 
+export interface ProductFunctionUpdateManyInput {
+  create?: Maybe<ProductFunctionCreateInput[] | ProductFunctionCreateInput>;
+  update?: Maybe<
+    | ProductFunctionUpdateWithWhereUniqueNestedInput[]
+    | ProductFunctionUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | ProductFunctionUpsertWithWhereUniqueNestedInput[]
+    | ProductFunctionUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<
+    ProductFunctionWhereUniqueInput[] | ProductFunctionWhereUniqueInput
+  >;
+  connect?: Maybe<
+    ProductFunctionWhereUniqueInput[] | ProductFunctionWhereUniqueInput
+  >;
+  set?: Maybe<
+    ProductFunctionWhereUniqueInput[] | ProductFunctionWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    ProductFunctionWhereUniqueInput[] | ProductFunctionWhereUniqueInput
+  >;
+  deleteMany?: Maybe<
+    ProductFunctionScalarWhereInput[] | ProductFunctionScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | ProductFunctionUpdateManyWithWhereNestedInput[]
+    | ProductFunctionUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ProductFunctionUpdateWithWhereUniqueNestedInput {
+  where: ProductFunctionWhereUniqueInput;
+  data: ProductFunctionUpdateDataInput;
+}
+
+export interface ProductFunctionUpdateDataInput {
+  name?: Maybe<String>;
+}
+
+export interface ProductFunctionUpsertWithWhereUniqueNestedInput {
+  where: ProductFunctionWhereUniqueInput;
+  update: ProductFunctionUpdateDataInput;
+  create: ProductFunctionCreateInput;
+}
+
+export interface ProductFunctionScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  AND?: Maybe<
+    ProductFunctionScalarWhereInput[] | ProductFunctionScalarWhereInput
+  >;
+  OR?: Maybe<
+    ProductFunctionScalarWhereInput[] | ProductFunctionScalarWhereInput
+  >;
+  NOT?: Maybe<
+    ProductFunctionScalarWhereInput[] | ProductFunctionScalarWhereInput
+  >;
+}
+
+export interface ProductFunctionUpdateManyWithWhereNestedInput {
+  where: ProductFunctionScalarWhereInput;
+  data: ProductFunctionUpdateManyDataInput;
+}
+
+export interface ProductFunctionUpdateManyDataInput {
+  name?: Maybe<String>;
+}
+
+export interface ProductUpdateinnerMaterialsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface ProductMaterialCategoryUpdateOneWithoutProductsInput {
+  create?: Maybe<ProductMaterialCategoryCreateWithoutProductsInput>;
+  update?: Maybe<ProductMaterialCategoryUpdateWithoutProductsDataInput>;
+  upsert?: Maybe<ProductMaterialCategoryUpsertWithoutProductsInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ProductMaterialCategoryWhereUniqueInput>;
+}
+
+export interface ProductMaterialCategoryUpdateWithoutProductsDataInput {
+  slug?: Maybe<String>;
+  lifeExpectancy?: Maybe<Float>;
+  category?: Maybe<CategoryUpdateOneRequiredInput>;
+}
+
+export interface ProductMaterialCategoryUpsertWithoutProductsInput {
+  update: ProductMaterialCategoryUpdateWithoutProductsDataInput;
+  create: ProductMaterialCategoryCreateWithoutProductsInput;
+}
+
+export interface ProductModelUpdateOneWithoutProductsInput {
+  create?: Maybe<ProductModelCreateWithoutProductsInput>;
+  update?: Maybe<ProductModelUpdateWithoutProductsDataInput>;
+  upsert?: Maybe<ProductModelUpsertWithoutProductsInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ProductModelWhereUniqueInput>;
+}
+
+export interface ProductModelUpdateWithoutProductsDataInput {
+  name?: Maybe<String>;
+  height?: Maybe<Float>;
+}
+
+export interface ProductModelUpsertWithoutProductsInput {
+  update: ProductModelUpdateWithoutProductsDataInput;
+  create: ProductModelCreateWithoutProductsInput;
+}
+
+export interface ProductUpdateouterMaterialsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface ProductSeasonUpdateOneInput {
+  create?: Maybe<ProductSeasonCreateInput>;
+  update?: Maybe<ProductSeasonUpdateDataInput>;
+  upsert?: Maybe<ProductSeasonUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ProductSeasonWhereUniqueInput>;
+}
+
+export interface ProductSeasonUpdateDataInput {
+  vendorSeason?: Maybe<SeasonUpdateOneInput>;
+  internalSeason?: Maybe<SeasonUpdateOneInput>;
+  wearableSeasons?: Maybe<ProductSeasonUpdatewearableSeasonsInput>;
+}
+
+export interface SeasonUpdateOneInput {
+  create?: Maybe<SeasonCreateInput>;
+  update?: Maybe<SeasonUpdateDataInput>;
+  upsert?: Maybe<SeasonUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<SeasonWhereUniqueInput>;
+}
+
+export interface SeasonUpdateDataInput {
+  year?: Maybe<Int>;
+  seasonCode?: Maybe<SeasonCode>;
+}
+
+export interface SeasonUpsertNestedInput {
+  update: SeasonUpdateDataInput;
+  create: SeasonCreateInput;
+}
+
+export interface ProductSeasonUpdatewearableSeasonsInput {
+  set?: Maybe<SeasonString[] | SeasonString>;
+}
+
+export interface ProductSeasonUpsertNestedInput {
+  update: ProductSeasonUpdateDataInput;
+  create: ProductSeasonCreateInput;
+}
+
 export interface ColorUpdateOneInput {
   create?: Maybe<ColorCreateInput>;
   update?: Maybe<ColorUpdateDataInput>;
@@ -12373,127 +12431,23 @@ export interface TagUpdateManyDataInput {
   description?: Maybe<String>;
 }
 
-export interface ProductFunctionUpdateManyInput {
-  create?: Maybe<ProductFunctionCreateInput[] | ProductFunctionCreateInput>;
-  update?: Maybe<
-    | ProductFunctionUpdateWithWhereUniqueNestedInput[]
-    | ProductFunctionUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | ProductFunctionUpsertWithWhereUniqueNestedInput[]
-    | ProductFunctionUpsertWithWhereUniqueNestedInput
-  >;
-  delete?: Maybe<
-    ProductFunctionWhereUniqueInput[] | ProductFunctionWhereUniqueInput
-  >;
-  connect?: Maybe<
-    ProductFunctionWhereUniqueInput[] | ProductFunctionWhereUniqueInput
-  >;
-  set?: Maybe<
-    ProductFunctionWhereUniqueInput[] | ProductFunctionWhereUniqueInput
-  >;
-  disconnect?: Maybe<
-    ProductFunctionWhereUniqueInput[] | ProductFunctionWhereUniqueInput
-  >;
-  deleteMany?: Maybe<
-    ProductFunctionScalarWhereInput[] | ProductFunctionScalarWhereInput
-  >;
-  updateMany?: Maybe<
-    | ProductFunctionUpdateManyWithWhereNestedInput[]
-    | ProductFunctionUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface ProductFunctionUpdateWithWhereUniqueNestedInput {
-  where: ProductFunctionWhereUniqueInput;
-  data: ProductFunctionUpdateDataInput;
-}
-
-export interface ProductFunctionUpdateDataInput {
-  name?: Maybe<String>;
-}
-
-export interface ProductFunctionUpsertWithWhereUniqueNestedInput {
-  where: ProductFunctionWhereUniqueInput;
-  update: ProductFunctionUpdateDataInput;
-  create: ProductFunctionCreateInput;
-}
-
-export interface ProductFunctionScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  AND?: Maybe<
-    ProductFunctionScalarWhereInput[] | ProductFunctionScalarWhereInput
-  >;
-  OR?: Maybe<
-    ProductFunctionScalarWhereInput[] | ProductFunctionScalarWhereInput
-  >;
-  NOT?: Maybe<
-    ProductFunctionScalarWhereInput[] | ProductFunctionScalarWhereInput
-  >;
-}
-
-export interface ProductFunctionUpdateManyWithWhereNestedInput {
-  where: ProductFunctionScalarWhereInput;
-  data: ProductFunctionUpdateManyDataInput;
-}
-
-export interface ProductFunctionUpdateManyDataInput {
-  name?: Maybe<String>;
-}
-
-export interface ProductMaterialCategoryUpdateOneWithoutProductsInput {
-  create?: Maybe<ProductMaterialCategoryCreateWithoutProductsInput>;
-  update?: Maybe<ProductMaterialCategoryUpdateWithoutProductsDataInput>;
-  upsert?: Maybe<ProductMaterialCategoryUpsertWithoutProductsInput>;
+export interface ProductTierUpdateOneInput {
+  create?: Maybe<ProductTierCreateInput>;
+  update?: Maybe<ProductTierUpdateDataInput>;
+  upsert?: Maybe<ProductTierUpsertNestedInput>;
   delete?: Maybe<Boolean>;
   disconnect?: Maybe<Boolean>;
-  connect?: Maybe<ProductMaterialCategoryWhereUniqueInput>;
+  connect?: Maybe<ProductTierWhereUniqueInput>;
 }
 
-export interface ProductMaterialCategoryUpdateWithoutProductsDataInput {
-  slug?: Maybe<String>;
-  lifeExpectancy?: Maybe<Float>;
-  category?: Maybe<CategoryUpdateOneRequiredInput>;
+export interface ProductTierUpdateDataInput {
+  tier?: Maybe<ProductTierName>;
+  price?: Maybe<Int>;
 }
 
-export interface ProductMaterialCategoryUpsertWithoutProductsInput {
-  update: ProductMaterialCategoryUpdateWithoutProductsDataInput;
-  create: ProductMaterialCategoryCreateWithoutProductsInput;
-}
-
-export interface ProductUpdateinnerMaterialsInput {
-  set?: Maybe<String[] | String>;
-}
-
-export interface ProductUpdateouterMaterialsInput {
-  set?: Maybe<String[] | String>;
+export interface ProductTierUpsertNestedInput {
+  update: ProductTierUpdateDataInput;
+  create: ProductTierCreateInput;
 }
 
 export interface ProductVariantUpdateManyWithoutProductInput {
@@ -12562,49 +12516,6 @@ export interface ProductVariantUpsertWithWhereUniqueWithoutProductInput {
   create: ProductVariantCreateWithoutProductInput;
 }
 
-export interface ProductSeasonUpdateOneInput {
-  create?: Maybe<ProductSeasonCreateInput>;
-  update?: Maybe<ProductSeasonUpdateDataInput>;
-  upsert?: Maybe<ProductSeasonUpsertNestedInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<ProductSeasonWhereUniqueInput>;
-}
-
-export interface ProductSeasonUpdateDataInput {
-  vendorSeason?: Maybe<SeasonUpdateOneInput>;
-  internalSeason?: Maybe<SeasonUpdateOneInput>;
-  wearableSeasons?: Maybe<ProductSeasonUpdatewearableSeasonsInput>;
-}
-
-export interface SeasonUpdateOneInput {
-  create?: Maybe<SeasonCreateInput>;
-  update?: Maybe<SeasonUpdateDataInput>;
-  upsert?: Maybe<SeasonUpsertNestedInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<SeasonWhereUniqueInput>;
-}
-
-export interface SeasonUpdateDataInput {
-  year?: Maybe<Int>;
-  seasonCode?: Maybe<SeasonCode>;
-}
-
-export interface SeasonUpsertNestedInput {
-  update: SeasonUpdateDataInput;
-  create: SeasonCreateInput;
-}
-
-export interface ProductSeasonUpdatewearableSeasonsInput {
-  set?: Maybe<SeasonString[] | SeasonString>;
-}
-
-export interface ProductSeasonUpsertNestedInput {
-  update: ProductSeasonUpdateDataInput;
-  create: ProductSeasonCreateInput;
-}
-
 export interface ProductUpsertWithWhereUniqueWithoutCategoryInput {
   where: ProductWhereUniqueInput;
   update: ProductUpdateWithoutCategoryDataInput;
@@ -12626,42 +12537,10 @@ export interface ProductScalarWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  slug?: Maybe<String>;
-  slug_not?: Maybe<String>;
-  slug_in?: Maybe<String[] | String>;
-  slug_not_in?: Maybe<String[] | String>;
-  slug_lt?: Maybe<String>;
-  slug_lte?: Maybe<String>;
-  slug_gt?: Maybe<String>;
-  slug_gte?: Maybe<String>;
-  slug_contains?: Maybe<String>;
-  slug_not_contains?: Maybe<String>;
-  slug_starts_with?: Maybe<String>;
-  slug_not_starts_with?: Maybe<String>;
-  slug_ends_with?: Maybe<String>;
-  slug_not_ends_with?: Maybe<String>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  productFit?: Maybe<ProductFit>;
-  productFit_not?: Maybe<ProductFit>;
-  productFit_in?: Maybe<ProductFit[] | ProductFit>;
-  productFit_not_in?: Maybe<ProductFit[] | ProductFit>;
-  type?: Maybe<ProductType>;
-  type_not?: Maybe<ProductType>;
-  type_in?: Maybe<ProductType[] | ProductType>;
-  type_not_in?: Maybe<ProductType[] | ProductType>;
+  architecture?: Maybe<ProductArchitecture>;
+  architecture_not?: Maybe<ProductArchitecture>;
+  architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
+  architecture_not_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
   description?: Maybe<String>;
   description_not?: Maybe<String>;
   description_in?: Maybe<String[] | String>;
@@ -12700,26 +12579,28 @@ export interface ProductScalarWhereInput {
   modelHeight_lte?: Maybe<Int>;
   modelHeight_gt?: Maybe<Int>;
   modelHeight_gte?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  retailPrice_not?: Maybe<Int>;
-  retailPrice_in?: Maybe<Int[] | Int>;
-  retailPrice_not_in?: Maybe<Int[] | Int>;
-  retailPrice_lt?: Maybe<Int>;
-  retailPrice_lte?: Maybe<Int>;
-  retailPrice_gt?: Maybe<Int>;
-  retailPrice_gte?: Maybe<Int>;
-  status?: Maybe<ProductStatus>;
-  status_not?: Maybe<ProductStatus>;
-  status_in?: Maybe<ProductStatus[] | ProductStatus>;
-  status_not_in?: Maybe<ProductStatus[] | ProductStatus>;
-  architecture?: Maybe<ProductArchitecture>;
-  architecture_not?: Maybe<ProductArchitecture>;
-  architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
-  architecture_not_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
   photographyStatus?: Maybe<PhotographyStatus>;
   photographyStatus_not?: Maybe<PhotographyStatus>;
   photographyStatus_in?: Maybe<PhotographyStatus[] | PhotographyStatus>;
   photographyStatus_not_in?: Maybe<PhotographyStatus[] | PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
+  productFit_not?: Maybe<ProductFit>;
+  productFit_in?: Maybe<ProductFit[] | ProductFit>;
+  productFit_not_in?: Maybe<ProductFit[] | ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
   publishedAt_not?: Maybe<DateTimeInput>;
   publishedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -12728,6 +12609,36 @@ export interface ProductScalarWhereInput {
   publishedAt_lte?: Maybe<DateTimeInput>;
   publishedAt_gt?: Maybe<DateTimeInput>;
   publishedAt_gte?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  retailPrice_not?: Maybe<Int>;
+  retailPrice_in?: Maybe<Int[] | Int>;
+  retailPrice_not_in?: Maybe<Int[] | Int>;
+  retailPrice_lt?: Maybe<Int>;
+  retailPrice_lte?: Maybe<Int>;
+  retailPrice_gt?: Maybe<Int>;
+  retailPrice_gte?: Maybe<Int>;
+  slug?: Maybe<String>;
+  slug_not?: Maybe<String>;
+  slug_in?: Maybe<String[] | String>;
+  slug_not_in?: Maybe<String[] | String>;
+  slug_lt?: Maybe<String>;
+  slug_lte?: Maybe<String>;
+  slug_gt?: Maybe<String>;
+  slug_gte?: Maybe<String>;
+  slug_contains?: Maybe<String>;
+  slug_not_contains?: Maybe<String>;
+  slug_starts_with?: Maybe<String>;
+  slug_not_starts_with?: Maybe<String>;
+  slug_ends_with?: Maybe<String>;
+  slug_not_ends_with?: Maybe<String>;
+  status?: Maybe<ProductStatus>;
+  status_not?: Maybe<ProductStatus>;
+  status_in?: Maybe<ProductStatus[] | ProductStatus>;
+  status_not_in?: Maybe<ProductStatus[] | ProductStatus>;
+  type?: Maybe<ProductType>;
+  type_not?: Maybe<ProductType>;
+  type_in?: Maybe<ProductType[] | ProductType>;
+  type_not_in?: Maybe<ProductType[] | ProductType>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -12755,21 +12666,21 @@ export interface ProductUpdateManyWithWhereNestedInput {
 }
 
 export interface ProductUpdateManyDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-  productFit?: Maybe<ProductFit>;
-  type?: Maybe<ProductType>;
+  architecture?: Maybe<ProductArchitecture>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   buyNewEnabled?: Maybe<Boolean>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  modelHeight?: Maybe<Int>;
+  name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  status?: Maybe<ProductStatus>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  slug?: Maybe<String>;
+  status?: Maybe<ProductStatus>;
+  type?: Maybe<ProductType>;
 }
 
 export interface CategoryUpsertWithWhereUniqueWithoutChildrenInput {
@@ -12916,35 +12827,36 @@ export interface ProductUpdateWithWhereUniqueNestedInput {
 }
 
 export interface ProductUpdateDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  productFit?: Maybe<ProductFit>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
-  type?: Maybe<ProductType>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeUpdateOneInput>;
-  color?: Maybe<ColorUpdateOneRequiredInput>;
-  secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
-  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonUpdateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  slug?: Maybe<String>;
+  status?: Maybe<ProductStatus>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
+  tier?: Maybe<ProductTierUpdateOneInput>;
+  type?: Maybe<ProductType>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueNestedInput {
@@ -15327,34 +15239,35 @@ export interface ProductCreateManyWithoutBrandInput {
 
 export interface ProductCreateWithoutBrandInput {
   id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
-  productFit?: Maybe<ProductFit>;
+  architecture?: Maybe<ProductArchitecture>;
   category: CategoryCreateOneWithoutProductsInput;
-  type?: Maybe<ProductType>;
+  color: ColorCreateOneInput;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionCreateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeCreateOneInput>;
-  color: ColorCreateOneInput;
-  secondaryColor?: Maybe<ColorCreateOneInput>;
-  tags?: Maybe<TagCreateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionCreateManyInput>;
+  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   materialCategory?: Maybe<
     ProductMaterialCategoryCreateOneWithoutProductsInput
   >;
-  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeCreateOneInput>;
+  name: String;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonCreateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
+  secondaryColor?: Maybe<ColorCreateOneInput>;
+  slug: String;
+  status?: Maybe<ProductStatus>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
+  tier?: Maybe<ProductTierCreateOneInput>;
+  type?: Maybe<ProductType>;
+  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
 }
 
 export interface BrandUpdateInput {
@@ -15405,34 +15318,35 @@ export interface ProductUpdateWithWhereUniqueWithoutBrandInput {
 }
 
 export interface ProductUpdateWithoutBrandDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-  productFit?: Maybe<ProductFit>;
+  architecture?: Maybe<ProductArchitecture>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
-  type?: Maybe<ProductType>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeUpdateOneInput>;
-  color?: Maybe<ColorUpdateOneRequiredInput>;
-  secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
-  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonUpdateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  slug?: Maybe<String>;
+  status?: Maybe<ProductStatus>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
+  tier?: Maybe<ProductTierUpdateOneInput>;
+  type?: Maybe<ProductType>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutBrandInput {
@@ -15521,169 +15435,6 @@ export interface CollectionUpdateManyMutationInput {
   descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
   published?: Maybe<Boolean>;
   placements?: Maybe<CollectionUpdateplacementsInput>;
-}
-
-export interface CollectionGroupCreateInput {
-  id?: Maybe<ID_Input>;
-  slug: String;
-  title?: Maybe<String>;
-  collectionCount?: Maybe<Int>;
-  collections?: Maybe<CollectionCreateManyInput>;
-}
-
-export interface CollectionCreateManyInput {
-  create?: Maybe<CollectionCreateInput[] | CollectionCreateInput>;
-  connect?: Maybe<CollectionWhereUniqueInput[] | CollectionWhereUniqueInput>;
-}
-
-export interface CollectionGroupUpdateInput {
-  slug?: Maybe<String>;
-  title?: Maybe<String>;
-  collectionCount?: Maybe<Int>;
-  collections?: Maybe<CollectionUpdateManyInput>;
-}
-
-export interface CollectionUpdateManyInput {
-  create?: Maybe<CollectionCreateInput[] | CollectionCreateInput>;
-  update?: Maybe<
-    | CollectionUpdateWithWhereUniqueNestedInput[]
-    | CollectionUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | CollectionUpsertWithWhereUniqueNestedInput[]
-    | CollectionUpsertWithWhereUniqueNestedInput
-  >;
-  delete?: Maybe<CollectionWhereUniqueInput[] | CollectionWhereUniqueInput>;
-  connect?: Maybe<CollectionWhereUniqueInput[] | CollectionWhereUniqueInput>;
-  set?: Maybe<CollectionWhereUniqueInput[] | CollectionWhereUniqueInput>;
-  disconnect?: Maybe<CollectionWhereUniqueInput[] | CollectionWhereUniqueInput>;
-  deleteMany?: Maybe<CollectionScalarWhereInput[] | CollectionScalarWhereInput>;
-  updateMany?: Maybe<
-    | CollectionUpdateManyWithWhereNestedInput[]
-    | CollectionUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface CollectionUpdateWithWhereUniqueNestedInput {
-  where: CollectionWhereUniqueInput;
-  data: CollectionUpdateDataInput;
-}
-
-export interface CollectionUpdateDataInput {
-  slug?: Maybe<String>;
-  images?: Maybe<ImageUpdateManyInput>;
-  title?: Maybe<String>;
-  subTitle?: Maybe<String>;
-  descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
-  products?: Maybe<ProductUpdateManyInput>;
-  published?: Maybe<Boolean>;
-  placements?: Maybe<CollectionUpdateplacementsInput>;
-}
-
-export interface CollectionUpsertWithWhereUniqueNestedInput {
-  where: CollectionWhereUniqueInput;
-  update: CollectionUpdateDataInput;
-  create: CollectionCreateInput;
-}
-
-export interface CollectionScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  slug?: Maybe<String>;
-  slug_not?: Maybe<String>;
-  slug_in?: Maybe<String[] | String>;
-  slug_not_in?: Maybe<String[] | String>;
-  slug_lt?: Maybe<String>;
-  slug_lte?: Maybe<String>;
-  slug_gt?: Maybe<String>;
-  slug_gte?: Maybe<String>;
-  slug_contains?: Maybe<String>;
-  slug_not_contains?: Maybe<String>;
-  slug_starts_with?: Maybe<String>;
-  slug_not_starts_with?: Maybe<String>;
-  slug_ends_with?: Maybe<String>;
-  slug_not_ends_with?: Maybe<String>;
-  title?: Maybe<String>;
-  title_not?: Maybe<String>;
-  title_in?: Maybe<String[] | String>;
-  title_not_in?: Maybe<String[] | String>;
-  title_lt?: Maybe<String>;
-  title_lte?: Maybe<String>;
-  title_gt?: Maybe<String>;
-  title_gte?: Maybe<String>;
-  title_contains?: Maybe<String>;
-  title_not_contains?: Maybe<String>;
-  title_starts_with?: Maybe<String>;
-  title_not_starts_with?: Maybe<String>;
-  title_ends_with?: Maybe<String>;
-  title_not_ends_with?: Maybe<String>;
-  subTitle?: Maybe<String>;
-  subTitle_not?: Maybe<String>;
-  subTitle_in?: Maybe<String[] | String>;
-  subTitle_not_in?: Maybe<String[] | String>;
-  subTitle_lt?: Maybe<String>;
-  subTitle_lte?: Maybe<String>;
-  subTitle_gt?: Maybe<String>;
-  subTitle_gte?: Maybe<String>;
-  subTitle_contains?: Maybe<String>;
-  subTitle_not_contains?: Maybe<String>;
-  subTitle_starts_with?: Maybe<String>;
-  subTitle_not_starts_with?: Maybe<String>;
-  subTitle_ends_with?: Maybe<String>;
-  subTitle_not_ends_with?: Maybe<String>;
-  published?: Maybe<Boolean>;
-  published_not?: Maybe<Boolean>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<CollectionScalarWhereInput[] | CollectionScalarWhereInput>;
-  OR?: Maybe<CollectionScalarWhereInput[] | CollectionScalarWhereInput>;
-  NOT?: Maybe<CollectionScalarWhereInput[] | CollectionScalarWhereInput>;
-}
-
-export interface CollectionUpdateManyWithWhereNestedInput {
-  where: CollectionScalarWhereInput;
-  data: CollectionUpdateManyDataInput;
-}
-
-export interface CollectionUpdateManyDataInput {
-  slug?: Maybe<String>;
-  title?: Maybe<String>;
-  subTitle?: Maybe<String>;
-  descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
-  published?: Maybe<Boolean>;
-  placements?: Maybe<CollectionUpdateplacementsInput>;
-}
-
-export interface CollectionGroupUpdateManyMutationInput {
-  slug?: Maybe<String>;
-  title?: Maybe<String>;
-  collectionCount?: Maybe<Int>;
 }
 
 export interface ColorUpdateInput {
@@ -16166,24 +15917,6 @@ export interface FitPicReportUpdateManyMutationInput {
   status?: Maybe<FitPicReportStatus>;
 }
 
-export interface HomepageProductRailCreateInput {
-  id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
-  products?: Maybe<ProductCreateManyInput>;
-}
-
-export interface HomepageProductRailUpdateInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-  products?: Maybe<ProductUpdateManyInput>;
-}
-
-export interface HomepageProductRailUpdateManyMutationInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-}
-
 export interface ImageUpdateInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
@@ -16430,53 +16163,54 @@ export interface PhysicalProductPriceUpdateManyMutationInput {
 }
 
 export interface ProductUpdateInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  productFit?: Maybe<ProductFit>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
-  type?: Maybe<ProductType>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeUpdateOneInput>;
-  color?: Maybe<ColorUpdateOneRequiredInput>;
-  secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
-  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonUpdateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  slug?: Maybe<String>;
+  status?: Maybe<ProductStatus>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
+  tier?: Maybe<ProductTierUpdateOneInput>;
+  type?: Maybe<ProductType>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
 }
 
 export interface ProductUpdateManyMutationInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-  productFit?: Maybe<ProductFit>;
-  type?: Maybe<ProductType>;
+  architecture?: Maybe<ProductArchitecture>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
   buyNewEnabled?: Maybe<Boolean>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  modelHeight?: Maybe<Int>;
+  name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  status?: Maybe<ProductStatus>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  slug?: Maybe<String>;
+  status?: Maybe<ProductStatus>;
+  type?: Maybe<ProductType>;
 }
 
 export interface ProductFunctionUpdateInput {
@@ -16505,32 +16239,33 @@ export interface ProductCreateManyWithoutMaterialCategoryInput {
 
 export interface ProductCreateWithoutMaterialCategoryInput {
   id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
+  architecture?: Maybe<ProductArchitecture>;
   brand: BrandCreateOneWithoutProductsInput;
-  productFit?: Maybe<ProductFit>;
   category: CategoryCreateOneWithoutProductsInput;
-  type?: Maybe<ProductType>;
+  color: ColorCreateOneInput;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionCreateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeCreateOneInput>;
-  color: ColorCreateOneInput;
-  secondaryColor?: Maybe<ColorCreateOneInput>;
-  tags?: Maybe<TagCreateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeCreateOneInput>;
+  name: String;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonCreateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
+  secondaryColor?: Maybe<ColorCreateOneInput>;
+  slug: String;
+  status?: Maybe<ProductStatus>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
+  tier?: Maybe<ProductTierCreateOneInput>;
+  type?: Maybe<ProductType>;
+  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
 }
 
 export interface ProductMaterialCategoryUpdateInput {
@@ -16570,32 +16305,33 @@ export interface ProductUpdateWithWhereUniqueWithoutMaterialCategoryInput {
 }
 
 export interface ProductUpdateWithoutMaterialCategoryDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  productFit?: Maybe<ProductFit>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
-  type?: Maybe<ProductType>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeUpdateOneInput>;
-  color?: Maybe<ColorUpdateOneRequiredInput>;
-  secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonUpdateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  slug?: Maybe<String>;
+  status?: Maybe<ProductStatus>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
+  tier?: Maybe<ProductTierUpdateOneInput>;
+  type?: Maybe<ProductType>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutMaterialCategoryInput {
@@ -16625,34 +16361,35 @@ export interface ProductCreateManyWithoutModelInput {
 
 export interface ProductCreateWithoutModelInput {
   id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
+  architecture?: Maybe<ProductArchitecture>;
   brand: BrandCreateOneWithoutProductsInput;
-  productFit?: Maybe<ProductFit>;
   category: CategoryCreateOneWithoutProductsInput;
-  type?: Maybe<ProductType>;
+  color: ColorCreateOneInput;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionCreateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  modelSize?: Maybe<SizeCreateOneInput>;
-  color: ColorCreateOneInput;
-  secondaryColor?: Maybe<ColorCreateOneInput>;
-  tags?: Maybe<TagCreateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionCreateManyInput>;
+  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   materialCategory?: Maybe<
     ProductMaterialCategoryCreateOneWithoutProductsInput
   >;
-  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeCreateOneInput>;
+  name: String;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonCreateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
+  secondaryColor?: Maybe<ColorCreateOneInput>;
+  slug: String;
+  status?: Maybe<ProductStatus>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
+  tier?: Maybe<ProductTierCreateOneInput>;
+  type?: Maybe<ProductType>;
+  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
 }
 
 export interface ProductModelUpdateInput {
@@ -16690,34 +16427,35 @@ export interface ProductUpdateWithWhereUniqueWithoutModelInput {
 }
 
 export interface ProductUpdateWithoutModelDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  productFit?: Maybe<ProductFit>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
-  type?: Maybe<ProductType>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  modelSize?: Maybe<SizeUpdateOneInput>;
-  color?: Maybe<ColorUpdateOneRequiredInput>;
-  secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
-  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonUpdateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  slug?: Maybe<String>;
+  status?: Maybe<ProductStatus>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
+  tier?: Maybe<ProductTierUpdateOneInput>;
+  type?: Maybe<ProductType>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutModelInput {
@@ -16865,6 +16603,16 @@ export interface ProductSeasonUpdateInput {
 
 export interface ProductSeasonUpdateManyMutationInput {
   wearableSeasons?: Maybe<ProductSeasonUpdatewearableSeasonsInput>;
+}
+
+export interface ProductTierUpdateInput {
+  tier?: Maybe<ProductTierName>;
+  price?: Maybe<Int>;
+}
+
+export interface ProductTierUpdateManyMutationInput {
+  tier?: Maybe<ProductTierName>;
+  price?: Maybe<Int>;
 }
 
 export interface ProductVariantUpdateInput {
@@ -17695,34 +17443,35 @@ export interface ProductCreateManyWithoutTagsInput {
 
 export interface ProductCreateWithoutTagsInput {
   id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
+  architecture?: Maybe<ProductArchitecture>;
   brand: BrandCreateOneWithoutProductsInput;
-  productFit?: Maybe<ProductFit>;
   category: CategoryCreateOneWithoutProductsInput;
-  type?: Maybe<ProductType>;
+  color: ColorCreateOneInput;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionCreateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageCreateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeCreateOneInput>;
-  color: ColorCreateOneInput;
-  secondaryColor?: Maybe<ColorCreateOneInput>;
-  functions?: Maybe<ProductFunctionCreateManyInput>;
+  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   materialCategory?: Maybe<
     ProductMaterialCategoryCreateOneWithoutProductsInput
   >;
-  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeCreateOneInput>;
+  name: String;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonCreateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
+  secondaryColor?: Maybe<ColorCreateOneInput>;
+  slug: String;
+  status?: Maybe<ProductStatus>;
+  tier?: Maybe<ProductTierCreateOneInput>;
+  type?: Maybe<ProductType>;
+  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
 }
 
 export interface TagUpdateInput {
@@ -17760,34 +17509,35 @@ export interface ProductUpdateWithWhereUniqueWithoutTagsInput {
 }
 
 export interface ProductUpdateWithoutTagsDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  productFit?: Maybe<ProductFit>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
-  type?: Maybe<ProductType>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
   buyNewEnabled?: Maybe<Boolean>;
   images?: Maybe<ImageUpdateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeUpdateOneInput>;
-  color?: Maybe<ColorUpdateOneRequiredInput>;
-  secondaryColor?: Maybe<ColorUpdateOneInput>;
-  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   materialCategory?: Maybe<
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
-  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<ProductSeasonUpdateOneInput>;
-  architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
+  productFit?: Maybe<ProductFit>;
   publishedAt?: Maybe<DateTimeInput>;
+  retailPrice?: Maybe<Int>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  slug?: Maybe<String>;
+  status?: Maybe<ProductStatus>;
+  tier?: Maybe<ProductTierUpdateOneInput>;
+  type?: Maybe<ProductType>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutTagsInput {
@@ -18397,26 +18147,6 @@ export interface CollectionSubscriptionWhereInput {
   >;
 }
 
-export interface CollectionGroupSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<CollectionGroupWhereInput>;
-  AND?: Maybe<
-    | CollectionGroupSubscriptionWhereInput[]
-    | CollectionGroupSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    | CollectionGroupSubscriptionWhereInput[]
-    | CollectionGroupSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    | CollectionGroupSubscriptionWhereInput[]
-    | CollectionGroupSubscriptionWhereInput
-  >;
-}
-
 export interface ColorSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -18565,26 +18295,6 @@ export interface FitPicReportSubscriptionWhereInput {
   >;
   NOT?: Maybe<
     FitPicReportSubscriptionWhereInput[] | FitPicReportSubscriptionWhereInput
-  >;
-}
-
-export interface HomepageProductRailSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<HomepageProductRailWhereInput>;
-  AND?: Maybe<
-    | HomepageProductRailSubscriptionWhereInput[]
-    | HomepageProductRailSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    | HomepageProductRailSubscriptionWhereInput[]
-    | HomepageProductRailSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    | HomepageProductRailSubscriptionWhereInput[]
-    | HomepageProductRailSubscriptionWhereInput
   >;
 }
 
@@ -18872,6 +18582,23 @@ export interface ProductSeasonSubscriptionWhereInput {
   >;
   NOT?: Maybe<
     ProductSeasonSubscriptionWhereInput[] | ProductSeasonSubscriptionWhereInput
+  >;
+}
+
+export interface ProductTierSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ProductTierWhereInput>;
+  AND?: Maybe<
+    ProductTierSubscriptionWhereInput[] | ProductTierSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    ProductTierSubscriptionWhereInput[] | ProductTierSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    ProductTierSubscriptionWhereInput[] | ProductTierSubscriptionWhereInput
   >;
 }
 
@@ -20573,35 +20300,42 @@ export interface BottomSizeNullablePromise
 
 export interface Product {
   id: ID_Output;
-  slug: String;
-  name: String;
-  productFit?: ProductFit;
-  type?: ProductType;
+  architecture?: ProductArchitecture;
   description?: String;
   externalURL?: String;
   buyNewEnabled: Boolean;
-  modelHeight?: Int;
-  retailPrice?: Int;
   innerMaterials: String[];
+  modelHeight?: Int;
+  name: String;
   outerMaterials: String[];
-  status?: ProductStatus;
-  architecture?: ProductArchitecture;
   photographyStatus?: PhotographyStatus;
+  productFit?: ProductFit;
   publishedAt?: DateTimeOutput;
+  retailPrice?: Int;
+  slug: String;
+  status?: ProductStatus;
+  type?: ProductType;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
 
 export interface ProductPromise extends Promise<Product>, Fragmentable {
   id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  name: () => Promise<String>;
+  architecture: () => Promise<ProductArchitecture>;
   brand: <T = BrandPromise>() => T;
-  productFit: () => Promise<ProductFit>;
   category: <T = CategoryPromise>() => T;
-  type: () => Promise<ProductType>;
+  color: <T = ColorPromise>() => T;
   description: () => Promise<String>;
   externalURL: () => Promise<String>;
+  functions: <T = FragmentableArray<ProductFunction>>(args?: {
+    where?: ProductFunctionWhereInput;
+    orderBy?: ProductFunctionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   buyNewEnabled: () => Promise<Boolean>;
   images: <T = FragmentableArray<Image>>(args?: {
     where?: ImageWhereInput;
@@ -20612,12 +20346,21 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
-  modelHeight: () => Promise<Int>;
-  retailPrice: () => Promise<Int>;
+  innerMaterials: () => Promise<String[]>;
+  materialCategory: <T = ProductMaterialCategoryPromise>() => T;
   model: <T = ProductModelPromise>() => T;
+  modelHeight: () => Promise<Int>;
   modelSize: <T = SizePromise>() => T;
-  color: <T = ColorPromise>() => T;
+  name: () => Promise<String>;
+  outerMaterials: () => Promise<String[]>;
+  photographyStatus: () => Promise<PhotographyStatus>;
+  productFit: () => Promise<ProductFit>;
+  publishedAt: () => Promise<DateTimeOutput>;
+  retailPrice: () => Promise<Int>;
+  season: <T = ProductSeasonPromise>() => T;
   secondaryColor: <T = ColorPromise>() => T;
+  slug: () => Promise<String>;
+  status: () => Promise<ProductStatus>;
   tags: <T = FragmentableArray<Tag>>(args?: {
     where?: TagWhereInput;
     orderBy?: TagOrderByInput;
@@ -20627,18 +20370,8 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
-  functions: <T = FragmentableArray<ProductFunction>>(args?: {
-    where?: ProductFunctionWhereInput;
-    orderBy?: ProductFunctionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  materialCategory: <T = ProductMaterialCategoryPromise>() => T;
-  innerMaterials: () => Promise<String[]>;
-  outerMaterials: () => Promise<String[]>;
+  tier: <T = ProductTierPromise>() => T;
+  type: () => Promise<ProductType>;
   variants: <T = FragmentableArray<ProductVariant>>(args?: {
     where?: ProductVariantWhereInput;
     orderBy?: ProductVariantOrderByInput;
@@ -20648,11 +20381,6 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
-  status: () => Promise<ProductStatus>;
-  season: <T = ProductSeasonPromise>() => T;
-  architecture: () => Promise<ProductArchitecture>;
-  photographyStatus: () => Promise<PhotographyStatus>;
-  publishedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -20661,14 +20389,21 @@ export interface ProductSubscription
   extends Promise<AsyncIterator<Product>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  slug: () => Promise<AsyncIterator<String>>;
-  name: () => Promise<AsyncIterator<String>>;
+  architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
   brand: <T = BrandSubscription>() => T;
-  productFit: () => Promise<AsyncIterator<ProductFit>>;
   category: <T = CategorySubscription>() => T;
-  type: () => Promise<AsyncIterator<ProductType>>;
+  color: <T = ColorSubscription>() => T;
   description: () => Promise<AsyncIterator<String>>;
   externalURL: () => Promise<AsyncIterator<String>>;
+  functions: <T = Promise<AsyncIterator<ProductFunctionSubscription>>>(args?: {
+    where?: ProductFunctionWhereInput;
+    orderBy?: ProductFunctionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   buyNewEnabled: () => Promise<AsyncIterator<Boolean>>;
   images: <T = Promise<AsyncIterator<ImageSubscription>>>(args?: {
     where?: ImageWhereInput;
@@ -20679,12 +20414,21 @@ export interface ProductSubscription
     first?: Int;
     last?: Int;
   }) => T;
-  modelHeight: () => Promise<AsyncIterator<Int>>;
-  retailPrice: () => Promise<AsyncIterator<Int>>;
+  innerMaterials: () => Promise<AsyncIterator<String[]>>;
+  materialCategory: <T = ProductMaterialCategorySubscription>() => T;
   model: <T = ProductModelSubscription>() => T;
+  modelHeight: () => Promise<AsyncIterator<Int>>;
   modelSize: <T = SizeSubscription>() => T;
-  color: <T = ColorSubscription>() => T;
+  name: () => Promise<AsyncIterator<String>>;
+  outerMaterials: () => Promise<AsyncIterator<String[]>>;
+  photographyStatus: () => Promise<AsyncIterator<PhotographyStatus>>;
+  productFit: () => Promise<AsyncIterator<ProductFit>>;
+  publishedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  retailPrice: () => Promise<AsyncIterator<Int>>;
+  season: <T = ProductSeasonSubscription>() => T;
   secondaryColor: <T = ColorSubscription>() => T;
+  slug: () => Promise<AsyncIterator<String>>;
+  status: () => Promise<AsyncIterator<ProductStatus>>;
   tags: <T = Promise<AsyncIterator<TagSubscription>>>(args?: {
     where?: TagWhereInput;
     orderBy?: TagOrderByInput;
@@ -20694,18 +20438,8 @@ export interface ProductSubscription
     first?: Int;
     last?: Int;
   }) => T;
-  functions: <T = Promise<AsyncIterator<ProductFunctionSubscription>>>(args?: {
-    where?: ProductFunctionWhereInput;
-    orderBy?: ProductFunctionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  materialCategory: <T = ProductMaterialCategorySubscription>() => T;
-  innerMaterials: () => Promise<AsyncIterator<String[]>>;
-  outerMaterials: () => Promise<AsyncIterator<String[]>>;
+  tier: <T = ProductTierSubscription>() => T;
+  type: () => Promise<AsyncIterator<ProductType>>;
   variants: <T = Promise<AsyncIterator<ProductVariantSubscription>>>(args?: {
     where?: ProductVariantWhereInput;
     orderBy?: ProductVariantOrderByInput;
@@ -20715,11 +20449,6 @@ export interface ProductSubscription
     first?: Int;
     last?: Int;
   }) => T;
-  status: () => Promise<AsyncIterator<ProductStatus>>;
-  season: <T = ProductSeasonSubscription>() => T;
-  architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
-  photographyStatus: () => Promise<AsyncIterator<PhotographyStatus>>;
-  publishedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -20728,14 +20457,21 @@ export interface ProductNullablePromise
   extends Promise<Product | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  name: () => Promise<String>;
+  architecture: () => Promise<ProductArchitecture>;
   brand: <T = BrandPromise>() => T;
-  productFit: () => Promise<ProductFit>;
   category: <T = CategoryPromise>() => T;
-  type: () => Promise<ProductType>;
+  color: <T = ColorPromise>() => T;
   description: () => Promise<String>;
   externalURL: () => Promise<String>;
+  functions: <T = FragmentableArray<ProductFunction>>(args?: {
+    where?: ProductFunctionWhereInput;
+    orderBy?: ProductFunctionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   buyNewEnabled: () => Promise<Boolean>;
   images: <T = FragmentableArray<Image>>(args?: {
     where?: ImageWhereInput;
@@ -20746,12 +20482,21 @@ export interface ProductNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
-  modelHeight: () => Promise<Int>;
-  retailPrice: () => Promise<Int>;
+  innerMaterials: () => Promise<String[]>;
+  materialCategory: <T = ProductMaterialCategoryPromise>() => T;
   model: <T = ProductModelPromise>() => T;
+  modelHeight: () => Promise<Int>;
   modelSize: <T = SizePromise>() => T;
-  color: <T = ColorPromise>() => T;
+  name: () => Promise<String>;
+  outerMaterials: () => Promise<String[]>;
+  photographyStatus: () => Promise<PhotographyStatus>;
+  productFit: () => Promise<ProductFit>;
+  publishedAt: () => Promise<DateTimeOutput>;
+  retailPrice: () => Promise<Int>;
+  season: <T = ProductSeasonPromise>() => T;
   secondaryColor: <T = ColorPromise>() => T;
+  slug: () => Promise<String>;
+  status: () => Promise<ProductStatus>;
   tags: <T = FragmentableArray<Tag>>(args?: {
     where?: TagWhereInput;
     orderBy?: TagOrderByInput;
@@ -20761,18 +20506,8 @@ export interface ProductNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
-  functions: <T = FragmentableArray<ProductFunction>>(args?: {
-    where?: ProductFunctionWhereInput;
-    orderBy?: ProductFunctionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  materialCategory: <T = ProductMaterialCategoryPromise>() => T;
-  innerMaterials: () => Promise<String[]>;
-  outerMaterials: () => Promise<String[]>;
+  tier: <T = ProductTierPromise>() => T;
+  type: () => Promise<ProductType>;
   variants: <T = FragmentableArray<ProductVariant>>(args?: {
     where?: ProductVariantWhereInput;
     orderBy?: ProductVariantOrderByInput;
@@ -20782,11 +20517,6 @@ export interface ProductNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
-  status: () => Promise<ProductStatus>;
-  season: <T = ProductSeasonPromise>() => T;
-  architecture: () => Promise<ProductArchitecture>;
-  photographyStatus: () => Promise<PhotographyStatus>;
-  publishedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -21066,124 +20796,6 @@ export interface CategoryNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface ProductModel {
-  id: ID_Output;
-  name: String;
-  height: Float;
-}
-
-export interface ProductModelPromise
-  extends Promise<ProductModel>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  height: () => Promise<Float>;
-  products: <T = FragmentableArray<Product>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface ProductModelSubscription
-  extends Promise<AsyncIterator<ProductModel>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  height: () => Promise<AsyncIterator<Float>>;
-  products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface ProductModelNullablePromise
-  extends Promise<ProductModel | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  height: () => Promise<Float>;
-  products: <T = FragmentableArray<Product>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface Tag {
-  id: ID_Output;
-  name: String;
-  description?: String;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface TagPromise extends Promise<Tag>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  description: () => Promise<String>;
-  products: <T = FragmentableArray<Product>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface TagSubscription
-  extends Promise<AsyncIterator<Tag>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  description: () => Promise<AsyncIterator<String>>;
-  products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface TagNullablePromise extends Promise<Tag | null>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  description: () => Promise<String>;
-  products: <T = FragmentableArray<Product>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
 export interface ProductFunction {
   id: ID_Output;
   name?: String;
@@ -21270,6 +20882,63 @@ export interface ProductMaterialCategoryNullablePromise
   }) => T;
 }
 
+export interface ProductModel {
+  id: ID_Output;
+  name: String;
+  height: Float;
+}
+
+export interface ProductModelPromise
+  extends Promise<ProductModel>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  height: () => Promise<Float>;
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface ProductModelSubscription
+  extends Promise<AsyncIterator<ProductModel>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  height: () => Promise<AsyncIterator<Float>>;
+  products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface ProductModelNullablePromise
+  extends Promise<ProductModel | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  height: () => Promise<Float>;
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
 export interface ProductSeason {
   id: ID_Output;
   wearableSeasons: SeasonString[];
@@ -21328,6 +20997,103 @@ export interface SeasonNullablePromise
   id: () => Promise<ID_Output>;
   year: () => Promise<Int>;
   seasonCode: () => Promise<SeasonCode>;
+}
+
+export interface Tag {
+  id: ID_Output;
+  name: String;
+  description?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface TagPromise extends Promise<Tag>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  description: () => Promise<String>;
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface TagSubscription
+  extends Promise<AsyncIterator<Tag>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  description: () => Promise<AsyncIterator<String>>;
+  products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface TagNullablePromise extends Promise<Tag | null>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  description: () => Promise<String>;
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ProductTier {
+  id: ID_Output;
+  tier: ProductTierName;
+  price: Int;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface ProductTierPromise extends Promise<ProductTier>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  tier: () => Promise<ProductTierName>;
+  price: () => Promise<Int>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ProductTierSubscription
+  extends Promise<AsyncIterator<ProductTier>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  tier: () => Promise<AsyncIterator<ProductTierName>>;
+  price: () => Promise<AsyncIterator<Int>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface ProductTierNullablePromise
+  extends Promise<ProductTier | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  tier: () => Promise<ProductTierName>;
+  price: () => Promise<Int>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ProductVariantPrice {
@@ -23497,123 +23263,6 @@ export interface AggregateCollectionSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface CollectionGroup {
-  id: ID_Output;
-  slug: String;
-  title?: String;
-  collectionCount?: Int;
-}
-
-export interface CollectionGroupPromise
-  extends Promise<CollectionGroup>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  title: () => Promise<String>;
-  collectionCount: () => Promise<Int>;
-  collections: <T = FragmentableArray<Collection>>(args?: {
-    where?: CollectionWhereInput;
-    orderBy?: CollectionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface CollectionGroupSubscription
-  extends Promise<AsyncIterator<CollectionGroup>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  slug: () => Promise<AsyncIterator<String>>;
-  title: () => Promise<AsyncIterator<String>>;
-  collectionCount: () => Promise<AsyncIterator<Int>>;
-  collections: <T = Promise<AsyncIterator<CollectionSubscription>>>(args?: {
-    where?: CollectionWhereInput;
-    orderBy?: CollectionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface CollectionGroupNullablePromise
-  extends Promise<CollectionGroup | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  title: () => Promise<String>;
-  collectionCount: () => Promise<Int>;
-  collections: <T = FragmentableArray<Collection>>(args?: {
-    where?: CollectionWhereInput;
-    orderBy?: CollectionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface CollectionGroupConnection {
-  pageInfo: PageInfo;
-  edges: CollectionGroupEdge[];
-}
-
-export interface CollectionGroupConnectionPromise
-  extends Promise<CollectionGroupConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<CollectionGroupEdge>>() => T;
-  aggregate: <T = AggregateCollectionGroupPromise>() => T;
-}
-
-export interface CollectionGroupConnectionSubscription
-  extends Promise<AsyncIterator<CollectionGroupConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<CollectionGroupEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateCollectionGroupSubscription>() => T;
-}
-
-export interface CollectionGroupEdge {
-  node: CollectionGroup;
-  cursor: String;
-}
-
-export interface CollectionGroupEdgePromise
-  extends Promise<CollectionGroupEdge>,
-    Fragmentable {
-  node: <T = CollectionGroupPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface CollectionGroupEdgeSubscription
-  extends Promise<AsyncIterator<CollectionGroupEdge>>,
-    Fragmentable {
-  node: <T = CollectionGroupSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateCollectionGroup {
-  count: Int;
-}
-
-export interface AggregateCollectionGroupPromise
-  extends Promise<AggregateCollectionGroup>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateCollectionGroupSubscription
-  extends Promise<AsyncIterator<AggregateCollectionGroup>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
 export interface ColorConnection {
   pageInfo: PageInfo;
   edges: ColorEdge[];
@@ -24116,121 +23765,6 @@ export interface AggregateFitPicReportPromise
 
 export interface AggregateFitPicReportSubscription
   extends Promise<AsyncIterator<AggregateFitPicReport>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface HomepageProductRail {
-  id: ID_Output;
-  slug: String;
-  name: String;
-}
-
-export interface HomepageProductRailPromise
-  extends Promise<HomepageProductRail>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  name: () => Promise<String>;
-  products: <T = FragmentableArray<Product>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface HomepageProductRailSubscription
-  extends Promise<AsyncIterator<HomepageProductRail>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  slug: () => Promise<AsyncIterator<String>>;
-  name: () => Promise<AsyncIterator<String>>;
-  products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface HomepageProductRailNullablePromise
-  extends Promise<HomepageProductRail | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  name: () => Promise<String>;
-  products: <T = FragmentableArray<Product>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface HomepageProductRailConnection {
-  pageInfo: PageInfo;
-  edges: HomepageProductRailEdge[];
-}
-
-export interface HomepageProductRailConnectionPromise
-  extends Promise<HomepageProductRailConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<HomepageProductRailEdge>>() => T;
-  aggregate: <T = AggregateHomepageProductRailPromise>() => T;
-}
-
-export interface HomepageProductRailConnectionSubscription
-  extends Promise<AsyncIterator<HomepageProductRailConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<HomepageProductRailEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateHomepageProductRailSubscription>() => T;
-}
-
-export interface HomepageProductRailEdge {
-  node: HomepageProductRail;
-  cursor: String;
-}
-
-export interface HomepageProductRailEdgePromise
-  extends Promise<HomepageProductRailEdge>,
-    Fragmentable {
-  node: <T = HomepageProductRailPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface HomepageProductRailEdgeSubscription
-  extends Promise<AsyncIterator<HomepageProductRailEdge>>,
-    Fragmentable {
-  node: <T = HomepageProductRailSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateHomepageProductRail {
-  count: Int;
-}
-
-export interface AggregateHomepageProductRailPromise
-  extends Promise<AggregateHomepageProductRail>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateHomepageProductRailSubscription
-  extends Promise<AsyncIterator<AggregateHomepageProductRail>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -25333,6 +24867,62 @@ export interface AggregateProductSeasonPromise
 
 export interface AggregateProductSeasonSubscription
   extends Promise<AsyncIterator<AggregateProductSeason>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ProductTierConnection {
+  pageInfo: PageInfo;
+  edges: ProductTierEdge[];
+}
+
+export interface ProductTierConnectionPromise
+  extends Promise<ProductTierConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ProductTierEdge>>() => T;
+  aggregate: <T = AggregateProductTierPromise>() => T;
+}
+
+export interface ProductTierConnectionSubscription
+  extends Promise<AsyncIterator<ProductTierConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ProductTierEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateProductTierSubscription>() => T;
+}
+
+export interface ProductTierEdge {
+  node: ProductTier;
+  cursor: String;
+}
+
+export interface ProductTierEdgePromise
+  extends Promise<ProductTierEdge>,
+    Fragmentable {
+  node: <T = ProductTierPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ProductTierEdgeSubscription
+  extends Promise<AsyncIterator<ProductTierEdge>>,
+    Fragmentable {
+  node: <T = ProductTierSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateProductTier {
+  count: Int;
+}
+
+export interface AggregateProductTierPromise
+  extends Promise<AggregateProductTier>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateProductTierSubscription
+  extends Promise<AsyncIterator<AggregateProductTier>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -27674,56 +27264,6 @@ export interface CollectionPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface CollectionGroupSubscriptionPayload {
-  mutation: MutationType;
-  node: CollectionGroup;
-  updatedFields: String[];
-  previousValues: CollectionGroupPreviousValues;
-}
-
-export interface CollectionGroupSubscriptionPayloadPromise
-  extends Promise<CollectionGroupSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = CollectionGroupPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = CollectionGroupPreviousValuesPromise>() => T;
-}
-
-export interface CollectionGroupSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<CollectionGroupSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = CollectionGroupSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = CollectionGroupPreviousValuesSubscription>() => T;
-}
-
-export interface CollectionGroupPreviousValues {
-  id: ID_Output;
-  slug: String;
-  title?: String;
-  collectionCount?: Int;
-}
-
-export interface CollectionGroupPreviousValuesPromise
-  extends Promise<CollectionGroupPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  title: () => Promise<String>;
-  collectionCount: () => Promise<Int>;
-}
-
-export interface CollectionGroupPreviousValuesSubscription
-  extends Promise<AsyncIterator<CollectionGroupPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  slug: () => Promise<AsyncIterator<String>>;
-  title: () => Promise<AsyncIterator<String>>;
-  collectionCount: () => Promise<AsyncIterator<Int>>;
-}
-
 export interface ColorSubscriptionPayload {
   mutation: MutationType;
   node: Color;
@@ -28267,53 +27807,6 @@ export interface FitPicReportPreviousValuesSubscription
   status: () => Promise<AsyncIterator<FitPicReportStatus>>;
   reportedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface HomepageProductRailSubscriptionPayload {
-  mutation: MutationType;
-  node: HomepageProductRail;
-  updatedFields: String[];
-  previousValues: HomepageProductRailPreviousValues;
-}
-
-export interface HomepageProductRailSubscriptionPayloadPromise
-  extends Promise<HomepageProductRailSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = HomepageProductRailPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = HomepageProductRailPreviousValuesPromise>() => T;
-}
-
-export interface HomepageProductRailSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<HomepageProductRailSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = HomepageProductRailSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = HomepageProductRailPreviousValuesSubscription>() => T;
-}
-
-export interface HomepageProductRailPreviousValues {
-  id: ID_Output;
-  slug: String;
-  name: String;
-}
-
-export interface HomepageProductRailPreviousValuesPromise
-  extends Promise<HomepageProductRailPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  name: () => Promise<String>;
-}
-
-export interface HomepageProductRailPreviousValuesSubscription
-  extends Promise<AsyncIterator<HomepageProductRailPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  slug: () => Promise<AsyncIterator<String>>;
-  name: () => Promise<AsyncIterator<String>>;
 }
 
 export interface ImageSubscriptionPayload {
@@ -28963,21 +28456,21 @@ export interface ProductSubscriptionPayloadSubscription
 
 export interface ProductPreviousValues {
   id: ID_Output;
-  slug: String;
-  name: String;
-  productFit?: ProductFit;
-  type?: ProductType;
+  architecture?: ProductArchitecture;
   description?: String;
   externalURL?: String;
   buyNewEnabled: Boolean;
-  modelHeight?: Int;
-  retailPrice?: Int;
   innerMaterials: String[];
+  modelHeight?: Int;
+  name: String;
   outerMaterials: String[];
-  status?: ProductStatus;
-  architecture?: ProductArchitecture;
   photographyStatus?: PhotographyStatus;
+  productFit?: ProductFit;
   publishedAt?: DateTimeOutput;
+  retailPrice?: Int;
+  slug: String;
+  status?: ProductStatus;
+  type?: ProductType;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -28986,21 +28479,21 @@ export interface ProductPreviousValuesPromise
   extends Promise<ProductPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  name: () => Promise<String>;
-  productFit: () => Promise<ProductFit>;
-  type: () => Promise<ProductType>;
+  architecture: () => Promise<ProductArchitecture>;
   description: () => Promise<String>;
   externalURL: () => Promise<String>;
   buyNewEnabled: () => Promise<Boolean>;
-  modelHeight: () => Promise<Int>;
-  retailPrice: () => Promise<Int>;
   innerMaterials: () => Promise<String[]>;
+  modelHeight: () => Promise<Int>;
+  name: () => Promise<String>;
   outerMaterials: () => Promise<String[]>;
-  status: () => Promise<ProductStatus>;
-  architecture: () => Promise<ProductArchitecture>;
   photographyStatus: () => Promise<PhotographyStatus>;
+  productFit: () => Promise<ProductFit>;
   publishedAt: () => Promise<DateTimeOutput>;
+  retailPrice: () => Promise<Int>;
+  slug: () => Promise<String>;
+  status: () => Promise<ProductStatus>;
+  type: () => Promise<ProductType>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -29009,21 +28502,21 @@ export interface ProductPreviousValuesSubscription
   extends Promise<AsyncIterator<ProductPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  slug: () => Promise<AsyncIterator<String>>;
-  name: () => Promise<AsyncIterator<String>>;
-  productFit: () => Promise<AsyncIterator<ProductFit>>;
-  type: () => Promise<AsyncIterator<ProductType>>;
+  architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
   description: () => Promise<AsyncIterator<String>>;
   externalURL: () => Promise<AsyncIterator<String>>;
   buyNewEnabled: () => Promise<AsyncIterator<Boolean>>;
-  modelHeight: () => Promise<AsyncIterator<Int>>;
-  retailPrice: () => Promise<AsyncIterator<Int>>;
   innerMaterials: () => Promise<AsyncIterator<String[]>>;
+  modelHeight: () => Promise<AsyncIterator<Int>>;
+  name: () => Promise<AsyncIterator<String>>;
   outerMaterials: () => Promise<AsyncIterator<String[]>>;
-  status: () => Promise<AsyncIterator<ProductStatus>>;
-  architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
   photographyStatus: () => Promise<AsyncIterator<PhotographyStatus>>;
+  productFit: () => Promise<AsyncIterator<ProductFit>>;
   publishedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  retailPrice: () => Promise<AsyncIterator<Int>>;
+  slug: () => Promise<AsyncIterator<String>>;
+  status: () => Promise<AsyncIterator<ProductStatus>>;
+  type: () => Promise<AsyncIterator<ProductType>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -29334,6 +28827,59 @@ export interface ProductSeasonPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   wearableSeasons: () => Promise<AsyncIterator<SeasonString[]>>;
+}
+
+export interface ProductTierSubscriptionPayload {
+  mutation: MutationType;
+  node: ProductTier;
+  updatedFields: String[];
+  previousValues: ProductTierPreviousValues;
+}
+
+export interface ProductTierSubscriptionPayloadPromise
+  extends Promise<ProductTierSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ProductTierPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ProductTierPreviousValuesPromise>() => T;
+}
+
+export interface ProductTierSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ProductTierSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ProductTierSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ProductTierPreviousValuesSubscription>() => T;
+}
+
+export interface ProductTierPreviousValues {
+  id: ID_Output;
+  tier: ProductTierName;
+  price: Int;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface ProductTierPreviousValuesPromise
+  extends Promise<ProductTierPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  tier: () => Promise<ProductTierName>;
+  price: () => Promise<Int>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ProductTierPreviousValuesSubscription
+  extends Promise<AsyncIterator<ProductTierPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  tier: () => Promise<AsyncIterator<ProductTierName>>;
+  price: () => Promise<AsyncIterator<Int>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface ProductVariantSubscriptionPayload {
@@ -30891,6 +30437,10 @@ export type Long = string;
 
 export const models: Model[] = [
   {
+    name: "ProductTierName",
+    embedded: false
+  },
+  {
     name: "BrandTier",
     embedded: false
   },
@@ -31023,14 +30573,6 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "CollectionGroup",
-    embedded: false
-  },
-  {
-    name: "HomepageProductRail",
-    embedded: false
-  },
-  {
     name: "Image",
     embedded: false
   },
@@ -31044,6 +30586,10 @@ export const models: Model[] = [
   },
   {
     name: "Product",
+    embedded: false
+  },
+  {
+    name: "ProductTier",
     embedded: false
   },
   {
