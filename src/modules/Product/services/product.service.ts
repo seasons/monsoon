@@ -14,6 +14,8 @@ import {
   Product,
   ProductFunction,
   ProductStatus,
+  ProductTier,
+  ProductTierName,
   ProductType,
   ProductVariant,
   ProductWhereUniqueInput,
@@ -295,6 +297,13 @@ export class ProductService {
       create: data,
       update: data,
       where: { slug },
+    })
+
+    // Add the product tier
+    const tier = await this.getProductTier(product)
+    await this.prisma.client.updateProduct({
+      where: { id: product.id },
+      data: { tier: { connect: { id: tier.id } } },
     })
 
     const sequenceNumbers = await this.physicalProductUtils.groupedSequenceNumbers(
@@ -838,6 +847,20 @@ export class ProductService {
     })
 
     return prodVar
+  }
+
+  async getProductTier(prod: Product): Promise<ProductTier> {
+    const allProductCategories = await this.productUtils.getAllCategories(prod)
+    const luxThreshold = allProductCategories
+      .map(a => a.name)
+      .includes("Outerwear")
+      ? 400
+      : 300
+    const tierName = prod.retailPrice > luxThreshold ? "Luxury" : "Standard"
+    const tiers = await this.prisma.client.productTiers({
+      where: { tier: tierName },
+    })
+    return head(tiers)
   }
 
   private async upsertFunctions(
