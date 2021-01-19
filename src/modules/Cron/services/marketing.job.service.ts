@@ -62,7 +62,6 @@ export class MarketingScheduledJobs {
     )
 
     for (const cust of customers) {
-      console.log(cust)
       const now = moment()
 
       const oneDayPassed = moment(cust.authorizedAt)
