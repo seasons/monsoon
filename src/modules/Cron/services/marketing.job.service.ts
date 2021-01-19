@@ -38,8 +38,8 @@ export class MarketingScheduledJobs {
       {
         where: {
           AND: [
-            // october 5 is 2020 is when we started manually enforcing the auth window
-            { user: { createdAt_gte: new Date(2020, 9, 5) } },
+            // Prior to Jan 18 2021 we had some cases we need to handle manually
+            { user: { createdAt_gte: new Date(2021, 0, 19) } },
             { status: "Authorized" },
           ],
         },
@@ -62,6 +62,7 @@ export class MarketingScheduledJobs {
     )
 
     for (const cust of customers) {
+      console.log(cust)
       const now = moment()
 
       const oneDayPassed = moment(cust.authorizedAt)
@@ -118,7 +119,7 @@ export class MarketingScheduledJobs {
           data: { status: "Waitlisted" },
         })
         windowsClosed.push(cust.user.email)
-        break
+        continue
       }
 
       // Send day 6 email as needed
@@ -136,19 +137,19 @@ export class MarketingScheduledJobs {
           smsId: "TwentyFourHourLeftAuthorizationFollowup",
         })
         daySixFollowupsSent.push(cust.user.email)
-        break
+        continue
       }
 
       // Send day 5 email if needed
       if (fourDaysPassed && !dayFiveFollowupSent) {
         // TODO: Send email
-        break
+        continue
       }
 
       // Send day 4 email if needed
       if (threeDaysPassed && !dayFourFollowupSent) {
         // TODO: Send email
-        break
+        continue
       }
 
       // Send day 3 email if needed
@@ -161,13 +162,13 @@ export class MarketingScheduledJobs {
           availableStyles
         )
         dayThreeFollowupsSent.push(cust.user.email)
-        break
+        continue
       }
 
       // Send day 2 email if needed
       if (oneDayPassed && !dayTwoFollowupSent) {
         // TODO: Send email
-        break
+        continue
       }
     }
     this.logger.log("Auth window followups job finished")
