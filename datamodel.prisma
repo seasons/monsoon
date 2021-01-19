@@ -314,21 +314,6 @@ enum CollectionPlacement {
   Homepage
 }
 
-type CollectionGroup {
-  id: ID! @id
-  slug: String! @unique
-  title: String
-  collectionCount: Int
-  collections: [Collection!]!
-}
-
-type HomepageProductRail {
-  id: ID! @id
-  slug: String! @unique
-  name: String!
-  products: [Product!]!
-}
-
 type Image {
   id: ID! @id
   caption: String

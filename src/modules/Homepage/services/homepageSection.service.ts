@@ -195,20 +195,7 @@ export class HomepageSectionService {
         })
 
       default:
-        const rails = await this.prisma.binding.query.homepageProductRails(
-          {
-            where: {
-              name: sectionTitle,
-            },
-          },
-          `{
-            products ${ProductFragment}
-          }`
-        )
-        return Array.prototype.concat.apply(
-          [],
-          rails.map(rail => rail.products)
-        )
+        return null
     }
   }
 }

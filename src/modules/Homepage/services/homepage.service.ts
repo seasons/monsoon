@@ -24,13 +24,6 @@ export class HomepageService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getHomepageSections(customer) {
-    const productRails = await this.prisma.binding.query.homepageProductRails(
-      {},
-      `{
-        name
-      }`
-    )
-
     const sections: Section[] = [
       {
         type: "CollectionGroups",
@@ -66,14 +59,6 @@ export class HomepageService {
         title: SectionTitle.RecentlyViewed,
       })
     }
-
-    productRails.forEach(rail => {
-      sections.push({
-        type: "HomepageProductRails",
-        __typename: "HomepageSection",
-        title: rail.name,
-      })
-    })
 
     return sections
   }
