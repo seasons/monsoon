@@ -8,7 +8,7 @@ export class HomepageFieldsResolver {
   constructor(private readonly homepageService: HomepageService) {}
 
   @ResolveField()
-  async id(@Customer() customer) {
+  async id() {
     return "homePageID"
   }
 
