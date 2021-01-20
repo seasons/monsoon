@@ -24,7 +24,6 @@ export interface Exists {
   brand: (where?: BrandWhereInput) => Promise<boolean>;
   category: (where?: CategoryWhereInput) => Promise<boolean>;
   collection: (where?: CollectionWhereInput) => Promise<boolean>;
-  collectionGroup: (where?: CollectionGroupWhereInput) => Promise<boolean>;
   color: (where?: ColorWhereInput) => Promise<boolean>;
   customer: (where?: CustomerWhereInput) => Promise<boolean>;
   customerAdmissionsData: (
@@ -40,9 +39,6 @@ export interface Exists {
   ) => Promise<boolean>;
   fitPic: (where?: FitPicWhereInput) => Promise<boolean>;
   fitPicReport: (where?: FitPicReportWhereInput) => Promise<boolean>;
-  homepageProductRail: (
-    where?: HomepageProductRailWhereInput
-  ) => Promise<boolean>;
   image: (where?: ImageWhereInput) => Promise<boolean>;
   interestedUser: (where?: InterestedUserWhereInput) => Promise<boolean>;
   label: (where?: LabelWhereInput) => Promise<boolean>;
@@ -301,27 +297,6 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => CollectionConnectionPromise;
-  collectionGroup: (
-    where: CollectionGroupWhereUniqueInput
-  ) => CollectionGroupNullablePromise;
-  collectionGroups: (args?: {
-    where?: CollectionGroupWhereInput;
-    orderBy?: CollectionGroupOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => FragmentableArray<CollectionGroup>;
-  collectionGroupsConnection: (args?: {
-    where?: CollectionGroupWhereInput;
-    orderBy?: CollectionGroupOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => CollectionGroupConnectionPromise;
   color: (where: ColorWhereUniqueInput) => ColorNullablePromise;
   colors: (args?: {
     where?: ColorWhereInput;
@@ -505,27 +480,6 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => FitPicReportConnectionPromise;
-  homepageProductRail: (
-    where: HomepageProductRailWhereUniqueInput
-  ) => HomepageProductRailNullablePromise;
-  homepageProductRails: (args?: {
-    where?: HomepageProductRailWhereInput;
-    orderBy?: HomepageProductRailOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => FragmentableArray<HomepageProductRail>;
-  homepageProductRailsConnection: (args?: {
-    where?: HomepageProductRailWhereInput;
-    orderBy?: HomepageProductRailOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => HomepageProductRailConnectionPromise;
   image: (where: ImageWhereUniqueInput) => ImageNullablePromise;
   images: (args?: {
     where?: ImageWhereInput;
@@ -1589,28 +1543,6 @@ export interface Prisma {
   }) => CollectionPromise;
   deleteCollection: (where: CollectionWhereUniqueInput) => CollectionPromise;
   deleteManyCollections: (where?: CollectionWhereInput) => BatchPayloadPromise;
-  createCollectionGroup: (
-    data: CollectionGroupCreateInput
-  ) => CollectionGroupPromise;
-  updateCollectionGroup: (args: {
-    data: CollectionGroupUpdateInput;
-    where: CollectionGroupWhereUniqueInput;
-  }) => CollectionGroupPromise;
-  updateManyCollectionGroups: (args: {
-    data: CollectionGroupUpdateManyMutationInput;
-    where?: CollectionGroupWhereInput;
-  }) => BatchPayloadPromise;
-  upsertCollectionGroup: (args: {
-    where: CollectionGroupWhereUniqueInput;
-    create: CollectionGroupCreateInput;
-    update: CollectionGroupUpdateInput;
-  }) => CollectionGroupPromise;
-  deleteCollectionGroup: (
-    where: CollectionGroupWhereUniqueInput
-  ) => CollectionGroupPromise;
-  deleteManyCollectionGroups: (
-    where?: CollectionGroupWhereInput
-  ) => BatchPayloadPromise;
   createColor: (data: ColorCreateInput) => ColorPromise;
   updateColor: (args: {
     data: ColorUpdateInput;
@@ -1786,28 +1718,6 @@ export interface Prisma {
   ) => FitPicReportPromise;
   deleteManyFitPicReports: (
     where?: FitPicReportWhereInput
-  ) => BatchPayloadPromise;
-  createHomepageProductRail: (
-    data: HomepageProductRailCreateInput
-  ) => HomepageProductRailPromise;
-  updateHomepageProductRail: (args: {
-    data: HomepageProductRailUpdateInput;
-    where: HomepageProductRailWhereUniqueInput;
-  }) => HomepageProductRailPromise;
-  updateManyHomepageProductRails: (args: {
-    data: HomepageProductRailUpdateManyMutationInput;
-    where?: HomepageProductRailWhereInput;
-  }) => BatchPayloadPromise;
-  upsertHomepageProductRail: (args: {
-    where: HomepageProductRailWhereUniqueInput;
-    create: HomepageProductRailCreateInput;
-    update: HomepageProductRailUpdateInput;
-  }) => HomepageProductRailPromise;
-  deleteHomepageProductRail: (
-    where: HomepageProductRailWhereUniqueInput
-  ) => HomepageProductRailPromise;
-  deleteManyHomepageProductRails: (
-    where?: HomepageProductRailWhereInput
   ) => BatchPayloadPromise;
   createImage: (data: ImageCreateInput) => ImagePromise;
   updateImage: (args: {
@@ -2732,9 +2642,6 @@ export interface Subscription {
   collection: (
     where?: CollectionSubscriptionWhereInput
   ) => CollectionSubscriptionPayloadSubscription;
-  collectionGroup: (
-    where?: CollectionGroupSubscriptionWhereInput
-  ) => CollectionGroupSubscriptionPayloadSubscription;
   color: (
     where?: ColorSubscriptionWhereInput
   ) => ColorSubscriptionPayloadSubscription;
@@ -2762,9 +2669,6 @@ export interface Subscription {
   fitPicReport: (
     where?: FitPicReportSubscriptionWhereInput
   ) => FitPicReportSubscriptionPayloadSubscription;
-  homepageProductRail: (
-    where?: HomepageProductRailSubscriptionWhereInput
-  ) => HomepageProductRailSubscriptionPayloadSubscription;
   image: (
     where?: ImageSubscriptionWhereInput
   ) => ImageSubscriptionPayloadSubscription;
@@ -3608,6 +3512,8 @@ export type BrandOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type CollectionPlacement = "Homepage";
+
 export type CollectionOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -3623,16 +3529,6 @@ export type CollectionOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
-
-export type CollectionGroupOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "title_ASC"
-  | "title_DESC"
-  | "collectionCount_ASC"
-  | "collectionCount_DESC";
 
 export type ColorOrderByInput =
   | "id_ASC"
@@ -3729,14 +3625,6 @@ export type ExternalShopifyIntegrationOrderByInput =
   | "accessToken_DESC"
   | "nonce_ASC"
   | "nonce_DESC";
-
-export type HomepageProductRailOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC";
 
 export type InterestedUserOrderByInput =
   | "id_ASC"
@@ -8275,70 +8163,6 @@ export interface CollectionWhereInput {
   NOT?: Maybe<CollectionWhereInput[] | CollectionWhereInput>;
 }
 
-export type CollectionGroupWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  slug?: Maybe<String>;
-}>;
-
-export interface CollectionGroupWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  slug?: Maybe<String>;
-  slug_not?: Maybe<String>;
-  slug_in?: Maybe<String[] | String>;
-  slug_not_in?: Maybe<String[] | String>;
-  slug_lt?: Maybe<String>;
-  slug_lte?: Maybe<String>;
-  slug_gt?: Maybe<String>;
-  slug_gte?: Maybe<String>;
-  slug_contains?: Maybe<String>;
-  slug_not_contains?: Maybe<String>;
-  slug_starts_with?: Maybe<String>;
-  slug_not_starts_with?: Maybe<String>;
-  slug_ends_with?: Maybe<String>;
-  slug_not_ends_with?: Maybe<String>;
-  title?: Maybe<String>;
-  title_not?: Maybe<String>;
-  title_in?: Maybe<String[] | String>;
-  title_not_in?: Maybe<String[] | String>;
-  title_lt?: Maybe<String>;
-  title_lte?: Maybe<String>;
-  title_gt?: Maybe<String>;
-  title_gte?: Maybe<String>;
-  title_contains?: Maybe<String>;
-  title_not_contains?: Maybe<String>;
-  title_starts_with?: Maybe<String>;
-  title_not_starts_with?: Maybe<String>;
-  title_ends_with?: Maybe<String>;
-  title_not_ends_with?: Maybe<String>;
-  collectionCount?: Maybe<Int>;
-  collectionCount_not?: Maybe<Int>;
-  collectionCount_in?: Maybe<Int[] | Int>;
-  collectionCount_not_in?: Maybe<Int[] | Int>;
-  collectionCount_lt?: Maybe<Int>;
-  collectionCount_lte?: Maybe<Int>;
-  collectionCount_gt?: Maybe<Int>;
-  collectionCount_gte?: Maybe<Int>;
-  collections_every?: Maybe<CollectionWhereInput>;
-  collections_some?: Maybe<CollectionWhereInput>;
-  collections_none?: Maybe<CollectionWhereInput>;
-  AND?: Maybe<CollectionGroupWhereInput[] | CollectionGroupWhereInput>;
-  OR?: Maybe<CollectionGroupWhereInput[] | CollectionGroupWhereInput>;
-  NOT?: Maybe<CollectionGroupWhereInput[] | CollectionGroupWhereInput>;
-}
-
 export type ColorWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
@@ -8378,62 +8202,6 @@ export type FitPicWhereUniqueInput = AtLeastOne<{
 export type FitPicReportWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
-
-export type HomepageProductRailWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  slug?: Maybe<String>;
-}>;
-
-export interface HomepageProductRailWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  slug?: Maybe<String>;
-  slug_not?: Maybe<String>;
-  slug_in?: Maybe<String[] | String>;
-  slug_not_in?: Maybe<String[] | String>;
-  slug_lt?: Maybe<String>;
-  slug_lte?: Maybe<String>;
-  slug_gt?: Maybe<String>;
-  slug_gte?: Maybe<String>;
-  slug_contains?: Maybe<String>;
-  slug_not_contains?: Maybe<String>;
-  slug_starts_with?: Maybe<String>;
-  slug_not_starts_with?: Maybe<String>;
-  slug_ends_with?: Maybe<String>;
-  slug_not_ends_with?: Maybe<String>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  products_every?: Maybe<ProductWhereInput>;
-  products_some?: Maybe<ProductWhereInput>;
-  products_none?: Maybe<ProductWhereInput>;
-  AND?: Maybe<HomepageProductRailWhereInput[] | HomepageProductRailWhereInput>;
-  OR?: Maybe<HomepageProductRailWhereInput[] | HomepageProductRailWhereInput>;
-  NOT?: Maybe<HomepageProductRailWhereInput[] | HomepageProductRailWhereInput>;
-}
 
 export type ImageWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -15630,10 +15398,15 @@ export interface CollectionCreateInput {
   descriptions?: Maybe<CollectionCreatedescriptionsInput>;
   products?: Maybe<ProductCreateManyInput>;
   published?: Maybe<Boolean>;
+  placements?: Maybe<CollectionCreateplacementsInput>;
 }
 
 export interface CollectionCreatedescriptionsInput {
   set?: Maybe<String[] | String>;
+}
+
+export interface CollectionCreateplacementsInput {
+  set?: Maybe<CollectionPlacement[] | CollectionPlacement>;
 }
 
 export interface CollectionUpdateInput {
@@ -15644,10 +15417,15 @@ export interface CollectionUpdateInput {
   descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
   products?: Maybe<ProductUpdateManyInput>;
   published?: Maybe<Boolean>;
+  placements?: Maybe<CollectionUpdateplacementsInput>;
 }
 
 export interface CollectionUpdatedescriptionsInput {
   set?: Maybe<String[] | String>;
+}
+
+export interface CollectionUpdateplacementsInput {
+  set?: Maybe<CollectionPlacement[] | CollectionPlacement>;
 }
 
 export interface CollectionUpdateManyMutationInput {
@@ -15656,167 +15434,7 @@ export interface CollectionUpdateManyMutationInput {
   subTitle?: Maybe<String>;
   descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
   published?: Maybe<Boolean>;
-}
-
-export interface CollectionGroupCreateInput {
-  id?: Maybe<ID_Input>;
-  slug: String;
-  title?: Maybe<String>;
-  collectionCount?: Maybe<Int>;
-  collections?: Maybe<CollectionCreateManyInput>;
-}
-
-export interface CollectionCreateManyInput {
-  create?: Maybe<CollectionCreateInput[] | CollectionCreateInput>;
-  connect?: Maybe<CollectionWhereUniqueInput[] | CollectionWhereUniqueInput>;
-}
-
-export interface CollectionGroupUpdateInput {
-  slug?: Maybe<String>;
-  title?: Maybe<String>;
-  collectionCount?: Maybe<Int>;
-  collections?: Maybe<CollectionUpdateManyInput>;
-}
-
-export interface CollectionUpdateManyInput {
-  create?: Maybe<CollectionCreateInput[] | CollectionCreateInput>;
-  update?: Maybe<
-    | CollectionUpdateWithWhereUniqueNestedInput[]
-    | CollectionUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | CollectionUpsertWithWhereUniqueNestedInput[]
-    | CollectionUpsertWithWhereUniqueNestedInput
-  >;
-  delete?: Maybe<CollectionWhereUniqueInput[] | CollectionWhereUniqueInput>;
-  connect?: Maybe<CollectionWhereUniqueInput[] | CollectionWhereUniqueInput>;
-  set?: Maybe<CollectionWhereUniqueInput[] | CollectionWhereUniqueInput>;
-  disconnect?: Maybe<CollectionWhereUniqueInput[] | CollectionWhereUniqueInput>;
-  deleteMany?: Maybe<CollectionScalarWhereInput[] | CollectionScalarWhereInput>;
-  updateMany?: Maybe<
-    | CollectionUpdateManyWithWhereNestedInput[]
-    | CollectionUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface CollectionUpdateWithWhereUniqueNestedInput {
-  where: CollectionWhereUniqueInput;
-  data: CollectionUpdateDataInput;
-}
-
-export interface CollectionUpdateDataInput {
-  slug?: Maybe<String>;
-  images?: Maybe<ImageUpdateManyInput>;
-  title?: Maybe<String>;
-  subTitle?: Maybe<String>;
-  descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
-  products?: Maybe<ProductUpdateManyInput>;
-  published?: Maybe<Boolean>;
-}
-
-export interface CollectionUpsertWithWhereUniqueNestedInput {
-  where: CollectionWhereUniqueInput;
-  update: CollectionUpdateDataInput;
-  create: CollectionCreateInput;
-}
-
-export interface CollectionScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  slug?: Maybe<String>;
-  slug_not?: Maybe<String>;
-  slug_in?: Maybe<String[] | String>;
-  slug_not_in?: Maybe<String[] | String>;
-  slug_lt?: Maybe<String>;
-  slug_lte?: Maybe<String>;
-  slug_gt?: Maybe<String>;
-  slug_gte?: Maybe<String>;
-  slug_contains?: Maybe<String>;
-  slug_not_contains?: Maybe<String>;
-  slug_starts_with?: Maybe<String>;
-  slug_not_starts_with?: Maybe<String>;
-  slug_ends_with?: Maybe<String>;
-  slug_not_ends_with?: Maybe<String>;
-  title?: Maybe<String>;
-  title_not?: Maybe<String>;
-  title_in?: Maybe<String[] | String>;
-  title_not_in?: Maybe<String[] | String>;
-  title_lt?: Maybe<String>;
-  title_lte?: Maybe<String>;
-  title_gt?: Maybe<String>;
-  title_gte?: Maybe<String>;
-  title_contains?: Maybe<String>;
-  title_not_contains?: Maybe<String>;
-  title_starts_with?: Maybe<String>;
-  title_not_starts_with?: Maybe<String>;
-  title_ends_with?: Maybe<String>;
-  title_not_ends_with?: Maybe<String>;
-  subTitle?: Maybe<String>;
-  subTitle_not?: Maybe<String>;
-  subTitle_in?: Maybe<String[] | String>;
-  subTitle_not_in?: Maybe<String[] | String>;
-  subTitle_lt?: Maybe<String>;
-  subTitle_lte?: Maybe<String>;
-  subTitle_gt?: Maybe<String>;
-  subTitle_gte?: Maybe<String>;
-  subTitle_contains?: Maybe<String>;
-  subTitle_not_contains?: Maybe<String>;
-  subTitle_starts_with?: Maybe<String>;
-  subTitle_not_starts_with?: Maybe<String>;
-  subTitle_ends_with?: Maybe<String>;
-  subTitle_not_ends_with?: Maybe<String>;
-  published?: Maybe<Boolean>;
-  published_not?: Maybe<Boolean>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<CollectionScalarWhereInput[] | CollectionScalarWhereInput>;
-  OR?: Maybe<CollectionScalarWhereInput[] | CollectionScalarWhereInput>;
-  NOT?: Maybe<CollectionScalarWhereInput[] | CollectionScalarWhereInput>;
-}
-
-export interface CollectionUpdateManyWithWhereNestedInput {
-  where: CollectionScalarWhereInput;
-  data: CollectionUpdateManyDataInput;
-}
-
-export interface CollectionUpdateManyDataInput {
-  slug?: Maybe<String>;
-  title?: Maybe<String>;
-  subTitle?: Maybe<String>;
-  descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
-  published?: Maybe<Boolean>;
-}
-
-export interface CollectionGroupUpdateManyMutationInput {
-  slug?: Maybe<String>;
-  title?: Maybe<String>;
-  collectionCount?: Maybe<Int>;
+  placements?: Maybe<CollectionUpdateplacementsInput>;
 }
 
 export interface ColorUpdateInput {
@@ -16297,24 +15915,6 @@ export interface FitPicUpsertWithoutReportsInput {
 
 export interface FitPicReportUpdateManyMutationInput {
   status?: Maybe<FitPicReportStatus>;
-}
-
-export interface HomepageProductRailCreateInput {
-  id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
-  products?: Maybe<ProductCreateManyInput>;
-}
-
-export interface HomepageProductRailUpdateInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-  products?: Maybe<ProductUpdateManyInput>;
-}
-
-export interface HomepageProductRailUpdateManyMutationInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
 }
 
 export interface ImageUpdateInput {
@@ -18547,26 +18147,6 @@ export interface CollectionSubscriptionWhereInput {
   >;
 }
 
-export interface CollectionGroupSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<CollectionGroupWhereInput>;
-  AND?: Maybe<
-    | CollectionGroupSubscriptionWhereInput[]
-    | CollectionGroupSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    | CollectionGroupSubscriptionWhereInput[]
-    | CollectionGroupSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    | CollectionGroupSubscriptionWhereInput[]
-    | CollectionGroupSubscriptionWhereInput
-  >;
-}
-
 export interface ColorSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -18715,26 +18295,6 @@ export interface FitPicReportSubscriptionWhereInput {
   >;
   NOT?: Maybe<
     FitPicReportSubscriptionWhereInput[] | FitPicReportSubscriptionWhereInput
-  >;
-}
-
-export interface HomepageProductRailSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<HomepageProductRailWhereInput>;
-  AND?: Maybe<
-    | HomepageProductRailSubscriptionWhereInput[]
-    | HomepageProductRailSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    | HomepageProductRailSubscriptionWhereInput[]
-    | HomepageProductRailSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    | HomepageProductRailSubscriptionWhereInput[]
-    | HomepageProductRailSubscriptionWhereInput
   >;
 }
 
@@ -23548,6 +23108,7 @@ export interface Collection {
   subTitle?: String;
   descriptions: String[];
   published: Boolean;
+  placements: CollectionPlacement[];
   createdAt: DateTimeOutput;
   updatedAt?: DateTimeOutput;
 }
@@ -23577,6 +23138,7 @@ export interface CollectionPromise extends Promise<Collection>, Fragmentable {
     last?: Int;
   }) => T;
   published: () => Promise<Boolean>;
+  placements: () => Promise<CollectionPlacement[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -23608,6 +23170,7 @@ export interface CollectionSubscription
     last?: Int;
   }) => T;
   published: () => Promise<AsyncIterator<Boolean>>;
+  placements: () => Promise<AsyncIterator<CollectionPlacement[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -23639,6 +23202,7 @@ export interface CollectionNullablePromise
     last?: Int;
   }) => T;
   published: () => Promise<Boolean>;
+  placements: () => Promise<CollectionPlacement[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -23695,123 +23259,6 @@ export interface AggregateCollectionPromise
 
 export interface AggregateCollectionSubscription
   extends Promise<AsyncIterator<AggregateCollection>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface CollectionGroup {
-  id: ID_Output;
-  slug: String;
-  title?: String;
-  collectionCount?: Int;
-}
-
-export interface CollectionGroupPromise
-  extends Promise<CollectionGroup>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  title: () => Promise<String>;
-  collectionCount: () => Promise<Int>;
-  collections: <T = FragmentableArray<Collection>>(args?: {
-    where?: CollectionWhereInput;
-    orderBy?: CollectionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface CollectionGroupSubscription
-  extends Promise<AsyncIterator<CollectionGroup>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  slug: () => Promise<AsyncIterator<String>>;
-  title: () => Promise<AsyncIterator<String>>;
-  collectionCount: () => Promise<AsyncIterator<Int>>;
-  collections: <T = Promise<AsyncIterator<CollectionSubscription>>>(args?: {
-    where?: CollectionWhereInput;
-    orderBy?: CollectionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface CollectionGroupNullablePromise
-  extends Promise<CollectionGroup | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  title: () => Promise<String>;
-  collectionCount: () => Promise<Int>;
-  collections: <T = FragmentableArray<Collection>>(args?: {
-    where?: CollectionWhereInput;
-    orderBy?: CollectionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface CollectionGroupConnection {
-  pageInfo: PageInfo;
-  edges: CollectionGroupEdge[];
-}
-
-export interface CollectionGroupConnectionPromise
-  extends Promise<CollectionGroupConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<CollectionGroupEdge>>() => T;
-  aggregate: <T = AggregateCollectionGroupPromise>() => T;
-}
-
-export interface CollectionGroupConnectionSubscription
-  extends Promise<AsyncIterator<CollectionGroupConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<CollectionGroupEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateCollectionGroupSubscription>() => T;
-}
-
-export interface CollectionGroupEdge {
-  node: CollectionGroup;
-  cursor: String;
-}
-
-export interface CollectionGroupEdgePromise
-  extends Promise<CollectionGroupEdge>,
-    Fragmentable {
-  node: <T = CollectionGroupPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface CollectionGroupEdgeSubscription
-  extends Promise<AsyncIterator<CollectionGroupEdge>>,
-    Fragmentable {
-  node: <T = CollectionGroupSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateCollectionGroup {
-  count: Int;
-}
-
-export interface AggregateCollectionGroupPromise
-  extends Promise<AggregateCollectionGroup>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateCollectionGroupSubscription
-  extends Promise<AsyncIterator<AggregateCollectionGroup>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -24318,121 +23765,6 @@ export interface AggregateFitPicReportPromise
 
 export interface AggregateFitPicReportSubscription
   extends Promise<AsyncIterator<AggregateFitPicReport>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface HomepageProductRail {
-  id: ID_Output;
-  slug: String;
-  name: String;
-}
-
-export interface HomepageProductRailPromise
-  extends Promise<HomepageProductRail>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  name: () => Promise<String>;
-  products: <T = FragmentableArray<Product>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface HomepageProductRailSubscription
-  extends Promise<AsyncIterator<HomepageProductRail>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  slug: () => Promise<AsyncIterator<String>>;
-  name: () => Promise<AsyncIterator<String>>;
-  products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface HomepageProductRailNullablePromise
-  extends Promise<HomepageProductRail | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  name: () => Promise<String>;
-  products: <T = FragmentableArray<Product>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface HomepageProductRailConnection {
-  pageInfo: PageInfo;
-  edges: HomepageProductRailEdge[];
-}
-
-export interface HomepageProductRailConnectionPromise
-  extends Promise<HomepageProductRailConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<HomepageProductRailEdge>>() => T;
-  aggregate: <T = AggregateHomepageProductRailPromise>() => T;
-}
-
-export interface HomepageProductRailConnectionSubscription
-  extends Promise<AsyncIterator<HomepageProductRailConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<HomepageProductRailEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateHomepageProductRailSubscription>() => T;
-}
-
-export interface HomepageProductRailEdge {
-  node: HomepageProductRail;
-  cursor: String;
-}
-
-export interface HomepageProductRailEdgePromise
-  extends Promise<HomepageProductRailEdge>,
-    Fragmentable {
-  node: <T = HomepageProductRailPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface HomepageProductRailEdgeSubscription
-  extends Promise<AsyncIterator<HomepageProductRailEdge>>,
-    Fragmentable {
-  node: <T = HomepageProductRailSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateHomepageProductRail {
-  count: Int;
-}
-
-export interface AggregateHomepageProductRailPromise
-  extends Promise<AggregateHomepageProductRail>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateHomepageProductRailSubscription
-  extends Promise<AsyncIterator<AggregateHomepageProductRail>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -27899,6 +27231,7 @@ export interface CollectionPreviousValues {
   subTitle?: String;
   descriptions: String[];
   published: Boolean;
+  placements: CollectionPlacement[];
   createdAt: DateTimeOutput;
   updatedAt?: DateTimeOutput;
 }
@@ -27912,6 +27245,7 @@ export interface CollectionPreviousValuesPromise
   subTitle: () => Promise<String>;
   descriptions: () => Promise<String[]>;
   published: () => Promise<Boolean>;
+  placements: () => Promise<CollectionPlacement[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -27925,58 +27259,9 @@ export interface CollectionPreviousValuesSubscription
   subTitle: () => Promise<AsyncIterator<String>>;
   descriptions: () => Promise<AsyncIterator<String[]>>;
   published: () => Promise<AsyncIterator<Boolean>>;
+  placements: () => Promise<AsyncIterator<CollectionPlacement[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface CollectionGroupSubscriptionPayload {
-  mutation: MutationType;
-  node: CollectionGroup;
-  updatedFields: String[];
-  previousValues: CollectionGroupPreviousValues;
-}
-
-export interface CollectionGroupSubscriptionPayloadPromise
-  extends Promise<CollectionGroupSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = CollectionGroupPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = CollectionGroupPreviousValuesPromise>() => T;
-}
-
-export interface CollectionGroupSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<CollectionGroupSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = CollectionGroupSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = CollectionGroupPreviousValuesSubscription>() => T;
-}
-
-export interface CollectionGroupPreviousValues {
-  id: ID_Output;
-  slug: String;
-  title?: String;
-  collectionCount?: Int;
-}
-
-export interface CollectionGroupPreviousValuesPromise
-  extends Promise<CollectionGroupPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  title: () => Promise<String>;
-  collectionCount: () => Promise<Int>;
-}
-
-export interface CollectionGroupPreviousValuesSubscription
-  extends Promise<AsyncIterator<CollectionGroupPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  slug: () => Promise<AsyncIterator<String>>;
-  title: () => Promise<AsyncIterator<String>>;
-  collectionCount: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface ColorSubscriptionPayload {
@@ -28522,53 +27807,6 @@ export interface FitPicReportPreviousValuesSubscription
   status: () => Promise<AsyncIterator<FitPicReportStatus>>;
   reportedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface HomepageProductRailSubscriptionPayload {
-  mutation: MutationType;
-  node: HomepageProductRail;
-  updatedFields: String[];
-  previousValues: HomepageProductRailPreviousValues;
-}
-
-export interface HomepageProductRailSubscriptionPayloadPromise
-  extends Promise<HomepageProductRailSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = HomepageProductRailPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = HomepageProductRailPreviousValuesPromise>() => T;
-}
-
-export interface HomepageProductRailSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<HomepageProductRailSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = HomepageProductRailSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = HomepageProductRailPreviousValuesSubscription>() => T;
-}
-
-export interface HomepageProductRailPreviousValues {
-  id: ID_Output;
-  slug: String;
-  name: String;
-}
-
-export interface HomepageProductRailPreviousValuesPromise
-  extends Promise<HomepageProductRailPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  slug: () => Promise<String>;
-  name: () => Promise<String>;
-}
-
-export interface HomepageProductRailPreviousValuesSubscription
-  extends Promise<AsyncIterator<HomepageProductRailPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  slug: () => Promise<AsyncIterator<String>>;
-  name: () => Promise<AsyncIterator<String>>;
 }
 
 export interface ImageSubscriptionPayload {
@@ -31331,11 +30569,7 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "CollectionGroup",
-    embedded: false
-  },
-  {
-    name: "HomepageProductRail",
+    name: "CollectionPlacement",
     embedded: false
   },
   {

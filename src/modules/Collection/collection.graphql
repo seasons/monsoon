@@ -12,6 +12,7 @@ input CollectionUpsertInput {
   descriptions: CollectionCreatedescriptionsInput
   productIDs: [String]
   published: Boolean
+  placements: [CollectionPlacement]
 }
 
 type Query {
@@ -24,6 +25,7 @@ type Query {
     before: String
     first: Int
     last: Int
+    placements: [CollectionPlacement!]
   ): [Collection]!
   collectionsConnection(
     where: CollectionWhereInput

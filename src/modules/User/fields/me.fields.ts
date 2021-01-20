@@ -8,6 +8,11 @@ export class MeFieldsResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @ResolveField()
+  async id(@User() user) {
+    return user.id
+  }
+
+  @ResolveField()
   async user(@User() user) {
     return user
   }

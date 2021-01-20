@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Fri Jan 15 2021 17:39:22 GMT-0600 (Central Standard Time)
+# timestamp: Tue Jan 19 2021 17:08:43 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -625,10 +625,6 @@ type AggregateCollection {
   count: Int!
 }
 
-type AggregateCollectionGroup {
-  count: Int!
-}
-
 type AggregateColor {
   count: Int!
 }
@@ -662,10 +658,6 @@ type AggregateFitPic {
 }
 
 type AggregateFitPicReport {
-  count: Int!
-}
-
-type AggregateHomepageProductRail {
   count: Int!
 }
 
@@ -4950,6 +4942,7 @@ type Collection implements Node {
     last: Int
   ): [Product!]
   published: Boolean!
+  placements: [CollectionPlacement!]!
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -4981,13 +4974,13 @@ input CollectionCreateInput {
   subTitle: String
   published: Boolean
   descriptions: CollectionCreatedescriptionsInput
+  placements: CollectionCreateplacementsInput
   images: ImageCreateManyInput
   products: ProductCreateManyInput
 }
 
-input CollectionCreateManyInput {
-  create: [CollectionCreateInput!]
-  connect: [CollectionWhereUniqueInput!]
+input CollectionCreateplacementsInput {
+  set: [CollectionPlacement!]
 }
 
 """
@@ -5003,396 +4996,6 @@ type CollectionEdge {
   A cursor for use in pagination.
   """
   cursor: String!
-}
-
-type CollectionGroup implements Node {
-  id: ID!
-  slug: String!
-  title: String
-  collectionCount: Int
-  collections(
-    where: CollectionWhereInput
-    orderBy: CollectionOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Collection!]
-}
-
-"""
-A connection to a list of items.
-"""
-type CollectionGroupConnection {
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  A list of edges.
-  """
-  edges: [CollectionGroupEdge]!
-  aggregate: AggregateCollectionGroup!
-}
-
-input CollectionGroupCreateInput {
-  id: ID
-  slug: String!
-  title: String
-  collectionCount: Int
-  collections: CollectionCreateManyInput
-}
-
-"""
-An edge in a connection.
-"""
-type CollectionGroupEdge {
-  """
-  The item at the end of the edge.
-  """
-  node: CollectionGroup!
-
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-}
-
-enum CollectionGroupOrderByInput {
-  id_ASC
-  id_DESC
-  slug_ASC
-  slug_DESC
-  title_ASC
-  title_DESC
-  collectionCount_ASC
-  collectionCount_DESC
-}
-
-type CollectionGroupPreviousValues {
-  id: ID!
-  slug: String!
-  title: String
-  collectionCount: Int
-}
-
-type CollectionGroupSubscriptionPayload {
-  mutation: MutationType!
-  node: CollectionGroup
-  updatedFields: [String!]
-  previousValues: CollectionGroupPreviousValues
-}
-
-input CollectionGroupSubscriptionWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [CollectionGroupSubscriptionWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [CollectionGroupSubscriptionWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [CollectionGroupSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: CollectionGroupWhereInput
-}
-
-input CollectionGroupUpdateInput {
-  slug: String
-  title: String
-  collectionCount: Int
-  collections: CollectionUpdateManyInput
-}
-
-input CollectionGroupUpdateManyMutationInput {
-  slug: String
-  title: String
-  collectionCount: Int
-}
-
-input CollectionGroupWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [CollectionGroupWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [CollectionGroupWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [CollectionGroupWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  slug: String
-
-  """
-  All values that are not equal to given value.
-  """
-  slug_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  slug_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  slug_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  slug_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  slug_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  slug_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  slug_gte: String
-
-  """
-  All values containing the given string.
-  """
-  slug_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  slug_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  slug_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  slug_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  slug_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  slug_not_ends_with: String
-  title: String
-
-  """
-  All values that are not equal to given value.
-  """
-  title_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  title_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  title_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  title_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  title_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  title_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  title_gte: String
-
-  """
-  All values containing the given string.
-  """
-  title_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  title_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  title_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  title_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  title_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  title_not_ends_with: String
-  collectionCount: Int
-
-  """
-  All values that are not equal to given value.
-  """
-  collectionCount_not: Int
-
-  """
-  All values that are contained in given list.
-  """
-  collectionCount_in: [Int!]
-
-  """
-  All values that are not contained in given list.
-  """
-  collectionCount_not_in: [Int!]
-
-  """
-  All values less than the given value.
-  """
-  collectionCount_lt: Int
-
-  """
-  All values less than or equal the given value.
-  """
-  collectionCount_lte: Int
-
-  """
-  All values greater than the given value.
-  """
-  collectionCount_gt: Int
-
-  """
-  All values greater than or equal the given value.
-  """
-  collectionCount_gte: Int
-  collections_every: CollectionWhereInput
-  collections_some: CollectionWhereInput
-  collections_none: CollectionWhereInput
-}
-
-input CollectionGroupWhereUniqueInput {
-  id: ID
-  slug: String
 }
 
 enum CollectionOrderByInput {
@@ -5412,6 +5015,10 @@ enum CollectionOrderByInput {
   updatedAt_DESC
 }
 
+enum CollectionPlacement {
+  Homepage
+}
+
 type CollectionPreviousValues {
   id: ID!
   slug: String!
@@ -5419,367 +5026,9 @@ type CollectionPreviousValues {
   subTitle: String
   descriptions: [String!]!
   published: Boolean!
+  placements: [CollectionPlacement!]!
   createdAt: DateTime!
   updatedAt: DateTime
-}
-
-input CollectionScalarWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [CollectionScalarWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [CollectionScalarWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [CollectionScalarWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  slug: String
-
-  """
-  All values that are not equal to given value.
-  """
-  slug_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  slug_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  slug_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  slug_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  slug_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  slug_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  slug_gte: String
-
-  """
-  All values containing the given string.
-  """
-  slug_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  slug_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  slug_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  slug_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  slug_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  slug_not_ends_with: String
-  title: String
-
-  """
-  All values that are not equal to given value.
-  """
-  title_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  title_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  title_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  title_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  title_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  title_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  title_gte: String
-
-  """
-  All values containing the given string.
-  """
-  title_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  title_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  title_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  title_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  title_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  title_not_ends_with: String
-  subTitle: String
-
-  """
-  All values that are not equal to given value.
-  """
-  subTitle_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  subTitle_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  subTitle_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  subTitle_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  subTitle_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  subTitle_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  subTitle_gte: String
-
-  """
-  All values containing the given string.
-  """
-  subTitle_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  subTitle_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  subTitle_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  subTitle_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  subTitle_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  subTitle_not_ends_with: String
-  published: Boolean
-
-  """
-  All values that are not equal to given value.
-  """
-  published_not: Boolean
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  updatedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  updatedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  updatedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  updatedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  updatedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  updatedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  updatedAt_gte: DateTime
 }
 
 type CollectionSubscriptionPayload {
@@ -5827,16 +5076,6 @@ input CollectionSubscriptionWhereInput {
   node: CollectionWhereInput
 }
 
-input CollectionUpdateDataInput {
-  slug: String
-  title: String
-  subTitle: String
-  published: Boolean
-  descriptions: CollectionUpdatedescriptionsInput
-  images: ImageUpdateManyInput
-  products: ProductUpdateManyInput
-}
-
 input CollectionUpdatedescriptionsInput {
   set: [String!]
 }
@@ -5847,28 +5086,9 @@ input CollectionUpdateInput {
   subTitle: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
+  placements: CollectionUpdateplacementsInput
   images: ImageUpdateManyInput
   products: ProductUpdateManyInput
-}
-
-input CollectionUpdateManyDataInput {
-  slug: String
-  title: String
-  subTitle: String
-  published: Boolean
-  descriptions: CollectionUpdatedescriptionsInput
-}
-
-input CollectionUpdateManyInput {
-  create: [CollectionCreateInput!]
-  connect: [CollectionWhereUniqueInput!]
-  set: [CollectionWhereUniqueInput!]
-  disconnect: [CollectionWhereUniqueInput!]
-  delete: [CollectionWhereUniqueInput!]
-  update: [CollectionUpdateWithWhereUniqueNestedInput!]
-  updateMany: [CollectionUpdateManyWithWhereNestedInput!]
-  deleteMany: [CollectionScalarWhereInput!]
-  upsert: [CollectionUpsertWithWhereUniqueNestedInput!]
 }
 
 input CollectionUpdateManyMutationInput {
@@ -5877,22 +5097,11 @@ input CollectionUpdateManyMutationInput {
   subTitle: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
+  placements: CollectionUpdateplacementsInput
 }
 
-input CollectionUpdateManyWithWhereNestedInput {
-  where: CollectionScalarWhereInput!
-  data: CollectionUpdateManyDataInput!
-}
-
-input CollectionUpdateWithWhereUniqueNestedInput {
-  where: CollectionWhereUniqueInput!
-  data: CollectionUpdateDataInput!
-}
-
-input CollectionUpsertWithWhereUniqueNestedInput {
-  where: CollectionWhereUniqueInput!
-  update: CollectionUpdateDataInput!
-  create: CollectionCreateInput!
+input CollectionUpdateplacementsInput {
+  set: [CollectionPlacement!]
 }
 
 input CollectionWhereInput {
@@ -12764,353 +11973,6 @@ input FitPicWhereUniqueInput {
   id: ID
 }
 
-type HomepageProductRail implements Node {
-  id: ID!
-  slug: String!
-  name: String!
-  products(
-    where: ProductWhereInput
-    orderBy: ProductOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Product!]
-}
-
-"""
-A connection to a list of items.
-"""
-type HomepageProductRailConnection {
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  A list of edges.
-  """
-  edges: [HomepageProductRailEdge]!
-  aggregate: AggregateHomepageProductRail!
-}
-
-input HomepageProductRailCreateInput {
-  id: ID
-  slug: String!
-  name: String!
-  products: ProductCreateManyInput
-}
-
-"""
-An edge in a connection.
-"""
-type HomepageProductRailEdge {
-  """
-  The item at the end of the edge.
-  """
-  node: HomepageProductRail!
-
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-}
-
-enum HomepageProductRailOrderByInput {
-  id_ASC
-  id_DESC
-  slug_ASC
-  slug_DESC
-  name_ASC
-  name_DESC
-}
-
-type HomepageProductRailPreviousValues {
-  id: ID!
-  slug: String!
-  name: String!
-}
-
-type HomepageProductRailSubscriptionPayload {
-  mutation: MutationType!
-  node: HomepageProductRail
-  updatedFields: [String!]
-  previousValues: HomepageProductRailPreviousValues
-}
-
-input HomepageProductRailSubscriptionWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [HomepageProductRailSubscriptionWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [HomepageProductRailSubscriptionWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [HomepageProductRailSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: HomepageProductRailWhereInput
-}
-
-input HomepageProductRailUpdateInput {
-  slug: String
-  name: String
-  products: ProductUpdateManyInput
-}
-
-input HomepageProductRailUpdateManyMutationInput {
-  slug: String
-  name: String
-}
-
-input HomepageProductRailWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [HomepageProductRailWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [HomepageProductRailWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [HomepageProductRailWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  slug: String
-
-  """
-  All values that are not equal to given value.
-  """
-  slug_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  slug_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  slug_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  slug_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  slug_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  slug_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  slug_gte: String
-
-  """
-  All values containing the given string.
-  """
-  slug_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  slug_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  slug_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  slug_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  slug_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  slug_not_ends_with: String
-  name: String
-
-  """
-  All values that are not equal to given value.
-  """
-  name_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  name_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  name_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  name_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  name_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  name_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  name_gte: String
-
-  """
-  All values containing the given string.
-  """
-  name_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  name_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  name_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  name_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  name_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  name_not_ends_with: String
-  products_every: ProductWhereInput
-  products_some: ProductWhereInput
-  products_none: ProductWhereInput
-}
-
-input HomepageProductRailWhereUniqueInput {
-  id: ID
-  slug: String
-}
-
 type Image implements Node {
   id: ID!
   caption: String
@@ -16431,10 +15293,7 @@ scalar Long
 
 type Mutation {
   createBrand(data: BrandCreateInput!): Brand!
-  createCollectionGroup(data: CollectionGroupCreateInput!): CollectionGroup!
-  createHomepageProductRail(
-    data: HomepageProductRailCreateInput!
-  ): HomepageProductRail!
+  createCollection(data: CollectionCreateInput!): Collection!
   createTag(data: TagCreateInput!): Tag!
   createProductMaterialCategory(
     data: ProductMaterialCategoryCreateInput!
@@ -16487,7 +15346,6 @@ type Mutation {
   createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
   createAdminActionLog(data: AdminActionLogCreateInput!): AdminActionLog!
   createSyncTiming(data: SyncTimingCreateInput!): SyncTiming!
-  createCollection(data: CollectionCreateInput!): Collection!
   createProductSeason(data: ProductSeasonCreateInput!): ProductSeason!
   createProductTier(data: ProductTierCreateInput!): ProductTier!
   createPushNotificationReceipt(
@@ -16539,14 +15397,10 @@ type Mutation {
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createReservation(data: ReservationCreateInput!): Reservation!
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
-  updateCollectionGroup(
-    data: CollectionGroupUpdateInput!
-    where: CollectionGroupWhereUniqueInput!
-  ): CollectionGroup
-  updateHomepageProductRail(
-    data: HomepageProductRailUpdateInput!
-    where: HomepageProductRailWhereUniqueInput!
-  ): HomepageProductRail
+  updateCollection(
+    data: CollectionUpdateInput!
+    where: CollectionWhereUniqueInput!
+  ): Collection
   updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
   updateProductMaterialCategory(
     data: ProductMaterialCategoryUpdateInput!
@@ -16645,10 +15499,6 @@ type Mutation {
     data: SyncTimingUpdateInput!
     where: SyncTimingWhereUniqueInput!
   ): SyncTiming
-  updateCollection(
-    data: CollectionUpdateInput!
-    where: CollectionWhereUniqueInput!
-  ): Collection
   updateProductSeason(
     data: ProductSeasonUpdateInput!
     where: ProductSeasonWhereUniqueInput!
@@ -16768,12 +15618,7 @@ type Mutation {
     where: ReservationWhereUniqueInput!
   ): Reservation
   deleteBrand(where: BrandWhereUniqueInput!): Brand
-  deleteCollectionGroup(
-    where: CollectionGroupWhereUniqueInput!
-  ): CollectionGroup
-  deleteHomepageProductRail(
-    where: HomepageProductRailWhereUniqueInput!
-  ): HomepageProductRail
+  deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deleteTag(where: TagWhereUniqueInput!): Tag
   deleteProductMaterialCategory(
     where: ProductMaterialCategoryWhereUniqueInput!
@@ -16828,7 +15673,6 @@ type Mutation {
   ): ActiveAdminUser
   deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   deleteSyncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
-  deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deleteProductSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
   deleteProductTier(where: ProductTierWhereUniqueInput!): ProductTier
   deletePushNotificationReceipt(
@@ -16890,16 +15734,11 @@ type Mutation {
     create: BrandCreateInput!
     update: BrandUpdateInput!
   ): Brand!
-  upsertCollectionGroup(
-    where: CollectionGroupWhereUniqueInput!
-    create: CollectionGroupCreateInput!
-    update: CollectionGroupUpdateInput!
-  ): CollectionGroup!
-  upsertHomepageProductRail(
-    where: HomepageProductRailWhereUniqueInput!
-    create: HomepageProductRailCreateInput!
-    update: HomepageProductRailUpdateInput!
-  ): HomepageProductRail!
+  upsertCollection(
+    where: CollectionWhereUniqueInput!
+    create: CollectionCreateInput!
+    update: CollectionUpdateInput!
+  ): Collection!
   upsertTag(
     where: TagWhereUniqueInput!
     create: TagCreateInput!
@@ -17030,11 +15869,6 @@ type Mutation {
     create: SyncTimingCreateInput!
     update: SyncTimingUpdateInput!
   ): SyncTiming!
-  upsertCollection(
-    where: CollectionWhereUniqueInput!
-    create: CollectionCreateInput!
-    update: CollectionUpdateInput!
-  ): Collection!
   upsertProductSeason(
     where: ProductSeasonWhereUniqueInput!
     create: ProductSeasonCreateInput!
@@ -17209,13 +16043,9 @@ type Mutation {
     data: BrandUpdateManyMutationInput!
     where: BrandWhereInput
   ): BatchPayload!
-  updateManyCollectionGroups(
-    data: CollectionGroupUpdateManyMutationInput!
-    where: CollectionGroupWhereInput
-  ): BatchPayload!
-  updateManyHomepageProductRails(
-    data: HomepageProductRailUpdateManyMutationInput!
-    where: HomepageProductRailWhereInput
+  updateManyCollections(
+    data: CollectionUpdateManyMutationInput!
+    where: CollectionWhereInput
   ): BatchPayload!
   updateManyTags(
     data: TagUpdateManyMutationInput!
@@ -17312,10 +16142,6 @@ type Mutation {
   updateManySyncTimings(
     data: SyncTimingUpdateManyMutationInput!
     where: SyncTimingWhereInput
-  ): BatchPayload!
-  updateManyCollections(
-    data: CollectionUpdateManyMutationInput!
-    where: CollectionWhereInput
   ): BatchPayload!
   updateManyProductSeasons(
     data: ProductSeasonUpdateManyMutationInput!
@@ -17454,10 +16280,7 @@ type Mutation {
     where: ReservationWhereInput
   ): BatchPayload!
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
-  deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
-  deleteManyHomepageProductRails(
-    where: HomepageProductRailWhereInput
-  ): BatchPayload!
+  deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   deleteManyTags(where: TagWhereInput): BatchPayload!
   deleteManyProductMaterialCategories(
     where: ProductMaterialCategoryWhereInput
@@ -17510,7 +16333,6 @@ type Mutation {
   deleteManyActiveAdminUsers(where: ActiveAdminUserWhereInput): BatchPayload!
   deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
   deleteManySyncTimings(where: SyncTimingWhereInput): BatchPayload!
-  deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   deleteManyProductSeasons(where: ProductSeasonWhereInput): BatchPayload!
   deleteManyProductTiers(where: ProductTierWhereInput): BatchPayload!
   deleteManyPushNotificationReceipts(
@@ -32208,24 +31030,15 @@ type Query {
     first: Int
     last: Int
   ): [Brand]!
-  collectionGroups(
-    where: CollectionGroupWhereInput
-    orderBy: CollectionGroupOrderByInput
+  collections(
+    where: CollectionWhereInput
+    orderBy: CollectionOrderByInput
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
-  ): [CollectionGroup]!
-  homepageProductRails(
-    where: HomepageProductRailWhereInput
-    orderBy: HomepageProductRailOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [HomepageProductRail]!
+  ): [Collection]!
   tags(
     where: TagWhereInput
     orderBy: TagOrderByInput
@@ -32460,15 +31273,6 @@ type Query {
     first: Int
     last: Int
   ): [SyncTiming]!
-  collections(
-    where: CollectionWhereInput
-    orderBy: CollectionOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Collection]!
   productSeasons(
     where: ProductSeasonWhereInput
     orderBy: ProductSeasonOrderByInput
@@ -32776,10 +31580,7 @@ type Query {
     last: Int
   ): [Reservation]!
   brand(where: BrandWhereUniqueInput!): Brand
-  collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
-  homepageProductRail(
-    where: HomepageProductRailWhereUniqueInput!
-  ): HomepageProductRail
+  collection(where: CollectionWhereUniqueInput!): Collection
   tag(where: TagWhereUniqueInput!): Tag
   productMaterialCategory(
     where: ProductMaterialCategoryWhereUniqueInput!
@@ -32832,7 +31633,6 @@ type Query {
   activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
   adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   syncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
-  collection(where: CollectionWhereUniqueInput!): Collection
   productSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
   productTier(where: ProductTierWhereUniqueInput!): ProductTier
   pushNotificationReceipt(
@@ -32892,24 +31692,15 @@ type Query {
     first: Int
     last: Int
   ): BrandConnection!
-  collectionGroupsConnection(
-    where: CollectionGroupWhereInput
-    orderBy: CollectionGroupOrderByInput
+  collectionsConnection(
+    where: CollectionWhereInput
+    orderBy: CollectionOrderByInput
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
-  ): CollectionGroupConnection!
-  homepageProductRailsConnection(
-    where: HomepageProductRailWhereInput
-    orderBy: HomepageProductRailOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): HomepageProductRailConnection!
+  ): CollectionConnection!
   tagsConnection(
     where: TagWhereInput
     orderBy: TagOrderByInput
@@ -33144,15 +31935,6 @@ type Query {
     first: Int
     last: Int
   ): SyncTimingConnection!
-  collectionsConnection(
-    where: CollectionWhereInput
-    orderBy: CollectionOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): CollectionConnection!
   productSeasonsConnection(
     where: ProductSeasonWhereInput
     orderBy: ProductSeasonOrderByInput
@@ -39905,12 +38687,9 @@ input StylePreferencesWhereUniqueInput {
 
 type Subscription {
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
-  collectionGroup(
-    where: CollectionGroupSubscriptionWhereInput
-  ): CollectionGroupSubscriptionPayload
-  homepageProductRail(
-    where: HomepageProductRailSubscriptionWhereInput
-  ): HomepageProductRailSubscriptionPayload
+  collection(
+    where: CollectionSubscriptionWhereInput
+  ): CollectionSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   productMaterialCategory(
     where: ProductMaterialCategorySubscriptionWhereInput
@@ -39981,9 +38760,6 @@ type Subscription {
   syncTiming(
     where: SyncTimingSubscriptionWhereInput
   ): SyncTimingSubscriptionPayload
-  collection(
-    where: CollectionSubscriptionWhereInput
-  ): CollectionSubscriptionPayload
   productSeason(
     where: ProductSeasonSubscriptionWhereInput
   ): ProductSeasonSubscriptionPayload
