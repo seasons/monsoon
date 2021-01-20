@@ -310,23 +310,13 @@ type Collection {
   descriptions: [String]! @scalarList(strategy: RELATION)
   products: [Product!]!
   published: Boolean! @default(value: false)
+  placements: [CollectionPlacement!] @scalarList(strategy: RELATION)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime @updatedAt
 }
 
-type CollectionGroup {
-  id: ID! @id
-  slug: String! @unique
-  title: String
-  collectionCount: Int
-  collections: [Collection!]!
-}
-
-type HomepageProductRail {
-  id: ID! @id
-  slug: String! @unique
-  name: String!
-  products: [Product!]!
+enum CollectionPlacement {
+  Homepage
 }
 
 type Image {

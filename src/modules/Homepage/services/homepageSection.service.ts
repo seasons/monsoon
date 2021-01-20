@@ -74,12 +74,6 @@ export class HomepageSectionService {
     }
 
     switch (sectionTitle) {
-      case SectionTitle.FeaturedCollection:
-        const collections = await this.prisma.client
-          .collectionGroup({ slug: "homepage-1" })
-          .collections()
-        return collections
-
       case SectionTitle.RecentlyViewed:
         if (!customerId) {
           return []
@@ -195,20 +189,7 @@ export class HomepageSectionService {
         })
 
       default:
-        const rails = await this.prisma.binding.query.homepageProductRails(
-          {
-            where: {
-              name: sectionTitle,
-            },
-          },
-          `{
-            products ${ProductFragment}
-          }`
-        )
-        return Array.prototype.concat.apply(
-          [],
-          rails.map(rail => rail.products)
-        )
+        return null
     }
   }
 }
