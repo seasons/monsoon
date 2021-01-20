@@ -4,7 +4,11 @@ import { Customer, ID_Input, Location, ShippingCode, User } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import shippo from "shippo"
 
-import { ShippoShipment, ShippoTransaction } from "../shipping.types"
+import {
+  ShippoRate,
+  ShippoShipment,
+  ShippoTransaction,
+} from "../shipping.types"
 
 interface CoreShippoAddressFields {
   name: string
@@ -30,6 +34,60 @@ export class ShippingService {
     private readonly prisma: PrismaService,
     private readonly utilsService: UtilsService
   ) {}
+
+  async getBuyUsedShippingRate(
+    productVariantId: ID_Input,
+    user: User,
+    customer: Customer
+  ): Promise<ShippoRate> {
+    // TODO: do these values change, as we're not shipping in seasons bags?
+    const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs([
+      productVariantId,
+    ] as string[])
+    const insuranceAmount = await this.calcTotalRetailPriceFromProductVariantIDs(
+      [productVariantId] as string[]
+    )
+
+    const [seasonsToShippoShipment] = await this.createShippoShipment(
+      user,
+      customer,
+      shipmentWeight,
+      insuranceAmount
+    )
+
+    return this.getShippingRate({
+      shipment: seasonsToShippoShipment,
+      servicelevel_token: "ups_ground",
+    })
+  }
+
+  async createBuyUsedShippingLabel(
+    productVariantId: ID_Input,
+    user: User,
+    customer: Customer
+  ): Promise<ShippoTransaction> {
+    const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs([
+      productVariantId,
+    ] as string[])
+    const insuranceAmount = await this.calcTotalRetailPriceFromProductVariantIDs(
+      [productVariantId] as string[]
+    )
+
+    const [seasonsToShippoShipment] = await this.createShippoShipment(
+      user,
+      customer,
+      shipmentWeight,
+      insuranceAmount
+    )
+
+    const seasonsToCustomerTransaction = await this.createShippingLabel({
+      shipment: seasonsToShippoShipment,
+      carrier_account: process.env.UPS_ACCOUNT_ID,
+      servicelevel_token: "ups_ground",
+    })
+
+    return seasonsToCustomerTransaction
+  }
 
   async createReservationShippingLabels(
     newProductVariantsBeingReserved: ID_Input[],
@@ -195,6 +253,22 @@ export class ShippingService {
         extra: { is_return: true },
       },
     ]
+  }
+
+  private async getShippingRate({
+    shipment: shipmentInput,
+    servicelevel_token,
+  }: Omit<ShippoLabelInputs, "carrier_account">): Promise<ShippoRate> {
+    const shipment: ShippoShipment = await this.shippo.shipment.create({
+      ...shipmentInput,
+      async: false,
+    })
+
+    const rate = shipment.rates.find(rate => {
+      return rate.servicelevel.token === servicelevel_token
+    })
+
+    return rate
   }
 
   private async createShippingLabel(

@@ -8,6 +8,7 @@ export interface ShippoShipment {
   address_to: any
   parcels: any
   extra?: any
+  rates?: Array<ShippoRate>
 }
 export interface ShippoTransaction {
   label_url: string
@@ -16,4 +17,14 @@ export interface ShippoTransaction {
   messages: any[]
   formatted_error?: string
   status: string
+}
+
+export type ShippoRate = {
+  amount: string
+  shipment: string
+  servicelevel: {
+    name: string
+    token: string
+    terms: string
+  }
 }

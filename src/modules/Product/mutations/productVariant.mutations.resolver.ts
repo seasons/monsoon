@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import {
   Product as PrismaBindingProduct,
@@ -10,6 +11,7 @@ import { head } from "lodash"
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
 import { ProductService } from "../services/product.service"
 import { ProductVariantService } from "../services/productVariant.service"
+import { ProductVariantOrderService } from "../services/productVariantOrder.service"
 
 @Resolver("ProductVariant")
 export class ProductVariantMutationsResolver {
@@ -17,7 +19,9 @@ export class ProductVariantMutationsResolver {
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
     private readonly productVariantService: ProductVariantService,
-    private readonly physicalProductUtilsService: PhysicalProductUtilsService
+    private readonly productVariantOrderService: ProductVariantOrderService,
+    private readonly physicalProductUtilsService: PhysicalProductUtilsService,
+    private readonly shopify: ShopifyService
   ) {}
 
   @Mutation()
@@ -63,6 +67,50 @@ export class ProductVariantMutationsResolver {
       create: data,
       update: data,
     })
+  }
+
+  @Mutation()
+  async createProductVariantDraftOrder(
+    @Args() { input: { orderType, productVariantId } },
+    @Customer() customer,
+    @User() user
+  ) {
+    if (orderType === "BUY_NEW") {
+      return this.productVariantOrderService.buyNewCreateDraftOrder({
+        productVariantId,
+        customerId: customer.id,
+      })
+    } else {
+      const draftOrder = await this.productVariantOrderService.buyUsedCreateDraftOrder(
+        {
+          productVariantId,
+          customer,
+          user,
+        }
+      )
+      console.log("draftOrder", draftOrder)
+      return draftOrder
+    }
+  }
+
+  @Mutation()
+  async createProductVariantOrder(
+    @Args() { input: { orderType, productVariantId } },
+    @Customer() customer,
+    @User() user
+  ) {
+    if (orderType === "BUY_NEW") {
+      return this.productVariantOrderService.buyNewCreateOrder({
+        productVariantId,
+        customerId: customer.id,
+      })
+    } else {
+      return this.productVariantOrderService.buyUsedCreateOrder({
+        productVariantId,
+        customer,
+        user,
+      })
+    }
   }
 
   @Mutation()
