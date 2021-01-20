@@ -40,7 +40,11 @@ export class MarketingScheduledJobs {
         where: {
           AND: [
             // Prior to Jan 18 2021 we had some cases we need to handle manually
-            { user: { createdAt_gte: new Date(2021, 0, 19) } },
+            {
+              admissions: {
+                authorizationWindowClosesAt_gte: new Date(2020, 0, 26),
+              },
+            },
             { status: "Authorized" },
           ],
         },
