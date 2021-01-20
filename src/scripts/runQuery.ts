@@ -29,6 +29,7 @@ const run = async () => {
               authorizationWindowClosesAt_lte: new Date(2021, 0, 21),
             },
           },
+          { authorizedAt_lte: new Date(2021, 0, 20) },
         ],
       },
     },
@@ -52,7 +53,7 @@ const run = async () => {
     console.log(b)
   }
   // console.log(util.inspect(a, { depth: null, showHidden: true }))
-  // console.log(sortedCustomers.length)
+  console.log(sortedCustomers.length)
 }
 
 run()
