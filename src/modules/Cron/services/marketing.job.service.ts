@@ -42,7 +42,7 @@ export class MarketingScheduledJobs {
             // Prior to Jan 18 2021 we had some cases we need to handle manually
             {
               admissions: {
-                authorizationWindowClosesAt_gte: new Date(2020, 0, 26),
+                authorizationWindowClosesAt_gte: new Date(2021, 0, 26),
               },
             },
             { status: "Authorized" },

@@ -1,8 +1,6 @@
 import "module-alias/register"
 
 import sgMail from "@sendgrid/mail"
-import moment from "moment"
-import readlineSync from "readline-sync"
 
 import { SegmentService } from "../modules/Analytics/services/segment.service"
 import { EmailService } from "../modules/Email/services/email.service"
