@@ -3,10 +3,12 @@ type Query {
 }
 
 type Homepage {
+  id: ID!
   sections: [HomepageSection!]!
 }
 
 type HomepageSection {
+  id: ID!
   type: HomePageSectionType!
   results: [HomepageResult!]!
   title: String
@@ -14,6 +16,7 @@ type HomepageSection {
 }
 
 type ProductsByTagTagData {
+  id: ID!
   tagName: String
   description: String
 }
