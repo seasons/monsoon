@@ -31057,6 +31057,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "PhysicalProductDamageType",
+    embedded: false
+  },
+  {
     name: "PhysicalProduct",
     embedded: false
   },

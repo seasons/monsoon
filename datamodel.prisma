@@ -489,6 +489,7 @@ enum PhysicalProductDamageType {
 
 type PhysicalProductQualityReport {
   id: ID! @id
+  user: User!
   damageType: PhysicalProductDamageType
   notes: String
   physicalProduct: PhysicalProduct!
