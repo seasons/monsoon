@@ -283,10 +283,6 @@ type AggregateCollection {
   count: Int!
 }
 
-type AggregateCollectionGroup {
-  count: Int!
-}
-
 type AggregateColor {
   count: Int!
 }
@@ -320,10 +316,6 @@ type AggregateFitPic {
 }
 
 type AggregateFitPicReport {
-  count: Int!
-}
-
-type AggregateHomepageProductRail {
   count: Int!
 }
 
@@ -2096,6 +2088,7 @@ type Collection {
   descriptions: [String!]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   published: Boolean!
+  placements: [CollectionPlacement!]!
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -2119,156 +2112,16 @@ input CollectionCreateInput {
   descriptions: CollectionCreatedescriptionsInput
   products: ProductCreateManyInput
   published: Boolean
+  placements: CollectionCreateplacementsInput
 }
 
-input CollectionCreateManyInput {
-  create: [CollectionCreateInput!]
-  connect: [CollectionWhereUniqueInput!]
+input CollectionCreateplacementsInput {
+  set: [CollectionPlacement!]
 }
 
 type CollectionEdge {
   node: Collection!
   cursor: String!
-}
-
-type CollectionGroup {
-  id: ID!
-  slug: String!
-  title: String
-  collectionCount: Int
-  collections(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Collection!]
-}
-
-type CollectionGroupConnection {
-  pageInfo: PageInfo!
-  edges: [CollectionGroupEdge]!
-  aggregate: AggregateCollectionGroup!
-}
-
-input CollectionGroupCreateInput {
-  id: ID
-  slug: String!
-  title: String
-  collectionCount: Int
-  collections: CollectionCreateManyInput
-}
-
-type CollectionGroupEdge {
-  node: CollectionGroup!
-  cursor: String!
-}
-
-enum CollectionGroupOrderByInput {
-  id_ASC
-  id_DESC
-  slug_ASC
-  slug_DESC
-  title_ASC
-  title_DESC
-  collectionCount_ASC
-  collectionCount_DESC
-}
-
-type CollectionGroupPreviousValues {
-  id: ID!
-  slug: String!
-  title: String
-  collectionCount: Int
-}
-
-type CollectionGroupSubscriptionPayload {
-  mutation: MutationType!
-  node: CollectionGroup
-  updatedFields: [String!]
-  previousValues: CollectionGroupPreviousValues
-}
-
-input CollectionGroupSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: CollectionGroupWhereInput
-  AND: [CollectionGroupSubscriptionWhereInput!]
-  OR: [CollectionGroupSubscriptionWhereInput!]
-  NOT: [CollectionGroupSubscriptionWhereInput!]
-}
-
-input CollectionGroupUpdateInput {
-  slug: String
-  title: String
-  collectionCount: Int
-  collections: CollectionUpdateManyInput
-}
-
-input CollectionGroupUpdateManyMutationInput {
-  slug: String
-  title: String
-  collectionCount: Int
-}
-
-input CollectionGroupWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  slug: String
-  slug_not: String
-  slug_in: [String!]
-  slug_not_in: [String!]
-  slug_lt: String
-  slug_lte: String
-  slug_gt: String
-  slug_gte: String
-  slug_contains: String
-  slug_not_contains: String
-  slug_starts_with: String
-  slug_not_starts_with: String
-  slug_ends_with: String
-  slug_not_ends_with: String
-  title: String
-  title_not: String
-  title_in: [String!]
-  title_not_in: [String!]
-  title_lt: String
-  title_lte: String
-  title_gt: String
-  title_gte: String
-  title_contains: String
-  title_not_contains: String
-  title_starts_with: String
-  title_not_starts_with: String
-  title_ends_with: String
-  title_not_ends_with: String
-  collectionCount: Int
-  collectionCount_not: Int
-  collectionCount_in: [Int!]
-  collectionCount_not_in: [Int!]
-  collectionCount_lt: Int
-  collectionCount_lte: Int
-  collectionCount_gt: Int
-  collectionCount_gte: Int
-  collections_every: CollectionWhereInput
-  collections_some: CollectionWhereInput
-  collections_none: CollectionWhereInput
-  AND: [CollectionGroupWhereInput!]
-  OR: [CollectionGroupWhereInput!]
-  NOT: [CollectionGroupWhereInput!]
-}
-
-input CollectionGroupWhereUniqueInput {
-  id: ID
-  slug: String
 }
 
 enum CollectionOrderByInput {
@@ -2288,6 +2141,10 @@ enum CollectionOrderByInput {
   updatedAt_DESC
 }
 
+enum CollectionPlacement {
+  Homepage
+}
+
 type CollectionPreviousValues {
   id: ID!
   slug: String!
@@ -2295,88 +2152,9 @@ type CollectionPreviousValues {
   subTitle: String
   descriptions: [String!]!
   published: Boolean!
+  placements: [CollectionPlacement!]!
   createdAt: DateTime!
   updatedAt: DateTime
-}
-
-input CollectionScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  slug: String
-  slug_not: String
-  slug_in: [String!]
-  slug_not_in: [String!]
-  slug_lt: String
-  slug_lte: String
-  slug_gt: String
-  slug_gte: String
-  slug_contains: String
-  slug_not_contains: String
-  slug_starts_with: String
-  slug_not_starts_with: String
-  slug_ends_with: String
-  slug_not_ends_with: String
-  title: String
-  title_not: String
-  title_in: [String!]
-  title_not_in: [String!]
-  title_lt: String
-  title_lte: String
-  title_gt: String
-  title_gte: String
-  title_contains: String
-  title_not_contains: String
-  title_starts_with: String
-  title_not_starts_with: String
-  title_ends_with: String
-  title_not_ends_with: String
-  subTitle: String
-  subTitle_not: String
-  subTitle_in: [String!]
-  subTitle_not_in: [String!]
-  subTitle_lt: String
-  subTitle_lte: String
-  subTitle_gt: String
-  subTitle_gte: String
-  subTitle_contains: String
-  subTitle_not_contains: String
-  subTitle_starts_with: String
-  subTitle_not_starts_with: String
-  subTitle_ends_with: String
-  subTitle_not_ends_with: String
-  published: Boolean
-  published_not: Boolean
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  AND: [CollectionScalarWhereInput!]
-  OR: [CollectionScalarWhereInput!]
-  NOT: [CollectionScalarWhereInput!]
 }
 
 type CollectionSubscriptionPayload {
@@ -2397,16 +2175,6 @@ input CollectionSubscriptionWhereInput {
   NOT: [CollectionSubscriptionWhereInput!]
 }
 
-input CollectionUpdateDataInput {
-  slug: String
-  images: ImageUpdateManyInput
-  title: String
-  subTitle: String
-  descriptions: CollectionUpdatedescriptionsInput
-  products: ProductUpdateManyInput
-  published: Boolean
-}
-
 input CollectionUpdatedescriptionsInput {
   set: [String!]
 }
@@ -2419,26 +2187,7 @@ input CollectionUpdateInput {
   descriptions: CollectionUpdatedescriptionsInput
   products: ProductUpdateManyInput
   published: Boolean
-}
-
-input CollectionUpdateManyDataInput {
-  slug: String
-  title: String
-  subTitle: String
-  descriptions: CollectionUpdatedescriptionsInput
-  published: Boolean
-}
-
-input CollectionUpdateManyInput {
-  create: [CollectionCreateInput!]
-  update: [CollectionUpdateWithWhereUniqueNestedInput!]
-  upsert: [CollectionUpsertWithWhereUniqueNestedInput!]
-  delete: [CollectionWhereUniqueInput!]
-  connect: [CollectionWhereUniqueInput!]
-  set: [CollectionWhereUniqueInput!]
-  disconnect: [CollectionWhereUniqueInput!]
-  deleteMany: [CollectionScalarWhereInput!]
-  updateMany: [CollectionUpdateManyWithWhereNestedInput!]
+  placements: CollectionUpdateplacementsInput
 }
 
 input CollectionUpdateManyMutationInput {
@@ -2447,22 +2196,11 @@ input CollectionUpdateManyMutationInput {
   subTitle: String
   descriptions: CollectionUpdatedescriptionsInput
   published: Boolean
+  placements: CollectionUpdateplacementsInput
 }
 
-input CollectionUpdateManyWithWhereNestedInput {
-  where: CollectionScalarWhereInput!
-  data: CollectionUpdateManyDataInput!
-}
-
-input CollectionUpdateWithWhereUniqueNestedInput {
-  where: CollectionWhereUniqueInput!
-  data: CollectionUpdateDataInput!
-}
-
-input CollectionUpsertWithWhereUniqueNestedInput {
-  where: CollectionWhereUniqueInput!
-  update: CollectionUpdateDataInput!
-  create: CollectionCreateInput!
+input CollectionUpdateplacementsInput {
+  set: [CollectionPlacement!]
 }
 
 input CollectionWhereInput {
@@ -5405,131 +5143,6 @@ input FitPicWhereUniqueInput {
   id: ID
 }
 
-type HomepageProductRail {
-  id: ID!
-  slug: String!
-  name: String!
-  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
-}
-
-type HomepageProductRailConnection {
-  pageInfo: PageInfo!
-  edges: [HomepageProductRailEdge]!
-  aggregate: AggregateHomepageProductRail!
-}
-
-input HomepageProductRailCreateInput {
-  id: ID
-  slug: String!
-  name: String!
-  products: ProductCreateManyInput
-}
-
-type HomepageProductRailEdge {
-  node: HomepageProductRail!
-  cursor: String!
-}
-
-enum HomepageProductRailOrderByInput {
-  id_ASC
-  id_DESC
-  slug_ASC
-  slug_DESC
-  name_ASC
-  name_DESC
-}
-
-type HomepageProductRailPreviousValues {
-  id: ID!
-  slug: String!
-  name: String!
-}
-
-type HomepageProductRailSubscriptionPayload {
-  mutation: MutationType!
-  node: HomepageProductRail
-  updatedFields: [String!]
-  previousValues: HomepageProductRailPreviousValues
-}
-
-input HomepageProductRailSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: HomepageProductRailWhereInput
-  AND: [HomepageProductRailSubscriptionWhereInput!]
-  OR: [HomepageProductRailSubscriptionWhereInput!]
-  NOT: [HomepageProductRailSubscriptionWhereInput!]
-}
-
-input HomepageProductRailUpdateInput {
-  slug: String
-  name: String
-  products: ProductUpdateManyInput
-}
-
-input HomepageProductRailUpdateManyMutationInput {
-  slug: String
-  name: String
-}
-
-input HomepageProductRailWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  slug: String
-  slug_not: String
-  slug_in: [String!]
-  slug_not_in: [String!]
-  slug_lt: String
-  slug_lte: String
-  slug_gt: String
-  slug_gte: String
-  slug_contains: String
-  slug_not_contains: String
-  slug_starts_with: String
-  slug_not_starts_with: String
-  slug_ends_with: String
-  slug_not_ends_with: String
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
-  products_every: ProductWhereInput
-  products_some: ProductWhereInput
-  products_none: ProductWhereInput
-  AND: [HomepageProductRailWhereInput!]
-  OR: [HomepageProductRailWhereInput!]
-  NOT: [HomepageProductRailWhereInput!]
-}
-
-input HomepageProductRailWhereUniqueInput {
-  id: ID
-  slug: String
-}
-
 type Image {
   id: ID!
   caption: String
@@ -6822,12 +6435,6 @@ type Mutation {
   upsertCollection(where: CollectionWhereUniqueInput!, create: CollectionCreateInput!, update: CollectionUpdateInput!): Collection!
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
-  createCollectionGroup(data: CollectionGroupCreateInput!): CollectionGroup!
-  updateCollectionGroup(data: CollectionGroupUpdateInput!, where: CollectionGroupWhereUniqueInput!): CollectionGroup
-  updateManyCollectionGroups(data: CollectionGroupUpdateManyMutationInput!, where: CollectionGroupWhereInput): BatchPayload!
-  upsertCollectionGroup(where: CollectionGroupWhereUniqueInput!, create: CollectionGroupCreateInput!, update: CollectionGroupUpdateInput!): CollectionGroup!
-  deleteCollectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
-  deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
   createColor(data: ColorCreateInput!): Color!
   updateColor(data: ColorUpdateInput!, where: ColorWhereUniqueInput!): Color
   updateManyColors(data: ColorUpdateManyMutationInput!, where: ColorWhereInput): BatchPayload!
@@ -6882,12 +6489,6 @@ type Mutation {
   upsertFitPicReport(where: FitPicReportWhereUniqueInput!, create: FitPicReportCreateInput!, update: FitPicReportUpdateInput!): FitPicReport!
   deleteFitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
   deleteManyFitPicReports(where: FitPicReportWhereInput): BatchPayload!
-  createHomepageProductRail(data: HomepageProductRailCreateInput!): HomepageProductRail!
-  updateHomepageProductRail(data: HomepageProductRailUpdateInput!, where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
-  updateManyHomepageProductRails(data: HomepageProductRailUpdateManyMutationInput!, where: HomepageProductRailWhereInput): BatchPayload!
-  upsertHomepageProductRail(where: HomepageProductRailWhereUniqueInput!, create: HomepageProductRailCreateInput!, update: HomepageProductRailUpdateInput!): HomepageProductRail!
-  deleteHomepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
-  deleteManyHomepageProductRails(where: HomepageProductRailWhereInput): BatchPayload!
   createImage(data: ImageCreateInput!): Image!
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
@@ -13428,9 +13029,6 @@ type Query {
   collection(where: CollectionWhereUniqueInput!): Collection
   collections(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Collection]!
   collectionsConnection(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionConnection!
-  collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
-  collectionGroups(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CollectionGroup]!
-  collectionGroupsConnection(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionGroupConnection!
   color(where: ColorWhereUniqueInput!): Color
   colors(where: ColorWhereInput, orderBy: ColorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Color]!
   colorsConnection(where: ColorWhereInput, orderBy: ColorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ColorConnection!
@@ -13458,9 +13056,6 @@ type Query {
   fitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
   fitPicReports(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPicReport]!
   fitPicReportsConnection(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicReportConnection!
-  homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
-  homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
-  homepageProductRailsConnection(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomepageProductRailConnection!
   image(where: ImageWhereUniqueInput!): Image
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
@@ -16333,7 +15928,6 @@ type Subscription {
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   collection(where: CollectionSubscriptionWhereInput): CollectionSubscriptionPayload
-  collectionGroup(where: CollectionGroupSubscriptionWhereInput): CollectionGroupSubscriptionPayload
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   customerAdmissionsData(where: CustomerAdmissionsDataSubscriptionWhereInput): CustomerAdmissionsDataSubscriptionPayload
@@ -16343,7 +15937,6 @@ type Subscription {
   externalShopifyIntegration(where: ExternalShopifyIntegrationSubscriptionWhereInput): ExternalShopifyIntegrationSubscriptionPayload
   fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload
   fitPicReport(where: FitPicReportSubscriptionWhereInput): FitPicReportSubscriptionPayload
-  homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   interestedUser(where: InterestedUserSubscriptionWhereInput): InterestedUserSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload

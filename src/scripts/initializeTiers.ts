@@ -28,7 +28,9 @@ const run = async () => {
   const allProds = await ps.client.products()
   let numStandard = 0
   let numLux = 0
+  let i = 0
   for (const prod of allProds) {
+    console.log(`${i++} of ${allProds.length}`)
     const tier = await productService.getProductTier(prod)
     if (tier.tier === "Standard") {
       numStandard += 1
