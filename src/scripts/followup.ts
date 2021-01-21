@@ -472,19 +472,26 @@ const run = async () => {
   ]
   const customersToFollowupWith = await ps.binding.query.customers(
     {
+      // where: {
+      //   AND: [
+      //     { user: { email_in: emailsTwo } },
+      //     { status: "Authorized" },
+      //     { user: { email_not_contains: "seasons.nyc" } },
+      //     { user: { email_not_contains: "faiyamrahman.com" } },
+      //     { user: { email_not_contains: "alexisohanian.com" } },
+      //     { user: { email_not_contains: "mylesthompsoncreative@gmail.com" } },
+      //   ],
+      // },
       where: {
-        AND: [
-          { user: { email_in: emailsTwo } },
-          { status: "Authorized" },
-          { user: { email_not_contains: "seasons.nyc" } },
-          { user: { email_not_contains: "faiyamrahman.com" } },
-          { user: { email_not_contains: "alexisohanian.com" } },
-          { user: { email_not_contains: "mylesthompsoncreative@gmail.com" } },
-        ],
+        AND: [{ status: "Waitlisted" }, { admissions: { admissable: true } }],
       },
+      // where: {
+      //   user: { email_contains: "faiyam" },
+      // },
     },
     `{
       id
+      status
       authorizedAt
       admissions {
         authorizationWindowClosesAt
@@ -515,12 +522,12 @@ const run = async () => {
 
     // Day 2 Followup
     if (!dayTwoFollowupSent) {
-      await email.sendAuthorizedDayTwoFollowup(cust.user)
+      await email.sendAuthorizedDayTwoFollowup(cust.user, cust.status)
       console.log(`sent ${cust.user.email} day 2 followup`)
       continue
     }
 
-    // Day 3 Followup
+    // // Day 3 Followup
     // if (!dayThreeFollowupSent) {
     //   const availableStyles = await admissions.getAvailableStyles({
     //     id: cust.id,

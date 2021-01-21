@@ -80,8 +80,8 @@ export class EmailService {
     })
   }
 
-  async sendAuthorizedDayTwoFollowup(user: EmailUser) {
-    const payload = await RenderEmail.authorizedDayTwoFollowup()
+  async sendAuthorizedDayTwoFollowup(user: EmailUser, status = "Authorized") {
+    const payload = await RenderEmail.authorizedDayTwoFollowup({ status })
     await this.sendPreRenderedTransactionalEmail({
       user: user,
       payload,
