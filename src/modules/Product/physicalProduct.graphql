@@ -40,6 +40,9 @@ type Mutation {
     data: PhysicalProductUpdateManyMutationInput!
     where: PhysicalProductWhereInput
   ): BatchPayload! @hasRole(roles: [Admin])
+  createPhysicalProductQualityReport(
+    data: PhysicalProductQualityReportCreateInput!
+  ): PhysicalProductQualityReport!
 }
 
 type PhysicalProductPrice {
@@ -65,6 +68,15 @@ type PhysicalProduct {
   dateReceived: DateTime
   unitCost: Float
   price: PhysicalProductPrice
+  reports(
+    where: PhysicalProductQualityReportWhereInput
+    orderBy: PhysicalProductQualityReportOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProductQualityReport!]
   reservations(orderBy: ReservationOrderByInput): [Reservation!]!
   createdAt: DateTime!
   updatedAt: DateTime!
