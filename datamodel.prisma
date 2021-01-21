@@ -1,3 +1,8 @@
+enum ProductTierName {
+  Standard
+  Luxury
+}
+
 enum BrandTier {
   Tier0
   Tier1
@@ -305,23 +310,13 @@ type Collection {
   descriptions: [String]! @scalarList(strategy: RELATION)
   products: [Product!]!
   published: Boolean! @default(value: false)
+  placements: [CollectionPlacement!] @scalarList(strategy: RELATION)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime @updatedAt
 }
 
-type CollectionGroup {
-  id: ID! @id
-  slug: String! @unique
-  title: String
-  collectionCount: Int
-  collections: [Collection!]!
-}
-
-type HomepageProductRail {
-  id: ID! @id
-  slug: String! @unique
-  name: String!
-  products: [Product!]!
+enum CollectionPlacement {
+  Homepage
 }
 
 type Image {
@@ -369,33 +364,42 @@ type Tag {
 
 type Product {
   id: ID! @id
-  slug: String! @unique
-  name: String!
+  architecture: ProductArchitecture
   brand: Brand!
-  productFit: ProductFit
   category: Category!
-  type: ProductType
+  color: Color! @relation(name: "ProductPrimaryColor")
   description: String
   externalURL: String
+  functions: [ProductFunction!]!
   buyNewEnabled: Boolean! @default(value: false)
   images: [Image!]
-  modelHeight: Int
-  retailPrice: Int
-  model: ProductModel
-  modelSize: Size @relation(name: "ProductModelSize")
-  color: Color! @relation(name: "ProductPrimaryColor")
-  secondaryColor: Color @relation(name: "ProductSecondaryColor")
-  tags: [Tag!]!
-  functions: [ProductFunction!]!
-  materialCategory: ProductMaterialCategory
   innerMaterials: [String!]! @scalarList(strategy: RELATION)
+  materialCategory: ProductMaterialCategory
+  model: ProductModel
+  modelHeight: Int
+  modelSize: Size @relation(name: "ProductModelSize")
+  name: String!
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
-  variants: [ProductVariant!]! @relation(link: TABLE, onDelete: CASCADE)
-  status: ProductStatus @default(value: Available)
-  season: ProductSeason
-  architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
+  productFit: ProductFit
   publishedAt: DateTime
+  retailPrice: Int
+  season: ProductSeason
+  secondaryColor: Color @relation(name: "ProductSecondaryColor")
+  slug: String! @unique
+  status: ProductStatus @default(value: Available)
+  tags: [Tag!]!
+  tier: ProductTier @relation(name: "ProductToProductTier", onDelete: SET_NULL)
+  type: ProductType
+  variants: [ProductVariant!]! @relation(link: TABLE, onDelete: CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type ProductTier {
+  id: ID! @id
+  tier: ProductTierName!
+  price: Int! # price in cents
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

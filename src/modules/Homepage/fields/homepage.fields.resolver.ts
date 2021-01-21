@@ -8,6 +8,11 @@ export class HomepageFieldsResolver {
   constructor(private readonly homepageService: HomepageService) {}
 
   @ResolveField()
+  async id() {
+    return "homePageID"
+  }
+
+  @ResolveField()
   async sections(@Customer() customer) {
     return await this.homepageService.getHomepageSections(customer)
   }

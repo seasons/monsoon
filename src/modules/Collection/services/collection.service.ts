@@ -28,6 +28,7 @@ export class CollectionService {
       subTitle: data.subTitle,
       descriptions: data.descriptions,
       published: data.published,
+      placements: data.productIDs && { set: data.placements },
     }
 
     return this.prisma.client.upsertCollection({

@@ -12,8 +12,6 @@ export class HomepageResultFieldsResolver {
       return "Brand"
     } else if (obj.subTitle) {
       return "Collection"
-    } else if (obj.name) {
-      return "HomepageProductRail"
     }
     return null
   }

@@ -32,14 +32,19 @@ export class MarketingScheduledJobs {
     this.logger.log("Run auth window followups job")
     const daySixFollowupsSent = []
     const dayThreeFollowupsSent = []
+    const dayTwoFollowupsSent = []
     const windowsClosed = []
 
     const customers = await this.prisma.binding.query.customers(
       {
         where: {
           AND: [
-            // october 5 is 2020 is when we started manually enforcing the auth window
-            { user: { createdAt_gte: new Date(2020, 9, 5) } },
+            // Prior to Jan 18 2021 we had some cases we need to handle manually
+            {
+              admissions: {
+                authorizationWindowClosesAt_gte: new Date(2021, 0, 26),
+              },
+            },
             { status: "Authorized" },
           ],
         },
@@ -103,71 +108,84 @@ export class MarketingScheduledJobs {
       const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
 
       // Send rewaitlist email as needed
-      if (windowClosed && !rewaitlistEmailSent) {
-        const availableStyles = await this.admissions.getAvailableStyles({
-          id: cust.id,
-        })
-        await this.email.sendRewaitlistedEmail(cust.user, availableStyles)
-        await this.sms.sendSMSById({
-          to: { id: cust.user.id },
-          renderData: { name: cust.user.firstName },
-          smsId: "Rewaitlisted",
-        })
-        await this.prisma.client.updateCustomer({
-          where: { id: cust.id },
-          data: { status: "Waitlisted" },
-        })
-        windowsClosed.push(cust.user.email)
-        break
+      if (windowClosed) {
+        if (!rewaitlistEmailSent) {
+          const availableStyles = await this.admissions.getAvailableStyles({
+            id: cust.id,
+          })
+          await this.email.sendRewaitlistedEmail(cust.user, availableStyles)
+          await this.sms.sendSMSById({
+            to: { id: cust.user.id },
+            renderData: { name: cust.user.firstName },
+            smsId: "Rewaitlisted",
+          })
+          await this.prisma.client.updateCustomer({
+            where: { id: cust.id },
+            data: { status: "Waitlisted" },
+          })
+          windowsClosed.push(cust.user.email)
+        }
+        continue
       }
 
       // Send day 6 email as needed
-      if (fiveDaysPassed && !daySixFollowupSent) {
-        const availableStyles = await this.admissions.getAvailableStyles({
-          id: cust.id,
-        })
-        await this.email.sendAuthorizedDaySixFollowup(
-          cust.user,
-          availableStyles
-        )
-        await this.sms.sendSMSById({
-          to: { id: cust.user.id },
-          renderData: { name: cust.user.firstName },
-          smsId: "TwentyFourHourLeftAuthorizationFollowup",
-        })
-        daySixFollowupsSent.push(cust.user.email)
-        break
+      if (fiveDaysPassed) {
+        if (!daySixFollowupSent) {
+          const availableStyles = await this.admissions.getAvailableStyles({
+            id: cust.id,
+          })
+          await this.email.sendAuthorizedDaySixFollowup(
+            cust.user,
+            availableStyles
+          )
+          await this.sms.sendSMSById({
+            to: { id: cust.user.id },
+            renderData: { name: cust.user.firstName },
+            smsId: "TwentyFourHourLeftAuthorizationFollowup",
+          })
+          daySixFollowupsSent.push(cust.user.email)
+        }
+        continue
       }
 
       // Send day 5 email if needed
-      if (fourDaysPassed && !dayFiveFollowupSent) {
+      if (fourDaysPassed) {
         // TODO: Send email
-        break
+        if (!dayFiveFollowupSent) {
+        }
+        continue
       }
 
       // Send day 4 email if needed
-      if (threeDaysPassed && !dayFourFollowupSent) {
+      if (threeDaysPassed) {
         // TODO: Send email
-        break
+        if (!dayFourFollowupSent) {
+        }
+        continue
       }
 
       // Send day 3 email if needed
-      if (twoDaysPassed && !dayThreeFollowupSent) {
-        const availableStyles = await this.admissions.getAvailableStyles({
-          id: cust.id,
-        })
-        await this.email.sendAuthorizedDayThreeFollowup(
-          cust.user,
-          availableStyles
-        )
-        dayThreeFollowupsSent.push(cust.user.email)
-        break
+      if (twoDaysPassed) {
+        if (!dayThreeFollowupSent) {
+          const availableStyles = await this.admissions.getAvailableStyles({
+            id: cust.id,
+          })
+          await this.email.sendAuthorizedDayThreeFollowup(
+            cust.user,
+            availableStyles
+          )
+          dayThreeFollowupsSent.push(cust.user.email)
+        }
+        continue
       }
 
       // Send day 2 email if needed
-      if (oneDayPassed && !dayTwoFollowupSent) {
-        // TODO: Send email
-        break
+      if (oneDayPassed) {
+        if (!dayTwoFollowupSent) {
+          await this.email.sendAuthorizedDayTwoFollowup(cust.user)
+          dayTwoFollowupsSent.push(cust.user.email)
+        }
+        continue
       }
     }
     this.logger.log("Auth window followups job finished")

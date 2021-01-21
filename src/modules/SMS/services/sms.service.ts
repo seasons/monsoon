@@ -45,7 +45,7 @@ export class SMSService {
 
   private async setupService() {
     const service = await this.twilio.client.verify.services.create({
-      friendlyName: "Seasons",
+      friendlyName: `Seasons-${process.env.NODE_ENV}`,
       codeLength: 6,
     })
     this.sid = service.sid

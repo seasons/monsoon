@@ -80,6 +80,15 @@ export class EmailService {
     })
   }
 
+  async sendAuthorizedDayTwoFollowup(user: EmailUser) {
+    const payload = await RenderEmail.authorizedDayTwoFollowup()
+    await this.sendPreRenderedTransactionalEmail({
+      user: user,
+      payload,
+      emailId: "DayTwoAuthorizationFollowup",
+    })
+  }
+
   async sendRewaitlistedEmail(user: EmailUser, availableStyles: Product[]) {
     await this.sendEmailWithReservableStyles({
       user,

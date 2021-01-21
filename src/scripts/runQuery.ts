@@ -1,45 +1,58 @@
 import "module-alias/register"
 
+import * as util from "util"
+
+import { UtilsService } from "../modules/Utils/services/utils.service"
 import { PrismaService } from "../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
+  const utils = new UtilsService(ps)
 
-  const triageCustomerInfo = `{
+  // const authorizedCustomers = await ps.binding.query.customers({
+  //   where: { status: "Authorized" },
+  // })
+  // console.log(authorizedCustomers.length)
+  const unhandledCustomers = await ps.binding.query.customers(
+    {
+      where: {
+        AND: [
+          { status: "Authorized" },
+          { user: { emails_none: { emailId: "Rewaitlisted" } } },
+          {
+            user: {
+              emails_none: { emailId: "TwentyFourHourAuthorizationFollowup" },
+            },
+          },
+          {
+            admissions: {
+              authorizationWindowClosesAt_lte: new Date(2021, 0, 21),
+            },
+          },
+        ],
+      },
+    },
+    `{
     id
-    status
-    detail {
-      shippingAddress {
-        zipCode
-      }
-      topSizes
-      waistSizes
-    }
     user {
-      id
-      firstName
-      lastName
       email
-      emails {
-        emailId
-      }
-    }
-    admissions {
-      authorizationsCount
+      createdAt
     }
   }`
-  try {
-    const x = await ps.binding.query.user(
-      {
-        where: {
-          id: "ckhqv491y026o09065zcro1a2",
-        },
-      },
-      `{id beamsToken}`
-    )
-  } catch (err) {
-    console.log(err)
+  )
+  let sortedCustomers = unhandledCustomers.sort(
+    (a, b) => utils.dateSort(a.user.createdAt, b.user.createdAt) * -1
+  )
+  // console.log(sortedCustomers.length)
+  // for (const c of sortedCustomers) {
+  //   console.log(c)
+  // }
+  const a = sortedCustomers.map(a => a.user.email)
+  for (const b of a) {
+    console.log(b)
   }
+  // console.log(util.inspect(a, { depth: null, showHidden: true }))
+  // console.log(sortedCustomers.length)
 }
 
 run()
