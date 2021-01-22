@@ -184,20 +184,28 @@ export class PaymentService {
 
       const { user, billingInfo } = customerWithUserData
 
-      const billingAddress = {
+      const tokenBillingAddressCity = token.card.addressCity || ""
+      const tokenBillingAddress1 = token.card.addressLine1 || ""
+      const tokenBillingAddress2 = token.card?.addressLine2 || ""
+      const tokenBillingAddressState = token.card.addressState || ""
+      const tokenBillingAddressZip = token.card.addressZip || ""
+      const tokenBillingAddressCountry =
+        token.card.addressCountry?.toUpperCase() || ""
+
+      const chargebeeBillingAddress = {
         first_name: user.firstName || "",
         last_name: user.lastName || "",
-        line1: token.card.addressLine1 || "",
-        line2: token.card?.addressLine2 || "",
-        city: token.card.addressCity || "",
-        state: token.card.addressState || "",
-        zip: token.card.addressZip || "",
-        country: token.card.addressCountry?.toUpperCase() || "",
+        line1: tokenBillingAddress1,
+        line2: tokenBillingAddress2,
+        city: tokenBillingAddressCity,
+        state: tokenBillingAddressState,
+        zip: tokenBillingAddressZip,
+        country: tokenBillingAddressCountry,
       }
 
       await chargebee.customer
         .update_billing_info(user.id, {
-          billing_address: billingAddress,
+          billing_address: chargebeeBillingAddress,
         })
         .request()
 
@@ -236,9 +244,18 @@ export class PaymentService {
       const brand = token?.card?.brand
       const billingInfoID = billingInfo?.id
 
+      const prismaBillingAddressData = {
+        city: tokenBillingAddressCity,
+        postal_code: tokenBillingAddressZip,
+        state: tokenBillingAddressState,
+        street1: tokenBillingAddress1,
+        street2: tokenBillingAddress2,
+        country: tokenBillingAddressCountry,
+      }
+
       await this.prisma.client.updateBillingInfo({
         where: { id: billingInfoID },
-        data: { brand, last_digits: last4 },
+        data: { ...prismaBillingAddressData, brand, last_digits: last4 },
       })
     } catch (e) {
       this.error.setExtraContext({ planID, token, tokenType })
@@ -654,6 +671,7 @@ export class PaymentService {
     })
   }
 
+  // This is deprecated, should eventually remove
   async updateCustomerBillingAddress(
     userID,
     customerID,
@@ -806,31 +824,24 @@ export class PaymentService {
     customer,
     user
   ) {
-    const {
-      city: billingCity,
-      postalCode: billingPostalCode,
-      state: billingState,
-      street1: billingStreet1,
-      street2: billingStreet2,
-    } = billingAddress
+    const billingCity = billingAddress?.city
+    const billingPostalCode = billingAddress?.postalCode
+    const billingState = billingAddress?.state
+    const billingStreet1 = billingAddress?.street1
+    const billingStreet2 = billingAddress?.street2
 
     const {
       city: shippingCity,
       postalCode: shippingPostalCode,
       state: shippingState,
       street1: shippingStreet1,
-      street2: shippingStreet2,
     } = shippingAddress
 
     if (
       !shippingCity ||
       !shippingPostalCode ||
       !shippingState ||
-      !shippingStreet1 ||
-      !billingCity ||
-      !billingPostalCode ||
-      !billingState ||
-      !billingStreet1
+      !shippingStreet1
     ) {
       throw new Error("You're missing a required field")
     }
@@ -857,21 +868,6 @@ export class PaymentService {
       ? getAbbreviatedState(billingState)
       : ""
 
-    const {
-      isValid: billingAddressIsValid,
-    } = await this.shippingService.shippoValidateAddress({
-      name: user.firstName,
-      street1: billingStreet1,
-      street2: billingStreet2,
-      city: billingCity,
-      state: abbrBillingState,
-      zip: billingPostalCode,
-    })
-
-    if (!billingAddressIsValid) {
-      throw new Error("Your billing address is invalid")
-    }
-
     const abbrShippingState = !!shippingState
       ? getAbbreviatedState(shippingState)
       : ""
@@ -890,26 +886,37 @@ export class PaymentService {
       throw new Error("Your shipping address is invalid")
     }
 
-    // Update user's billing address on chargebee
-    await this.updateChargebeeBillingAddress(
-      user.id,
-      billingStreet1,
-      billingStreet2,
-      billingCity,
-      abbrBillingState,
+    if (
+      billingStreet1 &&
+      billingCity &&
+      abbrBillingState &&
       billingPostalCode
-    )
+    ) {
+      // FIXME:
+      // This has been deprecated as of build on 1/22/2021,
+      // older builds allowed user to update both shipping and billing
+      // the billing update can be removed in the future.
 
-    // Update customer's billing address
-    await this.updateCustomerBillingAddress(
-      user.id,
-      customer.id,
-      billingStreet1,
-      billingStreet2,
-      billingCity,
-      abbrBillingState,
-      billingPostalCode
-    )
+      // Update user's billing address on chargebee
+      await this.updateChargebeeBillingAddress(
+        user.id,
+        billingStreet1,
+        billingStreet2,
+        billingCity,
+        abbrBillingState,
+        billingPostalCode
+      )
+      // Update customer's billing address
+      await this.updateCustomerBillingAddress(
+        user.id,
+        customer.id,
+        billingStreet1,
+        billingStreet2,
+        billingCity,
+        abbrBillingState,
+        billingPostalCode
+      )
+    }
 
     // Update customer's shipping address & phone number. Unlike before, will
     // accept all valid addresses. Will NOT throw an error if the address is

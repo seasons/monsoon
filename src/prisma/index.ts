@@ -53,6 +53,9 @@ export interface Exists {
   physicalProductPrice: (
     where?: PhysicalProductPriceWhereInput
   ) => Promise<boolean>;
+  physicalProductQualityReport: (
+    where?: PhysicalProductQualityReportWhereInput
+  ) => Promise<boolean>;
   product: (where?: ProductWhereInput) => Promise<boolean>;
   productFunction: (where?: ProductFunctionWhereInput) => Promise<boolean>;
   productMaterialCategory: (
@@ -682,6 +685,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => PhysicalProductPriceConnectionPromise;
+  physicalProductQualityReport: (
+    where: PhysicalProductQualityReportWhereUniqueInput
+  ) => PhysicalProductQualityReportNullablePromise;
+  physicalProductQualityReports: (args?: {
+    where?: PhysicalProductQualityReportWhereInput;
+    orderBy?: PhysicalProductQualityReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<PhysicalProductQualityReport>;
+  physicalProductQualityReportsConnection: (args?: {
+    where?: PhysicalProductQualityReportWhereInput;
+    orderBy?: PhysicalProductQualityReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => PhysicalProductQualityReportConnectionPromise;
   product: (where: ProductWhereUniqueInput) => ProductNullablePromise;
   products: (args?: {
     where?: ProductWhereInput;
@@ -1909,6 +1933,28 @@ export interface Prisma {
   deleteManyPhysicalProductPrices: (
     where?: PhysicalProductPriceWhereInput
   ) => BatchPayloadPromise;
+  createPhysicalProductQualityReport: (
+    data: PhysicalProductQualityReportCreateInput
+  ) => PhysicalProductQualityReportPromise;
+  updatePhysicalProductQualityReport: (args: {
+    data: PhysicalProductQualityReportUpdateInput;
+    where: PhysicalProductQualityReportWhereUniqueInput;
+  }) => PhysicalProductQualityReportPromise;
+  updateManyPhysicalProductQualityReports: (args: {
+    data: PhysicalProductQualityReportUpdateManyMutationInput;
+    where?: PhysicalProductQualityReportWhereInput;
+  }) => BatchPayloadPromise;
+  upsertPhysicalProductQualityReport: (args: {
+    where: PhysicalProductQualityReportWhereUniqueInput;
+    create: PhysicalProductQualityReportCreateInput;
+    update: PhysicalProductQualityReportUpdateInput;
+  }) => PhysicalProductQualityReportPromise;
+  deletePhysicalProductQualityReport: (
+    where: PhysicalProductQualityReportWhereUniqueInput
+  ) => PhysicalProductQualityReportPromise;
+  deleteManyPhysicalProductQualityReports: (
+    where?: PhysicalProductQualityReportWhereInput
+  ) => BatchPayloadPromise;
   createProduct: (data: ProductCreateInput) => ProductPromise;
   updateProduct: (args: {
     data: ProductUpdateInput;
@@ -2699,6 +2745,9 @@ export interface Subscription {
   physicalProductPrice: (
     where?: PhysicalProductPriceSubscriptionWhereInput
   ) => PhysicalProductPriceSubscriptionPayloadSubscription;
+  physicalProductQualityReport: (
+    where?: PhysicalProductQualityReportSubscriptionWhereInput
+  ) => PhysicalProductQualityReportSubscriptionPayloadSubscription;
   product: (
     where?: ProductSubscriptionWhereInput
   ) => ProductSubscriptionPayloadSubscription;
@@ -2929,6 +2978,14 @@ export type PhysicalProductOffloadMethod =
   | "Unknown";
 
 export type WarehouseLocationType = "Conveyor" | "Rail" | "Bin";
+
+export type PhysicalProductDamageType =
+  | "BarcodeMissing"
+  | "ButtonMissing"
+  | "Stain"
+  | "Smell"
+  | "Tear"
+  | "Other";
 
 export type ShippingCode = "UPSGround" | "UPSSelect";
 
@@ -3215,6 +3272,18 @@ export type WarehouseLocationOrderByInput =
   | "locationCode_DESC"
   | "itemCode_ASC"
   | "itemCode_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type PhysicalProductQualityReportOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "damageType_ASC"
+  | "damageType_DESC"
+  | "notes_ASC"
+  | "notes_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -4918,6 +4987,9 @@ export interface PhysicalProductWhereInput {
   unitCost_gt?: Maybe<Float>;
   unitCost_gte?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceWhereInput>;
+  reports_every?: Maybe<PhysicalProductQualityReportWhereInput>;
+  reports_some?: Maybe<PhysicalProductQualityReportWhereInput>;
+  reports_none?: Maybe<PhysicalProductQualityReportWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -6398,6 +6470,75 @@ export interface PhysicalProductPriceWhereInput {
   OR?: Maybe<PhysicalProductPriceWhereInput[] | PhysicalProductPriceWhereInput>;
   NOT?: Maybe<
     PhysicalProductPriceWhereInput[] | PhysicalProductPriceWhereInput
+  >;
+}
+
+export interface PhysicalProductQualityReportWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  user?: Maybe<UserWhereInput>;
+  damageType?: Maybe<PhysicalProductDamageType>;
+  damageType_not?: Maybe<PhysicalProductDamageType>;
+  damageType_in?: Maybe<
+    PhysicalProductDamageType[] | PhysicalProductDamageType
+  >;
+  damageType_not_in?: Maybe<
+    PhysicalProductDamageType[] | PhysicalProductDamageType
+  >;
+  notes?: Maybe<String>;
+  notes_not?: Maybe<String>;
+  notes_in?: Maybe<String[] | String>;
+  notes_not_in?: Maybe<String[] | String>;
+  notes_lt?: Maybe<String>;
+  notes_lte?: Maybe<String>;
+  notes_gt?: Maybe<String>;
+  notes_gte?: Maybe<String>;
+  notes_contains?: Maybe<String>;
+  notes_not_contains?: Maybe<String>;
+  notes_starts_with?: Maybe<String>;
+  notes_not_starts_with?: Maybe<String>;
+  notes_ends_with?: Maybe<String>;
+  notes_not_ends_with?: Maybe<String>;
+  physicalProduct?: Maybe<PhysicalProductWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    | PhysicalProductQualityReportWhereInput[]
+    | PhysicalProductQualityReportWhereInput
+  >;
+  OR?: Maybe<
+    | PhysicalProductQualityReportWhereInput[]
+    | PhysicalProductQualityReportWhereInput
+  >;
+  NOT?: Maybe<
+    | PhysicalProductQualityReportWhereInput[]
+    | PhysicalProductQualityReportWhereInput
   >;
 }
 
@@ -8311,6 +8452,10 @@ export type PhysicalProductPriceWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type PhysicalProductQualityReportWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type ProductWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
@@ -9172,6 +9317,9 @@ export interface PhysicalProductCreateWithoutLocationInput {
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceCreateOneInput>;
+  reports?: Maybe<
+    PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+  >;
 }
 
 export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
@@ -9511,6 +9659,9 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceCreateOneInput>;
+  reports?: Maybe<
+    PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+  >;
 }
 
 export interface LocationCreateOneWithoutPhysicalProductsInput {
@@ -9624,6 +9775,24 @@ export interface PhysicalProductPriceCreateInput {
   id?: Maybe<ID_Input>;
   buyUsedEnabled?: Maybe<Boolean>;
   buyUsedPrice?: Maybe<Float>;
+}
+
+export interface PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput {
+  create?: Maybe<
+    | PhysicalProductQualityReportCreateWithoutPhysicalProductInput[]
+    | PhysicalProductQualityReportCreateWithoutPhysicalProductInput
+  >;
+  connect?: Maybe<
+    | PhysicalProductQualityReportWhereUniqueInput[]
+    | PhysicalProductQualityReportWhereUniqueInput
+  >;
+}
+
+export interface PhysicalProductQualityReportCreateWithoutPhysicalProductInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneInput;
+  damageType?: Maybe<PhysicalProductDamageType>;
+  notes?: Maybe<String>;
 }
 
 export interface ProductFunctionCreateManyInput {
@@ -10722,6 +10891,9 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceUpdateOneInput>;
+  reports?: Maybe<
+    PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  >;
 }
 
 export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
@@ -11443,6 +11615,9 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceUpdateOneInput>;
+  reports?: Maybe<
+    PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  >;
 }
 
 export interface LocationUpdateOneWithoutPhysicalProductsInput {
@@ -11794,6 +11969,139 @@ export interface PhysicalProductPriceUpdateDataInput {
 export interface PhysicalProductPriceUpsertNestedInput {
   update: PhysicalProductPriceUpdateDataInput;
   create: PhysicalProductPriceCreateInput;
+}
+
+export interface PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput {
+  create?: Maybe<
+    | PhysicalProductQualityReportCreateWithoutPhysicalProductInput[]
+    | PhysicalProductQualityReportCreateWithoutPhysicalProductInput
+  >;
+  delete?: Maybe<
+    | PhysicalProductQualityReportWhereUniqueInput[]
+    | PhysicalProductQualityReportWhereUniqueInput
+  >;
+  connect?: Maybe<
+    | PhysicalProductQualityReportWhereUniqueInput[]
+    | PhysicalProductQualityReportWhereUniqueInput
+  >;
+  set?: Maybe<
+    | PhysicalProductQualityReportWhereUniqueInput[]
+    | PhysicalProductQualityReportWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    | PhysicalProductQualityReportWhereUniqueInput[]
+    | PhysicalProductQualityReportWhereUniqueInput
+  >;
+  update?: Maybe<
+    | PhysicalProductQualityReportUpdateWithWhereUniqueWithoutPhysicalProductInput[]
+    | PhysicalProductQualityReportUpdateWithWhereUniqueWithoutPhysicalProductInput
+  >;
+  upsert?: Maybe<
+    | PhysicalProductQualityReportUpsertWithWhereUniqueWithoutPhysicalProductInput[]
+    | PhysicalProductQualityReportUpsertWithWhereUniqueWithoutPhysicalProductInput
+  >;
+  deleteMany?: Maybe<
+    | PhysicalProductQualityReportScalarWhereInput[]
+    | PhysicalProductQualityReportScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | PhysicalProductQualityReportUpdateManyWithWhereNestedInput[]
+    | PhysicalProductQualityReportUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface PhysicalProductQualityReportUpdateWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductQualityReportWhereUniqueInput;
+  data: PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput;
+}
+
+export interface PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  damageType?: Maybe<PhysicalProductDamageType>;
+  notes?: Maybe<String>;
+}
+
+export interface PhysicalProductQualityReportUpsertWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductQualityReportWhereUniqueInput;
+  update: PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput;
+  create: PhysicalProductQualityReportCreateWithoutPhysicalProductInput;
+}
+
+export interface PhysicalProductQualityReportScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  damageType?: Maybe<PhysicalProductDamageType>;
+  damageType_not?: Maybe<PhysicalProductDamageType>;
+  damageType_in?: Maybe<
+    PhysicalProductDamageType[] | PhysicalProductDamageType
+  >;
+  damageType_not_in?: Maybe<
+    PhysicalProductDamageType[] | PhysicalProductDamageType
+  >;
+  notes?: Maybe<String>;
+  notes_not?: Maybe<String>;
+  notes_in?: Maybe<String[] | String>;
+  notes_not_in?: Maybe<String[] | String>;
+  notes_lt?: Maybe<String>;
+  notes_lte?: Maybe<String>;
+  notes_gt?: Maybe<String>;
+  notes_gte?: Maybe<String>;
+  notes_contains?: Maybe<String>;
+  notes_not_contains?: Maybe<String>;
+  notes_starts_with?: Maybe<String>;
+  notes_not_starts_with?: Maybe<String>;
+  notes_ends_with?: Maybe<String>;
+  notes_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    | PhysicalProductQualityReportScalarWhereInput[]
+    | PhysicalProductQualityReportScalarWhereInput
+  >;
+  OR?: Maybe<
+    | PhysicalProductQualityReportScalarWhereInput[]
+    | PhysicalProductQualityReportScalarWhereInput
+  >;
+  NOT?: Maybe<
+    | PhysicalProductQualityReportScalarWhereInput[]
+    | PhysicalProductQualityReportScalarWhereInput
+  >;
+}
+
+export interface PhysicalProductQualityReportUpdateManyWithWhereNestedInput {
+  where: PhysicalProductQualityReportScalarWhereInput;
+  data: PhysicalProductQualityReportUpdateManyDataInput;
+}
+
+export interface PhysicalProductQualityReportUpdateManyDataInput {
+  damageType?: Maybe<PhysicalProductDamageType>;
+  notes?: Maybe<String>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput {
@@ -13449,6 +13757,9 @@ export interface PhysicalProductCreateInput {
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceCreateOneInput>;
+  reports?: Maybe<
+    PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+  >;
 }
 
 export interface LabelCreateOneInput {
@@ -14196,6 +14507,9 @@ export interface PhysicalProductUpdateDataInput {
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceUpdateOneInput>;
+  reports?: Maybe<
+    PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  >;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -16137,6 +16451,9 @@ export interface PhysicalProductUpdateInput {
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceUpdateOneInput>;
+  reports?: Maybe<
+    PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  >;
 }
 
 export interface PhysicalProductUpdateManyMutationInput {
@@ -16160,6 +16477,84 @@ export interface PhysicalProductPriceUpdateInput {
 export interface PhysicalProductPriceUpdateManyMutationInput {
   buyUsedEnabled?: Maybe<Boolean>;
   buyUsedPrice?: Maybe<Float>;
+}
+
+export interface PhysicalProductQualityReportCreateInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneInput;
+  damageType?: Maybe<PhysicalProductDamageType>;
+  notes?: Maybe<String>;
+  physicalProduct: PhysicalProductCreateOneWithoutReportsInput;
+}
+
+export interface PhysicalProductCreateOneWithoutReportsInput {
+  create?: Maybe<PhysicalProductCreateWithoutReportsInput>;
+  connect?: Maybe<PhysicalProductWhereUniqueInput>;
+}
+
+export interface PhysicalProductCreateWithoutReportsInput {
+  id?: Maybe<ID_Input>;
+  seasonsUID: String;
+  location?: Maybe<LocationCreateOneWithoutPhysicalProductsInput>;
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput;
+  inventoryStatus: InventoryStatus;
+  productStatus: PhysicalProductStatus;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
+  sequenceNumber: Int;
+  warehouseLocation?: Maybe<
+    WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  >;
+  barcoded?: Maybe<Boolean>;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
+  price?: Maybe<PhysicalProductPriceCreateOneInput>;
+}
+
+export interface PhysicalProductQualityReportUpdateInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  damageType?: Maybe<PhysicalProductDamageType>;
+  notes?: Maybe<String>;
+  physicalProduct?: Maybe<PhysicalProductUpdateOneRequiredWithoutReportsInput>;
+}
+
+export interface PhysicalProductUpdateOneRequiredWithoutReportsInput {
+  create?: Maybe<PhysicalProductCreateWithoutReportsInput>;
+  update?: Maybe<PhysicalProductUpdateWithoutReportsDataInput>;
+  upsert?: Maybe<PhysicalProductUpsertWithoutReportsInput>;
+  connect?: Maybe<PhysicalProductWhereUniqueInput>;
+}
+
+export interface PhysicalProductUpdateWithoutReportsDataInput {
+  seasonsUID?: Maybe<String>;
+  location?: Maybe<LocationUpdateOneWithoutPhysicalProductsInput>;
+  productVariant?: Maybe<
+    ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  >;
+  inventoryStatus?: Maybe<InventoryStatus>;
+  productStatus?: Maybe<PhysicalProductStatus>;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
+  sequenceNumber?: Maybe<Int>;
+  warehouseLocation?: Maybe<
+    WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  >;
+  barcoded?: Maybe<Boolean>;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
+  price?: Maybe<PhysicalProductPriceUpdateOneInput>;
+}
+
+export interface PhysicalProductUpsertWithoutReportsInput {
+  update: PhysicalProductUpdateWithoutReportsDataInput;
+  create: PhysicalProductCreateWithoutReportsInput;
+}
+
+export interface PhysicalProductQualityReportUpdateManyMutationInput {
+  damageType?: Maybe<PhysicalProductDamageType>;
+  notes?: Maybe<String>;
 }
 
 export interface ProductUpdateInput {
@@ -17741,6 +18136,9 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceCreateOneInput>;
+  reports?: Maybe<
+    PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+  >;
 }
 
 export interface WarehouseLocationUpdateInput {
@@ -17811,6 +18209,9 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceUpdateOneInput>;
+  reports?: Maybe<
+    PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  >;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput {
@@ -18457,6 +18858,26 @@ export interface PhysicalProductPriceSubscriptionWhereInput {
   NOT?: Maybe<
     | PhysicalProductPriceSubscriptionWhereInput[]
     | PhysicalProductPriceSubscriptionWhereInput
+  >;
+}
+
+export interface PhysicalProductQualityReportSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<PhysicalProductQualityReportWhereInput>;
+  AND?: Maybe<
+    | PhysicalProductQualityReportSubscriptionWhereInput[]
+    | PhysicalProductQualityReportSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | PhysicalProductQualityReportSubscriptionWhereInput[]
+    | PhysicalProductQualityReportSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | PhysicalProductQualityReportSubscriptionWhereInput[]
+    | PhysicalProductQualityReportSubscriptionWhereInput
   >;
 }
 
@@ -19910,6 +20331,15 @@ export interface PhysicalProductPromise
   dateReceived: () => Promise<DateTimeOutput>;
   unitCost: () => Promise<Float>;
   price: <T = PhysicalProductPricePromise>() => T;
+  reports: <T = FragmentableArray<PhysicalProductQualityReport>>(args?: {
+    where?: PhysicalProductQualityReportWhereInput;
+    orderBy?: PhysicalProductQualityReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -19932,6 +20362,17 @@ export interface PhysicalProductSubscription
   dateReceived: () => Promise<AsyncIterator<DateTimeOutput>>;
   unitCost: () => Promise<AsyncIterator<Float>>;
   price: <T = PhysicalProductPriceSubscription>() => T;
+  reports: <
+    T = Promise<AsyncIterator<PhysicalProductQualityReportSubscription>>
+  >(args?: {
+    where?: PhysicalProductQualityReportWhereInput;
+    orderBy?: PhysicalProductQualityReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -19954,6 +20395,15 @@ export interface PhysicalProductNullablePromise
   dateReceived: () => Promise<DateTimeOutput>;
   unitCost: () => Promise<Float>;
   price: <T = PhysicalProductPricePromise>() => T;
+  reports: <T = FragmentableArray<PhysicalProductQualityReport>>(args?: {
+    where?: PhysicalProductQualityReportWhereInput;
+    orderBy?: PhysicalProductQualityReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -21358,6 +21808,50 @@ export interface PhysicalProductPriceNullablePromise
   id: () => Promise<ID_Output>;
   buyUsedEnabled: () => Promise<Boolean>;
   buyUsedPrice: () => Promise<Float>;
+}
+
+export interface PhysicalProductQualityReport {
+  id: ID_Output;
+  damageType?: PhysicalProductDamageType;
+  notes?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface PhysicalProductQualityReportPromise
+  extends Promise<PhysicalProductQualityReport>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  user: <T = UserPromise>() => T;
+  damageType: () => Promise<PhysicalProductDamageType>;
+  notes: () => Promise<String>;
+  physicalProduct: <T = PhysicalProductPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PhysicalProductQualityReportSubscription
+  extends Promise<AsyncIterator<PhysicalProductQualityReport>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  user: <T = UserSubscription>() => T;
+  damageType: () => Promise<AsyncIterator<PhysicalProductDamageType>>;
+  notes: () => Promise<AsyncIterator<String>>;
+  physicalProduct: <T = PhysicalProductSubscription>() => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface PhysicalProductQualityReportNullablePromise
+  extends Promise<PhysicalProductQualityReport | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  user: <T = UserPromise>() => T;
+  damageType: () => Promise<PhysicalProductDamageType>;
+  notes: () => Promise<String>;
+  physicalProduct: <T = PhysicalProductPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ShippingOption {
@@ -24361,6 +24855,64 @@ export interface AggregatePhysicalProductPricePromise
 
 export interface AggregatePhysicalProductPriceSubscription
   extends Promise<AsyncIterator<AggregatePhysicalProductPrice>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface PhysicalProductQualityReportConnection {
+  pageInfo: PageInfo;
+  edges: PhysicalProductQualityReportEdge[];
+}
+
+export interface PhysicalProductQualityReportConnectionPromise
+  extends Promise<PhysicalProductQualityReportConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PhysicalProductQualityReportEdge>>() => T;
+  aggregate: <T = AggregatePhysicalProductQualityReportPromise>() => T;
+}
+
+export interface PhysicalProductQualityReportConnectionSubscription
+  extends Promise<AsyncIterator<PhysicalProductQualityReportConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<PhysicalProductQualityReportEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregatePhysicalProductQualityReportSubscription>() => T;
+}
+
+export interface PhysicalProductQualityReportEdge {
+  node: PhysicalProductQualityReport;
+  cursor: String;
+}
+
+export interface PhysicalProductQualityReportEdgePromise
+  extends Promise<PhysicalProductQualityReportEdge>,
+    Fragmentable {
+  node: <T = PhysicalProductQualityReportPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface PhysicalProductQualityReportEdgeSubscription
+  extends Promise<AsyncIterator<PhysicalProductQualityReportEdge>>,
+    Fragmentable {
+  node: <T = PhysicalProductQualityReportSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregatePhysicalProductQualityReport {
+  count: Int;
+}
+
+export interface AggregatePhysicalProductQualityReportPromise
+  extends Promise<AggregatePhysicalProductQualityReport>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePhysicalProductQualityReportSubscription
+  extends Promise<AsyncIterator<AggregatePhysicalProductQualityReport>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -28429,6 +28981,65 @@ export interface PhysicalProductPricePreviousValuesSubscription
   buyUsedPrice: () => Promise<AsyncIterator<Float>>;
 }
 
+export interface PhysicalProductQualityReportSubscriptionPayload {
+  mutation: MutationType;
+  node: PhysicalProductQualityReport;
+  updatedFields: String[];
+  previousValues: PhysicalProductQualityReportPreviousValues;
+}
+
+export interface PhysicalProductQualityReportSubscriptionPayloadPromise
+  extends Promise<PhysicalProductQualityReportSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = PhysicalProductQualityReportPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <
+    T = PhysicalProductQualityReportPreviousValuesPromise
+  >() => T;
+}
+
+export interface PhysicalProductQualityReportSubscriptionPayloadSubscription
+  extends Promise<
+      AsyncIterator<PhysicalProductQualityReportSubscriptionPayload>
+    >,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = PhysicalProductQualityReportSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = PhysicalProductQualityReportPreviousValuesSubscription
+  >() => T;
+}
+
+export interface PhysicalProductQualityReportPreviousValues {
+  id: ID_Output;
+  damageType?: PhysicalProductDamageType;
+  notes?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface PhysicalProductQualityReportPreviousValuesPromise
+  extends Promise<PhysicalProductQualityReportPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  damageType: () => Promise<PhysicalProductDamageType>;
+  notes: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PhysicalProductQualityReportPreviousValuesSubscription
+  extends Promise<AsyncIterator<PhysicalProductQualityReportPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  damageType: () => Promise<AsyncIterator<PhysicalProductDamageType>>;
+  notes: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface ProductSubscriptionPayload {
   mutation: MutationType;
   node: Product;
@@ -30630,6 +31241,10 @@ export const models: Model[] = [
   },
   {
     name: "PhysicalProductDamageType",
+    embedded: false
+  },
+  {
+    name: "PhysicalProductQualityReport",
     embedded: false
   },
   {
