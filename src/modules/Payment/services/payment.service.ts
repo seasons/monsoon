@@ -184,20 +184,28 @@ export class PaymentService {
 
       const { user, billingInfo } = customerWithUserData
 
-      const billingAddress = {
+      const tokenBillingAddressCity = token.card.addressCity || ""
+      const tokenBillingAddress1 = token.card.addressLine1 || ""
+      const tokenBillingAddress2 = token.card?.addressLine2 || ""
+      const tokenBillingAddressState = token.card.addressState || ""
+      const tokenBillingAddressZip = token.card.addressZip || ""
+      const tokenBillingAddressCountry =
+        token.card.addressCountry?.toUpperCase() || ""
+
+      const chargebeeBillingAddress = {
         first_name: user.firstName || "",
         last_name: user.lastName || "",
-        line1: token.card.addressLine1 || "",
-        line2: token.card?.addressLine2 || "",
-        city: token.card.addressCity || "",
-        state: token.card.addressState || "",
-        zip: token.card.addressZip || "",
-        country: token.card.addressCountry?.toUpperCase() || "",
+        line1: tokenBillingAddress1,
+        line2: tokenBillingAddress2,
+        city: tokenBillingAddressCity,
+        state: tokenBillingAddressState,
+        zip: tokenBillingAddressZip,
+        country: tokenBillingAddressCountry,
       }
 
       await chargebee.customer
         .update_billing_info(user.id, {
-          billing_address: billingAddress,
+          billing_address: chargebeeBillingAddress,
         })
         .request()
 
@@ -236,9 +244,18 @@ export class PaymentService {
       const brand = token?.card?.brand
       const billingInfoID = billingInfo?.id
 
+      const prismaBillingAddressData = {
+        city: tokenBillingAddressCity,
+        postal_code: tokenBillingAddressZip,
+        state: tokenBillingAddressState,
+        street1: tokenBillingAddress1,
+        street2: tokenBillingAddress2,
+        country: tokenBillingAddressCountry,
+      }
+
       await this.prisma.client.updateBillingInfo({
         where: { id: billingInfoID },
-        data: { brand, last_digits: last4 },
+        data: { ...prismaBillingAddressData, brand, last_digits: last4 },
       })
     } catch (e) {
       this.error.setExtraContext({ planID, token, tokenType })
@@ -654,6 +671,7 @@ export class PaymentService {
     })
   }
 
+  // This is deprecated, should eventually remove
   async updateCustomerBillingAddress(
     userID,
     customerID,
