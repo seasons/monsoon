@@ -36,6 +36,14 @@ export class PhysicalProductMutationsResolver {
   }
 
   @Mutation()
+  async createPhysicalProductQualityReport(@Args() args, @Info() info) {
+    return await this.prisma.binding.mutation.createPhysicalProductQualityReport(
+      args,
+      info
+    )
+  }
+
+  @Mutation()
   async updatePhysicalProductByBarcode(@Args() args, @Info() info) {
     const { barcode, status } = args
     const sequenceNumber = parseInt(barcode.replace("SZNS", ""), 10)
