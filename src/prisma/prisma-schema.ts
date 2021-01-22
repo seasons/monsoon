@@ -16578,6 +16578,7 @@ type User {
   pushNotificationStatus: PushNotificationStatus!
   pushNotifications(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt!]
   emails(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt!]
+  sendSystemEmails: Boolean!
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
@@ -16604,6 +16605,7 @@ input UserCreateInput {
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   emails: EmailReceiptCreateManyWithoutUserInput
+  sendSystemEmails: Boolean
   pushNotification: UserPushNotificationCreateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -16645,6 +16647,7 @@ input UserCreateWithoutEmailsInput {
   roles: UserCreaterolesInput
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  sendSystemEmails: Boolean
   pushNotification: UserPushNotificationCreateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -16663,6 +16666,7 @@ input UserCreateWithoutFitPicsInput {
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   emails: EmailReceiptCreateManyWithoutUserInput
+  sendSystemEmails: Boolean
   pushNotification: UserPushNotificationCreateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -16679,6 +16683,7 @@ input UserCreateWithoutPushNotificationsInput {
   roles: UserCreaterolesInput
   pushNotificationStatus: PushNotificationStatus
   emails: EmailReceiptCreateManyWithoutUserInput
+  sendSystemEmails: Boolean
   pushNotification: UserPushNotificationCreateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -16706,6 +16711,8 @@ enum UserOrderByInput {
   role_DESC
   pushNotificationStatus_ASC
   pushNotificationStatus_DESC
+  sendSystemEmails_ASC
+  sendSystemEmails_DESC
   verificationStatus_ASC
   verificationStatus_DESC
   verificationMethod_ASC
@@ -16725,6 +16732,7 @@ type UserPreviousValues {
   role: UserRole!
   roles: [UserRole!]!
   pushNotificationStatus: PushNotificationStatus!
+  sendSystemEmails: Boolean!
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
@@ -17154,6 +17162,8 @@ input UserScalarWhereInput {
   pushNotificationStatus_not: PushNotificationStatus
   pushNotificationStatus_in: [PushNotificationStatus!]
   pushNotificationStatus_not_in: [PushNotificationStatus!]
+  sendSystemEmails: Boolean
+  sendSystemEmails_not: Boolean
   verificationStatus: UserVerificationStatus
   verificationStatus_not: UserVerificationStatus
   verificationStatus_in: [UserVerificationStatus!]
@@ -17211,6 +17221,7 @@ input UserUpdateDataInput {
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   emails: EmailReceiptUpdateManyWithoutUserInput
+  sendSystemEmails: Boolean
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -17228,6 +17239,7 @@ input UserUpdateInput {
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   emails: EmailReceiptUpdateManyWithoutUserInput
+  sendSystemEmails: Boolean
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -17243,6 +17255,7 @@ input UserUpdateManyDataInput {
   role: UserRole
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
 }
@@ -17255,6 +17268,7 @@ input UserUpdateManyMutationInput {
   role: UserRole
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
 }
@@ -17319,6 +17333,7 @@ input UserUpdateWithoutEmailsDataInput {
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  sendSystemEmails: Boolean
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -17336,6 +17351,7 @@ input UserUpdateWithoutFitPicsDataInput {
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   emails: EmailReceiptUpdateManyWithoutUserInput
+  sendSystemEmails: Boolean
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -17351,6 +17367,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
   emails: EmailReceiptUpdateManyWithoutUserInput
+  sendSystemEmails: Boolean
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -17481,6 +17498,8 @@ input UserWhereInput {
   emails_every: EmailReceiptWhereInput
   emails_some: EmailReceiptWhereInput
   emails_none: EmailReceiptWhereInput
+  sendSystemEmails: Boolean
+  sendSystemEmails_not: Boolean
   pushNotification: UserPushNotificationWhereInput
   verificationStatus: UserVerificationStatus
   verificationStatus_not: UserVerificationStatus

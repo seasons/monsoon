@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Jan 21 2021 09:56:09 GMT-0600 (Central Standard Time)
+# timestamp: Fri Jan 22 2021 14:26:12 GMT-0600 (Central Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -40419,6 +40419,7 @@ type User implements Node {
     first: Int
     last: Int
   ): [EmailReceipt!]
+  sendSystemEmails: Boolean!
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
@@ -40468,6 +40469,7 @@ input UserCreateInput {
   lastName: String!
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
@@ -40510,6 +40512,7 @@ input UserCreateWithoutEmailsInput {
   lastName: String!
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
@@ -40527,6 +40530,7 @@ input UserCreateWithoutFitPicsInput {
   lastName: String!
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
@@ -40544,6 +40548,7 @@ input UserCreateWithoutPushNotificationsInput {
   lastName: String!
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
@@ -40583,6 +40588,8 @@ enum UserOrderByInput {
   role_DESC
   pushNotificationStatus_ASC
   pushNotificationStatus_DESC
+  sendSystemEmails_ASC
+  sendSystemEmails_DESC
   verificationStatus_ASC
   verificationStatus_DESC
   verificationMethod_ASC
@@ -40602,6 +40609,7 @@ type UserPreviousValues {
   role: UserRole!
   roles: [UserRole!]!
   pushNotificationStatus: PushNotificationStatus!
+  sendSystemEmails: Boolean!
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
@@ -41768,6 +41776,12 @@ input UserScalarWhereInput {
   All values that are not contained in given list.
   """
   pushNotificationStatus_not_in: [PushNotificationStatus!]
+  sendSystemEmails: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  sendSystemEmails_not: Boolean
   verificationStatus: UserVerificationStatus
 
   """
@@ -41926,6 +41940,7 @@ input UserUpdateDataInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -41943,6 +41958,7 @@ input UserUpdateInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -41960,6 +41976,7 @@ input UserUpdateManyDataInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -41972,6 +41989,7 @@ input UserUpdateManyMutationInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -42035,6 +42053,7 @@ input UserUpdateWithoutEmailsDataInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -42051,6 +42070,7 @@ input UserUpdateWithoutFitPicsDataInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -42067,6 +42087,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -42491,6 +42512,12 @@ input UserWhereInput {
   All values that are not contained in given list.
   """
   pushNotificationStatus_not_in: [PushNotificationStatus!]
+  sendSystemEmails: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  sendSystemEmails_not: Boolean
   verificationStatus: UserVerificationStatus
 
   """

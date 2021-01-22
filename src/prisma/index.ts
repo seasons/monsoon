@@ -2979,6 +2979,8 @@ export type UserOrderByInput =
   | "role_DESC"
   | "pushNotificationStatus_ASC"
   | "pushNotificationStatus_DESC"
+  | "sendSystemEmails_ASC"
+  | "sendSystemEmails_DESC"
   | "verificationStatus_ASC"
   | "verificationStatus_DESC"
   | "verificationMethod_ASC"
@@ -4220,6 +4222,8 @@ export interface UserWhereInput {
   emails_every?: Maybe<EmailReceiptWhereInput>;
   emails_some?: Maybe<EmailReceiptWhereInput>;
   emails_none?: Maybe<EmailReceiptWhereInput>;
+  sendSystemEmails?: Maybe<Boolean>;
+  sendSystemEmails_not?: Maybe<Boolean>;
   pushNotification?: Maybe<UserPushNotificationWhereInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationStatus_not?: Maybe<UserVerificationStatus>;
@@ -8942,6 +8946,7 @@ export interface UserCreateInput {
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   pushNotifications?: Maybe<PushNotificationReceiptCreateManyWithoutUsersInput>;
   emails?: Maybe<EmailReceiptCreateManyWithoutUserInput>;
+  sendSystemEmails?: Maybe<Boolean>;
   pushNotification?: Maybe<UserPushNotificationCreateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
@@ -9066,6 +9071,7 @@ export interface UserCreateWithoutPushNotificationsInput {
   roles?: Maybe<UserCreaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   emails?: Maybe<EmailReceiptCreateManyWithoutUserInput>;
+  sendSystemEmails?: Maybe<Boolean>;
   pushNotification?: Maybe<UserPushNotificationCreateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
@@ -9828,6 +9834,7 @@ export interface UserUpdateDataInput {
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   pushNotifications?: Maybe<PushNotificationReceiptUpdateManyWithoutUsersInput>;
   emails?: Maybe<EmailReceiptUpdateManyWithoutUserInput>;
+  sendSystemEmails?: Maybe<Boolean>;
   pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
@@ -10422,6 +10429,7 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   emails?: Maybe<EmailReceiptUpdateManyWithoutUserInput>;
+  sendSystemEmails?: Maybe<Boolean>;
   pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
@@ -13107,6 +13115,8 @@ export interface UserScalarWhereInput {
   pushNotificationStatus_not_in?: Maybe<
     PushNotificationStatus[] | PushNotificationStatus
   >;
+  sendSystemEmails?: Maybe<Boolean>;
+  sendSystemEmails_not?: Maybe<Boolean>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationStatus_not?: Maybe<UserVerificationStatus>;
   verificationStatus_in?: Maybe<
@@ -13157,6 +13167,7 @@ export interface UserUpdateManyDataInput {
   role?: Maybe<UserRole>;
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  sendSystemEmails?: Maybe<Boolean>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
 }
@@ -15730,6 +15741,7 @@ export interface UserCreateWithoutEmailsInput {
   roles?: Maybe<UserCreaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   pushNotifications?: Maybe<PushNotificationReceiptCreateManyWithoutUsersInput>;
+  sendSystemEmails?: Maybe<Boolean>;
   pushNotification?: Maybe<UserPushNotificationCreateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
@@ -15758,6 +15770,7 @@ export interface UserUpdateWithoutEmailsDataInput {
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   pushNotifications?: Maybe<PushNotificationReceiptUpdateManyWithoutUsersInput>;
+  sendSystemEmails?: Maybe<Boolean>;
   pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
@@ -15815,6 +15828,7 @@ export interface UserCreateWithoutFitPicsInput {
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   pushNotifications?: Maybe<PushNotificationReceiptCreateManyWithoutUsersInput>;
   emails?: Maybe<EmailReceiptCreateManyWithoutUserInput>;
+  sendSystemEmails?: Maybe<Boolean>;
   pushNotification?: Maybe<UserPushNotificationCreateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
@@ -15848,6 +15862,7 @@ export interface UserUpdateWithoutFitPicsDataInput {
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   pushNotifications?: Maybe<PushNotificationReceiptUpdateManyWithoutUsersInput>;
   emails?: Maybe<EmailReceiptUpdateManyWithoutUserInput>;
+  sendSystemEmails?: Maybe<Boolean>;
   pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
@@ -17660,6 +17675,7 @@ export interface UserUpdateInput {
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   pushNotifications?: Maybe<PushNotificationReceiptUpdateManyWithoutUsersInput>;
   emails?: Maybe<EmailReceiptUpdateManyWithoutUserInput>;
+  sendSystemEmails?: Maybe<Boolean>;
   pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
@@ -17675,6 +17691,7 @@ export interface UserUpdateManyMutationInput {
   role?: Maybe<UserRole>;
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  sendSystemEmails?: Maybe<Boolean>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
 }
@@ -19117,6 +19134,7 @@ export interface User {
   role: UserRole;
   roles: UserRole[];
   pushNotificationStatus: PushNotificationStatus;
+  sendSystemEmails: Boolean;
   verificationStatus: UserVerificationStatus;
   verificationMethod: UserVerificationMethod;
   createdAt: DateTimeOutput;
@@ -19150,6 +19168,7 @@ export interface UserPromise extends Promise<User>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  sendSystemEmails: () => Promise<Boolean>;
   pushNotification: <T = UserPushNotificationPromise>() => T;
   verificationStatus: () => Promise<UserVerificationStatus>;
   verificationMethod: () => Promise<UserVerificationMethod>;
@@ -19206,6 +19225,7 @@ export interface UserSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  sendSystemEmails: () => Promise<AsyncIterator<Boolean>>;
   pushNotification: <T = UserPushNotificationSubscription>() => T;
   verificationStatus: () => Promise<AsyncIterator<UserVerificationStatus>>;
   verificationMethod: () => Promise<AsyncIterator<UserVerificationMethod>>;
@@ -19260,6 +19280,7 @@ export interface UserNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  sendSystemEmails: () => Promise<Boolean>;
   pushNotification: <T = UserPushNotificationPromise>() => T;
   verificationStatus: () => Promise<UserVerificationStatus>;
   verificationMethod: () => Promise<UserVerificationMethod>;
@@ -30138,6 +30159,7 @@ export interface UserPreviousValues {
   role: UserRole;
   roles: UserRole[];
   pushNotificationStatus: PushNotificationStatus;
+  sendSystemEmails: Boolean;
   verificationStatus: UserVerificationStatus;
   verificationMethod: UserVerificationMethod;
   createdAt: DateTimeOutput;
@@ -30155,6 +30177,7 @@ export interface UserPreviousValuesPromise
   role: () => Promise<UserRole>;
   roles: () => Promise<UserRole[]>;
   pushNotificationStatus: () => Promise<PushNotificationStatus>;
+  sendSystemEmails: () => Promise<Boolean>;
   verificationStatus: () => Promise<UserVerificationStatus>;
   verificationMethod: () => Promise<UserVerificationMethod>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -30172,6 +30195,7 @@ export interface UserPreviousValuesSubscription
   role: () => Promise<AsyncIterator<UserRole>>;
   roles: () => Promise<AsyncIterator<UserRole[]>>;
   pushNotificationStatus: () => Promise<AsyncIterator<PushNotificationStatus>>;
+  sendSystemEmails: () => Promise<AsyncIterator<Boolean>>;
   verificationStatus: () => Promise<AsyncIterator<UserVerificationStatus>>;
   verificationMethod: () => Promise<AsyncIterator<UserVerificationMethod>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;

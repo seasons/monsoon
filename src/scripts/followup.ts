@@ -506,7 +506,11 @@ const run = async () => {
       }
     }`
   )
+  const unsubscribes = ["mattpetermann@me.com", "ari.friedland@gmail.com"]
   for (const cust of customersToFollowupWith) {
+    if (unsubscribes.includes(cust.user.email)) {
+      continue
+    }
     const receivedEmails = cust.user.emails.map(a => a.emailId)
     const dayTwoFollowupSent = receivedEmails.includes(
       "DayTwoAuthorizationFollowup"
@@ -521,21 +525,25 @@ const run = async () => {
     const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
 
     // Day 2 Followup
-    if (!dayTwoFollowupSent) {
-      await email.sendAuthorizedDayTwoFollowup(cust.user, cust.status)
-      console.log(`sent ${cust.user.email} day 2 followup`)
-      continue
-    }
-
-    // // Day 3 Followup
-    // if (!dayThreeFollowupSent) {
-    //   const availableStyles = await admissions.getAvailableStyles({
-    //     id: cust.id,
-    //   })
-    //   await email.sendAuthorizedDayThreeFollowup(cust.user, availableStyles)
-    //   console.log(`sent ${cust.user.email} day 3 followup`)
+    // if (!dayTwoFollowupSent) {
+    //   await email.sendAuthorizedDayTwoFollowup(cust.user, cust.status)
+    //   console.log(`sent ${cust.user.email} day 2 followup`)
     //   continue
     // }
+
+    // // Day 3 Followup
+    if (!dayThreeFollowupSent) {
+      const availableStyles = await admissions.getAvailableStyles({
+        id: cust.id,
+      })
+      await email.sendAuthorizedDayThreeFollowup(
+        cust.user,
+        availableStyles,
+        cust.status
+      )
+      console.log(`sent ${cust.user.email} day 3 followup`)
+      continue
+    }
 
     // Day 6 Followup
     // if (!daySixFollowupSent) {
