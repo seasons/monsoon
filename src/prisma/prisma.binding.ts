@@ -28852,6 +28852,7 @@ type User implements Node {
   pushNotificationStatus: PushNotificationStatus!
   pushNotifications(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt!]
   emails(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt!]
+  sendSystemEmails: Boolean!
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
@@ -28879,6 +28880,7 @@ input UserCreateInput {
   lastName: String!
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
@@ -28921,6 +28923,7 @@ input UserCreateWithoutEmailsInput {
   lastName: String!
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
@@ -28938,6 +28941,7 @@ input UserCreateWithoutFitPicsInput {
   lastName: String!
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
@@ -28955,6 +28959,7 @@ input UserCreateWithoutPushNotificationsInput {
   lastName: String!
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
@@ -28988,6 +28993,8 @@ enum UserOrderByInput {
   role_DESC
   pushNotificationStatus_ASC
   pushNotificationStatus_DESC
+  sendSystemEmails_ASC
+  sendSystemEmails_DESC
   verificationStatus_ASC
   verificationStatus_DESC
   verificationMethod_ASC
@@ -29007,6 +29014,7 @@ type UserPreviousValues {
   role: UserRole!
   roles: [UserRole!]!
   pushNotificationStatus: PushNotificationStatus!
+  sendSystemEmails: Boolean!
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
@@ -29803,6 +29811,10 @@ input UserScalarWhereInput {
 
   """All values that are not contained in given list."""
   pushNotificationStatus_not_in: [PushNotificationStatus!]
+  sendSystemEmails: Boolean
+
+  """All values that are not equal to given value."""
+  sendSystemEmails_not: Boolean
   verificationStatus: UserVerificationStatus
 
   """All values that are not equal to given value."""
@@ -29913,6 +29925,7 @@ input UserUpdateDataInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -29930,6 +29943,7 @@ input UserUpdateInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -29947,6 +29961,7 @@ input UserUpdateManyDataInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -29959,6 +29974,7 @@ input UserUpdateManyMutationInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -30022,6 +30038,7 @@ input UserUpdateWithoutEmailsDataInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -30038,6 +30055,7 @@ input UserUpdateWithoutFitPicsDataInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -30054,6 +30072,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
@@ -30330,6 +30349,10 @@ input UserWhereInput {
 
   """All values that are not contained in given list."""
   pushNotificationStatus_not_in: [PushNotificationStatus!]
+  sendSystemEmails: Boolean
+
+  """All values that are not equal to given value."""
+  sendSystemEmails_not: Boolean
   verificationStatus: UserVerificationStatus
 
   """All values that are not equal to given value."""
@@ -33009,6 +33032,8 @@ export type UserOrderByInput =   'id_ASC' |
   'role_DESC' |
   'pushNotificationStatus_ASC' |
   'pushNotificationStatus_DESC' |
+  'sendSystemEmails_ASC' |
+  'sendSystemEmails_DESC' |
   'verificationStatus_ASC' |
   'verificationStatus_DESC' |
   'verificationMethod_ASC' |
@@ -45584,6 +45609,7 @@ export interface UserCreateInput {
   lastName: String
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  sendSystemEmails?: Boolean | null
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
@@ -45626,6 +45652,7 @@ export interface UserCreateWithoutEmailsInput {
   lastName: String
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  sendSystemEmails?: Boolean | null
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
@@ -45643,6 +45670,7 @@ export interface UserCreateWithoutFitPicsInput {
   lastName: String
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  sendSystemEmails?: Boolean | null
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
@@ -45660,6 +45688,7 @@ export interface UserCreateWithoutPushNotificationsInput {
   lastName: String
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  sendSystemEmails?: Boolean | null
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
@@ -45999,6 +46028,8 @@ export interface UserScalarWhereInput {
   pushNotificationStatus_not?: PushNotificationStatus | null
   pushNotificationStatus_in?: PushNotificationStatus[] | PushNotificationStatus | null
   pushNotificationStatus_not_in?: PushNotificationStatus[] | PushNotificationStatus | null
+  sendSystemEmails?: Boolean | null
+  sendSystemEmails_not?: Boolean | null
   verificationStatus?: UserVerificationStatus | null
   verificationStatus_not?: UserVerificationStatus | null
   verificationStatus_in?: UserVerificationStatus[] | UserVerificationStatus | null
@@ -46043,6 +46074,7 @@ export interface UserUpdateDataInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  sendSystemEmails?: Boolean | null
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
@@ -46060,6 +46092,7 @@ export interface UserUpdateInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  sendSystemEmails?: Boolean | null
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
@@ -46077,6 +46110,7 @@ export interface UserUpdateManyDataInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  sendSystemEmails?: Boolean | null
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
@@ -46089,6 +46123,7 @@ export interface UserUpdateManyMutationInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  sendSystemEmails?: Boolean | null
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
@@ -46152,6 +46187,7 @@ export interface UserUpdateWithoutEmailsDataInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  sendSystemEmails?: Boolean | null
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
@@ -46168,6 +46204,7 @@ export interface UserUpdateWithoutFitPicsDataInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  sendSystemEmails?: Boolean | null
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
@@ -46184,6 +46221,7 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  sendSystemEmails?: Boolean | null
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
@@ -46301,6 +46339,8 @@ export interface UserWhereInput {
   pushNotificationStatus_not?: PushNotificationStatus | null
   pushNotificationStatus_in?: PushNotificationStatus[] | PushNotificationStatus | null
   pushNotificationStatus_not_in?: PushNotificationStatus[] | PushNotificationStatus | null
+  sendSystemEmails?: Boolean | null
+  sendSystemEmails_not?: Boolean | null
   verificationStatus?: UserVerificationStatus | null
   verificationStatus_not?: UserVerificationStatus | null
   verificationStatus_in?: UserVerificationStatus[] | UserVerificationStatus | null
@@ -50006,6 +50046,7 @@ export interface User extends Node {
   pushNotificationStatus: PushNotificationStatus
   pushNotifications?: Array<PushNotificationReceipt> | null
   emails?: Array<EmailReceipt> | null
+  sendSystemEmails: Boolean
   pushNotification?: UserPushNotification | null
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -50043,6 +50084,7 @@ export interface UserPreviousValues {
   role: UserRole
   roles: Array<UserRole>
   pushNotificationStatus: PushNotificationStatus
+  sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   createdAt: DateTime

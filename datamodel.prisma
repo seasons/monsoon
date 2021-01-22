@@ -741,6 +741,7 @@ type User {
   pushNotifications: [PushNotificationReceipt!]
     @relation(name: "UserToPushNotificationReceipts", onDelete: CASCADE)
   emails: [EmailReceipt!] @relation(name: "UserToEmailReceipts")
+  sendSystemEmails: Boolean! @default(value: true)
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus! @default(value: Pending)
   verificationMethod: UserVerificationMethod! @default(value: None)

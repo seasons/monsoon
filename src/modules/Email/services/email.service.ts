@@ -28,6 +28,21 @@ type EmailUser = Pick<User, "email" | "firstName" | "id">
 
 @Injectable()
 export class EmailService {
+  private essentialEmails = [
+    "CompleteAccount",
+    "FreeToReserve",
+    "Paused",
+    "PriorityAccess",
+    "ReferralConfirmation",
+    "ReservationConfirmation",
+    "ReservationReturnConfirmation",
+    "ResumeConfirmation",
+    "ResumeReminder",
+    "SubmittedEmail",
+    "Waitlisted",
+    "WelcomeToSeasons",
+  ] as EmailId[]
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
@@ -70,13 +85,15 @@ export class EmailService {
 
   async sendAuthorizedDayThreeFollowup(
     user: EmailUser,
-    availableStyles: Product[]
+    availableStyles: Product[],
+    status: string = "Authorized"
   ) {
     await this.sendEmailWithReservableStyles({
       user,
       availableStyles,
       renderEmailFunc: "authorizedDayThreeFollowup",
       emailId: "DayThreeAuthorizationFollowup",
+      renderData: { status },
     })
   }
 
@@ -205,6 +222,7 @@ export class EmailService {
       to: process.env.OPERATIONS_ADMIN_EMAIL,
       subject: payload.subject,
       html: payload.body,
+      emailId: "ReservationReturnConfirmation",
     })
   }
 
@@ -343,15 +361,24 @@ export class EmailService {
     payload: { body: string; subject: string }
     emailId: EmailId
   }) {
-    await this.sendEmail({
+    const storeReceipt = await this.sendEmail({
       to: user.email,
       subject: subject,
       html: body,
+      emailId,
     })
-    await this.storeEmailReceipt(emailId, user.id)
+    if (storeReceipt) {
+      await this.storeEmailReceipt(emailId, user.id)
+    }
   }
 
-  private async sendEmail({ to, subject, html }) {
+  // returns true if it sent the email, false otherwise
+  private async sendEmail({ to, subject, html, emailId }) {
+    const shouldSendEmail = await this.shouldSendEmail({ to, emailId })
+    if (!shouldSendEmail) {
+      return false
+    }
+
     const nodemailerTransport = nodemailer.createTransport({
       host: "smtp.mailtrap.io",
       port: 2525,
@@ -376,6 +403,13 @@ export class EmailService {
         ...msg,
       })
     }
+
+    return true
+  }
+
+  private async shouldSendEmail({ to, emailId }) {
+    const u = await this.prisma.client.user({ email: to })
+    return u.sendSystemEmails || this.essentialEmails.includes(emailId)
   }
 
   private async addEmailedProductsToCustomer(
