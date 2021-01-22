@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Jan 21 2021 09:56:09 GMT-0600 (Central Standard Time)
+# timestamp: Fri Jan 22 2021 10:37:52 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -698,6 +698,10 @@ type AggregatePhysicalProduct {
 }
 
 type AggregatePhysicalProductPrice {
+  count: Int!
+}
+
+type AggregatePhysicalProductQualityReport {
   count: Int!
 }
 
@@ -15299,6 +15303,9 @@ type Mutation {
     data: ProductMaterialCategoryCreateInput!
   ): ProductMaterialCategory!
   createProductModel(data: ProductModelCreateInput!): ProductModel!
+  createPhysicalProductQualityReport(
+    data: PhysicalProductQualityReportCreateInput!
+  ): PhysicalProductQualityReport!
   createProductNotification(
     data: ProductNotificationCreateInput!
   ): ProductNotification!
@@ -15382,7 +15389,6 @@ type Mutation {
   createSeason(data: SeasonCreateInput!): Season!
   createCustomer(data: CustomerCreateInput!): Customer!
   createLabel(data: LabelCreateInput!): Label!
-  createUser(data: UserCreateInput!): User!
   createProductVariantPrice(
     data: ProductVariantPriceCreateInput!
   ): ProductVariantPrice!
@@ -15390,6 +15396,7 @@ type Mutation {
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
   createImage(data: ImageCreateInput!): Image!
   createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
+  createUser(data: UserCreateInput!): User!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
   createProduct(data: ProductCreateInput!): Product!
@@ -15410,6 +15417,10 @@ type Mutation {
     data: ProductModelUpdateInput!
     where: ProductModelWhereUniqueInput!
   ): ProductModel
+  updatePhysicalProductQualityReport(
+    data: PhysicalProductQualityReportUpdateInput!
+    where: PhysicalProductQualityReportWhereUniqueInput!
+  ): PhysicalProductQualityReport
   updateProductNotification(
     data: ProductNotificationUpdateInput!
     where: ProductNotificationWhereUniqueInput!
@@ -15575,7 +15586,6 @@ type Mutation {
     where: CustomerWhereUniqueInput!
   ): Customer
   updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateProductVariantPrice(
     data: ProductVariantPriceUpdateInput!
     where: ProductVariantPriceWhereUniqueInput!
@@ -15593,6 +15603,7 @@ type Mutation {
     data: SmsReceiptUpdateInput!
     where: SmsReceiptWhereUniqueInput!
   ): SmsReceipt
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateProductVariant(
     data: ProductVariantUpdateInput!
     where: ProductVariantWhereUniqueInput!
@@ -15624,6 +15635,9 @@ type Mutation {
     where: ProductMaterialCategoryWhereUniqueInput!
   ): ProductMaterialCategory
   deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
+  deletePhysicalProductQualityReport(
+    where: PhysicalProductQualityReportWhereUniqueInput!
+  ): PhysicalProductQualityReport
   deleteProductNotification(
     where: ProductNotificationWhereUniqueInput!
   ): ProductNotification
@@ -15713,7 +15727,6 @@ type Mutation {
   deleteSeason(where: SeasonWhereUniqueInput!): Season
   deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteLabel(where: LabelWhereUniqueInput!): Label
-  deleteUser(where: UserWhereUniqueInput!): User
   deleteProductVariantPrice(
     where: ProductVariantPriceWhereUniqueInput!
   ): ProductVariantPrice
@@ -15723,6 +15736,7 @@ type Mutation {
   ): PhysicalProduct
   deleteImage(where: ImageWhereUniqueInput!): Image
   deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  deleteUser(where: UserWhereUniqueInput!): User
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   deleteProduct(where: ProductWhereUniqueInput!): Product
@@ -15754,6 +15768,11 @@ type Mutation {
     create: ProductModelCreateInput!
     update: ProductModelUpdateInput!
   ): ProductModel!
+  upsertPhysicalProductQualityReport(
+    where: PhysicalProductQualityReportWhereUniqueInput!
+    create: PhysicalProductQualityReportCreateInput!
+    update: PhysicalProductQualityReportUpdateInput!
+  ): PhysicalProductQualityReport!
   upsertProductNotification(
     where: ProductNotificationWhereUniqueInput!
     create: ProductNotificationCreateInput!
@@ -15979,11 +15998,6 @@ type Mutation {
     create: LabelCreateInput!
     update: LabelUpdateInput!
   ): Label!
-  upsertUser(
-    where: UserWhereUniqueInput!
-    create: UserCreateInput!
-    update: UserUpdateInput!
-  ): User!
   upsertProductVariantPrice(
     where: ProductVariantPriceWhereUniqueInput!
     create: ProductVariantPriceCreateInput!
@@ -16009,6 +16023,11 @@ type Mutation {
     create: SmsReceiptCreateInput!
     update: SmsReceiptUpdateInput!
   ): SmsReceipt!
+  upsertUser(
+    where: UserWhereUniqueInput!
+    create: UserCreateInput!
+    update: UserUpdateInput!
+  ): User!
   upsertProductVariant(
     where: ProductVariantWhereUniqueInput!
     create: ProductVariantCreateInput!
@@ -16058,6 +16077,10 @@ type Mutation {
   updateManyProductModels(
     data: ProductModelUpdateManyMutationInput!
     where: ProductModelWhereInput
+  ): BatchPayload!
+  updateManyPhysicalProductQualityReports(
+    data: PhysicalProductQualityReportUpdateManyMutationInput!
+    where: PhysicalProductQualityReportWhereInput
   ): BatchPayload!
   updateManyProductNotifications(
     data: ProductNotificationUpdateManyMutationInput!
@@ -16231,10 +16254,6 @@ type Mutation {
     data: LabelUpdateManyMutationInput!
     where: LabelWhereInput
   ): BatchPayload!
-  updateManyUsers(
-    data: UserUpdateManyMutationInput!
-    where: UserWhereInput
-  ): BatchPayload!
   updateManyProductVariantPrices(
     data: ProductVariantPriceUpdateManyMutationInput!
     where: ProductVariantPriceWhereInput
@@ -16254,6 +16273,10 @@ type Mutation {
   updateManySmsReceipts(
     data: SmsReceiptUpdateManyMutationInput!
     where: SmsReceiptWhereInput
+  ): BatchPayload!
+  updateManyUsers(
+    data: UserUpdateManyMutationInput!
+    where: UserWhereInput
   ): BatchPayload!
   updateManyProductVariants(
     data: ProductVariantUpdateManyMutationInput!
@@ -16286,6 +16309,9 @@ type Mutation {
     where: ProductMaterialCategoryWhereInput
   ): BatchPayload!
   deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
+  deleteManyPhysicalProductQualityReports(
+    where: PhysicalProductQualityReportWhereInput
+  ): BatchPayload!
   deleteManyProductNotifications(
     where: ProductNotificationWhereInput
   ): BatchPayload!
@@ -16369,7 +16395,6 @@ type Mutation {
   deleteManySeasons(where: SeasonWhereInput): BatchPayload!
   deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
   deleteManyLabels(where: LabelWhereInput): BatchPayload!
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyProductVariantPrices(
     where: ProductVariantPriceWhereInput
   ): BatchPayload!
@@ -16377,6 +16402,7 @@ type Mutation {
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
   deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
@@ -19085,6 +19111,15 @@ type PhysicalProduct implements Node {
   dateReceived: DateTime
   unitCost: Float
   price: PhysicalProductPrice
+  reports(
+    where: PhysicalProductQualityReportWhereInput
+    orderBy: PhysicalProductQualityReportOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProductQualityReport!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -19121,6 +19156,7 @@ input PhysicalProductCreateInput {
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceCreateOneInput
+  reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
 }
 
 input PhysicalProductCreateManyInput {
@@ -19148,6 +19184,11 @@ input PhysicalProductCreateOneInput {
   connect: PhysicalProductWhereUniqueInput
 }
 
+input PhysicalProductCreateOneWithoutReportsInput {
+  create: PhysicalProductCreateWithoutReportsInput
+  connect: PhysicalProductWhereUniqueInput
+}
+
 input PhysicalProductCreateWithoutLocationInput {
   id: ID
   seasonsUID: String!
@@ -19163,6 +19204,7 @@ input PhysicalProductCreateWithoutLocationInput {
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceCreateOneInput
+  reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -19178,6 +19220,25 @@ input PhysicalProductCreateWithoutProductVariantInput {
   dateReceived: DateTime
   unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  price: PhysicalProductPriceCreateOneInput
+  reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+}
+
+input PhysicalProductCreateWithoutReportsInput {
+  id: ID
+  seasonsUID: String!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int!
+  barcoded: Boolean
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
+  location: LocationCreateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceCreateOneInput
 }
@@ -19197,6 +19258,16 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   price: PhysicalProductPriceCreateOneInput
+  reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+}
+
+enum PhysicalProductDamageType {
+  BarcodeMissing
+  ButtonMissing
+  Stain
+  Smell
+  Tear
+  Other
 }
 
 """
@@ -19530,6 +19601,664 @@ input PhysicalProductPriceWhereInput {
 }
 
 input PhysicalProductPriceWhereUniqueInput {
+  id: ID
+}
+
+type PhysicalProductQualityReport implements Node {
+  id: ID!
+  user: User!
+  damageType: PhysicalProductDamageType
+  notes: String
+  physicalProduct: PhysicalProduct!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type PhysicalProductQualityReportConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [PhysicalProductQualityReportEdge]!
+  aggregate: AggregatePhysicalProductQualityReport!
+}
+
+input PhysicalProductQualityReportCreateInput {
+  id: ID
+  damageType: PhysicalProductDamageType
+  notes: String
+  user: UserCreateOneInput!
+  physicalProduct: PhysicalProductCreateOneWithoutReportsInput!
+}
+
+input PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput {
+  create: [PhysicalProductQualityReportCreateWithoutPhysicalProductInput!]
+  connect: [PhysicalProductQualityReportWhereUniqueInput!]
+}
+
+input PhysicalProductQualityReportCreateWithoutPhysicalProductInput {
+  id: ID
+  damageType: PhysicalProductDamageType
+  notes: String
+  user: UserCreateOneInput!
+}
+
+"""
+An edge in a connection.
+"""
+type PhysicalProductQualityReportEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: PhysicalProductQualityReport!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum PhysicalProductQualityReportOrderByInput {
+  id_ASC
+  id_DESC
+  damageType_ASC
+  damageType_DESC
+  notes_ASC
+  notes_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type PhysicalProductQualityReportPreviousValues {
+  id: ID!
+  damageType: PhysicalProductDamageType
+  notes: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input PhysicalProductQualityReportScalarWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PhysicalProductQualityReportScalarWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PhysicalProductQualityReportScalarWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [PhysicalProductQualityReportScalarWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  damageType: PhysicalProductDamageType
+
+  """
+  All values that are not equal to given value.
+  """
+  damageType_not: PhysicalProductDamageType
+
+  """
+  All values that are contained in given list.
+  """
+  damageType_in: [PhysicalProductDamageType!]
+
+  """
+  All values that are not contained in given list.
+  """
+  damageType_not_in: [PhysicalProductDamageType!]
+  notes: String
+
+  """
+  All values that are not equal to given value.
+  """
+  notes_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  notes_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  notes_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  notes_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  notes_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  notes_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  notes_gte: String
+
+  """
+  All values containing the given string.
+  """
+  notes_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  notes_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  notes_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  notes_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  notes_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  notes_not_ends_with: String
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+}
+
+type PhysicalProductQualityReportSubscriptionPayload {
+  mutation: MutationType!
+  node: PhysicalProductQualityReport
+  updatedFields: [String!]
+  previousValues: PhysicalProductQualityReportPreviousValues
+}
+
+input PhysicalProductQualityReportSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PhysicalProductQualityReportSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PhysicalProductQualityReportSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [PhysicalProductQualityReportSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PhysicalProductQualityReportWhereInput
+}
+
+input PhysicalProductQualityReportUpdateInput {
+  damageType: PhysicalProductDamageType
+  notes: String
+  user: UserUpdateOneRequiredInput
+  physicalProduct: PhysicalProductUpdateOneRequiredWithoutReportsInput
+}
+
+input PhysicalProductQualityReportUpdateManyDataInput {
+  damageType: PhysicalProductDamageType
+  notes: String
+}
+
+input PhysicalProductQualityReportUpdateManyMutationInput {
+  damageType: PhysicalProductDamageType
+  notes: String
+}
+
+input PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput {
+  create: [PhysicalProductQualityReportCreateWithoutPhysicalProductInput!]
+  connect: [PhysicalProductQualityReportWhereUniqueInput!]
+  set: [PhysicalProductQualityReportWhereUniqueInput!]
+  disconnect: [PhysicalProductQualityReportWhereUniqueInput!]
+  delete: [PhysicalProductQualityReportWhereUniqueInput!]
+  update: [PhysicalProductQualityReportUpdateWithWhereUniqueWithoutPhysicalProductInput!]
+  updateMany: [PhysicalProductQualityReportUpdateManyWithWhereNestedInput!]
+  deleteMany: [PhysicalProductQualityReportScalarWhereInput!]
+  upsert: [PhysicalProductQualityReportUpsertWithWhereUniqueWithoutPhysicalProductInput!]
+}
+
+input PhysicalProductQualityReportUpdateManyWithWhereNestedInput {
+  where: PhysicalProductQualityReportScalarWhereInput!
+  data: PhysicalProductQualityReportUpdateManyDataInput!
+}
+
+input PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput {
+  damageType: PhysicalProductDamageType
+  notes: String
+  user: UserUpdateOneRequiredInput
+}
+
+input PhysicalProductQualityReportUpdateWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductQualityReportWhereUniqueInput!
+  data: PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput!
+}
+
+input PhysicalProductQualityReportUpsertWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductQualityReportWhereUniqueInput!
+  update: PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput!
+  create: PhysicalProductQualityReportCreateWithoutPhysicalProductInput!
+}
+
+input PhysicalProductQualityReportWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PhysicalProductQualityReportWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PhysicalProductQualityReportWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [PhysicalProductQualityReportWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  damageType: PhysicalProductDamageType
+
+  """
+  All values that are not equal to given value.
+  """
+  damageType_not: PhysicalProductDamageType
+
+  """
+  All values that are contained in given list.
+  """
+  damageType_in: [PhysicalProductDamageType!]
+
+  """
+  All values that are not contained in given list.
+  """
+  damageType_not_in: [PhysicalProductDamageType!]
+  notes: String
+
+  """
+  All values that are not equal to given value.
+  """
+  notes_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  notes_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  notes_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  notes_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  notes_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  notes_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  notes_gte: String
+
+  """
+  All values containing the given string.
+  """
+  notes_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  notes_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  notes_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  notes_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  notes_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  notes_not_ends_with: String
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+  user: UserWhereInput
+  physicalProduct: PhysicalProductWhereInput
+}
+
+input PhysicalProductQualityReportWhereUniqueInput {
   id: ID
 }
 
@@ -20088,6 +20817,7 @@ input PhysicalProductUpdateDataInput {
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
+  reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
 }
 
 input PhysicalProductUpdateInput {
@@ -20105,6 +20835,7 @@ input PhysicalProductUpdateInput {
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
+  reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -20202,6 +20933,13 @@ input PhysicalProductUpdateOneRequiredInput {
   upsert: PhysicalProductUpsertNestedInput
 }
 
+input PhysicalProductUpdateOneRequiredWithoutReportsInput {
+  create: PhysicalProductCreateWithoutReportsInput
+  connect: PhysicalProductWhereUniqueInput
+  update: PhysicalProductUpdateWithoutReportsDataInput
+  upsert: PhysicalProductUpsertWithoutReportsInput
+}
+
 input PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
@@ -20216,6 +20954,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
+  reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -20230,6 +20969,24 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   dateReceived: DateTime
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  price: PhysicalProductPriceUpdateOneInput
+  reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+}
+
+input PhysicalProductUpdateWithoutReportsDataInput {
+  seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int
+  barcoded: Boolean
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
 }
@@ -20248,6 +21005,7 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
+  reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -20273,6 +21031,11 @@ input PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput {
 input PhysicalProductUpsertNestedInput {
   update: PhysicalProductUpdateDataInput!
   create: PhysicalProductCreateInput!
+}
+
+input PhysicalProductUpsertWithoutReportsInput {
+  update: PhysicalProductUpdateWithoutReportsDataInput!
+  create: PhysicalProductCreateWithoutReportsInput!
 }
 
 input PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -20786,6 +21549,9 @@ input PhysicalProductWhereInput {
   productVariant: ProductVariantWhereInput
   warehouseLocation: WarehouseLocationWhereInput
   price: PhysicalProductPriceWhereInput
+  reports_every: PhysicalProductQualityReportWhereInput
+  reports_some: PhysicalProductQualityReportWhereInput
+  reports_none: PhysicalProductQualityReportWhereInput
 }
 
 input PhysicalProductWhereUniqueInput {
@@ -31066,6 +31832,15 @@ type Query {
     first: Int
     last: Int
   ): [ProductModel]!
+  physicalProductQualityReports(
+    where: PhysicalProductQualityReportWhereInput
+    orderBy: PhysicalProductQualityReportOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProductQualityReport]!
   productNotifications(
     where: ProductNotificationWhereInput
     orderBy: ProductNotificationOrderByInput
@@ -31471,15 +32246,6 @@ type Query {
     first: Int
     last: Int
   ): [Label]!
-  users(
-    where: UserWhereInput
-    orderBy: UserOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [User]!
   productVariantPrices(
     where: ProductVariantPriceWhereInput
     orderBy: ProductVariantPriceOrderByInput
@@ -31525,6 +32291,15 @@ type Query {
     first: Int
     last: Int
   ): [SmsReceipt]!
+  users(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [User]!
   productVariants(
     where: ProductVariantWhereInput
     orderBy: ProductVariantOrderByInput
@@ -31586,6 +32361,9 @@ type Query {
     where: ProductMaterialCategoryWhereUniqueInput!
   ): ProductMaterialCategory
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
+  physicalProductQualityReport(
+    where: PhysicalProductQualityReportWhereUniqueInput!
+  ): PhysicalProductQualityReport
   productNotification(
     where: ProductNotificationWhereUniqueInput!
   ): ProductNotification
@@ -31669,7 +32447,6 @@ type Query {
   season(where: SeasonWhereUniqueInput!): Season
   customer(where: CustomerWhereUniqueInput!): Customer
   label(where: LabelWhereUniqueInput!): Label
-  user(where: UserWhereUniqueInput!): User
   productVariantPrice(
     where: ProductVariantPriceWhereUniqueInput!
   ): ProductVariantPrice
@@ -31677,6 +32454,7 @@ type Query {
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   image(where: ImageWhereUniqueInput!): Image
   smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  user(where: UserWhereUniqueInput!): User
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   product(where: ProductWhereUniqueInput!): Product
@@ -31728,6 +32506,15 @@ type Query {
     first: Int
     last: Int
   ): ProductModelConnection!
+  physicalProductQualityReportsConnection(
+    where: PhysicalProductQualityReportWhereInput
+    orderBy: PhysicalProductQualityReportOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PhysicalProductQualityReportConnection!
   productNotificationsConnection(
     where: ProductNotificationWhereInput
     orderBy: ProductNotificationOrderByInput
@@ -32133,15 +32920,6 @@ type Query {
     first: Int
     last: Int
   ): LabelConnection!
-  usersConnection(
-    where: UserWhereInput
-    orderBy: UserOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): UserConnection!
   productVariantPricesConnection(
     where: ProductVariantPriceWhereInput
     orderBy: ProductVariantPriceOrderByInput
@@ -32187,6 +32965,15 @@ type Query {
     first: Int
     last: Int
   ): SmsReceiptConnection!
+  usersConnection(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): UserConnection!
   productVariantsConnection(
     where: ProductVariantWhereInput
     orderBy: ProductVariantOrderByInput
@@ -38697,6 +39484,9 @@ type Subscription {
   productModel(
     where: ProductModelSubscriptionWhereInput
   ): ProductModelSubscriptionPayload
+  physicalProductQualityReport(
+    where: PhysicalProductQualityReportSubscriptionWhereInput
+  ): PhysicalProductQualityReportSubscriptionPayload
   productNotification(
     where: ProductNotificationSubscriptionWhereInput
   ): ProductNotificationSubscriptionPayload
@@ -38810,7 +39600,6 @@ type Subscription {
   season(where: SeasonSubscriptionWhereInput): SeasonSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
-  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   productVariantPrice(
     where: ProductVariantPriceSubscriptionWhereInput
   ): ProductVariantPriceSubscriptionPayload
@@ -38822,6 +39611,7 @@ type Subscription {
   smsReceipt(
     where: SmsReceiptSubscriptionWhereInput
   ): SmsReceiptSubscriptionPayload
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   productVariant(
     where: ProductVariantSubscriptionWhereInput
   ): ProductVariantSubscriptionPayload

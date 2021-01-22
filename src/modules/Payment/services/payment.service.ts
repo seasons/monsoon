@@ -806,31 +806,24 @@ export class PaymentService {
     customer,
     user
   ) {
-    const {
-      city: billingCity,
-      postalCode: billingPostalCode,
-      state: billingState,
-      street1: billingStreet1,
-      street2: billingStreet2,
-    } = billingAddress
+    const billingCity = billingAddress?.city
+    const billingPostalCode = billingAddress?.postalCode
+    const billingState = billingAddress?.state
+    const billingStreet1 = billingAddress?.street1
+    const billingStreet2 = billingAddress?.street2
 
     const {
       city: shippingCity,
       postalCode: shippingPostalCode,
       state: shippingState,
       street1: shippingStreet1,
-      street2: shippingStreet2,
     } = shippingAddress
 
     if (
       !shippingCity ||
       !shippingPostalCode ||
       !shippingState ||
-      !shippingStreet1 ||
-      !billingCity ||
-      !billingPostalCode ||
-      !billingState ||
-      !billingStreet1
+      !shippingStreet1
     ) {
       throw new Error("You're missing a required field")
     }
@@ -857,21 +850,6 @@ export class PaymentService {
       ? getAbbreviatedState(billingState)
       : ""
 
-    const {
-      isValid: billingAddressIsValid,
-    } = await this.shippingService.shippoValidateAddress({
-      name: user.firstName,
-      street1: billingStreet1,
-      street2: billingStreet2,
-      city: billingCity,
-      state: abbrBillingState,
-      zip: billingPostalCode,
-    })
-
-    if (!billingAddressIsValid) {
-      throw new Error("Your billing address is invalid")
-    }
-
     const abbrShippingState = !!shippingState
       ? getAbbreviatedState(shippingState)
       : ""
@@ -890,26 +868,37 @@ export class PaymentService {
       throw new Error("Your shipping address is invalid")
     }
 
-    // Update user's billing address on chargebee
-    await this.updateChargebeeBillingAddress(
-      user.id,
-      billingStreet1,
-      billingStreet2,
-      billingCity,
-      abbrBillingState,
+    if (
+      billingStreet1 &&
+      billingCity &&
+      abbrBillingState &&
       billingPostalCode
-    )
+    ) {
+      // FIXME:
+      // This has been deprecated as of build on 1/22/2021,
+      // older builds allowed user to update both shipping and billing
+      // the billing update can be removed in the future.
 
-    // Update customer's billing address
-    await this.updateCustomerBillingAddress(
-      user.id,
-      customer.id,
-      billingStreet1,
-      billingStreet2,
-      billingCity,
-      abbrBillingState,
-      billingPostalCode
-    )
+      // Update user's billing address on chargebee
+      await this.updateChargebeeBillingAddress(
+        user.id,
+        billingStreet1,
+        billingStreet2,
+        billingCity,
+        abbrBillingState,
+        billingPostalCode
+      )
+      // Update customer's billing address
+      await this.updateCustomerBillingAddress(
+        user.id,
+        customer.id,
+        billingStreet1,
+        billingStreet2,
+        billingCity,
+        abbrBillingState,
+        billingPostalCode
+      )
+    }
 
     // Update customer's shipping address & phone number. Unlike before, will
     // accept all valid addresses. Will NOT throw an error if the address is
