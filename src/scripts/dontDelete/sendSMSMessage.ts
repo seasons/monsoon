@@ -17,31 +17,21 @@ const run = async () => {
   const twilioUtils = new TwilioUtils()
   const error = new ErrorService()
   const paymentUtils = new PaymentUtilsService(ps, new SegmentService())
-  const sms = new SMSService(ps, twilio, twilioUtils, paymentUtils, error)
+  const sms = new SMSService(ps, twilio, twilioUtils, paymentUtils, error, null)
 
   const sleep = async ms => {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
-  const u = await ps.client.user({ email: "kenna-wintheiser@seasons.nyc" })
-  const pauseRequests = await ps.client.pauseRequests({
-    where: {
-      membership: {
-        customer: { user: { id: u.id } },
-      },
-    },
-    orderBy: "createdAt_DESC",
-  })
-  await sms.sendSMSById({
+  const u = await ps.client.user({ email: "geovany-leannon@seasons.nyc" })
+  const x = await sms.sendSMSById({
     to: { id: u.id },
     renderData: {
       name: u.firstName,
-      resumeDate: moment(head(pauseRequests).resumeDate).format(
-        "dddd, MMMM Do"
-      ),
     },
-    smsId: "ResumeReminder",
+    smsId: "TwentyFourHourLeftAuthorizationFollowup",
   })
+  console.log(x)
 }
 
 run()
