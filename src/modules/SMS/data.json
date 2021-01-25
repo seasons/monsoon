@@ -6,13 +6,19 @@
     ]
   },
   "TwentyFourHourLeftAuthorizationFollowup": {
-    "body": "Hi {{{name}}}, you have 24 hours left to secure your spot! Remember, if we don’t hear from you, we’ll pass along your invite to the next person in line and you’ll be waitlisted. {{{webChoosePlanLink}}}.\n\nIf you need help finding your first reservation, follow this link {{{stylistLink}}} to book some one on one time with our stylist.",
+    "body": "Hi {{{name}}}, it's Seasons. You have 24 hours left to secure your spot. In order to ensure all Seasons subscribers have access to maximum inventory, our membership total is currently capped. So if we don't hear from you, you'll be placed on our waitlist until another spot is available. {{{webChoosePlanLink}}}.\n\nIf you need help finding your first reservation, follow this link {{{stylistLink}}} to book some one on one time with our stylist.",
+    "mediaUrls": [
+      "https://seasons-images.s3.amazonaws.com/email-images/Authorized24HourFollowupHero.jpg"
+    ]
+  },
+  "SeventyTwoHoursLeftAuthorizationFollowup": {
+    "body": "Hi {{{name}}}, it's Seasons. You have 72 hours left to secure your spot. In order to ensure all Seasons subscribers have access to maximum inventory, our membership total is currently capped. So if we don't hear from you, you'll be placed on our waitlist until another spot is available. {{{webChoosePlanLink}}}.\n\nIf you need help finding your first reservation, follow this link {{{stylistLink}}} to book some one on one time with our stylist.\n\n If we can help with anything else, pleace contact {{{contactEmail}}}",
     "mediaUrls": [
       "https://seasons-images.s3.amazonaws.com/email-images/Authorized24HourFollowupHero.jpg"
     ]
   },
   "Rewaitlisted": {
-    "body": "{{{name}}}, your signup window has closed. Due to demand, we've had to give your spot to the next person in line.\n\nIf you'd still like to obtain a membership, please contact us at {{{contactEmail}}}.",
+    "body": "{{{name}}}, it's Seasons. Your signup window has closed. Due to demand, we've had to give your spot to the next person in line.\n\nIf you'd still like to obtain a membership, please contact us at {{{contactEmail}}}.",
     "mediaUrls": [
       "https://seasons-images.s3.amazonaws.com/email-images/WaitlistedHero.jpg"
     ]
