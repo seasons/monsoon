@@ -219,7 +219,8 @@ export class SMSService {
       to: phoneNumber,
     })
     if (errorMessage) {
-      throw new Error(errorMessage)
+      this.error.setExtraContext({ cust }, "customer")
+      this.error.captureError(new Error(errorMessage))
     }
 
     // Create receipt and add it to the user
