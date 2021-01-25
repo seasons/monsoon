@@ -30,7 +30,7 @@ export class MarketingScheduledJobs {
   @Cron(CronExpression.EVERY_10_MINUTES)
   async authWindowFollowups() {
     this.logger.log("Run auth window followups job")
-    const daySixFollowupsSent = []
+    const daySevenFollowupsSent = []
     const dayThreeFollowupsSent = []
     const dayTwoFollowupsSent = []
     const windowsClosed = []
@@ -149,7 +149,7 @@ export class MarketingScheduledJobs {
             renderData: { name: cust.user.firstName },
             smsId: "TwentyFourHourLeftAuthorizationFollowup",
           })
-          daySixFollowupsSent.push(cust.user.email)
+          daySevenFollowupsSent.push(cust.user.email)
         }
         continue
       }
@@ -206,7 +206,7 @@ export class MarketingScheduledJobs {
     this.logger.log("Auth window followups job finished")
     this.logger.log({
       dayThreeFollowupsSent,
-      daySixFollowupsSent,
+      daySevenFollowupsSent,
       windowsClosed,
     })
   }

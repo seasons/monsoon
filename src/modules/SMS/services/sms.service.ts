@@ -207,41 +207,44 @@ export class SMSService {
     }
 
     // Send SMS message
-    const {
-      errorMessage,
-      sid,
-      status,
-    } = await this.twilio.client.messages.create({
-      body,
-      mediaUrl: mediaUrls,
-      from: twilioPhoneNumber,
-      statusCallback: twilioStatusCallback,
-      to: phoneNumber,
-    })
-    if (errorMessage) {
+    try {
+      const {
+        errorMessage,
+        sid,
+        status,
+      } = await this.twilio.client.messages.create({
+        body,
+        mediaUrl: mediaUrls,
+        from: twilioPhoneNumber,
+        statusCallback: twilioStatusCallback,
+        to: phoneNumber,
+      })
+      if (errorMessage) {
+        this.error.setExtraContext({ cust }, "customer")
+        this.error.captureError(new Error(errorMessage))
+      }
+      // Create receipt and add it to the user
+      const receipt = await this.prisma.client.createSmsReceipt({
+        body,
+        externalId: sid,
+        mediaUrls: { set: mediaUrls },
+        status: this.twilioUtils.twilioToPrismaSmsStatus(status),
+        smsId,
+      })
+      await this.prisma.client.updateUser({
+        data: {
+          smsReceipts: { connect: [{ id: receipt.id }] },
+        },
+        where: to,
+      })
+      // Return status
+      const smsStatus = this.twilioUtils.twilioToPrismaSmsStatus(status)
+      return smsStatus
+    } catch (err) {
       this.error.setExtraContext({ cust }, "customer")
-      this.error.captureError(new Error(errorMessage))
+      this.error.captureError(err)
+      return "Failed"
     }
-
-    // Create receipt and add it to the user
-    const receipt = await this.prisma.client.createSmsReceipt({
-      body,
-      externalId: sid,
-      mediaUrls: { set: mediaUrls },
-      status: this.twilioUtils.twilioToPrismaSmsStatus(status),
-      smsId,
-    })
-
-    await this.prisma.client.updateUser({
-      data: {
-        smsReceipts: { connect: [{ id: receipt.id }] },
-      },
-      where: to,
-    })
-
-    // Return status
-    const smsStatus = this.twilioUtils.twilioToPrismaSmsStatus(status)
-    return smsStatus
   }
 
   async handleSMSStatusUpdate(externalId: string, status: SmsStatus) {
