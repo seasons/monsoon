@@ -629,6 +629,7 @@ export class CustomerService {
         admissionsUpsertData = {
           admissable: true,
           inServiceableZipcode: true,
+          inAdmissableReason: null,
           allAccessEnabled,
           authorizationsCount: this.calculateNumAuthorizations(
             customer,
