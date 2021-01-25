@@ -100,8 +100,8 @@ const run = async () => {
     utils
   )
   // await reservationsJobService.sendReturnNotifications()
-  // await marketingJobService.authWindowFollowups()
-  await membershipService.manageMembershipResumes()
+  await marketingJobService.authWindowFollowups()
+  // await membershipService.manageMembershipResumes()
 }
 
 run()

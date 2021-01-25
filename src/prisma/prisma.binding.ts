@@ -7764,9 +7764,10 @@ scalar DateTime
 
 enum EmailId {
   CompleteAccount
+  DaySevenAuthorizationFollowup
+  DaySixAuthorizationFollowup
   DayFiveAuthorizationFollowup
   DayFourAuthorizationFollowup
-  DaySixAuthorizationFollowup
   DayThreeAuthorizationFollowup
   DayTwoAuthorizationFollowup
   FreeToReserve
@@ -32251,9 +32252,10 @@ export type CustomerStatus =   'Invited' |
   'Deactivated'
 
 export type EmailId =   'CompleteAccount' |
+  'DaySevenAuthorizationFollowup' |
+  'DaySixAuthorizationFollowup' |
   'DayFiveAuthorizationFollowup' |
   'DayFourAuthorizationFollowup' |
-  'DaySixAuthorizationFollowup' |
   'DayThreeAuthorizationFollowup' |
   'DayTwoAuthorizationFollowup' |
   'FreeToReserve' |

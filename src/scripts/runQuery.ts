@@ -1,7 +1,5 @@
 import "module-alias/register"
 
-import * as util from "util"
-
 import { UtilsService } from "../modules/Utils/services/utils.service"
 import { PrismaService } from "../prisma/prisma.service"
 
@@ -9,10 +7,6 @@ const run = async () => {
   const ps = new PrismaService()
   const utils = new UtilsService(ps)
 
-  // const authorizedCustomers = await ps.binding.query.customers({
-  //   where: { status: "Authorized" },
-  // })
-  // console.log(authorizedCustomers.length)
   const unhandledCustomers = await ps.binding.query.customers(
     {
       where: {
@@ -25,11 +19,15 @@ const run = async () => {
             },
           },
           {
-            admissions: {
-              authorizationWindowClosesAt_lte: new Date(2021, 0, 21),
+            user: {
+              emails_none: { emailId: "DaySixAuthorizationFollowup" },
             },
           },
-          { authorizedAt_lte: new Date(2021, 0, 20) },
+          {
+            admissions: {
+              authorizationWindowClosesAt_lte: new Date(2021, 0, 26),
+            },
+          },
         ],
       },
     },

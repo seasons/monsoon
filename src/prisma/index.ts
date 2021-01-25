@@ -2869,9 +2869,10 @@ export type PushNotificationStatus = "Blocked" | "Granted" | "Denied";
 
 export type EmailId =
   | "CompleteAccount"
+  | "DaySevenAuthorizationFollowup"
+  | "DaySixAuthorizationFollowup"
   | "DayFiveAuthorizationFollowup"
   | "DayFourAuthorizationFollowup"
-  | "DaySixAuthorizationFollowup"
   | "DayThreeAuthorizationFollowup"
   | "DayTwoAuthorizationFollowup"
   | "FreeToReserve"
