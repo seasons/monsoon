@@ -1,6 +1,7 @@
 export type SMSID =
   | "CompleteAccount"
   | "TwentyFourHourLeftAuthorizationFollowup"
+  | "SeventyTwoHoursLeftAuthorizationFollowup"
   | "Rewaitlisted"
   | "ResumeReminder"
 
