@@ -31,6 +31,7 @@ export class MarketingScheduledJobs {
   async authWindowFollowups() {
     this.logger.log("Run auth window followups job")
     const daySevenFollowupsSent = []
+    const dayFiveFollowupsSent = []
     const dayThreeFollowupsSent = []
     const dayTwoFollowupsSent = []
     const windowsClosed = []
@@ -62,6 +63,10 @@ export class MarketingScheduledJobs {
           emails {
             emailId
           }
+          smsReceipts {
+            id
+            smsId
+          }
         }
       }`
     )
@@ -92,6 +97,7 @@ export class MarketingScheduledJobs {
       )
 
       const receivedEmails = cust.user.emails.map(a => a.emailId)
+      const receivedSMSs = cust.user.smsReceipts.map(a => a.smsId)
       const dayTwoFollowupSent = receivedEmails.includes(
         "DayTwoAuthorizationFollowup"
       )
@@ -101,9 +107,9 @@ export class MarketingScheduledJobs {
       const dayFourFollowupSent = receivedEmails.includes(
         "DayFourAuthorizationFollowup"
       )
-      const dayFiveFollowupSent = receivedEmails.includes(
-        "DayFiveAuthorizationFollowup"
-      )
+      const dayFiveFollowupSent =
+        receivedEmails.includes("DayFiveAuthorizationFollowup") ||
+        receivedSMSs.includes("SeventyTwoHoursLeftAuthorizationFollowup")
       const daySixFollowupSent = receivedEmails.includes(
         "DaySixAuthorizationFollowup"
       )
@@ -165,8 +171,13 @@ export class MarketingScheduledJobs {
       // Send day 5 email if needed
       if (dayFiveStarted) {
         // TODO: Send email
-        // TODO: Send 72 hours left SMS
         if (!dayFiveFollowupSent) {
+          await this.sms.sendSMSById({
+            to: { id: cust.user.id },
+            renderData: { name: cust.user.firstName },
+            smsId: "SeventyTwoHoursLeftAuthorizationFollowup",
+          })
+          dayFiveFollowupsSent.push(cust.user.email)
         }
         continue
       }
@@ -206,6 +217,7 @@ export class MarketingScheduledJobs {
     this.logger.log("Auth window followups job finished")
     this.logger.log({
       dayThreeFollowupsSent,
+      dayFiveFollowupsSent,
       daySevenFollowupsSent,
       windowsClosed,
     })
