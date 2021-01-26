@@ -42,7 +42,7 @@ export class ProductUtilsService {
   }
 
   async getVariantDisplayShort(
-    manufacturerSizeIDs,
+    manufacturerSizeIDs = [],
     internalSizeID
   ): Promise<string> {
     const query = `{
