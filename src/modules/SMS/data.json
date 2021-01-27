@@ -18,7 +18,7 @@
     ]
   },
   "Rewaitlisted": {
-    "body": "{{{name}}}, it's Seasons. Your signup window has closed. Due to demand, we've had to give your spot to the next person in line.\n\nIf you'd still like to obtain a membership, please contact us at {{{contactEmail}}}.",
+    "body": "Hi {{{name}}}, your Seasons signup window has closed. If you’d still like to activate your account at any point, you can request authorization directly in the Seasons app (wearseasons.com) or by sending us an email at {{{contactEmail}}}",
     "mediaUrls": [
       "https://seasons-images.s3.amazonaws.com/email-images/WaitlistedHero.jpg"
     ]
