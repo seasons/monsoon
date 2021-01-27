@@ -408,7 +408,7 @@ export class EmailService {
   }
 
   private async shouldSendEmail({ to, emailId }) {
-    if (emailId === process.env.OPERATIONS_ADMIN_EMAIL) {
+    if (to === process.env.OPERATIONS_ADMIN_EMAIL) {
       return true
     }
     const u = await this.prisma.client.user({ email: to })
