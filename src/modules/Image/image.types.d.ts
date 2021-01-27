@@ -1,4 +1,10 @@
-export type ImageSize = "Thumb" | "Small" | "Medium" | "Large" | "XLarge"
+export type ImageSize =
+  | "XSmall"
+  | "Thumb"
+  | "Small"
+  | "Medium"
+  | "Large"
+  | "XLarge"
 
 export interface ImageData {
   url: string
