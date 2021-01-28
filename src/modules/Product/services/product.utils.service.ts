@@ -148,20 +148,11 @@ export class ProductUtilsService {
   }
 
   private async filters(args) {
-    let collectionFilter = { where: {} }
     let brandFilter = { where: {} }
     let categoryFilter = { where: {} }
     let variantsFilter = { where: {} }
 
     let paramFilters = {}
-
-    if (args.collection) {
-      collectionFilter = {
-        where: {
-          collection: { slug: args.collection },
-        },
-      }
-    }
 
     if (args.brand && args.brand !== "all") {
       brandFilter = {
@@ -318,7 +309,6 @@ export class ProductUtilsService {
 
     return {
       where: {
-        ...collectionFilter.where,
         ...brandFilter.where,
         ...categoryFilter.where,
         ...variantsFilter.where,
