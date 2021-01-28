@@ -2982,6 +2982,7 @@ type CustomerDetail {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: [CustomerStyle!]!
   commuteStyle: String
   stylePreferences: StylePreferences
   shippingAddress: Location
@@ -3017,6 +3018,7 @@ input CustomerDetailCreateInput {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: CustomerDetailCreatestylesInput
   commuteStyle: String
   stylePreferences: StylePreferencesCreateOneInput
   shippingAddress: LocationCreateOneInput
@@ -3028,6 +3030,10 @@ input CustomerDetailCreateInput {
 input CustomerDetailCreateOneInput {
   create: CustomerDetailCreateInput
   connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailCreatestylesInput {
+  set: [CustomerStyle!]
 }
 
 input CustomerDetailCreatetopSizesInput {
@@ -3111,6 +3117,7 @@ type CustomerDetailPreviousValues {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: [CustomerStyle!]!
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean!
@@ -3155,6 +3162,7 @@ input CustomerDetailUpdateDataInput {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: CustomerDetailUpdatestylesInput
   commuteStyle: String
   stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
@@ -3181,6 +3189,7 @@ input CustomerDetailUpdateInput {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: CustomerDetailUpdatestylesInput
   commuteStyle: String
   stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
@@ -3207,6 +3216,7 @@ input CustomerDetailUpdateManyMutationInput {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: CustomerDetailUpdatestylesInput
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
@@ -3220,6 +3230,10 @@ input CustomerDetailUpdateOneInput {
   delete: Boolean
   disconnect: Boolean
   connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailUpdatestylesInput {
+  set: [CustomerStyle!]
 }
 
 input CustomerDetailUpdatetopSizesInput {
@@ -3831,6 +3845,15 @@ enum CustomerStatus {
   Suspended
   Paused
   Deactivated
+}
+
+enum CustomerStyle {
+  AvantGarde
+  Bold
+  Classic
+  Minimalist
+  Streetwear
+  Techwear
 }
 
 type CustomerSubscriptionPayload {

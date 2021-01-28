@@ -761,6 +761,15 @@ type StylePreferences {
   brands: [String] @scalarList(strategy: RELATION)
 }
 
+enum CustomerStyle {
+  AvantGarde
+  Bold
+  Classic
+  Minimalist
+  Streetwear
+  Techwear
+}
+
 type CustomerDetail {
   id: ID! @id
   phoneNumber: String
@@ -786,6 +795,7 @@ type CustomerDetail {
   # How much do you spend?
   averageSpend: String
   style: String
+  styles: [CustomerStyle!]! @scalarList(strategy: RELATION)
   commuteStyle: String
   stylePreferences: StylePreferences
   shippingAddress: Location
