@@ -30,17 +30,7 @@ export class AuthMutationsResolver {
   @Mutation()
   async signup(
     @Args()
-    {
-      email,
-      password,
-      firstName,
-      lastName,
-      details,
-      referrerId,
-      giftId,
-      utm,
-      impactId,
-    },
+    { email, password, firstName, lastName, details, referrerId, giftId, utm },
     @Application() application,
     @Info() info
   ) {
@@ -94,7 +84,7 @@ export class AuthMutationsResolver {
       ActionTrackerId: 23949,
       EventDate: new Date().toISOString(),
       OrderId: new Date().getTime(),
-      ClickId: impactId,
+      ClickId: details.impactId,
     })
 
     return {

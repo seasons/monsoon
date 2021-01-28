@@ -792,6 +792,7 @@ type CustomerDetail {
   phoneOS: String
   insureShipment: Boolean! @default(value: false)
   instagramHandle: String
+  impactId: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
