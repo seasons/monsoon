@@ -795,7 +795,7 @@ type CustomerDetail {
   # How much do you spend?
   averageSpend: String
   style: String
-  styles: [CustomerStyle!]! @scalarList(strategy: RELATION)
+  styles: [CustomerStyle!] @scalarList(strategy: RELATION)
   commuteStyle: String
   stylePreferences: StylePreferences
   shippingAddress: Location
