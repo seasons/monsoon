@@ -30,7 +30,17 @@ export class AuthMutationsResolver {
   @Mutation()
   async signup(
     @Args()
-    { email, password, firstName, lastName, details, referrerId, giftId, utm },
+    {
+      email,
+      password,
+      firstName,
+      lastName,
+      details,
+      referrerId,
+      giftId,
+      utm,
+      impactId,
+    },
     @Application() application,
     @Info() info
   ) {
@@ -68,12 +78,23 @@ export class AuthMutationsResolver {
     this.segment.track<{
       customerID: string
       name: string
+      CampaignId: number
+      ActionTrackerId: number
+      EventDate: string
+      OrderId: number
+      ClickId: string
     }>(user.id, "Created Account", {
       name: `${user.firstName} ${user.lastName}`,
       ...pick(user, ["firstName", "lastName", "email"]),
       customerID: customer.id,
       application,
       ...this.utils.formatUTMForSegment(utm),
+      // impact properties
+      CampaignId: 12888,
+      ActionTrackerId: 23949,
+      EventDate: new Date().toISOString(),
+      OrderId: new Date().getTime(),
+      ClickId: impactId,
     })
 
     return {
