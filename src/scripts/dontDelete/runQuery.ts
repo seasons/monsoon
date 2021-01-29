@@ -9,11 +9,7 @@ const run = async () => {
   const utils = new UtilsService(ps)
   const drip = new DripService()
 
-  const allUnsubscribedCustomers = await drip.client.listSubscribers({
-    status: "unsubscribed",
-  })
-  const emails = allUnsubscribedCustomers.body.subscribers.map(a => a.email)
-  console.log(emails)
+  const email = await this.prisma.client.user({ id }).email()
   // console.log(allUnsubscribedCustomers)
   // console.log(allUnsubscribedCustomers.)
 }

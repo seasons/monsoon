@@ -12,12 +12,14 @@ export class UserMutationsResolver {
 
   @Mutation()
   async unsubscribeUserFromEmails(@Args() { id }) {
-    await this.prisma.client.updateUser({
-      where: { id },
-      data: { sendSystemEmails: false },
-    })
-    const email = await this.prisma.client.user({ id }).email()
-    await this.drip.client.unsubscribeFromAllMailings(email)
+    const u = await this.prisma.client.user({ id })
+    if (!!u) {
+      await this.prisma.client.updateUser({
+        where: { id },
+        data: { sendSystemEmails: false },
+      })
+      await this.drip.client.unsubscribeFromAllMailings(u.email)
+    }
   }
 
   @Mutation()
