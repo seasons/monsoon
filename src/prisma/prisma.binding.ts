@@ -4,7 +4,6 @@ import { Options } from 'graphql-binding'
 import { makePrismaBindingClass, BasePrismaOptions } from 'prisma-binding'
 
 export interface Query {
-    referralViews: <T = Array<ReferralView | null>>(args: { where?: ReferralViewWhereInput | null, orderBy?: ReferralViewOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     brands: <T = Array<Brand | null>>(args: { where?: BrandWhereInput | null, orderBy?: BrandOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     collections: <T = Array<Collection | null>>(args: { where?: CollectionWhereInput | null, orderBy?: CollectionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     tags: <T = Array<Tag | null>>(args: { where?: TagWhereInput | null, orderBy?: TagOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -59,16 +58,15 @@ export interface Query {
     productVariantPrices: <T = Array<ProductVariantPrice | null>>(args: { where?: ProductVariantPriceWhereInput | null, orderBy?: ProductVariantPriceOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     locations: <T = Array<Location | null>>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     physicalProducts: <T = Array<PhysicalProduct | null>>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     smsReceipts: <T = Array<SmsReceipt | null>>(args: { where?: SmsReceiptWhereInput | null, orderBy?: SmsReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     users: <T = Array<User | null>>(args: { where?: UserWhereInput | null, orderBy?: UserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariants: <T = Array<ProductVariant | null>>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     paymentPlans: <T = Array<PaymentPlan | null>>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     products: <T = Array<Product | null>>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shippingOptions: <T = Array<ShippingOption | null>>(args: { where?: ShippingOptionWhereInput | null, orderBy?: ShippingOptionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetails: <T = Array<CustomerDetail | null>>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservations: <T = Array<Reservation | null>>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    referralView: <T = ReferralView | null>(args: { where: ReferralViewWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     brand: <T = Brand | null>(args: { where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     collection: <T = Collection | null>(args: { where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     tag: <T = Tag | null>(args: { where: TagWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -123,16 +121,15 @@ export interface Query {
     productVariantPrice: <T = ProductVariantPrice | null>(args: { where: ProductVariantPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     location: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     physicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     smsReceipt: <T = SmsReceipt | null>(args: { where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     user: <T = User | null>(args: { where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     paymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     product: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     shippingOption: <T = ShippingOption | null>(args: { where: ShippingOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    referralViewsConnection: <T = ReferralViewConnection>(args: { where?: ReferralViewWhereInput | null, orderBy?: ReferralViewOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     brandsConnection: <T = BrandConnection>(args: { where?: BrandWhereInput | null, orderBy?: BrandOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     collectionsConnection: <T = CollectionConnection>(args: { where?: CollectionWhereInput | null, orderBy?: CollectionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     tagsConnection: <T = TagConnection>(args: { where?: TagWhereInput | null, orderBy?: TagOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -187,10 +184,10 @@ export interface Query {
     productVariantPricesConnection: <T = ProductVariantPriceConnection>(args: { where?: ProductVariantPriceWhereInput | null, orderBy?: ProductVariantPriceOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     locationsConnection: <T = LocationConnection>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     physicalProductsConnection: <T = PhysicalProductConnection>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     smsReceiptsConnection: <T = SmsReceiptConnection>(args: { where?: SmsReceiptWhereInput | null, orderBy?: SmsReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     usersConnection: <T = UserConnection>(args: { where?: UserWhereInput | null, orderBy?: UserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantsConnection: <T = ProductVariantConnection>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     paymentPlansConnection: <T = PaymentPlanConnection>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productsConnection: <T = ProductConnection>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shippingOptionsConnection: <T = ShippingOptionConnection>(args: { where?: ShippingOptionWhereInput | null, orderBy?: ShippingOptionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -200,7 +197,6 @@ export interface Query {
   }
 
 export interface Mutation {
-    createReferralView: <T = ReferralView>(args: { data: ReferralViewCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBrand: <T = Brand>(args: { data: BrandCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCollection: <T = Collection>(args: { data: CollectionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createTag: <T = Tag>(args: { data: TagCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -255,16 +251,15 @@ export interface Mutation {
     createProductVariantPrice: <T = ProductVariantPrice>(args: { data: ProductVariantPriceCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createLocation: <T = Location>(args: { data: LocationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPhysicalProduct: <T = PhysicalProduct>(args: { data: PhysicalProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSmsReceipt: <T = SmsReceipt>(args: { data: SmsReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createUser: <T = User>(args: { data: UserCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductVariant: <T = ProductVariant>(args: { data: ProductVariantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPaymentPlan: <T = PaymentPlan>(args: { data: PaymentPlanCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProduct: <T = Product>(args: { data: ProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createShippingOption: <T = ShippingOption>(args: { data: ShippingOptionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerDetail: <T = CustomerDetail>(args: { data: CustomerDetailCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createReservation: <T = Reservation>(args: { data: ReservationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateReferralView: <T = ReferralView | null>(args: { data: ReferralViewUpdateInput, where: ReferralViewWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBrand: <T = Brand | null>(args: { data: BrandUpdateInput, where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCollection: <T = Collection | null>(args: { data: CollectionUpdateInput, where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateTag: <T = Tag | null>(args: { data: TagUpdateInput, where: TagWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -319,16 +314,15 @@ export interface Mutation {
     updateProductVariantPrice: <T = ProductVariantPrice | null>(args: { data: ProductVariantPriceUpdateInput, where: ProductVariantPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateLocation: <T = Location | null>(args: { data: LocationUpdateInput, where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePhysicalProduct: <T = PhysicalProduct | null>(args: { data: PhysicalProductUpdateInput, where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSmsReceipt: <T = SmsReceipt | null>(args: { data: SmsReceiptUpdateInput, where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateUser: <T = User | null>(args: { data: UserUpdateInput, where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductVariant: <T = ProductVariant | null>(args: { data: ProductVariantUpdateInput, where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePaymentPlan: <T = PaymentPlan | null>(args: { data: PaymentPlanUpdateInput, where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProduct: <T = Product | null>(args: { data: ProductUpdateInput, where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateShippingOption: <T = ShippingOption | null>(args: { data: ShippingOptionUpdateInput, where: ShippingOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerDetail: <T = CustomerDetail | null>(args: { data: CustomerDetailUpdateInput, where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateReservation: <T = Reservation | null>(args: { data: ReservationUpdateInput, where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteReferralView: <T = ReferralView | null>(args: { where: ReferralViewWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBrand: <T = Brand | null>(args: { where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCollection: <T = Collection | null>(args: { where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteTag: <T = Tag | null>(args: { where: TagWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -383,16 +377,15 @@ export interface Mutation {
     deleteProductVariantPrice: <T = ProductVariantPrice | null>(args: { where: ProductVariantPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteLocation: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePhysicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSmsReceipt: <T = SmsReceipt | null>(args: { where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteUser: <T = User | null>(args: { where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePaymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProduct: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteShippingOption: <T = ShippingOption | null>(args: { where: ShippingOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteReservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    upsertReferralView: <T = ReferralView>(args: { where: ReferralViewWhereUniqueInput, create: ReferralViewCreateInput, update: ReferralViewUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBrand: <T = Brand>(args: { where: BrandWhereUniqueInput, create: BrandCreateInput, update: BrandUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCollection: <T = Collection>(args: { where: CollectionWhereUniqueInput, create: CollectionCreateInput, update: CollectionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertTag: <T = Tag>(args: { where: TagWhereUniqueInput, create: TagCreateInput, update: TagUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -447,16 +440,15 @@ export interface Mutation {
     upsertProductVariantPrice: <T = ProductVariantPrice>(args: { where: ProductVariantPriceWhereUniqueInput, create: ProductVariantPriceCreateInput, update: ProductVariantPriceUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertLocation: <T = Location>(args: { where: LocationWhereUniqueInput, create: LocationCreateInput, update: LocationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPhysicalProduct: <T = PhysicalProduct>(args: { where: PhysicalProductWhereUniqueInput, create: PhysicalProductCreateInput, update: PhysicalProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSmsReceipt: <T = SmsReceipt>(args: { where: SmsReceiptWhereUniqueInput, create: SmsReceiptCreateInput, update: SmsReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertUser: <T = User>(args: { where: UserWhereUniqueInput, create: UserCreateInput, update: UserUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductVariant: <T = ProductVariant>(args: { where: ProductVariantWhereUniqueInput, create: ProductVariantCreateInput, update: ProductVariantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPaymentPlan: <T = PaymentPlan>(args: { where: PaymentPlanWhereUniqueInput, create: PaymentPlanCreateInput, update: PaymentPlanUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProduct: <T = Product>(args: { where: ProductWhereUniqueInput, create: ProductCreateInput, update: ProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertShippingOption: <T = ShippingOption>(args: { where: ShippingOptionWhereUniqueInput, create: ShippingOptionCreateInput, update: ShippingOptionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerDetail: <T = CustomerDetail>(args: { where: CustomerDetailWhereUniqueInput, create: CustomerDetailCreateInput, update: CustomerDetailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertReservation: <T = Reservation>(args: { where: ReservationWhereUniqueInput, create: ReservationCreateInput, update: ReservationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyReferralViews: <T = BatchPayload>(args: { data: ReferralViewUpdateManyMutationInput, where?: ReferralViewWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBrands: <T = BatchPayload>(args: { data: BrandUpdateManyMutationInput, where?: BrandWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCollections: <T = BatchPayload>(args: { data: CollectionUpdateManyMutationInput, where?: CollectionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyTags: <T = BatchPayload>(args: { data: TagUpdateManyMutationInput, where?: TagWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -509,16 +501,15 @@ export interface Mutation {
     updateManyProductVariantPrices: <T = BatchPayload>(args: { data: ProductVariantPriceUpdateManyMutationInput, where?: ProductVariantPriceWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyLocations: <T = BatchPayload>(args: { data: LocationUpdateManyMutationInput, where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPhysicalProducts: <T = BatchPayload>(args: { data: PhysicalProductUpdateManyMutationInput, where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySmsReceipts: <T = BatchPayload>(args: { data: SmsReceiptUpdateManyMutationInput, where?: SmsReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyUsers: <T = BatchPayload>(args: { data: UserUpdateManyMutationInput, where?: UserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductVariants: <T = BatchPayload>(args: { data: ProductVariantUpdateManyMutationInput, where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPaymentPlans: <T = BatchPayload>(args: { data: PaymentPlanUpdateManyMutationInput, where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProducts: <T = BatchPayload>(args: { data: ProductUpdateManyMutationInput, where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyShippingOptions: <T = BatchPayload>(args: { data: ShippingOptionUpdateManyMutationInput, where?: ShippingOptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerDetails: <T = BatchPayload>(args: { data: CustomerDetailUpdateManyMutationInput, where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyReservations: <T = BatchPayload>(args: { data: ReservationUpdateManyMutationInput, where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyReferralViews: <T = BatchPayload>(args: { where?: ReferralViewWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBrands: <T = BatchPayload>(args: { where?: BrandWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCollections: <T = BatchPayload>(args: { where?: CollectionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyTags: <T = BatchPayload>(args: { where?: TagWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -573,10 +564,10 @@ export interface Mutation {
     deleteManyProductVariantPrices: <T = BatchPayload>(args: { where?: ProductVariantPriceWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyLocations: <T = BatchPayload>(args: { where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPhysicalProducts: <T = BatchPayload>(args: { where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySmsReceipts: <T = BatchPayload>(args: { where?: SmsReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyUsers: <T = BatchPayload>(args: { where?: UserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductVariants: <T = BatchPayload>(args: { where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPaymentPlans: <T = BatchPayload>(args: { where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProducts: <T = BatchPayload>(args: { where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyShippingOptions: <T = BatchPayload>(args: { where?: ShippingOptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -585,7 +576,6 @@ export interface Mutation {
   }
 
 export interface Subscription {
-    referralView: <T = ReferralViewSubscriptionPayload | null>(args: { where?: ReferralViewSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     brand: <T = BrandSubscriptionPayload | null>(args: { where?: BrandSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     collection: <T = CollectionSubscriptionPayload | null>(args: { where?: CollectionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     tag: <T = TagSubscriptionPayload | null>(args: { where?: TagSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -640,10 +630,10 @@ export interface Subscription {
     productVariantPrice: <T = ProductVariantPriceSubscriptionPayload | null>(args: { where?: ProductVariantPriceSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     location: <T = LocationSubscriptionPayload | null>(args: { where?: LocationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     physicalProduct: <T = PhysicalProductSubscriptionPayload | null>(args: { where?: PhysicalProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     smsReceipt: <T = SmsReceiptSubscriptionPayload | null>(args: { where?: SmsReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     user: <T = UserSubscriptionPayload | null>(args: { where?: UserSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productVariant: <T = ProductVariantSubscriptionPayload | null>(args: { where?: ProductVariantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     paymentPlan: <T = PaymentPlanSubscriptionPayload | null>(args: { where?: PaymentPlanSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     product: <T = ProductSubscriptionPayload | null>(args: { where?: ProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     shippingOption: <T = ShippingOptionSubscriptionPayload | null>(args: { where?: ShippingOptionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -652,7 +642,6 @@ export interface Subscription {
   }
 
 export interface Exists {
-  ReferralView: (where?: ReferralViewWhereInput) => Promise<boolean>
   Brand: (where?: BrandWhereInput) => Promise<boolean>
   Collection: (where?: CollectionWhereInput) => Promise<boolean>
   Tag: (where?: TagWhereInput) => Promise<boolean>
@@ -707,10 +696,10 @@ export interface Exists {
   ProductVariantPrice: (where?: ProductVariantPriceWhereInput) => Promise<boolean>
   Location: (where?: LocationWhereInput) => Promise<boolean>
   PhysicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>
+  Image: (where?: ImageWhereInput) => Promise<boolean>
   SmsReceipt: (where?: SmsReceiptWhereInput) => Promise<boolean>
   User: (where?: UserWhereInput) => Promise<boolean>
   ProductVariant: (where?: ProductVariantWhereInput) => Promise<boolean>
-  Image: (where?: ImageWhereInput) => Promise<boolean>
   PaymentPlan: (where?: PaymentPlanWhereInput) => Promise<boolean>
   Product: (where?: ProductWhereInput) => Promise<boolean>
   ShippingOption: (where?: ShippingOptionWhereInput) => Promise<boolean>
@@ -1335,10 +1324,6 @@ type AggregatePushNotificationReceipt {
 }
 
 type AggregateRecentlyViewedProduct {
-  count: Int!
-}
-
-type AggregateReferralView {
   count: Int!
 }
 
@@ -11645,7 +11630,6 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
-  createReferralView(data: ReferralViewCreateInput!): ReferralView!
   createBrand(data: BrandCreateInput!): Brand!
   createCollection(data: CollectionCreateInput!): Collection!
   createTag(data: TagCreateInput!): Tag!
@@ -11700,16 +11684,15 @@ type Mutation {
   createProductVariantPrice(data: ProductVariantPriceCreateInput!): ProductVariantPrice!
   createLocation(data: LocationCreateInput!): Location!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
+  createImage(data: ImageCreateInput!): Image!
   createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
   createUser(data: UserCreateInput!): User!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
-  createImage(data: ImageCreateInput!): Image!
   createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
   createProduct(data: ProductCreateInput!): Product!
   createShippingOption(data: ShippingOptionCreateInput!): ShippingOption!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createReservation(data: ReservationCreateInput!): Reservation!
-  updateReferralView(data: ReferralViewUpdateInput!, where: ReferralViewWhereUniqueInput!): ReferralView
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateCollection(data: CollectionUpdateInput!, where: CollectionWhereUniqueInput!): Collection
   updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
@@ -11764,16 +11747,15 @@ type Mutation {
   updateProductVariantPrice(data: ProductVariantPriceUpdateInput!, where: ProductVariantPriceWhereUniqueInput!): ProductVariantPrice
   updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
   updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
+  updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updateSmsReceipt(data: SmsReceiptUpdateInput!, where: SmsReceiptWhereUniqueInput!): SmsReceipt
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateProductVariant(data: ProductVariantUpdateInput!, where: ProductVariantWhereUniqueInput!): ProductVariant
-  updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updatePaymentPlan(data: PaymentPlanUpdateInput!, where: PaymentPlanWhereUniqueInput!): PaymentPlan
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
   updateShippingOption(data: ShippingOptionUpdateInput!, where: ShippingOptionWhereUniqueInput!): ShippingOption
   updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
   updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
-  deleteReferralView(where: ReferralViewWhereUniqueInput!): ReferralView
   deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deleteTag(where: TagWhereUniqueInput!): Tag
@@ -11828,16 +11810,15 @@ type Mutation {
   deleteProductVariantPrice(where: ProductVariantPriceWhereUniqueInput!): ProductVariantPrice
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deletePhysicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
+  deleteImage(where: ImageWhereUniqueInput!): Image
   deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   deleteUser(where: UserWhereUniqueInput!): User
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
-  deleteImage(where: ImageWhereUniqueInput!): Image
   deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   deleteProduct(where: ProductWhereUniqueInput!): Product
   deleteShippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
-  upsertReferralView(where: ReferralViewWhereUniqueInput!, create: ReferralViewCreateInput!, update: ReferralViewUpdateInput!): ReferralView!
   upsertBrand(where: BrandWhereUniqueInput!, create: BrandCreateInput!, update: BrandUpdateInput!): Brand!
   upsertCollection(where: CollectionWhereUniqueInput!, create: CollectionCreateInput!, update: CollectionUpdateInput!): Collection!
   upsertTag(where: TagWhereUniqueInput!, create: TagCreateInput!, update: TagUpdateInput!): Tag!
@@ -11892,16 +11873,15 @@ type Mutation {
   upsertProductVariantPrice(where: ProductVariantPriceWhereUniqueInput!, create: ProductVariantPriceCreateInput!, update: ProductVariantPriceUpdateInput!): ProductVariantPrice!
   upsertLocation(where: LocationWhereUniqueInput!, create: LocationCreateInput!, update: LocationUpdateInput!): Location!
   upsertPhysicalProduct(where: PhysicalProductWhereUniqueInput!, create: PhysicalProductCreateInput!, update: PhysicalProductUpdateInput!): PhysicalProduct!
+  upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   upsertSmsReceipt(where: SmsReceiptWhereUniqueInput!, create: SmsReceiptCreateInput!, update: SmsReceiptUpdateInput!): SmsReceipt!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
-  upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   upsertPaymentPlan(where: PaymentPlanWhereUniqueInput!, create: PaymentPlanCreateInput!, update: PaymentPlanUpdateInput!): PaymentPlan!
   upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
   upsertShippingOption(where: ShippingOptionWhereUniqueInput!, create: ShippingOptionCreateInput!, update: ShippingOptionUpdateInput!): ShippingOption!
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
   upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
-  updateManyReferralViews(data: ReferralViewUpdateManyMutationInput!, where: ReferralViewWhereInput): BatchPayload!
   updateManyBrands(data: BrandUpdateManyMutationInput!, where: BrandWhereInput): BatchPayload!
   updateManyCollections(data: CollectionUpdateManyMutationInput!, where: CollectionWhereInput): BatchPayload!
   updateManyTags(data: TagUpdateManyMutationInput!, where: TagWhereInput): BatchPayload!
@@ -11954,16 +11934,15 @@ type Mutation {
   updateManyProductVariantPrices(data: ProductVariantPriceUpdateManyMutationInput!, where: ProductVariantPriceWhereInput): BatchPayload!
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
   updateManyPhysicalProducts(data: PhysicalProductUpdateManyMutationInput!, where: PhysicalProductWhereInput): BatchPayload!
+  updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
   updateManySmsReceipts(data: SmsReceiptUpdateManyMutationInput!, where: SmsReceiptWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyProductVariants(data: ProductVariantUpdateManyMutationInput!, where: ProductVariantWhereInput): BatchPayload!
-  updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
   updateManyPaymentPlans(data: PaymentPlanUpdateManyMutationInput!, where: PaymentPlanWhereInput): BatchPayload!
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
   updateManyShippingOptions(data: ShippingOptionUpdateManyMutationInput!, where: ShippingOptionWhereInput): BatchPayload!
   updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
   updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
-  deleteManyReferralViews(where: ReferralViewWhereInput): BatchPayload!
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   deleteManyTags(where: TagWhereInput): BatchPayload!
@@ -12018,10 +11997,10 @@ type Mutation {
   deleteManyProductVariantPrices(where: ProductVariantPriceWhereInput): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
+  deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
-  deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
   deleteManyShippingOptions(where: ShippingOptionWhereInput): BatchPayload!
@@ -23003,7 +22982,6 @@ enum PushNotificationStatus {
 }
 
 type Query {
-  referralViews(where: ReferralViewWhereInput, orderBy: ReferralViewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReferralView]!
   brands(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Brand]!
   collections(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Collection]!
   tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag]!
@@ -23058,16 +23036,15 @@ type Query {
   productVariantPrices(where: ProductVariantPriceWhereInput, orderBy: ProductVariantPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantPrice]!
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
-  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   paymentPlans(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PaymentPlan]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   shippingOptions(where: ShippingOptionWhereInput, orderBy: ShippingOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShippingOption]!
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
-  referralView(where: ReferralViewWhereUniqueInput!): ReferralView
   brand(where: BrandWhereUniqueInput!): Brand
   collection(where: CollectionWhereUniqueInput!): Collection
   tag(where: TagWhereUniqueInput!): Tag
@@ -23122,16 +23099,15 @@ type Query {
   productVariantPrice(where: ProductVariantPriceWhereUniqueInput!): ProductVariantPrice
   location(where: LocationWhereUniqueInput!): Location
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
+  image(where: ImageWhereUniqueInput!): Image
   smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   user(where: UserWhereUniqueInput!): User
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
-  image(where: ImageWhereUniqueInput!): Image
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   product(where: ProductWhereUniqueInput!): Product
   shippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   reservation(where: ReservationWhereUniqueInput!): Reservation
-  referralViewsConnection(where: ReferralViewWhereInput, orderBy: ReferralViewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReferralViewConnection!
   brandsConnection(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BrandConnection!
   collectionsConnection(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionConnection!
   tagsConnection(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TagConnection!
@@ -23186,10 +23162,10 @@ type Query {
   productVariantPricesConnection(where: ProductVariantPriceWhereInput, orderBy: ProductVariantPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantPriceConnection!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
+  imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
   smsReceiptsConnection(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SmsReceiptConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
-  imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
   paymentPlansConnection(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PaymentPlanConnection!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
   shippingOptionsConnection(where: ShippingOptionWhereInput, orderBy: ShippingOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShippingOptionConnection!
@@ -23434,298 +23410,6 @@ input RecentlyViewedProductWhereInput {
 }
 
 input RecentlyViewedProductWhereUniqueInput {
-  id: ID
-}
-
-type ReferralView implements Node {
-  id: ID!
-  title: String!
-  description: String!
-  shareMessage: String!
-  listText: [String!]!
-  image: Image!
-}
-
-"""A connection to a list of items."""
-type ReferralViewConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [ReferralViewEdge]!
-  aggregate: AggregateReferralView!
-}
-
-input ReferralViewCreateInput {
-  id: ID
-  title: String!
-  description: String!
-  shareMessage: String!
-  listText: ReferralViewCreatelistTextInput
-  image: ImageCreateOneInput!
-}
-
-input ReferralViewCreatelistTextInput {
-  set: [String!]
-}
-
-"""An edge in a connection."""
-type ReferralViewEdge {
-  """The item at the end of the edge."""
-  node: ReferralView!
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-
-enum ReferralViewOrderByInput {
-  id_ASC
-  id_DESC
-  title_ASC
-  title_DESC
-  description_ASC
-  description_DESC
-  shareMessage_ASC
-  shareMessage_DESC
-}
-
-type ReferralViewPreviousValues {
-  id: ID!
-  title: String!
-  description: String!
-  shareMessage: String!
-  listText: [String!]!
-}
-
-type ReferralViewSubscriptionPayload {
-  mutation: MutationType!
-  node: ReferralView
-  updatedFields: [String!]
-  previousValues: ReferralViewPreviousValues
-}
-
-input ReferralViewSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ReferralViewSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ReferralViewSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ReferralViewSubscriptionWhereInput!]
-
-  """The subscription event gets dispatched when it's listed in mutation_in"""
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: ReferralViewWhereInput
-}
-
-input ReferralViewUpdateInput {
-  title: String
-  description: String
-  shareMessage: String
-  listText: ReferralViewUpdatelistTextInput
-  image: ImageUpdateOneRequiredInput
-}
-
-input ReferralViewUpdatelistTextInput {
-  set: [String!]
-}
-
-input ReferralViewUpdateManyMutationInput {
-  title: String
-  description: String
-  shareMessage: String
-  listText: ReferralViewUpdatelistTextInput
-}
-
-input ReferralViewWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ReferralViewWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ReferralViewWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ReferralViewWhereInput!]
-  id: ID
-
-  """All values that are not equal to given value."""
-  id_not: ID
-
-  """All values that are contained in given list."""
-  id_in: [ID!]
-
-  """All values that are not contained in given list."""
-  id_not_in: [ID!]
-
-  """All values less than the given value."""
-  id_lt: ID
-
-  """All values less than or equal the given value."""
-  id_lte: ID
-
-  """All values greater than the given value."""
-  id_gt: ID
-
-  """All values greater than or equal the given value."""
-  id_gte: ID
-
-  """All values containing the given string."""
-  id_contains: ID
-
-  """All values not containing the given string."""
-  id_not_contains: ID
-
-  """All values starting with the given string."""
-  id_starts_with: ID
-
-  """All values not starting with the given string."""
-  id_not_starts_with: ID
-
-  """All values ending with the given string."""
-  id_ends_with: ID
-
-  """All values not ending with the given string."""
-  id_not_ends_with: ID
-  title: String
-
-  """All values that are not equal to given value."""
-  title_not: String
-
-  """All values that are contained in given list."""
-  title_in: [String!]
-
-  """All values that are not contained in given list."""
-  title_not_in: [String!]
-
-  """All values less than the given value."""
-  title_lt: String
-
-  """All values less than or equal the given value."""
-  title_lte: String
-
-  """All values greater than the given value."""
-  title_gt: String
-
-  """All values greater than or equal the given value."""
-  title_gte: String
-
-  """All values containing the given string."""
-  title_contains: String
-
-  """All values not containing the given string."""
-  title_not_contains: String
-
-  """All values starting with the given string."""
-  title_starts_with: String
-
-  """All values not starting with the given string."""
-  title_not_starts_with: String
-
-  """All values ending with the given string."""
-  title_ends_with: String
-
-  """All values not ending with the given string."""
-  title_not_ends_with: String
-  description: String
-
-  """All values that are not equal to given value."""
-  description_not: String
-
-  """All values that are contained in given list."""
-  description_in: [String!]
-
-  """All values that are not contained in given list."""
-  description_not_in: [String!]
-
-  """All values less than the given value."""
-  description_lt: String
-
-  """All values less than or equal the given value."""
-  description_lte: String
-
-  """All values greater than the given value."""
-  description_gt: String
-
-  """All values greater than or equal the given value."""
-  description_gte: String
-
-  """All values containing the given string."""
-  description_contains: String
-
-  """All values not containing the given string."""
-  description_not_contains: String
-
-  """All values starting with the given string."""
-  description_starts_with: String
-
-  """All values not starting with the given string."""
-  description_not_starts_with: String
-
-  """All values ending with the given string."""
-  description_ends_with: String
-
-  """All values not ending with the given string."""
-  description_not_ends_with: String
-  shareMessage: String
-
-  """All values that are not equal to given value."""
-  shareMessage_not: String
-
-  """All values that are contained in given list."""
-  shareMessage_in: [String!]
-
-  """All values that are not contained in given list."""
-  shareMessage_not_in: [String!]
-
-  """All values less than the given value."""
-  shareMessage_lt: String
-
-  """All values less than or equal the given value."""
-  shareMessage_lte: String
-
-  """All values greater than the given value."""
-  shareMessage_gt: String
-
-  """All values greater than or equal the given value."""
-  shareMessage_gte: String
-
-  """All values containing the given string."""
-  shareMessage_contains: String
-
-  """All values not containing the given string."""
-  shareMessage_not_contains: String
-
-  """All values starting with the given string."""
-  shareMessage_starts_with: String
-
-  """All values not starting with the given string."""
-  shareMessage_not_starts_with: String
-
-  """All values ending with the given string."""
-  shareMessage_ends_with: String
-
-  """All values not ending with the given string."""
-  shareMessage_not_ends_with: String
-  image: ImageWhereInput
-}
-
-input ReferralViewWhereUniqueInput {
   id: ID
 }
 
@@ -28092,7 +27776,6 @@ input StylePreferencesWhereUniqueInput {
 }
 
 type Subscription {
-  referralView(where: ReferralViewSubscriptionWhereInput): ReferralViewSubscriptionPayload
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   collection(where: CollectionSubscriptionWhereInput): CollectionSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
@@ -28147,10 +27830,10 @@ type Subscription {
   productVariantPrice(where: ProductVariantPriceSubscriptionWhereInput): ProductVariantPriceSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
+  image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
-  image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   paymentPlan(where: PaymentPlanSubscriptionWhereInput): PaymentPlanSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   shippingOption(where: ShippingOptionSubscriptionWhereInput): ShippingOptionSubscriptionPayload
@@ -33218,15 +32901,6 @@ export type RecentlyViewedProductOrderByInput =   'id_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
-
-export type ReferralViewOrderByInput =   'id_ASC' |
-  'id_DESC' |
-  'title_ASC' |
-  'title_DESC' |
-  'description_ASC' |
-  'description_DESC' |
-  'shareMessage_ASC' |
-  'shareMessage_DESC'
 
 export type ReservationFeedbackOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -43612,116 +43286,6 @@ export interface RecentlyViewedProductWhereUniqueInput {
   id?: ID_Input | null
 }
 
-export interface ReferralViewCreateInput {
-  id?: ID_Input | null
-  title: String
-  description: String
-  shareMessage: String
-  listText?: ReferralViewCreatelistTextInput | null
-  image: ImageCreateOneInput
-}
-
-export interface ReferralViewCreatelistTextInput {
-  set?: String[] | String | null
-}
-
-export interface ReferralViewSubscriptionWhereInput {
-  AND?: ReferralViewSubscriptionWhereInput[] | ReferralViewSubscriptionWhereInput | null
-  OR?: ReferralViewSubscriptionWhereInput[] | ReferralViewSubscriptionWhereInput | null
-  NOT?: ReferralViewSubscriptionWhereInput[] | ReferralViewSubscriptionWhereInput | null
-  mutation_in?: MutationType[] | MutationType | null
-  updatedFields_contains?: String | null
-  updatedFields_contains_every?: String[] | String | null
-  updatedFields_contains_some?: String[] | String | null
-  node?: ReferralViewWhereInput | null
-}
-
-export interface ReferralViewUpdateInput {
-  title?: String | null
-  description?: String | null
-  shareMessage?: String | null
-  listText?: ReferralViewUpdatelistTextInput | null
-  image?: ImageUpdateOneRequiredInput | null
-}
-
-export interface ReferralViewUpdatelistTextInput {
-  set?: String[] | String | null
-}
-
-export interface ReferralViewUpdateManyMutationInput {
-  title?: String | null
-  description?: String | null
-  shareMessage?: String | null
-  listText?: ReferralViewUpdatelistTextInput | null
-}
-
-export interface ReferralViewWhereInput {
-  AND?: ReferralViewWhereInput[] | ReferralViewWhereInput | null
-  OR?: ReferralViewWhereInput[] | ReferralViewWhereInput | null
-  NOT?: ReferralViewWhereInput[] | ReferralViewWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  title?: String | null
-  title_not?: String | null
-  title_in?: String[] | String | null
-  title_not_in?: String[] | String | null
-  title_lt?: String | null
-  title_lte?: String | null
-  title_gt?: String | null
-  title_gte?: String | null
-  title_contains?: String | null
-  title_not_contains?: String | null
-  title_starts_with?: String | null
-  title_not_starts_with?: String | null
-  title_ends_with?: String | null
-  title_not_ends_with?: String | null
-  description?: String | null
-  description_not?: String | null
-  description_in?: String[] | String | null
-  description_not_in?: String[] | String | null
-  description_lt?: String | null
-  description_lte?: String | null
-  description_gt?: String | null
-  description_gte?: String | null
-  description_contains?: String | null
-  description_not_contains?: String | null
-  description_starts_with?: String | null
-  description_not_starts_with?: String | null
-  description_ends_with?: String | null
-  description_not_ends_with?: String | null
-  shareMessage?: String | null
-  shareMessage_not?: String | null
-  shareMessage_in?: String[] | String | null
-  shareMessage_not_in?: String[] | String | null
-  shareMessage_lt?: String | null
-  shareMessage_lte?: String | null
-  shareMessage_gt?: String | null
-  shareMessage_gte?: String | null
-  shareMessage_contains?: String | null
-  shareMessage_not_contains?: String | null
-  shareMessage_starts_with?: String | null
-  shareMessage_not_starts_with?: String | null
-  shareMessage_ends_with?: String | null
-  shareMessage_not_ends_with?: String | null
-  image?: ImageWhereInput | null
-}
-
-export interface ReferralViewWhereUniqueInput {
-  id?: ID_Input | null
-}
-
 export interface ReservationCreateInput {
   id?: ID_Input | null
   reservationNumber: Int
@@ -47860,10 +47424,6 @@ export interface AggregateRecentlyViewedProduct {
   count: Int
 }
 
-export interface AggregateReferralView {
-  count: Int
-}
-
 export interface AggregateReservation {
   count: Int
 }
@@ -49970,49 +49530,6 @@ export interface RecentlyViewedProductSubscriptionPayload {
   node?: RecentlyViewedProduct | null
   updatedFields?: Array<String> | null
   previousValues?: RecentlyViewedProductPreviousValues | null
-}
-
-export interface ReferralView extends Node {
-  id: ID_Output
-  title: String
-  description: String
-  shareMessage: String
-  listText: Array<String>
-  image: Image
-}
-
-/*
- * A connection to a list of items.
-
- */
-export interface ReferralViewConnection {
-  pageInfo: PageInfo
-  edges: Array<ReferralViewEdge | null>
-  aggregate: AggregateReferralView
-}
-
-/*
- * An edge in a connection.
-
- */
-export interface ReferralViewEdge {
-  node: ReferralView
-  cursor: String
-}
-
-export interface ReferralViewPreviousValues {
-  id: ID_Output
-  title: String
-  description: String
-  shareMessage: String
-  listText: Array<String>
-}
-
-export interface ReferralViewSubscriptionPayload {
-  mutation: MutationType
-  node?: ReferralView | null
-  updatedFields?: Array<String> | null
-  previousValues?: ReferralViewPreviousValues | null
 }
 
 export interface Reservation extends Node {
