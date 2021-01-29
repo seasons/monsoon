@@ -5,6 +5,7 @@ import { CustomerStatus, PaymentPlanTier } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
 import Analytics from "analytics-node"
+import { NumberPage } from "twilio/lib/rest/pricing/v1/voice/number"
 
 type SubscribedProperties = CommonTrackProperties & {
   tier: PaymentPlanTier
@@ -39,6 +40,7 @@ interface CommonTrackProperties {
 type BecameAuthorizedProperties = CommonTrackProperties & {
   previousStatus: CustomerStatus
   method: "Manual" | "Automatic"
+  OrderId: number
 }
 
 @Injectable()
@@ -66,15 +68,27 @@ export class SegmentService {
     userId: string,
     properties: BecameAuthorizedProperties
   ) {
-    this.trackEvent<BecameAuthorizedProperties>(
-      userId,
-      "Became Authorized",
-      properties
-    )
+    this.trackEvent<BecameAuthorizedProperties>(userId, "Became Authorized", {
+      ...properties,
+      OrderId: new Date().getTime(),
+    })
   }
 
   trackSubscribed(userId: string, properties: SubscribedProperties) {
-    this.trackEvent<SubscribedProperties>(userId, "Subscribed", properties)
+    this.trackEvent<
+      SubscribedProperties & {
+        OrderId: number
+        CustomerStatus: "New"
+        CurrencyCode: "USD"
+        OrderSubTotalPostDiscount: number
+      }
+    >(userId, "Subscribed", {
+      ...properties,
+      OrderId: new Date().getTime(),
+      CustomerStatus: "New",
+      CurrencyCode: "USD",
+      OrderSubTotalPostDiscount: 22.5,
+    })
   }
 
   private trackEvent<T>(
