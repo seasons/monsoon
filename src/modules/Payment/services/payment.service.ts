@@ -271,6 +271,10 @@ export class PaymentService {
       `
         {
           id
+          detail {
+            id
+            imapctId
+          }
           user {
             id
             firstName
@@ -371,6 +375,7 @@ export class PaymentService {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      impactId: customerWithUserData.detail.impactId,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
   }

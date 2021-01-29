@@ -33,6 +33,7 @@ interface CommonTrackProperties {
   email: string
   application?: ApplicationType
   customerID?: string
+  impactId?: string
 }
 
 type BecameAuthorizedProperties = CommonTrackProperties & {
@@ -76,17 +77,30 @@ export class SegmentService {
     this.trackEvent<SubscribedProperties>(userId, "Subscribed", properties)
   }
 
-  private trackEvent<T>(userId: string, event: TrackingEvent, properties: T) {
+  private trackEvent<T>(
+    userId: string,
+    event: TrackingEvent,
+    properties: T & { impactId?: string }
+  ) {
     try {
+      let _properties = properties
+      if (!!properties.impactId) {
+        _properties["context"] = {
+          referrer: { type: "impactRadius", id: properties.impactId },
+        }
+      }
       this.client.track({
         userId,
         event,
-        properties,
+        properties: _properties,
       })
       if (process.env.NODE_ENV === "development") {
         console.log(`tracked event`)
         console.log(
-          util.inspect({ userId, event, properties }, { depth: null })
+          util.inspect(
+            { userId, event, properties: _properties },
+            { depth: null }
+          )
         )
       }
     } catch (err) {

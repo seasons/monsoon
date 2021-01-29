@@ -53,6 +53,10 @@ export class ChargebeeController {
         { where: { user: { id: customer.id } } },
         `
         {
+          detail {
+            id
+            impactId
+          }
           user {
             id
             firstName
@@ -80,6 +84,7 @@ export class ChargebeeController {
       gateway: transaction.gateway,
       transactionType: transaction.type,
       amount: transaction.amount,
+      impactId: custWithData.detail.impactId,
       ...this.utils.formatUTMForSegment(custWithData.utm),
     })
   }
@@ -99,6 +104,10 @@ export class ChargebeeController {
           id
           billingInfo {
             id
+          }
+          detail {
+            id
+            impactId
           }
           utm {
             source
@@ -141,6 +150,7 @@ export class ChargebeeController {
           firstName: user?.firstName || "",
           lastName: user?.lastName || "",
           email: user?.email || "",
+          impactId: customerWithBillingAndUserData.detail.impactId,
           ...this.utils.formatUTMForSegment(customerWithBillingAndUserData.utm),
         })
         // Only create the billing info and send welcome email if user used chargebee checkout

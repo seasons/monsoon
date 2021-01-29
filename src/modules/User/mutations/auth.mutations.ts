@@ -71,14 +71,7 @@ export class AuthMutationsResolver {
       customerID: customer.id,
       application,
       ...this.utils.formatUTMForSegment(utm),
-      ...(!!details.impactId && {
-        context: {
-          referrer: {
-            type: "impactRadius",
-            id: details.impactId,
-          },
-        },
-      }),
+      impactId: details.impactId,
       OrderId: new Date().getTime(),
     })
 
