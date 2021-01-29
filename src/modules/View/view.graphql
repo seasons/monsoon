@@ -1,0 +1,16 @@
+enum ViewType {
+  Referral
+  Banner
+}
+
+type View {
+  id: ID!
+  type: ViewType
+  title: String!
+  caption: String
+  properties: JSON
+}
+
+type Query {
+  view(viewID: String): View
+}
