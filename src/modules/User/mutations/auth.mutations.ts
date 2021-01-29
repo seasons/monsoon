@@ -71,7 +71,7 @@ export class AuthMutationsResolver {
       customerID: customer.id,
       application,
       ...this.utils.formatUTMForSegment(utm),
-      impactId: details.impactId,
+      impactId: details?.impactId,
     })
 
     return {

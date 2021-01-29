@@ -456,7 +456,7 @@ export class CustomerService {
         email: customer.user.email,
         method: "Manual",
         application,
-        impactId: customer.detail.impactId,
+        impactId: customer.detail?.impactId,
         ...this.utils.formatUTMForSegment(customer.utm),
       })
     }
@@ -574,7 +574,7 @@ export class CustomerService {
           email: customer.user.email,
           method: "Automatic",
           application,
-          impactId: customer.detail.impactId,
+          impactId: customer.detail?.impactId,
           ...this.utils.formatUTMForSegment(customer.utm),
         })
 

@@ -376,7 +376,7 @@ export class PaymentService {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      impactId: customerWithUserData.detail.impactId,
+      impactId: customerWithUserData.detail?.impactId,
       total,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
