@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Jan 28 2021 14:39:09 GMT-0600 (Central Standard Time)
+# timestamp: Thu Jan 28 2021 21:57:17 GMT-0600 (Central Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -6776,6 +6776,7 @@ type CustomerDetail implements Node {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: [CustomerStyle!]!
   commuteStyle: String
   stylePreferences: StylePreferences
   shippingAddress: Location
@@ -6827,6 +6828,7 @@ input CustomerDetailCreateInput {
   weight: CustomerDetailCreateweightInput
   topSizes: CustomerDetailCreatetopSizesInput
   waistSizes: CustomerDetailCreatewaistSizesInput
+  styles: CustomerDetailCreatestylesInput
   stylePreferences: StylePreferencesCreateOneInput
   shippingAddress: LocationCreateOneInput
 }
@@ -6834,6 +6836,10 @@ input CustomerDetailCreateInput {
 input CustomerDetailCreateOneInput {
   create: CustomerDetailCreateInput
   connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailCreatestylesInput {
+  set: [CustomerStyle!]
 }
 
 input CustomerDetailCreatetopSizesInput {
@@ -6929,6 +6935,7 @@ type CustomerDetailPreviousValues {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: [CustomerStyle!]!
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean!
@@ -7006,6 +7013,7 @@ input CustomerDetailUpdateDataInput {
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
+  styles: CustomerDetailUpdatestylesInput
   stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
 }
@@ -7033,6 +7041,7 @@ input CustomerDetailUpdateInput {
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
+  styles: CustomerDetailUpdatestylesInput
   stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
 }
@@ -7060,6 +7069,7 @@ input CustomerDetailUpdateManyMutationInput {
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
+  styles: CustomerDetailUpdatestylesInput
 }
 
 input CustomerDetailUpdateOneInput {
@@ -7069,6 +7079,10 @@ input CustomerDetailUpdateOneInput {
   delete: Boolean
   update: CustomerDetailUpdateDataInput
   upsert: CustomerDetailUpsertNestedInput
+}
+
+input CustomerDetailUpdatestylesInput {
+  set: [CustomerStyle!]
 }
 
 input CustomerDetailUpdatetopSizesInput {
@@ -9212,6 +9226,15 @@ enum CustomerStatus {
   Suspended
   Paused
   Deactivated
+}
+
+enum CustomerStyle {
+  AvantGarde
+  Bold
+  Classic
+  Minimalist
+  Streetwear
+  Techwear
 }
 
 type CustomerSubscriptionPayload {

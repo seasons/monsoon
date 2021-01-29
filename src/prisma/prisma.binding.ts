@@ -5580,6 +5580,7 @@ type CustomerDetail implements Node {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: [CustomerStyle!]!
   commuteStyle: String
   stylePreferences: StylePreferences
   shippingAddress: Location
@@ -5625,6 +5626,7 @@ input CustomerDetailCreateInput {
   weight: CustomerDetailCreateweightInput
   topSizes: CustomerDetailCreatetopSizesInput
   waistSizes: CustomerDetailCreatewaistSizesInput
+  styles: CustomerDetailCreatestylesInput
   stylePreferences: StylePreferencesCreateOneInput
   shippingAddress: LocationCreateOneInput
 }
@@ -5632,6 +5634,10 @@ input CustomerDetailCreateInput {
 input CustomerDetailCreateOneInput {
   create: CustomerDetailCreateInput
   connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailCreatestylesInput {
+  set: [CustomerStyle!]
 }
 
 input CustomerDetailCreatetopSizesInput {
@@ -5721,6 +5727,7 @@ type CustomerDetailPreviousValues {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: [CustomerStyle!]!
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean!
@@ -5790,6 +5797,7 @@ input CustomerDetailUpdateDataInput {
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
+  styles: CustomerDetailUpdatestylesInput
   stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
 }
@@ -5817,6 +5825,7 @@ input CustomerDetailUpdateInput {
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
+  styles: CustomerDetailUpdatestylesInput
   stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
 }
@@ -5844,6 +5853,7 @@ input CustomerDetailUpdateManyMutationInput {
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
+  styles: CustomerDetailUpdatestylesInput
 }
 
 input CustomerDetailUpdateOneInput {
@@ -5853,6 +5863,10 @@ input CustomerDetailUpdateOneInput {
   delete: Boolean
   update: CustomerDetailUpdateDataInput
   upsert: CustomerDetailUpsertNestedInput
+}
+
+input CustomerDetailUpdatestylesInput {
+  set: [CustomerStyle!]
 }
 
 input CustomerDetailUpdatetopSizesInput {
@@ -7234,6 +7248,15 @@ enum CustomerStatus {
   Suspended
   Paused
   Deactivated
+}
+
+enum CustomerStyle {
+  AvantGarde
+  Bold
+  Classic
+  Minimalist
+  Streetwear
+  Techwear
 }
 
 type CustomerSubscriptionPayload {
@@ -32301,6 +32324,13 @@ export type CustomerStatus =   'Invited' |
   'Paused' |
   'Deactivated'
 
+export type CustomerStyle =   'AvantGarde' |
+  'Bold' |
+  'Classic' |
+  'Minimalist' |
+  'Streetwear' |
+  'Techwear'
+
 export type EmailId =   'CompleteAccount' |
   'DaySevenAuthorizationFollowup' |
   'DaySixAuthorizationFollowup' |
@@ -35210,6 +35240,7 @@ export interface CustomerDetailCreateInput {
   weight?: CustomerDetailCreateweightInput | null
   topSizes?: CustomerDetailCreatetopSizesInput | null
   waistSizes?: CustomerDetailCreatewaistSizesInput | null
+  styles?: CustomerDetailCreatestylesInput | null
   stylePreferences?: StylePreferencesCreateOneInput | null
   shippingAddress?: LocationCreateOneInput | null
 }
@@ -35217,6 +35248,10 @@ export interface CustomerDetailCreateInput {
 export interface CustomerDetailCreateOneInput {
   create?: CustomerDetailCreateInput | null
   connect?: CustomerDetailWhereUniqueInput | null
+}
+
+export interface CustomerDetailCreatestylesInput {
+  set?: CustomerStyle[] | CustomerStyle | null
 }
 
 export interface CustomerDetailCreatetopSizesInput {
@@ -35265,6 +35300,7 @@ export interface CustomerDetailUpdateDataInput {
   weight?: CustomerDetailUpdateweightInput | null
   topSizes?: CustomerDetailUpdatetopSizesInput | null
   waistSizes?: CustomerDetailUpdatewaistSizesInput | null
+  styles?: CustomerDetailUpdatestylesInput | null
   stylePreferences?: StylePreferencesUpdateOneInput | null
   shippingAddress?: LocationUpdateOneInput | null
 }
@@ -35292,6 +35328,7 @@ export interface CustomerDetailUpdateInput {
   weight?: CustomerDetailUpdateweightInput | null
   topSizes?: CustomerDetailUpdatetopSizesInput | null
   waistSizes?: CustomerDetailUpdatewaistSizesInput | null
+  styles?: CustomerDetailUpdatestylesInput | null
   stylePreferences?: StylePreferencesUpdateOneInput | null
   shippingAddress?: LocationUpdateOneInput | null
 }
@@ -35319,6 +35356,7 @@ export interface CustomerDetailUpdateManyMutationInput {
   weight?: CustomerDetailUpdateweightInput | null
   topSizes?: CustomerDetailUpdatetopSizesInput | null
   waistSizes?: CustomerDetailUpdatewaistSizesInput | null
+  styles?: CustomerDetailUpdatestylesInput | null
 }
 
 export interface CustomerDetailUpdateOneInput {
@@ -35328,6 +35366,10 @@ export interface CustomerDetailUpdateOneInput {
   delete?: Boolean | null
   update?: CustomerDetailUpdateDataInput | null
   upsert?: CustomerDetailUpsertNestedInput | null
+}
+
+export interface CustomerDetailUpdatestylesInput {
+  set?: CustomerStyle[] | CustomerStyle | null
 }
 
 export interface CustomerDetailUpdatetopSizesInput {
@@ -47930,6 +47972,7 @@ export interface CustomerDetail extends Node {
   shoppingFrequency?: String | null
   averageSpend?: String | null
   style?: String | null
+  styles: Array<CustomerStyle>
   commuteStyle?: String | null
   stylePreferences?: StylePreferences | null
   shippingAddress?: Location | null
@@ -47979,6 +48022,7 @@ export interface CustomerDetailPreviousValues {
   shoppingFrequency?: String | null
   averageSpend?: String | null
   style?: String | null
+  styles: Array<CustomerStyle>
   commuteStyle?: String | null
   phoneOS?: String | null
   insureShipment: Boolean
