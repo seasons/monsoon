@@ -2989,6 +2989,7 @@ type CustomerDetail {
   phoneOS: String
   insureShipment: Boolean!
   instagramHandle: String
+  impactId: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3025,6 +3026,7 @@ input CustomerDetailCreateInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  impactId: String
 }
 
 input CustomerDetailCreateOneInput {
@@ -3092,6 +3094,8 @@ enum CustomerDetailOrderByInput {
   insureShipment_DESC
   instagramHandle_ASC
   instagramHandle_DESC
+  impactId_ASC
+  impactId_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -3122,6 +3126,7 @@ type CustomerDetailPreviousValues {
   phoneOS: String
   insureShipment: Boolean!
   instagramHandle: String
+  impactId: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3169,6 +3174,7 @@ input CustomerDetailUpdateDataInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  impactId: String
 }
 
 input CustomerDetailUpdateInput {
@@ -3196,6 +3202,7 @@ input CustomerDetailUpdateInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  impactId: String
 }
 
 input CustomerDetailUpdateManyMutationInput {
@@ -3221,6 +3228,7 @@ input CustomerDetailUpdateManyMutationInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  impactId: String
 }
 
 input CustomerDetailUpdateOneInput {
@@ -3498,6 +3506,20 @@ input CustomerDetailWhereInput {
   instagramHandle_not_starts_with: String
   instagramHandle_ends_with: String
   instagramHandle_not_ends_with: String
+  impactId: String
+  impactId_not: String
+  impactId_in: [String!]
+  impactId_not_in: [String!]
+  impactId_lt: String
+  impactId_lte: String
+  impactId_gt: String
+  impactId_gte: String
+  impactId_contains: String
+  impactId_not_contains: String
+  impactId_starts_with: String
+  impactId_not_starts_with: String
+  impactId_ends_with: String
+  impactId_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

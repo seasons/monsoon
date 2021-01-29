@@ -3681,6 +3681,8 @@ export type CustomerDetailOrderByInput =
   | "insureShipment_DESC"
   | "instagramHandle_ASC"
   | "instagramHandle_DESC"
+  | "impactId_ASC"
+  | "impactId_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -7372,6 +7374,20 @@ export interface CustomerDetailWhereInput {
   instagramHandle_not_starts_with?: Maybe<String>;
   instagramHandle_ends_with?: Maybe<String>;
   instagramHandle_not_ends_with?: Maybe<String>;
+  impactId?: Maybe<String>;
+  impactId_not?: Maybe<String>;
+  impactId_in?: Maybe<String[] | String>;
+  impactId_not_in?: Maybe<String[] | String>;
+  impactId_lt?: Maybe<String>;
+  impactId_lte?: Maybe<String>;
+  impactId_gt?: Maybe<String>;
+  impactId_gte?: Maybe<String>;
+  impactId_contains?: Maybe<String>;
+  impactId_not_contains?: Maybe<String>;
+  impactId_starts_with?: Maybe<String>;
+  impactId_not_starts_with?: Maybe<String>;
+  impactId_ends_with?: Maybe<String>;
+  impactId_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -13597,6 +13613,7 @@ export interface CustomerDetailCreateInput {
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
   instagramHandle?: Maybe<String>;
+  impactId?: Maybe<String>;
 }
 
 export interface CustomerDetailCreateweightInput {
@@ -14160,6 +14177,7 @@ export interface CustomerDetailUpdateDataInput {
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
   instagramHandle?: Maybe<String>;
+  impactId?: Maybe<String>;
 }
 
 export interface CustomerDetailUpdateweightInput {
@@ -15952,6 +15970,7 @@ export interface CustomerDetailUpdateInput {
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
   instagramHandle?: Maybe<String>;
+  impactId?: Maybe<String>;
 }
 
 export interface CustomerDetailUpdateManyMutationInput {
@@ -15977,6 +15996,7 @@ export interface CustomerDetailUpdateManyMutationInput {
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
   instagramHandle?: Maybe<String>;
+  impactId?: Maybe<String>;
 }
 
 export interface CustomerMembershipCreateInput {
@@ -22456,6 +22476,7 @@ export interface CustomerDetail {
   phoneOS?: String;
   insureShipment: Boolean;
   instagramHandle?: String;
+  impactId?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -22488,6 +22509,7 @@ export interface CustomerDetailPromise
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
   instagramHandle: () => Promise<String>;
+  impactId: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -22520,6 +22542,7 @@ export interface CustomerDetailSubscription
   phoneOS: () => Promise<AsyncIterator<String>>;
   insureShipment: () => Promise<AsyncIterator<Boolean>>;
   instagramHandle: () => Promise<AsyncIterator<String>>;
+  impactId: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -22552,6 +22575,7 @@ export interface CustomerDetailNullablePromise
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
   instagramHandle: () => Promise<String>;
+  impactId: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -28091,6 +28115,7 @@ export interface CustomerDetailPreviousValues {
   phoneOS?: String;
   insureShipment: Boolean;
   instagramHandle?: String;
+  impactId?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -28121,6 +28146,7 @@ export interface CustomerDetailPreviousValuesPromise
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
   instagramHandle: () => Promise<String>;
+  impactId: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -28151,6 +28177,7 @@ export interface CustomerDetailPreviousValuesSubscription
   phoneOS: () => Promise<AsyncIterator<String>>;
   insureShipment: () => Promise<AsyncIterator<Boolean>>;
   instagramHandle: () => Promise<AsyncIterator<String>>;
+  impactId: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

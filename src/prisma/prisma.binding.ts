@@ -5587,6 +5587,7 @@ type CustomerDetail implements Node {
   phoneOS: String
   insureShipment: Boolean!
   instagramHandle: String
+  impactId: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5621,6 +5622,7 @@ input CustomerDetailCreateInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  impactId: String
   weight: CustomerDetailCreateweightInput
   topSizes: CustomerDetailCreatetopSizesInput
   waistSizes: CustomerDetailCreatewaistSizesInput
@@ -5698,6 +5700,8 @@ enum CustomerDetailOrderByInput {
   insureShipment_DESC
   instagramHandle_ASC
   instagramHandle_DESC
+  impactId_ASC
+  impactId_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -5728,6 +5732,7 @@ type CustomerDetailPreviousValues {
   phoneOS: String
   insureShipment: Boolean!
   instagramHandle: String
+  impactId: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5788,6 +5793,7 @@ input CustomerDetailUpdateDataInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  impactId: String
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
@@ -5815,6 +5821,7 @@ input CustomerDetailUpdateInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  impactId: String
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
@@ -5842,6 +5849,7 @@ input CustomerDetailUpdateManyMutationInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  impactId: String
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
@@ -6575,6 +6583,46 @@ input CustomerDetailWhereInput {
 
   """All values not ending with the given string."""
   instagramHandle_not_ends_with: String
+  impactId: String
+
+  """All values that are not equal to given value."""
+  impactId_not: String
+
+  """All values that are contained in given list."""
+  impactId_in: [String!]
+
+  """All values that are not contained in given list."""
+  impactId_not_in: [String!]
+
+  """All values less than the given value."""
+  impactId_lt: String
+
+  """All values less than or equal the given value."""
+  impactId_lte: String
+
+  """All values greater than the given value."""
+  impactId_gt: String
+
+  """All values greater than or equal the given value."""
+  impactId_gte: String
+
+  """All values containing the given string."""
+  impactId_contains: String
+
+  """All values not containing the given string."""
+  impactId_not_contains: String
+
+  """All values starting with the given string."""
+  impactId_starts_with: String
+
+  """All values not starting with the given string."""
+  impactId_not_starts_with: String
+
+  """All values ending with the given string."""
+  impactId_ends_with: String
+
+  """All values not ending with the given string."""
+  impactId_not_ends_with: String
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -32236,6 +32284,8 @@ export type CustomerDetailOrderByInput =   'id_ASC' |
   'insureShipment_DESC' |
   'instagramHandle_ASC' |
   'instagramHandle_DESC' |
+  'impactId_ASC' |
+  'impactId_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -35186,6 +35236,7 @@ export interface CustomerDetailCreateInput {
   phoneOS?: String | null
   insureShipment?: Boolean | null
   instagramHandle?: String | null
+  impactId?: String | null
   weight?: CustomerDetailCreateweightInput | null
   topSizes?: CustomerDetailCreatetopSizesInput | null
   waistSizes?: CustomerDetailCreatewaistSizesInput | null
@@ -35245,6 +35296,7 @@ export interface CustomerDetailUpdateDataInput {
   phoneOS?: String | null
   insureShipment?: Boolean | null
   instagramHandle?: String | null
+  impactId?: String | null
   weight?: CustomerDetailUpdateweightInput | null
   topSizes?: CustomerDetailUpdatetopSizesInput | null
   waistSizes?: CustomerDetailUpdatewaistSizesInput | null
@@ -35272,6 +35324,7 @@ export interface CustomerDetailUpdateInput {
   phoneOS?: String | null
   insureShipment?: Boolean | null
   instagramHandle?: String | null
+  impactId?: String | null
   weight?: CustomerDetailUpdateweightInput | null
   topSizes?: CustomerDetailUpdatetopSizesInput | null
   waistSizes?: CustomerDetailUpdatewaistSizesInput | null
@@ -35299,6 +35352,7 @@ export interface CustomerDetailUpdateManyMutationInput {
   phoneOS?: String | null
   insureShipment?: Boolean | null
   instagramHandle?: String | null
+  impactId?: String | null
   weight?: CustomerDetailUpdateweightInput | null
   topSizes?: CustomerDetailUpdatetopSizesInput | null
   waistSizes?: CustomerDetailUpdatewaistSizesInput | null
@@ -35581,6 +35635,20 @@ export interface CustomerDetailWhereInput {
   instagramHandle_not_starts_with?: String | null
   instagramHandle_ends_with?: String | null
   instagramHandle_not_ends_with?: String | null
+  impactId?: String | null
+  impactId_not?: String | null
+  impactId_in?: String[] | String | null
+  impactId_not_in?: String[] | String | null
+  impactId_lt?: String | null
+  impactId_lte?: String | null
+  impactId_gt?: String | null
+  impactId_gte?: String | null
+  impactId_contains?: String | null
+  impactId_not_contains?: String | null
+  impactId_starts_with?: String | null
+  impactId_not_starts_with?: String | null
+  impactId_ends_with?: String | null
+  impactId_not_ends_with?: String | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -47911,6 +47979,7 @@ export interface CustomerDetail extends Node {
   phoneOS?: String | null
   insureShipment: Boolean
   instagramHandle?: String | null
+  impactId?: String | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -47958,6 +48027,7 @@ export interface CustomerDetailPreviousValues {
   phoneOS?: String | null
   insureShipment: Boolean
   instagramHandle?: String | null
+  impactId?: String | null
   createdAt: DateTime
   updatedAt: DateTime
 }

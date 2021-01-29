@@ -8,8 +8,8 @@
   },
   "ReturnDue": {
     "alert": {
-      "title": "Your items are due back in 3 days",
-      "body": "Pack your bag, attach the pre-paid shipping label, and drop off at your nearest UPS pick-up location"
+      "title": "Want to swap your items?",
+      "body": "Pack up any items you wish to swap, attach the pre-paid shipping label, and drop off at your nearest UPS pick-up location"
     },
     "data": { "route": "Faq" }
   },
