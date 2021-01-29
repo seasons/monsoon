@@ -1,10 +1,24 @@
 import { User } from "@app/decorators"
+import { DripService } from "@app/modules/Drip/services/drip.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 
 @Resolver()
 export class UserMutationsResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly drip: DripService
+  ) {}
+
+  @Mutation()
+  async unsubscribeUserFromEmails(@Args() { id }) {
+    await this.prisma.client.updateUser({
+      where: { id },
+      data: { sendSystemEmails: false },
+    })
+    const email = await this.prisma.client.user({ id }).email()
+    await this.drip.client.unsubscribeFromAllMailings(email)
+  }
 
   @Mutation()
   async updateUserPushNotificationStatus(
