@@ -23,13 +23,13 @@ const run = async () => {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
-  const u = await ps.client.user({ email: "emmy-hansen@seasons.nyc" })
+  const u = await ps.client.user({ email: "louvenia-bartell@seasons.nyc" })
   const x = await sms.sendSMSById({
     to: { id: u.id },
     renderData: {
       name: u.firstName,
     },
-    smsId: "SeventyTwoHoursLeftAuthorizationFollowup",
+    smsId: "Rewaitlisted",
     // smsId: "TwentyFourHourLeftAuthorizationFollowup",
   })
   console.log(x)
