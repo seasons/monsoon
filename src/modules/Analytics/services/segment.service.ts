@@ -5,7 +5,6 @@ import { CustomerStatus, PaymentPlanTier } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
 import Analytics from "analytics-node"
-import { NumberPage } from "twilio/lib/rest/pricing/v1/voice/number"
 
 type SubscribedProperties = CommonTrackProperties & {
   tier: PaymentPlanTier
