@@ -52,7 +52,7 @@
     "@nestjs/schedule": "^0.4.0",
     "@nestjs/testing": "^7.2.0",
     "@pusher/push-notifications-server": "^1.2.0",
-    "@seasons/wind": "^2.3.1",
+    "@seasons/wind": "^2.3.3",
     "@sendgrid/mail": "^6.4.0",
     "@sentry/node": "^5.10.2",
     "@sentry/types": "^5.10.0",

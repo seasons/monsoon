@@ -216,7 +216,6 @@ export class EmailService {
       subject: payload.subject,
       html: payload.body,
       type: payload.type,
-      emailId: "ReservationReturnConfirmation",
     })
   }
 
