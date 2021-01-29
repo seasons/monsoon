@@ -173,37 +173,37 @@ const run = async () => {
     // }
 
     // Day 6 Followup
-    if (!daySixFollowupSent) {
-      const availableStyles = await admissions.getAvailableStyles({
-        id: cust.id,
-      })
-      await email.sendAuthorizedDaySevenFollowup(cust.user, availableStyles)
-      await sms.sendSMSById({
-        to: { id: cust.user.id },
-        renderData: { name: cust.user.firstName },
-        smsId: "TwentyFourHourLeftAuthorizationFollowup",
-      })
-      console.log(`sent ${cust.user.email} day 7 followup`)
-      continue
-    }
-
-    // Rewaitlisted
-    // if (!rewaitlistEmailSent) {
+    // if (!daySixFollowupSent) {
     //   const availableStyles = await admissions.getAvailableStyles({
     //     id: cust.id,
     //   })
-    //   await email.sendRewaitlistedEmail(cust.user, availableStyles)
+    //   await email.sendAuthorizedDaySevenFollowup(cust.user, availableStyles)
     //   await sms.sendSMSById({
     //     to: { id: cust.user.id },
     //     renderData: { name: cust.user.firstName },
-    //     smsId: "Rewaitlisted",
+    //     smsId: "TwentyFourHourLeftAuthorizationFollowup",
     //   })
-    //   await ps.client.updateCustomer({
-    //     where: { id: cust.id },
-    //     data: { status: "Waitlisted" },
-    //   })
-    //   console.log(`rewaitlisted ${cust.user.email}`)
+    //   console.log(`sent ${cust.user.email} day 7 followup`)
+    //   continue
     // }
+
+    // Rewaitlisted
+    if (!rewaitlistEmailSent) {
+      const availableStyles = await admissions.getAvailableStyles({
+        id: cust.id,
+      })
+      await email.sendRewaitlistedEmail(cust.user, availableStyles)
+      await sms.sendSMSById({
+        to: { id: cust.user.id },
+        renderData: { name: cust.user.firstName },
+        smsId: "Rewaitlisted",
+      })
+      await ps.client.updateCustomer({
+        where: { id: cust.id },
+        data: { status: "Waitlisted" },
+      })
+      console.log(`rewaitlisted ${cust.user.email}`)
+    }
   }
 }
 run()

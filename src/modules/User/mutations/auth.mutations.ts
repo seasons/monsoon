@@ -65,30 +65,20 @@ export class AuthMutationsResolver {
       createdAt: now.toISOString(),
     })
 
-    this.segment.track<{
-      customerID: string
-      name: string
-      // CampaignId: number
-      // ActionTrackerId: number
-      // EventDate: string
-      OrderId: number
-      context: { referrer: { type: string; id: string } }
-    }>(user.id, "Created Account", {
+    this.segment.track(user.id, "Created Account", {
       name: `${user.firstName} ${user.lastName}`,
       ...pick(user, ["firstName", "lastName", "email"]),
       customerID: customer.id,
       application,
       ...this.utils.formatUTMForSegment(utm),
-      // impact properties
-      // CampaignId: 12888,
-      // ActionTrackerId: 23949,
-      // EventDate: new Date().toISOString(),
-      context: {
-        referrer: {
-          type: "impactRadius",
-          id: details.impactId,
+      ...(!!details.impactId && {
+        context: {
+          referrer: {
+            type: "impactRadius",
+            id: details.impactId,
+          },
         },
-      },
+      }),
       OrderId: new Date().getTime(),
     })
 
