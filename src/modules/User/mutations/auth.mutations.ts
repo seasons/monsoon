@@ -65,15 +65,13 @@ export class AuthMutationsResolver {
       createdAt: now.toISOString(),
     })
 
-    this.segment.track<{
-      customerID: string
-      name: string
-    }>(user.id, "Created Account", {
+    this.segment.track(user.id, "Created Account", {
       name: `${user.firstName} ${user.lastName}`,
       ...pick(user, ["firstName", "lastName", "email"]),
       customerID: customer.id,
       application,
       ...this.utils.formatUTMForSegment(utm),
+      impactId: details?.impactId,
     })
 
     return {

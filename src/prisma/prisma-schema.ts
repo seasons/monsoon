@@ -2982,12 +2982,14 @@ type CustomerDetail {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: [CustomerStyle!]!
   commuteStyle: String
   stylePreferences: StylePreferences
   shippingAddress: Location
   phoneOS: String
   insureShipment: Boolean!
   instagramHandle: String
+  impactId: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3017,17 +3019,23 @@ input CustomerDetailCreateInput {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: CustomerDetailCreatestylesInput
   commuteStyle: String
   stylePreferences: StylePreferencesCreateOneInput
   shippingAddress: LocationCreateOneInput
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  impactId: String
 }
 
 input CustomerDetailCreateOneInput {
   create: CustomerDetailCreateInput
   connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailCreatestylesInput {
+  set: [CustomerStyle!]
 }
 
 input CustomerDetailCreatetopSizesInput {
@@ -3086,6 +3094,8 @@ enum CustomerDetailOrderByInput {
   insureShipment_DESC
   instagramHandle_ASC
   instagramHandle_DESC
+  impactId_ASC
+  impactId_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -3111,10 +3121,12 @@ type CustomerDetailPreviousValues {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: [CustomerStyle!]!
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean!
   instagramHandle: String
+  impactId: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3155,12 +3167,14 @@ input CustomerDetailUpdateDataInput {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: CustomerDetailUpdatestylesInput
   commuteStyle: String
   stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  impactId: String
 }
 
 input CustomerDetailUpdateInput {
@@ -3181,12 +3195,14 @@ input CustomerDetailUpdateInput {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: CustomerDetailUpdatestylesInput
   commuteStyle: String
   stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  impactId: String
 }
 
 input CustomerDetailUpdateManyMutationInput {
@@ -3207,10 +3223,12 @@ input CustomerDetailUpdateManyMutationInput {
   shoppingFrequency: String
   averageSpend: String
   style: String
+  styles: CustomerDetailUpdatestylesInput
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  impactId: String
 }
 
 input CustomerDetailUpdateOneInput {
@@ -3220,6 +3238,10 @@ input CustomerDetailUpdateOneInput {
   delete: Boolean
   disconnect: Boolean
   connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailUpdatestylesInput {
+  set: [CustomerStyle!]
 }
 
 input CustomerDetailUpdatetopSizesInput {
@@ -3484,6 +3506,20 @@ input CustomerDetailWhereInput {
   instagramHandle_not_starts_with: String
   instagramHandle_ends_with: String
   instagramHandle_not_ends_with: String
+  impactId: String
+  impactId_not: String
+  impactId_in: [String!]
+  impactId_not_in: [String!]
+  impactId_lt: String
+  impactId_lte: String
+  impactId_gt: String
+  impactId_gte: String
+  impactId_contains: String
+  impactId_not_contains: String
+  impactId_starts_with: String
+  impactId_not_starts_with: String
+  impactId_ends_with: String
+  impactId_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -3831,6 +3867,15 @@ enum CustomerStatus {
   Suspended
   Paused
   Deactivated
+}
+
+enum CustomerStyle {
+  AvantGarde
+  Bold
+  Classic
+  Minimalist
+  Streetwear
+  Techwear
 }
 
 type CustomerSubscriptionPayload {

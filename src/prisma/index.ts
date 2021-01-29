@@ -3346,6 +3346,14 @@ export type CustomerStatus =
   | "Paused"
   | "Deactivated";
 
+export type CustomerStyle =
+  | "AvantGarde"
+  | "Bold"
+  | "Classic"
+  | "Minimalist"
+  | "Streetwear"
+  | "Techwear";
+
 export type Plan = "AllAccess" | "Essential";
 
 export type PaymentPlanTier = "Essential" | "AllAccess";
@@ -3673,6 +3681,8 @@ export type CustomerDetailOrderByInput =
   | "insureShipment_DESC"
   | "instagramHandle_ASC"
   | "instagramHandle_DESC"
+  | "impactId_ASC"
+  | "impactId_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -7364,6 +7374,20 @@ export interface CustomerDetailWhereInput {
   instagramHandle_not_starts_with?: Maybe<String>;
   instagramHandle_ends_with?: Maybe<String>;
   instagramHandle_not_ends_with?: Maybe<String>;
+  impactId?: Maybe<String>;
+  impactId_not?: Maybe<String>;
+  impactId_in?: Maybe<String[] | String>;
+  impactId_not_in?: Maybe<String[] | String>;
+  impactId_lt?: Maybe<String>;
+  impactId_lte?: Maybe<String>;
+  impactId_gt?: Maybe<String>;
+  impactId_gte?: Maybe<String>;
+  impactId_contains?: Maybe<String>;
+  impactId_not_contains?: Maybe<String>;
+  impactId_starts_with?: Maybe<String>;
+  impactId_not_starts_with?: Maybe<String>;
+  impactId_ends_with?: Maybe<String>;
+  impactId_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -13582,12 +13606,14 @@ export interface CustomerDetailCreateInput {
   shoppingFrequency?: Maybe<String>;
   averageSpend?: Maybe<String>;
   style?: Maybe<String>;
+  styles?: Maybe<CustomerDetailCreatestylesInput>;
   commuteStyle?: Maybe<String>;
   stylePreferences?: Maybe<StylePreferencesCreateOneInput>;
   shippingAddress?: Maybe<LocationCreateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
   instagramHandle?: Maybe<String>;
+  impactId?: Maybe<String>;
 }
 
 export interface CustomerDetailCreateweightInput {
@@ -13600,6 +13626,10 @@ export interface CustomerDetailCreatetopSizesInput {
 
 export interface CustomerDetailCreatewaistSizesInput {
   set?: Maybe<Int[] | Int>;
+}
+
+export interface CustomerDetailCreatestylesInput {
+  set?: Maybe<CustomerStyle[] | CustomerStyle>;
 }
 
 export interface StylePreferencesCreateOneInput {
@@ -14140,12 +14170,14 @@ export interface CustomerDetailUpdateDataInput {
   shoppingFrequency?: Maybe<String>;
   averageSpend?: Maybe<String>;
   style?: Maybe<String>;
+  styles?: Maybe<CustomerDetailUpdatestylesInput>;
   commuteStyle?: Maybe<String>;
   stylePreferences?: Maybe<StylePreferencesUpdateOneInput>;
   shippingAddress?: Maybe<LocationUpdateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
   instagramHandle?: Maybe<String>;
+  impactId?: Maybe<String>;
 }
 
 export interface CustomerDetailUpdateweightInput {
@@ -14158,6 +14190,10 @@ export interface CustomerDetailUpdatetopSizesInput {
 
 export interface CustomerDetailUpdatewaistSizesInput {
   set?: Maybe<Int[] | Int>;
+}
+
+export interface CustomerDetailUpdatestylesInput {
+  set?: Maybe<CustomerStyle[] | CustomerStyle>;
 }
 
 export interface StylePreferencesUpdateOneInput {
@@ -15927,12 +15963,14 @@ export interface CustomerDetailUpdateInput {
   shoppingFrequency?: Maybe<String>;
   averageSpend?: Maybe<String>;
   style?: Maybe<String>;
+  styles?: Maybe<CustomerDetailUpdatestylesInput>;
   commuteStyle?: Maybe<String>;
   stylePreferences?: Maybe<StylePreferencesUpdateOneInput>;
   shippingAddress?: Maybe<LocationUpdateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
   instagramHandle?: Maybe<String>;
+  impactId?: Maybe<String>;
 }
 
 export interface CustomerDetailUpdateManyMutationInput {
@@ -15953,10 +15991,12 @@ export interface CustomerDetailUpdateManyMutationInput {
   shoppingFrequency?: Maybe<String>;
   averageSpend?: Maybe<String>;
   style?: Maybe<String>;
+  styles?: Maybe<CustomerDetailUpdatestylesInput>;
   commuteStyle?: Maybe<String>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
   instagramHandle?: Maybe<String>;
+  impactId?: Maybe<String>;
 }
 
 export interface CustomerMembershipCreateInput {
@@ -22431,10 +22471,12 @@ export interface CustomerDetail {
   shoppingFrequency?: String;
   averageSpend?: String;
   style?: String;
+  styles: CustomerStyle[];
   commuteStyle?: String;
   phoneOS?: String;
   insureShipment: Boolean;
   instagramHandle?: String;
+  impactId?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -22460,12 +22502,14 @@ export interface CustomerDetailPromise
   shoppingFrequency: () => Promise<String>;
   averageSpend: () => Promise<String>;
   style: () => Promise<String>;
+  styles: () => Promise<CustomerStyle[]>;
   commuteStyle: () => Promise<String>;
   stylePreferences: <T = StylePreferencesPromise>() => T;
   shippingAddress: <T = LocationPromise>() => T;
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
   instagramHandle: () => Promise<String>;
+  impactId: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -22491,12 +22535,14 @@ export interface CustomerDetailSubscription
   shoppingFrequency: () => Promise<AsyncIterator<String>>;
   averageSpend: () => Promise<AsyncIterator<String>>;
   style: () => Promise<AsyncIterator<String>>;
+  styles: () => Promise<AsyncIterator<CustomerStyle[]>>;
   commuteStyle: () => Promise<AsyncIterator<String>>;
   stylePreferences: <T = StylePreferencesSubscription>() => T;
   shippingAddress: <T = LocationSubscription>() => T;
   phoneOS: () => Promise<AsyncIterator<String>>;
   insureShipment: () => Promise<AsyncIterator<Boolean>>;
   instagramHandle: () => Promise<AsyncIterator<String>>;
+  impactId: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -22522,12 +22568,14 @@ export interface CustomerDetailNullablePromise
   shoppingFrequency: () => Promise<String>;
   averageSpend: () => Promise<String>;
   style: () => Promise<String>;
+  styles: () => Promise<CustomerStyle[]>;
   commuteStyle: () => Promise<String>;
   stylePreferences: <T = StylePreferencesPromise>() => T;
   shippingAddress: <T = LocationPromise>() => T;
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
   instagramHandle: () => Promise<String>;
+  impactId: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -28062,10 +28110,12 @@ export interface CustomerDetailPreviousValues {
   shoppingFrequency?: String;
   averageSpend?: String;
   style?: String;
+  styles: CustomerStyle[];
   commuteStyle?: String;
   phoneOS?: String;
   insureShipment: Boolean;
   instagramHandle?: String;
+  impactId?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -28091,10 +28141,12 @@ export interface CustomerDetailPreviousValuesPromise
   shoppingFrequency: () => Promise<String>;
   averageSpend: () => Promise<String>;
   style: () => Promise<String>;
+  styles: () => Promise<CustomerStyle[]>;
   commuteStyle: () => Promise<String>;
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
   instagramHandle: () => Promise<String>;
+  impactId: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -28120,10 +28172,12 @@ export interface CustomerDetailPreviousValuesSubscription
   shoppingFrequency: () => Promise<AsyncIterator<String>>;
   averageSpend: () => Promise<AsyncIterator<String>>;
   style: () => Promise<AsyncIterator<String>>;
+  styles: () => Promise<AsyncIterator<CustomerStyle[]>>;
   commuteStyle: () => Promise<AsyncIterator<String>>;
   phoneOS: () => Promise<AsyncIterator<String>>;
   insureShipment: () => Promise<AsyncIterator<Boolean>>;
   instagramHandle: () => Promise<AsyncIterator<String>>;
+  impactId: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -31366,6 +31420,10 @@ export const models: Model[] = [
   },
   {
     name: "StylePreferences",
+    embedded: false
+  },
+  {
+    name: "CustomerStyle",
     embedded: false
   },
   {

@@ -53,6 +53,10 @@ export class ChargebeeController {
         { where: { user: { id: customer.id } } },
         `
         {
+          detail {
+            id
+            impactId
+          }
           user {
             id
             firstName
@@ -80,6 +84,10 @@ export class ChargebeeController {
       gateway: transaction.gateway,
       transactionType: transaction.type,
       amount: transaction.amount,
+      impactId: custWithData.detail?.impactId,
+      currency: "USD",
+      total: transaction.amount,
+      impactCustomerStatus: "Returning",
       ...this.utils.formatUTMForSegment(custWithData.utm),
     })
   }
@@ -89,6 +97,7 @@ export class ChargebeeController {
       subscription: { customer_id, plan_id, id: subscriptionID },
       customer,
       card,
+      invoice: { total },
     } = content
 
     const customerWithBillingAndUserData: any = head(
@@ -99,6 +108,10 @@ export class ChargebeeController {
           id
           billingInfo {
             id
+          }
+          detail {
+            id
+            impactId
           }
           utm {
             source
@@ -141,6 +154,8 @@ export class ChargebeeController {
           firstName: user?.firstName || "",
           lastName: user?.lastName || "",
           email: user?.email || "",
+          impactId: customerWithBillingAndUserData.detail?.impactId,
+          total,
           ...this.utils.formatUTMForSegment(customerWithBillingAndUserData.utm),
         })
         // Only create the billing info and send welcome email if user used chargebee checkout
