@@ -94,6 +94,7 @@ export class ChargebeeController {
       subscription: { customer_id, plan_id, id: subscriptionID },
       customer,
       card,
+      invoice: { total },
     } = content
 
     const customerWithBillingAndUserData: any = head(
@@ -151,6 +152,7 @@ export class ChargebeeController {
           lastName: user?.lastName || "",
           email: user?.email || "",
           impactId: customerWithBillingAndUserData.detail.impactId,
+          total,
           ...this.utils.formatUTMForSegment(customerWithBillingAndUserData.utm),
         })
         // Only create the billing info and send welcome email if user used chargebee checkout

@@ -273,7 +273,7 @@ export class PaymentService {
           id
           detail {
             id
-            imapctId
+            impactId
           }
           user {
             id
@@ -359,6 +359,7 @@ export class PaymentService {
       .request()
 
     const subscriptionID = payload.subscription.id
+    const total = payload.invoice?.total
 
     await this.createPrismaSubscription(
       user.id,
@@ -376,6 +377,7 @@ export class PaymentService {
       lastName: user.lastName,
       email: user.email,
       impactId: customerWithUserData.detail.impactId,
+      total,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
   }

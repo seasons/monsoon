@@ -11,6 +11,7 @@ type SubscribedProperties = CommonTrackProperties & {
   tier: PaymentPlanTier
   planID: string
   method: "ApplePay" | "ChargebeeHostedCheckout"
+  total: number
 }
 
 type TrackingEvent =
@@ -75,24 +76,20 @@ export class SegmentService {
   trackSubscribed(userId: string, properties: SubscribedProperties) {
     this.trackEvent<
       SubscribedProperties & {
-        OrderId: number
-        CustomerStatus: "New"
-        CurrencyCode: "USD"
-        OrderSubTotalPostDiscount: number
+        impactCustomerStatus: "New"
+        currency: "USD"
       }
     >(userId, "Subscribed", {
       ...properties,
-      OrderId: new Date().getTime(),
-      CustomerStatus: "New",
-      CurrencyCode: "USD",
-      OrderSubTotalPostDiscount: 22.5,
+      impactCustomerStatus: "New",
+      currency: "USD",
     })
   }
 
   private trackEvent<T>(
     userId: string,
     event: TrackingEvent,
-    properties: T & { impactId?: string }
+    properties: T & { impactId?: string; impactCustomerStatus?: string }
   ) {
     try {
       let context = {}
@@ -100,6 +97,11 @@ export class SegmentService {
       if (!!properties.impactId) {
         context = {
           referrer: { type: "impactRadius", id: properties.impactId },
+        }
+        if (!!_properties.impactCustomerStatus) {
+          context["traits"] = {
+            status: _properties.impactCustomerStatus,
+          }
         }
         _properties["orderId"] = new Date().getTime()
       }
