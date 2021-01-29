@@ -30,6 +30,7 @@ import {
   SlackModule,
   SyncModule,
   UserModule,
+  ViewModule,
   directiveResolvers,
 } from "./modules"
 import { AdminModule } from "./modules/Admin/admin.module"
@@ -89,6 +90,7 @@ const scheduleModule =
     BlogModule,
     CollectionModule,
     FitPicModule,
+    ViewModule,
     CustomerModule,
     EmailModule,
     FAQModule,

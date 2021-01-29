@@ -1,0 +1,32 @@
+{
+  "Referral": {
+    "id": "referral",
+    "type": "Referral",
+    "title": "Invite a friend. Get a free month",
+    "caption": "Refer a friend and you'll both get a free month of Seasons when they successfully sign up!",
+    "properties": {
+      "imageURL": "https://seasons-s3.imgix.net/referral-view/referral-view-image.png",
+      "shareMessage": "Here’s my referral link for Seasons. Get a free month when you sign-up.",
+      "listText": [
+        "Limited to Essential plans",
+        "Credits are automatically applied",
+        "Maximum three invites per member"
+      ]
+    }
+  },
+  "Banner": {
+    "id": "banner",
+    "type": "Banner",
+    "title": "Refer a friend. Get a free month",
+    "caption": "You have a new invite. Get your link",
+    "properties": {
+      "icon": "InviteSVG",
+      "requiredCustomerStatus": ["Paused", "Active"],
+      "route": {
+        "stack": "HomeStack",
+        "screen": "ReferralView"
+      },
+      "published": true
+    }
+  }
+}
