@@ -85,6 +85,9 @@ export class ChargebeeController {
       transactionType: transaction.type,
       amount: transaction.amount,
       impactId: custWithData.detail.impactId,
+      currency: "USD",
+      total: transaction.amount,
+      impactCustomerStatus: "Returning",
       ...this.utils.formatUTMForSegment(custWithData.utm),
     })
   }
