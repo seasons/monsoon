@@ -40,7 +40,6 @@ interface CommonTrackProperties {
 type BecameAuthorizedProperties = CommonTrackProperties & {
   previousStatus: CustomerStatus
   method: "Manual" | "Automatic"
-  OrderId: number
 }
 
 @Injectable()
@@ -70,7 +69,6 @@ export class SegmentService {
   ) {
     this.trackEvent<BecameAuthorizedProperties>(userId, "Became Authorized", {
       ...properties,
-      OrderId: new Date().getTime(),
     })
   }
 
@@ -97,16 +95,19 @@ export class SegmentService {
     properties: T & { impactId?: string }
   ) {
     try {
+      let context = {}
       let _properties = properties
       if (!!properties.impactId) {
-        _properties["context"] = {
+        context = {
           referrer: { type: "impactRadius", id: properties.impactId },
         }
+        _properties["orderId"] = new Date().getTime()
       }
       this.client.track({
         userId,
         event,
         properties: _properties,
+        context,
       })
       if (process.env.NODE_ENV === "development") {
         console.log(`tracked event`)

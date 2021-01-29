@@ -72,7 +72,6 @@ export class AuthMutationsResolver {
       application,
       ...this.utils.formatUTMForSegment(utm),
       impactId: details.impactId,
-      OrderId: new Date().getTime(),
     })
 
     return {
