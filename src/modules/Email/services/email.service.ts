@@ -98,7 +98,10 @@ export class EmailService {
   }
 
   async sendAuthorizedDayTwoFollowup(user: EmailUser, status = "Authorized") {
-    const payload = await RenderEmail.authorizedDayTwoFollowup({ status })
+    const payload = await RenderEmail.authorizedDayTwoFollowup({
+      status,
+      id: user.id,
+    })
     await this.sendPreRenderedTransactionalEmail({
       user: user,
       payload,
@@ -125,6 +128,7 @@ export class EmailService {
     const payload = await RenderEmail.referralConfirmation({
       referrerName: referrer.firstName,
       refereeName: `${referee.firstName}`,
+      id: referrer.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user: referrer,
@@ -136,6 +140,7 @@ export class EmailService {
   async sendWaitlistedEmail(user: EmailUser) {
     const payload = await RenderEmail.waitlisted({
       name: user.firstName,
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -166,6 +171,7 @@ export class EmailService {
       name: user.firstName,
       planId: cust.membership?.plan?.planID,
       itemCount: `${cust.membership?.plan?.itemCount}`,
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -181,6 +187,7 @@ export class EmailService {
       name: customer.user.firstName,
       isExtension,
       resumeDate: latestPauseRequest.resumeDate,
+      id: customer.user.id,
     })
 
     await this.sendPreRenderedTransactionalEmail({
@@ -217,6 +224,7 @@ export class EmailService {
       email: user.email,
       reservationNumber: reservation.reservationNumber,
       returnedItems: returnedPhysicalProducts.map(a => a.seasonsUID),
+      id: user.id,
     })
     await this.sendEmail({
       to: process.env.OPERATIONS_ADMIN_EMAIL,
@@ -229,6 +237,7 @@ export class EmailService {
   async sendPriorityAccessEmail(user: EmailUser) {
     const payload = await RenderEmail.priorityAccess({
       name: user.firstName,
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -251,6 +260,7 @@ export class EmailService {
       orderNumber: reservation.reservationNumber,
       trackingNumber,
       trackingURL: trackingUrl,
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -266,6 +276,7 @@ export class EmailService {
     const payload = await RenderEmail.returnReminder({
       name: user.firstName,
       returnDate: this.utils.getReservationReturnDate(reservation),
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -275,7 +286,7 @@ export class EmailService {
   }
 
   async sendYouCanNowReserveAgainEmail(user: EmailUser) {
-    const payload = await RenderEmail.freeToReserve({})
+    const payload = await RenderEmail.freeToReserve({ id: user.id })
     await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
@@ -305,6 +316,7 @@ export class EmailService {
     const payload = await RenderEmail[renderEmailFunc]({
       name: `${user.firstName}`,
       products,
+      id: user.id,
       ...renderData,
     })
     await this.sendPreRenderedTransactionalEmail({
@@ -340,6 +352,7 @@ export class EmailService {
     const payload = await RenderEmail[renderEmailFunc]({
       name: `${user.firstName}`,
       products,
+      id: user.id,
       ...renderData,
     })
     await this.sendPreRenderedTransactionalEmail({
