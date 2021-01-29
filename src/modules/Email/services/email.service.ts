@@ -28,21 +28,6 @@ type EmailUser = Pick<User, "email" | "firstName" | "id">
 
 @Injectable()
 export class EmailService {
-  private essentialEmails = [
-    "CompleteAccount",
-    "FreeToReserve",
-    "Paused",
-    "PriorityAccess",
-    "ReferralConfirmation",
-    "ReservationConfirmation",
-    "ReservationReturnConfirmation",
-    "ResumeConfirmation",
-    "ResumeReminder",
-    "SubmittedEmail",
-    "Waitlisted",
-    "WelcomeToSeasons",
-  ] as EmailId[]
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
@@ -230,6 +215,7 @@ export class EmailService {
       to: process.env.OPERATIONS_ADMIN_EMAIL,
       subject: payload.subject,
       html: payload.body,
+      type: payload.type,
       emailId: "ReservationReturnConfirmation",
     })
   }
@@ -367,18 +353,18 @@ export class EmailService {
 
   private async sendPreRenderedTransactionalEmail({
     user,
-    payload: { body, subject },
+    payload: { body, subject, type },
     emailId,
   }: {
     user: EmailUser
-    payload: { body: string; subject: string }
+    payload: { body: string; subject: string; type: "essential" | "marketing" }
     emailId: EmailId
   }) {
     const storeReceipt = await this.sendEmail({
       to: user.email,
       subject: subject,
       html: body,
-      emailId,
+      type,
     })
     if (storeReceipt) {
       await this.storeEmailReceipt(emailId, user.id)
@@ -386,8 +372,8 @@ export class EmailService {
   }
 
   // returns true if it sent the email, false otherwise
-  private async sendEmail({ to, subject, html, emailId }) {
-    const shouldSendEmail = await this.shouldSendEmail({ to, emailId })
+  private async sendEmail({ to, subject, html, type }) {
+    const shouldSendEmail = await this.shouldSendEmail({ to, type })
     if (!shouldSendEmail) {
       return false
     }
@@ -420,12 +406,15 @@ export class EmailService {
     return true
   }
 
-  private async shouldSendEmail({ to, emailId }) {
+  private async shouldSendEmail({ to, type }) {
     if (to === process.env.OPERATIONS_ADMIN_EMAIL) {
       return true
     }
+    if (type === "essential") {
+      return true
+    }
     const u = await this.prisma.client.user({ email: to })
-    return u.sendSystemEmails || this.essentialEmails.includes(emailId)
+    return u.sendSystemEmails
   }
 
   private async addEmailedProductsToCustomer(
