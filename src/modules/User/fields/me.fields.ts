@@ -9,7 +9,7 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async id(@User() user) {
-    return user.id
+    return user?.id ?? "signedOutUserID"
   }
 
   @ResolveField()
