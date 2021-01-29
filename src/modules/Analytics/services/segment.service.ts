@@ -88,7 +88,11 @@ export class SegmentService {
   private trackEvent<T>(
     userId: string,
     event: TrackingEvent,
-    properties: T & { impactId?: string; impactCustomerStatus?: string }
+    properties: T & {
+      impactId?: string
+      impactCustomerStatus?: string
+      total?: number
+    }
   ) {
     try {
       let context = {}
@@ -97,12 +101,15 @@ export class SegmentService {
         context = {
           referrer: { type: "impactRadius", id: properties.impactId },
         }
-        if (!!_properties.impactCustomerStatus) {
+        if (!!properties.impactCustomerStatus) {
           context["traits"] = {
             status: _properties.impactCustomerStatus,
           }
         }
         _properties["orderId"] = new Date().getTime()
+        if (!!properties.total) {
+          _properties.total = properties.total / 100
+        }
       }
       this.client.track({
         userId,
