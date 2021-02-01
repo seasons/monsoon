@@ -1,11 +1,14 @@
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import {
+  BagItem,
   BillingInfo,
   Customer,
   Location,
   PhysicalProductPrice,
+  Product,
   User,
 } from "@app/prisma"
+import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
@@ -49,7 +52,8 @@ export class ProductVariantOrderService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly shopify: ShopifyService,
-    private readonly shipping: ShippingService
+    private readonly shipping: ShippingService,
+    private readonly productUtils: ProductUtilsService
   ) {}
 
   async getBuyUsedMetadata({
@@ -64,29 +68,54 @@ export class ProductVariantOrderService {
     invoice: InvoiceInput
     shippingAddress: Location
   }> {
-    const productVariant = await this.prisma.binding.query.productVariant(
-      {
-        where: {
-          id: productVariantId,
+    const [productVariant, customerQuery] = await Promise.all([
+      this.prisma.binding.query.productVariant(
+        {
+          where: {
+            id: productVariantId,
+          },
         },
-      },
-      `{
-        physicalProducts {
-          price {
-            buyUsedEnabled
-            buyUsedPrice
+        `{
+          physicalProducts {
+            price {
+              buyUsedEnabled
+              buyUsedPrice
+            }
           }
-        }
-        product {
-          name
-        }
-      }`
-    )
-
-    const shippingAddress = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .shippingAddress()
+          product {
+            id
+            name
+          }
+        }`
+      ),
+      this.prisma.binding.query.customer(
+        {
+          where: {
+            id: customer.id,
+          },
+        },
+        `{
+          detail {
+            shippingAddress {
+              name
+              company
+              address1
+              address2
+              city
+              state
+              zipCode
+              country
+            }
+          }
+          bag {
+            status
+            productVariant {
+              id
+            }
+          }
+        }`
+      ),
+    ])
 
     // FIXME: We're assuming that every physical product has the same price for a variant,
     // so take the first valid result.
@@ -94,8 +123,16 @@ export class ProductVariantOrderService {
       physicalProduct =>
         physicalProduct.price && physicalProduct.price.buyUsedEnabled
     )?.price
-
     const productName = productVariant?.product?.name
+    const productCategories = await this.productUtils.getAllCategories({
+      id: productVariant?.product?.id,
+    } as Product)
+    const productTaxCode = productCategories.some(
+      ({ name }) => name === "outerwear"
+    )
+      ? "PC040111"
+      : "PC040000"
+    const shippingAddress = customerQuery?.detail?.shippingAddress as Location
     const [firstName, ...lastName] = (shippingAddress?.name || "").split(" ")
 
     if (!price?.buyUsedEnabled || !price?.buyUsedPrice) {
@@ -104,11 +141,19 @@ export class ProductVariantOrderService {
       )
     }
 
-    const shippingRate = await this.shipping.getBuyUsedShippingRate(
-      productVariantId,
-      user,
-      customer
+    // Shipping is included only if user does not already have the product.
+    const bagItems = ((customerQuery as any)?.bag || []) as [
+      BagItem & {
+        productVariant: { id: string }
+      }
+    ]
+    const includeShipping = !bagItems.some(
+      ({ status, productVariant: { id: productVariantId } }) =>
+        status === "Reserved" && productVariantId === productVariant.id
     )
+    const shippingRate = await (includeShipping
+      ? this.shipping.getBuyUsedShippingRate(productVariantId, user, customer)
+      : Promise.resolve(null))
 
     return {
       shippingAddress,
@@ -132,15 +177,17 @@ export class ProductVariantOrderService {
             amount: price?.buyUsedPrice * 100,
             description: productName,
             taxable: true,
-            avalara_tax_code: "PC040000", // FIXME: outerwear has different code: https://seasonsnyc.slack.com/archives/D01E4L7AGNM/p1611939000004900
+            avalara_tax_code: productTaxCode,
           },
-          {
-            amount: parseFloat(shippingRate.amount) * 100,
-            description: shippingRate.servicelevel.name,
-            taxable: true,
-            avalara_tax_code: "FR020000",
-          },
-        ],
+          includeShipping
+            ? {
+                amount: parseFloat(shippingRate.amount) * 100,
+                description: shippingRate.servicelevel.name,
+                taxable: true,
+                avalara_tax_code: "FR020000",
+              }
+            : null,
+        ].filter(Boolean),
       },
     }
   }
@@ -390,18 +437,14 @@ export class ProductVariantOrderService {
       user,
     })
 
-    const invoiceEstimateInput = {
-      invoice: pick(invoice, ["customer_id"]),
-      ...pick(invoice, ["charges", "shipping_address"]),
-    }
-
-    console.log(invoiceEstimateInput)
-
     const {
       estimate: { invoice_estimate },
-    } = await chargebee.estimate.create_invoice(invoiceEstimateInput).request()
-
-    console.log("chargebee invoice estimate", invoice_estimate)
+    } = await chargebee.estimate
+      .create_invoice({
+        invoice: pick(invoice, ["customer_id"]),
+        ...pick(invoice, ["charges", "shipping_address"]),
+      })
+      .request()
 
     const unitLineItem = {
       amount: invoice_estimate.line_items[0].unit_amount,
