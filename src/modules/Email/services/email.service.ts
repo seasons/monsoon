@@ -28,21 +28,6 @@ type EmailUser = Pick<User, "email" | "firstName" | "id">
 
 @Injectable()
 export class EmailService {
-  private essentialEmails = [
-    "CompleteAccount",
-    "FreeToReserve",
-    "Paused",
-    "PriorityAccess",
-    "ReferralConfirmation",
-    "ReservationConfirmation",
-    "ReservationReturnConfirmation",
-    "ResumeConfirmation",
-    "ResumeReminder",
-    "SubmittedEmail",
-    "Waitlisted",
-    "WelcomeToSeasons",
-  ] as EmailId[]
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
@@ -98,7 +83,10 @@ export class EmailService {
   }
 
   async sendAuthorizedDayTwoFollowup(user: EmailUser, status = "Authorized") {
-    const payload = await RenderEmail.authorizedDayTwoFollowup({ status })
+    const payload = await RenderEmail.authorizedDayTwoFollowup({
+      status,
+      id: user.id,
+    })
     await this.sendPreRenderedTransactionalEmail({
       user: user,
       payload,
@@ -125,6 +113,7 @@ export class EmailService {
     const payload = await RenderEmail.referralConfirmation({
       referrerName: referrer.firstName,
       refereeName: `${referee.firstName}`,
+      id: referrer.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user: referrer,
@@ -136,6 +125,7 @@ export class EmailService {
   async sendWaitlistedEmail(user: EmailUser) {
     const payload = await RenderEmail.waitlisted({
       name: user.firstName,
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -166,6 +156,7 @@ export class EmailService {
       name: user.firstName,
       planId: cust.membership?.plan?.planID,
       itemCount: `${cust.membership?.plan?.itemCount}`,
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -181,6 +172,7 @@ export class EmailService {
       name: customer.user.firstName,
       isExtension,
       resumeDate: latestPauseRequest.resumeDate,
+      id: customer.user.id,
     })
 
     await this.sendPreRenderedTransactionalEmail({
@@ -217,18 +209,20 @@ export class EmailService {
       email: user.email,
       reservationNumber: reservation.reservationNumber,
       returnedItems: returnedPhysicalProducts.map(a => a.seasonsUID),
+      id: user.id,
     })
     await this.sendEmail({
       to: process.env.OPERATIONS_ADMIN_EMAIL,
       subject: payload.subject,
       html: payload.body,
-      emailId: "ReservationReturnConfirmation",
+      type: payload.type,
     })
   }
 
   async sendPriorityAccessEmail(user: EmailUser) {
     const payload = await RenderEmail.priorityAccess({
       name: user.firstName,
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -251,6 +245,7 @@ export class EmailService {
       orderNumber: reservation.reservationNumber,
       trackingNumber,
       trackingURL: trackingUrl,
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -266,6 +261,7 @@ export class EmailService {
     const payload = await RenderEmail.returnReminder({
       name: user.firstName,
       returnDate: this.utils.getReservationReturnDate(reservation),
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -275,7 +271,7 @@ export class EmailService {
   }
 
   async sendYouCanNowReserveAgainEmail(user: EmailUser) {
-    const payload = await RenderEmail.freeToReserve({})
+    const payload = await RenderEmail.freeToReserve({ id: user.id })
     await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
@@ -305,6 +301,7 @@ export class EmailService {
     const payload = await RenderEmail[renderEmailFunc]({
       name: `${user.firstName}`,
       products,
+      id: user.id,
       ...renderData,
     })
     await this.sendPreRenderedTransactionalEmail({
@@ -340,6 +337,7 @@ export class EmailService {
     const payload = await RenderEmail[renderEmailFunc]({
       name: `${user.firstName}`,
       products,
+      id: user.id,
       ...renderData,
     })
     await this.sendPreRenderedTransactionalEmail({
@@ -354,18 +352,18 @@ export class EmailService {
 
   private async sendPreRenderedTransactionalEmail({
     user,
-    payload: { body, subject },
+    payload: { body, subject, type },
     emailId,
   }: {
     user: EmailUser
-    payload: { body: string; subject: string }
+    payload: { body: string; subject: string; type: "essential" | "marketing" }
     emailId: EmailId
   }) {
     const storeReceipt = await this.sendEmail({
       to: user.email,
       subject: subject,
       html: body,
-      emailId,
+      type,
     })
     if (storeReceipt) {
       await this.storeEmailReceipt(emailId, user.id)
@@ -373,8 +371,8 @@ export class EmailService {
   }
 
   // returns true if it sent the email, false otherwise
-  private async sendEmail({ to, subject, html, emailId }) {
-    const shouldSendEmail = await this.shouldSendEmail({ to, emailId })
+  private async sendEmail({ to, subject, html, type }) {
+    const shouldSendEmail = await this.shouldSendEmail({ to, type })
     if (!shouldSendEmail) {
       return false
     }
@@ -407,12 +405,15 @@ export class EmailService {
     return true
   }
 
-  private async shouldSendEmail({ to, emailId }) {
+  private async shouldSendEmail({ to, type }) {
     if (to === process.env.OPERATIONS_ADMIN_EMAIL) {
       return true
     }
+    if (type === "essential") {
+      return true
+    }
     const u = await this.prisma.client.user({ email: to })
-    return u.sendSystemEmails || this.essentialEmails.includes(emailId)
+    return u.sendSystemEmails
   }
 
   private async addEmailedProductsToCustomer(

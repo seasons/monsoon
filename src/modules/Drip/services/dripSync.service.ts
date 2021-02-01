@@ -22,6 +22,17 @@ export class DripSyncService {
     private readonly error: ErrorService
   ) {}
 
+  async syncUnsubscribesFromDrip() {
+    const allUnsubscribedCustomers = await this.drip.client.listSubscribers({
+      status: "unsubscribed",
+    })
+    const emails = allUnsubscribedCustomers.body.subscribers.map(a => a.email)
+    return await this.prisma.client.updateManyUsers({
+      where: { AND: [{ email_in: emails }, { sendSystemEmails: true }] },
+      data: { sendSystemEmails: false },
+    })
+  }
+
   async syncCustomersDifferential() {
     const syncTimings = await this.utils.getSyncTimingsRecord("Drip")
 

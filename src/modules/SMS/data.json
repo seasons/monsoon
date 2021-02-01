@@ -12,7 +12,7 @@
     ]
   },
   "SeventyTwoHoursLeftAuthorizationFollowup": {
-    "body": "Hi {{{name}}}, your Seasons membership is waiting! Just a quick heads up: in order to ensure each member has access to a full range of our exclusive inventory, subscriptions are currently offered on a rolling basis. If no action is taken, you’ll be placed back onto our waitlist in 72 hours.\n\nIf you need help picking out your first bag, follow this link {{{stylistLink}}} to chat with one of our in-house stylists.\n\n If we can help with anything else, pleace contact {{{contactEmail}}}",
+    "body": "Hi {{{name}}}, your Seasons membership is waiting! Just a quick heads up: in order to ensure each member has access to a full range of our exclusive inventory, subscriptions are currently offered on a rolling basis. If no action is taken, you’ll be placed back onto our waitlist in 72 hours.\n\nIf you need help picking out your first bag, follow this link {{{stylistLink}}} to chat with one of our in-house stylists.\n\n If we can help with anything else, please contact {{{contactEmail}}}",
     "mediaUrls": [
       "https://seasons-images.s3.amazonaws.com/email-images/72hours.jpg"
     ]
