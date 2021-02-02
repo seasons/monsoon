@@ -80,6 +80,15 @@ enum ProductStatus {
   Offloaded
 }
 
+enum PackageStatus {
+  Queued
+  Shipped
+  Delivered
+  Blocked
+  Received
+  Cancelled
+}
+
 enum ReservationStatus {
   Queued
   Packed
@@ -914,6 +923,75 @@ type RecentlyViewedProduct {
   updatedAt: DateTime! @updatedAt
 }
 
+enum OrderType {
+  Used
+  New
+  External
+}
+
+enum OrderItemRecordType {
+  PhysicalProduct
+  ProductVariant
+  ExternalProduct
+  Package
+}
+
+enum OrderStatus {
+  Drafted
+  Submitted
+  Fulfilled
+  Returned
+  Cancelled
+}
+
+enum OrderCancelReason {
+  Customer # The customer wanted to cancel the order
+  Declined # Payment was declined
+  Fraud # The order was fraudulent
+  Inventory # There was insufficient inventory
+  Other # Some other reason not listed
+}
+
+enum OrderPaymentStatus {
+  Paid
+  PartiallyPaid
+  Refunded
+  NotPaid
+}
+
+type OrderItem {
+  id: ID! @id
+  recordID: ID!
+  recordType: OrderItemRecordType!
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int!
+  currencyCode: String!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Order {
+  id: ID! @id
+  customer: Customer!
+  sentPackage: Package
+  items: [OrderItem!]!
+  orderNumber: Int! @unique
+  type: OrderType!
+  status: OrderStatus! @default(value: Drafted)
+  subTotal: Int
+  total: Int
+  cancelReason: OrderCancelReason
+  couponID: String
+  paymentStatus: OrderPaymentStatus! @default(value: NotPaid)
+  note: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type Reservation {
   id: ID! @id
   user: User!
@@ -1019,6 +1097,7 @@ type Package {
   weight: Float
   cost: Int #cents
   events: [PackageTransitEvent!]
+  status: PackageStatus
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
