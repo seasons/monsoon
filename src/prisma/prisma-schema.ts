@@ -335,6 +335,14 @@ type AggregateLocation {
   count: Int!
 }
 
+type AggregateOrder {
+  count: Int!
+}
+
+type AggregateOrderItem {
+  count: Int!
+}
+
 type AggregatePackage {
   count: Int!
 }
@@ -6563,6 +6571,18 @@ type Mutation {
   upsertLocation(where: LocationWhereUniqueInput!, create: LocationCreateInput!, update: LocationUpdateInput!): Location!
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
+  createOrder(data: OrderCreateInput!): Order!
+  updateOrder(data: OrderUpdateInput!, where: OrderWhereUniqueInput!): Order
+  updateManyOrders(data: OrderUpdateManyMutationInput!, where: OrderWhereInput): BatchPayload!
+  upsertOrder(where: OrderWhereUniqueInput!, create: OrderCreateInput!, update: OrderUpdateInput!): Order!
+  deleteOrder(where: OrderWhereUniqueInput!): Order
+  deleteManyOrders(where: OrderWhereInput): BatchPayload!
+  createOrderItem(data: OrderItemCreateInput!): OrderItem!
+  updateOrderItem(data: OrderItemUpdateInput!, where: OrderItemWhereUniqueInput!): OrderItem
+  updateManyOrderItems(data: OrderItemUpdateManyMutationInput!, where: OrderItemWhereInput): BatchPayload!
+  upsertOrderItem(where: OrderItemWhereUniqueInput!, create: OrderItemCreateInput!, update: OrderItemUpdateInput!): OrderItem!
+  deleteOrderItem(where: OrderItemWhereUniqueInput!): OrderItem
+  deleteManyOrderItems(where: OrderItemWhereInput): BatchPayload!
   createPackage(data: PackageCreateInput!): Package!
   updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
   updateManyPackages(data: PackageUpdateManyMutationInput!, where: PackageWhereInput): BatchPayload!
@@ -6826,6 +6846,704 @@ interface Node {
   id: ID!
 }
 
+type Order {
+  id: ID!
+  customer: Customer!
+  sentPackage: Package
+  items(where: OrderItemWhereInput, orderBy: OrderItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderItem!]
+  orderNumber: Int!
+  type: OrderType!
+  status: OrderStatus!
+  subTotal: Int
+  total: Int
+  cancelReason: OrderCancelReason
+  couponID: String
+  paymentStatus: OrderPaymentStatus!
+  note: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum OrderCancelReason {
+  Customer
+  Declined
+  Fraud
+  Inventory
+  Other
+}
+
+type OrderConnection {
+  pageInfo: PageInfo!
+  edges: [OrderEdge]!
+  aggregate: AggregateOrder!
+}
+
+input OrderCreateInput {
+  id: ID
+  customer: CustomerCreateOneInput!
+  sentPackage: PackageCreateOneInput
+  items: OrderItemCreateManyInput
+  orderNumber: Int!
+  type: OrderType!
+  status: OrderStatus
+  subTotal: Int
+  total: Int
+  cancelReason: OrderCancelReason
+  couponID: String
+  paymentStatus: OrderPaymentStatus
+  note: String
+}
+
+type OrderEdge {
+  node: Order!
+  cursor: String!
+}
+
+type OrderItem {
+  id: ID!
+  recordID: ID!
+  recordType: OrderItemRecordType!
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int!
+  currencyCode: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type OrderItemConnection {
+  pageInfo: PageInfo!
+  edges: [OrderItemEdge]!
+  aggregate: AggregateOrderItem!
+}
+
+input OrderItemCreateInput {
+  id: ID
+  recordID: ID!
+  recordType: OrderItemRecordType!
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int!
+  currencyCode: String!
+}
+
+input OrderItemCreateManyInput {
+  create: [OrderItemCreateInput!]
+  connect: [OrderItemWhereUniqueInput!]
+}
+
+type OrderItemEdge {
+  node: OrderItem!
+  cursor: String!
+}
+
+enum OrderItemOrderByInput {
+  id_ASC
+  id_DESC
+  recordID_ASC
+  recordID_DESC
+  recordType_ASC
+  recordType_DESC
+  needShipping_ASC
+  needShipping_DESC
+  taxRate_ASC
+  taxRate_DESC
+  taxName_ASC
+  taxName_DESC
+  taxPercentage_ASC
+  taxPercentage_DESC
+  taxPrice_ASC
+  taxPrice_DESC
+  price_ASC
+  price_DESC
+  currencyCode_ASC
+  currencyCode_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type OrderItemPreviousValues {
+  id: ID!
+  recordID: ID!
+  recordType: OrderItemRecordType!
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int!
+  currencyCode: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum OrderItemRecordType {
+  PhysicalProduct
+  ProductVariant
+  ExternalProduct
+  Package
+}
+
+input OrderItemScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  recordID: ID
+  recordID_not: ID
+  recordID_in: [ID!]
+  recordID_not_in: [ID!]
+  recordID_lt: ID
+  recordID_lte: ID
+  recordID_gt: ID
+  recordID_gte: ID
+  recordID_contains: ID
+  recordID_not_contains: ID
+  recordID_starts_with: ID
+  recordID_not_starts_with: ID
+  recordID_ends_with: ID
+  recordID_not_ends_with: ID
+  recordType: OrderItemRecordType
+  recordType_not: OrderItemRecordType
+  recordType_in: [OrderItemRecordType!]
+  recordType_not_in: [OrderItemRecordType!]
+  needShipping: Boolean
+  needShipping_not: Boolean
+  taxRate: Float
+  taxRate_not: Float
+  taxRate_in: [Float!]
+  taxRate_not_in: [Float!]
+  taxRate_lt: Float
+  taxRate_lte: Float
+  taxRate_gt: Float
+  taxRate_gte: Float
+  taxName: String
+  taxName_not: String
+  taxName_in: [String!]
+  taxName_not_in: [String!]
+  taxName_lt: String
+  taxName_lte: String
+  taxName_gt: String
+  taxName_gte: String
+  taxName_contains: String
+  taxName_not_contains: String
+  taxName_starts_with: String
+  taxName_not_starts_with: String
+  taxName_ends_with: String
+  taxName_not_ends_with: String
+  taxPercentage: Float
+  taxPercentage_not: Float
+  taxPercentage_in: [Float!]
+  taxPercentage_not_in: [Float!]
+  taxPercentage_lt: Float
+  taxPercentage_lte: Float
+  taxPercentage_gt: Float
+  taxPercentage_gte: Float
+  taxPrice: Int
+  taxPrice_not: Int
+  taxPrice_in: [Int!]
+  taxPrice_not_in: [Int!]
+  taxPrice_lt: Int
+  taxPrice_lte: Int
+  taxPrice_gt: Int
+  taxPrice_gte: Int
+  price: Int
+  price_not: Int
+  price_in: [Int!]
+  price_not_in: [Int!]
+  price_lt: Int
+  price_lte: Int
+  price_gt: Int
+  price_gte: Int
+  currencyCode: String
+  currencyCode_not: String
+  currencyCode_in: [String!]
+  currencyCode_not_in: [String!]
+  currencyCode_lt: String
+  currencyCode_lte: String
+  currencyCode_gt: String
+  currencyCode_gte: String
+  currencyCode_contains: String
+  currencyCode_not_contains: String
+  currencyCode_starts_with: String
+  currencyCode_not_starts_with: String
+  currencyCode_ends_with: String
+  currencyCode_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [OrderItemScalarWhereInput!]
+  OR: [OrderItemScalarWhereInput!]
+  NOT: [OrderItemScalarWhereInput!]
+}
+
+type OrderItemSubscriptionPayload {
+  mutation: MutationType!
+  node: OrderItem
+  updatedFields: [String!]
+  previousValues: OrderItemPreviousValues
+}
+
+input OrderItemSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: OrderItemWhereInput
+  AND: [OrderItemSubscriptionWhereInput!]
+  OR: [OrderItemSubscriptionWhereInput!]
+  NOT: [OrderItemSubscriptionWhereInput!]
+}
+
+input OrderItemUpdateDataInput {
+  recordID: ID
+  recordType: OrderItemRecordType
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int
+  currencyCode: String
+}
+
+input OrderItemUpdateInput {
+  recordID: ID
+  recordType: OrderItemRecordType
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int
+  currencyCode: String
+}
+
+input OrderItemUpdateManyDataInput {
+  recordID: ID
+  recordType: OrderItemRecordType
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int
+  currencyCode: String
+}
+
+input OrderItemUpdateManyInput {
+  create: [OrderItemCreateInput!]
+  update: [OrderItemUpdateWithWhereUniqueNestedInput!]
+  upsert: [OrderItemUpsertWithWhereUniqueNestedInput!]
+  delete: [OrderItemWhereUniqueInput!]
+  connect: [OrderItemWhereUniqueInput!]
+  set: [OrderItemWhereUniqueInput!]
+  disconnect: [OrderItemWhereUniqueInput!]
+  deleteMany: [OrderItemScalarWhereInput!]
+  updateMany: [OrderItemUpdateManyWithWhereNestedInput!]
+}
+
+input OrderItemUpdateManyMutationInput {
+  recordID: ID
+  recordType: OrderItemRecordType
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int
+  currencyCode: String
+}
+
+input OrderItemUpdateManyWithWhereNestedInput {
+  where: OrderItemScalarWhereInput!
+  data: OrderItemUpdateManyDataInput!
+}
+
+input OrderItemUpdateWithWhereUniqueNestedInput {
+  where: OrderItemWhereUniqueInput!
+  data: OrderItemUpdateDataInput!
+}
+
+input OrderItemUpsertWithWhereUniqueNestedInput {
+  where: OrderItemWhereUniqueInput!
+  update: OrderItemUpdateDataInput!
+  create: OrderItemCreateInput!
+}
+
+input OrderItemWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  recordID: ID
+  recordID_not: ID
+  recordID_in: [ID!]
+  recordID_not_in: [ID!]
+  recordID_lt: ID
+  recordID_lte: ID
+  recordID_gt: ID
+  recordID_gte: ID
+  recordID_contains: ID
+  recordID_not_contains: ID
+  recordID_starts_with: ID
+  recordID_not_starts_with: ID
+  recordID_ends_with: ID
+  recordID_not_ends_with: ID
+  recordType: OrderItemRecordType
+  recordType_not: OrderItemRecordType
+  recordType_in: [OrderItemRecordType!]
+  recordType_not_in: [OrderItemRecordType!]
+  needShipping: Boolean
+  needShipping_not: Boolean
+  taxRate: Float
+  taxRate_not: Float
+  taxRate_in: [Float!]
+  taxRate_not_in: [Float!]
+  taxRate_lt: Float
+  taxRate_lte: Float
+  taxRate_gt: Float
+  taxRate_gte: Float
+  taxName: String
+  taxName_not: String
+  taxName_in: [String!]
+  taxName_not_in: [String!]
+  taxName_lt: String
+  taxName_lte: String
+  taxName_gt: String
+  taxName_gte: String
+  taxName_contains: String
+  taxName_not_contains: String
+  taxName_starts_with: String
+  taxName_not_starts_with: String
+  taxName_ends_with: String
+  taxName_not_ends_with: String
+  taxPercentage: Float
+  taxPercentage_not: Float
+  taxPercentage_in: [Float!]
+  taxPercentage_not_in: [Float!]
+  taxPercentage_lt: Float
+  taxPercentage_lte: Float
+  taxPercentage_gt: Float
+  taxPercentage_gte: Float
+  taxPrice: Int
+  taxPrice_not: Int
+  taxPrice_in: [Int!]
+  taxPrice_not_in: [Int!]
+  taxPrice_lt: Int
+  taxPrice_lte: Int
+  taxPrice_gt: Int
+  taxPrice_gte: Int
+  price: Int
+  price_not: Int
+  price_in: [Int!]
+  price_not_in: [Int!]
+  price_lt: Int
+  price_lte: Int
+  price_gt: Int
+  price_gte: Int
+  currencyCode: String
+  currencyCode_not: String
+  currencyCode_in: [String!]
+  currencyCode_not_in: [String!]
+  currencyCode_lt: String
+  currencyCode_lte: String
+  currencyCode_gt: String
+  currencyCode_gte: String
+  currencyCode_contains: String
+  currencyCode_not_contains: String
+  currencyCode_starts_with: String
+  currencyCode_not_starts_with: String
+  currencyCode_ends_with: String
+  currencyCode_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [OrderItemWhereInput!]
+  OR: [OrderItemWhereInput!]
+  NOT: [OrderItemWhereInput!]
+}
+
+input OrderItemWhereUniqueInput {
+  id: ID
+}
+
+enum OrderOrderByInput {
+  id_ASC
+  id_DESC
+  orderNumber_ASC
+  orderNumber_DESC
+  type_ASC
+  type_DESC
+  status_ASC
+  status_DESC
+  subTotal_ASC
+  subTotal_DESC
+  total_ASC
+  total_DESC
+  cancelReason_ASC
+  cancelReason_DESC
+  couponID_ASC
+  couponID_DESC
+  paymentStatus_ASC
+  paymentStatus_DESC
+  note_ASC
+  note_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+enum OrderPaymentStatus {
+  Paid
+  PartiallyPaid
+  Refunded
+  NotPaid
+}
+
+type OrderPreviousValues {
+  id: ID!
+  orderNumber: Int!
+  type: OrderType!
+  status: OrderStatus!
+  subTotal: Int
+  total: Int
+  cancelReason: OrderCancelReason
+  couponID: String
+  paymentStatus: OrderPaymentStatus!
+  note: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum OrderStatus {
+  Drafted
+  Submitted
+  Fulfilled
+  Returned
+  Cancelled
+}
+
+type OrderSubscriptionPayload {
+  mutation: MutationType!
+  node: Order
+  updatedFields: [String!]
+  previousValues: OrderPreviousValues
+}
+
+input OrderSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: OrderWhereInput
+  AND: [OrderSubscriptionWhereInput!]
+  OR: [OrderSubscriptionWhereInput!]
+  NOT: [OrderSubscriptionWhereInput!]
+}
+
+enum OrderType {
+  Used
+  New
+  External
+}
+
+input OrderUpdateInput {
+  customer: CustomerUpdateOneRequiredInput
+  sentPackage: PackageUpdateOneInput
+  items: OrderItemUpdateManyInput
+  orderNumber: Int
+  type: OrderType
+  status: OrderStatus
+  subTotal: Int
+  total: Int
+  cancelReason: OrderCancelReason
+  couponID: String
+  paymentStatus: OrderPaymentStatus
+  note: String
+}
+
+input OrderUpdateManyMutationInput {
+  orderNumber: Int
+  type: OrderType
+  status: OrderStatus
+  subTotal: Int
+  total: Int
+  cancelReason: OrderCancelReason
+  couponID: String
+  paymentStatus: OrderPaymentStatus
+  note: String
+}
+
+input OrderWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  customer: CustomerWhereInput
+  sentPackage: PackageWhereInput
+  items_every: OrderItemWhereInput
+  items_some: OrderItemWhereInput
+  items_none: OrderItemWhereInput
+  orderNumber: Int
+  orderNumber_not: Int
+  orderNumber_in: [Int!]
+  orderNumber_not_in: [Int!]
+  orderNumber_lt: Int
+  orderNumber_lte: Int
+  orderNumber_gt: Int
+  orderNumber_gte: Int
+  type: OrderType
+  type_not: OrderType
+  type_in: [OrderType!]
+  type_not_in: [OrderType!]
+  status: OrderStatus
+  status_not: OrderStatus
+  status_in: [OrderStatus!]
+  status_not_in: [OrderStatus!]
+  subTotal: Int
+  subTotal_not: Int
+  subTotal_in: [Int!]
+  subTotal_not_in: [Int!]
+  subTotal_lt: Int
+  subTotal_lte: Int
+  subTotal_gt: Int
+  subTotal_gte: Int
+  total: Int
+  total_not: Int
+  total_in: [Int!]
+  total_not_in: [Int!]
+  total_lt: Int
+  total_lte: Int
+  total_gt: Int
+  total_gte: Int
+  cancelReason: OrderCancelReason
+  cancelReason_not: OrderCancelReason
+  cancelReason_in: [OrderCancelReason!]
+  cancelReason_not_in: [OrderCancelReason!]
+  couponID: String
+  couponID_not: String
+  couponID_in: [String!]
+  couponID_not_in: [String!]
+  couponID_lt: String
+  couponID_lte: String
+  couponID_gt: String
+  couponID_gte: String
+  couponID_contains: String
+  couponID_not_contains: String
+  couponID_starts_with: String
+  couponID_not_starts_with: String
+  couponID_ends_with: String
+  couponID_not_ends_with: String
+  paymentStatus: OrderPaymentStatus
+  paymentStatus_not: OrderPaymentStatus
+  paymentStatus_in: [OrderPaymentStatus!]
+  paymentStatus_not_in: [OrderPaymentStatus!]
+  note: String
+  note_not: String
+  note_in: [String!]
+  note_not_in: [String!]
+  note_lt: String
+  note_lte: String
+  note_gt: String
+  note_gte: String
+  note_contains: String
+  note_not_contains: String
+  note_starts_with: String
+  note_not_starts_with: String
+  note_ends_with: String
+  note_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [OrderWhereInput!]
+  OR: [OrderWhereInput!]
+  NOT: [OrderWhereInput!]
+}
+
+input OrderWhereUniqueInput {
+  id: ID
+  orderNumber: Int
+}
+
 type Package {
   id: ID!
   items(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
@@ -6836,6 +7554,7 @@ type Package {
   weight: Float
   cost: Int
   events(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PackageTransitEvent!]
+  status: PackageStatus
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6856,6 +7575,7 @@ input PackageCreateInput {
   weight: Float
   cost: Int
   events: PackageTransitEventCreateManyWithoutPackageInput
+  status: PackageStatus
 }
 
 input PackageCreateOneInput {
@@ -6877,6 +7597,7 @@ input PackageCreateWithoutEventsInput {
   toAddress: LocationCreateOneInput!
   weight: Float
   cost: Int
+  status: PackageStatus
 }
 
 type PackageEdge {
@@ -6893,6 +7614,8 @@ enum PackageOrderByInput {
   weight_DESC
   cost_ASC
   cost_DESC
+  status_ASC
+  status_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6904,8 +7627,18 @@ type PackagePreviousValues {
   transactionID: String!
   weight: Float
   cost: Int
+  status: PackageStatus
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+enum PackageStatus {
+  Queued
+  Shipped
+  Delivered
+  Blocked
+  Received
+  Cancelled
 }
 
 type PackageSubscriptionPayload {
@@ -7252,6 +7985,7 @@ input PackageUpdateDataInput {
   weight: Float
   cost: Int
   events: PackageTransitEventUpdateManyWithoutPackageInput
+  status: PackageStatus
 }
 
 input PackageUpdateInput {
@@ -7263,12 +7997,14 @@ input PackageUpdateInput {
   weight: Float
   cost: Int
   events: PackageTransitEventUpdateManyWithoutPackageInput
+  status: PackageStatus
 }
 
 input PackageUpdateManyMutationInput {
   transactionID: String
   weight: Float
   cost: Int
+  status: PackageStatus
 }
 
 input PackageUpdateOneInput {
@@ -7295,6 +8031,7 @@ input PackageUpdateWithoutEventsDataInput {
   toAddress: LocationUpdateOneRequiredInput
   weight: Float
   cost: Int
+  status: PackageStatus
 }
 
 input PackageUpsertNestedInput {
@@ -7361,6 +8098,10 @@ input PackageWhereInput {
   events_every: PackageTransitEventWhereInput
   events_some: PackageTransitEventWhereInput
   events_none: PackageTransitEventWhereInput
+  status: PackageStatus
+  status_not: PackageStatus
+  status_in: [PackageStatus!]
+  status_not_in: [PackageStatus!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -13443,6 +14184,12 @@ type Query {
   location(where: LocationWhereUniqueInput!): Location
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
+  order(where: OrderWhereUniqueInput!): Order
+  orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order]!
+  ordersConnection(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderConnection!
+  orderItem(where: OrderItemWhereUniqueInput!): OrderItem
+  orderItems(where: OrderItemWhereInput, orderBy: OrderItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderItem]!
+  orderItemsConnection(where: OrderItemWhereInput, orderBy: OrderItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderItemConnection!
   package(where: PackageWhereUniqueInput!): Package
   packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
   packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
@@ -16319,6 +17066,8 @@ type Subscription {
   interestedUser(where: InterestedUserSubscriptionWhereInput): InterestedUserSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
+  order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
+  orderItem(where: OrderItemSubscriptionWhereInput): OrderItemSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   packageTransitEvent(where: PackageTransitEventSubscriptionWhereInput): PackageTransitEventSubscriptionPayload
   pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
