@@ -4,6 +4,7 @@ import {
 } from "@app/prisma"
 
 export interface ShippoShipment {
+  object_id?: string
   address_from: any
   address_to: any
   parcels: any
@@ -11,6 +12,7 @@ export interface ShippoShipment {
   rates?: Array<ShippoRate>
 }
 export interface ShippoTransaction {
+  object_id?: string
   label_url: string
   tracking_number: string
   tracking_url_provider: string

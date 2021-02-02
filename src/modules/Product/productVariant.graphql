@@ -48,25 +48,13 @@ enum OrderType {
   BUY_USED
 }
 
-input CreateProductVariantDraftOrderInput {
+input CreateDraftedOrderInput {
   orderType: OrderType!
   productVariantId: ID!
 }
 
-input CreateProductVariantOrderInput {
-  orderType: OrderType!
-  productVariantId: ID!
-}
-
-type LineItem {
-  amount: Float!
-  description: String!
-}
-
-type ProductVariantOrder {
-  total: Float!
-  lineItems: [LineItem!]!
-  shippingAddress: Location!
+input SubmitOrderInput {
+  orderId: ID!
 }
 
 type Mutation {
@@ -83,12 +71,9 @@ type Mutation {
     productID: ID!
     inputs: [UpsertVariantInput!]!
   ): [ProductVariant!] @hasRole(roles: [Admin])
-  createProductVariantDraftOrder(
-    input: CreateProductVariantDraftOrderInput!
-  ): ProductVariantOrder! @hasRole(roles: [Customer])
-  createProductVariantOrder(
-    input: CreateProductVariantOrderInput!
-  ): ProductVariantOrder! @hasRole(roles: [Customer])
+  createDraftedOrder(input: CreateDraftedOrderInput!): Order!
+    @hasRole(roles: [Customer])
+  submitOrder(input: SubmitOrderInput!): Order! @hasRole(roles: [Customer])
 }
 
 type ProductVariantPrice {

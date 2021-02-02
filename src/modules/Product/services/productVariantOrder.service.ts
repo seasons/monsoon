@@ -4,6 +4,9 @@ import {
   BillingInfo,
   Customer,
   Location,
+  Order,
+  OrderItem,
+  PhysicalProduct,
   PhysicalProductPrice,
   Product,
   User,
@@ -13,16 +16,18 @@ import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
-import { pick, sumBy } from "lodash"
+import { pick } from "lodash"
+
+type InvoiceCharge = {
+  amount: number
+  description: string
+  taxable: boolean
+  avalara_tax_code: string
+}
 
 type InvoiceInput = {
   customer_id: string
-  charges: Array<{
-    amount: number
-    description: string
-    taxable: boolean
-    avalara_tax_code: string
-  }>
+  charges: Array<InvoiceCharge>
   shipping_address: {
     first_name: string
     last_name: string
@@ -67,6 +72,7 @@ export class ProductVariantOrderService {
   }): Promise<{
     invoice: InvoiceInput
     shippingAddress: Location
+    orderItems: OrderItem[]
   }> {
     const [productVariant, customerQuery] = await Promise.all([
       this.prisma.binding.query.productVariant(
@@ -119,10 +125,12 @@ export class ProductVariantOrderService {
 
     // FIXME: We're assuming that every physical product has the same price for a variant,
     // so take the first valid result.
-    const price: PhysicalProductPrice | null = productVariant?.physicalProducts.find(
+    //
+    // FIXME: this needs a check to ensure item isnt "out of stock"
+    const physicalProduct = productVariant?.physicalProducts.find(
       physicalProduct =>
         physicalProduct.price && physicalProduct.price.buyUsedEnabled
-    )?.price
+    ) as (PhysicalProduct & { price: PhysicalProductPrice }) | null
     const productName = productVariant?.product?.name
     const productCategories = await this.productUtils.getAllCategories({
       id: productVariant?.product?.id,
@@ -135,7 +143,10 @@ export class ProductVariantOrderService {
     const shippingAddress = customerQuery?.detail?.shippingAddress as Location
     const [firstName, ...lastName] = (shippingAddress?.name || "").split(" ")
 
-    if (!price?.buyUsedEnabled || !price?.buyUsedPrice) {
+    if (
+      !physicalProduct?.price?.buyUsedEnabled ||
+      !physicalProduct?.price?.buyUsedPrice
+    ) {
       throw new Error(
         "ProductVariant is not enabled for buyUsed, or is missing a price."
       )
@@ -147,16 +158,36 @@ export class ProductVariantOrderService {
         productVariant: { id: string }
       }
     ]
-    const includeShipping = !bagItems.some(
+    const needShipping = !bagItems.some(
       ({ status, productVariant: { id: productVariantId } }) =>
         status === "Reserved" && productVariantId === productVariant.id
     )
-    const shippingRate = await (includeShipping
+    const shipping = await (needShipping
       ? this.shipping.getBuyUsedShippingRate(productVariantId, user, customer)
       : Promise.resolve(null))
 
+    const orderItems = [
+      {
+        recordID: physicalProduct.id,
+        recordType: "PhysicalProduct",
+        needShipping,
+        price: physicalProduct?.price?.buyUsedPrice * 100,
+        currencyCode: "USD",
+      },
+      needShipping
+        ? {
+            recordId: shipping.shipmentId,
+            recordType: "Package",
+            price: parseFloat(shipping.rate.amount) * 100,
+            currencyCode: "USD",
+            needsShipping: false,
+          }
+        : null,
+    ].filter(Boolean) as OrderItem[]
+
     return {
       shippingAddress,
+      orderItems,
       invoice: {
         customer_id: user.id,
         invoice_note: `Purchase Used ${productName}`,
@@ -172,22 +203,23 @@ export class ProductVariantOrderService {
           zip: shippingAddress.zipCode,
           country: shippingAddress.country || "US",
         },
-        charges: [
-          {
-            amount: price?.buyUsedPrice * 100,
-            description: productName,
-            taxable: true,
-            avalara_tax_code: productTaxCode,
-          },
-          includeShipping
+        charges: orderItems.map(orderItem => ({
+          amount: orderItem.price,
+          taxable: true,
+          ...(orderItem.recordType === "PhysicalProduct"
             ? {
-                amount: parseFloat(shippingRate.amount) * 100,
-                description: shippingRate.servicelevel.name,
-                taxable: true,
+                description: productName,
+                avalara_tax_code: productTaxCode,
+              }
+            : orderItem.recordType === "Package"
+            ? {
+                description: shipping.rate.servicelevel.name,
                 avalara_tax_code: "FR020000",
               }
-            : null,
-        ].filter(Boolean),
+            : {
+                /** TODO: handle other item types **/
+              }),
+        })) as InvoiceCharge[],
       },
     }
   }
@@ -322,13 +354,18 @@ export class ProductVariantOrderService {
     }
   }
 
-  async buyNewCreateOrder({
-    productVariantId,
-    customerId,
+  async buyNewSubmitOrder({
+    order,
+    customer,
   }: {
-    productVariantId: string
-    customerId: string
+    order: Order
+    customer: Customer
   }): Promise<void> {
+    const orderItems = await this.prisma.client.order({ id: order.id }).items()
+    const productVariantId = orderItems.find(
+      orderItem => orderItem.recordType === "ProductVariant"
+    ).recordID
+
     const {
       shippingAddress,
       billingAddress,
@@ -337,7 +374,10 @@ export class ProductVariantOrderService {
       shopifyProductVariantInternalId,
       accessToken,
       shopName,
-    } = await this.getBuyNewMetadata({ productVariantId, customerId })
+    } = await this.getBuyNewMetadata({
+      productVariantId,
+      customerId: customer.id,
+    })
 
     // Bypass internal cache and directly ensure product is still available at the merchant.
     const shopifyProductVariant = await this.shopify.cacheProductVariant({
@@ -368,15 +408,17 @@ export class ProductVariantOrderService {
 
     // TODO: Collect payment via Stripe connect
     // TODO: Complete Shopify Draft Order and mark as paid?
-    // return draftOrder
+    // TODO: Update internal order model, return
+
+    return null
   }
 
-  async buyNewCreateDraftOrder({
+  async buyNewCreateDraftedOrder({
     productVariantId,
-    customerId,
+    customer,
   }: {
     productVariantId: string
-    customerId: string
+    customer: Customer
   }): Promise<DraftOrder> {
     const {
       shippingAddress,
@@ -386,7 +428,10 @@ export class ProductVariantOrderService {
       productName,
       accessToken,
       shopName,
-    } = await this.getBuyNewMetadata({ productVariantId, customerId })
+    } = await this.getBuyNewMetadata({
+      productVariantId,
+      customerId: customer.id,
+    })
     const { id: shopifyCustomerId } = await this.shopify.createCustomer({
       shippingAddress,
       shopName,
@@ -402,27 +447,11 @@ export class ProductVariantOrderService {
       shopName,
     })
 
-    return {
-      total: draftOrder.totalPrice,
-      shippingAddress,
-      lineItems: [
-        {
-          description: productName,
-          amount: draftOrder.subtotalPrice,
-        },
-        {
-          description: "Sales Tax",
-          amount: draftOrder.totalTax,
-        },
-        {
-          description: "Shipping",
-          amount: draftOrder.totalShippingPrice,
-        },
-      ],
-    }
+    // TODO: create and return internal order model
+    return null
   }
 
-  async buyUsedCreateDraftOrder({
+  async buyUsedCreateDraftedOrder({
     productVariantId,
     customer,
     user,
@@ -430,8 +459,8 @@ export class ProductVariantOrderService {
     productVariantId: string
     customer: Customer
     user: User
-  }) {
-    const { invoice, shippingAddress } = await this.getBuyUsedMetadata({
+  }): Promise<Order> {
+    const { invoice, orderItems } = await this.getBuyUsedMetadata({
       productVariantId,
       customer,
       user,
@@ -446,54 +475,117 @@ export class ProductVariantOrderService {
       })
       .request()
 
-    const unitLineItem = {
-      amount: invoice_estimate.line_items[0].unit_amount,
-      description: invoice_estimate.line_items[0].description,
-    }
-    const taxLineItem = {
-      description: "Sales Tax",
-      amount: sumBy(
-        invoice_estimate.line_items,
-        ({ tax_amount }) => tax_amount
-      ),
-    }
-    const shippingLineItem = {
-      amount: invoice_estimate.line_items[1].unit_amount,
-      description: "Shipping",
-    }
-
-    return {
-      total: invoice_estimate.total || 0,
-      lineItems: [unitLineItem, taxLineItem, shippingLineItem],
-      shippingAddress,
-    }
+    return this.prisma.client.createOrder({
+      customer: { connect: { id: customer.id } },
+      orderNumber: 123,
+      type: "Used",
+      status: "Drafted",
+      subTotal: invoice_estimate.subtotal,
+      total: invoice_estimate.total,
+      items: {
+        create: orderItems.map((orderItem, idx) => ({
+          ...orderItem,
+          taxRate: invoice_estimate.line_items[idx].tax_rate,
+          taxPrice: invoice_estimate.line_items[idx].tax_amount,
+        })),
+      },
+    })
   }
 
-  async buyUsedCreateOrder({
-    productVariantId,
+  async buyUsedSubmitOrder({
+    order,
     customer,
     user,
   }: {
-    productVariantId: string
+    order: Order
     customer: Customer
     user: User
   }) {
-    // TODO: check if user has a reservation for a physical product for this variant that is delivered and
-    // has buy used enabled. if so, do not include shipping costs
-    const { invoice } = await this.getBuyUsedMetadata({
+    const orderItems = await this.prisma.client.order({ id: order.id }).items()
+    const physicalProductId = orderItems.find(
+      orderItem => orderItem.recordType === "PhysicalProduct"
+    ).recordID
+    const productVariantId = (
+      await this.prisma.client
+        .physicalProduct({ id: physicalProductId })
+        .productVariant()
+    ).id
+
+    const { invoice, shippingAddress } = await this.getBuyUsedMetadata({
       productVariantId,
       customer,
       user,
     })
 
-    await chargebee.invoice.create(invoice).request()
+    const { invoice: chargebeeInvoice } = await chargebee.invoice
+      .create(invoice)
+      .request()
 
-    const shippoTransaction = await this.shipping.createBuyUsedShippingLabel(
-      productVariantId,
-      user,
-      customer
-    )
+    const getOrderShippingUpdate = async () => {
+      const physicalProductsNeedShipping = orderItems.filter(
+        orderItem =>
+          orderItem.recordType === "PhysicalProduct" && orderItem.needShipping
+      )
 
-    // TODO: create internal order model, associate label, send confirmation email
+      if (physicalProductsNeedShipping.length === 0) {
+        return {}
+      }
+
+      const [shippoTransaction, shipmentWeight] = await Promise.all([
+        this.shipping.createBuyUsedShippingLabel(
+          productVariantId,
+          user,
+          customer
+        ),
+        this.shipping.calcShipmentWeightFromProductVariantIDs([
+          productVariantId,
+        ]),
+      ])
+
+      return {
+        sentPackage: {
+          create: {
+            transactionID: shippoTransaction.object_id,
+            weight: shipmentWeight,
+            items: {
+              connect: orderItems
+                .filter(orderItem => orderItem.recordType === "PhysicalProduct")
+                .map(orderItem => ({ id: orderItem.recordID })),
+            },
+            shippingLabel: {
+              create: {
+                image: shippoTransaction.label_url,
+                trackingNumber: shippoTransaction.tracking_number,
+                trackingURL: shippoTransaction.tracking_url_provider,
+                name: "UPS",
+              },
+            },
+            fromAddress: {
+              connect: {
+                slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
+              },
+            },
+            toAddress: {
+              connect: { id: shippingAddress.id },
+            },
+          },
+        },
+      }
+    }
+
+    const orderShippingUpdate = await getOrderShippingUpdate()
+
+    const updatedOrder = this.prisma.client.updateOrder({
+      where: { id: order.id },
+      data: {
+        status: "Submitted",
+        paymentStatus: chargebeeInvoice.status === "paid" ? "Paid" : "NotPaid",
+        ...orderShippingUpdate,
+      },
+    })
+
+    // TODO: send confirmation email
+
+    return updatedOrder
   }
 }

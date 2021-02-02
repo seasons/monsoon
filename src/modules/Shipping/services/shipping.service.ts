@@ -55,10 +55,12 @@ export class ShippingService {
       insuranceAmount
     )
 
-    return this.getShippingRate({
+    const shipping = await this.getShippingRate({
       shipment: seasonsToShippoShipment,
       servicelevel_token: "ups_ground",
     })
+
+    return shipping.rate
   }
 
   async createBuyUsedShippingLabel(
@@ -258,7 +260,10 @@ export class ShippingService {
   private async getShippingRate({
     shipment: shipmentInput,
     servicelevel_token,
-  }: Omit<ShippoLabelInputs, "carrier_account">): Promise<ShippoRate> {
+  }: Omit<ShippoLabelInputs, "carrier_account">): Promise<{
+    rate: ShippoRate
+    shipmentId: string
+  }> {
     const shipment: ShippoShipment = await this.shippo.shipment.create({
       ...shipmentInput,
       async: false,
@@ -268,7 +273,7 @@ export class ShippingService {
       return rate.servicelevel.token === servicelevel_token
     })
 
-    return rate
+    return { rate, shipmentId: shipment.object_id }
   }
 
   private async createShippingLabel(
