@@ -960,16 +960,16 @@ enum OrderPaymentStatus {
 }
 
 type OrderItem {
-  id: ID!
+  id: ID! @id
   recordID: ID!
-  recordType: OrderItemRecordType
+  recordType: OrderItemRecordType!
   needShipping: Boolean
   taxRate: Float
   taxName: String
   taxPercentage: Float
   taxPrice: Int
-  price: Int
-  currencyCode: String
+  price: Int!
+  currencyCode: String!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -978,16 +978,15 @@ type Order {
   id: ID! @id
   customer: Customer!
   sentPackage: Package
-  returnedPackage: Package
   items: [OrderItem!]!
   orderNumber: Int! @unique
-  type: OrderType
-  status: OrderStatus
+  type: OrderType!
+  status: OrderStatus! @default(value: Drafted)
   subTotal: Int
   total: Int
   cancelReason: OrderCancelReason
   couponID: String
-  paymentStatus: OrderPaymentStatus
+  paymentStatus: OrderPaymentStatus! @default(value: NotPaid)
   note: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
