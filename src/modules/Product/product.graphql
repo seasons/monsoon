@@ -155,6 +155,7 @@ type Mutation {
     barcode: String
     status: PhysicalProductStatus
   ): PhysicalProduct
+  createOrder(data: OrderCreateInput!): Order!
 }
 
 type PublishProductsResponse {
