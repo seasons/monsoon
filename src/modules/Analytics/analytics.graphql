@@ -16,8 +16,16 @@ input CreateEmbedURLInput {
   index: Int
 }
 
+enum ElementType {
+  Basic
+  Count
+  Money
+}
+
 type AnalyticsDashboardElement {
   id: ID!
+  type: ElementType
+  slug: String
   title: String
   view: String
   result: JSON

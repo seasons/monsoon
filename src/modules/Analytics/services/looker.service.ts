@@ -1,5 +1,6 @@
 import { LookerNodeSDK } from "@looker/sdk/lib/node"
 import { Injectable } from "@nestjs/common"
+import slugify from "slugify"
 
 @Injectable()
 export class LookerService {
@@ -23,9 +24,13 @@ export class LookerService {
             })
           )
 
+          const title = element.title ?? element?.look?.title
+
           return {
             id: element.id,
-            title: element.title,
+            type: "",
+            slug: (!!title ? slugify(title) : "").toLowerCase(),
+            title: title,
             view: element.look?.query?.view,
             result: {},
           }
@@ -42,6 +47,14 @@ export class LookerService {
 
       if (element) {
         element.result = queryResults[i]?.value?.[0]
+
+        const key = Object.keys(element.result)?.[0]
+
+        element.type = key.includes("count")
+          ? "Count"
+          : key.includes("Dollars")
+          ? "Money"
+          : "Basic"
       }
     }
 
