@@ -16,6 +16,7 @@ import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
+import { GraphQLResolveInfo } from "graphql"
 import { pick } from "lodash"
 
 type InvoiceCharge = {
@@ -463,10 +464,12 @@ export class ProductVariantOrderService {
     productVariantId,
     customer,
     user,
+    info,
   }: {
     productVariantId: string
     customer: Customer
     user: User
+    info: GraphQLResolveInfo
   }): Promise<Order> {
     const { invoice, orderItems } = await this.getBuyUsedMetadata({
       productVariantId,
@@ -483,23 +486,26 @@ export class ProductVariantOrderService {
         })
         .request()
 
-      return await this.prisma.binding.mutation.createOrder({
-        data: {
-          customer: { connect: { id: customer.id } },
-          orderNumber: Math.floor(Math.random() * 900000000) + 100000000,
-          type: "Used",
-          status: "Drafted",
-          subTotal: invoice_estimate.subtotal,
-          total: invoice_estimate.total,
-          items: {
-            create: orderItems.map((orderItem, idx) => ({
-              ...orderItem,
-              taxRate: invoice_estimate.line_items[idx].tax_rate,
-              taxPrice: invoice_estimate.line_items[idx].tax_amount,
-            })),
+      return await this.prisma.binding.mutation.createOrder(
+        {
+          data: {
+            customer: { connect: { id: customer.id } },
+            orderNumber: Math.floor(Math.random() * 900000000) + 100000000,
+            type: "Used",
+            status: "Drafted",
+            subTotal: invoice_estimate.subtotal,
+            total: invoice_estimate.total,
+            items: {
+              create: orderItems.map((orderItem, idx) => ({
+                ...orderItem,
+                taxRate: invoice_estimate.line_items[idx].tax_rate,
+                taxPrice: invoice_estimate.line_items[idx].tax_amount,
+              })),
+            },
           },
         },
-      })
+        info
+      )
     } catch (err) {
       console.error(err)
     }

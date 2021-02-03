@@ -73,7 +73,8 @@ export class ProductVariantMutationsResolver {
   async createDraftedOrder(
     @Args() { input: { orderType, productVariantId } },
     @Customer() customer,
-    @User() user
+    @User() user,
+    @Info() info
   ) {
     if (orderType === "New") {
       return this.productVariantOrderService.buyNewCreateDraftedOrder({
@@ -86,6 +87,7 @@ export class ProductVariantMutationsResolver {
           productVariantId,
           customer,
           user,
+          info,
         }
       )
       return draftOrder
