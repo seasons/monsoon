@@ -44,7 +44,7 @@ jobs:
       # Setup docker but don't start (Will be started from other scripts if needed)
       - run:
           name: Build and Create docker containers (Not run yet)
-          command: docker-compose build; docker-compose up --no-start;
+          command: docker-compose build; docker-compose up -d;
 
       - save_cache:
           paths:
