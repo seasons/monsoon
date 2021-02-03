@@ -8629,7 +8629,7 @@ export type LocationWhereUniqueInput = AtLeastOne<{
 
 export type OrderWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
-  orderNumber?: Maybe<Int>;
+  orderNumber?: Maybe<String>;
 }>;
 
 export interface OrderItemWhereInput {
@@ -8768,14 +8768,20 @@ export interface OrderWhereInput {
   items_every?: Maybe<OrderItemWhereInput>;
   items_some?: Maybe<OrderItemWhereInput>;
   items_none?: Maybe<OrderItemWhereInput>;
-  orderNumber?: Maybe<Int>;
-  orderNumber_not?: Maybe<Int>;
-  orderNumber_in?: Maybe<Int[] | Int>;
-  orderNumber_not_in?: Maybe<Int[] | Int>;
-  orderNumber_lt?: Maybe<Int>;
-  orderNumber_lte?: Maybe<Int>;
-  orderNumber_gt?: Maybe<Int>;
-  orderNumber_gte?: Maybe<Int>;
+  orderNumber?: Maybe<String>;
+  orderNumber_not?: Maybe<String>;
+  orderNumber_in?: Maybe<String[] | String>;
+  orderNumber_not_in?: Maybe<String[] | String>;
+  orderNumber_lt?: Maybe<String>;
+  orderNumber_lte?: Maybe<String>;
+  orderNumber_gt?: Maybe<String>;
+  orderNumber_gte?: Maybe<String>;
+  orderNumber_contains?: Maybe<String>;
+  orderNumber_not_contains?: Maybe<String>;
+  orderNumber_starts_with?: Maybe<String>;
+  orderNumber_not_starts_with?: Maybe<String>;
+  orderNumber_ends_with?: Maybe<String>;
+  orderNumber_not_ends_with?: Maybe<String>;
   type?: Maybe<OrderType>;
   type_not?: Maybe<OrderType>;
   type_in?: Maybe<OrderType[] | OrderType>;
@@ -16783,7 +16789,7 @@ export interface OrderCreateInput {
   customer: CustomerCreateOneInput;
   sentPackage?: Maybe<PackageCreateOneInput>;
   items?: Maybe<OrderItemCreateManyInput>;
-  orderNumber: Int;
+  orderNumber: String;
   type: OrderType;
   status?: Maybe<OrderStatus>;
   subTotal?: Maybe<Int>;
@@ -16821,7 +16827,7 @@ export interface OrderUpdateInput {
   customer?: Maybe<CustomerUpdateOneRequiredInput>;
   sentPackage?: Maybe<PackageUpdateOneInput>;
   items?: Maybe<OrderItemUpdateManyInput>;
-  orderNumber?: Maybe<Int>;
+  orderNumber?: Maybe<String>;
   type?: Maybe<OrderType>;
   status?: Maybe<OrderStatus>;
   subTotal?: Maybe<Int>;
@@ -17041,7 +17047,7 @@ export interface OrderItemUpdateManyDataInput {
 }
 
 export interface OrderUpdateManyMutationInput {
-  orderNumber?: Maybe<Int>;
+  orderNumber?: Maybe<String>;
   type?: Maybe<OrderType>;
   status?: Maybe<OrderStatus>;
   subTotal?: Maybe<Int>;
@@ -25299,7 +25305,7 @@ export interface AggregateLocationSubscription
 
 export interface Order {
   id: ID_Output;
-  orderNumber: Int;
+  orderNumber: String;
   type: OrderType;
   status: OrderStatus;
   subTotal?: Int;
@@ -25325,7 +25331,7 @@ export interface OrderPromise extends Promise<Order>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
-  orderNumber: () => Promise<Int>;
+  orderNumber: () => Promise<String>;
   type: () => Promise<OrderType>;
   status: () => Promise<OrderStatus>;
   subTotal: () => Promise<Int>;
@@ -25353,7 +25359,7 @@ export interface OrderSubscription
     first?: Int;
     last?: Int;
   }) => T;
-  orderNumber: () => Promise<AsyncIterator<Int>>;
+  orderNumber: () => Promise<AsyncIterator<String>>;
   type: () => Promise<AsyncIterator<OrderType>>;
   status: () => Promise<AsyncIterator<OrderStatus>>;
   subTotal: () => Promise<AsyncIterator<Int>>;
@@ -25381,7 +25387,7 @@ export interface OrderNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
-  orderNumber: () => Promise<Int>;
+  orderNumber: () => Promise<String>;
   type: () => Promise<OrderType>;
   status: () => Promise<OrderStatus>;
   subTotal: () => Promise<Int>;
@@ -29695,7 +29701,7 @@ export interface OrderSubscriptionPayloadSubscription
 
 export interface OrderPreviousValues {
   id: ID_Output;
-  orderNumber: Int;
+  orderNumber: String;
   type: OrderType;
   status: OrderStatus;
   subTotal?: Int;
@@ -29712,7 +29718,7 @@ export interface OrderPreviousValuesPromise
   extends Promise<OrderPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  orderNumber: () => Promise<Int>;
+  orderNumber: () => Promise<String>;
   type: () => Promise<OrderType>;
   status: () => Promise<OrderStatus>;
   subTotal: () => Promise<Int>;
@@ -29729,7 +29735,7 @@ export interface OrderPreviousValuesSubscription
   extends Promise<AsyncIterator<OrderPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  orderNumber: () => Promise<AsyncIterator<Int>>;
+  orderNumber: () => Promise<AsyncIterator<String>>;
   type: () => Promise<AsyncIterator<OrderType>>;
   status: () => Promise<AsyncIterator<OrderStatus>>;
   subTotal: () => Promise<AsyncIterator<Int>>;

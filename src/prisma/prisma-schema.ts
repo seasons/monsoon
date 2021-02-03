@@ -6851,7 +6851,7 @@ type Order {
   customer: Customer!
   sentPackage: Package
   items(where: OrderItemWhereInput, orderBy: OrderItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderItem!]
-  orderNumber: Int!
+  orderNumber: String!
   type: OrderType!
   status: OrderStatus!
   subTotal: Int
@@ -6883,7 +6883,7 @@ input OrderCreateInput {
   customer: CustomerCreateOneInput!
   sentPackage: PackageCreateOneInput
   items: OrderItemCreateManyInput
-  orderNumber: Int!
+  orderNumber: String!
   type: OrderType!
   status: OrderStatus
   subTotal: Int
@@ -7358,7 +7358,7 @@ enum OrderPaymentStatus {
 
 type OrderPreviousValues {
   id: ID!
-  orderNumber: Int!
+  orderNumber: String!
   type: OrderType!
   status: OrderStatus!
   subTotal: Int
@@ -7407,7 +7407,7 @@ input OrderUpdateInput {
   customer: CustomerUpdateOneRequiredInput
   sentPackage: PackageUpdateOneInput
   items: OrderItemUpdateManyInput
-  orderNumber: Int
+  orderNumber: String
   type: OrderType
   status: OrderStatus
   subTotal: Int
@@ -7419,7 +7419,7 @@ input OrderUpdateInput {
 }
 
 input OrderUpdateManyMutationInput {
-  orderNumber: Int
+  orderNumber: String
   type: OrderType
   status: OrderStatus
   subTotal: Int
@@ -7450,14 +7450,20 @@ input OrderWhereInput {
   items_every: OrderItemWhereInput
   items_some: OrderItemWhereInput
   items_none: OrderItemWhereInput
-  orderNumber: Int
-  orderNumber_not: Int
-  orderNumber_in: [Int!]
-  orderNumber_not_in: [Int!]
-  orderNumber_lt: Int
-  orderNumber_lte: Int
-  orderNumber_gt: Int
-  orderNumber_gte: Int
+  orderNumber: String
+  orderNumber_not: String
+  orderNumber_in: [String!]
+  orderNumber_not_in: [String!]
+  orderNumber_lt: String
+  orderNumber_lte: String
+  orderNumber_gt: String
+  orderNumber_gte: String
+  orderNumber_contains: String
+  orderNumber_not_contains: String
+  orderNumber_starts_with: String
+  orderNumber_not_starts_with: String
+  orderNumber_ends_with: String
+  orderNumber_not_ends_with: String
   type: OrderType
   type_not: OrderType
   type_in: [OrderType!]
@@ -7541,7 +7547,7 @@ input OrderWhereInput {
 
 input OrderWhereUniqueInput {
   id: ID
-  orderNumber: Int
+  orderNumber: String
 }
 
 type Package {
