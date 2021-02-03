@@ -31,6 +31,7 @@ import { ProductUtilsService } from "./services/product.utils.service"
 import { ProductRequestService } from "./services/productRequest.service"
 import { ProductRequestUtilsService } from "./services/productRequest.utils.service"
 import { ProductVariantService } from "./services/productVariant.service"
+import { ProductVariantOrderService } from "./services/productVariantOrder.service"
 
 export const ProductModuleDef = {
   imports: [
@@ -67,6 +68,7 @@ export const ProductModuleDef = {
     PhysicalProductMutationsResolver,
     SizeQueriesResolver,
     ShopifyService,
+    ProductVariantOrderService,
   ],
   exports: [
     ProductUtilsService,
