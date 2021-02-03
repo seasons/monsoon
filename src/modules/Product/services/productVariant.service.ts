@@ -157,17 +157,16 @@ export class ProductVariantService {
     const IDs =
       variant.manufacturerSizeNames &&
       (await Promise.all(
-        variant.manufacturerSizeNames?.map(async sizeName => {
-          // sizeName is of the format "[size type] [size value]"", i.e. "WxL 32x30"
-          const [sizeType, sizeValue] = sizeName.split(" ")
+        variant.manufacturerSizeNames?.map(async sizeValue => {
           if (!variant.sku) {
             throw new Error("No variant sku present in getManufacturerSizeIDs")
           }
+          const sizeType = type === "Bottom" ? variant.bottomSizeType : "Letter"
           const slug = `${variant.sku}-manufacturer-${sizeType}-${sizeValue}`
           const size = await this.productUtils.deepUpsertSize({
             slug,
             type,
-            display: sizeName,
+            display: sizeValue,
             topSizeData: type === "Top" && {
               letter: (sizeValue as LetterSize) || null,
             },

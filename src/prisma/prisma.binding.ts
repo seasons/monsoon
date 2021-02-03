@@ -12067,7 +12067,7 @@ type Order implements Node {
   customer: Customer!
   sentPackage: Package
   items(where: OrderItemWhereInput, orderBy: OrderItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderItem!]
-  orderNumber: Int!
+  orderNumber: String!
   type: OrderType!
   status: OrderStatus!
   subTotal: Int
@@ -12100,7 +12100,7 @@ type OrderConnection {
 
 input OrderCreateInput {
   id: ID
-  orderNumber: Int!
+  orderNumber: String!
   type: OrderType!
   status: OrderStatus
   subTotal: Int
@@ -13011,7 +13011,7 @@ enum OrderPaymentStatus {
 
 type OrderPreviousValues {
   id: ID!
-  orderNumber: Int!
+  orderNumber: String!
   type: OrderType!
   status: OrderStatus!
   subTotal: Int
@@ -13076,7 +13076,7 @@ enum OrderType {
 }
 
 input OrderUpdateInput {
-  orderNumber: Int
+  orderNumber: String
   type: OrderType
   status: OrderStatus
   subTotal: Int
@@ -13091,7 +13091,7 @@ input OrderUpdateInput {
 }
 
 input OrderUpdateManyMutationInput {
-  orderNumber: Int
+  orderNumber: String
   type: OrderType
   status: OrderStatus
   subTotal: Int
@@ -13151,28 +13151,46 @@ input OrderWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  orderNumber: Int
+  orderNumber: String
 
   """All values that are not equal to given value."""
-  orderNumber_not: Int
+  orderNumber_not: String
 
   """All values that are contained in given list."""
-  orderNumber_in: [Int!]
+  orderNumber_in: [String!]
 
   """All values that are not contained in given list."""
-  orderNumber_not_in: [Int!]
+  orderNumber_not_in: [String!]
 
   """All values less than the given value."""
-  orderNumber_lt: Int
+  orderNumber_lt: String
 
   """All values less than or equal the given value."""
-  orderNumber_lte: Int
+  orderNumber_lte: String
 
   """All values greater than the given value."""
-  orderNumber_gt: Int
+  orderNumber_gt: String
 
   """All values greater than or equal the given value."""
-  orderNumber_gte: Int
+  orderNumber_gte: String
+
+  """All values containing the given string."""
+  orderNumber_contains: String
+
+  """All values not containing the given string."""
+  orderNumber_not_contains: String
+
+  """All values starting with the given string."""
+  orderNumber_starts_with: String
+
+  """All values not starting with the given string."""
+  orderNumber_not_starts_with: String
+
+  """All values ending with the given string."""
+  orderNumber_ends_with: String
+
+  """All values not ending with the given string."""
+  orderNumber_not_ends_with: String
   type: OrderType
 
   """All values that are not equal to given value."""
@@ -13390,7 +13408,7 @@ input OrderWhereInput {
 
 input OrderWhereUniqueInput {
   id: ID
-  orderNumber: Int
+  orderNumber: String
 }
 
 type Package implements Node {
@@ -39447,7 +39465,7 @@ export interface LocationWhereUniqueInput {
 
 export interface OrderCreateInput {
   id?: ID_Input | null
-  orderNumber: Int
+  orderNumber: String
   type: OrderType
   status?: OrderStatus | null
   subTotal?: Int | null
@@ -39814,7 +39832,7 @@ export interface OrderSubscriptionWhereInput {
 }
 
 export interface OrderUpdateInput {
-  orderNumber?: Int | null
+  orderNumber?: String | null
   type?: OrderType | null
   status?: OrderStatus | null
   subTotal?: Int | null
@@ -39829,7 +39847,7 @@ export interface OrderUpdateInput {
 }
 
 export interface OrderUpdateManyMutationInput {
-  orderNumber?: Int | null
+  orderNumber?: String | null
   type?: OrderType | null
   status?: OrderStatus | null
   subTotal?: Int | null
@@ -39858,14 +39876,20 @@ export interface OrderWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
-  orderNumber?: Int | null
-  orderNumber_not?: Int | null
-  orderNumber_in?: Int[] | Int | null
-  orderNumber_not_in?: Int[] | Int | null
-  orderNumber_lt?: Int | null
-  orderNumber_lte?: Int | null
-  orderNumber_gt?: Int | null
-  orderNumber_gte?: Int | null
+  orderNumber?: String | null
+  orderNumber_not?: String | null
+  orderNumber_in?: String[] | String | null
+  orderNumber_not_in?: String[] | String | null
+  orderNumber_lt?: String | null
+  orderNumber_lte?: String | null
+  orderNumber_gt?: String | null
+  orderNumber_gte?: String | null
+  orderNumber_contains?: String | null
+  orderNumber_not_contains?: String | null
+  orderNumber_starts_with?: String | null
+  orderNumber_not_starts_with?: String | null
+  orderNumber_ends_with?: String | null
+  orderNumber_not_ends_with?: String | null
   type?: OrderType | null
   type_not?: OrderType | null
   type_in?: OrderType[] | OrderType | null
@@ -39951,7 +39975,7 @@ export interface OrderWhereInput {
 
 export interface OrderWhereUniqueInput {
   id?: ID_Input | null
-  orderNumber?: Int | null
+  orderNumber?: String | null
 }
 
 export interface PackageCreateInput {
@@ -50505,7 +50529,7 @@ export interface Order extends Node {
   customer: Customer
   sentPackage?: Package | null
   items?: Array<OrderItem> | null
-  orderNumber: Int
+  orderNumber: String
   type: OrderType
   status: OrderStatus
   subTotal?: Int | null
@@ -50595,7 +50619,7 @@ export interface OrderItemSubscriptionPayload {
 
 export interface OrderPreviousValues {
   id: ID_Output
-  orderNumber: Int
+  orderNumber: String
   type: OrderType
   status: OrderStatus
   subTotal?: Int | null

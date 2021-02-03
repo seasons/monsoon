@@ -43,6 +43,15 @@ type Query {
   ): [TopSize]!
 }
 
+input CreateDraftedOrderInput {
+  orderType: OrderType!
+  productVariantId: ID!
+}
+
+input SubmitOrderInput {
+  orderId: ID!
+}
+
 type Mutation {
   addProductVariantWant(variantID: ID!): ProductVariantWant!
     @hasRole(roles: [Customer])
@@ -57,6 +66,9 @@ type Mutation {
     productID: ID!
     inputs: [UpsertVariantInput!]!
   ): [ProductVariant!] @hasRole(roles: [Admin])
+  createDraftedOrder(input: CreateDraftedOrderInput!): Order!
+    @hasRole(roles: [Customer])
+  submitOrder(input: SubmitOrderInput!): Order! @hasRole(roles: [Customer])
 }
 
 type ProductVariantPrice {

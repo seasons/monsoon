@@ -248,13 +248,17 @@ export class ProductVariantFieldsResolver {
             brand {
               externalShopifyIntegration {
                 enabled
+                shopName
+                accessToken
               }
             }
           }
           shopifyProductVariant {
+            id
             cacheExpiresAt
             cachedAvailableForSale
             cachedPrice
+            externalId
           }
         }`,
       },
@@ -267,13 +271,17 @@ export class ProductVariantFieldsResolver {
         brand: {
           externalShopifyIntegration?: Pick<
             ExternalShopifyIntegration,
-            "enabled"
+            "enabled" | "shopName" | "accessToken"
           >
         }
       }
       shopifyProductVariant: Pick<
         ShopifyProductVariant,
-        "cacheExpiresAt" | "cachedAvailableForSale" | "cachedPrice"
+        | "cacheExpiresAt"
+        | "cachedAvailableForSale"
+        | "cachedPrice"
+        | "id"
+        | "externalId"
       >
     }>
   ) {
@@ -309,7 +317,13 @@ export class ProductVariantFieldsResolver {
       } = await (product?.brand?.externalShopifyIntegration?.enabled
         ? Date.parse(shopifyProductVariant?.cacheExpiresAt) > Date.now()
           ? Promise.resolve(shopifyProductVariant)
-          : this.shopify.cacheProductVariant(productVariant.id)
+          : this.shopify.cacheProductVariant({
+              shopifyProductVariantExternalId: shopifyProductVariant.externalId,
+              shopifyProductVariantInternalId: shopifyProductVariant.id,
+              shopName: product?.brand?.externalShopifyIntegration?.shopName,
+              accessToken:
+                product?.brand?.externalShopifyIntegration?.accessToken,
+            })
         : Promise.resolve({ cachedAvailableForSale: false, cachedPrice: null }))
       shopifyCacheData = {
         buyNewAvailableForSale,
