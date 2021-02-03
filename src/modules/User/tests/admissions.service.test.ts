@@ -21,7 +21,6 @@ describe("Admissions Service", () => {
   let expectAdmitWithAllAccessDisabled
 
   beforeAll(async () => {
-    jest.spyOn(SMSService.prototype as any, "setupService").mockImplementation()
     admissions = await createTestAdmissionsService(null)
   })
 

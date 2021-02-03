@@ -22,6 +22,7 @@ import moment from "moment"
 import mustache from "mustache"
 import Twilio from "twilio"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
+import { ServiceContext } from "twilio/lib/rest/verify/v2/service"
 import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
 
 import { SMSID, SMSPayload } from "../sms.types"
@@ -30,8 +31,6 @@ const twilioStatusCallback = process.env.TWILIO_STATUS_CALLBACK
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
 @Injectable()
 export class SMSService {
-  private sid?: string
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly twilio: TwilioService,
@@ -39,27 +38,13 @@ export class SMSService {
     private readonly paymentUtils: PaymentUtilsService,
     private readonly error: ErrorService,
     private readonly email: EmailService
-  ) {
-    this.setupService()
-  }
-
-  private async setupService() {
-    const service = await this.twilio.client.verify.services.create({
-      friendlyName: `Seasons-${process.env.NODE_ENV}`,
-      codeLength: 6,
-    })
-    this.sid = service.sid
-  }
+  ) {}
 
   async startSMSVerification(
     @Args() { phoneNumber }: { phoneNumber: string },
     @Customer() customer,
     @User() user
   ): Promise<boolean> {
-    if (!this.sid) {
-      throw new Error("Twilio service not set up yet. Please try again.")
-    }
-
     let validPhoneNumber: PhoneNumberInstance
     try {
       validPhoneNumber = await this.twilio.client.lookups
@@ -71,7 +56,7 @@ export class SMSService {
     const e164PhoneNumber = validPhoneNumber.phoneNumber
 
     const verification = await this.twilio.client.verify
-      .services(this.sid)
+      .services(process.env.TWILIO_SERVICE_SID)
       .verifications.create({ to: e164PhoneNumber, channel: "sms" })
     await this.prisma.client.updateUser({
       data: {
@@ -106,10 +91,6 @@ export class SMSService {
     @Customer() customer,
     @User() user
   ): Promise<UserVerificationStatus> {
-    if (!this.sid) {
-      throw new Error("Twilio service not set up yet. Please try again.")
-    }
-
     const phoneNumber = await this.prisma.client
       .customer({ id: customer.id })
       .detail()
@@ -121,8 +102,11 @@ export class SMSService {
     let check: VerificationCheckInstance
     try {
       check = await this.twilio.client.verify
-        .services(this.sid)
-        .verificationChecks.create({ to: phoneNumber, code })
+        .services(process.env.TWILIO_SERVICE_SID)
+        .verificationChecks.create({
+          to: phoneNumber,
+          code,
+        })
     } catch (error) {
       if (error.code === 20404) {
         // Most likely, Twilio has deleted the verification SID because it has expired, been approved, or the
