@@ -21,10 +21,17 @@ export class MarketingScheduledJobs {
 
   @Cron(CronExpression.EVERY_5_MINUTES)
   async syncCustomersToDrip() {
-    this.logger.log("Run drip sync")
+    this.logger.log("Run drip customers sync")
     const result = await this.dripSync.syncCustomersDifferential()
-    this.logger.log(`drip sync results: `)
+    this.logger.log(`Drip customers sync results: `)
     this.logger.log(result)
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
+  async syncUnsubscribesFromDrip() {
+    this.logger.log(`Run drip unsubscribe sync`)
+    const count = await this.dripSync.syncUnsubscribesFromDrip()
+    this.logger.log(`Drip Unsubscribe job unsucrbied ${count} users`)
   }
 
   @Cron(CronExpression.EVERY_10_MINUTES)

@@ -2,6 +2,7 @@ import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
 import { AnalyticsModule } from "../Analytics/analytics.module"
+import { DripModule } from "../Drip/drip.module"
 import { EmailModule } from "../Email/email.module"
 import { ErrorModule } from "../Error/error.module"
 import { PaymentModule } from "../Payment/payment.module"
@@ -32,6 +33,7 @@ import { CustomerService } from "./services/customer.service"
     SMSModule,
     ErrorModule,
     forwardRef(() => PaymentModule),
+    DripModule,
   ],
   providers: [
     AuthService,
