@@ -149,13 +149,13 @@ type Mutation {
     where: BrandWhereUniqueInput!
     data: CustomBrandUpdateInput!
   ): Brand @hasRole(roles: [Admin])
-  publishProducts(productIDs: [String!]): PublishProductsResponse!
+  publishProducts(productIDs: [ID!]): PublishProductsResponse!
     @hasRole(roles: [Admin])
   updatePhysicalProductByBarcode(
     barcode: String
     status: PhysicalProductStatus
   ): PhysicalProduct
-  createOrder(data: OrderCreateInput!): Order!
+  createUsedOrder(physicalProductID: ID!): Order!
 }
 
 type PublishProductsResponse {

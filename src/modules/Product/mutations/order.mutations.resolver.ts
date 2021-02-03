@@ -61,7 +61,4 @@ export class OrderMutationsResolver {
 
     return await this.prisma.binding.mutation.createOrder({ data })
   }
-
-  @Mutation()
-  async createOrder(@Args() { data: input }: { data: OrderCreateInput }) {}
 }
