@@ -182,7 +182,8 @@ export class ProductVariantOrderService {
       },
       needShipping
         ? {
-            recordID: shipping?.shipment || "13467" + Math.random() * 100,
+            recordID:
+              shipping?.shipment.substring(0, 24) || "137" + Math.random() * 10,
             recordType: "Package",
             price: parseFloat(shipping?.amount || "0.01") * 100,
             currencyCode: "USD",
@@ -485,7 +486,8 @@ export class ProductVariantOrderService {
       return this.prisma.client.createOrder({
         customer: { connect: { id: customer.id } },
         orderNumber: Math.floor(Math.random() * 900000000) + 100000000,
-        type: "Used",
+        // type: "Used",
+        type: "New",
         status: "Drafted",
         subTotal: invoice_estimate.subtotal,
         total: invoice_estimate.total,
