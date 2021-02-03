@@ -19,7 +19,6 @@ export class ProductVariantMutationsResolver {
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
     private readonly productVariantService: ProductVariantService,
-    private readonly productVariantOrderService: ProductVariantOrderService,
     private readonly physicalProductUtilsService: PhysicalProductUtilsService,
     private readonly shopify: ShopifyService
   ) {}
@@ -67,53 +66,6 @@ export class ProductVariantMutationsResolver {
       create: data,
       update: data,
     })
-  }
-
-  @Mutation()
-  async createDraftedOrder(
-    @Args() { input: { orderType, productVariantId } },
-    @Customer() customer,
-    @User() user,
-    @Info() info
-  ) {
-    if (orderType === "New") {
-      return this.productVariantOrderService.buyNewCreateDraftedOrder({
-        productVariantId,
-        customer,
-      })
-    } else {
-      const draftOrder = await this.productVariantOrderService.buyUsedCreateDraftedOrder(
-        {
-          productVariantId,
-          customer,
-          user,
-          info,
-        }
-      )
-      return draftOrder
-    }
-  }
-
-  @Mutation()
-  async submitOrder(
-    @Args() { input: { orderId } },
-    @Customer() customer,
-    @User() user
-  ) {
-    const order = await this.prisma.client.order({ id: orderId })
-
-    if (order.type === "New") {
-      return this.productVariantOrderService.buyNewSubmitOrder({
-        order,
-        customer,
-      })
-    } else {
-      return this.productVariantOrderService.buyUsedSubmitOrder({
-        order,
-        customer,
-        user,
-      })
-    }
   }
 
   @Mutation()

@@ -1,0 +1,5 @@
+type Mutation {
+  createDraftedOrder(input: CreateDraftedOrderInput!): Order!
+    @hasRole(roles: [Customer])
+  submitOrder(input: SubmitOrderInput!): Order! @hasRole(roles: [Customer])
+}

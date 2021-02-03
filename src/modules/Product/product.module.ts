@@ -75,6 +75,7 @@ export const ProductModuleDef = {
     ProductVariantService,
     PhysicalProductUtilsService,
     PhysicalProductService,
+    ProductVariantOrderService,
   ],
 }
 @Module(ProductModuleDef)

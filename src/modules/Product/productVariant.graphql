@@ -66,9 +66,6 @@ type Mutation {
     productID: ID!
     inputs: [UpsertVariantInput!]!
   ): [ProductVariant!] @hasRole(roles: [Admin])
-  createDraftedOrder(input: CreateDraftedOrderInput!): Order!
-    @hasRole(roles: [Customer])
-  submitOrder(input: SubmitOrderInput!): Order! @hasRole(roles: [Customer])
 }
 
 type ProductVariantPrice {
