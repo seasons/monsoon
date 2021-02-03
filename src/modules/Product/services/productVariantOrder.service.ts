@@ -486,7 +486,7 @@ export class ProductVariantOrderService {
       return await this.prisma.binding.mutation.createOrder({
         data: {
           customer: { connect: { id: customer.id } },
-          orderNumber: Math.floor(Math.random() * 900000000) + 100000000,
+          orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
           type: "Used",
           status: "Drafted",
           subTotal: invoice_estimate.subtotal,
