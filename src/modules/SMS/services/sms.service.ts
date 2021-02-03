@@ -22,6 +22,7 @@ import moment from "moment"
 import mustache from "mustache"
 import Twilio from "twilio"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
+import { ServiceContext } from "twilio/lib/rest/verify/v2/service"
 import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
 
 import { SMSID, SMSPayload } from "../sms.types"
@@ -30,7 +31,7 @@ const twilioStatusCallback = process.env.TWILIO_STATUS_CALLBACK
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
 @Injectable()
 export class SMSService {
-  private sid?: string
+  private verifyService: ServiceContext
 
   constructor(
     private readonly prisma: PrismaService,
@@ -44,11 +45,9 @@ export class SMSService {
   }
 
   private async setupService() {
-    const service = await this.twilio.client.verify.services.create({
-      friendlyName: `Seasons-${process.env.NODE_ENV}`,
-      codeLength: 6,
-    })
-    this.sid = service.sid
+    this.verifyService = await this.twilio.client.verify.services.get(
+      process.env.TWILIO_SERVICE_SID
+    )
   }
 
   async startSMSVerification(
@@ -56,7 +55,7 @@ export class SMSService {
     @Customer() customer,
     @User() user
   ): Promise<boolean> {
-    if (!this.sid) {
+    if (!!this.verifyService) {
       throw new Error("Twilio service not set up yet. Please try again.")
     }
 
@@ -70,9 +69,10 @@ export class SMSService {
     }
     const e164PhoneNumber = validPhoneNumber.phoneNumber
 
-    const verification = await this.twilio.client.verify
-      .services(this.sid)
-      .verifications.create({ to: e164PhoneNumber, channel: "sms" })
+    const verification = await this.verifyService.verifications.create({
+      to: e164PhoneNumber,
+      channel: "sms",
+    })
     await this.prisma.client.updateUser({
       data: {
         verificationStatus: this.twilioUtils.twilioToPrismaVerificationStatus(
@@ -106,7 +106,7 @@ export class SMSService {
     @Customer() customer,
     @User() user
   ): Promise<UserVerificationStatus> {
-    if (!this.sid) {
+    if (!!this.verifyService) {
       throw new Error("Twilio service not set up yet. Please try again.")
     }
 
@@ -120,9 +120,10 @@ export class SMSService {
 
     let check: VerificationCheckInstance
     try {
-      check = await this.twilio.client.verify
-        .services(this.sid)
-        .verificationChecks.create({ to: phoneNumber, code })
+      check = await this.verifyService.verificationChecks.create({
+        to: phoneNumber,
+        code,
+      })
     } catch (error) {
       if (error.code === 20404) {
         // Most likely, Twilio has deleted the verification SID because it has expired, been approved, or the
