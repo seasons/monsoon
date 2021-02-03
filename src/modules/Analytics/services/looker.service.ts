@@ -1,11 +1,50 @@
-import { LookerNodeSDK, NodeSettings } from "@looker/sdk/lib/node"
+import { LookerNodeSDK } from "@looker/sdk/lib/node"
 import { Injectable } from "@nestjs/common"
 
 @Injectable()
 export class LookerService {
-  client = LookerNodeSDK.init31(new NodeSettings())
+  client = LookerNodeSDK.init31()
 
   baseURL() {
     return "https://looker.seasons.nyc"
+  }
+
+  async getGlobalMetricsDashboard() {
+    const dashboard = await this.client.ok(this.client.dashboard("24"))
+
+    const queries = []
+    const elements = dashboard.dashboard_elements
+      .map(element => {
+        if (element.result_maker && element.result_maker.query_id) {
+          queries.push(
+            this.client.run_query({
+              query_id: element.result_maker?.query_id,
+              result_format: "json",
+            })
+          )
+
+          return {
+            id: element.id,
+            title: element.title,
+            view: element.look?.query?.view,
+            result: {},
+          }
+        }
+
+        return false
+      })
+      .filter(Boolean)
+
+    const queryResults = await Promise.all(queries)
+
+    for (let i = 0; i < elements.length; i++) {
+      let element = elements[i]
+
+      if (element) {
+        element.result = queryResults[i]?.value?.[0]
+      }
+    }
+
+    return elements
   }
 }

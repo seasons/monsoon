@@ -2,6 +2,10 @@ type Mutation {
   createEmbedURL(input: CreateEmbedURLInput): String @hasRole(roles: [Admin])
 }
 
+type Query {
+  dashboard(id: ID!): AnalyticsDashboard @hasRole(roles: [Admin])
+}
+
 enum ViewType {
   Dashboard
   Look
@@ -10,4 +14,17 @@ enum ViewType {
 input CreateEmbedURLInput {
   type: ViewType
   index: Int
+}
+
+type AnalyticsDashboardElement {
+  id: ID!
+  title: String
+  view: String
+  result: JSON
+}
+
+type AnalyticsDashboard {
+  id: ID!
+  name: String
+  elements: [AnalyticsDashboardElement!]
 }
