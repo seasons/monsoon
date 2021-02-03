@@ -6,13 +6,13 @@ type Query {
   dashboard(id: ID!): AnalyticsDashboard @hasRole(roles: [Admin])
 }
 
-enum ViewType {
+enum AnalyticsViewType {
   Dashboard
   Look
 }
 
 input CreateEmbedURLInput {
-  type: ViewType
+  type: AnalyticsViewType
   index: Int
 }
 
