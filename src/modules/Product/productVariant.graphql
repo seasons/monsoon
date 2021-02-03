@@ -43,11 +43,6 @@ type Query {
   ): [TopSize]!
 }
 
-enum OrderType {
-  BUY_NEW
-  BUY_USED
-}
-
 input CreateDraftedOrderInput {
   orderType: OrderType!
   productVariantId: ID!

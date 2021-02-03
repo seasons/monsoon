@@ -75,7 +75,7 @@ export class ProductVariantMutationsResolver {
     @Customer() customer,
     @User() user
   ) {
-    if (orderType === "BUY_NEW") {
+    if (orderType === "New") {
       return this.productVariantOrderService.buyNewCreateDraftedOrder({
         productVariantId,
         customer,
