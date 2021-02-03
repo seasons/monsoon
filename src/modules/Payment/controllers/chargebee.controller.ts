@@ -7,6 +7,7 @@ import { Body, Controller, Post } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
 import { head, pick } from "lodash"
+import moment from "moment"
 
 import { PaymentService } from "../services/payment.service"
 
@@ -74,6 +75,13 @@ export class ChargebeeController {
       `
       )
     )
+    let isNewCustomer = false
+    if (!!subscription) {
+      isNewCustomer = this.utils.isSameDay(
+        new Date(subscription.created_at * 1000),
+        new Date()
+      )
+    }
     this.segment.track(customer.id, "Completed Transaction", {
       ...pick(custWithData.user, ["firstName", "lastName", "email"]),
       transactionID: transaction.id,
@@ -87,7 +95,7 @@ export class ChargebeeController {
       impactId: custWithData.detail?.impactId,
       currency: "USD",
       total: transaction.amount,
-      impactCustomerStatus: "Returning",
+      impactCustomerStatus: isNewCustomer ? "New" : "Returning",
       ...this.utils.formatUTMForSegment(custWithData.utm),
     })
   }
