@@ -74,15 +74,16 @@ export class ProductVariantOrderService {
     shippingAddress: Location
     orderItems: OrderItem[]
   }> {
-    const [productVariant, customerQuery] = await Promise.all([
-      this.prisma.binding.query.productVariant(
-        {
-          where: {
-            id: productVariantId,
-          },
+    const productVariant = await this.prisma.binding.query.productVariant(
+      {
+        where: {
+          id: productVariantId,
         },
-        `{
+      },
+      `{
+          id
           physicalProducts {
+            id
             price {
               buyUsedEnabled
               buyUsedPrice
@@ -93,35 +94,40 @@ export class ProductVariantOrderService {
             name
           }
         }`
-      ),
-      this.prisma.binding.query.customer(
-        {
-          where: {
-            id: customer.id,
-          },
+    )
+    const customerQuery = await this.prisma.binding.query.customer(
+      {
+        where: {
+          id: customer.id,
         },
-        `{
-          detail {
-            shippingAddress {
-              name
-              company
-              address1
-              address2
-              city
-              state
-              zipCode
-              country
-            }
+      },
+      `{
+        id
+        user {
+          firstName
+          lastName
+        }
+        detail {
+          id
+          shippingAddress {
+            name
+            company
+            address1
+            address2
+            city
+            state
+            zipCode
+            country
           }
-          bag {
-            status
-            productVariant {
-              id
-            }
+        }
+        bagItems {
+          status
+          productVariant {
+            id
           }
-        }`
-      ),
-    ])
+        }
+      }`
+    )
 
     // FIXME: We're assuming that every physical product has the same price for a variant,
     // so take the first valid result.
@@ -153,7 +159,7 @@ export class ProductVariantOrderService {
     }
 
     // Shipping is included only if user does not already have the product.
-    const bagItems = ((customerQuery as any)?.bag || []) as [
+    const bagItems = ((customerQuery as any)?.bagItems || []) as [
       BagItem & {
         productVariant: { id: string }
       }
@@ -176,11 +182,11 @@ export class ProductVariantOrderService {
       },
       needShipping
         ? {
-            recordId: shipping.shipmentId,
+            recordID: shipping?.shipment || "13467" + Math.random() * 100,
             recordType: "Package",
-            price: parseFloat(shipping.rate.amount) * 100,
+            price: parseFloat(shipping?.amount || "0.01") * 100,
             currencyCode: "USD",
-            needsShipping: false,
+            needShipping: false,
           }
         : null,
     ].filter(Boolean) as OrderItem[]
@@ -195,25 +201,26 @@ export class ProductVariantOrderService {
           first_name: firstName,
           last_name: lastName.join(" "),
           email: user.email,
-          company: shippingAddress.company,
-          line1: shippingAddress.address1,
-          line2: shippingAddress.address2,
-          city: shippingAddress.city,
-          state_code: shippingAddress.state,
-          zip: shippingAddress.zipCode,
-          country: shippingAddress.country || "US",
+          company: shippingAddress?.company,
+          line1: shippingAddress?.address1,
+          line2: shippingAddress?.address2,
+          city: shippingAddress?.city,
+          state_code: shippingAddress?.state,
+          zip: shippingAddress?.zipCode,
+          country: shippingAddress?.country || "US",
         },
-        charges: orderItems.map(orderItem => ({
-          amount: orderItem.price,
+        charges: orderItems?.map(orderItem => ({
+          amount: orderItem?.price,
           taxable: true,
-          ...(orderItem.recordType === "PhysicalProduct"
+          ...(orderItem?.recordType === "PhysicalProduct"
             ? {
                 description: productName,
                 avalara_tax_code: productTaxCode,
               }
-            : orderItem.recordType === "Package"
+            : orderItem?.recordType === "Package"
             ? {
-                description: shipping.rate.servicelevel.name,
+                description:
+                  shipping?.rate?.servicelevel?.name || "The shipping rate",
                 avalara_tax_code: "FR020000",
               }
             : {
@@ -465,31 +472,34 @@ export class ProductVariantOrderService {
       customer,
       user,
     })
+    try {
+      const {
+        estimate: { invoice_estimate },
+      } = await chargebee.estimate
+        .create_invoice({
+          invoice: pick(invoice, ["customer_id"]),
+          ...pick(invoice, ["charges", "shipping_address"]),
+        })
+        .request()
 
-    const {
-      estimate: { invoice_estimate },
-    } = await chargebee.estimate
-      .create_invoice({
-        invoice: pick(invoice, ["customer_id"]),
-        ...pick(invoice, ["charges", "shipping_address"]),
+      return this.prisma.client.createOrder({
+        customer: { connect: { id: customer.id } },
+        orderNumber: Math.floor(Math.random() * 900000000) + 100000000,
+        type: "Used",
+        status: "Drafted",
+        subTotal: invoice_estimate.subtotal,
+        total: invoice_estimate.total,
+        items: {
+          create: orderItems.map((orderItem, idx) => ({
+            ...orderItem,
+            taxRate: invoice_estimate.line_items[idx].tax_rate,
+            taxPrice: invoice_estimate.line_items[idx].tax_amount,
+          })),
+        },
       })
-      .request()
-
-    return this.prisma.client.createOrder({
-      customer: { connect: { id: customer.id } },
-      orderNumber: 123,
-      type: "Used",
-      status: "Drafted",
-      subTotal: invoice_estimate.subtotal,
-      total: invoice_estimate.total,
-      items: {
-        create: orderItems.map((orderItem, idx) => ({
-          ...orderItem,
-          taxRate: invoice_estimate.line_items[idx].tax_rate,
-          taxPrice: invoice_estimate.line_items[idx].tax_amount,
-        })),
-      },
-    })
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   async buyUsedSubmitOrder({
