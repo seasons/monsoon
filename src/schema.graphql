@@ -13,7 +13,7 @@
 # import Query from "./modules/FAQ/faq.graphql"
 # import Query, Mutation from "./modules/PushNotification/pushNotification.graphql"
 # import Query, Mutation from "./modules/SMS/sms.graphql"
-# import Mutation from "./modules/Analytics/analytics.graphql"
+# import Query, Mutation from "./modules/Analytics/analytics.graphql"
 # import Query, Mutation from "./modules/FitPic/fitpic.graphql"
 # import Query from "./modules/View/view.graphql"
 
