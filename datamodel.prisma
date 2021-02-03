@@ -979,7 +979,7 @@ type Order {
   customer: Customer!
   sentPackage: Package
   items: [OrderItem!]!
-  orderNumber: Int! @unique
+  orderNumber: String! @unique
   type: OrderType!
   status: OrderStatus! @default(value: Drafted)
   subTotal: Int
