@@ -41,7 +41,7 @@ jobs:
           name: Create Testing File
           command: bash src/tests/create_testing_env_file.sh
 
-      # Setup docker but don't start (Will be started from other scripts if needed)
+      # Setup docker
       - run:
           name: Build and Create docker containers (Not run yet)
           command: docker-compose build; docker-compose up -d;
