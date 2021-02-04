@@ -161,8 +161,7 @@ export class SearchService {
     const viewCounts = await this.prisma.binding.query.recentlyViewedProducts(
       {},
       `
-    {
-      recentlyViewedProducts {
+      {
         id
         product {
           id
@@ -174,7 +173,6 @@ export class SearchService {
         }
         viewCount
       }
-    }
     `
     )
 

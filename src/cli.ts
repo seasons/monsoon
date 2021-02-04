@@ -11,7 +11,9 @@ dotenv.config()
 import { ScriptsModule } from "./modules/Scripts/scripts.module"
 
 async function setup() {
-  const app = await NestFactory.createApplicationContext(ScriptsModule)
+  const app = await NestFactory.createApplicationContext(ScriptsModule, {
+    logger: false
+  })
 
   const commandService = app.select(CommandModule).get(CommandService)
   commandService.yargs.scriptName("monsoon")

@@ -156,6 +156,7 @@ export class SyncCommands {
       type: "array",
       describe: "The Algolia index to sync data into",
       choices: ["default", "admin", "customer"],
+      default: "default",
       alias: "i",
     })
     indexKeys: string[]
@@ -168,15 +169,16 @@ export class SyncCommands {
     const shouldProceed = readlineSync.keyInYN(
       `You are about index ${
         table === "all" ? "all the tables" : "the " + table
-      } from prisma at url ${process.env.PRISMA_ENDPOINT} to Algolia.\n` +
-        `Proceed? (y/n)`
+      } from prisma at url ${
+        process.env.PRISMA_ENDPOINT
+      } to Algolia indices (${indexKeys.join(", ")}).\n` + `Proceed? (y/n)`
     )
     if (!shouldProceed) {
       console.log("\nExited without running anything\n")
       return
     }
 
-    const indices = indexKeys.map(indexKey => {
+    const indices = (indexKeys || []).map(indexKey => {
       switch (indexKey) {
         case "default":
           return IndexKey.Default
