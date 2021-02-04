@@ -16,10 +16,10 @@ export class SearchService {
   ) {}
 
   async indexData(indices = [IndexKey.Default]) {
-    await this.indexProducts()
-    await this.indexBrands()
-    await this.indexCustomers()
-    await this.indexPhysicalProducts()
+    await this.indexProducts(indices)
+    await this.indexBrands(indices)
+    await this.indexCustomers(indices)
+    await this.indexPhysicalProducts(indices)
   }
 
   async query(query: string): Promise<any[]> {
@@ -227,7 +227,7 @@ export class SearchService {
     return result
   }
 
-  async indexCustomers(indices: [IndexKey] = [IndexKey.Default]) {
+  async indexCustomers(indices = [IndexKey.Default]) {
     const customers = await this.prisma.binding.query.customers(
       {},
       `
