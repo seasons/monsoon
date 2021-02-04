@@ -1,8 +1,7 @@
 import { ImageService } from "@app/modules/Image/services/image.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
-import { pick, rest } from "lodash"
-import moment from "moment"
+import { pick } from "lodash"
 
 import { AlgoliaService } from "./algolia.service"
 
@@ -16,6 +15,9 @@ export class SearchService {
 
   async indexData() {
     await this.indexProducts()
+    await this.indexBrands()
+    await this.indexCustomers()
+    await this.indexPhysicalProducts()
   }
 
   async query(query: string): Promise<any[]> {
@@ -128,18 +130,135 @@ export class SearchService {
   }
 
   async indexBrands() {
-    const brands = this.prisma.binding.query.brands(
+    const brands = await this.prisma.binding.query.brands(
       {},
       `
     {
       id
+      brandCode
       name
+      description
+      designer
+      isPrimaryBrand
+      tier
+      published
+      websiteUrl
       products {
         id
+      }
+      createdAt
+      updatedAt
+    }
+    `
+    )
+
+    const viewCounts = await this.prisma.binding.query.recentlyViewedProducts(
+      {},
+      `
+    {
+      recentlyViewedProducts {
+        id
+        product {
+          id
+          brand {
+            id
+            name
+            brandCode
+          }
+        }
+        viewCount
       }
     }
     `
     )
+
+    const brandsForIndexing = brands.map(
+      ({
+        id,
+        brandCode,
+        name,
+        description,
+        designer,
+        products,
+        isPrimaryBrand,
+        tier,
+        published,
+        websiteUrl,
+        createdAt,
+        updatedAt,
+      }) => {
+        const brandViews = viewCounts.filter(
+          view => view.product?.brand?.id === id
+        )
+
+        const popularity = brandViews.length + (isPrimaryBrand ? 300 : 0)
+
+        return {
+          objectID: id,
+          kindOf: "Brand",
+          name,
+          brandCode,
+          description,
+          designer,
+          isPrimaryBrand,
+          productsCount: products.length,
+          popularity,
+          tier,
+          published,
+          websiteUrl,
+          createdAt,
+          updatedAt,
+        }
+      }
+    )
+
+    return this.algolia.index.saveObjects(brandsForIndexing, {
+      autoGenerateObjectIDIfNotExist: false,
+    })
+  }
+
+  async indexCustomers() {
+    const customers = await this.prisma.binding.query.customers(
+      {},
+      `
+      {
+        id
+        plan
+        status
+        user {
+          id
+          email
+          firstName
+          lastName
+        }
+        bagItems {
+          id
+        }
+        createdAt
+        updatedAt
+      }
+    `
+    )
+
+    const customersForIndexing = customers.map(
+      ({ id, plan, status, user, bagItems, createdAt, updatedAt }) => {
+        return {
+          objectID: id,
+          kindOf: "Customer",
+          plan,
+          status,
+          email: user.email,
+          user,
+          bagItemsCount: bagItems.length,
+          createdAt,
+          updatedAt,
+        }
+      }
+    )
+
+    return this.algolia.index.saveObjects(customersForIndexing, {
+      autoGenerateObjectIDIfNotExist: false,
+    })
   }
 
   async indexPhysicalProducts() {
