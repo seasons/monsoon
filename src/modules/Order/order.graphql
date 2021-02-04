@@ -3,3 +3,22 @@ type Mutation {
     @hasRole(roles: [Customer])
   submitOrder(input: SubmitOrderInput!): Order! @hasRole(roles: [Customer])
 }
+
+union OrderRecord = PhysicalProduct | ProductVariant
+
+type OrderItem {
+  id: ID!
+  recordID: ID!
+  recordType: OrderItemRecordType!
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int!
+  currencyCode: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  # Computed fields:
+  productVariant: ProductVariant
+}
