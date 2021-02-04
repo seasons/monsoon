@@ -1,19 +1,21 @@
 import { ImageService } from "@app/modules/Image/services/image.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { pick } from "lodash"
 
-import { AlgoliaService } from "./algolia.service"
+import { AlgoliaService, IndexKey } from "./algolia.service"
 
 @Injectable()
 export class SearchService {
+  private readonly logger = new Logger(SearchService.name)
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly algolia: AlgoliaService,
     private readonly image: ImageService
   ) {}
 
-  async indexData() {
+  async indexData(indices = [IndexKey.Default]) {
     await this.indexProducts()
     await this.indexBrands()
     await this.indexCustomers()
@@ -21,11 +23,11 @@ export class SearchService {
   }
 
   async query(query: string): Promise<any[]> {
-    const results = await this.algolia.index.search(query)
+    const results = await this.algolia.defaultIndex.search(query)
     return results.hits
   }
 
-  async indexProducts() {
+  async indexProducts(indices = [IndexKey.Default]) {
     const products = await this.prisma.binding.query.products(
       {},
       `
@@ -68,6 +70,8 @@ export class SearchService {
       }
     `
     )
+
+    this.logger.log(`Re-indexing ${products.length} products...`)
 
     const productsForIndexing = await Promise.all(
       products.map(
@@ -124,12 +128,14 @@ export class SearchService {
       )
     )
 
-    return this.algolia.index.saveObjects(productsForIndexing, {
-      autoGenerateObjectIDIfNotExist: false,
-    })
+    const result = await this.algolia.reindex(productsForIndexing, indices)
+
+    this.logger.log("Done re-indexing products!")
+
+    return result
   }
 
-  async indexBrands() {
+  async indexBrands(indices = [IndexKey.Default]) {
     const brands = await this.prisma.binding.query.brands(
       {},
       `
@@ -172,6 +178,8 @@ export class SearchService {
     `
     )
 
+    this.logger.log(`Re-indexing ${brands.length} brands...`)
+
     const brandsForIndexing = brands.map(
       ({
         id,
@@ -212,12 +220,14 @@ export class SearchService {
       }
     )
 
-    return this.algolia.index.saveObjects(brandsForIndexing, {
-      autoGenerateObjectIDIfNotExist: false,
-    })
+    const result = await this.algolia.reindex(brandsForIndexing, indices)
+
+    this.logger.log("Done re-indexing brands!")
+
+    return result
   }
 
-  async indexCustomers() {
+  async indexCustomers(indices: [IndexKey] = [IndexKey.Default]) {
     const customers = await this.prisma.binding.query.customers(
       {},
       `
@@ -240,6 +250,8 @@ export class SearchService {
     `
     )
 
+    this.logger.log(`Re-indexing ${customers.length} customers...`)
+
     const customersForIndexing = customers.map(
       ({ id, plan, status, user, bagItems, createdAt, updatedAt }) => {
         return {
@@ -256,12 +268,14 @@ export class SearchService {
       }
     )
 
-    return this.algolia.index.saveObjects(customersForIndexing, {
-      autoGenerateObjectIDIfNotExist: false,
-    })
+    const result = await this.algolia.reindex(customersForIndexing, indices)
+
+    this.logger.log("Done re-indexing customers!")
+
+    return result
   }
 
-  async indexPhysicalProducts() {
+  async indexPhysicalProducts(indices = [IndexKey.Default]) {
     const physicalProducts = await this.prisma.binding.query.physicalProducts(
       {},
       `{
@@ -279,6 +293,10 @@ export class SearchService {
     `
     )
 
+    this.logger.log(
+      `Re-indexing ${physicalProducts.length} physical products...`
+    )
+
     const physicalProductsForIndexing = physicalProducts.map(
       ({ id, ...data }) => {
         return {
@@ -291,8 +309,13 @@ export class SearchService {
       }
     )
 
-    return this.algolia.index.saveObjects(physicalProductsForIndexing, {
-      autoGenerateObjectIDIfNotExist: false,
-    })
+    const result = await this.algolia.reindex(
+      physicalProductsForIndexing,
+      indices
+    )
+
+    this.logger.log("Done re-indexing brands!")
+
+    return result
   }
 }
