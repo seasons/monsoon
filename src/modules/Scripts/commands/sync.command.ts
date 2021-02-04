@@ -168,10 +168,10 @@ export class SyncCommands {
 
     const shouldProceed = readlineSync.keyInYN(
       `You are about index ${
-        table === "all" ? "all the tables" : "the " + table
-      } from prisma at url ${
+        table === "all" ? "all tables" : table
+      } from \n- Prisma: ${
         process.env.PRISMA_ENDPOINT
-      } to Algolia indices (${indexKeys.join(", ")}).\n` + `Proceed? (y/n)`
+      }\n- Algolia indices: (${indexKeys.join(", ")}).\n` + `Proceed? (y/n)`
     )
     if (!shouldProceed) {
       console.log("\nExited without running anything\n")
