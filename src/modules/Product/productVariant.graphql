@@ -49,7 +49,7 @@ input CreateDraftedOrderInput {
 }
 
 input SubmitOrderInput {
-  orderId: ID!
+  orderID: ID!
 }
 
 type Mutation {

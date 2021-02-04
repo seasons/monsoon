@@ -105,12 +105,14 @@ export class ProductVariantOrderService {
       `{
         id
         user {
+          id
           firstName
           lastName
         }
         detail {
           id
           shippingAddress {
+            id
             name
             company
             address1
@@ -122,6 +124,7 @@ export class ProductVariantOrderService {
           }
         }
         bagItems {
+          id
           status
           productVariant {
             id
@@ -587,6 +590,7 @@ export class ProductVariantOrderService {
               },
             },
             toAddress: {
+              // FIXME: no id passed in shipping address
               connect: { id: shippingAddress.id },
             },
           },
@@ -596,7 +600,7 @@ export class ProductVariantOrderService {
 
     const orderShippingUpdate = await getOrderShippingUpdate()
 
-    const updatedOrder = this.prisma.client.updateOrder({
+    const updatedOrder = await this.prisma.client.updateOrder({
       where: { id: order.id },
       data: {
         status: "Submitted",

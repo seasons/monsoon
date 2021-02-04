@@ -39,11 +39,11 @@ export class OrderMutationsResolver {
 
   @Mutation()
   async submitOrder(
-    @Args() { input: { orderId } },
+    @Args() { input: { orderID } },
     @Customer() customer,
     @User() user
   ) {
-    const order = await this.prisma.client.order({ id: orderId })
+    const order = await this.prisma.client.order({ id: orderID })
 
     if (order.type === "New") {
       return this.productVariantOrderService.buyNewSubmitOrder({
@@ -57,5 +57,15 @@ export class OrderMutationsResolver {
         user,
       })
     }
+  }
+
+  @Mutation()
+  async updateOrderStatus(@Args() { orderID, status }) {
+    return await this.prisma.client.updateOrder({
+      where: { id: orderID },
+      data: {
+        status,
+      },
+    })
   }
 }
