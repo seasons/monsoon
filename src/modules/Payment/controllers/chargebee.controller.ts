@@ -92,10 +92,14 @@ export class ChargebeeController {
       gateway: transaction.gateway,
       transactionType: transaction.type,
       amount: transaction.amount,
-      impactId: custWithData.detail?.impactId,
       currency: "USD",
       total: transaction.amount,
-      impactCustomerStatus: isNewCustomer ? "New" : "Returning",
+      ...(!isNewCustomer
+        ? {
+            impactId: custWithData.detail?.impactId,
+            impactCustomerStatus: "Returning",
+          }
+        : {}),
       ...this.utils.formatUTMForSegment(custWithData.utm),
     })
   }
