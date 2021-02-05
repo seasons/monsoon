@@ -3,6 +3,7 @@ import { PrismaModule } from "@prisma/prisma.module"
 import { CommandModule } from "nestjs-command"
 
 import { DripModule } from "../Drip/drip.module"
+import { SearchModule } from "../Search/search.module"
 import { UtilsModule } from "../Utils/utils.module"
 import { DataCommands } from "./commands/data.command"
 import { HerokuCommands } from "./commands/heroku.command"
@@ -22,6 +23,7 @@ import { CronModule, PaymentModule, SyncModule, UserModule } from ".."
     UtilsModule,
     PaymentModule,
     CronModule,
+    SearchModule,
   ],
   providers: [
     ScriptsService,

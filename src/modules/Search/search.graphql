@@ -5,12 +5,14 @@ type Query {
 
 input SearchOptions {
   includeTypes: [String]
+  suggestions: Boolean
 }
 
 enum SearchResultType {
   Product
   Brand
   PhysicalProduct
+  Customer
 }
 
 union SearchResultData =
