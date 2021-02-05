@@ -16,10 +16,10 @@ export class SearchService {
   ) {}
 
   async indexData(indices = [IndexKey.Default]) {
-    await this.indexProducts(indices)
-    await this.indexBrands(indices)
-    await this.indexCustomers(indices)
-    await this.indexPhysicalProducts(indices)
+    await this.indexProducts([...indices, IndexKey.Product])
+    await this.indexBrands([...indices, IndexKey.Brand])
+    await this.indexCustomers([...indices, IndexKey.Customer])
+    await this.indexPhysicalProducts([...indices, IndexKey.PhysicalProduct])
   }
 
   async query(query: string): Promise<any[]> {
@@ -71,6 +71,24 @@ export class SearchService {
     `
     )
 
+    const viewCounts = await this.prisma.binding.query.recentlyViewedProducts(
+      {},
+      `
+      {
+        id
+        product {
+          id
+          brand {
+            id
+            name
+            brandCode
+          }
+        }
+        viewCount
+      }
+    `
+    )
+
     this.logger.log(`Re-indexing ${products.length} products...`)
 
     const productsForIndexing = await Promise.all(
@@ -94,6 +112,9 @@ export class SearchService {
           const physicalProductsCount = variants
             .map((variant: any) => variant.physicalProducts.length)
             .reduce((a, b) => a + b, 0)
+          const productViews = viewCounts.filter(
+            view => view.product?.id === id
+          )
 
           const image = images?.[0]
           const imageURL = image?.url
@@ -121,6 +142,7 @@ export class SearchService {
             status,
             categoryName: category.name,
             tags: tags.map(a => a.name),
+            popularity: productViews.length,
             createdAt: new Date(createdAt).getMilliseconds() / 1000,
             publishedAt: new Date(publishedAt).getMilliseconds() / 1000,
           }
@@ -260,6 +282,7 @@ export class SearchService {
           email: user.email,
           user,
           bagItemsCount: bagItems.length,
+          popularity: status === "Active" ? 100 : 0 + bagItems.length * 2,
           createdAt,
           updatedAt,
         }

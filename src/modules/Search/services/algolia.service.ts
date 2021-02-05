@@ -5,8 +5,12 @@ const { ALGOLIA_ACCOUNT_ID, ALGOLIA_KEY } = process.env
 
 export enum IndexKey {
   Default = "default",
-  Admin = "dev_inventory",
-  Customer = "seasons_external",
+  Admin = "admin",
+  Website = "website",
+  Customer = "customer",
+  Product = "product",
+  Brand = "brand",
+  PhysicalProduct = "physical-product",
 }
 
 @Injectable()
@@ -16,9 +20,26 @@ export class AlgoliaService {
   indices: Map<IndexKey, SearchIndex> = new Map()
 
   constructor() {
-    this.defaultIndex = this.client.initIndex(IndexKey.Admin)
+    this.defaultIndex = this.client.initIndex(
+      this.getEnvSpecificIndexName(IndexKey.Admin)
+    )
     this.indices.set(IndexKey.Default, this.defaultIndex)
     this.indices.set(IndexKey.Admin, this.defaultIndex)
+  }
+
+  get environment() {
+    const env = process.env.NODE_ENV
+
+    if (env === "production") {
+      return "production"
+    } else if (env === "staging") {
+      return "staging"
+    }
+    return "dev"
+  }
+
+  getEnvSpecificIndexName(indexName) {
+    return `${indexName}_${this.environment}`
   }
 
   getIndex(indexKey: IndexKey) {
@@ -26,7 +47,9 @@ export class AlgoliaService {
       return this.indices.get(indexKey)
     }
 
-    const newIndex = this.client.initIndex(indexKey)
+    const newIndex = this.client.initIndex(
+      this.getEnvSpecificIndexName(indexKey)
+    )
     this.indices.set(indexKey, newIndex)
 
     return newIndex

@@ -11,8 +11,7 @@ export class SearchScheduledJobs {
   @Cron(CronExpression.EVERY_6_HOURS)
   async indexProducts() {
     this.logger.log("Index products job beginning")
-    await this.search.indexProducts()
-    await this.search.indexPhysicalProducts()
+    await this.search.indexData()
     this.logger.log("Index products job completed")
   }
 }
