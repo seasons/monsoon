@@ -64,6 +64,7 @@ export class ProductVariantFieldsResolver {
             }
             bottom {
               id
+              type
               value
             }
           }
@@ -103,7 +104,22 @@ export class ProductVariantFieldsResolver {
 
     const manufacturerSize = variant?.manufacturerSizes?.[0]
     if (!!manufacturerSize) {
-      return shortToLongName(manufacturerSize?.bottom?.value)
+      if (
+        manufacturerSize?.bottom?.type === "JP" ||
+        manufacturerSize?.bottom?.type === "EU"
+      ) {
+        const sizeConversion = this.utils.parseJSONFile(
+          "src/modules/Product/sizeConversion"
+        )
+        const conversion =
+          sizeConversion.bottoms?.[manufacturerSize.bottom.type][
+            manufacturerSize.bottom.value
+          ]
+
+        return shortToLongName(conversion)
+      } else {
+        return shortToLongName(manufacturerSize?.bottom?.value)
+      }
     } else {
       return shortToLongName(internalSize.bottom?.value)
     }
