@@ -6,7 +6,31 @@ type Mutation {
     @hasRole(roles: [Customer, Admin])
 }
 
-union OrderRecord = PhysicalProduct | ProductVariant
+type Order {
+  id: ID!
+  customer: Customer!
+  sentPackage: Package
+  items(
+    where: OrderItemWhereInput
+    orderBy: OrderItemOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [OrderItem!]
+  orderNumber: String!
+  type: OrderType!
+  status: OrderStatus!
+  subTotal: Int
+  total: Int
+  cancelReason: OrderCancelReason
+  couponID: String
+  paymentStatus: OrderPaymentStatus!
+  note: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
 
 type OrderItem {
   id: ID!
@@ -21,6 +45,5 @@ type OrderItem {
   currencyCode: String!
   createdAt: DateTime!
   updatedAt: DateTime!
-  # Computed fields:
   productVariant: ProductVariant
 }
