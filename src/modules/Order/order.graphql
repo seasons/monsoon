@@ -30,6 +30,8 @@ type Order {
   note: String
   createdAt: DateTime!
   updatedAt: DateTime!
+  # Computed fields
+  salesTaxTotal: Int!
 }
 
 type OrderItem {
@@ -45,5 +47,6 @@ type OrderItem {
   currencyCode: String!
   createdAt: DateTime!
   updatedAt: DateTime!
+  # Computed fields
   productVariant: ProductVariant
 }
