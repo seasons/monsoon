@@ -620,7 +620,6 @@ export class OrderService {
       },
     })
 
-    // TODO: send confirmation email
     await this.email.sendBuyUsedOrderConfirmationEmail(user, updatedOrder)
 
     return await this.prisma.binding.query.order(
