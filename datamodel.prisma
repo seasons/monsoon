@@ -929,7 +929,7 @@ enum OrderType {
   External
 }
 
-enum OrderItemRecordType {
+enum OrderLineItemRecordType {
   PhysicalProduct
   ProductVariant
   ExternalProduct
@@ -959,10 +959,10 @@ enum OrderPaymentStatus {
   NotPaid
 }
 
-type OrderItem {
+type OrderLineItem {
   id: ID! @id
   recordID: ID!
-  recordType: OrderItemRecordType!
+  recordType: OrderLineItemRecordType!
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -978,7 +978,7 @@ type Order {
   id: ID! @id
   customer: Customer!
   sentPackage: Package
-  items: [OrderItem!]!
+  lineItems: [OrderLineItem!]!
   orderNumber: String! @unique
   type: OrderType!
   status: OrderStatus! @default(value: Drafted)

@@ -5,7 +5,7 @@ import {
   Customer,
   Location,
   Order,
-  OrderItem,
+  OrderLineItem,
   PhysicalProduct,
   PhysicalProductPrice,
   Product,
@@ -54,7 +54,7 @@ type DraftOrder = {
 }
 
 @Injectable()
-export class ProductVariantOrderService {
+export class OrderService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly shopify: ShopifyService,
@@ -73,7 +73,7 @@ export class ProductVariantOrderService {
   }): Promise<{
     invoice: InvoiceInput
     shippingAddress: Location
-    orderItems: OrderItem[]
+    orderLineItems: OrderLineItem[]
   }> {
     const productVariant = await this.prisma.binding.query.productVariant(
       {
@@ -105,12 +105,14 @@ export class ProductVariantOrderService {
       `{
         id
         user {
+          id
           firstName
           lastName
         }
         detail {
           id
           shippingAddress {
+            id
             name
             company
             address1
@@ -122,6 +124,7 @@ export class ProductVariantOrderService {
           }
         }
         bagItems {
+          id
           status
           productVariant {
             id
@@ -173,7 +176,7 @@ export class ProductVariantOrderService {
       ? this.shipping.getBuyUsedShippingRate(productVariantId, user, customer)
       : Promise.resolve(null))
 
-    const orderItems = [
+    const orderLineItems = [
       {
         recordID: physicalProduct.id,
         recordType: "PhysicalProduct",
@@ -191,11 +194,11 @@ export class ProductVariantOrderService {
             needShipping: false,
           }
         : null,
-    ].filter(Boolean) as OrderItem[]
+    ].filter(Boolean) as OrderLineItem[]
 
     return {
       shippingAddress,
-      orderItems,
+      orderLineItems,
       invoice: {
         customer_id: user.id,
         invoice_note: `Purchase Used ${productName}`,
@@ -211,15 +214,15 @@ export class ProductVariantOrderService {
           zip: shippingAddress?.zipCode,
           country: shippingAddress?.country || "US",
         },
-        charges: orderItems?.map(orderItem => ({
-          amount: orderItem?.price,
+        charges: orderLineItems?.map(orderLineItem => ({
+          amount: orderLineItem?.price,
           taxable: true,
-          ...(orderItem?.recordType === "PhysicalProduct"
+          ...(orderLineItem?.recordType === "PhysicalProduct"
             ? {
                 description: productName,
                 avalara_tax_code: productTaxCode,
               }
-            : orderItem?.recordType === "Package"
+            : orderLineItem?.recordType === "Package"
             ? {
                 description:
                   shipping?.rate?.servicelevel?.name || "The shipping rate",
@@ -370,9 +373,11 @@ export class ProductVariantOrderService {
     order: Order
     customer: Customer
   }): Promise<void> {
-    const orderItems = await this.prisma.client.order({ id: order.id }).items()
-    const productVariantId = orderItems.find(
-      orderItem => orderItem.recordType === "ProductVariant"
+    const orderLineItems = await this.prisma.client
+      .order({ id: order.id })
+      .lineItems()
+    const productVariantId = orderLineItems.find(
+      orderLineItem => orderLineItem.recordType === "ProductVariant"
     ).recordID
 
     const {
@@ -471,7 +476,7 @@ export class ProductVariantOrderService {
     user: User
     info: GraphQLResolveInfo
   }): Promise<Order> {
-    const { invoice, orderItems } = await this.getBuyUsedMetadata({
+    const { invoice, orderLineItems } = await this.getBuyUsedMetadata({
       productVariantId,
       customer,
       user,
@@ -497,9 +502,9 @@ export class ProductVariantOrderService {
             status: "Drafted",
             subTotal: invoice_estimate.subtotal,
             total: invoice_estimate.total,
-            items: {
-              create: orderItems.map((orderItem, idx) => ({
-                ...orderItem,
+            lineItems: {
+              create: orderLineItems.map((orderLineItem, idx) => ({
+                ...orderLineItem,
                 taxRate: invoice_estimate.line_items[idx].tax_rate,
                 taxPrice: invoice_estimate.line_items[idx].tax_amount,
               })),
@@ -522,9 +527,11 @@ export class ProductVariantOrderService {
     customer: Customer
     user: User
   }) {
-    const orderItems = await this.prisma.client.order({ id: order.id }).items()
-    const physicalProductId = orderItems.find(
-      orderItem => orderItem.recordType === "PhysicalProduct"
+    const orderLineItems = await this.prisma.client
+      .order({ id: order.id })
+      .lineItems()
+    const physicalProductId = orderLineItems.find(
+      orderLineItem => orderLineItem.recordType === "PhysicalProduct"
     ).recordID
     const productVariantId = (
       await this.prisma.client
@@ -543,9 +550,10 @@ export class ProductVariantOrderService {
       .request()
 
     const getOrderShippingUpdate = async () => {
-      const physicalProductsNeedShipping = orderItems.filter(
-        orderItem =>
-          orderItem.recordType === "PhysicalProduct" && orderItem.needShipping
+      const physicalProductsNeedShipping = orderLineItems.filter(
+        orderLineItem =>
+          orderLineItem.recordType === "PhysicalProduct" &&
+          orderLineItem.needShipping
       )
 
       if (physicalProductsNeedShipping.length === 0) {
@@ -569,9 +577,12 @@ export class ProductVariantOrderService {
             transactionID: shippoTransaction.object_id,
             weight: shipmentWeight,
             items: {
-              connect: orderItems
-                .filter(orderItem => orderItem.recordType === "PhysicalProduct")
-                .map(orderItem => ({ id: orderItem.recordID })),
+              connect: orderLineItems
+                .filter(
+                  orderLineItem =>
+                    orderLineItem.recordType === "PhysicalProduct"
+                )
+                .map(orderLineItem => ({ id: orderLineItem.recordID })),
             },
             shippingLabel: {
               create: {
@@ -596,7 +607,7 @@ export class ProductVariantOrderService {
 
     const orderShippingUpdate = await getOrderShippingUpdate()
 
-    const updatedOrder = this.prisma.client.updateOrder({
+    const updatedOrder = await this.prisma.client.updateOrder({
       where: { id: order.id },
       data: {
         status: "Submitted",

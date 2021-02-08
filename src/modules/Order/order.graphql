@@ -1,0 +1,52 @@
+type Mutation {
+  createDraftedOrder(input: CreateDraftedOrderInput!): Order!
+    @hasRole(roles: [Customer])
+  submitOrder(input: SubmitOrderInput!): Order! @hasRole(roles: [Customer])
+  updateOrderStatus(orderID: ID!, status: OrderStatus!): Order!
+    @hasRole(roles: [Customer, Admin])
+}
+
+type Order {
+  id: ID!
+  customer: Customer!
+  sentPackage: Package
+  lineItems(
+    where: OrderLineItemWhereInput
+    orderBy: OrderLineItemOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [OrderLineItem!]
+  orderNumber: String!
+  type: OrderType!
+  status: OrderStatus!
+  subTotal: Int
+  total: Int
+  cancelReason: OrderCancelReason
+  couponID: String
+  paymentStatus: OrderPaymentStatus!
+  note: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  # Computed fields
+  salesTaxTotal: Int!
+}
+
+type OrderLineItem {
+  id: ID!
+  recordID: ID!
+  recordType: OrderLineItemRecordType!
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int!
+  currencyCode: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  # Computed fields
+  productVariant: ProductVariant
+}

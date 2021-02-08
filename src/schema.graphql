@@ -16,6 +16,7 @@
 # import Query, Mutation from "./modules/Analytics/analytics.graphql"
 # import Query, Mutation from "./modules/FitPic/fitpic.graphql"
 # import Query from "./modules/View/view.graphql"
+# import Mutation, OrderItem, Order from "./modules/Order/order.graphql"
 
 scalar JSON
 

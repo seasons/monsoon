@@ -339,7 +339,7 @@ type AggregateOrder {
   count: Int!
 }
 
-type AggregateOrderItem {
+type AggregateOrderLineItem {
   count: Int!
 }
 
@@ -6577,12 +6577,12 @@ type Mutation {
   upsertOrder(where: OrderWhereUniqueInput!, create: OrderCreateInput!, update: OrderUpdateInput!): Order!
   deleteOrder(where: OrderWhereUniqueInput!): Order
   deleteManyOrders(where: OrderWhereInput): BatchPayload!
-  createOrderItem(data: OrderItemCreateInput!): OrderItem!
-  updateOrderItem(data: OrderItemUpdateInput!, where: OrderItemWhereUniqueInput!): OrderItem
-  updateManyOrderItems(data: OrderItemUpdateManyMutationInput!, where: OrderItemWhereInput): BatchPayload!
-  upsertOrderItem(where: OrderItemWhereUniqueInput!, create: OrderItemCreateInput!, update: OrderItemUpdateInput!): OrderItem!
-  deleteOrderItem(where: OrderItemWhereUniqueInput!): OrderItem
-  deleteManyOrderItems(where: OrderItemWhereInput): BatchPayload!
+  createOrderLineItem(data: OrderLineItemCreateInput!): OrderLineItem!
+  updateOrderLineItem(data: OrderLineItemUpdateInput!, where: OrderLineItemWhereUniqueInput!): OrderLineItem
+  updateManyOrderLineItems(data: OrderLineItemUpdateManyMutationInput!, where: OrderLineItemWhereInput): BatchPayload!
+  upsertOrderLineItem(where: OrderLineItemWhereUniqueInput!, create: OrderLineItemCreateInput!, update: OrderLineItemUpdateInput!): OrderLineItem!
+  deleteOrderLineItem(where: OrderLineItemWhereUniqueInput!): OrderLineItem
+  deleteManyOrderLineItems(where: OrderLineItemWhereInput): BatchPayload!
   createPackage(data: PackageCreateInput!): Package!
   updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
   updateManyPackages(data: PackageUpdateManyMutationInput!, where: PackageWhereInput): BatchPayload!
@@ -6850,7 +6850,7 @@ type Order {
   id: ID!
   customer: Customer!
   sentPackage: Package
-  items(where: OrderItemWhereInput, orderBy: OrderItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderItem!]
+  lineItems(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem!]
   orderNumber: String!
   type: OrderType!
   status: OrderStatus!
@@ -6882,7 +6882,7 @@ input OrderCreateInput {
   id: ID
   customer: CustomerCreateOneInput!
   sentPackage: PackageCreateOneInput
-  items: OrderItemCreateManyInput
+  lineItems: OrderLineItemCreateManyInput
   orderNumber: String!
   type: OrderType!
   status: OrderStatus
@@ -6899,10 +6899,10 @@ type OrderEdge {
   cursor: String!
 }
 
-type OrderItem {
+type OrderLineItem {
   id: ID!
   recordID: ID!
-  recordType: OrderItemRecordType!
+  recordType: OrderLineItemRecordType!
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -6914,16 +6914,16 @@ type OrderItem {
   updatedAt: DateTime!
 }
 
-type OrderItemConnection {
+type OrderLineItemConnection {
   pageInfo: PageInfo!
-  edges: [OrderItemEdge]!
-  aggregate: AggregateOrderItem!
+  edges: [OrderLineItemEdge]!
+  aggregate: AggregateOrderLineItem!
 }
 
-input OrderItemCreateInput {
+input OrderLineItemCreateInput {
   id: ID
   recordID: ID!
-  recordType: OrderItemRecordType!
+  recordType: OrderLineItemRecordType!
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -6933,17 +6933,17 @@ input OrderItemCreateInput {
   currencyCode: String!
 }
 
-input OrderItemCreateManyInput {
-  create: [OrderItemCreateInput!]
-  connect: [OrderItemWhereUniqueInput!]
+input OrderLineItemCreateManyInput {
+  create: [OrderLineItemCreateInput!]
+  connect: [OrderLineItemWhereUniqueInput!]
 }
 
-type OrderItemEdge {
-  node: OrderItem!
+type OrderLineItemEdge {
+  node: OrderLineItem!
   cursor: String!
 }
 
-enum OrderItemOrderByInput {
+enum OrderLineItemOrderByInput {
   id_ASC
   id_DESC
   recordID_ASC
@@ -6970,10 +6970,10 @@ enum OrderItemOrderByInput {
   updatedAt_DESC
 }
 
-type OrderItemPreviousValues {
+type OrderLineItemPreviousValues {
   id: ID!
   recordID: ID!
-  recordType: OrderItemRecordType!
+  recordType: OrderLineItemRecordType!
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -6985,14 +6985,14 @@ type OrderItemPreviousValues {
   updatedAt: DateTime!
 }
 
-enum OrderItemRecordType {
+enum OrderLineItemRecordType {
   PhysicalProduct
   ProductVariant
   ExternalProduct
   Package
 }
 
-input OrderItemScalarWhereInput {
+input OrderLineItemScalarWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -7021,10 +7021,10 @@ input OrderItemScalarWhereInput {
   recordID_not_starts_with: ID
   recordID_ends_with: ID
   recordID_not_ends_with: ID
-  recordType: OrderItemRecordType
-  recordType_not: OrderItemRecordType
-  recordType_in: [OrderItemRecordType!]
-  recordType_not_in: [OrderItemRecordType!]
+  recordType: OrderLineItemRecordType
+  recordType_not: OrderLineItemRecordType
+  recordType_in: [OrderLineItemRecordType!]
+  recordType_not_in: [OrderLineItemRecordType!]
   needShipping: Boolean
   needShipping_not: Boolean
   taxRate: Float
@@ -7103,32 +7103,32 @@ input OrderItemScalarWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  AND: [OrderItemScalarWhereInput!]
-  OR: [OrderItemScalarWhereInput!]
-  NOT: [OrderItemScalarWhereInput!]
+  AND: [OrderLineItemScalarWhereInput!]
+  OR: [OrderLineItemScalarWhereInput!]
+  NOT: [OrderLineItemScalarWhereInput!]
 }
 
-type OrderItemSubscriptionPayload {
+type OrderLineItemSubscriptionPayload {
   mutation: MutationType!
-  node: OrderItem
+  node: OrderLineItem
   updatedFields: [String!]
-  previousValues: OrderItemPreviousValues
+  previousValues: OrderLineItemPreviousValues
 }
 
-input OrderItemSubscriptionWhereInput {
+input OrderLineItemSubscriptionWhereInput {
   mutation_in: [MutationType!]
   updatedFields_contains: String
   updatedFields_contains_every: [String!]
   updatedFields_contains_some: [String!]
-  node: OrderItemWhereInput
-  AND: [OrderItemSubscriptionWhereInput!]
-  OR: [OrderItemSubscriptionWhereInput!]
-  NOT: [OrderItemSubscriptionWhereInput!]
+  node: OrderLineItemWhereInput
+  AND: [OrderLineItemSubscriptionWhereInput!]
+  OR: [OrderLineItemSubscriptionWhereInput!]
+  NOT: [OrderLineItemSubscriptionWhereInput!]
 }
 
-input OrderItemUpdateDataInput {
+input OrderLineItemUpdateDataInput {
   recordID: ID
-  recordType: OrderItemRecordType
+  recordType: OrderLineItemRecordType
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -7138,9 +7138,9 @@ input OrderItemUpdateDataInput {
   currencyCode: String
 }
 
-input OrderItemUpdateInput {
+input OrderLineItemUpdateInput {
   recordID: ID
-  recordType: OrderItemRecordType
+  recordType: OrderLineItemRecordType
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -7150,9 +7150,9 @@ input OrderItemUpdateInput {
   currencyCode: String
 }
 
-input OrderItemUpdateManyDataInput {
+input OrderLineItemUpdateManyDataInput {
   recordID: ID
-  recordType: OrderItemRecordType
+  recordType: OrderLineItemRecordType
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -7162,21 +7162,21 @@ input OrderItemUpdateManyDataInput {
   currencyCode: String
 }
 
-input OrderItemUpdateManyInput {
-  create: [OrderItemCreateInput!]
-  update: [OrderItemUpdateWithWhereUniqueNestedInput!]
-  upsert: [OrderItemUpsertWithWhereUniqueNestedInput!]
-  delete: [OrderItemWhereUniqueInput!]
-  connect: [OrderItemWhereUniqueInput!]
-  set: [OrderItemWhereUniqueInput!]
-  disconnect: [OrderItemWhereUniqueInput!]
-  deleteMany: [OrderItemScalarWhereInput!]
-  updateMany: [OrderItemUpdateManyWithWhereNestedInput!]
+input OrderLineItemUpdateManyInput {
+  create: [OrderLineItemCreateInput!]
+  update: [OrderLineItemUpdateWithWhereUniqueNestedInput!]
+  upsert: [OrderLineItemUpsertWithWhereUniqueNestedInput!]
+  delete: [OrderLineItemWhereUniqueInput!]
+  connect: [OrderLineItemWhereUniqueInput!]
+  set: [OrderLineItemWhereUniqueInput!]
+  disconnect: [OrderLineItemWhereUniqueInput!]
+  deleteMany: [OrderLineItemScalarWhereInput!]
+  updateMany: [OrderLineItemUpdateManyWithWhereNestedInput!]
 }
 
-input OrderItemUpdateManyMutationInput {
+input OrderLineItemUpdateManyMutationInput {
   recordID: ID
-  recordType: OrderItemRecordType
+  recordType: OrderLineItemRecordType
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -7186,23 +7186,23 @@ input OrderItemUpdateManyMutationInput {
   currencyCode: String
 }
 
-input OrderItemUpdateManyWithWhereNestedInput {
-  where: OrderItemScalarWhereInput!
-  data: OrderItemUpdateManyDataInput!
+input OrderLineItemUpdateManyWithWhereNestedInput {
+  where: OrderLineItemScalarWhereInput!
+  data: OrderLineItemUpdateManyDataInput!
 }
 
-input OrderItemUpdateWithWhereUniqueNestedInput {
-  where: OrderItemWhereUniqueInput!
-  data: OrderItemUpdateDataInput!
+input OrderLineItemUpdateWithWhereUniqueNestedInput {
+  where: OrderLineItemWhereUniqueInput!
+  data: OrderLineItemUpdateDataInput!
 }
 
-input OrderItemUpsertWithWhereUniqueNestedInput {
-  where: OrderItemWhereUniqueInput!
-  update: OrderItemUpdateDataInput!
-  create: OrderItemCreateInput!
+input OrderLineItemUpsertWithWhereUniqueNestedInput {
+  where: OrderLineItemWhereUniqueInput!
+  update: OrderLineItemUpdateDataInput!
+  create: OrderLineItemCreateInput!
 }
 
-input OrderItemWhereInput {
+input OrderLineItemWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -7231,10 +7231,10 @@ input OrderItemWhereInput {
   recordID_not_starts_with: ID
   recordID_ends_with: ID
   recordID_not_ends_with: ID
-  recordType: OrderItemRecordType
-  recordType_not: OrderItemRecordType
-  recordType_in: [OrderItemRecordType!]
-  recordType_not_in: [OrderItemRecordType!]
+  recordType: OrderLineItemRecordType
+  recordType_not: OrderLineItemRecordType
+  recordType_in: [OrderLineItemRecordType!]
+  recordType_not_in: [OrderLineItemRecordType!]
   needShipping: Boolean
   needShipping_not: Boolean
   taxRate: Float
@@ -7313,12 +7313,12 @@ input OrderItemWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  AND: [OrderItemWhereInput!]
-  OR: [OrderItemWhereInput!]
-  NOT: [OrderItemWhereInput!]
+  AND: [OrderLineItemWhereInput!]
+  OR: [OrderLineItemWhereInput!]
+  NOT: [OrderLineItemWhereInput!]
 }
 
-input OrderItemWhereUniqueInput {
+input OrderLineItemWhereUniqueInput {
   id: ID
 }
 
@@ -7406,7 +7406,7 @@ enum OrderType {
 input OrderUpdateInput {
   customer: CustomerUpdateOneRequiredInput
   sentPackage: PackageUpdateOneInput
-  items: OrderItemUpdateManyInput
+  lineItems: OrderLineItemUpdateManyInput
   orderNumber: String
   type: OrderType
   status: OrderStatus
@@ -7447,9 +7447,9 @@ input OrderWhereInput {
   id_not_ends_with: ID
   customer: CustomerWhereInput
   sentPackage: PackageWhereInput
-  items_every: OrderItemWhereInput
-  items_some: OrderItemWhereInput
-  items_none: OrderItemWhereInput
+  lineItems_every: OrderLineItemWhereInput
+  lineItems_some: OrderLineItemWhereInput
+  lineItems_none: OrderLineItemWhereInput
   orderNumber: String
   orderNumber_not: String
   orderNumber_in: [String!]
@@ -14193,9 +14193,9 @@ type Query {
   order(where: OrderWhereUniqueInput!): Order
   orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order]!
   ordersConnection(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderConnection!
-  orderItem(where: OrderItemWhereUniqueInput!): OrderItem
-  orderItems(where: OrderItemWhereInput, orderBy: OrderItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderItem]!
-  orderItemsConnection(where: OrderItemWhereInput, orderBy: OrderItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderItemConnection!
+  orderLineItem(where: OrderLineItemWhereUniqueInput!): OrderLineItem
+  orderLineItems(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem]!
+  orderLineItemsConnection(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderLineItemConnection!
   package(where: PackageWhereUniqueInput!): Package
   packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
   packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
@@ -17073,7 +17073,7 @@ type Subscription {
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
-  orderItem(where: OrderItemSubscriptionWhereInput): OrderItemSubscriptionPayload
+  orderLineItem(where: OrderLineItemSubscriptionWhereInput): OrderLineItemSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   packageTransitEvent(where: PackageTransitEventSubscriptionWhereInput): PackageTransitEventSubscriptionPayload
   pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload

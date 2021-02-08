@@ -44,7 +44,7 @@ export interface Exists {
   label: (where?: LabelWhereInput) => Promise<boolean>;
   location: (where?: LocationWhereInput) => Promise<boolean>;
   order: (where?: OrderWhereInput) => Promise<boolean>;
-  orderItem: (where?: OrderItemWhereInput) => Promise<boolean>;
+  orderLineItem: (where?: OrderLineItemWhereInput) => Promise<boolean>;
   package: (where?: PackageWhereInput) => Promise<boolean>;
   packageTransitEvent: (
     where?: PackageTransitEventWhereInput
@@ -582,25 +582,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => OrderConnectionPromise;
-  orderItem: (where: OrderItemWhereUniqueInput) => OrderItemNullablePromise;
-  orderItems: (args?: {
-    where?: OrderItemWhereInput;
-    orderBy?: OrderItemOrderByInput;
+  orderLineItem: (
+    where: OrderLineItemWhereUniqueInput
+  ) => OrderLineItemNullablePromise;
+  orderLineItems: (args?: {
+    where?: OrderLineItemWhereInput;
+    orderBy?: OrderLineItemOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
-  }) => FragmentableArray<OrderItem>;
-  orderItemsConnection: (args?: {
-    where?: OrderItemWhereInput;
-    orderBy?: OrderItemOrderByInput;
+  }) => FragmentableArray<OrderLineItem>;
+  orderLineItemsConnection: (args?: {
+    where?: OrderLineItemWhereInput;
+    orderBy?: OrderLineItemOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
-  }) => OrderItemConnectionPromise;
+  }) => OrderLineItemConnectionPromise;
   package: (where: PackageWhereUniqueInput) => PackageNullablePromise;
   packages: (args?: {
     where?: PackageWhereInput;
@@ -1869,22 +1871,26 @@ export interface Prisma {
   }) => OrderPromise;
   deleteOrder: (where: OrderWhereUniqueInput) => OrderPromise;
   deleteManyOrders: (where?: OrderWhereInput) => BatchPayloadPromise;
-  createOrderItem: (data: OrderItemCreateInput) => OrderItemPromise;
-  updateOrderItem: (args: {
-    data: OrderItemUpdateInput;
-    where: OrderItemWhereUniqueInput;
-  }) => OrderItemPromise;
-  updateManyOrderItems: (args: {
-    data: OrderItemUpdateManyMutationInput;
-    where?: OrderItemWhereInput;
+  createOrderLineItem: (data: OrderLineItemCreateInput) => OrderLineItemPromise;
+  updateOrderLineItem: (args: {
+    data: OrderLineItemUpdateInput;
+    where: OrderLineItemWhereUniqueInput;
+  }) => OrderLineItemPromise;
+  updateManyOrderLineItems: (args: {
+    data: OrderLineItemUpdateManyMutationInput;
+    where?: OrderLineItemWhereInput;
   }) => BatchPayloadPromise;
-  upsertOrderItem: (args: {
-    where: OrderItemWhereUniqueInput;
-    create: OrderItemCreateInput;
-    update: OrderItemUpdateInput;
-  }) => OrderItemPromise;
-  deleteOrderItem: (where: OrderItemWhereUniqueInput) => OrderItemPromise;
-  deleteManyOrderItems: (where?: OrderItemWhereInput) => BatchPayloadPromise;
+  upsertOrderLineItem: (args: {
+    where: OrderLineItemWhereUniqueInput;
+    create: OrderLineItemCreateInput;
+    update: OrderLineItemUpdateInput;
+  }) => OrderLineItemPromise;
+  deleteOrderLineItem: (
+    where: OrderLineItemWhereUniqueInput
+  ) => OrderLineItemPromise;
+  deleteManyOrderLineItems: (
+    where?: OrderLineItemWhereInput
+  ) => BatchPayloadPromise;
   createPackage: (data: PackageCreateInput) => PackagePromise;
   updatePackage: (args: {
     data: PackageUpdateInput;
@@ -2802,9 +2808,9 @@ export interface Subscription {
   order: (
     where?: OrderSubscriptionWhereInput
   ) => OrderSubscriptionPayloadSubscription;
-  orderItem: (
-    where?: OrderItemSubscriptionWhereInput
-  ) => OrderItemSubscriptionPayloadSubscription;
+  orderLineItem: (
+    where?: OrderLineItemSubscriptionWhereInput
+  ) => OrderLineItemSubscriptionPayloadSubscription;
   package: (
     where?: PackageSubscriptionWhereInput
   ) => PackageSubscriptionPayloadSubscription;
@@ -3852,13 +3858,13 @@ export type LocationOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type OrderItemRecordType =
+export type OrderLineItemRecordType =
   | "PhysicalProduct"
   | "ProductVariant"
   | "ExternalProduct"
   | "Package";
 
-export type OrderItemOrderByInput =
+export type OrderLineItemOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "recordID_ASC"
@@ -8632,7 +8638,7 @@ export type OrderWhereUniqueInput = AtLeastOne<{
   orderNumber?: Maybe<String>;
 }>;
 
-export interface OrderItemWhereInput {
+export interface OrderLineItemWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -8661,10 +8667,12 @@ export interface OrderItemWhereInput {
   recordID_not_starts_with?: Maybe<ID_Input>;
   recordID_ends_with?: Maybe<ID_Input>;
   recordID_not_ends_with?: Maybe<ID_Input>;
-  recordType?: Maybe<OrderItemRecordType>;
-  recordType_not?: Maybe<OrderItemRecordType>;
-  recordType_in?: Maybe<OrderItemRecordType[] | OrderItemRecordType>;
-  recordType_not_in?: Maybe<OrderItemRecordType[] | OrderItemRecordType>;
+  recordType?: Maybe<OrderLineItemRecordType>;
+  recordType_not?: Maybe<OrderLineItemRecordType>;
+  recordType_in?: Maybe<OrderLineItemRecordType[] | OrderLineItemRecordType>;
+  recordType_not_in?: Maybe<
+    OrderLineItemRecordType[] | OrderLineItemRecordType
+  >;
   needShipping?: Maybe<Boolean>;
   needShipping_not?: Maybe<Boolean>;
   taxRate?: Maybe<Float>;
@@ -8743,9 +8751,9 @@ export interface OrderItemWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<OrderItemWhereInput[] | OrderItemWhereInput>;
-  OR?: Maybe<OrderItemWhereInput[] | OrderItemWhereInput>;
-  NOT?: Maybe<OrderItemWhereInput[] | OrderItemWhereInput>;
+  AND?: Maybe<OrderLineItemWhereInput[] | OrderLineItemWhereInput>;
+  OR?: Maybe<OrderLineItemWhereInput[] | OrderLineItemWhereInput>;
+  NOT?: Maybe<OrderLineItemWhereInput[] | OrderLineItemWhereInput>;
 }
 
 export interface OrderWhereInput {
@@ -8765,9 +8773,9 @@ export interface OrderWhereInput {
   id_not_ends_with?: Maybe<ID_Input>;
   customer?: Maybe<CustomerWhereInput>;
   sentPackage?: Maybe<PackageWhereInput>;
-  items_every?: Maybe<OrderItemWhereInput>;
-  items_some?: Maybe<OrderItemWhereInput>;
-  items_none?: Maybe<OrderItemWhereInput>;
+  lineItems_every?: Maybe<OrderLineItemWhereInput>;
+  lineItems_some?: Maybe<OrderLineItemWhereInput>;
+  lineItems_none?: Maybe<OrderLineItemWhereInput>;
   orderNumber?: Maybe<String>;
   orderNumber_not?: Maybe<String>;
   orderNumber_in?: Maybe<String[] | String>;
@@ -8863,7 +8871,7 @@ export interface OrderWhereInput {
   NOT?: Maybe<OrderWhereInput[] | OrderWhereInput>;
 }
 
-export type OrderItemWhereUniqueInput = AtLeastOne<{
+export type OrderLineItemWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
@@ -16788,7 +16796,7 @@ export interface OrderCreateInput {
   id?: Maybe<ID_Input>;
   customer: CustomerCreateOneInput;
   sentPackage?: Maybe<PackageCreateOneInput>;
-  items?: Maybe<OrderItemCreateManyInput>;
+  lineItems?: Maybe<OrderLineItemCreateManyInput>;
   orderNumber: String;
   type: OrderType;
   status?: Maybe<OrderStatus>;
@@ -16805,15 +16813,17 @@ export interface CustomerCreateOneInput {
   connect?: Maybe<CustomerWhereUniqueInput>;
 }
 
-export interface OrderItemCreateManyInput {
-  create?: Maybe<OrderItemCreateInput[] | OrderItemCreateInput>;
-  connect?: Maybe<OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput>;
+export interface OrderLineItemCreateManyInput {
+  create?: Maybe<OrderLineItemCreateInput[] | OrderLineItemCreateInput>;
+  connect?: Maybe<
+    OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput
+  >;
 }
 
-export interface OrderItemCreateInput {
+export interface OrderLineItemCreateInput {
   id?: Maybe<ID_Input>;
   recordID: ID_Input;
-  recordType: OrderItemRecordType;
+  recordType: OrderLineItemRecordType;
   needShipping?: Maybe<Boolean>;
   taxRate?: Maybe<Float>;
   taxName?: Maybe<String>;
@@ -16826,7 +16836,7 @@ export interface OrderItemCreateInput {
 export interface OrderUpdateInput {
   customer?: Maybe<CustomerUpdateOneRequiredInput>;
   sentPackage?: Maybe<PackageUpdateOneInput>;
-  items?: Maybe<OrderItemUpdateManyInput>;
+  lineItems?: Maybe<OrderLineItemUpdateManyInput>;
   orderNumber?: Maybe<String>;
   type?: Maybe<OrderType>;
   status?: Maybe<OrderStatus>;
@@ -16869,35 +16879,43 @@ export interface CustomerUpsertNestedInput {
   create: CustomerCreateInput;
 }
 
-export interface OrderItemUpdateManyInput {
-  create?: Maybe<OrderItemCreateInput[] | OrderItemCreateInput>;
+export interface OrderLineItemUpdateManyInput {
+  create?: Maybe<OrderLineItemCreateInput[] | OrderLineItemCreateInput>;
   update?: Maybe<
-    | OrderItemUpdateWithWhereUniqueNestedInput[]
-    | OrderItemUpdateWithWhereUniqueNestedInput
+    | OrderLineItemUpdateWithWhereUniqueNestedInput[]
+    | OrderLineItemUpdateWithWhereUniqueNestedInput
   >;
   upsert?: Maybe<
-    | OrderItemUpsertWithWhereUniqueNestedInput[]
-    | OrderItemUpsertWithWhereUniqueNestedInput
+    | OrderLineItemUpsertWithWhereUniqueNestedInput[]
+    | OrderLineItemUpsertWithWhereUniqueNestedInput
   >;
-  delete?: Maybe<OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput>;
-  connect?: Maybe<OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput>;
-  set?: Maybe<OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput>;
-  disconnect?: Maybe<OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput>;
-  deleteMany?: Maybe<OrderItemScalarWhereInput[] | OrderItemScalarWhereInput>;
+  delete?: Maybe<
+    OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput
+  >;
+  connect?: Maybe<
+    OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput
+  >;
+  set?: Maybe<OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput>;
+  disconnect?: Maybe<
+    OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput
+  >;
+  deleteMany?: Maybe<
+    OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput
+  >;
   updateMany?: Maybe<
-    | OrderItemUpdateManyWithWhereNestedInput[]
-    | OrderItemUpdateManyWithWhereNestedInput
+    | OrderLineItemUpdateManyWithWhereNestedInput[]
+    | OrderLineItemUpdateManyWithWhereNestedInput
   >;
 }
 
-export interface OrderItemUpdateWithWhereUniqueNestedInput {
-  where: OrderItemWhereUniqueInput;
-  data: OrderItemUpdateDataInput;
+export interface OrderLineItemUpdateWithWhereUniqueNestedInput {
+  where: OrderLineItemWhereUniqueInput;
+  data: OrderLineItemUpdateDataInput;
 }
 
-export interface OrderItemUpdateDataInput {
+export interface OrderLineItemUpdateDataInput {
   recordID?: Maybe<ID_Input>;
-  recordType?: Maybe<OrderItemRecordType>;
+  recordType?: Maybe<OrderLineItemRecordType>;
   needShipping?: Maybe<Boolean>;
   taxRate?: Maybe<Float>;
   taxName?: Maybe<String>;
@@ -16907,13 +16925,13 @@ export interface OrderItemUpdateDataInput {
   currencyCode?: Maybe<String>;
 }
 
-export interface OrderItemUpsertWithWhereUniqueNestedInput {
-  where: OrderItemWhereUniqueInput;
-  update: OrderItemUpdateDataInput;
-  create: OrderItemCreateInput;
+export interface OrderLineItemUpsertWithWhereUniqueNestedInput {
+  where: OrderLineItemWhereUniqueInput;
+  update: OrderLineItemUpdateDataInput;
+  create: OrderLineItemCreateInput;
 }
 
-export interface OrderItemScalarWhereInput {
+export interface OrderLineItemScalarWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -16942,10 +16960,12 @@ export interface OrderItemScalarWhereInput {
   recordID_not_starts_with?: Maybe<ID_Input>;
   recordID_ends_with?: Maybe<ID_Input>;
   recordID_not_ends_with?: Maybe<ID_Input>;
-  recordType?: Maybe<OrderItemRecordType>;
-  recordType_not?: Maybe<OrderItemRecordType>;
-  recordType_in?: Maybe<OrderItemRecordType[] | OrderItemRecordType>;
-  recordType_not_in?: Maybe<OrderItemRecordType[] | OrderItemRecordType>;
+  recordType?: Maybe<OrderLineItemRecordType>;
+  recordType_not?: Maybe<OrderLineItemRecordType>;
+  recordType_in?: Maybe<OrderLineItemRecordType[] | OrderLineItemRecordType>;
+  recordType_not_in?: Maybe<
+    OrderLineItemRecordType[] | OrderLineItemRecordType
+  >;
   needShipping?: Maybe<Boolean>;
   needShipping_not?: Maybe<Boolean>;
   taxRate?: Maybe<Float>;
@@ -17024,19 +17044,19 @@ export interface OrderItemScalarWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<OrderItemScalarWhereInput[] | OrderItemScalarWhereInput>;
-  OR?: Maybe<OrderItemScalarWhereInput[] | OrderItemScalarWhereInput>;
-  NOT?: Maybe<OrderItemScalarWhereInput[] | OrderItemScalarWhereInput>;
+  AND?: Maybe<OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput>;
+  OR?: Maybe<OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput>;
+  NOT?: Maybe<OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput>;
 }
 
-export interface OrderItemUpdateManyWithWhereNestedInput {
-  where: OrderItemScalarWhereInput;
-  data: OrderItemUpdateManyDataInput;
+export interface OrderLineItemUpdateManyWithWhereNestedInput {
+  where: OrderLineItemScalarWhereInput;
+  data: OrderLineItemUpdateManyDataInput;
 }
 
-export interface OrderItemUpdateManyDataInput {
+export interface OrderLineItemUpdateManyDataInput {
   recordID?: Maybe<ID_Input>;
-  recordType?: Maybe<OrderItemRecordType>;
+  recordType?: Maybe<OrderLineItemRecordType>;
   needShipping?: Maybe<Boolean>;
   taxRate?: Maybe<Float>;
   taxName?: Maybe<String>;
@@ -17058,9 +17078,9 @@ export interface OrderUpdateManyMutationInput {
   note?: Maybe<String>;
 }
 
-export interface OrderItemUpdateInput {
+export interface OrderLineItemUpdateInput {
   recordID?: Maybe<ID_Input>;
-  recordType?: Maybe<OrderItemRecordType>;
+  recordType?: Maybe<OrderLineItemRecordType>;
   needShipping?: Maybe<Boolean>;
   taxRate?: Maybe<Float>;
   taxName?: Maybe<String>;
@@ -17070,9 +17090,9 @@ export interface OrderItemUpdateInput {
   currencyCode?: Maybe<String>;
 }
 
-export interface OrderItemUpdateManyMutationInput {
+export interface OrderLineItemUpdateManyMutationInput {
   recordID?: Maybe<ID_Input>;
-  recordType?: Maybe<OrderItemRecordType>;
+  recordType?: Maybe<OrderLineItemRecordType>;
   needShipping?: Maybe<Boolean>;
   taxRate?: Maybe<Float>;
   taxName?: Maybe<String>;
@@ -19505,20 +19525,20 @@ export interface OrderSubscriptionWhereInput {
   NOT?: Maybe<OrderSubscriptionWhereInput[] | OrderSubscriptionWhereInput>;
 }
 
-export interface OrderItemSubscriptionWhereInput {
+export interface OrderLineItemSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
   updatedFields_contains_every?: Maybe<String[] | String>;
   updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<OrderItemWhereInput>;
+  node?: Maybe<OrderLineItemWhereInput>;
   AND?: Maybe<
-    OrderItemSubscriptionWhereInput[] | OrderItemSubscriptionWhereInput
+    OrderLineItemSubscriptionWhereInput[] | OrderLineItemSubscriptionWhereInput
   >;
   OR?: Maybe<
-    OrderItemSubscriptionWhereInput[] | OrderItemSubscriptionWhereInput
+    OrderLineItemSubscriptionWhereInput[] | OrderLineItemSubscriptionWhereInput
   >;
   NOT?: Maybe<
-    OrderItemSubscriptionWhereInput[] | OrderItemSubscriptionWhereInput
+    OrderLineItemSubscriptionWhereInput[] | OrderLineItemSubscriptionWhereInput
   >;
 }
 
@@ -25322,9 +25342,9 @@ export interface OrderPromise extends Promise<Order>, Fragmentable {
   id: () => Promise<ID_Output>;
   customer: <T = CustomerPromise>() => T;
   sentPackage: <T = PackagePromise>() => T;
-  items: <T = FragmentableArray<OrderItem>>(args?: {
-    where?: OrderItemWhereInput;
-    orderBy?: OrderItemOrderByInput;
+  lineItems: <T = FragmentableArray<OrderLineItem>>(args?: {
+    where?: OrderLineItemWhereInput;
+    orderBy?: OrderLineItemOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -25350,9 +25370,9 @@ export interface OrderSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   customer: <T = CustomerSubscription>() => T;
   sentPackage: <T = PackageSubscription>() => T;
-  items: <T = Promise<AsyncIterator<OrderItemSubscription>>>(args?: {
-    where?: OrderItemWhereInput;
-    orderBy?: OrderItemOrderByInput;
+  lineItems: <T = Promise<AsyncIterator<OrderLineItemSubscription>>>(args?: {
+    where?: OrderLineItemWhereInput;
+    orderBy?: OrderLineItemOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -25378,9 +25398,9 @@ export interface OrderNullablePromise
   id: () => Promise<ID_Output>;
   customer: <T = CustomerPromise>() => T;
   sentPackage: <T = PackagePromise>() => T;
-  items: <T = FragmentableArray<OrderItem>>(args?: {
-    where?: OrderItemWhereInput;
-    orderBy?: OrderItemOrderByInput;
+  lineItems: <T = FragmentableArray<OrderLineItem>>(args?: {
+    where?: OrderLineItemWhereInput;
+    orderBy?: OrderLineItemOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -25400,10 +25420,10 @@ export interface OrderNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface OrderItem {
+export interface OrderLineItem {
   id: ID_Output;
   recordID: ID_Output;
-  recordType: OrderItemRecordType;
+  recordType: OrderLineItemRecordType;
   needShipping?: Boolean;
   taxRate?: Float;
   taxName?: String;
@@ -25415,10 +25435,12 @@ export interface OrderItem {
   updatedAt: DateTimeOutput;
 }
 
-export interface OrderItemPromise extends Promise<OrderItem>, Fragmentable {
+export interface OrderLineItemPromise
+  extends Promise<OrderLineItem>,
+    Fragmentable {
   id: () => Promise<ID_Output>;
   recordID: () => Promise<ID_Output>;
-  recordType: () => Promise<OrderItemRecordType>;
+  recordType: () => Promise<OrderLineItemRecordType>;
   needShipping: () => Promise<Boolean>;
   taxRate: () => Promise<Float>;
   taxName: () => Promise<String>;
@@ -25430,12 +25452,12 @@ export interface OrderItemPromise extends Promise<OrderItem>, Fragmentable {
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface OrderItemSubscription
-  extends Promise<AsyncIterator<OrderItem>>,
+export interface OrderLineItemSubscription
+  extends Promise<AsyncIterator<OrderLineItem>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   recordID: () => Promise<AsyncIterator<ID_Output>>;
-  recordType: () => Promise<AsyncIterator<OrderItemRecordType>>;
+  recordType: () => Promise<AsyncIterator<OrderLineItemRecordType>>;
   needShipping: () => Promise<AsyncIterator<Boolean>>;
   taxRate: () => Promise<AsyncIterator<Float>>;
   taxName: () => Promise<AsyncIterator<String>>;
@@ -25447,12 +25469,12 @@ export interface OrderItemSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface OrderItemNullablePromise
-  extends Promise<OrderItem | null>,
+export interface OrderLineItemNullablePromise
+  extends Promise<OrderLineItem | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
   recordID: () => Promise<ID_Output>;
-  recordType: () => Promise<OrderItemRecordType>;
+  recordType: () => Promise<OrderLineItemRecordType>;
   needShipping: () => Promise<Boolean>;
   taxRate: () => Promise<Float>;
   taxName: () => Promise<String>;
@@ -25518,58 +25540,58 @@ export interface AggregateOrderSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface OrderItemConnection {
+export interface OrderLineItemConnection {
   pageInfo: PageInfo;
-  edges: OrderItemEdge[];
+  edges: OrderLineItemEdge[];
 }
 
-export interface OrderItemConnectionPromise
-  extends Promise<OrderItemConnection>,
+export interface OrderLineItemConnectionPromise
+  extends Promise<OrderLineItemConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<OrderItemEdge>>() => T;
-  aggregate: <T = AggregateOrderItemPromise>() => T;
+  edges: <T = FragmentableArray<OrderLineItemEdge>>() => T;
+  aggregate: <T = AggregateOrderLineItemPromise>() => T;
 }
 
-export interface OrderItemConnectionSubscription
-  extends Promise<AsyncIterator<OrderItemConnection>>,
+export interface OrderLineItemConnectionSubscription
+  extends Promise<AsyncIterator<OrderLineItemConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<OrderItemEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateOrderItemSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<OrderLineItemEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateOrderLineItemSubscription>() => T;
 }
 
-export interface OrderItemEdge {
-  node: OrderItem;
+export interface OrderLineItemEdge {
+  node: OrderLineItem;
   cursor: String;
 }
 
-export interface OrderItemEdgePromise
-  extends Promise<OrderItemEdge>,
+export interface OrderLineItemEdgePromise
+  extends Promise<OrderLineItemEdge>,
     Fragmentable {
-  node: <T = OrderItemPromise>() => T;
+  node: <T = OrderLineItemPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface OrderItemEdgeSubscription
-  extends Promise<AsyncIterator<OrderItemEdge>>,
+export interface OrderLineItemEdgeSubscription
+  extends Promise<AsyncIterator<OrderLineItemEdge>>,
     Fragmentable {
-  node: <T = OrderItemSubscription>() => T;
+  node: <T = OrderLineItemSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateOrderItem {
+export interface AggregateOrderLineItem {
   count: Int;
 }
 
-export interface AggregateOrderItemPromise
-  extends Promise<AggregateOrderItem>,
+export interface AggregateOrderLineItemPromise
+  extends Promise<AggregateOrderLineItem>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateOrderItemSubscription
-  extends Promise<AsyncIterator<AggregateOrderItem>>,
+export interface AggregateOrderLineItemSubscription
+  extends Promise<AsyncIterator<AggregateOrderLineItem>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -29748,35 +29770,35 @@ export interface OrderPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface OrderItemSubscriptionPayload {
+export interface OrderLineItemSubscriptionPayload {
   mutation: MutationType;
-  node: OrderItem;
+  node: OrderLineItem;
   updatedFields: String[];
-  previousValues: OrderItemPreviousValues;
+  previousValues: OrderLineItemPreviousValues;
 }
 
-export interface OrderItemSubscriptionPayloadPromise
-  extends Promise<OrderItemSubscriptionPayload>,
+export interface OrderLineItemSubscriptionPayloadPromise
+  extends Promise<OrderLineItemSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = OrderItemPromise>() => T;
+  node: <T = OrderLineItemPromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = OrderItemPreviousValuesPromise>() => T;
+  previousValues: <T = OrderLineItemPreviousValuesPromise>() => T;
 }
 
-export interface OrderItemSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<OrderItemSubscriptionPayload>>,
+export interface OrderLineItemSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<OrderLineItemSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = OrderItemSubscription>() => T;
+  node: <T = OrderLineItemSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = OrderItemPreviousValuesSubscription>() => T;
+  previousValues: <T = OrderLineItemPreviousValuesSubscription>() => T;
 }
 
-export interface OrderItemPreviousValues {
+export interface OrderLineItemPreviousValues {
   id: ID_Output;
   recordID: ID_Output;
-  recordType: OrderItemRecordType;
+  recordType: OrderLineItemRecordType;
   needShipping?: Boolean;
   taxRate?: Float;
   taxName?: String;
@@ -29788,12 +29810,12 @@ export interface OrderItemPreviousValues {
   updatedAt: DateTimeOutput;
 }
 
-export interface OrderItemPreviousValuesPromise
-  extends Promise<OrderItemPreviousValues>,
+export interface OrderLineItemPreviousValuesPromise
+  extends Promise<OrderLineItemPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
   recordID: () => Promise<ID_Output>;
-  recordType: () => Promise<OrderItemRecordType>;
+  recordType: () => Promise<OrderLineItemRecordType>;
   needShipping: () => Promise<Boolean>;
   taxRate: () => Promise<Float>;
   taxName: () => Promise<String>;
@@ -29805,12 +29827,12 @@ export interface OrderItemPreviousValuesPromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface OrderItemPreviousValuesSubscription
-  extends Promise<AsyncIterator<OrderItemPreviousValues>>,
+export interface OrderLineItemPreviousValuesSubscription
+  extends Promise<AsyncIterator<OrderLineItemPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   recordID: () => Promise<AsyncIterator<ID_Output>>;
-  recordType: () => Promise<AsyncIterator<OrderItemRecordType>>;
+  recordType: () => Promise<AsyncIterator<OrderLineItemRecordType>>;
   needShipping: () => Promise<AsyncIterator<Boolean>>;
   taxRate: () => Promise<AsyncIterator<Float>>;
   taxName: () => Promise<AsyncIterator<String>>;
@@ -32601,7 +32623,7 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "OrderItemRecordType",
+    name: "OrderLineItemRecordType",
     embedded: false
   },
   {
@@ -32617,7 +32639,7 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "OrderItem",
+    name: "OrderLineItem",
     embedded: false
   },
   {
