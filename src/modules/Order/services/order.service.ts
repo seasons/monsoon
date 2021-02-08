@@ -598,7 +598,6 @@ export class OrderService {
               },
             },
             toAddress: {
-              // FIXME: no id passed in shipping address
               connect: { id: shippingAddress.id },
             },
           },
