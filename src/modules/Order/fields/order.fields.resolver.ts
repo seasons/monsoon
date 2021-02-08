@@ -9,7 +9,7 @@ export class OrderFieldsResolver {
   async salesTaxTotal(@Parent() order) {
     const calculateSalesTax = (price, taxRate) => (taxRate / 100) * price
     let total = 0
-    order?.items.map(item => {
+    order?.items?.map(item => {
       const itemTax = calculateSalesTax(item.price, item.taxPercentage)
       total = total + itemTax
     })

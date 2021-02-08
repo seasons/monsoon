@@ -54,7 +54,7 @@ type DraftOrder = {
 }
 
 @Injectable()
-export class ProductVariantOrderService {
+export class OrderService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly shopify: ShopifyService,
@@ -375,7 +375,7 @@ export class ProductVariantOrderService {
   }): Promise<void> {
     const orderLineItems = await this.prisma.client
       .order({ id: order.id })
-      .items()
+      .lineItems()
     const productVariantId = orderLineItems.find(
       orderLineItem => orderLineItem.recordType === "ProductVariant"
     ).recordID
@@ -502,7 +502,7 @@ export class ProductVariantOrderService {
             status: "Drafted",
             subTotal: invoice_estimate.subtotal,
             total: invoice_estimate.total,
-            items: {
+            lineItems: {
               create: orderLineItems.map((orderLineItem, idx) => ({
                 ...orderLineItem,
                 taxRate: invoice_estimate.line_items[idx].tax_rate,
@@ -529,7 +529,7 @@ export class ProductVariantOrderService {
   }) {
     const orderLineItems = await this.prisma.client
       .order({ id: order.id })
-      .items()
+      .lineItems()
     const physicalProductId = orderLineItems.find(
       orderLineItem => orderLineItem.recordType === "PhysicalProduct"
     ).recordID

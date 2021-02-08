@@ -10,7 +10,7 @@ type Order {
   id: ID!
   customer: Customer!
   sentPackage: Package
-  items(
+  lineItems(
     where: OrderLineItemWhereInput
     orderBy: OrderLineItemOrderByInput
     skip: Int

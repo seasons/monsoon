@@ -6850,7 +6850,7 @@ type Order {
   id: ID!
   customer: Customer!
   sentPackage: Package
-  items(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem!]
+  lineItems(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem!]
   orderNumber: String!
   type: OrderType!
   status: OrderStatus!
@@ -6882,7 +6882,7 @@ input OrderCreateInput {
   id: ID
   customer: CustomerCreateOneInput!
   sentPackage: PackageCreateOneInput
-  items: OrderLineItemCreateManyInput
+  lineItems: OrderLineItemCreateManyInput
   orderNumber: String!
   type: OrderType!
   status: OrderStatus
@@ -7406,7 +7406,7 @@ enum OrderType {
 input OrderUpdateInput {
   customer: CustomerUpdateOneRequiredInput
   sentPackage: PackageUpdateOneInput
-  items: OrderLineItemUpdateManyInput
+  lineItems: OrderLineItemUpdateManyInput
   orderNumber: String
   type: OrderType
   status: OrderStatus
@@ -7447,9 +7447,9 @@ input OrderWhereInput {
   id_not_ends_with: ID
   customer: CustomerWhereInput
   sentPackage: PackageWhereInput
-  items_every: OrderLineItemWhereInput
-  items_some: OrderLineItemWhereInput
-  items_none: OrderLineItemWhereInput
+  lineItems_every: OrderLineItemWhereInput
+  lineItems_some: OrderLineItemWhereInput
+  lineItems_none: OrderLineItemWhereInput
   orderNumber: String
   orderNumber_not: String
   orderNumber_in: [String!]

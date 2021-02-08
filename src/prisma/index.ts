@@ -8773,9 +8773,9 @@ export interface OrderWhereInput {
   id_not_ends_with?: Maybe<ID_Input>;
   customer?: Maybe<CustomerWhereInput>;
   sentPackage?: Maybe<PackageWhereInput>;
-  items_every?: Maybe<OrderLineItemWhereInput>;
-  items_some?: Maybe<OrderLineItemWhereInput>;
-  items_none?: Maybe<OrderLineItemWhereInput>;
+  lineItems_every?: Maybe<OrderLineItemWhereInput>;
+  lineItems_some?: Maybe<OrderLineItemWhereInput>;
+  lineItems_none?: Maybe<OrderLineItemWhereInput>;
   orderNumber?: Maybe<String>;
   orderNumber_not?: Maybe<String>;
   orderNumber_in?: Maybe<String[] | String>;
@@ -16796,7 +16796,7 @@ export interface OrderCreateInput {
   id?: Maybe<ID_Input>;
   customer: CustomerCreateOneInput;
   sentPackage?: Maybe<PackageCreateOneInput>;
-  items?: Maybe<OrderLineItemCreateManyInput>;
+  lineItems?: Maybe<OrderLineItemCreateManyInput>;
   orderNumber: String;
   type: OrderType;
   status?: Maybe<OrderStatus>;
@@ -16836,7 +16836,7 @@ export interface OrderLineItemCreateInput {
 export interface OrderUpdateInput {
   customer?: Maybe<CustomerUpdateOneRequiredInput>;
   sentPackage?: Maybe<PackageUpdateOneInput>;
-  items?: Maybe<OrderLineItemUpdateManyInput>;
+  lineItems?: Maybe<OrderLineItemUpdateManyInput>;
   orderNumber?: Maybe<String>;
   type?: Maybe<OrderType>;
   status?: Maybe<OrderStatus>;
@@ -25342,7 +25342,7 @@ export interface OrderPromise extends Promise<Order>, Fragmentable {
   id: () => Promise<ID_Output>;
   customer: <T = CustomerPromise>() => T;
   sentPackage: <T = PackagePromise>() => T;
-  items: <T = FragmentableArray<OrderLineItem>>(args?: {
+  lineItems: <T = FragmentableArray<OrderLineItem>>(args?: {
     where?: OrderLineItemWhereInput;
     orderBy?: OrderLineItemOrderByInput;
     skip?: Int;
@@ -25370,7 +25370,7 @@ export interface OrderSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   customer: <T = CustomerSubscription>() => T;
   sentPackage: <T = PackageSubscription>() => T;
-  items: <T = Promise<AsyncIterator<OrderLineItemSubscription>>>(args?: {
+  lineItems: <T = Promise<AsyncIterator<OrderLineItemSubscription>>>(args?: {
     where?: OrderLineItemWhereInput;
     orderBy?: OrderLineItemOrderByInput;
     skip?: Int;
@@ -25398,7 +25398,7 @@ export interface OrderNullablePromise
   id: () => Promise<ID_Output>;
   customer: <T = CustomerPromise>() => T;
   sentPackage: <T = PackagePromise>() => T;
-  items: <T = FragmentableArray<OrderLineItem>>(args?: {
+  lineItems: <T = FragmentableArray<OrderLineItem>>(args?: {
     where?: OrderLineItemWhereInput;
     orderBy?: OrderLineItemOrderByInput;
     skip?: Int;

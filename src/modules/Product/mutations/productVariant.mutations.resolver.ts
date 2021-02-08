@@ -1,5 +1,4 @@
 import { Customer, User } from "@app/decorators"
-import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import {
   Product as PrismaBindingProduct,
@@ -11,7 +10,6 @@ import { head } from "lodash"
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
 import { ProductService } from "../services/product.service"
 import { ProductVariantService } from "../services/productVariant.service"
-import { ProductVariantOrderService } from "../services/productVariantOrder.service"
 
 @Resolver("ProductVariant")
 export class ProductVariantMutationsResolver {
@@ -19,8 +17,7 @@ export class ProductVariantMutationsResolver {
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
     private readonly productVariantService: ProductVariantService,
-    private readonly physicalProductUtilsService: PhysicalProductUtilsService,
-    private readonly shopify: ShopifyService
+    private readonly physicalProductUtilsService: PhysicalProductUtilsService
   ) {}
 
   @Mutation()

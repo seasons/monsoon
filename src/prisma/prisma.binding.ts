@@ -12066,7 +12066,7 @@ type Order implements Node {
   id: ID!
   customer: Customer!
   sentPackage: Package
-  items(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem!]
+  lineItems(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem!]
   orderNumber: String!
   type: OrderType!
   status: OrderStatus!
@@ -12111,7 +12111,7 @@ input OrderCreateInput {
   note: String
   customer: CustomerCreateOneInput!
   sentPackage: PackageCreateOneInput
-  items: OrderLineItemCreateManyInput
+  lineItems: OrderLineItemCreateManyInput
 }
 
 """An edge in a connection."""
@@ -13087,7 +13087,7 @@ input OrderUpdateInput {
   note: String
   customer: CustomerUpdateOneRequiredInput
   sentPackage: PackageUpdateOneInput
-  items: OrderLineItemUpdateManyInput
+  lineItems: OrderLineItemUpdateManyInput
 }
 
 input OrderUpdateManyMutationInput {
@@ -13401,9 +13401,9 @@ input OrderWhereInput {
   updatedAt_gte: DateTime
   customer: CustomerWhereInput
   sentPackage: PackageWhereInput
-  items_every: OrderLineItemWhereInput
-  items_some: OrderLineItemWhereInput
-  items_none: OrderLineItemWhereInput
+  lineItems_every: OrderLineItemWhereInput
+  lineItems_some: OrderLineItemWhereInput
+  lineItems_none: OrderLineItemWhereInput
 }
 
 input OrderWhereUniqueInput {
@@ -39476,7 +39476,7 @@ export interface OrderCreateInput {
   note?: String | null
   customer: CustomerCreateOneInput
   sentPackage?: PackageCreateOneInput | null
-  items?: OrderLineItemCreateManyInput | null
+  lineItems?: OrderLineItemCreateManyInput | null
 }
 
 export interface OrderLineItemCreateInput {
@@ -39843,7 +39843,7 @@ export interface OrderUpdateInput {
   note?: String | null
   customer?: CustomerUpdateOneRequiredInput | null
   sentPackage?: PackageUpdateOneInput | null
-  items?: OrderLineItemUpdateManyInput | null
+  lineItems?: OrderLineItemUpdateManyInput | null
 }
 
 export interface OrderUpdateManyMutationInput {
@@ -39968,9 +39968,9 @@ export interface OrderWhereInput {
   updatedAt_gte?: DateTime | null
   customer?: CustomerWhereInput | null
   sentPackage?: PackageWhereInput | null
-  items_every?: OrderLineItemWhereInput | null
-  items_some?: OrderLineItemWhereInput | null
-  items_none?: OrderLineItemWhereInput | null
+  lineItems_every?: OrderLineItemWhereInput | null
+  lineItems_some?: OrderLineItemWhereInput | null
+  lineItems_none?: OrderLineItemWhereInput | null
 }
 
 export interface OrderWhereUniqueInput {
@@ -50528,7 +50528,7 @@ export interface Order extends Node {
   id: ID_Output
   customer: Customer
   sentPackage?: Package | null
-  items?: Array<OrderLineItem> | null
+  lineItems?: Array<OrderLineItem> | null
   orderNumber: String
   type: OrderType
   status: OrderStatus

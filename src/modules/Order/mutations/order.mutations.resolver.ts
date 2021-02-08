@@ -1,15 +1,14 @@
 import { Customer, User } from "@app/decorators"
-import { ProductVariantOrderService } from "@app/modules/Product/services/productVariantOrder.service"
-import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
+
+import { OrderService } from "../services/order.service"
 
 @Resolver("Order")
 export class OrderMutationsResolver {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly productVariantOrderService: ProductVariantOrderService,
-    private readonly shopify: ShopifyService
+    private readonly order: OrderService
   ) {}
 
   @Mutation()
@@ -20,19 +19,17 @@ export class OrderMutationsResolver {
     @Info() info
   ) {
     if (orderType === "New") {
-      return this.productVariantOrderService.buyNewCreateDraftedOrder({
+      return this.order.buyNewCreateDraftedOrder({
         productVariantId,
         customer,
       })
     } else {
-      const draftOrder = await this.productVariantOrderService.buyUsedCreateDraftedOrder(
-        {
-          productVariantId,
-          customer,
-          user,
-          info,
-        }
-      )
+      const draftOrder = await this.order.buyUsedCreateDraftedOrder({
+        productVariantId,
+        customer,
+        user,
+        info,
+      })
       return draftOrder
     }
   }
@@ -46,12 +43,12 @@ export class OrderMutationsResolver {
     const order = await this.prisma.client.order({ id: orderID })
 
     if (order.type === "New") {
-      return this.productVariantOrderService.buyNewSubmitOrder({
+      return this.order.buyNewSubmitOrder({
         order,
         customer,
       })
     } else {
-      return this.productVariantOrderService.buyUsedSubmitOrder({
+      return this.order.buyUsedSubmitOrder({
         order,
         customer,
         user,

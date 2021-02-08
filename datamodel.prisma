@@ -978,7 +978,7 @@ type Order {
   id: ID! @id
   customer: Customer!
   sentPackage: Package
-  items: [OrderLineItem!]!
+  lineItems: [OrderLineItem!]!
   orderNumber: String! @unique
   type: OrderType!
   status: OrderStatus! @default(value: Drafted)
