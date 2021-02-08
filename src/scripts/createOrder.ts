@@ -10,7 +10,7 @@ const run = async () => {
   // Update to the customer you're using
   const customerID = "ckkpofjw100vo097006nyp0sn"
 
-  const orderItem = await ps.client.createOrderItem({
+  const orderItem = await ps.client.createOrderLineItem({
     recordID: physicalProductID,
     recordType: "PhysicalProduct",
     needShipping: false,

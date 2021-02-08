@@ -11,14 +11,14 @@ type Order {
   customer: Customer!
   sentPackage: Package
   items(
-    where: OrderItemWhereInput
-    orderBy: OrderItemOrderByInput
+    where: OrderLineItemWhereInput
+    orderBy: OrderLineItemOrderByInput
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
-  ): [OrderItem!]
+  ): [OrderLineItem!]
   orderNumber: String!
   type: OrderType!
   status: OrderStatus!
@@ -34,10 +34,10 @@ type Order {
   salesTaxTotal: Int!
 }
 
-type OrderItem {
+type OrderLineItem {
   id: ID!
   recordID: ID!
-  recordType: OrderItemRecordType!
+  recordType: OrderLineItemRecordType!
   needShipping: Boolean
   taxRate: Float
   taxName: String

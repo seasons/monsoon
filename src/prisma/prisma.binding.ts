@@ -40,6 +40,7 @@ export interface Query {
     userPushNotificationInterests: <T = Array<UserPushNotificationInterest | null>>(args: { where?: UserPushNotificationInterestWhereInput | null, orderBy?: UserPushNotificationInterestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoes: <T = Array<BillingInfo | null>>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shopifyProductVariants: <T = Array<ShopifyProductVariant | null>>(args: { where?: ShopifyProductVariantWhereInput | null, orderBy?: ShopifyProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    orderLineItems: <T = Array<OrderLineItem | null>>(args: { where?: OrderLineItemWhereInput | null, orderBy?: OrderLineItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItems: <T = Array<ReservationReceiptItem | null>>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     stylePreferenceses: <T = Array<StylePreferences | null>>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizes: <T = Array<Size | null>>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -54,7 +55,6 @@ export interface Query {
     categories: <T = Array<Category | null>>(args: { where?: CategoryWhereInput | null, orderBy?: CategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bottomSizes: <T = Array<BottomSize | null>>(args: { where?: BottomSizeWhereInput | null, orderBy?: BottomSizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     seasons: <T = Array<Season | null>>(args: { where?: SeasonWhereInput | null, orderBy?: SeasonOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    orderItems: <T = Array<OrderItem | null>>(args: { where?: OrderItemWhereInput | null, orderBy?: OrderItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customers: <T = Array<Customer | null>>(args: { where?: CustomerWhereInput | null, orderBy?: CustomerOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     labels: <T = Array<Label | null>>(args: { where?: LabelWhereInput | null, orderBy?: LabelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantPrices: <T = Array<ProductVariantPrice | null>>(args: { where?: ProductVariantPriceWhereInput | null, orderBy?: ProductVariantPriceOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -105,6 +105,7 @@ export interface Query {
     userPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     billingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     shopifyProductVariant: <T = ShopifyProductVariant | null>(args: { where: ShopifyProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    orderLineItem: <T = OrderLineItem | null>(args: { where: OrderLineItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     stylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     size: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -119,7 +120,6 @@ export interface Query {
     category: <T = Category | null>(args: { where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     bottomSize: <T = BottomSize | null>(args: { where: BottomSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     season: <T = Season | null>(args: { where: SeasonWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    orderItem: <T = OrderItem | null>(args: { where: OrderItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customer: <T = Customer | null>(args: { where: CustomerWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     label: <T = Label | null>(args: { where: LabelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productVariantPrice: <T = ProductVariantPrice | null>(args: { where: ProductVariantPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -170,6 +170,7 @@ export interface Query {
     userPushNotificationInterestsConnection: <T = UserPushNotificationInterestConnection>(args: { where?: UserPushNotificationInterestWhereInput | null, orderBy?: UserPushNotificationInterestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoesConnection: <T = BillingInfoConnection>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shopifyProductVariantsConnection: <T = ShopifyProductVariantConnection>(args: { where?: ShopifyProductVariantWhereInput | null, orderBy?: ShopifyProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    orderLineItemsConnection: <T = OrderLineItemConnection>(args: { where?: OrderLineItemWhereInput | null, orderBy?: OrderLineItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItemsConnection: <T = ReservationReceiptItemConnection>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     stylePreferencesesConnection: <T = StylePreferencesConnection>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizesConnection: <T = SizeConnection>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -184,7 +185,6 @@ export interface Query {
     categoriesConnection: <T = CategoryConnection>(args: { where?: CategoryWhereInput | null, orderBy?: CategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bottomSizesConnection: <T = BottomSizeConnection>(args: { where?: BottomSizeWhereInput | null, orderBy?: BottomSizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     seasonsConnection: <T = SeasonConnection>(args: { where?: SeasonWhereInput | null, orderBy?: SeasonOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    orderItemsConnection: <T = OrderItemConnection>(args: { where?: OrderItemWhereInput | null, orderBy?: OrderItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customersConnection: <T = CustomerConnection>(args: { where?: CustomerWhereInput | null, orderBy?: CustomerOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     labelsConnection: <T = LabelConnection>(args: { where?: LabelWhereInput | null, orderBy?: LabelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantPricesConnection: <T = ProductVariantPriceConnection>(args: { where?: ProductVariantPriceWhereInput | null, orderBy?: ProductVariantPriceOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -239,6 +239,7 @@ export interface Mutation {
     createUserPushNotificationInterest: <T = UserPushNotificationInterest>(args: { data: UserPushNotificationInterestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBillingInfo: <T = BillingInfo>(args: { data: BillingInfoCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createShopifyProductVariant: <T = ShopifyProductVariant>(args: { data: ShopifyProductVariantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createOrderLineItem: <T = OrderLineItem>(args: { data: OrderLineItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createReservationReceiptItem: <T = ReservationReceiptItem>(args: { data: ReservationReceiptItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createStylePreferences: <T = StylePreferences>(args: { data: StylePreferencesCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSize: <T = Size>(args: { data: SizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -253,7 +254,6 @@ export interface Mutation {
     createCategory: <T = Category>(args: { data: CategoryCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBottomSize: <T = BottomSize>(args: { data: BottomSizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSeason: <T = Season>(args: { data: SeasonCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createOrderItem: <T = OrderItem>(args: { data: OrderItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomer: <T = Customer>(args: { data: CustomerCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createLabel: <T = Label>(args: { data: LabelCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductVariantPrice: <T = ProductVariantPrice>(args: { data: ProductVariantPriceCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -304,6 +304,7 @@ export interface Mutation {
     updateUserPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { data: UserPushNotificationInterestUpdateInput, where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBillingInfo: <T = BillingInfo | null>(args: { data: BillingInfoUpdateInput, where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateShopifyProductVariant: <T = ShopifyProductVariant | null>(args: { data: ShopifyProductVariantUpdateInput, where: ShopifyProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateOrderLineItem: <T = OrderLineItem | null>(args: { data: OrderLineItemUpdateInput, where: OrderLineItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { data: ReservationReceiptItemUpdateInput, where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateStylePreferences: <T = StylePreferences | null>(args: { data: StylePreferencesUpdateInput, where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSize: <T = Size | null>(args: { data: SizeUpdateInput, where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -318,7 +319,6 @@ export interface Mutation {
     updateCategory: <T = Category | null>(args: { data: CategoryUpdateInput, where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBottomSize: <T = BottomSize | null>(args: { data: BottomSizeUpdateInput, where: BottomSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSeason: <T = Season | null>(args: { data: SeasonUpdateInput, where: SeasonWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateOrderItem: <T = OrderItem | null>(args: { data: OrderItemUpdateInput, where: OrderItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomer: <T = Customer | null>(args: { data: CustomerUpdateInput, where: CustomerWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateLabel: <T = Label | null>(args: { data: LabelUpdateInput, where: LabelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductVariantPrice: <T = ProductVariantPrice | null>(args: { data: ProductVariantPriceUpdateInput, where: ProductVariantPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -369,6 +369,7 @@ export interface Mutation {
     deleteUserPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBillingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteShopifyProductVariant: <T = ShopifyProductVariant | null>(args: { where: ShopifyProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteOrderLineItem: <T = OrderLineItem | null>(args: { where: OrderLineItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteStylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSize: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -383,7 +384,6 @@ export interface Mutation {
     deleteCategory: <T = Category | null>(args: { where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBottomSize: <T = BottomSize | null>(args: { where: BottomSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSeason: <T = Season | null>(args: { where: SeasonWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteOrderItem: <T = OrderItem | null>(args: { where: OrderItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomer: <T = Customer | null>(args: { where: CustomerWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteLabel: <T = Label | null>(args: { where: LabelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductVariantPrice: <T = ProductVariantPrice | null>(args: { where: ProductVariantPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -434,6 +434,7 @@ export interface Mutation {
     upsertUserPushNotificationInterest: <T = UserPushNotificationInterest>(args: { where: UserPushNotificationInterestWhereUniqueInput, create: UserPushNotificationInterestCreateInput, update: UserPushNotificationInterestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBillingInfo: <T = BillingInfo>(args: { where: BillingInfoWhereUniqueInput, create: BillingInfoCreateInput, update: BillingInfoUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertShopifyProductVariant: <T = ShopifyProductVariant>(args: { where: ShopifyProductVariantWhereUniqueInput, create: ShopifyProductVariantCreateInput, update: ShopifyProductVariantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertOrderLineItem: <T = OrderLineItem>(args: { where: OrderLineItemWhereUniqueInput, create: OrderLineItemCreateInput, update: OrderLineItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertReservationReceiptItem: <T = ReservationReceiptItem>(args: { where: ReservationReceiptItemWhereUniqueInput, create: ReservationReceiptItemCreateInput, update: ReservationReceiptItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertStylePreferences: <T = StylePreferences>(args: { where: StylePreferencesWhereUniqueInput, create: StylePreferencesCreateInput, update: StylePreferencesUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSize: <T = Size>(args: { where: SizeWhereUniqueInput, create: SizeCreateInput, update: SizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -448,7 +449,6 @@ export interface Mutation {
     upsertCategory: <T = Category>(args: { where: CategoryWhereUniqueInput, create: CategoryCreateInput, update: CategoryUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBottomSize: <T = BottomSize>(args: { where: BottomSizeWhereUniqueInput, create: BottomSizeCreateInput, update: BottomSizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSeason: <T = Season>(args: { where: SeasonWhereUniqueInput, create: SeasonCreateInput, update: SeasonUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertOrderItem: <T = OrderItem>(args: { where: OrderItemWhereUniqueInput, create: OrderItemCreateInput, update: OrderItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomer: <T = Customer>(args: { where: CustomerWhereUniqueInput, create: CustomerCreateInput, update: CustomerUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertLabel: <T = Label>(args: { where: LabelWhereUniqueInput, create: LabelCreateInput, update: LabelUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductVariantPrice: <T = ProductVariantPrice>(args: { where: ProductVariantPriceWhereUniqueInput, create: ProductVariantPriceCreateInput, update: ProductVariantPriceUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -497,6 +497,7 @@ export interface Mutation {
     updateManyUserPushNotificationInterests: <T = BatchPayload>(args: { data: UserPushNotificationInterestUpdateManyMutationInput, where?: UserPushNotificationInterestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBillingInfoes: <T = BatchPayload>(args: { data: BillingInfoUpdateManyMutationInput, where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyShopifyProductVariants: <T = BatchPayload>(args: { data: ShopifyProductVariantUpdateManyMutationInput, where?: ShopifyProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyOrderLineItems: <T = BatchPayload>(args: { data: OrderLineItemUpdateManyMutationInput, where?: OrderLineItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyReservationReceiptItems: <T = BatchPayload>(args: { data: ReservationReceiptItemUpdateManyMutationInput, where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyStylePreferenceses: <T = BatchPayload>(args: { data: StylePreferencesUpdateManyMutationInput, where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySizes: <T = BatchPayload>(args: { data: SizeUpdateManyMutationInput, where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -511,7 +512,6 @@ export interface Mutation {
     updateManyCategories: <T = BatchPayload>(args: { data: CategoryUpdateManyMutationInput, where?: CategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBottomSizes: <T = BatchPayload>(args: { data: BottomSizeUpdateManyMutationInput, where?: BottomSizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySeasons: <T = BatchPayload>(args: { data: SeasonUpdateManyMutationInput, where?: SeasonWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyOrderItems: <T = BatchPayload>(args: { data: OrderItemUpdateManyMutationInput, where?: OrderItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomers: <T = BatchPayload>(args: { data: CustomerUpdateManyMutationInput, where?: CustomerWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyLabels: <T = BatchPayload>(args: { data: LabelUpdateManyMutationInput, where?: LabelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductVariantPrices: <T = BatchPayload>(args: { data: ProductVariantPriceUpdateManyMutationInput, where?: ProductVariantPriceWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -562,6 +562,7 @@ export interface Mutation {
     deleteManyUserPushNotificationInterests: <T = BatchPayload>(args: { where?: UserPushNotificationInterestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBillingInfoes: <T = BatchPayload>(args: { where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyShopifyProductVariants: <T = BatchPayload>(args: { where?: ShopifyProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyOrderLineItems: <T = BatchPayload>(args: { where?: OrderLineItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyReservationReceiptItems: <T = BatchPayload>(args: { where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyStylePreferenceses: <T = BatchPayload>(args: { where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySizes: <T = BatchPayload>(args: { where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -576,7 +577,6 @@ export interface Mutation {
     deleteManyCategories: <T = BatchPayload>(args: { where?: CategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBottomSizes: <T = BatchPayload>(args: { where?: BottomSizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySeasons: <T = BatchPayload>(args: { where?: SeasonWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyOrderItems: <T = BatchPayload>(args: { where?: OrderItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCustomers: <T = BatchPayload>(args: { where?: CustomerWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyLabels: <T = BatchPayload>(args: { where?: LabelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductVariantPrices: <T = BatchPayload>(args: { where?: ProductVariantPriceWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -630,6 +630,7 @@ export interface Subscription {
     userPushNotificationInterest: <T = UserPushNotificationInterestSubscriptionPayload | null>(args: { where?: UserPushNotificationInterestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     billingInfo: <T = BillingInfoSubscriptionPayload | null>(args: { where?: BillingInfoSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     shopifyProductVariant: <T = ShopifyProductVariantSubscriptionPayload | null>(args: { where?: ShopifyProductVariantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    orderLineItem: <T = OrderLineItemSubscriptionPayload | null>(args: { where?: OrderLineItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     reservationReceiptItem: <T = ReservationReceiptItemSubscriptionPayload | null>(args: { where?: ReservationReceiptItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     stylePreferences: <T = StylePreferencesSubscriptionPayload | null>(args: { where?: StylePreferencesSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     size: <T = SizeSubscriptionPayload | null>(args: { where?: SizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -644,7 +645,6 @@ export interface Subscription {
     category: <T = CategorySubscriptionPayload | null>(args: { where?: CategorySubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     bottomSize: <T = BottomSizeSubscriptionPayload | null>(args: { where?: BottomSizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     season: <T = SeasonSubscriptionPayload | null>(args: { where?: SeasonSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    orderItem: <T = OrderItemSubscriptionPayload | null>(args: { where?: OrderItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customer: <T = CustomerSubscriptionPayload | null>(args: { where?: CustomerSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     label: <T = LabelSubscriptionPayload | null>(args: { where?: LabelSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productVariantPrice: <T = ProductVariantPriceSubscriptionPayload | null>(args: { where?: ProductVariantPriceSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -698,6 +698,7 @@ export interface Exists {
   UserPushNotificationInterest: (where?: UserPushNotificationInterestWhereInput) => Promise<boolean>
   BillingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>
   ShopifyProductVariant: (where?: ShopifyProductVariantWhereInput) => Promise<boolean>
+  OrderLineItem: (where?: OrderLineItemWhereInput) => Promise<boolean>
   ReservationReceiptItem: (where?: ReservationReceiptItemWhereInput) => Promise<boolean>
   StylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>
   Size: (where?: SizeWhereInput) => Promise<boolean>
@@ -712,7 +713,6 @@ export interface Exists {
   Category: (where?: CategoryWhereInput) => Promise<boolean>
   BottomSize: (where?: BottomSizeWhereInput) => Promise<boolean>
   Season: (where?: SeasonWhereInput) => Promise<boolean>
-  OrderItem: (where?: OrderItemWhereInput) => Promise<boolean>
   Customer: (where?: CustomerWhereInput) => Promise<boolean>
   Label: (where?: LabelWhereInput) => Promise<boolean>
   ProductVariantPrice: (where?: ProductVariantPriceWhereInput) => Promise<boolean>
@@ -1265,7 +1265,7 @@ type AggregateOrder {
   count: Int!
 }
 
-type AggregateOrderItem {
+type AggregateOrderLineItem {
   count: Int!
 }
 
@@ -11696,6 +11696,7 @@ type Mutation {
   createUserPushNotificationInterest(data: UserPushNotificationInterestCreateInput!): UserPushNotificationInterest!
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
   createShopifyProductVariant(data: ShopifyProductVariantCreateInput!): ShopifyProductVariant!
+  createOrderLineItem(data: OrderLineItemCreateInput!): OrderLineItem!
   createReservationReceiptItem(data: ReservationReceiptItemCreateInput!): ReservationReceiptItem!
   createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   createSize(data: SizeCreateInput!): Size!
@@ -11710,7 +11711,6 @@ type Mutation {
   createCategory(data: CategoryCreateInput!): Category!
   createBottomSize(data: BottomSizeCreateInput!): BottomSize!
   createSeason(data: SeasonCreateInput!): Season!
-  createOrderItem(data: OrderItemCreateInput!): OrderItem!
   createCustomer(data: CustomerCreateInput!): Customer!
   createLabel(data: LabelCreateInput!): Label!
   createProductVariantPrice(data: ProductVariantPriceCreateInput!): ProductVariantPrice!
@@ -11761,6 +11761,7 @@ type Mutation {
   updateUserPushNotificationInterest(data: UserPushNotificationInterestUpdateInput!, where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
   updateShopifyProductVariant(data: ShopifyProductVariantUpdateInput!, where: ShopifyProductVariantWhereUniqueInput!): ShopifyProductVariant
+  updateOrderLineItem(data: OrderLineItemUpdateInput!, where: OrderLineItemWhereUniqueInput!): OrderLineItem
   updateReservationReceiptItem(data: ReservationReceiptItemUpdateInput!, where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   updateStylePreferences(data: StylePreferencesUpdateInput!, where: StylePreferencesWhereUniqueInput!): StylePreferences
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
@@ -11775,7 +11776,6 @@ type Mutation {
   updateCategory(data: CategoryUpdateInput!, where: CategoryWhereUniqueInput!): Category
   updateBottomSize(data: BottomSizeUpdateInput!, where: BottomSizeWhereUniqueInput!): BottomSize
   updateSeason(data: SeasonUpdateInput!, where: SeasonWhereUniqueInput!): Season
-  updateOrderItem(data: OrderItemUpdateInput!, where: OrderItemWhereUniqueInput!): OrderItem
   updateCustomer(data: CustomerUpdateInput!, where: CustomerWhereUniqueInput!): Customer
   updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
   updateProductVariantPrice(data: ProductVariantPriceUpdateInput!, where: ProductVariantPriceWhereUniqueInput!): ProductVariantPrice
@@ -11826,6 +11826,7 @@ type Mutation {
   deleteUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   deleteShopifyProductVariant(where: ShopifyProductVariantWhereUniqueInput!): ShopifyProductVariant
+  deleteOrderLineItem(where: OrderLineItemWhereUniqueInput!): OrderLineItem
   deleteReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   deleteStylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   deleteSize(where: SizeWhereUniqueInput!): Size
@@ -11840,7 +11841,6 @@ type Mutation {
   deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   deleteSeason(where: SeasonWhereUniqueInput!): Season
-  deleteOrderItem(where: OrderItemWhereUniqueInput!): OrderItem
   deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteLabel(where: LabelWhereUniqueInput!): Label
   deleteProductVariantPrice(where: ProductVariantPriceWhereUniqueInput!): ProductVariantPrice
@@ -11891,6 +11891,7 @@ type Mutation {
   upsertUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!, create: UserPushNotificationInterestCreateInput!, update: UserPushNotificationInterestUpdateInput!): UserPushNotificationInterest!
   upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
   upsertShopifyProductVariant(where: ShopifyProductVariantWhereUniqueInput!, create: ShopifyProductVariantCreateInput!, update: ShopifyProductVariantUpdateInput!): ShopifyProductVariant!
+  upsertOrderLineItem(where: OrderLineItemWhereUniqueInput!, create: OrderLineItemCreateInput!, update: OrderLineItemUpdateInput!): OrderLineItem!
   upsertReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!, create: ReservationReceiptItemCreateInput!, update: ReservationReceiptItemUpdateInput!): ReservationReceiptItem!
   upsertStylePreferences(where: StylePreferencesWhereUniqueInput!, create: StylePreferencesCreateInput!, update: StylePreferencesUpdateInput!): StylePreferences!
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
@@ -11905,7 +11906,6 @@ type Mutation {
   upsertCategory(where: CategoryWhereUniqueInput!, create: CategoryCreateInput!, update: CategoryUpdateInput!): Category!
   upsertBottomSize(where: BottomSizeWhereUniqueInput!, create: BottomSizeCreateInput!, update: BottomSizeUpdateInput!): BottomSize!
   upsertSeason(where: SeasonWhereUniqueInput!, create: SeasonCreateInput!, update: SeasonUpdateInput!): Season!
-  upsertOrderItem(where: OrderItemWhereUniqueInput!, create: OrderItemCreateInput!, update: OrderItemUpdateInput!): OrderItem!
   upsertCustomer(where: CustomerWhereUniqueInput!, create: CustomerCreateInput!, update: CustomerUpdateInput!): Customer!
   upsertLabel(where: LabelWhereUniqueInput!, create: LabelCreateInput!, update: LabelUpdateInput!): Label!
   upsertProductVariantPrice(where: ProductVariantPriceWhereUniqueInput!, create: ProductVariantPriceCreateInput!, update: ProductVariantPriceUpdateInput!): ProductVariantPrice!
@@ -11954,6 +11954,7 @@ type Mutation {
   updateManyUserPushNotificationInterests(data: UserPushNotificationInterestUpdateManyMutationInput!, where: UserPushNotificationInterestWhereInput): BatchPayload!
   updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
   updateManyShopifyProductVariants(data: ShopifyProductVariantUpdateManyMutationInput!, where: ShopifyProductVariantWhereInput): BatchPayload!
+  updateManyOrderLineItems(data: OrderLineItemUpdateManyMutationInput!, where: OrderLineItemWhereInput): BatchPayload!
   updateManyReservationReceiptItems(data: ReservationReceiptItemUpdateManyMutationInput!, where: ReservationReceiptItemWhereInput): BatchPayload!
   updateManyStylePreferenceses(data: StylePreferencesUpdateManyMutationInput!, where: StylePreferencesWhereInput): BatchPayload!
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
@@ -11968,7 +11969,6 @@ type Mutation {
   updateManyCategories(data: CategoryUpdateManyMutationInput!, where: CategoryWhereInput): BatchPayload!
   updateManyBottomSizes(data: BottomSizeUpdateManyMutationInput!, where: BottomSizeWhereInput): BatchPayload!
   updateManySeasons(data: SeasonUpdateManyMutationInput!, where: SeasonWhereInput): BatchPayload!
-  updateManyOrderItems(data: OrderItemUpdateManyMutationInput!, where: OrderItemWhereInput): BatchPayload!
   updateManyCustomers(data: CustomerUpdateManyMutationInput!, where: CustomerWhereInput): BatchPayload!
   updateManyLabels(data: LabelUpdateManyMutationInput!, where: LabelWhereInput): BatchPayload!
   updateManyProductVariantPrices(data: ProductVariantPriceUpdateManyMutationInput!, where: ProductVariantPriceWhereInput): BatchPayload!
@@ -12019,6 +12019,7 @@ type Mutation {
   deleteManyUserPushNotificationInterests(where: UserPushNotificationInterestWhereInput): BatchPayload!
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
   deleteManyShopifyProductVariants(where: ShopifyProductVariantWhereInput): BatchPayload!
+  deleteManyOrderLineItems(where: OrderLineItemWhereInput): BatchPayload!
   deleteManyReservationReceiptItems(where: ReservationReceiptItemWhereInput): BatchPayload!
   deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
   deleteManySizes(where: SizeWhereInput): BatchPayload!
@@ -12033,7 +12034,6 @@ type Mutation {
   deleteManyCategories(where: CategoryWhereInput): BatchPayload!
   deleteManyBottomSizes(where: BottomSizeWhereInput): BatchPayload!
   deleteManySeasons(where: SeasonWhereInput): BatchPayload!
-  deleteManyOrderItems(where: OrderItemWhereInput): BatchPayload!
   deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
   deleteManyLabels(where: LabelWhereInput): BatchPayload!
   deleteManyProductVariantPrices(where: ProductVariantPriceWhereInput): BatchPayload!
@@ -12066,7 +12066,7 @@ type Order implements Node {
   id: ID!
   customer: Customer!
   sentPackage: Package
-  items(where: OrderItemWhereInput, orderBy: OrderItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderItem!]
+  items(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem!]
   orderNumber: String!
   type: OrderType!
   status: OrderStatus!
@@ -12111,7 +12111,7 @@ input OrderCreateInput {
   note: String
   customer: CustomerCreateOneInput!
   sentPackage: PackageCreateOneInput
-  items: OrderItemCreateManyInput
+  items: OrderLineItemCreateManyInput
 }
 
 """An edge in a connection."""
@@ -12123,10 +12123,10 @@ type OrderEdge {
   cursor: String!
 }
 
-type OrderItem implements Node {
+type OrderLineItem implements Node {
   id: ID!
   recordID: ID!
-  recordType: OrderItemRecordType!
+  recordType: OrderLineItemRecordType!
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -12139,19 +12139,19 @@ type OrderItem implements Node {
 }
 
 """A connection to a list of items."""
-type OrderItemConnection {
+type OrderLineItemConnection {
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
   """A list of edges."""
-  edges: [OrderItemEdge]!
-  aggregate: AggregateOrderItem!
+  edges: [OrderLineItemEdge]!
+  aggregate: AggregateOrderLineItem!
 }
 
-input OrderItemCreateInput {
+input OrderLineItemCreateInput {
   id: ID
   recordID: ID!
-  recordType: OrderItemRecordType!
+  recordType: OrderLineItemRecordType!
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -12161,21 +12161,21 @@ input OrderItemCreateInput {
   currencyCode: String!
 }
 
-input OrderItemCreateManyInput {
-  create: [OrderItemCreateInput!]
-  connect: [OrderItemWhereUniqueInput!]
+input OrderLineItemCreateManyInput {
+  create: [OrderLineItemCreateInput!]
+  connect: [OrderLineItemWhereUniqueInput!]
 }
 
 """An edge in a connection."""
-type OrderItemEdge {
+type OrderLineItemEdge {
   """The item at the end of the edge."""
-  node: OrderItem!
+  node: OrderLineItem!
 
   """A cursor for use in pagination."""
   cursor: String!
 }
 
-enum OrderItemOrderByInput {
+enum OrderLineItemOrderByInput {
   id_ASC
   id_DESC
   recordID_ASC
@@ -12202,10 +12202,10 @@ enum OrderItemOrderByInput {
   updatedAt_DESC
 }
 
-type OrderItemPreviousValues {
+type OrderLineItemPreviousValues {
   id: ID!
   recordID: ID!
-  recordType: OrderItemRecordType!
+  recordType: OrderLineItemRecordType!
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -12217,22 +12217,22 @@ type OrderItemPreviousValues {
   updatedAt: DateTime!
 }
 
-enum OrderItemRecordType {
+enum OrderLineItemRecordType {
   PhysicalProduct
   ProductVariant
   ExternalProduct
   Package
 }
 
-input OrderItemScalarWhereInput {
+input OrderLineItemScalarWhereInput {
   """Logical AND on all given filters."""
-  AND: [OrderItemScalarWhereInput!]
+  AND: [OrderLineItemScalarWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [OrderItemScalarWhereInput!]
+  OR: [OrderLineItemScalarWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [OrderItemScalarWhereInput!]
+  NOT: [OrderLineItemScalarWhereInput!]
   id: ID
 
   """All values that are not equal to given value."""
@@ -12313,16 +12313,16 @@ input OrderItemScalarWhereInput {
 
   """All values not ending with the given string."""
   recordID_not_ends_with: ID
-  recordType: OrderItemRecordType
+  recordType: OrderLineItemRecordType
 
   """All values that are not equal to given value."""
-  recordType_not: OrderItemRecordType
+  recordType_not: OrderLineItemRecordType
 
   """All values that are contained in given list."""
-  recordType_in: [OrderItemRecordType!]
+  recordType_in: [OrderLineItemRecordType!]
 
   """All values that are not contained in given list."""
-  recordType_not_in: [OrderItemRecordType!]
+  recordType_not_in: [OrderLineItemRecordType!]
   needShipping: Boolean
 
   """All values that are not equal to given value."""
@@ -12541,22 +12541,22 @@ input OrderItemScalarWhereInput {
   updatedAt_gte: DateTime
 }
 
-type OrderItemSubscriptionPayload {
+type OrderLineItemSubscriptionPayload {
   mutation: MutationType!
-  node: OrderItem
+  node: OrderLineItem
   updatedFields: [String!]
-  previousValues: OrderItemPreviousValues
+  previousValues: OrderLineItemPreviousValues
 }
 
-input OrderItemSubscriptionWhereInput {
+input OrderLineItemSubscriptionWhereInput {
   """Logical AND on all given filters."""
-  AND: [OrderItemSubscriptionWhereInput!]
+  AND: [OrderLineItemSubscriptionWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [OrderItemSubscriptionWhereInput!]
+  OR: [OrderLineItemSubscriptionWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [OrderItemSubscriptionWhereInput!]
+  NOT: [OrderLineItemSubscriptionWhereInput!]
 
   """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
@@ -12575,12 +12575,12 @@ input OrderItemSubscriptionWhereInput {
   The subscription event gets only dispatched when some of the field names included in this list have been updated
   """
   updatedFields_contains_some: [String!]
-  node: OrderItemWhereInput
+  node: OrderLineItemWhereInput
 }
 
-input OrderItemUpdateDataInput {
+input OrderLineItemUpdateDataInput {
   recordID: ID
-  recordType: OrderItemRecordType
+  recordType: OrderLineItemRecordType
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -12590,9 +12590,9 @@ input OrderItemUpdateDataInput {
   currencyCode: String
 }
 
-input OrderItemUpdateInput {
+input OrderLineItemUpdateInput {
   recordID: ID
-  recordType: OrderItemRecordType
+  recordType: OrderLineItemRecordType
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -12602,9 +12602,9 @@ input OrderItemUpdateInput {
   currencyCode: String
 }
 
-input OrderItemUpdateManyDataInput {
+input OrderLineItemUpdateManyDataInput {
   recordID: ID
-  recordType: OrderItemRecordType
+  recordType: OrderLineItemRecordType
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -12614,21 +12614,21 @@ input OrderItemUpdateManyDataInput {
   currencyCode: String
 }
 
-input OrderItemUpdateManyInput {
-  create: [OrderItemCreateInput!]
-  connect: [OrderItemWhereUniqueInput!]
-  set: [OrderItemWhereUniqueInput!]
-  disconnect: [OrderItemWhereUniqueInput!]
-  delete: [OrderItemWhereUniqueInput!]
-  update: [OrderItemUpdateWithWhereUniqueNestedInput!]
-  updateMany: [OrderItemUpdateManyWithWhereNestedInput!]
-  deleteMany: [OrderItemScalarWhereInput!]
-  upsert: [OrderItemUpsertWithWhereUniqueNestedInput!]
+input OrderLineItemUpdateManyInput {
+  create: [OrderLineItemCreateInput!]
+  connect: [OrderLineItemWhereUniqueInput!]
+  set: [OrderLineItemWhereUniqueInput!]
+  disconnect: [OrderLineItemWhereUniqueInput!]
+  delete: [OrderLineItemWhereUniqueInput!]
+  update: [OrderLineItemUpdateWithWhereUniqueNestedInput!]
+  updateMany: [OrderLineItemUpdateManyWithWhereNestedInput!]
+  deleteMany: [OrderLineItemScalarWhereInput!]
+  upsert: [OrderLineItemUpsertWithWhereUniqueNestedInput!]
 }
 
-input OrderItemUpdateManyMutationInput {
+input OrderLineItemUpdateManyMutationInput {
   recordID: ID
-  recordType: OrderItemRecordType
+  recordType: OrderLineItemRecordType
   needShipping: Boolean
   taxRate: Float
   taxName: String
@@ -12638,31 +12638,31 @@ input OrderItemUpdateManyMutationInput {
   currencyCode: String
 }
 
-input OrderItemUpdateManyWithWhereNestedInput {
-  where: OrderItemScalarWhereInput!
-  data: OrderItemUpdateManyDataInput!
+input OrderLineItemUpdateManyWithWhereNestedInput {
+  where: OrderLineItemScalarWhereInput!
+  data: OrderLineItemUpdateManyDataInput!
 }
 
-input OrderItemUpdateWithWhereUniqueNestedInput {
-  where: OrderItemWhereUniqueInput!
-  data: OrderItemUpdateDataInput!
+input OrderLineItemUpdateWithWhereUniqueNestedInput {
+  where: OrderLineItemWhereUniqueInput!
+  data: OrderLineItemUpdateDataInput!
 }
 
-input OrderItemUpsertWithWhereUniqueNestedInput {
-  where: OrderItemWhereUniqueInput!
-  update: OrderItemUpdateDataInput!
-  create: OrderItemCreateInput!
+input OrderLineItemUpsertWithWhereUniqueNestedInput {
+  where: OrderLineItemWhereUniqueInput!
+  update: OrderLineItemUpdateDataInput!
+  create: OrderLineItemCreateInput!
 }
 
-input OrderItemWhereInput {
+input OrderLineItemWhereInput {
   """Logical AND on all given filters."""
-  AND: [OrderItemWhereInput!]
+  AND: [OrderLineItemWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [OrderItemWhereInput!]
+  OR: [OrderLineItemWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [OrderItemWhereInput!]
+  NOT: [OrderLineItemWhereInput!]
   id: ID
 
   """All values that are not equal to given value."""
@@ -12743,16 +12743,16 @@ input OrderItemWhereInput {
 
   """All values not ending with the given string."""
   recordID_not_ends_with: ID
-  recordType: OrderItemRecordType
+  recordType: OrderLineItemRecordType
 
   """All values that are not equal to given value."""
-  recordType_not: OrderItemRecordType
+  recordType_not: OrderLineItemRecordType
 
   """All values that are contained in given list."""
-  recordType_in: [OrderItemRecordType!]
+  recordType_in: [OrderLineItemRecordType!]
 
   """All values that are not contained in given list."""
-  recordType_not_in: [OrderItemRecordType!]
+  recordType_not_in: [OrderLineItemRecordType!]
   needShipping: Boolean
 
   """All values that are not equal to given value."""
@@ -12971,7 +12971,7 @@ input OrderItemWhereInput {
   updatedAt_gte: DateTime
 }
 
-input OrderItemWhereUniqueInput {
+input OrderLineItemWhereUniqueInput {
   id: ID
 }
 
@@ -13087,7 +13087,7 @@ input OrderUpdateInput {
   note: String
   customer: CustomerUpdateOneRequiredInput
   sentPackage: PackageUpdateOneInput
-  items: OrderItemUpdateManyInput
+  items: OrderLineItemUpdateManyInput
 }
 
 input OrderUpdateManyMutationInput {
@@ -13401,9 +13401,9 @@ input OrderWhereInput {
   updatedAt_gte: DateTime
   customer: CustomerWhereInput
   sentPackage: PackageWhereInput
-  items_every: OrderItemWhereInput
-  items_some: OrderItemWhereInput
-  items_none: OrderItemWhereInput
+  items_every: OrderLineItemWhereInput
+  items_some: OrderLineItemWhereInput
+  items_none: OrderLineItemWhereInput
 }
 
 input OrderWhereUniqueInput {
@@ -24438,6 +24438,7 @@ type Query {
   userPushNotificationInterests(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserPushNotificationInterest]!
   billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
   shopifyProductVariants(where: ShopifyProductVariantWhereInput, orderBy: ShopifyProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariant]!
+  orderLineItems(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem]!
   reservationReceiptItems(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem]!
   stylePreferenceses(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StylePreferences]!
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
@@ -24452,7 +24453,6 @@ type Query {
   categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category]!
   bottomSizes(where: BottomSizeWhereInput, orderBy: BottomSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BottomSize]!
   seasons(where: SeasonWhereInput, orderBy: SeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Season]!
-  orderItems(where: OrderItemWhereInput, orderBy: OrderItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderItem]!
   customers(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer]!
   labels(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Label]!
   productVariantPrices(where: ProductVariantPriceWhereInput, orderBy: ProductVariantPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantPrice]!
@@ -24503,6 +24503,7 @@ type Query {
   userPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   shopifyProductVariant(where: ShopifyProductVariantWhereUniqueInput!): ShopifyProductVariant
+  orderLineItem(where: OrderLineItemWhereUniqueInput!): OrderLineItem
   reservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   size(where: SizeWhereUniqueInput!): Size
@@ -24517,7 +24518,6 @@ type Query {
   category(where: CategoryWhereUniqueInput!): Category
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   season(where: SeasonWhereUniqueInput!): Season
-  orderItem(where: OrderItemWhereUniqueInput!): OrderItem
   customer(where: CustomerWhereUniqueInput!): Customer
   label(where: LabelWhereUniqueInput!): Label
   productVariantPrice(where: ProductVariantPriceWhereUniqueInput!): ProductVariantPrice
@@ -24568,6 +24568,7 @@ type Query {
   userPushNotificationInterestsConnection(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserPushNotificationInterestConnection!
   billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
   shopifyProductVariantsConnection(where: ShopifyProductVariantWhereInput, orderBy: ShopifyProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShopifyProductVariantConnection!
+  orderLineItemsConnection(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderLineItemConnection!
   reservationReceiptItemsConnection(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationReceiptItemConnection!
   stylePreferencesesConnection(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StylePreferencesConnection!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
@@ -24582,7 +24583,6 @@ type Query {
   categoriesConnection(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CategoryConnection!
   bottomSizesConnection(where: BottomSizeWhereInput, orderBy: BottomSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BottomSizeConnection!
   seasonsConnection(where: SeasonWhereInput, orderBy: SeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SeasonConnection!
-  orderItemsConnection(where: OrderItemWhereInput, orderBy: OrderItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderItemConnection!
   customersConnection(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerConnection!
   labelsConnection(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LabelConnection!
   productVariantPricesConnection(where: ProductVariantPriceWhereInput, orderBy: ProductVariantPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantPriceConnection!
@@ -29238,6 +29238,7 @@ type Subscription {
   userPushNotificationInterest(where: UserPushNotificationInterestSubscriptionWhereInput): UserPushNotificationInterestSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   shopifyProductVariant(where: ShopifyProductVariantSubscriptionWhereInput): ShopifyProductVariantSubscriptionPayload
+  orderLineItem(where: OrderLineItemSubscriptionWhereInput): OrderLineItemSubscriptionPayload
   reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
@@ -29252,7 +29253,6 @@ type Subscription {
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   bottomSize(where: BottomSizeSubscriptionWhereInput): BottomSizeSubscriptionPayload
   season(where: SeasonSubscriptionWhereInput): SeasonSubscriptionPayload
-  orderItem(where: OrderItemSubscriptionWhereInput): OrderItemSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   productVariantPrice(where: ProductVariantPriceSubscriptionWhereInput): ProductVariantPriceSubscriptionPayload
@@ -33937,7 +33937,7 @@ export type OrderCancelReason =   'Customer' |
   'Inventory' |
   'Other'
 
-export type OrderItemOrderByInput =   'id_ASC' |
+export type OrderLineItemOrderByInput =   'id_ASC' |
   'id_DESC' |
   'recordID_ASC' |
   'recordID_DESC' |
@@ -33962,7 +33962,7 @@ export type OrderItemOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
 
-export type OrderItemRecordType =   'PhysicalProduct' |
+export type OrderLineItemRecordType =   'PhysicalProduct' |
   'ProductVariant' |
   'ExternalProduct' |
   'Package'
@@ -39476,13 +39476,13 @@ export interface OrderCreateInput {
   note?: String | null
   customer: CustomerCreateOneInput
   sentPackage?: PackageCreateOneInput | null
-  items?: OrderItemCreateManyInput | null
+  items?: OrderLineItemCreateManyInput | null
 }
 
-export interface OrderItemCreateInput {
+export interface OrderLineItemCreateInput {
   id?: ID_Input | null
   recordID: ID_Output
-  recordType: OrderItemRecordType
+  recordType: OrderLineItemRecordType
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
@@ -39492,15 +39492,15 @@ export interface OrderItemCreateInput {
   currencyCode: String
 }
 
-export interface OrderItemCreateManyInput {
-  create?: OrderItemCreateInput[] | OrderItemCreateInput | null
-  connect?: OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput | null
+export interface OrderLineItemCreateManyInput {
+  create?: OrderLineItemCreateInput[] | OrderLineItemCreateInput | null
+  connect?: OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput | null
 }
 
-export interface OrderItemScalarWhereInput {
-  AND?: OrderItemScalarWhereInput[] | OrderItemScalarWhereInput | null
-  OR?: OrderItemScalarWhereInput[] | OrderItemScalarWhereInput | null
-  NOT?: OrderItemScalarWhereInput[] | OrderItemScalarWhereInput | null
+export interface OrderLineItemScalarWhereInput {
+  AND?: OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput | null
+  OR?: OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput | null
+  NOT?: OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput | null
   id?: ID_Input | null
   id_not?: ID_Input | null
   id_in?: ID_Output[] | ID_Output | null
@@ -39529,10 +39529,10 @@ export interface OrderItemScalarWhereInput {
   recordID_not_starts_with?: ID_Input | null
   recordID_ends_with?: ID_Input | null
   recordID_not_ends_with?: ID_Input | null
-  recordType?: OrderItemRecordType | null
-  recordType_not?: OrderItemRecordType | null
-  recordType_in?: OrderItemRecordType[] | OrderItemRecordType | null
-  recordType_not_in?: OrderItemRecordType[] | OrderItemRecordType | null
+  recordType?: OrderLineItemRecordType | null
+  recordType_not?: OrderLineItemRecordType | null
+  recordType_in?: OrderLineItemRecordType[] | OrderLineItemRecordType | null
+  recordType_not_in?: OrderLineItemRecordType[] | OrderLineItemRecordType | null
   needShipping?: Boolean | null
   needShipping_not?: Boolean | null
   taxRate?: Float | null
@@ -39613,20 +39613,20 @@ export interface OrderItemScalarWhereInput {
   updatedAt_gte?: DateTime | null
 }
 
-export interface OrderItemSubscriptionWhereInput {
-  AND?: OrderItemSubscriptionWhereInput[] | OrderItemSubscriptionWhereInput | null
-  OR?: OrderItemSubscriptionWhereInput[] | OrderItemSubscriptionWhereInput | null
-  NOT?: OrderItemSubscriptionWhereInput[] | OrderItemSubscriptionWhereInput | null
+export interface OrderLineItemSubscriptionWhereInput {
+  AND?: OrderLineItemSubscriptionWhereInput[] | OrderLineItemSubscriptionWhereInput | null
+  OR?: OrderLineItemSubscriptionWhereInput[] | OrderLineItemSubscriptionWhereInput | null
+  NOT?: OrderLineItemSubscriptionWhereInput[] | OrderLineItemSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
   updatedFields_contains_some?: String[] | String | null
-  node?: OrderItemWhereInput | null
+  node?: OrderLineItemWhereInput | null
 }
 
-export interface OrderItemUpdateDataInput {
+export interface OrderLineItemUpdateDataInput {
   recordID?: ID_Input | null
-  recordType?: OrderItemRecordType | null
+  recordType?: OrderLineItemRecordType | null
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
@@ -39636,9 +39636,9 @@ export interface OrderItemUpdateDataInput {
   currencyCode?: String | null
 }
 
-export interface OrderItemUpdateInput {
+export interface OrderLineItemUpdateInput {
   recordID?: ID_Input | null
-  recordType?: OrderItemRecordType | null
+  recordType?: OrderLineItemRecordType | null
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
@@ -39648,9 +39648,9 @@ export interface OrderItemUpdateInput {
   currencyCode?: String | null
 }
 
-export interface OrderItemUpdateManyDataInput {
+export interface OrderLineItemUpdateManyDataInput {
   recordID?: ID_Input | null
-  recordType?: OrderItemRecordType | null
+  recordType?: OrderLineItemRecordType | null
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
@@ -39660,21 +39660,21 @@ export interface OrderItemUpdateManyDataInput {
   currencyCode?: String | null
 }
 
-export interface OrderItemUpdateManyInput {
-  create?: OrderItemCreateInput[] | OrderItemCreateInput | null
-  connect?: OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput | null
-  set?: OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput | null
-  disconnect?: OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput | null
-  delete?: OrderItemWhereUniqueInput[] | OrderItemWhereUniqueInput | null
-  update?: OrderItemUpdateWithWhereUniqueNestedInput[] | OrderItemUpdateWithWhereUniqueNestedInput | null
-  updateMany?: OrderItemUpdateManyWithWhereNestedInput[] | OrderItemUpdateManyWithWhereNestedInput | null
-  deleteMany?: OrderItemScalarWhereInput[] | OrderItemScalarWhereInput | null
-  upsert?: OrderItemUpsertWithWhereUniqueNestedInput[] | OrderItemUpsertWithWhereUniqueNestedInput | null
+export interface OrderLineItemUpdateManyInput {
+  create?: OrderLineItemCreateInput[] | OrderLineItemCreateInput | null
+  connect?: OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput | null
+  set?: OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput | null
+  disconnect?: OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput | null
+  delete?: OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput | null
+  update?: OrderLineItemUpdateWithWhereUniqueNestedInput[] | OrderLineItemUpdateWithWhereUniqueNestedInput | null
+  updateMany?: OrderLineItemUpdateManyWithWhereNestedInput[] | OrderLineItemUpdateManyWithWhereNestedInput | null
+  deleteMany?: OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput | null
+  upsert?: OrderLineItemUpsertWithWhereUniqueNestedInput[] | OrderLineItemUpsertWithWhereUniqueNestedInput | null
 }
 
-export interface OrderItemUpdateManyMutationInput {
+export interface OrderLineItemUpdateManyMutationInput {
   recordID?: ID_Input | null
-  recordType?: OrderItemRecordType | null
+  recordType?: OrderLineItemRecordType | null
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
@@ -39684,26 +39684,26 @@ export interface OrderItemUpdateManyMutationInput {
   currencyCode?: String | null
 }
 
-export interface OrderItemUpdateManyWithWhereNestedInput {
-  where: OrderItemScalarWhereInput
-  data: OrderItemUpdateManyDataInput
+export interface OrderLineItemUpdateManyWithWhereNestedInput {
+  where: OrderLineItemScalarWhereInput
+  data: OrderLineItemUpdateManyDataInput
 }
 
-export interface OrderItemUpdateWithWhereUniqueNestedInput {
-  where: OrderItemWhereUniqueInput
-  data: OrderItemUpdateDataInput
+export interface OrderLineItemUpdateWithWhereUniqueNestedInput {
+  where: OrderLineItemWhereUniqueInput
+  data: OrderLineItemUpdateDataInput
 }
 
-export interface OrderItemUpsertWithWhereUniqueNestedInput {
-  where: OrderItemWhereUniqueInput
-  update: OrderItemUpdateDataInput
-  create: OrderItemCreateInput
+export interface OrderLineItemUpsertWithWhereUniqueNestedInput {
+  where: OrderLineItemWhereUniqueInput
+  update: OrderLineItemUpdateDataInput
+  create: OrderLineItemCreateInput
 }
 
-export interface OrderItemWhereInput {
-  AND?: OrderItemWhereInput[] | OrderItemWhereInput | null
-  OR?: OrderItemWhereInput[] | OrderItemWhereInput | null
-  NOT?: OrderItemWhereInput[] | OrderItemWhereInput | null
+export interface OrderLineItemWhereInput {
+  AND?: OrderLineItemWhereInput[] | OrderLineItemWhereInput | null
+  OR?: OrderLineItemWhereInput[] | OrderLineItemWhereInput | null
+  NOT?: OrderLineItemWhereInput[] | OrderLineItemWhereInput | null
   id?: ID_Input | null
   id_not?: ID_Input | null
   id_in?: ID_Output[] | ID_Output | null
@@ -39732,10 +39732,10 @@ export interface OrderItemWhereInput {
   recordID_not_starts_with?: ID_Input | null
   recordID_ends_with?: ID_Input | null
   recordID_not_ends_with?: ID_Input | null
-  recordType?: OrderItemRecordType | null
-  recordType_not?: OrderItemRecordType | null
-  recordType_in?: OrderItemRecordType[] | OrderItemRecordType | null
-  recordType_not_in?: OrderItemRecordType[] | OrderItemRecordType | null
+  recordType?: OrderLineItemRecordType | null
+  recordType_not?: OrderLineItemRecordType | null
+  recordType_in?: OrderLineItemRecordType[] | OrderLineItemRecordType | null
+  recordType_not_in?: OrderLineItemRecordType[] | OrderLineItemRecordType | null
   needShipping?: Boolean | null
   needShipping_not?: Boolean | null
   taxRate?: Float | null
@@ -39816,7 +39816,7 @@ export interface OrderItemWhereInput {
   updatedAt_gte?: DateTime | null
 }
 
-export interface OrderItemWhereUniqueInput {
+export interface OrderLineItemWhereUniqueInput {
   id?: ID_Input | null
 }
 
@@ -39843,7 +39843,7 @@ export interface OrderUpdateInput {
   note?: String | null
   customer?: CustomerUpdateOneRequiredInput | null
   sentPackage?: PackageUpdateOneInput | null
-  items?: OrderItemUpdateManyInput | null
+  items?: OrderLineItemUpdateManyInput | null
 }
 
 export interface OrderUpdateManyMutationInput {
@@ -39968,9 +39968,9 @@ export interface OrderWhereInput {
   updatedAt_gte?: DateTime | null
   customer?: CustomerWhereInput | null
   sentPackage?: PackageWhereInput | null
-  items_every?: OrderItemWhereInput | null
-  items_some?: OrderItemWhereInput | null
-  items_none?: OrderItemWhereInput | null
+  items_every?: OrderLineItemWhereInput | null
+  items_some?: OrderLineItemWhereInput | null
+  items_none?: OrderLineItemWhereInput | null
 }
 
 export interface OrderWhereUniqueInput {
@@ -49378,7 +49378,7 @@ export interface AggregateOrder {
   count: Int
 }
 
-export interface AggregateOrderItem {
+export interface AggregateOrderLineItem {
   count: Int
 }
 
@@ -50528,7 +50528,7 @@ export interface Order extends Node {
   id: ID_Output
   customer: Customer
   sentPackage?: Package | null
-  items?: Array<OrderItem> | null
+  items?: Array<OrderLineItem> | null
   orderNumber: String
   type: OrderType
   status: OrderStatus
@@ -50561,10 +50561,10 @@ export interface OrderEdge {
   cursor: String
 }
 
-export interface OrderItem extends Node {
+export interface OrderLineItem extends Node {
   id: ID_Output
   recordID: ID_Output
-  recordType: OrderItemRecordType
+  recordType: OrderLineItemRecordType
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
@@ -50580,25 +50580,25 @@ export interface OrderItem extends Node {
  * A connection to a list of items.
 
  */
-export interface OrderItemConnection {
+export interface OrderLineItemConnection {
   pageInfo: PageInfo
-  edges: Array<OrderItemEdge | null>
-  aggregate: AggregateOrderItem
+  edges: Array<OrderLineItemEdge | null>
+  aggregate: AggregateOrderLineItem
 }
 
 /*
  * An edge in a connection.
 
  */
-export interface OrderItemEdge {
-  node: OrderItem
+export interface OrderLineItemEdge {
+  node: OrderLineItem
   cursor: String
 }
 
-export interface OrderItemPreviousValues {
+export interface OrderLineItemPreviousValues {
   id: ID_Output
   recordID: ID_Output
-  recordType: OrderItemRecordType
+  recordType: OrderLineItemRecordType
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
@@ -50610,11 +50610,11 @@ export interface OrderItemPreviousValues {
   updatedAt: DateTime
 }
 
-export interface OrderItemSubscriptionPayload {
+export interface OrderLineItemSubscriptionPayload {
   mutation: MutationType
-  node?: OrderItem | null
+  node?: OrderLineItem | null
   updatedFields?: Array<String> | null
-  previousValues?: OrderItemPreviousValues | null
+  previousValues?: OrderLineItemPreviousValues | null
 }
 
 export interface OrderPreviousValues {

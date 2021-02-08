@@ -1,9 +1,14 @@
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
-@Resolver("OrderItem")
-export class OrderItemFieldsResolver {
+@Resolver("OrderLineItem")
+export class OrderLineItemFieldsResolver {
   constructor(private readonly prisma: PrismaService) {}
+
+  // @ResolveField()
+  // async name(@Parent() orderItem, @Info() info) {
+  //   return ""
+  // }
 
   @ResolveField()
   async productVariant(@Parent() orderItem, @Info() info) {
