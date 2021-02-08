@@ -522,11 +522,13 @@ export class OrderService {
     order,
     customer,
     user,
+    info,
   }: {
     order: Order
     customer: Customer
     user: User
-  }) {
+    info: GraphQLResolveInfo
+  }): Promise<Order> {
     const orderLineItems = await this.prisma.client
       .order({ id: order.id })
       .lineItems()
@@ -618,6 +620,11 @@ export class OrderService {
 
     // TODO: send confirmation email
 
-    return updatedOrder
+    return await this.prisma.binding.query.order(
+      {
+        where: { id: updatedOrder.id },
+      },
+      info
+    )
   }
 }
