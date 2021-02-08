@@ -5,11 +5,6 @@ import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 export class OrderLineItemFieldsResolver {
   constructor(private readonly prisma: PrismaService) {}
 
-  // @ResolveField()
-  // async name(@Parent() orderItem, @Info() info) {
-  //   return ""
-  // }
-
   @ResolveField()
   async productVariant(@Parent() orderItem, @Info() info) {
     const recordType = orderItem.recordType
