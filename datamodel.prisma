@@ -172,6 +172,7 @@ enum PhotographyStatus {
 
 enum EmailId {
   CompleteAccount
+  BuyUsedOrderConfirmation
   DaySevenAuthorizationFollowup
   DaySixAuthorizationFollowup
   DayFiveAuthorizationFollowup

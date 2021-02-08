@@ -1,3 +1,4 @@
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import {
   BagItem,
@@ -59,7 +60,8 @@ export class OrderService {
     private readonly prisma: PrismaService,
     private readonly shopify: ShopifyService,
     private readonly shipping: ShippingService,
-    private readonly productUtils: ProductUtilsService
+    private readonly productUtils: ProductUtilsService,
+    private readonly email: EmailService
   ) {}
 
   async getBuyUsedMetadata({
@@ -617,6 +619,7 @@ export class OrderService {
     })
 
     // TODO: send confirmation email
+    await this.email.sendBuyUsedOrderConfirmationEmail(user, updatedOrder)
 
     return updatedOrder
   }

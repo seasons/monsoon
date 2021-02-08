@@ -7,6 +7,7 @@ import nodemailer from "nodemailer"
 import {
   EmailId,
   ID_Input,
+  Order,
   Reservation as PrismaReservation,
   Product,
   User,
@@ -67,7 +68,6 @@ export class EmailService {
       emailId: "DaySevenAuthorizationFollowup",
     })
   }
-
   async sendAuthorizedDayThreeFollowup(
     user: EmailUser,
     availableStyles: Product[],
@@ -101,6 +101,75 @@ export class EmailService {
       renderEmailFunc: "rewaitlisted",
       emailId: "Rewaitlisted",
     })
+  }
+
+  async sendBuyUsedOrderConfirmationEmail(user: EmailUser, order: Order) {
+    let renderData = {}
+
+    // Gather the appropriate product info
+    const orderLineItems = await this.prisma.client
+      .order({ id: order.id })
+      .lineItems()
+    const physicalProductId = orderLineItems.find(
+      orderLineItem => orderLineItem.recordType === "PhysicalProduct"
+    ).recordID
+    const productId = (
+      await this.prisma.client
+        .physicalProduct({ id: physicalProductId })
+        .productVariant()
+        .product()
+    ).id
+    renderData["products"] = await this.emailUtils.createGridPayload([
+      { id: productId },
+    ])
+
+    // Grab the appropriate order info
+    const formattedOrderLineItems = await this.emailUtils.formatOrderLineItems(
+      order
+    )
+
+    const custData = (
+      await this.prisma.binding.query.customers(
+        {
+          where: { user: { id: user.id } },
+        },
+        `{
+        detail {
+          id
+          shippingAddress {
+            id
+            name
+            address1
+            address2
+            city
+            state
+            zipCode
+          }
+        }
+        billingInfo {
+          id
+          brand
+          last_digits
+        }
+      }`
+      )
+    )?.[0] as Customer
+
+    // Render the email
+    const payload = await RenderEmail.buyUsedOrderConfirmation({
+      name: user.firstName,
+      orderNumber: order.orderNumber,
+      orderLineItems: formattedOrderLineItems,
+      shipping: custData.detail.shippingAddress,
+      cardInfo: custData.billingInfo,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      user,
+      payload,
+      emailId: "BuyUsedOrderConfirmation",
+    })
+
+    // Send it
   }
 
   async sendReferralConfirmationEmail({

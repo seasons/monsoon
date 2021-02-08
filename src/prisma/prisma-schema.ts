@@ -4306,6 +4306,7 @@ scalar DateTime
 
 enum EmailId {
   CompleteAccount
+  BuyUsedOrderConfirmation
   DaySevenAuthorizationFollowup
   DaySixAuthorizationFollowup
   DayFiveAuthorizationFollowup
