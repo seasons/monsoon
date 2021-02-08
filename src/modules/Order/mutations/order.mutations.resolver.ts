@@ -38,7 +38,8 @@ export class OrderMutationsResolver {
   async submitOrder(
     @Args() { input: { orderID } },
     @Customer() customer,
-    @User() user
+    @User() user,
+    @Info() info
   ) {
     const order = await this.prisma.client.order({ id: orderID })
 
@@ -52,6 +53,7 @@ export class OrderMutationsResolver {
         order,
         customer,
         user,
+        info,
       })
     }
   }
