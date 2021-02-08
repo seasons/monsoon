@@ -130,3 +130,21 @@ type CustomerMembership {
     last: Int
   ): [PauseRequest!]
 }
+
+type PaymentPlan {
+  id: ID!
+  description: String
+  planID: String!
+  status: String
+  name: String
+  price: Int
+  itemCount: Int
+  tagline: String
+  tier: PaymentPlanTier
+  billingDate: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  # Computed fields
+  pauseWithItemsPrice: Int
+}

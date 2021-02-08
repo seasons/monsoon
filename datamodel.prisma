@@ -587,6 +587,7 @@ type PaymentPlan {
   itemCount: Int
   tagline: String
   tier: PaymentPlanTier
+  billingDate: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
