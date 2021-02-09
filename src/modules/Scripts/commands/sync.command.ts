@@ -10,6 +10,7 @@ import { Command, Option, Positional } from "nestjs-command"
 import readlineSync from "readline-sync"
 
 import { PrismaEnvOption } from "../scripts.decorators"
+import { HerokuService } from "../services/heroku.service"
 import { ScriptsService } from "../services/scripts.service"
 
 @Injectable()
@@ -21,7 +22,8 @@ export class SyncCommands {
     private readonly dripSync: DripSyncService,
     private readonly scripts: ScriptsService,
     private readonly search: SearchService,
-    private readonly moduleRef: ModuleRef
+    private readonly moduleRef: ModuleRef,
+    private readonly heroku: HerokuService
   ) {}
 
   @Command({

@@ -27,6 +27,7 @@ import { CronModule, PaymentModule, SyncModule, UserModule } from ".."
   ],
   providers: [
     ScriptsService,
+    HerokuService,
     UserCommands,
     ProductCommands,
     SyncCommands,
