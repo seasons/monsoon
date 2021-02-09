@@ -887,26 +887,26 @@ type Customer {
   updatedAt: DateTime! @updatedAt
 }
 
-type CustomerMembershipSubscription {
+type CustomerMembershipSubscriptionData {
   id: ID! @id
-  #   planID: String!
-  #   subscriptionId: String!
-  #   currentTermStart: DateTime!
-  #   currentTermEnd: DateTime!
-  #   nextBillingAt: DateTime!
-  #   status: String!
-  #   planPrice: Int!
-  #   createdAt: DateTime! @createdAt
-  #   updatedAt: DateTime! @updatedAt
+  planID: String!
+  subscriptionId: String!
+  currentTermStart: DateTime!
+  currentTermEnd: DateTime!
+  nextBillingAt: DateTime!
+  status: String!
+  planPrice: Int!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type CustomerMembership {
   id: ID! @id
   plan: PaymentPlan
   subscriptionId: String!
-  subscription: CustomerMembershipSubscription
+  subscription: CustomerMembershipSubscriptionData
     @relation(
-      name: "CustomerToCustomerMembershipSubscription"
+      name: "CustomerToCustomerMembershipSubscriptionData"
       onDelete: CASCADE
     )
   customer: Customer!

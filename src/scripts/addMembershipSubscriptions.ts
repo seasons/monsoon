@@ -40,11 +40,13 @@ const run = async () => {
           },
         },
         `
-        id
-        membership {
+        {
             id
-            subscription {
+            membership {
                 id
+                subscription {
+                    id
+                }
             }
         }
       `
@@ -74,12 +76,12 @@ const run = async () => {
 
       const membershipSubscriptionID = customer?.membership?.subscription?.id
       if (membershipSubscriptionID) {
-        await ps.client.updateCustomerMembershipSubscription({
+        await ps.client.updateCustomerMembershipSubscriptionData({
           where: { id: membershipSubscriptionID },
           data,
         })
       } else {
-        const membershipSubscription = (await ps.client.createCustomerMembershipSubscription(
+        const membershipSubscription = (await ps.client.createCustomerMembershipSubscriptionData(
           data
         )) as any
 
