@@ -176,6 +176,8 @@ type Product {
   description: String
   externalURL: String
   buyNewEnabled: Boolean!
+  buyUsedEnabled: Boolean!
+  buyUsedPrice: Int
   materialCategory: ProductMaterialCategory
   model: ProductModel
   modelHeight: Int
@@ -292,6 +294,8 @@ input UpsertProductInput {
   bottomSizeType: BottomSizeType
   brandID: String!
   buyNewEnabled: Boolean
+  buyUsedEnabled: Boolean!
+  buyUsedPrice: Int!
   categoryName: String!
   colorCode: String!
   description: String!
@@ -348,6 +352,8 @@ input CustomProductUpdateInput {
   modelSizeName: String
   tags: [String!]
   buyNewEnabled: Boolean
+  buyUsedEnabled: Boolean
+  buyUsedPrice: Int
 }
 
 input UpsertSeasonInput {
