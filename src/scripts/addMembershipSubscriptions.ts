@@ -31,6 +31,8 @@ const run = async () => {
       }
     }
 
+    console.log("subscriptions", allSubscriptions.length)
+
     for (const subscription of allSubscriptions) {
       const userID = subscription.customer_id
       const customers = await ps.binding.query.customers(
@@ -55,42 +57,41 @@ const run = async () => {
 
       if (!customer) {
         console.log("error no customer")
-        return
-      }
-
-      const data = {
-        nextBillingAt: DateTime.fromSeconds(
-          subscription.next_billing_at
-        ).toISO(),
-        currentTermEnd: DateTime.fromSeconds(
-          subscription.current_term_end
-        ).toISO(),
-        currentTermStart: DateTime.fromSeconds(
-          subscription.current_term_start
-        ).toISO(),
-        status: subscription.status,
-        planPrice: subscription.plan_amount,
-        subscriptionId: subscription.id,
-        planID: subscription.plan_id,
-      }
-
-      const membershipSubscriptionID = customer?.membership?.subscription?.id
-      if (membershipSubscriptionID) {
-        await ps.client.updateCustomerMembershipSubscriptionData({
-          where: { id: membershipSubscriptionID },
-          data,
-        })
       } else {
-        const membershipSubscription = (await ps.client.createCustomerMembershipSubscriptionData(
-          data
-        )) as any
+        const data = {
+          nextBillingAt: DateTime.fromSeconds(
+            subscription.next_billing_at
+          ).toISO(),
+          currentTermEnd: DateTime.fromSeconds(
+            subscription.current_term_end
+          ).toISO(),
+          currentTermStart: DateTime.fromSeconds(
+            subscription.current_term_start
+          ).toISO(),
+          status: subscription.status,
+          planPrice: subscription.plan_amount,
+          subscriptionId: subscription.id,
+          planID: subscription.plan_id,
+        }
 
-        await ps.client.updateCustomerMembership({
-          where: { id: customer.membership.id },
-          data: {
-            subscription: { connect: { id: membershipSubscription.id } },
-          },
-        })
+        const membershipSubscriptionID = customer?.membership?.subscription?.id
+        if (membershipSubscriptionID) {
+          await ps.client.updateCustomerMembershipSubscriptionData({
+            where: { id: membershipSubscriptionID },
+            data,
+          })
+        } else {
+          const membershipSubscription = (await ps.client.createCustomerMembershipSubscriptionData(
+            data
+          )) as any
+
+          await ps.client.updateCustomerMembership({
+            where: { id: customer.membership.id },
+            data: {
+              subscription: { connect: { id: membershipSubscription.id } },
+            },
+          })
+        }
       }
     }
   } catch (e) {

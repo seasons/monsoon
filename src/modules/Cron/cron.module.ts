@@ -20,6 +20,7 @@ import { MarketingScheduledJobs } from "./services/marketing.job.service"
 import { MembershipScheduledJobs } from "./services/membership.job.service"
 import { ReservationScheduledJobs } from "./services/reservations.job.service"
 import { SearchScheduledJobs } from "./services/search.job.service"
+import { SubscriptionsScheduledJobs } from "./services/subscriptions.job.service"
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { SearchScheduledJobs } from "./services/search.job.service"
     AnalyticsModule,
   ],
   providers: [
+    SubscriptionsScheduledJobs,
     ReservationScheduledJobs,
     DataScheduledJobs,
     MarketingScheduledJobs,
