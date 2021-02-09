@@ -13,19 +13,19 @@ export class OrderMutationsResolver {
 
   @Mutation()
   async createDraftedOrder(
-    @Args() { input: { orderType, productVariantId } },
+    @Args() { input: { orderType, productVariantID } },
     @Customer() customer,
     @User() user,
     @Info() info
   ) {
     if (orderType === "New") {
       return this.order.buyNewCreateDraftedOrder({
-        productVariantId,
+        productVariantID,
         customer,
       })
     } else {
       const draftOrder = await this.order.buyUsedCreateDraftedOrder({
-        productVariantId,
+        productVariantID,
         customer,
         user,
         info,
