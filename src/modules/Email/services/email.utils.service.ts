@@ -145,8 +145,7 @@ export class EmailUtilsService {
             .name(),
           lineItemValue: li.price,
         })
-      }
-      if (li.recordType === "Package") {
+      } else if (li.recordType === "Package") {
         formattedLineItems.push({
           lineItemName: "Shipping",
           lineItemValue: li.price,

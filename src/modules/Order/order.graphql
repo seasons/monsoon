@@ -53,7 +53,7 @@ type OrderLineItem {
 
 input CreateDraftedOrderInput {
   orderType: OrderType!
-  productVariantId: ID!
+  productVariantID: ID!
 }
 
 input SubmitOrderInput {
