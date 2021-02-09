@@ -2953,6 +2953,7 @@ export type PushNotificationStatus = "Blocked" | "Granted" | "Denied";
 
 export type EmailId =
   | "CompleteAccount"
+  | "BuyUsedOrderConfirmation"
   | "DaySevenAuthorizationFollowup"
   | "DaySixAuthorizationFollowup"
   | "DayFiveAuthorizationFollowup"

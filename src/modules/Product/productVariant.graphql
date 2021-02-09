@@ -43,15 +43,6 @@ type Query {
   ): [TopSize]!
 }
 
-input CreateDraftedOrderInput {
-  orderType: OrderType!
-  productVariantId: ID!
-}
-
-input SubmitOrderInput {
-  orderID: ID!
-}
-
 type Mutation {
   addProductVariantWant(variantID: ID!): ProductVariantWant!
     @hasRole(roles: [Customer])

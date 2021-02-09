@@ -1,3 +1,4 @@
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import {
   BagItem,
@@ -59,15 +60,16 @@ export class OrderService {
     private readonly prisma: PrismaService,
     private readonly shopify: ShopifyService,
     private readonly shipping: ShippingService,
-    private readonly productUtils: ProductUtilsService
+    private readonly productUtils: ProductUtilsService,
+    private readonly email: EmailService
   ) {}
 
   async getBuyUsedMetadata({
-    productVariantId,
+    productVariantID,
     customer,
     user,
   }: {
-    productVariantId: string
+    productVariantID: string
     customer: Customer
     user: User
   }): Promise<{
@@ -78,7 +80,7 @@ export class OrderService {
     const productVariant = await this.prisma.binding.query.productVariant(
       {
         where: {
-          id: productVariantId,
+          id: productVariantID,
         },
       },
       `{
@@ -173,7 +175,7 @@ export class OrderService {
         status === "Reserved" && productVariantId === productVariant.id
     )
     const shipping = await (needShipping
-      ? this.shipping.getBuyUsedShippingRate(productVariantId, user, customer)
+      ? this.shipping.getBuyUsedShippingRate(productVariantID, user, customer)
       : Promise.resolve(null))
 
     const orderLineItems = [
@@ -237,10 +239,10 @@ export class OrderService {
   }
 
   async getBuyNewMetadata({
-    productVariantId,
+    productVariantID,
     customerId,
   }: {
-    productVariantId: string
+    productVariantID: string
     customerId: string
   }): Promise<{
     shippingAddress: Location
@@ -266,7 +268,7 @@ export class OrderService {
       this.prisma.binding.query.productVariant(
         {
           where: {
-            id: productVariantId,
+            id: productVariantID,
           },
         },
         `{
@@ -376,7 +378,7 @@ export class OrderService {
     const orderLineItems = await this.prisma.client
       .order({ id: order.id })
       .lineItems()
-    const productVariantId = orderLineItems.find(
+    const productVariantID = orderLineItems.find(
       orderLineItem => orderLineItem.recordType === "ProductVariant"
     ).recordID
 
@@ -389,7 +391,7 @@ export class OrderService {
       accessToken,
       shopName,
     } = await this.getBuyNewMetadata({
-      productVariantId,
+      productVariantID,
       customerId: customer.id,
     })
 
@@ -428,10 +430,10 @@ export class OrderService {
   }
 
   async buyNewCreateDraftedOrder({
-    productVariantId,
+    productVariantID,
     customer,
   }: {
-    productVariantId: string
+    productVariantID: string
     customer: Customer
   }): Promise<DraftOrder> {
     const {
@@ -443,7 +445,7 @@ export class OrderService {
       accessToken,
       shopName,
     } = await this.getBuyNewMetadata({
-      productVariantId,
+      productVariantID,
       customerId: customer.id,
     })
     const { id: shopifyCustomerId } = await this.shopify.createCustomer({
@@ -466,18 +468,18 @@ export class OrderService {
   }
 
   async buyUsedCreateDraftedOrder({
-    productVariantId,
+    productVariantID,
     customer,
     user,
     info,
   }: {
-    productVariantId: string
+    productVariantID: string
     customer: Customer
     user: User
     info: GraphQLResolveInfo
   }): Promise<Order> {
     const { invoice, orderLineItems } = await this.getBuyUsedMetadata({
-      productVariantId,
+      productVariantID,
       customer,
       user,
     })
@@ -535,14 +537,14 @@ export class OrderService {
     const physicalProductId = orderLineItems.find(
       orderLineItem => orderLineItem.recordType === "PhysicalProduct"
     ).recordID
-    const productVariantId = (
+    const productVariantID = (
       await this.prisma.client
         .physicalProduct({ id: physicalProductId })
         .productVariant()
     ).id
 
     const { invoice, shippingAddress } = await this.getBuyUsedMetadata({
-      productVariantId,
+      productVariantID,
       customer,
       user,
     })
@@ -564,12 +566,12 @@ export class OrderService {
 
       const [shippoTransaction, shipmentWeight] = await Promise.all([
         this.shipping.createBuyUsedShippingLabel(
-          productVariantId,
+          productVariantID,
           user,
           customer
         ),
         this.shipping.calcShipmentWeightFromProductVariantIDs([
-          productVariantId,
+          productVariantID,
         ]),
       ])
 
@@ -618,7 +620,7 @@ export class OrderService {
       },
     })
 
-    // TODO: send confirmation email
+    await this.email.sendBuyUsedOrderConfirmationEmail(user, updatedOrder)
 
     return await this.prisma.binding.query.order(
       {
