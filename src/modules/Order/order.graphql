@@ -50,3 +50,12 @@ type OrderLineItem {
   # Computed fields
   productVariant: ProductVariant
 }
+
+input CreateDraftedOrderInput {
+  orderType: OrderType!
+  productVariantId: ID!
+}
+
+input SubmitOrderInput {
+  orderID: ID!
+}

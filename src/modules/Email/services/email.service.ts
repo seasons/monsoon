@@ -104,8 +104,6 @@ export class EmailService {
   }
 
   async sendBuyUsedOrderConfirmationEmail(user: EmailUser, order: Order) {
-    let renderData = {}
-
     // Gather the appropriate product info
     const orderLineItems = await this.prisma.client
       .order({ id: order.id })
@@ -119,7 +117,7 @@ export class EmailService {
         .productVariant()
         .product()
     ).id
-    renderData["products"] = await this.emailUtils.createGridPayload([
+    const products = await this.emailUtils.createGridPayload([
       { id: productId },
     ])
 
@@ -162,14 +160,13 @@ export class EmailService {
       orderLineItems: formattedOrderLineItems,
       shipping: custData.detail.shippingAddress,
       cardInfo: custData.billingInfo,
+      products,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
       emailId: "BuyUsedOrderConfirmation",
     })
-
-    // Send it
   }
 
   async sendReferralConfirmationEmail({

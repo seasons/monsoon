@@ -141,7 +141,8 @@ export class EmailUtilsService {
               id: li.recordID,
             })
             .productVariant()
-            .product().name,
+            .product()
+            .name(),
           lineItemValue: li.price,
         })
       }
