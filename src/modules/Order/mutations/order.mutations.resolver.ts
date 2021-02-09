@@ -1,6 +1,8 @@
 import { Customer, User } from "@app/decorators"
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
+import { pick } from "lodash"
 
 import { OrderService } from "../services/order.service"
 
@@ -8,7 +10,8 @@ import { OrderService } from "../services/order.service"
 export class OrderMutationsResolver {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly order: OrderService
+    private readonly order: OrderService,
+    private readonly segment: SegmentService
   ) {}
 
   @Mutation()
@@ -18,20 +21,28 @@ export class OrderMutationsResolver {
     @User() user,
     @Info() info
   ) {
+    let draftOrder
     if (orderType === "New") {
-      return this.order.buyNewCreateDraftedOrder({
+      draftOrder = await this.order.buyNewCreateDraftedOrder({
         productVariantID,
         customer,
       })
     } else {
-      const draftOrder = await this.order.buyUsedCreateDraftedOrder({
+      draftOrder = await this.order.buyUsedCreateDraftedOrder({
         productVariantID,
         customer,
         user,
         info,
       })
-      return draftOrder
     }
+
+    this.segment.track(user.id, "Created Draft Order", {
+      orderType,
+      productVariantID,
+      orderID: draftOrder.id,
+      ...pick(user, ["firstName", "lastName", "email"]),
+    })
+    return draftOrder
   }
 
   @Mutation()
@@ -43,19 +54,27 @@ export class OrderMutationsResolver {
   ) {
     const order = await this.prisma.client.order({ id: orderID })
 
+    let submittedOrder
     if (order.type === "New") {
-      return this.order.buyNewSubmitOrder({
+      submittedOrder = this.order.buyNewSubmitOrder({
         order,
         customer,
       })
     } else {
-      return this.order.buyUsedSubmitOrder({
+      submittedOrder = this.order.buyUsedSubmitOrder({
         order,
         customer,
         user,
         info,
       })
     }
+
+    this.segment.track(user.id, "Submitted Order", {
+      orderID,
+      ...pick(user, ["firstName", "lastName", "email"]),
+    })
+
+    return submittedOrder
   }
 
   @Mutation()
