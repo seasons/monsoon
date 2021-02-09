@@ -106,11 +106,13 @@ export class ChargebeeController {
 
   private async chargebeeSubscriptionCreated(content: any) {
     const {
-      subscription: { customer_id, plan_id, id: subscriptionID },
+      subscription,
       customer,
       card,
       invoice: { total },
     } = content
+
+    const { customer_id, plan_id } = subscription
 
     const customerWithBillingAndUserData: any = head(
       await this.prisma.binding.query.customers(
@@ -175,8 +177,7 @@ export class ChargebeeController {
           customer_id,
           customer,
           card,
-          plan_id,
-          subscriptionID
+          subscription
         )
 
         // Handle if it was a referral

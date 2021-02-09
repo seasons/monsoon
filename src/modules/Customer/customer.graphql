@@ -129,7 +129,7 @@ type CustomerMembership {
     first: Int
     last: Int
   ): [PauseRequest!]
-  subscription: CustomerMembershipSubscription
+  subscription: CustomerMembershipSubscriptionData
 }
 
 type PaymentPlan {

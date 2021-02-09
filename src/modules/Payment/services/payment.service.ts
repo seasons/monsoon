@@ -34,6 +34,16 @@ import {
   TransactionsDataLoader,
 } from "../payment.types"
 
+export interface SubscriptionData {
+  nextBillingAt: string
+  currentTermEnd: string
+  currentTermStart: string
+  status: string
+  planPrice: number
+  subscriptionId: string
+  planID: string
+}
+
 @Injectable()
 export class PaymentService {
   constructor(
@@ -358,15 +368,13 @@ export class PaymentService {
       })
       .request()
 
-    const subscriptionID = payload.subscription.id
     const total = payload.invoice?.total
 
     await this.createPrismaSubscription(
       user.id,
       payload.customer,
       paymentSource.payment_source.card,
-      planID,
-      subscriptionID
+      payload.subscription
     )
 
     this.segment.trackSubscribed(user.id, {
@@ -599,10 +607,23 @@ export class PaymentService {
     userID: string,
     chargebeeCustomer: any,
     card: any,
-    planID: string,
-    subscriptionID: string,
+    subscription: any,
     giftID?: string
   ) {
+    const subscriptionData: SubscriptionData = {
+      nextBillingAt: DateTime.fromSeconds(subscription.next_billing_at).toISO(),
+      currentTermEnd: DateTime.fromSeconds(
+        subscription.current_term_end
+      ).toISO(),
+      currentTermStart: DateTime.fromSeconds(
+        subscription.current_term_start
+      ).toISO(),
+      status: subscription.status,
+      planPrice: subscription.plan_amount,
+      subscriptionId: subscription.id,
+      planID: subscription.plan_id,
+    }
+
     // Retrieve plan and billing data
     const billingInfo = this.paymentUtils.createBillingInfoObject(
       card,
@@ -633,9 +654,12 @@ export class PaymentService {
 
     await this.prisma.client.createCustomerMembership({
       customer: { connect: { id: prismaCustomer.id } },
-      subscriptionId: subscriptionID,
+      subscriptionId: subscriptionData.subscriptionId,
       giftId: giftID,
-      plan: { connect: { planID } },
+      plan: { connect: { planID: subscriptionData.planID } },
+      subscription: {
+        create: subscriptionData,
+      },
     })
 
     // Send welcome to seasons email

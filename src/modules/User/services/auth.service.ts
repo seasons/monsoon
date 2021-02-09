@@ -1,12 +1,16 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { PaymentService } from "@app/modules/Payment/services/payment.service"
+import {
+  PaymentService,
+  SubscriptionData,
+} from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerCreateInput, CustomerDetail } from "@app/prisma/prisma.binding"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import {
   CustomerDetailCreateInput,
+  CustomerMembershipSubscriptionData,
   UserPushNotificationInterestType,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -140,8 +144,7 @@ export class AuthService {
           expiry_month: nextMonth.month,
           expiry_year: nextMonth.year,
         },
-        subscription.plan_id.replace("-gift", ""),
-        subscription.id,
+        subscription,
         giftId
       )
     }
