@@ -125,6 +125,10 @@ export class EmailService {
     const formattedOrderLineItems = await this.emailUtils.formatOrderLineItems(
       order
     )
+    const needsShipping = orderLineItems.reduce(
+      (acc, curVal) => acc || curVal.needShipping,
+      false
+    )
 
     const custData = (
       await this.prisma.binding.query.customers(
@@ -161,6 +165,7 @@ export class EmailService {
       shipping: custData.detail.shippingAddress,
       cardInfo: custData.billingInfo,
       products,
+      needsShipping,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
