@@ -303,6 +303,10 @@ type AggregateCustomerMembership {
   count: Int!
 }
 
+type AggregateCustomerMembershipSubscription {
+  count: Int!
+}
+
 type AggregateEmailReceipt {
   count: Int!
 }
@@ -3562,6 +3566,7 @@ type CustomerMembership {
   id: ID!
   plan: PaymentPlan
   subscriptionId: String!
+  subscription: CustomerMembershipSubscription
   customer: Customer!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
   giftId: String
@@ -3577,6 +3582,7 @@ input CustomerMembershipCreateInput {
   id: ID
   plan: PaymentPlanCreateOneInput
   subscriptionId: String!
+  subscription: CustomerMembershipSubscriptionCreateOneInput
   customer: CustomerCreateOneWithoutMembershipInput!
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
   giftId: String
@@ -3596,6 +3602,7 @@ input CustomerMembershipCreateWithoutCustomerInput {
   id: ID
   plan: PaymentPlanCreateOneInput
   subscriptionId: String!
+  subscription: CustomerMembershipSubscriptionCreateOneInput
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
   giftId: String
 }
@@ -3604,6 +3611,7 @@ input CustomerMembershipCreateWithoutPauseRequestsInput {
   id: ID
   plan: PaymentPlanCreateOneInput
   subscriptionId: String!
+  subscription: CustomerMembershipSubscriptionCreateOneInput
   customer: CustomerCreateOneWithoutMembershipInput!
   giftId: String
 }
@@ -3628,6 +3636,35 @@ type CustomerMembershipPreviousValues {
   giftId: String
 }
 
+type CustomerMembershipSubscription {
+  id: ID!
+}
+
+type CustomerMembershipSubscriptionConnection {
+  pageInfo: PageInfo!
+  edges: [CustomerMembershipSubscriptionEdge]!
+  aggregate: AggregateCustomerMembershipSubscription!
+}
+
+input CustomerMembershipSubscriptionCreateInput {
+  id: ID
+}
+
+input CustomerMembershipSubscriptionCreateOneInput {
+  create: CustomerMembershipSubscriptionCreateInput
+  connect: CustomerMembershipSubscriptionWhereUniqueInput
+}
+
+type CustomerMembershipSubscriptionEdge {
+  node: CustomerMembershipSubscription!
+  cursor: String!
+}
+
+enum CustomerMembershipSubscriptionOrderByInput {
+  id_ASC
+  id_DESC
+}
+
 type CustomerMembershipSubscriptionPayload {
   mutation: MutationType!
   node: CustomerMembership
@@ -3635,20 +3672,63 @@ type CustomerMembershipSubscriptionPayload {
   previousValues: CustomerMembershipPreviousValues
 }
 
-input CustomerMembershipSubscriptionWhereInput {
+type CustomerMembershipSubscriptionPreviousValues {
+  id: ID!
+}
+
+type CustomerMembershipSubscriptionSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerMembershipSubscription
+  updatedFields: [String!]
+  previousValues: CustomerMembershipSubscriptionPreviousValues
+}
+
+input CustomerMembershipSubscriptionSubscriptionWhereInput {
   mutation_in: [MutationType!]
   updatedFields_contains: String
   updatedFields_contains_every: [String!]
   updatedFields_contains_some: [String!]
-  node: CustomerMembershipWhereInput
+  node: CustomerMembershipSubscriptionWhereInput
+  AND: [CustomerMembershipSubscriptionSubscriptionWhereInput!]
+  OR: [CustomerMembershipSubscriptionSubscriptionWhereInput!]
+  NOT: [CustomerMembershipSubscriptionSubscriptionWhereInput!]
+}
+
+input CustomerMembershipSubscriptionUpdateOneInput {
+  create: CustomerMembershipSubscriptionCreateInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: CustomerMembershipSubscriptionWhereUniqueInput
+}
+
+input CustomerMembershipSubscriptionWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
   AND: [CustomerMembershipSubscriptionWhereInput!]
   OR: [CustomerMembershipSubscriptionWhereInput!]
   NOT: [CustomerMembershipSubscriptionWhereInput!]
 }
 
+input CustomerMembershipSubscriptionWhereUniqueInput {
+  id: ID
+}
+
 input CustomerMembershipUpdateInput {
   plan: PaymentPlanUpdateOneInput
   subscriptionId: String
+  subscription: CustomerMembershipSubscriptionUpdateOneInput
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
   giftId: String
@@ -3678,6 +3758,7 @@ input CustomerMembershipUpdateOneWithoutCustomerInput {
 input CustomerMembershipUpdateWithoutCustomerDataInput {
   plan: PaymentPlanUpdateOneInput
   subscriptionId: String
+  subscription: CustomerMembershipSubscriptionUpdateOneInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
   giftId: String
 }
@@ -3685,6 +3766,7 @@ input CustomerMembershipUpdateWithoutCustomerDataInput {
 input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
   plan: PaymentPlanUpdateOneInput
   subscriptionId: String
+  subscription: CustomerMembershipSubscriptionUpdateOneInput
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
   giftId: String
 }
@@ -3729,6 +3811,7 @@ input CustomerMembershipWhereInput {
   subscriptionId_not_starts_with: String
   subscriptionId_ends_with: String
   subscriptionId_not_ends_with: String
+  subscription: CustomerMembershipSubscriptionWhereInput
   customer: CustomerWhereInput
   pauseRequests_every: PauseRequestWhereInput
   pauseRequests_some: PauseRequestWhereInput
@@ -6523,6 +6606,9 @@ type Mutation {
   upsertCustomerMembership(where: CustomerMembershipWhereUniqueInput!, create: CustomerMembershipCreateInput!, update: CustomerMembershipUpdateInput!): CustomerMembership!
   deleteCustomerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   deleteManyCustomerMemberships(where: CustomerMembershipWhereInput): BatchPayload!
+  createCustomerMembershipSubscription(data: CustomerMembershipSubscriptionCreateInput!): CustomerMembershipSubscription!
+  deleteCustomerMembershipSubscription(where: CustomerMembershipSubscriptionWhereUniqueInput!): CustomerMembershipSubscription
+  deleteManyCustomerMembershipSubscriptions(where: CustomerMembershipSubscriptionWhereInput): BatchPayload!
   createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
   updateEmailReceipt(data: EmailReceiptUpdateInput!, where: EmailReceiptWhereUniqueInput!): EmailReceipt
   updateManyEmailReceipts(data: EmailReceiptUpdateManyMutationInput!, where: EmailReceiptWhereInput): BatchPayload!
@@ -14166,6 +14252,9 @@ type Query {
   customerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   customerMemberships(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerMembership]!
   customerMembershipsConnection(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerMembershipConnection!
+  customerMembershipSubscription(where: CustomerMembershipSubscriptionWhereUniqueInput!): CustomerMembershipSubscription
+  customerMembershipSubscriptions(where: CustomerMembershipSubscriptionWhereInput, orderBy: CustomerMembershipSubscriptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerMembershipSubscription]!
+  customerMembershipSubscriptionsConnection(where: CustomerMembershipSubscriptionWhereInput, orderBy: CustomerMembershipSubscriptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerMembershipSubscriptionConnection!
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
@@ -17064,6 +17153,7 @@ type Subscription {
   customerAdmissionsData(where: CustomerAdmissionsDataSubscriptionWhereInput): CustomerAdmissionsDataSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   customerMembership(where: CustomerMembershipSubscriptionWhereInput): CustomerMembershipSubscriptionPayload
+  customerMembershipSubscription(where: CustomerMembershipSubscriptionSubscriptionWhereInput): CustomerMembershipSubscriptionSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
   externalShopifyIntegration(where: ExternalShopifyIntegrationSubscriptionWhereInput): ExternalShopifyIntegrationSubscriptionPayload
   fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload

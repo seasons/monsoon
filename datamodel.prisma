@@ -587,7 +587,6 @@ type PaymentPlan {
   itemCount: Int
   tagline: String
   tier: PaymentPlanTier
-  billingDate: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -888,10 +887,28 @@ type Customer {
   updatedAt: DateTime! @updatedAt
 }
 
+type CustomerMembershipSubscription {
+  id: ID! @id
+  #   planID: String!
+  #   subscriptionId: String!
+  #   currentTermStart: DateTime!
+  #   currentTermEnd: DateTime!
+  #   nextBillingAt: DateTime!
+  #   status: String!
+  #   planPrice: Int!
+  #   createdAt: DateTime! @createdAt
+  #   updatedAt: DateTime! @updatedAt
+}
+
 type CustomerMembership {
   id: ID! @id
   plan: PaymentPlan
   subscriptionId: String!
+  subscription: CustomerMembershipSubscription
+    @relation(
+      name: "CustomerToCustomerMembershipSubscription"
+      onDelete: CASCADE
+    )
   customer: Customer!
     @relation(
       name: "CustomerToCustomerMembership"

@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Mon Feb 08 2021 12:07:52 GMT-0500 (Eastern Standard Time)
+# timestamp: Tue Feb 09 2021 15:16:20 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -642,6 +642,10 @@ type AggregateCustomerDetail {
 }
 
 type AggregateCustomerMembership {
+  count: Int!
+}
+
+type AggregateCustomerMembershipSubscription {
   count: Int!
 }
 
@@ -8424,6 +8428,7 @@ type CustomerMembership implements Node {
   id: ID!
   plan: PaymentPlan
   subscriptionId: String!
+  subscription: CustomerMembershipSubscription
   customer: Customer!
   pauseRequests(
     where: PauseRequestWhereInput
@@ -8458,6 +8463,7 @@ input CustomerMembershipCreateInput {
   subscriptionId: String!
   giftId: String
   plan: PaymentPlanCreateOneInput
+  subscription: CustomerMembershipSubscriptionCreateOneInput
   customer: CustomerCreateOneWithoutMembershipInput!
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
@@ -8477,6 +8483,7 @@ input CustomerMembershipCreateWithoutCustomerInput {
   subscriptionId: String!
   giftId: String
   plan: PaymentPlanCreateOneInput
+  subscription: CustomerMembershipSubscriptionCreateOneInput
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
 
@@ -8485,6 +8492,7 @@ input CustomerMembershipCreateWithoutPauseRequestsInput {
   subscriptionId: String!
   giftId: String
   plan: PaymentPlanCreateOneInput
+  subscription: CustomerMembershipSubscriptionCreateOneInput
   customer: CustomerCreateOneWithoutMembershipInput!
 }
 
@@ -8518,6 +8526,55 @@ type CustomerMembershipPreviousValues {
   giftId: String
 }
 
+type CustomerMembershipSubscription implements Node {
+  id: ID!
+}
+
+"""
+A connection to a list of items.
+"""
+type CustomerMembershipSubscriptionConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [CustomerMembershipSubscriptionEdge]!
+  aggregate: AggregateCustomerMembershipSubscription!
+}
+
+input CustomerMembershipSubscriptionCreateInput {
+  id: ID
+}
+
+input CustomerMembershipSubscriptionCreateOneInput {
+  create: CustomerMembershipSubscriptionCreateInput
+  connect: CustomerMembershipSubscriptionWhereUniqueInput
+}
+
+"""
+An edge in a connection.
+"""
+type CustomerMembershipSubscriptionEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: CustomerMembershipSubscription!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum CustomerMembershipSubscriptionOrderByInput {
+  id_ASC
+  id_DESC
+}
+
 type CustomerMembershipSubscriptionPayload {
   mutation: MutationType!
   node: CustomerMembership
@@ -8525,21 +8582,32 @@ type CustomerMembershipSubscriptionPayload {
   previousValues: CustomerMembershipPreviousValues
 }
 
-input CustomerMembershipSubscriptionWhereInput {
+type CustomerMembershipSubscriptionPreviousValues {
+  id: ID!
+}
+
+type CustomerMembershipSubscriptionSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerMembershipSubscription
+  updatedFields: [String!]
+  previousValues: CustomerMembershipSubscriptionPreviousValues
+}
+
+input CustomerMembershipSubscriptionSubscriptionWhereInput {
   """
   Logical AND on all given filters.
   """
-  AND: [CustomerMembershipSubscriptionWhereInput!]
+  AND: [CustomerMembershipSubscriptionSubscriptionWhereInput!]
 
   """
   Logical OR on all given filters.
   """
-  OR: [CustomerMembershipSubscriptionWhereInput!]
+  OR: [CustomerMembershipSubscriptionSubscriptionWhereInput!]
 
   """
   Logical NOT on all given filters combined by AND.
   """
-  NOT: [CustomerMembershipSubscriptionWhereInput!]
+  NOT: [CustomerMembershipSubscriptionSubscriptionWhereInput!]
 
   """
   The subscription event gets dispatched when it's listed in mutation_in
@@ -8560,13 +8628,108 @@ input CustomerMembershipSubscriptionWhereInput {
   The subscription event gets only dispatched when some of the field names included in this list have been updated
   """
   updatedFields_contains_some: [String!]
-  node: CustomerMembershipWhereInput
+  node: CustomerMembershipSubscriptionWhereInput
+}
+
+input CustomerMembershipSubscriptionUpdateOneInput {
+  create: CustomerMembershipSubscriptionCreateInput
+  connect: CustomerMembershipSubscriptionWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+}
+
+input CustomerMembershipSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [CustomerMembershipSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [CustomerMembershipSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [CustomerMembershipSubscriptionWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+}
+
+input CustomerMembershipSubscriptionWhereUniqueInput {
+  id: ID
 }
 
 input CustomerMembershipUpdateInput {
   subscriptionId: String
   giftId: String
   plan: PaymentPlanUpdateOneInput
+  subscription: CustomerMembershipSubscriptionUpdateOneInput
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
 }
@@ -8596,6 +8759,7 @@ input CustomerMembershipUpdateWithoutCustomerDataInput {
   subscriptionId: String
   giftId: String
   plan: PaymentPlanUpdateOneInput
+  subscription: CustomerMembershipSubscriptionUpdateOneInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
 }
 
@@ -8603,6 +8767,7 @@ input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
   subscriptionId: String
   giftId: String
   plan: PaymentPlanUpdateOneInput
+  subscription: CustomerMembershipSubscriptionUpdateOneInput
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
 }
 
@@ -8830,6 +8995,7 @@ input CustomerMembershipWhereInput {
   """
   giftId_not_ends_with: String
   plan: PaymentPlanWhereInput
+  subscription: CustomerMembershipSubscriptionWhereInput
   customer: CustomerWhereInput
   pauseRequests_every: PauseRequestWhereInput
   pauseRequests_some: PauseRequestWhereInput
@@ -15465,6 +15631,9 @@ type Mutation {
   createPushNotificationReceipt(
     data: PushNotificationReceiptCreateInput!
   ): PushNotificationReceipt!
+  createCustomerMembershipSubscription(
+    data: CustomerMembershipSubscriptionCreateInput!
+  ): CustomerMembershipSubscription!
   createUserPushNotificationInterest(
     data: UserPushNotificationInterestCreateInput!
   ): UserPushNotificationInterest!
@@ -15806,6 +15975,9 @@ type Mutation {
   deletePushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
   ): PushNotificationReceipt
+  deleteCustomerMembershipSubscription(
+    where: CustomerMembershipSubscriptionWhereUniqueInput!
+  ): CustomerMembershipSubscription
   deleteUserPushNotificationInterest(
     where: UserPushNotificationInterestWhereUniqueInput!
   ): UserPushNotificationInterest
@@ -16497,6 +16669,9 @@ type Mutation {
   deleteManyProductTiers(where: ProductTierWhereInput): BatchPayload!
   deleteManyPushNotificationReceipts(
     where: PushNotificationReceiptWhereInput
+  ): BatchPayload!
+  deleteManyCustomerMembershipSubscriptions(
+    where: CustomerMembershipSubscriptionWhereInput
   ): BatchPayload!
   deleteManyUserPushNotificationInterests(
     where: UserPushNotificationInterestWhereInput
@@ -34245,6 +34420,15 @@ type Query {
     first: Int
     last: Int
   ): [PushNotificationReceipt]!
+  customerMembershipSubscriptions(
+    where: CustomerMembershipSubscriptionWhereInput
+    orderBy: CustomerMembershipSubscriptionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [CustomerMembershipSubscription]!
   userPushNotificationInterests(
     where: UserPushNotificationInterestWhereInput
     orderBy: UserPushNotificationInterestOrderByInput
@@ -34596,6 +34780,9 @@ type Query {
   pushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
   ): PushNotificationReceipt
+  customerMembershipSubscription(
+    where: CustomerMembershipSubscriptionWhereUniqueInput!
+  ): CustomerMembershipSubscription
   userPushNotificationInterest(
     where: UserPushNotificationInterestWhereUniqueInput!
   ): UserPushNotificationInterest
@@ -34939,6 +35126,15 @@ type Query {
     first: Int
     last: Int
   ): PushNotificationReceiptConnection!
+  customerMembershipSubscriptionsConnection(
+    where: CustomerMembershipSubscriptionWhereInput
+    orderBy: CustomerMembershipSubscriptionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CustomerMembershipSubscriptionConnection!
   userPushNotificationInterestsConnection(
     where: UserPushNotificationInterestWhereInput
     orderBy: UserPushNotificationInterestOrderByInput
@@ -41759,6 +41955,9 @@ type Subscription {
   pushNotificationReceipt(
     where: PushNotificationReceiptSubscriptionWhereInput
   ): PushNotificationReceiptSubscriptionPayload
+  customerMembershipSubscription(
+    where: CustomerMembershipSubscriptionSubscriptionWhereInput
+  ): CustomerMembershipSubscriptionSubscriptionPayload
   userPushNotificationInterest(
     where: UserPushNotificationInterestSubscriptionWhereInput
   ): UserPushNotificationInterestSubscriptionPayload

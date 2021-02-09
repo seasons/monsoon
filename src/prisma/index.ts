@@ -33,6 +33,9 @@ export interface Exists {
   customerMembership: (
     where?: CustomerMembershipWhereInput
   ) => Promise<boolean>;
+  customerMembershipSubscription: (
+    where?: CustomerMembershipSubscriptionWhereInput
+  ) => Promise<boolean>;
   emailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>;
   externalShopifyIntegration: (
     where?: ExternalShopifyIntegrationWhereInput
@@ -403,6 +406,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => CustomerMembershipConnectionPromise;
+  customerMembershipSubscription: (
+    where: CustomerMembershipSubscriptionWhereUniqueInput
+  ) => CustomerMembershipSubscriptionNullablePromise;
+  customerMembershipSubscriptions: (args?: {
+    where?: CustomerMembershipSubscriptionWhereInput;
+    orderBy?: CustomerMembershipSubscriptionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<CustomerMembershipSubscription>;
+  customerMembershipSubscriptionsConnection: (args?: {
+    where?: CustomerMembershipSubscriptionWhereInput;
+    orderBy?: CustomerMembershipSubscriptionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => CustomerMembershipSubscriptionConnectionPromise;
   emailReceipt: (
     where: EmailReceiptWhereUniqueInput
   ) => EmailReceiptNullablePromise;
@@ -1707,6 +1731,15 @@ export interface Prisma {
   deleteManyCustomerMemberships: (
     where?: CustomerMembershipWhereInput
   ) => BatchPayloadPromise;
+  createCustomerMembershipSubscription: (
+    data: CustomerMembershipSubscriptionCreateInput
+  ) => CustomerMembershipSubscriptionPromise;
+  deleteCustomerMembershipSubscription: (
+    where: CustomerMembershipSubscriptionWhereUniqueInput
+  ) => CustomerMembershipSubscriptionPromise;
+  deleteManyCustomerMembershipSubscriptions: (
+    where?: CustomerMembershipSubscriptionWhereInput
+  ) => BatchPayloadPromise;
   createEmailReceipt: (data: EmailReceiptCreateInput) => EmailReceiptPromise;
   updateEmailReceipt: (args: {
     data: EmailReceiptUpdateInput;
@@ -2781,6 +2814,9 @@ export interface Subscription {
   customerMembership: (
     where?: CustomerMembershipSubscriptionWhereInput
   ) => CustomerMembershipSubscriptionPayloadSubscription;
+  customerMembershipSubscription: (
+    where?: CustomerMembershipSubscriptionSubscriptionWhereInput
+  ) => CustomerMembershipSubscriptionSubscriptionPayloadSubscription;
   emailReceipt: (
     where?: EmailReceiptSubscriptionWhereInput
   ) => EmailReceiptSubscriptionPayloadSubscription;
@@ -3787,6 +3823,8 @@ export type CustomerMembershipOrderByInput =
   | "subscriptionId_DESC"
   | "giftId_ASC"
   | "giftId_DESC";
+
+export type CustomerMembershipSubscriptionOrderByInput = "id_ASC" | "id_DESC";
 
 export type ExternalShopifyIntegrationOrderByInput =
   | "id_ASC"
@@ -7055,6 +7093,7 @@ export interface CustomerMembershipWhereInput {
   subscriptionId_not_starts_with?: Maybe<String>;
   subscriptionId_ends_with?: Maybe<String>;
   subscriptionId_not_ends_with?: Maybe<String>;
+  subscription?: Maybe<CustomerMembershipSubscriptionWhereInput>;
   customer?: Maybe<CustomerWhereInput>;
   pauseRequests_every?: Maybe<PauseRequestWhereInput>;
   pauseRequests_some?: Maybe<PauseRequestWhereInput>;
@@ -7202,6 +7241,35 @@ export interface PaymentPlanWhereInput {
   AND?: Maybe<PaymentPlanWhereInput[] | PaymentPlanWhereInput>;
   OR?: Maybe<PaymentPlanWhereInput[] | PaymentPlanWhereInput>;
   NOT?: Maybe<PaymentPlanWhereInput[] | PaymentPlanWhereInput>;
+}
+
+export interface CustomerMembershipSubscriptionWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  AND?: Maybe<
+    | CustomerMembershipSubscriptionWhereInput[]
+    | CustomerMembershipSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | CustomerMembershipSubscriptionWhereInput[]
+    | CustomerMembershipSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | CustomerMembershipSubscriptionWhereInput[]
+    | CustomerMembershipSubscriptionWhereInput
+  >;
 }
 
 export interface CustomerWhereInput {
@@ -8531,6 +8599,10 @@ export type CustomerDetailWhereUniqueInput = AtLeastOne<{
 }>;
 
 export type CustomerMembershipWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type CustomerMembershipSubscriptionWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
@@ -14110,6 +14182,7 @@ export interface CustomerMembershipCreateWithoutCustomerInput {
   id?: Maybe<ID_Input>;
   plan?: Maybe<PaymentPlanCreateOneInput>;
   subscriptionId: String;
+  subscription?: Maybe<CustomerMembershipSubscriptionCreateOneInput>;
   pauseRequests?: Maybe<PauseRequestCreateManyWithoutMembershipInput>;
   giftId?: Maybe<String>;
 }
@@ -14129,6 +14202,15 @@ export interface PaymentPlanCreateInput {
   itemCount?: Maybe<Int>;
   tagline?: Maybe<String>;
   tier?: Maybe<PaymentPlanTier>;
+}
+
+export interface CustomerMembershipSubscriptionCreateOneInput {
+  create?: Maybe<CustomerMembershipSubscriptionCreateInput>;
+  connect?: Maybe<CustomerMembershipSubscriptionWhereUniqueInput>;
+}
+
+export interface CustomerMembershipSubscriptionCreateInput {
+  id?: Maybe<ID_Input>;
 }
 
 export interface PauseRequestCreateManyWithoutMembershipInput {
@@ -14700,6 +14782,7 @@ export interface CustomerMembershipUpdateOneWithoutCustomerInput {
 export interface CustomerMembershipUpdateWithoutCustomerDataInput {
   plan?: Maybe<PaymentPlanUpdateOneInput>;
   subscriptionId?: Maybe<String>;
+  subscription?: Maybe<CustomerMembershipSubscriptionUpdateOneInput>;
   pauseRequests?: Maybe<PauseRequestUpdateManyWithoutMembershipInput>;
   giftId?: Maybe<String>;
 }
@@ -14727,6 +14810,13 @@ export interface PaymentPlanUpdateDataInput {
 export interface PaymentPlanUpsertNestedInput {
   update: PaymentPlanUpdateDataInput;
   create: PaymentPlanCreateInput;
+}
+
+export interface CustomerMembershipSubscriptionUpdateOneInput {
+  create?: Maybe<CustomerMembershipSubscriptionCreateInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<CustomerMembershipSubscriptionWhereUniqueInput>;
 }
 
 export interface PauseRequestUpdateManyWithoutMembershipInput {
@@ -16427,6 +16517,7 @@ export interface CustomerMembershipCreateInput {
   id?: Maybe<ID_Input>;
   plan?: Maybe<PaymentPlanCreateOneInput>;
   subscriptionId: String;
+  subscription?: Maybe<CustomerMembershipSubscriptionCreateOneInput>;
   customer: CustomerCreateOneWithoutMembershipInput;
   pauseRequests?: Maybe<PauseRequestCreateManyWithoutMembershipInput>;
   giftId?: Maybe<String>;
@@ -16459,6 +16550,7 @@ export interface CustomerCreateWithoutMembershipInput {
 export interface CustomerMembershipUpdateInput {
   plan?: Maybe<PaymentPlanUpdateOneInput>;
   subscriptionId?: Maybe<String>;
+  subscription?: Maybe<CustomerMembershipSubscriptionUpdateOneInput>;
   customer?: Maybe<CustomerUpdateOneRequiredWithoutMembershipInput>;
   pauseRequests?: Maybe<PauseRequestUpdateManyWithoutMembershipInput>;
   giftId?: Maybe<String>;
@@ -17162,6 +17254,7 @@ export interface CustomerMembershipCreateWithoutPauseRequestsInput {
   id?: Maybe<ID_Input>;
   plan?: Maybe<PaymentPlanCreateOneInput>;
   subscriptionId: String;
+  subscription?: Maybe<CustomerMembershipSubscriptionCreateOneInput>;
   customer: CustomerCreateOneWithoutMembershipInput;
   giftId?: Maybe<String>;
 }
@@ -17186,6 +17279,7 @@ export interface CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
 export interface CustomerMembershipUpdateWithoutPauseRequestsDataInput {
   plan?: Maybe<PaymentPlanUpdateOneInput>;
   subscriptionId?: Maybe<String>;
+  subscription?: Maybe<CustomerMembershipSubscriptionUpdateOneInput>;
   customer?: Maybe<CustomerUpdateOneRequiredWithoutMembershipInput>;
   giftId?: Maybe<String>;
 }
@@ -19372,23 +19466,23 @@ export interface CustomerDetailSubscriptionWhereInput {
   >;
 }
 
-export interface CustomerMembershipSubscriptionWhereInput {
+export interface CustomerMembershipSubscriptionSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
   updatedFields_contains_every?: Maybe<String[] | String>;
   updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<CustomerMembershipWhereInput>;
+  node?: Maybe<CustomerMembershipSubscriptionWhereInput>;
   AND?: Maybe<
-    | CustomerMembershipSubscriptionWhereInput[]
-    | CustomerMembershipSubscriptionWhereInput
+    | CustomerMembershipSubscriptionSubscriptionWhereInput[]
+    | CustomerMembershipSubscriptionSubscriptionWhereInput
   >;
   OR?: Maybe<
-    | CustomerMembershipSubscriptionWhereInput[]
-    | CustomerMembershipSubscriptionWhereInput
+    | CustomerMembershipSubscriptionSubscriptionWhereInput[]
+    | CustomerMembershipSubscriptionSubscriptionWhereInput
   >;
   NOT?: Maybe<
-    | CustomerMembershipSubscriptionWhereInput[]
-    | CustomerMembershipSubscriptionWhereInput
+    | CustomerMembershipSubscriptionSubscriptionWhereInput[]
+    | CustomerMembershipSubscriptionSubscriptionWhereInput
   >;
 }
 
@@ -23430,6 +23524,7 @@ export interface CustomerMembershipPromise
   id: () => Promise<ID_Output>;
   plan: <T = PaymentPlanPromise>() => T;
   subscriptionId: () => Promise<String>;
+  subscription: <T = CustomerMembershipSubscriptionPromise>() => T;
   customer: <T = CustomerPromise>() => T;
   pauseRequests: <T = FragmentableArray<PauseRequest>>(args?: {
     where?: PauseRequestWhereInput;
@@ -23449,6 +23544,7 @@ export interface CustomerMembershipSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   plan: <T = PaymentPlanSubscription>() => T;
   subscriptionId: () => Promise<AsyncIterator<String>>;
+  subscription: <T = CustomerMembershipSubscriptionSubscription>() => T;
   customer: <T = CustomerSubscription>() => T;
   pauseRequests: <T = Promise<AsyncIterator<PauseRequestSubscription>>>(args?: {
     where?: PauseRequestWhereInput;
@@ -23468,6 +23564,7 @@ export interface CustomerMembershipNullablePromise
   id: () => Promise<ID_Output>;
   plan: <T = PaymentPlanPromise>() => T;
   subscriptionId: () => Promise<String>;
+  subscription: <T = CustomerMembershipSubscriptionPromise>() => T;
   customer: <T = CustomerPromise>() => T;
   pauseRequests: <T = FragmentableArray<PauseRequest>>(args?: {
     where?: PauseRequestWhereInput;
@@ -23539,6 +23636,28 @@ export interface PaymentPlanNullablePromise
   tier: () => Promise<PaymentPlanTier>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface CustomerMembershipSubscription {
+  id: ID_Output;
+}
+
+export interface CustomerMembershipSubscriptionPromise
+  extends Promise<CustomerMembershipSubscription>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+}
+
+export interface CustomerMembershipSubscriptionSubscription
+  extends Promise<AsyncIterator<CustomerMembershipSubscription>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+}
+
+export interface CustomerMembershipSubscriptionNullablePromise
+  extends Promise<CustomerMembershipSubscription | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
 }
 
 export interface PauseRequest {
@@ -24837,6 +24956,64 @@ export interface AggregateCustomerMembershipPromise
 
 export interface AggregateCustomerMembershipSubscription
   extends Promise<AsyncIterator<AggregateCustomerMembership>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface CustomerMembershipSubscriptionConnection {
+  pageInfo: PageInfo;
+  edges: CustomerMembershipSubscriptionEdge[];
+}
+
+export interface CustomerMembershipSubscriptionConnectionPromise
+  extends Promise<CustomerMembershipSubscriptionConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<CustomerMembershipSubscriptionEdge>>() => T;
+  aggregate: <T = AggregateCustomerMembershipSubscriptionPromise>() => T;
+}
+
+export interface CustomerMembershipSubscriptionConnectionSubscription
+  extends Promise<AsyncIterator<CustomerMembershipSubscriptionConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<CustomerMembershipSubscriptionEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateCustomerMembershipSubscriptionSubscription>() => T;
+}
+
+export interface CustomerMembershipSubscriptionEdge {
+  node: CustomerMembershipSubscription;
+  cursor: String;
+}
+
+export interface CustomerMembershipSubscriptionEdgePromise
+  extends Promise<CustomerMembershipSubscriptionEdge>,
+    Fragmentable {
+  node: <T = CustomerMembershipSubscriptionPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface CustomerMembershipSubscriptionEdgeSubscription
+  extends Promise<AsyncIterator<CustomerMembershipSubscriptionEdge>>,
+    Fragmentable {
+  node: <T = CustomerMembershipSubscriptionSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateCustomerMembershipSubscription {
+  count: Int;
+}
+
+export interface AggregateCustomerMembershipSubscriptionPromise
+  extends Promise<AggregateCustomerMembershipSubscription>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateCustomerMembershipSubscriptionSubscription
+  extends Promise<AsyncIterator<AggregateCustomerMembershipSubscription>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -29234,6 +29411,53 @@ export interface CustomerMembershipPreviousValuesSubscription
   giftId: () => Promise<AsyncIterator<String>>;
 }
 
+export interface CustomerMembershipSubscriptionSubscriptionPayload {
+  mutation: MutationType;
+  node: CustomerMembershipSubscription;
+  updatedFields: String[];
+  previousValues: CustomerMembershipSubscriptionPreviousValues;
+}
+
+export interface CustomerMembershipSubscriptionSubscriptionPayloadPromise
+  extends Promise<CustomerMembershipSubscriptionSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = CustomerMembershipSubscriptionPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <
+    T = CustomerMembershipSubscriptionPreviousValuesPromise
+  >() => T;
+}
+
+export interface CustomerMembershipSubscriptionSubscriptionPayloadSubscription
+  extends Promise<
+      AsyncIterator<CustomerMembershipSubscriptionSubscriptionPayload>
+    >,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = CustomerMembershipSubscriptionSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = CustomerMembershipSubscriptionPreviousValuesSubscription
+  >() => T;
+}
+
+export interface CustomerMembershipSubscriptionPreviousValues {
+  id: ID_Output;
+}
+
+export interface CustomerMembershipSubscriptionPreviousValuesPromise
+  extends Promise<CustomerMembershipSubscriptionPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+}
+
+export interface CustomerMembershipSubscriptionPreviousValuesSubscription
+  extends Promise<AsyncIterator<CustomerMembershipSubscriptionPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+}
+
 export interface EmailReceiptSubscriptionPayload {
   mutation: MutationType;
   node: EmailReceipt;
@@ -32604,6 +32828,10 @@ export const models: Model[] = [
   },
   {
     name: "Customer",
+    embedded: false
+  },
+  {
+    name: "CustomerMembershipSubscription",
     embedded: false
   },
   {
