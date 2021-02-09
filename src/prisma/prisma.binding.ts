@@ -8360,6 +8360,7 @@ scalar DateTime
 
 enum EmailId {
   CompleteAccount
+  BuyUsedOrderConfirmation
   DaySevenAuthorizationFollowup
   DaySixAuthorizationFollowup
   DayFiveAuthorizationFollowup
@@ -34286,6 +34287,7 @@ export type CustomerStyle =   'AvantGarde' |
   'Techwear'
 
 export type EmailId =   'CompleteAccount' |
+  'BuyUsedOrderConfirmation' |
   'DaySevenAuthorizationFollowup' |
   'DaySixAuthorizationFollowup' |
   'DayFiveAuthorizationFollowup' |

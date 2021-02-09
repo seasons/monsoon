@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Feb 09 2021 17:56:44 GMT-0500 (Eastern Standard Time)
+# timestamp: Tue Feb 09 2021 13:50:08 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -10665,6 +10665,7 @@ scalar DateTime
 
 enum EmailId {
   CompleteAccount
+  BuyUsedOrderConfirmation
   DaySevenAuthorizationFollowup
   DaySixAuthorizationFollowup
   DayFiveAuthorizationFollowup
