@@ -3490,7 +3490,7 @@ export type CustomerStyle =
 
 export type Plan = "AllAccess" | "Essential";
 
-export type PaymentPlanTier = "Essential" | "AllAccess";
+export type PaymentPlanTier = "Essential" | "AllAccess" | "Pause";
 
 export type BagItemStatus = "Added" | "Reserved" | "Received";
 

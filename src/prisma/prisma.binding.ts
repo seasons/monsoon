@@ -15427,6 +15427,7 @@ input PaymentPlanSubscriptionWhereInput {
 enum PaymentPlanTier {
   Essential
   AllAccess
+  Pause
 }
 
 input PaymentPlanUpdateDataInput {
@@ -34644,7 +34645,8 @@ export type PaymentPlanOrderByInput =   'id_ASC' |
   'updatedAt_DESC'
 
 export type PaymentPlanTier =   'Essential' |
-  'AllAccess'
+  'AllAccess' |
+  'Pause'
 
 export type PhotographyStatus =   'Done' |
   'InProgress' |

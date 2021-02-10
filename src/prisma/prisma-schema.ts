@@ -8776,6 +8776,7 @@ input PaymentPlanSubscriptionWhereInput {
 enum PaymentPlanTier {
   Essential
   AllAccess
+  Pause
 }
 
 input PaymentPlanUpdateDataInput {

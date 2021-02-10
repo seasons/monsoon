@@ -595,6 +595,7 @@ type PaymentPlan {
 enum PaymentPlanTier {
   Essential
   AllAccess
+  Pause
 }
 
 type EmailReceipt {
