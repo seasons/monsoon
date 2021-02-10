@@ -621,7 +621,7 @@ export class PaymentService {
       status: subscription.status,
       planPrice: subscription.plan_amount,
       subscriptionId: subscription.id,
-      planID: subscription.plan_id,
+      planID: subscription.plan_id.replace("-gift", ""),
     }
 
     // Retrieve plan and billing data

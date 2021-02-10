@@ -77,7 +77,7 @@ export class SubscriptionsScheduledJobs {
             status: subscription.status,
             planPrice: subscription.plan_amount,
             subscriptionId: subscription.id,
-            planID: subscription.plan_id,
+            planID: subscription.plan_id.replace("-gift", ""),
           }
 
           const membershipSubscriptionID =
