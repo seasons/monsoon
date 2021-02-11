@@ -463,17 +463,38 @@ export class PaymentService {
       this.error.setExtraContext({ subscriptionId })
       this.error.setExtraContext(customer, "customer")
       this.error.captureError(e)
-      throw new Error(`Error pausing subscription: ${e}`)
+      throw new Error(`Error pausing subscription: ${JSON.stringify(e)}`)
     }
   }
 
   async removeScheduledPause(subscriptionId, customer) {
     try {
-      await chargebee.subscription
-        .remove_scheduled_pause(subscriptionId, {
-          pause_option: "end_of_term",
-        })
-        .request()
+      const pauseRequests = await this.prisma.client.pauseRequests({
+        where: {
+          membership: {
+            customer: {
+              id: customer.id,
+            },
+          },
+        },
+        orderBy: "createdAt_DESC",
+      })
+
+      const pauseRequest = head(pauseRequests)
+
+      if (pauseRequest.pauseType === "WithoutItems") {
+        await chargebee.subscription
+          .resume(subscriptionId, {
+            resume_option: "immediately",
+            charges_handling: "add_to_unbilled_charges",
+          })
+          .request()
+      }
+
+      await this.prisma.client.updatePauseRequest({
+        where: { id: pauseRequest.id },
+        data: { pausePending: false },
+      })
     } catch (e) {
       if (
         e?.api_error_code &&
@@ -485,24 +506,6 @@ export class PaymentService {
         throw new Error(`Error removing scheduled pause: ${e}`)
       }
     }
-
-    const pauseRequests = await this.prisma.client.pauseRequests({
-      where: {
-        membership: {
-          customer: {
-            id: customer.id,
-          },
-        },
-      },
-      orderBy: "createdAt_DESC",
-    })
-
-    const pauseRequest = head(pauseRequests)
-
-    await this.prisma.client.updatePauseRequest({
-      where: { id: pauseRequest.id },
-      data: { pausePending: false },
-    })
   }
 
   async createSubscription(
