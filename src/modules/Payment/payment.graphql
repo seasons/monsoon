@@ -125,6 +125,18 @@ type Invoice {
   transactions: [Transaction]
   lineItems: [LineItem]
   creditNotes: [CreditNote]
+  billingAddress: ChargebeeAddress
+}
+
+type ChargebeeAddress {
+  firstName: String
+  lastName: String
+  line1: String
+  line2: String
+  line3: String
+  city: String
+  state: String
+  zip: String
 }
 
 type Transaction {

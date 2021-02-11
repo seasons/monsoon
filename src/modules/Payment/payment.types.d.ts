@@ -23,10 +23,21 @@ export interface Invoice {
   issuedCreditNotes?: CreditNote[]
   linkedPayments: { txnId: string }[]
   lineItems: LineItem[]
+  billingAddress: ChargebeeBillingAddress
 }
 
 export type LineItemIdentityType = "PlanSetup" | "Plan" | "Addon"
 
+export interface ChargebeeBillingAddress {
+  firstName: String
+  lastName: String
+  line1: String
+  line2: String
+  line3: String
+  city: String
+  state: String
+  zip: String
+}
 export interface LineItem {
   id: String
   dateFrom: number // seconds since epoch
