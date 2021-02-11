@@ -126,6 +126,12 @@ type Invoice {
   lineItems: [LineItem]
   creditNotes: [CreditNote]
   billingAddress: ChargebeeAddress
+  discounts: [Discount]
+}
+
+type Discount {
+  amount: Int!
+  description: String
 }
 
 type ChargebeeAddress {

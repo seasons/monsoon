@@ -24,10 +24,15 @@ export interface Invoice {
   linkedPayments: { txnId: string }[]
   lineItems: LineItem[]
   billingAddress: ChargebeeBillingAddress
+  discounts: Discount[]
 }
 
 export type LineItemIdentityType = "PlanSetup" | "Plan" | "Addon"
 
+export interface Discount {
+  amount: number
+  description?: string
+}
 export interface ChargebeeBillingAddress {
   firstName: String
   lastName: String
