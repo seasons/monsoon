@@ -302,7 +302,7 @@ export class PaymentService {
       city: token.card.addressCity || "",
       state: token.card.addressState || "",
       zip: token.card.addressZip || "",
-      country: token.card.addressCountry?.toUpperCase() || "",
+      country: "US", // assume its US for now, because we need it for taxes.
     }
 
     let chargebeeCustomer
