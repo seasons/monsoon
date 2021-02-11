@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Feb 10 2021 16:54:38 GMT-0500 (Eastern Standard Time)
+# timestamp: Thu Feb 11 2021 13:41:48 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -20522,6 +20522,7 @@ type PauseRequest implements Node {
   createdAt: DateTime!
   updatedAt: DateTime!
   pausePending: Boolean!
+  pauseType: PauseType!
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean!
@@ -20547,6 +20548,7 @@ type PauseRequestConnection {
 input PauseRequestCreateInput {
   id: ID
   pausePending: Boolean!
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -20561,6 +20563,7 @@ input PauseRequestCreateManyWithoutMembershipInput {
 input PauseRequestCreateWithoutMembershipInput {
   id: ID
   pausePending: Boolean!
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -20590,6 +20593,8 @@ enum PauseRequestOrderByInput {
   updatedAt_DESC
   pausePending_ASC
   pausePending_DESC
+  pauseType_ASC
+  pauseType_DESC
   pauseDate_ASC
   pauseDate_DESC
   resumeDate_ASC
@@ -20603,6 +20608,7 @@ type PauseRequestPreviousValues {
   createdAt: DateTime!
   updatedAt: DateTime!
   pausePending: Boolean!
+  pauseType: PauseType!
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean!
@@ -20767,6 +20773,22 @@ input PauseRequestScalarWhereInput {
   All values that are not equal to given value.
   """
   pausePending_not: Boolean
+  pauseType: PauseType
+
+  """
+  All values that are not equal to given value.
+  """
+  pauseType_not: PauseType
+
+  """
+  All values that are contained in given list.
+  """
+  pauseType_in: [PauseType!]
+
+  """
+  All values that are not contained in given list.
+  """
+  pauseType_not_in: [PauseType!]
   pauseDate: DateTime
 
   """
@@ -20894,6 +20916,7 @@ input PauseRequestSubscriptionWhereInput {
 
 input PauseRequestUpdateInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -20902,6 +20925,7 @@ input PauseRequestUpdateInput {
 
 input PauseRequestUpdateManyDataInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -20909,6 +20933,7 @@ input PauseRequestUpdateManyDataInput {
 
 input PauseRequestUpdateManyMutationInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -20933,6 +20958,7 @@ input PauseRequestUpdateManyWithWhereNestedInput {
 
 input PauseRequestUpdateWithoutMembershipDataInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -21108,6 +21134,22 @@ input PauseRequestWhereInput {
   All values that are not equal to given value.
   """
   pausePending_not: Boolean
+  pauseType: PauseType
+
+  """
+  All values that are not equal to given value.
+  """
+  pauseType_not: PauseType
+
+  """
+  All values that are contained in given list.
+  """
+  pauseType_in: [PauseType!]
+
+  """
+  All values that are not contained in given list.
+  """
+  pauseType_not_in: [PauseType!]
   pauseDate: DateTime
 
   """
@@ -21191,6 +21233,11 @@ input PauseRequestWhereInput {
 
 input PauseRequestWhereUniqueInput {
   id: ID
+}
+
+enum PauseType {
+  WithItems
+  WithoutItems
 }
 
 type PaymentPlan implements Node {

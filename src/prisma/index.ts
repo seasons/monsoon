@@ -3492,6 +3492,8 @@ export type Plan = "AllAccess" | "Essential";
 
 export type PaymentPlanTier = "Essential" | "AllAccess" | "Pause";
 
+export type PauseType = "WithItems" | "WithoutItems";
+
 export type BagItemStatus = "Added" | "Reserved" | "Received";
 
 export type PackageTransitEventStatus =
@@ -3569,6 +3571,8 @@ export type PauseRequestOrderByInput =
   | "updatedAt_DESC"
   | "pausePending_ASC"
   | "pausePending_DESC"
+  | "pauseType_ASC"
+  | "pauseType_DESC"
   | "pauseDate_ASC"
   | "pauseDate_DESC"
   | "resumeDate_ASC"
@@ -7073,6 +7077,10 @@ export interface PauseRequestWhereInput {
   updatedAt_gte?: Maybe<DateTimeInput>;
   pausePending?: Maybe<Boolean>;
   pausePending_not?: Maybe<Boolean>;
+  pauseType?: Maybe<PauseType>;
+  pauseType_not?: Maybe<PauseType>;
+  pauseType_in?: Maybe<PauseType[] | PauseType>;
+  pauseType_not_in?: Maybe<PauseType[] | PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
   pauseDate_not?: Maybe<DateTimeInput>;
   pauseDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -14357,6 +14365,7 @@ export interface PauseRequestCreateManyWithoutMembershipInput {
 export interface PauseRequestCreateWithoutMembershipInput {
   id?: Maybe<ID_Input>;
   pausePending: Boolean;
+  pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
   notified?: Maybe<Boolean>;
@@ -15004,6 +15013,7 @@ export interface PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
 
 export interface PauseRequestUpdateWithoutMembershipDataInput {
   pausePending?: Maybe<Boolean>;
+  pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
   notified?: Maybe<Boolean>;
@@ -15048,6 +15058,10 @@ export interface PauseRequestScalarWhereInput {
   updatedAt_gte?: Maybe<DateTimeInput>;
   pausePending?: Maybe<Boolean>;
   pausePending_not?: Maybe<Boolean>;
+  pauseType?: Maybe<PauseType>;
+  pauseType_not?: Maybe<PauseType>;
+  pauseType_in?: Maybe<PauseType[] | PauseType>;
+  pauseType_not_in?: Maybe<PauseType[] | PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
   pauseDate_not?: Maybe<DateTimeInput>;
   pauseDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -15078,6 +15092,7 @@ export interface PauseRequestUpdateManyWithWhereNestedInput {
 
 export interface PauseRequestUpdateManyDataInput {
   pausePending?: Maybe<Boolean>;
+  pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
   notified?: Maybe<Boolean>;
@@ -17407,6 +17422,7 @@ export interface PackageTransitEventUpdateManyMutationInput {
 export interface PauseRequestCreateInput {
   id?: Maybe<ID_Input>;
   pausePending: Boolean;
+  pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
   notified?: Maybe<Boolean>;
@@ -17429,6 +17445,7 @@ export interface CustomerMembershipCreateWithoutPauseRequestsInput {
 
 export interface PauseRequestUpdateInput {
   pausePending?: Maybe<Boolean>;
+  pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
   notified?: Maybe<Boolean>;
@@ -17459,6 +17476,7 @@ export interface CustomerMembershipUpsertWithoutPauseRequestsInput {
 
 export interface PauseRequestUpdateManyMutationInput {
   pausePending?: Maybe<Boolean>;
+  pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
   notified?: Maybe<Boolean>;
@@ -23889,6 +23907,7 @@ export interface PauseRequest {
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   pausePending: Boolean;
+  pauseType: PauseType;
   pauseDate?: DateTimeOutput;
   resumeDate?: DateTimeOutput;
   notified: Boolean;
@@ -23901,6 +23920,7 @@ export interface PauseRequestPromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   pausePending: () => Promise<Boolean>;
+  pauseType: () => Promise<PauseType>;
   pauseDate: () => Promise<DateTimeOutput>;
   resumeDate: () => Promise<DateTimeOutput>;
   notified: () => Promise<Boolean>;
@@ -23914,6 +23934,7 @@ export interface PauseRequestSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   pausePending: () => Promise<AsyncIterator<Boolean>>;
+  pauseType: () => Promise<AsyncIterator<PauseType>>;
   pauseDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   resumeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   notified: () => Promise<AsyncIterator<Boolean>>;
@@ -23927,6 +23948,7 @@ export interface PauseRequestNullablePromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   pausePending: () => Promise<Boolean>;
+  pauseType: () => Promise<PauseType>;
   pauseDate: () => Promise<DateTimeOutput>;
   resumeDate: () => Promise<DateTimeOutput>;
   notified: () => Promise<Boolean>;
@@ -30470,6 +30492,7 @@ export interface PauseRequestPreviousValues {
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   pausePending: Boolean;
+  pauseType: PauseType;
   pauseDate?: DateTimeOutput;
   resumeDate?: DateTimeOutput;
   notified: Boolean;
@@ -30482,6 +30505,7 @@ export interface PauseRequestPreviousValuesPromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   pausePending: () => Promise<Boolean>;
+  pauseType: () => Promise<PauseType>;
   pauseDate: () => Promise<DateTimeOutput>;
   resumeDate: () => Promise<DateTimeOutput>;
   notified: () => Promise<Boolean>;
@@ -30494,6 +30518,7 @@ export interface PauseRequestPreviousValuesSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   pausePending: () => Promise<AsyncIterator<Boolean>>;
+  pauseType: () => Promise<AsyncIterator<PauseType>>;
   pauseDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   resumeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   notified: () => Promise<AsyncIterator<Boolean>>;
@@ -33093,6 +33118,10 @@ export const models: Model[] = [
   },
   {
     name: "CustomerMembership",
+    embedded: false
+  },
+  {
+    name: "PauseType",
     embedded: false
   },
   {

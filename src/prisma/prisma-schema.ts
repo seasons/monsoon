@@ -8416,6 +8416,7 @@ type PauseRequest {
   createdAt: DateTime!
   updatedAt: DateTime!
   pausePending: Boolean!
+  pauseType: PauseType!
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean!
@@ -8431,6 +8432,7 @@ type PauseRequestConnection {
 input PauseRequestCreateInput {
   id: ID
   pausePending: Boolean!
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -8445,6 +8447,7 @@ input PauseRequestCreateManyWithoutMembershipInput {
 input PauseRequestCreateWithoutMembershipInput {
   id: ID
   pausePending: Boolean!
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -8464,6 +8467,8 @@ enum PauseRequestOrderByInput {
   updatedAt_DESC
   pausePending_ASC
   pausePending_DESC
+  pauseType_ASC
+  pauseType_DESC
   pauseDate_ASC
   pauseDate_DESC
   resumeDate_ASC
@@ -8477,6 +8482,7 @@ type PauseRequestPreviousValues {
   createdAt: DateTime!
   updatedAt: DateTime!
   pausePending: Boolean!
+  pauseType: PauseType!
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean!
@@ -8515,6 +8521,10 @@ input PauseRequestScalarWhereInput {
   updatedAt_gte: DateTime
   pausePending: Boolean
   pausePending_not: Boolean
+  pauseType: PauseType
+  pauseType_not: PauseType
+  pauseType_in: [PauseType!]
+  pauseType_not_in: [PauseType!]
   pauseDate: DateTime
   pauseDate_not: DateTime
   pauseDate_in: [DateTime!]
@@ -8558,6 +8568,7 @@ input PauseRequestSubscriptionWhereInput {
 
 input PauseRequestUpdateInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -8566,6 +8577,7 @@ input PauseRequestUpdateInput {
 
 input PauseRequestUpdateManyDataInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -8573,6 +8585,7 @@ input PauseRequestUpdateManyDataInput {
 
 input PauseRequestUpdateManyMutationInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -8597,6 +8610,7 @@ input PauseRequestUpdateManyWithWhereNestedInput {
 
 input PauseRequestUpdateWithoutMembershipDataInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -8646,6 +8660,10 @@ input PauseRequestWhereInput {
   updatedAt_gte: DateTime
   pausePending: Boolean
   pausePending_not: Boolean
+  pauseType: PauseType
+  pauseType_not: PauseType
+  pauseType_in: [PauseType!]
+  pauseType_not_in: [PauseType!]
   pauseDate: DateTime
   pauseDate_not: DateTime
   pauseDate_in: [DateTime!]
@@ -8672,6 +8690,11 @@ input PauseRequestWhereInput {
 
 input PauseRequestWhereUniqueInput {
   id: ID
+}
+
+enum PauseType {
+  WithItems
+  WithoutItems
 }
 
 type PaymentPlan {

@@ -922,11 +922,17 @@ type CustomerMembership {
   giftId: String
 }
 
+enum PauseType {
+  WithItems
+  WithoutItems
+}
+
 type PauseRequest {
   id: ID! @id
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   pausePending: Boolean!
+  pauseType: PauseType! @default(value: WithoutItems)
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean! @default(value: false)

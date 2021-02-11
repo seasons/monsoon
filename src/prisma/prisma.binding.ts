@@ -14831,6 +14831,7 @@ type PauseRequest implements Node {
   createdAt: DateTime!
   updatedAt: DateTime!
   pausePending: Boolean!
+  pauseType: PauseType!
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean!
@@ -14850,6 +14851,7 @@ type PauseRequestConnection {
 input PauseRequestCreateInput {
   id: ID
   pausePending: Boolean!
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -14864,6 +14866,7 @@ input PauseRequestCreateManyWithoutMembershipInput {
 input PauseRequestCreateWithoutMembershipInput {
   id: ID
   pausePending: Boolean!
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -14887,6 +14890,8 @@ enum PauseRequestOrderByInput {
   updatedAt_DESC
   pausePending_ASC
   pausePending_DESC
+  pauseType_ASC
+  pauseType_DESC
   pauseDate_ASC
   pauseDate_DESC
   resumeDate_ASC
@@ -14900,6 +14905,7 @@ type PauseRequestPreviousValues {
   createdAt: DateTime!
   updatedAt: DateTime!
   pausePending: Boolean!
+  pauseType: PauseType!
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean!
@@ -15002,6 +15008,16 @@ input PauseRequestScalarWhereInput {
 
   """All values that are not equal to given value."""
   pausePending_not: Boolean
+  pauseType: PauseType
+
+  """All values that are not equal to given value."""
+  pauseType_not: PauseType
+
+  """All values that are contained in given list."""
+  pauseType_in: [PauseType!]
+
+  """All values that are not contained in given list."""
+  pauseType_not_in: [PauseType!]
   pauseDate: DateTime
 
   """All values that are not equal to given value."""
@@ -15091,6 +15107,7 @@ input PauseRequestSubscriptionWhereInput {
 
 input PauseRequestUpdateInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -15099,6 +15116,7 @@ input PauseRequestUpdateInput {
 
 input PauseRequestUpdateManyDataInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -15106,6 +15124,7 @@ input PauseRequestUpdateManyDataInput {
 
 input PauseRequestUpdateManyMutationInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -15130,6 +15149,7 @@ input PauseRequestUpdateManyWithWhereNestedInput {
 
 input PauseRequestUpdateWithoutMembershipDataInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -15243,6 +15263,16 @@ input PauseRequestWhereInput {
 
   """All values that are not equal to given value."""
   pausePending_not: Boolean
+  pauseType: PauseType
+
+  """All values that are not equal to given value."""
+  pauseType_not: PauseType
+
+  """All values that are contained in given list."""
+  pauseType_in: [PauseType!]
+
+  """All values that are not contained in given list."""
+  pauseType_not_in: [PauseType!]
   pauseDate: DateTime
 
   """All values that are not equal to given value."""
@@ -15296,6 +15326,11 @@ input PauseRequestWhereInput {
 
 input PauseRequestWhereUniqueInput {
   id: ID
+}
+
+enum PauseType {
+  WithItems
+  WithoutItems
 }
 
 type PaymentPlan implements Node {
@@ -34614,12 +34649,17 @@ export type PauseRequestOrderByInput =   'id_ASC' |
   'updatedAt_DESC' |
   'pausePending_ASC' |
   'pausePending_DESC' |
+  'pauseType_ASC' |
+  'pauseType_DESC' |
   'pauseDate_ASC' |
   'pauseDate_DESC' |
   'resumeDate_ASC' |
   'resumeDate_DESC' |
   'notified_ASC' |
   'notified_DESC'
+
+export type PauseType =   'WithItems' |
+  'WithoutItems'
 
 export type PaymentPlanOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -41125,6 +41165,7 @@ export interface PackageWhereUniqueInput {
 export interface PauseRequestCreateInput {
   id?: ID_Input | null
   pausePending: Boolean
+  pauseType?: PauseType | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified?: Boolean | null
@@ -41139,6 +41180,7 @@ export interface PauseRequestCreateManyWithoutMembershipInput {
 export interface PauseRequestCreateWithoutMembershipInput {
   id?: ID_Input | null
   pausePending: Boolean
+  pauseType?: PauseType | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified?: Boolean | null
@@ -41180,6 +41222,10 @@ export interface PauseRequestScalarWhereInput {
   updatedAt_gte?: DateTime | null
   pausePending?: Boolean | null
   pausePending_not?: Boolean | null
+  pauseType?: PauseType | null
+  pauseType_not?: PauseType | null
+  pauseType_in?: PauseType[] | PauseType | null
+  pauseType_not_in?: PauseType[] | PauseType | null
   pauseDate?: DateTime | null
   pauseDate_not?: DateTime | null
   pauseDate_in?: DateTime[] | DateTime | null
@@ -41213,6 +41259,7 @@ export interface PauseRequestSubscriptionWhereInput {
 
 export interface PauseRequestUpdateInput {
   pausePending?: Boolean | null
+  pauseType?: PauseType | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified?: Boolean | null
@@ -41221,6 +41268,7 @@ export interface PauseRequestUpdateInput {
 
 export interface PauseRequestUpdateManyDataInput {
   pausePending?: Boolean | null
+  pauseType?: PauseType | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified?: Boolean | null
@@ -41228,6 +41276,7 @@ export interface PauseRequestUpdateManyDataInput {
 
 export interface PauseRequestUpdateManyMutationInput {
   pausePending?: Boolean | null
+  pauseType?: PauseType | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified?: Boolean | null
@@ -41252,6 +41301,7 @@ export interface PauseRequestUpdateManyWithWhereNestedInput {
 
 export interface PauseRequestUpdateWithoutMembershipDataInput {
   pausePending?: Boolean | null
+  pauseType?: PauseType | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified?: Boolean | null
@@ -41304,6 +41354,10 @@ export interface PauseRequestWhereInput {
   updatedAt_gte?: DateTime | null
   pausePending?: Boolean | null
   pausePending_not?: Boolean | null
+  pauseType?: PauseType | null
+  pauseType_not?: PauseType | null
+  pauseType_in?: PauseType[] | PauseType | null
+  pauseType_not_in?: PauseType[] | PauseType | null
   pauseDate?: DateTime | null
   pauseDate_not?: DateTime | null
   pauseDate_in?: DateTime[] | DateTime | null
@@ -51531,6 +51585,7 @@ export interface PauseRequest extends Node {
   createdAt: DateTime
   updatedAt: DateTime
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified: Boolean
@@ -51561,6 +51616,7 @@ export interface PauseRequestPreviousValues {
   createdAt: DateTime
   updatedAt: DateTime
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified: Boolean

@@ -4,23 +4,15 @@ import { CustomerService } from "@app/modules/User/services/customer.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PaymentPlanTier, User } from "@app/prisma"
+import { PauseType } from "@app/prisma/prisma.binding"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
-import {
-  camelCase,
-  get,
-  head,
-  identity,
-  pick,
-  snakeCase,
-  upperFirst,
-} from "lodash"
+import { camelCase, get, head, identity, snakeCase, upperFirst } from "lodash"
 import { DateTime } from "luxon"
-import states from "us-state-converter"
 
 import {
   BillingAddress,
@@ -390,43 +382,83 @@ export class PaymentService {
     })
   }
 
-  async pauseSubscription(subscriptionId, customer) {
+  async pauseSubscription(
+    subscriptionId,
+    customer,
+    pauseType: PauseType = "WithoutItems"
+  ) {
     try {
-      const result = await chargebee.subscription
-        .pause(subscriptionId, {
-          pause_option: "immediately",
-        })
-        .request()
-
-      const termEnd = result?.subscription?.current_term_end
-
-      const customerWithMembership = await this.prisma.binding.query.customer(
-        { where: { id: customer.id } },
-        `
+      if (pauseType === "WithItems") {
+        const customerWithMembership = await this.prisma.binding.query.customer(
+          { where: { id: customer.id } },
+          `
           {
             id
             membership {
               id
+              subscription {
+                id
+                currentTermEnd
+              }
             }
           }
-        `
-      )
+          `
+        )
 
-      const pauseDateISO = DateTime.fromSeconds(termEnd).toISO()
-      const resumeDateISO = DateTime.fromSeconds(termEnd)
-        .plus({ months: 1 })
-        .toISO()
+        const termEnd = customerWithMembership?.membership?.subscription.currentTermEnd.toString()
+        const resumeDateISO = DateTime.fromISO(termEnd)
+          .plus({ months: 1 })
+          .toISO()
 
-      const customerMembership = await this.prisma.client.customerMembership({
-        id: customerWithMembership.membership?.id,
-      })
+        const customerMembership = await this.prisma.client.customerMembership({
+          id: customerWithMembership.membership?.id,
+        })
 
-      await this.prisma.client.createPauseRequest({
-        membership: { connect: { id: customerMembership.id } },
-        pausePending: true,
-        pauseDate: pauseDateISO,
-        resumeDate: resumeDateISO,
-      })
+        await this.prisma.client.createPauseRequest({
+          membership: { connect: { id: customerMembership.id } },
+          pausePending: true,
+          pauseDate: new Date(termEnd),
+          resumeDate: new Date(resumeDateISO),
+          pauseType,
+        })
+      } else {
+        const result = await chargebee.subscription
+          .pause(subscriptionId, {
+            pause_option: "immediately",
+          })
+          .request()
+
+        const termEnd = result?.subscription?.current_term_end
+
+        const customerWithMembership = await this.prisma.binding.query.customer(
+          { where: { id: customer.id } },
+          `
+            {
+              id
+              membership {
+                id
+              }
+            }
+          `
+        )
+
+        const pauseDateISO = DateTime.fromSeconds(termEnd).toISO()
+        const resumeDateISO = DateTime.fromSeconds(termEnd)
+          .plus({ months: 1 })
+          .toISO()
+
+        const customerMembership = await this.prisma.client.customerMembership({
+          id: customerWithMembership.membership?.id,
+        })
+
+        await this.prisma.client.createPauseRequest({
+          membership: { connect: { id: customerMembership.id } },
+          pausePending: true,
+          pauseDate: new Date(pauseDateISO),
+          resumeDate: new Date(resumeDateISO),
+          pauseType,
+        })
+      }
     } catch (e) {
       this.error.setExtraContext({ subscriptionId })
       this.error.setExtraContext(customer, "customer")
