@@ -49,7 +49,7 @@ export interface LineItem {
   description: String
   entityDescription?: String
   entityType: LineItemIdentityType
-  entityId: String
+  entityId?: String
   amount: Number
 }
 export interface CreditNote {

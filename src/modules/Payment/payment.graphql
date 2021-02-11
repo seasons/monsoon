@@ -153,6 +153,7 @@ enum LineItemIdentityType {
   PlanSetup
   Plan
   Addon
+  Adhoc
 }
 type LineItem {
   id: String!
@@ -165,7 +166,7 @@ type LineItem {
   description: String!
   entityDescription: String
   entityType: LineItemIdentityType!
-  entityId: String!
+  entityId: String
   amount: Int
 }
 

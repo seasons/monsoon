@@ -226,8 +226,7 @@ export class OrderService {
               }
             : orderLineItem?.recordType === "Package"
             ? {
-                description:
-                  shipping?.rate?.servicelevel?.name || "The shipping rate",
+                description: shipping?.rate?.servicelevel?.name || "Shipping",
                 avalara_tax_code: "FR020000",
               }
             : {
