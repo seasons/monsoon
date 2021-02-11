@@ -992,6 +992,12 @@ export class PaymentService {
           date: this.utils.secondsSinceEpochToISOString(a.date),
         })
       ),
+      lineItems: invoice.lineItems.map(a => ({
+        ...a,
+        entityType: upperFirst(camelCase(a.entityType)),
+        dateFrom: this.utils.secondsSinceEpochToISOString(a.dateFrom),
+        dateTo: this.utils.secondsSinceEpochToISOString(a.dateTo),
+      })),
     })
 
   /**

@@ -123,6 +123,7 @@ type Invoice {
   dueDate: DateTime
   amount: Int
   transactions: [Transaction]
+  lineItems: [LineItem]
   creditNotes: [CreditNote]
 }
 
@@ -134,6 +135,26 @@ type Transaction {
   status: TransactionStatus
   type: TransactionType!
   settledAt: DateTime
+}
+
+enum LineItemIdentityType {
+  PlanSetup
+  Plan
+  Addon
+}
+type LineItem {
+  id: String!
+  dateFrom: DateTime
+  dateTo: DateTime
+  isTaxed: Boolean
+  taxAmount: Int
+  taxRate: Float
+  discountAmount: Int
+  description: String!
+  entityDescription: String
+  entityType: LineItemIdentityType!
+  entityId: String!
+  amount: Int
 }
 
 type CreditNote {
