@@ -7,6 +7,7 @@ import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import * as Sentry from "@sentry/node"
+import chargebee from "chargebee"
 import { head } from "lodash"
 import { DateTime } from "luxon"
 import moment from "moment"
@@ -45,6 +46,10 @@ export class MembershipScheduledJobs {
                   customer {
                     id
                   }
+                  plan {
+                    id
+                    itemCount
+                  }
                 }
               }
             `
@@ -52,41 +57,34 @@ export class MembershipScheduledJobs {
 
           const customerId = pauseRequestWithCustomer?.membership?.customer?.id
 
-          const reservations = await this.prisma.client
-            .customer({ id: customerId })
-            .reservations({ orderBy: "createdAt_DESC" })
-
-          const latestReservation = head(reservations)
-
-          if (
-            latestReservation &&
-            !["Completed", "Cancelled"].includes(latestReservation.status)
-          ) {
-            const customer = await this.prisma.client.pauseRequests({
-              where: {
-                id: customerId,
-              },
-            })
-
-            const subscriptionId =
-              pauseRequestWithCustomer?.membership?.subscriptionId
-
-            if (!subscriptionId) {
-              return
+          if (pauseRequest.pauseType === "WithItems") {
+            const itemCount =
+              pauseRequestWithCustomer?.membership?.plan?.itemCount
+            let planID
+            if (itemCount === 1) {
+              planID = "pause-1"
+            } else if (itemCount === 2) {
+              planID = "pause-2"
+            } else if (itemCount === 3) {
+              planID = "pause-3"
             }
 
-            // Customer has an active reservation so we restart membership
-            await this.paymentUtils.resumeSubscription(
-              subscriptionId,
-              null,
-              customer
-            )
-            this.logger.log(`Resumed customer subscription: ${customerId}`)
-          } else {
-            // Otherwise we can pause the membership if no active reservations
+            await chargebee.subscription
+              .update(pauseRequestWithCustomer.membership.subscriptionId, {
+                plan_id: planID,
+              })
+              .request()
+
             await this.prisma.client.updatePauseRequest({
               where: { id: pauseRequest.id },
               data: { pausePending: false },
+            })
+
+            await this.prisma.client.updateCustomerMembership({
+              where: { id: pauseRequestWithCustomer.membership.id },
+              data: {
+                plan: { connect: { planID } },
+              },
             })
 
             await this.prisma.client.updateCustomer({
@@ -95,7 +93,58 @@ export class MembershipScheduledJobs {
               },
               where: { id: customerId },
             })
-            this.logger.log(`Paused customer subscription: ${customerId}`)
+
+            this.logger.log(
+              `Paused customer subscription with items: ${customerId}`
+            )
+          } else {
+            const reservations = await this.prisma.client
+              .customer({ id: customerId })
+              .reservations({ orderBy: "createdAt_DESC" })
+
+            const latestReservation = head(reservations)
+
+            if (
+              latestReservation &&
+              !["Completed", "Cancelled"].includes(latestReservation.status)
+            ) {
+              const customer = await this.prisma.client.pauseRequests({
+                where: {
+                  id: customerId,
+                },
+              })
+
+              const subscriptionId =
+                pauseRequestWithCustomer?.membership?.subscriptionId
+
+              if (!subscriptionId) {
+                return
+              }
+
+              // Customer has an active reservation so we restart membership
+              await this.paymentUtils.resumeSubscription(
+                subscriptionId,
+                null,
+                customer
+              )
+              this.logger.log(`Resumed customer subscription: ${customerId}`)
+            } else {
+              // Otherwise we can pause the membership if no active reservations
+              await this.prisma.client.updatePauseRequest({
+                where: { id: pauseRequest.id },
+                data: { pausePending: false },
+              })
+
+              await this.prisma.client.updateCustomer({
+                data: {
+                  status: "Paused",
+                },
+                where: { id: customerId },
+              })
+              this.logger.log(
+                `Paused customer subscription without items: ${customerId}`
+              )
+            }
           }
         }
       } catch (e) {

@@ -38,7 +38,7 @@ type Mutation {
   updateResumeDate(date: DateTime): Boolean @hasRole(roles: [Customer])
   removeScheduledPause(subscriptionID: String!): Boolean
     @hasRole(roles: [Customer])
-  pauseSubscription(subscriptionID: String!): Boolean
+  pauseSubscription(subscriptionID: String!, pauseType: PauseType): Boolean
     @hasRole(roles: [Customer])
   resumeSubscription(subscriptionID: String!, date: DateTime): Boolean
     @hasRole(roles: [Customer])

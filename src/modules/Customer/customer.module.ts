@@ -3,6 +3,7 @@ import { PrismaModule } from "@prisma/prisma.module"
 
 import { CustomerFieldsResolver } from "./fields/customer.fields.resolver"
 import { CustomerDetailFieldsResolver } from "./fields/customerDetail.fields.resolver"
+import { PaymentPlanFieldsResolver } from "./fields/paymentPlan.fields.resolver"
 import { CustomerQueriesResolver } from "./queries/customer.queries.resolver"
 import { PaymentModule } from ".."
 
@@ -12,6 +13,7 @@ export const CustomerModuleDef = {
     CustomerQueriesResolver,
     CustomerFieldsResolver,
     CustomerDetailFieldsResolver,
+    PaymentPlanFieldsResolver,
   ],
 }
 @Module(CustomerModuleDef)

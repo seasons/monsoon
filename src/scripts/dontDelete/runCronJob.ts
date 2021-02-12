@@ -7,6 +7,7 @@ import { AdmissionsScheduledJobs } from "../../modules/Cron/services/admissions.
 import { MarketingScheduledJobs } from "../../modules/Cron/services/marketing.job.service"
 import { MembershipScheduledJobs } from "../../modules/Cron/services/membership.job.service"
 import { ReservationScheduledJobs } from "../../modules/Cron/services/reservations.job.service"
+import { SubscriptionsScheduledJobs } from "../../modules/Cron/services/subscriptions.job.service"
 import { DripService } from "../../modules/Drip/services/drip.service"
 import { DripSyncService } from "../../modules/Drip/services/dripSync.service"
 import { EmailService } from "../../modules/Email/services/email.service"

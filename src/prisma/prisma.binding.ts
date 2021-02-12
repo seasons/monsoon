@@ -41,6 +41,7 @@ export interface Query {
     billingInfoes: <T = Array<BillingInfo | null>>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shopifyProductVariants: <T = Array<ShopifyProductVariant | null>>(args: { where?: ShopifyProductVariantWhereInput | null, orderBy?: ShopifyProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     orderLineItems: <T = Array<OrderLineItem | null>>(args: { where?: OrderLineItemWhereInput | null, orderBy?: OrderLineItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    customerMembershipSubscriptionDatas: <T = Array<CustomerMembershipSubscriptionData | null>>(args: { where?: CustomerMembershipSubscriptionDataWhereInput | null, orderBy?: CustomerMembershipSubscriptionDataOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItems: <T = Array<ReservationReceiptItem | null>>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     stylePreferenceses: <T = Array<StylePreferences | null>>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizes: <T = Array<Size | null>>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -106,6 +107,7 @@ export interface Query {
     billingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     shopifyProductVariant: <T = ShopifyProductVariant | null>(args: { where: ShopifyProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     orderLineItem: <T = OrderLineItem | null>(args: { where: OrderLineItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    customerMembershipSubscriptionData: <T = CustomerMembershipSubscriptionData | null>(args: { where: CustomerMembershipSubscriptionDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     stylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     size: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -171,6 +173,7 @@ export interface Query {
     billingInfoesConnection: <T = BillingInfoConnection>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shopifyProductVariantsConnection: <T = ShopifyProductVariantConnection>(args: { where?: ShopifyProductVariantWhereInput | null, orderBy?: ShopifyProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     orderLineItemsConnection: <T = OrderLineItemConnection>(args: { where?: OrderLineItemWhereInput | null, orderBy?: OrderLineItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    customerMembershipSubscriptionDatasConnection: <T = CustomerMembershipSubscriptionDataConnection>(args: { where?: CustomerMembershipSubscriptionDataWhereInput | null, orderBy?: CustomerMembershipSubscriptionDataOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItemsConnection: <T = ReservationReceiptItemConnection>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     stylePreferencesesConnection: <T = StylePreferencesConnection>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizesConnection: <T = SizeConnection>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -240,6 +243,7 @@ export interface Mutation {
     createBillingInfo: <T = BillingInfo>(args: { data: BillingInfoCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createShopifyProductVariant: <T = ShopifyProductVariant>(args: { data: ShopifyProductVariantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createOrderLineItem: <T = OrderLineItem>(args: { data: OrderLineItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createCustomerMembershipSubscriptionData: <T = CustomerMembershipSubscriptionData>(args: { data: CustomerMembershipSubscriptionDataCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createReservationReceiptItem: <T = ReservationReceiptItem>(args: { data: ReservationReceiptItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createStylePreferences: <T = StylePreferences>(args: { data: StylePreferencesCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSize: <T = Size>(args: { data: SizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -305,6 +309,7 @@ export interface Mutation {
     updateBillingInfo: <T = BillingInfo | null>(args: { data: BillingInfoUpdateInput, where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateShopifyProductVariant: <T = ShopifyProductVariant | null>(args: { data: ShopifyProductVariantUpdateInput, where: ShopifyProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateOrderLineItem: <T = OrderLineItem | null>(args: { data: OrderLineItemUpdateInput, where: OrderLineItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateCustomerMembershipSubscriptionData: <T = CustomerMembershipSubscriptionData | null>(args: { data: CustomerMembershipSubscriptionDataUpdateInput, where: CustomerMembershipSubscriptionDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { data: ReservationReceiptItemUpdateInput, where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateStylePreferences: <T = StylePreferences | null>(args: { data: StylePreferencesUpdateInput, where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSize: <T = Size | null>(args: { data: SizeUpdateInput, where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -370,6 +375,7 @@ export interface Mutation {
     deleteBillingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteShopifyProductVariant: <T = ShopifyProductVariant | null>(args: { where: ShopifyProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteOrderLineItem: <T = OrderLineItem | null>(args: { where: OrderLineItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteCustomerMembershipSubscriptionData: <T = CustomerMembershipSubscriptionData | null>(args: { where: CustomerMembershipSubscriptionDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteStylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSize: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -435,6 +441,7 @@ export interface Mutation {
     upsertBillingInfo: <T = BillingInfo>(args: { where: BillingInfoWhereUniqueInput, create: BillingInfoCreateInput, update: BillingInfoUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertShopifyProductVariant: <T = ShopifyProductVariant>(args: { where: ShopifyProductVariantWhereUniqueInput, create: ShopifyProductVariantCreateInput, update: ShopifyProductVariantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertOrderLineItem: <T = OrderLineItem>(args: { where: OrderLineItemWhereUniqueInput, create: OrderLineItemCreateInput, update: OrderLineItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertCustomerMembershipSubscriptionData: <T = CustomerMembershipSubscriptionData>(args: { where: CustomerMembershipSubscriptionDataWhereUniqueInput, create: CustomerMembershipSubscriptionDataCreateInput, update: CustomerMembershipSubscriptionDataUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertReservationReceiptItem: <T = ReservationReceiptItem>(args: { where: ReservationReceiptItemWhereUniqueInput, create: ReservationReceiptItemCreateInput, update: ReservationReceiptItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertStylePreferences: <T = StylePreferences>(args: { where: StylePreferencesWhereUniqueInput, create: StylePreferencesCreateInput, update: StylePreferencesUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSize: <T = Size>(args: { where: SizeWhereUniqueInput, create: SizeCreateInput, update: SizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -498,6 +505,7 @@ export interface Mutation {
     updateManyBillingInfoes: <T = BatchPayload>(args: { data: BillingInfoUpdateManyMutationInput, where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyShopifyProductVariants: <T = BatchPayload>(args: { data: ShopifyProductVariantUpdateManyMutationInput, where?: ShopifyProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyOrderLineItems: <T = BatchPayload>(args: { data: OrderLineItemUpdateManyMutationInput, where?: OrderLineItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyCustomerMembershipSubscriptionDatas: <T = BatchPayload>(args: { data: CustomerMembershipSubscriptionDataUpdateManyMutationInput, where?: CustomerMembershipSubscriptionDataWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyReservationReceiptItems: <T = BatchPayload>(args: { data: ReservationReceiptItemUpdateManyMutationInput, where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyStylePreferenceses: <T = BatchPayload>(args: { data: StylePreferencesUpdateManyMutationInput, where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySizes: <T = BatchPayload>(args: { data: SizeUpdateManyMutationInput, where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -563,6 +571,7 @@ export interface Mutation {
     deleteManyBillingInfoes: <T = BatchPayload>(args: { where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyShopifyProductVariants: <T = BatchPayload>(args: { where?: ShopifyProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyOrderLineItems: <T = BatchPayload>(args: { where?: OrderLineItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyCustomerMembershipSubscriptionDatas: <T = BatchPayload>(args: { where?: CustomerMembershipSubscriptionDataWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyReservationReceiptItems: <T = BatchPayload>(args: { where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyStylePreferenceses: <T = BatchPayload>(args: { where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySizes: <T = BatchPayload>(args: { where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -631,6 +640,7 @@ export interface Subscription {
     billingInfo: <T = BillingInfoSubscriptionPayload | null>(args: { where?: BillingInfoSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     shopifyProductVariant: <T = ShopifyProductVariantSubscriptionPayload | null>(args: { where?: ShopifyProductVariantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     orderLineItem: <T = OrderLineItemSubscriptionPayload | null>(args: { where?: OrderLineItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    customerMembershipSubscriptionData: <T = CustomerMembershipSubscriptionDataSubscriptionPayload | null>(args: { where?: CustomerMembershipSubscriptionDataSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     reservationReceiptItem: <T = ReservationReceiptItemSubscriptionPayload | null>(args: { where?: ReservationReceiptItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     stylePreferences: <T = StylePreferencesSubscriptionPayload | null>(args: { where?: StylePreferencesSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     size: <T = SizeSubscriptionPayload | null>(args: { where?: SizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -699,6 +709,7 @@ export interface Exists {
   BillingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>
   ShopifyProductVariant: (where?: ShopifyProductVariantWhereInput) => Promise<boolean>
   OrderLineItem: (where?: OrderLineItemWhereInput) => Promise<boolean>
+  CustomerMembershipSubscriptionData: (where?: CustomerMembershipSubscriptionDataWhereInput) => Promise<boolean>
   ReservationReceiptItem: (where?: ReservationReceiptItemWhereInput) => Promise<boolean>
   StylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>
   Size: (where?: SizeWhereInput) => Promise<boolean>
@@ -1226,6 +1237,10 @@ type AggregateCustomerDetail {
 }
 
 type AggregateCustomerMembership {
+  count: Int!
+}
+
+type AggregateCustomerMembershipSubscriptionData {
   count: Int!
 }
 
@@ -6718,6 +6733,7 @@ type CustomerMembership implements Node {
   id: ID!
   plan: PaymentPlan
   subscriptionId: String!
+  subscription: CustomerMembershipSubscriptionData
   customer: Customer!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
   giftId: String
@@ -6738,6 +6754,7 @@ input CustomerMembershipCreateInput {
   subscriptionId: String!
   giftId: String
   plan: PaymentPlanCreateOneInput
+  subscription: CustomerMembershipSubscriptionDataCreateOneInput
   customer: CustomerCreateOneWithoutMembershipInput!
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
@@ -6757,6 +6774,7 @@ input CustomerMembershipCreateWithoutCustomerInput {
   subscriptionId: String!
   giftId: String
   plan: PaymentPlanCreateOneInput
+  subscription: CustomerMembershipSubscriptionDataCreateOneInput
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
 
@@ -6765,6 +6783,7 @@ input CustomerMembershipCreateWithoutPauseRequestsInput {
   subscriptionId: String!
   giftId: String
   plan: PaymentPlanCreateOneInput
+  subscription: CustomerMembershipSubscriptionDataCreateOneInput
   customer: CustomerCreateOneWithoutMembershipInput!
 }
 
@@ -6790,6 +6809,478 @@ type CustomerMembershipPreviousValues {
   id: ID!
   subscriptionId: String!
   giftId: String
+}
+
+type CustomerMembershipSubscriptionData implements Node {
+  id: ID!
+  planID: String!
+  subscriptionId: String!
+  currentTermStart: DateTime!
+  currentTermEnd: DateTime!
+  nextBillingAt: DateTime!
+  status: String!
+  planPrice: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type CustomerMembershipSubscriptionDataConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CustomerMembershipSubscriptionDataEdge]!
+  aggregate: AggregateCustomerMembershipSubscriptionData!
+}
+
+input CustomerMembershipSubscriptionDataCreateInput {
+  id: ID
+  planID: String!
+  subscriptionId: String!
+  currentTermStart: DateTime!
+  currentTermEnd: DateTime!
+  nextBillingAt: DateTime!
+  status: String!
+  planPrice: Int!
+}
+
+input CustomerMembershipSubscriptionDataCreateOneInput {
+  create: CustomerMembershipSubscriptionDataCreateInput
+  connect: CustomerMembershipSubscriptionDataWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type CustomerMembershipSubscriptionDataEdge {
+  """The item at the end of the edge."""
+  node: CustomerMembershipSubscriptionData!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum CustomerMembershipSubscriptionDataOrderByInput {
+  id_ASC
+  id_DESC
+  planID_ASC
+  planID_DESC
+  subscriptionId_ASC
+  subscriptionId_DESC
+  currentTermStart_ASC
+  currentTermStart_DESC
+  currentTermEnd_ASC
+  currentTermEnd_DESC
+  nextBillingAt_ASC
+  nextBillingAt_DESC
+  status_ASC
+  status_DESC
+  planPrice_ASC
+  planPrice_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type CustomerMembershipSubscriptionDataPreviousValues {
+  id: ID!
+  planID: String!
+  subscriptionId: String!
+  currentTermStart: DateTime!
+  currentTermEnd: DateTime!
+  nextBillingAt: DateTime!
+  status: String!
+  planPrice: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type CustomerMembershipSubscriptionDataSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerMembershipSubscriptionData
+  updatedFields: [String!]
+  previousValues: CustomerMembershipSubscriptionDataPreviousValues
+}
+
+input CustomerMembershipSubscriptionDataSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerMembershipSubscriptionDataSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerMembershipSubscriptionDataSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerMembershipSubscriptionDataSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CustomerMembershipSubscriptionDataWhereInput
+}
+
+input CustomerMembershipSubscriptionDataUpdateDataInput {
+  planID: String
+  subscriptionId: String
+  currentTermStart: DateTime
+  currentTermEnd: DateTime
+  nextBillingAt: DateTime
+  status: String
+  planPrice: Int
+}
+
+input CustomerMembershipSubscriptionDataUpdateInput {
+  planID: String
+  subscriptionId: String
+  currentTermStart: DateTime
+  currentTermEnd: DateTime
+  nextBillingAt: DateTime
+  status: String
+  planPrice: Int
+}
+
+input CustomerMembershipSubscriptionDataUpdateManyMutationInput {
+  planID: String
+  subscriptionId: String
+  currentTermStart: DateTime
+  currentTermEnd: DateTime
+  nextBillingAt: DateTime
+  status: String
+  planPrice: Int
+}
+
+input CustomerMembershipSubscriptionDataUpdateOneInput {
+  create: CustomerMembershipSubscriptionDataCreateInput
+  connect: CustomerMembershipSubscriptionDataWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: CustomerMembershipSubscriptionDataUpdateDataInput
+  upsert: CustomerMembershipSubscriptionDataUpsertNestedInput
+}
+
+input CustomerMembershipSubscriptionDataUpsertNestedInput {
+  update: CustomerMembershipSubscriptionDataUpdateDataInput!
+  create: CustomerMembershipSubscriptionDataCreateInput!
+}
+
+input CustomerMembershipSubscriptionDataWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerMembershipSubscriptionDataWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerMembershipSubscriptionDataWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerMembershipSubscriptionDataWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  planID: String
+
+  """All values that are not equal to given value."""
+  planID_not: String
+
+  """All values that are contained in given list."""
+  planID_in: [String!]
+
+  """All values that are not contained in given list."""
+  planID_not_in: [String!]
+
+  """All values less than the given value."""
+  planID_lt: String
+
+  """All values less than or equal the given value."""
+  planID_lte: String
+
+  """All values greater than the given value."""
+  planID_gt: String
+
+  """All values greater than or equal the given value."""
+  planID_gte: String
+
+  """All values containing the given string."""
+  planID_contains: String
+
+  """All values not containing the given string."""
+  planID_not_contains: String
+
+  """All values starting with the given string."""
+  planID_starts_with: String
+
+  """All values not starting with the given string."""
+  planID_not_starts_with: String
+
+  """All values ending with the given string."""
+  planID_ends_with: String
+
+  """All values not ending with the given string."""
+  planID_not_ends_with: String
+  subscriptionId: String
+
+  """All values that are not equal to given value."""
+  subscriptionId_not: String
+
+  """All values that are contained in given list."""
+  subscriptionId_in: [String!]
+
+  """All values that are not contained in given list."""
+  subscriptionId_not_in: [String!]
+
+  """All values less than the given value."""
+  subscriptionId_lt: String
+
+  """All values less than or equal the given value."""
+  subscriptionId_lte: String
+
+  """All values greater than the given value."""
+  subscriptionId_gt: String
+
+  """All values greater than or equal the given value."""
+  subscriptionId_gte: String
+
+  """All values containing the given string."""
+  subscriptionId_contains: String
+
+  """All values not containing the given string."""
+  subscriptionId_not_contains: String
+
+  """All values starting with the given string."""
+  subscriptionId_starts_with: String
+
+  """All values not starting with the given string."""
+  subscriptionId_not_starts_with: String
+
+  """All values ending with the given string."""
+  subscriptionId_ends_with: String
+
+  """All values not ending with the given string."""
+  subscriptionId_not_ends_with: String
+  currentTermStart: DateTime
+
+  """All values that are not equal to given value."""
+  currentTermStart_not: DateTime
+
+  """All values that are contained in given list."""
+  currentTermStart_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  currentTermStart_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  currentTermStart_lt: DateTime
+
+  """All values less than or equal the given value."""
+  currentTermStart_lte: DateTime
+
+  """All values greater than the given value."""
+  currentTermStart_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  currentTermStart_gte: DateTime
+  currentTermEnd: DateTime
+
+  """All values that are not equal to given value."""
+  currentTermEnd_not: DateTime
+
+  """All values that are contained in given list."""
+  currentTermEnd_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  currentTermEnd_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  currentTermEnd_lt: DateTime
+
+  """All values less than or equal the given value."""
+  currentTermEnd_lte: DateTime
+
+  """All values greater than the given value."""
+  currentTermEnd_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  currentTermEnd_gte: DateTime
+  nextBillingAt: DateTime
+
+  """All values that are not equal to given value."""
+  nextBillingAt_not: DateTime
+
+  """All values that are contained in given list."""
+  nextBillingAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  nextBillingAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  nextBillingAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  nextBillingAt_lte: DateTime
+
+  """All values greater than the given value."""
+  nextBillingAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  nextBillingAt_gte: DateTime
+  status: String
+
+  """All values that are not equal to given value."""
+  status_not: String
+
+  """All values that are contained in given list."""
+  status_in: [String!]
+
+  """All values that are not contained in given list."""
+  status_not_in: [String!]
+
+  """All values less than the given value."""
+  status_lt: String
+
+  """All values less than or equal the given value."""
+  status_lte: String
+
+  """All values greater than the given value."""
+  status_gt: String
+
+  """All values greater than or equal the given value."""
+  status_gte: String
+
+  """All values containing the given string."""
+  status_contains: String
+
+  """All values not containing the given string."""
+  status_not_contains: String
+
+  """All values starting with the given string."""
+  status_starts_with: String
+
+  """All values not starting with the given string."""
+  status_not_starts_with: String
+
+  """All values ending with the given string."""
+  status_ends_with: String
+
+  """All values not ending with the given string."""
+  status_not_ends_with: String
+  planPrice: Int
+
+  """All values that are not equal to given value."""
+  planPrice_not: Int
+
+  """All values that are contained in given list."""
+  planPrice_in: [Int!]
+
+  """All values that are not contained in given list."""
+  planPrice_not_in: [Int!]
+
+  """All values less than the given value."""
+  planPrice_lt: Int
+
+  """All values less than or equal the given value."""
+  planPrice_lte: Int
+
+  """All values greater than the given value."""
+  planPrice_gt: Int
+
+  """All values greater than or equal the given value."""
+  planPrice_gte: Int
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
+input CustomerMembershipSubscriptionDataWhereUniqueInput {
+  id: ID
 }
 
 type CustomerMembershipSubscriptionPayload {
@@ -6833,6 +7324,7 @@ input CustomerMembershipUpdateInput {
   subscriptionId: String
   giftId: String
   plan: PaymentPlanUpdateOneInput
+  subscription: CustomerMembershipSubscriptionDataUpdateOneInput
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
 }
@@ -6862,6 +7354,7 @@ input CustomerMembershipUpdateWithoutCustomerDataInput {
   subscriptionId: String
   giftId: String
   plan: PaymentPlanUpdateOneInput
+  subscription: CustomerMembershipSubscriptionDataUpdateOneInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
 }
 
@@ -6869,6 +7362,7 @@ input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
   subscriptionId: String
   giftId: String
   plan: PaymentPlanUpdateOneInput
+  subscription: CustomerMembershipSubscriptionDataUpdateOneInput
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
 }
 
@@ -7012,6 +7506,7 @@ input CustomerMembershipWhereInput {
   """All values not ending with the given string."""
   giftId_not_ends_with: String
   plan: PaymentPlanWhereInput
+  subscription: CustomerMembershipSubscriptionDataWhereInput
   customer: CustomerWhereInput
   pauseRequests_every: PauseRequestWhereInput
   pauseRequests_some: PauseRequestWhereInput
@@ -11698,6 +12193,7 @@ type Mutation {
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
   createShopifyProductVariant(data: ShopifyProductVariantCreateInput!): ShopifyProductVariant!
   createOrderLineItem(data: OrderLineItemCreateInput!): OrderLineItem!
+  createCustomerMembershipSubscriptionData(data: CustomerMembershipSubscriptionDataCreateInput!): CustomerMembershipSubscriptionData!
   createReservationReceiptItem(data: ReservationReceiptItemCreateInput!): ReservationReceiptItem!
   createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   createSize(data: SizeCreateInput!): Size!
@@ -11763,6 +12259,7 @@ type Mutation {
   updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
   updateShopifyProductVariant(data: ShopifyProductVariantUpdateInput!, where: ShopifyProductVariantWhereUniqueInput!): ShopifyProductVariant
   updateOrderLineItem(data: OrderLineItemUpdateInput!, where: OrderLineItemWhereUniqueInput!): OrderLineItem
+  updateCustomerMembershipSubscriptionData(data: CustomerMembershipSubscriptionDataUpdateInput!, where: CustomerMembershipSubscriptionDataWhereUniqueInput!): CustomerMembershipSubscriptionData
   updateReservationReceiptItem(data: ReservationReceiptItemUpdateInput!, where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   updateStylePreferences(data: StylePreferencesUpdateInput!, where: StylePreferencesWhereUniqueInput!): StylePreferences
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
@@ -11828,6 +12325,7 @@ type Mutation {
   deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   deleteShopifyProductVariant(where: ShopifyProductVariantWhereUniqueInput!): ShopifyProductVariant
   deleteOrderLineItem(where: OrderLineItemWhereUniqueInput!): OrderLineItem
+  deleteCustomerMembershipSubscriptionData(where: CustomerMembershipSubscriptionDataWhereUniqueInput!): CustomerMembershipSubscriptionData
   deleteReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   deleteStylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   deleteSize(where: SizeWhereUniqueInput!): Size
@@ -11893,6 +12391,7 @@ type Mutation {
   upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
   upsertShopifyProductVariant(where: ShopifyProductVariantWhereUniqueInput!, create: ShopifyProductVariantCreateInput!, update: ShopifyProductVariantUpdateInput!): ShopifyProductVariant!
   upsertOrderLineItem(where: OrderLineItemWhereUniqueInput!, create: OrderLineItemCreateInput!, update: OrderLineItemUpdateInput!): OrderLineItem!
+  upsertCustomerMembershipSubscriptionData(where: CustomerMembershipSubscriptionDataWhereUniqueInput!, create: CustomerMembershipSubscriptionDataCreateInput!, update: CustomerMembershipSubscriptionDataUpdateInput!): CustomerMembershipSubscriptionData!
   upsertReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!, create: ReservationReceiptItemCreateInput!, update: ReservationReceiptItemUpdateInput!): ReservationReceiptItem!
   upsertStylePreferences(where: StylePreferencesWhereUniqueInput!, create: StylePreferencesCreateInput!, update: StylePreferencesUpdateInput!): StylePreferences!
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
@@ -11956,6 +12455,7 @@ type Mutation {
   updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
   updateManyShopifyProductVariants(data: ShopifyProductVariantUpdateManyMutationInput!, where: ShopifyProductVariantWhereInput): BatchPayload!
   updateManyOrderLineItems(data: OrderLineItemUpdateManyMutationInput!, where: OrderLineItemWhereInput): BatchPayload!
+  updateManyCustomerMembershipSubscriptionDatas(data: CustomerMembershipSubscriptionDataUpdateManyMutationInput!, where: CustomerMembershipSubscriptionDataWhereInput): BatchPayload!
   updateManyReservationReceiptItems(data: ReservationReceiptItemUpdateManyMutationInput!, where: ReservationReceiptItemWhereInput): BatchPayload!
   updateManyStylePreferenceses(data: StylePreferencesUpdateManyMutationInput!, where: StylePreferencesWhereInput): BatchPayload!
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
@@ -12021,6 +12521,7 @@ type Mutation {
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
   deleteManyShopifyProductVariants(where: ShopifyProductVariantWhereInput): BatchPayload!
   deleteManyOrderLineItems(where: OrderLineItemWhereInput): BatchPayload!
+  deleteManyCustomerMembershipSubscriptionDatas(where: CustomerMembershipSubscriptionDataWhereInput): BatchPayload!
   deleteManyReservationReceiptItems(where: ReservationReceiptItemWhereInput): BatchPayload!
   deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
   deleteManySizes(where: SizeWhereInput): BatchPayload!
@@ -14330,6 +14831,7 @@ type PauseRequest implements Node {
   createdAt: DateTime!
   updatedAt: DateTime!
   pausePending: Boolean!
+  pauseType: PauseType!
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean!
@@ -14349,6 +14851,7 @@ type PauseRequestConnection {
 input PauseRequestCreateInput {
   id: ID
   pausePending: Boolean!
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -14363,6 +14866,7 @@ input PauseRequestCreateManyWithoutMembershipInput {
 input PauseRequestCreateWithoutMembershipInput {
   id: ID
   pausePending: Boolean!
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -14386,6 +14890,8 @@ enum PauseRequestOrderByInput {
   updatedAt_DESC
   pausePending_ASC
   pausePending_DESC
+  pauseType_ASC
+  pauseType_DESC
   pauseDate_ASC
   pauseDate_DESC
   resumeDate_ASC
@@ -14399,6 +14905,7 @@ type PauseRequestPreviousValues {
   createdAt: DateTime!
   updatedAt: DateTime!
   pausePending: Boolean!
+  pauseType: PauseType!
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean!
@@ -14501,6 +15008,16 @@ input PauseRequestScalarWhereInput {
 
   """All values that are not equal to given value."""
   pausePending_not: Boolean
+  pauseType: PauseType
+
+  """All values that are not equal to given value."""
+  pauseType_not: PauseType
+
+  """All values that are contained in given list."""
+  pauseType_in: [PauseType!]
+
+  """All values that are not contained in given list."""
+  pauseType_not_in: [PauseType!]
   pauseDate: DateTime
 
   """All values that are not equal to given value."""
@@ -14590,6 +15107,7 @@ input PauseRequestSubscriptionWhereInput {
 
 input PauseRequestUpdateInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -14598,6 +15116,7 @@ input PauseRequestUpdateInput {
 
 input PauseRequestUpdateManyDataInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -14605,6 +15124,7 @@ input PauseRequestUpdateManyDataInput {
 
 input PauseRequestUpdateManyMutationInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -14629,6 +15149,7 @@ input PauseRequestUpdateManyWithWhereNestedInput {
 
 input PauseRequestUpdateWithoutMembershipDataInput {
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
@@ -14742,6 +15263,16 @@ input PauseRequestWhereInput {
 
   """All values that are not equal to given value."""
   pausePending_not: Boolean
+  pauseType: PauseType
+
+  """All values that are not equal to given value."""
+  pauseType_not: PauseType
+
+  """All values that are contained in given list."""
+  pauseType_in: [PauseType!]
+
+  """All values that are not contained in given list."""
+  pauseType_not_in: [PauseType!]
   pauseDate: DateTime
 
   """All values that are not equal to given value."""
@@ -14795,6 +15326,11 @@ input PauseRequestWhereInput {
 
 input PauseRequestWhereUniqueInput {
   id: ID
+}
+
+enum PauseType {
+  WithItems
+  WithoutItems
 }
 
 type PaymentPlan implements Node {
@@ -14926,6 +15462,7 @@ input PaymentPlanSubscriptionWhereInput {
 enum PaymentPlanTier {
   Essential
   AllAccess
+  Pause
 }
 
 input PaymentPlanUpdateDataInput {
@@ -24440,6 +24977,7 @@ type Query {
   billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
   shopifyProductVariants(where: ShopifyProductVariantWhereInput, orderBy: ShopifyProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariant]!
   orderLineItems(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem]!
+  customerMembershipSubscriptionDatas(where: CustomerMembershipSubscriptionDataWhereInput, orderBy: CustomerMembershipSubscriptionDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerMembershipSubscriptionData]!
   reservationReceiptItems(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem]!
   stylePreferenceses(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StylePreferences]!
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
@@ -24505,6 +25043,7 @@ type Query {
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   shopifyProductVariant(where: ShopifyProductVariantWhereUniqueInput!): ShopifyProductVariant
   orderLineItem(where: OrderLineItemWhereUniqueInput!): OrderLineItem
+  customerMembershipSubscriptionData(where: CustomerMembershipSubscriptionDataWhereUniqueInput!): CustomerMembershipSubscriptionData
   reservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   size(where: SizeWhereUniqueInput!): Size
@@ -24570,6 +25109,7 @@ type Query {
   billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
   shopifyProductVariantsConnection(where: ShopifyProductVariantWhereInput, orderBy: ShopifyProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShopifyProductVariantConnection!
   orderLineItemsConnection(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderLineItemConnection!
+  customerMembershipSubscriptionDatasConnection(where: CustomerMembershipSubscriptionDataWhereInput, orderBy: CustomerMembershipSubscriptionDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerMembershipSubscriptionDataConnection!
   reservationReceiptItemsConnection(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationReceiptItemConnection!
   stylePreferencesesConnection(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StylePreferencesConnection!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
@@ -29240,6 +29780,7 @@ type Subscription {
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   shopifyProductVariant(where: ShopifyProductVariantSubscriptionWhereInput): ShopifyProductVariantSubscriptionPayload
   orderLineItem(where: OrderLineItemSubscriptionWhereInput): OrderLineItemSubscriptionPayload
+  customerMembershipSubscriptionData(where: CustomerMembershipSubscriptionDataSubscriptionWhereInput): CustomerMembershipSubscriptionDataSubscriptionPayload
   reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
@@ -33727,6 +34268,27 @@ export type CustomerMembershipOrderByInput =   'id_ASC' |
   'giftId_ASC' |
   'giftId_DESC'
 
+export type CustomerMembershipSubscriptionDataOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'planID_ASC' |
+  'planID_DESC' |
+  'subscriptionId_ASC' |
+  'subscriptionId_DESC' |
+  'currentTermStart_ASC' |
+  'currentTermStart_DESC' |
+  'currentTermEnd_ASC' |
+  'currentTermEnd_DESC' |
+  'nextBillingAt_ASC' |
+  'nextBillingAt_DESC' |
+  'status_ASC' |
+  'status_DESC' |
+  'planPrice_ASC' |
+  'planPrice_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
 export type CustomerOrderByInput =   'id_ASC' |
   'id_DESC' |
   'status_ASC' |
@@ -34087,12 +34649,17 @@ export type PauseRequestOrderByInput =   'id_ASC' |
   'updatedAt_DESC' |
   'pausePending_ASC' |
   'pausePending_DESC' |
+  'pauseType_ASC' |
+  'pauseType_DESC' |
   'pauseDate_ASC' |
   'pauseDate_DESC' |
   'resumeDate_ASC' |
   'resumeDate_DESC' |
   'notified_ASC' |
   'notified_DESC'
+
+export type PauseType =   'WithItems' |
+  'WithoutItems'
 
 export type PaymentPlanOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -34118,7 +34685,8 @@ export type PaymentPlanOrderByInput =   'id_ASC' |
   'updatedAt_DESC'
 
 export type PaymentPlanTier =   'Essential' |
-  'AllAccess'
+  'AllAccess' |
+  'Pause'
 
 export type PhotographyStatus =   'Done' |
   'InProgress' |
@@ -37193,6 +37761,7 @@ export interface CustomerMembershipCreateInput {
   subscriptionId: String
   giftId?: String | null
   plan?: PaymentPlanCreateOneInput | null
+  subscription?: CustomerMembershipSubscriptionDataCreateOneInput | null
   customer: CustomerCreateOneWithoutMembershipInput
   pauseRequests?: PauseRequestCreateManyWithoutMembershipInput | null
 }
@@ -37212,6 +37781,7 @@ export interface CustomerMembershipCreateWithoutCustomerInput {
   subscriptionId: String
   giftId?: String | null
   plan?: PaymentPlanCreateOneInput | null
+  subscription?: CustomerMembershipSubscriptionDataCreateOneInput | null
   pauseRequests?: PauseRequestCreateManyWithoutMembershipInput | null
 }
 
@@ -37220,7 +37790,193 @@ export interface CustomerMembershipCreateWithoutPauseRequestsInput {
   subscriptionId: String
   giftId?: String | null
   plan?: PaymentPlanCreateOneInput | null
+  subscription?: CustomerMembershipSubscriptionDataCreateOneInput | null
   customer: CustomerCreateOneWithoutMembershipInput
+}
+
+export interface CustomerMembershipSubscriptionDataCreateInput {
+  id?: ID_Input | null
+  planID: String
+  subscriptionId: String
+  currentTermStart: DateTime
+  currentTermEnd: DateTime
+  nextBillingAt: DateTime
+  status: String
+  planPrice: Int
+}
+
+export interface CustomerMembershipSubscriptionDataCreateOneInput {
+  create?: CustomerMembershipSubscriptionDataCreateInput | null
+  connect?: CustomerMembershipSubscriptionDataWhereUniqueInput | null
+}
+
+export interface CustomerMembershipSubscriptionDataSubscriptionWhereInput {
+  AND?: CustomerMembershipSubscriptionDataSubscriptionWhereInput[] | CustomerMembershipSubscriptionDataSubscriptionWhereInput | null
+  OR?: CustomerMembershipSubscriptionDataSubscriptionWhereInput[] | CustomerMembershipSubscriptionDataSubscriptionWhereInput | null
+  NOT?: CustomerMembershipSubscriptionDataSubscriptionWhereInput[] | CustomerMembershipSubscriptionDataSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: CustomerMembershipSubscriptionDataWhereInput | null
+}
+
+export interface CustomerMembershipSubscriptionDataUpdateDataInput {
+  planID?: String | null
+  subscriptionId?: String | null
+  currentTermStart?: DateTime | null
+  currentTermEnd?: DateTime | null
+  nextBillingAt?: DateTime | null
+  status?: String | null
+  planPrice?: Int | null
+}
+
+export interface CustomerMembershipSubscriptionDataUpdateInput {
+  planID?: String | null
+  subscriptionId?: String | null
+  currentTermStart?: DateTime | null
+  currentTermEnd?: DateTime | null
+  nextBillingAt?: DateTime | null
+  status?: String | null
+  planPrice?: Int | null
+}
+
+export interface CustomerMembershipSubscriptionDataUpdateManyMutationInput {
+  planID?: String | null
+  subscriptionId?: String | null
+  currentTermStart?: DateTime | null
+  currentTermEnd?: DateTime | null
+  nextBillingAt?: DateTime | null
+  status?: String | null
+  planPrice?: Int | null
+}
+
+export interface CustomerMembershipSubscriptionDataUpdateOneInput {
+  create?: CustomerMembershipSubscriptionDataCreateInput | null
+  connect?: CustomerMembershipSubscriptionDataWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: CustomerMembershipSubscriptionDataUpdateDataInput | null
+  upsert?: CustomerMembershipSubscriptionDataUpsertNestedInput | null
+}
+
+export interface CustomerMembershipSubscriptionDataUpsertNestedInput {
+  update: CustomerMembershipSubscriptionDataUpdateDataInput
+  create: CustomerMembershipSubscriptionDataCreateInput
+}
+
+export interface CustomerMembershipSubscriptionDataWhereInput {
+  AND?: CustomerMembershipSubscriptionDataWhereInput[] | CustomerMembershipSubscriptionDataWhereInput | null
+  OR?: CustomerMembershipSubscriptionDataWhereInput[] | CustomerMembershipSubscriptionDataWhereInput | null
+  NOT?: CustomerMembershipSubscriptionDataWhereInput[] | CustomerMembershipSubscriptionDataWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  planID?: String | null
+  planID_not?: String | null
+  planID_in?: String[] | String | null
+  planID_not_in?: String[] | String | null
+  planID_lt?: String | null
+  planID_lte?: String | null
+  planID_gt?: String | null
+  planID_gte?: String | null
+  planID_contains?: String | null
+  planID_not_contains?: String | null
+  planID_starts_with?: String | null
+  planID_not_starts_with?: String | null
+  planID_ends_with?: String | null
+  planID_not_ends_with?: String | null
+  subscriptionId?: String | null
+  subscriptionId_not?: String | null
+  subscriptionId_in?: String[] | String | null
+  subscriptionId_not_in?: String[] | String | null
+  subscriptionId_lt?: String | null
+  subscriptionId_lte?: String | null
+  subscriptionId_gt?: String | null
+  subscriptionId_gte?: String | null
+  subscriptionId_contains?: String | null
+  subscriptionId_not_contains?: String | null
+  subscriptionId_starts_with?: String | null
+  subscriptionId_not_starts_with?: String | null
+  subscriptionId_ends_with?: String | null
+  subscriptionId_not_ends_with?: String | null
+  currentTermStart?: DateTime | null
+  currentTermStart_not?: DateTime | null
+  currentTermStart_in?: DateTime[] | DateTime | null
+  currentTermStart_not_in?: DateTime[] | DateTime | null
+  currentTermStart_lt?: DateTime | null
+  currentTermStart_lte?: DateTime | null
+  currentTermStart_gt?: DateTime | null
+  currentTermStart_gte?: DateTime | null
+  currentTermEnd?: DateTime | null
+  currentTermEnd_not?: DateTime | null
+  currentTermEnd_in?: DateTime[] | DateTime | null
+  currentTermEnd_not_in?: DateTime[] | DateTime | null
+  currentTermEnd_lt?: DateTime | null
+  currentTermEnd_lte?: DateTime | null
+  currentTermEnd_gt?: DateTime | null
+  currentTermEnd_gte?: DateTime | null
+  nextBillingAt?: DateTime | null
+  nextBillingAt_not?: DateTime | null
+  nextBillingAt_in?: DateTime[] | DateTime | null
+  nextBillingAt_not_in?: DateTime[] | DateTime | null
+  nextBillingAt_lt?: DateTime | null
+  nextBillingAt_lte?: DateTime | null
+  nextBillingAt_gt?: DateTime | null
+  nextBillingAt_gte?: DateTime | null
+  status?: String | null
+  status_not?: String | null
+  status_in?: String[] | String | null
+  status_not_in?: String[] | String | null
+  status_lt?: String | null
+  status_lte?: String | null
+  status_gt?: String | null
+  status_gte?: String | null
+  status_contains?: String | null
+  status_not_contains?: String | null
+  status_starts_with?: String | null
+  status_not_starts_with?: String | null
+  status_ends_with?: String | null
+  status_not_ends_with?: String | null
+  planPrice?: Int | null
+  planPrice_not?: Int | null
+  planPrice_in?: Int[] | Int | null
+  planPrice_not_in?: Int[] | Int | null
+  planPrice_lt?: Int | null
+  planPrice_lte?: Int | null
+  planPrice_gt?: Int | null
+  planPrice_gte?: Int | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+}
+
+export interface CustomerMembershipSubscriptionDataWhereUniqueInput {
+  id?: ID_Input | null
 }
 
 export interface CustomerMembershipSubscriptionWhereInput {
@@ -37238,6 +37994,7 @@ export interface CustomerMembershipUpdateInput {
   subscriptionId?: String | null
   giftId?: String | null
   plan?: PaymentPlanUpdateOneInput | null
+  subscription?: CustomerMembershipSubscriptionDataUpdateOneInput | null
   customer?: CustomerUpdateOneRequiredWithoutMembershipInput | null
   pauseRequests?: PauseRequestUpdateManyWithoutMembershipInput | null
 }
@@ -37267,6 +38024,7 @@ export interface CustomerMembershipUpdateWithoutCustomerDataInput {
   subscriptionId?: String | null
   giftId?: String | null
   plan?: PaymentPlanUpdateOneInput | null
+  subscription?: CustomerMembershipSubscriptionDataUpdateOneInput | null
   pauseRequests?: PauseRequestUpdateManyWithoutMembershipInput | null
 }
 
@@ -37274,6 +38032,7 @@ export interface CustomerMembershipUpdateWithoutPauseRequestsDataInput {
   subscriptionId?: String | null
   giftId?: String | null
   plan?: PaymentPlanUpdateOneInput | null
+  subscription?: CustomerMembershipSubscriptionDataUpdateOneInput | null
   customer?: CustomerUpdateOneRequiredWithoutMembershipInput | null
 }
 
@@ -37334,6 +38093,7 @@ export interface CustomerMembershipWhereInput {
   giftId_ends_with?: String | null
   giftId_not_ends_with?: String | null
   plan?: PaymentPlanWhereInput | null
+  subscription?: CustomerMembershipSubscriptionDataWhereInput | null
   customer?: CustomerWhereInput | null
   pauseRequests_every?: PauseRequestWhereInput | null
   pauseRequests_some?: PauseRequestWhereInput | null
@@ -40405,6 +41165,7 @@ export interface PackageWhereUniqueInput {
 export interface PauseRequestCreateInput {
   id?: ID_Input | null
   pausePending: Boolean
+  pauseType?: PauseType | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified?: Boolean | null
@@ -40419,6 +41180,7 @@ export interface PauseRequestCreateManyWithoutMembershipInput {
 export interface PauseRequestCreateWithoutMembershipInput {
   id?: ID_Input | null
   pausePending: Boolean
+  pauseType?: PauseType | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified?: Boolean | null
@@ -40460,6 +41222,10 @@ export interface PauseRequestScalarWhereInput {
   updatedAt_gte?: DateTime | null
   pausePending?: Boolean | null
   pausePending_not?: Boolean | null
+  pauseType?: PauseType | null
+  pauseType_not?: PauseType | null
+  pauseType_in?: PauseType[] | PauseType | null
+  pauseType_not_in?: PauseType[] | PauseType | null
   pauseDate?: DateTime | null
   pauseDate_not?: DateTime | null
   pauseDate_in?: DateTime[] | DateTime | null
@@ -40493,6 +41259,7 @@ export interface PauseRequestSubscriptionWhereInput {
 
 export interface PauseRequestUpdateInput {
   pausePending?: Boolean | null
+  pauseType?: PauseType | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified?: Boolean | null
@@ -40501,6 +41268,7 @@ export interface PauseRequestUpdateInput {
 
 export interface PauseRequestUpdateManyDataInput {
   pausePending?: Boolean | null
+  pauseType?: PauseType | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified?: Boolean | null
@@ -40508,6 +41276,7 @@ export interface PauseRequestUpdateManyDataInput {
 
 export interface PauseRequestUpdateManyMutationInput {
   pausePending?: Boolean | null
+  pauseType?: PauseType | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified?: Boolean | null
@@ -40532,6 +41301,7 @@ export interface PauseRequestUpdateManyWithWhereNestedInput {
 
 export interface PauseRequestUpdateWithoutMembershipDataInput {
   pausePending?: Boolean | null
+  pauseType?: PauseType | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified?: Boolean | null
@@ -40584,6 +41354,10 @@ export interface PauseRequestWhereInput {
   updatedAt_gte?: DateTime | null
   pausePending?: Boolean | null
   pausePending_not?: Boolean | null
+  pauseType?: PauseType | null
+  pauseType_not?: PauseType | null
+  pauseType_in?: PauseType[] | PauseType | null
+  pauseType_not_in?: PauseType[] | PauseType | null
   pauseDate?: DateTime | null
   pauseDate_not?: DateTime | null
   pauseDate_in?: DateTime[] | DateTime | null
@@ -49344,6 +50118,10 @@ export interface AggregateCustomerMembership {
   count: Int
 }
 
+export interface AggregateCustomerMembershipSubscriptionData {
+  count: Int
+}
+
 export interface AggregateEmailReceipt {
   count: Int
 }
@@ -50100,6 +50878,7 @@ export interface CustomerMembership extends Node {
   id: ID_Output
   plan?: PaymentPlan | null
   subscriptionId: String
+  subscription?: CustomerMembershipSubscriptionData | null
   customer: Customer
   pauseRequests?: Array<PauseRequest> | null
   giftId?: String | null
@@ -50128,6 +50907,58 @@ export interface CustomerMembershipPreviousValues {
   id: ID_Output
   subscriptionId: String
   giftId?: String | null
+}
+
+export interface CustomerMembershipSubscriptionData extends Node {
+  id: ID_Output
+  planID: String
+  subscriptionId: String
+  currentTermStart: DateTime
+  currentTermEnd: DateTime
+  nextBillingAt: DateTime
+  status: String
+  planPrice: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface CustomerMembershipSubscriptionDataConnection {
+  pageInfo: PageInfo
+  edges: Array<CustomerMembershipSubscriptionDataEdge | null>
+  aggregate: AggregateCustomerMembershipSubscriptionData
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface CustomerMembershipSubscriptionDataEdge {
+  node: CustomerMembershipSubscriptionData
+  cursor: String
+}
+
+export interface CustomerMembershipSubscriptionDataPreviousValues {
+  id: ID_Output
+  planID: String
+  subscriptionId: String
+  currentTermStart: DateTime
+  currentTermEnd: DateTime
+  nextBillingAt: DateTime
+  status: String
+  planPrice: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface CustomerMembershipSubscriptionDataSubscriptionPayload {
+  mutation: MutationType
+  node?: CustomerMembershipSubscriptionData | null
+  updatedFields?: Array<String> | null
+  previousValues?: CustomerMembershipSubscriptionDataPreviousValues | null
 }
 
 export interface CustomerMembershipSubscriptionPayload {
@@ -50754,6 +51585,7 @@ export interface PauseRequest extends Node {
   createdAt: DateTime
   updatedAt: DateTime
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified: Boolean
@@ -50784,6 +51616,7 @@ export interface PauseRequestPreviousValues {
   createdAt: DateTime
   updatedAt: DateTime
   pausePending: Boolean
+  pauseType: PauseType
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
   notified: Boolean

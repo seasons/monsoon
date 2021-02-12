@@ -595,6 +595,7 @@ type PaymentPlan {
 enum PaymentPlanTier {
   Essential
   AllAccess
+  Pause
 }
 
 type EmailReceipt {
@@ -888,10 +889,28 @@ type Customer {
   updatedAt: DateTime! @updatedAt
 }
 
+type CustomerMembershipSubscriptionData {
+  id: ID! @id
+  planID: String!
+  subscriptionId: String!
+  currentTermStart: DateTime!
+  currentTermEnd: DateTime!
+  nextBillingAt: DateTime!
+  status: String!
+  planPrice: Int!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type CustomerMembership {
   id: ID! @id
   plan: PaymentPlan
   subscriptionId: String!
+  subscription: CustomerMembershipSubscriptionData
+    @relation(
+      name: "CustomerToCustomerMembershipSubscriptionData"
+      onDelete: CASCADE
+    )
   customer: Customer!
     @relation(
       name: "CustomerToCustomerMembership"
@@ -903,11 +922,17 @@ type CustomerMembership {
   giftId: String
 }
 
+enum PauseType {
+  WithItems
+  WithoutItems
+}
+
 type PauseRequest {
   id: ID! @id
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   pausePending: Boolean!
+  pauseType: PauseType! @default(value: WithoutItems)
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean! @default(value: false)
