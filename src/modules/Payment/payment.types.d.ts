@@ -22,8 +22,41 @@ export interface Invoice {
   creditsApplied?: number
   issuedCreditNotes?: CreditNote[]
   linkedPayments: { txnId: string }[]
+  lineItems: LineItem[]
+  billingAddress: ChargebeeBillingAddress
+  discounts: Discount[]
 }
 
+export type LineItemIdentityType = "PlanSetup" | "Plan" | "Addon"
+
+export interface Discount {
+  amount: number
+  description?: string
+}
+export interface ChargebeeBillingAddress {
+  firstName: String
+  lastName: String
+  line1: String
+  line2: String
+  line3: String
+  city: String
+  state: String
+  zip: String
+}
+export interface LineItem {
+  id: String
+  dateFrom: number // seconds since epoch
+  dateTo: number // seconds since epoch
+  isTaxed: Boolean
+  taxAmount?: Number
+  taxRate?: Number
+  discountAmount?: Number
+  description: String
+  entityDescription?: String
+  entityType: LineItemIdentityType
+  entityId?: String
+  amount: Number
+}
 export interface CreditNote {
   id: string
   reasonCode: string

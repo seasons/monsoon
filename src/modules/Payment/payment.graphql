@@ -123,7 +123,26 @@ type Invoice {
   dueDate: DateTime
   amount: Int
   transactions: [Transaction]
+  lineItems: [LineItem]
   creditNotes: [CreditNote]
+  billingAddress: ChargebeeAddress
+  discounts: [Discount]
+}
+
+type Discount {
+  amount: Int!
+  description: String
+}
+
+type ChargebeeAddress {
+  firstName: String
+  lastName: String
+  line1: String
+  line2: String
+  line3: String
+  city: String
+  state: String
+  zip: String
 }
 
 type Transaction {
@@ -134,6 +153,27 @@ type Transaction {
   status: TransactionStatus
   type: TransactionType!
   settledAt: DateTime
+}
+
+enum LineItemIdentityType {
+  PlanSetup
+  Plan
+  Addon
+  Adhoc
+}
+type LineItem {
+  id: String!
+  dateFrom: DateTime
+  dateTo: DateTime
+  isTaxed: Boolean
+  taxAmount: Int
+  taxRate: Float
+  discountAmount: Int
+  description: String!
+  entityDescription: String
+  entityType: LineItemIdentityType!
+  entityId: String
+  amount: Int
 }
 
 type CreditNote {
