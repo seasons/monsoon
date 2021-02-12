@@ -38,6 +38,12 @@ class ChargeeBeeMock {
         return {
           subscription: {
             id: "testId",
+            next_billing_at: 1615137136,
+            current_term_end: 1615137136,
+            current_term_start: 1612717936,
+            status: "Active",
+            plan_amount: 9500,
+            plan_id: "essential",
           },
           customer: {
             billing_address: {
@@ -135,8 +141,13 @@ describe("Payment Service", () => {
             id
           }
           membership {
+            id
             subscriptionId
+            subscription {
+              id
+            }
             plan {
+              id
               planID
             }
           }
@@ -187,7 +198,7 @@ const setupPaymentPlans = async () => {
     api_key: process.env.CHARGEBEE_API_KEY,
   })
   const ps = new PrismaService()
-  const request = await chargebee.plan.list().request()
+  const request = await chargebee.plan.list({ limit: 100 }).request()
   const list = request?.list || []
 
   list.forEach(async item => {
