@@ -105,7 +105,7 @@ export class ProductFieldsResolver {
       productResult?.variants
         ?.flatMap(productVariant => productVariant.physicalProducts)
         ?.flatMap(physicalProduct => physicalProduct?.price)
-        ?.some(price => price.buyUsedEnabled) || false
+        ?.some(price => price?.buyUsedEnabled) || false
     )
   }
 
