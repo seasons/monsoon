@@ -73,6 +73,7 @@ type ProductVariantPrice {
   # PhysicalProduct is the source of truth.
   buyUsedPrice: Float
   buyUsedEnabled: Boolean!
+  buyUsedAvailableForSale: Boolean
 }
 
 type Size {

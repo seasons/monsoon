@@ -3,7 +3,9 @@ import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
+  BagItem,
   ExternalShopifyIntegration,
+  InventoryStatus,
   PhysicalProductPrice,
   Product,
   ShopifyProductVariant,
@@ -248,6 +250,25 @@ export class ProductVariantFieldsResolver {
   @ResolveField()
   async price(
     @Parent() productVariant: Pick<ProductVariant, "id">,
+    @Customer() customer,
+    @Loader({
+      params: {
+        query: "customers",
+        info: `{
+          bagItems {
+            status
+            productVariant {
+              id
+            }
+          }
+        }`,
+      },
+    })
+    customerLoader: PrismaDataLoader<{
+      bagItems: Array<
+        Pick<BagItem, "status"> & { productVariant: Pick<ProductVariant, "id"> }
+      >
+    }>,
     @Loader({
       params: {
         query: "productVariants",
@@ -258,6 +279,7 @@ export class ProductVariantFieldsResolver {
               buyUsedPrice
               buyUsedEnabled
             }
+            inventoryStatus
           }
           product {
             buyNewEnabled
@@ -282,6 +304,7 @@ export class ProductVariantFieldsResolver {
     productVariantLoader: PrismaDataLoader<{
       physicalProducts: Array<{
         price: Pick<PhysicalProductPrice, "buyUsedPrice" | "buyUsedEnabled">
+        inventoryStatus: InventoryStatus
       }>
       product: Pick<Product, "buyNewEnabled"> & {
         brand: {
@@ -301,9 +324,10 @@ export class ProductVariantFieldsResolver {
       >
     }>
   ) {
-    const productVariantResult = await productVariantLoader.load(
-      productVariant.id
-    )
+    const [productVariantResult, customerResult] = await Promise.all([
+      productVariantLoader.load(productVariant.id),
+      customer ? customerLoader.load(customer.id) : Promise.resolve(null),
+    ])
     const {
       physicalProducts,
       product,
@@ -352,9 +376,24 @@ export class ProductVariantFieldsResolver {
       }
     }
 
+    const isProductVariantReserved = (customerResult?.bagItems || []).some(
+      ({ status, productVariant: { id: productVariantId } }) =>
+        status === "Reserved" && productVariantId === productVariant.id
+    )
+    const buyUsedEnabled = physicalProducts.some(p => p?.price?.buyUsedEnabled)
+    const buyUsedAvailableForSale = physicalProducts.some(
+      physicalProduct =>
+        physicalProduct.price &&
+        physicalProduct.price.buyUsedEnabled &&
+        ((physicalProduct.inventoryStatus === "Reserved" &&
+          isProductVariantReserved) ||
+          physicalProduct.inventoryStatus !== "Offloaded")
+    )
+
     return {
       id: productVariant.id,
-      buyUsedEnabled: physicalProducts.some(p => p?.price?.buyUsedEnabled),
+      buyUsedEnabled,
+      buyUsedAvailableForSale,
       buyUsedPrice: usedPhysicalProduct?.price?.buyUsedPrice,
       buyNewEnabled: product.buyNewEnabled,
       ...shopifyCacheData,

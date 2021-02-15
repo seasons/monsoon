@@ -45,15 +45,6 @@ type InvoiceInput = {
   invoice_note: string
 }
 
-type DraftOrder = {
-  total: number
-  lineItems: Array<{
-    description: string
-    amount: number
-  }>
-  shippingAddress: Location
-}
-
 @Injectable()
 export class OrderService {
   constructor(
@@ -137,11 +128,27 @@ export class OrderService {
 
     // FIXME: We're assuming that every physical product has the same price for a variant,
     // so take the first valid result.
-    //
-    // FIXME: this needs a check to ensure item isnt "out of stock"
+    const bagItems = ((customerQuery as any)?.bagItems || []) as [
+      BagItem & {
+        productVariant: { id: string }
+      }
+    ]
+    const isProductVariantReserved = bagItems.some(
+      ({ status, productVariant: { id: productVariantId } }) =>
+        status === "Reserved" && productVariantId === productVariant.id
+    )
+    // Shipping is included only if user does not already have the product.
+    const shipping = await (isProductVariantReserved
+      ? this.shipping.getBuyUsedShippingRate(productVariant.id, user, customer)
+      : Promise.resolve(null))
+
     const physicalProduct = productVariant?.physicalProducts.find(
       physicalProduct =>
-        physicalProduct.price && physicalProduct.price.buyUsedEnabled
+        physicalProduct.price &&
+        physicalProduct.price.buyUsedEnabled &&
+        ((physicalProduct.inventoryStatus === "Reserved" &&
+          isProductVariantReserved) ||
+          physicalProduct.inventoryStatus !== "Offloaded")
     ) as (PhysicalProduct & { price: PhysicalProductPrice }) | null
     const productName = productVariant?.product?.name
     const productCategories = await this.productUtils.getAllCategories({
@@ -164,29 +171,15 @@ export class OrderService {
       )
     }
 
-    // Shipping is included only if user does not already have the product.
-    const bagItems = ((customerQuery as any)?.bagItems || []) as [
-      BagItem & {
-        productVariant: { id: string }
-      }
-    ]
-    const needShipping = !bagItems.some(
-      ({ status, productVariant: { id: productVariantId } }) =>
-        status === "Reserved" && productVariantId === productVariant.id
-    )
-    const shipping = await (needShipping
-      ? this.shipping.getBuyUsedShippingRate(productVariantID, user, customer)
-      : Promise.resolve(null))
-
     const orderLineItems = [
       {
         recordID: physicalProduct.id,
         recordType: "PhysicalProduct",
-        needShipping,
+        needShipping: !isProductVariantReserved,
         price: physicalProduct?.price?.buyUsedPrice * 100,
         currencyCode: "USD",
       },
-      needShipping
+      !isProductVariantReserved
         ? {
             recordID:
               shipping?.shipment.substring(0, 24) || "137" + Math.random() * 10,
@@ -434,7 +427,7 @@ export class OrderService {
   }: {
     productVariantID: string
     customer: Customer
-  }): Promise<DraftOrder> {
+  }): Promise<Order> {
     const {
       shippingAddress,
       billingAddress,
@@ -610,14 +603,25 @@ export class OrderService {
 
     const orderShippingUpdate = await getOrderShippingUpdate()
 
-    const updatedOrder = await this.prisma.client.updateOrder({
-      where: { id: order.id },
-      data: {
-        status: "Submitted",
-        paymentStatus: chargebeeInvoice.status === "paid" ? "Paid" : "NotPaid",
-        ...orderShippingUpdate,
-      },
-    })
+    const [updatedOrder, _updatedPhysicalProduct] = await Promise.all([
+      this.prisma.client.updateOrder({
+        where: { id: order.id },
+        data: {
+          status: "Submitted",
+          paymentStatus:
+            chargebeeInvoice.status === "paid" ? "Paid" : "NotPaid",
+          ...orderShippingUpdate,
+        },
+      }),
+      this.prisma.client.updatePhysicalProduct({
+        where: { id: physicalProductId },
+        data: {
+          inventoryStatus: "Offloaded",
+          offloadMethod: "SoldToUser",
+          offloadNotes: `Order ID: ${order.id}`,
+        },
+      }),
+    ])
 
     await this.email.sendBuyUsedOrderConfirmationEmail(user, updatedOrder)
 
