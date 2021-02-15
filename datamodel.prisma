@@ -387,7 +387,6 @@ type Product {
   innerMaterials: [String!]! @scalarList(strategy: RELATION)
   materialCategory: ProductMaterialCategory
   model: ProductModel
-  modelHeight: Int
   modelSize: Size @relation(name: "ProductModelSize")
   name: String!
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
