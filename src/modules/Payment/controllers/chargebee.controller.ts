@@ -20,6 +20,7 @@ export type ChargebeeEvent = {
 const CHARGEBEE_CUSTOMER_CHANGED = "customer_changed"
 const CHARGEBEE_SUBSCRIPTION_CREATED = "subscription_created"
 const CHARGEBEE_PAYMENT_SUCCEEDED = "payment_succeeded"
+const CHARGEBEE_PAYMENT_FAILED = "payment_failed"
 
 @Controller("chargebee_events")
 export class ChargebeeController {
@@ -43,6 +44,8 @@ export class ChargebeeController {
         break
       case CHARGEBEE_PAYMENT_SUCCEEDED:
         await this.chargebeePaymentSucceeded(body.content)
+      case CHARGEBEE_PAYMENT_FAILED:
+        await this.chargebeePaymentFailed(body.content)
         break
     }
   }
@@ -102,6 +105,25 @@ export class ChargebeeController {
         : {}),
       ...this.utils.formatUTMForSegment(custWithData.utm),
     })
+  }
+
+  private async chargebeePaymentFailed(content: any) {
+    const { customer } = content
+
+    const userId = customer?.id
+    const cust = head(
+      await this.prisma.client.customers({ where: { user: { id: userId } } })
+    )
+
+    if (!!cust) {
+      await this.prisma.client.updateCustomer({
+        where: { id: cust.id },
+        data: { status: "PaymentFailed" },
+      })
+    } else {
+      this.error.setExtraContext({ payload: content }, "chargebeePayload")
+      this.error.captureMessage(`Unable to locate customer for pailed payment`)
+    }
   }
 
   private async chargebeeSubscriptionCreated(content: any) {
