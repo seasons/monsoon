@@ -15,6 +15,11 @@ import { UtilsService } from "./services/utils.service"
     PaymentUtilsService,
     StatementsService,
   ],
-  exports: [UtilsService, TestUtilsService, PaymentUtilsService],
+  exports: [
+    UtilsService,
+    TestUtilsService,
+    PaymentUtilsService,
+    StatementsService,
+  ],
 })
 export class UtilsModule {}
