@@ -4137,6 +4137,7 @@ enum CustomerStatus {
   Authorized
   Active
   Suspended
+  PaymentFailed
   Paused
   Deactivated
 }

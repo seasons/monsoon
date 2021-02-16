@@ -27,6 +27,7 @@ import { AdmissionsService } from "../../modules/User/services/admissions.servic
 import { AuthService } from "../../modules/User/services/auth.service"
 import { CustomerService } from "../../modules/User/services/customer.service"
 import { PaymentUtilsService } from "../../modules/Utils/services/paymentUtils.service"
+import { StatementsService } from "../../modules/Utils/services/statements.service"
 import { UtilsService } from "../../modules/Utils/services/utils.service"
 import { PrismaService } from "../../prisma/prisma.service"
 
@@ -96,6 +97,7 @@ const run = async () => {
   )
   const dripService = new DripService()
   const dss = new DripSyncService(dripService, ps, utils, error)
+  const statements = new StatementsService(ps)
   const marketingJobService = new MarketingScheduledJobs(
     dss,
     ps,
@@ -108,7 +110,9 @@ const run = async () => {
     paymentUtils,
     email,
     sms,
-    utils
+    utils,
+    statements,
+    error
   )
   // await reservationsJobService.sendReturnNotifications()
   // await marketingJobService.syncUnsubscribesFromDrip()

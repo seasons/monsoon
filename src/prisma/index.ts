@@ -3477,6 +3477,7 @@ export type CustomerStatus =
   | "Authorized"
   | "Active"
   | "Suspended"
+  | "PaymentFailed"
   | "Paused"
   | "Deactivated";
 

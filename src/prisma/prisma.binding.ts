@@ -7771,6 +7771,7 @@ enum CustomerStatus {
   Authorized
   Active
   Suspended
+  PaymentFailed
   Paused
   Deactivated
 }
@@ -34312,6 +34313,7 @@ export type CustomerStatus =   'Invited' |
   'Authorized' |
   'Active' |
   'Suspended' |
+  'PaymentFailed' |
   'Paused' |
   'Deactivated'
 
