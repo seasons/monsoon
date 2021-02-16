@@ -21,6 +21,8 @@ export class SubscriptionsScheduledJobs {
   async updateAdmissionsFields() {
     this.logger.log(`Start update subscriptions field job`)
 
+    let subscription
+    let customer
     try {
       const allSubscriptions = []
 
@@ -39,7 +41,7 @@ export class SubscriptionsScheduledJobs {
         }
       }
 
-      for (const subscription of allSubscriptions) {
+      for (subscription of allSubscriptions) {
         const userID = subscription.customer_id
         const customers = await this.prisma.binding.query.customers(
           {
@@ -59,15 +61,15 @@ export class SubscriptionsScheduledJobs {
           }
         `
         )
-        const customer = head(customers)
+        customer = head(customers)
 
         if (!customer) {
           console.log("error no customer")
         } else {
           const data = {
-            nextBillingAt: DateTime.fromSeconds(
-              subscription.next_billing_at
-            ).toISO(),
+            nextBillingAt: !!subscription.next_billing_at
+              ? DateTime.fromSeconds(subscription.next_billing_at).toISO()
+              : null,
             currentTermEnd: DateTime.fromSeconds(
               subscription.current_term_end
             ).toISO(),
@@ -103,6 +105,8 @@ export class SubscriptionsScheduledJobs {
       }
     } catch (e) {
       console.log("e", e)
+      this.error.setExtraContext(subscription, "subscription")
+      this.error.setExtraContext(customer, "customer")
       this.error.captureError(e)
     }
 
