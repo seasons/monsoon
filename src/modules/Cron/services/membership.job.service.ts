@@ -28,7 +28,12 @@ export class MembershipScheduledJobs {
   async updatePausePendingToPaused() {
     const pauseRequests = await this.prisma.client.pauseRequests({
       where: {
-        pausePending: true,
+        AND: [
+          {
+            pausePending: true,
+          },
+          { membership: { id_not: null } },
+        ],
       },
     })
 

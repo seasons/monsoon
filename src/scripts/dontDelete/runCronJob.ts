@@ -1,6 +1,7 @@
 import "module-alias/register"
 
 import sgMail from "@sendgrid/mail"
+import chargebee from "chargebee"
 
 import { SegmentService } from "../../modules/Analytics/services/segment.service"
 import { AdmissionsScheduledJobs } from "../../modules/Cron/services/admissions.job.service"
@@ -32,6 +33,11 @@ import { PrismaService } from "../../prisma/prisma.service"
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const run = async () => {
+  chargebee.configure({
+    site: process.env.CHARGEBEE_SITE,
+    api_key: process.env.CHARGEBEE_API_KEY,
+  })
+
   const error = new ErrorService()
   const ps = new PrismaService()
   const utils = new UtilsService(ps)
@@ -106,8 +112,8 @@ const run = async () => {
   )
   // await reservationsJobService.sendReturnNotifications()
   // await marketingJobService.syncUnsubscribesFromDrip()
-  await marketingJobService.syncCustomersToDrip()
-  // await membershipService.manageMembershipResumes()
+  // await marketingJobService.syncCustomersToDrip()
+  await membershipService.updatePausePendingToPaused()
 }
 
 run()
