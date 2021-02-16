@@ -180,7 +180,7 @@ type Product {
   buyUsedPrice: Int
   materialCategory: ProductMaterialCategory
   model: ProductModel
-  modelHeight: Int
+  modelHeight: Float
   modelSize: Size
   photographyStatus: PhotographyStatus
   productFit: ProductFit
