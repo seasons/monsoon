@@ -13,6 +13,8 @@ const run = async () => {
   })
   const ps = new PrismaService()
 
+  let subscription
+  let customer
   try {
     const allSubscriptions = []
 
@@ -33,7 +35,7 @@ const run = async () => {
 
     console.log("subscriptions", allSubscriptions.length)
 
-    for (const subscription of allSubscriptions) {
+    for (subscription of allSubscriptions) {
       const userID = subscription.customer_id
       const customers = await ps.binding.query.customers(
         {
@@ -53,15 +55,15 @@ const run = async () => {
         }
       `
       )
-      const customer = head(customers)
+      customer = head(customers)
 
       if (!customer) {
-        console.log("error no customer")
+        console.log("error no customer", subscription.id, userID)
       } else {
         const data = {
-          nextBillingAt: DateTime.fromSeconds(
-            subscription.next_billing_at
-          ).toISO(),
+          nextBillingAt: !!subscription.next_billing_at
+            ? DateTime.fromSeconds(subscription.next_billing_at).toISO()
+            : null,
           currentTermEnd: DateTime.fromSeconds(
             subscription.current_term_end
           ).toISO(),
@@ -85,8 +87,18 @@ const run = async () => {
             data
           )) as any
 
+          let membershipId = customer.membership?.id
+          if (!membershipId) {
+            const newMembership = await ps.client.createCustomerMembership({
+              subscriptionId: subscription.id,
+              plan: { connect: { planID: subscription.plan_id } },
+              customer: { connect: { id: customer.id } },
+            })
+            membershipId = newMembership.id
+          }
+
           await ps.client.updateCustomerMembership({
-            where: { id: customer.membership.id },
+            where: { id: membershipId },
             data: {
               subscription: { connect: { id: membershipSubscription.id } },
             },
@@ -95,7 +107,7 @@ const run = async () => {
       }
     }
   } catch (e) {
-    console.log("e", e)
+    console.log("e", e, customer, subscription)
   }
 }
 

@@ -14347,7 +14347,7 @@ export interface CustomerMembershipSubscriptionDataCreateInput {
   subscriptionId: String;
   currentTermStart: DateTimeInput;
   currentTermEnd: DateTimeInput;
-  nextBillingAt: DateTimeInput;
+  nextBillingAt?: Maybe<DateTimeInput>;
   status: String;
   planPrice: Int;
 }
@@ -23850,7 +23850,7 @@ export interface CustomerMembershipSubscriptionData {
   subscriptionId: String;
   currentTermStart: DateTimeOutput;
   currentTermEnd: DateTimeOutput;
-  nextBillingAt: DateTimeOutput;
+  nextBillingAt?: DateTimeOutput;
   status: String;
   planPrice: Int;
   createdAt: DateTimeOutput;
@@ -29698,7 +29698,7 @@ export interface CustomerMembershipSubscriptionDataPreviousValues {
   subscriptionId: String;
   currentTermStart: DateTimeOutput;
   currentTermEnd: DateTimeOutput;
-  nextBillingAt: DateTimeOutput;
+  nextBillingAt?: DateTimeOutput;
   status: String;
   planPrice: Int;
   createdAt: DateTimeOutput;

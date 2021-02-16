@@ -895,7 +895,7 @@ type CustomerMembershipSubscriptionData {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
   createdAt: DateTime! @createdAt

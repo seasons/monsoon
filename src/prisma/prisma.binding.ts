@@ -6817,7 +6817,7 @@ type CustomerMembershipSubscriptionData implements Node {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
   createdAt: DateTime!
@@ -6840,7 +6840,7 @@ input CustomerMembershipSubscriptionDataCreateInput {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
 }
@@ -6888,7 +6888,7 @@ type CustomerMembershipSubscriptionDataPreviousValues {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
   createdAt: DateTime!
@@ -37800,7 +37800,7 @@ export interface CustomerMembershipSubscriptionDataCreateInput {
   subscriptionId: String
   currentTermStart: DateTime
   currentTermEnd: DateTime
-  nextBillingAt: DateTime
+  nextBillingAt?: DateTime | null
   status: String
   planPrice: Int
 }
@@ -50915,7 +50915,7 @@ export interface CustomerMembershipSubscriptionData extends Node {
   subscriptionId: String
   currentTermStart: DateTime
   currentTermEnd: DateTime
-  nextBillingAt: DateTime
+  nextBillingAt?: DateTime | null
   status: String
   planPrice: Int
   createdAt: DateTime
@@ -50947,7 +50947,7 @@ export interface CustomerMembershipSubscriptionDataPreviousValues {
   subscriptionId: String
   currentTermStart: DateTime
   currentTermEnd: DateTime
-  nextBillingAt: DateTime
+  nextBillingAt?: DateTime | null
   status: String
   planPrice: Int
   createdAt: DateTime

@@ -3642,7 +3642,7 @@ type CustomerMembershipSubscriptionData {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
   createdAt: DateTime!
@@ -3661,7 +3661,7 @@ input CustomerMembershipSubscriptionDataCreateInput {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
 }
@@ -3705,7 +3705,7 @@ type CustomerMembershipSubscriptionDataPreviousValues {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
   createdAt: DateTime!
