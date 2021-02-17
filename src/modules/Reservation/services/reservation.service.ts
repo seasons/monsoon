@@ -75,6 +75,10 @@ export class ReservationService {
     customer: Customer,
     info
   ) {
+    if (customer.status !== "Active") {
+      throw new Error(`Only Active customers can reserve items`)
+    }
+
     let reservationReturnData
     const rollbackFuncs = []
 
