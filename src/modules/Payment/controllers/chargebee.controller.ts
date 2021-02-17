@@ -1,6 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
@@ -30,7 +31,8 @@ export class ChargebeeController {
     private readonly prisma: PrismaService,
     private readonly error: ErrorService,
     private readonly email: EmailService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly statements: StatementsService
   ) {}
 
   @Post()
@@ -116,10 +118,12 @@ export class ChargebeeController {
     )
 
     if (!!cust) {
-      await this.prisma.client.updateCustomer({
-        where: { id: cust.id },
-        data: { status: "PaymentFailed" },
-      })
+      if (this.statements.isPayingCustomer(cust)) {
+        await this.prisma.client.updateCustomer({
+          where: { id: cust.id },
+          data: { status: "PaymentFailed" },
+        })
+      }
     } else {
       this.error.setExtraContext({ payload: content }, "chargebeePayload")
       this.error.captureMessage(`Unable to locate customer for pailed payment`)
