@@ -76,7 +76,7 @@ export class ReservationService {
     info
   ) {
     if (customer.status !== "Active") {
-      throw new Error(`Only Active customers can reserve items`)
+      throw new Error(`Only Active customers can place a reservation`)
     }
 
     let reservationReturnData
