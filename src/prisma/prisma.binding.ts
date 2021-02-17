@@ -17681,7 +17681,6 @@ type Product implements Node {
   innerMaterials: [String!]!
   materialCategory: ProductMaterialCategory
   model: ProductModel
-  modelHeight: Int
   modelSize: Size
   name: String!
   outerMaterials: [String!]!
@@ -17727,7 +17726,6 @@ input ProductCreateInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -17803,7 +17801,6 @@ input ProductCreateWithoutBrandInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -17834,7 +17831,6 @@ input ProductCreateWithoutCategoryInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -17865,7 +17861,6 @@ input ProductCreateWithoutMaterialCategoryInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -17896,7 +17891,6 @@ input ProductCreateWithoutModelInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -17927,7 +17921,6 @@ input ProductCreateWithoutTagsInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -17958,7 +17951,6 @@ input ProductCreateWithoutVariantsInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -19054,8 +19046,6 @@ enum ProductOrderByInput {
   externalURL_DESC
   buyNewEnabled_ASC
   buyNewEnabled_DESC
-  modelHeight_ASC
-  modelHeight_DESC
   name_ASC
   name_DESC
   photographyStatus_ASC
@@ -19085,7 +19075,6 @@ type ProductPreviousValues {
   externalURL: String
   buyNewEnabled: Boolean!
   innerMaterials: [String!]!
-  modelHeight: Int
   name: String!
   outerMaterials: [String!]!
   photographyStatus: PhotographyStatus
@@ -19798,28 +19787,6 @@ input ProductScalarWhereInput {
 
   """All values that are not equal to given value."""
   buyNewEnabled_not: Boolean
-  modelHeight: Int
-
-  """All values that are not equal to given value."""
-  modelHeight_not: Int
-
-  """All values that are contained in given list."""
-  modelHeight_in: [Int!]
-
-  """All values that are not contained in given list."""
-  modelHeight_not_in: [Int!]
-
-  """All values less than the given value."""
-  modelHeight_lt: Int
-
-  """All values less than or equal the given value."""
-  modelHeight_lte: Int
-
-  """All values greater than the given value."""
-  modelHeight_gt: Int
-
-  """All values greater than or equal the given value."""
-  modelHeight_gte: Int
   name: String
 
   """All values that are not equal to given value."""
@@ -20527,7 +20494,6 @@ input ProductUpdateDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -20562,7 +20528,6 @@ input ProductUpdateInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -20593,7 +20558,6 @@ input ProductUpdateManyDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -20623,7 +20587,6 @@ input ProductUpdateManyMutationInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -20724,7 +20687,6 @@ input ProductUpdateWithoutBrandDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -20754,7 +20716,6 @@ input ProductUpdateWithoutCategoryDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -20784,7 +20745,6 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -20814,7 +20774,6 @@ input ProductUpdateWithoutModelDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -20844,7 +20803,6 @@ input ProductUpdateWithoutTagsDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -20874,7 +20832,6 @@ input ProductUpdateWithoutVariantsDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -23439,28 +23396,6 @@ input ProductWhereInput {
 
   """All values that are not equal to given value."""
   buyNewEnabled_not: Boolean
-  modelHeight: Int
-
-  """All values that are not equal to given value."""
-  modelHeight_not: Int
-
-  """All values that are contained in given list."""
-  modelHeight_in: [Int!]
-
-  """All values that are not contained in given list."""
-  modelHeight_not_in: [Int!]
-
-  """All values less than the given value."""
-  modelHeight_lt: Int
-
-  """All values less than or equal the given value."""
-  modelHeight_lte: Int
-
-  """All values greater than the given value."""
-  modelHeight_gt: Int
-
-  """All values greater than or equal the given value."""
-  modelHeight_gte: Int
   name: String
 
   """All values that are not equal to given value."""
@@ -34814,8 +34749,6 @@ export type ProductOrderByInput =   'id_ASC' |
   'externalURL_DESC' |
   'buyNewEnabled_ASC' |
   'buyNewEnabled_DESC' |
-  'modelHeight_ASC' |
-  'modelHeight_DESC' |
   'name_ASC' |
   'name_DESC' |
   'photographyStatus_ASC' |
@@ -42504,7 +42437,6 @@ export interface ProductCreateInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name: String
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -42580,7 +42512,6 @@ export interface ProductCreateWithoutBrandInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name: String
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -42611,7 +42542,6 @@ export interface ProductCreateWithoutCategoryInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name: String
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -42642,7 +42572,6 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name: String
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -42673,7 +42602,6 @@ export interface ProductCreateWithoutModelInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name: String
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -42704,7 +42632,6 @@ export interface ProductCreateWithoutTagsInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name: String
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -42735,7 +42662,6 @@ export interface ProductCreateWithoutVariantsInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name: String
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -43461,14 +43387,6 @@ export interface ProductScalarWhereInput {
   externalURL_not_ends_with?: String | null
   buyNewEnabled?: Boolean | null
   buyNewEnabled_not?: Boolean | null
-  modelHeight?: Int | null
-  modelHeight_not?: Int | null
-  modelHeight_in?: Int[] | Int | null
-  modelHeight_not_in?: Int[] | Int | null
-  modelHeight_lt?: Int | null
-  modelHeight_lte?: Int | null
-  modelHeight_gt?: Int | null
-  modelHeight_gte?: Int | null
   name?: String | null
   name_not?: String | null
   name_in?: String[] | String | null
@@ -43753,7 +43671,6 @@ export interface ProductUpdateDataInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name?: String | null
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -43788,7 +43705,6 @@ export interface ProductUpdateInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name?: String | null
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -43819,7 +43735,6 @@ export interface ProductUpdateManyDataInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name?: String | null
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -43849,7 +43764,6 @@ export interface ProductUpdateManyMutationInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name?: String | null
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -43950,7 +43864,6 @@ export interface ProductUpdateWithoutBrandDataInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name?: String | null
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -43980,7 +43893,6 @@ export interface ProductUpdateWithoutCategoryDataInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name?: String | null
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -44010,7 +43922,6 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name?: String | null
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -44040,7 +43951,6 @@ export interface ProductUpdateWithoutModelDataInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name?: String | null
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -44070,7 +43980,6 @@ export interface ProductUpdateWithoutTagsDataInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name?: String | null
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -44100,7 +44009,6 @@ export interface ProductUpdateWithoutVariantsDataInput {
   description?: String | null
   externalURL?: String | null
   buyNewEnabled?: Boolean | null
-  modelHeight?: Int | null
   name?: String | null
   photographyStatus?: PhotographyStatus | null
   productFit?: ProductFit | null
@@ -45395,14 +45303,6 @@ export interface ProductWhereInput {
   externalURL_not_ends_with?: String | null
   buyNewEnabled?: Boolean | null
   buyNewEnabled_not?: Boolean | null
-  modelHeight?: Int | null
-  modelHeight_not?: Int | null
-  modelHeight_in?: Int[] | Int | null
-  modelHeight_not_in?: Int[] | Int | null
-  modelHeight_lt?: Int | null
-  modelHeight_lte?: Int | null
-  modelHeight_gt?: Int | null
-  modelHeight_gte?: Int | null
   name?: String | null
   name_not?: String | null
   name_in?: String[] | String | null
@@ -51842,7 +51742,6 @@ export interface Product extends Node {
   innerMaterials: Array<String>
   materialCategory?: ProductMaterialCategory | null
   model?: ProductModel | null
-  modelHeight?: Int | null
   modelSize?: Size | null
   name: String
   outerMaterials: Array<String>
@@ -52048,7 +51947,6 @@ export interface ProductPreviousValues {
   externalURL?: String | null
   buyNewEnabled: Boolean
   innerMaterials: Array<String>
-  modelHeight?: Int | null
   name: String
   outerMaterials: Array<String>
   photographyStatus?: PhotographyStatus | null
