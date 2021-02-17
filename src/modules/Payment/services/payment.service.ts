@@ -4,7 +4,7 @@ import { CustomerService } from "@app/modules/User/services/customer.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PaymentPlanTier, User } from "@app/prisma"
-import { PauseType } from "@app/prisma/prisma.binding"
+import { PauseType, Reservation } from "@app/prisma/prisma.binding"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { AuthService } from "@modules/User/services/auth.service"
@@ -387,24 +387,45 @@ export class PaymentService {
     customer,
     pauseType: PauseType = "WithoutItems"
   ) {
-    try {
-      if (pauseType === "WithItems") {
-        const customerWithMembership = await this.prisma.binding.query.customer(
-          { where: { id: customer.id } },
-          `
-          {
+    let customerWithMembership
+    if (pauseType === "WithItems") {
+      customerWithMembership = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+        {
+          id
+          reservations(orderBy: createdAt_DESC) {
             id
-            membership {
+            status
+          }
+          membership {
+            id
+            subscription {
               id
-              subscription {
-                id
-                currentTermEnd
-              }
+              currentTermEnd
             }
           }
-          `
-        )
+        }
+        `
+      )
 
+      const latestReservation: Reservation = head(
+        customerWithMembership.reservations
+      )
+
+      if (
+        !latestReservation ||
+        (latestReservation &&
+          ["Completed", "Cancelled"].includes(latestReservation.status))
+      ) {
+        throw new Error(
+          `Error pausing subscription: You must have an active reservation to pause with items.`
+        )
+      }
+    }
+
+    try {
+      if (pauseType === "WithItems") {
         const termEnd = customerWithMembership?.membership?.subscription.currentTermEnd.toString()
         const resumeDateISO = DateTime.fromISO(termEnd)
           .plus({ months: 1 })
