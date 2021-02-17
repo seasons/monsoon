@@ -56,13 +56,18 @@ enum CreditNoteReasonCodeInput {
 }
 
 enum CreditNoteReasonCode {
+  WriteOff
   SubscriptionChange
+  SubscriptionCancellation
+  SubscriptionPause
+  Chargeback
   ProductUnsatisfactory
   ServiceUnsatisfactory
   OrderChange
   OrderCancellation
   Waiver
   Other
+  Fraudulent
 }
 
 enum CreditNoteStatus {
