@@ -44,33 +44,42 @@ export class ProductVariantService {
     const unavailableVariants = prismaProductVariants.filter(
       v => v.reservable <= 0
     )
-    if (unavailableVariants.length > 0) {
-      // Remove items in the bag that are not available anymore
-      await this.prisma.client.deleteManyBagItems({
-        productVariant: {
-          id_in: unavailableVariants.map(a => a.id),
-        },
-        saved: false,
-        status: "Added",
-      })
-
-      throw new ApolloError(
-        "The following item is not reservable",
-        "511",
-        unavailableVariants
-      )
-    }
+    let unavailableVariantsIDS = unavailableVariants.map(a => a.id)
 
     // Double check that the product variants have a sufficient number of available
     // physical products
     const availablePhysicalProducts = this.physicalProductUtilsService.extractUniqueReservablePhysicalProducts(
       physicalProducts
     )
-    if (availablePhysicalProducts.length < items.length) {
-      // TODO: list out unavailable items
+
+    const unavailablePhysicalProducts = this.physicalProductUtilsService.extractUniqueNonreservablePhysicalProducts(
+      physicalProducts
+    )
+
+    if (unavailablePhysicalProducts.length > 0) {
+      unavailableVariantsIDS = unavailablePhysicalProducts.map(
+        a => a.productVariant.id
+      )
+    }
+
+    if (unavailableVariantsIDS.length > 0) {
+      // Move the items from the bag to saved items
+      await this.prisma.client.updateManyBagItems({
+        where: {
+          productVariant: {
+            id_in: unavailableVariantsIDS,
+          },
+        },
+        data: {
+          saved: true,
+          status: "Added",
+        },
+      })
+
       throw new ApolloError(
-        "One or more product variants does not have an available physical product",
-        "515"
+        "The following item is not reservable",
+        "511",
+        unavailableVariantsIDS
       )
     }
 
