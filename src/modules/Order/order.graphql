@@ -6,6 +6,28 @@ type Mutation {
     @hasRole(roles: [Customer, Admin])
 }
 
+type Query {
+  order(where: OrderWhereUniqueInput!): Order
+  orders(
+    where: OrderWhereInput
+    orderBy: OrderOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Order]!
+  ordersConnection(
+    where: OrderWhereInput
+    orderBy: OrderOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): OrderConnection!
+}
+
 type Order {
   id: ID!
   customer: Customer!
