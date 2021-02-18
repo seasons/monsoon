@@ -176,7 +176,7 @@ export class OrderService {
         recordID: physicalProduct.id,
         recordType: "PhysicalProduct",
         needShipping: !isProductVariantReserved,
-        price: physicalProduct?.price?.buyUsedPrice * 100,
+        price: physicalProduct?.price?.buyUsedPrice,
         currencyCode: "USD",
       },
       !isProductVariantReserved

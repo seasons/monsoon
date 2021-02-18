@@ -10,6 +10,7 @@ import { EmailModule } from "../Email/email.module"
 import { OrderFieldsResolver } from "./fields/order.fields.resolver"
 import { OrderLineItemFieldsResolver } from "./fields/orderLineItem.fields.resolver"
 import { OrderMutationsResolver } from "./mutations/order.mutations.resolver"
+import { OrderQueriesResolver } from "./queries/order.queries.resolver"
 import { OrderService } from "./services/order.service"
 
 @Module({
@@ -23,6 +24,7 @@ import { OrderService } from "./services/order.service"
     AnalyticsModule,
   ],
   providers: [
+    OrderQueriesResolver,
     OrderMutationsResolver,
     OrderLineItemFieldsResolver,
     OrderFieldsResolver,
