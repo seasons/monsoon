@@ -9690,6 +9690,7 @@ enum PhysicalProductStatus {
   PermanentlyDamaged
   Clean
   Lost
+  Sold
 }
 
 type PhysicalProductSubscriptionPayload {
