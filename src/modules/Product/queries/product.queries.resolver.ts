@@ -170,4 +170,19 @@ export class ProductQueriesResolver {
 
     return products
   }
+
+  @Query()
+  async availableProductVariantsConnectionForCustomer(
+    @Args() args,
+    @Customer() customer,
+    @Info() info
+  ) {
+    const products = await this.productService.availableProductVariantsConnectionForCustomer(
+      customer.id,
+      info,
+      args
+    )
+
+    return products
+  }
 }

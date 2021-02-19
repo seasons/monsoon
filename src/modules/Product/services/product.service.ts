@@ -18,7 +18,10 @@ import {
   RecentlyViewedProduct,
   Tag,
 } from "@prisma/index"
-import { Product as PrismaBindingProduct } from "@prisma/prisma.binding"
+import {
+  Product as PrismaBindingProduct,
+  ProductVariantConnection,
+} from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
@@ -486,6 +489,68 @@ export class ProductService {
     }
 
     return { sizesKey, internalSizeWhereInputCreateFunc }
+  }
+
+  async availableProductVariantsConnectionForCustomer(
+    costomerID: string,
+    info: GraphQLResolveInfo,
+    args: any
+  ) {
+    const customer = await this.prisma.binding.query.customer(
+      {
+        where: { id: costomerID },
+      },
+      `{
+        id
+        detail {
+          topSizes
+          waistSizes
+        }
+      }`
+    )
+
+    return (await this.prisma.binding.query.productVariantsConnection(
+      {
+        ...args,
+        where: {
+          OR: [
+            {
+              AND: [
+                {
+                  internalSize: {
+                    top: {
+                      letter_in: customer.detail.topSizes,
+                    },
+                  },
+                },
+                { reservable_gte: 1 },
+                {
+                  product: {
+                    AND: [{ status: "Available" }, { type: "Top" }],
+                  },
+                },
+              ],
+            },
+            {
+              AND: [
+                {
+                  internalSize: {
+                    display_in: customer.detail.waistSizes.map(a => `${a}`),
+                  },
+                },
+                { reservable_gte: 1 },
+                {
+                  product: {
+                    AND: [{ status: "Available" }, { type: "Bottom" }],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+      info
+    )) as ProductVariantConnection
   }
 
   async availableProductVariantsForCustomer(

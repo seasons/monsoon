@@ -29,6 +29,15 @@ type Query {
   ): [WarehouseLocation]! @hasRole(roles: [Admin])
   generatedSeasonsUIDs(input: PhysicalProductSeasonsUIDsInput!): [String!]
   surpriseProductVariants: [ProductVariant]!
+  availableProductVariantsConnectionForCustomer(
+    where: ProductVariantWhereInput
+    orderBy: ProductVariantOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductVariantConnection!
 }
 
 type Mutation {
