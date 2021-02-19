@@ -84,6 +84,29 @@ type Me {
   activeReservation: Reservation
   bag: [BagItem!]
   savedItems: [BagItem!]
+  notificationBar: NotificationBar
+}
+
+type NotificationBar {
+  title: String!
+  detail: String!
+  route: MultiPlatformRoute
+}
+
+type MultiPlatformRoute {
+  web: WebRoute!
+  mobile: MobileRoute!
+}
+
+type WebRoute {
+  url: String
+  drawerView: String
+}
+
+type MobileRoute {
+  route: String!
+  screen: String
+  params: Json
 }
 
 type UserLinks {

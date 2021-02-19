@@ -90,4 +90,21 @@ export class MeFieldsResolver {
       info
     )
   }
+
+  @ResolveField()
+  async notificationBar(@Info() info, @Customer() customer) {
+    let data = null
+    if (customer.status === "PaymentFailed") {
+      data = {
+        title: "You have a past due invoice",
+        detail:
+          "Update your billing info in order to avoid having your membership cancelled",
+        route: {
+          web: { drawerView: "TK" },
+          mobile: { route: "AccountStack", screen: "EditPaymentMethod" },
+        },
+      }
+    }
+    return data
+  }
 }
