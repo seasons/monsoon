@@ -1,5 +1,3 @@
-import fs from "fs"
-
 import { Customer, User } from "@app/decorators"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
@@ -7,6 +5,7 @@ import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
 import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
 import { TwilioEvent } from "@app/modules/Twilio/twilio.types"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
 import {
@@ -22,7 +21,6 @@ import moment from "moment"
 import mustache from "mustache"
 import Twilio from "twilio"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
-import { ServiceContext } from "twilio/lib/rest/verify/v2/service"
 import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
 
 import { SMSID, SMSPayload } from "../sms.types"
@@ -37,7 +35,8 @@ export class SMSService {
     private readonly twilioUtils: TwilioUtils,
     private readonly paymentUtils: PaymentUtilsService,
     private readonly error: ErrorService,
-    private readonly email: EmailService
+    private readonly email: EmailService,
+    private readonly utils: UtilsService
   ) {}
 
   async startSMSVerification(
@@ -453,9 +452,9 @@ export class SMSService {
   }
 
   private getSMSData(smsID: SMSID, vars: any): SMSPayload {
-    let { body, mediaUrls } = JSON.parse(
-      fs.readFileSync(process.cwd() + "/src/modules/SMS/data.json", "utf-8")
-    )[smsID]
+    let { body, mediaUrls } = this.utils.parseJSONFile("src/modules/SMS/data")[
+      smsID
+    ]
 
     body = this.interpolateJSONObjectWithMustache(body, {
       ...vars,
