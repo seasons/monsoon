@@ -1,14 +1,13 @@
-import { PrismaService } from "@app/prisma/prisma.service"
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+
+import { LocationService } from "../services/location.service"
 
 @Resolver("Location")
 export class LocationFieldsResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly location: LocationService) {}
 
-  //   @ResolveField()
-  //   async salesTaxTotal(@Parent() order) {
-  //     return order?.lineItems.reduce((sum, lineItem) => {
-  //       return sum + lineItem.taxPrice
-  //     }, 0)
-  //   }
+  @ResolveField()
+  async weatherDisplay(@Parent() location) {
+    return this.location.temperatureWithEmoji(location.id)
+  }
 }

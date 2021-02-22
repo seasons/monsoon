@@ -189,7 +189,7 @@ export class EmailUtilsService {
     const payload = {
       ...pick(product, ["id", "name", "retailPrice"]),
       sizes: `${sizes}`.replace(/,/g, " "),
-      //@ts-ignore
+      // @ts-ignore
       smallImageSrc,
       bigImageSrc,
       brand: product.brand?.name || "",

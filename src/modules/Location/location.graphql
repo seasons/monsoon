@@ -1,0 +1,40 @@
+type Location {
+  id: ID!
+  slug: String
+  name: String
+  company: String
+  description: String
+  address1: String
+  address2: String
+  city: String
+  country: String
+  state: String
+  zipCode: String!
+  locationType: LocationType
+  user: User
+  lat: Float
+  lng: Float
+  physicalProducts(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct!]
+  shippingOptions(
+    where: ShippingOptionWhereInput
+    orderBy: ShippingOptionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ShippingOption!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  ## Computed
+  weatherDisplay: String
+}
