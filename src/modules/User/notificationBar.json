@@ -1,0 +1,16 @@
+{
+  "PastDueInvoice": {
+    "web": {
+      "title": "You have a past due invoice (web)",
+      "detail": "Update your billing info in order to avoid having your membership cancelled (web)",
+      "route": { "drawerView": "TK" }
+    },
+    "mobile": {
+      "title": "You have a past due invoice (mobile)",
+      "detail": "Update your billing info in order to avoid having your membership cancelled (mobile)",
+      "route": { "route": "AccountStack", "screen": "EditPaymentMethod" }
+    },
+    "icon": "Chevron",
+    "paletteID": "RedAlert"
+  }
+}

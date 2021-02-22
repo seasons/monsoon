@@ -26,6 +26,7 @@ import { ApolloError } from "apollo-server"
 import { pick } from "lodash"
 import { DateTime } from "luxon"
 
+import { NotificationID } from "../user.types"
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
 import { AuthService } from "./auth.service"
 
@@ -612,6 +613,16 @@ export class CustomerService {
     })
 
     return { status, waitlistReason: reason }
+  }
+
+  getNotificationBarData(notificationID: NotificationID) {
+    const data = this.utils.parseJSONFile("src/modules/User/notificationBar")[
+      notificationID
+    ]
+    const palette = this.utils.parseJSONFile(
+      "src/modules/User/notificationBarColorSchemas"
+    )[data.paletteID]
+    return { ...data, palette }
   }
 
   private async updateCustomerAfterTriage({

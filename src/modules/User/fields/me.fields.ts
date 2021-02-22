@@ -3,9 +3,14 @@ import { Info, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
 
+import { CustomerService } from "../services/customer.service"
+
 @Resolver("Me")
 export class MeFieldsResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly customerService: CustomerService
+  ) {}
 
   @ResolveField()
   async id(@User() user) {
@@ -95,15 +100,7 @@ export class MeFieldsResolver {
   async notificationBar(@Info() info, @Customer() customer) {
     let data = null
     if (customer.status === "PaymentFailed") {
-      data = {
-        title: "You have a past due invoice",
-        detail:
-          "Update your billing info in order to avoid having your membership cancelled",
-        route: {
-          web: { drawerView: "TK" },
-          mobile: { route: "AccountStack", screen: "EditPaymentMethod" },
-        },
-      }
+      data = this.customerService.getNotificationBarData("PastDueInvoice")
     }
     return data
   }

@@ -88,25 +88,45 @@ type Me {
 }
 
 type NotificationBar {
-  title: String!
-  detail: String!
-  route: MultiPlatformRoute
+  web: WebNotificationBar!
+  mobile: MobileNotificationBar!
+  palette: NotificationBarPalette
 }
 
-type MultiPlatformRoute {
-  web: WebRoute!
-  mobile: MobileRoute!
+type NotificationBarPalette {
+  default: NotificationBarColorPalette!
+  pressed: NotificationBarColorPalette!
+}
+
+type NotificationBarColorPalette {
+  backgroundColor: String!
+  titleFontColor: String!
+  detailFontColor: String!
+  iconStrokeColor: String!
+}
+type WebNotificationBar {
+  title: String!
+  detail: String!
+  route: WebRoute!
+}
+
+type MobileNotificationBar {
+  title: String!
+  detail: String!
+  route: MobileRoute!
 }
 
 type WebRoute {
   url: String
   drawerView: String
+  dismissable: Boolean
 }
 
 type MobileRoute {
   route: String!
   screen: String
   params: Json
+  dismissable: Boolean
 }
 
 type UserLinks {
