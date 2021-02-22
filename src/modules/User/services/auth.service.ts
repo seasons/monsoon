@@ -299,13 +299,13 @@ export class AuthService {
   ): SegmentReservedTraitsInCustomerDetail {
     const traits = {} as any
     if (!!detail?.phoneNumber) {
-      traits.phone = detail.phoneNumber
+      traits.phone = detail.phoneNumber.trim()
     }
     const state = detail?.shippingAddress?.state
     if (!!detail.shippingAddress) {
       traits.address = {
-        city: detail.shippingAddress?.city,
-        postalCode: detail.shippingAddress?.zipCode,
+        city: detail.shippingAddress?.city.trim(),
+        postalCode: detail.shippingAddress?.zipCode.trim(),
         state,
       }
       traits.state = state
@@ -452,11 +452,12 @@ export class AuthService {
     utm
   ) {
     if (details?.shippingAddress?.create?.zipCode) {
-      const zipCode = details?.shippingAddress?.create?.zipCode
+      const zipCode = details?.shippingAddress?.create?.zipCode.trim()
       const state = zipcodes.lookup(zipCode)?.state
       const city = zipcodes.lookup(zipCode)?.city
       details.shippingAddress.create.city = city
       details.shippingAddress.create.state = state
+      details.shippingAddress.create.zipCode = zipCode
     }
     if (details?.phoneNumber) {
       details.phoneNumber = details.phoneNumber.replace(/-/g, "")

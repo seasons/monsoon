@@ -80,7 +80,7 @@ export class AdmissionsService {
   }
 
   zipcodeAllowed(zipcode: string): ZipcodeAllowedResult {
-    const state = zipcodes.lookup(zipcode)?.state
+    const state = zipcodes.lookup(zipcode.trim())?.state
     const allServiceableStates = [
       ...this.serviceableStates.allAccessEnabled.true,
       ...this.serviceableStates.allAccessEnabled.false,
