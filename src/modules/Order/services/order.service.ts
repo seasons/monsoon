@@ -529,14 +529,12 @@ export class OrderService {
     const physicalProductId = orderLineItems.find(
       orderLineItem => orderLineItem.recordType === "PhysicalProduct"
     ).recordID
-    const productVariantID = (
-      await this.prisma.client
-        .physicalProduct({ id: physicalProductId })
-        .productVariant()
-    ).id
+    const productVariant = await this.prisma.client
+      .physicalProduct({ id: physicalProductId })
+      .productVariant()
 
     const { invoice, shippingAddress } = await this.getBuyUsedMetadata({
-      productVariantID,
+      productVariantID: productVariant.id,
       customer,
       user,
     })
@@ -558,12 +556,12 @@ export class OrderService {
 
       const [shippoTransaction, shipmentWeight] = await Promise.all([
         this.shipping.createBuyUsedShippingLabel(
-          productVariantID,
+          productVariant.id,
           user,
           customer
         ),
         this.shipping.calcShipmentWeightFromProductVariantIDs([
-          productVariantID,
+          productVariant.id,
         ]),
       ])
 
@@ -603,7 +601,11 @@ export class OrderService {
 
     const orderShippingUpdate = await getOrderShippingUpdate()
 
-    const [updatedOrder, _updatedPhysicalProduct] = await Promise.all([
+    const [
+      updatedOrder,
+      _updatedPhysicalProduct,
+      _updatedProductVariant,
+    ] = await Promise.all([
       this.prisma.client.updateOrder({
         where: { id: order.id },
         data: {
@@ -619,6 +621,13 @@ export class OrderService {
           inventoryStatus: "Offloaded",
           offloadMethod: "SoldToUser",
           offloadNotes: `Order ID: ${order.id}`,
+        },
+      }),
+      this.prisma.client.updateProductVariant({
+        where: { id: productVariant.id },
+        data: {
+          reservable: productVariant.reservable - 1,
+          offloaded: productVariant.offloaded + 1,
         },
       }),
     ])

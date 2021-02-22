@@ -387,7 +387,9 @@ export class ProductVariantFieldsResolver {
         physicalProduct.price.buyUsedEnabled &&
         ((physicalProduct.inventoryStatus === "Reserved" &&
           isProductVariantReserved) ||
-          physicalProduct.inventoryStatus !== "Offloaded")
+          physicalProduct.inventoryStatus === "NonReservable" ||
+          physicalProduct.inventoryStatus === "Reservable" ||
+          physicalProduct.inventoryStatus === "Stored")
     )
 
     return {
