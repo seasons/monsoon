@@ -3,7 +3,6 @@ import { ImageService } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
   BottomSizeType,
-  Customer,
   CustomerWhereUniqueInput,
   ID_Input,
   InventoryStatus,
@@ -18,7 +17,10 @@ import {
   RecentlyViewedProduct,
   Tag,
 } from "@prisma/index"
-import { Product as PrismaBindingProduct } from "@prisma/prisma.binding"
+import {
+  Customer,
+  Product as PrismaBindingProduct,
+} from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
@@ -492,8 +494,7 @@ export class ProductService {
     where: CustomerWhereUniqueInput,
     info: GraphQLResolveInfo
   ) {
-    const productTypes = ["Top", "Bottom"]
-    const customer = await this.prisma.binding.query.customer(
+    const customer = (await this.prisma.binding.query.customer(
       {
         where,
       },
@@ -504,43 +505,49 @@ export class ProductService {
           waistSizes
         }
       }`
-    )
+    )) as Customer
 
-    let productVariants = [] as ProductVariant[]
-
-    for (const productType of productTypes) {
-      const { sizesKey, internalSizeWhereInputCreateFunc } = this.getSizeKey(
-        productType as "Top" | "Bottom"
-      )
-
-      const preferredSizes = customer.detail[sizesKey]
-
-      const variantsOfType = (await this.prisma.binding.query.productVariants(
-        {
-          where: {
-            AND: [
-              {
-                internalSize: internalSizeWhereInputCreateFunc(preferredSizes),
-              },
-              { reservable_gte: 1 },
-              {
-                product: {
-                  AND: [
-                    { status: "Available" },
-                    { type: productType as ProductType },
-                  ],
+    return (await this.prisma.binding.query.productVariants(
+      {
+        where: {
+          OR: [
+            {
+              AND: [
+                {
+                  internalSize: {
+                    top: {
+                      letter_in: customer.detail.topSizes as LetterSize[],
+                    },
+                  },
                 },
-              },
-            ],
-          },
+                { reservable_gte: 1 },
+                {
+                  product: {
+                    AND: [{ status: "Available" }, { type: "Top" }],
+                  },
+                },
+              ],
+            },
+            {
+              AND: [
+                {
+                  internalSize: {
+                    display_in: customer.detail.waistSizes.map(a => `${a}`),
+                  },
+                },
+                { reservable_gte: 1 },
+                {
+                  product: {
+                    AND: [{ status: "Available" }, { type: "Bottom" }],
+                  },
+                },
+              ],
+            },
+          ],
         },
-        info
-      )) as ProductVariant[]
-
-      productVariants = [...productVariants, ...variantsOfType]
-    }
-
-    return productVariants
+      },
+      info
+    )) as ProductVariant[]
   }
 
   async getSKUData({ brandID, colorCode }) {
