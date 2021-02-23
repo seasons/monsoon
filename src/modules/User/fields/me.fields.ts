@@ -99,7 +99,7 @@ export class MeFieldsResolver {
   @ResolveField()
   async notificationBar(@Info() info, @Customer() customer) {
     let data = null
-    if (customer.status === "PaymentFailed") {
+    if (customer?.status === "PaymentFailed") {
       data = this.customerService.getNotificationBarData("PastDueInvoice")
     }
     return data

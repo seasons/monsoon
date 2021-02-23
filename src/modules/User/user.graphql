@@ -1,5 +1,6 @@
 # import Reservation from "../Reservation/reservation.graphql"
 # import Coupon from "../Payment/payment.graphql"
+# import AppRoute from "../PushNotification/pushNotification.graphql"
 
 type Query {
   me: Me
@@ -123,7 +124,7 @@ type WebRoute {
 }
 
 type MobileRoute {
-  route: String!
+  route: AppRoute!
   screen: String
   params: Json
   dismissable: Boolean

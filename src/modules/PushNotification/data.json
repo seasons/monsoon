@@ -19,7 +19,7 @@
       "body": "You've been invited to complete your sign up and reserve your first order"
     },
     "data": {
-      "route": "Account"
+      "route": "AccountStack"
     }
   },
   "ReservationShipped": {

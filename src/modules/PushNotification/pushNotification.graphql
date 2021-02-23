@@ -60,7 +60,7 @@ enum AppRoute {
   Browse
   Home
   Brand
-  Account
+  AccountStack
   PaymentAndShipping
   PersonalPreferences
   ProductRequest
