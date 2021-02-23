@@ -36,5 +36,15 @@ type Location {
   updatedAt: DateTime!
 
   ## Computed
-  weatherDisplay: String
+  weather: Weather
+}
+
+type Weather {
+  id: String
+  temperature: Int
+  temperatureMax: Int
+  temperatureMin: Int
+  emoji: String
+  sunset: Int
+  sunrise: Int
 }

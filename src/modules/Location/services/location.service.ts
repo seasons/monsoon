@@ -72,7 +72,7 @@ export class LocationService {
       })
   }
 
-  async temperatureWithEmoji(locationID: string) {
+  async weather(locationID: string) {
     const location = await this.prisma.client.location({ id: locationID })
     const weatherData = (await this.getWeatherForLocation(location)) as any
     const weather = weatherData?.weather?.[0]?.id
@@ -80,14 +80,21 @@ export class LocationService {
     const sunset = weatherData?.sys.sunset
     const datetime = weatherData?.dt
     const emoji = this.getEmoji(weather, datetime, sunrise, sunset)
-    const temp = weatherData?.main?.temp && Math.floor(weatherData?.main?.temp)
+    const temperature =
+      weatherData?.main?.temp && Math.floor(weatherData?.main?.temp)
+    const temperatureMax =
+      weatherData?.main?.temp_max && Math.floor(weatherData?.main?.temp_max)
+    const temperatureMin =
+      weatherData?.main?.temp_min && Math.floor(weatherData?.main?.temp_min)
 
-    if (temp && emoji) {
-      return `${weatherData?.main?.temp} ${emoji}`
-    } else if (temp) {
-      return `${weatherData?.main?.temp}`
-    } else {
-      return ""
+    return {
+      id: datetime?.toString() ?? Math.random().toString(),
+      temperature,
+      temperatureMax,
+      temperatureMin,
+      emoji,
+      sunset,
+      sunrise,
     }
   }
 }

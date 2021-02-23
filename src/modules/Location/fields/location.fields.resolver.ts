@@ -7,7 +7,7 @@ export class LocationFieldsResolver {
   constructor(private readonly location: LocationService) {}
 
   @ResolveField()
-  async weatherDisplay(@Parent() location) {
-    return this.location.temperatureWithEmoji(location.id)
+  async weather(@Parent() location) {
+    return this.location.weather(location.id)
   }
 }
