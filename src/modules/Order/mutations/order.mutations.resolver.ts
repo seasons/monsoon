@@ -56,12 +56,12 @@ export class OrderMutationsResolver {
 
     let submittedOrder
     if (order.type === "New") {
-      submittedOrder = this.order.buyNewSubmitOrder({
+      submittedOrder = await this.order.buyNewSubmitOrder({
         order,
         customer,
       })
     } else {
-      submittedOrder = this.order.buyUsedSubmitOrder({
+      submittedOrder = await this.order.buyUsedSubmitOrder({
         order,
         customer,
         user,
