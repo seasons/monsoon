@@ -139,8 +139,8 @@ export class OrderService {
     )
     // Shipping is included only if user does not already have the product.
     const shipping = await (isProductVariantReserved
-      ? this.shipping.getBuyUsedShippingRate(productVariant.id, user, customer)
-      : Promise.resolve(null))
+      ? Promise.resolve(null)
+      : this.shipping.getBuyUsedShippingRate(productVariant.id, user, customer))
 
     const physicalProduct = productVariant?.physicalProducts.find(
       physicalProduct =>
@@ -184,7 +184,7 @@ export class OrderService {
             recordID:
               shipping?.shipment.substring(0, 24) || "137" + Math.random() * 10,
             recordType: "Package",
-            price: parseFloat(shipping?.amount || "0.01") * 100,
+            price: parseFloat(shipping?.amount || "0.00") * 100,
             currencyCode: "USD",
             needShipping: false,
           }
