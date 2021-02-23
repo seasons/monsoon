@@ -136,6 +136,8 @@ type ProductVariant {
   isWanted: Boolean! @deprecated(reason: "replaced with hasRestockNotification")
   createdAt: DateTime!
   updatedAt: DateTime!
+
+  purchased: Boolean!
 }
 
 input ProductVariantPriceInput {

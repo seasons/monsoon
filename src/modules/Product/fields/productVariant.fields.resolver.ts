@@ -38,6 +38,75 @@ export class ProductVariantFieldsResolver {
   }
 
   @ResolveField()
+  async purchased(
+    @Parent() productVariant: ProductVariant,
+    @Customer() customer
+  ) {
+    if (!customer?.id) {
+      return false
+    }
+    const orders = await this.prisma.binding.query.orders(
+      {
+        where: { customer: { id: customer.id } },
+      },
+      `
+      {
+        id
+        lineItems {
+            id
+            recordType
+            recordID
+        }
+      }`
+    )
+
+    const physicalProductIDs = []
+
+    const inOrders = orders?.some(order => {
+      return order?.lineItems?.some(item => {
+        if (
+          item.recordType === "ProductVariant" &&
+          item.recordID === productVariant.id
+        ) {
+          return true
+        } else if (item.recordType === "PhysicalProduct") {
+          physicalProductIDs.push(item.recordID)
+          return false
+        }
+      })
+    })
+
+    if (inOrders) {
+      return true
+    }
+
+    if (physicalProductIDs.length > 0) {
+      const physicalProducts = await this.prisma.binding.query.physicalProducts(
+        {
+          where: { id_in: physicalProductIDs },
+        },
+        `
+        {
+          id
+          productVariant {
+            id
+          }
+        }
+        `
+      )
+
+      const physicalProductIDS = physicalProducts?.map(p => p.productVariant.id)
+      if (physicalProductIDS.includes(productVariant.id)) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return false
+    }
+  }
+
+  @ResolveField()
   async displayLong(
     @Parent() parent,
     @Loader({
