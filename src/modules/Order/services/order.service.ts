@@ -3,13 +3,13 @@ import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import {
   BagItem,
   BillingInfo,
+  Category,
   Customer,
   Location,
   Order,
   OrderLineItem,
   PhysicalProduct,
   PhysicalProductPrice,
-  Product,
   User,
 } from "@app/prisma"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
@@ -18,7 +18,7 @@ import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
 import { GraphQLResolveInfo } from "graphql"
-import { pick } from "lodash"
+import { flatten, pick } from "lodash"
 
 type InvoiceCharge = {
   amount: number
@@ -47,13 +47,41 @@ type InvoiceInput = {
 
 @Injectable()
 export class OrderService {
+  readonly outerwearCategoryIds: Promise<Array<string>>
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly shopify: ShopifyService,
     private readonly shipping: ShippingService,
     private readonly productUtils: ProductUtilsService,
     private readonly email: EmailService
-  ) {}
+  ) {
+    const getCategoryAndAllChildren = (categoryId: string): Promise<string[]> =>
+      this.prisma.client
+        .category({ id: categoryId })
+        .children()
+        .then(children =>
+          Promise.all(
+            children && children.length
+              ? children.map((category: Category) =>
+                  getCategoryAndAllChildren(category.id)
+                )
+              : []
+          )
+        )
+        .then(children => {
+          const result = flatten(children)
+          result.push(categoryId)
+          return result
+        })
+
+    this.outerwearCategoryIds = this.prisma.client
+      .category({ slug: "outerwear" })
+      .id()
+      .then(outerwearCategoryId =>
+        getCategoryAndAllChildren(outerwearCategoryId)
+      )
+  }
 
   async getBuyUsedMetadata({
     productVariantID,
@@ -68,63 +96,68 @@ export class OrderService {
     shippingAddress: Location
     orderLineItems: OrderLineItem[]
   }> {
-    const productVariant = await this.prisma.binding.query.productVariant(
-      {
-        where: {
-          id: productVariantID,
+    const [productVariant, customerQuery] = await Promise.all([
+      this.prisma.binding.query.productVariant(
+        {
+          where: {
+            id: productVariantID,
+          },
         },
-      },
-      `{
-          id
-          physicalProducts {
+        `{
             id
-            price {
-              buyUsedEnabled
-              buyUsedPrice
+            physicalProducts {
+              id
+              price {
+                buyUsedEnabled
+                buyUsedPrice
+              }
+            }
+            product {
+              id
+              name
+              category {
+                id
+              }
+            }
+          }`
+      ),
+      this.prisma.binding.query.customer(
+        {
+          where: {
+            id: customer.id,
+          },
+        },
+        `{
+          id
+          user {
+            id
+            firstName
+            lastName
+          }
+          detail {
+            id
+            shippingAddress {
+              id
+              name
+              company
+              address1
+              address2
+              city
+              state
+              zipCode
+              country
             }
           }
-          product {
+          bagItems {
             id
-            name
+            status
+            productVariant {
+              id
+            }
           }
         }`
-    )
-    const customerQuery = await this.prisma.binding.query.customer(
-      {
-        where: {
-          id: customer.id,
-        },
-      },
-      `{
-        id
-        user {
-          id
-          firstName
-          lastName
-        }
-        detail {
-          id
-          shippingAddress {
-            id
-            name
-            company
-            address1
-            address2
-            city
-            state
-            zipCode
-            country
-          }
-        }
-        bagItems {
-          id
-          status
-          productVariant {
-            id
-          }
-        }
-      }`
-    )
+      ),
+    ])
 
     // FIXME: We're assuming that every physical product has the same price for a variant,
     // so take the first valid result.
@@ -151,14 +184,14 @@ export class OrderService {
           physicalProduct.inventoryStatus !== "Offloaded")
     ) as (PhysicalProduct & { price: PhysicalProductPrice }) | null
     const productName = productVariant?.product?.name
-    const productCategories = await this.productUtils.getAllCategories({
-      id: productVariant?.product?.id,
-    } as Product)
-    const productTaxCode = productCategories.some(
-      ({ name }) => name === "outerwear"
+
+    const productTaxCode = (await this.outerwearCategoryIds).some(
+      outerwearCategoryId =>
+        outerwearCategoryId === productVariant?.product?.category?.id
     )
       ? "PC040111"
       : "PC040000"
+
     const shippingAddress = customerQuery?.detail?.shippingAddress as Location
     const [firstName, ...lastName] = (shippingAddress?.name || "").split(" ")
 
