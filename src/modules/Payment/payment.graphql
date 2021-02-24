@@ -23,6 +23,11 @@ type Query {
 }
 
 type Mutation {
+  processPaymentMethod(
+    paymentMethodID: String!
+    planID: String!
+    billing: JSON
+  ): JSON
   applePayCheckout(
     planID: String!
     token: StripeToken!

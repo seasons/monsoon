@@ -5,7 +5,13 @@ import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.se
 import { PrismaService } from "@app/prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import chargebee from "chargebee"
 import { pick } from "lodash"
+import Stripe from "stripe"
+
+const stripe = new Stripe("sk_test_q3thv8dB2JZ1FAUbzdQqmO3G0022ZvQ5w4", {
+  apiVersion: "2020-08-27",
+})
 
 @Resolver()
 export class PaymentMutationsResolver {
@@ -17,6 +23,61 @@ export class PaymentMutationsResolver {
     private readonly paymentUtils: PaymentUtilsService
   ) {}
 
+  @Mutation()
+  async processPaymentMethod(
+    @Args() { planID, paymentMethodID, billing },
+    @User() user
+  ) {
+    console.log("paymentMethodID", paymentMethodID)
+
+    const intent = await stripe.paymentIntents.create({
+      payment_method: paymentMethodID,
+      amount: 65,
+      currency: "USD",
+      confirm: true,
+      setup_future_usage: "off_session",
+    })
+
+    const billingAddress = {
+      first_name: billing.user.firstName || "",
+      last_name: billing.user.lastName || "",
+      ...billing.address,
+      zip: billing.address.postal_code || "",
+      country: "US", // assume its US for now, because we need it for taxes.
+    }
+
+    const subscriptionOptions = {
+      plan_id: planID,
+      billing_address: billingAddress,
+      customer: {
+        first_name: billing.user.firstName || "",
+        last_name: billing.user.lastName || "",
+        email: billing.user.email || "",
+      },
+      payment_intent: {
+        gw_intent: intent.id,
+        gateway_account_id: "gw_BuVXEhRh6XPao1qfg",
+      },
+    }
+    console.log(subscriptionOptions)
+    try {
+      // const subscription = await chargebee.subscription
+      //   .create(subscriptionOptions)
+      //   .request()
+
+      // console.log(intent, subscription)
+      return intent
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  /**
+   * This method is used for both credit card and apple pay checkouts.
+   * Currently only used in harvest
+   * @param param0
+   * @param customer
+   */
   @Mutation()
   async applePayCheckout(
     @Args() { planID, token, tokenType, couponID },
