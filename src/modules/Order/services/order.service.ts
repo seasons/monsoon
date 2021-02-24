@@ -540,8 +540,12 @@ export class OrderService {
     })
 
     const { invoice: chargebeeInvoice } = await chargebee.invoice
-      .create(invoice)
+      .create({ ...invoice, auto_collection: true })
       .request()
+
+    if (chargebeeInvoice.status !== "paid") {
+      throw new Error("Failed to collect payment for invoice.")
+    }
 
     const getOrderShippingUpdate = async () => {
       const physicalProductsNeedShipping = orderLineItems.filter(
