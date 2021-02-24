@@ -111,6 +111,7 @@ export class OrderService {
                 buyUsedEnabled
                 buyUsedPrice
               }
+              inventoryStatus
             }
             product {
               id
@@ -181,8 +182,10 @@ export class OrderService {
         physicalProduct.price.buyUsedEnabled &&
         ((physicalProduct.inventoryStatus === "Reserved" &&
           isProductVariantReserved) ||
-          physicalProduct.inventoryStatus !== "Offloaded")
+          physicalProduct.inventoryStatus === "Reservable" ||
+          physicalProduct.inventoryStatus === "Stored")
     ) as (PhysicalProduct & { price: PhysicalProductPrice }) | null
+
     const productName = productVariant?.product?.name
 
     const productTaxCode = (await this.outerwearCategoryIds).some(
@@ -196,11 +199,12 @@ export class OrderService {
     const [firstName, ...lastName] = (shippingAddress?.name || "").split(" ")
 
     if (
+      !physicalProduct ||
       !physicalProduct?.price?.buyUsedEnabled ||
       !physicalProduct?.price?.buyUsedPrice
     ) {
       throw new Error(
-        "ProductVariant is not enabled for buyUsed, or is missing a price."
+        "ProductVariant is not enabled for Buy Used, is missing a price, or is unavailable for purchase."
       )
     }
 
@@ -508,41 +512,36 @@ export class OrderService {
       customer,
       user,
     })
-    try {
-      const {
-        estimate: { invoice_estimate },
-      } = await chargebee.estimate
-        .create_invoice({
-          invoice: pick(invoice, ["customer_id"]),
-          ...pick(invoice, ["charges", "shipping_address"]),
-        })
-        .request()
 
-      return await this.prisma.binding.mutation.createOrder(
-        {
-          data: {
-            customer: { connect: { id: customer.id } },
-            orderNumber: `O-${
-              Math.floor(Math.random() * 900000000) + 100000000
-            }`,
-            type: "Used",
-            status: "Drafted",
-            subTotal: invoice_estimate.subtotal,
-            total: invoice_estimate.total,
-            lineItems: {
-              create: orderLineItems.map((orderLineItem, idx) => ({
-                ...orderLineItem,
-                taxRate: invoice_estimate.line_items[idx].tax_rate,
-                taxPrice: invoice_estimate.line_items[idx].tax_amount,
-              })),
-            },
+    const {
+      estimate: { invoice_estimate },
+    } = await chargebee.estimate
+      .create_invoice({
+        invoice: pick(invoice, ["customer_id"]),
+        ...pick(invoice, ["charges", "shipping_address"]),
+      })
+      .request()
+
+    return await this.prisma.binding.mutation.createOrder(
+      {
+        data: {
+          customer: { connect: { id: customer.id } },
+          orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
+          type: "Used",
+          status: "Drafted",
+          subTotal: invoice_estimate.subtotal,
+          total: invoice_estimate.total,
+          lineItems: {
+            create: orderLineItems.map((orderLineItem, idx) => ({
+              ...orderLineItem,
+              taxRate: invoice_estimate.line_items[idx].tax_rate,
+              taxPrice: invoice_estimate.line_items[idx].tax_amount,
+            })),
           },
         },
-        info
-      )
-    } catch (err) {
-      console.error(err)
-    }
+      },
+      info
+    )
   }
 
   async buyUsedSubmitOrder({
@@ -573,7 +572,7 @@ export class OrderService {
     })
 
     const { invoice: chargebeeInvoice } = await chargebee.invoice
-      .create({ ...invoice, auto_collection: true })
+      .create({ ...invoice, auto_collection: "on" })
       .request()
 
     if (chargebeeInvoice.status !== "paid") {
