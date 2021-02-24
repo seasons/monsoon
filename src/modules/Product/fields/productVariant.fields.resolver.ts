@@ -10,7 +10,7 @@ import {
   Product,
   ShopifyProductVariant,
 } from "@app/prisma"
-import { ProductVariant } from "@app/prisma/prisma.binding"
+import { Order, ProductVariant } from "@app/prisma/prisma.binding"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
@@ -35,6 +35,78 @@ export class ProductVariantFieldsResolver {
     this.sizeConversion = this.utils.parseJSONFile(
       "src/modules/Product/sizeConversion"
     )
+  }
+
+  @ResolveField()
+  async purchased(
+    @Parent() productVariant: ProductVariant,
+    @Customer() customer,
+    @Loader({
+      params: {
+        query: "orders",
+        info: `{
+          id
+          customer {
+            id
+          }
+          lineItems {
+              id
+              recordType
+              recordID
+          }
+        }`,
+        formatWhere: ids => ({ customer: { id_in: ids } }),
+        getKeys: a => [a.customer.id],
+        fallbackValue: null,
+        keyToDataRelationship: "OneToMany",
+      },
+    })
+    ordersLoader: PrismaDataLoader<Order[]>
+  ) {
+    if (!customer?.id) {
+      return false
+    }
+
+    const orders = await ordersLoader.load(customer.id)
+    const physicalProductIDs = []
+
+    const inOrders = orders?.some(order => {
+      return order?.lineItems?.some(item => {
+        if (
+          item.recordType === "ProductVariant" &&
+          item.recordID === productVariant.id
+        ) {
+          return true
+        } else if (item.recordType === "PhysicalProduct") {
+          physicalProductIDs.push(item.recordID)
+        }
+      })
+    })
+
+    if (inOrders) {
+      return true
+    }
+
+    if (physicalProductIDs.length > 0) {
+      const physicalProducts = await this.prisma.binding.query.physicalProducts(
+        {
+          where: { id_in: physicalProductIDs },
+        },
+        `
+        {
+          id
+          productVariant {
+            id
+          }
+        }
+        `
+      )
+
+      const physicalProductIDS = physicalProducts?.map(p => p.productVariant.id)
+      return physicalProductIDS.includes(productVariant.id)
+    } else {
+      return false
+    }
   }
 
   @ResolveField()

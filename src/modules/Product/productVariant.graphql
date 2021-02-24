@@ -130,12 +130,15 @@ type ProductVariant {
   price: ProductVariantPrice!
   retailPrice: Float @deprecated(reason: "replaced with price.retailPrice")
   nonReservable: Int!
-  isSaved: Boolean!
-  isInBag: Boolean!
   hasRestockNotification: Boolean!
   isWanted: Boolean! @deprecated(reason: "replaced with hasRestockNotification")
   createdAt: DateTime!
   updatedAt: DateTime!
+
+  # Based on logged in customer
+  isSaved: Boolean!
+  isInBag: Boolean!
+  purchased: Boolean!
 }
 
 input ProductVariantPriceInput {
