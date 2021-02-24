@@ -10,7 +10,7 @@ import {
   Product,
   ShopifyProductVariant,
 } from "@app/prisma"
-import { ProductVariant } from "@app/prisma/prisma.binding"
+import { Order, ProductVariant } from "@app/prisma/prisma.binding"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
@@ -40,26 +40,34 @@ export class ProductVariantFieldsResolver {
   @ResolveField()
   async purchased(
     @Parent() productVariant: ProductVariant,
-    @Customer() customer
+    @Customer() customer,
+    @Loader({
+      params: {
+        query: "orders",
+        info: `{
+          id
+          customer {
+            id
+          }
+          lineItems {
+              id
+              recordType
+              recordID
+          }
+        }`,
+        formatWhere: ids => ({ customer: { id_in: ids } }),
+        getKeys: a => [a.customer.id],
+        fallbackValue: null,
+        keyToDataRelationship: "OneToMany",
+      },
+    })
+    ordersLoader: PrismaDataLoader<Order[]>
   ) {
     if (!customer?.id) {
       return false
     }
-    const orders = await this.prisma.binding.query.orders(
-      {
-        where: { customer: { id: customer.id } },
-      },
-      `
-      {
-        id
-        lineItems {
-            id
-            recordType
-            recordID
-        }
-      }`
-    )
 
+    const orders = await ordersLoader.load(customer.id)
     const physicalProductIDs = []
 
     const inOrders = orders?.some(order => {
@@ -71,7 +79,6 @@ export class ProductVariantFieldsResolver {
           return true
         } else if (item.recordType === "PhysicalProduct") {
           physicalProductIDs.push(item.recordID)
-          return false
         }
       })
     })
@@ -96,11 +103,7 @@ export class ProductVariantFieldsResolver {
       )
 
       const physicalProductIDS = physicalProducts?.map(p => p.productVariant.id)
-      if (physicalProductIDS.includes(productVariant.id)) {
-        return true
-      } else {
-        return false
-      }
+      return physicalProductIDS.includes(productVariant.id)
     } else {
       return false
     }
