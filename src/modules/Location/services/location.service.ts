@@ -13,40 +13,38 @@ export class LocationService {
     switch (weatherCodeGroup) {
       // Thunder
       case 2:
-        return "U+26C8"
-      // Drizzle
+        return "0x26C8" // Drizzle
       case 3:
-        return "U+1F327"
+        return "0x1F327"
       // Rain
       case 5:
-        return "U+1F327"
+        return "0x1F327"
       // Snow
       case 6:
-        return "U+2744"
-      // Fog
+        return "0x2744" // Fog
       case 7:
-        return "U+1F32B"
+        return "0x1F32B"
       case 8:
         // Cloudy
-        if (weatherCode === 802) return "U+2601"
+        if (weatherCode === 802) return "0x2601"
         const currentHour = new Date(datetime)
         if (
           currentHour >= new Date(sunrise) &&
           currentHour <= new Date(sunset)
         ) {
           // Sun
-          return "U+2600"
+          return "0x2600"
         } else {
           // Moon
-          return "U+1F311"
+          return "0x1F311"
         }
       case 9:
         // Tornado
-        if (weatherCode === 900) return "U+1F32A"
+        if (weatherCode === 900) return "0x1F32A"
         // Wind
-        if (weatherCode === 905) return "U+1F32C"
+        if (weatherCode === 905) return "0x1F32C"
         // Wind
-        if (weatherCode <= 955) return "U+1F32C"
+        if (weatherCode <= 955) return "0x1F32C"
         // Extreme
         return null
       default:
