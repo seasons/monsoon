@@ -8,9 +8,9 @@ import { RedisCacheService } from "./services/redisCache.service"
     CacheModule.registerAsync({
       useFactory: async configService => ({
         store: redisStore,
-        host: "localhost",
-        port: 6379,
-        ttl: 60,
+        host: process.env.REDIS_HOST || "localhost",
+        port: process.env.REDIS_PORT || 6789,
+        ttl: process.env.CACHE_MAX_AGE || 60,
       }),
     }),
   ],

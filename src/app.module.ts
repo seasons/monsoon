@@ -56,8 +56,11 @@ const scheduleModule =
   process.env.NODE_ENV === "production" && process.env.DYNO?.includes("cron")
     ? [ScheduleModule.forRoot()]
     : []
-// const scheduleModule =
-//   process.env.NODE_ENV === "development" ? [ScheduleModule.forRoot()] : []
+
+const redisConfig = {
+  host: process.env.REDIS_HOST || "localhost",
+  port: process.env.REDIS_PORT || 6789,
+}
 
 @Module({
   imports: [
@@ -77,7 +80,7 @@ const scheduleModule =
           }),
           plugins: [responseCachePlugin()],
           cacheControl: {
-            defaultMaxAge: 5,
+            defaultMaxAge: process.env.CACHE_MAX_AGE || 5,
           },
           uploads: {
             maxFileSize: 125000000, // 125 MB
@@ -91,16 +94,12 @@ const scheduleModule =
           resolvers: {
             JSON: GraphQLJSON,
           },
-          cache: new RedisCache({
-            host: "localhost",
-            port: 6379,
-          }),
+          cache: new RedisCache(redisConfig),
         } as GqlModuleOptions),
     }),
     CacheModule.register({
       store: redisStore,
-      host: "localhost",
-      port: 6379,
+      ...redisConfig,
     }),
     AdminModule,
     AnalyticsModule,
