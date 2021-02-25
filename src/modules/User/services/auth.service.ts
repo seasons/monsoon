@@ -304,8 +304,8 @@ export class AuthService {
     const state = detail?.shippingAddress?.state
     if (!!detail.shippingAddress) {
       traits.address = {
-        city: detail.shippingAddress?.city.trim(),
-        postalCode: detail.shippingAddress?.zipCode.trim(),
+        city: detail.shippingAddress?.city?.trim(),
+        postalCode: detail.shippingAddress?.zipCode?.trim(),
         state,
       }
       traits.state = state
