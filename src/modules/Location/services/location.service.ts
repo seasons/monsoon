@@ -9,44 +9,46 @@ export class LocationService {
 
   getEmoji(weatherCode, datetime, sunrise, sunset) {
     // Match OWM Conditions (http://openweathermap.org/weather-conditions)
+    // Emojis use (iOS 7 - Current) UTF-32 Hex (C Syntax)
+    // Example: http://www.iemoji.com/view/emoji/185/animals-nature/cloud
     const weatherCodeGroup = Math.floor(weatherCode / 100)
     switch (weatherCodeGroup) {
       case 2:
         // Thunder
-        return "0x0001F329"
+        return ["0x0001F329"]
       case 3:
         // Drizzle
-        return "0x0001F327"
+        return ["0x0001F327"]
       case 5:
         // Rain
-        return "0x0001F327"
+        return ["0x0001F327"]
       case 6:
         // Snow
-        return "0x00002744"
+        return ["0x00002744", "0x0000FE0F"]
       case 7:
         // Fog
-        return "0x0001F32B"
+        return ["0x0001F32B"]
       case 8:
         // Cloudy
-        if (weatherCode === 802) return "0x00002601"
+        if (weatherCode === 802) return ["0x00002601", "0x0000FE0F"]
         const currentHour = new Date(datetime)
         if (
           currentHour >= new Date(sunrise) &&
           currentHour <= new Date(sunset)
         ) {
           // Sun
-          return "0x2600"
+          return ["0x00002600", "0x0000FE0F"]
         } else {
           // Moon
-          return "0x0001F311"
+          return ["0x0001F311"]
         }
       case 9:
         // Tornado
-        if (weatherCode === 900) return "0x0001F32A"
+        if (weatherCode === 900) return ["0x0001F32A"]
         // Wind
-        if (weatherCode === 905) return "0x0001F32C"
+        if (weatherCode === 905) return ["0x0001F32C"]
         // Wind
-        if (weatherCode <= 955) return "0x0001F32C"
+        if (weatherCode <= 955) return ["0x0001F32C"]
         // Extreme
         return null
       default:

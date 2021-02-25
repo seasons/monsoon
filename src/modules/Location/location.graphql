@@ -44,7 +44,7 @@ type Weather {
   temperature: Int
   temperatureMax: Int
   temperatureMin: Int
-  emoji: String
+  emoji: [String!]
   sunset: Int
   sunrise: Int
 }
