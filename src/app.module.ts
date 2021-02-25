@@ -2,16 +2,12 @@ import * as util from "util"
 
 import { CustomerModule } from "@modules/Customer/customer.module"
 import { DataLoaderInterceptor } from "@modules/DataLoader/interceptors/dataloader.interceptor"
-import {
-  CacheInterceptor,
-  CacheModule,
-  Module,
-  forwardRef,
-} from "@nestjs/common"
+import { CacheModule, Module, forwardRef } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
 import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
 import { ScheduleModule } from "@nestjs/schedule"
 import sgMail from "@sendgrid/mail"
+import { RedisCache } from "apollo-server-cache-redis"
 import responseCachePlugin from "apollo-server-plugin-response-cache"
 import * as redisStore from "cache-manager-redis-store"
 import chargebee from "chargebee"
@@ -95,6 +91,10 @@ const scheduleModule =
           resolvers: {
             JSON: GraphQLJSON,
           },
+          cache: new RedisCache({
+            host: "localhost",
+            port: 6379,
+          }),
         } as GqlModuleOptions),
     }),
     CacheModule.register({

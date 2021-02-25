@@ -49,7 +49,7 @@ type Query {
     first: Int
     last: Int
   ): [Color]!
-  product(where: ProductWhereUniqueInput!): Product
+  product(where: ProductWhereUniqueInput!): Product @cacheControl(maxAge: 100)
   products(
     category: String
     brand: String
@@ -165,7 +165,7 @@ type PublishProductsResponse {
   status: String!
 }
 
-type Product {
+type Product @cacheControl(maxAge: 200) {
   id: ID!
   slug: String!
   name: String!
@@ -236,7 +236,7 @@ type ExternalShopifyIntegration {
   accessToken: String
 }
 
-type Brand {
+type Brand @cacheControl(maxAge: 1000) {
   id: ID!
   slug: String!
   brandCode: String!
