@@ -28,7 +28,7 @@ export class LocationService {
         return "0x0001F32B"
       case 8:
         // Cloudy
-        if (weatherCode === 802) return "0x0000E049"
+        if (weatherCode === 802) return "0x00002601"
         const currentHour = new Date(datetime)
         if (
           currentHour >= new Date(sunrise) &&
@@ -63,7 +63,6 @@ export class LocationService {
     return axios
       .get(api)
       .then(response => {
-        console.log(response)
         return response.data
       })
       .catch(error => {
