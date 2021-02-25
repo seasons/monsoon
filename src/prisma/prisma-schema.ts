@@ -307,6 +307,10 @@ type AggregateCustomerMembershipSubscriptionData {
   count: Int!
 }
 
+type AggregateCustomerNotificationBarReceipt {
+  count: Int!
+}
+
 type AggregateEmailReceipt {
   count: Int!
 }
@@ -2562,6 +2566,7 @@ type Customer {
   admissions: CustomerAdmissionsData
   authorizedAt: DateTime
   utm: UTMData
+  notificationBarReceipts(where: CustomerNotificationBarReceiptWhereInput, orderBy: CustomerNotificationBarReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerNotificationBarReceipt!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2800,6 +2805,7 @@ input CustomerCreateInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateManyWithoutReferrerInput {
@@ -2824,6 +2830,11 @@ input CustomerCreateOneWithoutBagItemsInput {
 
 input CustomerCreateOneWithoutMembershipInput {
   create: CustomerCreateWithoutMembershipInput
+  connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateOneWithoutNotificationBarReceiptsInput {
+  create: CustomerCreateWithoutNotificationBarReceiptsInput
   connect: CustomerWhereUniqueInput
 }
 
@@ -2859,6 +2870,7 @@ input CustomerCreateWithoutAdmissionsInput {
   emailedProducts: ProductCreateManyInput
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateWithoutBagItemsInput {
@@ -2878,6 +2890,7 @@ input CustomerCreateWithoutBagItemsInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateWithoutMembershipInput {
@@ -2887,6 +2900,27 @@ input CustomerCreateWithoutMembershipInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
+  bagItems: BagItemCreateManyWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
+  emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
+  authorizedAt: DateTime
+  utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+}
+
+input CustomerCreateWithoutNotificationBarReceiptsInput {
+  id: ID
+  user: UserCreateOneInput!
+  status: CustomerStatus
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  plan: Plan
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
   referralLink: String
@@ -2916,6 +2950,7 @@ input CustomerCreateWithoutReferreesInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReferrerInput {
@@ -2935,6 +2970,7 @@ input CustomerCreateWithoutReferrerInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -2954,6 +2990,7 @@ input CustomerCreateWithoutReservationsInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateWithoutUtmInput {
@@ -2973,6 +3010,7 @@ input CustomerCreateWithoutUtmInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 type CustomerDetail {
@@ -4020,6 +4058,259 @@ input CustomerMembershipWhereUniqueInput {
   id: ID
 }
 
+type CustomerNotificationBarReceipt {
+  id: ID!
+  notificationBarId: NotificationBarID!
+  viewCount: Int!
+  clickCount: Int!
+  customer: Customer!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type CustomerNotificationBarReceiptConnection {
+  pageInfo: PageInfo!
+  edges: [CustomerNotificationBarReceiptEdge]!
+  aggregate: AggregateCustomerNotificationBarReceipt!
+}
+
+input CustomerNotificationBarReceiptCreateInput {
+  id: ID
+  notificationBarId: NotificationBarID!
+  viewCount: Int
+  clickCount: Int
+  customer: CustomerCreateOneWithoutNotificationBarReceiptsInput!
+}
+
+input CustomerNotificationBarReceiptCreateManyWithoutCustomerInput {
+  create: [CustomerNotificationBarReceiptCreateWithoutCustomerInput!]
+  connect: [CustomerNotificationBarReceiptWhereUniqueInput!]
+}
+
+input CustomerNotificationBarReceiptCreateWithoutCustomerInput {
+  id: ID
+  notificationBarId: NotificationBarID!
+  viewCount: Int
+  clickCount: Int
+}
+
+type CustomerNotificationBarReceiptEdge {
+  node: CustomerNotificationBarReceipt!
+  cursor: String!
+}
+
+enum CustomerNotificationBarReceiptOrderByInput {
+  id_ASC
+  id_DESC
+  notificationBarId_ASC
+  notificationBarId_DESC
+  viewCount_ASC
+  viewCount_DESC
+  clickCount_ASC
+  clickCount_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type CustomerNotificationBarReceiptPreviousValues {
+  id: ID!
+  notificationBarId: NotificationBarID!
+  viewCount: Int!
+  clickCount: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input CustomerNotificationBarReceiptScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  notificationBarId: NotificationBarID
+  notificationBarId_not: NotificationBarID
+  notificationBarId_in: [NotificationBarID!]
+  notificationBarId_not_in: [NotificationBarID!]
+  viewCount: Int
+  viewCount_not: Int
+  viewCount_in: [Int!]
+  viewCount_not_in: [Int!]
+  viewCount_lt: Int
+  viewCount_lte: Int
+  viewCount_gt: Int
+  viewCount_gte: Int
+  clickCount: Int
+  clickCount_not: Int
+  clickCount_in: [Int!]
+  clickCount_not_in: [Int!]
+  clickCount_lt: Int
+  clickCount_lte: Int
+  clickCount_gt: Int
+  clickCount_gte: Int
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [CustomerNotificationBarReceiptScalarWhereInput!]
+  OR: [CustomerNotificationBarReceiptScalarWhereInput!]
+  NOT: [CustomerNotificationBarReceiptScalarWhereInput!]
+}
+
+type CustomerNotificationBarReceiptSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerNotificationBarReceipt
+  updatedFields: [String!]
+  previousValues: CustomerNotificationBarReceiptPreviousValues
+}
+
+input CustomerNotificationBarReceiptSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: CustomerNotificationBarReceiptWhereInput
+  AND: [CustomerNotificationBarReceiptSubscriptionWhereInput!]
+  OR: [CustomerNotificationBarReceiptSubscriptionWhereInput!]
+  NOT: [CustomerNotificationBarReceiptSubscriptionWhereInput!]
+}
+
+input CustomerNotificationBarReceiptUpdateInput {
+  notificationBarId: NotificationBarID
+  viewCount: Int
+  clickCount: Int
+  customer: CustomerUpdateOneRequiredWithoutNotificationBarReceiptsInput
+}
+
+input CustomerNotificationBarReceiptUpdateManyDataInput {
+  notificationBarId: NotificationBarID
+  viewCount: Int
+  clickCount: Int
+}
+
+input CustomerNotificationBarReceiptUpdateManyMutationInput {
+  notificationBarId: NotificationBarID
+  viewCount: Int
+  clickCount: Int
+}
+
+input CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput {
+  create: [CustomerNotificationBarReceiptCreateWithoutCustomerInput!]
+  delete: [CustomerNotificationBarReceiptWhereUniqueInput!]
+  connect: [CustomerNotificationBarReceiptWhereUniqueInput!]
+  set: [CustomerNotificationBarReceiptWhereUniqueInput!]
+  disconnect: [CustomerNotificationBarReceiptWhereUniqueInput!]
+  update: [CustomerNotificationBarReceiptUpdateWithWhereUniqueWithoutCustomerInput!]
+  upsert: [CustomerNotificationBarReceiptUpsertWithWhereUniqueWithoutCustomerInput!]
+  deleteMany: [CustomerNotificationBarReceiptScalarWhereInput!]
+  updateMany: [CustomerNotificationBarReceiptUpdateManyWithWhereNestedInput!]
+}
+
+input CustomerNotificationBarReceiptUpdateManyWithWhereNestedInput {
+  where: CustomerNotificationBarReceiptScalarWhereInput!
+  data: CustomerNotificationBarReceiptUpdateManyDataInput!
+}
+
+input CustomerNotificationBarReceiptUpdateWithoutCustomerDataInput {
+  notificationBarId: NotificationBarID
+  viewCount: Int
+  clickCount: Int
+}
+
+input CustomerNotificationBarReceiptUpdateWithWhereUniqueWithoutCustomerInput {
+  where: CustomerNotificationBarReceiptWhereUniqueInput!
+  data: CustomerNotificationBarReceiptUpdateWithoutCustomerDataInput!
+}
+
+input CustomerNotificationBarReceiptUpsertWithWhereUniqueWithoutCustomerInput {
+  where: CustomerNotificationBarReceiptWhereUniqueInput!
+  update: CustomerNotificationBarReceiptUpdateWithoutCustomerDataInput!
+  create: CustomerNotificationBarReceiptCreateWithoutCustomerInput!
+}
+
+input CustomerNotificationBarReceiptWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  notificationBarId: NotificationBarID
+  notificationBarId_not: NotificationBarID
+  notificationBarId_in: [NotificationBarID!]
+  notificationBarId_not_in: [NotificationBarID!]
+  viewCount: Int
+  viewCount_not: Int
+  viewCount_in: [Int!]
+  viewCount_not_in: [Int!]
+  viewCount_lt: Int
+  viewCount_lte: Int
+  viewCount_gt: Int
+  viewCount_gte: Int
+  clickCount: Int
+  clickCount_not: Int
+  clickCount_in: [Int!]
+  clickCount_not_in: [Int!]
+  clickCount_lt: Int
+  clickCount_lte: Int
+  clickCount_gt: Int
+  clickCount_gte: Int
+  customer: CustomerWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [CustomerNotificationBarReceiptWhereInput!]
+  OR: [CustomerNotificationBarReceiptWhereInput!]
+  NOT: [CustomerNotificationBarReceiptWhereInput!]
+}
+
+input CustomerNotificationBarReceiptWhereUniqueInput {
+  id: ID
+}
+
 enum CustomerOrderByInput {
   id_ASC
   id_DESC
@@ -4186,6 +4477,7 @@ input CustomerUpdateDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateInput {
@@ -4205,6 +4497,7 @@ input CustomerUpdateInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateManyDataInput {
@@ -4268,6 +4561,13 @@ input CustomerUpdateOneRequiredWithoutMembershipInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerUpdateOneRequiredWithoutNotificationBarReceiptsInput {
+  create: CustomerCreateWithoutNotificationBarReceiptsInput
+  update: CustomerUpdateWithoutNotificationBarReceiptsDataInput
+  upsert: CustomerUpsertWithoutNotificationBarReceiptsInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerUpdateOneRequiredWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput
   update: CustomerUpdateWithoutReservationsDataInput
@@ -4307,6 +4607,7 @@ input CustomerUpdateWithoutAdmissionsDataInput {
   emailedProducts: ProductUpdateManyInput
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutBagItemsDataInput {
@@ -4325,6 +4626,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
@@ -4333,6 +4635,26 @@ input CustomerUpdateWithoutMembershipDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  referralLink: String
+  referrerId: String
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  authorizedAt: DateTime
+  utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+}
+
+input CustomerUpdateWithoutNotificationBarReceiptsDataInput {
+  user: UserUpdateOneRequiredInput
+  status: CustomerStatus
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
   referralLink: String
@@ -4361,6 +4683,7 @@ input CustomerUpdateWithoutReferreesDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutReferrerDataInput {
@@ -4379,6 +4702,7 @@ input CustomerUpdateWithoutReferrerDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -4397,6 +4721,7 @@ input CustomerUpdateWithoutReservationsDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutUtmDataInput {
@@ -4415,6 +4740,7 @@ input CustomerUpdateWithoutUtmDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithWhereUniqueWithoutReferrerInput {
@@ -4440,6 +4766,11 @@ input CustomerUpsertWithoutBagItemsInput {
 input CustomerUpsertWithoutMembershipInput {
   update: CustomerUpdateWithoutMembershipDataInput!
   create: CustomerCreateWithoutMembershipInput!
+}
+
+input CustomerUpsertWithoutNotificationBarReceiptsInput {
+  update: CustomerUpdateWithoutNotificationBarReceiptsDataInput!
+  create: CustomerCreateWithoutNotificationBarReceiptsInput!
 }
 
 input CustomerUpsertWithoutReferreesInput {
@@ -4541,6 +4872,9 @@ input CustomerWhereInput {
   authorizedAt_gt: DateTime
   authorizedAt_gte: DateTime
   utm: UTMDataWhereInput
+  notificationBarReceipts_every: CustomerNotificationBarReceiptWhereInput
+  notificationBarReceipts_some: CustomerNotificationBarReceiptWhereInput
+  notificationBarReceipts_none: CustomerNotificationBarReceiptWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -6795,6 +7129,12 @@ type Mutation {
   upsertCustomerMembershipSubscriptionData(where: CustomerMembershipSubscriptionDataWhereUniqueInput!, create: CustomerMembershipSubscriptionDataCreateInput!, update: CustomerMembershipSubscriptionDataUpdateInput!): CustomerMembershipSubscriptionData!
   deleteCustomerMembershipSubscriptionData(where: CustomerMembershipSubscriptionDataWhereUniqueInput!): CustomerMembershipSubscriptionData
   deleteManyCustomerMembershipSubscriptionDatas(where: CustomerMembershipSubscriptionDataWhereInput): BatchPayload!
+  createCustomerNotificationBarReceipt(data: CustomerNotificationBarReceiptCreateInput!): CustomerNotificationBarReceipt!
+  updateCustomerNotificationBarReceipt(data: CustomerNotificationBarReceiptUpdateInput!, where: CustomerNotificationBarReceiptWhereUniqueInput!): CustomerNotificationBarReceipt
+  updateManyCustomerNotificationBarReceipts(data: CustomerNotificationBarReceiptUpdateManyMutationInput!, where: CustomerNotificationBarReceiptWhereInput): BatchPayload!
+  upsertCustomerNotificationBarReceipt(where: CustomerNotificationBarReceiptWhereUniqueInput!, create: CustomerNotificationBarReceiptCreateInput!, update: CustomerNotificationBarReceiptUpdateInput!): CustomerNotificationBarReceipt!
+  deleteCustomerNotificationBarReceipt(where: CustomerNotificationBarReceiptWhereUniqueInput!): CustomerNotificationBarReceipt
+  deleteManyCustomerNotificationBarReceipts(where: CustomerNotificationBarReceiptWhereInput): BatchPayload!
   createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
   updateEmailReceipt(data: EmailReceiptUpdateInput!, where: EmailReceiptWhereUniqueInput!): EmailReceipt
   updateManyEmailReceipts(data: EmailReceiptUpdateManyMutationInput!, where: EmailReceiptWhereInput): BatchPayload!
@@ -7116,6 +7456,10 @@ enum MutationType {
 
 interface Node {
   id: ID!
+}
+
+enum NotificationBarID {
+  PastDueInvoice
 }
 
 type Order {
@@ -14465,6 +14809,9 @@ type Query {
   customerMembershipSubscriptionData(where: CustomerMembershipSubscriptionDataWhereUniqueInput!): CustomerMembershipSubscriptionData
   customerMembershipSubscriptionDatas(where: CustomerMembershipSubscriptionDataWhereInput, orderBy: CustomerMembershipSubscriptionDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerMembershipSubscriptionData]!
   customerMembershipSubscriptionDatasConnection(where: CustomerMembershipSubscriptionDataWhereInput, orderBy: CustomerMembershipSubscriptionDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerMembershipSubscriptionDataConnection!
+  customerNotificationBarReceipt(where: CustomerNotificationBarReceiptWhereUniqueInput!): CustomerNotificationBarReceipt
+  customerNotificationBarReceipts(where: CustomerNotificationBarReceiptWhereInput, orderBy: CustomerNotificationBarReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerNotificationBarReceipt]!
+  customerNotificationBarReceiptsConnection(where: CustomerNotificationBarReceiptWhereInput, orderBy: CustomerNotificationBarReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerNotificationBarReceiptConnection!
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
@@ -17364,6 +17711,7 @@ type Subscription {
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   customerMembership(where: CustomerMembershipSubscriptionWhereInput): CustomerMembershipSubscriptionPayload
   customerMembershipSubscriptionData(where: CustomerMembershipSubscriptionDataSubscriptionWhereInput): CustomerMembershipSubscriptionDataSubscriptionPayload
+  customerNotificationBarReceipt(where: CustomerNotificationBarReceiptSubscriptionWhereInput): CustomerNotificationBarReceiptSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
   externalShopifyIntegration(where: ExternalShopifyIntegrationSubscriptionWhereInput): ExternalShopifyIntegrationSubscriptionPayload
   fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload

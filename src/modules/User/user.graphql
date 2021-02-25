@@ -92,6 +92,15 @@ type NotificationBar {
   web: WebNotificationBar!
   mobile: MobileNotificationBar!
   palette: NotificationBarPalette
+  icon: NotificationBarIcon
+  viewCount: Int
+  clickCount: Int
+  id: NotificationBarID
+}
+
+enum NotificationBarIcon {
+  Chevron
+  CloseX
 }
 
 type NotificationBarPalette {
@@ -108,13 +117,13 @@ type NotificationBarColorPalette {
 type WebNotificationBar {
   title: String!
   detail: String!
-  route: WebRoute!
+  route: WebRoute
 }
 
 type MobileNotificationBar {
   title: String!
   detail: String!
-  route: MobileRoute!
+  route: MobileRoute
 }
 
 type WebRoute {
@@ -124,7 +133,7 @@ type WebRoute {
 }
 
 type MobileRoute {
-  route: AppRoute!
+  route: AppRoute
   screen: String
   params: Json
   dismissable: Boolean

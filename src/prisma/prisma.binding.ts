@@ -20,6 +20,7 @@ export interface Query {
     bagItems: <T = Array<BagItem | null>>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerAdmissionsDatas: <T = Array<CustomerAdmissionsData | null>>(args: { where?: CustomerAdmissionsDataWhereInput | null, orderBy?: CustomerAdmissionsDataOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     uTMDatas: <T = Array<UTMData | null>>(args: { where?: UTMDataWhereInput | null, orderBy?: UTMDataOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    customerNotificationBarReceipts: <T = Array<CustomerNotificationBarReceipt | null>>(args: { where?: CustomerNotificationBarReceiptWhereInput | null, orderBy?: CustomerNotificationBarReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerMemberships: <T = Array<CustomerMembership | null>>(args: { where?: CustomerMembershipWhereInput | null, orderBy?: CustomerMembershipOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pauseRequests: <T = Array<PauseRequest | null>>(args: { where?: PauseRequestWhereInput | null, orderBy?: PauseRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     recentlyViewedProducts: <T = Array<RecentlyViewedProduct | null>>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -86,6 +87,7 @@ export interface Query {
     bagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerAdmissionsData: <T = CustomerAdmissionsData | null>(args: { where: CustomerAdmissionsDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     uTMData: <T = UTMData | null>(args: { where: UTMDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    customerNotificationBarReceipt: <T = CustomerNotificationBarReceipt | null>(args: { where: CustomerNotificationBarReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerMembership: <T = CustomerMembership | null>(args: { where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     pauseRequest: <T = PauseRequest | null>(args: { where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     recentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -152,6 +154,7 @@ export interface Query {
     bagItemsConnection: <T = BagItemConnection>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerAdmissionsDatasConnection: <T = CustomerAdmissionsDataConnection>(args: { where?: CustomerAdmissionsDataWhereInput | null, orderBy?: CustomerAdmissionsDataOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     uTMDatasConnection: <T = UTMDataConnection>(args: { where?: UTMDataWhereInput | null, orderBy?: UTMDataOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    customerNotificationBarReceiptsConnection: <T = CustomerNotificationBarReceiptConnection>(args: { where?: CustomerNotificationBarReceiptWhereInput | null, orderBy?: CustomerNotificationBarReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerMembershipsConnection: <T = CustomerMembershipConnection>(args: { where?: CustomerMembershipWhereInput | null, orderBy?: CustomerMembershipOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pauseRequestsConnection: <T = PauseRequestConnection>(args: { where?: PauseRequestWhereInput | null, orderBy?: PauseRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     recentlyViewedProductsConnection: <T = RecentlyViewedProductConnection>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -222,6 +225,7 @@ export interface Mutation {
     createBagItem: <T = BagItem>(args: { data: BagItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerAdmissionsData: <T = CustomerAdmissionsData>(args: { data: CustomerAdmissionsDataCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createUTMData: <T = UTMData>(args: { data: UTMDataCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createCustomerNotificationBarReceipt: <T = CustomerNotificationBarReceipt>(args: { data: CustomerNotificationBarReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerMembership: <T = CustomerMembership>(args: { data: CustomerMembershipCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPauseRequest: <T = PauseRequest>(args: { data: PauseRequestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { data: RecentlyViewedProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -288,6 +292,7 @@ export interface Mutation {
     updateBagItem: <T = BagItem | null>(args: { data: BagItemUpdateInput, where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerAdmissionsData: <T = CustomerAdmissionsData | null>(args: { data: CustomerAdmissionsDataUpdateInput, where: CustomerAdmissionsDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateUTMData: <T = UTMData | null>(args: { data: UTMDataUpdateInput, where: UTMDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateCustomerNotificationBarReceipt: <T = CustomerNotificationBarReceipt | null>(args: { data: CustomerNotificationBarReceiptUpdateInput, where: CustomerNotificationBarReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerMembership: <T = CustomerMembership | null>(args: { data: CustomerMembershipUpdateInput, where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePauseRequest: <T = PauseRequest | null>(args: { data: PauseRequestUpdateInput, where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { data: RecentlyViewedProductUpdateInput, where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -354,6 +359,7 @@ export interface Mutation {
     deleteBagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerAdmissionsData: <T = CustomerAdmissionsData | null>(args: { where: CustomerAdmissionsDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteUTMData: <T = UTMData | null>(args: { where: UTMDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteCustomerNotificationBarReceipt: <T = CustomerNotificationBarReceipt | null>(args: { where: CustomerNotificationBarReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerMembership: <T = CustomerMembership | null>(args: { where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePauseRequest: <T = PauseRequest | null>(args: { where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -420,6 +426,7 @@ export interface Mutation {
     upsertBagItem: <T = BagItem>(args: { where: BagItemWhereUniqueInput, create: BagItemCreateInput, update: BagItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerAdmissionsData: <T = CustomerAdmissionsData>(args: { where: CustomerAdmissionsDataWhereUniqueInput, create: CustomerAdmissionsDataCreateInput, update: CustomerAdmissionsDataUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertUTMData: <T = UTMData>(args: { where: UTMDataWhereUniqueInput, create: UTMDataCreateInput, update: UTMDataUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertCustomerNotificationBarReceipt: <T = CustomerNotificationBarReceipt>(args: { where: CustomerNotificationBarReceiptWhereUniqueInput, create: CustomerNotificationBarReceiptCreateInput, update: CustomerNotificationBarReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerMembership: <T = CustomerMembership>(args: { where: CustomerMembershipWhereUniqueInput, create: CustomerMembershipCreateInput, update: CustomerMembershipUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPauseRequest: <T = PauseRequest>(args: { where: PauseRequestWhereUniqueInput, create: PauseRequestCreateInput, update: PauseRequestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { where: RecentlyViewedProductWhereUniqueInput, create: RecentlyViewedProductCreateInput, update: RecentlyViewedProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -486,6 +493,7 @@ export interface Mutation {
     updateManyBagItems: <T = BatchPayload>(args: { data: BagItemUpdateManyMutationInput, where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerAdmissionsDatas: <T = BatchPayload>(args: { data: CustomerAdmissionsDataUpdateManyMutationInput, where?: CustomerAdmissionsDataWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyUTMDatas: <T = BatchPayload>(args: { data: UTMDataUpdateManyMutationInput, where?: UTMDataWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyCustomerNotificationBarReceipts: <T = BatchPayload>(args: { data: CustomerNotificationBarReceiptUpdateManyMutationInput, where?: CustomerNotificationBarReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerMemberships: <T = BatchPayload>(args: { data: CustomerMembershipUpdateManyMutationInput, where?: CustomerMembershipWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPauseRequests: <T = BatchPayload>(args: { data: PauseRequestUpdateManyMutationInput, where?: PauseRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyRecentlyViewedProducts: <T = BatchPayload>(args: { data: RecentlyViewedProductUpdateManyMutationInput, where?: RecentlyViewedProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -550,6 +558,7 @@ export interface Mutation {
     deleteManyBagItems: <T = BatchPayload>(args: { where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCustomerAdmissionsDatas: <T = BatchPayload>(args: { where?: CustomerAdmissionsDataWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyUTMDatas: <T = BatchPayload>(args: { where?: UTMDataWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyCustomerNotificationBarReceipts: <T = BatchPayload>(args: { where?: CustomerNotificationBarReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCustomerMemberships: <T = BatchPayload>(args: { where?: CustomerMembershipWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPauseRequests: <T = BatchPayload>(args: { where?: PauseRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyRecentlyViewedProducts: <T = BatchPayload>(args: { where?: RecentlyViewedProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -619,6 +628,7 @@ export interface Subscription {
     bagItem: <T = BagItemSubscriptionPayload | null>(args: { where?: BagItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customerAdmissionsData: <T = CustomerAdmissionsDataSubscriptionPayload | null>(args: { where?: CustomerAdmissionsDataSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     uTMData: <T = UTMDataSubscriptionPayload | null>(args: { where?: UTMDataSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    customerNotificationBarReceipt: <T = CustomerNotificationBarReceiptSubscriptionPayload | null>(args: { where?: CustomerNotificationBarReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customerMembership: <T = CustomerMembershipSubscriptionPayload | null>(args: { where?: CustomerMembershipSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     pauseRequest: <T = PauseRequestSubscriptionPayload | null>(args: { where?: PauseRequestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     recentlyViewedProduct: <T = RecentlyViewedProductSubscriptionPayload | null>(args: { where?: RecentlyViewedProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -688,6 +698,7 @@ export interface Exists {
   BagItem: (where?: BagItemWhereInput) => Promise<boolean>
   CustomerAdmissionsData: (where?: CustomerAdmissionsDataWhereInput) => Promise<boolean>
   UTMData: (where?: UTMDataWhereInput) => Promise<boolean>
+  CustomerNotificationBarReceipt: (where?: CustomerNotificationBarReceiptWhereInput) => Promise<boolean>
   CustomerMembership: (where?: CustomerMembershipWhereInput) => Promise<boolean>
   PauseRequest: (where?: PauseRequestWhereInput) => Promise<boolean>
   RecentlyViewedProduct: (where?: RecentlyViewedProductWhereInput) => Promise<boolean>
@@ -1241,6 +1252,10 @@ type AggregateCustomerMembership {
 }
 
 type AggregateCustomerMembershipSubscriptionData {
+  count: Int!
+}
+
+type AggregateCustomerNotificationBarReceipt {
   count: Int!
 }
 
@@ -5063,6 +5078,7 @@ type Customer implements Node {
   admissions: CustomerAdmissionsData
   authorizedAt: DateTime
   utm: UTMData
+  notificationBarReceipts(where: CustomerNotificationBarReceiptWhereInput, orderBy: CustomerNotificationBarReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerNotificationBarReceipt!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5431,6 +5447,7 @@ input CustomerCreateInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateManyWithoutReferrerInput {
@@ -5455,6 +5472,11 @@ input CustomerCreateOneWithoutBagItemsInput {
 
 input CustomerCreateOneWithoutMembershipInput {
   create: CustomerCreateWithoutMembershipInput
+  connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateOneWithoutNotificationBarReceiptsInput {
+  create: CustomerCreateWithoutNotificationBarReceiptsInput
   connect: CustomerWhereUniqueInput
 }
 
@@ -5490,6 +5512,7 @@ input CustomerCreateWithoutAdmissionsInput {
   referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
   utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateWithoutBagItemsInput {
@@ -5509,6 +5532,7 @@ input CustomerCreateWithoutBagItemsInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateWithoutMembershipInput {
@@ -5521,6 +5545,27 @@ input CustomerCreateWithoutMembershipInput {
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+  referrer: CustomerCreateOneWithoutReferreesInput
+  referrees: CustomerCreateManyWithoutReferrerInput
+  emailedProducts: ProductCreateManyInput
+  admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
+  utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+}
+
+input CustomerCreateWithoutNotificationBarReceiptsInput {
+  id: ID
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+  user: UserCreateOneInput!
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
   referrer: CustomerCreateOneWithoutReferreesInput
@@ -5547,6 +5592,7 @@ input CustomerCreateWithoutReferreesInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReferrerInput {
@@ -5566,6 +5612,7 @@ input CustomerCreateWithoutReferrerInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -5585,6 +5632,7 @@ input CustomerCreateWithoutReservationsInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   utm: UTMDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateWithoutUtmInput {
@@ -5604,6 +5652,7 @@ input CustomerCreateWithoutUtmInput {
   referrees: CustomerCreateManyWithoutReferrerInput
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
 }
 
 type CustomerDetail implements Node {
@@ -7517,6 +7566,472 @@ input CustomerMembershipWhereUniqueInput {
   id: ID
 }
 
+type CustomerNotificationBarReceipt implements Node {
+  id: ID!
+  notificationBarId: NotificationBarID!
+  viewCount: Int!
+  clickCount: Int!
+  customer: Customer!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type CustomerNotificationBarReceiptConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CustomerNotificationBarReceiptEdge]!
+  aggregate: AggregateCustomerNotificationBarReceipt!
+}
+
+input CustomerNotificationBarReceiptCreateInput {
+  id: ID
+  notificationBarId: NotificationBarID!
+  viewCount: Int
+  clickCount: Int
+  customer: CustomerCreateOneWithoutNotificationBarReceiptsInput!
+}
+
+input CustomerNotificationBarReceiptCreateManyWithoutCustomerInput {
+  create: [CustomerNotificationBarReceiptCreateWithoutCustomerInput!]
+  connect: [CustomerNotificationBarReceiptWhereUniqueInput!]
+}
+
+input CustomerNotificationBarReceiptCreateWithoutCustomerInput {
+  id: ID
+  notificationBarId: NotificationBarID!
+  viewCount: Int
+  clickCount: Int
+}
+
+"""An edge in a connection."""
+type CustomerNotificationBarReceiptEdge {
+  """The item at the end of the edge."""
+  node: CustomerNotificationBarReceipt!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum CustomerNotificationBarReceiptOrderByInput {
+  id_ASC
+  id_DESC
+  notificationBarId_ASC
+  notificationBarId_DESC
+  viewCount_ASC
+  viewCount_DESC
+  clickCount_ASC
+  clickCount_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type CustomerNotificationBarReceiptPreviousValues {
+  id: ID!
+  notificationBarId: NotificationBarID!
+  viewCount: Int!
+  clickCount: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input CustomerNotificationBarReceiptScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerNotificationBarReceiptScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerNotificationBarReceiptScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerNotificationBarReceiptScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  notificationBarId: NotificationBarID
+
+  """All values that are not equal to given value."""
+  notificationBarId_not: NotificationBarID
+
+  """All values that are contained in given list."""
+  notificationBarId_in: [NotificationBarID!]
+
+  """All values that are not contained in given list."""
+  notificationBarId_not_in: [NotificationBarID!]
+  viewCount: Int
+
+  """All values that are not equal to given value."""
+  viewCount_not: Int
+
+  """All values that are contained in given list."""
+  viewCount_in: [Int!]
+
+  """All values that are not contained in given list."""
+  viewCount_not_in: [Int!]
+
+  """All values less than the given value."""
+  viewCount_lt: Int
+
+  """All values less than or equal the given value."""
+  viewCount_lte: Int
+
+  """All values greater than the given value."""
+  viewCount_gt: Int
+
+  """All values greater than or equal the given value."""
+  viewCount_gte: Int
+  clickCount: Int
+
+  """All values that are not equal to given value."""
+  clickCount_not: Int
+
+  """All values that are contained in given list."""
+  clickCount_in: [Int!]
+
+  """All values that are not contained in given list."""
+  clickCount_not_in: [Int!]
+
+  """All values less than the given value."""
+  clickCount_lt: Int
+
+  """All values less than or equal the given value."""
+  clickCount_lte: Int
+
+  """All values greater than the given value."""
+  clickCount_gt: Int
+
+  """All values greater than or equal the given value."""
+  clickCount_gte: Int
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
+type CustomerNotificationBarReceiptSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerNotificationBarReceipt
+  updatedFields: [String!]
+  previousValues: CustomerNotificationBarReceiptPreviousValues
+}
+
+input CustomerNotificationBarReceiptSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerNotificationBarReceiptSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerNotificationBarReceiptSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerNotificationBarReceiptSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CustomerNotificationBarReceiptWhereInput
+}
+
+input CustomerNotificationBarReceiptUpdateInput {
+  notificationBarId: NotificationBarID
+  viewCount: Int
+  clickCount: Int
+  customer: CustomerUpdateOneRequiredWithoutNotificationBarReceiptsInput
+}
+
+input CustomerNotificationBarReceiptUpdateManyDataInput {
+  notificationBarId: NotificationBarID
+  viewCount: Int
+  clickCount: Int
+}
+
+input CustomerNotificationBarReceiptUpdateManyMutationInput {
+  notificationBarId: NotificationBarID
+  viewCount: Int
+  clickCount: Int
+}
+
+input CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput {
+  create: [CustomerNotificationBarReceiptCreateWithoutCustomerInput!]
+  connect: [CustomerNotificationBarReceiptWhereUniqueInput!]
+  set: [CustomerNotificationBarReceiptWhereUniqueInput!]
+  disconnect: [CustomerNotificationBarReceiptWhereUniqueInput!]
+  delete: [CustomerNotificationBarReceiptWhereUniqueInput!]
+  update: [CustomerNotificationBarReceiptUpdateWithWhereUniqueWithoutCustomerInput!]
+  updateMany: [CustomerNotificationBarReceiptUpdateManyWithWhereNestedInput!]
+  deleteMany: [CustomerNotificationBarReceiptScalarWhereInput!]
+  upsert: [CustomerNotificationBarReceiptUpsertWithWhereUniqueWithoutCustomerInput!]
+}
+
+input CustomerNotificationBarReceiptUpdateManyWithWhereNestedInput {
+  where: CustomerNotificationBarReceiptScalarWhereInput!
+  data: CustomerNotificationBarReceiptUpdateManyDataInput!
+}
+
+input CustomerNotificationBarReceiptUpdateWithoutCustomerDataInput {
+  notificationBarId: NotificationBarID
+  viewCount: Int
+  clickCount: Int
+}
+
+input CustomerNotificationBarReceiptUpdateWithWhereUniqueWithoutCustomerInput {
+  where: CustomerNotificationBarReceiptWhereUniqueInput!
+  data: CustomerNotificationBarReceiptUpdateWithoutCustomerDataInput!
+}
+
+input CustomerNotificationBarReceiptUpsertWithWhereUniqueWithoutCustomerInput {
+  where: CustomerNotificationBarReceiptWhereUniqueInput!
+  update: CustomerNotificationBarReceiptUpdateWithoutCustomerDataInput!
+  create: CustomerNotificationBarReceiptCreateWithoutCustomerInput!
+}
+
+input CustomerNotificationBarReceiptWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerNotificationBarReceiptWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerNotificationBarReceiptWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerNotificationBarReceiptWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  notificationBarId: NotificationBarID
+
+  """All values that are not equal to given value."""
+  notificationBarId_not: NotificationBarID
+
+  """All values that are contained in given list."""
+  notificationBarId_in: [NotificationBarID!]
+
+  """All values that are not contained in given list."""
+  notificationBarId_not_in: [NotificationBarID!]
+  viewCount: Int
+
+  """All values that are not equal to given value."""
+  viewCount_not: Int
+
+  """All values that are contained in given list."""
+  viewCount_in: [Int!]
+
+  """All values that are not contained in given list."""
+  viewCount_not_in: [Int!]
+
+  """All values less than the given value."""
+  viewCount_lt: Int
+
+  """All values less than or equal the given value."""
+  viewCount_lte: Int
+
+  """All values greater than the given value."""
+  viewCount_gt: Int
+
+  """All values greater than or equal the given value."""
+  viewCount_gte: Int
+  clickCount: Int
+
+  """All values that are not equal to given value."""
+  clickCount_not: Int
+
+  """All values that are contained in given list."""
+  clickCount_in: [Int!]
+
+  """All values that are not contained in given list."""
+  clickCount_not_in: [Int!]
+
+  """All values less than the given value."""
+  clickCount_lt: Int
+
+  """All values less than or equal the given value."""
+  clickCount_lte: Int
+
+  """All values greater than the given value."""
+  clickCount_gt: Int
+
+  """All values greater than or equal the given value."""
+  clickCount_gte: Int
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  customer: CustomerWhereInput
+}
+
+input CustomerNotificationBarReceiptWhereUniqueInput {
+  id: ID
+}
+
 enum CustomerOrderByInput {
   id_ASC
   id_DESC
@@ -7839,6 +8354,7 @@ input CustomerUpdateDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateInput {
@@ -7858,6 +8374,7 @@ input CustomerUpdateInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateManyDataInput {
@@ -7921,6 +8438,13 @@ input CustomerUpdateOneRequiredWithoutMembershipInput {
   upsert: CustomerUpsertWithoutMembershipInput
 }
 
+input CustomerUpdateOneRequiredWithoutNotificationBarReceiptsInput {
+  create: CustomerCreateWithoutNotificationBarReceiptsInput
+  connect: CustomerWhereUniqueInput
+  update: CustomerUpdateWithoutNotificationBarReceiptsDataInput
+  upsert: CustomerUpsertWithoutNotificationBarReceiptsInput
+}
+
 input CustomerUpdateOneRequiredWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput
   connect: CustomerWhereUniqueInput
@@ -7960,6 +8484,7 @@ input CustomerUpdateWithoutAdmissionsDataInput {
   referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutBagItemsDataInput {
@@ -7978,6 +8503,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
@@ -7989,6 +8515,26 @@ input CustomerUpdateWithoutMembershipDataInput {
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  referrer: CustomerUpdateOneWithoutReferreesInput
+  referrees: CustomerUpdateManyWithoutReferrerInput
+  emailedProducts: ProductUpdateManyInput
+  admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+}
+
+input CustomerUpdateWithoutNotificationBarReceiptsDataInput {
+  status: CustomerStatus
+  plan: Plan
+  referralLink: String
+  referrerId: String
+  authorizedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
   referrer: CustomerUpdateOneWithoutReferreesInput
@@ -8014,6 +8560,7 @@ input CustomerUpdateWithoutReferreesDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutReferrerDataInput {
@@ -8032,6 +8579,7 @@ input CustomerUpdateWithoutReferrerDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -8050,6 +8598,7 @@ input CustomerUpdateWithoutReservationsDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutUtmDataInput {
@@ -8068,6 +8617,7 @@ input CustomerUpdateWithoutUtmDataInput {
   referrees: CustomerUpdateManyWithoutReferrerInput
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
+  notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithWhereUniqueWithoutReferrerInput {
@@ -8093,6 +8643,11 @@ input CustomerUpsertWithoutBagItemsInput {
 input CustomerUpsertWithoutMembershipInput {
   update: CustomerUpdateWithoutMembershipDataInput!
   create: CustomerCreateWithoutMembershipInput!
+}
+
+input CustomerUpsertWithoutNotificationBarReceiptsInput {
+  update: CustomerUpdateWithoutNotificationBarReceiptsDataInput!
+  create: CustomerCreateWithoutNotificationBarReceiptsInput!
 }
 
 input CustomerUpsertWithoutReferreesInput {
@@ -8350,6 +8905,9 @@ input CustomerWhereInput {
   emailedProducts_none: ProductWhereInput
   admissions: CustomerAdmissionsDataWhereInput
   utm: UTMDataWhereInput
+  notificationBarReceipts_every: CustomerNotificationBarReceiptWhereInput
+  notificationBarReceipts_some: CustomerNotificationBarReceiptWhereInput
+  notificationBarReceipts_none: CustomerNotificationBarReceiptWhereInput
 }
 
 input CustomerWhereUniqueInput {
@@ -12173,6 +12731,7 @@ type Mutation {
   createBagItem(data: BagItemCreateInput!): BagItem!
   createCustomerAdmissionsData(data: CustomerAdmissionsDataCreateInput!): CustomerAdmissionsData!
   createUTMData(data: UTMDataCreateInput!): UTMData!
+  createCustomerNotificationBarReceipt(data: CustomerNotificationBarReceiptCreateInput!): CustomerNotificationBarReceipt!
   createCustomerMembership(data: CustomerMembershipCreateInput!): CustomerMembership!
   createPauseRequest(data: PauseRequestCreateInput!): PauseRequest!
   createRecentlyViewedProduct(data: RecentlyViewedProductCreateInput!): RecentlyViewedProduct!
@@ -12239,6 +12798,7 @@ type Mutation {
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateCustomerAdmissionsData(data: CustomerAdmissionsDataUpdateInput!, where: CustomerAdmissionsDataWhereUniqueInput!): CustomerAdmissionsData
   updateUTMData(data: UTMDataUpdateInput!, where: UTMDataWhereUniqueInput!): UTMData
+  updateCustomerNotificationBarReceipt(data: CustomerNotificationBarReceiptUpdateInput!, where: CustomerNotificationBarReceiptWhereUniqueInput!): CustomerNotificationBarReceipt
   updateCustomerMembership(data: CustomerMembershipUpdateInput!, where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   updatePauseRequest(data: PauseRequestUpdateInput!, where: PauseRequestWhereUniqueInput!): PauseRequest
   updateRecentlyViewedProduct(data: RecentlyViewedProductUpdateInput!, where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
@@ -12305,6 +12865,7 @@ type Mutation {
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
   deleteCustomerAdmissionsData(where: CustomerAdmissionsDataWhereUniqueInput!): CustomerAdmissionsData
   deleteUTMData(where: UTMDataWhereUniqueInput!): UTMData
+  deleteCustomerNotificationBarReceipt(where: CustomerNotificationBarReceiptWhereUniqueInput!): CustomerNotificationBarReceipt
   deleteCustomerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   deletePauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
   deleteRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
@@ -12371,6 +12932,7 @@ type Mutation {
   upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
   upsertCustomerAdmissionsData(where: CustomerAdmissionsDataWhereUniqueInput!, create: CustomerAdmissionsDataCreateInput!, update: CustomerAdmissionsDataUpdateInput!): CustomerAdmissionsData!
   upsertUTMData(where: UTMDataWhereUniqueInput!, create: UTMDataCreateInput!, update: UTMDataUpdateInput!): UTMData!
+  upsertCustomerNotificationBarReceipt(where: CustomerNotificationBarReceiptWhereUniqueInput!, create: CustomerNotificationBarReceiptCreateInput!, update: CustomerNotificationBarReceiptUpdateInput!): CustomerNotificationBarReceipt!
   upsertCustomerMembership(where: CustomerMembershipWhereUniqueInput!, create: CustomerMembershipCreateInput!, update: CustomerMembershipUpdateInput!): CustomerMembership!
   upsertPauseRequest(where: PauseRequestWhereUniqueInput!, create: PauseRequestCreateInput!, update: PauseRequestUpdateInput!): PauseRequest!
   upsertRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!, create: RecentlyViewedProductCreateInput!, update: RecentlyViewedProductUpdateInput!): RecentlyViewedProduct!
@@ -12437,6 +12999,7 @@ type Mutation {
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
   updateManyCustomerAdmissionsDatas(data: CustomerAdmissionsDataUpdateManyMutationInput!, where: CustomerAdmissionsDataWhereInput): BatchPayload!
   updateManyUTMDatas(data: UTMDataUpdateManyMutationInput!, where: UTMDataWhereInput): BatchPayload!
+  updateManyCustomerNotificationBarReceipts(data: CustomerNotificationBarReceiptUpdateManyMutationInput!, where: CustomerNotificationBarReceiptWhereInput): BatchPayload!
   updateManyCustomerMemberships(data: CustomerMembershipUpdateManyMutationInput!, where: CustomerMembershipWhereInput): BatchPayload!
   updateManyPauseRequests(data: PauseRequestUpdateManyMutationInput!, where: PauseRequestWhereInput): BatchPayload!
   updateManyRecentlyViewedProducts(data: RecentlyViewedProductUpdateManyMutationInput!, where: RecentlyViewedProductWhereInput): BatchPayload!
@@ -12501,6 +13064,7 @@ type Mutation {
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
   deleteManyCustomerAdmissionsDatas(where: CustomerAdmissionsDataWhereInput): BatchPayload!
   deleteManyUTMDatas(where: UTMDataWhereInput): BatchPayload!
+  deleteManyCustomerNotificationBarReceipts(where: CustomerNotificationBarReceiptWhereInput): BatchPayload!
   deleteManyCustomerMemberships(where: CustomerMembershipWhereInput): BatchPayload!
   deleteManyPauseRequests(where: PauseRequestWhereInput): BatchPayload!
   deleteManyRecentlyViewedProducts(where: RecentlyViewedProductWhereInput): BatchPayload!
@@ -12563,6 +13127,10 @@ enum MutationType {
 interface Node {
   """The id of the object."""
   id: ID!
+}
+
+enum NotificationBarID {
+  PastDueInvoice
 }
 
 type Order implements Node {
@@ -24957,6 +25525,7 @@ type Query {
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   customerAdmissionsDatas(where: CustomerAdmissionsDataWhereInput, orderBy: CustomerAdmissionsDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerAdmissionsData]!
   uTMDatas(where: UTMDataWhereInput, orderBy: UTMDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UTMData]!
+  customerNotificationBarReceipts(where: CustomerNotificationBarReceiptWhereInput, orderBy: CustomerNotificationBarReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerNotificationBarReceipt]!
   customerMemberships(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerMembership]!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest]!
   recentlyViewedProducts(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [RecentlyViewedProduct]!
@@ -25023,6 +25592,7 @@ type Query {
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   customerAdmissionsData(where: CustomerAdmissionsDataWhereUniqueInput!): CustomerAdmissionsData
   uTMData(where: UTMDataWhereUniqueInput!): UTMData
+  customerNotificationBarReceipt(where: CustomerNotificationBarReceiptWhereUniqueInput!): CustomerNotificationBarReceipt
   customerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   pauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
   recentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
@@ -25089,6 +25659,7 @@ type Query {
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
   customerAdmissionsDatasConnection(where: CustomerAdmissionsDataWhereInput, orderBy: CustomerAdmissionsDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerAdmissionsDataConnection!
   uTMDatasConnection(where: UTMDataWhereInput, orderBy: UTMDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UTMDataConnection!
+  customerNotificationBarReceiptsConnection(where: CustomerNotificationBarReceiptWhereInput, orderBy: CustomerNotificationBarReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerNotificationBarReceiptConnection!
   customerMembershipsConnection(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerMembershipConnection!
   pauseRequestsConnection(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PauseRequestConnection!
   recentlyViewedProductsConnection(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RecentlyViewedProductConnection!
@@ -29760,6 +30331,7 @@ type Subscription {
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   customerAdmissionsData(where: CustomerAdmissionsDataSubscriptionWhereInput): CustomerAdmissionsDataSubscriptionPayload
   uTMData(where: UTMDataSubscriptionWhereInput): UTMDataSubscriptionPayload
+  customerNotificationBarReceipt(where: CustomerNotificationBarReceiptSubscriptionWhereInput): CustomerNotificationBarReceiptSubscriptionPayload
   customerMembership(where: CustomerMembershipSubscriptionWhereInput): CustomerMembershipSubscriptionPayload
   pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
   recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
@@ -34290,6 +34862,19 @@ export type CustomerMembershipSubscriptionDataOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
 
+export type CustomerNotificationBarReceiptOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'notificationBarId_ASC' |
+  'notificationBarId_DESC' |
+  'viewCount_ASC' |
+  'viewCount_DESC' |
+  'clickCount_ASC' |
+  'clickCount_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
 export type CustomerOrderByInput =   'id_ASC' |
   'id_DESC' |
   'status_ASC' |
@@ -34496,6 +35081,8 @@ export type LocationType =   'Office' |
 export type MutationType =   'CREATED' |
   'UPDATED' |
   'DELETED'
+
+export type NotificationBarID =   'PastDueInvoice'
 
 export type OrderCancelReason =   'Customer' |
   'Declined' |
@@ -37126,6 +37713,7 @@ export interface CustomerCreateInput {
   emailedProducts?: ProductCreateManyInput | null
   admissions?: CustomerAdmissionsDataCreateOneWithoutCustomerInput | null
   utm?: UTMDataCreateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput | null
 }
 
 export interface CustomerCreateManyWithoutReferrerInput {
@@ -37150,6 +37738,11 @@ export interface CustomerCreateOneWithoutBagItemsInput {
 
 export interface CustomerCreateOneWithoutMembershipInput {
   create?: CustomerCreateWithoutMembershipInput | null
+  connect?: CustomerWhereUniqueInput | null
+}
+
+export interface CustomerCreateOneWithoutNotificationBarReceiptsInput {
+  create?: CustomerCreateWithoutNotificationBarReceiptsInput | null
   connect?: CustomerWhereUniqueInput | null
 }
 
@@ -37185,6 +37778,7 @@ export interface CustomerCreateWithoutAdmissionsInput {
   referrees?: CustomerCreateManyWithoutReferrerInput | null
   emailedProducts?: ProductCreateManyInput | null
   utm?: UTMDataCreateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput | null
 }
 
 export interface CustomerCreateWithoutBagItemsInput {
@@ -37204,6 +37798,7 @@ export interface CustomerCreateWithoutBagItemsInput {
   emailedProducts?: ProductCreateManyInput | null
   admissions?: CustomerAdmissionsDataCreateOneWithoutCustomerInput | null
   utm?: UTMDataCreateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput | null
 }
 
 export interface CustomerCreateWithoutMembershipInput {
@@ -37216,6 +37811,27 @@ export interface CustomerCreateWithoutMembershipInput {
   user: UserCreateOneInput
   detail?: CustomerDetailCreateOneInput | null
   billingInfo?: BillingInfoCreateOneInput | null
+  bagItems?: BagItemCreateManyWithoutCustomerInput | null
+  reservations?: ReservationCreateManyWithoutCustomerInput | null
+  referrer?: CustomerCreateOneWithoutReferreesInput | null
+  referrees?: CustomerCreateManyWithoutReferrerInput | null
+  emailedProducts?: ProductCreateManyInput | null
+  admissions?: CustomerAdmissionsDataCreateOneWithoutCustomerInput | null
+  utm?: UTMDataCreateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput | null
+}
+
+export interface CustomerCreateWithoutNotificationBarReceiptsInput {
+  id?: ID_Input | null
+  status?: CustomerStatus | null
+  plan?: Plan | null
+  referralLink?: String | null
+  referrerId?: String | null
+  authorizedAt?: DateTime | null
+  user: UserCreateOneInput
+  detail?: CustomerDetailCreateOneInput | null
+  billingInfo?: BillingInfoCreateOneInput | null
+  membership?: CustomerMembershipCreateOneWithoutCustomerInput | null
   bagItems?: BagItemCreateManyWithoutCustomerInput | null
   reservations?: ReservationCreateManyWithoutCustomerInput | null
   referrer?: CustomerCreateOneWithoutReferreesInput | null
@@ -37242,6 +37858,7 @@ export interface CustomerCreateWithoutReferreesInput {
   emailedProducts?: ProductCreateManyInput | null
   admissions?: CustomerAdmissionsDataCreateOneWithoutCustomerInput | null
   utm?: UTMDataCreateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput | null
 }
 
 export interface CustomerCreateWithoutReferrerInput {
@@ -37261,6 +37878,7 @@ export interface CustomerCreateWithoutReferrerInput {
   emailedProducts?: ProductCreateManyInput | null
   admissions?: CustomerAdmissionsDataCreateOneWithoutCustomerInput | null
   utm?: UTMDataCreateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput | null
 }
 
 export interface CustomerCreateWithoutReservationsInput {
@@ -37280,6 +37898,7 @@ export interface CustomerCreateWithoutReservationsInput {
   emailedProducts?: ProductCreateManyInput | null
   admissions?: CustomerAdmissionsDataCreateOneWithoutCustomerInput | null
   utm?: UTMDataCreateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput | null
 }
 
 export interface CustomerCreateWithoutUtmInput {
@@ -37299,6 +37918,7 @@ export interface CustomerCreateWithoutUtmInput {
   referrees?: CustomerCreateManyWithoutReferrerInput | null
   emailedProducts?: ProductCreateManyInput | null
   admissions?: CustomerAdmissionsDataCreateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput | null
 }
 
 export interface CustomerDetailCreateInput {
@@ -38106,6 +38726,207 @@ export interface CustomerMembershipWhereUniqueInput {
   id?: ID_Input | null
 }
 
+export interface CustomerNotificationBarReceiptCreateInput {
+  id?: ID_Input | null
+  notificationBarId: NotificationBarID
+  viewCount?: Int | null
+  clickCount?: Int | null
+  customer: CustomerCreateOneWithoutNotificationBarReceiptsInput
+}
+
+export interface CustomerNotificationBarReceiptCreateManyWithoutCustomerInput {
+  create?: CustomerNotificationBarReceiptCreateWithoutCustomerInput[] | CustomerNotificationBarReceiptCreateWithoutCustomerInput | null
+  connect?: CustomerNotificationBarReceiptWhereUniqueInput[] | CustomerNotificationBarReceiptWhereUniqueInput | null
+}
+
+export interface CustomerNotificationBarReceiptCreateWithoutCustomerInput {
+  id?: ID_Input | null
+  notificationBarId: NotificationBarID
+  viewCount?: Int | null
+  clickCount?: Int | null
+}
+
+export interface CustomerNotificationBarReceiptScalarWhereInput {
+  AND?: CustomerNotificationBarReceiptScalarWhereInput[] | CustomerNotificationBarReceiptScalarWhereInput | null
+  OR?: CustomerNotificationBarReceiptScalarWhereInput[] | CustomerNotificationBarReceiptScalarWhereInput | null
+  NOT?: CustomerNotificationBarReceiptScalarWhereInput[] | CustomerNotificationBarReceiptScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  notificationBarId?: NotificationBarID | null
+  notificationBarId_not?: NotificationBarID | null
+  notificationBarId_in?: NotificationBarID[] | NotificationBarID | null
+  notificationBarId_not_in?: NotificationBarID[] | NotificationBarID | null
+  viewCount?: Int | null
+  viewCount_not?: Int | null
+  viewCount_in?: Int[] | Int | null
+  viewCount_not_in?: Int[] | Int | null
+  viewCount_lt?: Int | null
+  viewCount_lte?: Int | null
+  viewCount_gt?: Int | null
+  viewCount_gte?: Int | null
+  clickCount?: Int | null
+  clickCount_not?: Int | null
+  clickCount_in?: Int[] | Int | null
+  clickCount_not_in?: Int[] | Int | null
+  clickCount_lt?: Int | null
+  clickCount_lte?: Int | null
+  clickCount_gt?: Int | null
+  clickCount_gte?: Int | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+}
+
+export interface CustomerNotificationBarReceiptSubscriptionWhereInput {
+  AND?: CustomerNotificationBarReceiptSubscriptionWhereInput[] | CustomerNotificationBarReceiptSubscriptionWhereInput | null
+  OR?: CustomerNotificationBarReceiptSubscriptionWhereInput[] | CustomerNotificationBarReceiptSubscriptionWhereInput | null
+  NOT?: CustomerNotificationBarReceiptSubscriptionWhereInput[] | CustomerNotificationBarReceiptSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: CustomerNotificationBarReceiptWhereInput | null
+}
+
+export interface CustomerNotificationBarReceiptUpdateInput {
+  notificationBarId?: NotificationBarID | null
+  viewCount?: Int | null
+  clickCount?: Int | null
+  customer?: CustomerUpdateOneRequiredWithoutNotificationBarReceiptsInput | null
+}
+
+export interface CustomerNotificationBarReceiptUpdateManyDataInput {
+  notificationBarId?: NotificationBarID | null
+  viewCount?: Int | null
+  clickCount?: Int | null
+}
+
+export interface CustomerNotificationBarReceiptUpdateManyMutationInput {
+  notificationBarId?: NotificationBarID | null
+  viewCount?: Int | null
+  clickCount?: Int | null
+}
+
+export interface CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput {
+  create?: CustomerNotificationBarReceiptCreateWithoutCustomerInput[] | CustomerNotificationBarReceiptCreateWithoutCustomerInput | null
+  connect?: CustomerNotificationBarReceiptWhereUniqueInput[] | CustomerNotificationBarReceiptWhereUniqueInput | null
+  set?: CustomerNotificationBarReceiptWhereUniqueInput[] | CustomerNotificationBarReceiptWhereUniqueInput | null
+  disconnect?: CustomerNotificationBarReceiptWhereUniqueInput[] | CustomerNotificationBarReceiptWhereUniqueInput | null
+  delete?: CustomerNotificationBarReceiptWhereUniqueInput[] | CustomerNotificationBarReceiptWhereUniqueInput | null
+  update?: CustomerNotificationBarReceiptUpdateWithWhereUniqueWithoutCustomerInput[] | CustomerNotificationBarReceiptUpdateWithWhereUniqueWithoutCustomerInput | null
+  updateMany?: CustomerNotificationBarReceiptUpdateManyWithWhereNestedInput[] | CustomerNotificationBarReceiptUpdateManyWithWhereNestedInput | null
+  deleteMany?: CustomerNotificationBarReceiptScalarWhereInput[] | CustomerNotificationBarReceiptScalarWhereInput | null
+  upsert?: CustomerNotificationBarReceiptUpsertWithWhereUniqueWithoutCustomerInput[] | CustomerNotificationBarReceiptUpsertWithWhereUniqueWithoutCustomerInput | null
+}
+
+export interface CustomerNotificationBarReceiptUpdateManyWithWhereNestedInput {
+  where: CustomerNotificationBarReceiptScalarWhereInput
+  data: CustomerNotificationBarReceiptUpdateManyDataInput
+}
+
+export interface CustomerNotificationBarReceiptUpdateWithoutCustomerDataInput {
+  notificationBarId?: NotificationBarID | null
+  viewCount?: Int | null
+  clickCount?: Int | null
+}
+
+export interface CustomerNotificationBarReceiptUpdateWithWhereUniqueWithoutCustomerInput {
+  where: CustomerNotificationBarReceiptWhereUniqueInput
+  data: CustomerNotificationBarReceiptUpdateWithoutCustomerDataInput
+}
+
+export interface CustomerNotificationBarReceiptUpsertWithWhereUniqueWithoutCustomerInput {
+  where: CustomerNotificationBarReceiptWhereUniqueInput
+  update: CustomerNotificationBarReceiptUpdateWithoutCustomerDataInput
+  create: CustomerNotificationBarReceiptCreateWithoutCustomerInput
+}
+
+export interface CustomerNotificationBarReceiptWhereInput {
+  AND?: CustomerNotificationBarReceiptWhereInput[] | CustomerNotificationBarReceiptWhereInput | null
+  OR?: CustomerNotificationBarReceiptWhereInput[] | CustomerNotificationBarReceiptWhereInput | null
+  NOT?: CustomerNotificationBarReceiptWhereInput[] | CustomerNotificationBarReceiptWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  notificationBarId?: NotificationBarID | null
+  notificationBarId_not?: NotificationBarID | null
+  notificationBarId_in?: NotificationBarID[] | NotificationBarID | null
+  notificationBarId_not_in?: NotificationBarID[] | NotificationBarID | null
+  viewCount?: Int | null
+  viewCount_not?: Int | null
+  viewCount_in?: Int[] | Int | null
+  viewCount_not_in?: Int[] | Int | null
+  viewCount_lt?: Int | null
+  viewCount_lte?: Int | null
+  viewCount_gt?: Int | null
+  viewCount_gte?: Int | null
+  clickCount?: Int | null
+  clickCount_not?: Int | null
+  clickCount_in?: Int[] | Int | null
+  clickCount_not_in?: Int[] | Int | null
+  clickCount_lt?: Int | null
+  clickCount_lte?: Int | null
+  clickCount_gt?: Int | null
+  clickCount_gte?: Int | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  customer?: CustomerWhereInput | null
+}
+
+export interface CustomerNotificationBarReceiptWhereUniqueInput {
+  id?: ID_Input | null
+}
+
 export interface CustomerScalarWhereInput {
   AND?: CustomerScalarWhereInput[] | CustomerScalarWhereInput | null
   OR?: CustomerScalarWhereInput[] | CustomerScalarWhereInput | null
@@ -38214,6 +39035,7 @@ export interface CustomerUpdateDataInput {
   emailedProducts?: ProductUpdateManyInput | null
   admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomerInput | null
   utm?: UTMDataUpdateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput | null
 }
 
 export interface CustomerUpdateInput {
@@ -38233,6 +39055,7 @@ export interface CustomerUpdateInput {
   emailedProducts?: ProductUpdateManyInput | null
   admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomerInput | null
   utm?: UTMDataUpdateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput | null
 }
 
 export interface CustomerUpdateManyDataInput {
@@ -38296,6 +39119,13 @@ export interface CustomerUpdateOneRequiredWithoutMembershipInput {
   upsert?: CustomerUpsertWithoutMembershipInput | null
 }
 
+export interface CustomerUpdateOneRequiredWithoutNotificationBarReceiptsInput {
+  create?: CustomerCreateWithoutNotificationBarReceiptsInput | null
+  connect?: CustomerWhereUniqueInput | null
+  update?: CustomerUpdateWithoutNotificationBarReceiptsDataInput | null
+  upsert?: CustomerUpsertWithoutNotificationBarReceiptsInput | null
+}
+
 export interface CustomerUpdateOneRequiredWithoutReservationsInput {
   create?: CustomerCreateWithoutReservationsInput | null
   connect?: CustomerWhereUniqueInput | null
@@ -38335,6 +39165,7 @@ export interface CustomerUpdateWithoutAdmissionsDataInput {
   referrees?: CustomerUpdateManyWithoutReferrerInput | null
   emailedProducts?: ProductUpdateManyInput | null
   utm?: UTMDataUpdateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput | null
 }
 
 export interface CustomerUpdateWithoutBagItemsDataInput {
@@ -38353,6 +39184,7 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   emailedProducts?: ProductUpdateManyInput | null
   admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomerInput | null
   utm?: UTMDataUpdateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput | null
 }
 
 export interface CustomerUpdateWithoutMembershipDataInput {
@@ -38364,6 +39196,26 @@ export interface CustomerUpdateWithoutMembershipDataInput {
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
+  bagItems?: BagItemUpdateManyWithoutCustomerInput | null
+  reservations?: ReservationUpdateManyWithoutCustomerInput | null
+  referrer?: CustomerUpdateOneWithoutReferreesInput | null
+  referrees?: CustomerUpdateManyWithoutReferrerInput | null
+  emailedProducts?: ProductUpdateManyInput | null
+  admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomerInput | null
+  utm?: UTMDataUpdateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput | null
+}
+
+export interface CustomerUpdateWithoutNotificationBarReceiptsDataInput {
+  status?: CustomerStatus | null
+  plan?: Plan | null
+  referralLink?: String | null
+  referrerId?: String | null
+  authorizedAt?: DateTime | null
+  user?: UserUpdateOneRequiredInput | null
+  detail?: CustomerDetailUpdateOneInput | null
+  billingInfo?: BillingInfoUpdateOneInput | null
+  membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
   bagItems?: BagItemUpdateManyWithoutCustomerInput | null
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
   referrer?: CustomerUpdateOneWithoutReferreesInput | null
@@ -38389,6 +39241,7 @@ export interface CustomerUpdateWithoutReferreesDataInput {
   emailedProducts?: ProductUpdateManyInput | null
   admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomerInput | null
   utm?: UTMDataUpdateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput | null
 }
 
 export interface CustomerUpdateWithoutReferrerDataInput {
@@ -38407,6 +39260,7 @@ export interface CustomerUpdateWithoutReferrerDataInput {
   emailedProducts?: ProductUpdateManyInput | null
   admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomerInput | null
   utm?: UTMDataUpdateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput | null
 }
 
 export interface CustomerUpdateWithoutReservationsDataInput {
@@ -38425,6 +39279,7 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   emailedProducts?: ProductUpdateManyInput | null
   admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomerInput | null
   utm?: UTMDataUpdateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput | null
 }
 
 export interface CustomerUpdateWithoutUtmDataInput {
@@ -38443,6 +39298,7 @@ export interface CustomerUpdateWithoutUtmDataInput {
   referrees?: CustomerUpdateManyWithoutReferrerInput | null
   emailedProducts?: ProductUpdateManyInput | null
   admissions?: CustomerAdmissionsDataUpdateOneWithoutCustomerInput | null
+  notificationBarReceipts?: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput | null
 }
 
 export interface CustomerUpdateWithWhereUniqueWithoutReferrerInput {
@@ -38468,6 +39324,11 @@ export interface CustomerUpsertWithoutBagItemsInput {
 export interface CustomerUpsertWithoutMembershipInput {
   update: CustomerUpdateWithoutMembershipDataInput
   create: CustomerCreateWithoutMembershipInput
+}
+
+export interface CustomerUpsertWithoutNotificationBarReceiptsInput {
+  update: CustomerUpdateWithoutNotificationBarReceiptsDataInput
+  create: CustomerCreateWithoutNotificationBarReceiptsInput
 }
 
 export interface CustomerUpsertWithoutReferreesInput {
@@ -38588,6 +39449,9 @@ export interface CustomerWhereInput {
   emailedProducts_none?: ProductWhereInput | null
   admissions?: CustomerAdmissionsDataWhereInput | null
   utm?: UTMDataWhereInput | null
+  notificationBarReceipts_every?: CustomerNotificationBarReceiptWhereInput | null
+  notificationBarReceipts_some?: CustomerNotificationBarReceiptWhereInput | null
+  notificationBarReceipts_none?: CustomerNotificationBarReceiptWhereInput | null
 }
 
 export interface CustomerWhereUniqueInput {
@@ -50124,6 +50988,10 @@ export interface AggregateCustomerMembershipSubscriptionData {
   count: Int
 }
 
+export interface AggregateCustomerNotificationBarReceipt {
+  count: Int
+}
+
 export interface AggregateEmailReceipt {
   count: Int
 }
@@ -50716,6 +51584,7 @@ export interface Customer extends Node {
   admissions?: CustomerAdmissionsData | null
   authorizedAt?: DateTime | null
   utm?: UTMData | null
+  notificationBarReceipts?: Array<CustomerNotificationBarReceipt> | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -50968,6 +51837,51 @@ export interface CustomerMembershipSubscriptionPayload {
   node?: CustomerMembership | null
   updatedFields?: Array<String> | null
   previousValues?: CustomerMembershipPreviousValues | null
+}
+
+export interface CustomerNotificationBarReceipt extends Node {
+  id: ID_Output
+  notificationBarId: NotificationBarID
+  viewCount: Int
+  clickCount: Int
+  customer: Customer
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface CustomerNotificationBarReceiptConnection {
+  pageInfo: PageInfo
+  edges: Array<CustomerNotificationBarReceiptEdge | null>
+  aggregate: AggregateCustomerNotificationBarReceipt
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface CustomerNotificationBarReceiptEdge {
+  node: CustomerNotificationBarReceipt
+  cursor: String
+}
+
+export interface CustomerNotificationBarReceiptPreviousValues {
+  id: ID_Output
+  notificationBarId: NotificationBarID
+  viewCount: Int
+  clickCount: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface CustomerNotificationBarReceiptSubscriptionPayload {
+  mutation: MutationType
+  node?: CustomerNotificationBarReceipt | null
+  updatedFields?: Array<String> | null
+  previousValues?: CustomerNotificationBarReceiptPreviousValues | null
 }
 
 export interface CustomerPreviousValues {

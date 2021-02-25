@@ -886,6 +886,29 @@ type Customer {
   authorizedAt: DateTime
   utm: UTMData
     @relation(name: "CustomerToUTMData", link: INLINE, onDelete: CASCADE)
+  notificationBarReceipts: [CustomerNotificationBarReceipt]
+    @relation(
+      name: "CustomerToCustomerNotificationBarReceipts"
+      link: TABLE
+      onDelete: CASCADE
+    )
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+enum NotificationBarID {
+  PastDueInvoice
+}
+type CustomerNotificationBarReceipt {
+  id: ID! @id
+  notificationBarId: NotificationBarID!
+  viewCount: Int! @default(value: 0)
+  clickCount: Int! @default(value: 0)
+  customer: Customer!
+    @relation(
+      name: "CustomerToCustomerNotificationBarReceipts"
+      onDelete: SET_NULL
+    )
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
