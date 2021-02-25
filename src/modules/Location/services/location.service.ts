@@ -11,22 +11,24 @@ export class LocationService {
     // Match OWM Conditions (http://openweathermap.org/weather-conditions)
     const weatherCodeGroup = Math.floor(weatherCode / 100)
     switch (weatherCodeGroup) {
-      // Thunder
       case 2:
-        return "0x26C8" // Drizzle
+        // Thunder
+        return "0x0001F329"
       case 3:
-        return "0x1F327"
-      // Rain
+        // Drizzle
+        return "0x0001F327"
       case 5:
-        return "0x1F327"
-      // Snow
+        // Rain
+        return "0x0001F327"
       case 6:
-        return "0x2744" // Fog
+        // Snow
+        return "0x00002744"
       case 7:
-        return "0x1F32B"
+        // Fog
+        return "0x0001F32B"
       case 8:
         // Cloudy
-        if (weatherCode === 802) return "0x2601"
+        if (weatherCode === 802) return "0x0000E049"
         const currentHour = new Date(datetime)
         if (
           currentHour >= new Date(sunrise) &&
@@ -36,15 +38,15 @@ export class LocationService {
           return "0x2600"
         } else {
           // Moon
-          return "0x1F311"
+          return "0x0001F311"
         }
       case 9:
         // Tornado
-        if (weatherCode === 900) return "0x1F32A"
+        if (weatherCode === 900) return "0x0001F32A"
         // Wind
-        if (weatherCode === 905) return "0x1F32C"
+        if (weatherCode === 905) return "0x0001F32C"
         // Wind
-        if (weatherCode <= 955) return "0x1F32C"
+        if (weatherCode <= 955) return "0x0001F32C"
         // Extreme
         return null
       default:
