@@ -7,11 +7,6 @@ import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import chargebee from "chargebee"
 import { pick } from "lodash"
-import Stripe from "stripe"
-
-const stripe = new Stripe("sk_test_q3thv8dB2JZ1FAUbzdQqmO3G0022ZvQ5w4", {
-  apiVersion: "2020-08-27",
-})
 
 @Resolver()
 export class PaymentMutationsResolver {
@@ -24,63 +19,8 @@ export class PaymentMutationsResolver {
   ) {}
 
   @Mutation()
-  async processPayment(
-    @Args() { planID, paymentMethodID, billing },
-    @User() user
-  ) {
-    const billingAddress = {
-      first_name: billing.user.firstName || "",
-      last_name: billing.user.lastName || "",
-      ...billing.address,
-      zip: billing.address.postal_code || "",
-      country: "US", // assume its US for now, because we need it for taxes.
-    }
-
-    const subscriptionEstimate = await chargebee.estimate
-      .create_subscription({
-        billing_address: billingAddress,
-        subscription: {
-          plan_id: planID,
-        },
-      })
-      .request()
-
-    const intent = await stripe.paymentIntents.create({
-      payment_method: paymentMethodID,
-      amount: subscriptionEstimate?.estimate?.invoice_estimate?.amount_due,
-      currency: "USD",
-      confirm: true,
-      confirmation_method: "manual",
-      setup_future_usage: "off_session",
-      capture_method: "manual",
-    })
-
-    const subscriptionOptions = {
-      plan_id: planID,
-      billing_address: billingAddress,
-      customer: {
-        first_name: billing.user.firstName || "",
-        last_name: billing.user.lastName || "",
-        email: billing.user.email || "",
-      },
-      payment_intent: {
-        gw_token: intent.id,
-        // TODO: store gateway account id in .env
-        gateway_account_id: "gw_BuVXEhRh6XPao1qfg",
-      },
-    }
-
-    try {
-      const subscription = await chargebee.subscription
-        .create(subscriptionOptions)
-        .request()
-
-      console.log(intent, subscription)
-      return intent
-    } catch (e) {
-      console.error(e)
-      throw e
-    }
+  async processPayment(@Args() { planID, paymentMethodID, billing }) {
+    return this.paymentService.processPayment(planID, paymentMethodID, billing)
   }
 
   /**

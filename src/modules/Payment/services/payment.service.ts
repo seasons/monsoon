@@ -13,6 +13,7 @@ import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
 import { camelCase, get, head, identity, snakeCase, upperFirst } from "lodash"
 import { DateTime } from "luxon"
+import Stripe from "stripe"
 
 import {
   BillingAddress,
@@ -25,6 +26,10 @@ import {
   Transaction,
   TransactionsDataLoader,
 } from "../payment.types"
+
+const stripe = new Stripe(process.env.STRIPE_API_KEY, {
+  apiVersion: "2020-08-27",
+})
 
 export interface SubscriptionData {
   nextBillingAt: string
@@ -309,6 +314,62 @@ export class PaymentService {
       this.error.setExtraContext(customer, "customer")
       this.error.captureError(e)
       throw new Error(`Error updating your payment method ${e}`)
+    }
+  }
+
+  async processPayment(planID, paymentMethodID, billing) {
+    const billingAddress = {
+      first_name: billing.user.firstName || "",
+      last_name: billing.user.lastName || "",
+      ...billing.address,
+      zip: billing.address.postal_code || "",
+      country: "US", // assume its US for now, because we need it for taxes.
+    }
+
+    const subscriptionEstimate = await chargebee.estimate
+      .create_subscription({
+        billing_address: billingAddress,
+        subscription: {
+          plan_id: planID,
+        },
+      })
+      .request()
+
+    const intent = await stripe.paymentIntents.create({
+      payment_method: paymentMethodID,
+      amount: subscriptionEstimate?.estimate?.invoice_estimate?.amount_due,
+      currency: "USD",
+      confirm: true,
+      confirmation_method: "manual",
+      setup_future_usage: "off_session",
+      capture_method: "manual",
+    })
+
+    const subscriptionOptions = {
+      plan_id: planID,
+      billing_address: billingAddress,
+      customer: {
+        first_name: billing.user.firstName || "",
+        last_name: billing.user.lastName || "",
+        email: billing.user.email || "",
+      },
+      payment_intent: {
+        gw_token: intent.id,
+        // TODO: store gateway account id in .env
+        gateway_account_id: "gw_BuVXEhRh6XPao1qfg",
+      },
+    }
+
+    try {
+      const subscription = await chargebee.subscription
+        .create(subscriptionOptions)
+        .request()
+
+      console.log(intent, subscription)
+      return intent
+    } catch (e) {
+      console.error(e)
+      throw e
     }
   }
 
