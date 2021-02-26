@@ -24,20 +24,10 @@ export class PaymentMutationsResolver {
   ) {}
 
   @Mutation()
-  async processPaymentMethod(
+  async processPayment(
     @Args() { planID, paymentMethodID, billing },
     @User() user
   ) {
-    console.log("paymentMethodID", paymentMethodID)
-
-    const intent = await stripe.paymentIntents.create({
-      payment_method: paymentMethodID,
-      amount: 65,
-      currency: "USD",
-      confirm: true,
-      setup_future_usage: "off_session",
-    })
-
     const billingAddress = {
       first_name: billing.user.firstName || "",
       last_name: billing.user.lastName || "",
@@ -45,6 +35,25 @@ export class PaymentMutationsResolver {
       zip: billing.address.postal_code || "",
       country: "US", // assume its US for now, because we need it for taxes.
     }
+
+    const subscriptionEstimate = await chargebee.estimate
+      .create_subscription({
+        billing_address: billingAddress,
+        subscription: {
+          plan_id: planID,
+        },
+      })
+      .request()
+
+    const intent = await stripe.paymentIntents.create({
+      payment_method: paymentMethodID,
+      amount: subscriptionEstimate?.estimate?.invoice_estimate?.amount_due,
+      currency: "USD",
+      confirm: true,
+      confirmation_method: "manual",
+      setup_future_usage: "off_session",
+      capture_method: "manual",
+    })
 
     const subscriptionOptions = {
       plan_id: planID,
@@ -55,20 +64,22 @@ export class PaymentMutationsResolver {
         email: billing.user.email || "",
       },
       payment_intent: {
-        gw_intent: intent.id,
+        gw_token: intent.id,
+        // TODO: store gateway account id in .env
         gateway_account_id: "gw_BuVXEhRh6XPao1qfg",
       },
     }
-    console.log(subscriptionOptions)
-    try {
-      // const subscription = await chargebee.subscription
-      //   .create(subscriptionOptions)
-      //   .request()
 
-      // console.log(intent, subscription)
+    try {
+      const subscription = await chargebee.subscription
+        .create(subscriptionOptions)
+        .request()
+
+      console.log(intent, subscription)
       return intent
     } catch (e) {
       console.error(e)
+      throw e
     }
   }
 

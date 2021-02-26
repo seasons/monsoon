@@ -49,7 +49,7 @@ type Query {
     first: Int
     last: Int
   ): [Color]!
-  product(where: ProductWhereUniqueInput!): Product @cacheControl(maxAge: 100)
+  product(where: ProductWhereUniqueInput!): Product
   products(
     category: String
     brand: String
@@ -222,7 +222,7 @@ type Product @cacheControl(maxAge: 200) {
     last: Int
   ): [ProductVariant!]
   status: ProductStatus
-  isSaved: Boolean
+  isSaved: Boolean @cacheControl(maxAge: 0)
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedAt: DateTime

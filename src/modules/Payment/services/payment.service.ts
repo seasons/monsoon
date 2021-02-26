@@ -3,7 +3,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PaymentPlanTier, User } from "@app/prisma"
+import { Customer, PaymentPlan, PaymentPlanTier, User } from "@app/prisma"
 import { PauseType, Reservation } from "@app/prisma/prisma.binding"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
@@ -107,6 +107,51 @@ export class PaymentService {
       this.error.captureError(e)
       throw new Error(JSON.stringify(e))
     }
+  }
+
+  async subscriptionEstimate(plan: PaymentPlan, customer: Customer) {
+    let billingAddress = null
+
+    if (customer) {
+      const customerWithBillingInfo = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+      {
+        id
+        billingInfo {
+          street1
+          street2
+          city
+          state
+          postal_code
+          country
+        }
+      }
+    `
+      )
+
+      const { billingInfo } = customerWithBillingInfo
+
+      billingAddress = {
+        line1: billingInfo.street1,
+        line2: billingInfo.street2,
+        city: billingInfo.city,
+        state: billingInfo.state,
+        zip: billingInfo.postal_code,
+        country: billingInfo.country,
+      }
+    }
+
+    const subscriptionEstimate = await chargebee.estimate
+      .create_subscription({
+        ...(!!billingAddress ? { billing_address: billingAddress } : {}),
+        subscription: {
+          plan_id: plan.planID,
+        },
+      })
+      .request()
+
+    return subscriptionEstimate.estimate.invoice_estimate
   }
 
   async changeCustomerPlan(planID, customer) {
