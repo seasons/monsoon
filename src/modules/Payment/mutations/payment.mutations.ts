@@ -5,7 +5,6 @@ import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.se
 import { PrismaService } from "@app/prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
-import chargebee from "chargebee"
 import { pick } from "lodash"
 
 @Resolver()
@@ -19,8 +18,16 @@ export class PaymentMutationsResolver {
   ) {}
 
   @Mutation()
-  async processPayment(@Args() { planID, paymentMethodID, billing }) {
-    return this.paymentService.processPayment(planID, paymentMethodID, billing)
+  async processPayment(
+    @Args() { planID, paymentMethodID, billing },
+    @Customer() customer
+  ) {
+    return this.paymentService.processPayment(
+      planID,
+      paymentMethodID,
+      billing,
+      customer
+    )
   }
 
   /**

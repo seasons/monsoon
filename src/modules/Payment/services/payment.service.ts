@@ -116,6 +116,7 @@ export class PaymentService {
 
   async subscriptionEstimate(plan: PaymentPlan, customer: Customer) {
     let billingAddress = null
+    let shippingAddress = null
 
     if (customer) {
       const customerWithBillingInfo = await this.prisma.binding.query.customer(
@@ -131,19 +132,38 @@ export class PaymentService {
           postal_code
           country
         }
+        detail {
+          id
+          shippingAddress {
+            id
+            address1
+            address2
+            city
+            country
+            state
+            zipCode
+          }
+        }
       }
     `
       )
 
       const { billingInfo } = customerWithBillingInfo
 
-      billingAddress = {
-        line1: billingInfo.street1,
-        line2: billingInfo.street2,
-        city: billingInfo.city,
-        state: billingInfo.state,
-        zip: billingInfo.postal_code,
-        country: billingInfo.country,
+      if (!!billingInfo) {
+        billingAddress = {
+          line1: billingInfo.street1,
+          line2: billingInfo.street2,
+          city: billingInfo.city,
+          state: billingInfo.state,
+          zip: billingInfo.postal_code,
+          country: "US",
+        }
+      } else {
+        billingAddress = {
+          zip: customerWithBillingInfo?.detail?.shippingAddress?.zipCode,
+          country: "US",
+        }
       }
     }
 
@@ -317,7 +337,7 @@ export class PaymentService {
     }
   }
 
-  async processPayment(planID, paymentMethodID, billing) {
+  async processPayment(planID, paymentMethodID, billing, customer) {
     const billingAddress = {
       first_name: billing.user.firstName || "",
       last_name: billing.user.lastName || "",

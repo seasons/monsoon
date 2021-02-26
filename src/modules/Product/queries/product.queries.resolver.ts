@@ -1,5 +1,4 @@
 import { Customer } from "@app/decorators"
-import { RedisCacheService } from "@app/modules/RedisCache/services/redisCache.service"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
@@ -10,8 +9,7 @@ import { ProductService } from "../services/product.service"
 export class ProductQueriesResolver {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly productService: ProductService,
-    private readonly cache: RedisCacheService
+    private readonly productService: ProductService
   ) {}
 
   @Query()
