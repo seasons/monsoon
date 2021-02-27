@@ -165,7 +165,7 @@ type PublishProductsResponse {
   status: String!
 }
 
-type Product {
+type Product @cacheControl(maxAge: 200) {
   id: ID!
   slug: String!
   name: String!
@@ -222,7 +222,7 @@ type Product {
     last: Int
   ): [ProductVariant!]
   status: ProductStatus
-  isSaved: Boolean
+  isSaved: Boolean @cacheControl(maxAge: 0)
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedAt: DateTime
@@ -236,7 +236,7 @@ type ExternalShopifyIntegration {
   accessToken: String
 }
 
-type Brand {
+type Brand @cacheControl(maxAge: 1000) {
   id: ID!
   slug: String!
   brandCode: String!
