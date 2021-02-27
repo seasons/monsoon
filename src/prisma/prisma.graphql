@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Feb 24 2021 16:01:14 GMT-0500 (Eastern Standard Time)
+# timestamp: Thu Feb 25 2021 12:53:25 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -18071,6 +18071,7 @@ interface Node {
 
 enum NotificationBarID {
   PastDueInvoice
+  TestDismissable
 }
 
 type Order implements Node {

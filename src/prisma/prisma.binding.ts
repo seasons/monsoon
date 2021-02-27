@@ -13131,6 +13131,7 @@ interface Node {
 
 enum NotificationBarID {
   PastDueInvoice
+  TestDismissable
 }
 
 type Order implements Node {
@@ -35082,7 +35083,8 @@ export type MutationType =   'CREATED' |
   'UPDATED' |
   'DELETED'
 
-export type NotificationBarID =   'PastDueInvoice'
+export type NotificationBarID =   'PastDueInvoice' |
+  'TestDismissable'
 
 export type OrderCancelReason =   'Customer' |
   'Declined' |

@@ -7460,6 +7460,7 @@ interface Node {
 
 enum NotificationBarID {
   PastDueInvoice
+  TestDismissable
 }
 
 type Order {

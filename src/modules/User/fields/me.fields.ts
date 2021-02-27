@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { Info, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
@@ -9,7 +10,8 @@ import { CustomerService } from "../services/customer.service"
 export class MeFieldsResolver {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly customerService: CustomerService
+    private readonly customerService: CustomerService,
+    private readonly statements: StatementsService
   ) {}
 
   @ResolveField()
@@ -98,14 +100,26 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async notificationBar(@Customer() customer) {
+    if (!customer) {
+      return null
+    }
+
     let data = null
+    if (
+      !this.statements.onProductionEnvironment() &&
+      process.env.SHOW_TEST_DISMISSABLE_NOTIF === "true"
+    ) {
+      data = await this.customerService.getNotificationBarData(
+        "TestDismissable",
+        customer.id
+      )
+    }
     if (customer?.status === "PaymentFailed") {
       data = await this.customerService.getNotificationBarData(
         "PastDueInvoice",
         customer.id
       )
     }
-    console.log(data)
     return data
   }
 }

@@ -12,5 +12,19 @@
     },
     "icon": "Chevron",
     "paletteID": "RedAlert"
+  },
+  "TestDismissable": {
+    "web": {
+      "title": "This is a test dismissable notif for local/staging",
+      "detail": "Click the notif to dismiss it. Check your env vars to turn this off",
+      "route": { "dismissable": true }
+    },
+    "mobile": {
+      "title": "This is a test dismissable notif for local/staging",
+      "detail": "Click the notif to dismiss it. Check your env vars to turn this off",
+      "route": { "dismissable": true }
+    },
+    "icon": "CloseX",
+    "paletteID": "RedAlert"
   }
 }
