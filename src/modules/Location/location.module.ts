@@ -6,12 +6,11 @@ import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
 import { LocationFieldsResolver } from "./fields/location.fields.resolver"
-import { LocationQueriesResolver } from "./queries/location.queries.resolver"
 import { LocationService } from "./services/location.service"
 
 @Module({
   imports: [PrismaModule],
-  providers: [LocationQueriesResolver, LocationFieldsResolver, LocationService],
+  providers: [LocationFieldsResolver, LocationService],
   exports: [LocationService],
 })
 export class LocationModule {}
