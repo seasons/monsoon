@@ -17054,6 +17054,7 @@ enum PhysicalProductStatus {
   PermanentlyDamaged
   Clean
   Lost
+  Sold
 }
 
 type PhysicalProductSubscriptionPayload {
@@ -34693,7 +34694,8 @@ export type PhysicalProductStatus =   'New' |
   'Damaged' |
   'PermanentlyDamaged' |
   'Clean' |
-  'Lost'
+  'Lost' |
+  'Sold'
 
 export type Plan =   'AllAccess' |
   'Essential'

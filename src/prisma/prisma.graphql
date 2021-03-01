@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Feb 17 2021 11:44:00 GMT-0500 (Eastern Standard Time)
+# timestamp: Mon Feb 22 2021 12:03:18 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -23685,6 +23685,7 @@ enum PhysicalProductStatus {
   PermanentlyDamaged
   Clean
   Lost
+  Sold
 }
 
 type PhysicalProductSubscriptionPayload {

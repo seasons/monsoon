@@ -9,7 +9,7 @@ import {
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
-import { lowerFirst, pick } from "lodash"
+import { lowerFirst, pick, uniq, uniqBy } from "lodash"
 
 import {
   PhysicalProductUtilsService,
@@ -52,13 +52,18 @@ export class ProductVariantService {
       physicalProducts
     )
 
-    const unavailablePhysicalProducts = this.physicalProductUtilsService.extractUniqueNonreservablePhysicalProducts(
-      physicalProducts
-    )
+    if (items.length > availablePhysicalProducts?.length) {
+      const availableVariantIDs = uniq(
+        availablePhysicalProducts.map(physProd => physProd.productVariant.id)
+      )
 
-    if (unavailablePhysicalProducts.length > 0) {
-      unavailableVariantsIDS = unavailablePhysicalProducts.map(
-        a => a.productVariant.id
+      unavailableVariantsIDS = uniq(
+        physicalProducts
+          .filter(
+            physProd =>
+              !availableVariantIDs.includes(physProd.productVariant.id)
+          )
+          .map(physProd => physProd.productVariant.id)
       )
     }
 

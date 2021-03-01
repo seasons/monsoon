@@ -16,10 +16,20 @@
 # import Query, Mutation from "./modules/Analytics/analytics.graphql"
 # import Query, Mutation from "./modules/FitPic/fitpic.graphql"
 # import Query from "./modules/View/view.graphql"
-# import Mutation, OrderItem, Order from "./modules/Order/order.graphql"
 # import Location from "./modules/Location/location.graphql"
+# import Query, Mutation, OrderLineItem, Order from "./modules/Order/order.graphql"
 
 scalar JSON
 
 directive @isAuthenticated on FIELD_DEFINITION
 directive @hasRole(roles: [UserRole]) on FIELD_DEFINITION
+
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+) on OBJECT | FIELD | FIELD_DEFINITION
+
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}

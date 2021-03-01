@@ -3103,7 +3103,8 @@ export type PhysicalProductStatus =
   | "Damaged"
   | "PermanentlyDamaged"
   | "Clean"
-  | "Lost";
+  | "Lost"
+  | "Sold";
 
 export type PhysicalProductOffloadMethod =
   | "SoldToUser"

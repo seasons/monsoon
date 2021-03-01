@@ -1,6 +1,7 @@
 export { directiveResolvers } from "@app/directives"
 
 export { BlogModule } from "@modules/Blog"
+export { RedisCacheModule } from "@modules/RedisCache/redisCache.module"
 export { FitPicModule } from "./FitPic/fitpic.module"
 export { CollectionModule } from "@modules/Collection"
 export { CronModule } from "./Cron/cron.module"
