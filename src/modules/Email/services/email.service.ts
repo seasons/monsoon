@@ -238,12 +238,27 @@ export class EmailService {
 
   async sendPausedEmail(customer: Customer, isExtension: boolean) {
     const latestPauseRequest = this.utils.getLatestPauseRequest(customer)
+    const latestReservation = this.utils.getLatestReservation(customer)
+    const withItems = latestPauseRequest.pauseType === "WithItems"
+    let pausedWithItemsPrice
+    if (withItems) {
+      const planID = this.utils.getPauseWIthItemsPlanId(customer.membership)
+      pausedWithItemsPrice = await this.prisma.client
+        .paymentPlan({ planID })
+        .price()
+    }
 
     const payload = await RenderEmail.paused({
-      name: customer.user.firstName,
-      isExtension,
-      resumeDate: latestPauseRequest.resumeDate,
       id: customer.user.id,
+      name: customer.user.firstName,
+      resumeDate: latestPauseRequest.resumeDate,
+      startDate: latestPauseRequest.pauseDate,
+      hasOpenReservation: ["Completed", "Cancelled"].includes(
+        latestReservation?.status
+      ),
+      withItems,
+      pausedWithItemsPrice,
+      isExtension,
     })
 
     await this.sendPreRenderedTransactionalEmail({

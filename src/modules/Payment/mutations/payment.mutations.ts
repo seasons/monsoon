@@ -105,10 +105,18 @@ export class PaymentMutationsResolver {
           id
           tier
           planID
+          itemCount
         }
         pauseRequests {
           createdAt
           resumeDate
+          pauseDate
+          pauseType
+        }
+        reservations {
+          id
+          status
+          createdAt
         }
       }
     }`
