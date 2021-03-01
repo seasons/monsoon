@@ -62,7 +62,6 @@ describe("Shippo Controller", () => {
   let pushNotificationsService: PushNotificationService
 
   beforeEach(async () => {
-    jest.spyOn(SMSService.prototype as any, "setupService").mockImplementation()
     const PrismaServiceProvider = {
       provide: PrismaService,
       useClass: PrismaServiceMock,

@@ -6,13 +6,19 @@
     ]
   },
   "TwentyFourHourLeftAuthorizationFollowup": {
-    "body": "Hi {{{name}}}, you have 24 hours left to secure your spot! Remember, if we don’t hear from you, we’ll pass along your invite to the next person in line and you’ll be waitlisted. {{{webChoosePlanLink}}}.\n\nIf you need help finding your first reservation, follow this link {{{stylistLink}}} to book some one on one time with our stylist.",
+    "body": "Hi {{{name}}}, — one last update from Seasons. In 24 hours you’ll be placed back on our waitlist until another membership slot is available. If you do choose to activate, your subscription can be paused at any time.\n\nOur flexible membership options start at $65/month. Learn more and browse our full inventory on wearseasons.com.\n\nAs always, feel free to contact {{{contactEmail}}} with any questions.",
     "mediaUrls": [
       "https://seasons-images.s3.amazonaws.com/email-images/Authorized24HourFollowupHero.jpg"
     ]
   },
+  "SeventyTwoHoursLeftAuthorizationFollowup": {
+    "body": "Hi {{{name}}}, your Seasons membership is waiting! Just a quick heads up: in order to ensure each member has access to a full range of our exclusive inventory, subscriptions are currently offered on a rolling basis. If no action is taken, you’ll be placed back onto our waitlist in 72 hours.\n\nIf you need help picking out your first bag, follow this link {{{stylistLink}}} to chat with one of our in-house stylists.\n\n If we can help with anything else, please contact {{{contactEmail}}}",
+    "mediaUrls": [
+      "https://seasons-images.s3.amazonaws.com/email-images/72hours.jpg"
+    ]
+  },
   "Rewaitlisted": {
-    "body": "{{{name}}}, your signup window has closed. Due to demand, we've had to give your spot to the next person in line.\n\nIf you'd still like to obtain a membership, please contact us at {{{contactEmail}}}.",
+    "body": "Hi {{{name}}}, your Seasons signup window has closed. If you’d still like to activate your account at any point, you can request authorization directly in the Seasons app (wearseasons.com) or by sending us an email at {{{contactEmail}}}",
     "mediaUrls": [
       "https://seasons-images.s3.amazonaws.com/email-images/WaitlistedHero.jpg"
     ]

@@ -149,12 +149,13 @@ type Mutation {
     where: BrandWhereUniqueInput!
     data: CustomBrandUpdateInput!
   ): Brand @hasRole(roles: [Admin])
-  publishProducts(productIDs: [String!]): PublishProductsResponse!
+  publishProducts(productIDs: [ID!]): PublishProductsResponse!
     @hasRole(roles: [Admin])
   updatePhysicalProductByBarcode(
     barcode: String
     status: PhysicalProductStatus
   ): PhysicalProduct
+  createUsedOrder(physicalProductID: ID!): Order!
 }
 
 type PublishProductsResponse {
@@ -164,7 +165,7 @@ type PublishProductsResponse {
   status: String!
 }
 
-type Product {
+type Product @cacheControl(maxAge: 200) {
   id: ID!
   slug: String!
   name: String!
@@ -175,9 +176,11 @@ type Product {
   description: String
   externalURL: String
   buyNewEnabled: Boolean!
+  buyUsedEnabled: Boolean!
+  buyUsedPrice: Int
   materialCategory: ProductMaterialCategory
   model: ProductModel
-  modelHeight: Int
+  modelHeight: Float
   modelSize: Size
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -219,7 +222,7 @@ type Product {
     last: Int
   ): [ProductVariant!]
   status: ProductStatus
-  isSaved: Boolean
+  isSaved: Boolean @cacheControl(maxAge: 0)
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedAt: DateTime
@@ -233,7 +236,7 @@ type ExternalShopifyIntegration {
   accessToken: String
 }
 
-type Brand {
+type Brand @cacheControl(maxAge: 1000) {
   id: ID!
   slug: String!
   brandCode: String!
@@ -291,6 +294,8 @@ input UpsertProductInput {
   bottomSizeType: BottomSizeType
   brandID: String!
   buyNewEnabled: Boolean
+  buyUsedEnabled: Boolean!
+  buyUsedPrice: Int!
   categoryName: String!
   colorCode: String!
   description: String!
@@ -347,6 +352,8 @@ input CustomProductUpdateInput {
   modelSizeName: String
   tags: [String!]
   buyNewEnabled: Boolean
+  buyUsedEnabled: Boolean
+  buyUsedPrice: Int
 }
 
 input UpsertSeasonInput {

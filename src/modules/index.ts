@@ -1,6 +1,7 @@
 export { directiveResolvers } from "@app/directives"
 
 export { BlogModule } from "@modules/Blog"
+export { RedisCacheModule } from "@modules/RedisCache/redisCache.module"
 export { FitPicModule } from "./FitPic/fitpic.module"
 export { CollectionModule } from "@modules/Collection"
 export { CronModule } from "./Cron/cron.module"
@@ -18,3 +19,5 @@ export { SMSModule } from "./SMS/sms.module"
 export { SyncModule } from "./Sync/sync.module"
 export { UserModule } from "./User/user.module"
 export { ShopifyModule } from "./Shopify/shopify.module"
+export { ViewModule } from "./View/view.module"
+export { OrderModule } from "./Order/order.module"

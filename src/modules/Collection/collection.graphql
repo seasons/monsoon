@@ -3,6 +3,51 @@ type Mutation {
     @hasRole(roles: [Admin])
 }
 
+type Collection {
+  id: ID!
+  slug: String!
+  images(
+    where: ImageWhereInput
+    orderBy: ImageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Image!]
+  title: String
+  subTitle: String
+  descriptions: [String!]!
+  products(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product!]
+  published: Boolean!
+  placements: [CollectionPlacement!]!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  # productsConnection is an added field
+  productsConnection(
+    sizes: [String!]
+    category: String
+    brand: String
+    brands: [String]
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    sizes: [String!]
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductConnection!
+}
+
 input CollectionUpsertInput {
   id: ID
   slug: String

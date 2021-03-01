@@ -18,6 +18,25 @@ export class PaymentMutationsResolver {
   ) {}
 
   @Mutation()
+  async processPayment(
+    @Args() { planID, paymentMethodID, billing },
+    @Customer() customer
+  ) {
+    return this.paymentService.processPayment(
+      planID,
+      paymentMethodID,
+      billing,
+      customer
+    )
+  }
+
+  /**
+   * This method is used for both credit card and apple pay checkouts.
+   * Currently only used in harvest
+   * @param param0
+   * @param customer
+   */
+  @Mutation()
   async applePayCheckout(
     @Args() { planID, token, tokenType, couponID },
     @Customer() customer
@@ -60,11 +79,15 @@ export class PaymentMutationsResolver {
 
   @Mutation()
   async pauseSubscription(
-    @Args() { subscriptionID },
+    @Args() { subscriptionID, pauseType },
     @Customer() customer,
     @User() user
   ) {
-    await this.paymentService.pauseSubscription(subscriptionID, customer)
+    await this.paymentService.pauseSubscription(
+      subscriptionID,
+      customer,
+      pauseType
+    )
     const customerWithData = (await this.prisma.binding.query.customer(
       {
         where: { id: customer.id },

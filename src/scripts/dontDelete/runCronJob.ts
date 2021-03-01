@@ -7,6 +7,9 @@ import { AdmissionsScheduledJobs } from "../../modules/Cron/services/admissions.
 import { MarketingScheduledJobs } from "../../modules/Cron/services/marketing.job.service"
 import { MembershipScheduledJobs } from "../../modules/Cron/services/membership.job.service"
 import { ReservationScheduledJobs } from "../../modules/Cron/services/reservations.job.service"
+import { SubscriptionsScheduledJobs } from "../../modules/Cron/services/subscriptions.job.service"
+import { DripService } from "../../modules/Drip/services/drip.service"
+import { DripSyncService } from "../../modules/Drip/services/dripSync.service"
 import { EmailService } from "../../modules/Email/services/email.service"
 import { EmailUtilsService } from "../../modules/Email/services/email.utils.service"
 import { ErrorService } from "../../modules/Error/services/error.service"
@@ -85,8 +88,10 @@ const run = async () => {
     pn,
     utils
   )
+  const dripService = new DripService()
+  const dss = new DripSyncService(dripService, ps, utils, error)
   const marketingJobService = new MarketingScheduledJobs(
-    null,
+    dss,
     ps,
     email,
     as,
@@ -100,8 +105,9 @@ const run = async () => {
     utils
   )
   // await reservationsJobService.sendReturnNotifications()
-  // await marketingJobService.authWindowFollowups()
-  await membershipService.manageMembershipResumes()
+  // await marketingJobService.syncUnsubscribesFromDrip()
+  await marketingJobService.syncCustomersToDrip()
+  // await membershipService.manageMembershipResumes()
 }
 
 run()

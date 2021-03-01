@@ -7,6 +7,7 @@ import { Body, Controller, Post } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
 import { head, pick } from "lodash"
+import moment from "moment"
 
 import { PaymentService } from "../services/payment.service"
 
@@ -53,6 +54,10 @@ export class ChargebeeController {
         { where: { user: { id: customer.id } } },
         `
         {
+          detail {
+            id
+            impactId
+          }
           user {
             id
             firstName
@@ -70,6 +75,13 @@ export class ChargebeeController {
       `
       )
     )
+    let isNewCustomer = false
+    if (!!subscription) {
+      isNewCustomer = this.utils.isSameDay(
+        new Date(subscription.created_at * 1000),
+        new Date()
+      )
+    }
     this.segment.track(customer.id, "Completed Transaction", {
       ...pick(custWithData.user, ["firstName", "lastName", "email"]),
       transactionID: transaction.id,
@@ -80,16 +92,27 @@ export class ChargebeeController {
       gateway: transaction.gateway,
       transactionType: transaction.type,
       amount: transaction.amount,
+      currency: "USD",
+      total: transaction.amount,
+      ...(!isNewCustomer
+        ? {
+            impactId: custWithData.detail?.impactId,
+            impactCustomerStatus: "Returning",
+          }
+        : {}),
       ...this.utils.formatUTMForSegment(custWithData.utm),
     })
   }
 
   private async chargebeeSubscriptionCreated(content: any) {
     const {
-      subscription: { customer_id, plan_id, id: subscriptionID },
+      subscription,
       customer,
       card,
+      invoice: { total },
     } = content
+
+    const { customer_id, plan_id } = subscription
 
     const customerWithBillingAndUserData: any = head(
       await this.prisma.binding.query.customers(
@@ -99,6 +122,10 @@ export class ChargebeeController {
           id
           billingInfo {
             id
+          }
+          detail {
+            id
+            impactId
           }
           utm {
             source
@@ -141,6 +168,8 @@ export class ChargebeeController {
           firstName: user?.firstName || "",
           lastName: user?.lastName || "",
           email: user?.email || "",
+          impactId: customerWithBillingAndUserData.detail?.impactId,
+          total,
           ...this.utils.formatUTMForSegment(customerWithBillingAndUserData.utm),
         })
         // Only create the billing info and send welcome email if user used chargebee checkout
@@ -148,8 +177,7 @@ export class ChargebeeController {
           customer_id,
           customer,
           card,
-          plan_id,
-          subscriptionID
+          subscription
         )
 
         // Handle if it was a referral

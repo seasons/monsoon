@@ -54,6 +54,7 @@ export class CustomerService {
       }
       topSizes
       waistSizes
+      impactId
     }
     utm {
       source
@@ -356,6 +357,7 @@ export class CustomerService {
           shippingAddress {
             zipCode
           }
+          impactId
         }
         status
         admissions {
@@ -454,6 +456,7 @@ export class CustomerService {
         email: customer.user.email,
         method: "Manual",
         application,
+        impactId: customer.detail?.impactId,
         ...this.utils.formatUTMForSegment(customer.utm),
       })
     }
@@ -571,6 +574,7 @@ export class CustomerService {
           email: customer.user.email,
           method: "Automatic",
           application,
+          impactId: customer.detail?.impactId,
           ...this.utils.formatUTMForSegment(customer.utm),
         })
 
@@ -629,6 +633,7 @@ export class CustomerService {
         admissionsUpsertData = {
           admissable: true,
           inServiceableZipcode: true,
+          inAdmissableReason: null,
           allAccessEnabled,
           authorizationsCount: this.calculateNumAuthorizations(
             customer,

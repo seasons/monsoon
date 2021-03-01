@@ -1,5 +1,3 @@
-import * as fs from "fs"
-
 import { ApplicationType } from "@app/decorators/application.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerStatus, CustomerWhereUniqueInput, Product } from "@app/prisma"
@@ -82,7 +80,7 @@ export class AdmissionsService {
   }
 
   zipcodeAllowed(zipcode: string): ZipcodeAllowedResult {
-    const state = zipcodes.lookup(zipcode)?.state
+    const state = zipcodes.lookup(zipcode.trim())?.state
     const allServiceableStates = [
       ...this.serviceableStates.allAccessEnabled.true,
       ...this.serviceableStates.allAccessEnabled.false,

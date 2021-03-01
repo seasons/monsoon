@@ -42,7 +42,7 @@ export class ProductUtilsService {
   }
 
   async getVariantDisplayShort(
-    manufacturerSizeIDs,
+    manufacturerSizeIDs = [],
     internalSizeID
   ): Promise<string> {
     const query = `{
@@ -70,7 +70,7 @@ export class ProductUtilsService {
 
     const manufacturerSizes = await this.prisma.binding.query.sizes(
       {
-        where: { id_in: manufacturerSizeIDs },
+        where: { id_in: manufacturerSizeIDs.map(a => a?.id) },
       },
       query
     )

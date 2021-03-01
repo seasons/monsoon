@@ -1,6 +1,8 @@
 import fs from "fs"
 
 import { DripSyncService } from "@app/modules/Drip/services/dripSync.service"
+import { IndexKey } from "@app/modules/Search/services/algolia.service"
+import { SearchService } from "@app/modules/Search/services/search.service"
 import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
@@ -15,9 +17,10 @@ export class SyncCommands {
   private readonly logger = new Logger(SyncCommands.name)
 
   constructor(
-    private readonly prismaSyncService: PrismaSyncService,
-    private readonly dripSyncService: DripSyncService,
-    private readonly scriptsService: ScriptsService,
+    private readonly prismaSync: PrismaSyncService,
+    private readonly dripSync: DripSyncService,
+    private readonly scripts: ScriptsService,
+    private readonly search: SearchService,
     private readonly moduleRef: ModuleRef
   ) {}
 
@@ -35,23 +38,23 @@ export class SyncCommands {
     })
     destination
   ) {
-    const pgpassFilepath = await this.scriptsService.downloadFromS3(
+    const pgpassFilepath = await this.scripts.downloadFromS3(
       "/tmp/.pgpass",
       "monsoon-scripts",
       "pgpass.txt"
     )
-    const envFilepath = await this.scriptsService.downloadFromS3(
+    const envFilepath = await this.scripts.downloadFromS3(
       "/tmp/__monsoon__env.json",
       "monsoon-scripts",
       "env.json"
     )
     try {
-      const env = this.scriptsService.readJSONObjectFromFile(envFilepath)
-      this.prismaSyncService.setDBEnvVarsFromJSON(
+      const env = this.scripts.readJSONObjectFromFile(envFilepath)
+      this.prismaSync.setDBEnvVarsFromJSON(
         "production",
         env.postgres.production
       )
-      this.prismaSyncService.setDBEnvVarsFromJSON(destination, {
+      this.prismaSync.setDBEnvVarsFromJSON(destination, {
         ...env.postgres[destination],
         ...env.prisma[destination],
       })
@@ -59,7 +62,7 @@ export class SyncCommands {
         env.auth0.staging["monsoon(staging)"].clientID
       process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_SECRET =
         env.auth0.staging["monsoon(staging)"].clientSecret
-      this.prismaSyncService.syncPrisma(destination)
+      this.prismaSync.syncPrisma(destination)
     } catch (err) {
       console.log(err)
     } finally {
@@ -103,7 +106,7 @@ export class SyncCommands {
     })
     batch
   ) {
-    await this.scriptsService.updateConnections({
+    await this.scripts.updateConnections({
       dripEnv,
       prismaEnv,
       moduleRef: this.moduleRef,
@@ -123,10 +126,87 @@ export class SyncCommands {
 
     switch (table) {
       case "customers":
-        await this.dripSyncService.syncAllCustomers(batch)
+        await this.dripSync.syncAllCustomers(batch)
         break
     }
 
     this.logger.log(`Complete!`)
+  }
+
+  @Command({
+    command: "sync:algolia <table>",
+    describe: "Sync prisma data with Algolia",
+    aliases: "sa",
+  })
+  async syncAlgolia(
+    @Positional({
+      name: "table",
+      type: "string",
+      describe: "Name of the prisma table to sync",
+      choices: ["all", "products", "physicalProducts", "brands", "customers"],
+    })
+    table,
+    @PrismaEnvOption({
+      choices: ["local", "staging", "production"],
+      default: "production",
+    })
+    prismaEnv,
+    @Option({
+      name: "index",
+      type: "array",
+      describe: "The Algolia index to sync data into",
+      choices: ["default", "admin", "customer"],
+      default: "default",
+      alias: "i",
+    })
+    indexKeys: string[]
+  ) {
+    await this.scripts.updateConnections({
+      prismaEnv,
+      moduleRef: this.moduleRef,
+    })
+
+    const shouldProceed = readlineSync.keyInYN(
+      `You are about index ${
+        table === "all" ? "all tables" : table
+      } from \n- Prisma: ${
+        process.env.PRISMA_ENDPOINT
+      }\n- Algolia indices: (${indexKeys.join(", ")}).\n` + `Proceed? (y/n)`
+    )
+    if (!shouldProceed) {
+      console.log("\nExited without running anything\n")
+      return
+    }
+
+    const indices = (indexKeys || []).map(indexKey => {
+      switch (indexKey) {
+        case "default":
+          return IndexKey.Default
+        case "admin":
+          return IndexKey.Admin
+        case "customer":
+          return IndexKey.Customer
+      }
+    })
+
+    switch (table) {
+      case "all":
+        await this.search.indexData(indices)
+        break
+      case "products":
+        await this.search.indexProducts(indices)
+        break
+      case "physicalProducts":
+        await this.search.indexPhysicalProducts(indices)
+        break
+      case "brands":
+        await this.search.indexBrands(indices)
+        break
+      case "customers":
+        await this.search.indexCustomers(indices)
+        break
+    }
+
+    this.logger.log(`Done indexing!`)
   }
 }

@@ -62,7 +62,6 @@ describe.only("Customer Service", () => {
   }
 
   beforeAll(async () => {
-    jest.spyOn(SMSService.prototype as any, "setupService").mockImplementation()
     const moduleRef = await Test.createTestingModule(
       CustomerModuleDef
     ).compile()

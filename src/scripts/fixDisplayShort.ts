@@ -13,6 +13,8 @@ const run = async () => {
     {},
     `{
       id
+      sku
+      displayShort
       internalSize {
         id
         display
@@ -49,8 +51,6 @@ const run = async () => {
   let count = 0
 
   for (const variant of productVariants) {
-    count++
-    console.log(`Updating: ${count} of ${productVariants.length}`)
     const internalSize = variant.internalSize
     const manufacturerSizes = variant.manufacturerSizes
     const manufacturerSize = head(manufacturerSizes)
@@ -80,11 +80,24 @@ const run = async () => {
       console.log("Missing displayShort on variant: ", variant.id)
     }
 
-    await ps.client.updateProductVariant({
-      where: { id: variant.id },
-      data: { displayShort },
-    })
+    if (displayShort !== variant.displayShort) {
+      count++
+      console.log(
+        "SKU: ",
+        variant.sku,
+        " / Old displayshort: ",
+        variant.displayShort,
+        " / new display short: ",
+        displayShort
+      )
+    }
+    // await ps.client.updateProductVariant({
+    //   where: { id: variant.id },
+    //   data: { displayShort },
+    // })
   }
+
+  console.log(`Total: ${count}`)
 }
 
 run()

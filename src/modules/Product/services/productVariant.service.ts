@@ -9,7 +9,7 @@ import {
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
-import { lowerFirst, pick } from "lodash"
+import { lowerFirst, pick, uniq, uniqBy } from "lodash"
 
 import {
   PhysicalProductUtilsService,
@@ -44,33 +44,47 @@ export class ProductVariantService {
     const unavailableVariants = prismaProductVariants.filter(
       v => v.reservable <= 0
     )
-    if (unavailableVariants.length > 0) {
-      // Remove items in the bag that are not available anymore
-      await this.prisma.client.deleteManyBagItems({
-        productVariant: {
-          id_in: unavailableVariants.map(a => a.id),
-        },
-        saved: false,
-        status: "Added",
-      })
-
-      throw new ApolloError(
-        "The following item is not reservable",
-        "511",
-        unavailableVariants
-      )
-    }
+    let unavailableVariantsIDS = unavailableVariants.map(a => a.id)
 
     // Double check that the product variants have a sufficient number of available
     // physical products
     const availablePhysicalProducts = this.physicalProductUtilsService.extractUniqueReservablePhysicalProducts(
       physicalProducts
     )
-    if (availablePhysicalProducts.length < items.length) {
-      // TODO: list out unavailable items
+
+    if (items.length > availablePhysicalProducts?.length) {
+      const availableVariantIDs = uniq(
+        availablePhysicalProducts.map(physProd => physProd.productVariant.id)
+      )
+
+      unavailableVariantsIDS = uniq(
+        physicalProducts
+          .filter(
+            physProd =>
+              !availableVariantIDs.includes(physProd.productVariant.id)
+          )
+          .map(physProd => physProd.productVariant.id)
+      )
+    }
+
+    if (unavailableVariantsIDS.length > 0) {
+      // Move the items from the bag to saved items
+      await this.prisma.client.updateManyBagItems({
+        where: {
+          productVariant: {
+            id_in: unavailableVariantsIDS,
+          },
+        },
+        data: {
+          saved: true,
+          status: "Added",
+        },
+      })
+
       throw new ApolloError(
-        "One or more product variants does not have an available physical product",
-        "515"
+        "The following item is not reservable",
+        "511",
+        unavailableVariantsIDS
       )
     }
 
@@ -157,17 +171,16 @@ export class ProductVariantService {
     const IDs =
       variant.manufacturerSizeNames &&
       (await Promise.all(
-        variant.manufacturerSizeNames?.map(async sizeName => {
-          // sizeName is of the format "[size type] [size value]"", i.e. "WxL 32x30"
-          const [sizeType, sizeValue] = sizeName.split(" ")
+        variant.manufacturerSizeNames?.map(async sizeValue => {
           if (!variant.sku) {
             throw new Error("No variant sku present in getManufacturerSizeIDs")
           }
+          const sizeType = type === "Bottom" ? variant.bottomSizeType : "Letter"
           const slug = `${variant.sku}-manufacturer-${sizeType}-${sizeValue}`
           const size = await this.productUtils.deepUpsertSize({
             slug,
             type,
-            display: sizeName,
+            display: sizeValue,
             topSizeData: type === "Top" && {
               letter: (sizeValue as LetterSize) || null,
             },

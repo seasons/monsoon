@@ -1,6 +1,6 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ImageService } from "@app/modules/Image/services/image.service"
-import { ID_Input, LetterSize, Product, User } from "@app/prisma"
+import { ID_Input, LetterSize, Order, Product, User } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { ProductGridItem } from "@seasons/wind"
 import { String } from "aws-sdk/clients/apigateway"
@@ -36,7 +36,7 @@ export class EmailUtilsService {
   }
     `
 
-  async createGridPayload(products: Product[]) {
+  async createGridPayload(products: { id: string }[]) {
     const productsWithData = await this.prisma.binding.query.products(
       {
         where: { id_in: products.map(a => a.id) },
@@ -107,6 +107,60 @@ export class EmailUtilsService {
     }
 
     return returnProducts
+  }
+
+  async formatOrderLineItems(
+    order: Order
+  ): Promise<
+    {
+      lineItemName: string
+      lineItemValue: number // total in cents
+    }[]
+  > {
+    const orderWithLineItems = await this.prisma.binding.query.order(
+      {
+        where: { id: order.id },
+      },
+      `{
+        id
+        lineItems {
+          recordID
+          recordType
+          taxPrice
+          price
+        }
+    }`
+    )
+
+    const formattedLineItems = []
+    for (const li of orderWithLineItems.lineItems) {
+      if (li.recordType === "PhysicalProduct") {
+        formattedLineItems.push({
+          lineItemName: await this.prisma.client
+            .physicalProduct({
+              id: li.recordID,
+            })
+            .productVariant()
+            .product()
+            .name(),
+          lineItemValue: li.price,
+        })
+      } else if (li.recordType === "Package") {
+        formattedLineItems.push({
+          lineItemName: "Shipping",
+          lineItemValue: li.price,
+        })
+      }
+    }
+    let totalTaxes = orderWithLineItems.lineItems.reduce(
+      (acc, curval) => acc + curval.taxPrice,
+      0
+    )
+    formattedLineItems.push({
+      lineItemName: "Taxes",
+      lineItemValue: totalTaxes,
+    })
+    return formattedLineItems
   }
 
   productToGridPayload = async (

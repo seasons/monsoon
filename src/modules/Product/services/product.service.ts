@@ -1,12 +1,8 @@
-import * as url from "url"
-
 import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
-import { S3_BASE } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
   BottomSizeType,
-  Customer,
   CustomerWhereUniqueInput,
   ID_Input,
   InventoryStatus,
@@ -15,14 +11,16 @@ import {
   ProductFunction,
   ProductStatus,
   ProductTier,
-  ProductTierName,
   ProductType,
   ProductVariant,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
   Tag,
 } from "@prisma/index"
-import { Product as PrismaBindingProduct } from "@prisma/prisma.binding"
+import {
+  Customer,
+  Product as PrismaBindingProduct,
+} from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
@@ -316,7 +314,14 @@ export class ProductService {
           sequenceNumbers: sequenceNumbers[i],
           variant: a,
           productID: slug,
-          ...pick(input, ["type", "colorCode", "retailPrice", "status"]),
+          ...pick(input, [
+            "type",
+            "colorCode",
+            "retailPrice",
+            "status",
+            "buyUsedEnabled",
+            "buyUsedPrice",
+          ]),
         })
       })
     )
@@ -489,8 +494,7 @@ export class ProductService {
     where: CustomerWhereUniqueInput,
     info: GraphQLResolveInfo
   ) {
-    const productTypes = ["Top", "Bottom"]
-    const customer = await this.prisma.binding.query.customer(
+    const customer = (await this.prisma.binding.query.customer(
       {
         where,
       },
@@ -501,43 +505,49 @@ export class ProductService {
           waistSizes
         }
       }`
-    )
+    )) as Customer
 
-    let productVariants = [] as ProductVariant[]
-
-    for (const productType of productTypes) {
-      const { sizesKey, internalSizeWhereInputCreateFunc } = this.getSizeKey(
-        productType as "Top" | "Bottom"
-      )
-
-      const preferredSizes = customer.detail[sizesKey]
-
-      const variantsOfType = (await this.prisma.binding.query.productVariants(
-        {
-          where: {
-            AND: [
-              {
-                internalSize: internalSizeWhereInputCreateFunc(preferredSizes),
-              },
-              { reservable_gte: 1 },
-              {
-                product: {
-                  AND: [
-                    { status: "Available" },
-                    { type: productType as ProductType },
-                  ],
+    return (await this.prisma.binding.query.productVariants(
+      {
+        where: {
+          OR: [
+            {
+              AND: [
+                {
+                  internalSize: {
+                    top: {
+                      letter_in: customer.detail.topSizes as LetterSize[],
+                    },
+                  },
                 },
-              },
-            ],
-          },
+                { reservable_gte: 1 },
+                {
+                  product: {
+                    AND: [{ status: "Available" }, { type: "Top" }],
+                  },
+                },
+              ],
+            },
+            {
+              AND: [
+                {
+                  internalSize: {
+                    display_in: customer.detail.waistSizes.map(a => `${a}`),
+                  },
+                },
+                { reservable_gte: 1 },
+                {
+                  product: {
+                    AND: [{ status: "Available" }, { type: "Bottom" }],
+                  },
+                },
+              ],
+            },
+          ],
         },
-        info
-      )) as ProductVariant[]
-
-      productVariants = [...productVariants, ...variantsOfType]
-    }
-
-    return productVariants
+      },
+      info
+    )) as ProductVariant[]
   }
 
   async getSKUData({ brandID, colorCode }) {
@@ -587,6 +597,8 @@ export class ProductService {
       variants,
       photographyStatus,
       season,
+      buyUsedEnabled,
+      buyUsedPrice,
       ...updateData
     } = data
     let functionIDs
@@ -604,6 +616,9 @@ export class ProductService {
           status
           variants {
             id
+            physicalProducts {
+              id
+            }
           }
           brand {
             id
@@ -680,6 +695,34 @@ export class ProductService {
       )
     }
 
+    if (buyUsedEnabled != null || buyUsedPrice != null) {
+      await Promise.all(
+        product?.variants
+          ?.flatMap(variant => variant.physicalProducts)
+          ?.map(physicalProduct =>
+            this.prisma.client.updatePhysicalProduct({
+              where: {
+                id: physicalProduct.id,
+              },
+              data: {
+                price: {
+                  upsert: {
+                    create: {
+                      buyUsedEnabled,
+                      buyUsedPrice,
+                    },
+                    update: {
+                      buyUsedEnabled,
+                      buyUsedPrice,
+                    },
+                  },
+                },
+              },
+            })
+          )
+      )
+    }
+
     await this.storeProductIfNeeded(where, status)
     await this.restoreProductIfNeeded(where, status)
     await this.prisma.client.updateProduct({
@@ -748,6 +791,8 @@ export class ProductService {
     retailPrice,
     productID,
     status,
+    buyUsedEnabled,
+    buyUsedPrice,
   }: {
     sequenceNumbers
     variant
@@ -756,6 +801,8 @@ export class ProductService {
     retailPrice?: number
     productID: string
     status: ProductStatus
+    buyUsedEnabled?: boolean
+    buyUsedPrice?: number
   }) {
     const internalSize = await this.productUtils.deepUpsertSize({
       slug: `${variant.sku}-internal`,
@@ -824,6 +871,10 @@ export class ProductService {
 
     variant.physicalProducts.forEach(async (physProdData, index) => {
       const sequenceNumber = sequenceNumbers[index]
+      const price =
+        buyUsedPrice == null && buyUsedEnabled == null
+          ? physProdData.price || variant.price
+          : { buyUsedEnabled, buyUsedPrice }
       await this.prisma.client.upsertPhysicalProduct({
         where: { seasonsUID: physProdData.seasonsUID },
         create: {
@@ -831,15 +882,15 @@ export class ProductService {
           sequenceNumber,
           productVariant: { connect: { id: prodVar.id } },
           price: {
-            create: physProdData.price || variant.price,
+            create: price,
           },
         },
         update: {
           ...physProdData,
           price: {
             upsert: {
-              update: physProdData.price || variant.price,
-              create: physProdData.price || variant.price,
+              update: price,
+              create: price,
             },
           },
         },

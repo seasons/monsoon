@@ -5,7 +5,6 @@ type Mutation {
     options: FitPicSubmissionOptionsInput
   ): ID! @hasRole(roles: [Admin, Customer])
   reportFitPic(id: ID!): Boolean! @hasRole(roles: [Admin, Customer])
-
   updateFitPic(id: ID!, data: FitPicUpdateInput!): Boolean!
     @hasRole(roles: [Admin])
   deleteFitPic(id: ID!): Boolean! @hasRole(roles: [Admin])

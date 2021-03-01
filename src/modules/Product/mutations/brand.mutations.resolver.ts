@@ -19,12 +19,6 @@ export class BrandMutationsResolver {
 
   @Mutation()
   async updateBrand(@Args() { where, data }) {
-    if (data.externalShopifyIntegration) {
-      data.externalShopifyIntegration = {
-        update: data.externalShopifyIntegration,
-      }
-    }
-
     return await this.brand.updateBrand({ where, data })
   }
 }

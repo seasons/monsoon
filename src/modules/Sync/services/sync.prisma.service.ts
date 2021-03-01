@@ -120,8 +120,12 @@ export class PrismaSyncService {
     // Copy monsoon$production schema and all contained tables as is to destination DB.
     // We are ok with this throwing a few errors.
     try {
+      console.log(
+        `Copying all objects from schema monsoon$production to monsoon$${toSchema}...`
+      )
+
       execSyncWithOptions(
-        `pg_dump --format=t --clean --create --no-password --host=${process.env.DB_PRODUCTION_HOST}\
+        `pg_dump --format=t --schema='monsoon$production' --clean --create --no-password --host=${process.env.DB_PRODUCTION_HOST}\
    --port=${process.env.DB_PRODUCTION_PORT} --username=${process.env.DB_PRODUCTION_USERNAME}\
    ${process.env.DB_PRODUCTION_DBNAME} | pg_restore ${creds}`
       )

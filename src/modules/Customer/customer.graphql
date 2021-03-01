@@ -36,7 +36,8 @@ type Mutation {
     event: CustomerAnalyticsEvent
   ): Customer! @hasRole(roles: [Customer])
   updatePaymentAndShipping(
-    billingAddress: AddressInput!
+    # Billing address here has been deprecated, we only update billing on payment update
+    billingAddress: AddressInput
     shippingAddress: AddressInput!
     phoneNumber: String!
   ): Boolean @hasRole(roles: [Customer])
@@ -128,4 +129,5 @@ type CustomerMembership {
     first: Int
     last: Int
   ): [PauseRequest!]
+  subscription: CustomerMembershipSubscriptionData
 }

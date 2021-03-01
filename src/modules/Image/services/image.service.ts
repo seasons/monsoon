@@ -37,6 +37,9 @@ type ImageSizeMap = {
 }
 
 const sizes: ImageSizeMap = {
+  XSmall: {
+    w: 90,
+  },
   Thumb: {
     w: 208,
   },

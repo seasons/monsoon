@@ -21,16 +21,24 @@ export class MarketingScheduledJobs {
 
   @Cron(CronExpression.EVERY_5_MINUTES)
   async syncCustomersToDrip() {
-    this.logger.log("Run drip sync")
+    this.logger.log("Run drip customers sync")
     const result = await this.dripSync.syncCustomersDifferential()
-    this.logger.log(`drip sync results: `)
+    this.logger.log(`Drip customers sync results: `)
     this.logger.log(result)
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
+  async syncUnsubscribesFromDrip() {
+    this.logger.log(`Run drip unsubscribe sync`)
+    const count = await this.dripSync.syncUnsubscribesFromDrip()
+    this.logger.log(`Drip Unsubscribe job unsucrbied ${count} users`)
   }
 
   @Cron(CronExpression.EVERY_10_MINUTES)
   async authWindowFollowups() {
     this.logger.log("Run auth window followups job")
-    const daySixFollowupsSent = []
+    const daySevenFollowupsSent = []
+    const dayFiveFollowupsSent = []
     const dayThreeFollowupsSent = []
     const dayTwoFollowupsSent = []
     const windowsClosed = []
@@ -39,7 +47,7 @@ export class MarketingScheduledJobs {
       {
         where: {
           AND: [
-            // Prior to Jan 18 2021 we had some cases we need to handle manually
+            // Prior to Jan 26 2021 we had some cases we need to handle manually
             {
               admissions: {
                 authorizationWindowClosesAt_gte: new Date(2021, 0, 26),
@@ -62,6 +70,10 @@ export class MarketingScheduledJobs {
           emails {
             emailId
           }
+          smsReceipts {
+            id
+            smsId
+          }
         }
       }`
     )
@@ -69,26 +81,30 @@ export class MarketingScheduledJobs {
     for (const cust of customers) {
       const now = moment()
 
-      const oneDayPassed = moment(cust.authorizedAt)
+      const dayTwoStarted = moment(cust.authorizedAt)
         .add(1, "d")
         .isSameOrBefore(now)
-      const twoDaysPassed = moment(cust.authorizedAt)
+      const dayThreeStarted = moment(cust.authorizedAt)
         .add(2, "d")
         .isSameOrBefore(now)
-      const threeDaysPassed = moment(cust.authorizedAt)
+      const dayFourStarted = moment(cust.authorizedAt)
         .add(3, "d")
         .isSameOrBefore(now)
-      const fourDaysPassed = moment(cust.authorizedAt)
+      const dayFiveStarted = moment(cust.authorizedAt)
         .add(4, "d")
         .isSameOrBefore(now)
-      const fiveDaysPassed = moment(cust.authorizedAt)
+      const daySixStarted = moment(cust.authorizedAt)
         .add(5, "d")
+        .isSameOrBefore(now)
+      const daySevenStarted = moment(cust.authorizedAt)
+        .add(6, "d")
         .isSameOrBefore(now)
       const windowClosed = moment(now).isAfter(
         cust.admissions?.authorizationWindowClosesAt
       )
 
       const receivedEmails = cust.user.emails.map(a => a.emailId)
+      const receivedSMSs = cust.user.smsReceipts.map(a => a.smsId)
       const dayTwoFollowupSent = receivedEmails.includes(
         "DayTwoAuthorizationFollowup"
       )
@@ -98,11 +114,14 @@ export class MarketingScheduledJobs {
       const dayFourFollowupSent = receivedEmails.includes(
         "DayFourAuthorizationFollowup"
       )
-      const dayFiveFollowupSent = receivedEmails.includes(
-        "DayFiveAuthorizationFollowup"
+      const dayFiveFollowupSent =
+        receivedEmails.includes("DayFiveAuthorizationFollowup") ||
+        receivedSMSs.includes("SeventyTwoHoursLeftAuthorizationFollowup")
+      const daySixFollowupSent = receivedEmails.includes(
+        "DaySixAuthorizationFollowup"
       )
-      const daySixFollowupSent =
-        receivedEmails.includes("DaySixAuthorizationFollowup") ||
+      const daySevenFollowupSent =
+        receivedEmails.includes("DaySevenAuthorizationFollowup") ||
         receivedEmails.includes("TwentyFourHourAuthorizationFollowup") // previous, deprecated email id. Maintain for backwards compatibility.
 
       const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
@@ -128,13 +147,13 @@ export class MarketingScheduledJobs {
         continue
       }
 
-      // Send day 6 email as needed
-      if (fiveDaysPassed) {
-        if (!daySixFollowupSent) {
+      // Send day 7 email as needed
+      if (daySevenStarted) {
+        if (!daySevenFollowupSent) {
           const availableStyles = await this.admissions.getAvailableStyles({
             id: cust.id,
           })
-          await this.email.sendAuthorizedDaySixFollowup(
+          await this.email.sendAuthorizedDaySevenFollowup(
             cust.user,
             availableStyles
           )
@@ -143,21 +162,35 @@ export class MarketingScheduledJobs {
             renderData: { name: cust.user.firstName },
             smsId: "TwentyFourHourLeftAuthorizationFollowup",
           })
-          daySixFollowupsSent.push(cust.user.email)
+          daySevenFollowupsSent.push(cust.user.email)
+        }
+        continue
+      }
+
+      // Send day 6 email as needed
+      if (daySixStarted) {
+        if (!daySixFollowupSent) {
+          // TODO: Send email
         }
         continue
       }
 
       // Send day 5 email if needed
-      if (fourDaysPassed) {
+      if (dayFiveStarted) {
         // TODO: Send email
         if (!dayFiveFollowupSent) {
+          await this.sms.sendSMSById({
+            to: { id: cust.user.id },
+            renderData: { name: cust.user.firstName },
+            smsId: "SeventyTwoHoursLeftAuthorizationFollowup",
+          })
+          dayFiveFollowupsSent.push(cust.user.email)
         }
         continue
       }
 
       // Send day 4 email if needed
-      if (threeDaysPassed) {
+      if (dayFourStarted) {
         // TODO: Send email
         if (!dayFourFollowupSent) {
         }
@@ -165,7 +198,7 @@ export class MarketingScheduledJobs {
       }
 
       // Send day 3 email if needed
-      if (twoDaysPassed) {
+      if (dayThreeStarted) {
         if (!dayThreeFollowupSent) {
           const availableStyles = await this.admissions.getAvailableStyles({
             id: cust.id,
@@ -180,7 +213,7 @@ export class MarketingScheduledJobs {
       }
 
       // Send day 2 email if needed
-      if (oneDayPassed) {
+      if (dayTwoStarted) {
         if (!dayTwoFollowupSent) {
           await this.email.sendAuthorizedDayTwoFollowup(cust.user)
           dayTwoFollowupsSent.push(cust.user.email)
@@ -191,7 +224,8 @@ export class MarketingScheduledJobs {
     this.logger.log("Auth window followups job finished")
     this.logger.log({
       dayThreeFollowupsSent,
-      daySixFollowupsSent,
+      dayFiveFollowupsSent,
+      daySevenFollowupsSent,
       windowsClosed,
     })
   }

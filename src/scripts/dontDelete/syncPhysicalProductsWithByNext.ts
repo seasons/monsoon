@@ -3,7 +3,7 @@ import "module-alias/register"
 import axios from "axios"
 import { chunk } from "lodash"
 
-import { PrismaService } from "../prisma/prisma.service"
+import { PrismaService } from "../../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
@@ -48,7 +48,7 @@ const run = async () => {
     }
     try {
       const res = await axios.post(
-        "https://playground.cleanlyapp.com/seasons/load-items/",
+        "https://cleanlyapp.com/seasons/load-items/",
         data,
         {
           headers: {

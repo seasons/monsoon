@@ -3,12 +3,14 @@ import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
+  BagItem,
   ExternalShopifyIntegration,
+  InventoryStatus,
   PhysicalProductPrice,
   Product,
   ShopifyProductVariant,
 } from "@app/prisma"
-import { ProductVariant } from "@app/prisma/prisma.binding"
+import { Order, ProductVariant } from "@app/prisma/prisma.binding"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
@@ -33,6 +35,78 @@ export class ProductVariantFieldsResolver {
     this.sizeConversion = this.utils.parseJSONFile(
       "src/modules/Product/sizeConversion"
     )
+  }
+
+  @ResolveField()
+  async purchased(
+    @Parent() productVariant: ProductVariant,
+    @Customer() customer,
+    @Loader({
+      params: {
+        query: "orders",
+        info: `{
+          id
+          customer {
+            id
+          }
+          lineItems {
+              id
+              recordType
+              recordID
+          }
+        }`,
+        formatWhere: ids => ({ customer: { id_in: ids } }),
+        getKeys: a => [a.customer.id],
+        fallbackValue: null,
+        keyToDataRelationship: "OneToMany",
+      },
+    })
+    ordersLoader: PrismaDataLoader<Order[]>
+  ) {
+    if (!customer?.id) {
+      return false
+    }
+
+    const orders = await ordersLoader.load(customer.id)
+    const physicalProductIDs = []
+
+    const inOrders = orders?.some(order => {
+      return order?.lineItems?.some(item => {
+        if (
+          item.recordType === "ProductVariant" &&
+          item.recordID === productVariant.id
+        ) {
+          return true
+        } else if (item.recordType === "PhysicalProduct") {
+          physicalProductIDs.push(item.recordID)
+        }
+      })
+    })
+
+    if (inOrders) {
+      return true
+    }
+
+    if (physicalProductIDs.length > 0) {
+      const physicalProducts = await this.prisma.binding.query.physicalProducts(
+        {
+          where: { id_in: physicalProductIDs },
+        },
+        `
+        {
+          id
+          productVariant {
+            id
+          }
+        }
+        `
+      )
+
+      const physicalProductIDS = physicalProducts?.map(p => p.productVariant.id)
+      return physicalProductIDS.includes(productVariant.id)
+    } else {
+      return false
+    }
   }
 
   @ResolveField()
@@ -64,6 +138,7 @@ export class ProductVariantFieldsResolver {
             }
             bottom {
               id
+              type
               value
             }
           }
@@ -103,7 +178,22 @@ export class ProductVariantFieldsResolver {
 
     const manufacturerSize = variant?.manufacturerSizes?.[0]
     if (!!manufacturerSize) {
-      return shortToLongName(manufacturerSize?.bottom?.value)
+      if (
+        manufacturerSize?.bottom?.type === "JP" ||
+        manufacturerSize?.bottom?.type === "EU"
+      ) {
+        const sizeConversion = this.utils.parseJSONFile(
+          "src/modules/Product/sizeConversion"
+        )
+        const conversion =
+          sizeConversion.bottoms?.[manufacturerSize.bottom.type][
+            manufacturerSize.bottom.value
+          ]
+
+        return shortToLongName(conversion)
+      } else {
+        return shortToLongName(manufacturerSize?.bottom?.value)
+      }
     } else {
       return shortToLongName(internalSize.bottom?.value)
     }
@@ -232,6 +322,25 @@ export class ProductVariantFieldsResolver {
   @ResolveField()
   async price(
     @Parent() productVariant: Pick<ProductVariant, "id">,
+    @Customer() customer,
+    @Loader({
+      params: {
+        query: "customers",
+        info: `{
+          bagItems {
+            status
+            productVariant {
+              id
+            }
+          }
+        }`,
+      },
+    })
+    customerLoader: PrismaDataLoader<{
+      bagItems: Array<
+        Pick<BagItem, "status"> & { productVariant: Pick<ProductVariant, "id"> }
+      >
+    }>,
     @Loader({
       params: {
         query: "productVariants",
@@ -242,19 +351,24 @@ export class ProductVariantFieldsResolver {
               buyUsedPrice
               buyUsedEnabled
             }
+            inventoryStatus
           }
           product {
             buyNewEnabled
             brand {
               externalShopifyIntegration {
                 enabled
+                shopName
+                accessToken
               }
             }
           }
           shopifyProductVariant {
+            id
             cacheExpiresAt
             cachedAvailableForSale
             cachedPrice
+            externalId
           }
         }`,
       },
@@ -262,24 +376,30 @@ export class ProductVariantFieldsResolver {
     productVariantLoader: PrismaDataLoader<{
       physicalProducts: Array<{
         price: Pick<PhysicalProductPrice, "buyUsedPrice" | "buyUsedEnabled">
+        inventoryStatus: InventoryStatus
       }>
       product: Pick<Product, "buyNewEnabled"> & {
         brand: {
           externalShopifyIntegration?: Pick<
             ExternalShopifyIntegration,
-            "enabled"
+            "enabled" | "shopName" | "accessToken"
           >
         }
       }
       shopifyProductVariant: Pick<
         ShopifyProductVariant,
-        "cacheExpiresAt" | "cachedAvailableForSale" | "cachedPrice"
+        | "cacheExpiresAt"
+        | "cachedAvailableForSale"
+        | "cachedPrice"
+        | "id"
+        | "externalId"
       >
     }>
   ) {
-    const productVariantResult = await productVariantLoader.load(
-      productVariant.id
-    )
+    const [productVariantResult, customerResult] = await Promise.all([
+      productVariantLoader.load(productVariant.id),
+      customer ? customerLoader.load(customer.id) : Promise.resolve(null),
+    ])
     const {
       physicalProducts,
       product,
@@ -309,7 +429,13 @@ export class ProductVariantFieldsResolver {
       } = await (product?.brand?.externalShopifyIntegration?.enabled
         ? Date.parse(shopifyProductVariant?.cacheExpiresAt) > Date.now()
           ? Promise.resolve(shopifyProductVariant)
-          : this.shopify.cacheProductVariant(productVariant.id)
+          : this.shopify.cacheProductVariant({
+              shopifyProductVariantExternalId: shopifyProductVariant.externalId,
+              shopifyProductVariantInternalId: shopifyProductVariant.id,
+              shopName: product?.brand?.externalShopifyIntegration?.shopName,
+              accessToken:
+                product?.brand?.externalShopifyIntegration?.accessToken,
+            })
         : Promise.resolve({ cachedAvailableForSale: false, cachedPrice: null }))
       shopifyCacheData = {
         buyNewAvailableForSale,
@@ -322,9 +448,25 @@ export class ProductVariantFieldsResolver {
       }
     }
 
+    const isProductVariantReserved = (customerResult?.bagItems || []).some(
+      ({ status, productVariant: { id: productVariantId } }) =>
+        status === "Reserved" && productVariantId === productVariant.id
+    )
+    const buyUsedEnabled = physicalProducts.some(p => p?.price?.buyUsedEnabled)
+    const buyUsedAvailableForSale = physicalProducts.some(
+      physicalProduct =>
+        physicalProduct.price &&
+        physicalProduct.price.buyUsedEnabled &&
+        ((physicalProduct.inventoryStatus === "Reserved" &&
+          isProductVariantReserved) ||
+          physicalProduct.inventoryStatus === "Reservable" ||
+          physicalProduct.inventoryStatus === "Stored")
+    )
+
     return {
       id: productVariant.id,
-      buyUsedEnabled: physicalProducts.some(p => p?.price?.buyUsedEnabled),
+      buyUsedEnabled,
+      buyUsedAvailableForSale,
       buyUsedPrice: usedPhysicalProduct?.price?.buyUsedPrice,
       buyNewEnabled: product.buyNewEnabled,
       ...shopifyCacheData,

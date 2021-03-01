@@ -59,16 +59,20 @@ export class BrandService {
   }) {
     let imageIDs
 
+    const brand: PrismaBindingBrand = await this.prisma.binding.query.brand(
+      { where },
+      `{
+          id
+          slug
+          brandCode
+          externalShopifyIntegration {
+            id
+          }
+      }`
+    )
+
     if (data.images) {
       const images = data.images
-      const brand: PrismaBindingBrand = await this.prisma.binding.query.brand(
-        { where },
-        `{
-            id
-            slug
-            brandCode
-        }`
-      )
 
       const imageNames = images.map((_image, index) => {
         return `${brand.brandCode}-${index + 1}.png`.toLowerCase()
@@ -79,6 +83,17 @@ export class BrandService {
         imageNames,
         data.slug
       )
+    }
+
+    if (data.externalShopifyIntegration) {
+      data.externalShopifyIntegration = {
+        upsert: {
+          update: data.externalShopifyIntegration,
+          create: data.externalShopifyIntegration,
+        },
+      }
+    } else if (brand?.externalShopifyIntegration?.id) {
+      data.externalShopifyIntegration = { delete: true }
     }
 
     return await this.prisma.client.updateBrand({

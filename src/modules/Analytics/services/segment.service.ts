@@ -10,6 +10,7 @@ type SubscribedProperties = CommonTrackProperties & {
   tier: PaymentPlanTier
   planID: string
   method: "ApplePay" | "ChargebeeHostedCheckout"
+  total: number
 }
 
 type TrackingEvent =
@@ -26,6 +27,8 @@ type TrackingEvent =
   | "Exited Active Admin Queue"
   | "Triaged"
   | "Completed Transaction"
+  | "Created Draft Order"
+  | "Submitted Order"
 
 interface CommonTrackProperties {
   firstName: string
@@ -33,6 +36,7 @@ interface CommonTrackProperties {
   email: string
   application?: ApplicationType
   customerID?: string
+  impactId?: string
 }
 
 type BecameAuthorizedProperties = CommonTrackProperties & {
@@ -65,28 +69,63 @@ export class SegmentService {
     userId: string,
     properties: BecameAuthorizedProperties
   ) {
-    this.trackEvent<BecameAuthorizedProperties>(
-      userId,
-      "Became Authorized",
-      properties
-    )
+    this.trackEvent<BecameAuthorizedProperties>(userId, "Became Authorized", {
+      ...properties,
+    })
   }
 
   trackSubscribed(userId: string, properties: SubscribedProperties) {
-    this.trackEvent<SubscribedProperties>(userId, "Subscribed", properties)
+    this.trackEvent<
+      SubscribedProperties & {
+        impactCustomerStatus: "New"
+        currency: "USD"
+      }
+    >(userId, "Subscribed", {
+      ...properties,
+      impactCustomerStatus: "New",
+      currency: "USD",
+    })
   }
 
-  private trackEvent<T>(userId: string, event: TrackingEvent, properties: T) {
+  private trackEvent<T>(
+    userId: string,
+    event: TrackingEvent,
+    properties: T & {
+      impactId?: string
+      impactCustomerStatus?: string
+      total?: number
+    }
+  ) {
     try {
+      let context = {}
+      let _properties = properties
+      if (!!properties.impactId) {
+        context = {
+          referrer: { type: "impactRadius", id: properties.impactId },
+        }
+        if (!!properties.impactCustomerStatus) {
+          context["traits"] = {
+            status: _properties.impactCustomerStatus,
+          }
+        }
+        _properties["orderId"] = new Date().getTime()
+        if (!!properties.total) {
+          _properties.total = properties.total / 100
+        }
+      }
       this.client.track({
         userId,
         event,
-        properties,
+        properties: _properties,
+        context,
       })
       if (process.env.NODE_ENV === "development") {
         console.log(`tracked event`)
         console.log(
-          util.inspect({ userId, event, properties }, { depth: null })
+          util.inspect(
+            { userId, event, properties: _properties },
+            { depth: null }
+          )
         )
       }
     } catch (err) {

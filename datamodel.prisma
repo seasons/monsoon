@@ -63,6 +63,7 @@ enum PhysicalProductStatus {
   PermanentlyDamaged
   Clean
   Lost
+  Sold
 }
 
 enum PhysicalProductOffloadMethod {
@@ -78,6 +79,15 @@ enum ProductStatus {
   NotAvailable
   Stored
   Offloaded
+}
+
+enum PackageStatus {
+  Queued
+  Shipped
+  Delivered
+  Blocked
+  Received
+  Cancelled
 }
 
 enum ReservationStatus {
@@ -163,9 +173,11 @@ enum PhotographyStatus {
 
 enum EmailId {
   CompleteAccount
+  BuyUsedOrderConfirmation
+  DaySevenAuthorizationFollowup
+  DaySixAuthorizationFollowup
   DayFiveAuthorizationFollowup
   DayFourAuthorizationFollowup
-  DaySixAuthorizationFollowup
   DayThreeAuthorizationFollowup
   DayTwoAuthorizationFollowup
   FreeToReserve
@@ -376,7 +388,6 @@ type Product {
   innerMaterials: [String!]! @scalarList(strategy: RELATION)
   materialCategory: ProductMaterialCategory
   model: ProductModel
-  modelHeight: Int
   modelSize: Size @relation(name: "ProductModelSize")
   name: String!
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
@@ -584,6 +595,7 @@ type PaymentPlan {
 enum PaymentPlanTier {
   Essential
   AllAccess
+  Pause
 }
 
 type EmailReceipt {
@@ -741,6 +753,7 @@ type User {
   pushNotifications: [PushNotificationReceipt!]
     @relation(name: "UserToPushNotificationReceipts", onDelete: CASCADE)
   emails: [EmailReceipt!] @relation(name: "UserToEmailReceipts")
+  sendSystemEmails: Boolean! @default(value: true)
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus! @default(value: Pending)
   verificationMethod: UserVerificationMethod! @default(value: None)
@@ -757,6 +770,15 @@ type StylePreferences {
   patterns: [String] @scalarList(strategy: RELATION)
   colors: [String] @scalarList(strategy: RELATION)
   brands: [String] @scalarList(strategy: RELATION)
+}
+
+enum CustomerStyle {
+  AvantGarde
+  Bold
+  Classic
+  Minimalist
+  Streetwear
+  Techwear
 }
 
 type CustomerDetail {
@@ -784,12 +806,14 @@ type CustomerDetail {
   # How much do you spend?
   averageSpend: String
   style: String
+  styles: [CustomerStyle!] @scalarList(strategy: RELATION)
   commuteStyle: String
   stylePreferences: StylePreferences
   shippingAddress: Location
   phoneOS: String
   insureShipment: Boolean! @default(value: false)
   instagramHandle: String
+  impactId: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -865,10 +889,28 @@ type Customer {
   updatedAt: DateTime! @updatedAt
 }
 
+type CustomerMembershipSubscriptionData {
+  id: ID! @id
+  planID: String!
+  subscriptionId: String!
+  currentTermStart: DateTime!
+  currentTermEnd: DateTime!
+  nextBillingAt: DateTime
+  status: String!
+  planPrice: Int!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type CustomerMembership {
   id: ID! @id
   plan: PaymentPlan
   subscriptionId: String!
+  subscription: CustomerMembershipSubscriptionData
+    @relation(
+      name: "CustomerToCustomerMembershipSubscriptionData"
+      onDelete: CASCADE
+    )
   customer: Customer!
     @relation(
       name: "CustomerToCustomerMembership"
@@ -880,11 +922,17 @@ type CustomerMembership {
   giftId: String
 }
 
+enum PauseType {
+  WithItems
+  WithoutItems
+}
+
 type PauseRequest {
   id: ID! @id
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   pausePending: Boolean!
+  pauseType: PauseType! @default(value: WithoutItems)
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean! @default(value: false)
@@ -897,6 +945,75 @@ type RecentlyViewedProduct {
   product: Product!
   customer: Customer!
   viewCount: Int! @default(value: 0)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+enum OrderType {
+  Used
+  New
+  External
+}
+
+enum OrderLineItemRecordType {
+  PhysicalProduct
+  ProductVariant
+  ExternalProduct
+  Package
+}
+
+enum OrderStatus {
+  Drafted
+  Submitted
+  Fulfilled
+  Returned
+  Cancelled
+}
+
+enum OrderCancelReason {
+  Customer # The customer wanted to cancel the order
+  Declined # Payment was declined
+  Fraud # The order was fraudulent
+  Inventory # There was insufficient inventory
+  Other # Some other reason not listed
+}
+
+enum OrderPaymentStatus {
+  Paid
+  PartiallyPaid
+  Refunded
+  NotPaid
+}
+
+type OrderLineItem {
+  id: ID! @id
+  recordID: ID!
+  recordType: OrderLineItemRecordType!
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int!
+  currencyCode: String!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Order {
+  id: ID! @id
+  customer: Customer!
+  sentPackage: Package
+  lineItems: [OrderLineItem!]!
+  orderNumber: String! @unique
+  type: OrderType!
+  status: OrderStatus! @default(value: Drafted)
+  subTotal: Int
+  total: Int
+  cancelReason: OrderCancelReason
+  couponID: String
+  paymentStatus: OrderPaymentStatus! @default(value: NotPaid)
+  note: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -1006,6 +1123,7 @@ type Package {
   weight: Float
   cost: Int #cents
   events: [PackageTransitEvent!]
+  status: PackageStatus
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

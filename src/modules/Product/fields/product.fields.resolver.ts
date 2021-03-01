@@ -1,4 +1,7 @@
 import { Customer } from "@app/decorators"
+import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
+import { Product } from "@app/prisma"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { ProductService } from "@modules/Product/services/product.service"
@@ -20,6 +23,25 @@ export class ProductFieldsResolver {
   @ResolveField()
   async isSaved(@Parent() product, @Customer() customer) {
     return this.productService.isSaved(product, customer)
+  }
+
+  @ResolveField()
+  async modelHeight(@Parent() product) {
+    const productWithModel = await this.prisma.binding.query.product(
+      {
+        where: { id: product.id },
+      },
+      `
+    {
+      model {
+        id
+        height
+      }
+    }
+    `
+    )
+
+    return productWithModel.model?.height
   }
 
   @ResolveField()
@@ -64,6 +86,86 @@ export class ProductFieldsResolver {
       )
       return uniqueVariants
     }
+  }
+
+  @ResolveField()
+  async buyUsedEnabled(
+    @Parent() product: Pick<Product, "id">,
+    @Loader({
+      params: {
+        query: "products",
+        info: `{
+          id
+          variants {
+            physicalProducts {
+              price {
+                buyUsedEnabled
+              }
+            }
+          }
+        }`,
+      },
+    })
+    productLoader: PrismaDataLoader<{
+      variants?: Array<{
+        physicalProducts?: Array<{
+          price?: {
+            buyUsedEnabled: boolean
+          }
+        }>
+      }>
+    }>
+  ) {
+    const productResult = await productLoader.load(product.id)
+
+    // Assume all physical products associated with the product have the same
+    // buyUsedEnabled configuration.
+    return (
+      productResult?.variants
+        ?.flatMap(productVariant => productVariant.physicalProducts)
+        ?.flatMap(physicalProduct => physicalProduct?.price)
+        ?.some(price => price?.buyUsedEnabled) || false
+    )
+  }
+
+  @ResolveField()
+  async buyUsedPrice(
+    @Parent() product: Pick<Product, "id">,
+    @Loader({
+      params: {
+        query: "products",
+        info: `{
+          id
+          variants {
+            physicalProducts {
+              price {
+                buyUsedPrice
+              }
+            }
+          }
+        }`,
+      },
+    })
+    productLoader: PrismaDataLoader<{
+      variants?: Array<{
+        physicalProducts?: Array<{
+          price?: {
+            buyUsedPrice: number
+          }
+        }>
+      }>
+    }>
+  ) {
+    const productResult = await productLoader.load(product.id)
+
+    // Assume all physical products associated with the product have the same
+    // buyUsedEnabled configuration.
+    const price = productResult?.variants
+      ?.flatMap(productVariant => productVariant.physicalProducts)
+      ?.flatMap(physicalProduct => physicalProduct?.price)
+      ?.find(price => price?.buyUsedPrice)
+
+    return price?.buyUsedPrice || null
   }
 
   @ResolveField()

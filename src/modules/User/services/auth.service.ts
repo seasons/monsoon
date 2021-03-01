@@ -1,12 +1,16 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { PaymentService } from "@app/modules/Payment/services/payment.service"
+import {
+  PaymentService,
+  SubscriptionData,
+} from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerCreateInput, CustomerDetail } from "@app/prisma/prisma.binding"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import {
   CustomerDetailCreateInput,
+  CustomerMembershipSubscriptionData,
   UserPushNotificationInterestType,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -140,8 +144,7 @@ export class AuthService {
           expiry_month: nextMonth.month,
           expiry_year: nextMonth.year,
         },
-        subscription.plan_id.replace("-gift", ""),
-        subscription.id,
+        subscription,
         giftId
       )
     }
@@ -296,13 +299,13 @@ export class AuthService {
   ): SegmentReservedTraitsInCustomerDetail {
     const traits = {} as any
     if (!!detail?.phoneNumber) {
-      traits.phone = detail.phoneNumber
+      traits.phone = detail.phoneNumber.trim()
     }
     const state = detail?.shippingAddress?.state
     if (!!detail.shippingAddress) {
       traits.address = {
-        city: detail.shippingAddress?.city,
-        postalCode: detail.shippingAddress?.zipCode,
+        city: detail.shippingAddress?.city?.trim(),
+        postalCode: detail.shippingAddress?.zipCode?.trim(),
         state,
       }
       traits.state = state
@@ -449,11 +452,12 @@ export class AuthService {
     utm
   ) {
     if (details?.shippingAddress?.create?.zipCode) {
-      const zipCode = details?.shippingAddress?.create?.zipCode
+      const zipCode = details?.shippingAddress?.create?.zipCode.trim()
       const state = zipcodes.lookup(zipCode)?.state
       const city = zipcodes.lookup(zipCode)?.city
       details.shippingAddress.create.city = city
       details.shippingAddress.create.state = state
+      details.shippingAddress.create.zipCode = zipCode
     }
     if (details?.phoneNumber) {
       details.phoneNumber = details.phoneNumber.replace(/-/g, "")

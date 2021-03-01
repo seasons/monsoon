@@ -7,6 +7,7 @@ import nodemailer from "nodemailer"
 import {
   EmailId,
   ID_Input,
+  Order,
   Reservation as PrismaReservation,
   Product,
   User,
@@ -56,32 +57,36 @@ export class EmailService {
     })
   }
 
-  async sendAuthorizedDaySixFollowup(
+  async sendAuthorizedDaySevenFollowup(
     user: EmailUser,
     availableStyles: Product[]
   ) {
     await this.sendEmailWithReservableStyles({
       user,
       availableStyles,
-      renderEmailFunc: "authorizedDaySixFollowup",
-      emailId: "DaySixAuthorizationFollowup",
+      renderEmailFunc: "authorizedDaySevenFollowup",
+      emailId: "DaySevenAuthorizationFollowup",
     })
   }
-
   async sendAuthorizedDayThreeFollowup(
     user: EmailUser,
-    availableStyles: Product[]
+    availableStyles: Product[],
+    status: string = "Authorized"
   ) {
     await this.sendEmailWithReservableStyles({
       user,
       availableStyles,
       renderEmailFunc: "authorizedDayThreeFollowup",
       emailId: "DayThreeAuthorizationFollowup",
+      renderData: { status },
     })
   }
 
-  async sendAuthorizedDayTwoFollowup(user: EmailUser) {
-    const payload = await RenderEmail.authorizedDayTwoFollowup()
+  async sendAuthorizedDayTwoFollowup(user: EmailUser, status = "Authorized") {
+    const payload = await RenderEmail.authorizedDayTwoFollowup({
+      status,
+      id: user.id,
+    })
     await this.sendPreRenderedTransactionalEmail({
       user: user,
       payload,
@@ -98,6 +103,77 @@ export class EmailService {
     })
   }
 
+  async sendBuyUsedOrderConfirmationEmail(user: EmailUser, order: Order) {
+    // Gather the appropriate product info
+    const orderLineItems = await this.prisma.client
+      .order({ id: order.id })
+      .lineItems()
+    const physicalProductId = orderLineItems.find(
+      orderLineItem => orderLineItem.recordType === "PhysicalProduct"
+    ).recordID
+    const productId = (
+      await this.prisma.client
+        .physicalProduct({ id: physicalProductId })
+        .productVariant()
+        .product()
+    ).id
+    const products = await this.emailUtils.createGridPayload([
+      { id: productId },
+    ])
+
+    // Grab the appropriate order info
+    const formattedOrderLineItems = await this.emailUtils.formatOrderLineItems(
+      order
+    )
+    const needsShipping = orderLineItems.reduce(
+      (acc, curVal) => acc || curVal.needShipping,
+      false
+    )
+
+    const custData = (
+      await this.prisma.binding.query.customers(
+        {
+          where: { user: { id: user.id } },
+        },
+        `{
+        detail {
+          id
+          shippingAddress {
+            id
+            name
+            address1
+            address2
+            city
+            state
+            zipCode
+          }
+        }
+        billingInfo {
+          id
+          brand
+          last_digits
+        }
+      }`
+      )
+    )?.[0] as Customer
+
+    // Render the email
+    const payload = await RenderEmail.buyUsedOrderConfirmation({
+      name: user.firstName,
+      orderNumber: order.orderNumber,
+      orderLineItems: formattedOrderLineItems,
+      shipping: custData.detail.shippingAddress,
+      cardInfo: custData.billingInfo,
+      products,
+      needsShipping,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      user,
+      payload,
+      emailId: "BuyUsedOrderConfirmation",
+    })
+  }
+
   async sendReferralConfirmationEmail({
     referrer,
     referee,
@@ -108,6 +184,7 @@ export class EmailService {
     const payload = await RenderEmail.referralConfirmation({
       referrerName: referrer.firstName,
       refereeName: `${referee.firstName}`,
+      id: referrer.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user: referrer,
@@ -119,6 +196,7 @@ export class EmailService {
   async sendWaitlistedEmail(user: EmailUser) {
     const payload = await RenderEmail.waitlisted({
       name: user.firstName,
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -149,6 +227,7 @@ export class EmailService {
       name: user.firstName,
       planId: cust.membership?.plan?.planID,
       itemCount: `${cust.membership?.plan?.itemCount}`,
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -164,6 +243,7 @@ export class EmailService {
       name: customer.user.firstName,
       isExtension,
       resumeDate: latestPauseRequest.resumeDate,
+      id: customer.user.id,
     })
 
     await this.sendPreRenderedTransactionalEmail({
@@ -200,17 +280,20 @@ export class EmailService {
       email: user.email,
       reservationNumber: reservation.reservationNumber,
       returnedItems: returnedPhysicalProducts.map(a => a.seasonsUID),
+      id: user.id,
     })
     await this.sendEmail({
       to: process.env.OPERATIONS_ADMIN_EMAIL,
       subject: payload.subject,
       html: payload.body,
+      type: payload.type,
     })
   }
 
   async sendPriorityAccessEmail(user: EmailUser) {
     const payload = await RenderEmail.priorityAccess({
       name: user.firstName,
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -233,6 +316,7 @@ export class EmailService {
       orderNumber: reservation.reservationNumber,
       trackingNumber,
       trackingURL: trackingUrl,
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -248,6 +332,7 @@ export class EmailService {
     const payload = await RenderEmail.returnReminder({
       name: user.firstName,
       returnDate: this.utils.getReservationReturnDate(reservation),
+      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -257,7 +342,7 @@ export class EmailService {
   }
 
   async sendYouCanNowReserveAgainEmail(user: EmailUser) {
-    const payload = await RenderEmail.freeToReserve({})
+    const payload = await RenderEmail.freeToReserve({ id: user.id })
     await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
@@ -287,6 +372,7 @@ export class EmailService {
     const payload = await RenderEmail[renderEmailFunc]({
       name: `${user.firstName}`,
       products,
+      id: user.id,
       ...renderData,
     })
     await this.sendPreRenderedTransactionalEmail({
@@ -309,7 +395,7 @@ export class EmailService {
     renderEmailFunc:
       | "authorized"
       | "authorizedDayThreeFollowup"
-      | "authorizedDaySixFollowup"
+      | "authorizedDaySevenFollowup"
       | "rewaitlisted"
     emailId: EmailId
     renderData?: any
@@ -322,6 +408,7 @@ export class EmailService {
     const payload = await RenderEmail[renderEmailFunc]({
       name: `${user.firstName}`,
       products,
+      id: user.id,
       ...renderData,
     })
     await this.sendPreRenderedTransactionalEmail({
@@ -336,22 +423,31 @@ export class EmailService {
 
   private async sendPreRenderedTransactionalEmail({
     user,
-    payload: { body, subject },
+    payload: { body, subject, type },
     emailId,
   }: {
     user: EmailUser
-    payload: { body: string; subject: string }
+    payload: { body: string; subject: string; type: "essential" | "marketing" }
     emailId: EmailId
   }) {
-    await this.sendEmail({
+    const storeReceipt = await this.sendEmail({
       to: user.email,
       subject: subject,
       html: body,
+      type,
     })
-    await this.storeEmailReceipt(emailId, user.id)
+    if (storeReceipt) {
+      await this.storeEmailReceipt(emailId, user.id)
+    }
   }
 
-  private async sendEmail({ to, subject, html }) {
+  // returns true if it sent the email, false otherwise
+  private async sendEmail({ to, subject, html, type }) {
+    const shouldSendEmail = await this.shouldSendEmail({ to, type })
+    if (!shouldSendEmail) {
+      return false
+    }
+
     const nodemailerTransport = nodemailer.createTransport({
       host: "smtp.mailtrap.io",
       port: 2525,
@@ -376,6 +472,19 @@ export class EmailService {
         ...msg,
       })
     }
+
+    return true
+  }
+
+  private async shouldSendEmail({ to, type }) {
+    if (to === process.env.OPERATIONS_ADMIN_EMAIL) {
+      return true
+    }
+    if (type === "essential") {
+      return true
+    }
+    const u = await this.prisma.client.user({ email: to })
+    return u.sendSystemEmails
   }
 
   private async addEmailedProductsToCustomer(

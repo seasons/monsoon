@@ -2,12 +2,37 @@ type Mutation {
   createEmbedURL(input: CreateEmbedURLInput): String @hasRole(roles: [Admin])
 }
 
-enum ViewType {
+type Query {
+  dashboard(id: ID!): AnalyticsDashboard @hasRole(roles: [Admin])
+}
+
+enum AnalyticsViewType {
   Dashboard
   Look
 }
 
 input CreateEmbedURLInput {
-  type: ViewType
+  type: AnalyticsViewType
   index: Int
+}
+
+enum ElementType {
+  Basic
+  Count
+  Money
+}
+
+type AnalyticsDashboardElement {
+  id: ID!
+  type: ElementType
+  slug: String
+  title: String
+  view: String
+  result: JSON
+}
+
+type AnalyticsDashboard {
+  id: ID!
+  name: String
+  elements: [AnalyticsDashboardElement!]
 }

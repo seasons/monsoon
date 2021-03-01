@@ -28,7 +28,6 @@ describe("Auth Service", () => {
   let emailService: EmailService
 
   beforeAll(async () => {
-    jest.spyOn(SMSService.prototype as any, "setupService").mockImplementation()
     const moduleRef = await Test.createTestingModule({
       providers: [
         AuthService,
