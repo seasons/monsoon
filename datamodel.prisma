@@ -506,6 +506,7 @@ type PhysicalProductQualityReport {
   id: ID! @id
   user: User!
   damageType: PhysicalProductDamageType
+  damageTypes: [PhysicalProductDamageType!] @scalarList(strategy: RELATION)
   notes: String
   physicalProduct: PhysicalProduct!
   createdAt: DateTime! @createdAt
