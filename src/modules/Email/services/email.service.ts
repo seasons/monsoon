@@ -162,7 +162,7 @@ export class EmailService {
       name: user.firstName,
       orderNumber: order.orderNumber,
       orderLineItems: formattedOrderLineItems,
-      shipping: custData.detail.shippingAddress,
+      shipping: custData.detail.shippingAddress as any,
       cardInfo: custData.billingInfo,
       products,
       needsShipping,
@@ -184,7 +184,6 @@ export class EmailService {
     const payload = await RenderEmail.referralConfirmation({
       referrerName: referrer.firstName,
       refereeName: `${referee.firstName}`,
-      id: referrer.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user: referrer,
@@ -196,7 +195,6 @@ export class EmailService {
   async sendWaitlistedEmail(user: EmailUser) {
     const payload = await RenderEmail.waitlisted({
       name: user.firstName,
-      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -227,7 +225,6 @@ export class EmailService {
       name: user.firstName,
       planId: cust.membership?.plan?.planID,
       itemCount: `${cust.membership?.plan?.itemCount}`,
-      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -248,18 +245,19 @@ export class EmailService {
         .price()
     }
 
-    const payload = await RenderEmail.paused({
-      id: customer.user.id,
+    const data = {
       name: customer.user.firstName,
       resumeDate: latestPauseRequest.resumeDate,
       startDate: latestPauseRequest.pauseDate,
-      hasOpenReservation: ["Completed", "Cancelled"].includes(
-        latestReservation?.status
-      ),
+      hasOpenReservation:
+        !!latestReservation &&
+        !["Completed", "Cancelled"].includes(latestReservation.status),
       withItems,
       pausedWithItemsPrice,
       isExtension,
-    })
+    }
+    console.log(data)
+    const payload = await RenderEmail.paused(data)
 
     await this.sendPreRenderedTransactionalEmail({
       user: customer.user,
@@ -293,9 +291,8 @@ export class EmailService {
     const payload = await RenderEmail.adminReservationReturnConfirmation({
       name: user.firstName,
       email: user.email,
-      reservationNumber: reservation.reservationNumber,
+      reservationNumber: `${reservation.reservationNumber}`,
       returnedItems: returnedPhysicalProducts.map(a => a.seasonsUID),
-      id: user.id,
     })
     await this.sendEmail({
       to: process.env.OPERATIONS_ADMIN_EMAIL,
@@ -308,7 +305,6 @@ export class EmailService {
   async sendPriorityAccessEmail(user: EmailUser) {
     const payload = await RenderEmail.priorityAccess({
       name: user.firstName,
-      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -328,7 +324,7 @@ export class EmailService {
 
     const payload = await RenderEmail.reservationConfirmation({
       products: formattedProducts,
-      orderNumber: reservation.reservationNumber,
+      orderNumber: `${reservation.reservationNumber}`,
       trackingNumber,
       trackingURL: trackingUrl,
       id: user.id,
@@ -347,7 +343,6 @@ export class EmailService {
     const payload = await RenderEmail.returnReminder({
       name: user.firstName,
       returnDate: this.utils.getReservationReturnDate(reservation),
-      id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -357,7 +352,7 @@ export class EmailService {
   }
 
   async sendYouCanNowReserveAgainEmail(user: EmailUser) {
-    const payload = await RenderEmail.freeToReserve({ id: user.id })
+    const payload = await RenderEmail.freeToReserve()
     await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
