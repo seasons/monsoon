@@ -330,11 +330,24 @@ export class SMSService {
                       }
                       membership {
                         id
+                        plan {
+                          id
+                          tier
+                          planID
+                          itemCount
+                        }
                         pauseRequests {
                           id
                           createdAt
                           resumeDate
+                          pauseDate
+                          pauseType
                         }
+                      }
+                      reservations {
+                        id
+                        status
+                        createdAt
                       }
                     }`
                   )

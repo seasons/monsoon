@@ -1,4 +1,6 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
@@ -14,7 +16,8 @@ export class SubscriptionsScheduledJobs {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly paymentUtils: PaymentUtilsService
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
@@ -66,21 +69,9 @@ export class SubscriptionsScheduledJobs {
         if (!customer) {
           console.log("error no customer")
         } else {
-          const data = {
-            nextBillingAt: !!subscription.next_billing_at
-              ? DateTime.fromSeconds(subscription.next_billing_at).toISO()
-              : null,
-            currentTermEnd: DateTime.fromSeconds(
-              subscription.current_term_end
-            ).toISO(),
-            currentTermStart: DateTime.fromSeconds(
-              subscription.current_term_start
-            ).toISO(),
-            status: subscription.status,
-            planPrice: subscription.plan_amount,
-            subscriptionId: subscription.id,
-            planID: subscription.plan_id.replace("-gift", ""),
-          }
+          const data = this.paymentUtils.getCustomerMembershipSubscriptionData(
+            subscription
+          )
 
           const membershipSubscriptionID =
             customer?.membership?.subscription?.id
