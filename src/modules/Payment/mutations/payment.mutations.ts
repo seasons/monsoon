@@ -113,11 +113,11 @@ export class PaymentMutationsResolver {
           pauseDate
           pauseType
         }
-        reservations {
-          id
-          status
-          createdAt
-        }
+      }
+      reservations {
+        id
+        status
+        createdAt
       }
     }`
     )) as any
