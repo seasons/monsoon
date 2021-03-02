@@ -68,16 +68,9 @@ export class MembershipScheduledJobs {
           const customerId = pauseRequestWithCustomer?.membership?.customer?.id
 
           if (pauseRequest.pauseType === "WithItems") {
-            const itemCount =
-              pauseRequestWithCustomer?.membership?.plan?.itemCount
-            let planID
-            if (itemCount === 1) {
-              planID = "pause-1"
-            } else if (itemCount === 2) {
-              planID = "pause-2"
-            } else if (itemCount === 3) {
-              planID = "pause-3"
-            }
+            const planID = this.utils.getPauseWIthItemsPlanId(
+              pauseRequestWithCustomer?.membership
+            )
 
             await chargebee.subscription
               .update(pauseRequestWithCustomer.membership.subscriptionId, {

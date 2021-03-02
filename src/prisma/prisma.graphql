@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Feb 25 2021 12:53:25 GMT-0500 (Eastern Standard Time)
+# timestamp: Tue Mar 02 2021 15:47:23 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -8578,7 +8578,7 @@ type CustomerMembershipSubscriptionData implements Node {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
   createdAt: DateTime!
@@ -8607,7 +8607,7 @@ input CustomerMembershipSubscriptionDataCreateInput {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
 }
@@ -8661,7 +8661,7 @@ type CustomerMembershipSubscriptionDataPreviousValues {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
   createdAt: DateTime!
@@ -24476,6 +24476,7 @@ enum PhysicalProductStatus {
   PermanentlyDamaged
   Clean
   Lost
+  Sold
 }
 
 type PhysicalProductSubscriptionPayload {
@@ -25315,7 +25316,6 @@ type Product implements Node {
   innerMaterials: [String!]!
   materialCategory: ProductMaterialCategory
   model: ProductModel
-  modelHeight: Int
   modelSize: Size
   name: String!
   outerMaterials: [String!]!
@@ -25383,7 +25383,6 @@ input ProductCreateInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -25459,7 +25458,6 @@ input ProductCreateWithoutBrandInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -25490,7 +25488,6 @@ input ProductCreateWithoutCategoryInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -25521,7 +25518,6 @@ input ProductCreateWithoutMaterialCategoryInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -25552,7 +25548,6 @@ input ProductCreateWithoutModelInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -25583,7 +25578,6 @@ input ProductCreateWithoutTagsInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -25614,7 +25608,6 @@ input ProductCreateWithoutVariantsInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String!
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -27140,8 +27133,6 @@ enum ProductOrderByInput {
   externalURL_DESC
   buyNewEnabled_ASC
   buyNewEnabled_DESC
-  modelHeight_ASC
-  modelHeight_DESC
   name_ASC
   name_DESC
   photographyStatus_ASC
@@ -27171,7 +27162,6 @@ type ProductPreviousValues {
   externalURL: String
   buyNewEnabled: Boolean!
   innerMaterials: [String!]!
-  modelHeight: Int
   name: String!
   outerMaterials: [String!]!
   photographyStatus: PhotographyStatus
@@ -28250,42 +28240,6 @@ input ProductScalarWhereInput {
   All values that are not equal to given value.
   """
   buyNewEnabled_not: Boolean
-  modelHeight: Int
-
-  """
-  All values that are not equal to given value.
-  """
-  modelHeight_not: Int
-
-  """
-  All values that are contained in given list.
-  """
-  modelHeight_in: [Int!]
-
-  """
-  All values that are not contained in given list.
-  """
-  modelHeight_not_in: [Int!]
-
-  """
-  All values less than the given value.
-  """
-  modelHeight_lt: Int
-
-  """
-  All values less than or equal the given value.
-  """
-  modelHeight_lte: Int
-
-  """
-  All values greater than the given value.
-  """
-  modelHeight_gt: Int
-
-  """
-  All values greater than or equal the given value.
-  """
-  modelHeight_gte: Int
   name: String
 
   """
@@ -29285,7 +29239,6 @@ input ProductUpdateDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -29320,7 +29273,6 @@ input ProductUpdateInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -29351,7 +29303,6 @@ input ProductUpdateManyDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -29381,7 +29332,6 @@ input ProductUpdateManyMutationInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -29482,7 +29432,6 @@ input ProductUpdateWithoutBrandDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -29512,7 +29461,6 @@ input ProductUpdateWithoutCategoryDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -29542,7 +29490,6 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -29572,7 +29519,6 @@ input ProductUpdateWithoutModelDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -29602,7 +29548,6 @@ input ProductUpdateWithoutTagsDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -29632,7 +29577,6 @@ input ProductUpdateWithoutVariantsDataInput {
   description: String
   externalURL: String
   buyNewEnabled: Boolean
-  modelHeight: Int
   name: String
   photographyStatus: PhotographyStatus
   productFit: ProductFit
@@ -33217,42 +33161,6 @@ input ProductWhereInput {
   All values that are not equal to given value.
   """
   buyNewEnabled_not: Boolean
-  modelHeight: Int
-
-  """
-  All values that are not equal to given value.
-  """
-  modelHeight_not: Int
-
-  """
-  All values that are contained in given list.
-  """
-  modelHeight_in: [Int!]
-
-  """
-  All values that are not contained in given list.
-  """
-  modelHeight_not_in: [Int!]
-
-  """
-  All values less than the given value.
-  """
-  modelHeight_lt: Int
-
-  """
-  All values less than or equal the given value.
-  """
-  modelHeight_lte: Int
-
-  """
-  All values greater than the given value.
-  """
-  modelHeight_gt: Int
-
-  """
-  All values greater than or equal the given value.
-  """
-  modelHeight_gte: Int
   name: String
 
   """

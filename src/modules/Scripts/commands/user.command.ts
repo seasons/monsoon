@@ -1,5 +1,6 @@
 import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
+import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable, Logger } from "@nestjs/common"
@@ -31,6 +32,7 @@ export class UserCommands {
     private readonly prisma: PrismaService,
     private readonly paymentService: PaymentService,
     private readonly utils: UtilsService,
+    private readonly paymentUtils: PaymentUtilsService,
     private moduleRef: ModuleRef
   ) {}
 
@@ -246,7 +248,7 @@ export class UserCommands {
         cvv: "222",
       }
       this.logger.log("Updating customer")
-      const subscription = await this.paymentService.createSubscription(
+      const { subscription } = await this.paymentService.createSubscription(
         planID,
         this.utils.snakeCaseify(address),
         user,
@@ -261,7 +263,7 @@ export class UserCommands {
                   planID,
                 },
               },
-              subscriptionId: subscription.subscription.id,
+              subscriptionId: subscription.id,
               ...(status === "Paused"
                 ? {
                     pauseRequests: {
@@ -275,6 +277,11 @@ export class UserCommands {
                     },
                   }
                 : {}),
+              subscription: {
+                create: this.paymentUtils.getCustomerMembershipSubscriptionData(
+                  subscription
+                ),
+              },
             },
           },
           billingInfo: {

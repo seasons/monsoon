@@ -26,6 +26,25 @@ export class ProductFieldsResolver {
   }
 
   @ResolveField()
+  async modelHeight(@Parent() product) {
+    const productWithModel = await this.prisma.binding.query.product(
+      {
+        where: { id: product.id },
+      },
+      `
+    {
+      model {
+        id
+        height
+      }
+    }
+    `
+    )
+
+    return productWithModel.model?.height
+  }
+
+  @ResolveField()
   async variants(@Parent() parent, @Info() info) {
     const productVariants = await this.prisma.binding.query.productVariants(
       {
@@ -105,7 +124,7 @@ export class ProductFieldsResolver {
       productResult?.variants
         ?.flatMap(productVariant => productVariant.physicalProducts)
         ?.flatMap(physicalProduct => physicalProduct?.price)
-        ?.some(price => price.buyUsedEnabled) || false
+        ?.some(price => price?.buyUsedEnabled) || false
     )
   }
 

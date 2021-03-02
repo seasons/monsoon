@@ -53,6 +53,15 @@ export class PhysicalProductUtilsService {
     )
   }
 
+  extractUniqueNonreservablePhysicalProducts(
+    physicalProducts: PhysicalProductWithReservationSpecificData[]
+  ): PhysicalProductWithReservationSpecificData[] {
+    return uniqBy(
+      physicalProducts.filter(a => a.inventoryStatus !== "Reservable"),
+      b => b.productVariant.id
+    )
+  }
+
   async markPhysicalProductsReservedOnPrisma(
     physicalProducts: PhysicalProduct[]
   ): Promise<() => void> {

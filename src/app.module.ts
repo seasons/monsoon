@@ -7,6 +7,8 @@ import { APP_INTERCEPTOR } from "@nestjs/core"
 import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
 import { ScheduleModule } from "@nestjs/schedule"
 import sgMail from "@sendgrid/mail"
+import { RedisCache } from "apollo-server-cache-redis"
+import responseCachePlugin from "apollo-server-plugin-response-cache"
 import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
 import GraphQLJSON from "graphql-type-json"
@@ -53,8 +55,6 @@ const scheduleModule =
   process.env.NODE_ENV === "production" && process.env.DYNO?.includes("cron")
     ? [ScheduleModule.forRoot()]
     : []
-// const scheduleModule =
-//   process.env.NODE_ENV === "development" ? [ScheduleModule.forRoot()] : []
 
 @Module({
   imports: [
@@ -72,6 +72,10 @@ const scheduleModule =
           context: ({ req }) => ({
             req,
           }),
+          plugins: [responseCachePlugin()],
+          cacheControl: {
+            defaultMaxAge: process.env.CACHE_MAX_AGE || 5,
+          },
           uploads: {
             maxFileSize: 125000000, // 125 MB
             maxFiles: 5,
@@ -84,6 +88,7 @@ const scheduleModule =
           resolvers: {
             JSON: GraphQLJSON,
           },
+          cache: new RedisCache(process.env.REDIS_URL),
         } as GqlModuleOptions),
     }),
     AdminModule,

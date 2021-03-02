@@ -3680,7 +3680,7 @@ type CustomerMembershipSubscriptionData {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
   createdAt: DateTime!
@@ -3699,7 +3699,7 @@ input CustomerMembershipSubscriptionDataCreateInput {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
 }
@@ -3743,7 +3743,7 @@ type CustomerMembershipSubscriptionDataPreviousValues {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
   createdAt: DateTime!
@@ -10036,6 +10036,7 @@ enum PhysicalProductStatus {
   PermanentlyDamaged
   Clean
   Lost
+  Sold
 }
 
 type PhysicalProductSubscriptionPayload {
@@ -10457,7 +10458,6 @@ type Product {
   innerMaterials: [String!]!
   materialCategory: ProductMaterialCategory
   model: ProductModel
-  modelHeight: Int
   modelSize: Size
   name: String!
   outerMaterials: [String!]!
@@ -10507,7 +10507,6 @@ input ProductCreateInput {
   innerMaterials: ProductCreateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   model: ProductModelCreateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeCreateOneInput
   name: String!
   outerMaterials: ProductCreateouterMaterialsInput
@@ -10582,7 +10581,6 @@ input ProductCreateWithoutBrandInput {
   innerMaterials: ProductCreateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   model: ProductModelCreateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeCreateOneInput
   name: String!
   outerMaterials: ProductCreateouterMaterialsInput
@@ -10613,7 +10611,6 @@ input ProductCreateWithoutCategoryInput {
   innerMaterials: ProductCreateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   model: ProductModelCreateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeCreateOneInput
   name: String!
   outerMaterials: ProductCreateouterMaterialsInput
@@ -10644,7 +10641,6 @@ input ProductCreateWithoutMaterialCategoryInput {
   images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   model: ProductModelCreateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeCreateOneInput
   name: String!
   outerMaterials: ProductCreateouterMaterialsInput
@@ -10675,7 +10671,6 @@ input ProductCreateWithoutModelInput {
   images: ImageCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeCreateOneInput
   name: String!
   outerMaterials: ProductCreateouterMaterialsInput
@@ -10707,7 +10702,6 @@ input ProductCreateWithoutTagsInput {
   innerMaterials: ProductCreateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   model: ProductModelCreateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeCreateOneInput
   name: String!
   outerMaterials: ProductCreateouterMaterialsInput
@@ -10738,7 +10732,6 @@ input ProductCreateWithoutVariantsInput {
   innerMaterials: ProductCreateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   model: ProductModelCreateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeCreateOneInput
   name: String!
   outerMaterials: ProductCreateouterMaterialsInput
@@ -11391,8 +11384,6 @@ enum ProductOrderByInput {
   externalURL_DESC
   buyNewEnabled_ASC
   buyNewEnabled_DESC
-  modelHeight_ASC
-  modelHeight_DESC
   name_ASC
   name_DESC
   photographyStatus_ASC
@@ -11422,7 +11413,6 @@ type ProductPreviousValues {
   externalURL: String
   buyNewEnabled: Boolean!
   innerMaterials: [String!]!
-  modelHeight: Int
   name: String!
   outerMaterials: [String!]!
   photographyStatus: PhotographyStatus
@@ -11761,14 +11751,6 @@ input ProductScalarWhereInput {
   externalURL_not_ends_with: String
   buyNewEnabled: Boolean
   buyNewEnabled_not: Boolean
-  modelHeight: Int
-  modelHeight_not: Int
-  modelHeight_in: [Int!]
-  modelHeight_not_in: [Int!]
-  modelHeight_lt: Int
-  modelHeight_lte: Int
-  modelHeight_gt: Int
-  modelHeight_gte: Int
   name: String
   name_not: String
   name_in: [String!]
@@ -12172,7 +12154,6 @@ input ProductUpdateDataInput {
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   model: ProductModelUpdateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeUpdateOneInput
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -12207,7 +12188,6 @@ input ProductUpdateInput {
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   model: ProductModelUpdateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeUpdateOneInput
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -12231,7 +12211,6 @@ input ProductUpdateManyDataInput {
   externalURL: String
   buyNewEnabled: Boolean
   innerMaterials: ProductUpdateinnerMaterialsInput
-  modelHeight: Int
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
   photographyStatus: PhotographyStatus
@@ -12261,7 +12240,6 @@ input ProductUpdateManyMutationInput {
   externalURL: String
   buyNewEnabled: Boolean
   innerMaterials: ProductUpdateinnerMaterialsInput
-  modelHeight: Int
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
   photographyStatus: PhotographyStatus
@@ -12368,7 +12346,6 @@ input ProductUpdateWithoutBrandDataInput {
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   model: ProductModelUpdateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeUpdateOneInput
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -12398,7 +12375,6 @@ input ProductUpdateWithoutCategoryDataInput {
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   model: ProductModelUpdateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeUpdateOneInput
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -12428,7 +12404,6 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   model: ProductModelUpdateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeUpdateOneInput
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -12458,7 +12433,6 @@ input ProductUpdateWithoutModelDataInput {
   images: ImageUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeUpdateOneInput
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -12489,7 +12463,6 @@ input ProductUpdateWithoutTagsDataInput {
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   model: ProductModelUpdateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeUpdateOneInput
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -12519,7 +12492,6 @@ input ProductUpdateWithoutVariantsDataInput {
   innerMaterials: ProductUpdateinnerMaterialsInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   model: ProductModelUpdateOneWithoutProductsInput
-  modelHeight: Int
   modelSize: SizeUpdateOneInput
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -14062,14 +14034,6 @@ input ProductWhereInput {
   images_none: ImageWhereInput
   materialCategory: ProductMaterialCategoryWhereInput
   model: ProductModelWhereInput
-  modelHeight: Int
-  modelHeight_not: Int
-  modelHeight_in: [Int!]
-  modelHeight_not_in: [Int!]
-  modelHeight_lt: Int
-  modelHeight_lte: Int
-  modelHeight_gt: Int
-  modelHeight_gte: Int
   modelSize: SizeWhereInput
   name: String
   name_not: String

@@ -57,6 +57,20 @@ export class PaymentUtilsService {
     }
   }
 
+  getCustomerMembershipSubscriptionData = subscription => ({
+    nextBillingAt: !!subscription.next_billing_at
+      ? DateTime.fromSeconds(subscription.next_billing_at).toISO()
+      : null,
+    currentTermEnd: DateTime.fromSeconds(subscription.current_term_end).toISO(),
+    currentTermStart: DateTime.fromSeconds(
+      subscription.current_term_start
+    ).toISO(),
+    status: subscription.status,
+    planPrice: subscription.plan_amount,
+    subscriptionId: subscription.id,
+    planID: subscription.plan_id.replace("-gift", ""),
+  })
+
   async getChargebeePaymentSource(userID: string) {
     const cardInfo: any = await new Promise((resolve, reject) => {
       // Get user's payment information from chargebee

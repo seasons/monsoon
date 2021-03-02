@@ -3152,7 +3152,8 @@ export type PhysicalProductStatus =
   | "Damaged"
   | "PermanentlyDamaged"
   | "Clean"
-  | "Lost";
+  | "Lost"
+  | "Sold";
 
 export type PhysicalProductOffloadMethod =
   | "SoldToUser"
@@ -3360,8 +3361,6 @@ export type ProductOrderByInput =
   | "externalURL_DESC"
   | "buyNewEnabled_ASC"
   | "buyNewEnabled_DESC"
-  | "modelHeight_ASC"
-  | "modelHeight_DESC"
   | "name_ASC"
   | "name_DESC"
   | "photographyStatus_ASC"
@@ -5830,14 +5829,6 @@ export interface ProductWhereInput {
   images_none?: Maybe<ImageWhereInput>;
   materialCategory?: Maybe<ProductMaterialCategoryWhereInput>;
   model?: Maybe<ProductModelWhereInput>;
-  modelHeight?: Maybe<Int>;
-  modelHeight_not?: Maybe<Int>;
-  modelHeight_in?: Maybe<Int[] | Int>;
-  modelHeight_not_in?: Maybe<Int[] | Int>;
-  modelHeight_lt?: Maybe<Int>;
-  modelHeight_lte?: Maybe<Int>;
-  modelHeight_gt?: Maybe<Int>;
-  modelHeight_gte?: Maybe<Int>;
   modelSize?: Maybe<SizeWhereInput>;
   name?: Maybe<String>;
   name_not?: Maybe<String>;
@@ -10232,7 +10223,6 @@ export interface ProductCreateWithoutVariantsInput {
     ProductMaterialCategoryCreateOneWithoutProductsInput
   >;
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeCreateOneInput>;
   name: String;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
@@ -10345,7 +10335,6 @@ export interface ProductCreateWithoutCategoryInput {
     ProductMaterialCategoryCreateOneWithoutProductsInput
   >;
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeCreateOneInput>;
   name: String;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
@@ -10742,7 +10731,6 @@ export interface ProductCreateInput {
     ProductMaterialCategoryCreateOneWithoutProductsInput
   >;
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeCreateOneInput>;
   name: String;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
@@ -11929,7 +11917,6 @@ export interface ProductUpdateWithoutVariantsDataInput {
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeUpdateOneInput>;
   name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
@@ -12230,7 +12217,6 @@ export interface ProductUpdateWithoutCategoryDataInput {
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeUpdateOneInput>;
   name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
@@ -13681,14 +13667,6 @@ export interface ProductScalarWhereInput {
   externalURL_not_ends_with?: Maybe<String>;
   buyNewEnabled?: Maybe<Boolean>;
   buyNewEnabled_not?: Maybe<Boolean>;
-  modelHeight?: Maybe<Int>;
-  modelHeight_not?: Maybe<Int>;
-  modelHeight_in?: Maybe<Int[] | Int>;
-  modelHeight_not_in?: Maybe<Int[] | Int>;
-  modelHeight_lt?: Maybe<Int>;
-  modelHeight_lte?: Maybe<Int>;
-  modelHeight_gt?: Maybe<Int>;
-  modelHeight_gte?: Maybe<Int>;
   name?: Maybe<String>;
   name_not?: Maybe<String>;
   name_in?: Maybe<String[] | String>;
@@ -13781,7 +13759,6 @@ export interface ProductUpdateManyDataInput {
   externalURL?: Maybe<String>;
   buyNewEnabled?: Maybe<Boolean>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
-  modelHeight?: Maybe<Int>;
   name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -13951,7 +13928,6 @@ export interface ProductUpdateDataInput {
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeUpdateOneInput>;
   name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
@@ -14495,7 +14471,7 @@ export interface CustomerMembershipSubscriptionDataCreateInput {
   subscriptionId: String;
   currentTermStart: DateTimeInput;
   currentTermEnd: DateTimeInput;
-  nextBillingAt: DateTimeInput;
+  nextBillingAt?: Maybe<DateTimeInput>;
   status: String;
   planPrice: Int;
 }
@@ -16610,7 +16586,6 @@ export interface ProductCreateWithoutBrandInput {
     ProductMaterialCategoryCreateOneWithoutProductsInput
   >;
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeCreateOneInput>;
   name: String;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
@@ -16689,7 +16664,6 @@ export interface ProductUpdateWithoutBrandDataInput {
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeUpdateOneInput>;
   name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
@@ -18063,7 +18037,6 @@ export interface ProductUpdateInput {
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeUpdateOneInput>;
   name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
@@ -18087,7 +18060,6 @@ export interface ProductUpdateManyMutationInput {
   externalURL?: Maybe<String>;
   buyNewEnabled?: Maybe<Boolean>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
-  modelHeight?: Maybe<Int>;
   name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -18136,7 +18108,6 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   images?: Maybe<ImageCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeCreateOneInput>;
   name: String;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
@@ -18202,7 +18173,6 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
   images?: Maybe<ImageUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeUpdateOneInput>;
   name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
@@ -18260,7 +18230,6 @@ export interface ProductCreateWithoutModelInput {
   materialCategory?: Maybe<
     ProductMaterialCategoryCreateOneWithoutProductsInput
   >;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeCreateOneInput>;
   name: String;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
@@ -18326,7 +18295,6 @@ export interface ProductUpdateWithoutModelDataInput {
   materialCategory?: Maybe<
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeUpdateOneInput>;
   name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
@@ -19307,7 +19275,6 @@ export interface ProductCreateWithoutTagsInput {
     ProductMaterialCategoryCreateOneWithoutProductsInput
   >;
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeCreateOneInput>;
   name: String;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
@@ -19373,7 +19340,6 @@ export interface ProductUpdateWithoutTagsDataInput {
     ProductMaterialCategoryUpdateOneWithoutProductsInput
   >;
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelHeight?: Maybe<Int>;
   modelSize?: Maybe<SizeUpdateOneInput>;
   name?: Maybe<String>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
@@ -22290,7 +22256,6 @@ export interface Product {
   externalURL?: String;
   buyNewEnabled: Boolean;
   innerMaterials: String[];
-  modelHeight?: Int;
   name: String;
   outerMaterials: String[];
   photographyStatus?: PhotographyStatus;
@@ -22334,7 +22299,6 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
   innerMaterials: () => Promise<String[]>;
   materialCategory: <T = ProductMaterialCategoryPromise>() => T;
   model: <T = ProductModelPromise>() => T;
-  modelHeight: () => Promise<Int>;
   modelSize: <T = SizePromise>() => T;
   name: () => Promise<String>;
   outerMaterials: () => Promise<String[]>;
@@ -22402,7 +22366,6 @@ export interface ProductSubscription
   innerMaterials: () => Promise<AsyncIterator<String[]>>;
   materialCategory: <T = ProductMaterialCategorySubscription>() => T;
   model: <T = ProductModelSubscription>() => T;
-  modelHeight: () => Promise<AsyncIterator<Int>>;
   modelSize: <T = SizeSubscription>() => T;
   name: () => Promise<AsyncIterator<String>>;
   outerMaterials: () => Promise<AsyncIterator<String[]>>;
@@ -22470,7 +22433,6 @@ export interface ProductNullablePromise
   innerMaterials: () => Promise<String[]>;
   materialCategory: <T = ProductMaterialCategoryPromise>() => T;
   model: <T = ProductModelPromise>() => T;
-  modelHeight: () => Promise<Int>;
   modelSize: <T = SizePromise>() => T;
   name: () => Promise<String>;
   outerMaterials: () => Promise<String[]>;
@@ -24328,7 +24290,7 @@ export interface CustomerMembershipSubscriptionData {
   subscriptionId: String;
   currentTermStart: DateTimeOutput;
   currentTermEnd: DateTimeOutput;
-  nextBillingAt: DateTimeOutput;
+  nextBillingAt?: DateTimeOutput;
   status: String;
   planPrice: Int;
   createdAt: DateTimeOutput;
@@ -30279,7 +30241,7 @@ export interface CustomerMembershipSubscriptionDataPreviousValues {
   subscriptionId: String;
   currentTermStart: DateTimeOutput;
   currentTermEnd: DateTimeOutput;
-  nextBillingAt: DateTimeOutput;
+  nextBillingAt?: DateTimeOutput;
   status: String;
   planPrice: Int;
   createdAt: DateTimeOutput;
@@ -31453,7 +31415,6 @@ export interface ProductPreviousValues {
   externalURL?: String;
   buyNewEnabled: Boolean;
   innerMaterials: String[];
-  modelHeight?: Int;
   name: String;
   outerMaterials: String[];
   photographyStatus?: PhotographyStatus;
@@ -31476,7 +31437,6 @@ export interface ProductPreviousValuesPromise
   externalURL: () => Promise<String>;
   buyNewEnabled: () => Promise<Boolean>;
   innerMaterials: () => Promise<String[]>;
-  modelHeight: () => Promise<Int>;
   name: () => Promise<String>;
   outerMaterials: () => Promise<String[]>;
   photographyStatus: () => Promise<PhotographyStatus>;
@@ -31499,7 +31459,6 @@ export interface ProductPreviousValuesSubscription
   externalURL: () => Promise<AsyncIterator<String>>;
   buyNewEnabled: () => Promise<AsyncIterator<Boolean>>;
   innerMaterials: () => Promise<AsyncIterator<String[]>>;
-  modelHeight: () => Promise<AsyncIterator<Int>>;
   name: () => Promise<AsyncIterator<String>>;
   outerMaterials: () => Promise<AsyncIterator<String[]>>;
   photographyStatus: () => Promise<AsyncIterator<PhotographyStatus>>;

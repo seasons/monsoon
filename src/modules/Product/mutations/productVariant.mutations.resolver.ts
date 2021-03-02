@@ -1,6 +1,7 @@
 import { Customer, User } from "@app/decorators"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import {
+  Order,
   Product as PrismaBindingProduct,
   ProductNotificationType,
 } from "@prisma/prisma.binding"

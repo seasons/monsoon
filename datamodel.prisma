@@ -64,6 +64,7 @@ enum PhysicalProductStatus {
   PermanentlyDamaged
   Clean
   Lost
+  Sold
 }
 
 enum PhysicalProductOffloadMethod {
@@ -388,7 +389,6 @@ type Product {
   innerMaterials: [String!]! @scalarList(strategy: RELATION)
   materialCategory: ProductMaterialCategory
   model: ProductModel
-  modelHeight: Int
   modelSize: Size @relation(name: "ProductModelSize")
   name: String!
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
@@ -920,7 +920,7 @@ type CustomerMembershipSubscriptionData {
   subscriptionId: String!
   currentTermStart: DateTime!
   currentTermEnd: DateTime!
-  nextBillingAt: DateTime!
+  nextBillingAt: DateTime
   status: String!
   planPrice: Int!
   createdAt: DateTime! @createdAt
