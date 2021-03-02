@@ -3,6 +3,7 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { CustomerStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
@@ -59,6 +60,8 @@ export class ChargebeeController {
         { where: { user: { id: customer.id } } },
         `
         {
+          id
+          status
           detail {
             id
             impactId
@@ -80,6 +83,17 @@ export class ChargebeeController {
       `
       )
     )
+
+    if (custWithData.status === "PaymentFailed") {
+      let newStatus: CustomerStatus = subscription.plan_id.includes("pause")
+        ? "Paused"
+        : "Active"
+      await this.prisma.client.updateCustomer({
+        where: { id: custWithData.id },
+        data: { status: newStatus },
+      })
+    }
+
     let isNewCustomer = false
     if (!!subscription) {
       isNewCustomer = this.utils.isSameDay(
