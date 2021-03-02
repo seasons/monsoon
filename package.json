@@ -9,8 +9,7 @@
     "node": "12.x"
   },
   "resolutions": {
-    "graphql": "^14.5.7",
-    "apollo-cache-control": "0.11.0"
+    "graphql": "^14.5.7"
   },
   "scripts": {
     "apollo": "apollo service:push",
