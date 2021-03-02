@@ -9,7 +9,6 @@ import { PrismaModule } from "@prisma/prisma.module"
 import { PusherService } from "../PushNotification/services/pusher.service"
 import { PushNotificationDataProvider } from "../PushNotification/services/pushNotification.data.service"
 import { PushNotificationService } from "../PushNotification/services/pushNotification.service"
-import { RedisCacheModule } from "../RedisCache/redisCache.module"
 import { ShopifyService } from "../Shopify/services/shopify.service"
 import { UserModule } from "../User/user.module"
 import { BrandFieldsResolver } from "./fields/brand.fields.resolver"
@@ -35,7 +34,6 @@ import { ProductVariantService } from "./services/productVariant.service"
 
 export const ProductModuleDef = {
   imports: [
-    RedisCacheModule,
     EmailModule,
     ErrorModule,
     ImageModule,
