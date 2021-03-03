@@ -1,4 +1,5 @@
 import { Customer } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { Product } from "@app/prisma"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
@@ -8,7 +9,6 @@ import { ProductService } from "@modules/Product/services/product.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
-import { addFragmentToInfo } from "graphql-binding"
 import { sortedUniqBy } from "lodash"
 
 @Resolver("Product")
@@ -48,6 +48,7 @@ export class ProductFieldsResolver {
   async variants(
     @Parent() parent,
     @Info() info,
+    @Application() application,
     @Loader({
       params: {
         query: "productVariants",
@@ -68,6 +69,7 @@ export class ProductFieldsResolver {
                   productType
               }
               offloaded
+              total
           }
         `,
         keyToDataRelationship: "OneToMany",
@@ -79,9 +81,12 @@ export class ProductFieldsResolver {
   ) {
     const productVariants = await productVariantLoader.load(parent.id)
 
-    const variantsNotOffloaded = productVariants?.filter(
-      variant => variant.total !== variant.offloaded
-    )
+    const variantsNotOffloaded =
+      application === "harvest" || application === "flare"
+        ? productVariants?.filter(
+            variant => variant.total !== variant.offloaded
+          )
+        : productVariants
     const type = variantsNotOffloaded?.[0]?.internalSize?.productType
 
     if (type === "Top") {
