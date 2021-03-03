@@ -205,7 +205,8 @@ export class ProductService {
     const slug = await this.productUtils.getProductSlug(
       brand.brandCode,
       input.name,
-      color.name
+      color.name,
+      input.createNew
     )
 
     const { season } = input
