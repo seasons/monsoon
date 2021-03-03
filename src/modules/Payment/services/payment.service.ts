@@ -116,7 +116,6 @@ export class PaymentService {
 
   async subscriptionEstimate(plan: PaymentPlan, customer: Customer) {
     let billingAddress = null
-    let shippingAddress = null
 
     if (customer) {
       const customerWithBillingInfo = await this.prisma.binding.query.customer(

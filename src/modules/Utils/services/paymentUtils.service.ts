@@ -88,27 +88,62 @@ export class PaymentUtilsService {
       ? { specific_date: DateTime.fromISO(date).toSeconds() }
       : "immediately"
 
-    const pauseRequest = head(
-      await this.prisma.client.pauseRequests({
-        where: {
-          membership: {
-            customer: {
-              id: customer.id,
-            },
-          },
-        },
-      })
-    )
+    const pausePlanIDs = ["pause-1", "pause-2", "pause-3"]
 
     try {
-      const result = await chargebee.subscription
-        .resume(subscriptionId, {
-          resume_option: resumeDate,
-          unpaid_invoices_handling: "schedule_payment_collection",
-        })
-        .request()
+      const customerWithInfo = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+        {
+          id
+          membership {
+            id
+            plan {
+              id
+              planID
+              itemCount
+            }
+            pauseRequests(orderBy: createdAt_DESC) {
+              id
+            }
+          }
+        }
+      `
+      )
 
-      if (result) {
+      const pauseRequest = head(customerWithInfo.membership.pauseRequests)
+      const customerPlanID = customerWithInfo.membership.plan.planID
+
+      let success
+
+      if (pausePlanIDs.includes(customerPlanID)) {
+        const itemCount = customerWithInfo.membership.plan.itemCount
+        let newPlanID
+        if (itemCount === 1) {
+          newPlanID = "essential-1"
+        } else if (itemCount === 2) {
+          newPlanID = "essential-2"
+        } else if (itemCount === 3) {
+          newPlanID = "essential"
+        }
+        // Customer is paused with items on a pause plan
+        // Check if the user is on a pause plan and switch plans instead of updating chargebee
+        success = await chargebee.subscription
+          .update(subscriptionId, {
+            plan_id: newPlanID,
+          })
+          .request()
+      } else {
+        // Customer is paused without items
+        success = await chargebee.subscription
+          .resume(subscriptionId, {
+            resume_option: resumeDate,
+            unpaid_invoices_handling: "schedule_payment_collection",
+          })
+          .request()
+      }
+
+      if (success) {
         await this.prisma.client.updatePauseRequest({
           where: { id: pauseRequest.id },
           data: { pausePending: false },
@@ -129,22 +164,22 @@ export class PaymentUtilsService {
             where: { id: customer.id },
           },
           `{
-            id
-            user {
               id
-              firstName
-              lastName
-              email
-            }
-            membership {
-              id
-              plan {
+              user {
                 id
-                tier
-                planID
+                firstName
+                lastName
+                email
               }
-            }
-          }`
+              membership {
+                id
+                plan {
+                  id
+                  tier
+                  planID
+                }
+              }
+            }`
         )
 
         const tier = customerWithData?.membership?.plan?.tier
