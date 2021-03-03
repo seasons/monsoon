@@ -10,6 +10,7 @@ type Query {
     @hasRole(roles: [Customer])
   hostedChargebeeCheckout(planID: String!): ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
+  paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   paymentPlans(
     where: PaymentPlanWhereInput
     orderBy: PaymentPlanOrderByInput
@@ -23,6 +24,7 @@ type Query {
 }
 
 type Mutation {
+  processPayment(paymentMethodID: String!, planID: String!, billing: JSON): JSON
   applePayCheckout(
     planID: String!
     token: StripeToken!
@@ -44,6 +46,25 @@ type Mutation {
     @hasRole(roles: [Customer])
   refundInvoice(input: RefundInvoiceInput): Boolean! @hasRole(roles: [Admin])
   checkCoupon(couponID: String!): Coupon
+}
+
+type PaymentPlan {
+  id: ID!
+  description: String
+  planID: String!
+  status: String
+  name: String
+  price: Int
+  itemCount: Int
+  tagline: String
+  tier: PaymentPlanTier
+  billingDate: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  # Computed fields
+  estimate: JSON
+  pauseWithItemsPrice: Int
 }
 
 enum CreditNoteReasonCodeInput {
@@ -166,6 +187,7 @@ enum LineItemIdentityType {
   Addon
   Adhoc
 }
+
 type LineItem {
   id: String!
   dateFrom: DateTime

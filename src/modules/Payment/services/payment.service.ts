@@ -3,7 +3,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PaymentPlanTier, User } from "@app/prisma"
+import { Customer, PaymentPlan, PaymentPlanTier, User } from "@app/prisma"
 import { PauseType, Reservation } from "@app/prisma/prisma.binding"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
@@ -13,6 +13,7 @@ import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
 import { camelCase, get, head, identity, snakeCase, upperFirst } from "lodash"
 import { DateTime } from "luxon"
+import Stripe from "stripe"
 
 import {
   BillingAddress,
@@ -25,6 +26,10 @@ import {
   Transaction,
   TransactionsDataLoader,
 } from "../payment.types"
+
+const stripe = new Stripe(process.env.STRIPE_API_KEY, {
+  apiVersion: "2020-08-27",
+})
 
 export interface SubscriptionData {
   nextBillingAt: string
@@ -107,6 +112,71 @@ export class PaymentService {
       this.error.captureError(e)
       throw new Error(JSON.stringify(e))
     }
+  }
+
+  async subscriptionEstimate(plan: PaymentPlan, customer: Customer) {
+    let billingAddress = null
+    let shippingAddress = null
+
+    if (customer) {
+      const customerWithBillingInfo = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+      {
+        id
+        billingInfo {
+          street1
+          street2
+          city
+          state
+          postal_code
+          country
+        }
+        detail {
+          id
+          shippingAddress {
+            id
+            address1
+            address2
+            city
+            country
+            state
+            zipCode
+          }
+        }
+      }
+    `
+      )
+
+      const { billingInfo } = customerWithBillingInfo
+
+      if (!!billingInfo) {
+        billingAddress = {
+          line1: billingInfo.street1,
+          line2: billingInfo.street2,
+          city: billingInfo.city,
+          state: billingInfo.state,
+          zip: billingInfo.postal_code,
+          country: "US",
+        }
+      } else {
+        billingAddress = {
+          zip: customerWithBillingInfo?.detail?.shippingAddress?.zipCode,
+          country: "US",
+        }
+      }
+    }
+
+    const subscriptionEstimate = await chargebee.estimate
+      .create_subscription({
+        ...(!!billingAddress ? { billing_address: billingAddress } : {}),
+        subscription: {
+          plan_id: plan.planID,
+        },
+      })
+      .request()
+
+    return subscriptionEstimate.estimate.invoice_estimate
   }
 
   async changeCustomerPlan(planID, customer) {
@@ -264,6 +334,62 @@ export class PaymentService {
       this.error.setExtraContext(customer, "customer")
       this.error.captureError(e)
       throw new Error(`Error updating your payment method ${e}`)
+    }
+  }
+
+  async processPayment(planID, paymentMethodID, billing, customer) {
+    const billingAddress = {
+      first_name: billing.user.firstName || "",
+      last_name: billing.user.lastName || "",
+      ...billing.address,
+      zip: billing.address.postal_code || "",
+      country: "US", // assume its US for now, because we need it for taxes.
+    }
+
+    const subscriptionEstimate = await chargebee.estimate
+      .create_subscription({
+        billing_address: billingAddress,
+        subscription: {
+          plan_id: planID,
+        },
+      })
+      .request()
+
+    const intent = await stripe.paymentIntents.create({
+      payment_method: paymentMethodID,
+      amount: subscriptionEstimate?.estimate?.invoice_estimate?.amount_due,
+      currency: "USD",
+      confirm: true,
+      confirmation_method: "manual",
+      setup_future_usage: "off_session",
+      capture_method: "manual",
+    })
+
+    const subscriptionOptions = {
+      plan_id: planID,
+      billing_address: billingAddress,
+      customer: {
+        first_name: billing.user.firstName || "",
+        last_name: billing.user.lastName || "",
+        email: billing.user.email || "",
+      },
+      payment_intent: {
+        gw_token: intent.id,
+        // TODO: store gateway account id in .env
+        gateway_account_id: "gw_BuVXEhRh6XPao1qfg",
+      },
+    }
+
+    try {
+      const subscription = await chargebee.subscription
+        .create(subscriptionOptions)
+        .request()
+
+      console.log(intent, subscription)
+      return intent
+    } catch (e) {
+      console.error(e)
+      throw e
     }
   }
 

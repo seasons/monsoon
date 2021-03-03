@@ -9,7 +9,30 @@ const run = async () => {
   const utils = new UtilsService(ps)
   const drip = new DripService()
 
-  const email = await this.prisma.client.user({ id }).email()
+  const jqmuProductVariants = await ps.client.productVariants({
+    where: { sku_contains: "JQMU" },
+    orderBy: "createdAt_ASC",
+  })
+  const jqmuProducts = await ps.binding.query.products(
+    {
+      where: { slug_contains: "jqmu" },
+    },
+    `{
+      id
+      slug
+      variants {
+        id
+        sku 
+      }
+  }`
+  )
+  for (const p of jqmuProducts) {
+    console.log(
+      p.slug,
+      p.variants.map(a => a.sku)
+    )
+  }
+  // const email = await this.prisma.client.user({ id }).email()
   // console.log(allUnsubscribedCustomers)
   // console.log(allUnsubscribedCustomers.)
 }

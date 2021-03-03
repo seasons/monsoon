@@ -18,6 +18,25 @@ export class PaymentMutationsResolver {
   ) {}
 
   @Mutation()
+  async processPayment(
+    @Args() { planID, paymentMethodID, billing },
+    @Customer() customer
+  ) {
+    return this.paymentService.processPayment(
+      planID,
+      paymentMethodID,
+      billing,
+      customer
+    )
+  }
+
+  /**
+   * This method is used for both credit card and apple pay checkouts.
+   * Currently only used in harvest
+   * @param param0
+   * @param customer
+   */
+  @Mutation()
   async applePayCheckout(
     @Args() { planID, token, tokenType, couponID },
     @Customer() customer
@@ -86,11 +105,19 @@ export class PaymentMutationsResolver {
           id
           tier
           planID
+          itemCount
         }
         pauseRequests {
           createdAt
           resumeDate
+          pauseDate
+          pauseType
         }
+      }
+      reservations {
+        id
+        status
+        createdAt
       }
     }`
     )) as any
