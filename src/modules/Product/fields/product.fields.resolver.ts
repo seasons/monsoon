@@ -45,19 +45,21 @@ export class ProductFieldsResolver {
   }
 
   @ResolveField()
-  async variants(@Parent() parent, @Info() info) {
-    const productVariants = await this.prisma.binding.query.productVariants(
-      {
-        where: {
-          product: {
-            id: parent.id,
-          },
-        },
-      },
-      addFragmentToInfo(
-        info,
-        `
+  async variants(
+    @Parent() parent,
+    @Info() info,
+    @Loader({
+      params: {
+        query: "productVariants",
+        formatWhere: ids => ({
+          product: { id_in: ids },
+        }),
+        infoFragment: `
           fragment EnsureDisplay on ProductVariant {
+              id
+              product {
+                id
+              }
               internalSize {
                   display
                   bottom {
@@ -65,18 +67,28 @@ export class ProductFieldsResolver {
                   }
                   productType
               }
+              offloaded
           }
-      `
-      )
-    )
+        `,
+        keyToDataRelationship: "OneToMany",
+        getKeys: a => [a.product.id],
+      },
+      includeInfo: true,
+    })
+    productVariantLoader: PrismaDataLoader<any>
+  ) {
+    const productVariants = await productVariantLoader.load(parent.id)
 
-    const type = productVariants?.[0]?.internalSize?.productType
+    const variantsNotOffloaded = productVariants?.filter(
+      variant => variant.total !== variant.offloaded
+    )
+    const type = variantsNotOffloaded?.[0]?.internalSize?.productType
 
     if (type === "Top") {
-      return this.productUtilsService.sortVariants(productVariants)
+      return this.productUtilsService.sortVariants(variantsNotOffloaded)
     } else {
       // type === "Bottom". Note that if we add a new type, we may need to update this
-      const sortedVariants = productVariants.sort((a, b) => {
+      const sortedVariants = variantsNotOffloaded.sort((a, b) => {
         // @ts-ignore
         return a?.internalSize?.display - b?.internalSize?.display
       })
