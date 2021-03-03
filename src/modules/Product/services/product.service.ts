@@ -205,14 +205,9 @@ export class ProductService {
     const slug = await this.productUtils.getProductSlug(
       brand.brandCode,
       input.name,
-      color.name
+      color.name,
+      input.createNew
     )
-    if (input.createNew) {
-      const existingProductId = await this.prisma.client.product({ slug }).id()
-      if (!!existingProductId) {
-        throw new Error(`Product with slug ${slug} already exists`)
-      }
-    }
 
     const { season } = input
     const productSeason =

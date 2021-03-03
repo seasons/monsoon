@@ -317,7 +317,9 @@ input UpsertProductInput {
   tags: [String!]!
   type: ProductType!
   variants: [UpsertVariantInput!]!
-  createNew: Boolean
+
+  # Is this a new one?
+  createNew: Boolean!
 }
 
 input CustomProductUpdateInput {

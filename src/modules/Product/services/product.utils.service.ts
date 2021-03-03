@@ -376,8 +376,23 @@ export class ProductUtilsService {
     })
   }
 
-  getProductSlug(brandCode: string, name: string, color: string) {
-    return slugify(brandCode + " " + name + " " + color).toLowerCase()
+  async getProductSlug(
+    brandCode: string,
+    name: string,
+    color: string,
+    createNew: boolean
+  ) {
+    const pureSlug = slugify(brandCode + " " + name + " " + color).toLowerCase()
+    if (createNew) {
+      const productsWithSlug = await this.prisma.client.products({
+        where: { slug_starts_with: pureSlug },
+      })
+      return `${pureSlug}${
+        productsWithSlug.length > 0 ? "-" + productsWithSlug.length : ""
+      }`
+    }
+
+    return pureSlug
   }
 
   physicalProductsForProduct(product: ProductWithPhysicalProducts) {
