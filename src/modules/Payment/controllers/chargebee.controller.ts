@@ -124,14 +124,17 @@ export class ChargebeeController {
   }
 
   private async chargebeePaymentFailed(content: any) {
-    console.log(content)
-    const { customer } = content
+    const { customer, subscription } = content
+
+    const isFailureForSubscription = !!subscription
+    if (!isFailureForSubscription) {
+      return
+    }
 
     const userId = customer?.id
     const cust = head(
       await this.prisma.client.customers({ where: { user: { id: userId } } })
     )
-
     if (!!cust) {
       if (this.statements.isPayingCustomer(cust)) {
         await this.prisma.client.updateCustomer({
@@ -141,7 +144,7 @@ export class ChargebeeController {
       }
     } else {
       this.error.setExtraContext({ payload: content }, "chargebeePayload")
-      this.error.captureMessage(`Unable to locate customer for pailed payment`)
+      this.error.captureMessage(`Unable to locate customer for failed payment`)
     }
   }
 
