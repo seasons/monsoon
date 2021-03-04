@@ -91,12 +91,12 @@ const scheduleModule =
           },
           cache: (() => {
             try {
-              const Redis_Url = process.env.REDIS_URL
-              if (Redis_Url.includes("redis://")) {
+              const URL = process.env.REDIS_URL
+              if (URL.includes("redis://")) {
                 return new RedisCache(url)
               }
 
-              const redis_uri = url.parse(process.env.REDIS_URL)
+              const redis_uri = url.parse(URL)
               const config = {
                 port: redis_uri.port,
                 host: redis_uri.hostname,
