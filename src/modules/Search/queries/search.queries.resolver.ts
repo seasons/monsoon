@@ -7,8 +7,8 @@ export class SearchQueriesResolver {
   constructor(private readonly service: SearchService) {}
 
   @Query()
-  async search(@Args() { query }) {
-    const result = await this.service.query(query)
+  async search(@Args() { query, options }) {
+    const result = await this.service.query(query, options)
 
     const data = result.map(data => {
       return {

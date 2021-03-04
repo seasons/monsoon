@@ -4,7 +4,8 @@ type Query {
 }
 
 input SearchOptions {
-  includeTypes: [String]
+  filters: String
+  includeTypes: [SearchResultType]
   suggestions: Boolean
 }
 
@@ -16,7 +17,9 @@ enum SearchResultType {
 }
 
 union SearchResultData =
-    ProductSearchResultData
+    BrandSearchResultData
+  | CustomerSearchResultData
+  | ProductSearchResultData
   | PhysicalProductSearchResultData
 
 type SearchResult {
@@ -41,4 +44,28 @@ type PhysicalProductSearchResultData {
   seasonsUID: String!
   inventoryStatus: InventoryStatus
   barcode: String!
+}
+
+type BrandSearchResultData {
+  id: ID!
+  name: String!
+  brandCode: String!
+  description: String
+  designer: String
+  websiteUrl: String
+  isPrimaryBrand: Boolean
+  productsCount: Int
+  popularity: Int
+  tier: String
+  published: Boolean
+}
+
+type CustomerSearchResultData {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  bagItemsCount: Int
+  popularity: Int
+  status: CustomerStatus
 }

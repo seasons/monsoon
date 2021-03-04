@@ -46,6 +46,7 @@ export class ProductVariantFieldsResolver {
         query: "orders",
         info: `{
           id
+          status
           customer {
             id
           }
@@ -55,7 +56,9 @@ export class ProductVariantFieldsResolver {
               recordID
           }
         }`,
-        formatWhere: ids => ({ customer: { id_in: ids } }),
+        formatWhere: ids => ({
+          AND: [{ customer: { id_in: ids } }, { status: "Submitted" }],
+        }),
         getKeys: a => [a.customer.id],
         fallbackValue: null,
         keyToDataRelationship: "OneToMany",
