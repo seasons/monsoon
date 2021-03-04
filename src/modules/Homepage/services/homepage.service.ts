@@ -6,7 +6,6 @@ export enum SectionTitle {
   RecentlyViewed = "Recently viewed",
   Designers = "Designers",
   Categories = "Browse by style",
-  RevivalRail = "The revival collection",
 }
 
 interface Section {
