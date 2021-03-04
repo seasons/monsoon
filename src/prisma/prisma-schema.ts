@@ -9677,6 +9677,7 @@ type PhysicalProductQualityReport {
   id: ID!
   user: User!
   damageType: PhysicalProductDamageType
+  damageTypes: [PhysicalProductDamageType!]!
   notes: String
   physicalProduct: PhysicalProduct!
   createdAt: DateTime!
@@ -9689,10 +9690,15 @@ type PhysicalProductQualityReportConnection {
   aggregate: AggregatePhysicalProductQualityReport!
 }
 
+input PhysicalProductQualityReportCreatedamageTypesInput {
+  set: [PhysicalProductDamageType!]
+}
+
 input PhysicalProductQualityReportCreateInput {
   id: ID
   user: UserCreateOneInput!
   damageType: PhysicalProductDamageType
+  damageTypes: PhysicalProductQualityReportCreatedamageTypesInput
   notes: String
   physicalProduct: PhysicalProductCreateOneWithoutReportsInput!
 }
@@ -9706,6 +9712,7 @@ input PhysicalProductQualityReportCreateWithoutPhysicalProductInput {
   id: ID
   user: UserCreateOneInput!
   damageType: PhysicalProductDamageType
+  damageTypes: PhysicalProductQualityReportCreatedamageTypesInput
   notes: String
 }
 
@@ -9730,6 +9737,7 @@ enum PhysicalProductQualityReportOrderByInput {
 type PhysicalProductQualityReportPreviousValues {
   id: ID!
   damageType: PhysicalProductDamageType
+  damageTypes: [PhysicalProductDamageType!]!
   notes: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -9807,20 +9815,27 @@ input PhysicalProductQualityReportSubscriptionWhereInput {
   NOT: [PhysicalProductQualityReportSubscriptionWhereInput!]
 }
 
+input PhysicalProductQualityReportUpdatedamageTypesInput {
+  set: [PhysicalProductDamageType!]
+}
+
 input PhysicalProductQualityReportUpdateInput {
   user: UserUpdateOneRequiredInput
   damageType: PhysicalProductDamageType
+  damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   notes: String
   physicalProduct: PhysicalProductUpdateOneRequiredWithoutReportsInput
 }
 
 input PhysicalProductQualityReportUpdateManyDataInput {
   damageType: PhysicalProductDamageType
+  damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   notes: String
 }
 
 input PhysicalProductQualityReportUpdateManyMutationInput {
   damageType: PhysicalProductDamageType
+  damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   notes: String
 }
 
@@ -9844,6 +9859,7 @@ input PhysicalProductQualityReportUpdateManyWithWhereNestedInput {
 input PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput {
   user: UserUpdateOneRequiredInput
   damageType: PhysicalProductDamageType
+  damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   notes: String
 }
 

@@ -10581,7 +10581,12 @@ export interface PhysicalProductQualityReportCreateWithoutPhysicalProductInput {
   id?: Maybe<ID_Input>;
   user: UserCreateOneInput;
   damageType?: Maybe<PhysicalProductDamageType>;
+  damageTypes?: Maybe<PhysicalProductQualityReportCreatedamageTypesInput>;
   notes?: Maybe<String>;
+}
+
+export interface PhysicalProductQualityReportCreatedamageTypesInput {
+  set?: Maybe<PhysicalProductDamageType[] | PhysicalProductDamageType>;
 }
 
 export interface ProductFunctionCreateManyInput {
@@ -12806,7 +12811,12 @@ export interface PhysicalProductQualityReportUpdateWithWhereUniqueWithoutPhysica
 export interface PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput {
   user?: Maybe<UserUpdateOneRequiredInput>;
   damageType?: Maybe<PhysicalProductDamageType>;
+  damageTypes?: Maybe<PhysicalProductQualityReportUpdatedamageTypesInput>;
   notes?: Maybe<String>;
+}
+
+export interface PhysicalProductQualityReportUpdatedamageTypesInput {
+  set?: Maybe<PhysicalProductDamageType[] | PhysicalProductDamageType>;
 }
 
 export interface PhysicalProductQualityReportUpsertWithWhereUniqueWithoutPhysicalProductInput {
@@ -12889,6 +12899,7 @@ export interface PhysicalProductQualityReportUpdateManyWithWhereNestedInput {
 
 export interface PhysicalProductQualityReportUpdateManyDataInput {
   damageType?: Maybe<PhysicalProductDamageType>;
+  damageTypes?: Maybe<PhysicalProductQualityReportUpdatedamageTypesInput>;
   notes?: Maybe<String>;
 }
 
@@ -17948,6 +17959,7 @@ export interface PhysicalProductQualityReportCreateInput {
   id?: Maybe<ID_Input>;
   user: UserCreateOneInput;
   damageType?: Maybe<PhysicalProductDamageType>;
+  damageTypes?: Maybe<PhysicalProductQualityReportCreatedamageTypesInput>;
   notes?: Maybe<String>;
   physicalProduct: PhysicalProductCreateOneWithoutReportsInput;
 }
@@ -17980,6 +17992,7 @@ export interface PhysicalProductCreateWithoutReportsInput {
 export interface PhysicalProductQualityReportUpdateInput {
   user?: Maybe<UserUpdateOneRequiredInput>;
   damageType?: Maybe<PhysicalProductDamageType>;
+  damageTypes?: Maybe<PhysicalProductQualityReportUpdatedamageTypesInput>;
   notes?: Maybe<String>;
   physicalProduct?: Maybe<PhysicalProductUpdateOneRequiredWithoutReportsInput>;
 }
@@ -18019,6 +18032,7 @@ export interface PhysicalProductUpsertWithoutReportsInput {
 
 export interface PhysicalProductQualityReportUpdateManyMutationInput {
   damageType?: Maybe<PhysicalProductDamageType>;
+  damageTypes?: Maybe<PhysicalProductQualityReportUpdatedamageTypesInput>;
   notes?: Maybe<String>;
 }
 
@@ -23310,6 +23324,7 @@ export interface PhysicalProductPriceNullablePromise
 export interface PhysicalProductQualityReport {
   id: ID_Output;
   damageType?: PhysicalProductDamageType;
+  damageTypes: PhysicalProductDamageType[];
   notes?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -23321,6 +23336,7 @@ export interface PhysicalProductQualityReportPromise
   id: () => Promise<ID_Output>;
   user: <T = UserPromise>() => T;
   damageType: () => Promise<PhysicalProductDamageType>;
+  damageTypes: () => Promise<PhysicalProductDamageType[]>;
   notes: () => Promise<String>;
   physicalProduct: <T = PhysicalProductPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
@@ -23333,6 +23349,7 @@ export interface PhysicalProductQualityReportSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   user: <T = UserSubscription>() => T;
   damageType: () => Promise<AsyncIterator<PhysicalProductDamageType>>;
+  damageTypes: () => Promise<AsyncIterator<PhysicalProductDamageType[]>>;
   notes: () => Promise<AsyncIterator<String>>;
   physicalProduct: <T = PhysicalProductSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -23345,6 +23362,7 @@ export interface PhysicalProductQualityReportNullablePromise
   id: () => Promise<ID_Output>;
   user: <T = UserPromise>() => T;
   damageType: () => Promise<PhysicalProductDamageType>;
+  damageTypes: () => Promise<PhysicalProductDamageType[]>;
   notes: () => Promise<String>;
   physicalProduct: <T = PhysicalProductPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
@@ -31358,6 +31376,7 @@ export interface PhysicalProductQualityReportSubscriptionPayloadSubscription
 export interface PhysicalProductQualityReportPreviousValues {
   id: ID_Output;
   damageType?: PhysicalProductDamageType;
+  damageTypes: PhysicalProductDamageType[];
   notes?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -31368,6 +31387,7 @@ export interface PhysicalProductQualityReportPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   damageType: () => Promise<PhysicalProductDamageType>;
+  damageTypes: () => Promise<PhysicalProductDamageType[]>;
   notes: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -31378,6 +31398,7 @@ export interface PhysicalProductQualityReportPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   damageType: () => Promise<AsyncIterator<PhysicalProductDamageType>>;
+  damageTypes: () => Promise<AsyncIterator<PhysicalProductDamageType[]>>;
   notes: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;

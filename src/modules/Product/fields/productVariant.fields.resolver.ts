@@ -327,7 +327,9 @@ export class ProductVariantFieldsResolver {
       params: {
         query: "customers",
         info: `{
+          id
           bagItems {
+            id
             status
             productVariant {
               id
@@ -347,15 +349,19 @@ export class ProductVariantFieldsResolver {
         info: `{ 
           id
           physicalProducts {
+            id
             price {
+              id
               buyUsedPrice
               buyUsedEnabled
             }
             inventoryStatus
           }
           product {
+            id
             buyNewEnabled
             brand {
+              id
               externalShopifyIntegration {
                 enabled
                 shopName

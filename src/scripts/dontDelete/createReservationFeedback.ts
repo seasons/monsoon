@@ -7,7 +7,6 @@ import { EmailUtilsService } from "../../modules/Email/services/email.utils.serv
 import { ErrorService } from "../../modules/Error/services/error.service"
 import { ImageService } from "../../modules/Image/services/image.service"
 import { PaymentService } from "../../modules/Payment/services/payment.service"
-import { PaymentUtilsService } from "../../modules/Payment/services/payment.utils.service"
 import { PhysicalProductUtilsService } from "../../modules/Product/services/physicalProduct.utils.service"
 import { ProductUtilsService } from "../../modules/Product/services/product.utils.service"
 import { ProductVariantService } from "../../modules/Product/services/productVariant.service"
@@ -23,6 +22,7 @@ import { TwilioUtils } from "../../modules/Twilio/services/twilio.utils.service"
 import { AdmissionsService } from "../../modules/User/services/admissions.service"
 import { AuthService } from "../../modules/User/services/auth.service"
 import { CustomerService } from "../../modules/User/services/customer.service"
+import { PaymentUtilsService } from "../../modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "../../modules/Utils/services/utils.service"
 import { PrismaService } from "../../prisma/prisma.service"
 
@@ -33,11 +33,23 @@ import { PrismaService } from "../../prisma/prisma.service"
 const run = async () => {
   const ps = new PrismaService()
   const error = new ErrorService()
+  const segmentService = new SegmentService()
   const twilio = new TwilioService()
   const twilioUtils = new TwilioUtils()
   const image = new ImageService(ps)
   const utils = new UtilsService(ps)
-  const sms = new SMSService(ps, twilio, twilioUtils)
+  const utilsService = new UtilsService(ps)
+  const emailUtils = new EmailUtilsService(ps, error, image)
+  const email = new EmailService(ps, utilsService, emailUtils)
+  const paymentUtils = new PaymentUtilsService(ps, segmentService)
+  const sms = new SMSService(
+    ps,
+    twilio,
+    twilioUtils,
+    paymentUtils,
+    error,
+    email
+  )
   const pusher = new PusherService()
   const pushNotifData = new PushNotificationDataProvider()
   const pushNotificationService = new PushNotificationService(
@@ -46,8 +58,6 @@ const run = async () => {
     ps,
     error
   )
-  const emailUtils = new EmailUtilsService(ps, error, image)
-  const utilsService = new UtilsService(ps)
   const productUtils = new ProductUtilsService(ps, utilsService)
   const physicalProductUtilsService = new PhysicalProductUtilsService(
     ps,
@@ -58,30 +68,19 @@ const run = async () => {
     productUtils,
     physicalProductUtilsService
   )
-  const paymentUtils = new PaymentUtilsService()
   const shippingService = new ShippingService(ps, utilsService)
   const admissionsService = new AdmissionsService(ps, utilsService)
-  const segmentService = new SegmentService()
-  const email = new EmailService(ps, utilsService, emailUtils)
+  let payment
+  let customerService
   const authService = new AuthService(
     ps,
     pushNotificationService,
     email,
     error,
-    utilsService
+    utilsService,
+    payment
   )
-  const customerService = new CustomerService(
-    authService,
-    ps,
-    shippingService,
-    admissionsService,
-    segmentService,
-    email,
-    pushNotificationService,
-    sms,
-    utilsService
-  )
-  const payment = new PaymentService(
+  payment = new PaymentService(
     shippingService,
     authService,
     customerService,
@@ -91,6 +90,17 @@ const run = async () => {
     utils,
     segmentService,
     error
+  )
+  customerService = new CustomerService(
+    authService,
+    ps,
+    shippingService,
+    admissionsService,
+    segmentService,
+    email,
+    pushNotificationService,
+    sms,
+    utilsService
   )
   const pushNotifs = new PushNotificationService(
     pusher,
@@ -112,7 +122,10 @@ const run = async () => {
     error
   )
 
-  const productVariantIDs = ["ck2zeb50o0sg40734uiklm294"]
+  const productVariantIDs = [
+    "cklh7w038320v0761r527lshm",
+    "cklifyhgs3adw0714t93m4xb5",
+  ]
 
   const returnedPhysicalProducts = await ps.client.productVariants({
     where: {
@@ -120,9 +133,9 @@ const run = async () => {
     },
   })
 
-  const prismaUser = await ps.client.user({ id: "ckizzh70v0ady0791f6pjjqmu" })
+  const prismaUser = await ps.client.user({ id: "ckltvlfkx00bg0770u8jyx7vp" })
   const reservation = await ps.client.reservation({
-    id: "ck2zfwoud11xv07341va25mew",
+    id: "ckltwj7xp00wy0770ritd6z65",
   })
 
   await reservationService.createReservationFeedbacksForVariants(

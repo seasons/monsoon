@@ -1,3 +1,4 @@
+import * as url from "url"
 import * as util from "util"
 
 import { CustomerModule } from "@modules/Customer/customer.module"
@@ -88,7 +89,30 @@ const scheduleModule =
           resolvers: {
             JSON: GraphQLJSON,
           },
-          cache: new RedisCache(process.env.REDIS_URL),
+          cache: (() => {
+            try {
+              const URL = process.env.REDIS_URL
+              if (URL.includes("redis://")) {
+                return new RedisCache(URL)
+              }
+
+              const redis_uri = url.parse(URL)
+              const config = {
+                port: redis_uri.port,
+                host: redis_uri.hostname,
+                password: redis_uri.auth.split(":")[1],
+                db: 0,
+                tls: {
+                  rejectUnauthorized: false,
+                  requestCert: true,
+                  agent: false,
+                },
+              }
+              return new RedisCache(config)
+            } catch (e) {
+              console.error(e)
+            }
+          })(),
         } as GqlModuleOptions),
     }),
     AdminModule,

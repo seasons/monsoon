@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Mar 03 2021 13:53:48 GMT-0500 (Eastern Standard Time)
+# timestamp: Thu Mar 04 2021 13:16:15 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -23329,6 +23329,7 @@ type PhysicalProductQualityReport implements Node {
   id: ID!
   user: User!
   damageType: PhysicalProductDamageType
+  damageTypes: [PhysicalProductDamageType!]!
   notes: String
   physicalProduct: PhysicalProduct!
   createdAt: DateTime!
@@ -23351,10 +23352,15 @@ type PhysicalProductQualityReportConnection {
   aggregate: AggregatePhysicalProductQualityReport!
 }
 
+input PhysicalProductQualityReportCreatedamageTypesInput {
+  set: [PhysicalProductDamageType!]
+}
+
 input PhysicalProductQualityReportCreateInput {
   id: ID
   damageType: PhysicalProductDamageType
   notes: String
+  damageTypes: PhysicalProductQualityReportCreatedamageTypesInput
   user: UserCreateOneInput!
   physicalProduct: PhysicalProductCreateOneWithoutReportsInput!
 }
@@ -23368,6 +23374,7 @@ input PhysicalProductQualityReportCreateWithoutPhysicalProductInput {
   id: ID
   damageType: PhysicalProductDamageType
   notes: String
+  damageTypes: PhysicalProductQualityReportCreatedamageTypesInput
   user: UserCreateOneInput!
 }
 
@@ -23402,6 +23409,7 @@ enum PhysicalProductQualityReportOrderByInput {
 type PhysicalProductQualityReportPreviousValues {
   id: ID!
   damageType: PhysicalProductDamageType
+  damageTypes: [PhysicalProductDamageType!]!
   notes: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -23689,9 +23697,14 @@ input PhysicalProductQualityReportSubscriptionWhereInput {
   node: PhysicalProductQualityReportWhereInput
 }
 
+input PhysicalProductQualityReportUpdatedamageTypesInput {
+  set: [PhysicalProductDamageType!]
+}
+
 input PhysicalProductQualityReportUpdateInput {
   damageType: PhysicalProductDamageType
   notes: String
+  damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   user: UserUpdateOneRequiredInput
   physicalProduct: PhysicalProductUpdateOneRequiredWithoutReportsInput
 }
@@ -23699,11 +23712,13 @@ input PhysicalProductQualityReportUpdateInput {
 input PhysicalProductQualityReportUpdateManyDataInput {
   damageType: PhysicalProductDamageType
   notes: String
+  damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
 }
 
 input PhysicalProductQualityReportUpdateManyMutationInput {
   damageType: PhysicalProductDamageType
   notes: String
+  damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
 }
 
 input PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput {
@@ -23726,6 +23741,7 @@ input PhysicalProductQualityReportUpdateManyWithWhereNestedInput {
 input PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput {
   damageType: PhysicalProductDamageType
   notes: String
+  damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   user: UserUpdateOneRequiredInput
 }
 
