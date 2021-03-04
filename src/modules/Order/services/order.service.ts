@@ -662,7 +662,7 @@ export class OrderService {
       this.prisma.client.updateProductVariant({
         where: { id: productVariant.id },
         data: {
-          reservable: productVariant.reservable - 1,
+          reservable: Math.max(productVariant.reservable - 1, 0),
           offloaded: productVariant.offloaded + 1,
         },
       }),
