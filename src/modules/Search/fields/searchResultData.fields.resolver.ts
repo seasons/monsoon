@@ -11,6 +11,8 @@ export class SearchResultDataFieldsResolver {
         return "BrandSearchResultData"
       case "PhysicalProduct":
         return "PhysicalProductSearchResultData"
+      case "Customer":
+        return "CustomerSearchResultData"
     }
   }
 }
