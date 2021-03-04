@@ -272,7 +272,7 @@ export class PaymentService {
         city: tokenBillingAddressCity,
         state: tokenBillingAddressState,
         zip: tokenBillingAddressZip,
-        country: tokenBillingAddressCountry,
+        country: tokenBillingAddressCountry || "US",
       }
 
       await chargebee.customer
@@ -322,7 +322,7 @@ export class PaymentService {
         state: tokenBillingAddressState,
         street1: tokenBillingAddress1,
         street2: tokenBillingAddress2,
-        country: tokenBillingAddressCountry,
+        country: tokenBillingAddressCountry || "US",
       }
 
       await this.prisma.client.updateBillingInfo({

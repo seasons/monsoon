@@ -84,7 +84,7 @@ export class ChargebeeController {
       )
     )
 
-    if (custWithData.status === "PaymentFailed") {
+    if (custWithData?.status === "PaymentFailed") {
       let newStatus: CustomerStatus = subscription.plan_id.includes("pause")
         ? "Paused"
         : "Active"
@@ -124,6 +124,7 @@ export class ChargebeeController {
   }
 
   private async chargebeePaymentFailed(content: any) {
+    console.log(content)
     const { customer } = content
 
     const userId = customer?.id

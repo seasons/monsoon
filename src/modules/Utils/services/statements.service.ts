@@ -13,7 +13,7 @@ export class StatementsService {
   }
 
   isPayingCustomer(customer: Pick<Customer, "status">) {
-    return !!customer && !["Active", "Paused"].includes(customer.status)
+    return !!customer && ["Active", "Paused"].includes(customer.status)
   }
 
   onProductionEnvironment() {
