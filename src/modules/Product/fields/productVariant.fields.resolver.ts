@@ -57,7 +57,7 @@ export class ProductVariantFieldsResolver {
           }
         }`,
         formatWhere: ids => ({
-          AND: [{ customer: { id_in: ids }, status: "Submitted" }],
+          AND: [{ customer: { id_in: ids } }, { status: "Submitted" }],
         }),
         getKeys: a => [a.customer.id],
         fallbackValue: null,
