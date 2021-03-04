@@ -579,14 +579,16 @@ export class OrderService {
       throw new Error("Failed to collect payment for invoice.")
     }
 
-    const physicalProductsNeedShipping = orderLineItems.filter(
+    const orderLineItemsWithShipping = orderLineItems.filter(
       orderLineItem =>
         orderLineItem.recordType === "PhysicalProduct" &&
         orderLineItem.needShipping
     )
 
+    const orderNeedsShipping = orderLineItemsWithShipping.length > 0
+
     const getOrderShippingUpdate = async () => {
-      if (physicalProductsNeedShipping.length === 0) {
+      if (!orderNeedsShipping) {
         return {}
       }
 
@@ -638,16 +640,16 @@ export class OrderService {
     const orderShippingUpdate = await getOrderShippingUpdate()
 
     let updateProductVariantData
-    if (physicalProductsNeedShipping.length === 0) {
-      // Item is with the customer
-      updateProductVariantData = {
-        reserved: productVariant.reserved - 1,
-        offloaded: productVariant.offloaded + 1,
-      }
-    } else {
+    if (orderNeedsShipping) {
       // Item is at the warehouse
       updateProductVariantData = {
         reservable: productVariant.reservable - 1,
+        offloaded: productVariant.offloaded + 1,
+      }
+    } else {
+      // Item is with the customer
+      updateProductVariantData = {
+        reserved: productVariant.reserved - 1,
         offloaded: productVariant.offloaded + 1,
       }
     }
