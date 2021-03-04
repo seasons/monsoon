@@ -93,7 +93,7 @@ const scheduleModule =
             try {
               const URL = process.env.REDIS_URL
               if (URL.includes("redis://")) {
-                return new RedisCache(url)
+                return new RedisCache(URL)
               }
 
               const redis_uri = url.parse(URL)
