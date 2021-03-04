@@ -79,7 +79,7 @@ type ResetPasswordPayload {
 }
 
 type Me {
-  id: ID!
+  id: ID
   user: User
   customer: Customer
   activeReservation: Reservation
