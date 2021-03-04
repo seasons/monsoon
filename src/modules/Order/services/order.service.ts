@@ -579,13 +579,13 @@ export class OrderService {
       throw new Error("Failed to collect payment for invoice.")
     }
 
-    const getOrderShippingUpdate = async () => {
-      const physicalProductsNeedShipping = orderLineItems.filter(
-        orderLineItem =>
-          orderLineItem.recordType === "PhysicalProduct" &&
-          orderLineItem.needShipping
-      )
+    const physicalProductsNeedShipping = orderLineItems.filter(
+      orderLineItem =>
+        orderLineItem.recordType === "PhysicalProduct" &&
+        orderLineItem.needShipping
+    )
 
+    const getOrderShippingUpdate = async () => {
       if (physicalProductsNeedShipping.length === 0) {
         return {}
       }
@@ -637,6 +637,21 @@ export class OrderService {
 
     const orderShippingUpdate = await getOrderShippingUpdate()
 
+    let updateProductVariantData
+    if (physicalProductsNeedShipping.length === 0) {
+      // Item is with the customer
+      updateProductVariantData = {
+        reserved: productVariant.reserved - 1,
+        offloaded: productVariant.offloaded + 1,
+      }
+    } else {
+      // Item is at the warehouse
+      updateProductVariantData = {
+        reservable: productVariant.reservable - 1,
+        offloaded: productVariant.offloaded + 1,
+      }
+    }
+
     const [
       updatedOrder,
       _updatedPhysicalProduct,
@@ -661,10 +676,7 @@ export class OrderService {
       }),
       this.prisma.client.updateProductVariant({
         where: { id: productVariant.id },
-        data: {
-          reservable: Math.max(productVariant.reservable - 1, 0),
-          offloaded: productVariant.offloaded + 1,
-        },
+        data: updateProductVariantData,
       }),
     ])
 
