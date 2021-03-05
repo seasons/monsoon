@@ -69,6 +69,31 @@ export class ProductQueriesResolver {
   }
 
   @Query()
+  async productVariantsConnection(
+    @Args() args,
+    @Info() info,
+    @Customer() customer
+  ) {
+    if (args.personalizedForCurrentUser) {
+      const products = await this.productService.availableProductVariantsConnectionForCustomer(
+        customer.id,
+        info,
+        args
+      )
+      return products
+    }
+
+    return await this.prisma.binding.query.productVariantsConnection(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on ProductVariantConnection { edges { node { id } } }`
+      )
+    )
+  }
+
+  @Query()
   async productVariant(@Args() args, @Info() info, @Context() ctx) {
     return await this.prisma.binding.query.productVariant(
       args,
@@ -110,14 +135,6 @@ export class ProductQueriesResolver {
     @Info() info,
     @Customer() customer
   ) {
-    if (args.personalizedForCurrentUser) {
-      const products = await this.productService.availableProductVariantsConnectionForCustomer(
-        customer.id,
-        info,
-        args
-      )
-      return products
-    }
     return await this.prisma.binding.query.physicalProductsConnection(
       args,
       addFragmentToInfo(
