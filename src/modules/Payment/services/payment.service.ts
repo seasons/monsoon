@@ -47,6 +47,7 @@ export class PaymentService {
     private readonly shippingService: ShippingService,
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
+    @Inject(forwardRef(() => CustomerService))
     private readonly customerService: CustomerService,
     private readonly emailService: EmailService,
     private readonly paymentUtils: PaymentUtilsService,
