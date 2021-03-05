@@ -8,7 +8,7 @@ export class SearchScheduledJobs {
 
   constructor(private readonly search: SearchService) {}
 
-  @Cron(CronExpression.EVERY_6_HOURS)
+  @Cron(CronExpression.EVERY_2_HOURS)
   async indexProducts() {
     this.logger.log("Index products job beginning")
     await this.search.indexData()
