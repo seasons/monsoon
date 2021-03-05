@@ -9,7 +9,7 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async id(@User() user) {
-    return user?.id ?? "signedOutUserID"
+    return user?.id
   }
 
   @ResolveField()
@@ -59,7 +59,7 @@ export class MeFieldsResolver {
     if (!customer) {
       return null
     }
-    return await this.prisma.binding.query.bagItems(
+    const bagItems = await this.prisma.binding.query.bagItems(
       {
         where: {
           customer: {
@@ -70,6 +70,7 @@ export class MeFieldsResolver {
       },
       info
     )
+    return bagItems
   }
 
   @ResolveField()

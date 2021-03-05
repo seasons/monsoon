@@ -1,4 +1,14 @@
 type Query {
+  productVariantsConnection(
+    where: ProductVariantWhereInput
+    orderBy: ProductVariantOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+    personalizedForCurrentUser: Boolean
+  ): ProductVariantConnection!
   generatedVariantSKUs(input: ProductVariantSKUsInput!): [String!]
 
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize

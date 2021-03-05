@@ -248,7 +248,7 @@ export class SearchService {
           description,
           designer,
           isPrimaryBrand,
-          productsCount: products.length,
+          productsCount: products?.length || 0,
           popularity,
           tier,
           published,
