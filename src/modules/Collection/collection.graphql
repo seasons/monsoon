@@ -6,6 +6,8 @@ type Mutation {
 type Collection {
   id: ID!
   slug: String!
+  displayTextOverlay: Boolean!
+  textOverlayColor: String
   images(
     where: ImageWhereInput
     orderBy: ImageOrderByInput
@@ -58,6 +60,8 @@ input CollectionUpsertInput {
   productIDs: [String]
   published: Boolean
   placements: [CollectionPlacement]
+  displayTextOverlay: Boolean
+  textOverlayColor: String
 }
 
 type Query {

@@ -2101,6 +2101,8 @@ type Collection {
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   title: String
   subTitle: String
+  displayTextOverlay: Boolean!
+  textOverlayColor: String
   descriptions: [String!]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   published: Boolean!
@@ -2125,6 +2127,8 @@ input CollectionCreateInput {
   images: ImageCreateManyInput
   title: String
   subTitle: String
+  displayTextOverlay: Boolean
+  textOverlayColor: String
   descriptions: CollectionCreatedescriptionsInput
   products: ProductCreateManyInput
   published: Boolean
@@ -2149,6 +2153,10 @@ enum CollectionOrderByInput {
   title_DESC
   subTitle_ASC
   subTitle_DESC
+  displayTextOverlay_ASC
+  displayTextOverlay_DESC
+  textOverlayColor_ASC
+  textOverlayColor_DESC
   published_ASC
   published_DESC
   createdAt_ASC
@@ -2166,6 +2174,8 @@ type CollectionPreviousValues {
   slug: String!
   title: String
   subTitle: String
+  displayTextOverlay: Boolean!
+  textOverlayColor: String
   descriptions: [String!]!
   published: Boolean!
   placements: [CollectionPlacement!]!
@@ -2200,6 +2210,8 @@ input CollectionUpdateInput {
   images: ImageUpdateManyInput
   title: String
   subTitle: String
+  displayTextOverlay: Boolean
+  textOverlayColor: String
   descriptions: CollectionUpdatedescriptionsInput
   products: ProductUpdateManyInput
   published: Boolean
@@ -2210,6 +2222,8 @@ input CollectionUpdateManyMutationInput {
   slug: String
   title: String
   subTitle: String
+  displayTextOverlay: Boolean
+  textOverlayColor: String
   descriptions: CollectionUpdatedescriptionsInput
   published: Boolean
   placements: CollectionUpdateplacementsInput
@@ -2279,6 +2293,22 @@ input CollectionWhereInput {
   subTitle_not_starts_with: String
   subTitle_ends_with: String
   subTitle_not_ends_with: String
+  displayTextOverlay: Boolean
+  displayTextOverlay_not: Boolean
+  textOverlayColor: String
+  textOverlayColor_not: String
+  textOverlayColor_in: [String!]
+  textOverlayColor_not_in: [String!]
+  textOverlayColor_lt: String
+  textOverlayColor_lte: String
+  textOverlayColor_gt: String
+  textOverlayColor_gte: String
+  textOverlayColor_contains: String
+  textOverlayColor_not_contains: String
+  textOverlayColor_starts_with: String
+  textOverlayColor_not_starts_with: String
+  textOverlayColor_ends_with: String
+  textOverlayColor_not_ends_with: String
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
