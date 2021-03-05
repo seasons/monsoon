@@ -5,6 +5,17 @@ import { pick } from "lodash"
 
 import { AlgoliaService, IndexKey } from "./algolia.service"
 
+enum SearchResultType {
+  Product = "Product",
+  Brand = "Brand",
+  PhysicalProduct = "PhysicalProduct",
+  Customer = "Customer",
+}
+export interface QueryOptions {
+  filters?: string
+  includeTypes?: [SearchResultType]
+}
+
 @Injectable()
 export class SearchService {
   private readonly logger = new Logger(SearchService.name)
@@ -22,8 +33,16 @@ export class SearchService {
     await this.indexPhysicalProducts([...indices, IndexKey.PhysicalProduct])
   }
 
-  async query(query: string): Promise<any[]> {
-    const results = await this.algolia.defaultIndex.search(query)
+  async query(query: string, options?: QueryOptions): Promise<any[]> {
+    let filters = !!options?.filters ? options?.filters + " OR " : ""
+    let typeFilter = options?.includeTypes
+      .map(type => `kindOf:${type}`)
+      .join(" OR ")
+    filters = filters += typeFilter
+
+    const results = await this.algolia.defaultIndex.search(query, {
+      filters,
+    })
     return results.hits
   }
 

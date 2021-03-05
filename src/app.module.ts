@@ -1,15 +1,15 @@
+import * as url from "url"
 import * as util from "util"
 
 import { CustomerModule } from "@modules/Customer/customer.module"
 import { DataLoaderInterceptor } from "@modules/DataLoader/interceptors/dataloader.interceptor"
-import { CacheModule, Module, forwardRef } from "@nestjs/common"
+import { Module, forwardRef } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
 import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
 import { ScheduleModule } from "@nestjs/schedule"
 import sgMail from "@sendgrid/mail"
 import { RedisCache } from "apollo-server-cache-redis"
 import responseCachePlugin from "apollo-server-plugin-response-cache"
-import * as redisStore from "cache-manager-redis-store"
 import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
 import GraphQLJSON from "graphql-type-json"
@@ -58,11 +58,6 @@ const scheduleModule =
     ? [ScheduleModule.forRoot()]
     : []
 
-const redisConfig = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: process.env.REDIS_PORT || 6789,
-}
-
 @Module({
   imports: [
     ...scheduleModule,
@@ -95,12 +90,31 @@ const redisConfig = {
           resolvers: {
             JSON: GraphQLJSON,
           },
-          cache: new RedisCache(redisConfig),
+          cache: (() => {
+            try {
+              const URL = process.env.REDIS_URL
+              if (URL.includes("redis://")) {
+                return new RedisCache(URL)
+              }
+
+              const redis_uri = url.parse(URL)
+              const config = {
+                port: redis_uri.port,
+                host: redis_uri.hostname,
+                password: redis_uri.auth.split(":")[1],
+                db: 0,
+                tls: {
+                  rejectUnauthorized: false,
+                  requestCert: true,
+                  agent: false,
+                },
+              }
+              return new RedisCache(config)
+            } catch (e) {
+              console.error(e)
+            }
+          })(),
         } as GqlModuleOptions),
-    }),
-    CacheModule.register({
-      store: redisStore,
-      ...redisConfig,
     }),
     AdminModule,
     AnalyticsModule,

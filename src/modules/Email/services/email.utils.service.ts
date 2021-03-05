@@ -1,9 +1,8 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ImageService } from "@app/modules/Image/services/image.service"
-import { ID_Input, LetterSize, Order, Product, User } from "@app/prisma"
+import { ID_Input, Order, Product, User } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { ProductGridItem } from "@seasons/wind"
-import { String } from "aws-sdk/clients/apigateway"
 import { head, pick, sampleSize, uniq } from "lodash"
 
 import { PrismaService } from "../../../prisma/prisma.service"

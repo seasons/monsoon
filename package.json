@@ -9,8 +9,7 @@
     "node": "12.x"
   },
   "resolutions": {
-    "graphql": "^14.5.7",
-    "apollo-cache-control": "0.11.0"
+    "graphql": "^14.5.7"
   },
   "scripts": {
     "apollo": "apollo service:push",
@@ -52,7 +51,7 @@
     "@nestjs/schedule": "^0.4.0",
     "@nestjs/testing": "^7.2.0",
     "@pusher/push-notifications-server": "^1.2.0",
-    "@seasons/wind": "^2.4.7",
+    "@seasons/wind": "^2.5.16",
     "@sendgrid/mail": "^6.4.0",
     "@sentry/node": "^5.10.2",
     "@sentry/types": "^5.10.0",

@@ -2568,10 +2568,10 @@
     "@angular-devkit/core" "9.1.9"
     "@angular-devkit/schematics" "9.1.9"
 
-"@seasons/wind@^2.4.7":
-  version "2.4.7"
-  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.4.7.tgz#470ac7d3c465beaebce29d0219b5ae086ae5af16"
-  integrity sha512-KkvK1WhIabhxH4a02asl6vEZchaK6h6264XmZZA0659F9LvhVaM/PdirPXOSFyrlxQXXhFgvF05I9lKVzUy0Gg==
+"@seasons/wind@^2.5.16":
+  version "2.5.16"
+  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.5.16.tgz#d9ff025f04a0615257a319a71cd09b02ec1dbb3a"
+  integrity sha512-Swnbh9vvnhkX3J5c1F4aeJFGsnNc7nvpJHpWaWp2w/wAkm1kWaejNur154jvVtwTs/Gl0LgIXWKS6xg/Sbhkcg==
   dependencies:
     "@types/node" "^14.0.23"
     child_process "^1.0.2"
@@ -3931,13 +3931,21 @@ anymatch@^3.0.3, anymatch@~3.1.1:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
-apollo-cache-control@0.11.0, apollo-cache-control@^0.11.0, apollo-cache-control@^0.11.1, apollo-cache-control@^0.11.6:
+apollo-cache-control@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/apollo-cache-control/-/apollo-cache-control-0.11.0.tgz#7075492d04c5424e7c6769380b503e8f75b39d61"
   integrity sha512-dmRnQ9AXGw2SHahVGLzB/p4UW/taFBAJxifxubp8hqY5p9qdlSu4MPRq8zvV2ULMYf50rBtZyC4C+dZLqmHuHQ==
   dependencies:
     apollo-server-env "^2.4.4"
     apollo-server-plugin-base "^0.9.0"
+
+apollo-cache-control@^0.11.1, apollo-cache-control@^0.11.6:
+  version "0.11.6"
+  resolved "https://registry.yarnpkg.com/apollo-cache-control/-/apollo-cache-control-0.11.6.tgz#f7bdf924272af47ac474cf3f3f35cfc038cc9485"
+  integrity sha512-YZ+uuIG+fPy+mkpBS2qKF0v1qlzZ3PW6xZVaDukeK3ed3iAs4L/2YnkTqau3OmoF/VPzX2FmSkocX/OVd59YSw==
+  dependencies:
+    apollo-server-env "^3.0.0"
+    apollo-server-plugin-base "^0.10.4"
 
 apollo-codegen-core@^0.20.0:
   version "0.20.1"
