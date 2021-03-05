@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Mar 04 2021 18:05:09 GMT-0500 (Eastern Standard Time)
+# timestamp: Fri Mar 05 2021 14:18:34 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -4951,6 +4951,8 @@ type Collection implements Node {
   ): [Image!]
   title: String
   subTitle: String
+  displayTextOverlay: Boolean!
+  textOverlayColor: String
   descriptions: [String!]!
   products(
     where: ProductWhereInput
@@ -4992,6 +4994,8 @@ input CollectionCreateInput {
   slug: String!
   title: String
   subTitle: String
+  displayTextOverlay: Boolean
+  textOverlayColor: String
   published: Boolean
   descriptions: CollectionCreatedescriptionsInput
   placements: CollectionCreateplacementsInput
@@ -5027,6 +5031,10 @@ enum CollectionOrderByInput {
   title_DESC
   subTitle_ASC
   subTitle_DESC
+  displayTextOverlay_ASC
+  displayTextOverlay_DESC
+  textOverlayColor_ASC
+  textOverlayColor_DESC
   published_ASC
   published_DESC
   createdAt_ASC
@@ -5044,6 +5052,8 @@ type CollectionPreviousValues {
   slug: String!
   title: String
   subTitle: String
+  displayTextOverlay: Boolean!
+  textOverlayColor: String
   descriptions: [String!]!
   published: Boolean!
   placements: [CollectionPlacement!]!
@@ -5104,6 +5114,8 @@ input CollectionUpdateInput {
   slug: String
   title: String
   subTitle: String
+  displayTextOverlay: Boolean
+  textOverlayColor: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
   placements: CollectionUpdateplacementsInput
@@ -5115,6 +5127,8 @@ input CollectionUpdateManyMutationInput {
   slug: String
   title: String
   subTitle: String
+  displayTextOverlay: Boolean
+  textOverlayColor: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
   placements: CollectionUpdateplacementsInput
@@ -5403,6 +5417,78 @@ input CollectionWhereInput {
   All values not ending with the given string.
   """
   subTitle_not_ends_with: String
+  displayTextOverlay: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  displayTextOverlay_not: Boolean
+  textOverlayColor: String
+
+  """
+  All values that are not equal to given value.
+  """
+  textOverlayColor_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  textOverlayColor_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  textOverlayColor_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  textOverlayColor_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  textOverlayColor_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  textOverlayColor_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  textOverlayColor_gte: String
+
+  """
+  All values containing the given string.
+  """
+  textOverlayColor_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  textOverlayColor_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  textOverlayColor_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  textOverlayColor_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  textOverlayColor_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  textOverlayColor_not_ends_with: String
   published: Boolean
 
   """

@@ -320,6 +320,8 @@ type Collection {
   images: [Image!]
   title: String
   subTitle: String
+  displayTextOverlay: Boolean! @default(value: false)
+  textOverlayColor: String
   descriptions: [String]! @scalarList(strategy: RELATION)
   products: [Product!]!
   published: Boolean! @default(value: false)

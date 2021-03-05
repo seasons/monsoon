@@ -16,6 +16,7 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async id(@User() user) {
+    console.log(user)
     return user?.id
   }
 
@@ -100,6 +101,7 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async notificationBar(@Customer() customer) {
+    console.log(customer)
     if (!customer) {
       return null
     }
