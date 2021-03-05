@@ -1,6 +1,8 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
+import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
@@ -20,21 +22,30 @@ export class MembershipScheduledJobs {
     private readonly paymentUtils: PaymentUtilsService,
     private readonly email: EmailService,
     private readonly sms: SMSService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly statements: StatementsService,
+    private readonly error: ErrorService
   ) {}
 
   @Cron(CronExpression.EVERY_6_HOURS)
   async updatePausePendingToPaused() {
     const pauseRequests = await this.prisma.client.pauseRequests({
       where: {
-        pausePending: true,
+        AND: [
+          {
+            pausePending: true,
+          },
+          { membership: { id_not: null } },
+        ],
       },
     })
 
     for (const pauseRequest of pauseRequests) {
+      let pauseRequestWithCustomer = null
+      let latestReservation = null
       try {
         if (DateTime.fromISO(pauseRequest.pauseDate) <= DateTime.local()) {
-          const pauseRequestWithCustomer = (await this.prisma.binding.query.pauseRequest(
+          pauseRequestWithCustomer = (await this.prisma.binding.query.pauseRequest(
             { where: { id: pauseRequest.id } },
             `
               {
@@ -94,12 +105,9 @@ export class MembershipScheduledJobs {
               .customer({ id: customerId })
               .reservations({ orderBy: "createdAt_DESC" })
 
-            const latestReservation = head(reservations)
+            latestReservation = head(reservations)
 
-            if (
-              latestReservation &&
-              !["Completed", "Cancelled"].includes(latestReservation.status)
-            ) {
+            if (this.statements.reservationIsActive(latestReservation)) {
               const customer = await this.prisma.client.pauseRequests({
                 where: {
                   id: customerId,
@@ -140,7 +148,9 @@ export class MembershipScheduledJobs {
           }
         }
       } catch (e) {
-        Sentry.captureException(JSON.stringify(e))
+        this.error.setExtraContext({ pauseRequestWithCustomer }, "pauseRequest")
+        this.error.setExtraContext({ latestReservation }, "latestReservation")
+        this.error.captureError(e)
       }
     }
   }

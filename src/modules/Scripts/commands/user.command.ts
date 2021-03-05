@@ -139,6 +139,7 @@ export class UserCommands {
         "Created",
         "Waitlisted",
         "Authorized",
+        "PaymentFailed",
         "Active",
         "Suspended",
         "Paused",

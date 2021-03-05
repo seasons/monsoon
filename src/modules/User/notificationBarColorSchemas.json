@@ -1,0 +1,16 @@
+{
+  "RedAlert": {
+    "default": {
+      "backgroundColor": "#B45455",
+      "titleFontColor": "#ffffff",
+      "detailFontColor": "#D8A8A9",
+      "iconStrokeColor": "#D8A8A9"
+    },
+    "pressed": {
+      "backgroundColor": "#B56464",
+      "titleFontColor": "#ffffff",
+      "detailFontColor": "#D8A8A9",
+      "iconStrokeColor": "#D8A8A9"
+    }
+  }
+}

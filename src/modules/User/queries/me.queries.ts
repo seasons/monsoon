@@ -1,6 +1,5 @@
 import { User } from "@app/decorators/user.decorator"
 import { Query, Resolver } from "@nestjs/graphql"
-
 @Resolver()
 export class MeQueriesResolver {
   @Query()

@@ -1,9 +1,10 @@
 import { Customer, User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { UserInputError } from "apollo-server"
-import { pick } from "lodash"
+import { head, pick } from "lodash"
 
 import { CustomerService } from "../services/customer.service"
 
@@ -11,7 +12,8 @@ import { CustomerService } from "../services/customer.service"
 export class CustomerMutationsResolver {
   constructor(
     private readonly customerService: CustomerService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly prisma: PrismaService
   ) {}
 
   @Mutation()
@@ -64,5 +66,33 @@ export class CustomerMutationsResolver {
       false
     )
     return status
+  }
+
+  @Mutation()
+  async updateNotificationBarReceipt(
+    @Customer() customer,
+    @Args() { notification: { notificationBarId, viewCount, clickCount } },
+    @Info() info
+  ) {
+    const r = head(
+      await this.prisma.client.customerNotificationBarReceipts({
+        where: {
+          AND: [{ customer: { id: customer.id } }, { notificationBarId }],
+        },
+      })
+    )
+    return this.prisma.binding.mutation.upsertCustomerNotificationBarReceipt(
+      {
+        where: { id: r?.id || "" },
+        create: {
+          notificationBarId,
+          viewCount,
+          clickCount,
+          customer: { connect: { id: customer.id } },
+        },
+        update: { viewCount, clickCount },
+      },
+      info
+    )
   }
 }

@@ -1,6 +1,7 @@
 import "module-alias/register"
 
 import sgMail from "@sendgrid/mail"
+import chargebee from "chargebee"
 
 import { SegmentService } from "../../modules/Analytics/services/segment.service"
 import { AdmissionsScheduledJobs } from "../../modules/Cron/services/admissions.job.service"
@@ -26,12 +27,18 @@ import { AdmissionsService } from "../../modules/User/services/admissions.servic
 import { AuthService } from "../../modules/User/services/auth.service"
 import { CustomerService } from "../../modules/User/services/customer.service"
 import { PaymentUtilsService } from "../../modules/Utils/services/paymentUtils.service"
+import { StatementsService } from "../../modules/Utils/services/statements.service"
 import { UtilsService } from "../../modules/Utils/services/utils.service"
 import { PrismaService } from "../../prisma/prisma.service"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const run = async () => {
+  chargebee.configure({
+    site: process.env.CHARGEBEE_SITE,
+    api_key: process.env.CHARGEBEE_API_KEY,
+  })
+
   const error = new ErrorService()
   const ps = new PrismaService()
   const utils = new UtilsService(ps)
@@ -90,6 +97,7 @@ const run = async () => {
   )
   const dripService = new DripService()
   const dss = new DripSyncService(dripService, ps, utils, error)
+  const statements = new StatementsService(ps)
   const marketingJobService = new MarketingScheduledJobs(
     dss,
     ps,
@@ -102,12 +110,14 @@ const run = async () => {
     paymentUtils,
     email,
     sms,
-    utils
+    utils,
+    statements,
+    error
   )
   // await reservationsJobService.sendReturnNotifications()
   // await marketingJobService.syncUnsubscribesFromDrip()
-  await marketingJobService.syncCustomersToDrip()
-  // await membershipService.manageMembershipResumes()
+  // await marketingJobService.syncCustomersToDrip()
+  await membershipService.updatePausePendingToPaused()
 }
 
 run()
