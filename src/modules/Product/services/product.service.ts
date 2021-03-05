@@ -493,13 +493,13 @@ export class ProductService {
   }
 
   async availableProductVariantsConnectionForCustomer(
-    costomerID: string,
+    customerID: string,
     info: GraphQLResolveInfo,
     args: any
   ) {
     const customer = await this.prisma.binding.query.customer(
       {
-        where: { id: costomerID },
+        where: { id: customerID },
       },
       `{
         id
