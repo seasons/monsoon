@@ -1,3 +1,5 @@
+# import NotificationBar from "../User/user.graphql"
+
 type Query {
   customer(where: CustomerWhereUniqueInput!): Customer @hasRole(roles: [Admin])
   customers(
@@ -42,6 +44,9 @@ type Mutation {
     phoneNumber: String!
   ): Boolean @hasRole(roles: [Customer])
   triageCustomer: TriageCustomerStatus @hasRole(roles: [Customer])
+  updateNotificationBarReceipt(
+    notification: NotificationBarReceiptUpdateInput
+  ): CustomerNotificationBarReceipt @hasRole(roles: [Customer])
 }
 
 input AddressInput {
@@ -116,6 +121,11 @@ type Customer {
   updatedAt: DateTime!
 }
 
+input NotificationBarReceiptUpdateInput {
+  notificationBarId: NotificationBarID!
+  viewCount: Int
+  clickCount: Int
+}
 type CustomerMembership {
   id: ID!
   subscriptionId: String!

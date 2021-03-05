@@ -36,6 +36,9 @@ export interface Exists {
   customerMembershipSubscriptionData: (
     where?: CustomerMembershipSubscriptionDataWhereInput
   ) => Promise<boolean>;
+  customerNotificationBarReceipt: (
+    where?: CustomerNotificationBarReceiptWhereInput
+  ) => Promise<boolean>;
   emailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>;
   externalShopifyIntegration: (
     where?: ExternalShopifyIntegrationWhereInput
@@ -427,6 +430,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => CustomerMembershipSubscriptionDataConnectionPromise;
+  customerNotificationBarReceipt: (
+    where: CustomerNotificationBarReceiptWhereUniqueInput
+  ) => CustomerNotificationBarReceiptNullablePromise;
+  customerNotificationBarReceipts: (args?: {
+    where?: CustomerNotificationBarReceiptWhereInput;
+    orderBy?: CustomerNotificationBarReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<CustomerNotificationBarReceipt>;
+  customerNotificationBarReceiptsConnection: (args?: {
+    where?: CustomerNotificationBarReceiptWhereInput;
+    orderBy?: CustomerNotificationBarReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => CustomerNotificationBarReceiptConnectionPromise;
   emailReceipt: (
     where: EmailReceiptWhereUniqueInput
   ) => EmailReceiptNullablePromise;
@@ -1753,6 +1777,28 @@ export interface Prisma {
   deleteManyCustomerMembershipSubscriptionDatas: (
     where?: CustomerMembershipSubscriptionDataWhereInput
   ) => BatchPayloadPromise;
+  createCustomerNotificationBarReceipt: (
+    data: CustomerNotificationBarReceiptCreateInput
+  ) => CustomerNotificationBarReceiptPromise;
+  updateCustomerNotificationBarReceipt: (args: {
+    data: CustomerNotificationBarReceiptUpdateInput;
+    where: CustomerNotificationBarReceiptWhereUniqueInput;
+  }) => CustomerNotificationBarReceiptPromise;
+  updateManyCustomerNotificationBarReceipts: (args: {
+    data: CustomerNotificationBarReceiptUpdateManyMutationInput;
+    where?: CustomerNotificationBarReceiptWhereInput;
+  }) => BatchPayloadPromise;
+  upsertCustomerNotificationBarReceipt: (args: {
+    where: CustomerNotificationBarReceiptWhereUniqueInput;
+    create: CustomerNotificationBarReceiptCreateInput;
+    update: CustomerNotificationBarReceiptUpdateInput;
+  }) => CustomerNotificationBarReceiptPromise;
+  deleteCustomerNotificationBarReceipt: (
+    where: CustomerNotificationBarReceiptWhereUniqueInput
+  ) => CustomerNotificationBarReceiptPromise;
+  deleteManyCustomerNotificationBarReceipts: (
+    where?: CustomerNotificationBarReceiptWhereInput
+  ) => BatchPayloadPromise;
   createEmailReceipt: (data: EmailReceiptCreateInput) => EmailReceiptPromise;
   updateEmailReceipt: (args: {
     data: EmailReceiptUpdateInput;
@@ -2830,6 +2876,9 @@ export interface Subscription {
   customerMembershipSubscriptionData: (
     where?: CustomerMembershipSubscriptionDataSubscriptionWhereInput
   ) => CustomerMembershipSubscriptionDataSubscriptionPayloadSubscription;
+  customerNotificationBarReceipt: (
+    where?: CustomerNotificationBarReceiptSubscriptionWhereInput
+  ) => CustomerNotificationBarReceiptSubscriptionPayloadSubscription;
   emailReceipt: (
     where?: EmailReceiptSubscriptionWhereInput
   ) => EmailReceiptSubscriptionPayloadSubscription;
@@ -3476,6 +3525,7 @@ export type CustomerStatus =
   | "Authorized"
   | "Active"
   | "Suspended"
+  | "PaymentFailed"
   | "Paused"
   | "Deactivated";
 
@@ -3560,6 +3610,8 @@ export type InAdmissableReason =
   | "UnserviceableZipcode"
   | "InsufficientInventory"
   | "OpsThresholdExceeded";
+
+export type NotificationBarID = "PastDueInvoice" | "TestDismissable";
 
 export type PauseRequestOrderByInput =
   | "id_ASC"
@@ -3652,6 +3704,20 @@ export type CustomerOrderByInput =
   | "referrerId_DESC"
   | "authorizedAt_ASC"
   | "authorizedAt_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type CustomerNotificationBarReceiptOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "notificationBarId_ASC"
+  | "notificationBarId_DESC"
+  | "viewCount_ASC"
+  | "viewCount_DESC"
+  | "clickCount_ASC"
+  | "clickCount_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -7477,6 +7543,15 @@ export interface CustomerWhereInput {
   authorizedAt_gt?: Maybe<DateTimeInput>;
   authorizedAt_gte?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataWhereInput>;
+  notificationBarReceipts_every?: Maybe<
+    CustomerNotificationBarReceiptWhereInput
+  >;
+  notificationBarReceipts_some?: Maybe<
+    CustomerNotificationBarReceiptWhereInput
+  >;
+  notificationBarReceipts_none?: Maybe<
+    CustomerNotificationBarReceiptWhereInput
+  >;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -8595,6 +8670,72 @@ export interface UTMDataWhereInput {
   NOT?: Maybe<UTMDataWhereInput[] | UTMDataWhereInput>;
 }
 
+export interface CustomerNotificationBarReceiptWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  notificationBarId?: Maybe<NotificationBarID>;
+  notificationBarId_not?: Maybe<NotificationBarID>;
+  notificationBarId_in?: Maybe<NotificationBarID[] | NotificationBarID>;
+  notificationBarId_not_in?: Maybe<NotificationBarID[] | NotificationBarID>;
+  viewCount?: Maybe<Int>;
+  viewCount_not?: Maybe<Int>;
+  viewCount_in?: Maybe<Int[] | Int>;
+  viewCount_not_in?: Maybe<Int[] | Int>;
+  viewCount_lt?: Maybe<Int>;
+  viewCount_lte?: Maybe<Int>;
+  viewCount_gt?: Maybe<Int>;
+  viewCount_gte?: Maybe<Int>;
+  clickCount?: Maybe<Int>;
+  clickCount_not?: Maybe<Int>;
+  clickCount_in?: Maybe<Int[] | Int>;
+  clickCount_not_in?: Maybe<Int[] | Int>;
+  clickCount_lt?: Maybe<Int>;
+  clickCount_lte?: Maybe<Int>;
+  clickCount_gt?: Maybe<Int>;
+  clickCount_gte?: Maybe<Int>;
+  customer?: Maybe<CustomerWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    | CustomerNotificationBarReceiptWhereInput[]
+    | CustomerNotificationBarReceiptWhereInput
+  >;
+  OR?: Maybe<
+    | CustomerNotificationBarReceiptWhereInput[]
+    | CustomerNotificationBarReceiptWhereInput
+  >;
+  NOT?: Maybe<
+    | CustomerNotificationBarReceiptWhereInput[]
+    | CustomerNotificationBarReceiptWhereInput
+  >;
+}
+
 export type BillingInfoWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -8746,6 +8887,10 @@ export type CustomerMembershipWhereUniqueInput = AtLeastOne<{
 }>;
 
 export type CustomerMembershipSubscriptionDataWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type CustomerNotificationBarReceiptWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
@@ -14211,6 +14356,9 @@ export interface CustomerCreateWithoutBagItemsInput {
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  >;
 }
 
 export interface CustomerDetailCreateOneInput {
@@ -14532,6 +14680,9 @@ export interface CustomerCreateWithoutReservationsInput {
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  >;
 }
 
 export interface BagItemCreateManyWithoutCustomerInput {
@@ -14599,6 +14750,9 @@ export interface CustomerCreateWithoutReferreesInput {
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  >;
 }
 
 export interface CustomerAdmissionsDataCreateOneWithoutCustomerInput {
@@ -14630,6 +14784,24 @@ export interface UTMDataCreateWithoutCustomerInput {
   content?: Maybe<String>;
 }
 
+export interface CustomerNotificationBarReceiptCreateManyWithoutCustomerInput {
+  create?: Maybe<
+    | CustomerNotificationBarReceiptCreateWithoutCustomerInput[]
+    | CustomerNotificationBarReceiptCreateWithoutCustomerInput
+  >;
+  connect?: Maybe<
+    | CustomerNotificationBarReceiptWhereUniqueInput[]
+    | CustomerNotificationBarReceiptWhereUniqueInput
+  >;
+}
+
+export interface CustomerNotificationBarReceiptCreateWithoutCustomerInput {
+  id?: Maybe<ID_Input>;
+  notificationBarId: NotificationBarID;
+  viewCount?: Maybe<Int>;
+  clickCount?: Maybe<Int>;
+}
+
 export interface CustomerCreateManyWithoutReferrerInput {
   create?: Maybe<
     CustomerCreateWithoutReferrerInput[] | CustomerCreateWithoutReferrerInput
@@ -14654,6 +14826,9 @@ export interface CustomerCreateWithoutReferrerInput {
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  >;
 }
 
 export interface ReservationReceiptCreateOneWithoutReservationInput {
@@ -14792,6 +14967,9 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  >;
 }
 
 export interface CustomerDetailUpdateOneInput {
@@ -15372,6 +15550,9 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  >;
 }
 
 export interface BagItemUpdateManyWithoutCustomerInput {
@@ -15535,6 +15716,9 @@ export interface CustomerUpdateWithoutReferreesDataInput {
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  >;
 }
 
 export interface CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
@@ -15580,6 +15764,138 @@ export interface UTMDataUpdateWithoutCustomerDataInput {
 export interface UTMDataUpsertWithoutCustomerInput {
   update: UTMDataUpdateWithoutCustomerDataInput;
   create: UTMDataCreateWithoutCustomerInput;
+}
+
+export interface CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput {
+  create?: Maybe<
+    | CustomerNotificationBarReceiptCreateWithoutCustomerInput[]
+    | CustomerNotificationBarReceiptCreateWithoutCustomerInput
+  >;
+  delete?: Maybe<
+    | CustomerNotificationBarReceiptWhereUniqueInput[]
+    | CustomerNotificationBarReceiptWhereUniqueInput
+  >;
+  connect?: Maybe<
+    | CustomerNotificationBarReceiptWhereUniqueInput[]
+    | CustomerNotificationBarReceiptWhereUniqueInput
+  >;
+  set?: Maybe<
+    | CustomerNotificationBarReceiptWhereUniqueInput[]
+    | CustomerNotificationBarReceiptWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    | CustomerNotificationBarReceiptWhereUniqueInput[]
+    | CustomerNotificationBarReceiptWhereUniqueInput
+  >;
+  update?: Maybe<
+    | CustomerNotificationBarReceiptUpdateWithWhereUniqueWithoutCustomerInput[]
+    | CustomerNotificationBarReceiptUpdateWithWhereUniqueWithoutCustomerInput
+  >;
+  upsert?: Maybe<
+    | CustomerNotificationBarReceiptUpsertWithWhereUniqueWithoutCustomerInput[]
+    | CustomerNotificationBarReceiptUpsertWithWhereUniqueWithoutCustomerInput
+  >;
+  deleteMany?: Maybe<
+    | CustomerNotificationBarReceiptScalarWhereInput[]
+    | CustomerNotificationBarReceiptScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | CustomerNotificationBarReceiptUpdateManyWithWhereNestedInput[]
+    | CustomerNotificationBarReceiptUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface CustomerNotificationBarReceiptUpdateWithWhereUniqueWithoutCustomerInput {
+  where: CustomerNotificationBarReceiptWhereUniqueInput;
+  data: CustomerNotificationBarReceiptUpdateWithoutCustomerDataInput;
+}
+
+export interface CustomerNotificationBarReceiptUpdateWithoutCustomerDataInput {
+  notificationBarId?: Maybe<NotificationBarID>;
+  viewCount?: Maybe<Int>;
+  clickCount?: Maybe<Int>;
+}
+
+export interface CustomerNotificationBarReceiptUpsertWithWhereUniqueWithoutCustomerInput {
+  where: CustomerNotificationBarReceiptWhereUniqueInput;
+  update: CustomerNotificationBarReceiptUpdateWithoutCustomerDataInput;
+  create: CustomerNotificationBarReceiptCreateWithoutCustomerInput;
+}
+
+export interface CustomerNotificationBarReceiptScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  notificationBarId?: Maybe<NotificationBarID>;
+  notificationBarId_not?: Maybe<NotificationBarID>;
+  notificationBarId_in?: Maybe<NotificationBarID[] | NotificationBarID>;
+  notificationBarId_not_in?: Maybe<NotificationBarID[] | NotificationBarID>;
+  viewCount?: Maybe<Int>;
+  viewCount_not?: Maybe<Int>;
+  viewCount_in?: Maybe<Int[] | Int>;
+  viewCount_not_in?: Maybe<Int[] | Int>;
+  viewCount_lt?: Maybe<Int>;
+  viewCount_lte?: Maybe<Int>;
+  viewCount_gt?: Maybe<Int>;
+  viewCount_gte?: Maybe<Int>;
+  clickCount?: Maybe<Int>;
+  clickCount_not?: Maybe<Int>;
+  clickCount_in?: Maybe<Int[] | Int>;
+  clickCount_not_in?: Maybe<Int[] | Int>;
+  clickCount_lt?: Maybe<Int>;
+  clickCount_lte?: Maybe<Int>;
+  clickCount_gt?: Maybe<Int>;
+  clickCount_gte?: Maybe<Int>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    | CustomerNotificationBarReceiptScalarWhereInput[]
+    | CustomerNotificationBarReceiptScalarWhereInput
+  >;
+  OR?: Maybe<
+    | CustomerNotificationBarReceiptScalarWhereInput[]
+    | CustomerNotificationBarReceiptScalarWhereInput
+  >;
+  NOT?: Maybe<
+    | CustomerNotificationBarReceiptScalarWhereInput[]
+    | CustomerNotificationBarReceiptScalarWhereInput
+  >;
+}
+
+export interface CustomerNotificationBarReceiptUpdateManyWithWhereNestedInput {
+  where: CustomerNotificationBarReceiptScalarWhereInput;
+  data: CustomerNotificationBarReceiptUpdateManyDataInput;
+}
+
+export interface CustomerNotificationBarReceiptUpdateManyDataInput {
+  notificationBarId?: Maybe<NotificationBarID>;
+  viewCount?: Maybe<Int>;
+  clickCount?: Maybe<Int>;
 }
 
 export interface CustomerUpsertWithoutReferreesInput {
@@ -15631,6 +15947,9 @@ export interface CustomerUpdateWithoutReferrerDataInput {
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  >;
 }
 
 export interface CustomerUpsertWithWhereUniqueWithoutReferrerInput {
@@ -16520,6 +16839,9 @@ export interface CustomerCreateInput {
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  >;
 }
 
 export interface CustomerUpdateInput {
@@ -16539,6 +16861,9 @@ export interface CustomerUpdateInput {
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  >;
 }
 
 export interface CustomerUpdateManyMutationInput {
@@ -16582,6 +16907,9 @@ export interface CustomerCreateWithoutAdmissionsInput {
   emailedProducts?: Maybe<ProductCreateManyInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  >;
 }
 
 export interface CustomerAdmissionsDataUpdateInput {
@@ -16617,6 +16945,9 @@ export interface CustomerUpdateWithoutAdmissionsDataInput {
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  >;
 }
 
 export interface CustomerUpsertWithoutAdmissionsInput {
@@ -16719,6 +17050,9 @@ export interface CustomerCreateWithoutMembershipInput {
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  >;
 }
 
 export interface CustomerMembershipUpdateInput {
@@ -16753,6 +17087,9 @@ export interface CustomerUpdateWithoutMembershipDataInput {
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  >;
 }
 
 export interface CustomerUpsertWithoutMembershipInput {
@@ -16783,6 +17120,85 @@ export interface CustomerMembershipSubscriptionDataUpdateManyMutationInput {
   nextBillingAt?: Maybe<DateTimeInput>;
   status?: Maybe<String>;
   planPrice?: Maybe<Int>;
+}
+
+export interface CustomerNotificationBarReceiptCreateInput {
+  id?: Maybe<ID_Input>;
+  notificationBarId: NotificationBarID;
+  viewCount?: Maybe<Int>;
+  clickCount?: Maybe<Int>;
+  customer: CustomerCreateOneWithoutNotificationBarReceiptsInput;
+}
+
+export interface CustomerCreateOneWithoutNotificationBarReceiptsInput {
+  create?: Maybe<CustomerCreateWithoutNotificationBarReceiptsInput>;
+  connect?: Maybe<CustomerWhereUniqueInput>;
+}
+
+export interface CustomerCreateWithoutNotificationBarReceiptsInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneInput;
+  status?: Maybe<CustomerStatus>;
+  detail?: Maybe<CustomerDetailCreateOneInput>;
+  billingInfo?: Maybe<BillingInfoCreateOneInput>;
+  plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
+  bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
+  reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerCreateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerCreateManyWithoutReferrerInput>;
+  emailedProducts?: Maybe<ProductCreateManyInput>;
+  admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
+}
+
+export interface CustomerNotificationBarReceiptUpdateInput {
+  notificationBarId?: Maybe<NotificationBarID>;
+  viewCount?: Maybe<Int>;
+  clickCount?: Maybe<Int>;
+  customer?: Maybe<
+    CustomerUpdateOneRequiredWithoutNotificationBarReceiptsInput
+  >;
+}
+
+export interface CustomerUpdateOneRequiredWithoutNotificationBarReceiptsInput {
+  create?: Maybe<CustomerCreateWithoutNotificationBarReceiptsInput>;
+  update?: Maybe<CustomerUpdateWithoutNotificationBarReceiptsDataInput>;
+  upsert?: Maybe<CustomerUpsertWithoutNotificationBarReceiptsInput>;
+  connect?: Maybe<CustomerWhereUniqueInput>;
+}
+
+export interface CustomerUpdateWithoutNotificationBarReceiptsDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  status?: Maybe<CustomerStatus>;
+  detail?: Maybe<CustomerDetailUpdateOneInput>;
+  billingInfo?: Maybe<BillingInfoUpdateOneInput>;
+  plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
+  bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
+  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+  referralLink?: Maybe<String>;
+  referrerId?: Maybe<String>;
+  referrer?: Maybe<CustomerUpdateOneWithoutReferreesInput>;
+  referrees?: Maybe<CustomerUpdateManyWithoutReferrerInput>;
+  emailedProducts?: Maybe<ProductUpdateManyInput>;
+  admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
+  authorizedAt?: Maybe<DateTimeInput>;
+  utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
+}
+
+export interface CustomerUpsertWithoutNotificationBarReceiptsInput {
+  update: CustomerUpdateWithoutNotificationBarReceiptsDataInput;
+  create: CustomerCreateWithoutNotificationBarReceiptsInput;
+}
+
+export interface CustomerNotificationBarReceiptUpdateManyMutationInput {
+  notificationBarId?: Maybe<NotificationBarID>;
+  viewCount?: Maybe<Int>;
+  clickCount?: Maybe<Int>;
 }
 
 export interface EmailReceiptCreateInput {
@@ -17158,6 +17574,9 @@ export interface CustomerUpdateDataInput {
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  >;
 }
 
 export interface CustomerUpsertNestedInput {
@@ -19038,6 +19457,9 @@ export interface CustomerCreateWithoutUtmInput {
   emailedProducts?: Maybe<ProductCreateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  >;
 }
 
 export interface UTMDataUpdateInput {
@@ -19072,6 +19494,9 @@ export interface CustomerUpdateWithoutUtmDataInput {
   emailedProducts?: Maybe<ProductUpdateManyInput>;
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
+  notificationBarReceipts?: Maybe<
+    CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  >;
 }
 
 export interface CustomerUpsertWithoutUtmInput {
@@ -19695,6 +20120,26 @@ export interface CustomerMembershipSubscriptionDataSubscriptionWhereInput {
   NOT?: Maybe<
     | CustomerMembershipSubscriptionDataSubscriptionWhereInput[]
     | CustomerMembershipSubscriptionDataSubscriptionWhereInput
+  >;
+}
+
+export interface CustomerNotificationBarReceiptSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<CustomerNotificationBarReceiptWhereInput>;
+  AND?: Maybe<
+    | CustomerNotificationBarReceiptSubscriptionWhereInput[]
+    | CustomerNotificationBarReceiptSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | CustomerNotificationBarReceiptSubscriptionWhereInput[]
+    | CustomerNotificationBarReceiptSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | CustomerNotificationBarReceiptSubscriptionWhereInput[]
+    | CustomerNotificationBarReceiptSubscriptionWhereInput
   >;
 }
 
@@ -23370,6 +23815,17 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
   admissions: <T = CustomerAdmissionsDataPromise>() => T;
   authorizedAt: () => Promise<DateTimeOutput>;
   utm: <T = UTMDataPromise>() => T;
+  notificationBarReceipts: <
+    T = FragmentableArray<CustomerNotificationBarReceipt>
+  >(args?: {
+    where?: CustomerNotificationBarReceiptWhereInput;
+    orderBy?: CustomerNotificationBarReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -23426,6 +23882,17 @@ export interface CustomerSubscription
   admissions: <T = CustomerAdmissionsDataSubscription>() => T;
   authorizedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   utm: <T = UTMDataSubscription>() => T;
+  notificationBarReceipts: <
+    T = Promise<AsyncIterator<CustomerNotificationBarReceiptSubscription>>
+  >(args?: {
+    where?: CustomerNotificationBarReceiptWhereInput;
+    orderBy?: CustomerNotificationBarReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -23482,6 +23949,17 @@ export interface CustomerNullablePromise
   admissions: <T = CustomerAdmissionsDataPromise>() => T;
   authorizedAt: () => Promise<DateTimeOutput>;
   utm: <T = UTMDataPromise>() => T;
+  notificationBarReceipts: <
+    T = FragmentableArray<CustomerNotificationBarReceipt>
+  >(args?: {
+    where?: CustomerNotificationBarReceiptWhereInput;
+    orderBy?: CustomerNotificationBarReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -24492,6 +24970,51 @@ export interface UTMDataNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
+export interface CustomerNotificationBarReceipt {
+  id: ID_Output;
+  notificationBarId: NotificationBarID;
+  viewCount: Int;
+  clickCount: Int;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface CustomerNotificationBarReceiptPromise
+  extends Promise<CustomerNotificationBarReceipt>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  notificationBarId: () => Promise<NotificationBarID>;
+  viewCount: () => Promise<Int>;
+  clickCount: () => Promise<Int>;
+  customer: <T = CustomerPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface CustomerNotificationBarReceiptSubscription
+  extends Promise<AsyncIterator<CustomerNotificationBarReceipt>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  notificationBarId: () => Promise<AsyncIterator<NotificationBarID>>;
+  viewCount: () => Promise<AsyncIterator<Int>>;
+  clickCount: () => Promise<AsyncIterator<Int>>;
+  customer: <T = CustomerSubscription>() => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface CustomerNotificationBarReceiptNullablePromise
+  extends Promise<CustomerNotificationBarReceipt | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  notificationBarId: () => Promise<NotificationBarID>;
+  viewCount: () => Promise<Int>;
+  clickCount: () => Promise<Int>;
+  customer: <T = CustomerPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
 export interface BagItemConnection {
   pageInfo: PageInfo;
   edges: BagItemEdge[];
@@ -25278,6 +25801,64 @@ export interface AggregateCustomerMembershipSubscriptionDataPromise
 
 export interface AggregateCustomerMembershipSubscriptionDataSubscription
   extends Promise<AsyncIterator<AggregateCustomerMembershipSubscriptionData>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface CustomerNotificationBarReceiptConnection {
+  pageInfo: PageInfo;
+  edges: CustomerNotificationBarReceiptEdge[];
+}
+
+export interface CustomerNotificationBarReceiptConnectionPromise
+  extends Promise<CustomerNotificationBarReceiptConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<CustomerNotificationBarReceiptEdge>>() => T;
+  aggregate: <T = AggregateCustomerNotificationBarReceiptPromise>() => T;
+}
+
+export interface CustomerNotificationBarReceiptConnectionSubscription
+  extends Promise<AsyncIterator<CustomerNotificationBarReceiptConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<CustomerNotificationBarReceiptEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateCustomerNotificationBarReceiptSubscription>() => T;
+}
+
+export interface CustomerNotificationBarReceiptEdge {
+  node: CustomerNotificationBarReceipt;
+  cursor: String;
+}
+
+export interface CustomerNotificationBarReceiptEdgePromise
+  extends Promise<CustomerNotificationBarReceiptEdge>,
+    Fragmentable {
+  node: <T = CustomerNotificationBarReceiptPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface CustomerNotificationBarReceiptEdgeSubscription
+  extends Promise<AsyncIterator<CustomerNotificationBarReceiptEdge>>,
+    Fragmentable {
+  node: <T = CustomerNotificationBarReceiptSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateCustomerNotificationBarReceipt {
+  count: Int;
+}
+
+export interface AggregateCustomerNotificationBarReceiptPromise
+  extends Promise<AggregateCustomerNotificationBarReceipt>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateCustomerNotificationBarReceiptSubscription
+  extends Promise<AsyncIterator<AggregateCustomerNotificationBarReceipt>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -29757,6 +30338,68 @@ export interface CustomerMembershipSubscriptionDataPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface CustomerNotificationBarReceiptSubscriptionPayload {
+  mutation: MutationType;
+  node: CustomerNotificationBarReceipt;
+  updatedFields: String[];
+  previousValues: CustomerNotificationBarReceiptPreviousValues;
+}
+
+export interface CustomerNotificationBarReceiptSubscriptionPayloadPromise
+  extends Promise<CustomerNotificationBarReceiptSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = CustomerNotificationBarReceiptPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <
+    T = CustomerNotificationBarReceiptPreviousValuesPromise
+  >() => T;
+}
+
+export interface CustomerNotificationBarReceiptSubscriptionPayloadSubscription
+  extends Promise<
+      AsyncIterator<CustomerNotificationBarReceiptSubscriptionPayload>
+    >,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = CustomerNotificationBarReceiptSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = CustomerNotificationBarReceiptPreviousValuesSubscription
+  >() => T;
+}
+
+export interface CustomerNotificationBarReceiptPreviousValues {
+  id: ID_Output;
+  notificationBarId: NotificationBarID;
+  viewCount: Int;
+  clickCount: Int;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface CustomerNotificationBarReceiptPreviousValuesPromise
+  extends Promise<CustomerNotificationBarReceiptPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  notificationBarId: () => Promise<NotificationBarID>;
+  viewCount: () => Promise<Int>;
+  clickCount: () => Promise<Int>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface CustomerNotificationBarReceiptPreviousValuesSubscription
+  extends Promise<AsyncIterator<CustomerNotificationBarReceiptPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  notificationBarId: () => Promise<AsyncIterator<NotificationBarID>>;
+  viewCount: () => Promise<AsyncIterator<Int>>;
+  clickCount: () => Promise<AsyncIterator<Int>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface EmailReceiptSubscriptionPayload {
   mutation: MutationType;
   node: EmailReceipt;
@@ -33130,6 +33773,14 @@ export const models: Model[] = [
   },
   {
     name: "Customer",
+    embedded: false
+  },
+  {
+    name: "NotificationBarID",
+    embedded: false
+  },
+  {
+    name: "CustomerNotificationBarReceipt",
     embedded: false
   },
   {

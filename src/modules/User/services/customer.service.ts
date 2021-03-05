@@ -17,13 +17,14 @@ import {
   CustomerWhereUniqueInput,
   ID_Input,
   InAdmissableReason,
+  NotificationBarID,
   ShippingOption,
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
-import { pick } from "lodash"
+import { head, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
@@ -612,6 +613,31 @@ export class CustomerService {
     })
 
     return { status, waitlistReason: reason }
+  }
+
+  async getNotificationBarData(
+    notificationBarId: NotificationBarID,
+    customerId
+  ) {
+    const data = this.utils.parseJSONFile("src/modules/User/notificationBar")[
+      notificationBarId
+    ]
+    const palette = this.utils.parseJSONFile(
+      "src/modules/User/notificationBarColorSchemas"
+    )[data.paletteID]
+    const receiptData = head(
+      await this.prisma.client.customerNotificationBarReceipts({
+        where: {
+          AND: [{ notificationBarId }, { customer: { id: customerId } }],
+        },
+      })
+    )
+    return {
+      ...data,
+      palette,
+      ...pick(receiptData, ["viewCount", "clickCount"]),
+      id: notificationBarId,
+    }
   }
 
   private async updateCustomerAfterTriage({

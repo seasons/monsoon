@@ -67,7 +67,6 @@ export class ProductVariantMutationsResolver {
   }
 
   @Mutation()
-
   async addProductVariantWant(@Args() { variantID }, @User() user) {
     if (!user) throw new Error("Missing user from context")
 
