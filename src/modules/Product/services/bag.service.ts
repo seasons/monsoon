@@ -27,11 +27,12 @@ export class BagService {
     `
     )
 
-    const customerPlanItemCount = await this.prisma.client
-      .customer({ id: customer.id })
-      .membership()
-      .plan()
-      .itemCount()
+    const customerPlanItemCount =
+      (await this.prisma.client
+        .customer({ id: customer.id })
+        .membership()
+        .plan()
+        .itemCount()) ?? 3
 
     if (bag.some(i => i.productVariant?.id === item)) {
       throw new ApolloError("Item already in bag", "515")
