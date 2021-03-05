@@ -28,6 +28,8 @@ export class CollectionService {
       subTitle: data.subTitle,
       descriptions: data.descriptions,
       published: data.published,
+      displayTextOverlay: data.displayTextOverlay,
+      textOverlayColor: data.textOverlayColor,
       placements: data.productIDs && { set: data.placements },
     }
 

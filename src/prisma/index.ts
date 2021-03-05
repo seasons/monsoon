@@ -3748,6 +3748,10 @@ export type CollectionOrderByInput =
   | "title_DESC"
   | "subTitle_ASC"
   | "subTitle_DESC"
+  | "displayTextOverlay_ASC"
+  | "displayTextOverlay_DESC"
+  | "textOverlayColor_ASC"
+  | "textOverlayColor_DESC"
   | "published_ASC"
   | "published_DESC"
   | "createdAt_ASC"
@@ -8676,6 +8680,22 @@ export interface CollectionWhereInput {
   subTitle_not_starts_with?: Maybe<String>;
   subTitle_ends_with?: Maybe<String>;
   subTitle_not_ends_with?: Maybe<String>;
+  displayTextOverlay?: Maybe<Boolean>;
+  displayTextOverlay_not?: Maybe<Boolean>;
+  textOverlayColor?: Maybe<String>;
+  textOverlayColor_not?: Maybe<String>;
+  textOverlayColor_in?: Maybe<String[] | String>;
+  textOverlayColor_not_in?: Maybe<String[] | String>;
+  textOverlayColor_lt?: Maybe<String>;
+  textOverlayColor_lte?: Maybe<String>;
+  textOverlayColor_gt?: Maybe<String>;
+  textOverlayColor_gte?: Maybe<String>;
+  textOverlayColor_contains?: Maybe<String>;
+  textOverlayColor_not_contains?: Maybe<String>;
+  textOverlayColor_starts_with?: Maybe<String>;
+  textOverlayColor_not_starts_with?: Maybe<String>;
+  textOverlayColor_ends_with?: Maybe<String>;
+  textOverlayColor_not_ends_with?: Maybe<String>;
   products_every?: Maybe<ProductWhereInput>;
   products_some?: Maybe<ProductWhereInput>;
   products_none?: Maybe<ProductWhereInput>;
@@ -16419,6 +16439,8 @@ export interface CollectionCreateInput {
   images?: Maybe<ImageCreateManyInput>;
   title?: Maybe<String>;
   subTitle?: Maybe<String>;
+  displayTextOverlay?: Maybe<Boolean>;
+  textOverlayColor?: Maybe<String>;
   descriptions?: Maybe<CollectionCreatedescriptionsInput>;
   products?: Maybe<ProductCreateManyInput>;
   published?: Maybe<Boolean>;
@@ -16438,6 +16460,8 @@ export interface CollectionUpdateInput {
   images?: Maybe<ImageUpdateManyInput>;
   title?: Maybe<String>;
   subTitle?: Maybe<String>;
+  displayTextOverlay?: Maybe<Boolean>;
+  textOverlayColor?: Maybe<String>;
   descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
   products?: Maybe<ProductUpdateManyInput>;
   published?: Maybe<Boolean>;
@@ -16456,6 +16480,8 @@ export interface CollectionUpdateManyMutationInput {
   slug?: Maybe<String>;
   title?: Maybe<String>;
   subTitle?: Maybe<String>;
+  displayTextOverlay?: Maybe<Boolean>;
+  textOverlayColor?: Maybe<String>;
   descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
   published?: Maybe<Boolean>;
   placements?: Maybe<CollectionUpdateplacementsInput>;
@@ -24747,6 +24773,8 @@ export interface Collection {
   slug: String;
   title?: String;
   subTitle?: String;
+  displayTextOverlay: Boolean;
+  textOverlayColor?: String;
   descriptions: String[];
   published: Boolean;
   placements: CollectionPlacement[];
@@ -24768,6 +24796,8 @@ export interface CollectionPromise extends Promise<Collection>, Fragmentable {
   }) => T;
   title: () => Promise<String>;
   subTitle: () => Promise<String>;
+  displayTextOverlay: () => Promise<Boolean>;
+  textOverlayColor: () => Promise<String>;
   descriptions: () => Promise<String[]>;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
@@ -24800,6 +24830,8 @@ export interface CollectionSubscription
   }) => T;
   title: () => Promise<AsyncIterator<String>>;
   subTitle: () => Promise<AsyncIterator<String>>;
+  displayTextOverlay: () => Promise<AsyncIterator<Boolean>>;
+  textOverlayColor: () => Promise<AsyncIterator<String>>;
   descriptions: () => Promise<AsyncIterator<String[]>>;
   products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
     where?: ProductWhereInput;
@@ -24832,6 +24864,8 @@ export interface CollectionNullablePromise
   }) => T;
   title: () => Promise<String>;
   subTitle: () => Promise<String>;
+  displayTextOverlay: () => Promise<Boolean>;
+  textOverlayColor: () => Promise<String>;
   descriptions: () => Promise<String[]>;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
@@ -29263,6 +29297,8 @@ export interface CollectionPreviousValues {
   slug: String;
   title?: String;
   subTitle?: String;
+  displayTextOverlay: Boolean;
+  textOverlayColor?: String;
   descriptions: String[];
   published: Boolean;
   placements: CollectionPlacement[];
@@ -29277,6 +29313,8 @@ export interface CollectionPreviousValuesPromise
   slug: () => Promise<String>;
   title: () => Promise<String>;
   subTitle: () => Promise<String>;
+  displayTextOverlay: () => Promise<Boolean>;
+  textOverlayColor: () => Promise<String>;
   descriptions: () => Promise<String[]>;
   published: () => Promise<Boolean>;
   placements: () => Promise<CollectionPlacement[]>;
@@ -29291,6 +29329,8 @@ export interface CollectionPreviousValuesSubscription
   slug: () => Promise<AsyncIterator<String>>;
   title: () => Promise<AsyncIterator<String>>;
   subTitle: () => Promise<AsyncIterator<String>>;
+  displayTextOverlay: () => Promise<AsyncIterator<Boolean>>;
+  textOverlayColor: () => Promise<AsyncIterator<String>>;
   descriptions: () => Promise<AsyncIterator<String[]>>;
   published: () => Promise<AsyncIterator<Boolean>>;
   placements: () => Promise<AsyncIterator<CollectionPlacement[]>>;

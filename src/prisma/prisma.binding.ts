@@ -4274,6 +4274,8 @@ type Collection implements Node {
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   title: String
   subTitle: String
+  displayTextOverlay: Boolean!
+  textOverlayColor: String
   descriptions: [String!]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   published: Boolean!
@@ -4301,6 +4303,8 @@ input CollectionCreateInput {
   slug: String!
   title: String
   subTitle: String
+  displayTextOverlay: Boolean
+  textOverlayColor: String
   published: Boolean
   descriptions: CollectionCreatedescriptionsInput
   placements: CollectionCreateplacementsInput
@@ -4330,6 +4334,10 @@ enum CollectionOrderByInput {
   title_DESC
   subTitle_ASC
   subTitle_DESC
+  displayTextOverlay_ASC
+  displayTextOverlay_DESC
+  textOverlayColor_ASC
+  textOverlayColor_DESC
   published_ASC
   published_DESC
   createdAt_ASC
@@ -4347,6 +4355,8 @@ type CollectionPreviousValues {
   slug: String!
   title: String
   subTitle: String
+  displayTextOverlay: Boolean!
+  textOverlayColor: String
   descriptions: [String!]!
   published: Boolean!
   placements: [CollectionPlacement!]!
@@ -4399,6 +4409,8 @@ input CollectionUpdateInput {
   slug: String
   title: String
   subTitle: String
+  displayTextOverlay: Boolean
+  textOverlayColor: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
   placements: CollectionUpdateplacementsInput
@@ -4410,6 +4422,8 @@ input CollectionUpdateManyMutationInput {
   slug: String
   title: String
   subTitle: String
+  displayTextOverlay: Boolean
+  textOverlayColor: String
   published: Boolean
   descriptions: CollectionUpdatedescriptionsInput
   placements: CollectionUpdateplacementsInput
@@ -4588,6 +4602,50 @@ input CollectionWhereInput {
 
   """All values not ending with the given string."""
   subTitle_not_ends_with: String
+  displayTextOverlay: Boolean
+
+  """All values that are not equal to given value."""
+  displayTextOverlay_not: Boolean
+  textOverlayColor: String
+
+  """All values that are not equal to given value."""
+  textOverlayColor_not: String
+
+  """All values that are contained in given list."""
+  textOverlayColor_in: [String!]
+
+  """All values that are not contained in given list."""
+  textOverlayColor_not_in: [String!]
+
+  """All values less than the given value."""
+  textOverlayColor_lt: String
+
+  """All values less than or equal the given value."""
+  textOverlayColor_lte: String
+
+  """All values greater than the given value."""
+  textOverlayColor_gt: String
+
+  """All values greater than or equal the given value."""
+  textOverlayColor_gte: String
+
+  """All values containing the given string."""
+  textOverlayColor_contains: String
+
+  """All values not containing the given string."""
+  textOverlayColor_not_contains: String
+
+  """All values starting with the given string."""
+  textOverlayColor_starts_with: String
+
+  """All values not starting with the given string."""
+  textOverlayColor_not_starts_with: String
+
+  """All values ending with the given string."""
+  textOverlayColor_ends_with: String
+
+  """All values not ending with the given string."""
+  textOverlayColor_not_ends_with: String
   published: Boolean
 
   """All values that are not equal to given value."""
@@ -34129,6 +34187,10 @@ export type CollectionOrderByInput =   'id_ASC' |
   'title_DESC' |
   'subTitle_ASC' |
   'subTitle_DESC' |
+  'displayTextOverlay_ASC' |
+  'displayTextOverlay_DESC' |
+  'textOverlayColor_ASC' |
+  'textOverlayColor_DESC' |
   'published_ASC' |
   'published_DESC' |
   'createdAt_ASC' |
@@ -36584,6 +36646,8 @@ export interface CollectionCreateInput {
   slug: String
   title?: String | null
   subTitle?: String | null
+  displayTextOverlay?: Boolean | null
+  textOverlayColor?: String | null
   published?: Boolean | null
   descriptions?: CollectionCreatedescriptionsInput | null
   placements?: CollectionCreateplacementsInput | null
@@ -36614,6 +36678,8 @@ export interface CollectionUpdateInput {
   slug?: String | null
   title?: String | null
   subTitle?: String | null
+  displayTextOverlay?: Boolean | null
+  textOverlayColor?: String | null
   published?: Boolean | null
   descriptions?: CollectionUpdatedescriptionsInput | null
   placements?: CollectionUpdateplacementsInput | null
@@ -36625,6 +36691,8 @@ export interface CollectionUpdateManyMutationInput {
   slug?: String | null
   title?: String | null
   subTitle?: String | null
+  displayTextOverlay?: Boolean | null
+  textOverlayColor?: String | null
   published?: Boolean | null
   descriptions?: CollectionUpdatedescriptionsInput | null
   placements?: CollectionUpdateplacementsInput | null
@@ -36694,6 +36762,22 @@ export interface CollectionWhereInput {
   subTitle_not_starts_with?: String | null
   subTitle_ends_with?: String | null
   subTitle_not_ends_with?: String | null
+  displayTextOverlay?: Boolean | null
+  displayTextOverlay_not?: Boolean | null
+  textOverlayColor?: String | null
+  textOverlayColor_not?: String | null
+  textOverlayColor_in?: String[] | String | null
+  textOverlayColor_not_in?: String[] | String | null
+  textOverlayColor_lt?: String | null
+  textOverlayColor_lte?: String | null
+  textOverlayColor_gt?: String | null
+  textOverlayColor_gte?: String | null
+  textOverlayColor_contains?: String | null
+  textOverlayColor_not_contains?: String | null
+  textOverlayColor_starts_with?: String | null
+  textOverlayColor_not_starts_with?: String | null
+  textOverlayColor_ends_with?: String | null
+  textOverlayColor_not_ends_with?: String | null
   published?: Boolean | null
   published_not?: Boolean | null
   createdAt?: DateTime | null
@@ -50539,6 +50623,8 @@ export interface Collection extends Node {
   images?: Array<Image> | null
   title?: String | null
   subTitle?: String | null
+  displayTextOverlay: Boolean
+  textOverlayColor?: String | null
   descriptions: Array<String>
   products?: Array<Product> | null
   published: Boolean
@@ -50571,6 +50657,8 @@ export interface CollectionPreviousValues {
   slug: String
   title?: String | null
   subTitle?: String | null
+  displayTextOverlay: Boolean
+  textOverlayColor?: String | null
   descriptions: Array<String>
   published: Boolean
   placements: Array<CollectionPlacement>
