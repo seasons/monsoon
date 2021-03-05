@@ -26,7 +26,7 @@ export class SearchService {
     private readonly image: ImageService
   ) {}
 
-  async indexData(indices = [IndexKey.Default]) {
+  async indexData(indices = [IndexKey.Default, IndexKey.Admin]) {
     await this.indexProducts([...indices, IndexKey.Product])
     await this.indexBrands([...indices, IndexKey.Brand])
     await this.indexCustomers([...indices, IndexKey.Customer])
