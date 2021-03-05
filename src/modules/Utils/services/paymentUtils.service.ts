@@ -104,28 +104,29 @@ export class PaymentUtilsService {
 
     const pausePlanIDs = ["pause-1", "pause-2", "pause-3"]
 
-    try {
-      const customerWithInfo = await this.prisma.binding.query.customer(
-        { where: { id: customer.id } },
-        `
-        {
+    const customerWithInfo = await this.prisma.binding.query.customer(
+      { where: { id: customer.id } },
+      `
+      {
+        id
+        membership {
           id
-          membership {
+          plan {
             id
-            plan {
-              id
-              planID
-              itemCount
-            }
-            pauseRequests(orderBy: createdAt_DESC) {
-              id
-            }
+            planID
+            itemCount
+          }
+          pauseRequests(orderBy: createdAt_DESC) {
+            id
           }
         }
-      `
-      )
+      }
+    `
+    )
 
-      const pauseRequest = head(customerWithInfo.membership.pauseRequests)
+    const pauseRequest = head(customerWithInfo.membership.pauseRequests)
+
+    try {
       const customerPlanID = customerWithInfo.membership.plan.planID
 
       let success
