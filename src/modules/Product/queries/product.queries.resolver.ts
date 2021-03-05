@@ -105,7 +105,19 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async physicalProductsConnection(@Args() args, @Info() info) {
+  async physicalProductsConnection(
+    @Args() args,
+    @Info() info,
+    @Customer() customer
+  ) {
+    if (args.personalizedForCurrentUser) {
+      const products = await this.productService.availableProductVariantsConnectionForCustomer(
+        customer.id,
+        info,
+        args
+      )
+      return products
+    }
     return await this.prisma.binding.query.physicalProductsConnection(
       args,
       addFragmentToInfo(
@@ -166,21 +178,6 @@ export class ProductQueriesResolver {
     const products = await this.productService.availableProductVariantsForCustomer(
       { id: customer.id },
       info
-    )
-
-    return products
-  }
-
-  @Query()
-  async availableProductVariantsConnectionForCustomer(
-    @Args() args,
-    @Customer() customer,
-    @Info() info
-  ) {
-    const products = await this.productService.availableProductVariantsConnectionForCustomer(
-      customer.id,
-      info,
-      args
     )
 
     return products
