@@ -8,7 +8,7 @@
     "mobile": {
       "title": "You have a past due invoice",
       "detail": "Update your billing info in order to avoid having your membership cancelled",
-      "route": { "route": "AccountStack", "screen": "EditPaymentMethod" }
+      "route": { "route": "AccountStack", "screen": "EditCreditCard" }
     },
     "icon": "Chevron",
     "paletteID": "RedAlert"
