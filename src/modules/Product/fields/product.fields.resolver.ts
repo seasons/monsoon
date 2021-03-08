@@ -1,5 +1,4 @@
 import { Customer } from "@app/decorators"
-import { Application } from "@app/decorators/application.decorator"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { Product } from "@app/prisma"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
@@ -9,6 +8,7 @@ import { ProductService } from "@modules/Product/services/product.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
+import { addFragmentToInfo } from "graphql-binding"
 import { sortedUniqBy } from "lodash"
 
 @Resolver("Product")
@@ -45,22 +45,19 @@ export class ProductFieldsResolver {
   }
 
   @ResolveField()
-  async variants(
-    @Parent() parent,
-    @Info() info,
-    @Application() application,
-    @Loader({
-      params: {
-        query: "productVariants",
-        formatWhere: ids => ({
-          product: { id_in: ids },
-        }),
-        infoFragment: `
+  async variants(@Parent() parent, @Info() info) {
+    const productVariants = await this.prisma.binding.query.productVariants(
+      {
+        where: {
+          product: {
+            id: parent.id,
+          },
+        },
+      },
+      addFragmentToInfo(
+        info,
+        `
           fragment EnsureDisplay on ProductVariant {
-              id
-              product {
-                id
-              }
               internalSize {
                   display
                   bottom {
@@ -68,32 +65,18 @@ export class ProductFieldsResolver {
                   }
                   productType
               }
-              offloaded
-              total
           }
-        `,
-        keyToDataRelationship: "OneToMany",
-        getKeys: a => [a.product.id],
-      },
-      includeInfo: true,
-    })
-    productVariantLoader: PrismaDataLoader<any>
-  ) {
-    const productVariants = await productVariantLoader.load(parent.id)
+      `
+      )
+    )
 
-    const variantsNotOffloaded =
-      application === "harvest" || application === "flare"
-        ? productVariants?.filter(
-            variant => variant.total !== variant.offloaded
-          )
-        : productVariants
-    const type = variantsNotOffloaded?.[0]?.internalSize?.productType
+    const type = productVariants?.[0]?.internalSize?.productType
 
     if (type === "Top") {
-      return this.productUtilsService.sortVariants(variantsNotOffloaded)
+      return this.productUtilsService.sortVariants(productVariants)
     } else {
       // type === "Bottom". Note that if we add a new type, we may need to update this
-      const sortedVariants = variantsNotOffloaded.sort((a, b) => {
+      const sortedVariants = productVariants.sort((a, b) => {
         // @ts-ignore
         return a?.internalSize?.display - b?.internalSize?.display
       })
