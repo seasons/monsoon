@@ -39,8 +39,12 @@ export const Loader: (
 
     // If includeInfo from context, ensure we key dataloaders using the origin query information, and prevent
     // stale results from data based on loader params alone, as the underlying prisma query will be different.
+    //
     // `fieldNodes` captures the set of selected fields in the query, and we omit other info data (e.g. schema)
     // as it's expected to be the same across all queries and useless for hashing the result key.
+    //
+    // `loc` is omitted from the `fieldNode` as it indicates the "line of code" on which the field selection
+    // can be found, and may result in otherwise identical queries being keyed differently.
     const keyData = {
       ...data,
       ...(data.includeInfo
