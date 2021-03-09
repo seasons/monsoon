@@ -47,6 +47,7 @@ export class ChargebeeController {
         break
       case CHARGEBEE_PAYMENT_SUCCEEDED:
         await this.chargebeePaymentSucceeded(body.content)
+        break
       case CHARGEBEE_PAYMENT_FAILED:
         await this.chargebeePaymentFailed(body.content)
         break
