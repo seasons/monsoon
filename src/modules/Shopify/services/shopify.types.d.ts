@@ -29,3 +29,15 @@ export type DraftOrder = {
   totalTax: number
   subtotalPrice: number
 }
+
+export type ProductVariant = {
+  id: string
+  displayName: string
+  title: string
+  availableForSale: boolean
+  price: string
+  selectedOptions: Array<{ name: string; value: string }>
+  image: {
+    transformedSrc: string
+  } | null
+}

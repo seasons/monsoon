@@ -456,9 +456,19 @@ type ProductVariantPrice {
   retailPrice: Float
 }
 
+type ShopifyProductVariantSelectedOption {
+  id: ID! @id
+  name: String!
+  value: String!
+}
+
 type ShopifyProductVariant {
   id: ID! @id
   externalId: String @unique
+  displayName: String
+  selectedOptions: [ShopifyProductVariantSelectedOption!]
+  title: String
+  image: Image 
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime

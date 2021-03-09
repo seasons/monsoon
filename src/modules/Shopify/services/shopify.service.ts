@@ -12,6 +12,7 @@ import {
   DraftOrder,
   DraftOrderCreateInputVariables,
   MutationResult,
+  ProductVariant,
 } from "./shopify.types.d"
 
 const {
@@ -171,7 +172,6 @@ export class ShopifyService {
           json: true,
         },
         (error, _response, body) => {
-          console.log(error, body)
           if (error) {
             reject(error)
             return
@@ -223,6 +223,59 @@ export class ShopifyService {
       ...productVariant,
       price: parseFloat(productVariant.price),
     }
+  }
+
+  async getShopifyProductVariants({
+    after,
+    first,
+    shopName,
+    accessToken,
+  }: {
+    after: string
+    first: number
+    shopName: string
+    accessToken: string
+  }): Promise<{
+    edges: Array<{
+      node: ProductVariant
+      cursor: string
+    }>
+    pageInfo: {
+      hasNextPage: boolean
+    }
+  }> {
+    const query = `{
+      productVariants(${after ? `after: ${after}, ` : ""}first: ${first}) {
+        edges {
+          node {
+            id
+            displayName
+            title
+            availableForSale
+            price
+            selectedOptions {
+              name
+              value
+            }
+            image {
+              transformedSrc
+            }
+          }
+          cursor
+        }
+        pageInfo {
+          hasNextPage
+        }
+      }
+    }`
+
+    const data: any = await this.shopifyGraphQLRequest({
+      query,
+      shopName,
+      accessToken,
+    })
+
+    return data.productVariants
   }
 
   async createCustomer({
@@ -525,7 +578,101 @@ export class ShopifyService {
     }
   }
 
-  async cacheProductVariant({
+  async importProductVariants({
+    shopName,
+    accessToken,
+  }: {
+    shopName: string
+    accessToken: string
+  }): Promise<Array<ShopifyProductVariant>> {
+    const loop = async ({
+      after,
+      productVariants,
+    }): Promise<Array<ProductVariant>> => {
+      const {
+        edges,
+        pageInfo: { hasNextPage },
+      } = await this.getShopifyProductVariants({
+        after,
+        first: 25,
+        shopName,
+        accessToken,
+      })
+      const updatedProductVariants = [
+        ...productVariants,
+        ...edges.map(({ node }) => node),
+      ]
+      if (hasNextPage) {
+        return loop({
+          after: edges[edges.length - 1].cursor,
+          productVariants: updatedProductVariants,
+        })
+      }
+
+      return updatedProductVariants
+    }
+
+    const productVariants = await loop({ after: "", productVariants: [] })
+
+    return Promise.all(
+      productVariants.map(productVariant => {
+        const data = {
+          externalId: productVariant.id,
+          displayName: productVariant.displayName,
+          title: productVariant.title,
+          selectedOptions: {
+            create: productVariant.selectedOptions,
+          },
+          cachedPrice: parseFloat(productVariant.price),
+          cachedAvailableForSale: productVariant.availableForSale,
+          cacheExpiresAt: DateTime.local()
+            .plus({
+              seconds: PRODUCT_VARIANT_CACHE_SECONDS,
+            })
+            .toISO(),
+        }
+        return this.prisma.client.upsertShopifyProductVariant({
+          where: {
+            externalId: productVariant.id,
+          },
+          create: {
+            ...data,
+            ...(productVariant.image
+              ? {
+                  image: {
+                    create: {
+                      url: productVariant.image.transformedSrc,
+                    },
+                  },
+                }
+              : {}),
+          },
+          update: {
+            ...data,
+            ...(productVariant.image
+              ? {
+                  image: {
+                    upsert: {
+                      update: {
+                        url: productVariant.image.transformedSrc,
+                      },
+                      create: {
+                        url: productVariant.image.transformedSrc,
+                      },
+                    },
+                  },
+                }
+              : {}),
+          },
+        })
+      })
+    )
+  }
+
+  /*
+   * Fetch price and availability information from Shopify for a product variant
+   */
+  async cacheProductVariantBuyMetadata({
     shopifyProductVariantExternalId,
     shopifyProductVariantInternalId,
     shopName,
@@ -548,6 +695,7 @@ export class ShopifyService {
       where: { id: shopifyProductVariantInternalId },
       data: {
         externalId: externalShopifyProductVariant.externalId,
+
         cachedPrice: externalShopifyProductVariant.price,
         cachedAvailableForSale: externalShopifyProductVariant.availableForSale,
         cacheExpiresAt: DateTime.local()

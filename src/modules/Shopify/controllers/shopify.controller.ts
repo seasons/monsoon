@@ -30,11 +30,22 @@ export class ShopifyController {
       return
     }
 
-    const oauthURL = await this.shopify.getOAuthURL({
-      shop,
-    })
+    try {
+      const oauthURL = await this.shopify.getOAuthURL({
+        shop,
+      })
+      return res.redirect(oauthURL)
+    } catch (error) {
+      console.error(error)
 
-    return res.redirect(oauthURL)
+      res
+        .status(401)
+        .send(
+          "Unable to install Shopify App. Contact Seasons for more information."
+        )
+
+      return
+    }
   }
 
   // https://shopify.dev/tutorials/authenticate-with-oauth#step-3-confirm-installation
