@@ -375,8 +375,7 @@ export class PaymentService {
       },
       payment_intent: {
         gw_token: intent.id,
-        // TODO: store gateway account id in .env
-        gateway_account_id: "gw_BuVXEhRh6XPao1qfg",
+        gateway_account_id: process.env.CHARGEBEE_GATEWAY_ACCOUNT_ID,
       },
     }
 
