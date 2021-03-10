@@ -380,11 +380,8 @@ export class PaymentService {
     }
 
     try {
-      const subscription = await chargebee.subscription
-        .create(subscriptionOptions)
-        .request()
+      await chargebee.subscription.create(subscriptionOptions).request()
 
-      console.log(intent, subscription)
       return intent
     } catch (e) {
       console.error(e)
