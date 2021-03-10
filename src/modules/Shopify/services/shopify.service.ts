@@ -12,6 +12,7 @@ import {
   DraftOrder,
   DraftOrderCreateInputVariables,
   MutationResult,
+  Product,
   ProductVariant,
 } from "./shopify.types.d"
 
@@ -237,7 +238,9 @@ export class ShopifyService {
     accessToken: string
   }): Promise<{
     edges: Array<{
-      node: ProductVariant
+      node: ProductVariant & {
+        product: Product
+      }
       cursor: string
     }>
     pageInfo: {
@@ -257,8 +260,14 @@ export class ShopifyService {
               name
               value
             }
-            image {
-              transformedSrc
+            product {
+              images(first: 1) {
+                edges {
+                  node {
+                    transformedSrc
+                  }
+                }
+              }
             }
           }
           cursor
@@ -590,7 +599,7 @@ export class ShopifyService {
     const loop = async ({
       after,
       productVariants,
-    }): Promise<Array<ProductVariant>> => {
+    }): Promise<Array<ProductVariant & { product: Product }>> => {
       const {
         edges,
         pageInfo: { hasNextPage },
@@ -616,64 +625,90 @@ export class ShopifyService {
 
     const productVariants = await loop({ after: "", productVariants: [] })
 
-    return Promise.all(
-      productVariants.map(productVariant => {
-        const data = {
-          externalId: productVariant.id,
-          displayName: productVariant.displayName,
-          title: productVariant.title,
-          selectedOptions: {
-            create: productVariant.selectedOptions,
+    const shopifyProductVariantResults = []
+    for (const productVariant of productVariants) {
+      const data = {
+        externalId: productVariant.id,
+        displayName: productVariant.displayName,
+        title: productVariant.title,
+        selectedOptions: {
+          create: productVariant.selectedOptions,
+        },
+        brand: {
+          connect: {
+            id: brandId,
           },
-          brand: {
+        },
+        cachedPrice: parseFloat(productVariant.price),
+        cachedAvailableForSale: productVariant.availableForSale,
+        cacheExpiresAt: DateTime.local()
+          .plus({
+            seconds: PRODUCT_VARIANT_CACHE_SECONDS,
+          })
+          .toISO(),
+      }
+      const imageSrc =
+        productVariant?.product?.images.edges?.[0]?.node?.transformedSrc
+
+      const image = await (productVariants.length > 0
+        ? this.prisma.client.image({
+            url:
+              productVariants[0].product?.images?.edges?.[0]?.node
+                ?.transformedSrc,
+          })
+        : Promise.resolve(null))
+
+      const getImageData = (type: "create" | "update") => {
+        if (type === "create" && imageSrc && image) {
+          return {
             connect: {
-              id: brandId,
+              url,
             },
-          },
-          cachedPrice: parseFloat(productVariant.price),
-          cachedAvailableForSale: productVariant.availableForSale,
-          cacheExpiresAt: DateTime.local()
-            .plus({
-              seconds: PRODUCT_VARIANT_CACHE_SECONDS,
-            })
-            .toISO(),
+          }
         }
-        return this.prisma.client.upsertShopifyProductVariant({
-          where: {
-            externalId: productVariant.id,
-          },
-          create: {
-            ...data,
-            ...(productVariant.image
-              ? {
-                  image: {
+      }
+
+      const result = await this.prisma.client.upsertShopifyProductVariant({
+        where: {
+          externalId: productVariant.id,
+        },
+        create: {
+          ...data,
+          ...(imageSrc
+            ? {
+                image: {
+                  connect: {
+                    url: imageSrc,
+                  },
+                  create: {
+                    url: imageSrc,
+                  },
+                },
+              }
+            : {}),
+        },
+        update: {
+          ...data,
+          ...(imageSrc
+            ? {
+                image: {
+                  upsert: {
+                    update: {
+                      url: imageSrc,
+                    },
                     create: {
-                      url: productVariant.image.transformedSrc,
+                      url: imageSrc,
                     },
                   },
-                }
-              : {}),
-          },
-          update: {
-            ...data,
-            ...(productVariant.image
-              ? {
-                  image: {
-                    upsert: {
-                      update: {
-                        url: productVariant.image.transformedSrc,
-                      },
-                      create: {
-                        url: productVariant.image.transformedSrc,
-                      },
-                    },
-                  },
-                }
-              : {}),
-          },
-        })
+                },
+              }
+            : {}),
+        },
       })
-    )
+      shopifyProductVariantResults.push(result)
+    }
+
+    return shopifyProductVariantResults
   }
 
   /*

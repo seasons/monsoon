@@ -37,7 +37,14 @@ export type ProductVariant = {
   availableForSale: boolean
   price: string
   selectedOptions: Array<{ name: string; value: string }>
-  image: {
-    transformedSrc: string
-  } | null
+}
+
+export type Product = {
+  images: {
+    edges: Array<{
+      node: {
+        transformedSrc: string
+      }
+    }>
+  }
 }

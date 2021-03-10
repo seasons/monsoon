@@ -42,11 +42,15 @@ export class ShopifyScheduledJobs {
         continue
       }
 
-      await this.shopify.importProductVariants({
-        shopName,
-        accessToken,
-        brandId: brands[0].id,
-      })
+      try {
+        await this.shopify.importProductVariants({
+          shopName,
+          accessToken,
+          brandId: brands[0].id,
+        })
+      } catch (error) {
+        this.logger.log(`failed to import product variants: ${error}`)
+      }
 
       this.logger.log(`imported product variants for ${shopName}`)
     }
