@@ -171,7 +171,7 @@ export class SyncCommands {
       name: "index",
       type: "array",
       describe: "The Algolia index to sync data into",
-      choices: ["default", "admin", "customer"],
+      choices: ["default", "admin", "customer", "shopifyProductVariant"],
       default: "default",
       alias: "i",
     })
@@ -202,6 +202,8 @@ export class SyncCommands {
           return IndexKey.Admin
         case "customer":
           return IndexKey.Customer
+        case "shopifyProductVariant":
+          return IndexKey.ShopifyProductVariant
       }
     })
 

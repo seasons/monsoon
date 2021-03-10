@@ -386,15 +386,15 @@ export class SearchService {
     )
 
     this.logger.log(
-      `Re-indexing ${shopifyProductVariants.length} physical products...`
+      `Re-indexing ${shopifyProductVariants.length} ShopifyProductVariants...`
     )
 
     const shopifyProductVariantsForIndexing = shopifyProductVariants.map(
       ({ selectedOptions, brand, image, id, ...data }) => ({
         kindOf: "ShopifyProductVariant",
         objectID: id,
-        brandID: brand.id,
-        brandName: brand.name,
+        brandID: brand?.id,
+        brandName: brand?.name,
         image: image?.url,
         ...data,
       })
