@@ -7,7 +7,8 @@ import {
   createParamDecorator,
 } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
-import { cloneDeep, isUndefined } from "lodash"
+import { addFragmentToInfo } from "graphql-binding"
+import { cloneDeep, isUndefined, omit } from "lodash"
 import sha1 from "sha1"
 
 import { DataloaderContext, LoaderParams } from "../dataloader.types"
@@ -35,7 +36,29 @@ export const Loader: (
     const { operationName, variables } = ctx.req.body
 
     const adjustedOptions = cloneDeep({ type, ...data })
-    adjustedOptions.name = createKey(type, operationName, variables, data)
+
+    // If includeInfo from context, ensure we key dataloaders using the origin query information, and prevent
+    // stale results from data based on loader params alone, as the underlying prisma query will be different.
+    //
+    // `fieldNodes` captures the set of selected fields in the query, and we omit other info data (e.g. schema)
+    // as it's expected to be the same across all queries and useless for hashing the result key.
+    //
+    // `loc` is omitted from the `fieldNode` as it indicates the "line of code" on which the field selection
+    // can be found, and may result in otherwise identical queries being keyed differently.
+    const keyData = {
+      ...data,
+      ...(data.includeInfo
+        ? data.params.infoFragment
+          ? {
+              fieldNodes: addFragmentToInfo(
+                info,
+                data.params.infoFragment
+              ).fieldNodes.map(node => omit(node, ["loc"])),
+            }
+          : { fieldNodes: info.fieldNodes.map(node => omit(node, ["loc"])) }
+        : {}),
+    }
+    adjustedOptions.name = createKey(type, operationName, variables, keyData)
 
     // If needed, get the info from the context
     if (data.includeInfo === true) {
