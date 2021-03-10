@@ -375,22 +375,12 @@ export class PaymentService {
       },
       payment_intent: {
         gw_token: intent.id,
-        // TODO: store gateway account id in .env
-        gateway_account_id: "gw_BuVXEhRh6XPao1qfg",
+        gateway_account_id: process.env.CHARGEBEE_GATEWAY_ACCOUNT_ID,
       },
     }
 
-    try {
-      const subscription = await chargebee.subscription
-        .create(subscriptionOptions)
-        .request()
-
-      console.log(intent, subscription)
-      return intent
-    } catch (e) {
-      console.error(e)
-      throw e
-    }
+    await chargebee.subscription.create(subscriptionOptions).request()
+    return intent
   }
 
   async stripeTokenCheckout(planID, token, customer, tokenType, couponID) {
