@@ -579,9 +579,11 @@ export class ShopifyService {
   }
 
   async importProductVariants({
+    brandId,
     shopName,
     accessToken,
   }: {
+    brandId: string
     shopName: string
     accessToken: string
   }): Promise<Array<ShopifyProductVariant>> {
@@ -622,6 +624,11 @@ export class ShopifyService {
           title: productVariant.title,
           selectedOptions: {
             create: productVariant.selectedOptions,
+          },
+          brand: {
+            connect: {
+              id: brandId,
+            },
           },
           cachedPrice: parseFloat(productVariant.price),
           cachedAvailableForSale: productVariant.availableForSale,

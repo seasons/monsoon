@@ -1384,6 +1384,11 @@ input BrandCreateInput {
   externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
 }
 
+input BrandCreateOneInput {
+  create: BrandCreateInput
+  connect: BrandWhereUniqueInput
+}
+
 input BrandCreateOneWithoutProductsInput {
   create: BrandCreateWithoutProductsInput
   connect: BrandWhereUniqueInput
@@ -1497,6 +1502,25 @@ enum BrandTier {
   Discovery
 }
 
+input BrandUpdateDataInput {
+  slug: String
+  brandCode: String
+  description: String
+  isPrimaryBrand: Boolean
+  logo: Json
+  name: String
+  designer: String
+  basedIn: String
+  products: ProductUpdateManyWithoutBrandInput
+  images: ImageUpdateManyInput
+  since: DateTime
+  tier: BrandTier
+  published: Boolean
+  featured: Boolean
+  websiteUrl: String
+  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+}
+
 input BrandUpdateInput {
   slug: String
   brandCode: String
@@ -1532,6 +1556,15 @@ input BrandUpdateManyMutationInput {
   websiteUrl: String
 }
 
+input BrandUpdateOneInput {
+  create: BrandCreateInput
+  update: BrandUpdateDataInput
+  upsert: BrandUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: BrandWhereUniqueInput
+}
+
 input BrandUpdateOneRequiredWithoutProductsInput {
   create: BrandCreateWithoutProductsInput
   update: BrandUpdateWithoutProductsDataInput
@@ -1555,6 +1588,11 @@ input BrandUpdateWithoutProductsDataInput {
   featured: Boolean
   websiteUrl: String
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+}
+
+input BrandUpsertNestedInput {
+  update: BrandUpdateDataInput!
+  create: BrandCreateInput!
 }
 
 input BrandUpsertWithoutProductsInput {
@@ -16828,6 +16866,7 @@ type ShopifyProductVariant {
   externalId: String
   displayName: String
   selectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariantSelectedOption!]
+  brand: Brand
   title: String
   image: Image
   cachedPrice: Float
@@ -16846,6 +16885,7 @@ input ShopifyProductVariantCreateInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
+  brand: BrandCreateOneInput
   title: String
   image: ImageCreateOneInput
   cachedPrice: Float
@@ -17121,6 +17161,7 @@ input ShopifyProductVariantUpdateDataInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
+  brand: BrandUpdateOneInput
   title: String
   image: ImageUpdateOneInput
   cachedPrice: Float
@@ -17132,6 +17173,7 @@ input ShopifyProductVariantUpdateInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
+  brand: BrandUpdateOneInput
   title: String
   image: ImageUpdateOneInput
   cachedPrice: Float
@@ -17208,6 +17250,7 @@ input ShopifyProductVariantWhereInput {
   selectedOptions_every: ShopifyProductVariantSelectedOptionWhereInput
   selectedOptions_some: ShopifyProductVariantSelectedOptionWhereInput
   selectedOptions_none: ShopifyProductVariantSelectedOptionWhereInput
+  brand: BrandWhereInput
   title: String
   title_not: String
   title_in: [String!]

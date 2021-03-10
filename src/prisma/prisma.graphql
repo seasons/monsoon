@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Mar 09 2021 14:37:58 GMT-0500 (Eastern Standard Time)
+# timestamp: Wed Mar 10 2021 11:20:35 GMT-0500 (Eastern Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -3104,6 +3104,11 @@ input BrandCreateInput {
   externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
 }
 
+input BrandCreateOneInput {
+  create: BrandCreateInput
+  connect: BrandWhereUniqueInput
+}
+
 input BrandCreateOneWithoutProductsInput {
   create: BrandCreateWithoutProductsInput
   connect: BrandWhereUniqueInput
@@ -3254,6 +3259,25 @@ enum BrandTier {
   Discovery
 }
 
+input BrandUpdateDataInput {
+  slug: String
+  brandCode: String
+  description: String
+  isPrimaryBrand: Boolean
+  logo: Json
+  name: String
+  designer: String
+  basedIn: String
+  since: DateTime
+  tier: BrandTier
+  published: Boolean
+  featured: Boolean
+  websiteUrl: String
+  products: ProductUpdateManyWithoutBrandInput
+  images: ImageUpdateManyInput
+  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+}
+
 input BrandUpdateInput {
   slug: String
   brandCode: String
@@ -3289,6 +3313,15 @@ input BrandUpdateManyMutationInput {
   websiteUrl: String
 }
 
+input BrandUpdateOneInput {
+  create: BrandCreateInput
+  connect: BrandWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: BrandUpdateDataInput
+  upsert: BrandUpsertNestedInput
+}
+
 input BrandUpdateOneRequiredWithoutProductsInput {
   create: BrandCreateWithoutProductsInput
   connect: BrandWhereUniqueInput
@@ -3312,6 +3345,11 @@ input BrandUpdateWithoutProductsDataInput {
   websiteUrl: String
   images: ImageUpdateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+}
+
+input BrandUpsertNestedInput {
+  update: BrandUpdateDataInput!
+  create: BrandCreateInput!
 }
 
 input BrandUpsertWithoutProductsInput {
@@ -16964,7 +17002,6 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
-  createBrand(data: BrandCreateInput!): Brand!
   createCollection(data: CollectionCreateInput!): Collection!
   createTag(data: TagCreateInput!): Tag!
   createProductMaterialCategory(
@@ -17054,6 +17091,7 @@ type Mutation {
   createPhysicalProductPrice(
     data: PhysicalProductPriceCreateInput!
   ): PhysicalProductPrice!
+  createBrand(data: BrandCreateInput!): Brand!
   createExternalShopifyIntegration(
     data: ExternalShopifyIntegrationCreateInput!
   ): ExternalShopifyIntegration!
@@ -17082,7 +17120,6 @@ type Mutation {
   createShippingOption(data: ShippingOptionCreateInput!): ShippingOption!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createReservation(data: ReservationCreateInput!): Reservation!
-  updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateCollection(
     data: CollectionUpdateInput!
     where: CollectionWhereUniqueInput!
@@ -17248,6 +17285,7 @@ type Mutation {
     data: PhysicalProductPriceUpdateInput!
     where: PhysicalProductPriceWhereUniqueInput!
   ): PhysicalProductPrice
+  updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateExternalShopifyIntegration(
     data: ExternalShopifyIntegrationUpdateInput!
     where: ExternalShopifyIntegrationWhereUniqueInput!
@@ -17324,7 +17362,6 @@ type Mutation {
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
   ): Reservation
-  deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deleteTag(where: TagWhereUniqueInput!): Tag
   deleteProductMaterialCategory(
@@ -17420,6 +17457,7 @@ type Mutation {
   deletePhysicalProductPrice(
     where: PhysicalProductPriceWhereUniqueInput!
   ): PhysicalProductPrice
+  deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteExternalShopifyIntegration(
     where: ExternalShopifyIntegrationWhereUniqueInput!
   ): ExternalShopifyIntegration
@@ -17450,11 +17488,6 @@ type Mutation {
   deleteShippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
-  upsertBrand(
-    where: BrandWhereUniqueInput!
-    create: BrandCreateInput!
-    update: BrandUpdateInput!
-  ): Brand!
   upsertCollection(
     where: CollectionWhereUniqueInput!
     create: CollectionCreateInput!
@@ -17680,6 +17713,11 @@ type Mutation {
     create: PhysicalProductPriceCreateInput!
     update: PhysicalProductPriceUpdateInput!
   ): PhysicalProductPrice!
+  upsertBrand(
+    where: BrandWhereUniqueInput!
+    create: BrandCreateInput!
+    update: BrandUpdateInput!
+  ): Brand!
   upsertExternalShopifyIntegration(
     where: ExternalShopifyIntegrationWhereUniqueInput!
     create: ExternalShopifyIntegrationCreateInput!
@@ -17790,10 +17828,6 @@ type Mutation {
     create: ReservationCreateInput!
     update: ReservationUpdateInput!
   ): Reservation!
-  updateManyBrands(
-    data: BrandUpdateManyMutationInput!
-    where: BrandWhereInput
-  ): BatchPayload!
   updateManyCollections(
     data: CollectionUpdateManyMutationInput!
     where: CollectionWhereInput
@@ -17966,6 +18000,10 @@ type Mutation {
     data: PhysicalProductPriceUpdateManyMutationInput!
     where: PhysicalProductPriceWhereInput
   ): BatchPayload!
+  updateManyBrands(
+    data: BrandUpdateManyMutationInput!
+    where: BrandWhereInput
+  ): BatchPayload!
   updateManyExternalShopifyIntegrations(
     data: ExternalShopifyIntegrationUpdateManyMutationInput!
     where: ExternalShopifyIntegrationWhereInput
@@ -18054,7 +18092,6 @@ type Mutation {
     data: ReservationUpdateManyMutationInput!
     where: ReservationWhereInput
   ): BatchPayload!
-  deleteManyBrands(where: BrandWhereInput): BatchPayload!
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   deleteManyTags(where: TagWhereInput): BatchPayload!
   deleteManyProductMaterialCategories(
@@ -18144,6 +18181,7 @@ type Mutation {
   deleteManyPhysicalProductPrices(
     where: PhysicalProductPriceWhereInput
   ): BatchPayload!
+  deleteManyBrands(where: BrandWhereInput): BatchPayload!
   deleteManyExternalShopifyIntegrations(
     where: ExternalShopifyIntegrationWhereInput
   ): BatchPayload!
@@ -35553,15 +35591,6 @@ enum PushNotificationStatus {
 }
 
 type Query {
-  brands(
-    where: BrandWhereInput
-    orderBy: BrandOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Brand]!
   collections(
     where: CollectionWhereInput
     orderBy: CollectionOrderByInput
@@ -35967,6 +35996,15 @@ type Query {
     first: Int
     last: Int
   ): [PhysicalProductPrice]!
+  brands(
+    where: BrandWhereInput
+    orderBy: BrandOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Brand]!
   externalShopifyIntegrations(
     where: ExternalShopifyIntegrationWhereInput
     orderBy: ExternalShopifyIntegrationOrderByInput
@@ -36165,7 +36203,6 @@ type Query {
     first: Int
     last: Int
   ): [Reservation]!
-  brand(where: BrandWhereUniqueInput!): Brand
   collection(where: CollectionWhereUniqueInput!): Collection
   tag(where: TagWhereUniqueInput!): Tag
   productMaterialCategory(
@@ -36255,6 +36292,7 @@ type Query {
   physicalProductPrice(
     where: PhysicalProductPriceWhereUniqueInput!
   ): PhysicalProductPrice
+  brand(where: BrandWhereUniqueInput!): Brand
   externalShopifyIntegration(
     where: ExternalShopifyIntegrationWhereUniqueInput!
   ): ExternalShopifyIntegration
@@ -36283,15 +36321,6 @@ type Query {
   shippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   reservation(where: ReservationWhereUniqueInput!): Reservation
-  brandsConnection(
-    where: BrandWhereInput
-    orderBy: BrandOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): BrandConnection!
   collectionsConnection(
     where: CollectionWhereInput
     orderBy: CollectionOrderByInput
@@ -36697,6 +36726,15 @@ type Query {
     first: Int
     last: Int
   ): PhysicalProductPriceConnection!
+  brandsConnection(
+    where: BrandWhereInput
+    orderBy: BrandOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): BrandConnection!
   externalShopifyIntegrationsConnection(
     where: ExternalShopifyIntegrationWhereInput
     orderBy: ExternalShopifyIntegrationOrderByInput
@@ -41088,6 +41126,7 @@ type ShopifyProductVariant implements Node {
     first: Int
     last: Int
   ): [ShopifyProductVariantSelectedOption!]
+  brand: Brand
   title: String
   image: Image
   cachedPrice: Float
@@ -41120,6 +41159,7 @@ input ShopifyProductVariantCreateInput {
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
+  brand: BrandCreateOneInput
   image: ImageCreateOneInput
 }
 
@@ -41813,6 +41853,7 @@ input ShopifyProductVariantUpdateDataInput {
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
+  brand: BrandUpdateOneInput
   image: ImageUpdateOneInput
 }
 
@@ -41824,6 +41865,7 @@ input ShopifyProductVariantUpdateInput {
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
+  brand: BrandUpdateOneInput
   image: ImageUpdateOneInput
 }
 
@@ -42210,6 +42252,7 @@ input ShopifyProductVariantWhereInput {
   selectedOptions_every: ShopifyProductVariantSelectedOptionWhereInput
   selectedOptions_some: ShopifyProductVariantSelectedOptionWhereInput
   selectedOptions_none: ShopifyProductVariantSelectedOptionWhereInput
+  brand: BrandWhereInput
   image: ImageWhereInput
 }
 
@@ -44098,7 +44141,6 @@ input StylePreferencesWhereUniqueInput {
 }
 
 type Subscription {
-  brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   collection(
     where: CollectionSubscriptionWhereInput
   ): CollectionSubscriptionPayload
@@ -44220,6 +44262,7 @@ type Subscription {
   physicalProductPrice(
     where: PhysicalProductPriceSubscriptionWhereInput
   ): PhysicalProductPriceSubscriptionPayload
+  brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   externalShopifyIntegration(
     where: ExternalShopifyIntegrationSubscriptionWhereInput
   ): ExternalShopifyIntegrationSubscriptionPayload

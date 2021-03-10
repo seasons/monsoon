@@ -28,10 +28,24 @@ export class ShopifyScheduledJobs {
       }
     )
 
-    for (const { shopName, accessToken } of externalShopifyIntegrations) {
+    for (const { shopName, accessToken, id } of externalShopifyIntegrations) {
+      const brands = await this.prisma.client.brands({
+        where: {
+          externalShopifyIntegration: { id },
+        },
+      })
+
+      if (!brands || brands.length === 0) {
+        this.logger.log(
+          `Unable to find brand for ExternalShopifyIntegration: ${id}`
+        )
+        continue
+      }
+
       await this.shopify.importProductVariants({
         shopName,
         accessToken,
+        brandId: brands[0].id,
       })
 
       this.logger.log(`imported product variants for ${shopName}`)
