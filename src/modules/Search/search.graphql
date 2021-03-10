@@ -21,6 +21,7 @@ union SearchResultData =
   | CustomerSearchResultData
   | ProductSearchResultData
   | PhysicalProductSearchResultData
+  | ShopifyProductVariantSearchResultData
 
 type SearchResult {
   kindOf: SearchResultType!
@@ -68,4 +69,15 @@ type CustomerSearchResultData {
   bagItemsCount: Int
   popularity: Int
   status: CustomerStatus
+}
+
+type ShopifyProductVariantSearchResultData {
+  id: ID!
+  brandID: ID!
+  brandName: String!
+  externalId: String!
+  displayName: String
+  selectedOptions: [ShopifyProductVariantSelectedOption!]
+  title: String
+  image: String
 }

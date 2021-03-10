@@ -13,6 +13,8 @@ export class SearchResultDataFieldsResolver {
         return "PhysicalProductSearchResultData"
       case "Customer":
         return "CustomerSearchResultData"
+      case "ShopifyProductVariant":
+        return "ShopifyProductVariantSearchResultData"
     }
   }
 }

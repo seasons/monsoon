@@ -152,7 +152,14 @@ export class SyncCommands {
       name: "table",
       type: "string",
       describe: "Name of the prisma table to sync",
-      choices: ["all", "products", "physicalProducts", "brands", "customers"],
+      choices: [
+        "all",
+        "products",
+        "physicalProducts",
+        "brands",
+        "customers",
+        "shopifyProductVariants",
+      ],
     })
     table,
     @PrismaEnvOption({
@@ -214,6 +221,8 @@ export class SyncCommands {
       case "customers":
         await this.search.indexCustomers(indices)
         break
+      case "shopifyProductVariants":
+        await this.search.indexShopifyProductVariants(indices)
     }
 
     this.logger.log(`Done indexing!`)

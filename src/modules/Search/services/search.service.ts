@@ -31,6 +31,10 @@ export class SearchService {
     await this.indexBrands([...indices, IndexKey.Brand])
     await this.indexCustomers([...indices, IndexKey.Customer])
     await this.indexPhysicalProducts([...indices, IndexKey.PhysicalProduct])
+    await this.indexShopifyProductVariants([
+      ...indices,
+      IndexKey.ShopifyProductVariant,
+    ])
   }
 
   async query(query: string, options?: QueryOptions): Promise<any[]> {
@@ -355,6 +359,51 @@ export class SearchService {
     )
 
     this.logger.log("Done re-indexing brands!")
+
+    return result
+  }
+
+  async indexShopifyProductVariants(indices = [IndexKey.Default]) {
+    const shopifyProductVariants = await this.prisma.binding.query.shopifyProductVariants(
+      {},
+      `{
+        id
+        externalId
+        displayName
+        selectedOptions {
+          name
+          value
+        }
+        brand {
+          id
+          name
+        }
+        title
+        image {
+          url
+        }
+      }`
+    )
+
+    this.logger.log(
+      `Re-indexing ${shopifyProductVariants.length} physical products...`
+    )
+
+    const shopifyProductVariantsForIndexing = shopifyProductVariants.map(
+      ({ selectedOptions, brand, image, id, ...data }) => ({
+        kindOf: "ShopifyProductVariant",
+        objectID: id,
+        brandID: brand.id,
+        brandName: brand.name,
+        image: image?.url,
+        ...data,
+      })
+    )
+
+    const result = await this.algolia.reindex(
+      shopifyProductVariantsForIndexing,
+      indices
+    )
 
     return result
   }
