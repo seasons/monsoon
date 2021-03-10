@@ -627,6 +627,35 @@ export class ShopifyService {
 
     const shopifyProductVariantResults = []
     for (const productVariant of productVariants) {
+      const imageSrc =
+        productVariant?.product?.images.edges?.[0]?.node?.transformedSrc
+      const imageExists = await (productVariants.length > 0
+        ? this.prisma.client
+            .image({
+              url:
+                productVariants[0].product?.images?.edges?.[0]?.node
+                  ?.transformedSrc,
+            })
+            .then(res => Boolean(res))
+            .catch(() => false)
+        : Promise.resolve(false))
+      const imageData = imageSrc
+        ? imageExists
+          ? {
+              image: {
+                connect: {
+                  url: imageSrc,
+                },
+              },
+            }
+          : {
+              image: {
+                create: {
+                  url: imageSrc,
+                },
+              },
+            }
+        : {}
       const data = {
         externalId: productVariant.id,
         displayName: productVariant.displayName,
@@ -639,6 +668,7 @@ export class ShopifyService {
             id: brandId,
           },
         },
+        ...imageData,
         cachedPrice: parseFloat(productVariant.price),
         cachedAvailableForSale: productVariant.availableForSale,
         cacheExpiresAt: DateTime.local()
@@ -647,63 +677,13 @@ export class ShopifyService {
           })
           .toISO(),
       }
-      const imageSrc =
-        productVariant?.product?.images.edges?.[0]?.node?.transformedSrc
-
-      const image = await (productVariants.length > 0
-        ? this.prisma.client.image({
-            url:
-              productVariants[0].product?.images?.edges?.[0]?.node
-                ?.transformedSrc,
-          })
-        : Promise.resolve(null))
-
-      const getImageData = (type: "create" | "update") => {
-        if (type === "create" && imageSrc && image) {
-          return {
-            connect: {
-              url,
-            },
-          }
-        }
-      }
 
       const result = await this.prisma.client.upsertShopifyProductVariant({
         where: {
           externalId: productVariant.id,
         },
-        create: {
-          ...data,
-          ...(imageSrc
-            ? {
-                image: {
-                  connect: {
-                    url: imageSrc,
-                  },
-                  create: {
-                    url: imageSrc,
-                  },
-                },
-              }
-            : {}),
-        },
-        update: {
-          ...data,
-          ...(imageSrc
-            ? {
-                image: {
-                  upsert: {
-                    update: {
-                      url: imageSrc,
-                    },
-                    create: {
-                      url: imageSrc,
-                    },
-                  },
-                },
-              }
-            : {}),
-        },
+        create: data,
+        update: data,
       })
       shopifyProductVariantResults.push(result)
     }
