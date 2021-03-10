@@ -379,14 +379,8 @@ export class PaymentService {
       },
     }
 
-    try {
-      await chargebee.subscription.create(subscriptionOptions).request()
-
-      return intent
-    } catch (e) {
-      console.error(e)
-      throw e
-    }
+    await chargebee.subscription.create(subscriptionOptions).request()
+    return intent
   }
 
   async stripeTokenCheckout(planID, token, customer, tokenType, couponID) {
