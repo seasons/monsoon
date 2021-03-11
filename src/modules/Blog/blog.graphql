@@ -1,6 +1,6 @@
 type Query {
   blogCollections: [BlogCollection!]!
-  blogPosts(skip: Int, count: Int): [BlogPost!]!
+  blogPosts(skip: Int, count: Int): [BlogPost!]! @cacheControl(maxAge: 1000)
   blogPost(id: String): BlogPost @cacheControl(maxAge: 1000)
 }
 
