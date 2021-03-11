@@ -978,6 +978,44 @@ export class ProductService {
     return head(tiers)
   }
 
+  async newestBrandProducts(args, info): Promise<[Product]> {
+    const newestProducts = await this.prisma.binding.query.products(
+      {
+        where: {
+          AND: [{ tags_none: { name: "Vintage" } }, { status: "Available" }],
+        },
+        orderBy: "publishedAt_DESC",
+        first: 1,
+      },
+      `{
+        id
+        brand {
+          id
+        }
+      }`
+    )
+
+    const newestProduct = head(newestProducts)
+
+    if (!newestProduct) {
+      return null
+    }
+
+    return await this.prisma.binding.query.products(
+      {
+        ...args,
+        where: {
+          AND: [
+            { brand: { id: newestProduct.brand.id } },
+            { status: "Available" },
+          ],
+        },
+        orderBy: "publishedAt_DESC",
+      },
+      info
+    )
+  }
+
   private async upsertFunctions(
     functions: string[]
   ): Promise<{ id: ID_Input }[]> {
