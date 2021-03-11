@@ -1,10 +1,10 @@
 type Query {
-  blogCollections: [BlogCollection!]! @cacheControl(maxAge: 1000)
-  blogPosts(skip: Int, count: Int): [BlogPost!]! @cacheControl(maxAge: 1000)
+  blogCollections: [BlogCollection!]!
+  blogPosts(skip: Int, count: Int): [BlogPost!]!
   blogPost(id: String): BlogPost @cacheControl(maxAge: 1000)
 }
 
-type BlogCollection {
+type BlogCollection @cacheControl(maxAge: 1000) {
   id: ID!
   slug: String!
   url: String
@@ -14,7 +14,7 @@ type BlogCollection {
   updatedAt: DateTime!
 }
 
-type BlogPost {
+type BlogPost @cacheControl(maxAge: 1000) {
   id: ID!
   slug: String!
   name: String
