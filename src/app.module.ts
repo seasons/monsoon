@@ -76,7 +76,7 @@ const scheduleModule =
           }),
           plugins: [responseCachePlugin()],
           cacheControl: {
-            defaultMaxAge: 0,
+            defaultMaxAge: process.env.CACHE_MAX_AGE || 5,
           },
           uploads: {
             maxFileSize: 125000000, // 125 MB
