@@ -9,7 +9,7 @@ import Analytics from "analytics-node"
 type SubscribedProperties = CommonTrackProperties & {
   tier: PaymentPlanTier
   planID: string
-  method: "ApplePay" | "ChargebeeHostedCheckout"
+  method: "ApplePay" | "ChargebeeHostedCheckout" | "CreditCard"
   total: number
 }
 
