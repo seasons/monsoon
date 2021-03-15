@@ -183,7 +183,7 @@ export class EmailService {
     })
   }
 
-  async returnToGoodStandingEmail(user: EmailUser) {
+  async sendReturnToGoodStandingEmail(user: EmailUser) {
     const payload = await RenderEmail.returnToGoodStanding({
       name: user.firstName,
     })

@@ -9,7 +9,6 @@ import { Body, Controller, Post } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
 import { head, pick } from "lodash"
-import moment from "moment"
 
 import { PaymentService } from "../services/payment.service"
 
@@ -93,7 +92,7 @@ export class ChargebeeController {
         where: { id: custWithData.id },
         data: { status: newStatus },
       })
-      await this.email.returnToGoodStandingEmail(custWithData.user)
+      await this.email.sendReturnToGoodStandingEmail(custWithData.user)
     }
 
     let isNewCustomer = false
