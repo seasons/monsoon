@@ -130,6 +130,7 @@ export class PaymentMutationsResolver {
       ...pick(user, ["firstName", "lastName", "email"]),
       planID,
       tier,
+      pauseType,
     })
 
     return true
