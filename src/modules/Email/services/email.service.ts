@@ -183,6 +183,17 @@ export class EmailService {
     })
   }
 
+  async returnToGoodStandingEmail(user: EmailUser) {
+    const payload = await RenderEmail.returnToGoodStanding({
+      name: user.firstName,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      user: user,
+      payload,
+      emailId: "ReturnToGoodStanding",
+    })
+  }
+
   async sendReferralConfirmationEmail({
     referrer,
     referee,

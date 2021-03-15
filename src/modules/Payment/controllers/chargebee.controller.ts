@@ -93,6 +93,7 @@ export class ChargebeeController {
         where: { id: custWithData.id },
         data: { status: newStatus },
       })
+      await this.email.returnToGoodStandingEmail(custWithData.user)
     }
 
     let isNewCustomer = false
