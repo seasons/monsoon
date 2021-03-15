@@ -356,13 +356,9 @@ export class EmailService {
     })
   }
 
-  async sendReturnReminderEmail(
-    user: EmailUser,
-    reservation: PrismaReservation
-  ) {
+  async sendReturnReminderEmail(user: EmailUser) {
     const payload = await RenderEmail.returnReminder({
       name: user.firstName,
-      returnDate: this.utils.getReservationReturnDate(reservation),
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
