@@ -174,6 +174,15 @@ export class EmailService {
     })
   }
 
+  async sendUnpaidMembershipEmail(user: EmailUser) {
+    const payload = await RenderEmail.unpaidMembership({ name: user.firstName })
+    await this.sendPreRenderedTransactionalEmail({
+      user: user,
+      payload,
+      emailId: "UnpaidMembership",
+    })
+  }
+
   async sendReferralConfirmationEmail({
     referrer,
     referee,
