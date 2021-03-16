@@ -149,12 +149,14 @@ export class ChargebeeController {
       }`
       )
     ) as any
-    if (this.statements.isPayingCustomer(cust)) {
-      await this.prisma.client.updateCustomer({
-        where: { id: cust.id },
-        data: { status: "PaymentFailed" },
-      })
-      await this.email.sendUnpaidMembershipEmail(cust.user)
+    if (!!cust) {
+      if (this.statements.isPayingCustomer(cust)) {
+        await this.prisma.client.updateCustomer({
+          where: { id: cust.id },
+          data: { status: "PaymentFailed" },
+        })
+        await this.email.sendUnpaidMembershipEmail(cust.user)
+      }
     } else {
       this.error.setExtraContext({ payload: content }, "chargebeePayload")
       this.error.captureMessage(`Unable to locate customer for failed payment`)
