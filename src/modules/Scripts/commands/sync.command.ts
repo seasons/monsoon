@@ -25,7 +25,7 @@ export class SyncCommands {
   ) {}
 
   @Command({
-    command: "sync:prisma:prisma <destination> <origin>",
+    command: "sync:prisma:prisma <destination> [origin]",
     describe: "sync prisma production to staging/local",
     aliases: "spp",
   })
