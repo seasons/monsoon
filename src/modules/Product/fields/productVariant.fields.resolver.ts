@@ -438,7 +438,7 @@ export class ProductVariantFieldsResolver {
       } = await (product?.brand?.externalShopifyIntegration?.enabled
         ? Date.parse(shopifyProductVariant?.cacheExpiresAt) > Date.now()
           ? Promise.resolve(shopifyProductVariant)
-          : this.shopify.cacheProductVariant({
+          : this.shopify.cacheProductVariantBuyMetadata({
               shopifyProductVariantExternalId: shopifyProductVariant.externalId,
               shopifyProductVariantInternalId: shopifyProductVariant.id,
               shopName: product?.brand?.externalShopifyIntegration?.shopName,

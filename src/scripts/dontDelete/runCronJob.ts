@@ -8,6 +8,7 @@ import { AdmissionsScheduledJobs } from "../../modules/Cron/services/admissions.
 import { MarketingScheduledJobs } from "../../modules/Cron/services/marketing.job.service"
 import { MembershipScheduledJobs } from "../../modules/Cron/services/membership.job.service"
 import { ReservationScheduledJobs } from "../../modules/Cron/services/reservations.job.service"
+import { ShopifyScheduledJobs } from "../../modules/Cron/services/shopify.job.service"
 import { SubscriptionsScheduledJobs } from "../../modules/Cron/services/subscriptions.job.service"
 import { DripService } from "../../modules/Drip/services/drip.service"
 import { DripSyncService } from "../../modules/Drip/services/dripSync.service"
@@ -20,6 +21,7 @@ import { PusherService } from "../../modules/PushNotification/services/pusher.se
 import { PushNotificationDataProvider } from "../../modules/PushNotification/services/pushNotification.data.service"
 import { PushNotificationService } from "../../modules/PushNotification/services/pushNotification.service"
 import { ShippingService } from "../../modules/Shipping/services/shipping.service"
+import { ShopifyService } from "../../modules/Shopify/services/shopify.service"
 import { SMSService } from "../../modules/SMS/services/sms.service"
 import { TwilioService } from "../../modules/Twilio/services/twilio.service"
 import { TwilioUtils } from "../../modules/Twilio/services/twilio.utils.service"
@@ -62,7 +64,8 @@ const run = async () => {
     twilioUtils,
     paymentUtils,
     error,
-    email
+    email,
+    utils
   )
   const shipping = new ShippingService(ps, utils)
   const cs = new CustomerService(
@@ -87,6 +90,7 @@ const run = async () => {
     segment,
     error
   )
+  const shopify = new ShopifyService(ps)
   const admissionsJobService = new AdmissionsScheduledJobs(ps, as, cs, error)
   const reservationsJobService = new ReservationScheduledJobs(
     email,
@@ -114,10 +118,12 @@ const run = async () => {
     statements,
     error
   )
+  const shopifyJobService = new ShopifyScheduledJobs(shopify, ps)
   // await reservationsJobService.sendReturnNotifications()
   // await marketingJobService.syncUnsubscribesFromDrip()
   // await marketingJobService.syncCustomersToDrip()
-  await membershipService.updatePausePendingToPaused()
+  // await membershipService.updatePausePendingToPaused()
+  await shopifyJobService.importProductVariantsForExternalShopifyIntegrations()
 }
 
 run()

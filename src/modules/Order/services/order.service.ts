@@ -425,12 +425,14 @@ export class OrderService {
     })
 
     // Bypass internal cache and directly ensure product is still available at the merchant.
-    const shopifyProductVariant = await this.shopify.cacheProductVariant({
-      shopifyProductVariantExternalId,
-      shopifyProductVariantInternalId,
-      shopName,
-      accessToken,
-    })
+    const shopifyProductVariant = await this.shopify.cacheProductVariantBuyMetadata(
+      {
+        shopifyProductVariantExternalId,
+        shopifyProductVariantInternalId,
+        shopName,
+        accessToken,
+      }
+    )
 
     if (!shopifyProductVariant.cachedAvailableForSale) {
       throw new Error("Product variant is unavailable for sale.")
