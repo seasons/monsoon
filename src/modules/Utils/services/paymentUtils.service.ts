@@ -215,12 +215,8 @@ export class PaymentUtilsService {
           where: { id: pauseRequest.id },
           data: { pausePending: false },
         })
-        await this.prisma.client.updateCustomer({
-          data: {
-            status: "PaymentFailed",
-          },
-          where: { id: customer.id },
-        })
+        // don't set status to `PaymentFailed` here because we do it in the
+        // chargebee webhook
       }
       throw e
     }

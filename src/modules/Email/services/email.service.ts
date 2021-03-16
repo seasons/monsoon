@@ -174,6 +174,26 @@ export class EmailService {
     })
   }
 
+  async sendUnpaidMembershipEmail(user: EmailUser) {
+    const payload = await RenderEmail.unpaidMembership({ name: user.firstName })
+    await this.sendPreRenderedTransactionalEmail({
+      user: user,
+      payload,
+      emailId: "UnpaidMembership",
+    })
+  }
+
+  async sendReturnToGoodStandingEmail(user: EmailUser) {
+    const payload = await RenderEmail.returnToGoodStanding({
+      name: user.firstName,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      user: user,
+      payload,
+      emailId: "ReturnToGoodStanding",
+    })
+  }
+
   async sendReferralConfirmationEmail({
     referrer,
     referee,
@@ -336,13 +356,9 @@ export class EmailService {
     })
   }
 
-  async sendReturnReminderEmail(
-    user: EmailUser,
-    reservation: PrismaReservation
-  ) {
+  async sendReturnReminderEmail(user: EmailUser) {
     const payload = await RenderEmail.returnReminder({
       name: user.firstName,
-      returnDate: this.utils.getReservationReturnDate(reservation),
     })
     await this.sendPreRenderedTransactionalEmail({
       user,

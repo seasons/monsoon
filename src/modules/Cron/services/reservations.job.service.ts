@@ -59,8 +59,7 @@ export class ReservationScheduledJobs {
 
         if (await this.returnNoticeNeeded(reservation)) {
           await this.emailService.sendReturnReminderEmail(
-            reservation.customer.user,
-            reservation as ClientReservation
+            reservation.customer.user
           )
 
           const now = new Date()

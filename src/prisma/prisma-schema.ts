@@ -4956,6 +4956,8 @@ enum EmailId {
   TwentyFourHourAuthorizationFollowup
   Waitlisted
   WelcomeToSeasons
+  UnpaidMembership
+  ReturnToGoodStanding
 }
 
 type EmailReceipt {

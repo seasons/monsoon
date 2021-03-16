@@ -9,7 +9,6 @@ import { Body, Controller, Post } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
 import { head, pick } from "lodash"
-import moment from "moment"
 
 import { PaymentService } from "../services/payment.service"
 
@@ -93,6 +92,7 @@ export class ChargebeeController {
         where: { id: custWithData.id },
         data: { status: newStatus },
       })
+      await this.email.sendReturnToGoodStandingEmail(custWithData.user)
     }
 
     let isNewCustomer = false
@@ -134,15 +134,27 @@ export class ChargebeeController {
 
     const userId = customer?.id
     const cust = head(
-      await this.prisma.client.customers({ where: { user: { id: userId } } })
-    )
-    if (!!cust) {
-      if (this.statements.isPayingCustomer(cust)) {
-        await this.prisma.client.updateCustomer({
-          where: { id: cust.id },
-          data: { status: "PaymentFailed" },
-        })
-      }
+      await this.prisma.binding.query.customers(
+        {
+          where: { user: { id: userId } },
+        },
+        `{
+        id
+        status
+        user {
+          id
+          email
+          firstName
+        }
+      }`
+      )
+    ) as any
+    if (this.statements.isPayingCustomer(cust)) {
+      await this.prisma.client.updateCustomer({
+        where: { id: cust.id },
+        data: { status: "PaymentFailed" },
+      })
+      await this.email.sendUnpaidMembershipEmail(cust.user)
     } else {
       this.error.setExtraContext({ payload: content }, "chargebeePayload")
       this.error.captureMessage(`Unable to locate customer for failed payment`)
