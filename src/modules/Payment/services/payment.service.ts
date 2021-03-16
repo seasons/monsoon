@@ -338,6 +338,33 @@ export class PaymentService {
   }
 
   async processPayment(planID, paymentMethodID, billing, customer) {
+    const customerWithUserData = await this.prisma.binding.query.customer(
+      { where: { id: customer.id } },
+      `
+        {
+          id
+          detail {
+            id
+            impactId
+          }
+          user {
+            id
+            firstName
+            lastName
+            email
+          }
+          utm {
+            source
+            medium
+            campaign
+            term
+            content
+          }
+        }
+      `
+    )
+    const user = customerWithUserData?.user
+
     const billingAddress = {
       first_name: billing.user.firstName || "",
       last_name: billing.user.lastName || "",
@@ -355,9 +382,11 @@ export class PaymentService {
       })
       .request()
 
+    const amountDue =
+      subscriptionEstimate?.estimate?.invoice_estimate?.amount_due
     const intent = await stripe.paymentIntents.create({
       payment_method: paymentMethodID,
-      amount: subscriptionEstimate?.estimate?.invoice_estimate?.amount_due,
+      amount: amountDue,
       currency: "USD",
       confirm: true,
       confirmation_method: "manual",
@@ -375,22 +404,34 @@ export class PaymentService {
       },
       payment_intent: {
         gw_token: intent.id,
-        // TODO: store gateway account id in .env
-        gateway_account_id: "gw_BuVXEhRh6XPao1qfg",
+        gateway_account_id: process.env.CHARGEBEE_GATEWAY_ACCOUNT_ID,
       },
     }
 
-    try {
-      const subscription = await chargebee.subscription
-        .create(subscriptionOptions)
-        .request()
+    const subscriptionData = await chargebee.subscription
+      .create(subscriptionOptions)
+      .request()
 
-      console.log(intent, subscription)
-      return intent
-    } catch (e) {
-      console.error(e)
-      throw e
-    }
+    await this.createPrismaSubscription(
+      customerWithUserData.user.id,
+      subscriptionData.customer,
+      subscriptionData.card,
+      subscriptionData.subscription
+    )
+
+    this.segment.trackSubscribed(user.id, {
+      tier: this.getPaymentPlanTier(planID),
+      planID,
+      method: "CreditCard",
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      impactId: customerWithUserData.detail?.impactId,
+      total: amountDue,
+      ...this.utils.formatUTMForSegment(customerWithUserData.utm),
+    })
+
+    return intent
   }
 
   async stripeTokenCheckout(planID, token, customer, tokenType, couponID) {

@@ -3120,7 +3120,9 @@ export type EmailId =
   | "SubmittedEmail"
   | "TwentyFourHourAuthorizationFollowup"
   | "Waitlisted"
-  | "WelcomeToSeasons";
+  | "WelcomeToSeasons"
+  | "UnpaidMembership"
+  | "ReturnToGoodStanding";
 
 export type UserPushNotificationInterestType =
   | "Bag"

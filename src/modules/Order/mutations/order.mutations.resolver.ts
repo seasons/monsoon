@@ -42,7 +42,8 @@ export class OrderMutationsResolver {
         orderType,
         productVariantID,
         orderID: draftOrder.id,
-        ...pick(user, ["firstName", "lastName", "email"]),
+        total: draftOrder.total,
+        ...pick(user, ["firstName", "lastName", "email", "id"]),
       })
       return draftOrder
     } catch (e) {

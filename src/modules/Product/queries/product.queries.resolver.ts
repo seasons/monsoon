@@ -199,4 +199,10 @@ export class ProductQueriesResolver {
 
     return products
   }
+
+  @Query()
+  async newestBrandProducts(@Args() args, @Info() info) {
+    // Returns products from the most recent brand to be added
+    return await this.productService.newestBrandProducts(args, info)
+  }
 }

@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Mar 10 2021 11:20:35 GMT-0500 (Eastern Standard Time)
+# timestamp: Mon Mar 15 2021 16:36:30 GMT-0500 (Central Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -11578,6 +11578,8 @@ enum EmailId {
   TwentyFourHourAuthorizationFollowup
   Waitlisted
   WelcomeToSeasons
+  UnpaidMembership
+  ReturnToGoodStanding
 }
 
 type EmailReceipt implements Node {
