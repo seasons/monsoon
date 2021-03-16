@@ -1,7 +1,7 @@
 import { execSync } from "child_process"
 
 import { Injectable } from "@nestjs/common"
-import { cloneDeep } from "lodash"
+import { cloneDeep, head } from "lodash"
 import { Command, Positional } from "nestjs-command"
 
 @Injectable()
@@ -16,9 +16,12 @@ export class HerokuCommands {
       execSync(`heroku releases --app monsoon-production --json`).toString()
     ) as { description: string; version: number }[]
 
-    releases = this.discardEnvVarUpdates(releases)
-    releases = this.handleRollbackIfNeeded(releases)
-    releases = this.discardEnvVarUpdates(releases)
+    let isDeployRelease = head(releases).description.match(/Deploy/)
+    while (!isDeployRelease) {
+      releases = this.discardUpdatesIfNeeded(releases)
+      releases = this.handleRollbackIfNeeded(releases)
+      isDeployRelease = head(releases).description.match(/Deploy/)
+    }
 
     const activeRelease = releases[0]
 
@@ -29,10 +32,13 @@ export class HerokuCommands {
     )
   }
 
-  private discardEnvVarUpdates = releases => {
+  private discardUpdatesIfNeeded = releases => {
     let _releases = cloneDeep(releases)
     let release = _releases.shift()
-    while (!!release.description.match(/Set/)) {
+    while (
+      !!release.description.match(/Set/) ||
+      !!release.description.match(/Update/)
+    ) {
       this.checkReleases(_releases)
       release = _releases.shift()
     }

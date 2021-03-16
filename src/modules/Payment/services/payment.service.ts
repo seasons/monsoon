@@ -398,6 +398,7 @@ export class PaymentService {
       plan_id: planID,
       billing_address: billingAddress,
       customer: {
+        id: customerWithUserData.user.id,
         first_name: billing.user.firstName || "",
         last_name: billing.user.lastName || "",
         email: billing.user.email || "",

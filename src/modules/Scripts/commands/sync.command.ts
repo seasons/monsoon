@@ -25,7 +25,7 @@ export class SyncCommands {
   ) {}
 
   @Command({
-    command: "sync:prisma:prisma <destination>",
+    command: "sync:prisma:prisma <destination> <origin>",
     describe: "sync prisma production to staging/local",
     aliases: "spp",
   })
@@ -36,8 +36,20 @@ export class SyncCommands {
       describe: "Prisma environment to sync to",
       choices: ["staging", "local"],
     })
-    destination
+    destination,
+    @Positional({
+      name: "origin",
+      type: "string",
+      describe: "Prisma environment to sync from",
+      choices: ["staging", "production"],
+      default: "production",
+    })
+    origin
   ) {
+    if (origin === "staging" && destination !== "local") {
+      throw new Error(`If syncing from staging, destination must be local`)
+    }
+
     const pgpassFilepath = await this.scripts.downloadFromS3(
       "/tmp/.pgpass",
       "monsoon-scripts",
@@ -50,10 +62,7 @@ export class SyncCommands {
     )
     try {
       const env = this.scripts.readJSONObjectFromFile(envFilepath)
-      this.prismaSync.setDBEnvVarsFromJSON(
-        "production",
-        env.postgres.production
-      )
+      this.prismaSync.setDBEnvVarsFromJSON(origin, env.postgres[origin])
       this.prismaSync.setDBEnvVarsFromJSON(destination, {
         ...env.postgres[destination],
         ...env.prisma[destination],
@@ -62,7 +71,7 @@ export class SyncCommands {
         env.auth0.staging["monsoon(staging)"].clientID
       process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_SECRET =
         env.auth0.staging["monsoon(staging)"].clientSecret
-      this.prismaSync.syncPrisma(destination)
+      this.prismaSync.syncPrisma(destination, origin)
     } catch (err) {
       console.log(err)
     } finally {
