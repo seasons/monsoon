@@ -390,10 +390,11 @@ export class SearchService {
     )
 
     const shopifyProductVariantsForIndexing = shopifyProductVariants.map(
-      ({ selectedOptions, brand, image, id, ...data }) => ({
+      ({ selectedOptions, brand, image, id, externalId, ...data }) => ({
         kindOf: "ShopifyProductVariant",
         objectID: id,
         brandID: brand?.id,
+        externalID: externalId,
         brandName: brand?.name,
         image: image?.url,
         ...data,

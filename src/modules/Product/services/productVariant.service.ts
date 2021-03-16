@@ -254,10 +254,7 @@ export class ProductVariantService {
 
     if (shopifyProductVariant) {
       data.shopifyProductVariant = {
-        upsert: {
-          create: { externalId: shopifyProductVariant.externalId },
-          update: { externalId: shopifyProductVariant.externalId },
-        },
+        connect: { externalId: shopifyProductVariant.externalId },
       }
     }
 
