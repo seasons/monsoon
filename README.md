@@ -104,15 +104,12 @@ Before deploying to production your first time, please check with a senior membe
 
 - `yarn start` starts GraphQL server on `http://localhost:3000`
 - `yarn prisma:<subcommand>` gives access to local version of Prisma CLI (e.g. `yarn prisma:deploy`)
-- `yarn sls:<subcommand>` executes the given subcommand for code we've deployed to Serverless. (e.g `yarn sls:start`)
 
 Monsoon ships with a command line interface. To install it run `yarn link`. Once that's complete, you can use the following commands:
 
-- `monsoon sync:airtable:prisma` to seed data from the production airtable base to the prisma environment of your choosing
-- `monsoon sync:prisma:prisma` to sync the production prisma (technically, postgres) to a secondary db of your choosing
-- `monsoon sync:airtable:airtable:` to sync the production airtable base to a secondary base of your choosing
+- `monsoon sync:prisma:prisma` to sync the production db to staging/local, or the staging db to local.
 
-For details on the arguments and options for each command, use `--help`. e.g `monsoon sync:airtable:prisma --help`
+For details on the arguments and options for each command, use `--help`. e.g `monsoon sync:prisma:prisma --help`
 
 Note that you may need to run `yarn tsc` to generate the files used by the monsoon cli.
 

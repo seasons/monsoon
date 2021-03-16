@@ -16,6 +16,7 @@ interface DBVars {
   secret: string
 }
 type PrismaSyncDestination = "local" | "staging"
+type PrismaSyncOrigin = "staging" | "production"
 
 @Injectable()
 export class PrismaSyncService {
@@ -30,7 +31,10 @@ export class PrismaSyncService {
     process.env[`DB_${env.toUpperCase()}_SECRET`] = values.secret
   }
 
-  async syncPrisma(env: PrismaSyncDestination) {
+  async syncPrisma(
+    destination: PrismaSyncDestination,
+    origin: PrismaSyncOrigin
+  ) {
     let toHost
     let toDBName
     let toUsername
@@ -38,7 +42,7 @@ export class PrismaSyncService {
     let toSchema
     let toEndpoint
     let toSecret
-    switch (env) {
+    switch (destination) {
       case "staging":
         toHost = process.env.DB_STAGING_HOST
         toDBName = process.env.DB_STAGING_DBNAME
@@ -59,13 +63,40 @@ export class PrismaSyncService {
         break
     }
 
-    if (
-      readlineSync.keyInYN(
-        this.getWarning({ toHost, toDBName, toPort, toUsername })
-      )
-    ) {
+    let fromHost
+    let fromPort
+    let fromUsername
+    let fromDBName
+    let fromSchema
+    switch (origin) {
+      case "staging":
+        fromHost = process.env.DB_STAGING_HOST
+        fromDBName = process.env.DB_STAGING_DBNAME
+        fromUsername = process.env.DB_STAGING_USERNAME
+        fromPort = process.env.DB_STAGING_PORT
+        fromSchema = "monsoon$staging"
+        break
+      case "production":
+        fromHost = process.env.DB_PRODUCTION_HOST
+        fromPort = process.env.DB_PRODUCTION_PORT
+        fromUsername = process.env.DB_PRODUCTION_USERNAME
+        fromDBName = process.env.DB_PRODUCTION_DBNAME
+        fromSchema = "monsoon$production"
+        break
+    }
+
+    if (readlineSync.keyInYN(this.getWarning(destination, origin))) {
       // Y key was pressed
-      this.runSync(toHost, toPort, toUsername, toDBName, toSchema)
+      this.runSync(
+        { fromHost, fromPort, fromUsername, fromDBName, fromSchema },
+        {
+          toHost,
+          toPort,
+          toUsername,
+          toDBName,
+          toSchema,
+        }
+      )
       this.resetAuth0IDsForUsers({
         endpoint: toEndpoint,
         secret: toSecret,
@@ -82,24 +113,20 @@ export class PrismaSyncService {
     }
   }
 
-  private getWarning({ toHost, toDBName, toPort, toUsername }) {
+  private getWarning(destination, origin) {
     return `
     DANGER ALERT. Please review the change you are about to make.
 
-    DESTINATION:
-    -- Host: ${toHost}
-    -- Port: ${toPort}
-    -- DBName: ${toDBName}
-    -- Username: ${toUsername}
+    You are syncing from ${origin} to ${destination}.
 
     All data on the destination will be irreversibly replaced with the data from source.
 
-    DOUBLE DANGER: If the schema on the target DB does not match the schema on the production db, 
+    DOUBLE DANGER: If the schema on the target DB does not match the schema on the origin db, 
     this will irrevocably damage your target DB. You will then need to recreate it from scratch. 
 
-    Please ensure before proceeding that your target DB's schema matches production's.
+    Please ensure before proceeding that your target DB's schema matches the origin's.
     You can do so as follows:
-    1. Get the latest commit to deployed to production by running "monsoon gpc"
+    1. Get the latest commit to deployed to the origin service. (If production, run monsoon gpc)
     2. Checkout that commit and deploy prisma to your target DB. 
     3. Re-run this sync. 
 
@@ -107,7 +134,10 @@ export class PrismaSyncService {
     `
   }
 
-  private runSync(toHost, toPort, toUsername, toDBName, toSchema) {
+  private runSync(
+    { fromHost, fromPort, fromUsername, fromDBName, fromSchema },
+    { toHost, toPort, toUsername, toDBName, toSchema }
+  ) {
     // .pgpass specifies passwords for the databases
     fs.chmodSync("/tmp/.pgpass", 0o600)
 
@@ -116,18 +146,17 @@ export class PrismaSyncService {
       env: { ...process.env, PGPASSFILE: "/tmp/.pgpass" },
     })
 
-    const creds = `--host=${toHost} --port=${toPort} --username=${toUsername} --no-password --dbname=${toDBName}`
+    const destinationCreds = `--host=${toHost} --port=${toPort} --username=${toUsername} --no-password --dbname=${toDBName}`
     // Copy monsoon$production schema and all contained tables as is to destination DB.
     // We are ok with this throwing a few errors.
     try {
       console.log(
-        `Copying all objects from schema monsoon$production to monsoon$${toSchema}...`
+        `Copying all objects from schema ${fromSchema} to ${toSchema}...`
       )
 
       execSyncWithOptions(
-        `pg_dump --format=t --schema='monsoon$production' --clean --create --no-password --host=${process.env.DB_PRODUCTION_HOST}\
-   --port=${process.env.DB_PRODUCTION_PORT} --username=${process.env.DB_PRODUCTION_USERNAME}\
-   ${process.env.DB_PRODUCTION_DBNAME} | pg_restore ${creds}`
+        `pg_dump --format=t --schema='${fromSchema}' --clean --create --no-password --host=${fromHost}\
+   --port=${fromPort} --username=${fromUsername} ${fromDBName} | pg_restore ${destinationCreds}`
       )
     } catch (err) {
       console.log(err)
@@ -135,18 +164,18 @@ export class PrismaSyncService {
 
     //  Drop the (old) monsoon$staging or monsoon$dev schema and all contained tables
     execSyncWithOptions(
-      `echo 'DROP SCHEMA "${toSchema}" CASCADE' | psql ${creds}`
+      `echo 'DROP SCHEMA "${toSchema}" CASCADE' | psql ${destinationCreds}`
     )
 
     // Adjust the name of the schema to be appropriate for staging or dev
     execSyncWithOptions(
-      `echo 'ALTER SCHEMA "monsoon$production" RENAME TO "${toSchema}"' | psql ${creds}`
+      `echo 'ALTER SCHEMA "${fromSchema}" RENAME TO "${toSchema}"' | psql ${destinationCreds}`
     )
 
     // Drop the audit trigger from the inherited schema. Should technically also recreate it, but
     // we can pick that up another day
     execSyncWithOptions(
-      `echo 'DROP FUNCTION ${toSchema}.if_modified_func() CASCADE' | psql ${creds}`
+      `echo 'DROP FUNCTION ${toSchema}.if_modified_func() CASCADE' | psql ${destinationCreds}`
     )
   }
 
