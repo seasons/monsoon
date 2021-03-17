@@ -115,7 +115,11 @@ export class PaymentService {
     }
   }
 
-  async subscriptionEstimate(plan: PaymentPlan, customer: Customer) {
+  async subscriptionEstimate(
+    plan: PaymentPlan,
+    customer: Customer,
+    couponID: string
+  ) {
     let billingAddress = null
 
     if (customer) {
@@ -173,6 +177,7 @@ export class PaymentService {
         subscription: {
           plan_id: plan.planID,
         },
+        ...(!!couponID ? { coupon_ids: [couponID] } : {}),
       })
       .request()
 
@@ -337,7 +342,7 @@ export class PaymentService {
     }
   }
 
-  async processPayment(planID, paymentMethodID, billing, customer) {
+  async processPayment(planID, paymentMethodID, couponID, billing, customer) {
     const customerWithUserData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
       `
@@ -397,6 +402,7 @@ export class PaymentService {
     const subscriptionOptions = {
       plan_id: planID,
       billing_address: billingAddress,
+      coupon_ids: !!couponID ? [couponID] : [],
       customer: {
         id: customerWithUserData.user.id,
         first_name: billing.user.firstName || "",
