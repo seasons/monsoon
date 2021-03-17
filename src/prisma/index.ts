@@ -3278,6 +3278,8 @@ export type UserOrderByInput =
   | "verificationStatus_DESC"
   | "verificationMethod_ASC"
   | "verificationMethod_DESC"
+  | "iOSVersion_ASC"
+  | "iOSVersion_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -4709,6 +4711,20 @@ export interface UserWhereInput {
   fitPics_every?: Maybe<FitPicWhereInput>;
   fitPics_some?: Maybe<FitPicWhereInput>;
   fitPics_none?: Maybe<FitPicWhereInput>;
+  iOSVersion?: Maybe<String>;
+  iOSVersion_not?: Maybe<String>;
+  iOSVersion_in?: Maybe<String[] | String>;
+  iOSVersion_not_in?: Maybe<String[] | String>;
+  iOSVersion_lt?: Maybe<String>;
+  iOSVersion_lte?: Maybe<String>;
+  iOSVersion_gt?: Maybe<String>;
+  iOSVersion_gte?: Maybe<String>;
+  iOSVersion_contains?: Maybe<String>;
+  iOSVersion_not_contains?: Maybe<String>;
+  iOSVersion_starts_with?: Maybe<String>;
+  iOSVersion_not_starts_with?: Maybe<String>;
+  iOSVersion_ends_with?: Maybe<String>;
+  iOSVersion_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -10059,6 +10075,7 @@ export interface UserCreateInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
   fitPics?: Maybe<FitPicCreateManyWithoutUserInput>;
+  iOSVersion?: Maybe<String>;
 }
 
 export interface UserCreaterolesInput {
@@ -10184,6 +10201,7 @@ export interface UserCreateWithoutPushNotificationsInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
   fitPics?: Maybe<FitPicCreateManyWithoutUserInput>;
+  iOSVersion?: Maybe<String>;
 }
 
 export interface SmsReceiptCreateManyInput {
@@ -11059,6 +11077,7 @@ export interface UserUpdateDataInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
   fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
+  iOSVersion?: Maybe<String>;
 }
 
 export interface UserUpdaterolesInput {
@@ -11654,6 +11673,7 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
   fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
+  iOSVersion?: Maybe<String>;
 }
 
 export interface SmsReceiptUpdateManyInput {
@@ -14719,6 +14739,20 @@ export interface UserScalarWhereInput {
   verificationMethod_not_in?: Maybe<
     UserVerificationMethod[] | UserVerificationMethod
   >;
+  iOSVersion?: Maybe<String>;
+  iOSVersion_not?: Maybe<String>;
+  iOSVersion_in?: Maybe<String[] | String>;
+  iOSVersion_not_in?: Maybe<String[] | String>;
+  iOSVersion_lt?: Maybe<String>;
+  iOSVersion_lte?: Maybe<String>;
+  iOSVersion_gt?: Maybe<String>;
+  iOSVersion_gte?: Maybe<String>;
+  iOSVersion_contains?: Maybe<String>;
+  iOSVersion_not_contains?: Maybe<String>;
+  iOSVersion_starts_with?: Maybe<String>;
+  iOSVersion_not_starts_with?: Maybe<String>;
+  iOSVersion_ends_with?: Maybe<String>;
+  iOSVersion_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -14756,6 +14790,7 @@ export interface UserUpdateManyDataInput {
   sendSystemEmails?: Maybe<Boolean>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
+  iOSVersion?: Maybe<String>;
 }
 
 export interface PushNotificationReceiptUpsertWithWhereUniqueNestedInput {
@@ -17581,6 +17616,7 @@ export interface UserCreateWithoutEmailsInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
   fitPics?: Maybe<FitPicCreateManyWithoutUserInput>;
+  iOSVersion?: Maybe<String>;
 }
 
 export interface EmailReceiptUpdateInput {
@@ -17610,6 +17646,7 @@ export interface UserUpdateWithoutEmailsDataInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
   fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
+  iOSVersion?: Maybe<String>;
 }
 
 export interface UserUpsertWithoutEmailsInput {
@@ -17667,6 +17704,7 @@ export interface UserCreateWithoutFitPicsInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
+  iOSVersion?: Maybe<String>;
 }
 
 export interface FitPicUpdateInput {
@@ -17701,6 +17739,7 @@ export interface UserUpdateWithoutFitPicsDataInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
+  iOSVersion?: Maybe<String>;
 }
 
 export interface UserUpsertWithoutFitPicsInput {
@@ -19898,6 +19937,7 @@ export interface UserUpdateInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
   fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
+  iOSVersion?: Maybe<String>;
 }
 
 export interface UserUpdateManyMutationInput {
@@ -19911,6 +19951,7 @@ export interface UserUpdateManyMutationInput {
   sendSystemEmails?: Maybe<Boolean>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
+  iOSVersion?: Maybe<String>;
 }
 
 export interface UserPushNotificationUpdateInput {
@@ -21468,6 +21509,7 @@ export interface User {
   sendSystemEmails: Boolean;
   verificationStatus: UserVerificationStatus;
   verificationMethod: UserVerificationMethod;
+  iOSVersion?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -21521,6 +21563,7 @@ export interface UserPromise extends Promise<User>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  iOSVersion: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -21578,6 +21621,7 @@ export interface UserSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  iOSVersion: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -21633,6 +21677,7 @@ export interface UserNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  iOSVersion: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -33745,6 +33790,7 @@ export interface UserPreviousValues {
   sendSystemEmails: Boolean;
   verificationStatus: UserVerificationStatus;
   verificationMethod: UserVerificationMethod;
+  iOSVersion?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -33763,6 +33809,7 @@ export interface UserPreviousValuesPromise
   sendSystemEmails: () => Promise<Boolean>;
   verificationStatus: () => Promise<UserVerificationStatus>;
   verificationMethod: () => Promise<UserVerificationMethod>;
+  iOSVersion: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -33781,6 +33828,7 @@ export interface UserPreviousValuesSubscription
   sendSystemEmails: () => Promise<AsyncIterator<Boolean>>;
   verificationStatus: () => Promise<AsyncIterator<UserVerificationStatus>>;
   verificationMethod: () => Promise<AsyncIterator<UserVerificationMethod>>;
+  iOSVersion: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

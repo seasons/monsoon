@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Mar 16 2021 14:01:46 GMT-0500 (Central Daylight Time)
+# timestamp: Wed Mar 17 2021 14:24:31 GMT-0500 (Central Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -45914,6 +45914,7 @@ type User implements Node {
     first: Int
     last: Int
   ): [FitPic!]
+  iOSVersion: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -45945,6 +45946,7 @@ input UserCreateInput {
   sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  iOSVersion: String
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   emails: EmailReceiptCreateManyWithoutUserInput
@@ -45988,6 +45990,7 @@ input UserCreateWithoutEmailsInput {
   sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  iOSVersion: String
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   pushNotification: UserPushNotificationCreateOneInput
@@ -46006,6 +46009,7 @@ input UserCreateWithoutFitPicsInput {
   sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  iOSVersion: String
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   emails: EmailReceiptCreateManyWithoutUserInput
@@ -46024,6 +46028,7 @@ input UserCreateWithoutPushNotificationsInput {
   sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  iOSVersion: String
   roles: UserCreaterolesInput
   emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
@@ -46067,6 +46072,8 @@ enum UserOrderByInput {
   verificationStatus_DESC
   verificationMethod_ASC
   verificationMethod_DESC
+  iOSVersion_ASC
+  iOSVersion_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -46085,6 +46092,7 @@ type UserPreviousValues {
   sendSystemEmails: Boolean!
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
+  iOSVersion: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -47287,6 +47295,72 @@ input UserScalarWhereInput {
   All values that are not contained in given list.
   """
   verificationMethod_not_in: [UserVerificationMethod!]
+  iOSVersion: String
+
+  """
+  All values that are not equal to given value.
+  """
+  iOSVersion_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  iOSVersion_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  iOSVersion_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  iOSVersion_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  iOSVersion_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  iOSVersion_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  iOSVersion_gte: String
+
+  """
+  All values containing the given string.
+  """
+  iOSVersion_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  iOSVersion_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  iOSVersion_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  iOSVersion_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  iOSVersion_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  iOSVersion_not_ends_with: String
   createdAt: DateTime
 
   """
@@ -47416,6 +47490,7 @@ input UserUpdateDataInput {
   sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  iOSVersion: String
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   emails: EmailReceiptUpdateManyWithoutUserInput
@@ -47434,6 +47509,7 @@ input UserUpdateInput {
   sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  iOSVersion: String
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   emails: EmailReceiptUpdateManyWithoutUserInput
@@ -47452,6 +47528,7 @@ input UserUpdateManyDataInput {
   sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  iOSVersion: String
   roles: UserUpdaterolesInput
 }
 
@@ -47465,6 +47542,7 @@ input UserUpdateManyMutationInput {
   sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  iOSVersion: String
   roles: UserUpdaterolesInput
 }
 
@@ -47529,6 +47607,7 @@ input UserUpdateWithoutEmailsDataInput {
   sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  iOSVersion: String
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   pushNotification: UserPushNotificationUpdateOneInput
@@ -47546,6 +47625,7 @@ input UserUpdateWithoutFitPicsDataInput {
   sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  iOSVersion: String
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   emails: EmailReceiptUpdateManyWithoutUserInput
@@ -47563,6 +47643,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  iOSVersion: String
   roles: UserUpdaterolesInput
   emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
@@ -48023,6 +48104,72 @@ input UserWhereInput {
   All values that are not contained in given list.
   """
   verificationMethod_not_in: [UserVerificationMethod!]
+  iOSVersion: String
+
+  """
+  All values that are not equal to given value.
+  """
+  iOSVersion_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  iOSVersion_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  iOSVersion_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  iOSVersion_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  iOSVersion_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  iOSVersion_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  iOSVersion_gte: String
+
+  """
+  All values containing the given string.
+  """
+  iOSVersion_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  iOSVersion_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  iOSVersion_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  iOSVersion_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  iOSVersion_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  iOSVersion_not_ends_with: String
   createdAt: DateTime
 
   """

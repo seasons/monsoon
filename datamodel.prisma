@@ -471,7 +471,7 @@ type ShopifyProductVariant {
   selectedOptions: [ShopifyProductVariantSelectedOption!]
   brand: Brand
   title: String
-  image: Image 
+  image: Image
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
@@ -777,6 +777,7 @@ type User {
   smsReceipts: [SmsReceipt!]!
     @relation(name: "UserToSmsReceipts", onDelete: CASCADE)
   fitPics: [FitPic!]! @relation(name: "UserToFitPic", onDelete: CASCADE)
+  iOSVersion: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

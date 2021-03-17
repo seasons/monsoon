@@ -18710,6 +18710,7 @@ type User {
   verificationMethod: UserVerificationMethod!
   smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt!]
   fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic!]
+  iOSVersion: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -18737,6 +18738,7 @@ input UserCreateInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
+  iOSVersion: String
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -18779,6 +18781,7 @@ input UserCreateWithoutEmailsInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
+  iOSVersion: String
 }
 
 input UserCreateWithoutFitPicsInput {
@@ -18797,6 +18800,7 @@ input UserCreateWithoutFitPicsInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptCreateManyInput
+  iOSVersion: String
 }
 
 input UserCreateWithoutPushNotificationsInput {
@@ -18815,6 +18819,7 @@ input UserCreateWithoutPushNotificationsInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
+  iOSVersion: String
 }
 
 type UserEdge {
@@ -18843,6 +18848,8 @@ enum UserOrderByInput {
   verificationStatus_DESC
   verificationMethod_ASC
   verificationMethod_DESC
+  iOSVersion_ASC
+  iOSVersion_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -18861,6 +18868,7 @@ type UserPreviousValues {
   sendSystemEmails: Boolean!
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
+  iOSVersion: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -19298,6 +19306,20 @@ input UserScalarWhereInput {
   verificationMethod_not: UserVerificationMethod
   verificationMethod_in: [UserVerificationMethod!]
   verificationMethod_not_in: [UserVerificationMethod!]
+  iOSVersion: String
+  iOSVersion_not: String
+  iOSVersion_in: [String!]
+  iOSVersion_not_in: [String!]
+  iOSVersion_lt: String
+  iOSVersion_lte: String
+  iOSVersion_gt: String
+  iOSVersion_gte: String
+  iOSVersion_contains: String
+  iOSVersion_not_contains: String
+  iOSVersion_starts_with: String
+  iOSVersion_not_starts_with: String
+  iOSVersion_ends_with: String
+  iOSVersion_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -19353,6 +19375,7 @@ input UserUpdateDataInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  iOSVersion: String
 }
 
 input UserUpdateInput {
@@ -19371,6 +19394,7 @@ input UserUpdateInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  iOSVersion: String
 }
 
 input UserUpdateManyDataInput {
@@ -19384,6 +19408,7 @@ input UserUpdateManyDataInput {
   sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  iOSVersion: String
 }
 
 input UserUpdateManyMutationInput {
@@ -19397,6 +19422,7 @@ input UserUpdateManyMutationInput {
   sendSystemEmails: Boolean
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  iOSVersion: String
 }
 
 input UserUpdateManyWithoutPushNotificationsInput {
@@ -19465,6 +19491,7 @@ input UserUpdateWithoutEmailsDataInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  iOSVersion: String
 }
 
 input UserUpdateWithoutFitPicsDataInput {
@@ -19482,6 +19509,7 @@ input UserUpdateWithoutFitPicsDataInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
+  iOSVersion: String
 }
 
 input UserUpdateWithoutPushNotificationsDataInput {
@@ -19499,6 +19527,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  iOSVersion: String
 }
 
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -19641,6 +19670,20 @@ input UserWhereInput {
   fitPics_every: FitPicWhereInput
   fitPics_some: FitPicWhereInput
   fitPics_none: FitPicWhereInput
+  iOSVersion: String
+  iOSVersion_not: String
+  iOSVersion_in: [String!]
+  iOSVersion_not_in: [String!]
+  iOSVersion_lt: String
+  iOSVersion_lte: String
+  iOSVersion_gt: String
+  iOSVersion_gte: String
+  iOSVersion_contains: String
+  iOSVersion_not_contains: String
+  iOSVersion_starts_with: String
+  iOSVersion_not_starts_with: String
+  iOSVersion_ends_with: String
+  iOSVersion_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
