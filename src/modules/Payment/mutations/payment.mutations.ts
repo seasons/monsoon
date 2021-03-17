@@ -19,12 +19,13 @@ export class PaymentMutationsResolver {
 
   @Mutation()
   async processPayment(
-    @Args() { planID, paymentMethodID, billing },
+    @Args() { planID, paymentMethodID, couponID, billing },
     @Customer() customer
   ) {
     return this.paymentService.processPayment(
       planID,
       paymentMethodID,
+      couponID,
       billing,
       customer
     )

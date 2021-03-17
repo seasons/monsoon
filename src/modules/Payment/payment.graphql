@@ -63,7 +63,7 @@ type PaymentPlan {
   updatedAt: DateTime!
 
   # Computed fields
-  estimate: JSON
+  estimate(couponID: String): JSON
   pauseWithItemsPrice: Int
 }
 
