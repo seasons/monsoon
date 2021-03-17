@@ -777,9 +777,14 @@ type User {
   smsReceipts: [SmsReceipt!]!
     @relation(name: "UserToSmsReceipts", onDelete: CASCADE)
   fitPics: [FitPic!]! @relation(name: "UserToFitPic", onDelete: CASCADE)
-  iOSVersion: String
+  deviceData: UserDeviceData
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type UserDeviceData {
+  id: ID! @id
+  iOSVersion: String
 }
 
 type StylePreferences {

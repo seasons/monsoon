@@ -20,7 +20,14 @@ export class SegmentController {
     if (body.type === "identify" && body.userId !== null) {
       await this.prisma.client.updateUser({
         where: { id: body.userId },
-        data: { iOSVersion: body.context.app.version },
+        data: {
+          deviceData: {
+            upsert: {
+              create: { iOSVersion: body.context.app.version },
+              update: { iOSVersion: body.context.app.version },
+            },
+          },
+        },
       })
     }
   }
