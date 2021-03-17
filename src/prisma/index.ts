@@ -122,6 +122,7 @@ export interface Exists {
   topSize: (where?: TopSizeWhereInput) => Promise<boolean>;
   uTMData: (where?: UTMDataWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
+  userDeviceData: (where?: UserDeviceDataWhereInput) => Promise<boolean>;
   userPushNotification: (
     where?: UserPushNotificationWhereInput
   ) => Promise<boolean>;
@@ -1453,6 +1454,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => UserConnectionPromise;
+  userDeviceData: (
+    where: UserDeviceDataWhereUniqueInput
+  ) => UserDeviceDataNullablePromise;
+  userDeviceDatas: (args?: {
+    where?: UserDeviceDataWhereInput;
+    orderBy?: UserDeviceDataOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<UserDeviceData>;
+  userDeviceDatasConnection: (args?: {
+    where?: UserDeviceDataWhereInput;
+    orderBy?: UserDeviceDataOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => UserDeviceDataConnectionPromise;
   userPushNotification: (
     where: UserPushNotificationWhereUniqueInput
   ) => UserPushNotificationNullablePromise;
@@ -2783,6 +2805,28 @@ export interface Prisma {
   }) => UserPromise;
   deleteUser: (where: UserWhereUniqueInput) => UserPromise;
   deleteManyUsers: (where?: UserWhereInput) => BatchPayloadPromise;
+  createUserDeviceData: (
+    data: UserDeviceDataCreateInput
+  ) => UserDeviceDataPromise;
+  updateUserDeviceData: (args: {
+    data: UserDeviceDataUpdateInput;
+    where: UserDeviceDataWhereUniqueInput;
+  }) => UserDeviceDataPromise;
+  updateManyUserDeviceDatas: (args: {
+    data: UserDeviceDataUpdateManyMutationInput;
+    where?: UserDeviceDataWhereInput;
+  }) => BatchPayloadPromise;
+  upsertUserDeviceData: (args: {
+    where: UserDeviceDataWhereUniqueInput;
+    create: UserDeviceDataCreateInput;
+    update: UserDeviceDataUpdateInput;
+  }) => UserDeviceDataPromise;
+  deleteUserDeviceData: (
+    where: UserDeviceDataWhereUniqueInput
+  ) => UserDeviceDataPromise;
+  deleteManyUserDeviceDatas: (
+    where?: UserDeviceDataWhereInput
+  ) => BatchPayloadPromise;
   createUserPushNotification: (
     data: UserPushNotificationCreateInput
   ) => UserPushNotificationPromise;
@@ -3072,6 +3116,9 @@ export interface Subscription {
   user: (
     where?: UserSubscriptionWhereInput
   ) => UserSubscriptionPayloadSubscription;
+  userDeviceData: (
+    where?: UserDeviceDataSubscriptionWhereInput
+  ) => UserDeviceDataSubscriptionPayloadSubscription;
   userPushNotification: (
     where?: UserPushNotificationSubscriptionWhereInput
   ) => UserPushNotificationSubscriptionPayloadSubscription;
@@ -4404,6 +4451,12 @@ export type UTMDataOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type UserDeviceDataOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "iOSVersion_ASC"
+  | "iOSVersion_DESC";
+
 export type UserPushNotificationOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -4709,6 +4762,7 @@ export interface UserWhereInput {
   fitPics_every?: Maybe<FitPicWhereInput>;
   fitPics_some?: Maybe<FitPicWhereInput>;
   fitPics_none?: Maybe<FitPicWhereInput>;
+  deviceData?: Maybe<UserDeviceDataWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -7170,6 +7224,40 @@ export interface FitPicReportWhereInput {
   AND?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
   OR?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
   NOT?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
+}
+
+export interface UserDeviceDataWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  iOSVersion?: Maybe<String>;
+  iOSVersion_not?: Maybe<String>;
+  iOSVersion_in?: Maybe<String[] | String>;
+  iOSVersion_not_in?: Maybe<String[] | String>;
+  iOSVersion_lt?: Maybe<String>;
+  iOSVersion_lte?: Maybe<String>;
+  iOSVersion_gt?: Maybe<String>;
+  iOSVersion_gte?: Maybe<String>;
+  iOSVersion_contains?: Maybe<String>;
+  iOSVersion_not_contains?: Maybe<String>;
+  iOSVersion_starts_with?: Maybe<String>;
+  iOSVersion_not_starts_with?: Maybe<String>;
+  iOSVersion_ends_with?: Maybe<String>;
+  iOSVersion_not_ends_with?: Maybe<String>;
+  AND?: Maybe<UserDeviceDataWhereInput[] | UserDeviceDataWhereInput>;
+  OR?: Maybe<UserDeviceDataWhereInput[] | UserDeviceDataWhereInput>;
+  NOT?: Maybe<UserDeviceDataWhereInput[] | UserDeviceDataWhereInput>;
 }
 
 export interface ActiveAdminUserWhereInput {
@@ -10015,6 +10103,10 @@ export type UserWhereUniqueInput = AtLeastOne<{
   email?: Maybe<String>;
 }>;
 
+export type UserDeviceDataWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type UserPushNotificationWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -10059,6 +10151,7 @@ export interface UserCreateInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
   fitPics?: Maybe<FitPicCreateManyWithoutUserInput>;
+  deviceData?: Maybe<UserDeviceDataCreateOneInput>;
 }
 
 export interface UserCreaterolesInput {
@@ -10184,6 +10277,7 @@ export interface UserCreateWithoutPushNotificationsInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
   fitPics?: Maybe<FitPicCreateManyWithoutUserInput>;
+  deviceData?: Maybe<UserDeviceDataCreateOneInput>;
 }
 
 export interface SmsReceiptCreateManyInput {
@@ -11032,6 +11126,16 @@ export interface FitPicReportCreateWithoutReportedInput {
   status?: Maybe<FitPicReportStatus>;
 }
 
+export interface UserDeviceDataCreateOneInput {
+  create?: Maybe<UserDeviceDataCreateInput>;
+  connect?: Maybe<UserDeviceDataWhereUniqueInput>;
+}
+
+export interface UserDeviceDataCreateInput {
+  id?: Maybe<ID_Input>;
+  iOSVersion?: Maybe<String>;
+}
+
 export interface ActiveAdminUserUpdateInput {
   admin?: Maybe<UserUpdateOneRequiredInput>;
 }
@@ -11059,6 +11163,7 @@ export interface UserUpdateDataInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
   fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
+  deviceData?: Maybe<UserDeviceDataUpdateOneInput>;
 }
 
 export interface UserUpdaterolesInput {
@@ -11654,6 +11759,7 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
   fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
+  deviceData?: Maybe<UserDeviceDataUpdateOneInput>;
 }
 
 export interface SmsReceiptUpdateManyInput {
@@ -14610,6 +14716,24 @@ export interface FitPicUpdateManyWithWhereNestedInput {
 export interface FitPicUpdateManyDataInput {
   includeInstagramHandle?: Maybe<Boolean>;
   status?: Maybe<FitPicStatus>;
+}
+
+export interface UserDeviceDataUpdateOneInput {
+  create?: Maybe<UserDeviceDataCreateInput>;
+  update?: Maybe<UserDeviceDataUpdateDataInput>;
+  upsert?: Maybe<UserDeviceDataUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<UserDeviceDataWhereUniqueInput>;
+}
+
+export interface UserDeviceDataUpdateDataInput {
+  iOSVersion?: Maybe<String>;
+}
+
+export interface UserDeviceDataUpsertNestedInput {
+  update: UserDeviceDataUpdateDataInput;
+  create: UserDeviceDataCreateInput;
 }
 
 export interface UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
@@ -17581,6 +17705,7 @@ export interface UserCreateWithoutEmailsInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
   fitPics?: Maybe<FitPicCreateManyWithoutUserInput>;
+  deviceData?: Maybe<UserDeviceDataCreateOneInput>;
 }
 
 export interface EmailReceiptUpdateInput {
@@ -17610,6 +17735,7 @@ export interface UserUpdateWithoutEmailsDataInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
   fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
+  deviceData?: Maybe<UserDeviceDataUpdateOneInput>;
 }
 
 export interface UserUpsertWithoutEmailsInput {
@@ -17667,6 +17793,7 @@ export interface UserCreateWithoutFitPicsInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
+  deviceData?: Maybe<UserDeviceDataCreateOneInput>;
 }
 
 export interface FitPicUpdateInput {
@@ -17701,6 +17828,7 @@ export interface UserUpdateWithoutFitPicsDataInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
+  deviceData?: Maybe<UserDeviceDataUpdateOneInput>;
 }
 
 export interface UserUpsertWithoutFitPicsInput {
@@ -19898,6 +20026,7 @@ export interface UserUpdateInput {
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
   fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
+  deviceData?: Maybe<UserDeviceDataUpdateOneInput>;
 }
 
 export interface UserUpdateManyMutationInput {
@@ -19911,6 +20040,14 @@ export interface UserUpdateManyMutationInput {
   sendSystemEmails?: Maybe<Boolean>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
+}
+
+export interface UserDeviceDataUpdateInput {
+  iOSVersion?: Maybe<String>;
+}
+
+export interface UserDeviceDataUpdateManyMutationInput {
+  iOSVersion?: Maybe<String>;
 }
 
 export interface UserPushNotificationUpdateInput {
@@ -21347,6 +21484,26 @@ export interface UserSubscriptionWhereInput {
   NOT?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
 }
 
+export interface UserDeviceDataSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<UserDeviceDataWhereInput>;
+  AND?: Maybe<
+    | UserDeviceDataSubscriptionWhereInput[]
+    | UserDeviceDataSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | UserDeviceDataSubscriptionWhereInput[]
+    | UserDeviceDataSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | UserDeviceDataSubscriptionWhereInput[]
+    | UserDeviceDataSubscriptionWhereInput
+  >;
+}
+
 export interface UserPushNotificationSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -21521,6 +21678,7 @@ export interface UserPromise extends Promise<User>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  deviceData: <T = UserDeviceDataPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -21578,6 +21736,7 @@ export interface UserSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  deviceData: <T = UserDeviceDataSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -21633,6 +21792,7 @@ export interface UserNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  deviceData: <T = UserDeviceDataPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -23985,6 +24145,32 @@ export interface FitPicReportNullablePromise
   status: () => Promise<FitPicReportStatus>;
   reportedAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface UserDeviceData {
+  id: ID_Output;
+  iOSVersion?: String;
+}
+
+export interface UserDeviceDataPromise
+  extends Promise<UserDeviceData>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  iOSVersion: () => Promise<String>;
+}
+
+export interface UserDeviceDataSubscription
+  extends Promise<AsyncIterator<UserDeviceData>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  iOSVersion: () => Promise<AsyncIterator<String>>;
+}
+
+export interface UserDeviceDataNullablePromise
+  extends Promise<UserDeviceData | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  iOSVersion: () => Promise<String>;
 }
 
 export interface ActiveAdminUserConnection {
@@ -29690,6 +29876,62 @@ export interface AggregateUserSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface UserDeviceDataConnection {
+  pageInfo: PageInfo;
+  edges: UserDeviceDataEdge[];
+}
+
+export interface UserDeviceDataConnectionPromise
+  extends Promise<UserDeviceDataConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<UserDeviceDataEdge>>() => T;
+  aggregate: <T = AggregateUserDeviceDataPromise>() => T;
+}
+
+export interface UserDeviceDataConnectionSubscription
+  extends Promise<AsyncIterator<UserDeviceDataConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<UserDeviceDataEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateUserDeviceDataSubscription>() => T;
+}
+
+export interface UserDeviceDataEdge {
+  node: UserDeviceData;
+  cursor: String;
+}
+
+export interface UserDeviceDataEdgePromise
+  extends Promise<UserDeviceDataEdge>,
+    Fragmentable {
+  node: <T = UserDeviceDataPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface UserDeviceDataEdgeSubscription
+  extends Promise<AsyncIterator<UserDeviceDataEdge>>,
+    Fragmentable {
+  node: <T = UserDeviceDataSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateUserDeviceData {
+  count: Int;
+}
+
+export interface AggregateUserDeviceDataPromise
+  extends Promise<AggregateUserDeviceData>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateUserDeviceDataSubscription
+  extends Promise<AsyncIterator<AggregateUserDeviceData>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface UserPushNotificationConnection {
   pageInfo: PageInfo;
   edges: UserPushNotificationEdge[];
@@ -33785,6 +34027,50 @@ export interface UserPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface UserDeviceDataSubscriptionPayload {
+  mutation: MutationType;
+  node: UserDeviceData;
+  updatedFields: String[];
+  previousValues: UserDeviceDataPreviousValues;
+}
+
+export interface UserDeviceDataSubscriptionPayloadPromise
+  extends Promise<UserDeviceDataSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = UserDeviceDataPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = UserDeviceDataPreviousValuesPromise>() => T;
+}
+
+export interface UserDeviceDataSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<UserDeviceDataSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = UserDeviceDataSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = UserDeviceDataPreviousValuesSubscription>() => T;
+}
+
+export interface UserDeviceDataPreviousValues {
+  id: ID_Output;
+  iOSVersion?: String;
+}
+
+export interface UserDeviceDataPreviousValuesPromise
+  extends Promise<UserDeviceDataPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  iOSVersion: () => Promise<String>;
+}
+
+export interface UserDeviceDataPreviousValuesSubscription
+  extends Promise<AsyncIterator<UserDeviceDataPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  iOSVersion: () => Promise<AsyncIterator<String>>;
+}
+
 export interface UserPushNotificationSubscriptionPayload {
   mutation: MutationType;
   node: UserPushNotification;
@@ -34341,6 +34627,10 @@ export const models: Model[] = [
   },
   {
     name: "User",
+    embedded: false
+  },
+  {
+    name: "UserDeviceData",
     embedded: false
   },
   {

@@ -47,6 +47,7 @@ export interface Query {
     stylePreferenceses: <T = Array<StylePreferences | null>>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizes: <T = Array<Size | null>>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productFunctions: <T = Array<ProductFunction | null>>(args: { where?: ProductFunctionWhereInput | null, orderBy?: ProductFunctionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    userDeviceDatas: <T = Array<UserDeviceData | null>>(args: { where?: UserDeviceDataWhereInput | null, orderBy?: UserDeviceDataOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     colors: <T = Array<Color | null>>(args: { where?: ColorWhereInput | null, orderBy?: ColorOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     physicalProductPrices: <T = Array<PhysicalProductPrice | null>>(args: { where?: PhysicalProductPriceWhereInput | null, orderBy?: PhysicalProductPriceOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     brands: <T = Array<Brand | null>>(args: { where?: BrandWhereInput | null, orderBy?: BrandOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -115,6 +116,7 @@ export interface Query {
     stylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     size: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productFunction: <T = ProductFunction | null>(args: { where: ProductFunctionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    userDeviceData: <T = UserDeviceData | null>(args: { where: UserDeviceDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     color: <T = Color | null>(args: { where: ColorWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     physicalProductPrice: <T = PhysicalProductPrice | null>(args: { where: PhysicalProductPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     brand: <T = Brand | null>(args: { where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -183,6 +185,7 @@ export interface Query {
     stylePreferencesesConnection: <T = StylePreferencesConnection>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizesConnection: <T = SizeConnection>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productFunctionsConnection: <T = ProductFunctionConnection>(args: { where?: ProductFunctionWhereInput | null, orderBy?: ProductFunctionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    userDeviceDatasConnection: <T = UserDeviceDataConnection>(args: { where?: UserDeviceDataWhereInput | null, orderBy?: UserDeviceDataOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     colorsConnection: <T = ColorConnection>(args: { where?: ColorWhereInput | null, orderBy?: ColorOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     physicalProductPricesConnection: <T = PhysicalProductPriceConnection>(args: { where?: PhysicalProductPriceWhereInput | null, orderBy?: PhysicalProductPriceOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     brandsConnection: <T = BrandConnection>(args: { where?: BrandWhereInput | null, orderBy?: BrandOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -255,6 +258,7 @@ export interface Mutation {
     createStylePreferences: <T = StylePreferences>(args: { data: StylePreferencesCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSize: <T = Size>(args: { data: SizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductFunction: <T = ProductFunction>(args: { data: ProductFunctionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createUserDeviceData: <T = UserDeviceData>(args: { data: UserDeviceDataCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createColor: <T = Color>(args: { data: ColorCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPhysicalProductPrice: <T = PhysicalProductPrice>(args: { data: PhysicalProductPriceCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBrand: <T = Brand>(args: { data: BrandCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -323,6 +327,7 @@ export interface Mutation {
     updateStylePreferences: <T = StylePreferences | null>(args: { data: StylePreferencesUpdateInput, where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSize: <T = Size | null>(args: { data: SizeUpdateInput, where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductFunction: <T = ProductFunction | null>(args: { data: ProductFunctionUpdateInput, where: ProductFunctionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateUserDeviceData: <T = UserDeviceData | null>(args: { data: UserDeviceDataUpdateInput, where: UserDeviceDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateColor: <T = Color | null>(args: { data: ColorUpdateInput, where: ColorWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePhysicalProductPrice: <T = PhysicalProductPrice | null>(args: { data: PhysicalProductPriceUpdateInput, where: PhysicalProductPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBrand: <T = Brand | null>(args: { data: BrandUpdateInput, where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -391,6 +396,7 @@ export interface Mutation {
     deleteStylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSize: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductFunction: <T = ProductFunction | null>(args: { where: ProductFunctionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteUserDeviceData: <T = UserDeviceData | null>(args: { where: UserDeviceDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteColor: <T = Color | null>(args: { where: ColorWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePhysicalProductPrice: <T = PhysicalProductPrice | null>(args: { where: PhysicalProductPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBrand: <T = Brand | null>(args: { where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -459,6 +465,7 @@ export interface Mutation {
     upsertStylePreferences: <T = StylePreferences>(args: { where: StylePreferencesWhereUniqueInput, create: StylePreferencesCreateInput, update: StylePreferencesUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSize: <T = Size>(args: { where: SizeWhereUniqueInput, create: SizeCreateInput, update: SizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductFunction: <T = ProductFunction>(args: { where: ProductFunctionWhereUniqueInput, create: ProductFunctionCreateInput, update: ProductFunctionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertUserDeviceData: <T = UserDeviceData>(args: { where: UserDeviceDataWhereUniqueInput, create: UserDeviceDataCreateInput, update: UserDeviceDataUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertColor: <T = Color>(args: { where: ColorWhereUniqueInput, create: ColorCreateInput, update: ColorUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPhysicalProductPrice: <T = PhysicalProductPrice>(args: { where: PhysicalProductPriceWhereUniqueInput, create: PhysicalProductPriceCreateInput, update: PhysicalProductPriceUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBrand: <T = Brand>(args: { where: BrandWhereUniqueInput, create: BrandCreateInput, update: BrandUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -525,6 +532,7 @@ export interface Mutation {
     updateManyStylePreferenceses: <T = BatchPayload>(args: { data: StylePreferencesUpdateManyMutationInput, where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySizes: <T = BatchPayload>(args: { data: SizeUpdateManyMutationInput, where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductFunctions: <T = BatchPayload>(args: { data: ProductFunctionUpdateManyMutationInput, where?: ProductFunctionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyUserDeviceDatas: <T = BatchPayload>(args: { data: UserDeviceDataUpdateManyMutationInput, where?: UserDeviceDataWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyColors: <T = BatchPayload>(args: { data: ColorUpdateManyMutationInput, where?: ColorWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPhysicalProductPrices: <T = BatchPayload>(args: { data: PhysicalProductPriceUpdateManyMutationInput, where?: PhysicalProductPriceWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBrands: <T = BatchPayload>(args: { data: BrandUpdateManyMutationInput, where?: BrandWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -593,6 +601,7 @@ export interface Mutation {
     deleteManyStylePreferenceses: <T = BatchPayload>(args: { where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySizes: <T = BatchPayload>(args: { where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductFunctions: <T = BatchPayload>(args: { where?: ProductFunctionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyUserDeviceDatas: <T = BatchPayload>(args: { where?: UserDeviceDataWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyColors: <T = BatchPayload>(args: { where?: ColorWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPhysicalProductPrices: <T = BatchPayload>(args: { where?: PhysicalProductPriceWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBrands: <T = BatchPayload>(args: { where?: BrandWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -664,6 +673,7 @@ export interface Subscription {
     stylePreferences: <T = StylePreferencesSubscriptionPayload | null>(args: { where?: StylePreferencesSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     size: <T = SizeSubscriptionPayload | null>(args: { where?: SizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productFunction: <T = ProductFunctionSubscriptionPayload | null>(args: { where?: ProductFunctionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    userDeviceData: <T = UserDeviceDataSubscriptionPayload | null>(args: { where?: UserDeviceDataSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     color: <T = ColorSubscriptionPayload | null>(args: { where?: ColorSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     physicalProductPrice: <T = PhysicalProductPriceSubscriptionPayload | null>(args: { where?: PhysicalProductPriceSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     brand: <T = BrandSubscriptionPayload | null>(args: { where?: BrandSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -735,6 +745,7 @@ export interface Exists {
   StylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>
   Size: (where?: SizeWhereInput) => Promise<boolean>
   ProductFunction: (where?: ProductFunctionWhereInput) => Promise<boolean>
+  UserDeviceData: (where?: UserDeviceDataWhereInput) => Promise<boolean>
   Color: (where?: ColorWhereInput) => Promise<boolean>
   PhysicalProductPrice: (where?: PhysicalProductPriceWhereInput) => Promise<boolean>
   Brand: (where?: BrandWhereInput) => Promise<boolean>
@@ -1459,6 +1470,10 @@ type AggregateTopSize {
 }
 
 type AggregateUser {
+  count: Int!
+}
+
+type AggregateUserDeviceData {
   count: Int!
 }
 
@@ -12880,6 +12895,7 @@ type Mutation {
   createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   createSize(data: SizeCreateInput!): Size!
   createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
+  createUserDeviceData(data: UserDeviceDataCreateInput!): UserDeviceData!
   createColor(data: ColorCreateInput!): Color!
   createPhysicalProductPrice(data: PhysicalProductPriceCreateInput!): PhysicalProductPrice!
   createBrand(data: BrandCreateInput!): Brand!
@@ -12948,6 +12964,7 @@ type Mutation {
   updateStylePreferences(data: StylePreferencesUpdateInput!, where: StylePreferencesWhereUniqueInput!): StylePreferences
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
   updateProductFunction(data: ProductFunctionUpdateInput!, where: ProductFunctionWhereUniqueInput!): ProductFunction
+  updateUserDeviceData(data: UserDeviceDataUpdateInput!, where: UserDeviceDataWhereUniqueInput!): UserDeviceData
   updateColor(data: ColorUpdateInput!, where: ColorWhereUniqueInput!): Color
   updatePhysicalProductPrice(data: PhysicalProductPriceUpdateInput!, where: PhysicalProductPriceWhereUniqueInput!): PhysicalProductPrice
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
@@ -13016,6 +13033,7 @@ type Mutation {
   deleteStylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   deleteSize(where: SizeWhereUniqueInput!): Size
   deleteProductFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
+  deleteUserDeviceData(where: UserDeviceDataWhereUniqueInput!): UserDeviceData
   deleteColor(where: ColorWhereUniqueInput!): Color
   deletePhysicalProductPrice(where: PhysicalProductPriceWhereUniqueInput!): PhysicalProductPrice
   deleteBrand(where: BrandWhereUniqueInput!): Brand
@@ -13084,6 +13102,7 @@ type Mutation {
   upsertStylePreferences(where: StylePreferencesWhereUniqueInput!, create: StylePreferencesCreateInput!, update: StylePreferencesUpdateInput!): StylePreferences!
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
   upsertProductFunction(where: ProductFunctionWhereUniqueInput!, create: ProductFunctionCreateInput!, update: ProductFunctionUpdateInput!): ProductFunction!
+  upsertUserDeviceData(where: UserDeviceDataWhereUniqueInput!, create: UserDeviceDataCreateInput!, update: UserDeviceDataUpdateInput!): UserDeviceData!
   upsertColor(where: ColorWhereUniqueInput!, create: ColorCreateInput!, update: ColorUpdateInput!): Color!
   upsertPhysicalProductPrice(where: PhysicalProductPriceWhereUniqueInput!, create: PhysicalProductPriceCreateInput!, update: PhysicalProductPriceUpdateInput!): PhysicalProductPrice!
   upsertBrand(where: BrandWhereUniqueInput!, create: BrandCreateInput!, update: BrandUpdateInput!): Brand!
@@ -13150,6 +13169,7 @@ type Mutation {
   updateManyStylePreferenceses(data: StylePreferencesUpdateManyMutationInput!, where: StylePreferencesWhereInput): BatchPayload!
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
   updateManyProductFunctions(data: ProductFunctionUpdateManyMutationInput!, where: ProductFunctionWhereInput): BatchPayload!
+  updateManyUserDeviceDatas(data: UserDeviceDataUpdateManyMutationInput!, where: UserDeviceDataWhereInput): BatchPayload!
   updateManyColors(data: ColorUpdateManyMutationInput!, where: ColorWhereInput): BatchPayload!
   updateManyPhysicalProductPrices(data: PhysicalProductPriceUpdateManyMutationInput!, where: PhysicalProductPriceWhereInput): BatchPayload!
   updateManyBrands(data: BrandUpdateManyMutationInput!, where: BrandWhereInput): BatchPayload!
@@ -13218,6 +13238,7 @@ type Mutation {
   deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
   deleteManySizes(where: SizeWhereInput): BatchPayload!
   deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
+  deleteManyUserDeviceDatas(where: UserDeviceDataWhereInput): BatchPayload!
   deleteManyColors(where: ColorWhereInput): BatchPayload!
   deleteManyPhysicalProductPrices(where: PhysicalProductPriceWhereInput): BatchPayload!
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
@@ -25633,6 +25654,7 @@ type Query {
   stylePreferenceses(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StylePreferences]!
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   productFunctions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction]!
+  userDeviceDatas(where: UserDeviceDataWhereInput, orderBy: UserDeviceDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserDeviceData]!
   colors(where: ColorWhereInput, orderBy: ColorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Color]!
   physicalProductPrices(where: PhysicalProductPriceWhereInput, orderBy: PhysicalProductPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductPrice]!
   brands(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Brand]!
@@ -25701,6 +25723,7 @@ type Query {
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   size(where: SizeWhereUniqueInput!): Size
   productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
+  userDeviceData(where: UserDeviceDataWhereUniqueInput!): UserDeviceData
   color(where: ColorWhereUniqueInput!): Color
   physicalProductPrice(where: PhysicalProductPriceWhereUniqueInput!): PhysicalProductPrice
   brand(where: BrandWhereUniqueInput!): Brand
@@ -25769,6 +25792,7 @@ type Query {
   stylePreferencesesConnection(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StylePreferencesConnection!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
   productFunctionsConnection(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductFunctionConnection!
+  userDeviceDatasConnection(where: UserDeviceDataWhereInput, orderBy: UserDeviceDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserDeviceDataConnection!
   colorsConnection(where: ColorWhereInput, orderBy: ColorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ColorConnection!
   physicalProductPricesConnection(where: PhysicalProductPriceWhereInput, orderBy: PhysicalProductPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductPriceConnection!
   brandsConnection(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BrandConnection!
@@ -30957,6 +30981,7 @@ type Subscription {
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
+  userDeviceData(where: UserDeviceDataSubscriptionWhereInput): UserDeviceDataSubscriptionPayload
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   physicalProductPrice(where: PhysicalProductPriceSubscriptionWhereInput): PhysicalProductPriceSubscriptionPayload
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
@@ -32073,6 +32098,7 @@ type User implements Node {
   verificationMethod: UserVerificationMethod!
   smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt!]
   fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic!]
+  deviceData: UserDeviceData
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -32104,6 +32130,7 @@ input UserCreateInput {
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
+  deviceData: UserDeviceDataCreateOneInput
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -32146,6 +32173,7 @@ input UserCreateWithoutEmailsInput {
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
+  deviceData: UserDeviceDataCreateOneInput
 }
 
 input UserCreateWithoutFitPicsInput {
@@ -32164,6 +32192,7 @@ input UserCreateWithoutFitPicsInput {
   emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
+  deviceData: UserDeviceDataCreateOneInput
 }
 
 input UserCreateWithoutPushNotificationsInput {
@@ -32182,6 +32211,211 @@ input UserCreateWithoutPushNotificationsInput {
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
+  deviceData: UserDeviceDataCreateOneInput
+}
+
+type UserDeviceData implements Node {
+  id: ID!
+  iOSVersion: String
+}
+
+"""A connection to a list of items."""
+type UserDeviceDataConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [UserDeviceDataEdge]!
+  aggregate: AggregateUserDeviceData!
+}
+
+input UserDeviceDataCreateInput {
+  id: ID
+  iOSVersion: String
+}
+
+input UserDeviceDataCreateOneInput {
+  create: UserDeviceDataCreateInput
+  connect: UserDeviceDataWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type UserDeviceDataEdge {
+  """The item at the end of the edge."""
+  node: UserDeviceData!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum UserDeviceDataOrderByInput {
+  id_ASC
+  id_DESC
+  iOSVersion_ASC
+  iOSVersion_DESC
+}
+
+type UserDeviceDataPreviousValues {
+  id: ID!
+  iOSVersion: String
+}
+
+type UserDeviceDataSubscriptionPayload {
+  mutation: MutationType!
+  node: UserDeviceData
+  updatedFields: [String!]
+  previousValues: UserDeviceDataPreviousValues
+}
+
+input UserDeviceDataSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserDeviceDataSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserDeviceDataSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserDeviceDataSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: UserDeviceDataWhereInput
+}
+
+input UserDeviceDataUpdateDataInput {
+  iOSVersion: String
+}
+
+input UserDeviceDataUpdateInput {
+  iOSVersion: String
+}
+
+input UserDeviceDataUpdateManyMutationInput {
+  iOSVersion: String
+}
+
+input UserDeviceDataUpdateOneInput {
+  create: UserDeviceDataCreateInput
+  connect: UserDeviceDataWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: UserDeviceDataUpdateDataInput
+  upsert: UserDeviceDataUpsertNestedInput
+}
+
+input UserDeviceDataUpsertNestedInput {
+  update: UserDeviceDataUpdateDataInput!
+  create: UserDeviceDataCreateInput!
+}
+
+input UserDeviceDataWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserDeviceDataWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserDeviceDataWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserDeviceDataWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  iOSVersion: String
+
+  """All values that are not equal to given value."""
+  iOSVersion_not: String
+
+  """All values that are contained in given list."""
+  iOSVersion_in: [String!]
+
+  """All values that are not contained in given list."""
+  iOSVersion_not_in: [String!]
+
+  """All values less than the given value."""
+  iOSVersion_lt: String
+
+  """All values less than or equal the given value."""
+  iOSVersion_lte: String
+
+  """All values greater than the given value."""
+  iOSVersion_gt: String
+
+  """All values greater than or equal the given value."""
+  iOSVersion_gte: String
+
+  """All values containing the given string."""
+  iOSVersion_contains: String
+
+  """All values not containing the given string."""
+  iOSVersion_not_contains: String
+
+  """All values starting with the given string."""
+  iOSVersion_starts_with: String
+
+  """All values not starting with the given string."""
+  iOSVersion_not_starts_with: String
+
+  """All values ending with the given string."""
+  iOSVersion_ends_with: String
+
+  """All values not ending with the given string."""
+  iOSVersion_not_ends_with: String
+}
+
+input UserDeviceDataWhereUniqueInput {
+  id: ID
 }
 
 """An edge in a connection."""
@@ -33149,6 +33383,7 @@ input UserUpdateDataInput {
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateInput {
@@ -33167,6 +33402,7 @@ input UserUpdateInput {
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateManyDataInput {
@@ -33261,6 +33497,7 @@ input UserUpdateWithoutEmailsDataInput {
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateWithoutFitPicsDataInput {
@@ -33278,6 +33515,7 @@ input UserUpdateWithoutFitPicsDataInput {
   emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateWithoutPushNotificationsDataInput {
@@ -33295,6 +33533,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -33645,6 +33884,7 @@ input UserWhereInput {
   fitPics_every: FitPicWhereInput
   fitPics_some: FitPicWhereInput
   fitPics_none: FitPicWhereInput
+  deviceData: UserDeviceDataWhereInput
 }
 
 input UserWhereUniqueInput {
@@ -36388,6 +36628,11 @@ export type TopSizeOrderByInput =   'id_ASC' |
   'neck_DESC' |
   'length_ASC' |
   'length_DESC'
+
+export type UserDeviceDataOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'iOSVersion_ASC' |
+  'iOSVersion_DESC'
 
 export type UserOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -50297,6 +50542,7 @@ export interface UserCreateInput {
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
   fitPics?: FitPicCreateManyWithoutUserInput | null
+  deviceData?: UserDeviceDataCreateOneInput | null
 }
 
 export interface UserCreateManyWithoutPushNotificationsInput {
@@ -50339,6 +50585,7 @@ export interface UserCreateWithoutEmailsInput {
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
   fitPics?: FitPicCreateManyWithoutUserInput | null
+  deviceData?: UserDeviceDataCreateOneInput | null
 }
 
 export interface UserCreateWithoutFitPicsInput {
@@ -50357,6 +50604,7 @@ export interface UserCreateWithoutFitPicsInput {
   emails?: EmailReceiptCreateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
+  deviceData?: UserDeviceDataCreateOneInput | null
 }
 
 export interface UserCreateWithoutPushNotificationsInput {
@@ -50375,6 +50623,92 @@ export interface UserCreateWithoutPushNotificationsInput {
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
   fitPics?: FitPicCreateManyWithoutUserInput | null
+  deviceData?: UserDeviceDataCreateOneInput | null
+}
+
+export interface UserDeviceDataCreateInput {
+  id?: ID_Input | null
+  iOSVersion?: String | null
+}
+
+export interface UserDeviceDataCreateOneInput {
+  create?: UserDeviceDataCreateInput | null
+  connect?: UserDeviceDataWhereUniqueInput | null
+}
+
+export interface UserDeviceDataSubscriptionWhereInput {
+  AND?: UserDeviceDataSubscriptionWhereInput[] | UserDeviceDataSubscriptionWhereInput | null
+  OR?: UserDeviceDataSubscriptionWhereInput[] | UserDeviceDataSubscriptionWhereInput | null
+  NOT?: UserDeviceDataSubscriptionWhereInput[] | UserDeviceDataSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: UserDeviceDataWhereInput | null
+}
+
+export interface UserDeviceDataUpdateDataInput {
+  iOSVersion?: String | null
+}
+
+export interface UserDeviceDataUpdateInput {
+  iOSVersion?: String | null
+}
+
+export interface UserDeviceDataUpdateManyMutationInput {
+  iOSVersion?: String | null
+}
+
+export interface UserDeviceDataUpdateOneInput {
+  create?: UserDeviceDataCreateInput | null
+  connect?: UserDeviceDataWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: UserDeviceDataUpdateDataInput | null
+  upsert?: UserDeviceDataUpsertNestedInput | null
+}
+
+export interface UserDeviceDataUpsertNestedInput {
+  update: UserDeviceDataUpdateDataInput
+  create: UserDeviceDataCreateInput
+}
+
+export interface UserDeviceDataWhereInput {
+  AND?: UserDeviceDataWhereInput[] | UserDeviceDataWhereInput | null
+  OR?: UserDeviceDataWhereInput[] | UserDeviceDataWhereInput | null
+  NOT?: UserDeviceDataWhereInput[] | UserDeviceDataWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  iOSVersion?: String | null
+  iOSVersion_not?: String | null
+  iOSVersion_in?: String[] | String | null
+  iOSVersion_not_in?: String[] | String | null
+  iOSVersion_lt?: String | null
+  iOSVersion_lte?: String | null
+  iOSVersion_gt?: String | null
+  iOSVersion_gte?: String | null
+  iOSVersion_contains?: String | null
+  iOSVersion_not_contains?: String | null
+  iOSVersion_starts_with?: String | null
+  iOSVersion_not_starts_with?: String | null
+  iOSVersion_ends_with?: String | null
+  iOSVersion_not_ends_with?: String | null
+}
+
+export interface UserDeviceDataWhereUniqueInput {
+  id?: ID_Input | null
 }
 
 export interface UserPushNotificationCreateInput {
@@ -50762,6 +51096,7 @@ export interface UserUpdateDataInput {
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
   fitPics?: FitPicUpdateManyWithoutUserInput | null
+  deviceData?: UserDeviceDataUpdateOneInput | null
 }
 
 export interface UserUpdateInput {
@@ -50780,6 +51115,7 @@ export interface UserUpdateInput {
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
   fitPics?: FitPicUpdateManyWithoutUserInput | null
+  deviceData?: UserDeviceDataUpdateOneInput | null
 }
 
 export interface UserUpdateManyDataInput {
@@ -50874,6 +51210,7 @@ export interface UserUpdateWithoutEmailsDataInput {
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
   fitPics?: FitPicUpdateManyWithoutUserInput | null
+  deviceData?: UserDeviceDataUpdateOneInput | null
 }
 
 export interface UserUpdateWithoutFitPicsDataInput {
@@ -50891,6 +51228,7 @@ export interface UserUpdateWithoutFitPicsDataInput {
   emails?: EmailReceiptUpdateManyWithoutUserInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
+  deviceData?: UserDeviceDataUpdateOneInput | null
 }
 
 export interface UserUpdateWithoutPushNotificationsDataInput {
@@ -50908,6 +51246,7 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
   fitPics?: FitPicUpdateManyWithoutUserInput | null
+  deviceData?: UserDeviceDataUpdateOneInput | null
 }
 
 export interface UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -51057,6 +51396,7 @@ export interface UserWhereInput {
   fitPics_every?: FitPicWhereInput | null
   fitPics_some?: FitPicWhereInput | null
   fitPics_none?: FitPicWhereInput | null
+  deviceData?: UserDeviceDataWhereInput | null
 }
 
 export interface UserWhereUniqueInput {
@@ -52068,6 +52408,10 @@ export interface AggregateTopSize {
 }
 
 export interface AggregateUser {
+  count: Int
+}
+
+export interface AggregateUserDeviceData {
   count: Int
 }
 
@@ -55022,6 +55366,7 @@ export interface User extends Node {
   verificationMethod: UserVerificationMethod
   smsReceipts?: Array<SmsReceipt> | null
   fitPics?: Array<FitPic> | null
+  deviceData?: UserDeviceData | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -55034,6 +55379,42 @@ export interface UserConnection {
   pageInfo: PageInfo
   edges: Array<UserEdge | null>
   aggregate: AggregateUser
+}
+
+export interface UserDeviceData extends Node {
+  id: ID_Output
+  iOSVersion?: String | null
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface UserDeviceDataConnection {
+  pageInfo: PageInfo
+  edges: Array<UserDeviceDataEdge | null>
+  aggregate: AggregateUserDeviceData
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface UserDeviceDataEdge {
+  node: UserDeviceData
+  cursor: String
+}
+
+export interface UserDeviceDataPreviousValues {
+  id: ID_Output
+  iOSVersion?: String | null
+}
+
+export interface UserDeviceDataSubscriptionPayload {
+  mutation: MutationType
+  node?: UserDeviceData | null
+  updatedFields?: Array<String> | null
+  previousValues?: UserDeviceDataPreviousValues | null
 }
 
 /*

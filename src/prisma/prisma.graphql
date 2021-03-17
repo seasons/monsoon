@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Mar 16 2021 14:01:46 GMT-0500 (Central Daylight Time)
+# timestamp: Wed Mar 17 2021 15:03:14 GMT-0500 (Central Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -842,6 +842,10 @@ type AggregateTopSize {
 }
 
 type AggregateUser {
+  count: Int!
+}
+
+type AggregateUserDeviceData {
   count: Int!
 }
 
@@ -17089,6 +17093,7 @@ type Mutation {
   createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   createSize(data: SizeCreateInput!): Size!
   createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
+  createUserDeviceData(data: UserDeviceDataCreateInput!): UserDeviceData!
   createColor(data: ColorCreateInput!): Color!
   createPhysicalProductPrice(
     data: PhysicalProductPriceCreateInput!
@@ -17282,6 +17287,10 @@ type Mutation {
     data: ProductFunctionUpdateInput!
     where: ProductFunctionWhereUniqueInput!
   ): ProductFunction
+  updateUserDeviceData(
+    data: UserDeviceDataUpdateInput!
+    where: UserDeviceDataWhereUniqueInput!
+  ): UserDeviceData
   updateColor(data: ColorUpdateInput!, where: ColorWhereUniqueInput!): Color
   updatePhysicalProductPrice(
     data: PhysicalProductPriceUpdateInput!
@@ -17455,6 +17464,7 @@ type Mutation {
   deleteProductFunction(
     where: ProductFunctionWhereUniqueInput!
   ): ProductFunction
+  deleteUserDeviceData(where: UserDeviceDataWhereUniqueInput!): UserDeviceData
   deleteColor(where: ColorWhereUniqueInput!): Color
   deletePhysicalProductPrice(
     where: PhysicalProductPriceWhereUniqueInput!
@@ -17705,6 +17715,11 @@ type Mutation {
     create: ProductFunctionCreateInput!
     update: ProductFunctionUpdateInput!
   ): ProductFunction!
+  upsertUserDeviceData(
+    where: UserDeviceDataWhereUniqueInput!
+    create: UserDeviceDataCreateInput!
+    update: UserDeviceDataUpdateInput!
+  ): UserDeviceData!
   upsertColor(
     where: ColorWhereUniqueInput!
     create: ColorCreateInput!
@@ -17994,6 +18009,10 @@ type Mutation {
     data: ProductFunctionUpdateManyMutationInput!
     where: ProductFunctionWhereInput
   ): BatchPayload!
+  updateManyUserDeviceDatas(
+    data: UserDeviceDataUpdateManyMutationInput!
+    where: UserDeviceDataWhereInput
+  ): BatchPayload!
   updateManyColors(
     data: ColorUpdateManyMutationInput!
     where: ColorWhereInput
@@ -18179,6 +18198,7 @@ type Mutation {
   deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
   deleteManySizes(where: SizeWhereInput): BatchPayload!
   deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
+  deleteManyUserDeviceDatas(where: UserDeviceDataWhereInput): BatchPayload!
   deleteManyColors(where: ColorWhereInput): BatchPayload!
   deleteManyPhysicalProductPrices(
     where: PhysicalProductPriceWhereInput
@@ -35980,6 +36000,15 @@ type Query {
     first: Int
     last: Int
   ): [ProductFunction]!
+  userDeviceDatas(
+    where: UserDeviceDataWhereInput
+    orderBy: UserDeviceDataOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [UserDeviceData]!
   colors(
     where: ColorWhereInput
     orderBy: ColorOrderByInput
@@ -36290,6 +36319,7 @@ type Query {
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   size(where: SizeWhereUniqueInput!): Size
   productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
+  userDeviceData(where: UserDeviceDataWhereUniqueInput!): UserDeviceData
   color(where: ColorWhereUniqueInput!): Color
   physicalProductPrice(
     where: PhysicalProductPriceWhereUniqueInput!
@@ -36710,6 +36740,15 @@ type Query {
     first: Int
     last: Int
   ): ProductFunctionConnection!
+  userDeviceDatasConnection(
+    where: UserDeviceDataWhereInput
+    orderBy: UserDeviceDataOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): UserDeviceDataConnection!
   colorsConnection(
     where: ColorWhereInput
     orderBy: ColorOrderByInput
@@ -44260,6 +44299,9 @@ type Subscription {
   productFunction(
     where: ProductFunctionSubscriptionWhereInput
   ): ProductFunctionSubscriptionPayload
+  userDeviceData(
+    where: UserDeviceDataSubscriptionWhereInput
+  ): UserDeviceDataSubscriptionPayload
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   physicalProductPrice(
     where: PhysicalProductPriceSubscriptionWhereInput
@@ -45914,6 +45956,7 @@ type User implements Node {
     first: Int
     last: Int
   ): [FitPic!]
+  deviceData: UserDeviceData
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -45951,6 +45994,7 @@ input UserCreateInput {
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
+  deviceData: UserDeviceDataCreateOneInput
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -45993,6 +46037,7 @@ input UserCreateWithoutEmailsInput {
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
+  deviceData: UserDeviceDataCreateOneInput
 }
 
 input UserCreateWithoutFitPicsInput {
@@ -46011,6 +46056,7 @@ input UserCreateWithoutFitPicsInput {
   emails: EmailReceiptCreateManyWithoutUserInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
+  deviceData: UserDeviceDataCreateOneInput
 }
 
 input UserCreateWithoutPushNotificationsInput {
@@ -46029,6 +46075,289 @@ input UserCreateWithoutPushNotificationsInput {
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
+  deviceData: UserDeviceDataCreateOneInput
+}
+
+type UserDeviceData implements Node {
+  id: ID!
+  iOSVersion: String
+}
+
+"""
+A connection to a list of items.
+"""
+type UserDeviceDataConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [UserDeviceDataEdge]!
+  aggregate: AggregateUserDeviceData!
+}
+
+input UserDeviceDataCreateInput {
+  id: ID
+  iOSVersion: String
+}
+
+input UserDeviceDataCreateOneInput {
+  create: UserDeviceDataCreateInput
+  connect: UserDeviceDataWhereUniqueInput
+}
+
+"""
+An edge in a connection.
+"""
+type UserDeviceDataEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: UserDeviceData!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum UserDeviceDataOrderByInput {
+  id_ASC
+  id_DESC
+  iOSVersion_ASC
+  iOSVersion_DESC
+}
+
+type UserDeviceDataPreviousValues {
+  id: ID!
+  iOSVersion: String
+}
+
+type UserDeviceDataSubscriptionPayload {
+  mutation: MutationType!
+  node: UserDeviceData
+  updatedFields: [String!]
+  previousValues: UserDeviceDataPreviousValues
+}
+
+input UserDeviceDataSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [UserDeviceDataSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [UserDeviceDataSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [UserDeviceDataSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: UserDeviceDataWhereInput
+}
+
+input UserDeviceDataUpdateDataInput {
+  iOSVersion: String
+}
+
+input UserDeviceDataUpdateInput {
+  iOSVersion: String
+}
+
+input UserDeviceDataUpdateManyMutationInput {
+  iOSVersion: String
+}
+
+input UserDeviceDataUpdateOneInput {
+  create: UserDeviceDataCreateInput
+  connect: UserDeviceDataWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: UserDeviceDataUpdateDataInput
+  upsert: UserDeviceDataUpsertNestedInput
+}
+
+input UserDeviceDataUpsertNestedInput {
+  update: UserDeviceDataUpdateDataInput!
+  create: UserDeviceDataCreateInput!
+}
+
+input UserDeviceDataWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [UserDeviceDataWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [UserDeviceDataWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [UserDeviceDataWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  iOSVersion: String
+
+  """
+  All values that are not equal to given value.
+  """
+  iOSVersion_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  iOSVersion_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  iOSVersion_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  iOSVersion_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  iOSVersion_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  iOSVersion_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  iOSVersion_gte: String
+
+  """
+  All values containing the given string.
+  """
+  iOSVersion_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  iOSVersion_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  iOSVersion_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  iOSVersion_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  iOSVersion_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  iOSVersion_not_ends_with: String
+}
+
+input UserDeviceDataWhereUniqueInput {
+  id: ID
 }
 
 """
@@ -47422,6 +47751,7 @@ input UserUpdateDataInput {
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateInput {
@@ -47440,6 +47770,7 @@ input UserUpdateInput {
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateManyDataInput {
@@ -47534,6 +47865,7 @@ input UserUpdateWithoutEmailsDataInput {
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateWithoutFitPicsDataInput {
@@ -47551,6 +47883,7 @@ input UserUpdateWithoutFitPicsDataInput {
   emails: EmailReceiptUpdateManyWithoutUserInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateWithoutPushNotificationsDataInput {
@@ -47568,6 +47901,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -48108,6 +48442,7 @@ input UserWhereInput {
   fitPics_every: FitPicWhereInput
   fitPics_some: FitPicWhereInput
   fitPics_none: FitPicWhereInput
+  deviceData: UserDeviceDataWhereInput
 }
 
 input UserWhereUniqueInput {

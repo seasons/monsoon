@@ -503,6 +503,10 @@ type AggregateUser {
   count: Int!
 }
 
+type AggregateUserDeviceData {
+  count: Int!
+}
+
 type AggregateUserPushNotification {
   count: Int!
 }
@@ -7511,6 +7515,12 @@ type Mutation {
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   deleteUser(where: UserWhereUniqueInput!): User
   deleteManyUsers(where: UserWhereInput): BatchPayload!
+  createUserDeviceData(data: UserDeviceDataCreateInput!): UserDeviceData!
+  updateUserDeviceData(data: UserDeviceDataUpdateInput!, where: UserDeviceDataWhereUniqueInput!): UserDeviceData
+  updateManyUserDeviceDatas(data: UserDeviceDataUpdateManyMutationInput!, where: UserDeviceDataWhereInput): BatchPayload!
+  upsertUserDeviceData(where: UserDeviceDataWhereUniqueInput!, create: UserDeviceDataCreateInput!, update: UserDeviceDataUpdateInput!): UserDeviceData!
+  deleteUserDeviceData(where: UserDeviceDataWhereUniqueInput!): UserDeviceData
+  deleteManyUserDeviceDatas(where: UserDeviceDataWhereInput): BatchPayload!
   createUserPushNotification(data: UserPushNotificationCreateInput!): UserPushNotification!
   updateUserPushNotification(data: UserPushNotificationUpdateInput!, where: UserPushNotificationWhereUniqueInput!): UserPushNotification
   updateManyUserPushNotifications(data: UserPushNotificationUpdateManyMutationInput!, where: UserPushNotificationWhereInput): BatchPayload!
@@ -15029,6 +15039,9 @@ type Query {
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  userDeviceData(where: UserDeviceDataWhereUniqueInput!): UserDeviceData
+  userDeviceDatas(where: UserDeviceDataWhereInput, orderBy: UserDeviceDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserDeviceData]!
+  userDeviceDatasConnection(where: UserDeviceDataWhereInput, orderBy: UserDeviceDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserDeviceDataConnection!
   userPushNotification(where: UserPushNotificationWhereUniqueInput!): UserPushNotification
   userPushNotifications(where: UserPushNotificationWhereInput, orderBy: UserPushNotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserPushNotification]!
   userPushNotificationsConnection(where: UserPushNotificationWhereInput, orderBy: UserPushNotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserPushNotificationConnection!
@@ -18104,6 +18117,7 @@ type Subscription {
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
   uTMData(where: UTMDataSubscriptionWhereInput): UTMDataSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  userDeviceData(where: UserDeviceDataSubscriptionWhereInput): UserDeviceDataSubscriptionPayload
   userPushNotification(where: UserPushNotificationSubscriptionWhereInput): UserPushNotificationSubscriptionPayload
   userPushNotificationInterest(where: UserPushNotificationInterestSubscriptionWhereInput): UserPushNotificationInterestSubscriptionPayload
   warehouseLocation(where: WarehouseLocationSubscriptionWhereInput): WarehouseLocationSubscriptionPayload
@@ -18710,6 +18724,7 @@ type User {
   verificationMethod: UserVerificationMethod!
   smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt!]
   fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic!]
+  deviceData: UserDeviceData
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -18737,6 +18752,7 @@ input UserCreateInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
+  deviceData: UserDeviceDataCreateOneInput
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -18779,6 +18795,7 @@ input UserCreateWithoutEmailsInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
+  deviceData: UserDeviceDataCreateOneInput
 }
 
 input UserCreateWithoutFitPicsInput {
@@ -18797,6 +18814,7 @@ input UserCreateWithoutFitPicsInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptCreateManyInput
+  deviceData: UserDeviceDataCreateOneInput
 }
 
 input UserCreateWithoutPushNotificationsInput {
@@ -18815,6 +18833,127 @@ input UserCreateWithoutPushNotificationsInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptCreateManyInput
   fitPics: FitPicCreateManyWithoutUserInput
+  deviceData: UserDeviceDataCreateOneInput
+}
+
+type UserDeviceData {
+  id: ID!
+  iOSVersion: String
+}
+
+type UserDeviceDataConnection {
+  pageInfo: PageInfo!
+  edges: [UserDeviceDataEdge]!
+  aggregate: AggregateUserDeviceData!
+}
+
+input UserDeviceDataCreateInput {
+  id: ID
+  iOSVersion: String
+}
+
+input UserDeviceDataCreateOneInput {
+  create: UserDeviceDataCreateInput
+  connect: UserDeviceDataWhereUniqueInput
+}
+
+type UserDeviceDataEdge {
+  node: UserDeviceData!
+  cursor: String!
+}
+
+enum UserDeviceDataOrderByInput {
+  id_ASC
+  id_DESC
+  iOSVersion_ASC
+  iOSVersion_DESC
+}
+
+type UserDeviceDataPreviousValues {
+  id: ID!
+  iOSVersion: String
+}
+
+type UserDeviceDataSubscriptionPayload {
+  mutation: MutationType!
+  node: UserDeviceData
+  updatedFields: [String!]
+  previousValues: UserDeviceDataPreviousValues
+}
+
+input UserDeviceDataSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: UserDeviceDataWhereInput
+  AND: [UserDeviceDataSubscriptionWhereInput!]
+  OR: [UserDeviceDataSubscriptionWhereInput!]
+  NOT: [UserDeviceDataSubscriptionWhereInput!]
+}
+
+input UserDeviceDataUpdateDataInput {
+  iOSVersion: String
+}
+
+input UserDeviceDataUpdateInput {
+  iOSVersion: String
+}
+
+input UserDeviceDataUpdateManyMutationInput {
+  iOSVersion: String
+}
+
+input UserDeviceDataUpdateOneInput {
+  create: UserDeviceDataCreateInput
+  update: UserDeviceDataUpdateDataInput
+  upsert: UserDeviceDataUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: UserDeviceDataWhereUniqueInput
+}
+
+input UserDeviceDataUpsertNestedInput {
+  update: UserDeviceDataUpdateDataInput!
+  create: UserDeviceDataCreateInput!
+}
+
+input UserDeviceDataWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  iOSVersion: String
+  iOSVersion_not: String
+  iOSVersion_in: [String!]
+  iOSVersion_not_in: [String!]
+  iOSVersion_lt: String
+  iOSVersion_lte: String
+  iOSVersion_gt: String
+  iOSVersion_gte: String
+  iOSVersion_contains: String
+  iOSVersion_not_contains: String
+  iOSVersion_starts_with: String
+  iOSVersion_not_starts_with: String
+  iOSVersion_ends_with: String
+  iOSVersion_not_ends_with: String
+  AND: [UserDeviceDataWhereInput!]
+  OR: [UserDeviceDataWhereInput!]
+  NOT: [UserDeviceDataWhereInput!]
+}
+
+input UserDeviceDataWhereUniqueInput {
+  id: ID
 }
 
 type UserEdge {
@@ -19353,6 +19492,7 @@ input UserUpdateDataInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateInput {
@@ -19371,6 +19511,7 @@ input UserUpdateInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateManyDataInput {
@@ -19465,6 +19606,7 @@ input UserUpdateWithoutEmailsDataInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateWithoutFitPicsDataInput {
@@ -19482,6 +19624,7 @@ input UserUpdateWithoutFitPicsDataInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateWithoutPushNotificationsDataInput {
@@ -19499,6 +19642,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
   fitPics: FitPicUpdateManyWithoutUserInput
+  deviceData: UserDeviceDataUpdateOneInput
 }
 
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -19641,6 +19785,7 @@ input UserWhereInput {
   fitPics_every: FitPicWhereInput
   fitPics_some: FitPicWhereInput
   fitPics_none: FitPicWhereInput
+  deviceData: UserDeviceDataWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
