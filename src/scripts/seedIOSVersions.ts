@@ -11,10 +11,18 @@ import { PrismaService } from "../prisma/prisma.service"
 
 // Useful Docs: https://segment.com/docs/connections/sources/catalog/libraries/server/node/#identify
 
-const seed = () => {
+const seed = async () => {
   let i = 0
   const iosVersionByUserId = {}
   const ps = new PrismaService()
+
+  // Make email to id resolver map
+  const users = await ps.client.users()
+  const emailToIdMap = {}
+  for (const u of users) {
+    emailToIdMap[u.email] = u.id
+  }
+
   const pipe = fs
     .createReadStream(`harvestIdentifies.csv`)
     .pipe(csv())
@@ -23,33 +31,47 @@ const seed = () => {
       pipe.pause()
       const eventSentAt = new Date(row.sent_at)
 
-      const firstTimeSeeingUser = !iosVersionByUserId[row.user_id]
-      const fresherData =
-        //@ts-ignore
-        eventSentAt - iosVersionByUserId[row.user_id]["timestamp"] > 0
-      if (firstTimeSeeingUser || fresherData) {
-        iosVersionByUserId[row.user_id] = {
-          timestamp: eventSentAt,
-          version: row.context_app_version,
+      const userId = row.user_id.includes("@")
+        ? emailToIdMap[row.user_id]
+        : row.user_id
+
+      if (userId !== "") {
+        const firstTimeSeeingUser = !iosVersionByUserId[userId]
+        const fresherData =
+          !!iosVersionByUserId[userId] &&
+          //@ts-ignore
+          eventSentAt - iosVersionByUserId[userId]["timestamp"] > 0
+        if (firstTimeSeeingUser || fresherData) {
+          iosVersionByUserId[userId] = {
+            timestamp: eventSentAt,
+            version: row.context_app_version,
+          }
         }
+      } else {
+        console.log(row)
       }
+
       pipe.resume()
     })
     .on("end", async () => {
       console.log("CSV file successfully processed")
       const userIds = Object.keys(iosVersionByUserId)
       for (const id of userIds) {
-        await ps.client.updateUser({
-          where: { id },
-          data: {
-            deviceData: {
-              upsert: {
-                create: { iOSVersion: iosVersionByUserId[id]["version"] },
-                update: { iOSVersion: iosVersionByUserId[id]["version"] },
+        try {
+          await ps.client.updateUser({
+            where: { id },
+            data: {
+              deviceData: {
+                upsert: {
+                  create: { iOSVersion: iosVersionByUserId[id]["version"] },
+                  update: { iOSVersion: iosVersionByUserId[id]["version"] },
+                },
               },
             },
-          },
-        })
+          })
+        } catch (e) {
+          console.log(e)
+        }
       }
     })
 }
