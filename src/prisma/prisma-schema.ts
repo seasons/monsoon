@@ -7745,6 +7745,7 @@ enum NotificationBarID {
 
 type Order {
   id: ID!
+  externalID: ID
   customer: Customer!
   sentPackage: Package
   lineItems(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem!]
@@ -7777,6 +7778,7 @@ type OrderConnection {
 
 input OrderCreateInput {
   id: ID
+  externalID: ID
   customer: CustomerCreateOneInput!
   sentPackage: PackageCreateOneInput
   lineItems: OrderLineItemCreateManyInput
@@ -8222,6 +8224,8 @@ input OrderLineItemWhereUniqueInput {
 enum OrderOrderByInput {
   id_ASC
   id_DESC
+  externalID_ASC
+  externalID_DESC
   orderNumber_ASC
   orderNumber_DESC
   type_ASC
@@ -8255,6 +8259,7 @@ enum OrderPaymentStatus {
 
 type OrderPreviousValues {
   id: ID!
+  externalID: ID
   orderNumber: String!
   type: OrderType!
   status: OrderStatus!
@@ -8301,6 +8306,7 @@ enum OrderType {
 }
 
 input OrderUpdateInput {
+  externalID: ID
   customer: CustomerUpdateOneRequiredInput
   sentPackage: PackageUpdateOneInput
   lineItems: OrderLineItemUpdateManyInput
@@ -8316,6 +8322,7 @@ input OrderUpdateInput {
 }
 
 input OrderUpdateManyMutationInput {
+  externalID: ID
   orderNumber: String
   type: OrderType
   status: OrderStatus
@@ -8342,6 +8349,20 @@ input OrderWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  externalID: ID
+  externalID_not: ID
+  externalID_in: [ID!]
+  externalID_not_in: [ID!]
+  externalID_lt: ID
+  externalID_lte: ID
+  externalID_gt: ID
+  externalID_gte: ID
+  externalID_contains: ID
+  externalID_not_contains: ID
+  externalID_starts_with: ID
+  externalID_not_starts_with: ID
+  externalID_ends_with: ID
+  externalID_not_ends_with: ID
   customer: CustomerWhereInput
   sentPackage: PackageWhereInput
   lineItems_every: OrderLineItemWhereInput

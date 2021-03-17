@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Fri Mar 26 2021 10:53:35 GMT-0400 (Eastern Daylight Time)
+# timestamp: Mon Mar 29 2021 10:25:44 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -18643,6 +18643,7 @@ enum NotificationBarID {
 
 type Order implements Node {
   id: ID!
+  externalID: ID
   customer: Customer!
   sentPackage: Package
   lineItems(
@@ -18693,6 +18694,7 @@ type OrderConnection {
 
 input OrderCreateInput {
   id: ID
+  externalID: ID
   orderNumber: String!
   type: OrderType!
   status: OrderStatus
@@ -20001,6 +20003,8 @@ input OrderLineItemWhereUniqueInput {
 enum OrderOrderByInput {
   id_ASC
   id_DESC
+  externalID_ASC
+  externalID_DESC
   orderNumber_ASC
   orderNumber_DESC
   type_ASC
@@ -20034,6 +20038,7 @@ enum OrderPaymentStatus {
 
 type OrderPreviousValues {
   id: ID!
+  externalID: ID
   orderNumber: String!
   type: OrderType!
   status: OrderStatus!
@@ -20107,6 +20112,7 @@ enum OrderType {
 }
 
 input OrderUpdateInput {
+  externalID: ID
   orderNumber: String
   type: OrderType
   status: OrderStatus
@@ -20122,6 +20128,7 @@ input OrderUpdateInput {
 }
 
 input OrderUpdateManyMutationInput {
+  externalID: ID
   orderNumber: String
   type: OrderType
   status: OrderStatus
@@ -20214,6 +20221,72 @@ input OrderWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
+  externalID: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  externalID_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  externalID_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  externalID_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  externalID_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  externalID_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  externalID_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  externalID_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  externalID_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  externalID_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  externalID_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  externalID_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  externalID_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  externalID_not_ends_with: ID
   orderNumber: String
 
   """
