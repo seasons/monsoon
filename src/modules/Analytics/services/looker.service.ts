@@ -2,6 +2,12 @@ import { LookerNodeSDK } from "@looker/sdk/lib/node"
 import { Injectable } from "@nestjs/common"
 import slugify from "slugify"
 
+type GlobalDashboardQuerySlug =
+  | "percentage-of-referring-customers"
+  | "avg-referrals-per-referring-customer"
+  | "account-creations-by-platform"
+  | "reservations-by-platform"
+  | string
 @Injectable()
 export class LookerService {
   client = LookerNodeSDK.init31()
@@ -46,7 +52,10 @@ export class LookerService {
       let element = elements[i]
 
       if (element) {
-        element.result = queryResults[i]?.value?.[0]
+        element.result = this.extractValueFromQueryResult(
+          queryResults[i],
+          element.slug
+        )
 
         const key = Object.keys(element.result)?.[0]
 
@@ -59,5 +68,34 @@ export class LookerService {
     }
 
     return elements
+  }
+
+  private extractValueFromQueryResult(
+    result: any,
+    slug: GlobalDashboardQuerySlug
+  ) {
+    let val = result?.value
+    switch (slug) {
+      case "account-creations-by-platform":
+        return {
+          [val?.[0]?.["created_account.application"]]: val?.[0]?.[
+            "created_account.count"
+          ],
+          [val?.[1]?.["created_account.application"]]: val?.[1]?.[
+            "created_account.count"
+          ],
+        }
+      case "reservations-by-platform":
+        return {
+          [val?.[0]?.["reserved_items.application"]]: val?.[0]?.[
+            "reserved_items.count"
+          ],
+          [val?.[1]?.["reserved_items.application"]]: val?.[1]?.[
+            "reserved_items.count"
+          ],
+        }
+      default:
+        return val?.[0]
+    }
   }
 }
