@@ -24,7 +24,12 @@ type Query {
 }
 
 type Mutation {
-  processPayment(paymentMethodID: String!, planID: String!, billing: JSON): JSON
+  processPayment(
+    paymentMethodID: String!
+    planID: String!
+    couponID: String
+    billing: JSON
+  ): JSON
   applePayCheckout(
     planID: String!
     token: StripeToken!
@@ -63,7 +68,7 @@ type PaymentPlan {
   updatedAt: DateTime!
 
   # Computed fields
-  estimate: JSON
+  estimate(couponID: String): JSON
   pauseWithItemsPrice: Int
 }
 

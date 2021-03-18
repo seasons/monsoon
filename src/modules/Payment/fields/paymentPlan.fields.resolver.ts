@@ -1,7 +1,7 @@
 import { Customer } from "@app/decorators"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PaymentPlan } from "@app/prisma"
-import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("PaymentPlan")
 export class PaymentPlanFieldsResolver {
@@ -37,7 +37,11 @@ export class PaymentPlanFieldsResolver {
   }
 
   @ResolveField()
-  async estimate(@Parent() paymentPlan: PaymentPlan, @Customer() customer) {
-    return this.payment.subscriptionEstimate(paymentPlan, customer)
+  async estimate(
+    @Parent() paymentPlan: PaymentPlan,
+    @Customer() customer,
+    @Args() { couponID }
+  ) {
+    return this.payment.subscriptionEstimate(paymentPlan, customer, couponID)
   }
 }
