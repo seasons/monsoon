@@ -228,6 +228,7 @@ export class ChargebeeController {
           lastName: user?.lastName || "",
           email: user?.email || "",
           impactId: customerWithBillingAndUserData.detail?.impactId,
+          application: "flare", // must be flare since its ChargebeeHostedCheckout
           total,
           ...this.utils.formatUTMForSegment(customerWithBillingAndUserData.utm),
         })
