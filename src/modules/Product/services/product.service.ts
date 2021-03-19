@@ -899,7 +899,7 @@ export class ProductService {
     const shopifyProductVariantData = variant.shopifyProductVariant
       ? {
           shopifyProductVariant: {
-            create: variant.shopifyProductVariant,
+            connect: variant.shopifyProductVariant,
           },
         }
       : {}

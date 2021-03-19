@@ -14,6 +14,7 @@ enum SearchResultType {
   Brand
   PhysicalProduct
   Customer
+  ShopifyProductVariant
 }
 
 union SearchResultData =
@@ -21,6 +22,7 @@ union SearchResultData =
   | CustomerSearchResultData
   | ProductSearchResultData
   | PhysicalProductSearchResultData
+  | ShopifyProductVariantSearchResultData
 
 type SearchResult {
   kindOf: SearchResultType!
@@ -68,4 +70,15 @@ type CustomerSearchResultData {
   bagItemsCount: Int
   popularity: Int
   status: CustomerStatus
+}
+
+type ShopifyProductVariantSearchResultData {
+  id: ID!
+  brandID: ID!
+  brandName: String!
+  externalID: String!
+  displayName: String
+  selectedOptions: [ShopifyProductVariantSelectedOption!]
+  title: String
+  image: String
 }

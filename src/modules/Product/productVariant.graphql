@@ -73,7 +73,7 @@ type ProductVariantPrice {
   id: ID!
   retailPrice: Float
 
-  # ExternalShopifyProductVariant is the source of truth.
+  # ShopifyProductVariant is the source of truth.
   buyNewPrice: Float
   buyNewAvailableForSale: Boolean
 
@@ -98,6 +98,9 @@ type Size {
 type ShopifyProductVariant {
   id: ID!
   externalId: String
+  displayName: String
+  image: Image
+  title: String
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
