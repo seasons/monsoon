@@ -94,7 +94,11 @@ export class LookerService {
             "reserved_items.count"
           ],
         }
+      case "accounts-created-per-month":
+        return val?.map(a => ({ [a["user.created_month"]]: a["user.count"] }))
       case "web-acquisition-funnel":
+      case "ios-acquisition-funnel":
+      case "overall-acquisition-funnel":
         return {
           created_account: val?.[0]?.["created_account.count"],
           subscribed: val?.[0]?.["subscribed.count_distinct_ids"],
