@@ -94,6 +94,11 @@ export class LookerService {
             "reserved_items.count"
           ],
         }
+      case "web-acquisition-funnel":
+        return {
+          created_account: val?.[0]?.["created_account.count"],
+          subscribed: val?.[0]?.["subscribed.count_distinct_ids"],
+        }
       default:
         return val?.[0]
     }
