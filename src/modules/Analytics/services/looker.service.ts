@@ -106,6 +106,21 @@ export class LookerService {
           created_account: val?.[0]?.["created_account.count"],
           subscribed: val?.[0]?.["subscribed.count_distinct_ids"],
         }
+      case "active-customers-by-latlng":
+        return val?.reduce((acc, curVal) => {
+          const count = curVal["customer.count"]
+          for (let i = 0; i < count; i++) {
+            acc.push({
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: curVal["location.Coordinates"],
+              },
+              properties: {},
+            })
+          }
+          return acc
+        }, [])
       default:
         return val?.[0]
     }
