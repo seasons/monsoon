@@ -9,7 +9,7 @@ import {
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
-import { lowerFirst, pick, uniq, uniqBy } from "lodash"
+import { lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
 
 import {
   PhysicalProductUtilsService,
@@ -24,6 +24,73 @@ export class ProductVariantService {
     private readonly productUtils: ProductUtilsService,
     private readonly physicalProductUtilsService: PhysicalProductUtilsService
   ) {}
+
+  async addPhysicalProducts(productVariant: ProductVariant, count: number) {
+    const physicalProducts = await this.prisma.binding.query.physicalProducts(
+      {
+        where: {
+          productVariant: {
+            id: productVariant.id,
+          },
+        },
+      },
+      `{
+            id
+            seasonsUID
+            inventoryStatus
+            price {
+              id
+              buyUsedPrice
+              buyUsedEnabled
+            }
+            productVariant {
+                id
+            }
+        }`
+    )
+
+    const SUIDs = []
+    for (let i = physicalProducts.length; i < count; i++) {
+      const num = String(i + 1).padStart(2, "0")
+      SUIDs.push(productVariant.sku + "-" + num)
+    }
+    const nextSequenceNumber = await this.physicalProductUtilsService.nextSequenceNumber()
+
+    const price = omit(physicalProducts?.[0].price, "id")
+
+    const newVariants = await Promise.all(
+      SUIDs.map(async (SUID, i) => {
+        return await this.prisma.client.upsertPhysicalProduct({
+          where: { seasonsUID: SUID },
+          create: {
+            seasonsUID: SUID,
+            productStatus: "New",
+            inventoryStatus: "Reservable",
+            sequenceNumber: nextSequenceNumber + i,
+            productVariant: { connect: { id: productVariant.id } },
+            price: {
+              create: price,
+            },
+          },
+          update: {
+            seasonsUID: SUID,
+          },
+        })
+      })
+    )
+
+    await this.prisma.client.updateProductVariant({
+      where: {
+        id: productVariant.id,
+      },
+      data: {
+        total: count,
+        reservable: productVariant.reservable + 1,
+      },
+    })
+
+    return newVariants
+  }
 
   async updateProductVariantCounts(
     /* array of product variant ids */

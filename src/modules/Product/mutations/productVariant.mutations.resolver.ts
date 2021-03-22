@@ -138,4 +138,10 @@ export class ProductVariantMutationsResolver {
     )
     return variants
   }
+
+  @Mutation()
+  async addPhysicalProductsToVariant(@Args() { variantID, count }) {
+    const variant = await this.prisma.client.productVariant({ id: variantID })
+    return await this.productVariantService.addPhysicalProducts(variant, count)
+  }
 }
