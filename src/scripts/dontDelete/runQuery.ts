@@ -1,40 +1,25 @@
 import "module-alias/register"
 
+import zipcodes from "zipcodes"
+
 import { DripService } from "../../modules/Drip/services/drip.service"
 import { UtilsService } from "../../modules/Utils/services/utils.service"
 import { PrismaService } from "../../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
-  const utils = new UtilsService(ps)
-  const drip = new DripService()
-
-  const jqmuProductVariants = await ps.client.productVariants({
-    where: { sku_contains: "JQMU" },
-    orderBy: "createdAt_ASC",
+  const locationsToUpdate = await ps.client.locations({
+    // where: { OR: [{ lat: null }, { lng: null }] },
   })
-  const jqmuProducts = await ps.binding.query.products(
-    {
-      where: { slug_contains: "jqmu" },
-    },
-    `{
-      id
-      slug
-      variants {
-        id
-        sku 
-      }
-  }`
-  )
-  for (const p of jqmuProducts) {
-    console.log(
-      p.slug,
-      p.variants.map(a => a.sku)
-    )
+  for (const l of locationsToUpdate) {
+    const { latitude, longitude } = zipcodes.lookup(l.zipCode) || {}
+    if (!!latitude && !!longitude) {
+      await ps.client.updateLocation({
+        where: { id: l.id },
+        data: { lat: latitude, lng: longitude },
+      })
+    }
   }
-  // const email = await this.prisma.client.user({ id }).email()
-  // console.log(allUnsubscribedCustomers)
-  // console.log(allUnsubscribedCustomers.)
 }
 
 run()

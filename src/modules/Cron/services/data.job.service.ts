@@ -134,11 +134,13 @@ export class DataScheduledJobs {
       where: { OR: [{ lat: null }, { lng: null }] },
     })
     for (const l of locationsToUpdate) {
-      const { latitude, longitude } = zipcodes.lookup(l.zipCode)
-      await this.prisma.client.updateLocation({
-        where: { id: l.id },
-        data: { lat: latitude, lng: longitude },
-      })
+      const { latitude, longitude } = zipcodes.lookup(l.zipCode) || {}
+      if (!!latitude && !!longitude) {
+        await this.prisma.client.updateLocation({
+          where: { id: l.id },
+          data: { lat: latitude, lng: longitude },
+        })
+      }
     }
   }
 
