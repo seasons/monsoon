@@ -81,19 +81,13 @@ export class ProductFieldsResolver {
   ) {
     const productVariants = await productVariantLoader.load(parent.id)
 
-    const variantsNotOffloaded =
-      application === "harvest" || application === "flare"
-        ? productVariants?.filter(
-            variant => variant.total !== variant.offloaded
-          )
-        : productVariants
-    const type = variantsNotOffloaded?.[0]?.internalSize?.productType
+    const type = productVariants?.[0]?.internalSize?.productType
 
     if (type === "Top") {
-      return this.productUtilsService.sortVariants(variantsNotOffloaded)
+      return this.productUtilsService.sortVariants(productVariants)
     } else {
       // type === "Bottom". Note that if we add a new type, we may need to update this
-      const sortedVariants = variantsNotOffloaded.sort((a, b) => {
+      const sortedVariants = productVariants.sort((a, b) => {
         // @ts-ignore
         return a?.internalSize?.display - b?.internalSize?.display
       })
