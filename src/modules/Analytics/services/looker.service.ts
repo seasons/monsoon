@@ -95,7 +95,10 @@ export class LookerService {
           ],
         }
       case "accounts-created-per-month":
-        return val?.map(a => ({ [a["user.created_month"]]: a["user.count"] }))
+        return val?.reduce((acc, curVal) => {
+          acc[curVal["user.created_month"]] = curVal["user.count"]
+          return acc
+        }, {})
       case "web-acquisition-funnel":
       case "ios-acquisition-funnel":
       case "overall-acquisition-funnel":
