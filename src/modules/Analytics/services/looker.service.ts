@@ -1,5 +1,6 @@
 import { LookerNodeSDK } from "@looker/sdk/lib/node"
 import { Injectable } from "@nestjs/common"
+import { values } from "lodash"
 import slugify from "slugify"
 
 type GlobalDashboardQuerySlug =
@@ -60,11 +61,15 @@ export class LookerService {
 
         const key = Object.keys(element.result)?.[0]
 
-        element.type = key.includes("count")
-          ? "Count"
-          : key.includes("Dollars")
-          ? "Money"
-          : "Basic"
+        try {
+          element.type = key.includes("count")
+            ? "Count"
+            : key.includes("Dollars")
+            ? "Money"
+            : "Basic"
+        } catch (err) {
+          console.log(element)
+        }
       }
     }
 
@@ -108,19 +113,60 @@ export class LookerService {
           subscribed: val?.[0]?.["subscribed.count_distinct_ids"],
         }
       case "active-paused-or-admissable-customers-by-latlng":
-        return val?.map(a => ({
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: a["location.Coordinates"].reverse(),
-          },
-          properties: {
-            subscriptionStatus: a["subscription.status"],
-            customerStatus: a["customer.status"],
-            admissable: a["customer_admissions_data.admissable"],
-            count: a["customer.count"],
-          },
-        }))
+        return [
+          val?.map(a => ({
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: a["location.Coordinates"].reverse(),
+            },
+            properties: {
+              subscriptionStatus: a["subscription.status"],
+              customerStatus: a["customer.status"],
+              admissable: a["customer_admissions_data.admissable"],
+              count: a["customer.count"],
+            },
+          })),
+        ]
+      case "ios-version-table":
+        const returnableValues = val?.filter(a => {
+          const isActiveOrPausedCustomer = ["active", "paused"].includes(
+            a["subscription.status"]
+          )
+          const isWaitlistedAdmissableUser =
+            a["customer_admissions_data.admissable"] === "Yes" &&
+            a["customer.status"] === "Waitlisted"
+          return isActiveOrPausedCustomer || isWaitlistedAdmissableUser
+        })
+
+        const sanitizedValues = returnableValues.reduce((acc, curVal) => {
+          const version = curVal["user_device_data.i_osversion"]
+          console.log(curVal)
+
+          // If this is not the first time we're seeing this version,
+          // increment counts accordingly
+          if (!acc[version]) {
+            acc[version] = {}
+          }
+
+          // Initialize or increment values accordingly
+          if (curVal["subscription.status"] === "active") {
+            acc[version]["active"] =
+              (acc[version]["active"] || 0) + curVal["customer.count"]
+          } else if (curVal["subscription.status"] === "paused") {
+            acc[version]["paused"] =
+              (acc[version]["paused"] || 0) + curVal["customer.count"]
+          } else if (
+            curVal["customer.status"] === "Waitlisted" &&
+            curVal["customer_admissions_data.admissable"] === "Yes"
+          ) {
+            acc[version]["admissable"] =
+              (acc[version]["admissable"] || 0) + curVal["customer.count"]
+          }
+
+          return acc
+        }, {})
+        return sanitizedValues
       default:
         return val?.[0]
     }
