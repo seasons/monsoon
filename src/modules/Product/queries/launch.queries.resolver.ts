@@ -12,11 +12,11 @@ export class LaunchQueriesResolver {
 
   @Query()
   async launches(@Args() args, @Info() info) {
-    return this.prisma.binding.query.launches(args, info)
+    return await this.prisma.binding.query.launches(args, info)
   }
 
   @Query()
   async launchesConnection(@Args() args, @Info() info) {
-    return this.prisma.binding.query.launchesConnection(args, info)
+    return await this.prisma.binding.query.launchesConnection(args, info)
   }
 }
