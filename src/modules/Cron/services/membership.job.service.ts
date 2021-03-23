@@ -101,13 +101,11 @@ export class MembershipScheduledJobs {
               `Paused customer subscription with items: ${customerId}`
             )
           } else {
-            const reservations = await this.prisma.client
+            const reservedBagItems = await this.prisma.client
               .customer({ id: customerId })
-              .reservations({ orderBy: "createdAt_DESC" })
+              .bagItems({ where: { status: "Reserved" } })
 
-            latestReservation = head(reservations)
-
-            if (this.statements.reservationIsActive(latestReservation)) {
+            if (reservedBagItems.length > 0) {
               const customer = await this.prisma.client.pauseRequests({
                 where: {
                   id: customerId,
@@ -121,7 +119,7 @@ export class MembershipScheduledJobs {
                 return
               }
 
-              // Customer has an active reservation so we restart membership
+              // Customer has reserved pieces so we restart membership
               await this.paymentUtils.resumeSubscription(
                 subscriptionId,
                 null,
@@ -129,7 +127,7 @@ export class MembershipScheduledJobs {
               )
               this.logger.log(`Resumed customer subscription: ${customerId}`)
             } else {
-              // Otherwise we can pause the membership if no active reservations
+              // Otherwise we can pause the membership if no reserved pieces
               await this.prisma.client.updatePauseRequest({
                 where: { id: pauseRequest.id },
                 data: { pausePending: false },
