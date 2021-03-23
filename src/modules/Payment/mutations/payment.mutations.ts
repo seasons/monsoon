@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
@@ -20,14 +21,16 @@ export class PaymentMutationsResolver {
   @Mutation()
   async processPayment(
     @Args() { planID, paymentMethodID, couponID, billing },
-    @Customer() customer
+    @Customer() customer,
+    @Application() application
   ) {
     return this.paymentService.processPayment(
       planID,
       paymentMethodID,
       couponID,
       billing,
-      customer
+      customer,
+      application
     )
   }
 
@@ -40,14 +43,16 @@ export class PaymentMutationsResolver {
   @Mutation()
   async applePayCheckout(
     @Args() { planID, token, tokenType, couponID },
-    @Customer() customer
+    @Customer() customer,
+    @Application() application
   ) {
     await this.paymentService.stripeTokenCheckout(
       planID,
       token,
       customer,
       tokenType,
-      couponID
+      couponID,
+      application
     )
     return true
   }

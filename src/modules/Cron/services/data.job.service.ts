@@ -6,6 +6,7 @@ import { Injectable } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, pick } from "lodash"
+import zipcodes from "zipcodes"
 
 interface DataPoint {
   name: string
@@ -125,6 +126,22 @@ export class DataScheduledJobs {
     }
 
     await this.slackService.postMessage(message)
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
+  async updateLatitudesAndLongitudes() {
+    const locationsToUpdate = await this.prisma.client.locations({
+      where: { OR: [{ lat: null }, { lng: null }] },
+    })
+    for (const l of locationsToUpdate) {
+      const { latitude, longitude } = zipcodes.lookup(l.zipCode) || {}
+      if (!!latitude && !!longitude) {
+        await this.prisma.client.updateLocation({
+          where: { id: l.id },
+          data: { lat: latitude, lng: longitude },
+        })
+      }
+    }
   }
 
   async checkAll(withDetails = false) {

@@ -342,7 +342,14 @@ export class PaymentService {
     }
   }
 
-  async processPayment(planID, paymentMethodID, couponID, billing, customer) {
+  async processPayment(
+    planID,
+    paymentMethodID,
+    couponID,
+    billing,
+    customer,
+    application
+  ) {
     const customerWithUserData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
       `
@@ -435,13 +442,21 @@ export class PaymentService {
       email: user.email,
       impactId: customerWithUserData.detail?.impactId,
       total: amountDue,
+      application,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
 
     return intent
   }
 
-  async stripeTokenCheckout(planID, token, customer, tokenType, couponID) {
+  async stripeTokenCheckout(
+    planID,
+    token,
+    customer,
+    tokenType,
+    couponID,
+    application
+  ) {
     const customerWithUserData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
       `
@@ -552,6 +567,7 @@ export class PaymentService {
       email: user.email,
       impactId: customerWithUserData.detail?.impactId,
       total,
+      application,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
   }
