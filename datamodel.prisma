@@ -1321,3 +1321,12 @@ type SyncTiming {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
+
+type Launch {
+  id: ID! @id
+  brand: Brand
+  collection: Collection
+  launchAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
