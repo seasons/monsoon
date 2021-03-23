@@ -27,6 +27,7 @@ export class LookerService {
             this.client.run_query({
               query_id: element.result_maker?.query_id,
               result_format: "json",
+              limit: 100000, // may need to update in future. Essentially, "infinity"
             })
           )
 
@@ -106,21 +107,20 @@ export class LookerService {
           created_account: val?.[0]?.["created_account.count"],
           subscribed: val?.[0]?.["subscribed.count_distinct_ids"],
         }
-      case "active-customers-by-latlng":
-        return val?.reduce((acc, curVal) => {
-          const count = curVal["customer.count"]
-          for (let i = 0; i < count; i++) {
-            acc.push({
-              type: "Feature",
-              geometry: {
-                type: "Point",
-                coordinates: curVal["location.Coordinates"],
-              },
-              properties: {},
-            })
-          }
-          return acc
-        }, [])
+      case "active-paused-or-admissable-customers-by-latlng":
+        return val?.map(a => ({
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: a["location.Coordinates"].reverse(),
+          },
+          properties: {
+            subscriptionStatus: a["subscription.status"],
+            customerStatus: a["customer.status"],
+            admissable: a["customer_admissions_data.admissable"],
+            count: a["customer.count"],
+          },
+        }))
       default:
         return val?.[0]
     }
