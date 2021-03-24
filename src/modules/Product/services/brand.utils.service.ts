@@ -3,6 +3,8 @@ import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 
+import { CustomBrandCreateOrUpdateInput } from "../product.types"
+
 @Injectable()
 export class BrandUtilsService {
   constructor(
@@ -10,7 +12,7 @@ export class BrandUtilsService {
     private readonly imageService: ImageService
   ) {}
 
-  async createBrandImages(data: any) {
+  async createBrandImages(data: CustomBrandCreateOrUpdateInput) {
     let imageIDs
     let logoID
     if (data.images && data.brandCode) {

@@ -2,7 +2,7 @@ import * as url from "url"
 
 import { BrandUtilsService } from "@modules/Product/services/brand.utils.service"
 import { Injectable } from "@nestjs/common"
-import { BrandWhereUniqueInput, ID_Input } from "@prisma/index"
+import { BrandWhereUniqueInput } from "@prisma/index"
 import { Brand as PrismaBindingBrand } from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
 
