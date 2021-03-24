@@ -1325,7 +1325,7 @@ type SyncTiming {
 type Launch {
   id: ID! @id
   brand: Brand
-  published: Boolean! @default(value: true)
+  published: Boolean! @default(value: false)
   collection: Collection
   launchAt: DateTime!
   createdAt: DateTime! @createdAt
