@@ -16,14 +16,17 @@ import { PhysicalProductFieldsResolver } from "./fields/physicalProduct.fields.r
 import { ProductFieldsResolver } from "./fields/product.fields.resolver"
 import { ProductVariantFieldsResolver } from "./fields/productVariant.fields.resolver"
 import { BrandMutationsResolver } from "./mutations/brand.mutations.resolver"
+import { LaunchMutationsResolver } from "./mutations/launch.mutations.resolver"
 import { PhysicalProductMutationsResolver } from "./mutations/physicalProduct.mutations.resolver"
 import { ProductMutationsResolver } from "./mutations/product.mutations.resolver"
 import { ProductVariantMutationsResolver } from "./mutations/productVariant.mutations.resolver"
 import { BrandQueriesResolver } from "./queries/brand.queries.resolver"
+import { LaunchQueriesResolver } from "./queries/launch.queries.resolver"
 import { ProductQueriesResolver } from "./queries/product.queries.resolver"
 import { SizeQueriesResolver } from "./queries/size.queries.resolver"
 import { BagService } from "./services/bag.service"
 import { BrandService } from "./services/brand.service"
+import { LaunchService } from "./services/launch.service"
 import { PhysicalProductService } from "./services/physicalProduct.service"
 import { PhysicalProductUtilsService } from "./services/physicalProduct.utils.service"
 import { ProductService } from "./services/product.service"
@@ -47,6 +50,9 @@ export const ProductModuleDef = {
     BrandService,
     BrandQueriesResolver,
     BrandMutationsResolver,
+    LaunchService,
+    LaunchMutationsResolver,
+    LaunchQueriesResolver,
     PusherService,
     PushNotificationService,
     PushNotificationDataProvider,
