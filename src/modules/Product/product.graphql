@@ -49,6 +49,25 @@ type Query {
     first: Int
     last: Int
   ): [Color]!
+  launch(where: LaunchWhereUniqueInput!): Launch
+  launches(
+    where: LaunchWhereInput
+    orderBy: LaunchOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Launch]!
+  launchesConnection(
+    where: LaunchWhereInput
+    orderBy: LaunchOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): LaunchConnection!
   product(where: ProductWhereUniqueInput!): Product
   products(
     category: String
@@ -149,6 +168,10 @@ type Mutation {
     where: BrandWhereUniqueInput!
     data: CustomBrandUpdateInput!
   ): Brand @hasRole(roles: [Admin])
+  upsertLaunch(
+    where: LaunchWhereUniqueInput!
+    data: CustomLaunchUpsertInput!
+  ): Launch @hasRole(roles: [Admin])
   publishProducts(productIDs: [ID!]): PublishProductsResponse!
     @hasRole(roles: [Admin])
   updatePhysicalProductByBarcode(
@@ -412,4 +435,12 @@ input CustomBrandUpdateInput {
   logo: Upload
   images: [Upload!]
   externalShopifyIntegration: ExternalShopifyIntegrationInput
+}
+
+input CustomLaunchUpsertInput {
+  id: ID
+  launchAt: DateTime
+  # Custom fields
+  collectionID: ID
+  brandID: ID
 }

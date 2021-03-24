@@ -339,6 +339,10 @@ type AggregateLabel {
   count: Int!
 }
 
+type AggregateLaunch {
+  count: Int!
+}
+
 type AggregateLocation {
   count: Int!
 }
@@ -2182,6 +2186,11 @@ input CollectionCreateInput {
   placements: CollectionCreateplacementsInput
 }
 
+input CollectionCreateOneInput {
+  create: CollectionCreateInput
+  connect: CollectionWhereUniqueInput
+}
+
 input CollectionCreateplacementsInput {
   set: [CollectionPlacement!]
 }
@@ -2248,6 +2257,19 @@ input CollectionSubscriptionWhereInput {
   NOT: [CollectionSubscriptionWhereInput!]
 }
 
+input CollectionUpdateDataInput {
+  slug: String
+  images: ImageUpdateManyInput
+  title: String
+  subTitle: String
+  displayTextOverlay: Boolean
+  textOverlayColor: String
+  descriptions: CollectionUpdatedescriptionsInput
+  products: ProductUpdateManyInput
+  published: Boolean
+  placements: CollectionUpdateplacementsInput
+}
+
 input CollectionUpdatedescriptionsInput {
   set: [String!]
 }
@@ -2276,8 +2298,22 @@ input CollectionUpdateManyMutationInput {
   placements: CollectionUpdateplacementsInput
 }
 
+input CollectionUpdateOneInput {
+  create: CollectionCreateInput
+  update: CollectionUpdateDataInput
+  upsert: CollectionUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: CollectionWhereUniqueInput
+}
+
 input CollectionUpdateplacementsInput {
   set: [CollectionPlacement!]
+}
+
+input CollectionUpsertNestedInput {
+  update: CollectionUpdateDataInput!
+  create: CollectionCreateInput!
 }
 
 input CollectionWhereInput {
@@ -6584,6 +6620,129 @@ input LabelWhereUniqueInput {
   id: ID
 }
 
+type Launch {
+  id: ID!
+  brand: Brand
+  collection: Collection
+  launchAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type LaunchConnection {
+  pageInfo: PageInfo!
+  edges: [LaunchEdge]!
+  aggregate: AggregateLaunch!
+}
+
+input LaunchCreateInput {
+  id: ID
+  brand: BrandCreateOneInput
+  collection: CollectionCreateOneInput
+  launchAt: DateTime!
+}
+
+type LaunchEdge {
+  node: Launch!
+  cursor: String!
+}
+
+enum LaunchOrderByInput {
+  id_ASC
+  id_DESC
+  launchAt_ASC
+  launchAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type LaunchPreviousValues {
+  id: ID!
+  launchAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type LaunchSubscriptionPayload {
+  mutation: MutationType!
+  node: Launch
+  updatedFields: [String!]
+  previousValues: LaunchPreviousValues
+}
+
+input LaunchSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: LaunchWhereInput
+  AND: [LaunchSubscriptionWhereInput!]
+  OR: [LaunchSubscriptionWhereInput!]
+  NOT: [LaunchSubscriptionWhereInput!]
+}
+
+input LaunchUpdateInput {
+  brand: BrandUpdateOneInput
+  collection: CollectionUpdateOneInput
+  launchAt: DateTime
+}
+
+input LaunchUpdateManyMutationInput {
+  launchAt: DateTime
+}
+
+input LaunchWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  brand: BrandWhereInput
+  collection: CollectionWhereInput
+  launchAt: DateTime
+  launchAt_not: DateTime
+  launchAt_in: [DateTime!]
+  launchAt_not_in: [DateTime!]
+  launchAt_lt: DateTime
+  launchAt_lte: DateTime
+  launchAt_gt: DateTime
+  launchAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [LaunchWhereInput!]
+  OR: [LaunchWhereInput!]
+  NOT: [LaunchWhereInput!]
+}
+
+input LaunchWhereUniqueInput {
+  id: ID
+}
+
 enum LetterSize {
   XXS
   XS
@@ -7261,6 +7420,12 @@ type Mutation {
   upsertLabel(where: LabelWhereUniqueInput!, create: LabelCreateInput!, update: LabelUpdateInput!): Label!
   deleteLabel(where: LabelWhereUniqueInput!): Label
   deleteManyLabels(where: LabelWhereInput): BatchPayload!
+  createLaunch(data: LaunchCreateInput!): Launch!
+  updateLaunch(data: LaunchUpdateInput!, where: LaunchWhereUniqueInput!): Launch
+  updateManyLaunches(data: LaunchUpdateManyMutationInput!, where: LaunchWhereInput): BatchPayload!
+  upsertLaunch(where: LaunchWhereUniqueInput!, create: LaunchCreateInput!, update: LaunchUpdateInput!): Launch!
+  deleteLaunch(where: LaunchWhereUniqueInput!): Launch
+  deleteManyLaunches(where: LaunchWhereInput): BatchPayload!
   createLocation(data: LocationCreateInput!): Location!
   updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
@@ -14910,6 +15075,9 @@ type Query {
   label(where: LabelWhereUniqueInput!): Label
   labels(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Label]!
   labelsConnection(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LabelConnection!
+  launch(where: LaunchWhereUniqueInput!): Launch
+  launches(where: LaunchWhereInput, orderBy: LaunchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Launch]!
+  launchesConnection(where: LaunchWhereInput, orderBy: LaunchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LaunchConnection!
   location(where: LocationWhereUniqueInput!): Location
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
@@ -18072,6 +18240,7 @@ type Subscription {
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   interestedUser(where: InterestedUserSubscriptionWhereInput): InterestedUserSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
+  launch(where: LaunchSubscriptionWhereInput): LaunchSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
   orderLineItem(where: OrderLineItemSubscriptionWhereInput): OrderLineItemSubscriptionPayload
