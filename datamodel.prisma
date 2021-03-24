@@ -279,12 +279,12 @@ type Brand {
   brandCode: String! @unique
   description: String
   isPrimaryBrand: Boolean! @default(value: false)
-  logo: Json
+  logo: Image @relation(name: "BrandToBrandLogo")
   name: String!
   designer: String
   basedIn: String
   products: [Product!]!
-  images: [Image!]
+  images: [Image!] @relation(name: "BrandToBrandImages")
   since: DateTime
   tier: BrandTier!
   published: Boolean! @default(value: true)
@@ -1318,6 +1318,16 @@ type SyncTiming {
   id: ID! @id
   type: SyncTimingType!
   syncedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Launch {
+  id: ID! @id
+  brand: Brand
+  published: Boolean! @default(value: false)
+  collection: Collection
+  launchAt: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

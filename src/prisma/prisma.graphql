@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Mar 17 2021 15:03:14 GMT-0500 (Central Daylight Time)
+# timestamp: Wed Mar 24 2021 13:53:15 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -678,6 +678,10 @@ type AggregateInterestedUser {
 }
 
 type AggregateLabel {
+  count: Int!
+}
+
+type AggregateLaunch {
   count: Int!
 }
 
@@ -3040,7 +3044,7 @@ type Brand implements Node {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean!
-  logo: Json
+  logo: Image
   name: String!
   designer: String
   basedIn: String
@@ -3094,7 +3098,6 @@ input BrandCreateInput {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
   name: String!
   designer: String
   basedIn: String
@@ -3103,6 +3106,7 @@ input BrandCreateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  logo: ImageCreateOneInput
   products: ProductCreateManyWithoutBrandInput
   images: ImageCreateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
@@ -3124,7 +3128,6 @@ input BrandCreateWithoutProductsInput {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
   name: String!
   designer: String
   basedIn: String
@@ -3133,6 +3136,7 @@ input BrandCreateWithoutProductsInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  logo: ImageCreateOneInput
   images: ImageCreateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
 }
@@ -3163,8 +3167,6 @@ enum BrandOrderByInput {
   description_DESC
   isPrimaryBrand_ASC
   isPrimaryBrand_DESC
-  logo_ASC
-  logo_DESC
   name_ASC
   name_DESC
   designer_ASC
@@ -3193,7 +3195,6 @@ type BrandPreviousValues {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean!
-  logo: Json
   name: String!
   designer: String
   basedIn: String
@@ -3268,7 +3269,6 @@ input BrandUpdateDataInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
   name: String
   designer: String
   basedIn: String
@@ -3277,6 +3277,7 @@ input BrandUpdateDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  logo: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
@@ -3287,7 +3288,6 @@ input BrandUpdateInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
   name: String
   designer: String
   basedIn: String
@@ -3296,6 +3296,7 @@ input BrandUpdateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  logo: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
@@ -3306,7 +3307,6 @@ input BrandUpdateManyMutationInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
   name: String
   designer: String
   basedIn: String
@@ -3338,7 +3338,6 @@ input BrandUpdateWithoutProductsDataInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
   name: String
   designer: String
   basedIn: String
@@ -3347,6 +3346,7 @@ input BrandUpdateWithoutProductsDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  logo: ImageUpdateOneInput
   images: ImageUpdateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
 }
@@ -4046,6 +4046,7 @@ input BrandWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
+  logo: ImageWhereInput
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
@@ -5049,6 +5050,11 @@ input CollectionCreateInput {
   products: ProductCreateManyInput
 }
 
+input CollectionCreateOneInput {
+  create: CollectionCreateInput
+  connect: CollectionWhereUniqueInput
+}
+
 input CollectionCreateplacementsInput {
   set: [CollectionPlacement!]
 }
@@ -5152,6 +5158,19 @@ input CollectionSubscriptionWhereInput {
   node: CollectionWhereInput
 }
 
+input CollectionUpdateDataInput {
+  slug: String
+  title: String
+  subTitle: String
+  displayTextOverlay: Boolean
+  textOverlayColor: String
+  published: Boolean
+  descriptions: CollectionUpdatedescriptionsInput
+  placements: CollectionUpdateplacementsInput
+  images: ImageUpdateManyInput
+  products: ProductUpdateManyInput
+}
+
 input CollectionUpdatedescriptionsInput {
   set: [String!]
 }
@@ -5180,8 +5199,22 @@ input CollectionUpdateManyMutationInput {
   placements: CollectionUpdateplacementsInput
 }
 
+input CollectionUpdateOneInput {
+  create: CollectionCreateInput
+  connect: CollectionWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: CollectionUpdateDataInput
+  upsert: CollectionUpsertNestedInput
+}
+
 input CollectionUpdateplacementsInput {
   set: [CollectionPlacement!]
+}
+
+input CollectionUpsertNestedInput {
+  update: CollectionUpdateDataInput!
+  create: CollectionCreateInput!
 }
 
 input CollectionWhereInput {
@@ -15688,6 +15721,336 @@ input LabelWhereUniqueInput {
   id: ID
 }
 
+type Launch implements Node {
+  id: ID!
+  brand: Brand
+  published: Boolean!
+  collection: Collection
+  launchAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type LaunchConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [LaunchEdge]!
+  aggregate: AggregateLaunch!
+}
+
+input LaunchCreateInput {
+  id: ID
+  published: Boolean
+  launchAt: DateTime!
+  brand: BrandCreateOneInput
+  collection: CollectionCreateOneInput
+}
+
+"""
+An edge in a connection.
+"""
+type LaunchEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Launch!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum LaunchOrderByInput {
+  id_ASC
+  id_DESC
+  published_ASC
+  published_DESC
+  launchAt_ASC
+  launchAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type LaunchPreviousValues {
+  id: ID!
+  published: Boolean!
+  launchAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type LaunchSubscriptionPayload {
+  mutation: MutationType!
+  node: Launch
+  updatedFields: [String!]
+  previousValues: LaunchPreviousValues
+}
+
+input LaunchSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [LaunchSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [LaunchSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [LaunchSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: LaunchWhereInput
+}
+
+input LaunchUpdateInput {
+  published: Boolean
+  launchAt: DateTime
+  brand: BrandUpdateOneInput
+  collection: CollectionUpdateOneInput
+}
+
+input LaunchUpdateManyMutationInput {
+  published: Boolean
+  launchAt: DateTime
+}
+
+input LaunchWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [LaunchWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [LaunchWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [LaunchWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  published: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  published_not: Boolean
+  launchAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  launchAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  launchAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  launchAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  launchAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  launchAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  launchAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  launchAt_gte: DateTime
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+  brand: BrandWhereInput
+  collection: CollectionWhereInput
+}
+
+input LaunchWhereUniqueInput {
+  id: ID
+}
+
 enum LetterSize {
   XXS
   XS
@@ -17008,7 +17371,6 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
-  createCollection(data: CollectionCreateInput!): Collection!
   createTag(data: TagCreateInput!): Tag!
   createProductMaterialCategory(
     data: ProductMaterialCategoryCreateInput!
@@ -17068,11 +17430,13 @@ type Mutation {
   createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
   createAdminActionLog(data: AdminActionLogCreateInput!): AdminActionLog!
   createSyncTiming(data: SyncTimingCreateInput!): SyncTiming!
+  createLaunch(data: LaunchCreateInput!): Launch!
   createShopifyProductVariantSelectedOption(
     data: ShopifyProductVariantSelectedOptionCreateInput!
   ): ShopifyProductVariantSelectedOption!
   createProductSeason(data: ProductSeasonCreateInput!): ProductSeason!
   createProductTier(data: ProductTierCreateInput!): ProductTier!
+  createCollection(data: CollectionCreateInput!): Collection!
   createPushNotificationReceipt(
     data: PushNotificationReceiptCreateInput!
   ): PushNotificationReceipt!
@@ -17098,13 +17462,13 @@ type Mutation {
   createPhysicalProductPrice(
     data: PhysicalProductPriceCreateInput!
   ): PhysicalProductPrice!
-  createBrand(data: BrandCreateInput!): Brand!
   createExternalShopifyIntegration(
     data: ExternalShopifyIntegrationCreateInput!
   ): ExternalShopifyIntegration!
   createPackage(data: PackageCreateInput!): Package!
   createTopSize(data: TopSizeCreateInput!): TopSize!
   createShippingMethod(data: ShippingMethodCreateInput!): ShippingMethod!
+  createBrand(data: BrandCreateInput!): Brand!
   createUserPushNotification(
     data: UserPushNotificationCreateInput!
   ): UserPushNotification!
@@ -17127,10 +17491,6 @@ type Mutation {
   createShippingOption(data: ShippingOptionCreateInput!): ShippingOption!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createReservation(data: ReservationCreateInput!): Reservation!
-  updateCollection(
-    data: CollectionUpdateInput!
-    where: CollectionWhereUniqueInput!
-  ): Collection
   updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
   updateProductMaterialCategory(
     data: ProductMaterialCategoryUpdateInput!
@@ -17238,6 +17598,7 @@ type Mutation {
     data: SyncTimingUpdateInput!
     where: SyncTimingWhereUniqueInput!
   ): SyncTiming
+  updateLaunch(data: LaunchUpdateInput!, where: LaunchWhereUniqueInput!): Launch
   updateShopifyProductVariantSelectedOption(
     data: ShopifyProductVariantSelectedOptionUpdateInput!
     where: ShopifyProductVariantSelectedOptionWhereUniqueInput!
@@ -17250,6 +17611,10 @@ type Mutation {
     data: ProductTierUpdateInput!
     where: ProductTierWhereUniqueInput!
   ): ProductTier
+  updateCollection(
+    data: CollectionUpdateInput!
+    where: CollectionWhereUniqueInput!
+  ): Collection
   updatePushNotificationReceipt(
     data: PushNotificationReceiptUpdateInput!
     where: PushNotificationReceiptWhereUniqueInput!
@@ -17296,7 +17661,6 @@ type Mutation {
     data: PhysicalProductPriceUpdateInput!
     where: PhysicalProductPriceWhereUniqueInput!
   ): PhysicalProductPrice
-  updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateExternalShopifyIntegration(
     data: ExternalShopifyIntegrationUpdateInput!
     where: ExternalShopifyIntegrationWhereUniqueInput!
@@ -17313,6 +17677,7 @@ type Mutation {
     data: ShippingMethodUpdateInput!
     where: ShippingMethodWhereUniqueInput!
   ): ShippingMethod
+  updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateUserPushNotification(
     data: UserPushNotificationUpdateInput!
     where: UserPushNotificationWhereUniqueInput!
@@ -17373,7 +17738,6 @@ type Mutation {
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
   ): Reservation
-  deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deleteTag(where: TagWhereUniqueInput!): Tag
   deleteProductMaterialCategory(
     where: ProductMaterialCategoryWhereUniqueInput!
@@ -17435,11 +17799,13 @@ type Mutation {
   ): ActiveAdminUser
   deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   deleteSyncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
+  deleteLaunch(where: LaunchWhereUniqueInput!): Launch
   deleteShopifyProductVariantSelectedOption(
     where: ShopifyProductVariantSelectedOptionWhereUniqueInput!
   ): ShopifyProductVariantSelectedOption
   deleteProductSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
   deleteProductTier(where: ProductTierWhereUniqueInput!): ProductTier
+  deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deletePushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
   ): PushNotificationReceipt
@@ -17469,13 +17835,13 @@ type Mutation {
   deletePhysicalProductPrice(
     where: PhysicalProductPriceWhereUniqueInput!
   ): PhysicalProductPrice
-  deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteExternalShopifyIntegration(
     where: ExternalShopifyIntegrationWhereUniqueInput!
   ): ExternalShopifyIntegration
   deletePackage(where: PackageWhereUniqueInput!): Package
   deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
   deleteShippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
+  deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteUserPushNotification(
     where: UserPushNotificationWhereUniqueInput!
   ): UserPushNotification
@@ -17500,11 +17866,6 @@ type Mutation {
   deleteShippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
-  upsertCollection(
-    where: CollectionWhereUniqueInput!
-    create: CollectionCreateInput!
-    update: CollectionUpdateInput!
-  ): Collection!
   upsertTag(
     where: TagWhereUniqueInput!
     create: TagCreateInput!
@@ -17650,6 +18011,11 @@ type Mutation {
     create: SyncTimingCreateInput!
     update: SyncTimingUpdateInput!
   ): SyncTiming!
+  upsertLaunch(
+    where: LaunchWhereUniqueInput!
+    create: LaunchCreateInput!
+    update: LaunchUpdateInput!
+  ): Launch!
   upsertShopifyProductVariantSelectedOption(
     where: ShopifyProductVariantSelectedOptionWhereUniqueInput!
     create: ShopifyProductVariantSelectedOptionCreateInput!
@@ -17665,6 +18031,11 @@ type Mutation {
     create: ProductTierCreateInput!
     update: ProductTierUpdateInput!
   ): ProductTier!
+  upsertCollection(
+    where: CollectionWhereUniqueInput!
+    create: CollectionCreateInput!
+    update: CollectionUpdateInput!
+  ): Collection!
   upsertPushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
     create: PushNotificationReceiptCreateInput!
@@ -17730,11 +18101,6 @@ type Mutation {
     create: PhysicalProductPriceCreateInput!
     update: PhysicalProductPriceUpdateInput!
   ): PhysicalProductPrice!
-  upsertBrand(
-    where: BrandWhereUniqueInput!
-    create: BrandCreateInput!
-    update: BrandUpdateInput!
-  ): Brand!
   upsertExternalShopifyIntegration(
     where: ExternalShopifyIntegrationWhereUniqueInput!
     create: ExternalShopifyIntegrationCreateInput!
@@ -17755,6 +18121,11 @@ type Mutation {
     create: ShippingMethodCreateInput!
     update: ShippingMethodUpdateInput!
   ): ShippingMethod!
+  upsertBrand(
+    where: BrandWhereUniqueInput!
+    create: BrandCreateInput!
+    update: BrandUpdateInput!
+  ): Brand!
   upsertUserPushNotification(
     where: UserPushNotificationWhereUniqueInput!
     create: UserPushNotificationCreateInput!
@@ -17845,10 +18216,6 @@ type Mutation {
     create: ReservationCreateInput!
     update: ReservationUpdateInput!
   ): Reservation!
-  updateManyCollections(
-    data: CollectionUpdateManyMutationInput!
-    where: CollectionWhereInput
-  ): BatchPayload!
   updateManyTags(
     data: TagUpdateManyMutationInput!
     where: TagWhereInput
@@ -17957,6 +18324,10 @@ type Mutation {
     data: SyncTimingUpdateManyMutationInput!
     where: SyncTimingWhereInput
   ): BatchPayload!
+  updateManyLaunches(
+    data: LaunchUpdateManyMutationInput!
+    where: LaunchWhereInput
+  ): BatchPayload!
   updateManyShopifyProductVariantSelectedOptions(
     data: ShopifyProductVariantSelectedOptionUpdateManyMutationInput!
     where: ShopifyProductVariantSelectedOptionWhereInput
@@ -17968,6 +18339,10 @@ type Mutation {
   updateManyProductTiers(
     data: ProductTierUpdateManyMutationInput!
     where: ProductTierWhereInput
+  ): BatchPayload!
+  updateManyCollections(
+    data: CollectionUpdateManyMutationInput!
+    where: CollectionWhereInput
   ): BatchPayload!
   updateManyPushNotificationReceipts(
     data: PushNotificationReceiptUpdateManyMutationInput!
@@ -18021,10 +18396,6 @@ type Mutation {
     data: PhysicalProductPriceUpdateManyMutationInput!
     where: PhysicalProductPriceWhereInput
   ): BatchPayload!
-  updateManyBrands(
-    data: BrandUpdateManyMutationInput!
-    where: BrandWhereInput
-  ): BatchPayload!
   updateManyExternalShopifyIntegrations(
     data: ExternalShopifyIntegrationUpdateManyMutationInput!
     where: ExternalShopifyIntegrationWhereInput
@@ -18040,6 +18411,10 @@ type Mutation {
   updateManyShippingMethods(
     data: ShippingMethodUpdateManyMutationInput!
     where: ShippingMethodWhereInput
+  ): BatchPayload!
+  updateManyBrands(
+    data: BrandUpdateManyMutationInput!
+    where: BrandWhereInput
   ): BatchPayload!
   updateManyUserPushNotifications(
     data: UserPushNotificationUpdateManyMutationInput!
@@ -18113,7 +18488,6 @@ type Mutation {
     data: ReservationUpdateManyMutationInput!
     where: ReservationWhereInput
   ): BatchPayload!
-  deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   deleteManyTags(where: TagWhereInput): BatchPayload!
   deleteManyProductMaterialCategories(
     where: ProductMaterialCategoryWhereInput
@@ -18173,11 +18547,13 @@ type Mutation {
   deleteManyActiveAdminUsers(where: ActiveAdminUserWhereInput): BatchPayload!
   deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
   deleteManySyncTimings(where: SyncTimingWhereInput): BatchPayload!
+  deleteManyLaunches(where: LaunchWhereInput): BatchPayload!
   deleteManyShopifyProductVariantSelectedOptions(
     where: ShopifyProductVariantSelectedOptionWhereInput
   ): BatchPayload!
   deleteManyProductSeasons(where: ProductSeasonWhereInput): BatchPayload!
   deleteManyProductTiers(where: ProductTierWhereInput): BatchPayload!
+  deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   deleteManyPushNotificationReceipts(
     where: PushNotificationReceiptWhereInput
   ): BatchPayload!
@@ -18203,13 +18579,13 @@ type Mutation {
   deleteManyPhysicalProductPrices(
     where: PhysicalProductPriceWhereInput
   ): BatchPayload!
-  deleteManyBrands(where: BrandWhereInput): BatchPayload!
   deleteManyExternalShopifyIntegrations(
     where: ExternalShopifyIntegrationWhereInput
   ): BatchPayload!
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
   deleteManyTopSizes(where: TopSizeWhereInput): BatchPayload!
   deleteManyShippingMethods(where: ShippingMethodWhereInput): BatchPayload!
+  deleteManyBrands(where: BrandWhereInput): BatchPayload!
   deleteManyUserPushNotifications(
     where: UserPushNotificationWhereInput
   ): BatchPayload!
@@ -35613,15 +35989,6 @@ enum PushNotificationStatus {
 }
 
 type Query {
-  collections(
-    where: CollectionWhereInput
-    orderBy: CollectionOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Collection]!
   tags(
     where: TagWhereInput
     orderBy: TagOrderByInput
@@ -35883,6 +36250,15 @@ type Query {
     first: Int
     last: Int
   ): [SyncTiming]!
+  launches(
+    where: LaunchWhereInput
+    orderBy: LaunchOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Launch]!
   shopifyProductVariantSelectedOptions(
     where: ShopifyProductVariantSelectedOptionWhereInput
     orderBy: ShopifyProductVariantSelectedOptionOrderByInput
@@ -35910,6 +36286,15 @@ type Query {
     first: Int
     last: Int
   ): [ProductTier]!
+  collections(
+    where: CollectionWhereInput
+    orderBy: CollectionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Collection]!
   pushNotificationReceipts(
     where: PushNotificationReceiptWhereInput
     orderBy: PushNotificationReceiptOrderByInput
@@ -36027,15 +36412,6 @@ type Query {
     first: Int
     last: Int
   ): [PhysicalProductPrice]!
-  brands(
-    where: BrandWhereInput
-    orderBy: BrandOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Brand]!
   externalShopifyIntegrations(
     where: ExternalShopifyIntegrationWhereInput
     orderBy: ExternalShopifyIntegrationOrderByInput
@@ -36072,6 +36448,15 @@ type Query {
     first: Int
     last: Int
   ): [ShippingMethod]!
+  brands(
+    where: BrandWhereInput
+    orderBy: BrandOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Brand]!
   userPushNotifications(
     where: UserPushNotificationWhereInput
     orderBy: UserPushNotificationOrderByInput
@@ -36234,7 +36619,6 @@ type Query {
     first: Int
     last: Int
   ): [Reservation]!
-  collection(where: CollectionWhereUniqueInput!): Collection
   tag(where: TagWhereUniqueInput!): Tag
   productMaterialCategory(
     where: ProductMaterialCategoryWhereUniqueInput!
@@ -36294,11 +36678,13 @@ type Query {
   activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
   adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   syncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
+  launch(where: LaunchWhereUniqueInput!): Launch
   shopifyProductVariantSelectedOption(
     where: ShopifyProductVariantSelectedOptionWhereUniqueInput!
   ): ShopifyProductVariantSelectedOption
   productSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
   productTier(where: ProductTierWhereUniqueInput!): ProductTier
+  collection(where: CollectionWhereUniqueInput!): Collection
   pushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
   ): PushNotificationReceipt
@@ -36324,13 +36710,13 @@ type Query {
   physicalProductPrice(
     where: PhysicalProductPriceWhereUniqueInput!
   ): PhysicalProductPrice
-  brand(where: BrandWhereUniqueInput!): Brand
   externalShopifyIntegration(
     where: ExternalShopifyIntegrationWhereUniqueInput!
   ): ExternalShopifyIntegration
   package(where: PackageWhereUniqueInput!): Package
   topSize(where: TopSizeWhereUniqueInput!): TopSize
   shippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
+  brand(where: BrandWhereUniqueInput!): Brand
   userPushNotification(
     where: UserPushNotificationWhereUniqueInput!
   ): UserPushNotification
@@ -36353,15 +36739,6 @@ type Query {
   shippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   reservation(where: ReservationWhereUniqueInput!): Reservation
-  collectionsConnection(
-    where: CollectionWhereInput
-    orderBy: CollectionOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): CollectionConnection!
   tagsConnection(
     where: TagWhereInput
     orderBy: TagOrderByInput
@@ -36623,6 +37000,15 @@ type Query {
     first: Int
     last: Int
   ): SyncTimingConnection!
+  launchesConnection(
+    where: LaunchWhereInput
+    orderBy: LaunchOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): LaunchConnection!
   shopifyProductVariantSelectedOptionsConnection(
     where: ShopifyProductVariantSelectedOptionWhereInput
     orderBy: ShopifyProductVariantSelectedOptionOrderByInput
@@ -36650,6 +37036,15 @@ type Query {
     first: Int
     last: Int
   ): ProductTierConnection!
+  collectionsConnection(
+    where: CollectionWhereInput
+    orderBy: CollectionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CollectionConnection!
   pushNotificationReceiptsConnection(
     where: PushNotificationReceiptWhereInput
     orderBy: PushNotificationReceiptOrderByInput
@@ -36767,15 +37162,6 @@ type Query {
     first: Int
     last: Int
   ): PhysicalProductPriceConnection!
-  brandsConnection(
-    where: BrandWhereInput
-    orderBy: BrandOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): BrandConnection!
   externalShopifyIntegrationsConnection(
     where: ExternalShopifyIntegrationWhereInput
     orderBy: ExternalShopifyIntegrationOrderByInput
@@ -36812,6 +37198,15 @@ type Query {
     first: Int
     last: Int
   ): ShippingMethodConnection!
+  brandsConnection(
+    where: BrandWhereInput
+    orderBy: BrandOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): BrandConnection!
   userPushNotificationsConnection(
     where: UserPushNotificationWhereInput
     orderBy: UserPushNotificationOrderByInput
@@ -44182,9 +44577,6 @@ input StylePreferencesWhereUniqueInput {
 }
 
 type Subscription {
-  collection(
-    where: CollectionSubscriptionWhereInput
-  ): CollectionSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   productMaterialCategory(
     where: ProductMaterialCategorySubscriptionWhereInput
@@ -44262,6 +44654,7 @@ type Subscription {
   syncTiming(
     where: SyncTimingSubscriptionWhereInput
   ): SyncTimingSubscriptionPayload
+  launch(where: LaunchSubscriptionWhereInput): LaunchSubscriptionPayload
   shopifyProductVariantSelectedOption(
     where: ShopifyProductVariantSelectedOptionSubscriptionWhereInput
   ): ShopifyProductVariantSelectedOptionSubscriptionPayload
@@ -44271,6 +44664,9 @@ type Subscription {
   productTier(
     where: ProductTierSubscriptionWhereInput
   ): ProductTierSubscriptionPayload
+  collection(
+    where: CollectionSubscriptionWhereInput
+  ): CollectionSubscriptionPayload
   pushNotificationReceipt(
     where: PushNotificationReceiptSubscriptionWhereInput
   ): PushNotificationReceiptSubscriptionPayload
@@ -44306,7 +44702,6 @@ type Subscription {
   physicalProductPrice(
     where: PhysicalProductPriceSubscriptionWhereInput
   ): PhysicalProductPriceSubscriptionPayload
-  brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   externalShopifyIntegration(
     where: ExternalShopifyIntegrationSubscriptionWhereInput
   ): ExternalShopifyIntegrationSubscriptionPayload
@@ -44315,6 +44710,7 @@ type Subscription {
   shippingMethod(
     where: ShippingMethodSubscriptionWhereInput
   ): ShippingMethodSubscriptionPayload
+  brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   userPushNotification(
     where: UserPushNotificationSubscriptionWhereInput
   ): UserPushNotificationSubscriptionPayload

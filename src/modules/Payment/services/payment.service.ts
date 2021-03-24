@@ -342,7 +342,14 @@ export class PaymentService {
     }
   }
 
-  async processPayment(planID, paymentMethodID, couponID, billing, customer) {
+  async processPayment(
+    planID,
+    paymentMethodID,
+    couponID,
+    billing,
+    customer,
+    application
+  ) {
     const customerWithUserData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
       `
@@ -435,13 +442,21 @@ export class PaymentService {
       email: user.email,
       impactId: customerWithUserData.detail?.impactId,
       total: amountDue,
+      application,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
 
     return intent
   }
 
-  async stripeTokenCheckout(planID, token, customer, tokenType, couponID) {
+  async stripeTokenCheckout(
+    planID,
+    token,
+    customer,
+    tokenType,
+    couponID,
+    application
+  ) {
     const customerWithUserData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
       `
@@ -552,6 +567,7 @@ export class PaymentService {
       email: user.email,
       impactId: customerWithUserData.detail?.impactId,
       total,
+      application,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
   }
@@ -561,41 +577,34 @@ export class PaymentService {
     customer,
     pauseType: PauseType = "WithoutItems"
   ) {
-    let customerWithMembership
-    if (pauseType === "WithItems") {
-      customerWithMembership = await this.prisma.binding.query.customer(
-        { where: { id: customer.id } },
-        `
-        {
+    let customerWithMembership = await this.prisma.binding.query.customer(
+      { where: { id: customer.id } },
+      `
+      {
+        id
+        membership {
           id
-          reservations(orderBy: createdAt_DESC) {
+          subscription {
             id
-            status
-          }
-          membership {
-            id
-            subscription {
-              id
-              currentTermEnd
-            }
+            currentTermEnd
           }
         }
-        `
-      )
-
-      const latestReservation: Reservation = head(
-        customerWithMembership.reservations
-      )
-
-      if (
-        !latestReservation ||
-        (latestReservation &&
-          ["Completed", "Cancelled"].includes(latestReservation.status))
-      ) {
-        throw new Error(
-          `Error pausing subscription: You must have an active reservation to pause with items.`
-        )
+        bagItems {
+          id
+          status
+        }
       }
+      `
+    )
+
+    const numReservedItemsInBag = customerWithMembership.bagItems?.filter(
+      a => a.status === "Reserved"
+    )?.length
+
+    if (pauseType === "WithItems" && numReservedItemsInBag === 0) {
+      throw new Error(
+        `Error pausing subscription: You must have reserved items to pause with items.`
+      )
     }
 
     try {

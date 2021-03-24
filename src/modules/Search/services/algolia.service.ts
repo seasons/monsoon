@@ -11,6 +11,7 @@ export enum IndexKey {
   Product = "product",
   Brand = "brand",
   PhysicalProduct = "physical-product",
+  ShopifyProductVariant = "shopify-product-variant",
 }
 
 @Injectable()

@@ -48,6 +48,7 @@ export interface Exists {
   image: (where?: ImageWhereInput) => Promise<boolean>;
   interestedUser: (where?: InterestedUserWhereInput) => Promise<boolean>;
   label: (where?: LabelWhereInput) => Promise<boolean>;
+  launch: (where?: LaunchWhereInput) => Promise<boolean>;
   location: (where?: LocationWhereInput) => Promise<boolean>;
   order: (where?: OrderWhereInput) => Promise<boolean>;
   orderLineItem: (where?: OrderLineItemWhereInput) => Promise<boolean>;
@@ -596,6 +597,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => LabelConnectionPromise;
+  launch: (where: LaunchWhereUniqueInput) => LaunchNullablePromise;
+  launches: (args?: {
+    where?: LaunchWhereInput;
+    orderBy?: LaunchOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Launch>;
+  launchesConnection: (args?: {
+    where?: LaunchWhereInput;
+    orderBy?: LaunchOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => LaunchConnectionPromise;
   location: (where: LocationWhereUniqueInput) => LocationNullablePromise;
   locations: (args?: {
     where?: LocationWhereInput;
@@ -1977,6 +1997,22 @@ export interface Prisma {
   }) => LabelPromise;
   deleteLabel: (where: LabelWhereUniqueInput) => LabelPromise;
   deleteManyLabels: (where?: LabelWhereInput) => BatchPayloadPromise;
+  createLaunch: (data: LaunchCreateInput) => LaunchPromise;
+  updateLaunch: (args: {
+    data: LaunchUpdateInput;
+    where: LaunchWhereUniqueInput;
+  }) => LaunchPromise;
+  updateManyLaunches: (args: {
+    data: LaunchUpdateManyMutationInput;
+    where?: LaunchWhereInput;
+  }) => BatchPayloadPromise;
+  upsertLaunch: (args: {
+    where: LaunchWhereUniqueInput;
+    create: LaunchCreateInput;
+    update: LaunchUpdateInput;
+  }) => LaunchPromise;
+  deleteLaunch: (where: LaunchWhereUniqueInput) => LaunchPromise;
+  deleteManyLaunches: (where?: LaunchWhereInput) => BatchPayloadPromise;
   createLocation: (data: LocationCreateInput) => LocationPromise;
   updateLocation: (args: {
     data: LocationUpdateInput;
@@ -2990,6 +3026,9 @@ export interface Subscription {
   label: (
     where?: LabelSubscriptionWhereInput
   ) => LabelSubscriptionPayloadSubscription;
+  launch: (
+    where?: LaunchSubscriptionWhereInput
+  ) => LaunchSubscriptionPayloadSubscription;
   location: (
     where?: LocationSubscriptionWhereInput
   ) => LocationSubscriptionPayloadSubscription;
@@ -3886,8 +3925,6 @@ export type BrandOrderByInput =
   | "description_DESC"
   | "isPrimaryBrand_ASC"
   | "isPrimaryBrand_DESC"
-  | "logo_ASC"
-  | "logo_DESC"
   | "name_ASC"
   | "name_DESC"
   | "designer_ASC"
@@ -4074,6 +4111,18 @@ export type LabelOrderByInput =
   | "trackingNumber_DESC"
   | "trackingURL_ASC"
   | "trackingURL_DESC";
+
+export type LaunchOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "published_ASC"
+  | "published_DESC"
+  | "launchAt_ASC"
+  | "launchAt_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type LocationOrderByInput =
   | "id_ASC"
@@ -6100,6 +6149,7 @@ export interface BrandWhereInput {
   description_not_ends_with?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
   isPrimaryBrand_not?: Maybe<Boolean>;
+  logo?: Maybe<ImageWhereInput>;
   name?: Maybe<String>;
   name_not?: Maybe<String>;
   name_in?: Maybe<String[] | String>;
@@ -9229,6 +9279,58 @@ export type LabelWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type LaunchWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface LaunchWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  brand?: Maybe<BrandWhereInput>;
+  published?: Maybe<Boolean>;
+  published_not?: Maybe<Boolean>;
+  collection?: Maybe<CollectionWhereInput>;
+  launchAt?: Maybe<DateTimeInput>;
+  launchAt_not?: Maybe<DateTimeInput>;
+  launchAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  launchAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  launchAt_lt?: Maybe<DateTimeInput>;
+  launchAt_lte?: Maybe<DateTimeInput>;
+  launchAt_gt?: Maybe<DateTimeInput>;
+  launchAt_gte?: Maybe<DateTimeInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<LaunchWhereInput[] | LaunchWhereInput>;
+  OR?: Maybe<LaunchWhereInput[] | LaunchWhereInput>;
+  NOT?: Maybe<LaunchWhereInput[] | LaunchWhereInput>;
+}
+
 export type LocationWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
@@ -10521,7 +10623,7 @@ export interface BrandCreateWithoutProductsInput {
   brandCode: String;
   description?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
-  logo?: Maybe<Json>;
+  logo?: Maybe<ImageCreateOneInput>;
   name: String;
   designer?: Maybe<String>;
   basedIn?: Maybe<String>;
@@ -10725,7 +10827,7 @@ export interface BrandCreateInput {
   brandCode: String;
   description?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
-  logo?: Maybe<Json>;
+  logo?: Maybe<ImageCreateOneInput>;
   name: String;
   designer?: Maybe<String>;
   basedIn?: Maybe<String>;
@@ -12319,7 +12421,7 @@ export interface BrandUpdateWithoutProductsDataInput {
   brandCode?: Maybe<String>;
   description?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
-  logo?: Maybe<Json>;
+  logo?: Maybe<ImageUpdateOneInput>;
   name?: Maybe<String>;
   designer?: Maybe<String>;
   basedIn?: Maybe<String>;
@@ -12330,6 +12432,15 @@ export interface BrandUpdateWithoutProductsDataInput {
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
   externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
+}
+
+export interface ImageUpdateOneInput {
+  create?: Maybe<ImageCreateInput>;
+  update?: Maybe<ImageUpdateDataInput>;
+  upsert?: Maybe<ImageUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ImageWhereUniqueInput>;
 }
 
 export interface ImageUpdateManyInput {
@@ -12858,7 +12969,7 @@ export interface BrandUpdateDataInput {
   brandCode?: Maybe<String>;
   description?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
-  logo?: Maybe<Json>;
+  logo?: Maybe<ImageUpdateOneInput>;
   name?: Maybe<String>;
   designer?: Maybe<String>;
   basedIn?: Maybe<String>;
@@ -14356,15 +14467,6 @@ export interface ProductUpdateManyDataInput {
 export interface BrandUpsertNestedInput {
   update: BrandUpdateDataInput;
   create: BrandCreateInput;
-}
-
-export interface ImageUpdateOneInput {
-  create?: Maybe<ImageCreateInput>;
-  update?: Maybe<ImageUpdateDataInput>;
-  upsert?: Maybe<ImageUpsertNestedInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<ImageWhereUniqueInput>;
 }
 
 export interface ShopifyProductVariantUpsertNestedInput {
@@ -17181,7 +17283,7 @@ export interface BrandUpdateInput {
   brandCode?: Maybe<String>;
   description?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
-  logo?: Maybe<Json>;
+  logo?: Maybe<ImageUpdateOneInput>;
   name?: Maybe<String>;
   designer?: Maybe<String>;
   basedIn?: Maybe<String>;
@@ -17200,7 +17302,6 @@ export interface BrandUpdateManyMutationInput {
   brandCode?: Maybe<String>;
   description?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
-  logo?: Maybe<Json>;
   name?: Maybe<String>;
   designer?: Maybe<String>;
   basedIn?: Maybe<String>;
@@ -17938,6 +18039,58 @@ export interface LabelUpdateManyMutationInput {
   image?: Maybe<String>;
   trackingNumber?: Maybe<String>;
   trackingURL?: Maybe<String>;
+}
+
+export interface LaunchCreateInput {
+  id?: Maybe<ID_Input>;
+  brand?: Maybe<BrandCreateOneInput>;
+  published?: Maybe<Boolean>;
+  collection?: Maybe<CollectionCreateOneInput>;
+  launchAt: DateTimeInput;
+}
+
+export interface CollectionCreateOneInput {
+  create?: Maybe<CollectionCreateInput>;
+  connect?: Maybe<CollectionWhereUniqueInput>;
+}
+
+export interface LaunchUpdateInput {
+  brand?: Maybe<BrandUpdateOneInput>;
+  published?: Maybe<Boolean>;
+  collection?: Maybe<CollectionUpdateOneInput>;
+  launchAt?: Maybe<DateTimeInput>;
+}
+
+export interface CollectionUpdateOneInput {
+  create?: Maybe<CollectionCreateInput>;
+  update?: Maybe<CollectionUpdateDataInput>;
+  upsert?: Maybe<CollectionUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<CollectionWhereUniqueInput>;
+}
+
+export interface CollectionUpdateDataInput {
+  slug?: Maybe<String>;
+  images?: Maybe<ImageUpdateManyInput>;
+  title?: Maybe<String>;
+  subTitle?: Maybe<String>;
+  displayTextOverlay?: Maybe<Boolean>;
+  textOverlayColor?: Maybe<String>;
+  descriptions?: Maybe<CollectionUpdatedescriptionsInput>;
+  products?: Maybe<ProductUpdateManyInput>;
+  published?: Maybe<Boolean>;
+  placements?: Maybe<CollectionUpdateplacementsInput>;
+}
+
+export interface CollectionUpsertNestedInput {
+  update: CollectionUpdateDataInput;
+  create: CollectionCreateInput;
+}
+
+export interface LaunchUpdateManyMutationInput {
+  published?: Maybe<Boolean>;
+  launchAt?: Maybe<DateTimeInput>;
 }
 
 export interface LocationUpdateInput {
@@ -20757,6 +20910,17 @@ export interface LabelSubscriptionWhereInput {
   NOT?: Maybe<LabelSubscriptionWhereInput[] | LabelSubscriptionWhereInput>;
 }
 
+export interface LaunchSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<LaunchWhereInput>;
+  AND?: Maybe<LaunchSubscriptionWhereInput[] | LaunchSubscriptionWhereInput>;
+  OR?: Maybe<LaunchSubscriptionWhereInput[] | LaunchSubscriptionWhereInput>;
+  NOT?: Maybe<LaunchSubscriptionWhereInput[] | LaunchSubscriptionWhereInput>;
+}
+
 export interface LocationSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -23064,7 +23228,6 @@ export interface Brand {
   brandCode: String;
   description?: String;
   isPrimaryBrand: Boolean;
-  logo?: Json;
   name: String;
   designer?: String;
   basedIn?: String;
@@ -23083,7 +23246,7 @@ export interface BrandPromise extends Promise<Brand>, Fragmentable {
   brandCode: () => Promise<String>;
   description: () => Promise<String>;
   isPrimaryBrand: () => Promise<Boolean>;
-  logo: () => Promise<Json>;
+  logo: <T = ImagePromise>() => T;
   name: () => Promise<String>;
   designer: () => Promise<String>;
   basedIn: () => Promise<String>;
@@ -23123,7 +23286,7 @@ export interface BrandSubscription
   brandCode: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
   isPrimaryBrand: () => Promise<AsyncIterator<Boolean>>;
-  logo: () => Promise<AsyncIterator<Json>>;
+  logo: <T = ImageSubscription>() => T;
   name: () => Promise<AsyncIterator<String>>;
   designer: () => Promise<AsyncIterator<String>>;
   basedIn: () => Promise<AsyncIterator<String>>;
@@ -23165,7 +23328,7 @@ export interface BrandNullablePromise
   brandCode: () => Promise<String>;
   description: () => Promise<String>;
   isPrimaryBrand: () => Promise<Boolean>;
-  logo: () => Promise<Json>;
+  logo: <T = ImagePromise>() => T;
   name: () => Promise<String>;
   designer: () => Promise<String>;
   basedIn: () => Promise<String>;
@@ -26942,6 +27105,102 @@ export interface AggregateLabelSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface Launch {
+  id: ID_Output;
+  published: Boolean;
+  launchAt: DateTimeOutput;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface LaunchPromise extends Promise<Launch>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  brand: <T = BrandPromise>() => T;
+  published: () => Promise<Boolean>;
+  collection: <T = CollectionPromise>() => T;
+  launchAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface LaunchSubscription
+  extends Promise<AsyncIterator<Launch>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  brand: <T = BrandSubscription>() => T;
+  published: () => Promise<AsyncIterator<Boolean>>;
+  collection: <T = CollectionSubscription>() => T;
+  launchAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface LaunchNullablePromise
+  extends Promise<Launch | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  brand: <T = BrandPromise>() => T;
+  published: () => Promise<Boolean>;
+  collection: <T = CollectionPromise>() => T;
+  launchAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface LaunchConnection {
+  pageInfo: PageInfo;
+  edges: LaunchEdge[];
+}
+
+export interface LaunchConnectionPromise
+  extends Promise<LaunchConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<LaunchEdge>>() => T;
+  aggregate: <T = AggregateLaunchPromise>() => T;
+}
+
+export interface LaunchConnectionSubscription
+  extends Promise<AsyncIterator<LaunchConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<LaunchEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateLaunchSubscription>() => T;
+}
+
+export interface LaunchEdge {
+  node: Launch;
+  cursor: String;
+}
+
+export interface LaunchEdgePromise extends Promise<LaunchEdge>, Fragmentable {
+  node: <T = LaunchPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface LaunchEdgeSubscription
+  extends Promise<AsyncIterator<LaunchEdge>>,
+    Fragmentable {
+  node: <T = LaunchSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateLaunch {
+  count: Int;
+}
+
+export interface AggregateLaunchPromise
+  extends Promise<AggregateLaunch>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateLaunchSubscription
+  extends Promise<AsyncIterator<AggregateLaunch>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface LocationConnection {
   pageInfo: PageInfo;
   edges: LocationEdge[];
@@ -30507,7 +30766,6 @@ export interface BrandPreviousValues {
   brandCode: String;
   description?: String;
   isPrimaryBrand: Boolean;
-  logo?: Json;
   name: String;
   designer?: String;
   basedIn?: String;
@@ -30528,7 +30786,6 @@ export interface BrandPreviousValuesPromise
   brandCode: () => Promise<String>;
   description: () => Promise<String>;
   isPrimaryBrand: () => Promise<Boolean>;
-  logo: () => Promise<Json>;
   name: () => Promise<String>;
   designer: () => Promise<String>;
   basedIn: () => Promise<String>;
@@ -30549,7 +30806,6 @@ export interface BrandPreviousValuesSubscription
   brandCode: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
   isPrimaryBrand: () => Promise<AsyncIterator<Boolean>>;
-  logo: () => Promise<AsyncIterator<Json>>;
   name: () => Promise<AsyncIterator<String>>;
   designer: () => Promise<AsyncIterator<String>>;
   basedIn: () => Promise<AsyncIterator<String>>;
@@ -31547,6 +31803,59 @@ export interface LabelPreviousValuesSubscription
   image: () => Promise<AsyncIterator<String>>;
   trackingNumber: () => Promise<AsyncIterator<String>>;
   trackingURL: () => Promise<AsyncIterator<String>>;
+}
+
+export interface LaunchSubscriptionPayload {
+  mutation: MutationType;
+  node: Launch;
+  updatedFields: String[];
+  previousValues: LaunchPreviousValues;
+}
+
+export interface LaunchSubscriptionPayloadPromise
+  extends Promise<LaunchSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = LaunchPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = LaunchPreviousValuesPromise>() => T;
+}
+
+export interface LaunchSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<LaunchSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = LaunchSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = LaunchPreviousValuesSubscription>() => T;
+}
+
+export interface LaunchPreviousValues {
+  id: ID_Output;
+  published: Boolean;
+  launchAt: DateTimeOutput;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface LaunchPreviousValuesPromise
+  extends Promise<LaunchPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  published: () => Promise<Boolean>;
+  launchAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface LaunchPreviousValuesSubscription
+  extends Promise<AsyncIterator<LaunchPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  published: () => Promise<AsyncIterator<Boolean>>;
+  launchAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface LocationSubscriptionPayload {
@@ -34811,6 +35120,10 @@ export const models: Model[] = [
   },
   {
     name: "SyncTiming",
+    embedded: false
+  },
+  {
+    name: "Launch",
     embedded: false
   }
 ];

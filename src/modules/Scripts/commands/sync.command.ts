@@ -152,7 +152,14 @@ export class SyncCommands {
       name: "table",
       type: "string",
       describe: "Name of the prisma table to sync",
-      choices: ["all", "products", "physicalProducts", "brands", "customers"],
+      choices: [
+        "all",
+        "products",
+        "physicalProducts",
+        "brands",
+        "customers",
+        "shopifyProductVariants",
+      ],
     })
     table,
     @PrismaEnvOption({
@@ -164,7 +171,7 @@ export class SyncCommands {
       name: "index",
       type: "array",
       describe: "The Algolia index to sync data into",
-      choices: ["default", "admin", "customer"],
+      choices: ["default", "admin", "customer", "shopifyProductVariant"],
       default: "default",
       alias: "i",
     })
@@ -195,6 +202,8 @@ export class SyncCommands {
           return IndexKey.Admin
         case "customer":
           return IndexKey.Customer
+        case "shopifyProductVariant":
+          return IndexKey.ShopifyProductVariant
       }
     })
 
@@ -214,6 +223,8 @@ export class SyncCommands {
       case "customers":
         await this.search.indexCustomers(indices)
         break
+      case "shopifyProductVariants":
+        await this.search.indexShopifyProductVariants(indices)
     }
 
     this.logger.log(`Done indexing!`)

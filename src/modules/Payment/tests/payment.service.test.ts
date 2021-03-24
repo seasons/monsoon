@@ -116,7 +116,8 @@ describe("Payment Service", () => {
         token,
         customer,
         "apple_pay",
-        process.env.REFERRAL_COUPON_ID
+        process.env.REFERRAL_COUPON_ID,
+        "flare"
       )
 
       const newCustomer = await prisma.binding.query.customer(
