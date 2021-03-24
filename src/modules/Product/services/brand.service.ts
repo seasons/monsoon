@@ -1,51 +1,25 @@
 import * as url from "url"
 
-import { ImageData } from "@modules/Image/image.types"
-import { ImageService } from "@modules/Image/services/image.service"
-import { S3_BASE } from "@modules/Image/services/image.service"
+import { BrandUtilsService } from "@modules/Product/services/brand.utils.service"
 import { Injectable } from "@nestjs/common"
-import { BrandWhereUniqueInput, ID_Input } from "@prisma/index"
+import { BrandWhereUniqueInput } from "@prisma/index"
 import { Brand as PrismaBindingBrand } from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
-import { ApolloError } from "apollo-server"
 
 @Injectable()
 export class BrandService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly imageService: ImageService
+    private readonly utils: BrandUtilsService
   ) {}
 
   async createBrand({ input }: { input: any }) {
-    let imageIDs
     // Store images and get their record ids to connect to the brand
-    if (input.images && input.brandCode) {
-      const imageDatas: ImageData[] = await Promise.all(
-        input.images.map((image, index) => {
-          const imageName = `${input.brandCode}-${index}.png`.toLowerCase()
-          return this.imageService.uploadImage(image, {
-            imageName,
-          })
-        })
-      )
-
-      const prismaImages = await Promise.all(
-        imageDatas.map(async imageData => {
-          return await this.prisma.client.upsertImage({
-            where: { url: imageData.url },
-            create: { ...imageData, title: input.brandCode },
-            update: { ...imageData, title: input.brandCode },
-          })
-        })
-      )
-
-      imageIDs = prismaImages.map(image => ({ id: image.id }))
-    } else if (input.images && !input.brandCode) {
-      throw new ApolloError("To upload brand images please include a brandCode")
-    }
+    const { logoID, imageIDs } = await this.utils.createBrandImages(input)
 
     return await this.prisma.client.createBrand({
       ...input,
+      logo: logoID && { connect: { id: logoID } },
       images: imageIDs && { connect: imageIDs },
     })
   }
@@ -57,33 +31,17 @@ export class BrandService {
     where: BrandWhereUniqueInput
     data: any
   }) {
-    let imageIDs
-
     const brand: PrismaBindingBrand = await this.prisma.binding.query.brand(
       { where },
       `{
           id
-          slug
-          brandCode
           externalShopifyIntegration {
             id
           }
       }`
     )
 
-    if (data.images) {
-      const images = data.images
-
-      const imageNames = images.map((_image, index) => {
-        return `${brand.brandCode}-${index + 1}.png`.toLowerCase()
-      })
-
-      imageIDs = await this.imageService.upsertImages(
-        images,
-        imageNames,
-        data.slug
-      )
-    }
+    const { logoID, imageIDs } = await this.utils.createBrandImages(data)
 
     if (data.externalShopifyIntegration) {
       data.externalShopifyIntegration = {
@@ -100,6 +58,7 @@ export class BrandService {
       where,
       data: {
         ...data,
+        logo: logoID && { connect: { id: logoID } },
         images: imageIDs && { set: imageIDs },
       },
     })

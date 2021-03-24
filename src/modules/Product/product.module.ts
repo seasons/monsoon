@@ -26,6 +26,7 @@ import { ProductQueriesResolver } from "./queries/product.queries.resolver"
 import { SizeQueriesResolver } from "./queries/size.queries.resolver"
 import { BagService } from "./services/bag.service"
 import { BrandService } from "./services/brand.service"
+import { BrandUtilsService } from "./services/brand.utils.service"
 import { LaunchService } from "./services/launch.service"
 import { PhysicalProductService } from "./services/physicalProduct.service"
 import { PhysicalProductUtilsService } from "./services/physicalProduct.utils.service"
@@ -48,6 +49,7 @@ export const ProductModuleDef = {
   providers: [
     BagService,
     BrandService,
+    BrandUtilsService,
     BrandQueriesResolver,
     BrandMutationsResolver,
     LaunchService,
