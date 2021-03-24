@@ -440,6 +440,7 @@ input CustomBrandUpdateInput {
 input CustomLaunchUpsertInput {
   id: ID
   launchAt: DateTime
+  published: Boolean
   # Custom fields
   collectionID: ID
   brandID: ID

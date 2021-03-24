@@ -4115,6 +4115,8 @@ export type LabelOrderByInput =
 export type LaunchOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "published_ASC"
+  | "published_DESC"
   | "launchAt_ASC"
   | "launchAt_DESC"
   | "createdAt_ASC"
@@ -9297,6 +9299,8 @@ export interface LaunchWhereInput {
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
   brand?: Maybe<BrandWhereInput>;
+  published?: Maybe<Boolean>;
+  published_not?: Maybe<Boolean>;
   collection?: Maybe<CollectionWhereInput>;
   launchAt?: Maybe<DateTimeInput>;
   launchAt_not?: Maybe<DateTimeInput>;
@@ -18040,6 +18044,7 @@ export interface LabelUpdateManyMutationInput {
 export interface LaunchCreateInput {
   id?: Maybe<ID_Input>;
   brand?: Maybe<BrandCreateOneInput>;
+  published?: Maybe<Boolean>;
   collection?: Maybe<CollectionCreateOneInput>;
   launchAt: DateTimeInput;
 }
@@ -18051,6 +18056,7 @@ export interface CollectionCreateOneInput {
 
 export interface LaunchUpdateInput {
   brand?: Maybe<BrandUpdateOneInput>;
+  published?: Maybe<Boolean>;
   collection?: Maybe<CollectionUpdateOneInput>;
   launchAt?: Maybe<DateTimeInput>;
 }
@@ -18083,6 +18089,7 @@ export interface CollectionUpsertNestedInput {
 }
 
 export interface LaunchUpdateManyMutationInput {
+  published?: Maybe<Boolean>;
   launchAt?: Maybe<DateTimeInput>;
 }
 
@@ -27100,6 +27107,7 @@ export interface AggregateLabelSubscription
 
 export interface Launch {
   id: ID_Output;
+  published: Boolean;
   launchAt: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -27108,6 +27116,7 @@ export interface Launch {
 export interface LaunchPromise extends Promise<Launch>, Fragmentable {
   id: () => Promise<ID_Output>;
   brand: <T = BrandPromise>() => T;
+  published: () => Promise<Boolean>;
   collection: <T = CollectionPromise>() => T;
   launchAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -27119,6 +27128,7 @@ export interface LaunchSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   brand: <T = BrandSubscription>() => T;
+  published: () => Promise<AsyncIterator<Boolean>>;
   collection: <T = CollectionSubscription>() => T;
   launchAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -27130,6 +27140,7 @@ export interface LaunchNullablePromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   brand: <T = BrandPromise>() => T;
+  published: () => Promise<Boolean>;
   collection: <T = CollectionPromise>() => T;
   launchAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -31821,6 +31832,7 @@ export interface LaunchSubscriptionPayloadSubscription
 
 export interface LaunchPreviousValues {
   id: ID_Output;
+  published: Boolean;
   launchAt: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -31830,6 +31842,7 @@ export interface LaunchPreviousValuesPromise
   extends Promise<LaunchPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  published: () => Promise<Boolean>;
   launchAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -31839,6 +31852,7 @@ export interface LaunchPreviousValuesSubscription
   extends Promise<AsyncIterator<LaunchPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  published: () => Promise<AsyncIterator<Boolean>>;
   launchAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
