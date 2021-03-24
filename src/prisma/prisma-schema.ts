@@ -1346,7 +1346,7 @@ type Brand {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean!
-  logo: Json
+  logo: Image
   name: String!
   designer: String
   basedIn: String
@@ -1374,7 +1374,7 @@ input BrandCreateInput {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
+  logo: ImageCreateOneInput
   name: String!
   designer: String
   basedIn: String
@@ -1404,7 +1404,7 @@ input BrandCreateWithoutProductsInput {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
+  logo: ImageCreateOneInput
   name: String!
   designer: String
   basedIn: String
@@ -1433,8 +1433,6 @@ enum BrandOrderByInput {
   description_DESC
   isPrimaryBrand_ASC
   isPrimaryBrand_DESC
-  logo_ASC
-  logo_DESC
   name_ASC
   name_DESC
   designer_ASC
@@ -1463,7 +1461,6 @@ type BrandPreviousValues {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean!
-  logo: Json
   name: String!
   designer: String
   basedIn: String
@@ -1511,7 +1508,7 @@ input BrandUpdateDataInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
+  logo: ImageUpdateOneInput
   name: String
   designer: String
   basedIn: String
@@ -1530,7 +1527,7 @@ input BrandUpdateInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
+  logo: ImageUpdateOneInput
   name: String
   designer: String
   basedIn: String
@@ -1549,7 +1546,6 @@ input BrandUpdateManyMutationInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
   name: String
   designer: String
   basedIn: String
@@ -1581,7 +1577,7 @@ input BrandUpdateWithoutProductsDataInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
+  logo: ImageUpdateOneInput
   name: String
   designer: String
   basedIn: String
@@ -1663,6 +1659,7 @@ input BrandWhereInput {
   description_not_ends_with: String
   isPrimaryBrand: Boolean
   isPrimaryBrand_not: Boolean
+  logo: ImageWhereInput
   name: String
   name_not: String
   name_in: [String!]

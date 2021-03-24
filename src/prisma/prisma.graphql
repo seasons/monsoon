@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Mar 17 2021 15:03:14 GMT-0500 (Central Daylight Time)
+# timestamp: Wed Mar 24 2021 07:06:10 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -3040,7 +3040,7 @@ type Brand implements Node {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean!
-  logo: Json
+  logo: Image
   name: String!
   designer: String
   basedIn: String
@@ -3094,7 +3094,6 @@ input BrandCreateInput {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
   name: String!
   designer: String
   basedIn: String
@@ -3103,6 +3102,7 @@ input BrandCreateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  logo: ImageCreateOneInput
   products: ProductCreateManyWithoutBrandInput
   images: ImageCreateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
@@ -3124,7 +3124,6 @@ input BrandCreateWithoutProductsInput {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
   name: String!
   designer: String
   basedIn: String
@@ -3133,6 +3132,7 @@ input BrandCreateWithoutProductsInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  logo: ImageCreateOneInput
   images: ImageCreateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
 }
@@ -3163,8 +3163,6 @@ enum BrandOrderByInput {
   description_DESC
   isPrimaryBrand_ASC
   isPrimaryBrand_DESC
-  logo_ASC
-  logo_DESC
   name_ASC
   name_DESC
   designer_ASC
@@ -3193,7 +3191,6 @@ type BrandPreviousValues {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean!
-  logo: Json
   name: String!
   designer: String
   basedIn: String
@@ -3268,7 +3265,6 @@ input BrandUpdateDataInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
   name: String
   designer: String
   basedIn: String
@@ -3277,6 +3273,7 @@ input BrandUpdateDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  logo: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
@@ -3287,7 +3284,6 @@ input BrandUpdateInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
   name: String
   designer: String
   basedIn: String
@@ -3296,6 +3292,7 @@ input BrandUpdateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  logo: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
@@ -3306,7 +3303,6 @@ input BrandUpdateManyMutationInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
   name: String
   designer: String
   basedIn: String
@@ -3338,7 +3334,6 @@ input BrandUpdateWithoutProductsDataInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
-  logo: Json
   name: String
   designer: String
   basedIn: String
@@ -3347,6 +3342,7 @@ input BrandUpdateWithoutProductsDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  logo: ImageUpdateOneInput
   images: ImageUpdateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
 }
@@ -4046,6 +4042,7 @@ input BrandWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
+  logo: ImageWhereInput
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
