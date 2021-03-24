@@ -12,7 +12,7 @@ interface ProductVariantWithPhysicalProducts {
   }[]
 }
 
-export interface CustomBrandCreateOrUpdateInput {
+export interface CustomBrandCreateOrUpdateData {
   id: string
   slug: string
   designer?: string
