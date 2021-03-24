@@ -11969,6 +11969,7 @@ input LabelWhereUniqueInput {
 type Launch implements Node {
   id: ID!
   brand: Brand
+  published: Boolean!
   collection: Collection
   launchAt: DateTime!
   createdAt: DateTime!
@@ -11987,6 +11988,7 @@ type LaunchConnection {
 
 input LaunchCreateInput {
   id: ID
+  published: Boolean
   launchAt: DateTime!
   brand: BrandCreateOneInput
   collection: CollectionCreateOneInput
@@ -12004,6 +12006,8 @@ type LaunchEdge {
 enum LaunchOrderByInput {
   id_ASC
   id_DESC
+  published_ASC
+  published_DESC
   launchAt_ASC
   launchAt_DESC
   createdAt_ASC
@@ -12014,6 +12018,7 @@ enum LaunchOrderByInput {
 
 type LaunchPreviousValues {
   id: ID!
+  published: Boolean!
   launchAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -12057,12 +12062,14 @@ input LaunchSubscriptionWhereInput {
 }
 
 input LaunchUpdateInput {
+  published: Boolean
   launchAt: DateTime
   brand: BrandUpdateOneInput
   collection: CollectionUpdateOneInput
 }
 
 input LaunchUpdateManyMutationInput {
+  published: Boolean
   launchAt: DateTime
 }
 
@@ -12115,6 +12122,10 @@ input LaunchWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  published: Boolean
+
+  """All values that are not equal to given value."""
+  published_not: Boolean
   launchAt: DateTime
 
   """All values that are not equal to given value."""
@@ -36154,6 +36165,8 @@ export type LabelOrderByInput =   'id_ASC' |
 
 export type LaunchOrderByInput =   'id_ASC' |
   'id_DESC' |
+  'published_ASC' |
+  'published_DESC' |
   'launchAt_ASC' |
   'launchAt_DESC' |
   'createdAt_ASC' |
@@ -41909,6 +41922,7 @@ export interface LabelWhereUniqueInput {
 
 export interface LaunchCreateInput {
   id?: ID_Input | null
+  published?: Boolean | null
   launchAt: DateTime
   brand?: BrandCreateOneInput | null
   collection?: CollectionCreateOneInput | null
@@ -41926,12 +41940,14 @@ export interface LaunchSubscriptionWhereInput {
 }
 
 export interface LaunchUpdateInput {
+  published?: Boolean | null
   launchAt?: DateTime | null
   brand?: BrandUpdateOneInput | null
   collection?: CollectionUpdateOneInput | null
 }
 
 export interface LaunchUpdateManyMutationInput {
+  published?: Boolean | null
   launchAt?: DateTime | null
 }
 
@@ -41953,6 +41969,8 @@ export interface LaunchWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
+  published?: Boolean | null
+  published_not?: Boolean | null
   launchAt?: DateTime | null
   launchAt_not?: DateTime | null
   launchAt_in?: DateTime[] | DateTime | null
@@ -53845,6 +53863,7 @@ export interface LabelSubscriptionPayload {
 export interface Launch extends Node {
   id: ID_Output
   brand?: Brand | null
+  published: Boolean
   collection?: Collection | null
   launchAt: DateTime
   createdAt: DateTime
@@ -53872,6 +53891,7 @@ export interface LaunchEdge {
 
 export interface LaunchPreviousValues {
   id: ID_Output
+  published: Boolean
   launchAt: DateTime
   createdAt: DateTime
   updatedAt: DateTime

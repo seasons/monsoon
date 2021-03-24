@@ -6623,6 +6623,7 @@ input LabelWhereUniqueInput {
 type Launch {
   id: ID!
   brand: Brand
+  published: Boolean!
   collection: Collection
   launchAt: DateTime!
   createdAt: DateTime!
@@ -6638,6 +6639,7 @@ type LaunchConnection {
 input LaunchCreateInput {
   id: ID
   brand: BrandCreateOneInput
+  published: Boolean
   collection: CollectionCreateOneInput
   launchAt: DateTime!
 }
@@ -6650,6 +6652,8 @@ type LaunchEdge {
 enum LaunchOrderByInput {
   id_ASC
   id_DESC
+  published_ASC
+  published_DESC
   launchAt_ASC
   launchAt_DESC
   createdAt_ASC
@@ -6660,6 +6664,7 @@ enum LaunchOrderByInput {
 
 type LaunchPreviousValues {
   id: ID!
+  published: Boolean!
   launchAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -6685,11 +6690,13 @@ input LaunchSubscriptionWhereInput {
 
 input LaunchUpdateInput {
   brand: BrandUpdateOneInput
+  published: Boolean
   collection: CollectionUpdateOneInput
   launchAt: DateTime
 }
 
 input LaunchUpdateManyMutationInput {
+  published: Boolean
   launchAt: DateTime
 }
 
@@ -6709,6 +6716,8 @@ input LaunchWhereInput {
   id_ends_with: ID
   id_not_ends_with: ID
   brand: BrandWhereInput
+  published: Boolean
+  published_not: Boolean
   collection: CollectionWhereInput
   launchAt: DateTime
   launchAt_not: DateTime
