@@ -27,7 +27,7 @@ const seed = async () => {
     .createReadStream(`harvestIdentifies.csv`)
     .pipe(csv())
     .on("data", async row => {
-      console.log(`row ${i++}`)
+      console.log(`Reading csv row ${i++} of 262773`)
       pipe.pause()
       const eventSentAt = new Date(row.sent_at)
 
@@ -56,7 +56,10 @@ const seed = async () => {
     .on("end", async () => {
       console.log("CSV file successfully processed")
       const userIds = Object.keys(iosVersionByUserId)
+      const numIdsToUpdate = userIds.length
+      let i = 0
       for (const id of userIds) {
+        console.log(`Updating user ${i++} of ${numIdsToUpdate}`)
         try {
           await ps.client.updateUser({
             where: { id },
