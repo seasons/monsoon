@@ -83,40 +83,35 @@ export class LookerService {
     let val = result?.value
     switch (slug) {
       case "account-creations-by-platform":
-        return {
-          [val?.[0]?.["created_account.application"]]: val?.[0]?.[
-            "created_account.count"
-          ],
-          [val?.[1]?.["created_account.application"]]: val?.[1]?.[
-            "created_account.count"
-          ],
-        }
+        return this.extractMultiKeyCountsResult(
+          val,
+          "created_account.application",
+          "created_account.count"
+        )
       case "reservations-by-platform":
-        return {
-          [val?.[0]?.["reserved_items.application"]]: val?.[0]?.[
-            "reserved_items.count"
-          ],
-          [val?.[1]?.["reserved_items.application"]]: val?.[1]?.[
-            "reserved_items.count"
-          ],
-        }
+        return this.extractMultiKeyCountsResult(
+          val,
+          "reserved_items.application",
+          "reserved_items.count"
+        )
       case "subscribed-events-by-platform":
-        return {
-          [val?.[0]?.["subscribed.application"]]: val?.[0]?.[
-            "subscribed.count"
-          ],
-          [val?.[1]?.["subscribed.application"]]: val?.[1]?.[
-            "subscribed.count"
-          ],
-          [val?.[2]?.["subscribed.application"]]: val?.[2]?.[
-            "subscribed.count"
-          ],
-        }
+        return this.extractMultiKeyCountsResult(
+          val,
+          "subscribed.application",
+          "subscribed.count"
+        )
+      case "subscribe-speed":
+        return this.extractMultiKeyCountsResult(
+          val,
+          "customer.subscribe_speed",
+          "customer.count"
+        )
       case "accounts-created-per-month":
-        return val?.reduce((acc, curVal) => {
-          acc[curVal["user.created_month"]] = curVal["user.count"]
-          return acc
-        }, {})
+        return this.extractMultiKeyCountsResult(
+          val,
+          "user.created_month",
+          "user.count"
+        )
       case "web-acquisition-funnel":
       case "ios-acquisition-funnel":
       case "overall-acquisition-funnel":
@@ -151,7 +146,6 @@ export class LookerService {
 
         const sanitizedValues = returnableValues.reduce((acc, curVal) => {
           const version = curVal["user_device_data.i_osversion"]
-          console.log(curVal)
 
           // If this is not the first time we're seeing this version,
           // increment counts accordingly
@@ -180,5 +174,12 @@ export class LookerService {
       default:
         return val?.[0]
     }
+  }
+
+  private extractMultiKeyCountsResult(result, labelKey, valueKey) {
+    return result?.reduce((acc, curVal) => {
+      acc[curVal[labelKey]] = curVal[valueKey]
+      return acc
+    }, {})
   }
 }
