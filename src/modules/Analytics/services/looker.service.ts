@@ -100,6 +100,18 @@ export class LookerService {
             "reserved_items.count"
           ],
         }
+      case "subscribed-events-by-platform":
+        return {
+          [val?.[0]?.["subscribed.application"]]: val?.[0]?.[
+            "subscribed.count"
+          ],
+          [val?.[1]?.["subscribed.application"]]: val?.[1]?.[
+            "subscribed.count"
+          ],
+          [val?.[2]?.["subscribed.application"]]: val?.[2]?.[
+            "subscribed.count"
+          ],
+        }
       case "accounts-created-per-month":
         return val?.reduce((acc, curVal) => {
           acc[curVal["user.created_month"]] = curVal["user.count"]
@@ -113,21 +125,19 @@ export class LookerService {
           subscribed: val?.[0]?.["subscribed.count_distinct_ids"],
         }
       case "active-paused-or-admissable-customers-by-latlng":
-        return [
-          val?.map(a => ({
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: a["location.Coordinates"].reverse(),
-            },
-            properties: {
-              subscriptionStatus: a["subscription.status"],
-              customerStatus: a["customer.status"],
-              admissable: a["customer_admissions_data.admissable"],
-              count: a["customer.count"],
-            },
-          })),
-        ]
+        return val?.map(a => ({
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: a["location.Coordinates"].reverse(),
+          },
+          properties: {
+            subscriptionStatus: a["subscription.status"],
+            customerStatus: a["customer.status"],
+            admissable: a["customer_admissions_data.admissable"],
+            count: a["customer.count"],
+          },
+        }))
       case "ios-version-table":
         const returnableValues = val?.filter(a => {
           const isActiveOrPausedCustomer = ["active", "paused"].includes(
