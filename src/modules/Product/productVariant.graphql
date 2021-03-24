@@ -68,6 +68,7 @@ type Mutation {
     inputs: [UpsertVariantInput!]!
   ): [ProductVariant!] @hasRole(roles: [Admin])
   addPhysicalProductsToVariant(variantID: ID, count: Int): [ProductVariant!]
+    @hasRole(roles: [Admin])
 }
 
 type ProductVariantPrice {

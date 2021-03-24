@@ -25,7 +25,10 @@ export class ProductVariantService {
     private readonly physicalProductUtilsService: PhysicalProductUtilsService
   ) {}
 
-  async addPhysicalProducts(productVariant: ProductVariant, count: number) {
+  async addPhysicalProducts(productVariantID: string, count: number) {
+    const productVariant = await this.prisma.client.productVariant({
+      id: productVariantID,
+    })
     const physicalProducts = await this.prisma.binding.query.physicalProducts(
       {
         where: {
@@ -58,22 +61,16 @@ export class ProductVariantService {
 
     const price = omit(physicalProducts?.[0].price, "id")
 
-    const newVariants = await Promise.all(
+    const newPhysicalProducts = await Promise.all(
       SUIDs.map(async (SUID, i) => {
-        return await this.prisma.client.upsertPhysicalProduct({
-          where: { seasonsUID: SUID },
-          create: {
-            seasonsUID: SUID,
-            productStatus: "New",
-            inventoryStatus: "Reservable",
-            sequenceNumber: nextSequenceNumber + i,
-            productVariant: { connect: { id: productVariant.id } },
-            price: {
-              create: price,
-            },
-          },
-          update: {
-            seasonsUID: SUID,
+        return await this.prisma.client.createPhysicalProduct({
+          seasonsUID: SUID,
+          productStatus: "New",
+          inventoryStatus: "NonReservable",
+          sequenceNumber: nextSequenceNumber + i,
+          productVariant: { connect: { id: productVariant.id } },
+          price: {
+            create: price,
           },
         })
       })
@@ -84,12 +81,12 @@ export class ProductVariantService {
         id: productVariant.id,
       },
       data: {
-        total: count,
-        reservable: productVariant.reservable + 1,
+        total: productVariant.total + count,
+        nonReservable: productVariant.nonReservable + 1,
       },
     })
 
-    return newVariants
+    return newPhysicalProducts
   }
 
   async updateProductVariantCounts(
