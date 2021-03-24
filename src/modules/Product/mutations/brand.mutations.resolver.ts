@@ -19,7 +19,6 @@ export class BrandMutationsResolver {
 
   @Mutation()
   async updateBrand(@Args() { where, data }) {
-    const updatedBrand = await this.brand.updateBrand({ where, data })
-    return updatedBrand
+    return await this.brand.updateBrand({ where, data })
   }
 }
