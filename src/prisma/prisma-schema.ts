@@ -5245,7 +5245,9 @@ type ExternalShopifyIntegration {
   shopName: String!
   enabled: Boolean!
   accessToken: String
-  nonce: String
+  scope: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type ExternalShopifyIntegrationConnection {
@@ -5259,12 +5261,16 @@ input ExternalShopifyIntegrationCreateInput {
   shopName: String!
   enabled: Boolean!
   accessToken: String
-  nonce: String
+  scope: ExternalShopifyIntegrationCreatescopeInput
 }
 
 input ExternalShopifyIntegrationCreateOneInput {
   create: ExternalShopifyIntegrationCreateInput
   connect: ExternalShopifyIntegrationWhereUniqueInput
+}
+
+input ExternalShopifyIntegrationCreatescopeInput {
+  set: [String!]
 }
 
 type ExternalShopifyIntegrationEdge {
@@ -5281,8 +5287,10 @@ enum ExternalShopifyIntegrationOrderByInput {
   enabled_DESC
   accessToken_ASC
   accessToken_DESC
-  nonce_ASC
-  nonce_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type ExternalShopifyIntegrationPreviousValues {
@@ -5290,7 +5298,9 @@ type ExternalShopifyIntegrationPreviousValues {
   shopName: String!
   enabled: Boolean!
   accessToken: String
-  nonce: String
+  scope: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type ExternalShopifyIntegrationSubscriptionPayload {
@@ -5315,21 +5325,21 @@ input ExternalShopifyIntegrationUpdateDataInput {
   shopName: String
   enabled: Boolean
   accessToken: String
-  nonce: String
+  scope: ExternalShopifyIntegrationUpdatescopeInput
 }
 
 input ExternalShopifyIntegrationUpdateInput {
   shopName: String
   enabled: Boolean
   accessToken: String
-  nonce: String
+  scope: ExternalShopifyIntegrationUpdatescopeInput
 }
 
 input ExternalShopifyIntegrationUpdateManyMutationInput {
   shopName: String
   enabled: Boolean
   accessToken: String
-  nonce: String
+  scope: ExternalShopifyIntegrationUpdatescopeInput
 }
 
 input ExternalShopifyIntegrationUpdateOneInput {
@@ -5339,6 +5349,10 @@ input ExternalShopifyIntegrationUpdateOneInput {
   delete: Boolean
   disconnect: Boolean
   connect: ExternalShopifyIntegrationWhereUniqueInput
+}
+
+input ExternalShopifyIntegrationUpdatescopeInput {
+  set: [String!]
 }
 
 input ExternalShopifyIntegrationUpsertNestedInput {
@@ -5391,20 +5405,22 @@ input ExternalShopifyIntegrationWhereInput {
   accessToken_not_starts_with: String
   accessToken_ends_with: String
   accessToken_not_ends_with: String
-  nonce: String
-  nonce_not: String
-  nonce_in: [String!]
-  nonce_not_in: [String!]
-  nonce_lt: String
-  nonce_lte: String
-  nonce_gt: String
-  nonce_gte: String
-  nonce_contains: String
-  nonce_not_contains: String
-  nonce_starts_with: String
-  nonce_not_starts_with: String
-  nonce_ends_with: String
-  nonce_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [ExternalShopifyIntegrationWhereInput!]
   OR: [ExternalShopifyIntegrationWhereInput!]
   NOT: [ExternalShopifyIntegrationWhereInput!]
@@ -17055,6 +17071,7 @@ type ShopifyProductVariant {
   externalId: String
   displayName: String
   selectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariantSelectedOption!]
+  shop: ExternalShopifyIntegration
   brand: Brand
   title: String
   image: Image
@@ -17074,6 +17091,7 @@ input ShopifyProductVariantCreateInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
+  shop: ExternalShopifyIntegrationCreateOneInput
   brand: BrandCreateOneInput
   title: String
   image: ImageCreateOneInput
@@ -17350,6 +17368,7 @@ input ShopifyProductVariantUpdateDataInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
+  shop: ExternalShopifyIntegrationUpdateOneInput
   brand: BrandUpdateOneInput
   title: String
   image: ImageUpdateOneInput
@@ -17362,6 +17381,7 @@ input ShopifyProductVariantUpdateInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
+  shop: ExternalShopifyIntegrationUpdateOneInput
   brand: BrandUpdateOneInput
   title: String
   image: ImageUpdateOneInput
@@ -17439,6 +17459,7 @@ input ShopifyProductVariantWhereInput {
   selectedOptions_every: ShopifyProductVariantSelectedOptionWhereInput
   selectedOptions_some: ShopifyProductVariantSelectedOptionWhereInput
   selectedOptions_none: ShopifyProductVariantSelectedOptionWhereInput
+  shop: ExternalShopifyIntegrationWhereInput
   brand: BrandWhereInput
   title: String
   title_not: String

@@ -18,6 +18,7 @@
 # import Query from "./modules/View/view.graphql"
 # import Location from "./modules/Location/location.graphql"
 # import Query, Mutation, OrderLineItem, Order from "./modules/Order/order.graphql"
+# import Query, Mutation from "./modules/Shopify/shopify.graphql"
 
 scalar JSON
 

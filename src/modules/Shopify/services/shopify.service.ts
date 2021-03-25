@@ -56,13 +56,6 @@ export class ShopifyService {
       })
     })
 
-    await this.prisma.client.updateExternalShopifyIntegration({
-      where: {
-        shopName,
-      },
-      data: { nonce },
-    })
-
     const query = querystring.stringify({
       client_id: SHOPIFY_API_KEY,
       scope: OAUTH_SCOPES.join(","),
@@ -112,11 +105,7 @@ export class ShopifyService {
       }
     )
 
-    return (
-      externalShopifyIntegration &&
-      nonce === externalShopifyIntegration.nonce &&
-      isValidHMAC
-    )
+    return externalShopifyIntegration && isValidHMAC
   }
 
   async getAccessToken({
@@ -141,6 +130,7 @@ export class ShopifyService {
           json: true,
         },
         (err, _response, body) => {
+          console.log(body)
           if (err) {
             return reject(err)
           }
@@ -592,7 +582,7 @@ export class ShopifyService {
     shopName,
     accessToken,
   }: {
-    brandId: string
+    brandId?: string
     shopName: string
     accessToken: string
   }): Promise<Array<ShopifyProductVariant>> {
@@ -663,9 +653,16 @@ export class ShopifyService {
         selectedOptions: {
           create: productVariant.selectedOptions,
         },
-        brand: {
+        ...(brandId && {
+          brand: {
+            connect: {
+              id: brandId,
+            },
+          },
+        }),
+        shop: {
           connect: {
-            id: brandId,
+            shopName,
           },
         },
         ...imageData,
