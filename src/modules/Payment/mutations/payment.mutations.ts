@@ -5,6 +5,7 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/services/payment.service"
+import { UpdatePaymentService } from "@modules/Payment/services/updatePayment.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
 
@@ -13,6 +14,7 @@ export class PaymentMutationsResolver {
   constructor(
     private readonly prisma: PrismaService,
     private readonly paymentService: PaymentService,
+    private readonly updatePaymentService: UpdatePaymentService,
     private readonly segment: SegmentService,
     private readonly email: EmailService,
     private readonly paymentUtils: PaymentUtilsService
@@ -58,15 +60,36 @@ export class PaymentMutationsResolver {
   }
 
   @Mutation()
+  async updatePaymentMethod(
+    @Args() { planID, paymentMethodID, billing },
+    @Customer() customer
+  ) {
+    await this.updatePaymentService.updatePaymentMethod(
+      planID,
+      customer,
+      null,
+      null,
+      paymentMethodID,
+      billing
+    )
+    return true
+  }
+
+  /**
+   * applePayUpdatePaymentMethod is deprecated, use updatePaymentMethod
+   */
+  @Mutation()
   async applePayUpdatePaymentMethod(
     @Args() { planID, token, tokenType },
     @Customer() customer
   ) {
-    await this.paymentService.updatePaymentMethodWithStripeToken(
+    await this.updatePaymentService.updatePaymentMethod(
       planID,
-      token,
       customer,
-      tokenType
+      token,
+      tokenType,
+      null,
+      null
     )
     return true
   }
@@ -163,7 +186,7 @@ export class PaymentMutationsResolver {
     @Customer() customer,
     @User() user
   ) {
-    return await this.paymentService.updatePaymentAndShipping(
+    return await this.updatePaymentService.updatePaymentAndShipping(
       billingAddress,
       phoneNumber,
       shippingAddress,
