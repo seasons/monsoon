@@ -265,7 +265,7 @@ type Brand @cacheControl(maxAge: 1000) {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean!
-  logo: Image
+  logo: JSON
   name: String!
   basedIn: String
   published: Boolean!
