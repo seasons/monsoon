@@ -1,7 +1,4 @@
-# source: http://localhost:4466/monsoon/dev
-# timestamp: Fri Mar 26 2021 10:53:35 GMT-0400 (Eastern Daylight Time)
-
-type ActiveAdminUser implements Node {
+type ActiveAdminUser {
   id: ID!
   admin: User!
 }
@@ -1395,6 +1392,7 @@ input BrandCreateInput {
   description: String
   isPrimaryBrand: Boolean
   logo: Json
+  logoImage: ImageCreateOneInput
   name: String!
   designer: String
   basedIn: String
@@ -1405,9 +1403,6 @@ input BrandCreateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  logoImage: ImageCreateOneInput
-  products: ProductCreateManyWithoutBrandInput
-  images: ImageCreateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
 }
 
@@ -1428,6 +1423,7 @@ input BrandCreateWithoutProductsInput {
   description: String
   isPrimaryBrand: Boolean
   logo: Json
+  logoImage: ImageCreateOneInput
   name: String!
   designer: String
   basedIn: String
@@ -1437,8 +1433,6 @@ input BrandCreateWithoutProductsInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  logoImage: ImageCreateOneInput
-  images: ImageCreateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
 }
 
@@ -1537,6 +1531,7 @@ input BrandUpdateDataInput {
   description: String
   isPrimaryBrand: Boolean
   logo: Json
+  logoImage: ImageUpdateOneInput
   name: String
   designer: String
   basedIn: String
@@ -1547,9 +1542,6 @@ input BrandUpdateDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  logoImage: ImageUpdateOneInput
-  products: ProductUpdateManyWithoutBrandInput
-  images: ImageUpdateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
 }
 
@@ -1559,6 +1551,7 @@ input BrandUpdateInput {
   description: String
   isPrimaryBrand: Boolean
   logo: Json
+  logoImage: ImageUpdateOneInput
   name: String
   designer: String
   basedIn: String
@@ -1569,9 +1562,6 @@ input BrandUpdateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  logoImage: ImageUpdateOneInput
-  products: ProductUpdateManyWithoutBrandInput
-  images: ImageUpdateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
 }
 
@@ -1613,6 +1603,7 @@ input BrandUpdateWithoutProductsDataInput {
   description: String
   isPrimaryBrand: Boolean
   logo: Json
+  logoImage: ImageUpdateOneInput
   name: String
   designer: String
   basedIn: String
@@ -1622,8 +1613,6 @@ input BrandUpdateWithoutProductsDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  logoImage: ImageUpdateOneInput
-  images: ImageUpdateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
 }
 
@@ -1696,7 +1685,7 @@ input BrandWhereInput {
   description_not_ends_with: String
   isPrimaryBrand: Boolean
   isPrimaryBrand_not: Boolean
-  logo: ImageWhereInput
+  logoImage: ImageWhereInput
   name: String
   name_not: String
   name_in: [String!]
@@ -1791,13 +1780,6 @@ input BrandWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  logoImage: ImageWhereInput
-  products_every: ProductWhereInput
-  products_some: ProductWhereInput
-  products_none: ProductWhereInput
-  images_every: ImageWhereInput
-  images_some: ImageWhereInput
-  images_none: ImageWhereInput
   externalShopifyIntegration: ExternalShopifyIntegrationWhereInput
   AND: [BrandWhereInput!]
   OR: [BrandWhereInput!]
