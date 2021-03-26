@@ -279,7 +279,8 @@ type Brand {
   brandCode: String! @unique
   description: String
   isPrimaryBrand: Boolean! @default(value: false)
-  logo: Image @relation(name: "BrandToBrandLogo")
+  logo: Json
+  logoImage: Image @relation(name: "BrandToLogoImage")
   name: String!
   designer: String
   basedIn: String

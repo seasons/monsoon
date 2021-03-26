@@ -19,7 +19,7 @@ export class BrandService {
 
     return await this.prisma.client.createBrand({
       ...input,
-      logo: logoID && { connect: { id: logoID } },
+      logoImage: logoID && { connect: { id: logoID } },
       images: imageIDs && { connect: imageIDs },
     })
   }
@@ -58,7 +58,7 @@ export class BrandService {
       where,
       data: {
         ...data,
-        logo: logoID && { connect: { id: logoID } },
+        logoImage: logoID && { connect: { id: logoID } },
         images: imageIDs && { set: imageIDs },
       },
     })

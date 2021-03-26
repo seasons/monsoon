@@ -31,22 +31,22 @@ export class BrandUtilsService {
       throw new ApolloError("To upload brand images please include a brandCode")
     }
 
-    if (data.logo && data.brandCode) {
+    if (data.logoImage && data.brandCode) {
       const imageName = `${data.brandCode}-logo.png`.toLowerCase()
-      const imageData = await this.imageService.uploadImage(data.logo, {
+      const imageData = await this.imageService.uploadImage(data.logoImage, {
         imageName,
       })
 
       const title = `${data.brandCode} Logo`
 
-      const logo = await this.prisma.client.upsertImage({
+      const logoImage = await this.prisma.client.upsertImage({
         where: { url: imageData.url },
         create: { ...imageData, title },
         update: { ...imageData, title },
       })
 
-      logoID = logo.id
-    } else if (data.logo && !data.brandCode) {
+      logoID = logoImage.id
+    } else if (data.logoImage && !data.brandCode) {
       throw new ApolloError("To upload brand logo please include a brandCode")
     }
 
