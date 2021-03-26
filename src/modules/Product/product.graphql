@@ -51,6 +51,7 @@ type Query {
   ): [Color]!
   launch(where: LaunchWhereUniqueInput!): Launch
   launches(
+    upcoming: Boolean
     where: LaunchWhereInput
     orderBy: LaunchOrderByInput
     skip: Int

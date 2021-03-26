@@ -12,7 +12,16 @@ export class LaunchQueriesResolver {
 
   @Query()
   async launches(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.launches(args, info)
+    let _args = args
+    if (args.upcoming) {
+      _args = {
+        ...args,
+        where: {
+          launchAt_gte: new Date(Date.now()).toISOString(),
+        },
+      }
+    }
+    return await this.prisma.binding.query.launches(_args, info)
   }
 
   @Query()
