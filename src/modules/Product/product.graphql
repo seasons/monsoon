@@ -265,7 +265,8 @@ type Brand @cacheControl(maxAge: 1000) {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean!
-  logo: Image
+  logo: JSON @deprecated(reason: "replaced with logoImage")
+  logoImage: Image
   name: String!
   basedIn: String
   published: Boolean!
@@ -412,7 +413,7 @@ input CustomBrandCreateInput {
   websiteUrl: String
   products: ProductCreateManyWithoutBrandInput
   # Custom fields
-  logo: Upload
+  logoImage: Upload
   images: [Upload!]
   externalShopifyIntegration: ExternalShopifyIntegrationInput
 }
@@ -432,7 +433,7 @@ input CustomBrandUpdateInput {
   tier: BrandTier
   websiteUrl: String
   # Custom fields
-  logo: Upload
+  logoImage: Upload
   images: [Upload!]
   externalShopifyIntegration: ExternalShopifyIntegrationInput
 }

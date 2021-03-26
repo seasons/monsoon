@@ -3015,7 +3015,8 @@ type Brand implements Node {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean!
-  logo: Image
+  logo: Json
+  logoImage: Image
   name: String!
   designer: String
   basedIn: String
@@ -3047,6 +3048,7 @@ input BrandCreateInput {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
+  logo: Json
   name: String!
   designer: String
   basedIn: String
@@ -3055,7 +3057,7 @@ input BrandCreateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  logo: ImageCreateOneInput
+  logoImage: ImageCreateOneInput
   products: ProductCreateManyWithoutBrandInput
   images: ImageCreateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
@@ -3077,6 +3079,7 @@ input BrandCreateWithoutProductsInput {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
+  logo: Json
   name: String!
   designer: String
   basedIn: String
@@ -3085,7 +3088,7 @@ input BrandCreateWithoutProductsInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  logo: ImageCreateOneInput
+  logoImage: ImageCreateOneInput
   images: ImageCreateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
 }
@@ -3110,6 +3113,8 @@ enum BrandOrderByInput {
   description_DESC
   isPrimaryBrand_ASC
   isPrimaryBrand_DESC
+  logo_ASC
+  logo_DESC
   name_ASC
   name_DESC
   designer_ASC
@@ -3138,6 +3143,7 @@ type BrandPreviousValues {
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean!
+  logo: Json
   name: String!
   designer: String
   basedIn: String
@@ -3204,6 +3210,7 @@ input BrandUpdateDataInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
+  logo: Json
   name: String
   designer: String
   basedIn: String
@@ -3212,7 +3219,7 @@ input BrandUpdateDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  logo: ImageUpdateOneInput
+  logoImage: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
@@ -3223,6 +3230,7 @@ input BrandUpdateInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
+  logo: Json
   name: String
   designer: String
   basedIn: String
@@ -3231,7 +3239,7 @@ input BrandUpdateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  logo: ImageUpdateOneInput
+  logoImage: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
@@ -3242,6 +3250,7 @@ input BrandUpdateManyMutationInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
+  logo: Json
   name: String
   designer: String
   basedIn: String
@@ -3273,6 +3282,7 @@ input BrandUpdateWithoutProductsDataInput {
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
+  logo: Json
   name: String
   designer: String
   basedIn: String
@@ -3281,7 +3291,7 @@ input BrandUpdateWithoutProductsDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  logo: ImageUpdateOneInput
+  logoImage: ImageUpdateOneInput
   images: ImageUpdateManyInput
   externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
 }
@@ -3713,7 +3723,7 @@ input BrandWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-  logo: ImageWhereInput
+  logoImage: ImageWhereInput
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
@@ -35822,6 +35832,8 @@ export type BrandOrderByInput =   'id_ASC' |
   'description_DESC' |
   'isPrimaryBrand_ASC' |
   'isPrimaryBrand_DESC' |
+  'logo_ASC' |
+  'logo_DESC' |
   'name_ASC' |
   'name_DESC' |
   'designer_ASC' |
@@ -37793,6 +37805,7 @@ export interface BrandCreateInput {
   brandCode: String
   description?: String | null
   isPrimaryBrand?: Boolean | null
+  logo?: Json | null
   name: String
   designer?: String | null
   basedIn?: String | null
@@ -37801,7 +37814,7 @@ export interface BrandCreateInput {
   published?: Boolean | null
   featured?: Boolean | null
   websiteUrl?: String | null
-  logo?: ImageCreateOneInput | null
+  logoImage?: ImageCreateOneInput | null
   products?: ProductCreateManyWithoutBrandInput | null
   images?: ImageCreateManyInput | null
   externalShopifyIntegration?: ExternalShopifyIntegrationCreateOneInput | null
@@ -37823,6 +37836,7 @@ export interface BrandCreateWithoutProductsInput {
   brandCode: String
   description?: String | null
   isPrimaryBrand?: Boolean | null
+  logo?: Json | null
   name: String
   designer?: String | null
   basedIn?: String | null
@@ -37831,7 +37845,7 @@ export interface BrandCreateWithoutProductsInput {
   published?: Boolean | null
   featured?: Boolean | null
   websiteUrl?: String | null
-  logo?: ImageCreateOneInput | null
+  logoImage?: ImageCreateOneInput | null
   images?: ImageCreateManyInput | null
   externalShopifyIntegration?: ExternalShopifyIntegrationCreateOneInput | null
 }
@@ -37852,6 +37866,7 @@ export interface BrandUpdateDataInput {
   brandCode?: String | null
   description?: String | null
   isPrimaryBrand?: Boolean | null
+  logo?: Json | null
   name?: String | null
   designer?: String | null
   basedIn?: String | null
@@ -37860,7 +37875,7 @@ export interface BrandUpdateDataInput {
   published?: Boolean | null
   featured?: Boolean | null
   websiteUrl?: String | null
-  logo?: ImageUpdateOneInput | null
+  logoImage?: ImageUpdateOneInput | null
   products?: ProductUpdateManyWithoutBrandInput | null
   images?: ImageUpdateManyInput | null
   externalShopifyIntegration?: ExternalShopifyIntegrationUpdateOneInput | null
@@ -37871,6 +37886,7 @@ export interface BrandUpdateInput {
   brandCode?: String | null
   description?: String | null
   isPrimaryBrand?: Boolean | null
+  logo?: Json | null
   name?: String | null
   designer?: String | null
   basedIn?: String | null
@@ -37879,7 +37895,7 @@ export interface BrandUpdateInput {
   published?: Boolean | null
   featured?: Boolean | null
   websiteUrl?: String | null
-  logo?: ImageUpdateOneInput | null
+  logoImage?: ImageUpdateOneInput | null
   products?: ProductUpdateManyWithoutBrandInput | null
   images?: ImageUpdateManyInput | null
   externalShopifyIntegration?: ExternalShopifyIntegrationUpdateOneInput | null
@@ -37890,6 +37906,7 @@ export interface BrandUpdateManyMutationInput {
   brandCode?: String | null
   description?: String | null
   isPrimaryBrand?: Boolean | null
+  logo?: Json | null
   name?: String | null
   designer?: String | null
   basedIn?: String | null
@@ -37921,6 +37938,7 @@ export interface BrandUpdateWithoutProductsDataInput {
   brandCode?: String | null
   description?: String | null
   isPrimaryBrand?: Boolean | null
+  logo?: Json | null
   name?: String | null
   designer?: String | null
   basedIn?: String | null
@@ -37929,7 +37947,7 @@ export interface BrandUpdateWithoutProductsDataInput {
   published?: Boolean | null
   featured?: Boolean | null
   websiteUrl?: String | null
-  logo?: ImageUpdateOneInput | null
+  logoImage?: ImageUpdateOneInput | null
   images?: ImageUpdateManyInput | null
   externalShopifyIntegration?: ExternalShopifyIntegrationUpdateOneInput | null
 }
@@ -38094,7 +38112,7 @@ export interface BrandWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
-  logo?: ImageWhereInput | null
+  logoImage?: ImageWhereInput | null
   products_every?: ProductWhereInput | null
   products_some?: ProductWhereInput | null
   products_none?: ProductWhereInput | null
@@ -53013,7 +53031,8 @@ export interface Brand extends Node {
   brandCode: String
   description?: String | null
   isPrimaryBrand: Boolean
-  logo?: Image | null
+  logo?: Json | null
+  logoImage?: Image | null
   name: String
   designer?: String | null
   basedIn?: String | null
@@ -53054,6 +53073,7 @@ export interface BrandPreviousValues {
   brandCode: String
   description?: String | null
   isPrimaryBrand: Boolean
+  logo?: Json | null
   name: String
   designer?: String | null
   basedIn?: String | null

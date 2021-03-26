@@ -27,7 +27,7 @@ export interface CustomBrandCreateOrUpdateData {
   tier: string
   websiteUrl?: string
   products?: ProductCreateManyWithoutBrandInput
-  logo?: any
+  logoImage?: any
   images?: any[]
   externalShopifyIntegration?: ExternalShopifyIntegrationInput
 }
