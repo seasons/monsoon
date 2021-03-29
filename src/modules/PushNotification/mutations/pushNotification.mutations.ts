@@ -54,27 +54,21 @@ export class PushNotificationMutationsResolver {
     await this.validatePushNotifDataInputs(route, record, uri)
 
     // Validate the user
-    const users = await this.prisma.client.users({ where })
-    if (users.length === 0) {
+    const customers = await this.prisma.binding.query.customers(
+      { where },
+      `{id user {id email}}`
+    )
+    if (customers.length === 0) {
       throw new ApolloError(`No users found on that criteria`)
     }
 
     // Send the notif
     const receipts = await this.pushNotifications.pushNotifyUsers({
-      emails: users.map(a => a.email),
+      emails: customers.map(a => a.user.email),
       pushNotifID: "Custom",
       vars: { title, body, route, uri, ...pick(record, ["id", "slug"]) },
     })
 
-    console.log(Object.values(receipts).map((a: any) => a.id))
-    console.log(
-      await this.prisma.binding.query.pushNotificationReceipts(
-        {
-          where: { id_in: Object.values(receipts).map((a: any) => a.id) },
-        },
-        info
-      )
-    )
     return await this.prisma.binding.query.pushNotificationReceipts(
       {
         where: { id_in: Object.values(receipts).map((a: any) => a.id) },

@@ -28,7 +28,7 @@ type Mutation {
     data: PushNotifDataInput
   ): PushNotificationReceipt @hasRole(roles: [Marketer])
   pushNotifyUsers(
-    where: UserWhereInput
+    where: CustomerWhereInput
     data: PushNotifDataInput
   ): [PushNotificationReceipt]! @hasRole(roles: [Marketer])
   pushNotifyInterest(
