@@ -3925,6 +3925,8 @@ export type BrandOrderByInput =
   | "description_DESC"
   | "isPrimaryBrand_ASC"
   | "isPrimaryBrand_DESC"
+  | "logo_ASC"
+  | "logo_DESC"
   | "name_ASC"
   | "name_DESC"
   | "designer_ASC"
@@ -6149,7 +6151,7 @@ export interface BrandWhereInput {
   description_not_ends_with?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
   isPrimaryBrand_not?: Maybe<Boolean>;
-  logo?: Maybe<ImageWhereInput>;
+  logoImage?: Maybe<ImageWhereInput>;
   name?: Maybe<String>;
   name_not?: Maybe<String>;
   name_in?: Maybe<String[] | String>;
@@ -10623,7 +10625,8 @@ export interface BrandCreateWithoutProductsInput {
   brandCode: String;
   description?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
-  logo?: Maybe<ImageCreateOneInput>;
+  logo?: Maybe<Json>;
+  logoImage?: Maybe<ImageCreateOneInput>;
   name: String;
   designer?: Maybe<String>;
   basedIn?: Maybe<String>;
@@ -10827,7 +10830,8 @@ export interface BrandCreateInput {
   brandCode: String;
   description?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
-  logo?: Maybe<ImageCreateOneInput>;
+  logo?: Maybe<Json>;
+  logoImage?: Maybe<ImageCreateOneInput>;
   name: String;
   designer?: Maybe<String>;
   basedIn?: Maybe<String>;
@@ -12421,7 +12425,8 @@ export interface BrandUpdateWithoutProductsDataInput {
   brandCode?: Maybe<String>;
   description?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
-  logo?: Maybe<ImageUpdateOneInput>;
+  logo?: Maybe<Json>;
+  logoImage?: Maybe<ImageUpdateOneInput>;
   name?: Maybe<String>;
   designer?: Maybe<String>;
   basedIn?: Maybe<String>;
@@ -12969,7 +12974,8 @@ export interface BrandUpdateDataInput {
   brandCode?: Maybe<String>;
   description?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
-  logo?: Maybe<ImageUpdateOneInput>;
+  logo?: Maybe<Json>;
+  logoImage?: Maybe<ImageUpdateOneInput>;
   name?: Maybe<String>;
   designer?: Maybe<String>;
   basedIn?: Maybe<String>;
@@ -17283,7 +17289,8 @@ export interface BrandUpdateInput {
   brandCode?: Maybe<String>;
   description?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
-  logo?: Maybe<ImageUpdateOneInput>;
+  logo?: Maybe<Json>;
+  logoImage?: Maybe<ImageUpdateOneInput>;
   name?: Maybe<String>;
   designer?: Maybe<String>;
   basedIn?: Maybe<String>;
@@ -17302,6 +17309,7 @@ export interface BrandUpdateManyMutationInput {
   brandCode?: Maybe<String>;
   description?: Maybe<String>;
   isPrimaryBrand?: Maybe<Boolean>;
+  logo?: Maybe<Json>;
   name?: Maybe<String>;
   designer?: Maybe<String>;
   basedIn?: Maybe<String>;
@@ -23228,6 +23236,7 @@ export interface Brand {
   brandCode: String;
   description?: String;
   isPrimaryBrand: Boolean;
+  logo?: Json;
   name: String;
   designer?: String;
   basedIn?: String;
@@ -23246,7 +23255,8 @@ export interface BrandPromise extends Promise<Brand>, Fragmentable {
   brandCode: () => Promise<String>;
   description: () => Promise<String>;
   isPrimaryBrand: () => Promise<Boolean>;
-  logo: <T = ImagePromise>() => T;
+  logo: () => Promise<Json>;
+  logoImage: <T = ImagePromise>() => T;
   name: () => Promise<String>;
   designer: () => Promise<String>;
   basedIn: () => Promise<String>;
@@ -23286,7 +23296,8 @@ export interface BrandSubscription
   brandCode: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
   isPrimaryBrand: () => Promise<AsyncIterator<Boolean>>;
-  logo: <T = ImageSubscription>() => T;
+  logo: () => Promise<AsyncIterator<Json>>;
+  logoImage: <T = ImageSubscription>() => T;
   name: () => Promise<AsyncIterator<String>>;
   designer: () => Promise<AsyncIterator<String>>;
   basedIn: () => Promise<AsyncIterator<String>>;
@@ -23328,7 +23339,8 @@ export interface BrandNullablePromise
   brandCode: () => Promise<String>;
   description: () => Promise<String>;
   isPrimaryBrand: () => Promise<Boolean>;
-  logo: <T = ImagePromise>() => T;
+  logo: () => Promise<Json>;
+  logoImage: <T = ImagePromise>() => T;
   name: () => Promise<String>;
   designer: () => Promise<String>;
   basedIn: () => Promise<String>;
@@ -30766,6 +30778,7 @@ export interface BrandPreviousValues {
   brandCode: String;
   description?: String;
   isPrimaryBrand: Boolean;
+  logo?: Json;
   name: String;
   designer?: String;
   basedIn?: String;
@@ -30786,6 +30799,7 @@ export interface BrandPreviousValuesPromise
   brandCode: () => Promise<String>;
   description: () => Promise<String>;
   isPrimaryBrand: () => Promise<Boolean>;
+  logo: () => Promise<Json>;
   name: () => Promise<String>;
   designer: () => Promise<String>;
   basedIn: () => Promise<String>;
@@ -30806,6 +30820,7 @@ export interface BrandPreviousValuesSubscription
   brandCode: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
   isPrimaryBrand: () => Promise<AsyncIterator<Boolean>>;
+  logo: () => Promise<AsyncIterator<Json>>;
   name: () => Promise<AsyncIterator<String>>;
   designer: () => Promise<AsyncIterator<String>>;
   basedIn: () => Promise<AsyncIterator<String>>;
