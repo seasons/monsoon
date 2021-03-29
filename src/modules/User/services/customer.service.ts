@@ -158,9 +158,9 @@ export class CustomerService {
         state,
         zipCode: zip,
       } = details.shippingAddress.create
-      if (!(name && street1 && city && state && zip)) {
+      if (!(street1 && city && state && zip)) {
         throw new Error(
-          "Missing a required field. Expected name, address1, city, state, and zipCode."
+          "Missing a required field. Expected address1, city, state, and zipCode."
         )
       }
       const {
