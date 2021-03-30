@@ -28,6 +28,8 @@ export class OrderMutationsResolver {
         draftOrder = await this.order.buyNewCreateDraftedOrder({
           productVariantID,
           customer,
+          user,
+          info,
         })
       } else {
         draftOrder = await this.order.buyUsedCreateDraftedOrder({
@@ -66,6 +68,8 @@ export class OrderMutationsResolver {
         submittedOrder = await this.order.buyNewSubmitOrder({
           order,
           customer,
+          user,
+          info,
         })
       } else {
         submittedOrder = await this.order.buyUsedSubmitOrder({

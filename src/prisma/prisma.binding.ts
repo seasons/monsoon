@@ -13579,6 +13579,7 @@ enum NotificationBarID {
 
 type Order implements Node {
   id: ID!
+  externalID: ID
   customer: Customer!
   sentPackage: Package
   lineItems(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem!]
@@ -13615,6 +13616,7 @@ type OrderConnection {
 
 input OrderCreateInput {
   id: ID
+  externalID: ID
   orderNumber: String!
   type: OrderType!
   status: OrderStatus
@@ -14493,6 +14495,8 @@ input OrderLineItemWhereUniqueInput {
 enum OrderOrderByInput {
   id_ASC
   id_DESC
+  externalID_ASC
+  externalID_DESC
   orderNumber_ASC
   orderNumber_DESC
   type_ASC
@@ -14526,6 +14530,7 @@ enum OrderPaymentStatus {
 
 type OrderPreviousValues {
   id: ID!
+  externalID: ID
   orderNumber: String!
   type: OrderType!
   status: OrderStatus!
@@ -14591,6 +14596,7 @@ enum OrderType {
 }
 
 input OrderUpdateInput {
+  externalID: ID
   orderNumber: String
   type: OrderType
   status: OrderStatus
@@ -14606,6 +14612,7 @@ input OrderUpdateInput {
 }
 
 input OrderUpdateManyMutationInput {
+  externalID: ID
   orderNumber: String
   type: OrderType
   status: OrderStatus
@@ -14666,6 +14673,46 @@ input OrderWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  externalID: ID
+
+  """All values that are not equal to given value."""
+  externalID_not: ID
+
+  """All values that are contained in given list."""
+  externalID_in: [ID!]
+
+  """All values that are not contained in given list."""
+  externalID_not_in: [ID!]
+
+  """All values less than the given value."""
+  externalID_lt: ID
+
+  """All values less than or equal the given value."""
+  externalID_lte: ID
+
+  """All values greater than the given value."""
+  externalID_gt: ID
+
+  """All values greater than or equal the given value."""
+  externalID_gte: ID
+
+  """All values containing the given string."""
+  externalID_contains: ID
+
+  """All values not containing the given string."""
+  externalID_not_contains: ID
+
+  """All values starting with the given string."""
+  externalID_starts_with: ID
+
+  """All values not starting with the given string."""
+  externalID_not_starts_with: ID
+
+  """All values ending with the given string."""
+  externalID_ends_with: ID
+
+  """All values not ending with the given string."""
+  externalID_not_ends_with: ID
   orderNumber: String
 
   """All values that are not equal to given value."""
@@ -36278,6 +36325,8 @@ export type OrderLineItemRecordType =   'PhysicalProduct' |
 
 export type OrderOrderByInput =   'id_ASC' |
   'id_DESC' |
+  'externalID_ASC' |
+  'externalID_DESC' |
   'orderNumber_ASC' |
   'orderNumber_DESC' |
   'type_ASC' |
@@ -42454,6 +42503,7 @@ export interface LocationWhereUniqueInput {
 
 export interface OrderCreateInput {
   id?: ID_Input | null
+  externalID?: ID_Input | null
   orderNumber: String
   type: OrderType
   status?: OrderStatus | null
@@ -42821,6 +42871,7 @@ export interface OrderSubscriptionWhereInput {
 }
 
 export interface OrderUpdateInput {
+  externalID?: ID_Input | null
   orderNumber?: String | null
   type?: OrderType | null
   status?: OrderStatus | null
@@ -42836,6 +42887,7 @@ export interface OrderUpdateInput {
 }
 
 export interface OrderUpdateManyMutationInput {
+  externalID?: ID_Input | null
   orderNumber?: String | null
   type?: OrderType | null
   status?: OrderStatus | null
@@ -42865,6 +42917,20 @@ export interface OrderWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
+  externalID?: ID_Input | null
+  externalID_not?: ID_Input | null
+  externalID_in?: ID_Output[] | ID_Output | null
+  externalID_not_in?: ID_Output[] | ID_Output | null
+  externalID_lt?: ID_Input | null
+  externalID_lte?: ID_Input | null
+  externalID_gt?: ID_Input | null
+  externalID_gte?: ID_Input | null
+  externalID_contains?: ID_Input | null
+  externalID_not_contains?: ID_Input | null
+  externalID_starts_with?: ID_Input | null
+  externalID_not_starts_with?: ID_Input | null
+  externalID_ends_with?: ID_Input | null
+  externalID_not_ends_with?: ID_Input | null
   orderNumber?: String | null
   orderNumber_not?: String | null
   orderNumber_in?: String[] | String | null
@@ -53993,6 +54059,7 @@ export interface LocationSubscriptionPayload {
 
 export interface Order extends Node {
   id: ID_Output
+  externalID?: ID_Output | null
   customer: Customer
   sentPackage?: Package | null
   lineItems?: Array<OrderLineItem> | null
@@ -54086,6 +54153,7 @@ export interface OrderLineItemSubscriptionPayload {
 
 export interface OrderPreviousValues {
   id: ID_Output
+  externalID?: ID_Output | null
   orderNumber: String
   type: OrderType
   status: OrderStatus

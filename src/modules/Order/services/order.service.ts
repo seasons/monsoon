@@ -1,4 +1,5 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import {
   BagItem,
@@ -12,7 +13,7 @@ import {
   PhysicalProductPrice,
   User,
 } from "@app/prisma"
-import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
+import { OrderLineItemRecordType } from "@app/prisma"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
@@ -53,8 +54,8 @@ export class OrderService {
     private readonly prisma: PrismaService,
     private readonly shopify: ShopifyService,
     private readonly shipping: ShippingService,
-    private readonly productUtils: ProductUtilsService,
-    private readonly email: EmailService
+    private readonly email: EmailService,
+    private readonly error: ErrorService
   ) {
     const getCategoryAndAllChildren = (categoryId: string): Promise<string[]> =>
       this.prisma.client
@@ -196,7 +197,6 @@ export class OrderService {
       : "PC040000"
 
     const shippingAddress = customerQuery?.detail?.shippingAddress as Location
-    const [firstName, ...lastName] = (shippingAddress?.name || "").split(" ")
 
     if (
       !physicalProduct ||
@@ -234,35 +234,21 @@ export class OrderService {
       invoice: {
         customer_id: user.id,
         invoice_note: `Purchase Used ${productName}`,
-        shipping_address: {
-          first_name: firstName,
-          last_name: lastName.join(" "),
-          email: user.email,
-          company: shippingAddress?.company,
-          line1: shippingAddress?.address1,
-          line2: shippingAddress?.address2,
-          city: shippingAddress?.city,
-          state_code: shippingAddress?.state,
-          zip: shippingAddress?.zipCode,
-          country: shippingAddress?.country || "US",
-        },
-        charges: orderLineItems?.map(orderLineItem => ({
-          amount: orderLineItem?.price,
-          taxable: true,
-          ...(orderLineItem?.recordType === "PhysicalProduct"
-            ? {
-                description: productName,
-                avalara_tax_code: productTaxCode,
-              }
-            : orderLineItem?.recordType === "Package"
-            ? {
-                description: shipping?.rate?.servicelevel?.name || "Shipping",
-                avalara_tax_code: "FR020000",
-              }
-            : {
-                /** TODO: handle other item types **/
-              }),
-        })) as InvoiceCharge[],
+        shipping_address: this.getChargebeeShippingAddress({
+          location: shippingAddress,
+          user,
+        }),
+        charges: orderLineItems
+          ?.map(orderLineItem =>
+            this.getChargebeeChargeForOrderLineItem({
+              orderLineItem,
+              productName,
+              productTaxCode,
+              shippingDescription:
+                shipping?.rate?.servicelevel?.name || "Shipping",
+            })
+          )
+          .filter(Boolean),
       },
     }
   }
@@ -288,6 +274,7 @@ export class OrderService {
     userId: string
     emailAddress: string
     productName: string
+    productTaxCode: string
     shopifyProductVariantInternalId: string
     shopifyProductVariantExternalId: string
     accessToken: string
@@ -311,6 +298,9 @@ export class OrderService {
               accessToken
             }
           }
+          category {
+            id
+          }
         }
         shopifyProductVariant {
           id
@@ -329,6 +319,8 @@ export class OrderService {
         user {
           id
           email
+          firstName
+          lastName
         }
         detail {
           shippingAddress {
@@ -368,6 +360,13 @@ export class OrderService {
     const billingAddress = customer?.billingInfo
     const { email: emailAddress, id: userId } = customer?.user
 
+    const productTaxCode = (await this.outerwearCategoryIds).some(
+      outerwearCategoryId =>
+        outerwearCategoryId === productVariant?.product?.category?.id
+    )
+      ? "PC040111"
+      : "PC040000"
+
     if (
       !buyNewEnabled ||
       !enabled ||
@@ -387,6 +386,7 @@ export class OrderService {
     return {
       userId,
       productName,
+      productTaxCode,
       shippingAddress: shippingAddress as Location,
       billingAddress,
       emailAddress,
@@ -400,15 +400,19 @@ export class OrderService {
   async buyNewSubmitOrder({
     order,
     customer,
+    user,
+    info,
   }: {
     order: Order
     customer: Customer
+    user: User
+    info: GraphQLResolveInfo
   }): Promise<void> {
     const orderLineItems = await this.prisma.client
       .order({ id: order.id })
       .lineItems()
     const productVariantID = orderLineItems.find(
-      orderLineItem => orderLineItem.recordType === "ProductVariant"
+      orderLineItem => orderLineItem.recordType === "ExternalProduct"
     ).recordID
 
     const {
@@ -417,8 +421,11 @@ export class OrderService {
       emailAddress,
       shopifyProductVariantExternalId,
       shopifyProductVariantInternalId,
+      userId,
       accessToken,
       shopName,
+      productName,
+      productTaxCode,
     } = await this.getBuyNewMetadata({
       productVariantID,
       customerId: customer.id,
@@ -453,26 +460,114 @@ export class OrderService {
       emailAddress,
     })
 
-    // TODO: Collect payment via Stripe connect
-    // TODO: Complete Shopify Draft Order and mark as paid?
-    // TODO: Update internal order model, return
+    let chargebeeInvoice
+    try {
+      chargebeeInvoice = (
+        await chargebee.invoice
+          .create({
+            customer_id: userId,
+            shippingAddress: this.getChargebeeShippingAddress({
+              user,
+              location: shippingAddress,
+            }),
+            charges: orderLineItems
+              .map(orderLineItem =>
+                this.getChargebeeChargeForOrderLineItem({
+                  orderLineItem,
+                  productName,
+                  productTaxCode,
+                  shippingDescription: draftOrder.shippingLine.title,
+                })
+              )
+              .filter(Boolean),
+          })
+          .request()
+      ).invoice
+    } catch (error) {
+      chargebeeInvoice = { status: "not_paid" }
+    }
 
-    return null
+    if (chargebeeInvoice.status !== "paid") {
+      if (chargebeeInvoice.id) {
+        try {
+          // Disable dunning in favor of letting the user manually retry failed charges via the UI,
+          // as otherwise we run a risk of duplicate charges.
+          await chargebee.invoice.stop_dunning(chargebeeInvoice.id).request()
+        } catch (error) {
+          this.error.setExtraContext({ chargebeeInvoice }, "chargebeeInvoice")
+          this.error.captureError(error)
+        }
+      }
+      try {
+        // Cleanup the draft order we created in brand partner's Shopify.
+        await this.shopify.deleteDraftOrder({
+          orderId: draftOrder.id,
+          shopName,
+          accessToken,
+        })
+      } catch (error) {
+        this.error.setExtraContext({ draftOrder }, "draftOrder")
+        this.error.captureError(error)
+      }
+
+      throw new Error("Failed to collect payment for invoice.")
+    }
+
+    try {
+      const [updatedOrder, _completedShopifyOrder] = await Promise.all([
+        this.prisma.client.updateOrder({
+          where: { id: order.id },
+          data: {
+            status: "Submitted",
+            paymentStatus:
+              chargebeeInvoice.status === "paid" ? "Paid" : "NotPaid",
+          },
+        }),
+        this.shopify.completeDraftOrder({
+          orderId: draftOrder.id,
+          shopName,
+          accessToken,
+        }),
+      ])
+
+      // TODO: send buy new email?
+      // await this.email.sendBuyUsedOrderConfirmationEmail(user, updatedOrder)
+
+      return await this.prisma.binding.query.order(
+        {
+          where: { id: updatedOrder.id },
+        },
+        info
+      )
+    } catch (error) {
+      console.log(
+        "Warning: Payment collected but failed to update internal or external order model. Manual intervention required.",
+        order.id,
+        draftOrder.id
+      )
+      throw error
+    }
   }
 
   async buyNewCreateDraftedOrder({
     productVariantID,
     customer,
+    user,
+    info,
   }: {
     productVariantID: string
     customer: Customer
+    user: User
+    info: GraphQLResolveInfo
   }): Promise<Order> {
     const {
       shippingAddress,
       billingAddress,
       emailAddress,
       shopifyProductVariantExternalId,
+      userId,
       productName,
+      productTaxCode,
       accessToken,
       shopName,
     } = await this.getBuyNewMetadata({
@@ -485,17 +580,79 @@ export class OrderService {
       accessToken,
     })
 
-    const { draftOrder } = await this.shopify.calculateDraftOrder({
-      shopifyCustomerId,
-      shopifyProductVariantId: shopifyProductVariantExternalId,
-      emailAddress,
-      billingAddress,
-      accessToken,
-      shopName,
-    })
+    const { draftOrder, shippingRate } = await this.shopify.calculateDraftOrder(
+      {
+        shopifyCustomerId,
+        shopifyProductVariantId: shopifyProductVariantExternalId,
+        emailAddress,
+        billingAddress,
+        accessToken,
+        shopName,
+      }
+    )
 
-    // TODO: create and return internal order model
-    return null
+    const orderLineItems = [
+      {
+        recordID: productVariantID,
+        recordType: "ExternalProduct" as OrderLineItemRecordType,
+        // Note: assumes that orders are single item, as otherwise subtotal is not the item price.
+        price: draftOrder.subtotalPrice,
+        currencyCode: "USD",
+        needShipping: true,
+      },
+      {
+        recordID: shippingRate.handle || "137" + Math.random() * 10,
+        recordType: "Package" as OrderLineItemRecordType,
+        price: shippingRate.price,
+        currencyCode: "USD",
+        needShipping: false,
+      },
+    ]
+    const chargebeeInvoice = {
+      invoice: {
+        customer_id: userId,
+      },
+      shippingAddress: this.getChargebeeShippingAddress({
+        user,
+        location: shippingAddress,
+      }),
+      charges: orderLineItems
+        .map(orderLineItem =>
+          this.getChargebeeChargeForOrderLineItem({
+            orderLineItem,
+            productName,
+            productTaxCode,
+            shippingDescription: shippingRate.title || "Shipping",
+          })
+        )
+        .filter(Boolean),
+    }
+
+    const {
+      estimate: { invoice_estimate },
+    } = await chargebee.estimate.create_invoice(chargebeeInvoice).request()
+
+    return await this.prisma.binding.mutation.createOrder(
+      {
+        data: {
+          customer: { connect: { id: customer.id } },
+          orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
+          externalID: draftOrder.id,
+          type: "New",
+          status: "Drafted",
+          subTotal: invoice_estimate.sub_total,
+          total: invoice_estimate.total,
+          lineItems: {
+            create: orderLineItems.map((orderLineItem, idx) => ({
+              ...orderLineItem,
+              taxRate: invoice_estimate.line_items?.[idx].tax_rate || 0,
+              taxPrice: invoice_estimate.line_items?.[idx].tax_amount || 0,
+            })),
+          },
+        },
+      },
+      info
+    )
   }
 
   async buyUsedCreateDraftedOrder({
@@ -531,7 +688,7 @@ export class OrderService {
           orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
           type: "Used",
           status: "Drafted",
-          subTotal: invoice_estimate.subtotal,
+          subTotal: invoice_estimate.sub_total,
           total: invoice_estimate.total,
           lineItems: {
             create: orderLineItems.map((orderLineItem, idx) => ({
@@ -704,5 +861,60 @@ export class OrderService {
       },
       info
     )
+  }
+
+  getChargebeeShippingAddress({
+    location,
+    user,
+  }: {
+    location: Location
+    user: User
+  }) {
+    const [firstName, ...lastName] = (location?.name || "").split(" ")
+    return {
+      first_name: firstName,
+      last_name: lastName.join(" "),
+      email: user.email,
+      company: location?.company,
+      line1: location?.address1,
+      line2: location?.address2,
+      city: location?.city,
+      state_code: location?.state,
+      zip: location?.zipCode,
+      country: location?.country || "US",
+    }
+  }
+
+  getChargebeeChargeForOrderLineItem({
+    orderLineItem,
+    productName,
+    productTaxCode,
+    shippingDescription,
+  }: {
+    orderLineItem: Pick<OrderLineItem, "recordType" | "price">
+    productName: string
+    productTaxCode: string
+    shippingDescription: string
+  }): InvoiceCharge | null {
+    if (
+      orderLineItem.recordType === "ExternalProduct" ||
+      orderLineItem.recordType === "PhysicalProduct"
+    ) {
+      return {
+        amount: orderLineItem.price,
+        taxable: true,
+        description: productName,
+        avalara_tax_code: productTaxCode,
+      }
+    }
+
+    if (orderLineItem.recordType === "Package" && orderLineItem.price > 0) {
+      return {
+        amount: orderLineItem.price,
+        taxable: true,
+        description: shippingDescription,
+        avalara_tax_code: "FR020000",
+      }
+    }
   }
 }
