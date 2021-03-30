@@ -53,7 +53,8 @@ export class ProductVariantService {
     )
 
     const SUIDs = []
-    for (let i = physicalProducts.length; i < count; i++) {
+    const newTotal = physicalProducts.length + count
+    for (let i = physicalProducts.length; i < newTotal; i++) {
       const num = String(i + 1).padStart(2, "0")
       SUIDs.push(productVariant.sku + "-" + num)
     }
