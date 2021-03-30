@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import { LaunchWhereUniqueInput } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
+import { omit } from "lodash"
 
 @Injectable()
 export class LaunchService {
@@ -14,9 +15,11 @@ export class LaunchService {
     data: any
   }) {
     let upsertdata
+    const cleanedData = omit(data, ["brandID", "collectionID"])
+
     if (data.brandID) {
       upsertdata = {
-        launchAt: data.launchAt,
+        ...cleanedData,
         brand: {
           connect: {
             id: data.brandID,
@@ -25,7 +28,7 @@ export class LaunchService {
       }
     } else {
       upsertdata = {
-        launchAt: data.launchAt,
+        ...cleanedData,
         collection: {
           connect: {
             id: data.collectionID,
