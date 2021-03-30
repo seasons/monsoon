@@ -4194,7 +4194,7 @@ export type OrderLineItemOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type OrderType = "Used" | "New" | "External";
+export type OrderType = "Used" | "New";
 
 export type OrderStatus =
   | "Drafted"

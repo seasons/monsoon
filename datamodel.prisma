@@ -1005,7 +1005,6 @@ type RecentlyViewedProduct {
 enum OrderType {
   Used
   New
-  External
 }
 
 enum OrderLineItemRecordType {

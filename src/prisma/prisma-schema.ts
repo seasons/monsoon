@@ -8318,7 +8318,6 @@ input OrderSubscriptionWhereInput {
 enum OrderType {
   Used
   New
-  External
 }
 
 input OrderUpdateInput {
