@@ -4087,8 +4087,10 @@ export type ExternalShopifyIntegrationOrderByInput =
   | "enabled_DESC"
   | "accessToken_ASC"
   | "accessToken_DESC"
-  | "nonce_ASC"
-  | "nonce_DESC";
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type InterestedUserOrderByInput =
   | "id_ASC"
@@ -6299,20 +6301,22 @@ export interface ExternalShopifyIntegrationWhereInput {
   accessToken_not_starts_with?: Maybe<String>;
   accessToken_ends_with?: Maybe<String>;
   accessToken_not_ends_with?: Maybe<String>;
-  nonce?: Maybe<String>;
-  nonce_not?: Maybe<String>;
-  nonce_in?: Maybe<String[] | String>;
-  nonce_not_in?: Maybe<String[] | String>;
-  nonce_lt?: Maybe<String>;
-  nonce_lte?: Maybe<String>;
-  nonce_gt?: Maybe<String>;
-  nonce_gte?: Maybe<String>;
-  nonce_contains?: Maybe<String>;
-  nonce_not_contains?: Maybe<String>;
-  nonce_starts_with?: Maybe<String>;
-  nonce_not_starts_with?: Maybe<String>;
-  nonce_ends_with?: Maybe<String>;
-  nonce_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<
     | ExternalShopifyIntegrationWhereInput[]
     | ExternalShopifyIntegrationWhereInput
@@ -6779,6 +6783,7 @@ export interface ShopifyProductVariantWhereInput {
   selectedOptions_every?: Maybe<ShopifyProductVariantSelectedOptionWhereInput>;
   selectedOptions_some?: Maybe<ShopifyProductVariantSelectedOptionWhereInput>;
   selectedOptions_none?: Maybe<ShopifyProductVariantSelectedOptionWhereInput>;
+  shop?: Maybe<ExternalShopifyIntegrationWhereInput>;
   brand?: Maybe<BrandWhereInput>;
   title?: Maybe<String>;
   title_not?: Maybe<String>;
@@ -10670,7 +10675,11 @@ export interface ExternalShopifyIntegrationCreateInput {
   shopName: String;
   enabled: Boolean;
   accessToken?: Maybe<String>;
-  nonce?: Maybe<String>;
+  scope?: Maybe<ExternalShopifyIntegrationCreatescopeInput>;
+}
+
+export interface ExternalShopifyIntegrationCreatescopeInput {
+  set?: Maybe<String[] | String>;
 }
 
 export interface CategoryCreateOneWithoutProductsInput {
@@ -10810,6 +10819,7 @@ export interface ShopifyProductVariantCreateInput {
   externalId?: Maybe<String>;
   displayName?: Maybe<String>;
   selectedOptions?: Maybe<ShopifyProductVariantSelectedOptionCreateManyInput>;
+  shop?: Maybe<ExternalShopifyIntegrationCreateOneInput>;
   brand?: Maybe<BrandCreateOneInput>;
   title?: Maybe<String>;
   image?: Maybe<ImageCreateOneInput>;
@@ -12615,7 +12625,11 @@ export interface ExternalShopifyIntegrationUpdateDataInput {
   shopName?: Maybe<String>;
   enabled?: Maybe<Boolean>;
   accessToken?: Maybe<String>;
-  nonce?: Maybe<String>;
+  scope?: Maybe<ExternalShopifyIntegrationUpdatescopeInput>;
+}
+
+export interface ExternalShopifyIntegrationUpdatescopeInput {
+  set?: Maybe<String[] | String>;
 }
 
 export interface ExternalShopifyIntegrationUpsertNestedInput {
@@ -12846,6 +12860,7 @@ export interface ShopifyProductVariantUpdateDataInput {
   externalId?: Maybe<String>;
   displayName?: Maybe<String>;
   selectedOptions?: Maybe<ShopifyProductVariantSelectedOptionUpdateManyInput>;
+  shop?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
   brand?: Maybe<BrandUpdateOneInput>;
   title?: Maybe<String>;
   image?: Maybe<ImageUpdateOneInput>;
@@ -17876,14 +17891,14 @@ export interface ExternalShopifyIntegrationUpdateInput {
   shopName?: Maybe<String>;
   enabled?: Maybe<Boolean>;
   accessToken?: Maybe<String>;
-  nonce?: Maybe<String>;
+  scope?: Maybe<ExternalShopifyIntegrationUpdatescopeInput>;
 }
 
 export interface ExternalShopifyIntegrationUpdateManyMutationInput {
   shopName?: Maybe<String>;
   enabled?: Maybe<Boolean>;
   accessToken?: Maybe<String>;
-  nonce?: Maybe<String>;
+  scope?: Maybe<ExternalShopifyIntegrationUpdatescopeInput>;
 }
 
 export interface FitPicCreateInput {
@@ -19876,6 +19891,7 @@ export interface ShopifyProductVariantUpdateInput {
   externalId?: Maybe<String>;
   displayName?: Maybe<String>;
   selectedOptions?: Maybe<ShopifyProductVariantSelectedOptionUpdateManyInput>;
+  shop?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
   brand?: Maybe<BrandUpdateOneInput>;
   title?: Maybe<String>;
   image?: Maybe<ImageUpdateOneInput>;
@@ -23396,7 +23412,9 @@ export interface ExternalShopifyIntegration {
   shopName: String;
   enabled: Boolean;
   accessToken?: String;
-  nonce?: String;
+  scope: String[];
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface ExternalShopifyIntegrationPromise
@@ -23406,7 +23424,9 @@ export interface ExternalShopifyIntegrationPromise
   shopName: () => Promise<String>;
   enabled: () => Promise<Boolean>;
   accessToken: () => Promise<String>;
-  nonce: () => Promise<String>;
+  scope: () => Promise<String[]>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ExternalShopifyIntegrationSubscription
@@ -23416,7 +23436,9 @@ export interface ExternalShopifyIntegrationSubscription
   shopName: () => Promise<AsyncIterator<String>>;
   enabled: () => Promise<AsyncIterator<Boolean>>;
   accessToken: () => Promise<AsyncIterator<String>>;
-  nonce: () => Promise<AsyncIterator<String>>;
+  scope: () => Promise<AsyncIterator<String[]>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface ExternalShopifyIntegrationNullablePromise
@@ -23426,7 +23448,9 @@ export interface ExternalShopifyIntegrationNullablePromise
   shopName: () => Promise<String>;
   enabled: () => Promise<Boolean>;
   accessToken: () => Promise<String>;
-  nonce: () => Promise<String>;
+  scope: () => Promise<String[]>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface Category {
@@ -23880,6 +23904,7 @@ export interface ShopifyProductVariantPromise
     first?: Int;
     last?: Int;
   }) => T;
+  shop: <T = ExternalShopifyIntegrationPromise>() => T;
   brand: <T = BrandPromise>() => T;
   title: () => Promise<String>;
   image: <T = ImagePromise>() => T;
@@ -23905,6 +23930,7 @@ export interface ShopifyProductVariantSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  shop: <T = ExternalShopifyIntegrationSubscription>() => T;
   brand: <T = BrandSubscription>() => T;
   title: () => Promise<AsyncIterator<String>>;
   image: <T = ImageSubscription>() => T;
@@ -23930,6 +23956,7 @@ export interface ShopifyProductVariantNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  shop: <T = ExternalShopifyIntegrationPromise>() => T;
   brand: <T = BrandPromise>() => T;
   title: () => Promise<String>;
   image: <T = ImagePromise>() => T;
@@ -31549,7 +31576,9 @@ export interface ExternalShopifyIntegrationPreviousValues {
   shopName: String;
   enabled: Boolean;
   accessToken?: String;
-  nonce?: String;
+  scope: String[];
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface ExternalShopifyIntegrationPreviousValuesPromise
@@ -31559,7 +31588,9 @@ export interface ExternalShopifyIntegrationPreviousValuesPromise
   shopName: () => Promise<String>;
   enabled: () => Promise<Boolean>;
   accessToken: () => Promise<String>;
-  nonce: () => Promise<String>;
+  scope: () => Promise<String[]>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ExternalShopifyIntegrationPreviousValuesSubscription
@@ -31569,7 +31600,9 @@ export interface ExternalShopifyIntegrationPreviousValuesSubscription
   shopName: () => Promise<AsyncIterator<String>>;
   enabled: () => Promise<AsyncIterator<Boolean>>;
   accessToken: () => Promise<AsyncIterator<String>>;
-  nonce: () => Promise<AsyncIterator<String>>;
+  scope: () => Promise<AsyncIterator<String[]>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface FitPicSubscriptionPayload {
@@ -34796,10 +34829,6 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "ExternalShopifyIntegration",
-    embedded: false
-  },
-  {
     name: "Brand",
     embedded: false
   },
@@ -34861,6 +34890,10 @@ export const models: Model[] = [
   },
   {
     name: "ProductVariantPrice",
+    embedded: false
+  },
+  {
+    name: "ExternalShopifyIntegration",
     embedded: false
   },
   {

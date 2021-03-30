@@ -265,14 +265,6 @@ enum ShippingCode {
   UPSSelect
 }
 
-type ExternalShopifyIntegration {
-  id: ID! @id
-  shopName: String! @unique
-  enabled: Boolean!
-  accessToken: String
-  nonce: String
-}
-
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -459,6 +451,16 @@ type ProductVariantPrice {
   retailPrice: Float
 }
 
+type ExternalShopifyIntegration {
+  id: ID! @id
+  shopName: String! @unique
+  enabled: Boolean!
+  accessToken: String
+  scope: [String!] @scalarList(strategy: RELATION)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type ShopifyProductVariantSelectedOption {
   id: ID! @id
   name: String!
@@ -470,6 +472,8 @@ type ShopifyProductVariant {
   externalId: String @unique
   displayName: String
   selectedOptions: [ShopifyProductVariantSelectedOption!]
+    @relation(name: "ShopifyProductVariantToVariantSelectedOption")
+  shop: ExternalShopifyIntegration
   brand: Brand
   title: String
   image: Image
@@ -492,6 +496,7 @@ type ProductVariant {
   retailPrice: Float
   price: ProductVariantPrice
   shopifyProductVariant: ShopifyProductVariant
+    @relation(name: "ShopifyProductVariantToVariant")
   physicalProducts: [PhysicalProduct!]!
     @relation(link: TABLE, onDelete: CASCADE)
   total: Int!

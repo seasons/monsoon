@@ -138,4 +138,14 @@ export class ProductVariantMutationsResolver {
     )
     return variants
   }
+
+  @Mutation()
+  async addPhysicalProductsToVariant(
+    @Args() { variantID, count }: { variantID: string; count: number }
+  ) {
+    return await this.productVariantService.addPhysicalProducts(
+      variantID,
+      count
+    )
+  }
 }

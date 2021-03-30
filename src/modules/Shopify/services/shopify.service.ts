@@ -56,13 +56,6 @@ export class ShopifyService {
       })
     })
 
-    await this.prisma.client.updateExternalShopifyIntegration({
-      where: {
-        shopName,
-      },
-      data: { nonce },
-    })
-
     const query = querystring.stringify({
       client_id: SHOPIFY_API_KEY,
       scope: OAUTH_SCOPES.join(","),
@@ -70,7 +63,7 @@ export class ShopifyService {
       state: nonce,
     })
 
-    return `https://${shopName}.myshopify.com/admin/oauth/authorize?${query}`
+    return `https://${shopName}/admin/oauth/authorize?${query}`
   }
 
   isValidHMAC({
@@ -112,11 +105,7 @@ export class ShopifyService {
       }
     )
 
-    return (
-      externalShopifyIntegration &&
-      nonce === externalShopifyIntegration.nonce &&
-      isValidHMAC
-    )
+    return externalShopifyIntegration && isValidHMAC
   }
 
   async getAccessToken({
@@ -129,9 +118,7 @@ export class ShopifyService {
     return new Promise((resolve, reject) => {
       request(
         {
-          uri: `https://${this.getShopName(
-            shop
-          )}.myshopify.com/admin/oauth/access_token`,
+          uri: `https://${this.getShopName(shop)}/admin/oauth/access_token`,
           method: "POST",
           body: {
             client_id: SHOPIFY_API_KEY,
@@ -141,6 +128,7 @@ export class ShopifyService {
           json: true,
         },
         (err, _response, body) => {
+          console.log(body)
           if (err) {
             return reject(err)
           }
@@ -164,7 +152,7 @@ export class ShopifyService {
     return new Promise((resolve, reject) => {
       request(
         {
-          uri: `https://${shopName}.myshopify.com/admin/api/2021-01/graphql.json`,
+          uri: `https://${shopName}/admin/api/2021-01/graphql.json`,
           method: "POST",
           headers: {
             "X-Shopify-Access-Token": accessToken,
@@ -677,7 +665,7 @@ export class ShopifyService {
     shopName,
     accessToken,
   }: {
-    brandId: string
+    brandId?: string
     shopName: string
     accessToken: string
   }): Promise<Array<ShopifyProductVariant>> {
@@ -748,9 +736,16 @@ export class ShopifyService {
         selectedOptions: {
           create: productVariant.selectedOptions,
         },
-        brand: {
+        ...(brandId && {
+          brand: {
+            connect: {
+              id: brandId,
+            },
+          },
+        }),
+        shop: {
           connect: {
-            id: brandId,
+            shopName,
           },
         },
         ...imageData,

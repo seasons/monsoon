@@ -1,0 +1,8 @@
+# type Query {
+#     # shopifyProductVariants(first: )
+# }
+
+type Mutation {
+  sendShopifyData(data: JSON): ExternalShopifyIntegration
+  importShopifyData(shopName: String): Boolean
+}
