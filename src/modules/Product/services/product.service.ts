@@ -945,18 +945,22 @@ export class ProductService {
           ...physProdData,
           sequenceNumber,
           productVariant: { connect: { id: prodVar.id } },
-          price: {
-            create: price,
-          },
+          ...(price && {
+            price: {
+              create: price,
+            },
+          }),
         },
         update: {
           ...physProdData,
-          price: {
-            upsert: {
-              update: price,
-              create: price,
+          ...(price && {
+            price: {
+              upsert: {
+                update: price,
+                create: price,
+              },
             },
-          },
+          }),
         },
       })
     })
