@@ -1,3 +1,7 @@
+import {
+  ExternalShopifyIntegrationCreateInput,
+  ExternalShopifyIntegrationUpdateInput,
+} from "@app/prisma"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 
@@ -19,15 +23,18 @@ export class ShopifyMutationsResolver {
         shopName: data.shop,
         accessToken: data.accessToken,
         enabled: true,
-        // scope: data.scope.split(',')
-      }
+        scope: {
+          set: data.scope.split(","),
+        },
+      } as ExternalShopifyIntegrationUpdateInput
+
       await this.prisma.client.upsertExternalShopifyIntegration({
         where: {
           shopName: data.shop,
         },
         create: {
           ...mutationData,
-        },
+        } as ExternalShopifyIntegrationCreateInput,
         update: {
           ...mutationData,
         },
