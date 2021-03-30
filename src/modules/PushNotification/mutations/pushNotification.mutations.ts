@@ -20,8 +20,7 @@ export class PushNotificationMutationsResolver {
     { where, data: { title, body, route, uri, record } },
     @Info() info
   ) {
-    this.validateWebviewParams(route, uri)
-    await this.validateBrandAndProductParams(route, record)
+    await this.validatePushNotifDataInputs(route, record, uri)
 
     // Validate the user
     const { email } = await this.prisma.client.user(where)
@@ -47,13 +46,44 @@ export class PushNotificationMutationsResolver {
   }
 
   @Mutation()
+  async pushNotifyUsers(
+    @Args()
+    { where, data: { title, body, route, uri, record } },
+    @Info() info
+  ) {
+    await this.validatePushNotifDataInputs(route, record, uri)
+
+    // Validate the user
+    const customers = await this.prisma.binding.query.customers(
+      { where },
+      `{id user {id email}}`
+    )
+    if (customers.length === 0) {
+      throw new ApolloError(`No users found on that criteria`)
+    }
+
+    // Send the notif
+    const receipts = await this.pushNotifications.pushNotifyUsers({
+      emails: customers.map(a => a.user.email),
+      pushNotifID: "Custom",
+      vars: { title, body, route, uri, ...pick(record, ["id", "slug"]) },
+    })
+
+    return await this.prisma.binding.query.pushNotificationReceipts(
+      {
+        where: { id_in: Object.values(receipts).map((a: any) => a.id) },
+      },
+      info
+    )
+  }
+
+  @Mutation()
   async pushNotifyInterest(
     @Args()
     { interest, data: { title, body, route, uri, record }, debug = false },
     @Info() info
   ) {
-    this.validateWebviewParams(route, uri)
-    await this.validateBrandAndProductParams(route, record)
+    await this.validatePushNotifDataInputs(route, record, uri)
 
     // Send the notif
     const { id } = await this.pushNotifications.pushNotifyInterest({
@@ -70,6 +100,10 @@ export class PushNotificationMutationsResolver {
     )
   }
 
+  private async validatePushNotifDataInputs(route, record, uri) {
+    this.validateWebviewParams(route, uri)
+    await this.validateBrandAndProductParams(route, record)
+  }
   private isValidURL(url: string): boolean {
     const startsCorrect = url.startsWith("http") || url.startsWith("https")
     return startsCorrect && validUrl.isUri(url)
