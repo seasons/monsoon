@@ -17,7 +17,14 @@ export class LaunchQueriesResolver {
       _args = {
         ...args,
         where: {
-          launchAt_gte: new Date(Date.now()).toISOString(),
+          AND: [
+            {
+              launchAt_gte: new Date(Date.now()).toISOString(),
+            },
+            {
+              published: true,
+            },
+          ],
         },
       }
     }
