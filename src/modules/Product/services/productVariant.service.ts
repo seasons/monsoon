@@ -59,7 +59,10 @@ export class ProductVariantService {
     }
     const nextSequenceNumber = await this.physicalProductUtilsService.nextSequenceNumber()
 
-    const price = omit(physicalProducts?.[0].price, "id")
+    const price = omit(physicalProducts?.[0]?.price, "id") || {
+      buyUsedEnabled: false,
+      buyUsedPrice: 0,
+    }
 
     const newPhysicalProducts = await Promise.all(
       SUIDs.map(async (SUID, i) => {
