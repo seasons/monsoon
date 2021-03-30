@@ -63,7 +63,7 @@ export class ShopifyService {
       state: nonce,
     })
 
-    return `https://${shopName}.myshopify.com/admin/oauth/authorize?${query}`
+    return `https://${shopName}/admin/oauth/authorize?${query}`
   }
 
   isValidHMAC({
@@ -118,9 +118,7 @@ export class ShopifyService {
     return new Promise((resolve, reject) => {
       request(
         {
-          uri: `https://${this.getShopName(
-            shop
-          )}.myshopify.com/admin/oauth/access_token`,
+          uri: `https://${this.getShopName(shop)}/admin/oauth/access_token`,
           method: "POST",
           body: {
             client_id: SHOPIFY_API_KEY,
@@ -154,7 +152,7 @@ export class ShopifyService {
     return new Promise((resolve, reject) => {
       request(
         {
-          uri: `https://${shopName}.myshopify.com/admin/api/2021-01/graphql.json`,
+          uri: `https://${shopName}/admin/api/2021-01/graphql.json`,
           method: "POST",
           headers: {
             "X-Shopify-Access-Token": accessToken,
