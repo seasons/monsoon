@@ -1,7 +1,12 @@
 import crypto from "crypto"
 import querystring from "querystring"
 
-import { BillingInfo, Location, ShopifyProductVariant } from "@app/prisma"
+import {
+  BillingInfo,
+  Location,
+  ShopifyProductVariant,
+  ShopifyProductVariantUpdateInput,
+} from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { minBy, pick } from "lodash"
 import { DateTime } from "luxon"
@@ -702,33 +707,19 @@ export class ShopifyService {
     for (const productVariant of productVariants) {
       const imageSrc =
         productVariant?.product?.images.edges?.[0]?.node?.transformedSrc
-      const imageExists = await (productVariants.length > 0
-        ? this.prisma.client
-            .image({
-              url:
-                productVariants[0].product?.images?.edges?.[0]?.node
-                  ?.transformedSrc,
-            })
-            .then(res => Boolean(res))
-            .catch(() => false)
-        : Promise.resolve(false))
-      const imageData = imageSrc
-        ? imageExists
-          ? {
-              image: {
-                connect: {
-                  url: imageSrc,
-                },
-              },
-            }
-          : {
-              image: {
-                create: {
-                  url: imageSrc,
-                },
-              },
-            }
-        : {}
+
+      const image = await this.prisma.client.upsertImage({
+        where: {
+          url: imageSrc,
+        },
+        create: {
+          url: imageSrc,
+        },
+        update: {
+          url: imageSrc,
+        },
+      })
+
       const data = {
         externalId: productVariant.id,
         displayName: productVariant.displayName,
@@ -748,7 +739,11 @@ export class ShopifyService {
             shopName,
           },
         },
-        ...imageData,
+        image: {
+          connect: {
+            url: imageSrc,
+          },
+        },
         cachedPrice: this.parseShopifyPriceToCents(productVariant.price),
         cachedAvailableForSale: productVariant.availableForSale,
         cacheExpiresAt: DateTime.local()
@@ -756,7 +751,7 @@ export class ShopifyService {
             seconds: PRODUCT_VARIANT_CACHE_SECONDS,
           })
           .toISO(),
-      }
+      } as ShopifyProductVariantUpdateInput
 
       const result = await this.prisma.client.upsertShopifyProductVariant({
         where: {

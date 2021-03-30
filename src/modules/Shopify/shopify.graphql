@@ -1,6 +1,14 @@
-# type Query {
-#     # shopifyProductVariants(first: )
-# }
+type Query {
+  shopifyProductVariants(
+    where: ShopifyProductVariantWhereInput
+    orderBy: ShopifyProductVariantOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ShopifyProductVariant]!
+}
 
 type Mutation {
   sendShopifyData(data: JSON): ExternalShopifyIntegration
