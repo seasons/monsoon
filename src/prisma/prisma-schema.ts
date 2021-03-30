@@ -12961,7 +12961,7 @@ input ProductVariantCreateInput {
   product: ProductCreateOneWithoutVariantsInput!
   retailPrice: Float
   price: ProductVariantPriceCreateOneInput
-  shopifyProductVariant: ShopifyProductVariantCreateOneInput
+  shopifyProductVariant: ShopifyProductVariantCreateOneWithoutProductVariantInput
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
   total: Int!
   reservable: Int!
@@ -12991,6 +12991,11 @@ input ProductVariantCreateOneWithoutPhysicalProductsInput {
   connect: ProductVariantWhereUniqueInput
 }
 
+input ProductVariantCreateOneWithoutShopifyProductVariantInput {
+  create: ProductVariantCreateWithoutShopifyProductVariantInput
+  connect: ProductVariantWhereUniqueInput
+}
+
 input ProductVariantCreateWithoutColorInput {
   id: ID
   sku: String
@@ -13003,7 +13008,7 @@ input ProductVariantCreateWithoutColorInput {
   product: ProductCreateOneWithoutVariantsInput!
   retailPrice: Float
   price: ProductVariantPriceCreateOneInput
-  shopifyProductVariant: ShopifyProductVariantCreateOneInput
+  shopifyProductVariant: ShopifyProductVariantCreateOneWithoutProductVariantInput
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
   total: Int!
   reservable: Int!
@@ -13026,7 +13031,7 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
   product: ProductCreateOneWithoutVariantsInput!
   retailPrice: Float
   price: ProductVariantPriceCreateOneInput
-  shopifyProductVariant: ShopifyProductVariantCreateOneInput
+  shopifyProductVariant: ShopifyProductVariantCreateOneWithoutProductVariantInput
   total: Int!
   reservable: Int!
   reserved: Int!
@@ -13047,7 +13052,29 @@ input ProductVariantCreateWithoutProductInput {
   productID: String!
   retailPrice: Float
   price: ProductVariantPriceCreateOneInput
-  shopifyProductVariant: ShopifyProductVariantCreateOneInput
+  shopifyProductVariant: ShopifyProductVariantCreateOneWithoutProductVariantInput
+  physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
+}
+
+input ProductVariantCreateWithoutShopifyProductVariantInput {
+  id: ID
+  sku: String
+  displayShort: String!
+  color: ColorCreateOneWithoutProductVariantsInput!
+  internalSize: SizeCreateOneInput
+  manufacturerSizes: SizeCreateManyInput
+  weight: Float
+  height: Float
+  productID: String!
+  product: ProductCreateOneWithoutVariantsInput!
+  retailPrice: Float
+  price: ProductVariantPriceCreateOneInput
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
   total: Int!
   reservable: Int!
@@ -13839,7 +13866,7 @@ input ProductVariantUpdateDataInput {
   product: ProductUpdateOneRequiredWithoutVariantsInput
   retailPrice: Float
   price: ProductVariantPriceUpdateOneInput
-  shopifyProductVariant: ShopifyProductVariantUpdateOneInput
+  shopifyProductVariant: ShopifyProductVariantUpdateOneWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
   total: Int
   reservable: Int
@@ -13861,7 +13888,7 @@ input ProductVariantUpdateInput {
   product: ProductUpdateOneRequiredWithoutVariantsInput
   retailPrice: Float
   price: ProductVariantPriceUpdateOneInput
-  shopifyProductVariant: ShopifyProductVariantUpdateOneInput
+  shopifyProductVariant: ShopifyProductVariantUpdateOneWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
   total: Int
   reservable: Int
@@ -13953,6 +13980,15 @@ input ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
   connect: ProductVariantWhereUniqueInput
 }
 
+input ProductVariantUpdateOneWithoutShopifyProductVariantInput {
+  create: ProductVariantCreateWithoutShopifyProductVariantInput
+  update: ProductVariantUpdateWithoutShopifyProductVariantDataInput
+  upsert: ProductVariantUpsertWithoutShopifyProductVariantInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ProductVariantWhereUniqueInput
+}
+
 input ProductVariantUpdateWithoutColorDataInput {
   sku: String
   displayShort: String
@@ -13964,7 +14000,7 @@ input ProductVariantUpdateWithoutColorDataInput {
   product: ProductUpdateOneRequiredWithoutVariantsInput
   retailPrice: Float
   price: ProductVariantPriceUpdateOneInput
-  shopifyProductVariant: ShopifyProductVariantUpdateOneInput
+  shopifyProductVariant: ShopifyProductVariantUpdateOneWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
   total: Int
   reservable: Int
@@ -13986,7 +14022,7 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   product: ProductUpdateOneRequiredWithoutVariantsInput
   retailPrice: Float
   price: ProductVariantPriceUpdateOneInput
-  shopifyProductVariant: ShopifyProductVariantUpdateOneInput
+  shopifyProductVariant: ShopifyProductVariantUpdateOneWithoutProductVariantInput
   total: Int
   reservable: Int
   reserved: Int
@@ -14006,7 +14042,28 @@ input ProductVariantUpdateWithoutProductDataInput {
   productID: String
   retailPrice: Float
   price: ProductVariantPriceUpdateOneInput
-  shopifyProductVariant: ShopifyProductVariantUpdateOneInput
+  shopifyProductVariant: ShopifyProductVariantUpdateOneWithoutProductVariantInput
+  physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
+  total: Int
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
+  offloaded: Int
+  stored: Int
+}
+
+input ProductVariantUpdateWithoutShopifyProductVariantDataInput {
+  sku: String
+  displayShort: String
+  color: ColorUpdateOneRequiredWithoutProductVariantsInput
+  internalSize: SizeUpdateOneInput
+  manufacturerSizes: SizeUpdateManyInput
+  weight: Float
+  height: Float
+  productID: String
+  product: ProductUpdateOneRequiredWithoutVariantsInput
+  retailPrice: Float
+  price: ProductVariantPriceUpdateOneInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
   total: Int
   reservable: Int
@@ -14034,6 +14091,11 @@ input ProductVariantUpsertNestedInput {
 input ProductVariantUpsertWithoutPhysicalProductsInput {
   update: ProductVariantUpdateWithoutPhysicalProductsDataInput!
   create: ProductVariantCreateWithoutPhysicalProductsInput!
+}
+
+input ProductVariantUpsertWithoutShopifyProductVariantInput {
+  update: ProductVariantUpdateWithoutShopifyProductVariantDataInput!
+  create: ProductVariantCreateWithoutShopifyProductVariantInput!
 }
 
 input ProductVariantUpsertWithWhereUniqueWithoutColorInput {
@@ -17102,6 +17164,7 @@ type ShopifyProductVariant {
   externalId: String
   displayName: String
   selectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariantSelectedOption!]
+  productVariant: ProductVariant
   shop: ExternalShopifyIntegration
   brand: Brand
   title: String
@@ -17122,6 +17185,7 @@ input ShopifyProductVariantCreateInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
+  productVariant: ProductVariantCreateOneWithoutShopifyProductVariantInput
   shop: ExternalShopifyIntegrationCreateOneInput
   brand: BrandCreateOneInput
   title: String
@@ -17131,9 +17195,23 @@ input ShopifyProductVariantCreateInput {
   cacheExpiresAt: DateTime
 }
 
-input ShopifyProductVariantCreateOneInput {
-  create: ShopifyProductVariantCreateInput
+input ShopifyProductVariantCreateOneWithoutProductVariantInput {
+  create: ShopifyProductVariantCreateWithoutProductVariantInput
   connect: ShopifyProductVariantWhereUniqueInput
+}
+
+input ShopifyProductVariantCreateWithoutProductVariantInput {
+  id: ID
+  externalId: String
+  displayName: String
+  selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
+  shop: ExternalShopifyIntegrationCreateOneInput
+  brand: BrandCreateOneInput
+  title: String
+  image: ImageCreateOneInput
+  cachedPrice: Float
+  cachedAvailableForSale: Boolean
+  cacheExpiresAt: DateTime
 }
 
 type ShopifyProductVariantEdge {
@@ -17395,23 +17473,11 @@ input ShopifyProductVariantSubscriptionWhereInput {
   NOT: [ShopifyProductVariantSubscriptionWhereInput!]
 }
 
-input ShopifyProductVariantUpdateDataInput {
-  externalId: String
-  displayName: String
-  selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
-  shop: ExternalShopifyIntegrationUpdateOneInput
-  brand: BrandUpdateOneInput
-  title: String
-  image: ImageUpdateOneInput
-  cachedPrice: Float
-  cachedAvailableForSale: Boolean
-  cacheExpiresAt: DateTime
-}
-
 input ShopifyProductVariantUpdateInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
+  productVariant: ProductVariantUpdateOneWithoutShopifyProductVariantInput
   shop: ExternalShopifyIntegrationUpdateOneInput
   brand: BrandUpdateOneInput
   title: String
@@ -17430,18 +17496,31 @@ input ShopifyProductVariantUpdateManyMutationInput {
   cacheExpiresAt: DateTime
 }
 
-input ShopifyProductVariantUpdateOneInput {
-  create: ShopifyProductVariantCreateInput
-  update: ShopifyProductVariantUpdateDataInput
-  upsert: ShopifyProductVariantUpsertNestedInput
+input ShopifyProductVariantUpdateOneWithoutProductVariantInput {
+  create: ShopifyProductVariantCreateWithoutProductVariantInput
+  update: ShopifyProductVariantUpdateWithoutProductVariantDataInput
+  upsert: ShopifyProductVariantUpsertWithoutProductVariantInput
   delete: Boolean
   disconnect: Boolean
   connect: ShopifyProductVariantWhereUniqueInput
 }
 
-input ShopifyProductVariantUpsertNestedInput {
-  update: ShopifyProductVariantUpdateDataInput!
-  create: ShopifyProductVariantCreateInput!
+input ShopifyProductVariantUpdateWithoutProductVariantDataInput {
+  externalId: String
+  displayName: String
+  selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
+  shop: ExternalShopifyIntegrationUpdateOneInput
+  brand: BrandUpdateOneInput
+  title: String
+  image: ImageUpdateOneInput
+  cachedPrice: Float
+  cachedAvailableForSale: Boolean
+  cacheExpiresAt: DateTime
+}
+
+input ShopifyProductVariantUpsertWithoutProductVariantInput {
+  update: ShopifyProductVariantUpdateWithoutProductVariantDataInput!
+  create: ShopifyProductVariantCreateWithoutProductVariantInput!
 }
 
 input ShopifyProductVariantWhereInput {
@@ -17490,6 +17569,7 @@ input ShopifyProductVariantWhereInput {
   selectedOptions_every: ShopifyProductVariantSelectedOptionWhereInput
   selectedOptions_some: ShopifyProductVariantSelectedOptionWhereInput
   selectedOptions_none: ShopifyProductVariantSelectedOptionWhereInput
+  productVariant: ProductVariantWhereInput
   shop: ExternalShopifyIntegrationWhereInput
   brand: BrandWhereInput
   title: String

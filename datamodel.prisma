@@ -473,6 +473,8 @@ type ShopifyProductVariant {
   displayName: String
   selectedOptions: [ShopifyProductVariantSelectedOption!]
     @relation(name: "ShopifyProductVariantToVariantSelectedOption")
+  productVariant: ProductVariant
+    @relation(name: "ShopifyProductVariantToVariant", link: INLINE)
   shop: ExternalShopifyIntegration
   brand: Brand
   title: String

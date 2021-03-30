@@ -6783,6 +6783,7 @@ export interface ShopifyProductVariantWhereInput {
   selectedOptions_every?: Maybe<ShopifyProductVariantSelectedOptionWhereInput>;
   selectedOptions_some?: Maybe<ShopifyProductVariantSelectedOptionWhereInput>;
   selectedOptions_none?: Maybe<ShopifyProductVariantSelectedOptionWhereInput>;
+  productVariant?: Maybe<ProductVariantWhereInput>;
   shop?: Maybe<ExternalShopifyIntegrationWhereInput>;
   brand?: Maybe<BrandWhereInput>;
   title?: Maybe<String>;
@@ -10527,7 +10528,9 @@ export interface ProductVariantCreateWithoutPhysicalProductsInput {
   product: ProductCreateOneWithoutVariantsInput;
   retailPrice?: Maybe<Float>;
   price?: Maybe<ProductVariantPriceCreateOneInput>;
-  shopifyProductVariant?: Maybe<ShopifyProductVariantCreateOneInput>;
+  shopifyProductVariant?: Maybe<
+    ShopifyProductVariantCreateOneWithoutProductVariantInput
+  >;
   total: Int;
   reservable: Int;
   reserved: Int;
@@ -10789,7 +10792,9 @@ export interface ProductVariantCreateWithoutColorInput {
   product: ProductCreateOneWithoutVariantsInput;
   retailPrice?: Maybe<Float>;
   price?: Maybe<ProductVariantPriceCreateOneInput>;
-  shopifyProductVariant?: Maybe<ShopifyProductVariantCreateOneInput>;
+  shopifyProductVariant?: Maybe<
+    ShopifyProductVariantCreateOneWithoutProductVariantInput
+  >;
   physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>;
   total: Int;
   reservable: Int;
@@ -10809,12 +10814,12 @@ export interface ProductVariantPriceCreateInput {
   retailPrice?: Maybe<Float>;
 }
 
-export interface ShopifyProductVariantCreateOneInput {
-  create?: Maybe<ShopifyProductVariantCreateInput>;
+export interface ShopifyProductVariantCreateOneWithoutProductVariantInput {
+  create?: Maybe<ShopifyProductVariantCreateWithoutProductVariantInput>;
   connect?: Maybe<ShopifyProductVariantWhereUniqueInput>;
 }
 
-export interface ShopifyProductVariantCreateInput {
+export interface ShopifyProductVariantCreateWithoutProductVariantInput {
   id?: Maybe<ID_Input>;
   externalId?: Maybe<String>;
   displayName?: Maybe<String>;
@@ -11042,7 +11047,9 @@ export interface ProductVariantCreateWithoutProductInput {
   productID: String;
   retailPrice?: Maybe<Float>;
   price?: Maybe<ProductVariantPriceCreateOneInput>;
-  shopifyProductVariant?: Maybe<ShopifyProductVariantCreateOneInput>;
+  shopifyProductVariant?: Maybe<
+    ShopifyProductVariantCreateOneWithoutProductVariantInput
+  >;
   physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>;
   total: Int;
   reservable: Int;
@@ -12211,7 +12218,9 @@ export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
   product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>;
   retailPrice?: Maybe<Float>;
   price?: Maybe<ProductVariantPriceUpdateOneInput>;
-  shopifyProductVariant?: Maybe<ShopifyProductVariantUpdateOneInput>;
+  shopifyProductVariant?: Maybe<
+    ShopifyProductVariantUpdateOneWithoutProductVariantInput
+  >;
   total?: Maybe<Int>;
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
@@ -12819,7 +12828,9 @@ export interface ProductVariantUpdateWithoutColorDataInput {
   product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>;
   retailPrice?: Maybe<Float>;
   price?: Maybe<ProductVariantPriceUpdateOneInput>;
-  shopifyProductVariant?: Maybe<ShopifyProductVariantUpdateOneInput>;
+  shopifyProductVariant?: Maybe<
+    ShopifyProductVariantUpdateOneWithoutProductVariantInput
+  >;
   physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>;
   total?: Maybe<Int>;
   reservable?: Maybe<Int>;
@@ -12847,16 +12858,16 @@ export interface ProductVariantPriceUpsertNestedInput {
   create: ProductVariantPriceCreateInput;
 }
 
-export interface ShopifyProductVariantUpdateOneInput {
-  create?: Maybe<ShopifyProductVariantCreateInput>;
-  update?: Maybe<ShopifyProductVariantUpdateDataInput>;
-  upsert?: Maybe<ShopifyProductVariantUpsertNestedInput>;
+export interface ShopifyProductVariantUpdateOneWithoutProductVariantInput {
+  create?: Maybe<ShopifyProductVariantCreateWithoutProductVariantInput>;
+  update?: Maybe<ShopifyProductVariantUpdateWithoutProductVariantDataInput>;
+  upsert?: Maybe<ShopifyProductVariantUpsertWithoutProductVariantInput>;
   delete?: Maybe<Boolean>;
   disconnect?: Maybe<Boolean>;
   connect?: Maybe<ShopifyProductVariantWhereUniqueInput>;
 }
 
-export interface ShopifyProductVariantUpdateDataInput {
+export interface ShopifyProductVariantUpdateWithoutProductVariantDataInput {
   externalId?: Maybe<String>;
   displayName?: Maybe<String>;
   selectedOptions?: Maybe<ShopifyProductVariantSelectedOptionUpdateManyInput>;
@@ -13481,7 +13492,9 @@ export interface ProductVariantUpdateWithoutProductDataInput {
   productID?: Maybe<String>;
   retailPrice?: Maybe<Float>;
   price?: Maybe<ProductVariantPriceUpdateOneInput>;
-  shopifyProductVariant?: Maybe<ShopifyProductVariantUpdateOneInput>;
+  shopifyProductVariant?: Maybe<
+    ShopifyProductVariantUpdateOneWithoutProductVariantInput
+  >;
   physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>;
   total?: Maybe<Int>;
   reservable?: Maybe<Int>;
@@ -14506,9 +14519,9 @@ export interface BrandUpsertNestedInput {
   create: BrandCreateInput;
 }
 
-export interface ShopifyProductVariantUpsertNestedInput {
-  update: ShopifyProductVariantUpdateDataInput;
-  create: ShopifyProductVariantCreateInput;
+export interface ShopifyProductVariantUpsertWithoutProductVariantInput {
+  update: ShopifyProductVariantUpdateWithoutProductVariantDataInput;
+  create: ShopifyProductVariantCreateWithoutProductVariantInput;
 }
 
 export interface ProductVariantUpsertWithWhereUniqueWithoutColorInput {
@@ -15458,7 +15471,9 @@ export interface ProductVariantCreateInput {
   product: ProductCreateOneWithoutVariantsInput;
   retailPrice?: Maybe<Float>;
   price?: Maybe<ProductVariantPriceCreateOneInput>;
-  shopifyProductVariant?: Maybe<ShopifyProductVariantCreateOneInput>;
+  shopifyProductVariant?: Maybe<
+    ShopifyProductVariantCreateOneWithoutProductVariantInput
+  >;
   physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>;
   total: Int;
   reservable: Int;
@@ -16349,7 +16364,9 @@ export interface ProductVariantUpdateDataInput {
   product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>;
   retailPrice?: Maybe<Float>;
   price?: Maybe<ProductVariantPriceUpdateOneInput>;
-  shopifyProductVariant?: Maybe<ShopifyProductVariantUpdateOneInput>;
+  shopifyProductVariant?: Maybe<
+    ShopifyProductVariantUpdateOneWithoutProductVariantInput
+  >;
   physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>;
   total?: Maybe<Int>;
   reservable?: Maybe<Int>;
@@ -19161,7 +19178,9 @@ export interface ProductVariantUpdateInput {
   product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>;
   retailPrice?: Maybe<Float>;
   price?: Maybe<ProductVariantPriceUpdateOneInput>;
-  shopifyProductVariant?: Maybe<ShopifyProductVariantUpdateOneInput>;
+  shopifyProductVariant?: Maybe<
+    ShopifyProductVariantUpdateOneWithoutProductVariantInput
+  >;
   physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>;
   total?: Maybe<Int>;
   reservable?: Maybe<Int>;
@@ -19887,10 +19906,57 @@ export interface ShippingOptionUpdateManyMutationInput {
   averageDuration?: Maybe<Int>;
 }
 
+export interface ShopifyProductVariantCreateInput {
+  id?: Maybe<ID_Input>;
+  externalId?: Maybe<String>;
+  displayName?: Maybe<String>;
+  selectedOptions?: Maybe<ShopifyProductVariantSelectedOptionCreateManyInput>;
+  productVariant?: Maybe<
+    ProductVariantCreateOneWithoutShopifyProductVariantInput
+  >;
+  shop?: Maybe<ExternalShopifyIntegrationCreateOneInput>;
+  brand?: Maybe<BrandCreateOneInput>;
+  title?: Maybe<String>;
+  image?: Maybe<ImageCreateOneInput>;
+  cachedPrice?: Maybe<Float>;
+  cachedAvailableForSale?: Maybe<Boolean>;
+  cacheExpiresAt?: Maybe<DateTimeInput>;
+}
+
+export interface ProductVariantCreateOneWithoutShopifyProductVariantInput {
+  create?: Maybe<ProductVariantCreateWithoutShopifyProductVariantInput>;
+  connect?: Maybe<ProductVariantWhereUniqueInput>;
+}
+
+export interface ProductVariantCreateWithoutShopifyProductVariantInput {
+  id?: Maybe<ID_Input>;
+  sku?: Maybe<String>;
+  displayShort: String;
+  color: ColorCreateOneWithoutProductVariantsInput;
+  internalSize?: Maybe<SizeCreateOneInput>;
+  manufacturerSizes?: Maybe<SizeCreateManyInput>;
+  weight?: Maybe<Float>;
+  height?: Maybe<Float>;
+  productID: String;
+  product: ProductCreateOneWithoutVariantsInput;
+  retailPrice?: Maybe<Float>;
+  price?: Maybe<ProductVariantPriceCreateOneInput>;
+  physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>;
+  total: Int;
+  reservable: Int;
+  reserved: Int;
+  nonReservable: Int;
+  offloaded: Int;
+  stored: Int;
+}
+
 export interface ShopifyProductVariantUpdateInput {
   externalId?: Maybe<String>;
   displayName?: Maybe<String>;
   selectedOptions?: Maybe<ShopifyProductVariantSelectedOptionUpdateManyInput>;
+  productVariant?: Maybe<
+    ProductVariantUpdateOneWithoutShopifyProductVariantInput
+  >;
   shop?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
   brand?: Maybe<BrandUpdateOneInput>;
   title?: Maybe<String>;
@@ -19898,6 +19964,41 @@ export interface ShopifyProductVariantUpdateInput {
   cachedPrice?: Maybe<Float>;
   cachedAvailableForSale?: Maybe<Boolean>;
   cacheExpiresAt?: Maybe<DateTimeInput>;
+}
+
+export interface ProductVariantUpdateOneWithoutShopifyProductVariantInput {
+  create?: Maybe<ProductVariantCreateWithoutShopifyProductVariantInput>;
+  update?: Maybe<ProductVariantUpdateWithoutShopifyProductVariantDataInput>;
+  upsert?: Maybe<ProductVariantUpsertWithoutShopifyProductVariantInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ProductVariantWhereUniqueInput>;
+}
+
+export interface ProductVariantUpdateWithoutShopifyProductVariantDataInput {
+  sku?: Maybe<String>;
+  displayShort?: Maybe<String>;
+  color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>;
+  internalSize?: Maybe<SizeUpdateOneInput>;
+  manufacturerSizes?: Maybe<SizeUpdateManyInput>;
+  weight?: Maybe<Float>;
+  height?: Maybe<Float>;
+  productID?: Maybe<String>;
+  product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>;
+  retailPrice?: Maybe<Float>;
+  price?: Maybe<ProductVariantPriceUpdateOneInput>;
+  physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>;
+  total?: Maybe<Int>;
+  reservable?: Maybe<Int>;
+  reserved?: Maybe<Int>;
+  nonReservable?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
+}
+
+export interface ProductVariantUpsertWithoutShopifyProductVariantInput {
+  update: ProductVariantUpdateWithoutShopifyProductVariantDataInput;
+  create: ProductVariantCreateWithoutShopifyProductVariantInput;
 }
 
 export interface ShopifyProductVariantUpdateManyMutationInput {
@@ -23904,6 +24005,7 @@ export interface ShopifyProductVariantPromise
     first?: Int;
     last?: Int;
   }) => T;
+  productVariant: <T = ProductVariantPromise>() => T;
   shop: <T = ExternalShopifyIntegrationPromise>() => T;
   brand: <T = BrandPromise>() => T;
   title: () => Promise<String>;
@@ -23930,6 +24032,7 @@ export interface ShopifyProductVariantSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  productVariant: <T = ProductVariantSubscription>() => T;
   shop: <T = ExternalShopifyIntegrationSubscription>() => T;
   brand: <T = BrandSubscription>() => T;
   title: () => Promise<AsyncIterator<String>>;
@@ -23956,6 +24059,7 @@ export interface ShopifyProductVariantNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  productVariant: <T = ProductVariantPromise>() => T;
   shop: <T = ExternalShopifyIntegrationPromise>() => T;
   brand: <T = BrandPromise>() => T;
   title: () => Promise<String>;

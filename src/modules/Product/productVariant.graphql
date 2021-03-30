@@ -101,8 +101,20 @@ type ShopifyProductVariant {
   id: ID!
   externalId: String
   displayName: String
-  image: Image
+  selectedOptions(
+    where: ShopifyProductVariantSelectedOptionWhereInput
+    orderBy: ShopifyProductVariantSelectedOptionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ShopifyProductVariantSelectedOption!]
+  productVariant: ProductVariant
+  shop: ExternalShopifyIntegration
+  brand: Brand
   title: String
+  image: Image
   cachedPrice: Float
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
