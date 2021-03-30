@@ -1050,6 +1050,7 @@ type OrderLineItem {
 
 type Order {
   id: ID! @id
+  externalID: ID # The ID of the order in an external system (e.g. Shopify )
   customer: Customer!
   sentPackage: Package
   lineItems: [OrderLineItem!]!
