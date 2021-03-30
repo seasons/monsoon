@@ -25,7 +25,10 @@ export class OrderLineItemFieldsResolver {
         },
         info
       )
-    } else if (recordType === "ProductVariant") {
+    } else if (
+      recordType === "ProductVariant" ||
+      recordType === "ExternalProduct"
+    ) {
       return await this.prisma.binding.query.productVariant(
         {
           where: {

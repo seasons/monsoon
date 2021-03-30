@@ -3,7 +3,7 @@ import querystring from "querystring"
 
 import { BillingInfo, Location, ShopifyProductVariant } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
-import { minBy } from "lodash"
+import { minBy, pick } from "lodash"
 import { DateTime } from "luxon"
 import request from "request"
 
@@ -11,7 +11,7 @@ import { PrismaService } from "../../../prisma/prisma.service"
 import {
   DraftOrder,
   DraftOrderCreateInputVariables,
-  MutationResult,
+  MutationUserErrors,
   Product,
   ProductVariant,
 } from "./shopify.types.d"
@@ -30,9 +30,6 @@ const OAUTH_SCOPES = [
   "write_customers",
 ]
 
-const productVariantGlobalId = (externalId: string): string =>
-  `gid://shopify/ProductVariant/${externalId}`
-
 @Injectable()
 export class ShopifyService {
   constructor(private readonly prisma: PrismaService) {}
@@ -42,6 +39,9 @@ export class ShopifyService {
 
     return matches && matches.length === 2 ? matches[1] : shop
   }
+
+  parseShopifyPriceToCents = (price: string | null): number =>
+    Math.round(parseFloat(price || "0.00") * 100)
 
   async getOAuthURL({ shop }: { shop: string }): Promise<string> {
     const shopName = this.getShopName(shop)
@@ -56,13 +56,6 @@ export class ShopifyService {
       })
     })
 
-    await this.prisma.client.updateExternalShopifyIntegration({
-      where: {
-        shopName,
-      },
-      data: { nonce },
-    })
-
     const query = querystring.stringify({
       client_id: SHOPIFY_API_KEY,
       scope: OAUTH_SCOPES.join(","),
@@ -70,7 +63,7 @@ export class ShopifyService {
       state: nonce,
     })
 
-    return `https://${shopName}.myshopify.com/admin/oauth/authorize?${query}`
+    return `https://${shopName}/admin/oauth/authorize?${query}`
   }
 
   isValidHMAC({
@@ -112,11 +105,7 @@ export class ShopifyService {
       }
     )
 
-    return (
-      externalShopifyIntegration &&
-      nonce === externalShopifyIntegration.nonce &&
-      isValidHMAC
-    )
+    return externalShopifyIntegration && isValidHMAC
   }
 
   async getAccessToken({
@@ -129,9 +118,7 @@ export class ShopifyService {
     return new Promise((resolve, reject) => {
       request(
         {
-          uri: `https://${this.getShopName(
-            shop
-          )}.myshopify.com/admin/oauth/access_token`,
+          uri: `https://${this.getShopName(shop)}/admin/oauth/access_token`,
           method: "POST",
           body: {
             client_id: SHOPIFY_API_KEY,
@@ -141,6 +128,7 @@ export class ShopifyService {
           json: true,
         },
         (err, _response, body) => {
+          console.log(body)
           if (err) {
             return reject(err)
           }
@@ -164,7 +152,7 @@ export class ShopifyService {
     return new Promise((resolve, reject) => {
       request(
         {
-          uri: `https://${shopName}.myshopify.com/admin/api/2021-01/graphql.json`,
+          uri: `https://${shopName}/admin/api/2021-01/graphql.json`,
           method: "POST",
           headers: {
             "X-Shopify-Access-Token": accessToken,
@@ -203,7 +191,7 @@ export class ShopifyService {
     externalId: string
   }> {
     const query = `{
-      productVariant(id: "${productVariantGlobalId(externalId)}") {
+      productVariant(id: "${externalId}") {
         availableForSale
         price
       }
@@ -222,7 +210,7 @@ export class ShopifyService {
 
     return {
       ...productVariant,
-      price: parseFloat(productVariant.price),
+      price: this.parseShopifyPriceToCents(productVariant.price),
     }
   }
 
@@ -313,6 +301,7 @@ export class ShopifyService {
       input: {
         note: "Created by Seasons.",
         acceptsMarketing: false,
+        taxExempt: true, // Use tax values from Avalara via Chargebee, not values from Brand Partner Shopify
         firstName: shippingAddressFirstName,
         lastName: shippingAddressLastName.join(" "),
         addresses: [
@@ -396,7 +385,7 @@ export class ShopifyService {
         note: "Created by Seasons.",
         lineItems: [
           {
-            variantId: productVariantGlobalId(shopifyProductVariantId),
+            variantId: shopifyProductVariantId,
             quantity: 1,
           },
         ],
@@ -413,6 +402,7 @@ export class ShopifyService {
         customerId: shopifyCustomerId,
         useCustomerDefaultAddress: true,
         email: emailAddress,
+        taxExempt: true, // Use tax values from Avalara via Chargebee, not values from Brand Partner Shopify
       },
     }
     const draftOrderCalculateQuery = `
@@ -452,7 +442,8 @@ export class ShopifyService {
       throw new Error(
         "Shopify draftOrderCalculate errors: " +
           JSON.stringify(
-            draftOrderCalculateResult?.calculatedDraftOrder?.userErrors
+            draftOrderCalculateResult?.draftOrderCalculate?.calculatedDraftOrder
+              ?.userErrors
           )
       )
     }
@@ -463,12 +454,11 @@ export class ShopifyService {
       totalShippingPrice,
       subtotalPrice,
       totalTax,
-    } = draftOrderCalculateResult?.calculatedDraftOrder?.calculatedDraftOrder
+    } = draftOrderCalculateResult?.draftOrderCalculate?.calculatedDraftOrder
 
     // Use the cheapest shipping option available to create the draft order with.
-    const shippingRate: any = minBy(
-      availableShippingRates || [],
-      rate => (rate as any)?.price?.amount
+    const shippingRate: any = minBy(availableShippingRates || [], rate =>
+      this.parseShopifyPriceToCents((rate as any)?.price?.amount)
     )
     if (!shippingRate) {
       throw new Error("Unable to find merchant shipping rate to use for order.")
@@ -476,14 +466,14 @@ export class ShopifyService {
 
     return {
       draftOrder: {
-        totalPrice,
-        totalShippingPrice,
-        totalTax,
-        subtotalPrice,
+        totalPrice: this.parseShopifyPriceToCents(totalPrice),
+        totalShippingPrice: this.parseShopifyPriceToCents(totalShippingPrice),
+        totalTax: this.parseShopifyPriceToCents(totalTax),
+        subtotalPrice: this.parseShopifyPriceToCents(subtotalPrice),
       },
       shippingRate: {
         title: shippingRate.title,
-        price: shippingRate.price.amount,
+        price: this.parseShopifyPriceToCents(shippingRate.price.amount),
         handle: shippingRate.handle,
       },
       inputVariables: draftOrderCalculateVariables,
@@ -513,7 +503,7 @@ export class ShopifyService {
       | "postal_code"
       | "country"
     >
-  }): Promise<DraftOrder> {
+  }): Promise<DraftOrder & { shippingLine: { title: string } }> {
     const {
       shippingRate,
       inputVariables: draftOrderInputVariables,
@@ -542,6 +532,9 @@ export class ShopifyService {
               totalShippingPrice
               totalTax
               subtotalPrice
+              shippingLine {
+                title
+              }
             }
             userErrors {
               field
@@ -551,7 +544,7 @@ export class ShopifyService {
         }
       `
 
-    const draftOrderResult: MutationResult<{
+    const draftOrderResult: {
       draftOrderCreate?: {
         draftOrder?: {
           id: string
@@ -559,21 +552,22 @@ export class ShopifyService {
           totalShippingPrice: string
           totalTax: string
           subtotalPrice: string
+          shippingLine: {
+            title: string
+          }
         }
-      }
-    }> = await this.shopifyGraphQLRequest({
+      } & MutationUserErrors
+    } = await this.shopifyGraphQLRequest({
       query: draftOrderQuery,
       variables: draftOrderInputVariables,
       shopName,
       accessToken,
     })
 
-    if ((draftOrderResult as any)?.draftOrderCreate?.userErrors?.length) {
+    if (draftOrderResult.draftOrderCreate?.userErrors?.length) {
       throw new Error(
         "Shopify draftOrderCreate error: " +
-          JSON.stringify(
-            (draftOrderResult as any)?.draftOrderCreate?.userErrors
-          )
+          JSON.stringify(draftOrderResult?.draftOrderCreate?.userErrors)
       )
     }
 
@@ -583,8 +577,87 @@ export class ShopifyService {
      */
     return {
       ...calculatedDraftOrder,
-      id: draftOrderResult?.draftOrderCreate?.draftOrder?.id,
+      ...pick(draftOrderResult?.draftOrderCreate?.draftOrder, [
+        "id",
+        "shippingLine",
+      ]),
     }
+  }
+
+  async completeDraftOrder({
+    orderId,
+    shopName,
+    accessToken,
+  }: {
+    orderId: string
+    shopName: string
+    accessToken: string
+  }) {
+    const completeDraftOrderQuery = `
+      mutation CompleteDraftOrder($id: ID!) {
+        draftOrderComplete(id: $id) {
+          draftOrder {
+            id
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `
+
+    const completeDraftOrderResult: {
+      draftOrderComplete: { draftOrder: { id: string } } & MutationUserErrors
+    } = await this.shopifyGraphQLRequest({
+      query: completeDraftOrderQuery,
+      variables: { id: orderId },
+      shopName,
+      accessToken,
+    })
+
+    if (completeDraftOrderResult?.draftOrderComplete?.userErrors?.length) {
+      throw new Error(
+        "Shopify draftOrderCreate error: " +
+          JSON.stringify(
+            completeDraftOrderResult?.draftOrderComplete?.userErrors
+          )
+      )
+    }
+
+    return completeDraftOrderResult?.draftOrderComplete?.draftOrder
+  }
+
+  async deleteDraftOrder({ orderId, shopName, accessToken }): Promise<string> {
+    const deleteDraftOrderQuery = `
+      mutation DraftOrderDelete($input: DraftOrderDeleteInput!) {
+        draftOrderDelete(input: $input) {
+          deletedId
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `
+
+    const deleteDraftOrderResult: {
+      draftOrderDelete: { deletedId: string } & MutationUserErrors
+    } = await this.shopifyGraphQLRequest({
+      query: deleteDraftOrderQuery,
+      variables: { input: { id: orderId } },
+      shopName,
+      accessToken,
+    })
+
+    if (deleteDraftOrderResult?.draftOrderDelete?.userErrors?.length) {
+      throw new Error(
+        "Shopify draftOrderDelete error: " +
+          JSON.stringify(deleteDraftOrderResult?.draftOrderDelete?.userErrors)
+      )
+    }
+
+    return deleteDraftOrderResult?.draftOrderDelete?.deletedId
   }
 
   async importProductVariants({
@@ -592,7 +665,7 @@ export class ShopifyService {
     shopName,
     accessToken,
   }: {
-    brandId: string
+    brandId?: string
     shopName: string
     accessToken: string
   }): Promise<Array<ShopifyProductVariant>> {
@@ -663,13 +736,20 @@ export class ShopifyService {
         selectedOptions: {
           create: productVariant.selectedOptions,
         },
-        brand: {
+        ...(brandId && {
+          brand: {
+            connect: {
+              id: brandId,
+            },
+          },
+        }),
+        shop: {
           connect: {
-            id: brandId,
+            shopName,
           },
         },
         ...imageData,
-        cachedPrice: parseFloat(productVariant.price),
+        cachedPrice: this.parseShopifyPriceToCents(productVariant.price),
         cachedAvailableForSale: productVariant.availableForSale,
         cacheExpiresAt: DateTime.local()
           .plus({

@@ -1,6 +1,6 @@
 type MutationInput<T> = { input: T }
 
-export type MutationResult<T> = T & {
+export type MutationUserErrors = {
   userErrors?: Array<{ field: string; message: string }>
 }
 export type DraftOrderCreateInputVariables = MutationInput<{
@@ -19,6 +19,7 @@ export type DraftOrderCreateInputVariables = MutationInput<{
   }
   customerId: string
   useCustomerDefaultAddress: boolean
+  taxExempt: boolean
   email: string
 }>
 
