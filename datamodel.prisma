@@ -383,12 +383,12 @@ type Product {
   functions: [ProductFunction!]!
   buyNewEnabled: Boolean! @default(value: false)
   images: [Image!]
-  innerMaterials: [String!]! @scalarList(strategy: RELATION)
+  innerMaterials: [String!]! @scalarList(strategy: RELATION, onDelete: CASCADE)
   materialCategory: ProductMaterialCategory
   model: ProductModel
   modelSize: Size @relation(name: "ProductModelSize")
   name: String!
-  outerMaterials: [String!]! @scalarList(strategy: RELATION)
+  outerMaterials: [String!]! @scalarList(strategy: RELATION, onDelete: CASCADE)
   photographyStatus: PhotographyStatus
   productFit: ProductFit
   publishedAt: DateTime
