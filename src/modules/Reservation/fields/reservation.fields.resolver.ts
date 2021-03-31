@@ -1,5 +1,7 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { AdminActionLog, AdminActionLogWhereInput } from "@app/prisma"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
@@ -30,17 +32,27 @@ export class ReservationFieldsResolver {
   }
 
   @ResolveField()
-  async adminLogs(@Parent() reservation, @Info() info) {
-    return this.reservationService.interpretReservationLogs(
-      await this.prisma.binding.query.adminActionLogs(
-        {
-          where: {
-            AND: [{ entityId: reservation.id }, { tableName: "Reservation" }],
-          },
-        },
-        info
-      )
-    )
+  async adminLogs(
+    @Parent() reservation,
+    @Info() info,
+    @Loader({
+      params: {
+        query: `adminActionLogs`,
+        formatWhere: keys => ({
+          AND: [
+            { entityId_in: keys },
+            { tableName: "Reservation" },
+          ] as AdminActionLogWhereInput,
+        }),
+        keyToDataRelationship: "OneToMany",
+        getKeys: a => [a.entityId],
+      },
+      includeInfo: true,
+    })
+    prismaLoader: PrismaDataLoader<string>
+  ) {
+    const logs = await prismaLoader.load(reservation.id)
+    return this.reservationService.interpretReservationLogs(logs as any)
   }
 
   @ResolveField()
