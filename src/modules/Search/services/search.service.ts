@@ -50,6 +50,41 @@ export class SearchService {
     return results.hits
   }
 
+  async getRecentlyViewedProducts() {
+    const PAGE_SIZE = 10000
+    let recentlyViewedProducts = []
+    let lastPageRecentlyViewedProducts
+    do {
+      lastPageRecentlyViewedProducts = await this.prisma.binding.query.recentlyViewedProducts(
+        {
+          skip: recentlyViewedProducts.length,
+          first: PAGE_SIZE,
+          orderBy: "id_DESC",
+        },
+        `
+          {
+            id
+            product {
+              id
+              brand {
+                id
+                name
+                brandCode
+              }
+            }
+            viewCount
+          }
+        `
+      )
+
+      recentlyViewedProducts = recentlyViewedProducts.concat(
+        lastPageRecentlyViewedProducts
+      )
+    } while (lastPageRecentlyViewedProducts.length === PAGE_SIZE)
+
+    return recentlyViewedProducts
+  }
+
   async indexProducts(indices = [IndexKey.Default]) {
     const products = await this.prisma.binding.query.products(
       {},
@@ -94,23 +129,7 @@ export class SearchService {
     `
     )
 
-    const viewCounts = await this.prisma.binding.query.recentlyViewedProducts(
-      {},
-      `
-      {
-        id
-        product {
-          id
-          brand {
-            id
-            name
-            brandCode
-          }
-        }
-        viewCount
-      }
-    `
-    )
+    const viewCounts = await this.getRecentlyViewedProducts()
 
     this.logger.log(`Re-indexing ${products.length} products...`)
 
@@ -203,23 +222,7 @@ export class SearchService {
     `
     )
 
-    const viewCounts = await this.prisma.binding.query.recentlyViewedProducts(
-      {},
-      `
-      {
-        id
-        product {
-          id
-          brand {
-            id
-            name
-            brandCode
-          }
-        }
-        viewCount
-      }
-    `
-    )
+    const viewCounts = await this.getRecentlyViewedProducts()
 
     this.logger.log(`Re-indexing ${brands.length} brands...`)
 
