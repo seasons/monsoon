@@ -4,9 +4,8 @@ import { CustomerService } from "@app/modules/User/services/customer.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Customer, PaymentPlan, PaymentPlanTier, User } from "@app/prisma"
-import { PauseType, Reservation } from "@app/prisma/prisma.binding"
+import { PauseType } from "@app/prisma/prisma.binding"
 import { EmailService } from "@modules/Email/services/email.service"
-import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
@@ -44,7 +43,6 @@ export interface SubscriptionData {
 @Injectable()
 export class PaymentService {
   constructor(
-    private readonly shippingService: ShippingService,
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
     @Inject(forwardRef(() => CustomerService))
@@ -236,109 +234,6 @@ export class PaymentService {
       this.error.setExtraContext(customer, "customer")
       this.error.captureError(e)
       throw new Error(`Error updating to new plan: ${e.message}`)
-    }
-  }
-
-  async updatePaymentMethodWithStripeToken(planID, token, customer, tokenType) {
-    try {
-      const customerWithUserData = await this.prisma.binding.query.customer(
-        { where: { id: customer.id } },
-        `
-          {
-            id
-            user {
-              id
-              firstName
-              lastName
-              email
-            }
-            billingInfo {
-              id
-            }
-          }
-        `
-      )
-
-      const { user, billingInfo } = customerWithUserData
-
-      const tokenBillingAddressCity = token.card.addressCity || ""
-      const tokenBillingAddress1 = token.card.addressLine1 || ""
-      const tokenBillingAddress2 = token.card?.addressLine2 || ""
-      const tokenBillingAddressState = token.card.addressState || ""
-      const tokenBillingAddressZip = token.card.addressZip || ""
-      const tokenBillingAddressCountry =
-        token.card.addressCountry?.toUpperCase() || ""
-
-      const chargebeeBillingAddress = {
-        first_name: user.firstName || "",
-        last_name: user.lastName || "",
-        line1: tokenBillingAddress1,
-        line2: tokenBillingAddress2,
-        city: tokenBillingAddressCity,
-        state: tokenBillingAddressState,
-        zip: tokenBillingAddressZip,
-        country: tokenBillingAddressCountry || "US",
-      }
-
-      await chargebee.customer
-        .update_billing_info(user.id, {
-          billing_address: chargebeeBillingAddress,
-        })
-        .request()
-
-      const subscriptions = await chargebee.subscription
-        .list({
-          plan_id: { in: [planID] },
-          customer_id: { is: user.id },
-        })
-        .request()
-
-      const subscription = (head(subscriptions.list) as any)?.subscription
-
-      // If chargebee account is paused
-      if (subscription.status === "paused") {
-        // chargeebee account is active
-        await chargebee.subscription
-          .resume(subscription.id, {
-            resume_option: "immediately",
-            charges_handling: "add_to_unbilled_charges",
-          })
-          .request()
-      }
-
-      await chargebee.subscription
-        .update(subscription.id, {
-          plan_id: planID,
-          invoice_immediately: false,
-          payment_method: {
-            tmp_token: token.tokenId,
-            type: tokenType ? tokenType : "apple_pay",
-          },
-        })
-        .request()
-
-      const last4 = token?.card?.last4
-      const brand = token?.card?.brand
-      const billingInfoID = billingInfo?.id
-
-      const prismaBillingAddressData = {
-        city: tokenBillingAddressCity,
-        postal_code: tokenBillingAddressZip,
-        state: tokenBillingAddressState,
-        street1: tokenBillingAddress1,
-        street2: tokenBillingAddress2,
-        country: tokenBillingAddressCountry || "US",
-      }
-
-      await this.prisma.client.updateBillingInfo({
-        where: { id: billingInfoID },
-        data: { ...prismaBillingAddressData, brand, last_digits: last4 },
-      })
-    } catch (e) {
-      this.error.setExtraContext({ planID, token, tokenType })
-      this.error.setExtraContext(customer, "customer")
-      this.error.captureError(e)
-      throw new Error(`Error updating your payment method ${e}`)
     }
   }
 
@@ -905,98 +800,6 @@ export class PaymentService {
     await this.emailService.sendSubscribedEmail(prismaUser)
   }
 
-  async updateChargebeeBillingAddress(
-    userID: string,
-    billingStreet1: string,
-    billingStreet2: string,
-    billingCity: string,
-    billingState: string,
-    billingPostalCode: string
-  ) {
-    await new Promise((resolve, reject) => {
-      chargebee.customer
-        .update_billing_info(userID, {
-          billing_address: {
-            line1: billingStreet1,
-            line2: billingStreet2,
-            city: billingCity,
-            state: billingState,
-            zip: billingPostalCode,
-          },
-        })
-        .request((error, result) => {
-          if (error) {
-            reject(JSON.stringify(error))
-          } else {
-            const chargebeeBillingAddress = get(
-              result,
-              "customer.billing_address"
-            )
-            if (!chargebeeBillingAddress) {
-              reject("Failed to update billing address on chargebee.")
-            }
-            resolve(chargebeeBillingAddress)
-          }
-        })
-    })
-  }
-
-  // This is deprecated, should eventually remove
-  async updateCustomerBillingAddress(
-    userID,
-    customerID,
-    billingStreet1,
-    billingStreet2,
-    billingCity,
-    billingState,
-    billingPostalCode
-  ) {
-    const billingAddressData = {
-      city: billingCity,
-      postal_code: billingPostalCode,
-      state: billingState,
-      street1: billingStreet1,
-      street2: billingStreet2,
-    }
-    const billingInfoId = await this.prisma.client
-      .customer({ id: customerID })
-      .billingInfo()
-      .id()
-    if (billingInfoId) {
-      await this.prisma.client.updateBillingInfo({
-        data: billingAddressData,
-        where: { id: billingInfoId },
-      })
-    } else {
-      // Get user's card information from chargebee
-      const cardInfo = await this.paymentUtils.getChargebeePaymentSource(userID)
-      const {
-        brand,
-        expiry_month,
-        expiry_year,
-        first_name,
-        last4,
-        last_name,
-      } = cardInfo
-
-      // Create new billing info object
-      const billingInfo = await this.prisma.client.createBillingInfo({
-        ...billingAddressData,
-        brand,
-        expiration_month: expiry_month,
-        expiration_year: expiry_year,
-        last_digits: last4,
-        name: `${first_name} ${last_name}`,
-      })
-
-      // Connect new billing info to customer object
-      await this.prisma.client.updateCustomer({
-        data: { billingInfo: { connect: { id: billingInfo.id } } },
-        where: { id: customerID },
-      })
-    }
-  }
-
   getPaymentPlanTier(planID): PaymentPlanTier {
     if (planID.includes("essential")) {
       return "Essential"
@@ -1081,135 +884,6 @@ export class PaymentService {
       })
       .request()
     return true
-  }
-
-  async updatePaymentAndShipping(
-    billingAddress,
-    phoneNumber,
-    shippingAddress,
-    customer,
-    user
-  ) {
-    const billingCity = billingAddress?.city
-    const billingPostalCode = billingAddress?.postalCode
-    const billingState = billingAddress?.state
-    const billingStreet1 = billingAddress?.street1
-    const billingStreet2 = billingAddress?.street2
-
-    const {
-      city: shippingCity,
-      postalCode: shippingPostalCode,
-      state: shippingState,
-      street1: shippingStreet1,
-    } = shippingAddress
-
-    if (
-      !shippingCity ||
-      !shippingPostalCode ||
-      !shippingState ||
-      !shippingStreet1
-    ) {
-      throw new Error("You're missing a required field")
-    }
-
-    const getAbbreviatedState = originalState => {
-      if (!originalState) {
-        throw new Error(`Invalid state: ${originalState}`)
-      }
-      if (originalState.length === 2) {
-        return originalState
-      }
-      if (originalState.length > 2) {
-        const abbr = this.utils.abbreviateState(originalState)
-        if (abbr) {
-          return abbr
-        } else {
-          return originalState?.toUpperCase()
-        }
-      }
-      throw new Error(`Invalid state: ${originalState}`)
-    }
-
-    const abbrBillingState = !!billingState
-      ? getAbbreviatedState(billingState)
-      : ""
-
-    const abbrShippingState = !!shippingState
-      ? getAbbreviatedState(shippingState)
-      : ""
-
-    const {
-      isValid: shippingAddressIsValid,
-    } = await this.shippingService.shippoValidateAddress({
-      name: user.firstName,
-      street1: shippingStreet1,
-      city: shippingCity,
-      state: abbrShippingState,
-      zip: shippingPostalCode,
-    })
-
-    if (!shippingAddressIsValid) {
-      throw new Error("Your shipping address is invalid")
-    }
-
-    if (
-      billingStreet1 &&
-      billingCity &&
-      abbrBillingState &&
-      billingPostalCode
-    ) {
-      // FIXME:
-      // This has been deprecated as of build on 1/22/2021,
-      // older builds allowed user to update both shipping and billing
-      // the billing update can be removed in the future.
-
-      // Update user's billing address on chargebee
-      await this.updateChargebeeBillingAddress(
-        user.id,
-        billingStreet1,
-        billingStreet2,
-        billingCity,
-        abbrBillingState,
-        billingPostalCode
-      )
-      // Update customer's billing address
-      await this.updateCustomerBillingAddress(
-        user.id,
-        customer.id,
-        billingStreet1,
-        billingStreet2,
-        billingCity,
-        abbrBillingState,
-        billingPostalCode
-      )
-    }
-
-    // Update customer's shipping address & phone number. Unlike before, will
-    // accept all valid addresses. Will NOT throw an error if the address is
-    // not in NYC.
-
-    await this.customerService.updateCustomerDetail(
-      user,
-      customer,
-      { ...shippingAddress, state: abbrShippingState },
-      phoneNumber
-    )
-
-    // Adds the customer's shipping options to their location record
-    const customerLocationID = await this.prisma.client
-      .customer({
-        id: customer.id,
-      })
-      .detail()
-      .shippingAddress()
-      .id()
-
-    await this.customerService.addCustomerLocationShippingOptions(
-      shippingState,
-      customerLocationID
-    )
-
-    return null
   }
 
   /*

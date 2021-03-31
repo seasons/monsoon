@@ -13,6 +13,63 @@ export class PaymentUtilsService {
     private readonly segment: SegmentService
   ) {}
 
+  createBillingAddresses(user, token, billing) {
+    let chargebeeBillingAddress
+    let prismaBillingAddress
+
+    if (billing) {
+      // Ideally we pass the billing info from the form
+      // some older Harvest builds didn't have the billing address included
+      chargebeeBillingAddress = {
+        first_name: billing.user.firstName || "",
+        last_name: billing.user.lastName || "",
+        ...billing.address,
+        zip: billing.address.postal_code.toString() || "",
+        country: "US", // assume its US for now, because we need it for taxes.
+      }
+
+      prismaBillingAddress = {
+        postal_code: billing.address.postal_code.toString(),
+        street1: billing.address.line1,
+        street2: billing.address.line2,
+        city: billing.address.city,
+        state: billing.address.state,
+        country: "US", // assume its US for now, because we need it for taxes.
+      }
+    } else {
+      // We use the token data if no billing passed from form
+      const tokenBillingAddressCity = token.card.addressCity || ""
+      const tokenBillingAddress1 = token.card.addressLine1 || ""
+      const tokenBillingAddress2 = token.card?.addressLine2 || ""
+      const tokenBillingAddressState = token.card.addressState || ""
+      const tokenBillingAddressZip = token.card.addressZip || ""
+      const tokenBillingAddressCountry =
+        token.card.addressCountry?.toUpperCase() || ""
+
+      chargebeeBillingAddress = {
+        first_name: user.firstName || "",
+        last_name: user.lastName || "",
+        line1: tokenBillingAddress1,
+        line2: tokenBillingAddress2,
+        city: tokenBillingAddressCity,
+        state: tokenBillingAddressState,
+        zip: tokenBillingAddressZip,
+        country: tokenBillingAddressCountry || "US",
+      }
+
+      prismaBillingAddress = {
+        city: tokenBillingAddressCity,
+        postal_code: tokenBillingAddressZip,
+        state: tokenBillingAddressState,
+        street1: tokenBillingAddress1,
+        street2: tokenBillingAddress2,
+        country: tokenBillingAddressCountry || "US",
+      }
+    }
+
+    return { prismaBillingAddress, chargebeeBillingAddress }
+  }
+
   async updateResumeDate(date, customer) {
     const customerWithMembership = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },

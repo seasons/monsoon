@@ -30,6 +30,11 @@ type Mutation {
     couponID: String
     billing: JSON
   ): JSON
+  updatePaymentMethod(
+    paymentMethodID: String!
+    planID: String!
+    billing: JSON
+  ): Boolean @hasRole(roles: [Customer])
   applePayCheckout(
     planID: String!
     token: StripeToken!
