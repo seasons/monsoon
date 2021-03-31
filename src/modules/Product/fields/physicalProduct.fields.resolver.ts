@@ -1,4 +1,5 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { AdminActionLogWhereInput, PhysicalProduct } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
@@ -11,8 +12,8 @@ import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.s
 export class PhysicalProductFieldsResolver {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly physicalProductService: PhysicalProductService,
-    private readonly physicalProductUtils: PhysicalProductUtilsService
+    private readonly physicalProductUtils: PhysicalProductUtilsService,
+    private readonly utils: UtilsService
   ) {}
 
   @ResolveField()
@@ -37,7 +38,6 @@ export class PhysicalProductFieldsResolver {
   @ResolveField()
   async adminLogs(
     @Parent() physicalProduct,
-    @Info() info,
     @Loader({
       params: {
         query: `adminActionLogs`,
@@ -54,19 +54,16 @@ export class PhysicalProductFieldsResolver {
     })
     prismaLoader: PrismaDataLoader<string>
   ) {
-    return this.physicalProductService.interpretPhysicalProductLogs(
-      await this.prisma.binding.query.adminActionLogs(
-        {
-          where: {
-            AND: [
-              { entityId: physicalProduct.id },
-              { tableName: "PhysicalProduct" },
-            ],
-          },
-        },
-        info
-      )
-    )
+    const keysWeDontCareAbout = [
+      "id",
+      "price",
+      "location",
+      "dateOrdered",
+      "dateReceived",
+      "unitCost",
+    ]
+    const logs = await prismaLoader.load(physicalProduct.id)
+    return this.utils.filterAdminLogs(logs as any, keysWeDontCareAbout)
   }
 
   @ResolveField()

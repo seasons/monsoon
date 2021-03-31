@@ -2,7 +2,7 @@ import { RollbackError } from "@app/errors"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
-import { AdminActionLog } from "@app/prisma/prisma.binding"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
   PhysicalProductUtilsService,
@@ -12,6 +12,7 @@ import {
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
+  AdminActionLog,
   Customer,
   ID_Input,
   InventoryStatus,
@@ -65,7 +66,8 @@ export class ReservationService {
     private readonly emails: EmailService,
     private readonly pushNotifs: PushNotificationService,
     private readonly reservationUtils: ReservationUtilsService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly utils: UtilsService
   ) {}
 
   async reserveItems(
@@ -401,21 +403,7 @@ export class ReservationService {
       "returnedPackage",
     ]
 
-    return logs
-      .map(a => {
-        const filteredLog = { ...a }
-        filteredLog.changedFields = omit(a.changedFields, keysWeDontCareAbout)
-        return filteredLog
-      })
-      .filter(b => {
-        if (
-          b.action === "Update" &&
-          Object.keys(b.changedFields).length === 0
-        ) {
-          return false
-        }
-        return true
-      })
+    return this.utils.filterAdminLogs(logs, keysWeDontCareAbout)
   }
 
   async updateReservation(

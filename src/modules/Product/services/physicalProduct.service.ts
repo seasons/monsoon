@@ -205,32 +205,13 @@ export class PhysicalProductService {
   }
 
   interpretPhysicalProductLogs(logs: AdminActionLog[]) {
-    // for now, just filter these out of the changed logs
-    const keysWeDontCareAbout = [
-      "id",
-      "price",
-      "location",
-      "dateOrdered",
-      "dateReceived",
-    ]
+    /*
+    TODO: 
+    Filter using utils function
+    Populate a "readable" field on there
 
-    // TODO: Abstract this logic so we can share it between reservation
-    // and physical product
-    return logs
-      .map(a => {
-        const filteredLog = { ...a }
-        filteredLog.changedFields = omit(a.changedFields, keysWeDontCareAbout)
-        return filteredLog
-      })
-      .filter(b => {
-        if (
-          b.action === "Update" &&
-          Object.keys(b.changedFields).length === 0
-        ) {
-          return false
-        }
-        return true
-      })
+
+    */
   }
 
   /**

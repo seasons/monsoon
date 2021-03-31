@@ -4,6 +4,7 @@ import * as fs from "fs"
 import { UTMData as BindingUTMData, DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import {
+  AdminActionLog,
   Location,
   PauseRequest,
   Reservation,
@@ -13,7 +14,15 @@ import {
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import graphqlFields from "graphql-fields"
-import { camelCase, get, head, isObject, mapKeys, snakeCase } from "lodash"
+import {
+  camelCase,
+  get,
+  head,
+  isObject,
+  mapKeys,
+  omit,
+  snakeCase,
+} from "lodash"
 import moment from "moment"
 import states from "us-state-converter"
 
@@ -397,6 +406,15 @@ export class UtilsService {
       planID = "pause-3"
     }
     return planID
+  }
+
+  filterAdminLogs(logs: AdminActionLog[], ignoreKeys = []) {
+    const isEmptyUpdate = b =>
+      b.action === "Update" && Object.keys(b.changedFields).length === 0
+
+    return logs
+      .map(a => ({ ...a, changedFields: omit(a.changedFields, ignoreKeys) }))
+      .filter(b => !isEmptyUpdate(b))
   }
 
   private caseify = (obj: any, caseFunc: (str: string) => string): any => {
