@@ -1,6 +1,6 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { AdminActionLog, AdminActionLogWhereInput } from "@app/prisma"
+import { AdminActionLogWhereInput } from "@app/prisma"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
@@ -8,7 +8,6 @@ import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 
 import { ReservationService } from "../services/reservation.service"
-import { ReservationUtilsService } from "../services/reservation.utils.service"
 
 @Resolver("Reservation")
 export class ReservationFieldsResolver {

@@ -1,5 +1,6 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import {
+  AdminActionLog,
   Brand,
   ID_Input,
   InventoryStatus,
@@ -17,7 +18,7 @@ import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
-import { cloneDeep, head, identity, pick } from "lodash"
+import { cloneDeep, head, identity, omit, pick } from "lodash"
 
 import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 import { ProductService } from "./product.service"
@@ -201,6 +202,35 @@ export class PhysicalProductService {
         },
       })
     )
+  }
+
+  interpretPhysicalProductLogs(logs: AdminActionLog[]) {
+    // for now, just filter these out of the changed logs
+    const keysWeDontCareAbout = [
+      "id",
+      "price",
+      "location",
+      "dateOrdered",
+      "dateReceived",
+    ]
+
+    // TODO: Abstract this logic so we can share it between reservation
+    // and physical product
+    return logs
+      .map(a => {
+        const filteredLog = { ...a }
+        filteredLog.changedFields = omit(a.changedFields, keysWeDontCareAbout)
+        return filteredLog
+      })
+      .filter(b => {
+        if (
+          b.action === "Update" &&
+          Object.keys(b.changedFields).length === 0
+        ) {
+          return false
+        }
+        return true
+      })
   }
 
   /**
