@@ -1,16 +1,25 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import { PhysicalProduct } from "@app/prisma"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import {
+  AdminActionLog,
+  AdminActionLogWhereInput,
+  PhysicalProduct,
+  WarehouseLocation,
+} from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaDataLoader } from "@prisma/prisma.loader"
 
+import { PhysicalProductService } from "../services/physicalProduct.service"
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
 
 @Resolver("PhysicalProduct")
 export class PhysicalProductFieldsResolver {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly physicalProductUtils: PhysicalProductUtilsService
+    private readonly physicalProductService: PhysicalProductService,
+    private readonly physicalProductUtils: PhysicalProductUtilsService,
+    private readonly utils: UtilsService
   ) {}
 
   @ResolveField()
@@ -29,6 +38,49 @@ export class PhysicalProductFieldsResolver {
     )
     return this.physicalProductUtils.sequenceNumberToBarcode(
       loadedPhysicalProduct.sequenceNumber
+    )
+  }
+
+  @ResolveField()
+  async adminLogs(
+    @Parent() physicalProduct,
+    @Loader({
+      params: {
+        query: `adminActionLogs`,
+        formatWhere: keys => ({
+          AND: [
+            { entityId_in: keys },
+            { tableName: "PhysicalProduct" },
+          ] as AdminActionLogWhereInput,
+        }),
+        keyToDataRelationship: "OneToMany",
+        getKeys: a => [a.entityId],
+      },
+      includeInfo: true,
+    })
+    logsLoader: PrismaDataLoader<AdminActionLog[]>,
+    @Loader({
+      params: {
+        query: `warehouseLocations`,
+        formatWhere: keys => ({ id_in: keys }),
+        keyToDataRelationship: "OneToOne",
+        info: `{id barcode}`,
+      },
+    })
+    locationsLoader: PrismaDataLoader<WarehouseLocation[]>
+  ) {
+    const logs = await logsLoader.load(physicalProduct.id)
+    const allReferencedWarehouseLocations = logs
+      .filter(a => !!a.changedFields)
+      .map(a => a.changedFields)
+      .filter(b => b["warehouseLocation"] != null)
+      .map(c => c["warehouseLocation"])
+    const warehouseLocations = await locationsLoader.loadMany(
+      allReferencedWarehouseLocations
+    )
+    return this.physicalProductService.interpretPhysicalProductLogs(
+      logs,
+      warehouseLocations as any
     )
   }
 

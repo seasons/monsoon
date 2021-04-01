@@ -190,3 +190,16 @@ type Reservation {
   adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])
   shippingOption: ShippingOption
 }
+
+type AdminActionLog {
+  actionId: Int!
+  entityId: String!
+  tableName: String!
+  activeAdminUser: User!
+  triggeredAt: DateTime!
+  action: AdminAction!
+  rowData: Json!
+  changedFields: Json
+  statementOnly: Boolean!
+  interpretation: String
+}

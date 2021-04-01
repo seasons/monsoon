@@ -1,5 +1,7 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
+  AdminActionLog,
   Brand,
   ID_Input,
   InventoryStatus,
@@ -17,7 +19,7 @@ import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
-import { cloneDeep, head, identity, pick } from "lodash"
+import { cloneDeep, head, identity, omit, pick } from "lodash"
 
 import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 import { ProductService } from "./product.service"
@@ -47,7 +49,8 @@ export class PhysicalProductService {
     private readonly pushNotification: PushNotificationService,
     private readonly productVariantService: ProductVariantService,
     private readonly productService: ProductService,
-    private readonly physicalProductUtils: PhysicalProductUtilsService
+    private readonly physicalProductUtils: PhysicalProductUtilsService,
+    private readonly utils: UtilsService
   ) {}
 
   async updatePhysicalProduct({
@@ -201,6 +204,57 @@ export class PhysicalProductService {
         },
       })
     )
+  }
+
+  interpretPhysicalProductLogs(
+    logs: AdminActionLog[],
+    warehouseLocations: Pick<WarehouseLocation, "id" | "barcode">[]
+  ) {
+    const keysWeDontCareAbout = [
+      "id",
+      "price",
+      "location",
+      "dateOrdered",
+      "dateReceived",
+      "unitCost",
+    ]
+    const locationsMap = warehouseLocations.reduce((acc, curval) => {
+      acc[curval["id"]] = curval["barcode"]
+      return acc
+    }, {})
+
+    const filteredLogs = this.utils.filterAdminLogs(logs, keysWeDontCareAbout)
+    const interpretedLogs = filteredLogs.map(a => {
+      const changedFields = a.changedFields
+      const keys = Object.keys(changedFields)
+      let interpretation
+
+      if (keys.includes("warehouseLocation")) {
+        if (changedFields["warehouseLocation"] === null) {
+          interpretation = "Picked"
+        } else {
+          interpretation = `Stowed at ${
+            locationsMap[changedFields["warehouseLocation"]]
+          }`
+        }
+      } else if (keys.includes("barcoded")) {
+        if (changedFields["barcoded"] === "t") {
+          interpretation = "Applied barcode"
+        }
+      } else if (
+        keys.includes("productStatus") &&
+        keys.includes("inventoryStatus")
+      ) {
+        if (
+          changedFields["productStatus"] === "Dirty" &&
+          changedFields["inventoryStatus"] === "NonReservable"
+        ) {
+          interpretation = "Processed return from Reservation"
+        }
+      }
+      return { ...a, interpretation }
+    })
+    return interpretedLogs
   }
 
   /**
