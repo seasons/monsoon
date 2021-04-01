@@ -79,7 +79,7 @@ describe("Auth Service", () => {
       const firstName = "Test"
       const lastName = "User"
       const email = "test@seasons.nyc"
-      const phoneOS = "iOS"
+      const discoveryReference = "instagram"
       const phoneNumber = "6463502715"
       const zipCode = "10013"
 
@@ -90,7 +90,7 @@ describe("Auth Service", () => {
         lastName,
         details: {
           id: "1", // Done to make it easy to retrieve later on in test
-          phoneOS,
+          discoveryReference,
           phoneNumber,
           shippingAddress: {
             create: {
@@ -114,7 +114,7 @@ describe("Auth Service", () => {
 
       // Customer Details Fields
       const customerDetails = await prisma.client.customerDetail({ id: "1" })
-      expect(customerDetails.phoneOS).toEqual(phoneOS)
+      expect(customerDetails.discoveryReference).toEqual(discoveryReference)
       expect(customerDetails.phoneNumber).toEqual(phoneNumber)
 
       // Shipping Address Fields
