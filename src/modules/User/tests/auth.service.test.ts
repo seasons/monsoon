@@ -64,7 +64,7 @@ describe("Auth Service", () => {
       cleanupFunc()
     })
 
-    it.only("Successfully creates and sets new user", async () => {
+    it("Successfully creates and sets new user", async () => {
       const auth0Id = "auth0|5dbc6c7b5148b30e148c400e"
 
       jest.spyOn(auth, "createAuth0User").mockResolvedValue(auth0Id)
