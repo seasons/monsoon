@@ -4041,6 +4041,8 @@ export type CustomerDetailOrderByInput =
   | "insureShipment_DESC"
   | "instagramHandle_ASC"
   | "instagramHandle_DESC"
+  | "discoveryReference_ASC"
+  | "discoveryReference_DESC"
   | "impactId_ASC"
   | "impactId_DESC"
   | "createdAt_ASC"
@@ -8119,6 +8121,20 @@ export interface CustomerDetailWhereInput {
   instagramHandle_not_starts_with?: Maybe<String>;
   instagramHandle_ends_with?: Maybe<String>;
   instagramHandle_not_ends_with?: Maybe<String>;
+  discoveryReference?: Maybe<String>;
+  discoveryReference_not?: Maybe<String>;
+  discoveryReference_in?: Maybe<String[] | String>;
+  discoveryReference_not_in?: Maybe<String[] | String>;
+  discoveryReference_lt?: Maybe<String>;
+  discoveryReference_lte?: Maybe<String>;
+  discoveryReference_gt?: Maybe<String>;
+  discoveryReference_gte?: Maybe<String>;
+  discoveryReference_contains?: Maybe<String>;
+  discoveryReference_not_contains?: Maybe<String>;
+  discoveryReference_starts_with?: Maybe<String>;
+  discoveryReference_not_starts_with?: Maybe<String>;
+  discoveryReference_ends_with?: Maybe<String>;
+  discoveryReference_not_ends_with?: Maybe<String>;
   impactId?: Maybe<String>;
   impactId_not?: Maybe<String>;
   impactId_in?: Maybe<String[] | String>;
@@ -15145,6 +15161,7 @@ export interface CustomerDetailCreateInput {
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
   instagramHandle?: Maybe<String>;
+  discoveryReference?: Maybe<String>;
   impactId?: Maybe<String>;
 }
 
@@ -15761,6 +15778,7 @@ export interface CustomerDetailUpdateDataInput {
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
   instagramHandle?: Maybe<String>;
+  discoveryReference?: Maybe<String>;
   impactId?: Maybe<String>;
 }
 
@@ -17623,6 +17641,7 @@ export interface CustomerDetailUpdateInput {
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
   instagramHandle?: Maybe<String>;
+  discoveryReference?: Maybe<String>;
   impactId?: Maybe<String>;
 }
 
@@ -17649,6 +17668,7 @@ export interface CustomerDetailUpdateManyMutationInput {
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
   instagramHandle?: Maybe<String>;
+  discoveryReference?: Maybe<String>;
   impactId?: Maybe<String>;
 }
 
@@ -24966,6 +24986,7 @@ export interface CustomerDetail {
   phoneOS?: String;
   insureShipment: Boolean;
   instagramHandle?: String;
+  discoveryReference?: String;
   impactId?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -24999,6 +25020,7 @@ export interface CustomerDetailPromise
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
   instagramHandle: () => Promise<String>;
+  discoveryReference: () => Promise<String>;
   impactId: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -25032,6 +25054,7 @@ export interface CustomerDetailSubscription
   phoneOS: () => Promise<AsyncIterator<String>>;
   insureShipment: () => Promise<AsyncIterator<Boolean>>;
   instagramHandle: () => Promise<AsyncIterator<String>>;
+  discoveryReference: () => Promise<AsyncIterator<String>>;
   impactId: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -25065,6 +25088,7 @@ export interface CustomerDetailNullablePromise
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
   instagramHandle: () => Promise<String>;
+  discoveryReference: () => Promise<String>;
   impactId: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -31346,6 +31370,7 @@ export interface CustomerDetailPreviousValues {
   phoneOS?: String;
   insureShipment: Boolean;
   instagramHandle?: String;
+  discoveryReference?: String;
   impactId?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -31377,6 +31402,7 @@ export interface CustomerDetailPreviousValuesPromise
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
   instagramHandle: () => Promise<String>;
+  discoveryReference: () => Promise<String>;
   impactId: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -31408,6 +31434,7 @@ export interface CustomerDetailPreviousValuesSubscription
   phoneOS: () => Promise<AsyncIterator<String>>;
   insureShipment: () => Promise<AsyncIterator<Boolean>>;
   instagramHandle: () => Promise<AsyncIterator<String>>;
+  discoveryReference: () => Promise<AsyncIterator<String>>;
   impactId: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;

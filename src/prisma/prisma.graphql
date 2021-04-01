@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Mar 30 2021 02:10:51 GMT-0500 (Colombia Standard Time)
+# timestamp: Wed Mar 31 2021 20:36:57 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -7016,6 +7016,7 @@ type CustomerDetail implements Node {
   phoneOS: String
   insureShipment: Boolean!
   instagramHandle: String
+  discoveryReference: String
   impactId: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -7057,6 +7058,7 @@ input CustomerDetailCreateInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  discoveryReference: String
   impactId: String
   weight: CustomerDetailCreateweightInput
   topSizes: CustomerDetailCreatetopSizesInput
@@ -7141,6 +7143,8 @@ enum CustomerDetailOrderByInput {
   insureShipment_DESC
   instagramHandle_ASC
   instagramHandle_DESC
+  discoveryReference_ASC
+  discoveryReference_DESC
   impactId_ASC
   impactId_DESC
   createdAt_ASC
@@ -7173,6 +7177,7 @@ type CustomerDetailPreviousValues {
   phoneOS: String
   insureShipment: Boolean!
   instagramHandle: String
+  discoveryReference: String
   impactId: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -7242,6 +7247,7 @@ input CustomerDetailUpdateDataInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  discoveryReference: String
   impactId: String
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
@@ -7270,6 +7276,7 @@ input CustomerDetailUpdateInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  discoveryReference: String
   impactId: String
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
@@ -7298,6 +7305,7 @@ input CustomerDetailUpdateManyMutationInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  discoveryReference: String
   impactId: String
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
@@ -8484,6 +8492,72 @@ input CustomerDetailWhereInput {
   All values not ending with the given string.
   """
   instagramHandle_not_ends_with: String
+  discoveryReference: String
+
+  """
+  All values that are not equal to given value.
+  """
+  discoveryReference_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  discoveryReference_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  discoveryReference_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  discoveryReference_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  discoveryReference_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  discoveryReference_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  discoveryReference_gte: String
+
+  """
+  All values containing the given string.
+  """
+  discoveryReference_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  discoveryReference_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  discoveryReference_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  discoveryReference_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  discoveryReference_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  discoveryReference_not_ends_with: String
   impactId: String
 
   """

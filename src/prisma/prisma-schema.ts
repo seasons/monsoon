@@ -3158,6 +3158,7 @@ type CustomerDetail {
   phoneOS: String
   insureShipment: Boolean!
   instagramHandle: String
+  discoveryReference: String
   impactId: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3195,6 +3196,7 @@ input CustomerDetailCreateInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  discoveryReference: String
   impactId: String
 }
 
@@ -3263,6 +3265,8 @@ enum CustomerDetailOrderByInput {
   insureShipment_DESC
   instagramHandle_ASC
   instagramHandle_DESC
+  discoveryReference_ASC
+  discoveryReference_DESC
   impactId_ASC
   impactId_DESC
   createdAt_ASC
@@ -3295,6 +3299,7 @@ type CustomerDetailPreviousValues {
   phoneOS: String
   insureShipment: Boolean!
   instagramHandle: String
+  discoveryReference: String
   impactId: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3343,6 +3348,7 @@ input CustomerDetailUpdateDataInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  discoveryReference: String
   impactId: String
 }
 
@@ -3371,6 +3377,7 @@ input CustomerDetailUpdateInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  discoveryReference: String
   impactId: String
 }
 
@@ -3397,6 +3404,7 @@ input CustomerDetailUpdateManyMutationInput {
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
+  discoveryReference: String
   impactId: String
 }
 
@@ -3675,6 +3683,20 @@ input CustomerDetailWhereInput {
   instagramHandle_not_starts_with: String
   instagramHandle_ends_with: String
   instagramHandle_not_ends_with: String
+  discoveryReference: String
+  discoveryReference_not: String
+  discoveryReference_in: [String!]
+  discoveryReference_not_in: [String!]
+  discoveryReference_lt: String
+  discoveryReference_lte: String
+  discoveryReference_gt: String
+  discoveryReference_gte: String
+  discoveryReference_contains: String
+  discoveryReference_not_contains: String
+  discoveryReference_starts_with: String
+  discoveryReference_not_starts_with: String
+  discoveryReference_ends_with: String
+  discoveryReference_not_ends_with: String
   impactId: String
   impactId_not: String
   impactId_in: [String!]
