@@ -70,16 +70,14 @@ export class PhysicalProductFieldsResolver {
     locationsLoader: PrismaDataLoader<WarehouseLocation[]>
   ) {
     const logs = await logsLoader.load(physicalProduct.id)
-    console.log(logs)
     const allReferencedWarehouseLocations = logs
+      .filter(a => !!a.changedFields)
       .map(a => a.changedFields)
       .filter(b => b["warehouseLocation"] != null)
       .map(c => c["warehouseLocation"])
-    console.log(allReferencedWarehouseLocations)
     const warehouseLocations = await locationsLoader.loadMany(
       allReferencedWarehouseLocations
     )
-    console.log(warehouseLocations)
     return this.physicalProductService.interpretPhysicalProductLogs(
       logs,
       warehouseLocations as any

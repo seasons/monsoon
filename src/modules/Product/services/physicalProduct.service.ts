@@ -237,6 +237,20 @@ export class PhysicalProductService {
             locationsMap[changedFields["warehouseLocation"]]
           }`
         }
+      } else if (keys.includes("barcoded")) {
+        if (changedFields["barcoded"] === "t") {
+          interpretation = "Applied barcode"
+        }
+      } else if (
+        keys.includes("productStatus") &&
+        keys.includes("inventoryStatus")
+      ) {
+        if (
+          changedFields["productStatus"] === "Dirty" &&
+          changedFields["inventoryStatus"] === "NonReservable"
+        ) {
+          interpretation = "Processed return from Reservation"
+        }
       }
       return { ...a, interpretation }
     })
