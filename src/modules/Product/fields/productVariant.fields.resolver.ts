@@ -1,5 +1,6 @@
 import { Customer, User } from "@app/decorators"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
@@ -30,7 +31,8 @@ export class ProductVariantFieldsResolver {
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
-    private readonly shopify: ShopifyService
+    private readonly shopify: ShopifyService,
+    private readonly error: ErrorService
   ) {
     this.sizeConversion = this.utils.parseJSONFile(
       "src/modules/Product/sizeConversion"
@@ -451,6 +453,7 @@ export class ProductVariantFieldsResolver {
         buyNewPrice,
       }
     } catch (e) {
+      this.error.captureError(e)
       shopifyCacheData = {
         buyNewAvailableForSale: false,
         buyNewPrice: null,
