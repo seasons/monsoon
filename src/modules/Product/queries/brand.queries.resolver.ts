@@ -1,5 +1,6 @@
 import { Args, Info, Parent, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
+import { addFragmentToInfo } from "graphql-binding"
 
 @Resolver()
 export class BrandQueriesResolver {
@@ -7,7 +8,18 @@ export class BrandQueriesResolver {
 
   @Query()
   async brand(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.brand(args, info)
+    if (typeof args?.published === "boolean") {
+      const brand = await this.prisma.binding.query.brand(
+        args,
+        addFragmentToInfo(
+          info,
+          `fragment EnsurePublished on Brand { published }`
+        )
+      )
+      return args.published === brand.published ? brand : null
+    } else {
+      return await this.prisma.binding.query.brand(args, info)
+    }
   }
 
   @Query()

@@ -2,7 +2,7 @@
 # import PhysicalProduct, Query, Mutation from "./physicalProduct.graphql"
 
 type Query {
-  brand(where: BrandWhereUniqueInput!): Brand
+  brand(where: BrandWhereUniqueInput!, published: Boolean): Brand
   brands(
     where: BrandWhereInput
     orderBy: BrandOrderByInput
