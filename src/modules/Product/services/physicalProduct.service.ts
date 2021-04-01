@@ -1,4 +1,5 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
   AdminActionLog,
   Brand,
@@ -48,7 +49,8 @@ export class PhysicalProductService {
     private readonly pushNotification: PushNotificationService,
     private readonly productVariantService: ProductVariantService,
     private readonly productService: ProductService,
-    private readonly physicalProductUtils: PhysicalProductUtilsService
+    private readonly physicalProductUtils: PhysicalProductUtilsService,
+    private readonly utils: UtilsService
   ) {}
 
   async updatePhysicalProduct({
@@ -204,14 +206,41 @@ export class PhysicalProductService {
     )
   }
 
-  interpretPhysicalProductLogs(logs: AdminActionLog[]) {
-    /*
-    TODO: 
-    Filter using utils function
-    Populate a "readable" field on there
+  interpretPhysicalProductLogs(
+    logs: AdminActionLog[],
+    warehouseLocations: Pick<WarehouseLocation, "id" | "barcode">[]
+  ) {
+    const keysWeDontCareAbout = [
+      "id",
+      "price",
+      "location",
+      "dateOrdered",
+      "dateReceived",
+      "unitCost",
+    ]
+    const locationsMap = warehouseLocations.reduce((acc, curval) => {
+      acc[curval["id"]] = curval["barcode"]
+      return acc
+    }, {})
 
+    const filteredLogs = this.utils.filterAdminLogs(logs, keysWeDontCareAbout)
+    const interpretedLogs = filteredLogs.map(a => {
+      const changedFields = a.changedFields
+      const keys = Object.keys(changedFields)
+      let interpretation
 
-    */
+      if (keys.includes("warehouseLocation")) {
+        if (changedFields["warehouseLocation"] === null) {
+          interpretation = "Picked"
+        } else {
+          interpretation = `Stowed at ${
+            locationsMap[changedFields["warehouseLocation"]]
+          }`
+        }
+      }
+      return { ...a, interpretation }
+    })
+    return interpretedLogs
   }
 
   /**

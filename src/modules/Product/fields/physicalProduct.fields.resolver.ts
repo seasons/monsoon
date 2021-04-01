@@ -1,6 +1,11 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { AdminActionLogWhereInput, PhysicalProduct } from "@app/prisma"
+import {
+  AdminActionLog,
+  AdminActionLogWhereInput,
+  PhysicalProduct,
+  WarehouseLocation,
+} from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaDataLoader } from "@prisma/prisma.loader"
@@ -12,6 +17,7 @@ import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.s
 export class PhysicalProductFieldsResolver {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly physicalProductService: PhysicalProductService,
     private readonly physicalProductUtils: PhysicalProductUtilsService,
     private readonly utils: UtilsService
   ) {}
@@ -52,18 +58,32 @@ export class PhysicalProductFieldsResolver {
       },
       includeInfo: true,
     })
-    prismaLoader: PrismaDataLoader<string>
+    logsLoader: PrismaDataLoader<AdminActionLog[]>,
+    @Loader({
+      params: {
+        query: `warehouseLocations`,
+        formatWhere: keys => ({ id_in: keys }),
+        keyToDataRelationship: "OneToOne",
+        info: `{id barcode}`,
+      },
+    })
+    locationsLoader: PrismaDataLoader<WarehouseLocation[]>
   ) {
-    const keysWeDontCareAbout = [
-      "id",
-      "price",
-      "location",
-      "dateOrdered",
-      "dateReceived",
-      "unitCost",
-    ]
-    const logs = await prismaLoader.load(physicalProduct.id)
-    return this.utils.filterAdminLogs(logs as any, keysWeDontCareAbout)
+    const logs = await logsLoader.load(physicalProduct.id)
+    console.log(logs)
+    const allReferencedWarehouseLocations = logs
+      .map(a => a.changedFields)
+      .filter(b => b["warehouseLocation"] != null)
+      .map(c => c["warehouseLocation"])
+    console.log(allReferencedWarehouseLocations)
+    const warehouseLocations = await locationsLoader.loadMany(
+      allReferencedWarehouseLocations
+    )
+    console.log(warehouseLocations)
+    return this.physicalProductService.interpretPhysicalProductLogs(
+      logs,
+      warehouseLocations as any
+    )
   }
 
   @ResolveField()
