@@ -21,8 +21,8 @@ then
   echo "Starting up new docker container"
   docker-compose up -d;
   sleep 20;
-  yarn prisma deploy -e .env.testing
+  yarn prisma1 deploy -e .env.testing
   sh alter_db.sh -p $POSTGRES_PASSWORD -t $POSTGRES_TABLE -d $POSTGRES_DATABASE &>/dev/null
 fi
-yarn prisma reset -f -e .env.testing;
+yarn prisma1 reset -f -e .env.testing;
 yarn jest --verbose -i "$@";
