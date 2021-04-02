@@ -20,6 +20,7 @@ export interface Exists {
   adminActionLog: (where?: AdminActionLogWhereInput) => Promise<boolean>;
   bagItem: (where?: BagItemWhereInput) => Promise<boolean>;
   billingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>;
+  blogPost: (where?: BlogPostWhereInput) => Promise<boolean>;
   bottomSize: (where?: BottomSizeWhereInput) => Promise<boolean>;
   brand: (where?: BrandWhereInput) => Promise<boolean>;
   category: (where?: CategoryWhereInput) => Promise<boolean>;
@@ -237,6 +238,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => BillingInfoConnectionPromise;
+  blogPost: (where: BlogPostWhereUniqueInput) => BlogPostNullablePromise;
+  blogPosts: (args?: {
+    where?: BlogPostWhereInput;
+    orderBy?: BlogPostOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<BlogPost>;
+  blogPostsConnection: (args?: {
+    where?: BlogPostWhereInput;
+    orderBy?: BlogPostOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => BlogPostConnectionPromise;
   bottomSize: (where: BottomSizeWhereUniqueInput) => BottomSizeNullablePromise;
   bottomSizes: (args?: {
     where?: BottomSizeWhereInput;
@@ -1659,6 +1679,22 @@ export interface Prisma {
   deleteManyBillingInfoes: (
     where?: BillingInfoWhereInput
   ) => BatchPayloadPromise;
+  createBlogPost: (data: BlogPostCreateInput) => BlogPostPromise;
+  updateBlogPost: (args: {
+    data: BlogPostUpdateInput;
+    where: BlogPostWhereUniqueInput;
+  }) => BlogPostPromise;
+  updateManyBlogPosts: (args: {
+    data: BlogPostUpdateManyMutationInput;
+    where?: BlogPostWhereInput;
+  }) => BatchPayloadPromise;
+  upsertBlogPost: (args: {
+    where: BlogPostWhereUniqueInput;
+    create: BlogPostCreateInput;
+    update: BlogPostUpdateInput;
+  }) => BlogPostPromise;
+  deleteBlogPost: (where: BlogPostWhereUniqueInput) => BlogPostPromise;
+  deleteManyBlogPosts: (where?: BlogPostWhereInput) => BatchPayloadPromise;
   createBottomSize: (data: BottomSizeCreateInput) => BottomSizePromise;
   updateBottomSize: (args: {
     data: BottomSizeUpdateInput;
@@ -2972,6 +3008,9 @@ export interface Subscription {
   billingInfo: (
     where?: BillingInfoSubscriptionWhereInput
   ) => BillingInfoSubscriptionPayloadSubscription;
+  blogPost: (
+    where?: BlogPostSubscriptionWhereInput
+  ) => BlogPostSubscriptionPayloadSubscription;
   bottomSize: (
     where?: BottomSizeSubscriptionWhereInput
   ) => BottomSizeSubscriptionPayloadSubscription;
@@ -3897,6 +3936,42 @@ export type BillingInfoOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type BlogPostOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "webflowId_ASC"
+  | "webflowId_DESC"
+  | "webflowCreatedAt_ASC"
+  | "webflowCreatedAt_DESC"
+  | "webflowUpdatedAt_ASC"
+  | "webflowUpdatedAt_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "body_ASC"
+  | "body_DESC"
+  | "summary_ASC"
+  | "summary_DESC"
+  | "thumbnailURL_ASC"
+  | "thumbnailURL_DESC"
+  | "imageURL_ASC"
+  | "imageURL_DESC"
+  | "imageAlt_ASC"
+  | "imageAlt_DESC"
+  | "url_ASC"
+  | "url_DESC"
+  | "author_ASC"
+  | "author_DESC"
+  | "category_ASC"
+  | "category_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "publishedOn_ASC"
+  | "publishedOn_DESC";
 
 export type BottomSizeOrderByInput =
   | "id_ASC"
@@ -9056,6 +9131,224 @@ export interface CustomerNotificationBarReceiptWhereInput {
 export type BillingInfoWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
+
+export type BlogPostWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface BlogPostWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  webflowId?: Maybe<String>;
+  webflowId_not?: Maybe<String>;
+  webflowId_in?: Maybe<String[] | String>;
+  webflowId_not_in?: Maybe<String[] | String>;
+  webflowId_lt?: Maybe<String>;
+  webflowId_lte?: Maybe<String>;
+  webflowId_gt?: Maybe<String>;
+  webflowId_gte?: Maybe<String>;
+  webflowId_contains?: Maybe<String>;
+  webflowId_not_contains?: Maybe<String>;
+  webflowId_starts_with?: Maybe<String>;
+  webflowId_not_starts_with?: Maybe<String>;
+  webflowId_ends_with?: Maybe<String>;
+  webflowId_not_ends_with?: Maybe<String>;
+  webflowCreatedAt?: Maybe<DateTimeInput>;
+  webflowCreatedAt_not?: Maybe<DateTimeInput>;
+  webflowCreatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  webflowCreatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  webflowCreatedAt_lt?: Maybe<DateTimeInput>;
+  webflowCreatedAt_lte?: Maybe<DateTimeInput>;
+  webflowCreatedAt_gt?: Maybe<DateTimeInput>;
+  webflowCreatedAt_gte?: Maybe<DateTimeInput>;
+  webflowUpdatedAt?: Maybe<DateTimeInput>;
+  webflowUpdatedAt_not?: Maybe<DateTimeInput>;
+  webflowUpdatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  webflowUpdatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  webflowUpdatedAt_lt?: Maybe<DateTimeInput>;
+  webflowUpdatedAt_lte?: Maybe<DateTimeInput>;
+  webflowUpdatedAt_gt?: Maybe<DateTimeInput>;
+  webflowUpdatedAt_gte?: Maybe<DateTimeInput>;
+  slug?: Maybe<String>;
+  slug_not?: Maybe<String>;
+  slug_in?: Maybe<String[] | String>;
+  slug_not_in?: Maybe<String[] | String>;
+  slug_lt?: Maybe<String>;
+  slug_lte?: Maybe<String>;
+  slug_gt?: Maybe<String>;
+  slug_gte?: Maybe<String>;
+  slug_contains?: Maybe<String>;
+  slug_not_contains?: Maybe<String>;
+  slug_starts_with?: Maybe<String>;
+  slug_not_starts_with?: Maybe<String>;
+  slug_ends_with?: Maybe<String>;
+  slug_not_ends_with?: Maybe<String>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  body?: Maybe<String>;
+  body_not?: Maybe<String>;
+  body_in?: Maybe<String[] | String>;
+  body_not_in?: Maybe<String[] | String>;
+  body_lt?: Maybe<String>;
+  body_lte?: Maybe<String>;
+  body_gt?: Maybe<String>;
+  body_gte?: Maybe<String>;
+  body_contains?: Maybe<String>;
+  body_not_contains?: Maybe<String>;
+  body_starts_with?: Maybe<String>;
+  body_not_starts_with?: Maybe<String>;
+  body_ends_with?: Maybe<String>;
+  body_not_ends_with?: Maybe<String>;
+  summary?: Maybe<String>;
+  summary_not?: Maybe<String>;
+  summary_in?: Maybe<String[] | String>;
+  summary_not_in?: Maybe<String[] | String>;
+  summary_lt?: Maybe<String>;
+  summary_lte?: Maybe<String>;
+  summary_gt?: Maybe<String>;
+  summary_gte?: Maybe<String>;
+  summary_contains?: Maybe<String>;
+  summary_not_contains?: Maybe<String>;
+  summary_starts_with?: Maybe<String>;
+  summary_not_starts_with?: Maybe<String>;
+  summary_ends_with?: Maybe<String>;
+  summary_not_ends_with?: Maybe<String>;
+  thumbnailURL?: Maybe<String>;
+  thumbnailURL_not?: Maybe<String>;
+  thumbnailURL_in?: Maybe<String[] | String>;
+  thumbnailURL_not_in?: Maybe<String[] | String>;
+  thumbnailURL_lt?: Maybe<String>;
+  thumbnailURL_lte?: Maybe<String>;
+  thumbnailURL_gt?: Maybe<String>;
+  thumbnailURL_gte?: Maybe<String>;
+  thumbnailURL_contains?: Maybe<String>;
+  thumbnailURL_not_contains?: Maybe<String>;
+  thumbnailURL_starts_with?: Maybe<String>;
+  thumbnailURL_not_starts_with?: Maybe<String>;
+  thumbnailURL_ends_with?: Maybe<String>;
+  thumbnailURL_not_ends_with?: Maybe<String>;
+  imageURL?: Maybe<String>;
+  imageURL_not?: Maybe<String>;
+  imageURL_in?: Maybe<String[] | String>;
+  imageURL_not_in?: Maybe<String[] | String>;
+  imageURL_lt?: Maybe<String>;
+  imageURL_lte?: Maybe<String>;
+  imageURL_gt?: Maybe<String>;
+  imageURL_gte?: Maybe<String>;
+  imageURL_contains?: Maybe<String>;
+  imageURL_not_contains?: Maybe<String>;
+  imageURL_starts_with?: Maybe<String>;
+  imageURL_not_starts_with?: Maybe<String>;
+  imageURL_ends_with?: Maybe<String>;
+  imageURL_not_ends_with?: Maybe<String>;
+  imageAlt?: Maybe<String>;
+  imageAlt_not?: Maybe<String>;
+  imageAlt_in?: Maybe<String[] | String>;
+  imageAlt_not_in?: Maybe<String[] | String>;
+  imageAlt_lt?: Maybe<String>;
+  imageAlt_lte?: Maybe<String>;
+  imageAlt_gt?: Maybe<String>;
+  imageAlt_gte?: Maybe<String>;
+  imageAlt_contains?: Maybe<String>;
+  imageAlt_not_contains?: Maybe<String>;
+  imageAlt_starts_with?: Maybe<String>;
+  imageAlt_not_starts_with?: Maybe<String>;
+  imageAlt_ends_with?: Maybe<String>;
+  imageAlt_not_ends_with?: Maybe<String>;
+  url?: Maybe<String>;
+  url_not?: Maybe<String>;
+  url_in?: Maybe<String[] | String>;
+  url_not_in?: Maybe<String[] | String>;
+  url_lt?: Maybe<String>;
+  url_lte?: Maybe<String>;
+  url_gt?: Maybe<String>;
+  url_gte?: Maybe<String>;
+  url_contains?: Maybe<String>;
+  url_not_contains?: Maybe<String>;
+  url_starts_with?: Maybe<String>;
+  url_not_starts_with?: Maybe<String>;
+  url_ends_with?: Maybe<String>;
+  url_not_ends_with?: Maybe<String>;
+  author?: Maybe<String>;
+  author_not?: Maybe<String>;
+  author_in?: Maybe<String[] | String>;
+  author_not_in?: Maybe<String[] | String>;
+  author_lt?: Maybe<String>;
+  author_lte?: Maybe<String>;
+  author_gt?: Maybe<String>;
+  author_gte?: Maybe<String>;
+  author_contains?: Maybe<String>;
+  author_not_contains?: Maybe<String>;
+  author_starts_with?: Maybe<String>;
+  author_not_starts_with?: Maybe<String>;
+  author_ends_with?: Maybe<String>;
+  author_not_ends_with?: Maybe<String>;
+  category?: Maybe<String>;
+  category_not?: Maybe<String>;
+  category_in?: Maybe<String[] | String>;
+  category_not_in?: Maybe<String[] | String>;
+  category_lt?: Maybe<String>;
+  category_lte?: Maybe<String>;
+  category_gt?: Maybe<String>;
+  category_gte?: Maybe<String>;
+  category_contains?: Maybe<String>;
+  category_not_contains?: Maybe<String>;
+  category_starts_with?: Maybe<String>;
+  category_not_starts_with?: Maybe<String>;
+  category_ends_with?: Maybe<String>;
+  category_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  publishedOn?: Maybe<DateTimeInput>;
+  publishedOn_not?: Maybe<DateTimeInput>;
+  publishedOn_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  publishedOn_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  publishedOn_lt?: Maybe<DateTimeInput>;
+  publishedOn_lte?: Maybe<DateTimeInput>;
+  publishedOn_gt?: Maybe<DateTimeInput>;
+  publishedOn_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<BlogPostWhereInput[] | BlogPostWhereInput>;
+  OR?: Maybe<BlogPostWhereInput[] | BlogPostWhereInput>;
+  NOT?: Maybe<BlogPostWhereInput[] | BlogPostWhereInput>;
+}
 
 export type BottomSizeWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -17332,6 +17625,69 @@ export interface BillingInfoUpdateManyMutationInput {
   postal_code?: Maybe<String>;
 }
 
+export interface BlogPostCreateInput {
+  id?: Maybe<ID_Input>;
+  webflowId: String;
+  webflowCreatedAt: DateTimeInput;
+  webflowUpdatedAt: DateTimeInput;
+  slug: String;
+  name?: Maybe<String>;
+  body?: Maybe<String>;
+  summary?: Maybe<String>;
+  thumbnailURL?: Maybe<String>;
+  imageURL?: Maybe<String>;
+  imageAlt?: Maybe<String>;
+  url?: Maybe<String>;
+  tags?: Maybe<BlogPostCreatetagsInput>;
+  author?: Maybe<String>;
+  category?: Maybe<String>;
+  publishedOn: DateTimeInput;
+}
+
+export interface BlogPostCreatetagsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface BlogPostUpdateInput {
+  webflowId?: Maybe<String>;
+  webflowCreatedAt?: Maybe<DateTimeInput>;
+  webflowUpdatedAt?: Maybe<DateTimeInput>;
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  body?: Maybe<String>;
+  summary?: Maybe<String>;
+  thumbnailURL?: Maybe<String>;
+  imageURL?: Maybe<String>;
+  imageAlt?: Maybe<String>;
+  url?: Maybe<String>;
+  tags?: Maybe<BlogPostUpdatetagsInput>;
+  author?: Maybe<String>;
+  category?: Maybe<String>;
+  publishedOn?: Maybe<DateTimeInput>;
+}
+
+export interface BlogPostUpdatetagsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface BlogPostUpdateManyMutationInput {
+  webflowId?: Maybe<String>;
+  webflowCreatedAt?: Maybe<DateTimeInput>;
+  webflowUpdatedAt?: Maybe<DateTimeInput>;
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  body?: Maybe<String>;
+  summary?: Maybe<String>;
+  thumbnailURL?: Maybe<String>;
+  imageURL?: Maybe<String>;
+  imageAlt?: Maybe<String>;
+  url?: Maybe<String>;
+  tags?: Maybe<BlogPostUpdatetagsInput>;
+  author?: Maybe<String>;
+  category?: Maybe<String>;
+  publishedOn?: Maybe<DateTimeInput>;
+}
+
 export interface BottomSizeUpdateInput {
   type?: Maybe<BottomSizeType>;
   value?: Maybe<String>;
@@ -20778,6 +21134,21 @@ export interface BillingInfoSubscriptionWhereInput {
   >;
   NOT?: Maybe<
     BillingInfoSubscriptionWhereInput[] | BillingInfoSubscriptionWhereInput
+  >;
+}
+
+export interface BlogPostSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<BlogPostWhereInput>;
+  AND?: Maybe<
+    BlogPostSubscriptionWhereInput[] | BlogPostSubscriptionWhereInput
+  >;
+  OR?: Maybe<BlogPostSubscriptionWhereInput[] | BlogPostSubscriptionWhereInput>;
+  NOT?: Maybe<
+    BlogPostSubscriptionWhereInput[] | BlogPostSubscriptionWhereInput
   >;
 }
 
@@ -26127,6 +26498,150 @@ export interface AggregateBillingInfoSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface BlogPost {
+  id: ID_Output;
+  webflowId: String;
+  webflowCreatedAt: DateTimeOutput;
+  webflowUpdatedAt: DateTimeOutput;
+  slug: String;
+  name?: String;
+  body?: String;
+  summary?: String;
+  thumbnailURL?: String;
+  imageURL?: String;
+  imageAlt?: String;
+  url?: String;
+  tags: String[];
+  author?: String;
+  category?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  publishedOn: DateTimeOutput;
+}
+
+export interface BlogPostPromise extends Promise<BlogPost>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  webflowId: () => Promise<String>;
+  webflowCreatedAt: () => Promise<DateTimeOutput>;
+  webflowUpdatedAt: () => Promise<DateTimeOutput>;
+  slug: () => Promise<String>;
+  name: () => Promise<String>;
+  body: () => Promise<String>;
+  summary: () => Promise<String>;
+  thumbnailURL: () => Promise<String>;
+  imageURL: () => Promise<String>;
+  imageAlt: () => Promise<String>;
+  url: () => Promise<String>;
+  tags: () => Promise<String[]>;
+  author: () => Promise<String>;
+  category: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  publishedOn: () => Promise<DateTimeOutput>;
+}
+
+export interface BlogPostSubscription
+  extends Promise<AsyncIterator<BlogPost>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  webflowId: () => Promise<AsyncIterator<String>>;
+  webflowCreatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  webflowUpdatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  slug: () => Promise<AsyncIterator<String>>;
+  name: () => Promise<AsyncIterator<String>>;
+  body: () => Promise<AsyncIterator<String>>;
+  summary: () => Promise<AsyncIterator<String>>;
+  thumbnailURL: () => Promise<AsyncIterator<String>>;
+  imageURL: () => Promise<AsyncIterator<String>>;
+  imageAlt: () => Promise<AsyncIterator<String>>;
+  url: () => Promise<AsyncIterator<String>>;
+  tags: () => Promise<AsyncIterator<String[]>>;
+  author: () => Promise<AsyncIterator<String>>;
+  category: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  publishedOn: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface BlogPostNullablePromise
+  extends Promise<BlogPost | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  webflowId: () => Promise<String>;
+  webflowCreatedAt: () => Promise<DateTimeOutput>;
+  webflowUpdatedAt: () => Promise<DateTimeOutput>;
+  slug: () => Promise<String>;
+  name: () => Promise<String>;
+  body: () => Promise<String>;
+  summary: () => Promise<String>;
+  thumbnailURL: () => Promise<String>;
+  imageURL: () => Promise<String>;
+  imageAlt: () => Promise<String>;
+  url: () => Promise<String>;
+  tags: () => Promise<String[]>;
+  author: () => Promise<String>;
+  category: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  publishedOn: () => Promise<DateTimeOutput>;
+}
+
+export interface BlogPostConnection {
+  pageInfo: PageInfo;
+  edges: BlogPostEdge[];
+}
+
+export interface BlogPostConnectionPromise
+  extends Promise<BlogPostConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<BlogPostEdge>>() => T;
+  aggregate: <T = AggregateBlogPostPromise>() => T;
+}
+
+export interface BlogPostConnectionSubscription
+  extends Promise<AsyncIterator<BlogPostConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<BlogPostEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateBlogPostSubscription>() => T;
+}
+
+export interface BlogPostEdge {
+  node: BlogPost;
+  cursor: String;
+}
+
+export interface BlogPostEdgePromise
+  extends Promise<BlogPostEdge>,
+    Fragmentable {
+  node: <T = BlogPostPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface BlogPostEdgeSubscription
+  extends Promise<AsyncIterator<BlogPostEdge>>,
+    Fragmentable {
+  node: <T = BlogPostSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateBlogPost {
+  count: Int;
+}
+
+export interface AggregateBlogPostPromise
+  extends Promise<AggregateBlogPost>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateBlogPostSubscription
+  extends Promise<AsyncIterator<AggregateBlogPost>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface BottomSizeConnection {
   pageInfo: PageInfo;
   edges: BottomSizeEdge[];
@@ -30866,6 +31381,98 @@ export interface BillingInfoPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface BlogPostSubscriptionPayload {
+  mutation: MutationType;
+  node: BlogPost;
+  updatedFields: String[];
+  previousValues: BlogPostPreviousValues;
+}
+
+export interface BlogPostSubscriptionPayloadPromise
+  extends Promise<BlogPostSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = BlogPostPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = BlogPostPreviousValuesPromise>() => T;
+}
+
+export interface BlogPostSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<BlogPostSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = BlogPostSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = BlogPostPreviousValuesSubscription>() => T;
+}
+
+export interface BlogPostPreviousValues {
+  id: ID_Output;
+  webflowId: String;
+  webflowCreatedAt: DateTimeOutput;
+  webflowUpdatedAt: DateTimeOutput;
+  slug: String;
+  name?: String;
+  body?: String;
+  summary?: String;
+  thumbnailURL?: String;
+  imageURL?: String;
+  imageAlt?: String;
+  url?: String;
+  tags: String[];
+  author?: String;
+  category?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  publishedOn: DateTimeOutput;
+}
+
+export interface BlogPostPreviousValuesPromise
+  extends Promise<BlogPostPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  webflowId: () => Promise<String>;
+  webflowCreatedAt: () => Promise<DateTimeOutput>;
+  webflowUpdatedAt: () => Promise<DateTimeOutput>;
+  slug: () => Promise<String>;
+  name: () => Promise<String>;
+  body: () => Promise<String>;
+  summary: () => Promise<String>;
+  thumbnailURL: () => Promise<String>;
+  imageURL: () => Promise<String>;
+  imageAlt: () => Promise<String>;
+  url: () => Promise<String>;
+  tags: () => Promise<String[]>;
+  author: () => Promise<String>;
+  category: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  publishedOn: () => Promise<DateTimeOutput>;
+}
+
+export interface BlogPostPreviousValuesSubscription
+  extends Promise<AsyncIterator<BlogPostPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  webflowId: () => Promise<AsyncIterator<String>>;
+  webflowCreatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  webflowUpdatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  slug: () => Promise<AsyncIterator<String>>;
+  name: () => Promise<AsyncIterator<String>>;
+  body: () => Promise<AsyncIterator<String>>;
+  summary: () => Promise<AsyncIterator<String>>;
+  thumbnailURL: () => Promise<AsyncIterator<String>>;
+  imageURL: () => Promise<AsyncIterator<String>>;
+  imageAlt: () => Promise<AsyncIterator<String>>;
+  url: () => Promise<AsyncIterator<String>>;
+  tags: () => Promise<AsyncIterator<String[]>>;
+  author: () => Promise<AsyncIterator<String>>;
+  category: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  publishedOn: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface BottomSizeSubscriptionPayload {
   mutation: MutationType;
   node: BottomSize;
@@ -34957,6 +35564,10 @@ export const models: Model[] = [
   },
   {
     name: "ShippingCode",
+    embedded: false
+  },
+  {
+    name: "BlogPost",
     embedded: false
   },
   {

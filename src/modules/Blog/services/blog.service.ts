@@ -42,7 +42,7 @@ export class BlogService {
     return head(publishedPosts)
   }
 
-  private async getAllItems(): Promise<BlogPost[]> {
+  async getAllItems(): Promise<BlogPost[]> {
     const allPosts = []
     let offset = 0
     while (true) {
