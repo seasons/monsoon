@@ -180,8 +180,6 @@ input ShopifyProductVariantInput {
 
 input UpsertVariantInput {
   sku: String!
-  internalSizeName: String!
-  manufacturerSizeNames: [String!]
   # Top Size values
   sleeve: Float
   shoulder: Float
@@ -189,7 +187,10 @@ input UpsertVariantInput {
   neck: Float
   length: Float
   # Bottom Size values
-  bottomSizeType: BottomSizeType
+  internalSizeName: String!
+  internalBottomSizeType: BottomSizeType
+  manufacturerSizeNames: [String!]
+  manufacturerBottomSizeType: BottomSizeType
   waist: Float
   rise: Float
   hem: Float
@@ -203,7 +204,6 @@ input UpsertVariantInput {
 
 input UpdateVariantInput {
   id: ID!
-  manufacturerSizeNames: [String!]
   productType: ProductType!
   weight: Float
   # Top Size values
@@ -213,6 +213,8 @@ input UpdateVariantInput {
   neck: Float
   length: Float
   # Bottom Size values
+  manufacturerSizeNames: [String!]
+  manufacturerBottomSizeType: BottomSizeType
   waist: Float
   rise: Float
   hem: Float
