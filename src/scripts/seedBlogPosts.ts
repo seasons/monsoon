@@ -41,7 +41,6 @@ const seed = async () => {
         "slug",
       ]),
     } as any
-    console.log(createData)
     await ps.client.createBlogPost(createData)
   }
 }
