@@ -49,7 +49,7 @@ export class ShopifyService {
     Math.round(parseFloat(price || "0.00") * 100)
 
   async getOAuthURL({ shop }: { shop: string }): Promise<string> {
-    const shopName = this.getShopName(shop)
+    const shopName = shop
     const nonce: string = await new Promise((resolve, reject) => {
       crypto.randomBytes(48, (error, buffer) => {
         if (error) {
