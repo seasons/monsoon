@@ -265,6 +265,27 @@ enum ShippingCode {
   UPSSelect
 }
 
+type BlogPost {
+  id: ID! @id
+  webflowId: String!
+  webflowCreatedAt: DateTime!
+  webflowUpdatedAt: DateTime!
+  slug: String!
+  name: String
+  body: String
+  summary: String
+  thumbnailURL: String
+  imageURL: String
+  imageAlt: String
+  url: String
+  tags: [String] @scalarList(strategy: RELATION)
+  author: String
+  category: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  publishedOn: DateTime!
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -287,7 +308,6 @@ type Brand {
   updatedAt: DateTime! @updatedAt
   externalShopifyIntegration: ExternalShopifyIntegration
 }
-
 type Category {
   id: ID! @id
   slug: String! @unique
