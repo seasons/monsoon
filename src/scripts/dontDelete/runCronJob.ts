@@ -80,7 +80,6 @@ const run = async () => {
     utils
   )
   payment = new PaymentService(
-    shipping,
     auth,
     cs,
     email,

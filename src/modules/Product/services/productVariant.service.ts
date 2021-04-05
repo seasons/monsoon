@@ -325,9 +325,13 @@ export class ProductVariantService {
     }
 
     if (shopifyProductVariant) {
-      data.shopifyProductVariant = {
-        connect: { externalId: shopifyProductVariant.externalId },
-      }
+      data.shopifyProductVariant = shopifyProductVariant.externalId
+        ? {
+            connect: { externalId: shopifyProductVariant.externalId },
+          }
+        : {
+            disconnect: true,
+          }
     }
 
     const prodVar = await this.prisma.client.updateProductVariant({
