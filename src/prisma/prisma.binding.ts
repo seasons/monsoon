@@ -4,6 +4,7 @@ import { Options } from 'graphql-binding'
 import { makePrismaBindingClass, BasePrismaOptions } from 'prisma-binding'
 
 export interface Query {
+    blogPosts: <T = Array<BlogPost | null>>(args: { where?: BlogPostWhereInput | null, orderBy?: BlogPostOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     tags: <T = Array<Tag | null>>(args: { where?: TagWhereInput | null, orderBy?: TagOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productMaterialCategories: <T = Array<ProductMaterialCategory | null>>(args: { where?: ProductMaterialCategoryWhereInput | null, orderBy?: ProductMaterialCategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productModels: <T = Array<ProductModel | null>>(args: { where?: ProductModelWhereInput | null, orderBy?: ProductModelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -74,6 +75,7 @@ export interface Query {
     shippingOptions: <T = Array<ShippingOption | null>>(args: { where?: ShippingOptionWhereInput | null, orderBy?: ShippingOptionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetails: <T = Array<CustomerDetail | null>>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservations: <T = Array<Reservation | null>>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    blogPost: <T = BlogPost | null>(args: { where: BlogPostWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     tag: <T = Tag | null>(args: { where: TagWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productMaterialCategory: <T = ProductMaterialCategory | null>(args: { where: ProductMaterialCategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productModel: <T = ProductModel | null>(args: { where: ProductModelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -144,6 +146,7 @@ export interface Query {
     shippingOption: <T = ShippingOption | null>(args: { where: ShippingOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    blogPostsConnection: <T = BlogPostConnection>(args: { where?: BlogPostWhereInput | null, orderBy?: BlogPostOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     tagsConnection: <T = TagConnection>(args: { where?: TagWhereInput | null, orderBy?: TagOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productMaterialCategoriesConnection: <T = ProductMaterialCategoryConnection>(args: { where?: ProductMaterialCategoryWhereInput | null, orderBy?: ProductMaterialCategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productModelsConnection: <T = ProductModelConnection>(args: { where?: ProductModelWhereInput | null, orderBy?: ProductModelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -218,6 +221,7 @@ export interface Query {
   }
 
 export interface Mutation {
+    createBlogPost: <T = BlogPost>(args: { data: BlogPostCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createTag: <T = Tag>(args: { data: TagCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductMaterialCategory: <T = ProductMaterialCategory>(args: { data: ProductMaterialCategoryCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductModel: <T = ProductModel>(args: { data: ProductModelCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -288,6 +292,7 @@ export interface Mutation {
     createShippingOption: <T = ShippingOption>(args: { data: ShippingOptionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerDetail: <T = CustomerDetail>(args: { data: CustomerDetailCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createReservation: <T = Reservation>(args: { data: ReservationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateBlogPost: <T = BlogPost | null>(args: { data: BlogPostUpdateInput, where: BlogPostWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateTag: <T = Tag | null>(args: { data: TagUpdateInput, where: TagWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductMaterialCategory: <T = ProductMaterialCategory | null>(args: { data: ProductMaterialCategoryUpdateInput, where: ProductMaterialCategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductModel: <T = ProductModel | null>(args: { data: ProductModelUpdateInput, where: ProductModelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -358,6 +363,7 @@ export interface Mutation {
     updateShippingOption: <T = ShippingOption | null>(args: { data: ShippingOptionUpdateInput, where: ShippingOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerDetail: <T = CustomerDetail | null>(args: { data: CustomerDetailUpdateInput, where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateReservation: <T = Reservation | null>(args: { data: ReservationUpdateInput, where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteBlogPost: <T = BlogPost | null>(args: { where: BlogPostWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteTag: <T = Tag | null>(args: { where: TagWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductMaterialCategory: <T = ProductMaterialCategory | null>(args: { where: ProductMaterialCategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductModel: <T = ProductModel | null>(args: { where: ProductModelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -428,6 +434,7 @@ export interface Mutation {
     deleteShippingOption: <T = ShippingOption | null>(args: { where: ShippingOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteReservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    upsertBlogPost: <T = BlogPost>(args: { where: BlogPostWhereUniqueInput, create: BlogPostCreateInput, update: BlogPostUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertTag: <T = Tag>(args: { where: TagWhereUniqueInput, create: TagCreateInput, update: TagUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductMaterialCategory: <T = ProductMaterialCategory>(args: { where: ProductMaterialCategoryWhereUniqueInput, create: ProductMaterialCategoryCreateInput, update: ProductMaterialCategoryUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductModel: <T = ProductModel>(args: { where: ProductModelWhereUniqueInput, create: ProductModelCreateInput, update: ProductModelUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -498,6 +505,7 @@ export interface Mutation {
     upsertShippingOption: <T = ShippingOption>(args: { where: ShippingOptionWhereUniqueInput, create: ShippingOptionCreateInput, update: ShippingOptionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerDetail: <T = CustomerDetail>(args: { where: CustomerDetailWhereUniqueInput, create: CustomerDetailCreateInput, update: CustomerDetailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertReservation: <T = Reservation>(args: { where: ReservationWhereUniqueInput, create: ReservationCreateInput, update: ReservationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyBlogPosts: <T = BatchPayload>(args: { data: BlogPostUpdateManyMutationInput, where?: BlogPostWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyTags: <T = BatchPayload>(args: { data: TagUpdateManyMutationInput, where?: TagWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductMaterialCategories: <T = BatchPayload>(args: { data: ProductMaterialCategoryUpdateManyMutationInput, where?: ProductMaterialCategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductModels: <T = BatchPayload>(args: { data: ProductModelUpdateManyMutationInput, where?: ProductModelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -566,6 +574,7 @@ export interface Mutation {
     updateManyShippingOptions: <T = BatchPayload>(args: { data: ShippingOptionUpdateManyMutationInput, where?: ShippingOptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerDetails: <T = BatchPayload>(args: { data: CustomerDetailUpdateManyMutationInput, where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyReservations: <T = BatchPayload>(args: { data: ReservationUpdateManyMutationInput, where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyBlogPosts: <T = BatchPayload>(args: { where?: BlogPostWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyTags: <T = BatchPayload>(args: { where?: TagWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductMaterialCategories: <T = BatchPayload>(args: { where?: ProductMaterialCategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductModels: <T = BatchPayload>(args: { where?: ProductModelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -639,6 +648,7 @@ export interface Mutation {
   }
 
 export interface Subscription {
+    blogPost: <T = BlogPostSubscriptionPayload | null>(args: { where?: BlogPostSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     tag: <T = TagSubscriptionPayload | null>(args: { where?: TagSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productMaterialCategory: <T = ProductMaterialCategorySubscriptionPayload | null>(args: { where?: ProductMaterialCategorySubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productModel: <T = ProductModelSubscriptionPayload | null>(args: { where?: ProductModelSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -712,6 +722,7 @@ export interface Subscription {
   }
 
 export interface Exists {
+  BlogPost: (where?: BlogPostWhereInput) => Promise<boolean>
   Tag: (where?: TagWhereInput) => Promise<boolean>
   ProductMaterialCategory: (where?: ProductMaterialCategoryWhereInput) => Promise<boolean>
   ProductModel: (where?: ProductModelWhereInput) => Promise<boolean>
@@ -1245,6 +1256,10 @@ type AggregateBagItem {
 }
 
 type AggregateBillingInfo {
+  count: Int!
+}
+
+type AggregateBlogPost {
   count: Int!
 }
 
@@ -2656,6 +2671,809 @@ input BillingInfoWhereInput {
 }
 
 input BillingInfoWhereUniqueInput {
+  id: ID
+}
+
+type BlogPost implements Node {
+  id: ID!
+  webflowId: String!
+  webflowCreatedAt: DateTime!
+  webflowUpdatedAt: DateTime!
+  slug: String!
+  name: String
+  body: String
+  summary: String
+  thumbnailURL: String
+  imageURL: String
+  imageAlt: String
+  url: String
+  tags: [String!]!
+  author: String
+  category: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  publishedOn: DateTime!
+}
+
+"""A connection to a list of items."""
+type BlogPostConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [BlogPostEdge]!
+  aggregate: AggregateBlogPost!
+}
+
+input BlogPostCreateInput {
+  id: ID
+  webflowId: String!
+  webflowCreatedAt: DateTime!
+  webflowUpdatedAt: DateTime!
+  slug: String!
+  name: String
+  body: String
+  summary: String
+  thumbnailURL: String
+  imageURL: String
+  imageAlt: String
+  url: String
+  author: String
+  category: String
+  publishedOn: DateTime!
+  tags: BlogPostCreatetagsInput
+}
+
+input BlogPostCreatetagsInput {
+  set: [String!]
+}
+
+"""An edge in a connection."""
+type BlogPostEdge {
+  """The item at the end of the edge."""
+  node: BlogPost!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum BlogPostOrderByInput {
+  id_ASC
+  id_DESC
+  webflowId_ASC
+  webflowId_DESC
+  webflowCreatedAt_ASC
+  webflowCreatedAt_DESC
+  webflowUpdatedAt_ASC
+  webflowUpdatedAt_DESC
+  slug_ASC
+  slug_DESC
+  name_ASC
+  name_DESC
+  body_ASC
+  body_DESC
+  summary_ASC
+  summary_DESC
+  thumbnailURL_ASC
+  thumbnailURL_DESC
+  imageURL_ASC
+  imageURL_DESC
+  imageAlt_ASC
+  imageAlt_DESC
+  url_ASC
+  url_DESC
+  author_ASC
+  author_DESC
+  category_ASC
+  category_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  publishedOn_ASC
+  publishedOn_DESC
+}
+
+type BlogPostPreviousValues {
+  id: ID!
+  webflowId: String!
+  webflowCreatedAt: DateTime!
+  webflowUpdatedAt: DateTime!
+  slug: String!
+  name: String
+  body: String
+  summary: String
+  thumbnailURL: String
+  imageURL: String
+  imageAlt: String
+  url: String
+  tags: [String!]!
+  author: String
+  category: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  publishedOn: DateTime!
+}
+
+type BlogPostSubscriptionPayload {
+  mutation: MutationType!
+  node: BlogPost
+  updatedFields: [String!]
+  previousValues: BlogPostPreviousValues
+}
+
+input BlogPostSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [BlogPostSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [BlogPostSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [BlogPostSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: BlogPostWhereInput
+}
+
+input BlogPostUpdateInput {
+  webflowId: String
+  webflowCreatedAt: DateTime
+  webflowUpdatedAt: DateTime
+  slug: String
+  name: String
+  body: String
+  summary: String
+  thumbnailURL: String
+  imageURL: String
+  imageAlt: String
+  url: String
+  author: String
+  category: String
+  publishedOn: DateTime
+  tags: BlogPostUpdatetagsInput
+}
+
+input BlogPostUpdateManyMutationInput {
+  webflowId: String
+  webflowCreatedAt: DateTime
+  webflowUpdatedAt: DateTime
+  slug: String
+  name: String
+  body: String
+  summary: String
+  thumbnailURL: String
+  imageURL: String
+  imageAlt: String
+  url: String
+  author: String
+  category: String
+  publishedOn: DateTime
+  tags: BlogPostUpdatetagsInput
+}
+
+input BlogPostUpdatetagsInput {
+  set: [String!]
+}
+
+input BlogPostWhereInput {
+  """Logical AND on all given filters."""
+  AND: [BlogPostWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [BlogPostWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [BlogPostWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  webflowId: String
+
+  """All values that are not equal to given value."""
+  webflowId_not: String
+
+  """All values that are contained in given list."""
+  webflowId_in: [String!]
+
+  """All values that are not contained in given list."""
+  webflowId_not_in: [String!]
+
+  """All values less than the given value."""
+  webflowId_lt: String
+
+  """All values less than or equal the given value."""
+  webflowId_lte: String
+
+  """All values greater than the given value."""
+  webflowId_gt: String
+
+  """All values greater than or equal the given value."""
+  webflowId_gte: String
+
+  """All values containing the given string."""
+  webflowId_contains: String
+
+  """All values not containing the given string."""
+  webflowId_not_contains: String
+
+  """All values starting with the given string."""
+  webflowId_starts_with: String
+
+  """All values not starting with the given string."""
+  webflowId_not_starts_with: String
+
+  """All values ending with the given string."""
+  webflowId_ends_with: String
+
+  """All values not ending with the given string."""
+  webflowId_not_ends_with: String
+  webflowCreatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  webflowCreatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  webflowCreatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  webflowCreatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  webflowCreatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  webflowCreatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  webflowCreatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  webflowCreatedAt_gte: DateTime
+  webflowUpdatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  webflowUpdatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  webflowUpdatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  webflowUpdatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  webflowUpdatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  webflowUpdatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  webflowUpdatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  webflowUpdatedAt_gte: DateTime
+  slug: String
+
+  """All values that are not equal to given value."""
+  slug_not: String
+
+  """All values that are contained in given list."""
+  slug_in: [String!]
+
+  """All values that are not contained in given list."""
+  slug_not_in: [String!]
+
+  """All values less than the given value."""
+  slug_lt: String
+
+  """All values less than or equal the given value."""
+  slug_lte: String
+
+  """All values greater than the given value."""
+  slug_gt: String
+
+  """All values greater than or equal the given value."""
+  slug_gte: String
+
+  """All values containing the given string."""
+  slug_contains: String
+
+  """All values not containing the given string."""
+  slug_not_contains: String
+
+  """All values starting with the given string."""
+  slug_starts_with: String
+
+  """All values not starting with the given string."""
+  slug_not_starts_with: String
+
+  """All values ending with the given string."""
+  slug_ends_with: String
+
+  """All values not ending with the given string."""
+  slug_not_ends_with: String
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  body: String
+
+  """All values that are not equal to given value."""
+  body_not: String
+
+  """All values that are contained in given list."""
+  body_in: [String!]
+
+  """All values that are not contained in given list."""
+  body_not_in: [String!]
+
+  """All values less than the given value."""
+  body_lt: String
+
+  """All values less than or equal the given value."""
+  body_lte: String
+
+  """All values greater than the given value."""
+  body_gt: String
+
+  """All values greater than or equal the given value."""
+  body_gte: String
+
+  """All values containing the given string."""
+  body_contains: String
+
+  """All values not containing the given string."""
+  body_not_contains: String
+
+  """All values starting with the given string."""
+  body_starts_with: String
+
+  """All values not starting with the given string."""
+  body_not_starts_with: String
+
+  """All values ending with the given string."""
+  body_ends_with: String
+
+  """All values not ending with the given string."""
+  body_not_ends_with: String
+  summary: String
+
+  """All values that are not equal to given value."""
+  summary_not: String
+
+  """All values that are contained in given list."""
+  summary_in: [String!]
+
+  """All values that are not contained in given list."""
+  summary_not_in: [String!]
+
+  """All values less than the given value."""
+  summary_lt: String
+
+  """All values less than or equal the given value."""
+  summary_lte: String
+
+  """All values greater than the given value."""
+  summary_gt: String
+
+  """All values greater than or equal the given value."""
+  summary_gte: String
+
+  """All values containing the given string."""
+  summary_contains: String
+
+  """All values not containing the given string."""
+  summary_not_contains: String
+
+  """All values starting with the given string."""
+  summary_starts_with: String
+
+  """All values not starting with the given string."""
+  summary_not_starts_with: String
+
+  """All values ending with the given string."""
+  summary_ends_with: String
+
+  """All values not ending with the given string."""
+  summary_not_ends_with: String
+  thumbnailURL: String
+
+  """All values that are not equal to given value."""
+  thumbnailURL_not: String
+
+  """All values that are contained in given list."""
+  thumbnailURL_in: [String!]
+
+  """All values that are not contained in given list."""
+  thumbnailURL_not_in: [String!]
+
+  """All values less than the given value."""
+  thumbnailURL_lt: String
+
+  """All values less than or equal the given value."""
+  thumbnailURL_lte: String
+
+  """All values greater than the given value."""
+  thumbnailURL_gt: String
+
+  """All values greater than or equal the given value."""
+  thumbnailURL_gte: String
+
+  """All values containing the given string."""
+  thumbnailURL_contains: String
+
+  """All values not containing the given string."""
+  thumbnailURL_not_contains: String
+
+  """All values starting with the given string."""
+  thumbnailURL_starts_with: String
+
+  """All values not starting with the given string."""
+  thumbnailURL_not_starts_with: String
+
+  """All values ending with the given string."""
+  thumbnailURL_ends_with: String
+
+  """All values not ending with the given string."""
+  thumbnailURL_not_ends_with: String
+  imageURL: String
+
+  """All values that are not equal to given value."""
+  imageURL_not: String
+
+  """All values that are contained in given list."""
+  imageURL_in: [String!]
+
+  """All values that are not contained in given list."""
+  imageURL_not_in: [String!]
+
+  """All values less than the given value."""
+  imageURL_lt: String
+
+  """All values less than or equal the given value."""
+  imageURL_lte: String
+
+  """All values greater than the given value."""
+  imageURL_gt: String
+
+  """All values greater than or equal the given value."""
+  imageURL_gte: String
+
+  """All values containing the given string."""
+  imageURL_contains: String
+
+  """All values not containing the given string."""
+  imageURL_not_contains: String
+
+  """All values starting with the given string."""
+  imageURL_starts_with: String
+
+  """All values not starting with the given string."""
+  imageURL_not_starts_with: String
+
+  """All values ending with the given string."""
+  imageURL_ends_with: String
+
+  """All values not ending with the given string."""
+  imageURL_not_ends_with: String
+  imageAlt: String
+
+  """All values that are not equal to given value."""
+  imageAlt_not: String
+
+  """All values that are contained in given list."""
+  imageAlt_in: [String!]
+
+  """All values that are not contained in given list."""
+  imageAlt_not_in: [String!]
+
+  """All values less than the given value."""
+  imageAlt_lt: String
+
+  """All values less than or equal the given value."""
+  imageAlt_lte: String
+
+  """All values greater than the given value."""
+  imageAlt_gt: String
+
+  """All values greater than or equal the given value."""
+  imageAlt_gte: String
+
+  """All values containing the given string."""
+  imageAlt_contains: String
+
+  """All values not containing the given string."""
+  imageAlt_not_contains: String
+
+  """All values starting with the given string."""
+  imageAlt_starts_with: String
+
+  """All values not starting with the given string."""
+  imageAlt_not_starts_with: String
+
+  """All values ending with the given string."""
+  imageAlt_ends_with: String
+
+  """All values not ending with the given string."""
+  imageAlt_not_ends_with: String
+  url: String
+
+  """All values that are not equal to given value."""
+  url_not: String
+
+  """All values that are contained in given list."""
+  url_in: [String!]
+
+  """All values that are not contained in given list."""
+  url_not_in: [String!]
+
+  """All values less than the given value."""
+  url_lt: String
+
+  """All values less than or equal the given value."""
+  url_lte: String
+
+  """All values greater than the given value."""
+  url_gt: String
+
+  """All values greater than or equal the given value."""
+  url_gte: String
+
+  """All values containing the given string."""
+  url_contains: String
+
+  """All values not containing the given string."""
+  url_not_contains: String
+
+  """All values starting with the given string."""
+  url_starts_with: String
+
+  """All values not starting with the given string."""
+  url_not_starts_with: String
+
+  """All values ending with the given string."""
+  url_ends_with: String
+
+  """All values not ending with the given string."""
+  url_not_ends_with: String
+  author: String
+
+  """All values that are not equal to given value."""
+  author_not: String
+
+  """All values that are contained in given list."""
+  author_in: [String!]
+
+  """All values that are not contained in given list."""
+  author_not_in: [String!]
+
+  """All values less than the given value."""
+  author_lt: String
+
+  """All values less than or equal the given value."""
+  author_lte: String
+
+  """All values greater than the given value."""
+  author_gt: String
+
+  """All values greater than or equal the given value."""
+  author_gte: String
+
+  """All values containing the given string."""
+  author_contains: String
+
+  """All values not containing the given string."""
+  author_not_contains: String
+
+  """All values starting with the given string."""
+  author_starts_with: String
+
+  """All values not starting with the given string."""
+  author_not_starts_with: String
+
+  """All values ending with the given string."""
+  author_ends_with: String
+
+  """All values not ending with the given string."""
+  author_not_ends_with: String
+  category: String
+
+  """All values that are not equal to given value."""
+  category_not: String
+
+  """All values that are contained in given list."""
+  category_in: [String!]
+
+  """All values that are not contained in given list."""
+  category_not_in: [String!]
+
+  """All values less than the given value."""
+  category_lt: String
+
+  """All values less than or equal the given value."""
+  category_lte: String
+
+  """All values greater than the given value."""
+  category_gt: String
+
+  """All values greater than or equal the given value."""
+  category_gte: String
+
+  """All values containing the given string."""
+  category_contains: String
+
+  """All values not containing the given string."""
+  category_not_contains: String
+
+  """All values starting with the given string."""
+  category_starts_with: String
+
+  """All values not starting with the given string."""
+  category_not_starts_with: String
+
+  """All values ending with the given string."""
+  category_ends_with: String
+
+  """All values not ending with the given string."""
+  category_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  publishedOn: DateTime
+
+  """All values that are not equal to given value."""
+  publishedOn_not: DateTime
+
+  """All values that are contained in given list."""
+  publishedOn_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  publishedOn_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  publishedOn_lt: DateTime
+
+  """All values less than or equal the given value."""
+  publishedOn_lte: DateTime
+
+  """All values greater than the given value."""
+  publishedOn_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  publishedOn_gte: DateTime
+}
+
+input BlogPostWhereUniqueInput {
   id: ID
 }
 
@@ -13206,6 +14024,7 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
+  createBlogPost(data: BlogPostCreateInput!): BlogPost!
   createTag(data: TagCreateInput!): Tag!
   createProductMaterialCategory(data: ProductMaterialCategoryCreateInput!): ProductMaterialCategory!
   createProductModel(data: ProductModelCreateInput!): ProductModel!
@@ -13276,6 +14095,7 @@ type Mutation {
   createShippingOption(data: ShippingOptionCreateInput!): ShippingOption!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createReservation(data: ReservationCreateInput!): Reservation!
+  updateBlogPost(data: BlogPostUpdateInput!, where: BlogPostWhereUniqueInput!): BlogPost
   updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
   updateProductMaterialCategory(data: ProductMaterialCategoryUpdateInput!, where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
   updateProductModel(data: ProductModelUpdateInput!, where: ProductModelWhereUniqueInput!): ProductModel
@@ -13346,6 +14166,7 @@ type Mutation {
   updateShippingOption(data: ShippingOptionUpdateInput!, where: ShippingOptionWhereUniqueInput!): ShippingOption
   updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
   updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
+  deleteBlogPost(where: BlogPostWhereUniqueInput!): BlogPost
   deleteTag(where: TagWhereUniqueInput!): Tag
   deleteProductMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
   deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
@@ -13416,6 +14237,7 @@ type Mutation {
   deleteShippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
+  upsertBlogPost(where: BlogPostWhereUniqueInput!, create: BlogPostCreateInput!, update: BlogPostUpdateInput!): BlogPost!
   upsertTag(where: TagWhereUniqueInput!, create: TagCreateInput!, update: TagUpdateInput!): Tag!
   upsertProductMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!, create: ProductMaterialCategoryCreateInput!, update: ProductMaterialCategoryUpdateInput!): ProductMaterialCategory!
   upsertProductModel(where: ProductModelWhereUniqueInput!, create: ProductModelCreateInput!, update: ProductModelUpdateInput!): ProductModel!
@@ -13486,6 +14308,7 @@ type Mutation {
   upsertShippingOption(where: ShippingOptionWhereUniqueInput!, create: ShippingOptionCreateInput!, update: ShippingOptionUpdateInput!): ShippingOption!
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
   upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
+  updateManyBlogPosts(data: BlogPostUpdateManyMutationInput!, where: BlogPostWhereInput): BatchPayload!
   updateManyTags(data: TagUpdateManyMutationInput!, where: TagWhereInput): BatchPayload!
   updateManyProductMaterialCategories(data: ProductMaterialCategoryUpdateManyMutationInput!, where: ProductMaterialCategoryWhereInput): BatchPayload!
   updateManyProductModels(data: ProductModelUpdateManyMutationInput!, where: ProductModelWhereInput): BatchPayload!
@@ -13554,6 +14377,7 @@ type Mutation {
   updateManyShippingOptions(data: ShippingOptionUpdateManyMutationInput!, where: ShippingOptionWhereInput): BatchPayload!
   updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
   updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
+  deleteManyBlogPosts(where: BlogPostWhereInput): BatchPayload!
   deleteManyTags(where: TagWhereInput): BatchPayload!
   deleteManyProductMaterialCategories(where: ProductMaterialCategoryWhereInput): BatchPayload!
   deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
@@ -14658,7 +15482,6 @@ input OrderSubscriptionWhereInput {
 enum OrderType {
   Used
   New
-  External
 }
 
 input OrderUpdateInput {
@@ -26080,6 +26903,7 @@ enum PushNotificationStatus {
 }
 
 type Query {
+  blogPosts(where: BlogPostWhereInput, orderBy: BlogPostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BlogPost]!
   tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag]!
   productMaterialCategories(where: ProductMaterialCategoryWhereInput, orderBy: ProductMaterialCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductMaterialCategory]!
   productModels(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductModel]!
@@ -26150,6 +26974,7 @@ type Query {
   shippingOptions(where: ShippingOptionWhereInput, orderBy: ShippingOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShippingOption]!
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
+  blogPost(where: BlogPostWhereUniqueInput!): BlogPost
   tag(where: TagWhereUniqueInput!): Tag
   productMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
@@ -26220,6 +27045,7 @@ type Query {
   shippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   reservation(where: ReservationWhereUniqueInput!): Reservation
+  blogPostsConnection(where: BlogPostWhereInput, orderBy: BlogPostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BlogPostConnection!
   tagsConnection(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TagConnection!
   productMaterialCategoriesConnection(where: ProductMaterialCategoryWhereInput, orderBy: ProductMaterialCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductMaterialCategoryConnection!
   productModelsConnection(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductModelConnection!
@@ -31433,6 +32259,7 @@ input StylePreferencesWhereUniqueInput {
 }
 
 type Subscription {
+  blogPost(where: BlogPostSubscriptionWhereInput): BlogPostSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   productMaterialCategory(where: ProductMaterialCategorySubscriptionWhereInput): ProductMaterialCategorySubscriptionPayload
   productModel(where: ProductModelSubscriptionWhereInput): ProductModelSubscriptionPayload
@@ -35999,6 +36826,41 @@ export type BillingInfoOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
 
+export type BlogPostOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'webflowId_ASC' |
+  'webflowId_DESC' |
+  'webflowCreatedAt_ASC' |
+  'webflowCreatedAt_DESC' |
+  'webflowUpdatedAt_ASC' |
+  'webflowUpdatedAt_DESC' |
+  'slug_ASC' |
+  'slug_DESC' |
+  'name_ASC' |
+  'name_DESC' |
+  'body_ASC' |
+  'body_DESC' |
+  'summary_ASC' |
+  'summary_DESC' |
+  'thumbnailURL_ASC' |
+  'thumbnailURL_DESC' |
+  'imageURL_ASC' |
+  'imageURL_DESC' |
+  'imageAlt_ASC' |
+  'imageAlt_DESC' |
+  'url_ASC' |
+  'url_DESC' |
+  'author_ASC' |
+  'author_DESC' |
+  'category_ASC' |
+  'category_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC' |
+  'publishedOn_ASC' |
+  'publishedOn_DESC'
+
 export type BottomSizeOrderByInput =   'id_ASC' |
   'id_DESC' |
   'type_ASC' |
@@ -36517,8 +37379,7 @@ export type OrderStatus =   'Drafted' |
   'Cancelled'
 
 export type OrderType =   'Used' |
-  'New' |
-  'External'
+  'New'
 
 export type PackageOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -37859,6 +38720,298 @@ export interface BillingInfoWhereInput {
 }
 
 export interface BillingInfoWhereUniqueInput {
+  id?: ID_Input | null
+}
+
+export interface BlogPostCreateInput {
+  id?: ID_Input | null
+  webflowId: String
+  webflowCreatedAt: DateTime
+  webflowUpdatedAt: DateTime
+  slug: String
+  name?: String | null
+  body?: String | null
+  summary?: String | null
+  thumbnailURL?: String | null
+  imageURL?: String | null
+  imageAlt?: String | null
+  url?: String | null
+  author?: String | null
+  category?: String | null
+  publishedOn: DateTime
+  tags?: BlogPostCreatetagsInput | null
+}
+
+export interface BlogPostCreatetagsInput {
+  set?: String[] | String | null
+}
+
+export interface BlogPostSubscriptionWhereInput {
+  AND?: BlogPostSubscriptionWhereInput[] | BlogPostSubscriptionWhereInput | null
+  OR?: BlogPostSubscriptionWhereInput[] | BlogPostSubscriptionWhereInput | null
+  NOT?: BlogPostSubscriptionWhereInput[] | BlogPostSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: BlogPostWhereInput | null
+}
+
+export interface BlogPostUpdateInput {
+  webflowId?: String | null
+  webflowCreatedAt?: DateTime | null
+  webflowUpdatedAt?: DateTime | null
+  slug?: String | null
+  name?: String | null
+  body?: String | null
+  summary?: String | null
+  thumbnailURL?: String | null
+  imageURL?: String | null
+  imageAlt?: String | null
+  url?: String | null
+  author?: String | null
+  category?: String | null
+  publishedOn?: DateTime | null
+  tags?: BlogPostUpdatetagsInput | null
+}
+
+export interface BlogPostUpdateManyMutationInput {
+  webflowId?: String | null
+  webflowCreatedAt?: DateTime | null
+  webflowUpdatedAt?: DateTime | null
+  slug?: String | null
+  name?: String | null
+  body?: String | null
+  summary?: String | null
+  thumbnailURL?: String | null
+  imageURL?: String | null
+  imageAlt?: String | null
+  url?: String | null
+  author?: String | null
+  category?: String | null
+  publishedOn?: DateTime | null
+  tags?: BlogPostUpdatetagsInput | null
+}
+
+export interface BlogPostUpdatetagsInput {
+  set?: String[] | String | null
+}
+
+export interface BlogPostWhereInput {
+  AND?: BlogPostWhereInput[] | BlogPostWhereInput | null
+  OR?: BlogPostWhereInput[] | BlogPostWhereInput | null
+  NOT?: BlogPostWhereInput[] | BlogPostWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  webflowId?: String | null
+  webflowId_not?: String | null
+  webflowId_in?: String[] | String | null
+  webflowId_not_in?: String[] | String | null
+  webflowId_lt?: String | null
+  webflowId_lte?: String | null
+  webflowId_gt?: String | null
+  webflowId_gte?: String | null
+  webflowId_contains?: String | null
+  webflowId_not_contains?: String | null
+  webflowId_starts_with?: String | null
+  webflowId_not_starts_with?: String | null
+  webflowId_ends_with?: String | null
+  webflowId_not_ends_with?: String | null
+  webflowCreatedAt?: DateTime | null
+  webflowCreatedAt_not?: DateTime | null
+  webflowCreatedAt_in?: DateTime[] | DateTime | null
+  webflowCreatedAt_not_in?: DateTime[] | DateTime | null
+  webflowCreatedAt_lt?: DateTime | null
+  webflowCreatedAt_lte?: DateTime | null
+  webflowCreatedAt_gt?: DateTime | null
+  webflowCreatedAt_gte?: DateTime | null
+  webflowUpdatedAt?: DateTime | null
+  webflowUpdatedAt_not?: DateTime | null
+  webflowUpdatedAt_in?: DateTime[] | DateTime | null
+  webflowUpdatedAt_not_in?: DateTime[] | DateTime | null
+  webflowUpdatedAt_lt?: DateTime | null
+  webflowUpdatedAt_lte?: DateTime | null
+  webflowUpdatedAt_gt?: DateTime | null
+  webflowUpdatedAt_gte?: DateTime | null
+  slug?: String | null
+  slug_not?: String | null
+  slug_in?: String[] | String | null
+  slug_not_in?: String[] | String | null
+  slug_lt?: String | null
+  slug_lte?: String | null
+  slug_gt?: String | null
+  slug_gte?: String | null
+  slug_contains?: String | null
+  slug_not_contains?: String | null
+  slug_starts_with?: String | null
+  slug_not_starts_with?: String | null
+  slug_ends_with?: String | null
+  slug_not_ends_with?: String | null
+  name?: String | null
+  name_not?: String | null
+  name_in?: String[] | String | null
+  name_not_in?: String[] | String | null
+  name_lt?: String | null
+  name_lte?: String | null
+  name_gt?: String | null
+  name_gte?: String | null
+  name_contains?: String | null
+  name_not_contains?: String | null
+  name_starts_with?: String | null
+  name_not_starts_with?: String | null
+  name_ends_with?: String | null
+  name_not_ends_with?: String | null
+  body?: String | null
+  body_not?: String | null
+  body_in?: String[] | String | null
+  body_not_in?: String[] | String | null
+  body_lt?: String | null
+  body_lte?: String | null
+  body_gt?: String | null
+  body_gte?: String | null
+  body_contains?: String | null
+  body_not_contains?: String | null
+  body_starts_with?: String | null
+  body_not_starts_with?: String | null
+  body_ends_with?: String | null
+  body_not_ends_with?: String | null
+  summary?: String | null
+  summary_not?: String | null
+  summary_in?: String[] | String | null
+  summary_not_in?: String[] | String | null
+  summary_lt?: String | null
+  summary_lte?: String | null
+  summary_gt?: String | null
+  summary_gte?: String | null
+  summary_contains?: String | null
+  summary_not_contains?: String | null
+  summary_starts_with?: String | null
+  summary_not_starts_with?: String | null
+  summary_ends_with?: String | null
+  summary_not_ends_with?: String | null
+  thumbnailURL?: String | null
+  thumbnailURL_not?: String | null
+  thumbnailURL_in?: String[] | String | null
+  thumbnailURL_not_in?: String[] | String | null
+  thumbnailURL_lt?: String | null
+  thumbnailURL_lte?: String | null
+  thumbnailURL_gt?: String | null
+  thumbnailURL_gte?: String | null
+  thumbnailURL_contains?: String | null
+  thumbnailURL_not_contains?: String | null
+  thumbnailURL_starts_with?: String | null
+  thumbnailURL_not_starts_with?: String | null
+  thumbnailURL_ends_with?: String | null
+  thumbnailURL_not_ends_with?: String | null
+  imageURL?: String | null
+  imageURL_not?: String | null
+  imageURL_in?: String[] | String | null
+  imageURL_not_in?: String[] | String | null
+  imageURL_lt?: String | null
+  imageURL_lte?: String | null
+  imageURL_gt?: String | null
+  imageURL_gte?: String | null
+  imageURL_contains?: String | null
+  imageURL_not_contains?: String | null
+  imageURL_starts_with?: String | null
+  imageURL_not_starts_with?: String | null
+  imageURL_ends_with?: String | null
+  imageURL_not_ends_with?: String | null
+  imageAlt?: String | null
+  imageAlt_not?: String | null
+  imageAlt_in?: String[] | String | null
+  imageAlt_not_in?: String[] | String | null
+  imageAlt_lt?: String | null
+  imageAlt_lte?: String | null
+  imageAlt_gt?: String | null
+  imageAlt_gte?: String | null
+  imageAlt_contains?: String | null
+  imageAlt_not_contains?: String | null
+  imageAlt_starts_with?: String | null
+  imageAlt_not_starts_with?: String | null
+  imageAlt_ends_with?: String | null
+  imageAlt_not_ends_with?: String | null
+  url?: String | null
+  url_not?: String | null
+  url_in?: String[] | String | null
+  url_not_in?: String[] | String | null
+  url_lt?: String | null
+  url_lte?: String | null
+  url_gt?: String | null
+  url_gte?: String | null
+  url_contains?: String | null
+  url_not_contains?: String | null
+  url_starts_with?: String | null
+  url_not_starts_with?: String | null
+  url_ends_with?: String | null
+  url_not_ends_with?: String | null
+  author?: String | null
+  author_not?: String | null
+  author_in?: String[] | String | null
+  author_not_in?: String[] | String | null
+  author_lt?: String | null
+  author_lte?: String | null
+  author_gt?: String | null
+  author_gte?: String | null
+  author_contains?: String | null
+  author_not_contains?: String | null
+  author_starts_with?: String | null
+  author_not_starts_with?: String | null
+  author_ends_with?: String | null
+  author_not_ends_with?: String | null
+  category?: String | null
+  category_not?: String | null
+  category_in?: String[] | String | null
+  category_not_in?: String[] | String | null
+  category_lt?: String | null
+  category_lte?: String | null
+  category_gt?: String | null
+  category_gte?: String | null
+  category_contains?: String | null
+  category_not_contains?: String | null
+  category_starts_with?: String | null
+  category_not_starts_with?: String | null
+  category_ends_with?: String | null
+  category_not_ends_with?: String | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  publishedOn?: DateTime | null
+  publishedOn_not?: DateTime | null
+  publishedOn_in?: DateTime[] | DateTime | null
+  publishedOn_not_in?: DateTime[] | DateTime | null
+  publishedOn_lt?: DateTime | null
+  publishedOn_lte?: DateTime | null
+  publishedOn_gt?: DateTime | null
+  publishedOn_gte?: DateTime | null
+}
+
+export interface BlogPostWhereUniqueInput {
   id?: ID_Input | null
 }
 
@@ -52937,6 +54090,10 @@ export interface AggregateBillingInfo {
   count: Int
 }
 
+export interface AggregateBlogPost {
+  count: Int
+}
+
 export interface AggregateBottomSize {
   count: Int
 }
@@ -53309,6 +54466,74 @@ export interface BillingInfoSubscriptionPayload {
   node?: BillingInfo | null
   updatedFields?: Array<String> | null
   previousValues?: BillingInfoPreviousValues | null
+}
+
+export interface BlogPost extends Node {
+  id: ID_Output
+  webflowId: String
+  webflowCreatedAt: DateTime
+  webflowUpdatedAt: DateTime
+  slug: String
+  name?: String | null
+  body?: String | null
+  summary?: String | null
+  thumbnailURL?: String | null
+  imageURL?: String | null
+  imageAlt?: String | null
+  url?: String | null
+  tags: Array<String>
+  author?: String | null
+  category?: String | null
+  createdAt: DateTime
+  updatedAt: DateTime
+  publishedOn: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface BlogPostConnection {
+  pageInfo: PageInfo
+  edges: Array<BlogPostEdge | null>
+  aggregate: AggregateBlogPost
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface BlogPostEdge {
+  node: BlogPost
+  cursor: String
+}
+
+export interface BlogPostPreviousValues {
+  id: ID_Output
+  webflowId: String
+  webflowCreatedAt: DateTime
+  webflowUpdatedAt: DateTime
+  slug: String
+  name?: String | null
+  body?: String | null
+  summary?: String | null
+  thumbnailURL?: String | null
+  imageURL?: String | null
+  imageAlt?: String | null
+  url?: String | null
+  tags: Array<String>
+  author?: String | null
+  category?: String | null
+  createdAt: DateTime
+  updatedAt: DateTime
+  publishedOn: DateTime
+}
+
+export interface BlogPostSubscriptionPayload {
+  mutation: MutationType
+  node?: BlogPost | null
+  updatedFields?: Array<String> | null
+  previousValues?: BlogPostPreviousValues | null
 }
 
 export interface BottomSize extends Node {
