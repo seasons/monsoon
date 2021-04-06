@@ -486,12 +486,11 @@ export class ReservationService {
                 type: MULTIPLE_CHOICE,
               },
               {
-                question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
+                question: "Would you be interested in buying it?",
                 options: {
                   set: [
-                    "Would buy at a discount",
-                    "Buy below retail",
-                    "Buy at retail",
+                    "Buy used below retail",
+                    "Buy new at retail",
                     "Would only rent",
                   ],
                 },
@@ -501,7 +500,7 @@ export class ReservationService {
                 question: `Did it fit as expected?`,
                 options: {
                   set: [
-                    "Fit too big",
+                    "Ran oversized",
                     "Fit true to size",
                     "Ran small",
                     "Didn’t fit at all",
