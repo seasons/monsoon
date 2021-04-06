@@ -238,7 +238,7 @@ export class ProductService {
         type: input.type,
         modelSizeName: input.modelSizeName,
         modelSizeDisplay: input.modelSizeDisplay,
-        bottomSizeType: input.bottomSizeType,
+        bottomSizeType: input.internalBottomSizeType,
       })
     }
 
@@ -651,7 +651,7 @@ export class ProductService {
   }) {
     // Extract custom fields out
     const {
-      bottomSizeType,
+      internalBottomSizeType,
       functions,
       images,
       modelSizeDisplay,
@@ -732,7 +732,7 @@ export class ProductService {
         type: product.type,
         modelSizeName,
         modelSizeDisplay,
-        bottomSizeType,
+        bottomSizeType: internalBottomSizeType,
       })
       modelSizeID = modelSize.id
     }
@@ -880,7 +880,7 @@ export class ProductService {
         ...pick(variant, ["sleeve", "shoulder", "chest", "neck", "length"]),
       },
       bottomSizeData: type === "Bottom" && {
-        type: (variant.bottomSizeType as BottomSizeType) || null,
+        type: (variant.internalBottomSizeType as BottomSizeType) || null,
         value: variant.internalSizeName || "",
         ...pick(variant, ["waist", "rise", "hem", "inseam"]),
       },
@@ -914,9 +914,6 @@ export class ProductService {
       internalSize: {
         connect: { id: internalSize.id },
       },
-      manufacturerSizes: manufacturerSizeIDs && {
-        connect: manufacturerSizeIDs,
-      },
       retailPrice,
       reservable: status === "Available" ? variant.total : 0,
       reserved: 0,
@@ -929,8 +926,18 @@ export class ProductService {
 
     const prodVar = await this.prisma.client.upsertProductVariant({
       where: { sku: variant.sku },
-      create: data,
-      update: data,
+      create: {
+        ...data,
+        manufacturerSizes: manufacturerSizeIDs && {
+          connect: manufacturerSizeIDs,
+        },
+      },
+      update: {
+        ...data,
+        manufacturerSizes: manufacturerSizeIDs && {
+          set: manufacturerSizeIDs,
+        },
+      },
     })
 
     variant.physicalProducts.forEach(async (physProdData, index) => {

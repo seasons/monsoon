@@ -561,7 +561,7 @@ type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
   location: Location
-  productVariant: ProductVariant! @relation(onDelete: SET_NULL)
+  productVariant: ProductVariant! @relation(onDelete: CASCADE)
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
