@@ -1156,6 +1156,7 @@ type BlogPost {
   thumbnailURL: String
   imageURL: String
   imageAlt: String
+  image: Image
   url: String
   tags: [String!]!
   author: String
@@ -1183,6 +1184,7 @@ input BlogPostCreateInput {
   thumbnailURL: String
   imageURL: String
   imageAlt: String
+  image: ImageCreateOneInput
   url: String
   tags: BlogPostCreatetagsInput
   author: String
@@ -1286,6 +1288,7 @@ input BlogPostUpdateInput {
   thumbnailURL: String
   imageURL: String
   imageAlt: String
+  image: ImageUpdateOneInput
   url: String
   tags: BlogPostUpdatetagsInput
   author: String
@@ -1458,6 +1461,7 @@ input BlogPostWhereInput {
   imageAlt_not_starts_with: String
   imageAlt_ends_with: String
   imageAlt_not_ends_with: String
+  image: ImageWhereInput
   url: String
   url_not: String
   url_in: [String!]

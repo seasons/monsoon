@@ -277,6 +277,7 @@ type BlogPost {
   thumbnailURL: String
   imageURL: String
   imageAlt: String
+  image: Image
   url: String
   tags: [String] @scalarList(strategy: RELATION)
   author: String

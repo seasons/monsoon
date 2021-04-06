@@ -9279,6 +9279,7 @@ export interface BlogPostWhereInput {
   imageAlt_not_starts_with?: Maybe<String>;
   imageAlt_ends_with?: Maybe<String>;
   imageAlt_not_ends_with?: Maybe<String>;
+  image?: Maybe<ImageWhereInput>;
   url?: Maybe<String>;
   url_not?: Maybe<String>;
   url_in?: Maybe<String[] | String>;
@@ -17637,6 +17638,7 @@ export interface BlogPostCreateInput {
   thumbnailURL?: Maybe<String>;
   imageURL?: Maybe<String>;
   imageAlt?: Maybe<String>;
+  image?: Maybe<ImageCreateOneInput>;
   url?: Maybe<String>;
   tags?: Maybe<BlogPostCreatetagsInput>;
   author?: Maybe<String>;
@@ -17659,6 +17661,7 @@ export interface BlogPostUpdateInput {
   thumbnailURL?: Maybe<String>;
   imageURL?: Maybe<String>;
   imageAlt?: Maybe<String>;
+  image?: Maybe<ImageUpdateOneInput>;
   url?: Maybe<String>;
   tags?: Maybe<BlogPostUpdatetagsInput>;
   author?: Maybe<String>;
@@ -26531,6 +26534,7 @@ export interface BlogPostPromise extends Promise<BlogPost>, Fragmentable {
   thumbnailURL: () => Promise<String>;
   imageURL: () => Promise<String>;
   imageAlt: () => Promise<String>;
+  image: <T = ImagePromise>() => T;
   url: () => Promise<String>;
   tags: () => Promise<String[]>;
   author: () => Promise<String>;
@@ -26554,6 +26558,7 @@ export interface BlogPostSubscription
   thumbnailURL: () => Promise<AsyncIterator<String>>;
   imageURL: () => Promise<AsyncIterator<String>>;
   imageAlt: () => Promise<AsyncIterator<String>>;
+  image: <T = ImageSubscription>() => T;
   url: () => Promise<AsyncIterator<String>>;
   tags: () => Promise<AsyncIterator<String[]>>;
   author: () => Promise<AsyncIterator<String>>;
@@ -26577,6 +26582,7 @@ export interface BlogPostNullablePromise
   thumbnailURL: () => Promise<String>;
   imageURL: () => Promise<String>;
   imageAlt: () => Promise<String>;
+  image: <T = ImagePromise>() => T;
   url: () => Promise<String>;
   tags: () => Promise<String[]>;
   author: () => Promise<String>;
