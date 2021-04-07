@@ -30,7 +30,7 @@
     "prisma:token": "prisma1 token",
     "postinstall": "yarn build",
     "start:server": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
-    "start": "concurrently --kill-others 'yarn tsc -w' 'yarn start:server'",
+    "start": "docker-compose up -d && concurrently --kill-others 'yarn tsc -w' 'yarn start:server'",
     "start:production": "node -r dotenv/config dist/index.js",
     "test": "bash src/tests/test.sh"
   },
