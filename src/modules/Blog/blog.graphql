@@ -1,5 +1,6 @@
 type Query {
-  blogPost(where: BlogPostWhereUniqueInput!) @cacheControl(maxAge: 1000)
+  blogPost(where: BlogPostWhereUniqueInput!): BlogPost
+    @cacheControl(maxAge: 1000)
   blogPosts(
     where: BlogPostWhereInput
     orderBy: BlogPostOrderByInput
