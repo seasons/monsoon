@@ -6,12 +6,13 @@ export class BlogQueriesResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @Query()
-  async blogPosts(@Args() { skip, count }, @Info() info) {
+  async blogPosts(@Args() { skip, count, ...args }, @Info() info) {
     return this.prisma.binding.query.blogPosts(
       {
         orderBy: "webflowCreatedAt_DESC",
         skip,
         first: count,
+        ...args,
       },
       info
     )

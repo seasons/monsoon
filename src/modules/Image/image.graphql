@@ -8,6 +8,7 @@ type Image {
   id: ID!
   caption: String
   url: String
+  alt: String
   originalHeight: Int
   originalWidth: Int
   originalUrl: String!

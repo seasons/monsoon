@@ -1,5 +1,6 @@
 import { BlogPostCreateInput } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
+import { ImageService } from "@modules/Image/services/image.service"
 import { Controller, Post } from "@nestjs/common"
 import { pick } from "lodash"
 
@@ -9,7 +10,8 @@ import { BlogService } from "../services/blog.service"
 export class WebflowController {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly blog: BlogService
+    private readonly blog: BlogService,
+    private readonly image: ImageService
   ) {}
 
   @Post()
@@ -39,7 +41,29 @@ export class WebflowController {
           "slug",
         ]),
       } as BlogPostCreateInput
-      await this.prisma.client.createBlogPost(createData)
+
+      const imageName = `${createData.slug}-image`
+      const title = `${createData.name} Image`
+      const alt = createData.imageAlt ? createData.imageAlt : title
+
+      const imageData = await this.image.uploadImageFromURL(
+        createData.imageURL,
+        imageName,
+        imageName
+      )
+
+      const blogImage = await this.prisma.client.upsertImage({
+        where: { url: imageData.url },
+        create: { ...imageData, title, alt },
+        update: { ...imageData, title, alt },
+      })
+
+      await this.prisma.client.createBlogPost({
+        ...createData,
+        image: {
+          connect: { id: blogImage.id },
+        },
+      })
     }
   }
 }
