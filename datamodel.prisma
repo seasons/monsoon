@@ -354,6 +354,7 @@ type Image {
   id: ID! @id
   caption: String
   url: String! @unique
+  alt: String
   height: Int
   width: Int
   title: String

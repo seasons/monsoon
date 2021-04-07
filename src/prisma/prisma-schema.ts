@@ -6361,6 +6361,7 @@ type Image {
   id: ID!
   caption: String
   url: String!
+  alt: String
   height: Int
   width: Int
   title: String
@@ -6378,6 +6379,7 @@ input ImageCreateInput {
   id: ID
   caption: String
   url: String!
+  alt: String
   height: Int
   width: Int
   title: String
@@ -6405,6 +6407,8 @@ enum ImageOrderByInput {
   caption_DESC
   url_ASC
   url_DESC
+  alt_ASC
+  alt_DESC
   height_ASC
   height_DESC
   width_ASC
@@ -6421,6 +6425,7 @@ type ImagePreviousValues {
   id: ID!
   caption: String
   url: String!
+  alt: String
   height: Int
   width: Int
   title: String
@@ -6471,6 +6476,20 @@ input ImageScalarWhereInput {
   url_not_starts_with: String
   url_ends_with: String
   url_not_ends_with: String
+  alt: String
+  alt_not: String
+  alt_in: [String!]
+  alt_not_in: [String!]
+  alt_lt: String
+  alt_lte: String
+  alt_gt: String
+  alt_gte: String
+  alt_contains: String
+  alt_not_contains: String
+  alt_starts_with: String
+  alt_not_starts_with: String
+  alt_ends_with: String
+  alt_not_ends_with: String
   height: Int
   height_not: Int
   height_in: [Int!]
@@ -6543,6 +6562,7 @@ input ImageSubscriptionWhereInput {
 input ImageUpdateDataInput {
   caption: String
   url: String
+  alt: String
   height: Int
   width: Int
   title: String
@@ -6551,6 +6571,7 @@ input ImageUpdateDataInput {
 input ImageUpdateInput {
   caption: String
   url: String
+  alt: String
   height: Int
   width: Int
   title: String
@@ -6559,6 +6580,7 @@ input ImageUpdateInput {
 input ImageUpdateManyDataInput {
   caption: String
   url: String
+  alt: String
   height: Int
   width: Int
   title: String
@@ -6579,6 +6601,7 @@ input ImageUpdateManyInput {
 input ImageUpdateManyMutationInput {
   caption: String
   url: String
+  alt: String
   height: Int
   width: Int
   title: String
@@ -6664,6 +6687,20 @@ input ImageWhereInput {
   url_not_starts_with: String
   url_ends_with: String
   url_not_ends_with: String
+  alt: String
+  alt_not: String
+  alt_in: [String!]
+  alt_not_in: [String!]
+  alt_lt: String
+  alt_lte: String
+  alt_gt: String
+  alt_gte: String
+  alt_contains: String
+  alt_not_contains: String
+  alt_starts_with: String
+  alt_not_starts_with: String
+  alt_ends_with: String
+  alt_not_ends_with: String
   height: Int
   height_not: Int
   height_in: [Int!]
