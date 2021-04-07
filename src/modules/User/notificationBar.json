@@ -10,6 +10,7 @@
       "detail": "Update your billing info in order to avoid having your membership cancelled",
       "route": { "route": "AccountStack", "screen": "EditCreditCard" }
     },
+    "underlinedCTAText": "",
     "icon": "Chevron",
     "paletteID": "RedAlert"
   },
@@ -24,7 +25,23 @@
       "detail": "Click the notif to dismiss it. Check your env vars to turn this off",
       "route": { "dismissable": true }
     },
+    "underlinedCTAText": "",
     "icon": "CloseX",
     "paletteID": "RedAlert"
+  },
+  "AuthorizedReminder": {
+    "web": {
+      "title": "You're in! Sign up and finish choosing your plan to place your first reservation:",
+      "detail": "",
+      "route": { "url": "/signup" }
+    },
+    "mobile": {
+      "title": "You're in! Sign up and finish choosing your plan to place your first reservation:",
+      "detail": "",
+      "route": { "route": "AccountStack", "screen": "EditCreditCard" }
+    },
+    "underlinedCTAText": "Secure your spot",
+    "icon": "Chevron",
+    "paletteID": "BlackAlert"
   }
 }

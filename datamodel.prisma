@@ -952,7 +952,9 @@ type Customer {
 enum NotificationBarID {
   PastDueInvoice
   TestDismissable
+  AuthorizedReminder
 }
+
 type CustomerNotificationBarReceipt {
   id: ID! @id
   notificationBarId: NotificationBarID!
