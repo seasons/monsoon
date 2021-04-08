@@ -3797,7 +3797,10 @@ export type InAdmissableReason =
   | "InsufficientInventory"
   | "OpsThresholdExceeded";
 
-export type NotificationBarID = "PastDueInvoice" | "TestDismissable";
+export type NotificationBarID =
+  | "PastDueInvoice"
+  | "TestDismissable"
+  | "AuthorizedReminder";
 
 export type PauseRequestOrderByInput =
   | "id_ASC"

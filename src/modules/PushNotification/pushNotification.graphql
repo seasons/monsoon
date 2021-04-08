@@ -69,4 +69,5 @@ enum AppRoute {
   PersonalPreferences
   ProductRequest
   Product
+  Modal
 }

@@ -107,18 +107,22 @@ export class MeFieldsResolver {
     }
 
     let data = null
-    if (
+    if (customer?.status === "PaymentFailed") {
+      data = await this.customerService.getNotificationBarData(
+        "PastDueInvoice",
+        customer.id
+      )
+    } else if (customer?.status === "Authorized") {
+      data = await this.customerService.getNotificationBarData(
+        "AuthorizedReminder",
+        customer.id
+      )
+    } else if (
       !this.statements.onProductionEnvironment() &&
       process.env.SHOW_TEST_DISMISSABLE_NOTIF === "true"
     ) {
       data = await this.customerService.getNotificationBarData(
         "TestDismissable",
-        customer.id
-      )
-    }
-    if (customer?.status === "PaymentFailed") {
-      data = await this.customerService.getNotificationBarData(
-        "PastDueInvoice",
         customer.id
       )
     }
