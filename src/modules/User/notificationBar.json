@@ -36,9 +36,16 @@
       "route": { "url": "/signup" }
     },
     "mobile": {
-      "title": "You're in! Sign up and finish choosing your plan to place your first reservation:",
-      "detail": "",
-      "route": { "route": "AccountStack", "screen": "EditCreditCard" }
+      "title": "You're in!",
+      "detail": "Sign up and finish choosing your plan",
+      "route": {
+        "route": "Modal",
+        "screen": "CreateAccountModal",
+        "params": {
+          "initialState": "ChoosePlan",
+          "initialUserState": "Admitted"
+        }
+      }
     },
     "underlinedCTAText": "Secure your spot",
     "icon": "Chevron",

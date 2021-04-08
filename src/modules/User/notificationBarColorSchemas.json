@@ -17,14 +17,14 @@
     "default": {
       "backgroundColor": "#000000",
       "titleFontColor": "#ffffff",
-      "detailFontColor": "#ffffff",
-      "iconStrokeColor": "#ffffff"
+      "detailFontColor": "#7F7F7F",
+      "iconStrokeColor": "#7F7F7F"
     },
     "pressed": {
       "backgroundColor": "#000000",
       "titleFontColor": "#ffffff",
-      "detailFontColor": "#ffffff",
-      "iconStrokeColor": "#ffffff"
+      "detailFontColor": "#7F7F7F",
+      "iconStrokeColor": "#7F7F7F"
     }
   }
 }
