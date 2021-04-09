@@ -2,7 +2,7 @@ import { BlogPostCreateInput } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Controller, Post } from "@nestjs/common"
-import { pick } from "lodash"
+import { head, pick } from "lodash"
 
 import { BlogService } from "../services/blog.service"
 
@@ -17,10 +17,13 @@ export class WebflowController {
   @Post()
   async handlePost() {
     const lastPostPublished = await this.blog.getLastPost()
-    const lastPostStored = await this.prisma.client.blogPosts({
+    const firstBlogPosts = await this.prisma.client.blogPosts({
       first: 1,
       orderBy: "webflowCreatedAt_DESC",
-    })?.[0]
+    })
+
+    const lastPostStored = head(firstBlogPosts) as any
+
     if (lastPostPublished.id !== lastPostStored.webflowId) {
       const createData = {
         webflowId: lastPostPublished.id,
