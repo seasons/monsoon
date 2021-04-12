@@ -1,58 +1,66 @@
 import "module-alias/register"
 
+import { size } from "lodash"
+
 import { PrismaService } from "../prisma/prisma.service"
 
 const addsManufacturerSizeToVariants = async () => {
   const ps = new PrismaService()
-
-  const variants = await ps.binding.query.productVariants(
-    {},
-    `
-    {
-        id
-        manufacturerSizes {
+  let count = 0
+  try {
+    const variants = await ps.binding.query.productVariants(
+      {},
+      `
+      {
           id
-        }
-        internalSize {
-          productType
+          manufacturerSizes {
             id
+          }
+          internalSize {
+            id
+            display
+            productType
             type
-            bottom {
-              id
-              value
-              type
-            }
-            top {
-              id
-            }
-        }
-    }
-  `
-  )
+          }
+      }
+    `
+    )
 
-  for (const variant of variants) {
-    // Fix for JP sizes
-    if (size?.bottom?.type && size.productType === "Bottom") {
-      await ps.client.updateSize({
-        where: { id: size.id },
-        data: {
-          type: size?.bottom?.type,
-        },
-      })
-    } else if (size.productType === "Top") {
-      await ps.client.updateSize({
-        where: { id: size.id },
-        data: {
-          type: "Letter",
-        },
-      })
+    for (const variant of variants) {
+      const manuID = variant.manufacturerSizes?.[0]?.id
+      const internalSize = variant.internalSize
+
+      if (!manuID) {
+        let data = {
+          display: internalSize.display,
+          productType: internalSize.productType,
+          type: internalSize.type,
+        }
+
+        const size = await ps.client.createSize(data)
+
+        await ps.client.updateProductVariant({
+          where: { id: variant.id },
+          data: {
+            manufacturerSizes: {
+              set: [{ id: size.id }],
+            },
+          },
+        })
+        count++
+        console.log(`Updated ${count} of ${variants.length}`)
+      } else {
+        count++
+      }
     }
+  } catch (e) {
+    console.log(e)
   }
 }
 
 const addTypeToSizes = async () => {
   const ps = new PrismaService()
-
+  let count = 0
   const sizes = await ps.binding.query.sizes(
     {},
     `
@@ -84,6 +92,9 @@ const addTypeToSizes = async () => {
         },
       })
     }
+
+    count++
+    console.log(`Updated ${count} of ${sizes.length}`)
   }
 }
 
