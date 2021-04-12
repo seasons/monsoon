@@ -130,6 +130,14 @@ enum BottomSizeType {
   Letter
 }
 
+enum SizeType {
+  WxL
+  US
+  EU
+  JP
+  Letter
+}
+
 enum QuestionType {
   MultipleChoice
   FreeResponse
@@ -1314,6 +1322,7 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
+  type: SizeType
 }
 
 # Helper table for audit logs. Should only ever have 0 or 1 records.

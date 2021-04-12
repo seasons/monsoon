@@ -6,6 +6,7 @@ import {
   Category,
   Product,
   ProductMaterialCategoryCreateInput,
+  SizeType,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, identity, pickBy, union, uniq, uniqBy } from "lodash"
@@ -468,58 +469,62 @@ export class ProductUtilsService {
     display,
     topSizeData,
     bottomSizeData,
+    sizeType,
   }: {
     slug: string
     type: ProductType
+    sizeType: SizeType
     display: string
     topSizeData?: TopSizeCreateInput
     bottomSizeData?: BottomSizeCreateInput
   }): Promise<Size> {
-    const sizeData = { slug, productType: type, display }
+    const sizeData = { slug, productType: type, display, type: sizeType }
     // Update if needed
     const sizeRecord = await this.prisma.client.upsertSize({
       where: { slug },
       create: { ...sizeData },
       update: { ...sizeData },
     })
-    switch (type) {
-      case "Top":
-        if (!topSizeData) {
-          throw new Error("topSizeData must be non null if type is Top")
-        }
-        const prismaTopSize = await this.prisma.client
-          .size({ id: sizeRecord.id })
-          .top()
-        const topSize = await this.prisma.client.upsertTopSize({
-          where: { id: prismaTopSize?.id || "" },
-          update: { ...topSizeData },
-          create: { ...topSizeData },
-        })
-        if (!prismaTopSize) {
-          await this.prisma.client.updateSize({
-            where: { slug },
-            data: { top: { connect: { id: topSize.id } } },
+    if (!bottomSizeData || !topSizeData) {
+      switch (type) {
+        case "Top":
+          // if (!topSizeData.letter) {
+          //   throw new Error("topSizeData must be non null if type is Top")
+          // }
+          const prismaTopSize = await this.prisma.client
+            .size({ id: sizeRecord.id })
+            .top()
+          const topSize = await this.prisma.client.upsertTopSize({
+            where: { id: prismaTopSize?.id || "" },
+            update: { ...topSizeData },
+            create: { ...topSizeData },
           })
-        }
-        break
-      case "Bottom":
-        if (!bottomSizeData) {
-          throw new Error("bottomSizeData must be non null if type is Bottom")
-        }
-        const prismaBottomSize = await this.prisma.client
-          .size({ id: sizeRecord?.id })
-          .bottom()
-        const bottomSize = await this.prisma.client.upsertBottomSize({
-          where: { id: prismaBottomSize?.id || "" },
-          create: { ...bottomSizeData },
-          update: { ...bottomSizeData },
-        })
-        if (!prismaBottomSize) {
-          await this.prisma.client.updateSize({
-            where: { slug },
-            data: { bottom: { connect: { id: bottomSize.id } } },
+          if (!prismaTopSize) {
+            await this.prisma.client.updateSize({
+              where: { slug },
+              data: { top: { connect: { id: topSize.id } } },
+            })
+          }
+          break
+        case "Bottom":
+          // if (!bottomSizeData) {
+          //   throw new Error("bottomSizeData must be non null if type is Bottom")
+          // }
+          const prismaBottomSize = await this.prisma.client
+            .size({ id: sizeRecord?.id })
+            .bottom()
+          const bottomSize = await this.prisma.client.upsertBottomSize({
+            where: { id: prismaBottomSize?.id || "" },
+            create: { ...bottomSizeData },
+            update: { ...bottomSizeData },
           })
-        }
+          if (!prismaBottomSize) {
+            await this.prisma.client.updateSize({
+              where: { slug },
+              data: { bottom: { connect: { id: bottomSize.id } } },
+            })
+          }
+      }
     }
 
     return sizeRecord
@@ -565,13 +570,14 @@ export class ProductUtilsService {
       slug,
       type,
       display: modelSizeDisplay,
-      topSizeData: type === "Top" && {
-        letter: modelSizeName as LetterSize,
-      },
-      bottomSizeData: type === "Bottom" && {
-        type: bottomSizeType as BottomSizeType,
-        value: modelSizeName,
-      },
+      // topSizeData: type === "Top" && {
+      //   letter: modelSizeName as LetterSize,
+      // },
+      // bottomSizeData: type === "Bottom" && {
+      //   type: bottomSizeType as BottomSizeType,
+      //   value: modelSizeName,
+      // },
+      sizeType: bottomSizeType,
     })
   }
 

@@ -884,6 +884,7 @@ export class ProductService {
         value: variant.internalSizeName || "",
         ...pick(variant, ["waist", "rise", "hem", "inseam"]),
       },
+      sizeType: variant.internalBottomSizeType,
     })
 
     const manufacturerSizeIDs = await this.productVariantService.getManufacturerSizeIDs(

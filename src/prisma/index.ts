@@ -3282,6 +3282,8 @@ export type LetterSize = "XXS" | "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL";
 
 export type BottomSizeType = "WxL" | "US" | "EU" | "JP" | "Letter";
 
+export type SizeType = "WxL" | "US" | "EU" | "JP" | "Letter";
+
 export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple";
 
 export type BrandTier =
@@ -3524,7 +3526,9 @@ export type SizeOrderByInput =
   | "productType_ASC"
   | "productType_DESC"
   | "display_ASC"
-  | "display_DESC";
+  | "display_DESC"
+  | "type_ASC"
+  | "type_DESC";
 
 export type ProductOrderByInput =
   | "id_ASC"
@@ -5902,6 +5906,10 @@ export interface SizeWhereInput {
   display_not_starts_with?: Maybe<String>;
   display_ends_with?: Maybe<String>;
   display_not_ends_with?: Maybe<String>;
+  type?: Maybe<SizeType>;
+  type_not?: Maybe<SizeType>;
+  type_in?: Maybe<SizeType[] | SizeType>;
+  type_not_in?: Maybe<SizeType[] | SizeType>;
   AND?: Maybe<SizeWhereInput[] | SizeWhereInput>;
   OR?: Maybe<SizeWhereInput[] | SizeWhereInput>;
   NOT?: Maybe<SizeWhereInput[] | SizeWhereInput>;
@@ -10894,6 +10902,7 @@ export interface SizeCreateInput {
   top?: Maybe<TopSizeCreateOneInput>;
   bottom?: Maybe<BottomSizeCreateOneInput>;
   display: String;
+  type?: Maybe<SizeType>;
 }
 
 export interface TopSizeCreateOneInput {
@@ -12594,6 +12603,7 @@ export interface SizeUpdateDataInput {
   top?: Maybe<TopSizeUpdateOneInput>;
   bottom?: Maybe<BottomSizeUpdateOneInput>;
   display?: Maybe<String>;
+  type?: Maybe<SizeType>;
 }
 
 export interface TopSizeUpdateOneInput {
@@ -12725,6 +12735,10 @@ export interface SizeScalarWhereInput {
   display_not_starts_with?: Maybe<String>;
   display_ends_with?: Maybe<String>;
   display_not_ends_with?: Maybe<String>;
+  type?: Maybe<SizeType>;
+  type_not?: Maybe<SizeType>;
+  type_in?: Maybe<SizeType[] | SizeType>;
+  type_not_in?: Maybe<SizeType[] | SizeType>;
   AND?: Maybe<SizeScalarWhereInput[] | SizeScalarWhereInput>;
   OR?: Maybe<SizeScalarWhereInput[] | SizeScalarWhereInput>;
   NOT?: Maybe<SizeScalarWhereInput[] | SizeScalarWhereInput>;
@@ -12739,6 +12753,7 @@ export interface SizeUpdateManyDataInput {
   slug?: Maybe<String>;
   productType?: Maybe<ProductType>;
   display?: Maybe<String>;
+  type?: Maybe<SizeType>;
 }
 
 export interface ProductUpdateOneRequiredWithoutVariantsInput {
@@ -20443,12 +20458,14 @@ export interface SizeUpdateInput {
   top?: Maybe<TopSizeUpdateOneInput>;
   bottom?: Maybe<BottomSizeUpdateOneInput>;
   display?: Maybe<String>;
+  type?: Maybe<SizeType>;
 }
 
 export interface SizeUpdateManyMutationInput {
   slug?: Maybe<String>;
   productType?: Maybe<ProductType>;
   display?: Maybe<String>;
+  type?: Maybe<SizeType>;
 }
 
 export interface SmsReceiptUpdateInput {
@@ -23462,6 +23479,7 @@ export interface Size {
   slug: String;
   productType?: ProductType;
   display: String;
+  type?: SizeType;
 }
 
 export interface SizePromise extends Promise<Size>, Fragmentable {
@@ -23471,6 +23489,7 @@ export interface SizePromise extends Promise<Size>, Fragmentable {
   top: <T = TopSizePromise>() => T;
   bottom: <T = BottomSizePromise>() => T;
   display: () => Promise<String>;
+  type: () => Promise<SizeType>;
 }
 
 export interface SizeSubscription
@@ -23482,6 +23501,7 @@ export interface SizeSubscription
   top: <T = TopSizeSubscription>() => T;
   bottom: <T = BottomSizeSubscription>() => T;
   display: () => Promise<AsyncIterator<String>>;
+  type: () => Promise<AsyncIterator<SizeType>>;
 }
 
 export interface SizeNullablePromise
@@ -23493,6 +23513,7 @@ export interface SizeNullablePromise
   top: <T = TopSizePromise>() => T;
   bottom: <T = BottomSizePromise>() => T;
   display: () => Promise<String>;
+  type: () => Promise<SizeType>;
 }
 
 export interface TopSize {
@@ -34760,6 +34781,7 @@ export interface SizePreviousValues {
   slug: String;
   productType?: ProductType;
   display: String;
+  type?: SizeType;
 }
 
 export interface SizePreviousValuesPromise
@@ -34769,6 +34791,7 @@ export interface SizePreviousValuesPromise
   slug: () => Promise<String>;
   productType: () => Promise<ProductType>;
   display: () => Promise<String>;
+  type: () => Promise<SizeType>;
 }
 
 export interface SizePreviousValuesSubscription
@@ -34778,6 +34801,7 @@ export interface SizePreviousValuesSubscription
   slug: () => Promise<AsyncIterator<String>>;
   productType: () => Promise<AsyncIterator<ProductType>>;
   display: () => Promise<AsyncIterator<String>>;
+  type: () => Promise<AsyncIterator<SizeType>>;
 }
 
 export interface SmsReceiptSubscriptionPayload {
@@ -35563,6 +35587,10 @@ export const models: Model[] = [
   },
   {
     name: "BottomSizeType",
+    embedded: false
+  },
+  {
+    name: "SizeType",
     embedded: false
   },
   {

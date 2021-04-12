@@ -243,20 +243,13 @@ export class ProductVariantService {
           if (!variant.sku) {
             throw new Error("No variant sku present in getManufacturerSizeIDs")
           }
-          const sizeType =
-            type === "Bottom" ? variant.manufacturerBottomSizeType : "Letter"
+          const sizeType = variant.manufacturerSizeType
           const slug = `${variant.sku}-manufacturer-${sizeType}-${sizeValue}`
           const size = await this.productUtils.deepUpsertSize({
             slug,
             type,
             display: sizeValue,
-            topSizeData: type === "Top" && {
-              letter: (sizeValue as LetterSize) || null,
-            },
-            bottomSizeData: type === "Bottom" && {
-              type: (sizeType as BottomSizeType) || null,
-              value: sizeValue || "",
-            },
+            sizeType,
           })
           return { id: size.id }
         })

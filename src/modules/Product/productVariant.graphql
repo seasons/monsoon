@@ -88,6 +88,26 @@ type ProductVariantPrice {
   buyUsedAvailableForSale: Boolean
 }
 
+type TopSize {
+  id: ID!
+  letter: LetterSize @deprecated(reason: "replaced with size.display")
+  sleeve: Float
+  shoulder: Float
+  chest: Float
+  neck: Float
+  length: Float
+}
+
+type BottomSize {
+  id: ID!
+  type: BottomSizeType @deprecated(reason: "replaced with size.type")
+  value: String @deprecated(reason: "replaced with size.display")
+  waist: Float
+  rise: Float
+  hem: Float
+  inseam: Float
+}
+
 type Size {
   id: ID!
   slug: String!
@@ -95,6 +115,7 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
+  type: SizeType
 }
 
 type ShopifyProductVariant {
@@ -190,7 +211,7 @@ input UpsertVariantInput {
   internalSizeName: String!
   internalBottomSizeType: BottomSizeType
   manufacturerSizeNames: [String!]
-  manufacturerBottomSizeType: BottomSizeType
+  manufacturerSizeType: SizeType
   waist: Float
   rise: Float
   hem: Float
@@ -214,7 +235,7 @@ input UpdateVariantInput {
   length: Float
   # Bottom Size values
   manufacturerSizeNames: [String!]
-  manufacturerBottomSizeType: BottomSizeType
+  manufacturerSizeType: SizeType
   waist: Float
   rise: Float
   hem: Float
