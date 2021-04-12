@@ -5,6 +5,7 @@ import { size } from "lodash"
 import { PrismaService } from "../prisma/prisma.service"
 
 const addsManufacturerSizeToVariants = async () => {
+  // Run this second
   const ps = new PrismaService()
   let count = 0
   try {
@@ -13,6 +14,7 @@ const addsManufacturerSizeToVariants = async () => {
       `
       {
           id
+          sku
           manufacturerSizes {
             id
           }
@@ -28,13 +30,17 @@ const addsManufacturerSizeToVariants = async () => {
 
     for (const variant of variants) {
       const manuID = variant.manufacturerSizes?.[0]?.id
-      const internalSize = variant.internalSize
 
       if (!manuID) {
-        let data = {
-          display: internalSize.display,
+        const internalSize = variant.internalSize
+        const sizeType = internalSize.type
+        const sizeDisplay = internalSize.display
+
+        const data = {
+          display: sizeDisplay,
           productType: internalSize.productType,
           type: internalSize.type,
+          slug: `${variant.sku}-manufacturer-${sizeType}-${sizeDisplay}`,
         }
 
         const size = await ps.client.createSize(data)
@@ -59,6 +65,7 @@ const addsManufacturerSizeToVariants = async () => {
 }
 
 const addTypeToSizes = async () => {
+  // Run this first
   const ps = new PrismaService()
   let count = 0
   const sizes = await ps.binding.query.sizes(
