@@ -47,6 +47,7 @@ export class SearchService {
     const results = await this.algolia.defaultIndex.search(query, {
       filters,
     })
+
     return results.hits
   }
 

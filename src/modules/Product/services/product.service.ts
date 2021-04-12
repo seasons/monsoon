@@ -896,13 +896,29 @@ export class ProductService {
       internalSize.id
     )
 
-    const shopifyProductVariantData = variant.shopifyProductVariant
-      ? {
-          shopifyProductVariant: {
-            connect: variant.shopifyProductVariant,
-          },
-        }
-      : {}
+    const shopifyProductVariant = variant.shopifyProductVariant
+    const shopifyProductVariantCreateData =
+      shopifyProductVariant && shopifyProductVariant.externalId
+        ? {
+            shopifyProductVariant: {
+              connect: variant.shopifyProductVariant,
+            },
+          }
+        : {}
+    const shopifyProductVariantUpdateData =
+      shopifyProductVariant && shopifyProductVariant.externalId
+        ? {
+            shopifyProductVariant: {
+              connect: variant.shopifyProductVariant,
+            },
+          }
+        : shopifyProductVariant
+        ? {
+            shopifyProductVariant: {
+              disconnect: true,
+            },
+          }
+        : {}
 
     const data = {
       displayShort,
@@ -920,7 +936,6 @@ export class ProductService {
       nonReservable: status === "NotAvailable" ? variant.total : 0,
       offloaded: 0,
       stored: 0,
-      ...shopifyProductVariantData,
       ...pick(variant, ["weight", "total", "sku"]),
     }
 
@@ -928,12 +943,14 @@ export class ProductService {
       where: { sku: variant.sku },
       create: {
         ...data,
+        ...shopifyProductVariantCreateData,
         manufacturerSizes: manufacturerSizeIDs && {
           connect: manufacturerSizeIDs,
         },
       },
       update: {
         ...data,
+        ...shopifyProductVariantUpdateData,
         manufacturerSizes: manufacturerSizeIDs && {
           set: manufacturerSizeIDs,
         },
