@@ -68,7 +68,7 @@ export class BrandService {
       )
 
       for (let shopifyPV of shopifyProductVariants) {
-        this.prisma.client.updateShopifyProductVariant({
+        await this.prisma.client.updateShopifyProductVariant({
           where: {
             id: shopifyPV.id,
           },
@@ -81,6 +81,8 @@ export class BrandService {
           },
         })
       }
+
+      // Index shopify product variants into algolia
     } else if (brand?.externalShopifyIntegration?.id) {
       data.externalShopifyIntegration = { delete: true }
     }

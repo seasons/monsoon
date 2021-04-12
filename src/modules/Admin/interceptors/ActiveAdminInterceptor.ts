@@ -48,6 +48,10 @@ export class ActiveAdminInterceptor implements NestInterceptor {
     )
     const ctx: ActiveAdminInterceptorContext = graphqlExecutionContext.getContext()
 
+    const cleanup = async () => {
+      await this.destroyActiveAdminRecordIfNeeded(ctx)
+    }
+
     let numPolls = 0
     if (ctx.isAdminAction && ctx.isMutation && ctx.activeUserIsAdmin) {
       // Ensure we're not colliding with another admin action by enforcing an empty ActiveAdminTable
@@ -67,7 +71,9 @@ export class ActiveAdminInterceptor implements NestInterceptor {
         numPolls++
 
         if (numPolls * this.pollInterval > 5000) {
-          throw new Error("Timed out after 5 seconds in queue")
+          // For long living admin mutations, clean up after 5 seconds
+          await cleanup()
+          await this.updateLoggerBlocked()
         }
       }
       if (numPolls > 0) {
@@ -83,9 +89,6 @@ export class ActiveAdminInterceptor implements NestInterceptor {
       })
     }
 
-    const cleanup = async () => {
-      await this.destroyActiveAdminRecordIfNeeded(ctx)
-    }
     return next.handle().pipe(
       tap(
         // no next observable
