@@ -98,6 +98,13 @@ export class CustomerFieldsResolver {
       )
     }
 
+    // One Dapper Street campaign
+    if (utm?.source?.toLowerCase() === "onedapperstreet") {
+      coupon = await this.paymentService.checkCoupon(
+        process.env.ONE_DAPPER_STREET_COUPON_ID
+      )
+    }
+
     return coupon
   }
 

@@ -3565,6 +3565,8 @@ export type ImageOrderByInput =
   | "caption_DESC"
   | "url_ASC"
   | "url_DESC"
+  | "alt_ASC"
+  | "alt_DESC"
   | "height_ASC"
   | "height_DESC"
   | "width_ASC"
@@ -3795,7 +3797,10 @@ export type InAdmissableReason =
   | "InsufficientInventory"
   | "OpsThresholdExceeded";
 
-export type NotificationBarID = "PastDueInvoice" | "TestDismissable";
+export type NotificationBarID =
+  | "PastDueInvoice"
+  | "TestDismissable"
+  | "AuthorizedReminder";
 
 export type PauseRequestOrderByInput =
   | "id_ASC"
@@ -5219,6 +5224,20 @@ export interface ImageWhereInput {
   url_not_starts_with?: Maybe<String>;
   url_ends_with?: Maybe<String>;
   url_not_ends_with?: Maybe<String>;
+  alt?: Maybe<String>;
+  alt_not?: Maybe<String>;
+  alt_in?: Maybe<String[] | String>;
+  alt_not_in?: Maybe<String[] | String>;
+  alt_lt?: Maybe<String>;
+  alt_lte?: Maybe<String>;
+  alt_gt?: Maybe<String>;
+  alt_gte?: Maybe<String>;
+  alt_contains?: Maybe<String>;
+  alt_not_contains?: Maybe<String>;
+  alt_starts_with?: Maybe<String>;
+  alt_not_starts_with?: Maybe<String>;
+  alt_ends_with?: Maybe<String>;
+  alt_not_ends_with?: Maybe<String>;
   height?: Maybe<Int>;
   height_not?: Maybe<Int>;
   height_in?: Maybe<Int[] | Int>;
@@ -9279,6 +9298,7 @@ export interface BlogPostWhereInput {
   imageAlt_not_starts_with?: Maybe<String>;
   imageAlt_ends_with?: Maybe<String>;
   imageAlt_not_ends_with?: Maybe<String>;
+  image?: Maybe<ImageWhereInput>;
   url?: Maybe<String>;
   url_not?: Maybe<String>;
   url_in?: Maybe<String[] | String>;
@@ -10757,6 +10777,7 @@ export interface ImageCreateInput {
   id?: Maybe<ID_Input>;
   caption?: Maybe<String>;
   url: String;
+  alt?: Maybe<String>;
   height?: Maybe<Int>;
   width?: Maybe<Int>;
   title?: Maybe<String>;
@@ -12394,6 +12415,7 @@ export interface ImageUpdateOneRequiredInput {
 export interface ImageUpdateDataInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
+  alt?: Maybe<String>;
   height?: Maybe<Int>;
   width?: Maybe<Int>;
   title?: Maybe<String>;
@@ -12866,6 +12888,20 @@ export interface ImageScalarWhereInput {
   url_not_starts_with?: Maybe<String>;
   url_ends_with?: Maybe<String>;
   url_not_ends_with?: Maybe<String>;
+  alt?: Maybe<String>;
+  alt_not?: Maybe<String>;
+  alt_in?: Maybe<String[] | String>;
+  alt_not_in?: Maybe<String[] | String>;
+  alt_lt?: Maybe<String>;
+  alt_lte?: Maybe<String>;
+  alt_gt?: Maybe<String>;
+  alt_gte?: Maybe<String>;
+  alt_contains?: Maybe<String>;
+  alt_not_contains?: Maybe<String>;
+  alt_starts_with?: Maybe<String>;
+  alt_not_starts_with?: Maybe<String>;
+  alt_ends_with?: Maybe<String>;
+  alt_not_ends_with?: Maybe<String>;
   height?: Maybe<Int>;
   height_not?: Maybe<Int>;
   height_in?: Maybe<Int[] | Int>;
@@ -12925,6 +12961,7 @@ export interface ImageUpdateManyWithWhereNestedInput {
 export interface ImageUpdateManyDataInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
+  alt?: Maybe<String>;
   height?: Maybe<Int>;
   width?: Maybe<Int>;
   title?: Maybe<String>;
@@ -17637,6 +17674,7 @@ export interface BlogPostCreateInput {
   thumbnailURL?: Maybe<String>;
   imageURL?: Maybe<String>;
   imageAlt?: Maybe<String>;
+  image?: Maybe<ImageCreateOneInput>;
   url?: Maybe<String>;
   tags?: Maybe<BlogPostCreatetagsInput>;
   author?: Maybe<String>;
@@ -17659,6 +17697,7 @@ export interface BlogPostUpdateInput {
   thumbnailURL?: Maybe<String>;
   imageURL?: Maybe<String>;
   imageAlt?: Maybe<String>;
+  image?: Maybe<ImageUpdateOneInput>;
   url?: Maybe<String>;
   tags?: Maybe<BlogPostUpdatetagsInput>;
   author?: Maybe<String>;
@@ -18430,6 +18469,7 @@ export interface FitPicReportUpdateManyMutationInput {
 export interface ImageUpdateInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
+  alt?: Maybe<String>;
   height?: Maybe<Int>;
   width?: Maybe<Int>;
   title?: Maybe<String>;
@@ -18438,6 +18478,7 @@ export interface ImageUpdateInput {
 export interface ImageUpdateManyMutationInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
+  alt?: Maybe<String>;
   height?: Maybe<Int>;
   width?: Maybe<Int>;
   title?: Maybe<String>;
@@ -22902,6 +22943,7 @@ export interface Image {
   id: ID_Output;
   caption?: String;
   url: String;
+  alt?: String;
   height?: Int;
   width?: Int;
   title?: String;
@@ -22913,6 +22955,7 @@ export interface ImagePromise extends Promise<Image>, Fragmentable {
   id: () => Promise<ID_Output>;
   caption: () => Promise<String>;
   url: () => Promise<String>;
+  alt: () => Promise<String>;
   height: () => Promise<Int>;
   width: () => Promise<Int>;
   title: () => Promise<String>;
@@ -22926,6 +22969,7 @@ export interface ImageSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   caption: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
+  alt: () => Promise<AsyncIterator<String>>;
   height: () => Promise<AsyncIterator<Int>>;
   width: () => Promise<AsyncIterator<Int>>;
   title: () => Promise<AsyncIterator<String>>;
@@ -22939,6 +22983,7 @@ export interface ImageNullablePromise
   id: () => Promise<ID_Output>;
   caption: () => Promise<String>;
   url: () => Promise<String>;
+  alt: () => Promise<String>;
   height: () => Promise<Int>;
   width: () => Promise<Int>;
   title: () => Promise<String>;
@@ -26531,6 +26576,7 @@ export interface BlogPostPromise extends Promise<BlogPost>, Fragmentable {
   thumbnailURL: () => Promise<String>;
   imageURL: () => Promise<String>;
   imageAlt: () => Promise<String>;
+  image: <T = ImagePromise>() => T;
   url: () => Promise<String>;
   tags: () => Promise<String[]>;
   author: () => Promise<String>;
@@ -26554,6 +26600,7 @@ export interface BlogPostSubscription
   thumbnailURL: () => Promise<AsyncIterator<String>>;
   imageURL: () => Promise<AsyncIterator<String>>;
   imageAlt: () => Promise<AsyncIterator<String>>;
+  image: <T = ImageSubscription>() => T;
   url: () => Promise<AsyncIterator<String>>;
   tags: () => Promise<AsyncIterator<String[]>>;
   author: () => Promise<AsyncIterator<String>>;
@@ -26577,6 +26624,7 @@ export interface BlogPostNullablePromise
   thumbnailURL: () => Promise<String>;
   imageURL: () => Promise<String>;
   imageAlt: () => Promise<String>;
+  image: <T = ImagePromise>() => T;
   url: () => Promise<String>;
   tags: () => Promise<String[]>;
   author: () => Promise<String>;
@@ -32475,6 +32523,7 @@ export interface ImagePreviousValues {
   id: ID_Output;
   caption?: String;
   url: String;
+  alt?: String;
   height?: Int;
   width?: Int;
   title?: String;
@@ -32488,6 +32537,7 @@ export interface ImagePreviousValuesPromise
   id: () => Promise<ID_Output>;
   caption: () => Promise<String>;
   url: () => Promise<String>;
+  alt: () => Promise<String>;
   height: () => Promise<Int>;
   width: () => Promise<Int>;
   title: () => Promise<String>;
@@ -32501,6 +32551,7 @@ export interface ImagePreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   caption: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
+  alt: () => Promise<AsyncIterator<String>>;
   height: () => Promise<AsyncIterator<Int>>;
   width: () => Promise<AsyncIterator<Int>>;
   title: () => Promise<AsyncIterator<String>>;
