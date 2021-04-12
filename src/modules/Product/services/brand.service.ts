@@ -57,30 +57,30 @@ export class BrandService {
           shopName,
         },
       } as ExternalShopifyIntegrationUpdateOneInput
-      // const shopifyProductVariants = await this.prisma.client.shopifyProductVariants(
-      //   {
-      //     where: {
-      //       shop: {
-      //         shopName,
-      //       },
-      //     },
-      //   }
-      // )
+      const shopifyProductVariants = await this.prisma.client.shopifyProductVariants(
+        {
+          where: {
+            shop: {
+              shopName,
+            },
+          },
+        }
+      )
 
-      // for (let shopifyPV of shopifyProductVariants) {
-      //   this.prisma.client.updateShopifyProductVariant({
-      //     where: {
-      //       id: shopifyPV.id,
-      //     },
-      //     data: {
-      //       brand: {
-      //         connect: {
-      //           id: brand.id,
-      //         },
-      //       },
-      //     },
-      //   })
-      // }
+      for (let shopifyPV of shopifyProductVariants) {
+        this.prisma.client.updateShopifyProductVariant({
+          where: {
+            id: shopifyPV.id,
+          },
+          data: {
+            brand: {
+              connect: {
+                id: brand.id,
+              },
+            },
+          },
+        })
+      }
     } else if (brand?.externalShopifyIntegration?.id) {
       data.externalShopifyIntegration = { delete: true }
     }
