@@ -2,8 +2,14 @@ import * as url from "url"
 
 import { BrandUtilsService } from "@modules/Product/services/brand.utils.service"
 import { Injectable } from "@nestjs/common"
-import { BrandWhereUniqueInput } from "@prisma/index"
-import { Brand as PrismaBindingBrand } from "@prisma/prisma.binding"
+import {
+  BrandWhereUniqueInput,
+  ExternalShopifyIntegrationUpdateOneInput,
+} from "@prisma/index"
+import {
+  BrandUpdateOneInput,
+  Brand as PrismaBindingBrand,
+} from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
 
 @Injectable()
@@ -44,12 +50,37 @@ export class BrandService {
     const { logoID, imageIDs } = await this.utils.createBrandImages(data)
 
     if (data.externalShopifyIntegration) {
+      const shopName = data.externalShopifyIntegration.shopName
+
       data.externalShopifyIntegration = {
-        upsert: {
-          update: data.externalShopifyIntegration,
-          create: data.externalShopifyIntegration,
+        connect: {
+          shopName,
         },
-      }
+      } as ExternalShopifyIntegrationUpdateOneInput
+      // const shopifyProductVariants = await this.prisma.client.shopifyProductVariants(
+      //   {
+      //     where: {
+      //       shop: {
+      //         shopName,
+      //       },
+      //     },
+      //   }
+      // )
+
+      // for (let shopifyPV of shopifyProductVariants) {
+      //   this.prisma.client.updateShopifyProductVariant({
+      //     where: {
+      //       id: shopifyPV.id,
+      //     },
+      //     data: {
+      //       brand: {
+      //         connect: {
+      //           id: brand.id,
+      //         },
+      //       },
+      //     },
+      //   })
+      // }
     } else if (brand?.externalShopifyIntegration?.id) {
       data.externalShopifyIntegration = { delete: true }
     }

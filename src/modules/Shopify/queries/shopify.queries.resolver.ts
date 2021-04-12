@@ -9,4 +9,12 @@ export class ShopifyQueriesResolver {
   async shopifyProductVariants(@Args() args, @Info() info) {
     return await this.prisma.binding.query.shopifyProductVariants(args, info)
   }
+
+  @Query()
+  async externalShopifyIntegrations(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.externalShopifyIntegrations(
+      args,
+      info
+    )
+  }
 }
