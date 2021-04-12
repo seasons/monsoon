@@ -367,9 +367,16 @@ export class SearchService {
     return result
   }
 
-  async indexShopifyProductVariants(indices = [IndexKey.Default]) {
+  async indexShopifyProductVariants(
+    indices = [IndexKey.Default],
+    brandID?: string
+  ) {
     const shopifyProductVariants = await this.prisma.binding.query.shopifyProductVariants(
-      {},
+      {
+        where: {
+          brand: brandID ? { id: brandID } : { id_not: null },
+        },
+      },
       `{
         id
         externalId
