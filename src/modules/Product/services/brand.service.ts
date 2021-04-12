@@ -1,6 +1,8 @@
 import * as url from "url"
 
 import { BrandUtilsService } from "@modules/Product/services/brand.utils.service"
+import { IndexKey } from "@modules/Search/services/algolia.service"
+import { SearchService } from "@modules/Search/services/search.service"
 import { Injectable } from "@nestjs/common"
 import { BrandWhereUniqueInput } from "@prisma/index"
 import { Brand as PrismaBindingBrand } from "@prisma/prisma.binding"
@@ -10,7 +12,8 @@ import { PrismaService } from "@prisma/prisma.service"
 export class BrandService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly utils: BrandUtilsService
+    private readonly utils: BrandUtilsService,
+    private readonly search: SearchService
   ) {}
 
   async createBrand({ input }: { input: any }) {
@@ -41,7 +44,12 @@ export class BrandService {
       }`
     )
 
-    const { logoID, imageIDs } = await this.utils.createBrandImages(data)
+    let brandImages
+    try {
+      brandImages = await this.utils.createBrandImages(data)
+    } catch (ex) {
+      /** noop **/
+    }
 
     if (data.externalShopifyIntegration) {
       data.externalShopifyIntegration = {
@@ -54,13 +62,24 @@ export class BrandService {
       data.externalShopifyIntegration = { delete: true }
     }
 
-    return await this.prisma.client.updateBrand({
+    const updatedBrand = await this.prisma.client.updateBrand({
       where,
       data: {
         ...data,
-        logoImage: logoID && { connect: { id: logoID } },
-        images: imageIDs && { set: imageIDs },
+        logoImage: brandImages &&
+          brandImages.logoID && { connect: { id: brandImages.logoID } },
+        images: brandImages &&
+          brandImages.imageIDs && { set: brandImages.imageIDs },
       },
     })
+
+    if (data.externalShopifyIntegration) {
+      await this.search.indexShopifyProductVariants(
+        [IndexKey.Default, IndexKey.Admin, IndexKey.ShopifyProductVariant],
+        updatedBrand.id
+      )
+    }
+
+    return updatedBrand
   }
 }
