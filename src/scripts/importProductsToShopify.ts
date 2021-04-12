@@ -72,6 +72,7 @@ const importProductsToShopify = async () => {
         slug
         name
         productFit
+        retailPrice
         category {
           id
           name
@@ -120,8 +121,6 @@ const importProductsToShopify = async () => {
       shopName,
     })
 
-    console.log(shop.accessToken)
-
     for (let product of products) {
       const images = product.images.map(image => {
         return resizeImage(image.url, "Large", {
@@ -136,11 +135,12 @@ const importProductsToShopify = async () => {
         variables: {
           input: {
             title: product.name,
+            vendor: product.brand.name,
             descriptionHtml: product.description,
             variants: product.variants.map(variant => {
               return {
                 sku: variant.sku,
-                price: variant.price?.retailPrice || 0,
+                price: product.retailPrice || 0,
                 options: [variant.internalSize.display, product.color.name],
                 imageSrc: product.images?.[0].url,
                 inventoryItem: {
