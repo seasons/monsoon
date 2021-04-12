@@ -95,6 +95,7 @@ type NotificationBar {
   icon: NotificationBarIcon
   viewCount: Int
   clickCount: Int
+  underlinedCTAText: String
   id: NotificationBarID
 }
 

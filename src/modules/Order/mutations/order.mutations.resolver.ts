@@ -93,12 +93,7 @@ export class OrderMutationsResolver {
   }
 
   @Mutation()
-  async updateOrderStatus(@Args() { orderID, status }) {
-    return await this.prisma.client.updateOrder({
-      where: { id: orderID },
-      data: {
-        status,
-      },
-    })
+  updateOrderStatus(@Args() { orderID, status }, @Customer() customer) {
+    return this.order.updateOrderStatus({ orderID, status, customer })
   }
 }

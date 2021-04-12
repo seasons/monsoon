@@ -66,11 +66,11 @@ export interface Query {
     productVariantPrices: <T = Array<ProductVariantPrice | null>>(args: { where?: ProductVariantPriceWhereInput | null, orderBy?: ProductVariantPriceOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     locations: <T = Array<Location | null>>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     physicalProducts: <T = Array<PhysicalProduct | null>>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     smsReceipts: <T = Array<SmsReceipt | null>>(args: { where?: SmsReceiptWhereInput | null, orderBy?: SmsReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     users: <T = Array<User | null>>(args: { where?: UserWhereInput | null, orderBy?: UserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariants: <T = Array<ProductVariant | null>>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     paymentPlans: <T = Array<PaymentPlan | null>>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     products: <T = Array<Product | null>>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shippingOptions: <T = Array<ShippingOption | null>>(args: { where?: ShippingOptionWhereInput | null, orderBy?: ShippingOptionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetails: <T = Array<CustomerDetail | null>>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -137,11 +137,11 @@ export interface Query {
     productVariantPrice: <T = ProductVariantPrice | null>(args: { where: ProductVariantPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     location: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     physicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     smsReceipt: <T = SmsReceipt | null>(args: { where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     user: <T = User | null>(args: { where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     paymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     product: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     shippingOption: <T = ShippingOption | null>(args: { where: ShippingOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -208,11 +208,11 @@ export interface Query {
     productVariantPricesConnection: <T = ProductVariantPriceConnection>(args: { where?: ProductVariantPriceWhereInput | null, orderBy?: ProductVariantPriceOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     locationsConnection: <T = LocationConnection>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     physicalProductsConnection: <T = PhysicalProductConnection>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     smsReceiptsConnection: <T = SmsReceiptConnection>(args: { where?: SmsReceiptWhereInput | null, orderBy?: SmsReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     usersConnection: <T = UserConnection>(args: { where?: UserWhereInput | null, orderBy?: UserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantsConnection: <T = ProductVariantConnection>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     paymentPlansConnection: <T = PaymentPlanConnection>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productsConnection: <T = ProductConnection>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shippingOptionsConnection: <T = ShippingOptionConnection>(args: { where?: ShippingOptionWhereInput | null, orderBy?: ShippingOptionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetailsConnection: <T = CustomerDetailConnection>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -283,11 +283,11 @@ export interface Mutation {
     createProductVariantPrice: <T = ProductVariantPrice>(args: { data: ProductVariantPriceCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createLocation: <T = Location>(args: { data: LocationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPhysicalProduct: <T = PhysicalProduct>(args: { data: PhysicalProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSmsReceipt: <T = SmsReceipt>(args: { data: SmsReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createUser: <T = User>(args: { data: UserCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductVariant: <T = ProductVariant>(args: { data: ProductVariantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPaymentPlan: <T = PaymentPlan>(args: { data: PaymentPlanCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProduct: <T = Product>(args: { data: ProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createShippingOption: <T = ShippingOption>(args: { data: ShippingOptionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerDetail: <T = CustomerDetail>(args: { data: CustomerDetailCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -354,11 +354,11 @@ export interface Mutation {
     updateProductVariantPrice: <T = ProductVariantPrice | null>(args: { data: ProductVariantPriceUpdateInput, where: ProductVariantPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateLocation: <T = Location | null>(args: { data: LocationUpdateInput, where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePhysicalProduct: <T = PhysicalProduct | null>(args: { data: PhysicalProductUpdateInput, where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSmsReceipt: <T = SmsReceipt | null>(args: { data: SmsReceiptUpdateInput, where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateUser: <T = User | null>(args: { data: UserUpdateInput, where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductVariant: <T = ProductVariant | null>(args: { data: ProductVariantUpdateInput, where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePaymentPlan: <T = PaymentPlan | null>(args: { data: PaymentPlanUpdateInput, where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProduct: <T = Product | null>(args: { data: ProductUpdateInput, where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateShippingOption: <T = ShippingOption | null>(args: { data: ShippingOptionUpdateInput, where: ShippingOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerDetail: <T = CustomerDetail | null>(args: { data: CustomerDetailUpdateInput, where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -425,11 +425,11 @@ export interface Mutation {
     deleteProductVariantPrice: <T = ProductVariantPrice | null>(args: { where: ProductVariantPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteLocation: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePhysicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSmsReceipt: <T = SmsReceipt | null>(args: { where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteUser: <T = User | null>(args: { where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePaymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProduct: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteShippingOption: <T = ShippingOption | null>(args: { where: ShippingOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -496,11 +496,11 @@ export interface Mutation {
     upsertProductVariantPrice: <T = ProductVariantPrice>(args: { where: ProductVariantPriceWhereUniqueInput, create: ProductVariantPriceCreateInput, update: ProductVariantPriceUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertLocation: <T = Location>(args: { where: LocationWhereUniqueInput, create: LocationCreateInput, update: LocationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPhysicalProduct: <T = PhysicalProduct>(args: { where: PhysicalProductWhereUniqueInput, create: PhysicalProductCreateInput, update: PhysicalProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSmsReceipt: <T = SmsReceipt>(args: { where: SmsReceiptWhereUniqueInput, create: SmsReceiptCreateInput, update: SmsReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertUser: <T = User>(args: { where: UserWhereUniqueInput, create: UserCreateInput, update: UserUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductVariant: <T = ProductVariant>(args: { where: ProductVariantWhereUniqueInput, create: ProductVariantCreateInput, update: ProductVariantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPaymentPlan: <T = PaymentPlan>(args: { where: PaymentPlanWhereUniqueInput, create: PaymentPlanCreateInput, update: PaymentPlanUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProduct: <T = Product>(args: { where: ProductWhereUniqueInput, create: ProductCreateInput, update: ProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertShippingOption: <T = ShippingOption>(args: { where: ShippingOptionWhereUniqueInput, create: ShippingOptionCreateInput, update: ShippingOptionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerDetail: <T = CustomerDetail>(args: { where: CustomerDetailWhereUniqueInput, create: CustomerDetailCreateInput, update: CustomerDetailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -565,11 +565,11 @@ export interface Mutation {
     updateManyProductVariantPrices: <T = BatchPayload>(args: { data: ProductVariantPriceUpdateManyMutationInput, where?: ProductVariantPriceWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyLocations: <T = BatchPayload>(args: { data: LocationUpdateManyMutationInput, where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPhysicalProducts: <T = BatchPayload>(args: { data: PhysicalProductUpdateManyMutationInput, where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySmsReceipts: <T = BatchPayload>(args: { data: SmsReceiptUpdateManyMutationInput, where?: SmsReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyUsers: <T = BatchPayload>(args: { data: UserUpdateManyMutationInput, where?: UserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductVariants: <T = BatchPayload>(args: { data: ProductVariantUpdateManyMutationInput, where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPaymentPlans: <T = BatchPayload>(args: { data: PaymentPlanUpdateManyMutationInput, where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProducts: <T = BatchPayload>(args: { data: ProductUpdateManyMutationInput, where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyShippingOptions: <T = BatchPayload>(args: { data: ShippingOptionUpdateManyMutationInput, where?: ShippingOptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerDetails: <T = BatchPayload>(args: { data: CustomerDetailUpdateManyMutationInput, where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -636,11 +636,11 @@ export interface Mutation {
     deleteManyProductVariantPrices: <T = BatchPayload>(args: { where?: ProductVariantPriceWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyLocations: <T = BatchPayload>(args: { where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPhysicalProducts: <T = BatchPayload>(args: { where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySmsReceipts: <T = BatchPayload>(args: { where?: SmsReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyUsers: <T = BatchPayload>(args: { where?: UserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductVariants: <T = BatchPayload>(args: { where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPaymentPlans: <T = BatchPayload>(args: { where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProducts: <T = BatchPayload>(args: { where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyShippingOptions: <T = BatchPayload>(args: { where?: ShippingOptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCustomerDetails: <T = BatchPayload>(args: { where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -710,11 +710,11 @@ export interface Subscription {
     productVariantPrice: <T = ProductVariantPriceSubscriptionPayload | null>(args: { where?: ProductVariantPriceSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     location: <T = LocationSubscriptionPayload | null>(args: { where?: LocationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     physicalProduct: <T = PhysicalProductSubscriptionPayload | null>(args: { where?: PhysicalProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     smsReceipt: <T = SmsReceiptSubscriptionPayload | null>(args: { where?: SmsReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     user: <T = UserSubscriptionPayload | null>(args: { where?: UserSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productVariant: <T = ProductVariantSubscriptionPayload | null>(args: { where?: ProductVariantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     paymentPlan: <T = PaymentPlanSubscriptionPayload | null>(args: { where?: PaymentPlanSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     product: <T = ProductSubscriptionPayload | null>(args: { where?: ProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     shippingOption: <T = ShippingOptionSubscriptionPayload | null>(args: { where?: ShippingOptionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customerDetail: <T = CustomerDetailSubscriptionPayload | null>(args: { where?: CustomerDetailSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -784,11 +784,11 @@ export interface Exists {
   ProductVariantPrice: (where?: ProductVariantPriceWhereInput) => Promise<boolean>
   Location: (where?: LocationWhereInput) => Promise<boolean>
   PhysicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>
-  Image: (where?: ImageWhereInput) => Promise<boolean>
   SmsReceipt: (where?: SmsReceiptWhereInput) => Promise<boolean>
   User: (where?: UserWhereInput) => Promise<boolean>
   ProductVariant: (where?: ProductVariantWhereInput) => Promise<boolean>
   PaymentPlan: (where?: PaymentPlanWhereInput) => Promise<boolean>
+  Image: (where?: ImageWhereInput) => Promise<boolean>
   Product: (where?: ProductWhereInput) => Promise<boolean>
   ShippingOption: (where?: ShippingOptionWhereInput) => Promise<boolean>
   CustomerDetail: (where?: CustomerDetailWhereInput) => Promise<boolean>
@@ -2686,6 +2686,7 @@ type BlogPost implements Node {
   thumbnailURL: String
   imageURL: String
   imageAlt: String
+  image: Image
   url: String
   tags: [String!]!
   author: String
@@ -2722,6 +2723,7 @@ input BlogPostCreateInput {
   category: String
   publishedOn: DateTime!
   tags: BlogPostCreatetagsInput
+  image: ImageCreateOneInput
 }
 
 input BlogPostCreatetagsInput {
@@ -2848,6 +2850,7 @@ input BlogPostUpdateInput {
   category: String
   publishedOn: DateTime
   tags: BlogPostUpdatetagsInput
+  image: ImageUpdateOneInput
 }
 
 input BlogPostUpdateManyMutationInput {
@@ -3471,6 +3474,7 @@ input BlogPostWhereInput {
 
   """All values greater than or equal the given value."""
   publishedOn_gte: DateTime
+  image: ImageWhereInput
 }
 
 input BlogPostWhereUniqueInput {
@@ -11498,6 +11502,7 @@ type Image implements Node {
   id: ID!
   caption: String
   url: String!
+  alt: String
   height: Int
   width: Int
   title: String
@@ -11519,6 +11524,7 @@ input ImageCreateInput {
   id: ID
   caption: String
   url: String!
+  alt: String
   height: Int
   width: Int
   title: String
@@ -11550,6 +11556,8 @@ enum ImageOrderByInput {
   caption_DESC
   url_ASC
   url_DESC
+  alt_ASC
+  alt_DESC
   height_ASC
   height_DESC
   width_ASC
@@ -11566,6 +11574,7 @@ type ImagePreviousValues {
   id: ID!
   caption: String
   url: String!
+  alt: String
   height: Int
   width: Int
   title: String
@@ -11702,6 +11711,46 @@ input ImageScalarWhereInput {
 
   """All values not ending with the given string."""
   url_not_ends_with: String
+  alt: String
+
+  """All values that are not equal to given value."""
+  alt_not: String
+
+  """All values that are contained in given list."""
+  alt_in: [String!]
+
+  """All values that are not contained in given list."""
+  alt_not_in: [String!]
+
+  """All values less than the given value."""
+  alt_lt: String
+
+  """All values less than or equal the given value."""
+  alt_lte: String
+
+  """All values greater than the given value."""
+  alt_gt: String
+
+  """All values greater than or equal the given value."""
+  alt_gte: String
+
+  """All values containing the given string."""
+  alt_contains: String
+
+  """All values not containing the given string."""
+  alt_not_contains: String
+
+  """All values starting with the given string."""
+  alt_starts_with: String
+
+  """All values not starting with the given string."""
+  alt_not_starts_with: String
+
+  """All values ending with the given string."""
+  alt_ends_with: String
+
+  """All values not ending with the given string."""
+  alt_not_ends_with: String
   height: Int
 
   """All values that are not equal to given value."""
@@ -11872,6 +11921,7 @@ input ImageSubscriptionWhereInput {
 input ImageUpdateDataInput {
   caption: String
   url: String
+  alt: String
   height: Int
   width: Int
   title: String
@@ -11880,6 +11930,7 @@ input ImageUpdateDataInput {
 input ImageUpdateInput {
   caption: String
   url: String
+  alt: String
   height: Int
   width: Int
   title: String
@@ -11888,6 +11939,7 @@ input ImageUpdateInput {
 input ImageUpdateManyDataInput {
   caption: String
   url: String
+  alt: String
   height: Int
   width: Int
   title: String
@@ -11908,6 +11960,7 @@ input ImageUpdateManyInput {
 input ImageUpdateManyMutationInput {
   caption: String
   url: String
+  alt: String
   height: Int
   width: Int
   title: String
@@ -12079,6 +12132,46 @@ input ImageWhereInput {
 
   """All values not ending with the given string."""
   url_not_ends_with: String
+  alt: String
+
+  """All values that are not equal to given value."""
+  alt_not: String
+
+  """All values that are contained in given list."""
+  alt_in: [String!]
+
+  """All values that are not contained in given list."""
+  alt_not_in: [String!]
+
+  """All values less than the given value."""
+  alt_lt: String
+
+  """All values less than or equal the given value."""
+  alt_lte: String
+
+  """All values greater than the given value."""
+  alt_gt: String
+
+  """All values greater than or equal the given value."""
+  alt_gte: String
+
+  """All values containing the given string."""
+  alt_contains: String
+
+  """All values not containing the given string."""
+  alt_not_contains: String
+
+  """All values starting with the given string."""
+  alt_starts_with: String
+
+  """All values not starting with the given string."""
+  alt_not_starts_with: String
+
+  """All values ending with the given string."""
+  alt_ends_with: String
+
+  """All values not ending with the given string."""
+  alt_not_ends_with: String
   height: Int
 
   """All values that are not equal to given value."""
@@ -14086,11 +14179,11 @@ type Mutation {
   createProductVariantPrice(data: ProductVariantPriceCreateInput!): ProductVariantPrice!
   createLocation(data: LocationCreateInput!): Location!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
-  createImage(data: ImageCreateInput!): Image!
   createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
   createUser(data: UserCreateInput!): User!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
+  createImage(data: ImageCreateInput!): Image!
   createProduct(data: ProductCreateInput!): Product!
   createShippingOption(data: ShippingOptionCreateInput!): ShippingOption!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
@@ -14157,11 +14250,11 @@ type Mutation {
   updateProductVariantPrice(data: ProductVariantPriceUpdateInput!, where: ProductVariantPriceWhereUniqueInput!): ProductVariantPrice
   updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
   updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
-  updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updateSmsReceipt(data: SmsReceiptUpdateInput!, where: SmsReceiptWhereUniqueInput!): SmsReceipt
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateProductVariant(data: ProductVariantUpdateInput!, where: ProductVariantWhereUniqueInput!): ProductVariant
   updatePaymentPlan(data: PaymentPlanUpdateInput!, where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
   updateShippingOption(data: ShippingOptionUpdateInput!, where: ShippingOptionWhereUniqueInput!): ShippingOption
   updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
@@ -14228,11 +14321,11 @@ type Mutation {
   deleteProductVariantPrice(where: ProductVariantPriceWhereUniqueInput!): ProductVariantPrice
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deletePhysicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
-  deleteImage(where: ImageWhereUniqueInput!): Image
   deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   deleteUser(where: UserWhereUniqueInput!): User
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  deleteImage(where: ImageWhereUniqueInput!): Image
   deleteProduct(where: ProductWhereUniqueInput!): Product
   deleteShippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
@@ -14299,11 +14392,11 @@ type Mutation {
   upsertProductVariantPrice(where: ProductVariantPriceWhereUniqueInput!, create: ProductVariantPriceCreateInput!, update: ProductVariantPriceUpdateInput!): ProductVariantPrice!
   upsertLocation(where: LocationWhereUniqueInput!, create: LocationCreateInput!, update: LocationUpdateInput!): Location!
   upsertPhysicalProduct(where: PhysicalProductWhereUniqueInput!, create: PhysicalProductCreateInput!, update: PhysicalProductUpdateInput!): PhysicalProduct!
-  upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   upsertSmsReceipt(where: SmsReceiptWhereUniqueInput!, create: SmsReceiptCreateInput!, update: SmsReceiptUpdateInput!): SmsReceipt!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
   upsertPaymentPlan(where: PaymentPlanWhereUniqueInput!, create: PaymentPlanCreateInput!, update: PaymentPlanUpdateInput!): PaymentPlan!
+  upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
   upsertShippingOption(where: ShippingOptionWhereUniqueInput!, create: ShippingOptionCreateInput!, update: ShippingOptionUpdateInput!): ShippingOption!
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
@@ -14368,11 +14461,11 @@ type Mutation {
   updateManyProductVariantPrices(data: ProductVariantPriceUpdateManyMutationInput!, where: ProductVariantPriceWhereInput): BatchPayload!
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
   updateManyPhysicalProducts(data: PhysicalProductUpdateManyMutationInput!, where: PhysicalProductWhereInput): BatchPayload!
-  updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
   updateManySmsReceipts(data: SmsReceiptUpdateManyMutationInput!, where: SmsReceiptWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyProductVariants(data: ProductVariantUpdateManyMutationInput!, where: ProductVariantWhereInput): BatchPayload!
   updateManyPaymentPlans(data: PaymentPlanUpdateManyMutationInput!, where: PaymentPlanWhereInput): BatchPayload!
+  updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
   updateManyShippingOptions(data: ShippingOptionUpdateManyMutationInput!, where: ShippingOptionWhereInput): BatchPayload!
   updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
@@ -14439,11 +14532,11 @@ type Mutation {
   deleteManyProductVariantPrices(where: ProductVariantPriceWhereInput): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
-  deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
+  deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
   deleteManyShippingOptions(where: ShippingOptionWhereInput): BatchPayload!
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
@@ -14465,6 +14558,7 @@ interface Node {
 enum NotificationBarID {
   PastDueInvoice
   TestDismissable
+  AuthorizedReminder
 }
 
 type Order implements Node {
@@ -26965,11 +27059,11 @@ type Query {
   productVariantPrices(where: ProductVariantPriceWhereInput, orderBy: ProductVariantPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantPrice]!
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
-  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
   paymentPlans(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PaymentPlan]!
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   shippingOptions(where: ShippingOptionWhereInput, orderBy: ShippingOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShippingOption]!
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
@@ -27036,11 +27130,11 @@ type Query {
   productVariantPrice(where: ProductVariantPriceWhereUniqueInput!): ProductVariantPrice
   location(where: LocationWhereUniqueInput!): Location
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
-  image(where: ImageWhereUniqueInput!): Image
   smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   user(where: UserWhereUniqueInput!): User
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  image(where: ImageWhereUniqueInput!): Image
   product(where: ProductWhereUniqueInput!): Product
   shippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
@@ -27107,11 +27201,11 @@ type Query {
   productVariantPricesConnection(where: ProductVariantPriceWhereInput, orderBy: ProductVariantPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantPriceConnection!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
-  imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
   smsReceiptsConnection(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SmsReceiptConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
   paymentPlansConnection(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PaymentPlanConnection!
+  imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
   shippingOptionsConnection(where: ShippingOptionWhereInput, orderBy: ShippingOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShippingOptionConnection!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
@@ -32321,11 +32415,11 @@ type Subscription {
   productVariantPrice(where: ProductVariantPriceSubscriptionWhereInput): ProductVariantPriceSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
-  image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
   paymentPlan(where: PaymentPlanSubscriptionWhereInput): PaymentPlanSubscriptionPayload
+  image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   shippingOption(where: ShippingOptionSubscriptionWhereInput): ShippingOptionSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
@@ -37193,6 +37287,8 @@ export type ImageOrderByInput =   'id_ASC' |
   'caption_DESC' |
   'url_ASC' |
   'url_DESC' |
+  'alt_ASC' |
+  'alt_DESC' |
   'height_ASC' |
   'height_DESC' |
   'width_ASC' |
@@ -37302,7 +37398,8 @@ export type MutationType =   'CREATED' |
   'DELETED'
 
 export type NotificationBarID =   'PastDueInvoice' |
-  'TestDismissable'
+  'TestDismissable' |
+  'AuthorizedReminder'
 
 export type OrderCancelReason =   'Customer' |
   'Declined' |
@@ -38740,6 +38837,7 @@ export interface BlogPostCreateInput {
   category?: String | null
   publishedOn: DateTime
   tags?: BlogPostCreatetagsInput | null
+  image?: ImageCreateOneInput | null
 }
 
 export interface BlogPostCreatetagsInput {
@@ -38773,6 +38871,7 @@ export interface BlogPostUpdateInput {
   category?: String | null
   publishedOn?: DateTime | null
   tags?: BlogPostUpdatetagsInput | null
+  image?: ImageUpdateOneInput | null
 }
 
 export interface BlogPostUpdateManyMutationInput {
@@ -39009,6 +39108,7 @@ export interface BlogPostWhereInput {
   publishedOn_lte?: DateTime | null
   publishedOn_gt?: DateTime | null
   publishedOn_gte?: DateTime | null
+  image?: ImageWhereInput | null
 }
 
 export interface BlogPostWhereUniqueInput {
@@ -42791,6 +42891,7 @@ export interface ImageCreateInput {
   id?: ID_Input | null
   caption?: String | null
   url: String
+  alt?: String | null
   height?: Int | null
   width?: Int | null
   title?: String | null
@@ -42852,6 +42953,20 @@ export interface ImageScalarWhereInput {
   url_not_starts_with?: String | null
   url_ends_with?: String | null
   url_not_ends_with?: String | null
+  alt?: String | null
+  alt_not?: String | null
+  alt_in?: String[] | String | null
+  alt_not_in?: String[] | String | null
+  alt_lt?: String | null
+  alt_lte?: String | null
+  alt_gt?: String | null
+  alt_gte?: String | null
+  alt_contains?: String | null
+  alt_not_contains?: String | null
+  alt_starts_with?: String | null
+  alt_not_starts_with?: String | null
+  alt_ends_with?: String | null
+  alt_not_ends_with?: String | null
   height?: Int | null
   height_not?: Int | null
   height_in?: Int[] | Int | null
@@ -42914,6 +43029,7 @@ export interface ImageSubscriptionWhereInput {
 export interface ImageUpdateDataInput {
   caption?: String | null
   url?: String | null
+  alt?: String | null
   height?: Int | null
   width?: Int | null
   title?: String | null
@@ -42922,6 +43038,7 @@ export interface ImageUpdateDataInput {
 export interface ImageUpdateInput {
   caption?: String | null
   url?: String | null
+  alt?: String | null
   height?: Int | null
   width?: Int | null
   title?: String | null
@@ -42930,6 +43047,7 @@ export interface ImageUpdateInput {
 export interface ImageUpdateManyDataInput {
   caption?: String | null
   url?: String | null
+  alt?: String | null
   height?: Int | null
   width?: Int | null
   title?: String | null
@@ -42950,6 +43068,7 @@ export interface ImageUpdateManyInput {
 export interface ImageUpdateManyMutationInput {
   caption?: String | null
   url?: String | null
+  alt?: String | null
   height?: Int | null
   width?: Int | null
   title?: String | null
@@ -43038,6 +43157,20 @@ export interface ImageWhereInput {
   url_not_starts_with?: String | null
   url_ends_with?: String | null
   url_not_ends_with?: String | null
+  alt?: String | null
+  alt_not?: String | null
+  alt_in?: String[] | String | null
+  alt_not_in?: String[] | String | null
+  alt_lt?: String | null
+  alt_lte?: String | null
+  alt_gt?: String | null
+  alt_gte?: String | null
+  alt_contains?: String | null
+  alt_not_contains?: String | null
+  alt_starts_with?: String | null
+  alt_not_starts_with?: String | null
+  alt_ends_with?: String | null
+  alt_not_ends_with?: String | null
   height?: Int | null
   height_not?: Int | null
   height_in?: Int[] | Int | null
@@ -54480,6 +54613,7 @@ export interface BlogPost extends Node {
   thumbnailURL?: String | null
   imageURL?: String | null
   imageAlt?: String | null
+  image?: Image | null
   url?: String | null
   tags: Array<String>
   author?: String | null
@@ -55315,6 +55449,7 @@ export interface Image extends Node {
   id: ID_Output
   caption?: String | null
   url: String
+  alt?: String | null
   height?: Int | null
   width?: Int | null
   title?: String | null
@@ -55345,6 +55480,7 @@ export interface ImagePreviousValues {
   id: ID_Output
   caption?: String | null
   url: String
+  alt?: String | null
   height?: Int | null
   width?: Int | null
   title?: String | null

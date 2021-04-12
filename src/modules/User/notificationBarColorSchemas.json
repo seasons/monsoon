@@ -12,5 +12,19 @@
       "detailFontColor": "#D8A8A9",
       "iconStrokeColor": "#D8A8A9"
     }
+  },
+  "BlackAlert": {
+    "default": {
+      "backgroundColor": "#000000",
+      "titleFontColor": "#ffffff",
+      "detailFontColor": "#7F7F7F",
+      "iconStrokeColor": "#7F7F7F"
+    },
+    "pressed": {
+      "backgroundColor": "#000000",
+      "titleFontColor": "#ffffff",
+      "detailFontColor": "#7F7F7F",
+      "iconStrokeColor": "#7F7F7F"
+    }
   }
 }

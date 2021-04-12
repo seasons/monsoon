@@ -1,5 +1,6 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { BagService } from "@app/modules/Product/services/bag.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import {
   BagItem,
@@ -9,6 +10,7 @@ import {
   Location,
   Order,
   OrderLineItem,
+  OrderStatus,
   PhysicalProduct,
   PhysicalProductPrice,
   User,
@@ -55,7 +57,8 @@ export class OrderService {
     private readonly shopify: ShopifyService,
     private readonly shipping: ShippingService,
     private readonly email: EmailService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly bag: BagService
   ) {
     const getCategoryAndAllChildren = (categoryId: string): Promise<string[]> =>
       this.prisma.client
@@ -833,7 +836,7 @@ export class OrderService {
       this.prisma.client.updateOrder({
         where: { id: order.id },
         data: {
-          status: "Submitted",
+          status: orderNeedsShipping ? "Submitted" : "Fulfilled",
           paymentStatus:
             chargebeeInvoice.status === "paid" ? "Paid" : "NotPaid",
           ...orderShippingUpdate,
@@ -861,6 +864,53 @@ export class OrderService {
       },
       info
     )
+  }
+
+  async updateOrderStatus({
+    orderID,
+    status,
+    customer,
+  }: {
+    orderID: string
+    status: OrderStatus
+    customer: Customer
+  }): Promise<Order> {
+    const removeFulfilledItemFromBag = async () => {
+      const lineItems = await this.prisma.client
+        .order({ id: orderID })
+        .lineItems()
+      const physicalProduct = lineItems.find(
+        item => item.recordType === "PhysicalProduct"
+      )
+      if (!physicalProduct) {
+        this.error.setExtraContext({ orderID }, "orderID")
+        this.error.captureError(
+          new Error("Unable to remove fulfilled order item from customer bag.")
+        )
+        return null
+      }
+      const productVariant = await this.prisma.client
+        .physicalProduct({ id: physicalProduct.recordID })
+        .productVariant()
+
+      await this.bag.removeFromBag(productVariant.id, false, customer)
+    }
+
+    const order = await this.prisma.client.order({ id: orderID })
+
+    const [updateOrderResult, _removeFromBagResult] = await Promise.all([
+      this.prisma.client.updateOrder({
+        where: { id: orderID },
+        data: {
+          status,
+        },
+      }) as Promise<Order>,
+      status === "Fulfilled" && order.type === "Used"
+        ? removeFulfilledItemFromBag()
+        : Promise.resolve(),
+    ])
+
+    return updateOrderResult
   }
 
   getChargebeeShippingAddress({
