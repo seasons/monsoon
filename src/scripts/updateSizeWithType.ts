@@ -1,7 +1,5 @@
 import "module-alias/register"
 
-import { size } from "lodash"
-
 import { PrismaService } from "../prisma/prisma.service"
 
 const addsManufacturerSizeToVariants = async () => {
@@ -105,4 +103,4 @@ const addTypeToSizes = async () => {
   }
 }
 
-addTypeToSizes()
+addsManufacturerSizeToVariants()

@@ -457,8 +457,9 @@ export class ProductService {
     const { brandCode, styleCode } = skuData
 
     return sizes
-      .map(({ sizeName, count }) => {
-        const sizeCode = this.utils.sizeNameToSizeCode(sizeName)
+      .map(({ internalSize, manufacturerSize, count }) => {
+        // FIXME: eventually we may want to create the sizeCode using the manufacturer name
+        const sizeCode = this.utils.sizeNameToSizeCode(internalSize)
         return Array.from(Array(count).keys()).map((_, index) => {
           const physicalProductIndex = `${index + 1}`.padStart(2, "0")
           return `${brandCode}-${colorCode}-${sizeCode}-${styleCode}-${physicalProductIndex}`
@@ -876,10 +877,12 @@ export class ProductService {
         sizeName: variant.internalSizeName,
       }),
       topSizeData: type === "Top" && {
+        // TODO: letter is deprecated, can eventually remove
         letter: (variant.internalSizeName as LetterSize) || null,
         ...pick(variant, ["sleeve", "shoulder", "chest", "neck", "length"]),
       },
       bottomSizeData: type === "Bottom" && {
+        // TODO: type and value are deprecated, can eventually remove
         type: (variant.internalBottomSizeType as BottomSizeType) || null,
         value: variant.internalSizeName || "",
         ...pick(variant, ["waist", "rise", "hem", "inseam"]),

@@ -136,6 +136,7 @@ input PhysicalProductSeasonsUIDsInput {
 }
 
 input PhysicalProductSeasonsUIDSizes {
-  sizeName: String!
+  internalSize: String!
+  manufacturerSize: String!
   count: Int!
 }
