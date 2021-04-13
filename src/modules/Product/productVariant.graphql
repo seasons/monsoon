@@ -209,7 +209,7 @@ input UpsertVariantInput {
   length: Float
   # Bottom Size values
   internalSizeName: String!
-  internalBottomSizeType: BottomSizeType
+  internalSizeType: SizeType
   manufacturerSizeNames: [String!]
   manufacturerSizeType: SizeType
   waist: Float

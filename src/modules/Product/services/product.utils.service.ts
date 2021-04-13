@@ -479,18 +479,14 @@ export class ProductUtilsService {
     bottomSizeData?: BottomSizeCreateInput
   }): Promise<Size> {
     const sizeData = { slug, productType: type, display, type: sizeType }
-    // Update if needed
     const sizeRecord = await this.prisma.client.upsertSize({
       where: { slug },
       create: { ...sizeData },
       update: { ...sizeData },
     })
-    if (!bottomSizeData || !topSizeData) {
+    if (!!bottomSizeData || !!topSizeData) {
       switch (type) {
         case "Top":
-          // if (!topSizeData.letter) {
-          //   throw new Error("topSizeData must be non null if type is Top")
-          // }
           const prismaTopSize = await this.prisma.client
             .size({ id: sizeRecord.id })
             .top()
@@ -507,9 +503,6 @@ export class ProductUtilsService {
           }
           break
         case "Bottom":
-          // if (!bottomSizeData) {
-          //   throw new Error("bottomSizeData must be non null if type is Bottom")
-          // }
           const prismaBottomSize = await this.prisma.client
             .size({ id: sizeRecord?.id })
             .bottom()
@@ -556,28 +549,19 @@ export class ProductUtilsService {
   async upsertModelSize({
     slug,
     type,
-    modelSizeName,
     modelSizeDisplay,
-    bottomSizeType,
+    sizeType,
   }: {
     slug: string
     type: ProductType
-    modelSizeName: string
     modelSizeDisplay: string
-    bottomSizeType?: BottomSizeType
+    sizeType?: SizeType
   }) {
     return await this.deepUpsertSize({
       slug,
       type,
       display: modelSizeDisplay,
-      // topSizeData: type === "Top" && {
-      //   letter: modelSizeName as LetterSize,
-      // },
-      // bottomSizeData: type === "Bottom" && {
-      //   type: bottomSizeType as BottomSizeType,
-      //   value: modelSizeName,
-      // },
-      sizeType: bottomSizeType,
+      sizeType,
     })
   }
 

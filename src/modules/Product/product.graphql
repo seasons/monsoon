@@ -320,7 +320,7 @@ type Brand @cacheControl(maxAge: 1000) {
 
 input UpsertProductInput {
   architecture: String
-  internalBottomSizeType: BottomSizeType
+  internalSizeType: SizeType
   brandID: String!
   buyNewEnabled: Boolean
   buyUsedEnabled: Boolean!

@@ -236,9 +236,8 @@ export class ProductService {
       modelSize = await this.productUtils.upsertModelSize({
         slug,
         type: input.type,
-        modelSizeName: input.modelSizeName,
         modelSizeDisplay: input.modelSizeDisplay,
-        bottomSizeType: input.internalBottomSizeType,
+        sizeType: input.internalSizeType,
       })
     }
 
@@ -652,7 +651,7 @@ export class ProductService {
   }) {
     // Extract custom fields out
     const {
-      internalBottomSizeType,
+      internalSizeType,
       functions,
       images,
       modelSizeDisplay,
@@ -731,9 +730,8 @@ export class ProductService {
       const modelSize = await this.productUtils.upsertModelSize({
         slug: product.slug,
         type: product.type,
-        modelSizeName,
         modelSizeDisplay,
-        bottomSizeType: internalBottomSizeType,
+        sizeType: internalSizeType,
       })
       modelSizeID = modelSize.id
     }
@@ -883,11 +881,11 @@ export class ProductService {
       },
       bottomSizeData: type === "Bottom" && {
         // TODO: type and value are deprecated, can eventually remove
-        type: (variant.internalBottomSizeType as BottomSizeType) || null,
+        type: (variant.internalSizeType as BottomSizeType) || null,
         value: variant.internalSizeName || "",
         ...pick(variant, ["waist", "rise", "hem", "inseam"]),
       },
-      sizeType: variant.internalBottomSizeType,
+      sizeType: variant.internalSizeType,
     })
 
     const manufacturerSizeIDs = await this.productVariantService.getManufacturerSizeIDs(
