@@ -648,8 +648,8 @@ export class OrderService {
           lineItems: {
             create: orderLineItems.map((orderLineItem, idx) => ({
               ...orderLineItem,
-              taxRate: invoice_estimate.line_items?.[idx].tax_rate || 0,
-              taxPrice: invoice_estimate.line_items?.[idx].tax_amount || 0,
+              taxRate: invoice_estimate.line_items?.[idx]?.tax_rate || 0,
+              taxPrice: invoice_estimate.line_items?.[idx]?.tax_amount || 0,
             })),
           },
         },
