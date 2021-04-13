@@ -9,6 +9,8 @@ import { PrismaModule } from "@prisma/prisma.module"
 import { PusherService } from "../PushNotification/services/pusher.service"
 import { PushNotificationDataProvider } from "../PushNotification/services/pushNotification.data.service"
 import { PushNotificationService } from "../PushNotification/services/pushNotification.service"
+import { AlgoliaService } from "../Search/services/algolia.service"
+import { SearchService } from "../Search/services/search.service"
 import { ShopifyService } from "../Shopify/services/shopify.service"
 import { UserModule } from "../User/user.module"
 import { BrandFieldsResolver } from "./fields/brand.fields.resolver"
@@ -75,12 +77,15 @@ export const ProductModuleDef = {
     PhysicalProductMutationsResolver,
     SizeQueriesResolver,
     ShopifyService,
+    SearchService,
+    AlgoliaService,
   ],
   exports: [
     ProductUtilsService,
     ProductVariantService,
     PhysicalProductUtilsService,
     PhysicalProductService,
+    BagService,
   ],
 }
 @Module(ProductModuleDef)

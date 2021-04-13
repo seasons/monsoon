@@ -47,6 +47,7 @@ export class SearchService {
     const results = await this.algolia.defaultIndex.search(query, {
       filters,
     })
+
     return results.hits
   }
 
@@ -366,9 +367,16 @@ export class SearchService {
     return result
   }
 
-  async indexShopifyProductVariants(indices = [IndexKey.Default]) {
+  async indexShopifyProductVariants(
+    indices = [IndexKey.Default],
+    brandID?: string
+  ) {
     const shopifyProductVariants = await this.prisma.binding.query.shopifyProductVariants(
-      {},
+      {
+        where: {
+          brand: brandID ? { id: brandID } : { id_not: null },
+        },
+      },
       `{
         id
         externalId
