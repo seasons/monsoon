@@ -1,3 +1,5 @@
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/seasons/monsoon)
+
 <h1>⽲ Monsoon</h1>
 <h3>GraphQL API for Seasons</h3>
 
