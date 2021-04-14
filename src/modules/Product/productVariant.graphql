@@ -227,6 +227,9 @@ input UpdateVariantInput {
   id: ID!
   productType: ProductType!
   weight: Float
+  manufacturerSizeNames: [String!]
+  manufacturerSizeType: SizeType
+  internalSizeType: SizeType
   # Top Size values
   sleeve: Float
   shoulder: Float
@@ -234,9 +237,6 @@ input UpdateVariantInput {
   neck: Float
   length: Float
   # Bottom Size values
-  manufacturerSizeNames: [String!]
-  manufacturerSizeType: SizeType
-  internalSizeType: SizeType
   waist: Float
   rise: Float
   hem: Float
