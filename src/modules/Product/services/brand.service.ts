@@ -4,8 +4,14 @@ import { BrandUtilsService } from "@modules/Product/services/brand.utils.service
 import { IndexKey } from "@modules/Search/services/algolia.service"
 import { SearchService } from "@modules/Search/services/search.service"
 import { Injectable } from "@nestjs/common"
-import { BrandWhereUniqueInput } from "@prisma/index"
-import { Brand as PrismaBindingBrand } from "@prisma/prisma.binding"
+import {
+  BrandWhereUniqueInput,
+  ExternalShopifyIntegrationUpdateOneInput,
+} from "@prisma/index"
+import {
+  BrandUpdateOneInput,
+  Brand as PrismaBindingBrand,
+} from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
 
 @Injectable()
@@ -52,12 +58,39 @@ export class BrandService {
     }
 
     if (data.externalShopifyIntegration) {
+      const shopName = data.externalShopifyIntegration.shopName
+
       data.externalShopifyIntegration = {
-        upsert: {
-          update: data.externalShopifyIntegration,
-          create: data.externalShopifyIntegration,
+        connect: {
+          shopName,
         },
+      } as ExternalShopifyIntegrationUpdateOneInput
+      const shopifyProductVariants = await this.prisma.client.shopifyProductVariants(
+        {
+          where: {
+            shop: {
+              shopName,
+            },
+          },
+        }
+      )
+
+      for (let shopifyPV of shopifyProductVariants) {
+        await this.prisma.client.updateShopifyProductVariant({
+          where: {
+            id: shopifyPV.id,
+          },
+          data: {
+            brand: {
+              connect: {
+                id: brand.id,
+              },
+            },
+          },
+        })
       }
+
+      // Index shopify product variants into algolia
     } else if (brand?.externalShopifyIntegration?.id) {
       data.externalShopifyIntegration = { delete: true }
     }

@@ -5,35 +5,13 @@ Monsoon is a Gateway service as its schema is using a GraphQL design pattern cal
 
 You can explore the Monsoon API using the staging [GraphQL Playground](https://e7339i1sra.execute-api.us-east-1.amazonaws.com/dev/playground)
 
-![](https://miro.medium.com/max/3200/1*abI3_s-HJJ0cLrT5UM1rfQ.png)
-
-## Features
-
-- **Scalable GraphQL server:** The server uses [`apollo-server`](https://github.com/prisma/graphql-yoga) which is based on Apollo Server & Express
-- **Static type generation**: TypeScript types for GraphQL queries & mutations are generated in a build step
-- **Authentication**: Signup and login workflows are ready to use for your users
-- **GraphQL database:** Includes GraphQL database binding to [Prisma](https://www.prismagraphql.com) (running on Postgres)
-- **Tooling**: Out-of-the-box support for [GraphQL Playground](https://github.com/prisma/graphql-playground) & [query performance tracing](https://github.com/apollographql/apollo-tracing)
-- **Extensible**: Simple and flexible [data model](./database/datamodel.graphql) – easy to adjust and extend
-- **No configuration overhead**: Preconfigured [`graphql-config`](https://github.com/prisma/graphql-config) setup
-- **Realtime updates**: Support for GraphQL subscriptions
-
 ## Requirements
 
-1. You need to have both the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) and [Serverless CLI](https://serverless.com/) installed and setup;
-
-```sh
-npm install -g serverless
-```
+1. You need to have both the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 
 2. Docker command line tools. You can get them by visiting the [Docker Website](https://www.docker.com/products/docker-desktop) and downloading the desktop client.
 
-3. Access to the Seasons [Airtable](https://airtable.com/) workspace.
-
-4. Postgres CLI tools.
-
-- Install latest postgres client.
-- run `sudo mkdir -p /etc/paths.d && echo /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/paths.d/postgresapp`
+3. Postgres CLI tools.
 
 ## Getting started
 
@@ -204,11 +182,6 @@ data: {
 },
 ...
 ```
-
-## Resources
-
-- [GraphQL Resolvers: Best Practices](https://medium.com/paypal-engineering/graphql-resolvers-best-practices-cd36fdbcef55)
-- [The ultimate guide to Schema Stitching in GraphQL](https://blog.hasura.io/the-ultimate-guide-to-schema-stitching-in-graphql-f30178ac0072/)
 
 ## If you need to replace the DB
 
