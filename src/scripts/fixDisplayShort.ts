@@ -17,11 +17,6 @@ const run = async () => {
       id
       sku
       displayShort
-      internalSize {
-        id
-        display
-        productType
-      }
       manufacturerSizes {
         id
         display
@@ -30,43 +25,37 @@ const run = async () => {
   }`
   )
 
-  let count = 0
-
   for (const variant of productVariants) {
-    const internalSize = variant.internalSize
     const manufacturerSizes = variant.manufacturerSizes
     const manufacturerSize = head(manufacturerSizes)
 
     let displayShort
     // If top exit early because we are only using internalSizes for tops
-    if (manufacturerSize?.display) {
+    if (manufacturerSize?.display && manufacturerSize?.type) {
       displayShort = productUtils.coerceSizeDisplayIfNeeded(
         manufacturerSize.display,
         manufacturerSize.type,
         manufacturerSize.productType
       )
-    } else {
-      displayShort = internalSize.display
-    }
 
-    if (displayShort !== variant.displayShort) {
-      count++
-      console.log(
-        "SKU: ",
-        variant.sku,
-        " / Old displayshort: ",
-        variant.displayShort,
-        " / new display short: ",
-        displayShort
-      )
-      await ps.client.updateProductVariant({
-        where: { id: variant.id },
-        data: { displayShort },
-      })
+      if (!!displayShort && displayShort !== variant.displayShort) {
+        console.log(
+          "SKU: ",
+          variant.sku,
+          " / Old displayshort: ",
+          variant.displayShort,
+          " / new display short: ",
+          displayShort
+        )
+        await ps.client.updateProductVariant({
+          where: { id: variant.id },
+          data: { displayShort },
+        })
+      }
+    } else {
+      console.log("No data for: ", variant.sku)
     }
   }
-
-  console.log(`updated ${count}`)
 }
 
 run()
