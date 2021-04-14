@@ -253,17 +253,6 @@ type Product @cacheControl(maxAge: 200) {
   tier: ProductTier!
 }
 
-type ExternalShopifyIntegration {
-  # {shopName}.myshopify.com
-  id: ID!
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: [String!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type Brand @cacheControl(maxAge: 1000) {
   id: ID!
   slug: String!

@@ -7,10 +7,30 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ShopifyProductVariant]!
+  ): [ShopifyProductVariant]! @hasRole(roles: [Admin])
+  externalShopifyIntegrations(
+    where: ExternalShopifyIntegrationWhereInput
+    orderBy: ExternalShopifyIntegrationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ExternalShopifyIntegration]! @hasRole(roles: [Admin])
 }
 
 type Mutation {
   sendShopifyData(data: JSON): ExternalShopifyIntegration
   importShopifyData(shopName: String): Boolean
+}
+
+type ExternalShopifyIntegration {
+  # {shopName}.myshopify.com
+  id: ID!
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
