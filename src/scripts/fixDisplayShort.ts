@@ -2,12 +2,14 @@ import "module-alias/register"
 
 import { head } from "lodash"
 
+import { ProductUtilsService } from "../modules/Product/services/product.utils.service"
 import { UtilsService } from "../modules/Utils/services/utils.service"
 import { PrismaService } from "../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
   const utils = new UtilsService(ps)
+  const productUtils = new ProductUtilsService(ps, utils)
 
   const productVariants = await ps.binding.query.productVariants(
     {},
@@ -18,34 +20,14 @@ const run = async () => {
       internalSize {
         id
         display
-        bottom {
-          id
-          value
-          type
-        }
-        top {
-          id
-          letter
-        }
+        productType
       }
       manufacturerSizes {
         id
         display
-        bottom {
-          id
-          value
-          type
-        }
-        top {
-          id
-          letter
-        }
+        productType
       }
   }`
-  )
-
-  const sizeConversion = utils.parseJSONFile(
-    "src/modules/Product/sizeConversion"
   )
 
   let count = 0
@@ -57,27 +39,14 @@ const run = async () => {
 
     let displayShort
     // If top exit early because we are only using internalSizes for tops
-    if (!!internalSize.top) {
-      displayShort = internalSize.top.letter
-    } else if (manufacturerSize) {
-      const manufacturerSizeBottomType = manufacturerSize.bottom.type
-      if (
-        manufacturerSizeBottomType === "EU" ||
-        manufacturerSizeBottomType === "JP"
-      ) {
-        displayShort =
-          sizeConversion.bottoms?.[manufacturerSizeBottomType][
-            manufacturerSize?.bottom?.value
-          ]
-      } else {
-        displayShort = manufacturerSize.display
-      }
+    if (manufacturerSize?.display) {
+      displayShort = productUtils.coerceSizeDisplayIfNeeded(
+        manufacturerSize.display,
+        manufacturerSize.type,
+        manufacturerSize.productType
+      )
     } else {
       displayShort = internalSize.display
-    }
-
-    if (!displayShort) {
-      console.log("Missing displayShort on variant: ", variant.id)
     }
 
     if (displayShort !== variant.displayShort) {
@@ -90,14 +59,14 @@ const run = async () => {
         " / new display short: ",
         displayShort
       )
+      await ps.client.updateProductVariant({
+        where: { id: variant.id },
+        data: { displayShort },
+      })
     }
-    // await ps.client.updateProductVariant({
-    //   where: { id: variant.id },
-    //   data: { displayShort },
-    // })
   }
 
-  console.log(`Total: ${count}`)
+  console.log(`updated ${count}`)
 }
 
 run()
