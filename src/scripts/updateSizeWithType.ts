@@ -118,4 +118,4 @@ const addTypeToSizes = async () => {
   }
 }
 
-addsManufacturerSizeToVariants()
+addTypeToSizes()
