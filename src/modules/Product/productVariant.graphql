@@ -236,6 +236,7 @@ input UpdateVariantInput {
   # Bottom Size values
   manufacturerSizeNames: [String!]
   manufacturerSizeType: SizeType
+  internalSizeType: SizeType
   waist: Float
   rise: Float
   hem: Float
