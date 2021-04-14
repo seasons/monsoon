@@ -41,6 +41,22 @@ export class ProductUtilsService {
     )
   }
 
+  async getProductStyleCode(product) {
+    const prod = await this.prisma.binding.query.product(
+      {
+        where: { id: product.id },
+      },
+      `{
+        id
+        variants {
+          id
+          sku
+        }
+    }`
+    )
+    return head(prod?.variants).sku.split("-").pop()
+  }
+
   async getVariantDisplayShort(
     manufacturerSizeIDs = [],
     internalSizeID
