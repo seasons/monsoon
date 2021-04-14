@@ -644,6 +644,9 @@ export class ReservationService {
     const physicalProductSUIDs = allPhysicalProductsInReservation.map(p => ({
       seasonsUID: p.seasonsUID,
     }))
+    const newPhysicalProductSUIDs = physicalProductsBeingReserved.map(p => ({
+      seasonsUID: p.seasonsUID,
+    }))
 
     const customerShippingAddressRecordID = await this.prisma.client
       .customer({ id: customer.id })
@@ -658,6 +661,9 @@ export class ReservationService {
     let createData = {
       products: {
         connect: physicalProductSUIDs,
+      },
+      newProducts: {
+        connect: newPhysicalProductSUIDs,
       },
       customer: {
         connect: {

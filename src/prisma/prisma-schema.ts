@@ -15946,6 +15946,7 @@ type Reservation {
   sentPackage: Package
   returnedPackage: Package
   products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  newProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   packageEvents(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PackageTransitEvent!]
   reservationNumber: Int!
   phase: ReservationPhase!
@@ -15975,6 +15976,7 @@ input ReservationCreateInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
@@ -16015,6 +16017,7 @@ input ReservationCreateWithoutCustomerInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
@@ -16036,6 +16039,7 @@ input ReservationCreateWithoutPackageEventsInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
@@ -16056,6 +16060,7 @@ input ReservationCreateWithoutReceiptInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
@@ -16730,11 +16735,13 @@ input ReservationScalarWhereInput {
 
 enum ReservationStatus {
   Queued
+  Picked
   Packed
   Shipped
   Delivered
   Completed
   Cancelled
+  Hold
   Blocked
   Unknown
   Received
@@ -16764,6 +16771,7 @@ input ReservationUpdateDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
@@ -16784,6 +16792,7 @@ input ReservationUpdateInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
@@ -16865,6 +16874,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
@@ -16885,6 +16895,7 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
@@ -16904,6 +16915,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
@@ -16965,6 +16977,9 @@ input ReservationWhereInput {
   products_every: PhysicalProductWhereInput
   products_some: PhysicalProductWhereInput
   products_none: PhysicalProductWhereInput
+  newProducts_every: PhysicalProductWhereInput
+  newProducts_some: PhysicalProductWhereInput
+  newProducts_none: PhysicalProductWhereInput
   packageEvents_every: PackageTransitEventWhereInput
   packageEvents_some: PackageTransitEventWhereInput
   packageEvents_none: PackageTransitEventWhereInput
