@@ -38,6 +38,10 @@ const run = async () => {
         manufacturerSize.productType
       )
 
+      if (manufacturerSize.type === "WxL") {
+        displayShort = displayShort.split("x")[0]
+      }
+
       if (!!displayShort && displayShort !== variant.displayShort) {
         console.log(
           "SKU: ",

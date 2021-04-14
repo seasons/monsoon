@@ -9,7 +9,7 @@ import {
   SizeType,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { head, identity, pickBy, union, uniq, uniqBy } from "lodash"
+import { head, identity, pickBy, size, union, uniq, uniqBy } from "lodash"
 import slugify from "slugify"
 
 import {
@@ -50,6 +50,7 @@ export class ProductUtilsService {
       id
       display
       productType
+      type
       bottom {
         id
         value
@@ -59,7 +60,6 @@ export class ProductUtilsService {
         id
         letter
       }
-      type
     }`
 
     const manufacturerSizes = await this.prisma.binding.query.sizes(
@@ -79,6 +79,9 @@ export class ProductUtilsService {
         manufacturerSize.type,
         manufacturerSize.productType
       )
+      if (manufacturerSize.type === "WxL") {
+        displayShort = displayShort.split("x")[0]
+      }
     } else {
       const internalSize = await this.prisma.binding.query.size(
         {
@@ -87,6 +90,10 @@ export class ProductUtilsService {
         query
       )
       displayShort = internalSize.display
+
+      if (internalSize.type === "WxL") {
+        displayShort = displayShort.split("x")[0]
+      }
     }
 
     return displayShort

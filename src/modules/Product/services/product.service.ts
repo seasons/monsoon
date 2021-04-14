@@ -870,10 +870,7 @@ export class ProductService {
     const internalSize = await this.productUtils.deepUpsertSize({
       slug: `${variant.sku}-internal`,
       type,
-      display: this.internalSizeNameToDisplaySize({
-        type,
-        sizeName: variant.internalSizeName,
-      }),
+      display: variant.internalSizeName,
       topSizeData: type === "Top" && {
         // TODO: letter is deprecated, can eventually remove
         letter: (variant.internalSizeName as LetterSize) || null,
@@ -1324,26 +1321,6 @@ export class ProductService {
         })
       }
     }
-  }
-
-  private internalSizeNameToDisplaySize({
-    type,
-    sizeName,
-  }: {
-    type: ProductType
-    sizeName
-  }) {
-    let displaySize
-    switch (type) {
-      case "Bottom":
-        this.validateInternalBottomSizeName(sizeName)
-        displaySize = sizeName.split("x")[0]
-        break
-      default:
-        displaySize = sizeName
-    }
-
-    return displaySize
   }
 
   private validateInternalBottomSizeName(sizeName) {
