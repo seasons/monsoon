@@ -1,7 +1,16 @@
 version: "3"
 services:
+  web:
+    image: node:12-alpine
+    command: sh -c "yarn install && yarn start"
+    ports:
+      - "3000:3000"
+    working_dir: /app
+    volumes:
+      - ./:/app
   redis:
     image: "redis:alpine"
+    restart: always
     command: redis-server
     ports:
       - "6379:6379"
