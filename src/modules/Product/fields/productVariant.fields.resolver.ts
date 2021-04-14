@@ -123,29 +123,17 @@ export class ProductVariantFieldsResolver {
         info: `
         {
           id
+          displayShort
           internalSize {
             id
-            top {
-              id
-              letter
-            }
-            bottom {
-              id
-              value
-            }
+            type
+            display
           }
           manufacturerSizes {
             id
+            type
             display
-            top {
-              id
-              letter
-            }
-            bottom {
-              id
-              type
-              value
-            }
+            value
           }
         }`,
       },
@@ -175,33 +163,21 @@ export class ProductVariantFieldsResolver {
       }
     }
 
-    // If top exit early because we are only using internalSizes for tops
-    const internalSize = variant?.internalSize
-    if (!!internalSize.top) {
-      return shortToLongName(internalSize.top.letter)
+    let displayLong
+    const manufacturerSize = head(variant.manufacturerSizes)
+    switch (manufacturerSize.type) {
+      case "EU":
+      case "JP":
+      case "US":
+      case "Letter":
+        displayLong = shortToLongName(variant.displayShort)
+        break
+      case "WxL":
+        displayLong = manufacturerSize.display // e.g if displayShort is 30, displayLong should be 30x42.
+        break
     }
 
-    const manufacturerSize = variant?.manufacturerSizes?.[0]
-    if (!!manufacturerSize) {
-      if (
-        manufacturerSize?.bottom?.type === "JP" ||
-        manufacturerSize?.bottom?.type === "EU"
-      ) {
-        const sizeConversion = this.utils.parseJSONFile(
-          "src/modules/Product/sizeConversion"
-        )
-        const conversion =
-          sizeConversion.bottoms?.[manufacturerSize.bottom.type][
-            manufacturerSize.bottom.value
-          ]
-
-        return shortToLongName(conversion)
-      } else {
-        return shortToLongName(manufacturerSize?.bottom?.value)
-      }
-    } else {
-      return shortToLongName(internalSize.bottom?.value)
-    }
+    return displayLong
   }
 
   @ResolveField()

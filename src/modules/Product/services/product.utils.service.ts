@@ -49,6 +49,7 @@ export class ProductUtilsService {
     const query = `{
       id
       display
+      productType
       bottom {
         id
         value
@@ -58,16 +59,8 @@ export class ProductUtilsService {
         id
         letter
       }
+      type
     }`
-    const internalSize = await this.prisma.binding.query.size(
-      {
-        where: { id: internalSizeID },
-      },
-      query
-    )
-
-    // If top exit early because we are only using internalSizes for tops
-    if (!!internalSize.top) return internalSize.top.letter
 
     const manufacturerSizes = await this.prisma.binding.query.sizes(
       {
@@ -77,21 +70,26 @@ export class ProductUtilsService {
     )
     const manufacturerSize = head(manufacturerSizes)
 
-    if (manufacturerSize) {
-      const manufacturerSizeBottomType = manufacturerSize.bottom.type
-      if (
-        manufacturerSizeBottomType === "EU" ||
-        manufacturerSizeBottomType === "JP"
-      ) {
-        return this.sizeConversion.bottoms?.[manufacturerSizeBottomType][
-          manufacturerSize?.bottom.value
-        ]
-      } else {
-        return manufacturerSize.display
-      }
+    // There *should* always be a manufacturer size display,
+    // but just to be safe we fallback to internal size display
+    let displayShort
+    if (manufacturerSize?.display) {
+      displayShort = this.coerceSizeDisplayIfNeeded(
+        manufacturerSize.display,
+        manufacturerSize.type,
+        manufacturerSize.productType
+      )
     } else {
-      return internalSize.display
+      const internalSize = await this.prisma.binding.query.size(
+        {
+          where: { id: internalSizeID },
+        },
+        query
+      )
+      displayShort = internalSize.display
     }
+
+    return displayShort
   }
 
   async getAllCategories(prod: Product): Promise<Category[]> {
@@ -580,5 +578,23 @@ export class ProductUtilsService {
       create: data,
       update: data,
     })
+  }
+
+  coerceSizeDisplayIfNeeded(
+    display: string,
+    sizeType: SizeType,
+    productType: ProductType
+  ) {
+    let conversion = display
+
+    if (sizeType === "JP" || sizeType === "EU") {
+      const sizeConversion = this.utils.parseJSONFile(
+        "src/modules/Product/sizeConversion"
+      )
+      conversion =
+        sizeConversion?.[productType.toLowerCase()]?.[sizeType]?.[display]
+    }
+
+    return conversion
   }
 }

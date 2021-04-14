@@ -122,6 +122,7 @@ enum ProductType {
   Shoe
 }
 
+# This should be deprecated in favor of using SizeType in the future
 enum BottomSizeType {
   WxL
   US
