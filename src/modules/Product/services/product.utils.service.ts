@@ -41,10 +41,10 @@ export class ProductUtilsService {
     )
   }
 
-  async getProductStyleCode(product) {
+  async getProductStyleCode(productID) {
     const prod = await this.prisma.binding.query.product(
       {
-        where: { id: product.id },
+        where: { id: productID },
       },
       `{
         id
