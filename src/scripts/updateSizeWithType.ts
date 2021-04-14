@@ -89,6 +89,12 @@ const addTypeToSizes = async () => {
         display: newDisplay,
       }
     }
+    if (size.display.includes("JP ")) {
+      const newDisplay = size.display.replace("JP ", "")
+      data = {
+        display: newDisplay,
+      }
+    }
     if (size?.bottom?.type && size.productType === "Bottom") {
       await ps.client.updateSize({
         where: { id: size.id },
