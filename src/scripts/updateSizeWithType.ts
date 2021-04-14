@@ -72,6 +72,7 @@ const addTypeToSizes = async () => {
     {
         id
         productType
+        display
         bottom {
             id
             type
@@ -81,11 +82,18 @@ const addTypeToSizes = async () => {
   )
 
   for (const size of sizes) {
-    // Fix for JP sizes
+    let data = {}
+    if (size.display.includes("EU ")) {
+      const newDisplay = size.display.replace("EU ", "")
+      data = {
+        display: newDisplay,
+      }
+    }
     if (size?.bottom?.type && size.productType === "Bottom") {
       await ps.client.updateSize({
         where: { id: size.id },
         data: {
+          ...data,
           type: size?.bottom?.type,
         },
       })
@@ -93,6 +101,7 @@ const addTypeToSizes = async () => {
       await ps.client.updateSize({
         where: { id: size.id },
         data: {
+          ...data,
           type: "Letter",
         },
       })
