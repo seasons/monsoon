@@ -266,11 +266,11 @@ export class ProductVariantService {
       shopifyProductVariant,
     } = input
 
-    const prodVarSize = await this.prisma.client
+    const internalSize = await this.prisma.client
       .productVariant({ id })
       .internalSize()
 
-    if (!prodVarSize) {
+    if (!internalSize) {
       return null
     }
     switch (productType) {
@@ -280,7 +280,7 @@ export class ProductVariantService {
         }
         await this.prisma.client.updateSize({
           data: { top: { update: topSizeValues } },
-          where: { id: prodVarSize.id },
+          where: { id: internalSize.id },
         })
         break
       case "Bottom":
@@ -289,7 +289,7 @@ export class ProductVariantService {
         }
         await this.prisma.client.updateSize({
           data: { bottom: { update: bottomSizeValues } },
-          where: { id: prodVarSize.id },
+          where: { id: internalSize.id },
         })
         break
     }
@@ -315,6 +315,11 @@ export class ProductVariantService {
       data.manufacturerSizes = {
         set: manufacturerSizeIDs,
       }
+      const displayShort = await this.productUtils.getVariantDisplayShort(
+        manufacturerSizeIDs,
+        internalSize.id
+      )
+      data.displayShort = displayShort
     }
 
     if (shopifyProductVariant) {
