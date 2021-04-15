@@ -11,7 +11,6 @@ export class LogsScheduledJobs {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly utils: UtilsService,
     private readonly physicalProductService: PhysicalProductService
   ) {}
 
