@@ -14,9 +14,13 @@ const run = async () => {
       ],
     },
   })
+
+  let i = 0
   for (const r of reservations) {
+    console.log(`${i++} of ${reservations.length}`)
+
     let data = {}
-    const relevantLogs = logs.filter(a => (a.entityId = r.id))
+    const relevantLogs = logs.filter(a => a.entityId === r.id)
     const completedLog = relevantLogs.find(
       a => a.changedFields?.["status"] === "Completed"
     )
@@ -30,6 +34,15 @@ const run = async () => {
       data["cancelledAt"] = cancelledLog.triggeredAt
     }
     if (Object.keys(data).length > 0) {
+      console.log(
+        `CreatedAt: ${r.createdAt}` +
+          `\n${
+            !!data["completedAt"] ? "completedAt: " + data["completedAt"] : ""
+          }}` +
+          `\n${
+            !!data["cancelledAt"] ? "cancelledAt: " + data["cancelledAt"] : ""
+          }}`
+      )
       await ps.client.updateReservation({ where: { id: r.id }, data })
     }
   }
