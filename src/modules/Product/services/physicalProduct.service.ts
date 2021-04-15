@@ -11,6 +11,7 @@ import {
   PhysicalProductWhereUniqueInput,
   Product,
   ProductVariant,
+  Reservation,
   WarehouseLocation,
   WarehouseLocationType,
   WarehouseLocationWhereUniqueInput,
@@ -208,7 +209,11 @@ export class PhysicalProductService {
 
   interpretPhysicalProductLogs(
     logs: AdminActionLog[],
-    warehouseLocations: Pick<WarehouseLocation, "id" | "barcode">[]
+    warehouseLocations: Pick<WarehouseLocation, "id" | "barcode">[],
+    reservations: Pick<
+      Reservation,
+      "id" | "createdAt" | "cancelledAt" | "completedAt" | "reservationNumber"
+    >[]
   ) {
     const keysWeDontCareAbout = [
       "id",
@@ -231,7 +236,25 @@ export class PhysicalProductService {
 
       if (keys.includes("warehouseLocation")) {
         if (changedFields["warehouseLocation"] === null) {
-          interpretation = "Picked"
+          const activeReservation = reservations.find(r => {
+            // TODO: Walk through this logic to ensure it works
+            const createdAt = new Date(r.createdAt)
+            const cancelledAt = new Date(r.cancelledAt)
+            const completedAt = new Date(r.completedAt)
+
+            const logTimestamp = new Date(a.triggeredAt)
+
+            const loggedAfterReservationCreated = createdAt < logTimestamp
+            const loggedBeforeReservationEnded =
+              cancelledAt > logTimestamp || completedAt > logTimestamp
+
+            return loggedAfterReservationCreated && loggedBeforeReservationEnded
+          })
+          if (!!activeReservation) {
+            interpretation = `Picked for reservation ${activeReservation.reservationNumber}`
+          } else {
+            interpretation = "Unstowed"
+          }
         } else {
           interpretation = `Stowed at ${
             locationsMap[changedFields["warehouseLocation"]]

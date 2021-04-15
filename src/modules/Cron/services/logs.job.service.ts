@@ -1,6 +1,6 @@
 import { PhysicalProductService } from "@app/modules/Product"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { AdminActionLog } from "@app/prisma"
+import { AdminActionLog, Reservation } from "@app/prisma"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
@@ -43,9 +43,22 @@ export class LogsScheduledJobs {
         barcode
       }`
     )
+
+    const allPhysProdIDs = logsToInterpret.map(a => a.entityId)
+    const allRelevantReservations = (await this.prisma.binding.query.reservations(
+      { where: { products_some: { id_in: allPhysProdIDs } } },
+      `{
+        id
+        createdAt
+        completedAt
+        cancelledAt
+        reservationNumber
+      }`
+    )) as any
     const interpretations = this.physicalProductService.interpretPhysicalProductLogs(
       logsToInterpret,
-      allReferencedWarehouseLocations
+      allReferencedWarehouseLocations,
+      allRelevantReservations
     )
 
     for (const log of logsToInterpret) {
