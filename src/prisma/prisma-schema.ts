@@ -1164,6 +1164,7 @@ type BlogPost {
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedOn: DateTime!
+  content: String
 }
 
 type BlogPostConnection {
@@ -1190,6 +1191,7 @@ input BlogPostCreateInput {
   author: String
   category: String
   publishedOn: DateTime!
+  content: String
 }
 
 input BlogPostCreatetagsInput {
@@ -1236,6 +1238,8 @@ enum BlogPostOrderByInput {
   updatedAt_DESC
   publishedOn_ASC
   publishedOn_DESC
+  content_ASC
+  content_DESC
 }
 
 type BlogPostPreviousValues {
@@ -1257,6 +1261,7 @@ type BlogPostPreviousValues {
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedOn: DateTime!
+  content: String
 }
 
 type BlogPostSubscriptionPayload {
@@ -1294,6 +1299,7 @@ input BlogPostUpdateInput {
   author: String
   category: String
   publishedOn: DateTime
+  content: String
 }
 
 input BlogPostUpdateManyMutationInput {
@@ -1312,6 +1318,7 @@ input BlogPostUpdateManyMutationInput {
   author: String
   category: String
   publishedOn: DateTime
+  content: String
 }
 
 input BlogPostUpdatetagsInput {
@@ -1528,6 +1535,20 @@ input BlogPostWhereInput {
   publishedOn_lte: DateTime
   publishedOn_gt: DateTime
   publishedOn_gte: DateTime
+  content: String
+  content_not: String
+  content_in: [String!]
+  content_not_in: [String!]
+  content_lt: String
+  content_lte: String
+  content_gt: String
+  content_gte: String
+  content_contains: String
+  content_not_contains: String
+  content_starts_with: String
+  content_not_starts_with: String
+  content_ends_with: String
+  content_not_ends_with: String
   AND: [BlogPostWhereInput!]
   OR: [BlogPostWhereInput!]
   NOT: [BlogPostWhereInput!]

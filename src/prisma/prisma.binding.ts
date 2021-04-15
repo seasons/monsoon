@@ -2694,6 +2694,7 @@ type BlogPost implements Node {
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedOn: DateTime!
+  content: String
 }
 
 """A connection to a list of items."""
@@ -2722,6 +2723,7 @@ input BlogPostCreateInput {
   author: String
   category: String
   publishedOn: DateTime!
+  content: String
   tags: BlogPostCreatetagsInput
   image: ImageCreateOneInput
 }
@@ -2774,6 +2776,8 @@ enum BlogPostOrderByInput {
   updatedAt_DESC
   publishedOn_ASC
   publishedOn_DESC
+  content_ASC
+  content_DESC
 }
 
 type BlogPostPreviousValues {
@@ -2795,6 +2799,7 @@ type BlogPostPreviousValues {
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedOn: DateTime!
+  content: String
 }
 
 type BlogPostSubscriptionPayload {
@@ -2849,6 +2854,7 @@ input BlogPostUpdateInput {
   author: String
   category: String
   publishedOn: DateTime
+  content: String
   tags: BlogPostUpdatetagsInput
   image: ImageUpdateOneInput
 }
@@ -2868,6 +2874,7 @@ input BlogPostUpdateManyMutationInput {
   author: String
   category: String
   publishedOn: DateTime
+  content: String
   tags: BlogPostUpdatetagsInput
 }
 
@@ -3474,6 +3481,46 @@ input BlogPostWhereInput {
 
   """All values greater than or equal the given value."""
   publishedOn_gte: DateTime
+  content: String
+
+  """All values that are not equal to given value."""
+  content_not: String
+
+  """All values that are contained in given list."""
+  content_in: [String!]
+
+  """All values that are not contained in given list."""
+  content_not_in: [String!]
+
+  """All values less than the given value."""
+  content_lt: String
+
+  """All values less than or equal the given value."""
+  content_lte: String
+
+  """All values greater than the given value."""
+  content_gt: String
+
+  """All values greater than or equal the given value."""
+  content_gte: String
+
+  """All values containing the given string."""
+  content_contains: String
+
+  """All values not containing the given string."""
+  content_not_contains: String
+
+  """All values starting with the given string."""
+  content_starts_with: String
+
+  """All values not starting with the given string."""
+  content_not_starts_with: String
+
+  """All values ending with the given string."""
+  content_ends_with: String
+
+  """All values not ending with the given string."""
+  content_not_ends_with: String
   image: ImageWhereInput
 }
 
@@ -36953,7 +37000,9 @@ export type BlogPostOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC' |
   'publishedOn_ASC' |
-  'publishedOn_DESC'
+  'publishedOn_DESC' |
+  'content_ASC' |
+  'content_DESC'
 
 export type BottomSizeOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -38836,6 +38885,7 @@ export interface BlogPostCreateInput {
   author?: String | null
   category?: String | null
   publishedOn: DateTime
+  content?: String | null
   tags?: BlogPostCreatetagsInput | null
   image?: ImageCreateOneInput | null
 }
@@ -38870,6 +38920,7 @@ export interface BlogPostUpdateInput {
   author?: String | null
   category?: String | null
   publishedOn?: DateTime | null
+  content?: String | null
   tags?: BlogPostUpdatetagsInput | null
   image?: ImageUpdateOneInput | null
 }
@@ -38889,6 +38940,7 @@ export interface BlogPostUpdateManyMutationInput {
   author?: String | null
   category?: String | null
   publishedOn?: DateTime | null
+  content?: String | null
   tags?: BlogPostUpdatetagsInput | null
 }
 
@@ -39108,6 +39160,20 @@ export interface BlogPostWhereInput {
   publishedOn_lte?: DateTime | null
   publishedOn_gt?: DateTime | null
   publishedOn_gte?: DateTime | null
+  content?: String | null
+  content_not?: String | null
+  content_in?: String[] | String | null
+  content_not_in?: String[] | String | null
+  content_lt?: String | null
+  content_lte?: String | null
+  content_gt?: String | null
+  content_gte?: String | null
+  content_contains?: String | null
+  content_not_contains?: String | null
+  content_starts_with?: String | null
+  content_not_starts_with?: String | null
+  content_ends_with?: String | null
+  content_not_ends_with?: String | null
   image?: ImageWhereInput | null
 }
 
@@ -54621,6 +54687,7 @@ export interface BlogPost extends Node {
   createdAt: DateTime
   updatedAt: DateTime
   publishedOn: DateTime
+  content?: String | null
 }
 
 /*
@@ -54661,6 +54728,7 @@ export interface BlogPostPreviousValues {
   createdAt: DateTime
   updatedAt: DateTime
   publishedOn: DateTime
+  content?: String | null
 }
 
 export interface BlogPostSubscriptionPayload {
