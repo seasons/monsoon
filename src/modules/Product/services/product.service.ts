@@ -622,10 +622,13 @@ export class ProductService {
       return null
     }
 
-    let styleNumber
+    let styleNumber = null
     if (!!productID) {
-      styleNumber = this.productUtils.getProductStyleCode(productID)
-    } else {
+      // valid style code if variants exist on the product, null otherwise
+      styleNumber = await this.productUtils.getProductStyleCode(productID)
+    }
+
+    if (styleNumber === null) {
       const brandCount = await this.prisma.client
         .productsConnection({
           where: { brand: { id: brandID } },

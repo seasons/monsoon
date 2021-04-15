@@ -54,7 +54,8 @@ export class ProductUtilsService {
         }
     }`
     )
-    return head(prod?.variants).sku.split("-").pop()
+    const firstVariant = head(prod?.variants)
+    return !!firstVariant ? firstVariant.sku.split("-").pop() : null
   }
 
   async getVariantDisplayShort(
