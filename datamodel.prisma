@@ -1347,8 +1347,17 @@ type AdminActionLog {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+  interpretedAt: DateTime
 }
 
+type AdminActionLogInterpretation {
+  id: ID! @id
+  log: AdminActionLog!
+  entityId: String!
+  tableName: String!
+  interpretation: String!
+  data: Json # miscellaneous useful data for the client
+}
 enum SyncTimingType {
   Drip
   Next

@@ -2,6 +2,8 @@ import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
   AdminActionLog,
+  AdminActionLogInterpretation,
+  AdminActionLogInterpretationWhereInput,
   AdminActionLogWhereInput,
   PhysicalProduct,
   WarehouseLocation,
@@ -46,42 +48,23 @@ export class PhysicalProductFieldsResolver {
     @Parent() physicalProduct,
     @Loader({
       params: {
-        query: `adminActionLogs`,
+        query: `adminActionLogInterpretations`,
         formatWhere: keys => ({
           AND: [
             { entityId_in: keys },
             { tableName: "PhysicalProduct" },
-          ] as AdminActionLogWhereInput,
+            { interpretation_not: null },
+          ] as AdminActionLogInterpretationWhereInput,
         }),
         keyToDataRelationship: "OneToMany",
         getKeys: a => [a.entityId],
       },
       includeInfo: true,
     })
-    logsLoader: PrismaDataLoader<AdminActionLog[]>,
-    @Loader({
-      params: {
-        query: `warehouseLocations`,
-        formatWhere: keys => ({ id_in: keys }),
-        keyToDataRelationship: "OneToOne",
-        info: `{id barcode}`,
-      },
-    })
-    locationsLoader: PrismaDataLoader<WarehouseLocation[]>
+    logsLoader: PrismaDataLoader<AdminActionLogInterpretation[]>
   ) {
     const logs = await logsLoader.load(physicalProduct.id)
-    const allReferencedWarehouseLocations = logs
-      .filter(a => !!a.changedFields)
-      .map(a => a.changedFields)
-      .filter(b => b["warehouseLocation"] != null)
-      .map(c => c["warehouseLocation"])
-    const warehouseLocations = await locationsLoader.loadMany(
-      allReferencedWarehouseLocations
-    )
-    return this.physicalProductService.interpretPhysicalProductLogs(
-      logs,
-      warehouseLocations as any
-    )
+    return logs
   }
 
   @ResolveField()

@@ -96,6 +96,7 @@ type AdminActionLog {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+  interpretedAt: DateTime
 }
 
 type AdminActionLogConnection {
@@ -114,11 +115,167 @@ input AdminActionLogCreateInput {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+  interpretedAt: DateTime
+}
+
+input AdminActionLogCreateOneInput {
+  create: AdminActionLogCreateInput
+  connect: AdminActionLogWhereUniqueInput
 }
 
 type AdminActionLogEdge {
   node: AdminActionLog!
   cursor: String!
+}
+
+type AdminActionLogInterpretation {
+  id: ID!
+  log: AdminActionLog!
+  entityId: String!
+  tableName: String!
+  interpretation: String!
+  data: Json
+}
+
+type AdminActionLogInterpretationConnection {
+  pageInfo: PageInfo!
+  edges: [AdminActionLogInterpretationEdge]!
+  aggregate: AggregateAdminActionLogInterpretation!
+}
+
+input AdminActionLogInterpretationCreateInput {
+  id: ID
+  log: AdminActionLogCreateOneInput!
+  entityId: String!
+  tableName: String!
+  interpretation: String!
+  data: Json
+}
+
+type AdminActionLogInterpretationEdge {
+  node: AdminActionLogInterpretation!
+  cursor: String!
+}
+
+enum AdminActionLogInterpretationOrderByInput {
+  id_ASC
+  id_DESC
+  entityId_ASC
+  entityId_DESC
+  tableName_ASC
+  tableName_DESC
+  interpretation_ASC
+  interpretation_DESC
+  data_ASC
+  data_DESC
+}
+
+type AdminActionLogInterpretationPreviousValues {
+  id: ID!
+  entityId: String!
+  tableName: String!
+  interpretation: String!
+  data: Json
+}
+
+type AdminActionLogInterpretationSubscriptionPayload {
+  mutation: MutationType!
+  node: AdminActionLogInterpretation
+  updatedFields: [String!]
+  previousValues: AdminActionLogInterpretationPreviousValues
+}
+
+input AdminActionLogInterpretationSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: AdminActionLogInterpretationWhereInput
+  AND: [AdminActionLogInterpretationSubscriptionWhereInput!]
+  OR: [AdminActionLogInterpretationSubscriptionWhereInput!]
+  NOT: [AdminActionLogInterpretationSubscriptionWhereInput!]
+}
+
+input AdminActionLogInterpretationUpdateInput {
+  log: AdminActionLogUpdateOneRequiredInput
+  entityId: String
+  tableName: String
+  interpretation: String
+  data: Json
+}
+
+input AdminActionLogInterpretationUpdateManyMutationInput {
+  entityId: String
+  tableName: String
+  interpretation: String
+  data: Json
+}
+
+input AdminActionLogInterpretationWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  log: AdminActionLogWhereInput
+  entityId: String
+  entityId_not: String
+  entityId_in: [String!]
+  entityId_not_in: [String!]
+  entityId_lt: String
+  entityId_lte: String
+  entityId_gt: String
+  entityId_gte: String
+  entityId_contains: String
+  entityId_not_contains: String
+  entityId_starts_with: String
+  entityId_not_starts_with: String
+  entityId_ends_with: String
+  entityId_not_ends_with: String
+  tableName: String
+  tableName_not: String
+  tableName_in: [String!]
+  tableName_not_in: [String!]
+  tableName_lt: String
+  tableName_lte: String
+  tableName_gt: String
+  tableName_gte: String
+  tableName_contains: String
+  tableName_not_contains: String
+  tableName_starts_with: String
+  tableName_not_starts_with: String
+  tableName_ends_with: String
+  tableName_not_ends_with: String
+  interpretation: String
+  interpretation_not: String
+  interpretation_in: [String!]
+  interpretation_not_in: [String!]
+  interpretation_lt: String
+  interpretation_lte: String
+  interpretation_gt: String
+  interpretation_gte: String
+  interpretation_contains: String
+  interpretation_not_contains: String
+  interpretation_starts_with: String
+  interpretation_not_starts_with: String
+  interpretation_ends_with: String
+  interpretation_not_ends_with: String
+  AND: [AdminActionLogInterpretationWhereInput!]
+  OR: [AdminActionLogInterpretationWhereInput!]
+  NOT: [AdminActionLogInterpretationWhereInput!]
+}
+
+input AdminActionLogInterpretationWhereUniqueInput {
+  id: ID
 }
 
 enum AdminActionLogOrderByInput {
@@ -138,6 +295,8 @@ enum AdminActionLogOrderByInput {
   changedFields_DESC
   statementOnly_ASC
   statementOnly_DESC
+  interpretedAt_ASC
+  interpretedAt_DESC
 }
 
 type AdminActionLogPreviousValues {
@@ -149,6 +308,7 @@ type AdminActionLogPreviousValues {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+  interpretedAt: DateTime
 }
 
 type AdminActionLogSubscriptionPayload {
@@ -169,6 +329,18 @@ input AdminActionLogSubscriptionWhereInput {
   NOT: [AdminActionLogSubscriptionWhereInput!]
 }
 
+input AdminActionLogUpdateDataInput {
+  entityId: String
+  tableName: String
+  activeAdminUser: UserUpdateOneRequiredInput
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+  interpretedAt: DateTime
+}
+
 input AdminActionLogUpdateInput {
   entityId: String
   tableName: String
@@ -178,6 +350,7 @@ input AdminActionLogUpdateInput {
   rowData: Json
   changedFields: Json
   statementOnly: Boolean
+  interpretedAt: DateTime
 }
 
 input AdminActionLogUpdateManyMutationInput {
@@ -188,6 +361,19 @@ input AdminActionLogUpdateManyMutationInput {
   rowData: Json
   changedFields: Json
   statementOnly: Boolean
+  interpretedAt: DateTime
+}
+
+input AdminActionLogUpdateOneRequiredInput {
+  create: AdminActionLogCreateInput
+  update: AdminActionLogUpdateDataInput
+  upsert: AdminActionLogUpsertNestedInput
+  connect: AdminActionLogWhereUniqueInput
+}
+
+input AdminActionLogUpsertNestedInput {
+  update: AdminActionLogUpdateDataInput!
+  create: AdminActionLogCreateInput!
 }
 
 input AdminActionLogWhereInput {
@@ -242,6 +428,14 @@ input AdminActionLogWhereInput {
   action_not_in: [AdminAction!]
   statementOnly: Boolean
   statementOnly_not: Boolean
+  interpretedAt: DateTime
+  interpretedAt_not: DateTime
+  interpretedAt_in: [DateTime!]
+  interpretedAt_not_in: [DateTime!]
+  interpretedAt_lt: DateTime
+  interpretedAt_lte: DateTime
+  interpretedAt_gt: DateTime
+  interpretedAt_gte: DateTime
   AND: [AdminActionLogWhereInput!]
   OR: [AdminActionLogWhereInput!]
   NOT: [AdminActionLogWhereInput!]
@@ -256,6 +450,10 @@ type AggregateActiveAdminUser {
 }
 
 type AggregateAdminActionLog {
+  count: Int!
+}
+
+type AggregateAdminActionLogInterpretation {
   count: Int!
 }
 
@@ -7791,6 +7989,12 @@ type Mutation {
   upsertAdminActionLog(where: AdminActionLogWhereUniqueInput!, create: AdminActionLogCreateInput!, update: AdminActionLogUpdateInput!): AdminActionLog!
   deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
+  createAdminActionLogInterpretation(data: AdminActionLogInterpretationCreateInput!): AdminActionLogInterpretation!
+  updateAdminActionLogInterpretation(data: AdminActionLogInterpretationUpdateInput!, where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
+  updateManyAdminActionLogInterpretations(data: AdminActionLogInterpretationUpdateManyMutationInput!, where: AdminActionLogInterpretationWhereInput): BatchPayload!
+  upsertAdminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!, create: AdminActionLogInterpretationCreateInput!, update: AdminActionLogInterpretationUpdateInput!): AdminActionLogInterpretation!
+  deleteAdminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
+  deleteManyAdminActionLogInterpretations(where: AdminActionLogInterpretationWhereInput): BatchPayload!
   createBagItem(data: BagItemCreateInput!): BagItem!
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
@@ -15595,6 +15799,9 @@ type Query {
   adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   adminActionLogs(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLog]!
   adminActionLogsConnection(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogConnection!
+  adminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
+  adminActionLogInterpretations(where: AdminActionLogInterpretationWhereInput, orderBy: AdminActionLogInterpretationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLogInterpretation]!
+  adminActionLogInterpretationsConnection(where: AdminActionLogInterpretationWhereInput, orderBy: AdminActionLogInterpretationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogInterpretationConnection!
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
@@ -18841,6 +19048,7 @@ input StylePreferencesWhereUniqueInput {
 type Subscription {
   activeAdminUser(where: ActiveAdminUserSubscriptionWhereInput): ActiveAdminUserSubscriptionPayload
   adminActionLog(where: AdminActionLogSubscriptionWhereInput): AdminActionLogSubscriptionPayload
+  adminActionLogInterpretation(where: AdminActionLogInterpretationSubscriptionWhereInput): AdminActionLogInterpretationSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   blogPost(where: BlogPostSubscriptionWhereInput): BlogPostSubscriptionPayload
