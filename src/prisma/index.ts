@@ -3784,11 +3784,13 @@ export type ReservationPhase = "BusinessToCustomer" | "CustomerToBusiness";
 
 export type ReservationStatus =
   | "Queued"
+  | "Picked"
   | "Packed"
   | "Shipped"
   | "Delivered"
   | "Completed"
   | "Cancelled"
+  | "Hold"
   | "Blocked"
   | "Unknown"
   | "Received";
@@ -8544,6 +8546,9 @@ export interface ReservationWhereInput {
   products_every?: Maybe<PhysicalProductWhereInput>;
   products_some?: Maybe<PhysicalProductWhereInput>;
   products_none?: Maybe<PhysicalProductWhereInput>;
+  newProducts_every?: Maybe<PhysicalProductWhereInput>;
+  newProducts_some?: Maybe<PhysicalProductWhereInput>;
+  newProducts_none?: Maybe<PhysicalProductWhereInput>;
   packageEvents_every?: Maybe<PackageTransitEventWhereInput>;
   packageEvents_some?: Maybe<PackageTransitEventWhereInput>;
   packageEvents_none?: Maybe<PackageTransitEventWhereInput>;
@@ -15655,6 +15660,7 @@ export interface ReservationCreateWithoutCustomerInput {
   sentPackage?: Maybe<PackageCreateOneInput>;
   returnedPackage?: Maybe<PackageCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
+  newProducts?: Maybe<PhysicalProductCreateManyInput>;
   packageEvents?: Maybe<PackageTransitEventCreateManyWithoutReservationInput>;
   reservationNumber: Int;
   phase: ReservationPhase;
@@ -15760,6 +15766,7 @@ export interface ReservationCreateWithoutPackageEventsInput {
   sentPackage?: Maybe<PackageCreateOneInput>;
   returnedPackage?: Maybe<PackageCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
+  newProducts?: Maybe<PhysicalProductCreateManyInput>;
   reservationNumber: Int;
   phase: ReservationPhase;
   shipped: Boolean;
@@ -16444,6 +16451,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   sentPackage?: Maybe<PackageUpdateOneInput>;
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
+  newProducts?: Maybe<PhysicalProductUpdateManyInput>;
   packageEvents?: Maybe<PackageTransitEventUpdateManyWithoutReservationInput>;
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
@@ -16632,6 +16640,7 @@ export interface ReservationUpdateWithoutPackageEventsDataInput {
   sentPackage?: Maybe<PackageUpdateOneInput>;
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
+  newProducts?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
@@ -19700,6 +19709,7 @@ export interface ReservationCreateInput {
   sentPackage?: Maybe<PackageCreateOneInput>;
   returnedPackage?: Maybe<PackageCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
+  newProducts?: Maybe<PhysicalProductCreateManyInput>;
   packageEvents?: Maybe<PackageTransitEventCreateManyWithoutReservationInput>;
   reservationNumber: Int;
   phase: ReservationPhase;
@@ -19877,6 +19887,7 @@ export interface ReservationUpdateDataInput {
   sentPackage?: Maybe<PackageUpdateOneInput>;
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
+  newProducts?: Maybe<PhysicalProductUpdateManyInput>;
   packageEvents?: Maybe<PackageTransitEventUpdateManyWithoutReservationInput>;
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
@@ -20055,6 +20066,7 @@ export interface ReservationUpdateInput {
   sentPackage?: Maybe<PackageUpdateOneInput>;
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
+  newProducts?: Maybe<PhysicalProductUpdateManyInput>;
   packageEvents?: Maybe<PackageTransitEventUpdateManyWithoutReservationInput>;
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
@@ -20245,6 +20257,7 @@ export interface ReservationCreateWithoutReceiptInput {
   sentPackage?: Maybe<PackageCreateOneInput>;
   returnedPackage?: Maybe<PackageCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
+  newProducts?: Maybe<PhysicalProductCreateManyInput>;
   packageEvents?: Maybe<PackageTransitEventCreateManyWithoutReservationInput>;
   reservationNumber: Int;
   phase: ReservationPhase;
@@ -20276,6 +20289,7 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   sentPackage?: Maybe<PackageUpdateOneInput>;
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
+  newProducts?: Maybe<PhysicalProductUpdateManyInput>;
   packageEvents?: Maybe<PackageTransitEventUpdateManyWithoutReservationInput>;
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
@@ -25907,6 +25921,15 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  newProducts: <T = FragmentableArray<PhysicalProduct>>(args?: {
+    where?: PhysicalProductWhereInput;
+    orderBy?: PhysicalProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   packageEvents: <T = FragmentableArray<PackageTransitEvent>>(args?: {
     where?: PackageTransitEventWhereInput;
     orderBy?: PackageTransitEventOrderByInput;
@@ -25940,6 +25963,17 @@ export interface ReservationSubscription
   sentPackage: <T = PackageSubscription>() => T;
   returnedPackage: <T = PackageSubscription>() => T;
   products: <T = Promise<AsyncIterator<PhysicalProductSubscription>>>(args?: {
+    where?: PhysicalProductWhereInput;
+    orderBy?: PhysicalProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  newProducts: <
+    T = Promise<AsyncIterator<PhysicalProductSubscription>>
+  >(args?: {
     where?: PhysicalProductWhereInput;
     orderBy?: PhysicalProductOrderByInput;
     skip?: Int;
@@ -25983,6 +26017,15 @@ export interface ReservationNullablePromise
   sentPackage: <T = PackagePromise>() => T;
   returnedPackage: <T = PackagePromise>() => T;
   products: <T = FragmentableArray<PhysicalProduct>>(args?: {
+    where?: PhysicalProductWhereInput;
+    orderBy?: PhysicalProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  newProducts: <T = FragmentableArray<PhysicalProduct>>(args?: {
     where?: PhysicalProductWhereInput;
     orderBy?: PhysicalProductOrderByInput;
     skip?: Int;

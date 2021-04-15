@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Apr 13 2021 12:53:07 GMT-0400 (Eastern Daylight Time)
+# timestamp: Tue Apr 13 2021 14:58:14 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -18946,8 +18946,8 @@ type Mutation {
     data: ProductVariantPriceCreateInput!
   ): ProductVariantPrice!
   createLocation(data: LocationCreateInput!): Location!
-  createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
   createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
+  createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
   createUser(data: UserCreateInput!): User!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
@@ -19173,14 +19173,14 @@ type Mutation {
     data: LocationUpdateInput!
     where: LocationWhereUniqueInput!
   ): Location
-  updatePhysicalProduct(
-    data: PhysicalProductUpdateInput!
-    where: PhysicalProductWhereUniqueInput!
-  ): PhysicalProduct
   updateSmsReceipt(
     data: SmsReceiptUpdateInput!
     where: SmsReceiptWhereUniqueInput!
   ): SmsReceipt
+  updatePhysicalProduct(
+    data: PhysicalProductUpdateInput!
+    where: PhysicalProductWhereUniqueInput!
+  ): PhysicalProduct
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateProductVariant(
     data: ProductVariantUpdateInput!
@@ -19324,10 +19324,10 @@ type Mutation {
     where: ProductVariantPriceWhereUniqueInput!
   ): ProductVariantPrice
   deleteLocation(where: LocationWhereUniqueInput!): Location
+  deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   deletePhysicalProduct(
     where: PhysicalProductWhereUniqueInput!
   ): PhysicalProduct
-  deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   deleteUser(where: UserWhereUniqueInput!): User
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
@@ -19641,16 +19641,16 @@ type Mutation {
     create: LocationCreateInput!
     update: LocationUpdateInput!
   ): Location!
-  upsertPhysicalProduct(
-    where: PhysicalProductWhereUniqueInput!
-    create: PhysicalProductCreateInput!
-    update: PhysicalProductUpdateInput!
-  ): PhysicalProduct!
   upsertSmsReceipt(
     where: SmsReceiptWhereUniqueInput!
     create: SmsReceiptCreateInput!
     update: SmsReceiptUpdateInput!
   ): SmsReceipt!
+  upsertPhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+    create: PhysicalProductCreateInput!
+    update: PhysicalProductUpdateInput!
+  ): PhysicalProduct!
   upsertUser(
     where: UserWhereUniqueInput!
     create: UserCreateInput!
@@ -19927,13 +19927,13 @@ type Mutation {
     data: LocationUpdateManyMutationInput!
     where: LocationWhereInput
   ): BatchPayload!
-  updateManyPhysicalProducts(
-    data: PhysicalProductUpdateManyMutationInput!
-    where: PhysicalProductWhereInput
-  ): BatchPayload!
   updateManySmsReceipts(
     data: SmsReceiptUpdateManyMutationInput!
     where: SmsReceiptWhereInput
+  ): BatchPayload!
+  updateManyPhysicalProducts(
+    data: PhysicalProductUpdateManyMutationInput!
+    where: PhysicalProductWhereInput
   ): BatchPayload!
   updateManyUsers(
     data: UserUpdateManyMutationInput!
@@ -20078,8 +20078,8 @@ type Mutation {
     where: ProductVariantPriceWhereInput
   ): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
-  deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
   deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
+  deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
@@ -38153,15 +38153,6 @@ type Query {
     first: Int
     last: Int
   ): [Location]!
-  physicalProducts(
-    where: PhysicalProductWhereInput
-    orderBy: PhysicalProductOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [PhysicalProduct]!
   smsReceipts(
     where: SmsReceiptWhereInput
     orderBy: SmsReceiptOrderByInput
@@ -38171,6 +38162,15 @@ type Query {
     first: Int
     last: Int
   ): [SmsReceipt]!
+  physicalProducts(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct]!
   users(
     where: UserWhereInput
     orderBy: UserOrderByInput
@@ -38354,8 +38354,8 @@ type Query {
     where: ProductVariantPriceWhereUniqueInput!
   ): ProductVariantPrice
   location(where: LocationWhereUniqueInput!): Location
-  physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   user(where: UserWhereUniqueInput!): User
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
@@ -38913,15 +38913,6 @@ type Query {
     first: Int
     last: Int
   ): LocationConnection!
-  physicalProductsConnection(
-    where: PhysicalProductWhereInput
-    orderBy: PhysicalProductOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): PhysicalProductConnection!
   smsReceiptsConnection(
     where: SmsReceiptWhereInput
     orderBy: SmsReceiptOrderByInput
@@ -38931,6 +38922,15 @@ type Query {
     first: Int
     last: Int
   ): SmsReceiptConnection!
+  physicalProductsConnection(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PhysicalProductConnection!
   usersConnection(
     where: UserWhereInput
     orderBy: UserOrderByInput
@@ -39358,6 +39358,15 @@ type Reservation implements Node {
     first: Int
     last: Int
   ): [PhysicalProduct!]
+  newProducts(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct!]
   packageEvents(
     where: PackageTransitEventWhereInput
     orderBy: PackageTransitEventOrderByInput
@@ -39413,6 +39422,7 @@ input ReservationCreateInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
@@ -39453,6 +39463,7 @@ input ReservationCreateWithoutCustomerInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
@@ -39474,6 +39485,7 @@ input ReservationCreateWithoutPackageEventsInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -39494,6 +39506,7 @@ input ReservationCreateWithoutReceiptInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -41198,11 +41211,13 @@ input ReservationScalarWhereInput {
 
 enum ReservationStatus {
   Queued
+  Picked
   Packed
   Shipped
   Delivered
   Completed
   Cancelled
+  Hold
   Blocked
   Unknown
   Received
@@ -41267,6 +41282,7 @@ input ReservationUpdateDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
@@ -41287,6 +41303,7 @@ input ReservationUpdateInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
@@ -41368,6 +41385,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
@@ -41388,6 +41406,7 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -41407,6 +41426,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -41816,6 +41836,9 @@ input ReservationWhereInput {
   products_every: PhysicalProductWhereInput
   products_some: PhysicalProductWhereInput
   products_none: PhysicalProductWhereInput
+  newProducts_every: PhysicalProductWhereInput
+  newProducts_some: PhysicalProductWhereInput
+  newProducts_none: PhysicalProductWhereInput
   packageEvents_every: PackageTransitEventWhereInput
   packageEvents_some: PackageTransitEventWhereInput
   packageEvents_none: PackageTransitEventWhereInput
@@ -44385,7 +44408,6 @@ input SizeCreateInput {
   slug: String!
   productType: ProductType
   display: String!
-  type: SizeType
   top: TopSizeCreateOneInput
   bottom: BottomSizeCreateOneInput
 }
@@ -44665,22 +44687,6 @@ input SizeScalarWhereInput {
   All values not ending with the given string.
   """
   display_not_ends_with: String
-  type: SizeType
-
-  """
-  All values that are not equal to given value.
-  """
-  type_not: SizeType
-
-  """
-  All values that are contained in given list.
-  """
-  type_in: [SizeType!]
-
-  """
-  All values that are not contained in given list.
-  """
-  type_not_in: [SizeType!]
 }
 
 type SizeSubscriptionPayload {
@@ -44728,19 +44734,10 @@ input SizeSubscriptionWhereInput {
   node: SizeWhereInput
 }
 
-enum SizeType {
-  WxL
-  US
-  EU
-  JP
-  Letter
-}
-
 input SizeUpdateDataInput {
   slug: String
   productType: ProductType
   display: String
-  type: SizeType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
 }
@@ -44749,7 +44746,6 @@ input SizeUpdateInput {
   slug: String
   productType: ProductType
   display: String
-  type: SizeType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
 }
@@ -45039,22 +45035,6 @@ input SizeWhereInput {
   All values not ending with the given string.
   """
   display_not_ends_with: String
-  type: SizeType
-
-  """
-  All values that are not equal to given value.
-  """
-  type_not: SizeType
-
-  """
-  All values that are contained in given list.
-  """
-  type_in: [SizeType!]
-
-  """
-  All values that are not contained in given list.
-  """
-  type_not_in: [SizeType!]
   top: TopSizeWhereInput
   bottom: BottomSizeWhereInput
 }
@@ -46432,12 +46412,12 @@ type Subscription {
     where: ProductVariantPriceSubscriptionWhereInput
   ): ProductVariantPriceSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
-  physicalProduct(
-    where: PhysicalProductSubscriptionWhereInput
-  ): PhysicalProductSubscriptionPayload
   smsReceipt(
     where: SmsReceiptSubscriptionWhereInput
   ): SmsReceiptSubscriptionPayload
+  physicalProduct(
+    where: PhysicalProductSubscriptionWhereInput
+  ): PhysicalProductSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   productVariant(
     where: ProductVariantSubscriptionWhereInput
