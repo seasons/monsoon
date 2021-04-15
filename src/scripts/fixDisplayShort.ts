@@ -21,6 +21,7 @@ const run = async () => {
         id
         display
         productType
+        type
       }
   }`
   )
@@ -57,7 +58,14 @@ const run = async () => {
         })
       }
     } else {
-      console.log("No data for: ", variant.sku)
+      console.log(
+        "No data for: ",
+        variant.sku,
+        " / Display ",
+        manufacturerSize?.display,
+        " / type ",
+        manufacturerSize?.type
+      )
     }
   }
 }
