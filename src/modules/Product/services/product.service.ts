@@ -622,6 +622,8 @@ export class ProductService {
       return null
     }
 
+    // TODO: If the product exists already but has no variants,
+    // don't increment the brand code. Speak to San.
     let styleNumber = null
     if (!!productID) {
       // valid style code if variants exist on the product, null otherwise
