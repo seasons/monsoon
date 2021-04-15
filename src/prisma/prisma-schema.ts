@@ -16163,6 +16163,8 @@ type Reservation {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceipt
   lastLocation: Location
   createdAt: DateTime!
@@ -16193,6 +16195,8 @@ input ReservationCreateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -16234,6 +16238,8 @@ input ReservationCreateWithoutCustomerInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -16255,6 +16261,8 @@ input ReservationCreateWithoutPackageEventsInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -16277,6 +16285,8 @@ input ReservationCreateWithoutReceiptInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
 }
@@ -16500,6 +16510,10 @@ enum ReservationOrderByInput {
   reminderSentAt_DESC
   statusUpdatedAt_ASC
   statusUpdatedAt_DESC
+  completedAt_ASC
+  completedAt_DESC
+  cancelledAt_ASC
+  cancelledAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -16521,6 +16535,8 @@ type ReservationPreviousValues {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -16919,6 +16935,22 @@ input ReservationScalarWhereInput {
   statusUpdatedAt_lte: DateTime
   statusUpdatedAt_gt: DateTime
   statusUpdatedAt_gte: DateTime
+  completedAt: DateTime
+  completedAt_not: DateTime
+  completedAt_in: [DateTime!]
+  completedAt_not_in: [DateTime!]
+  completedAt_lt: DateTime
+  completedAt_lte: DateTime
+  completedAt_gt: DateTime
+  completedAt_gte: DateTime
+  cancelledAt: DateTime
+  cancelledAt_not: DateTime
+  cancelledAt_in: [DateTime!]
+  cancelledAt_not_in: [DateTime!]
+  cancelledAt_lt: DateTime
+  cancelledAt_lte: DateTime
+  cancelledAt_gt: DateTime
+  cancelledAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -16988,6 +17020,8 @@ input ReservationUpdateDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -17009,6 +17043,8 @@ input ReservationUpdateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -17023,6 +17059,8 @@ input ReservationUpdateManyDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyMutationInput {
@@ -17034,6 +17072,8 @@ input ReservationUpdateManyMutationInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -17091,6 +17131,8 @@ input ReservationUpdateWithoutCustomerDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -17111,6 +17153,8 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -17132,6 +17176,8 @@ input ReservationUpdateWithoutReceiptDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
 }
@@ -17240,6 +17286,22 @@ input ReservationWhereInput {
   statusUpdatedAt_lte: DateTime
   statusUpdatedAt_gt: DateTime
   statusUpdatedAt_gte: DateTime
+  completedAt: DateTime
+  completedAt_not: DateTime
+  completedAt_in: [DateTime!]
+  completedAt_not_in: [DateTime!]
+  completedAt_lt: DateTime
+  completedAt_lte: DateTime
+  completedAt_gt: DateTime
+  completedAt_gte: DateTime
+  cancelledAt: DateTime
+  cancelledAt_not: DateTime
+  cancelledAt_in: [DateTime!]
+  cancelledAt_not_in: [DateTime!]
+  cancelledAt_lt: DateTime
+  cancelledAt_lte: DateTime
+  cancelledAt_gt: DateTime
+  cancelledAt_gte: DateTime
   receipt: ReservationReceiptWhereInput
   lastLocation: LocationWhereInput
   createdAt: DateTime

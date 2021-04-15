@@ -27837,6 +27837,8 @@ type Reservation implements Node {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceipt
   lastLocation: Location
   createdAt: DateTime!
@@ -27864,6 +27866,8 @@ input ReservationCreateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
@@ -27906,6 +27910,8 @@ input ReservationCreateWithoutCustomerInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserCreateOneInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
@@ -27927,6 +27933,8 @@ input ReservationCreateWithoutPackageEventsInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
@@ -27948,6 +27956,8 @@ input ReservationCreateWithoutReceiptInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
@@ -28314,6 +28324,10 @@ enum ReservationOrderByInput {
   reminderSentAt_DESC
   statusUpdatedAt_ASC
   statusUpdatedAt_DESC
+  completedAt_ASC
+  completedAt_DESC
+  cancelledAt_ASC
+  cancelledAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -28335,6 +28349,8 @@ type ReservationPreviousValues {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -29090,6 +29106,50 @@ input ReservationScalarWhereInput {
 
   """All values greater than or equal the given value."""
   statusUpdatedAt_gte: DateTime
+  completedAt: DateTime
+
+  """All values that are not equal to given value."""
+  completedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  completedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  completedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  completedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  completedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  completedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  completedAt_gte: DateTime
+  cancelledAt: DateTime
+
+  """All values that are not equal to given value."""
+  cancelledAt_not: DateTime
+
+  """All values that are contained in given list."""
+  cancelledAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  cancelledAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  cancelledAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  cancelledAt_lte: DateTime
+
+  """All values greater than the given value."""
+  cancelledAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  cancelledAt_gte: DateTime
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -29196,6 +29256,8 @@ input ReservationUpdateDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -29217,6 +29279,8 @@ input ReservationUpdateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -29238,6 +29302,8 @@ input ReservationUpdateManyDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyMutationInput {
@@ -29249,6 +29315,8 @@ input ReservationUpdateManyMutationInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -29300,6 +29368,8 @@ input ReservationUpdateWithoutCustomerDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
@@ -29320,6 +29390,8 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -29340,6 +29412,8 @@ input ReservationUpdateWithoutReceiptDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -29560,6 +29634,50 @@ input ReservationWhereInput {
 
   """All values greater than or equal the given value."""
   statusUpdatedAt_gte: DateTime
+  completedAt: DateTime
+
+  """All values that are not equal to given value."""
+  completedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  completedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  completedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  completedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  completedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  completedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  completedAt_gte: DateTime
+  cancelledAt: DateTime
+
+  """All values that are not equal to given value."""
+  cancelledAt_not: DateTime
+
+  """All values that are contained in given list."""
+  cancelledAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  cancelledAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  cancelledAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  cancelledAt_lte: DateTime
+
+  """All values greater than the given value."""
+  cancelledAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  cancelledAt_gte: DateTime
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -38319,6 +38437,10 @@ export type ReservationOrderByInput =   'id_ASC' |
   'reminderSentAt_DESC' |
   'statusUpdatedAt_ASC' |
   'statusUpdatedAt_DESC' |
+  'completedAt_ASC' |
+  'completedAt_DESC' |
+  'cancelledAt_ASC' |
+  'cancelledAt_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -50456,6 +50578,8 @@ export interface ReservationCreateInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
   user: UserCreateOneInput
   customer: CustomerCreateOneWithoutReservationsInput
   sentPackage?: PackageCreateOneInput | null
@@ -50498,6 +50622,8 @@ export interface ReservationCreateWithoutCustomerInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
   user: UserCreateOneInput
   sentPackage?: PackageCreateOneInput | null
   returnedPackage?: PackageCreateOneInput | null
@@ -50519,6 +50645,8 @@ export interface ReservationCreateWithoutPackageEventsInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
   user: UserCreateOneInput
   customer: CustomerCreateOneWithoutReservationsInput
   sentPackage?: PackageCreateOneInput | null
@@ -50540,6 +50668,8 @@ export interface ReservationCreateWithoutReceiptInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
   user: UserCreateOneInput
   customer: CustomerCreateOneWithoutReservationsInput
   sentPackage?: PackageCreateOneInput | null
@@ -51008,6 +51138,22 @@ export interface ReservationScalarWhereInput {
   statusUpdatedAt_lte?: DateTime | null
   statusUpdatedAt_gt?: DateTime | null
   statusUpdatedAt_gte?: DateTime | null
+  completedAt?: DateTime | null
+  completedAt_not?: DateTime | null
+  completedAt_in?: DateTime[] | DateTime | null
+  completedAt_not_in?: DateTime[] | DateTime | null
+  completedAt_lt?: DateTime | null
+  completedAt_lte?: DateTime | null
+  completedAt_gt?: DateTime | null
+  completedAt_gte?: DateTime | null
+  cancelledAt?: DateTime | null
+  cancelledAt_not?: DateTime | null
+  cancelledAt_in?: DateTime[] | DateTime | null
+  cancelledAt_not_in?: DateTime[] | DateTime | null
+  cancelledAt_lt?: DateTime | null
+  cancelledAt_lte?: DateTime | null
+  cancelledAt_gt?: DateTime | null
+  cancelledAt_gte?: DateTime | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -51046,6 +51192,8 @@ export interface ReservationUpdateDataInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
   sentPackage?: PackageUpdateOneInput | null
@@ -51067,6 +51215,8 @@ export interface ReservationUpdateInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
   sentPackage?: PackageUpdateOneInput | null
@@ -51088,6 +51238,8 @@ export interface ReservationUpdateManyDataInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
 }
 
 export interface ReservationUpdateManyMutationInput {
@@ -51099,6 +51251,8 @@ export interface ReservationUpdateManyMutationInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
 }
 
 export interface ReservationUpdateManyWithoutCustomerInput {
@@ -51150,6 +51304,8 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   sentPackage?: PackageUpdateOneInput | null
   returnedPackage?: PackageUpdateOneInput | null
@@ -51170,6 +51326,8 @@ export interface ReservationUpdateWithoutPackageEventsDataInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
   sentPackage?: PackageUpdateOneInput | null
@@ -51190,6 +51348,8 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
   sentPackage?: PackageUpdateOneInput | null
@@ -51295,6 +51455,22 @@ export interface ReservationWhereInput {
   statusUpdatedAt_lte?: DateTime | null
   statusUpdatedAt_gt?: DateTime | null
   statusUpdatedAt_gte?: DateTime | null
+  completedAt?: DateTime | null
+  completedAt_not?: DateTime | null
+  completedAt_in?: DateTime[] | DateTime | null
+  completedAt_not_in?: DateTime[] | DateTime | null
+  completedAt_lt?: DateTime | null
+  completedAt_lte?: DateTime | null
+  completedAt_gt?: DateTime | null
+  completedAt_gte?: DateTime | null
+  cancelledAt?: DateTime | null
+  cancelledAt_not?: DateTime | null
+  cancelledAt_in?: DateTime[] | DateTime | null
+  cancelledAt_not_in?: DateTime[] | DateTime | null
+  cancelledAt_lt?: DateTime | null
+  cancelledAt_lte?: DateTime | null
+  cancelledAt_gt?: DateTime | null
+  cancelledAt_gte?: DateTime | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -57484,6 +57660,8 @@ export interface Reservation extends Node {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
   receipt?: ReservationReceipt | null
   lastLocation?: Location | null
   createdAt: DateTime
@@ -57567,6 +57745,8 @@ export interface ReservationPreviousValues {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
 }

@@ -420,6 +420,21 @@ export class ReservationService {
         }
       }`
     )
+
+    // If we're completing or cancelling the resy, set the timestamp
+    if (
+      reservationBeforeUpdate.status !== "Cancelled" &&
+      data.status === "Cancelled"
+    ) {
+      data["cancelledAt"] = new Date()
+    }
+    if (
+      reservationBeforeUpdate.status !== "Completed" &&
+      data.status === "Completed"
+    ) {
+      data["completedAt"] = new Date()
+    }
+
     await this.prisma.client.updateReservation({ data, where })
 
     // Reservation was just packed. Null out warehouse locations on attached products

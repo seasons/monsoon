@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Apr 15 2021 15:12:07 GMT-0400 (Eastern Daylight Time)
+# timestamp: Thu Apr 15 2021 15:23:52 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -39919,6 +39919,8 @@ type Reservation implements Node {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceipt
   lastLocation: Location
   createdAt: DateTime!
@@ -39952,6 +39954,8 @@ input ReservationCreateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
@@ -39994,6 +39998,8 @@ input ReservationCreateWithoutCustomerInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserCreateOneInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
@@ -40015,6 +40021,8 @@ input ReservationCreateWithoutPackageEventsInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
@@ -40036,6 +40044,8 @@ input ReservationCreateWithoutReceiptInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
@@ -40542,6 +40552,10 @@ enum ReservationOrderByInput {
   reminderSentAt_DESC
   statusUpdatedAt_ASC
   statusUpdatedAt_DESC
+  completedAt_ASC
+  completedAt_DESC
+  cancelledAt_ASC
+  cancelledAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -40563,6 +40577,8 @@ type ReservationPreviousValues {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -41670,6 +41686,78 @@ input ReservationScalarWhereInput {
   All values greater than or equal the given value.
   """
   statusUpdatedAt_gte: DateTime
+  completedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  completedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  completedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  completedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  completedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  completedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  completedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  completedAt_gte: DateTime
+  cancelledAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  cancelledAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  cancelledAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  cancelledAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  cancelledAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  cancelledAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  cancelledAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  cancelledAt_gte: DateTime
   createdAt: DateTime
 
   """
@@ -41812,6 +41900,8 @@ input ReservationUpdateDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -41833,6 +41923,8 @@ input ReservationUpdateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -41854,6 +41946,8 @@ input ReservationUpdateManyDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyMutationInput {
@@ -41865,6 +41959,8 @@ input ReservationUpdateManyMutationInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -41916,6 +42012,8 @@ input ReservationUpdateWithoutCustomerDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
@@ -41936,6 +42034,8 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -41956,6 +42056,8 @@ input ReservationUpdateWithoutReceiptDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -42292,6 +42394,78 @@ input ReservationWhereInput {
   All values greater than or equal the given value.
   """
   statusUpdatedAt_gte: DateTime
+  completedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  completedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  completedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  completedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  completedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  completedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  completedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  completedAt_gte: DateTime
+  cancelledAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  cancelledAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  cancelledAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  cancelledAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  cancelledAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  cancelledAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  cancelledAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  cancelledAt_gte: DateTime
   createdAt: DateTime
 
   """
