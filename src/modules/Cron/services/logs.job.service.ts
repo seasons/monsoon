@@ -16,19 +16,19 @@ export class LogsScheduledJobs {
 
   @Cron(CronExpression.EVERY_10_MINUTES)
   async interpretPhysicalProductLogs() {
-    const logsToInterpret = (await this.prisma.binding.query.adminActionLogs(
+    const allLogs = (await this.prisma.binding.query.adminActionLogs(
       {
-        where: {
-          AND: [{ interpretedAt: null }, { tableName: "PhysicalProduct" }],
-        },
+        where: { tableName: "PhysicalProduct" },
       },
       `{
       actionId
       entityId
       action
       changedFields
+      interpretedAt
     }`
     )) as AdminActionLog[]
+    const logsToInterpret = allLogs.filter(a => !a.interpretedAt)
 
     const allReferencedWarehouseLocationIDs = logsToInterpret
       .filter(a => !!a.changedFields)

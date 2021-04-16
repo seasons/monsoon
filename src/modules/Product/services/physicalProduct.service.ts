@@ -237,7 +237,6 @@ export class PhysicalProductService {
       if (keys.includes("warehouseLocation")) {
         if (changedFields["warehouseLocation"] === null) {
           const activeReservation = reservations.find(r => {
-            // TODO: Walk through this logic to ensure it works
             const createdAt = new Date(r.createdAt)
             const cancelledAt = new Date(r.cancelledAt)
             const completedAt = new Date(r.completedAt)
