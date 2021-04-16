@@ -133,7 +133,6 @@ export class ProductVariantFieldsResolver {
             id
             type
             display
-            value
           }
         }`,
       },
