@@ -16,18 +16,9 @@ export class LogsScheduledJobs {
 
   @Cron(CronExpression.EVERY_10_MINUTES)
   async interpretPhysicalProductLogs() {
-    const allLogs = (await this.prisma.binding.query.adminActionLogs(
-      {
-        where: { tableName: "PhysicalProduct" },
-      },
-      `{
-      actionId
-      entityId
-      action
-      changedFields
-      interpretedAt
-    }`
-    )) as AdminActionLog[]
+    const allLogs = (await this.prisma.client.adminActionLogs({
+      where: { tableName: "PhysicalProduct" },
+    })) as AdminActionLog[]
     const logsToInterpret = allLogs.filter(a => !a.interpretedAt)
 
     const allReferencedWarehouseLocationIDs = logsToInterpret
@@ -44,32 +35,56 @@ export class LogsScheduledJobs {
     )
 
     const allPhysProdIDs = logsToInterpret.map(a => a.entityId)
-    const allRelevantReservations = (await this.prisma.binding.query.reservations(
-      { where: { products_some: { id_in: allPhysProdIDs } } },
+
+    // For some reason, binding won't let us query completedAt and cancelledAt...
+    // So we hack around it by doing two queries and merging the data
+    let allRelevantReservations = (await this.prisma.binding.query.reservations(
+      {
+        where: { products_some: { id_in: allPhysProdIDs } },
+      },
       `{
-        id
-        createdAt
-        completedAt
-        cancelledAt
-        reservationNumber
-      }`
-    )) as any
+          id
+          products {
+            id
+          }
+        }`
+    )) as Reservation[]
+    const allRelevantReservationsWithCompletedAndCancelledAtDates = (await this.prisma.client.reservations(
+      {
+        where: { products_some: { id_in: allPhysProdIDs } },
+      }
+    )) as Reservation[]
+    allRelevantReservationsWithCompletedAndCancelledAtDates.forEach(a => {
+      const matchingReservationIndex = allRelevantReservations.findIndex(
+        b => a.id === b.id
+      )
+      allRelevantReservations[matchingReservationIndex] = {
+        ...allRelevantReservations[matchingReservationIndex],
+        ...a,
+      }
+    })
+
     const interpretations = this.physicalProductService.interpretPhysicalProductLogs(
       logsToInterpret,
       allReferencedWarehouseLocations,
       allRelevantReservations
     )
+    const nonNullInterpretations = interpretations.filter(
+      a => !!a.interpretation
+    )
 
     for (const log of logsToInterpret) {
-      const interpretedLog = interpretations.find(
+      const interpretedLog = nonNullInterpretations.find(
         a => a.actionId == log.actionId
       )
-      await this.prisma.client.createAdminActionLogInterpretation({
-        log: { connect: { actionId: log.actionId } },
-        entityId: log.entityId,
-        tableName: "PhysicalProduct",
-        interpretation: interpretedLog.interpretation, // may be undefined,
-      })
+      if (!!interpretedLog) {
+        await this.prisma.client.createAdminActionLogInterpretation({
+          log: { connect: { actionId: log.actionId } },
+          entityId: log.entityId,
+          tableName: "PhysicalProduct",
+          interpretation: interpretedLog.interpretation || "", // may be undefined,
+        })
+      }
       await this.prisma.client.updateAdminActionLog({
         where: { actionId: log.actionId },
         data: { interpretedAt: new Date() },

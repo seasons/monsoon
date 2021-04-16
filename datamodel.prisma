@@ -1367,7 +1367,7 @@ type AdminActionLogInterpretation {
   log: AdminActionLog!
   entityId: String!
   tableName: String!
-  interpretation: String!
+  interpretation: String
   data: Json # miscellaneous useful data for the client
 }
 enum SyncTimingType {
