@@ -18102,6 +18102,7 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
+  type: SizeType
 }
 
 type SizeConnection {
@@ -18117,6 +18118,7 @@ input SizeCreateInput {
   top: TopSizeCreateOneInput
   bottom: BottomSizeCreateOneInput
   display: String!
+  type: SizeType
 }
 
 input SizeCreateManyInput {
@@ -18143,6 +18145,8 @@ enum SizeOrderByInput {
   productType_DESC
   display_ASC
   display_DESC
+  type_ASC
+  type_DESC
 }
 
 type SizePreviousValues {
@@ -18150,6 +18154,7 @@ type SizePreviousValues {
   slug: String!
   productType: ProductType
   display: String!
+  type: SizeType
 }
 
 input SizeScalarWhereInput {
@@ -18199,6 +18204,10 @@ input SizeScalarWhereInput {
   display_not_starts_with: String
   display_ends_with: String
   display_not_ends_with: String
+  type: SizeType
+  type_not: SizeType
+  type_in: [SizeType!]
+  type_not_in: [SizeType!]
   AND: [SizeScalarWhereInput!]
   OR: [SizeScalarWhereInput!]
   NOT: [SizeScalarWhereInput!]
@@ -18222,12 +18231,21 @@ input SizeSubscriptionWhereInput {
   NOT: [SizeSubscriptionWhereInput!]
 }
 
+enum SizeType {
+  WxL
+  US
+  EU
+  JP
+  Letter
+}
+
 input SizeUpdateDataInput {
   slug: String
   productType: ProductType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
   display: String
+  type: SizeType
 }
 
 input SizeUpdateInput {
@@ -18236,12 +18254,14 @@ input SizeUpdateInput {
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
   display: String
+  type: SizeType
 }
 
 input SizeUpdateManyDataInput {
   slug: String
   productType: ProductType
   display: String
+  type: SizeType
 }
 
 input SizeUpdateManyInput {
@@ -18260,6 +18280,7 @@ input SizeUpdateManyMutationInput {
   slug: String
   productType: ProductType
   display: String
+  type: SizeType
 }
 
 input SizeUpdateManyWithWhereNestedInput {
@@ -18341,6 +18362,10 @@ input SizeWhereInput {
   display_not_starts_with: String
   display_ends_with: String
   display_not_ends_with: String
+  type: SizeType
+  type_not: SizeType
+  type_in: [SizeType!]
+  type_not_in: [SizeType!]
   AND: [SizeWhereInput!]
   OR: [SizeWhereInput!]
   NOT: [SizeWhereInput!]
