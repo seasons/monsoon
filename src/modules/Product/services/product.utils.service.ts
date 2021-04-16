@@ -6,9 +6,10 @@ import {
   Category,
   Product,
   ProductMaterialCategoryCreateInput,
+  SizeType,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { head, identity, pickBy, union, uniq, uniqBy } from "lodash"
+import { head, identity, pickBy, size, union, uniq, uniqBy } from "lodash"
 import slugify from "slugify"
 
 import {
@@ -48,6 +49,8 @@ export class ProductUtilsService {
     const query = `{
       id
       display
+      productType
+      type
       bottom {
         id
         value
@@ -58,15 +61,6 @@ export class ProductUtilsService {
         letter
       }
     }`
-    const internalSize = await this.prisma.binding.query.size(
-      {
-        where: { id: internalSizeID },
-      },
-      query
-    )
-
-    // If top exit early because we are only using internalSizes for tops
-    if (!!internalSize.top) return internalSize.top.letter
 
     const manufacturerSizes = await this.prisma.binding.query.sizes(
       {
@@ -76,21 +70,33 @@ export class ProductUtilsService {
     )
     const manufacturerSize = head(manufacturerSizes)
 
-    if (manufacturerSize) {
-      const manufacturerSizeBottomType = manufacturerSize.bottom.type
-      if (
-        manufacturerSizeBottomType === "EU" ||
-        manufacturerSizeBottomType === "JP"
-      ) {
-        return this.sizeConversion.bottoms?.[manufacturerSizeBottomType][
-          manufacturerSize?.bottom.value
-        ]
-      } else {
-        return manufacturerSize.display
+    // There *should* always be a manufacturer size display,
+    // but just to be safe we fallback to internal size display
+    let displayShort
+    if (manufacturerSize?.display) {
+      displayShort = this.coerceSizeDisplayIfNeeded(
+        manufacturerSize.display,
+        manufacturerSize.type,
+        manufacturerSize.productType
+      )
+      if (manufacturerSize.type === "WxL") {
+        displayShort = displayShort.split("x")[0]
       }
     } else {
-      return internalSize.display
+      const internalSize = await this.prisma.binding.query.size(
+        {
+          where: { id: internalSizeID },
+        },
+        query
+      )
+      displayShort = internalSize.display
+
+      if (internalSize.type === "WxL") {
+        displayShort = displayShort.split("x")[0]
+      }
     }
+
+    return displayShort
   }
 
   async getAllCategories(prod: Product): Promise<Category[]> {
@@ -468,58 +474,55 @@ export class ProductUtilsService {
     display,
     topSizeData,
     bottomSizeData,
+    sizeType,
   }: {
     slug: string
     type: ProductType
+    sizeType: SizeType
     display: string
     topSizeData?: TopSizeCreateInput
     bottomSizeData?: BottomSizeCreateInput
   }): Promise<Size> {
-    const sizeData = { slug, productType: type, display }
-    // Update if needed
+    const sizeData = { slug, productType: type, display, type: sizeType }
     const sizeRecord = await this.prisma.client.upsertSize({
       where: { slug },
       create: { ...sizeData },
       update: { ...sizeData },
     })
-    switch (type) {
-      case "Top":
-        if (!topSizeData) {
-          throw new Error("topSizeData must be non null if type is Top")
-        }
-        const prismaTopSize = await this.prisma.client
-          .size({ id: sizeRecord.id })
-          .top()
-        const topSize = await this.prisma.client.upsertTopSize({
-          where: { id: prismaTopSize?.id || "" },
-          update: { ...topSizeData },
-          create: { ...topSizeData },
-        })
-        if (!prismaTopSize) {
-          await this.prisma.client.updateSize({
-            where: { slug },
-            data: { top: { connect: { id: topSize.id } } },
+    if (!!bottomSizeData || !!topSizeData) {
+      switch (type) {
+        case "Top":
+          const prismaTopSize = await this.prisma.client
+            .size({ id: sizeRecord.id })
+            .top()
+          const topSize = await this.prisma.client.upsertTopSize({
+            where: { id: prismaTopSize?.id || "" },
+            update: { ...topSizeData },
+            create: { ...topSizeData },
           })
-        }
-        break
-      case "Bottom":
-        if (!bottomSizeData) {
-          throw new Error("bottomSizeData must be non null if type is Bottom")
-        }
-        const prismaBottomSize = await this.prisma.client
-          .size({ id: sizeRecord?.id })
-          .bottom()
-        const bottomSize = await this.prisma.client.upsertBottomSize({
-          where: { id: prismaBottomSize?.id || "" },
-          create: { ...bottomSizeData },
-          update: { ...bottomSizeData },
-        })
-        if (!prismaBottomSize) {
-          await this.prisma.client.updateSize({
-            where: { slug },
-            data: { bottom: { connect: { id: bottomSize.id } } },
+          if (!prismaTopSize) {
+            await this.prisma.client.updateSize({
+              where: { slug },
+              data: { top: { connect: { id: topSize.id } } },
+            })
+          }
+          break
+        case "Bottom":
+          const prismaBottomSize = await this.prisma.client
+            .size({ id: sizeRecord?.id })
+            .bottom()
+          const bottomSize = await this.prisma.client.upsertBottomSize({
+            where: { id: prismaBottomSize?.id || "" },
+            create: { ...bottomSizeData },
+            update: { ...bottomSizeData },
           })
-        }
+          if (!prismaBottomSize) {
+            await this.prisma.client.updateSize({
+              where: { slug },
+              data: { bottom: { connect: { id: bottomSize.id } } },
+            })
+          }
+      }
     }
 
     return sizeRecord
@@ -551,27 +554,19 @@ export class ProductUtilsService {
   async upsertModelSize({
     slug,
     type,
-    modelSizeName,
     modelSizeDisplay,
-    bottomSizeType,
+    sizeType,
   }: {
     slug: string
     type: ProductType
-    modelSizeName: string
     modelSizeDisplay: string
-    bottomSizeType?: BottomSizeType
+    sizeType?: SizeType
   }) {
     return await this.deepUpsertSize({
       slug,
       type,
       display: modelSizeDisplay,
-      topSizeData: type === "Top" && {
-        letter: modelSizeName as LetterSize,
-      },
-      bottomSizeData: type === "Bottom" && {
-        type: bottomSizeType as BottomSizeType,
-        value: modelSizeName,
-      },
+      sizeType,
     })
   }
 
@@ -590,5 +585,23 @@ export class ProductUtilsService {
       create: data,
       update: data,
     })
+  }
+
+  coerceSizeDisplayIfNeeded(
+    display: string,
+    sizeType: SizeType,
+    productType: ProductType
+  ) {
+    let conversion = display
+
+    if (sizeType === "JP" || sizeType === "EU") {
+      const sizeConversion = this.utils.parseJSONFile(
+        "src/modules/Product/sizeConversion"
+      )
+      conversion =
+        sizeConversion?.[productType.toLowerCase()]?.[sizeType]?.[display]
+    }
+
+    return conversion
   }
 }

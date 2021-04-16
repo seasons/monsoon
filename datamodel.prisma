@@ -124,7 +124,16 @@ enum ProductType {
   Shoe
 }
 
+# This should be deprecated in favor of using SizeType in the future
 enum BottomSizeType {
+  WxL
+  US
+  EU
+  JP
+  Letter
+}
+
+enum SizeType {
   WxL
   US
   EU
@@ -1323,6 +1332,7 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
+  type: SizeType
 }
 
 # Helper table for audit logs. Should only ever have 0 or 1 records.

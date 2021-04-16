@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Apr 15 2021 15:23:52 GMT-0400 (Eastern Daylight Time)
+# timestamp: Fri Apr 16 2021 14:47:39 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -45093,6 +45093,7 @@ type Size implements Node {
   top: TopSize
   bottom: BottomSize
   display: String!
+  type: SizeType
 }
 
 """
@@ -45116,6 +45117,7 @@ input SizeCreateInput {
   slug: String!
   productType: ProductType
   display: String!
+  type: SizeType
   top: TopSizeCreateOneInput
   bottom: BottomSizeCreateOneInput
 }
@@ -45154,6 +45156,8 @@ enum SizeOrderByInput {
   productType_DESC
   display_ASC
   display_DESC
+  type_ASC
+  type_DESC
 }
 
 type SizePreviousValues {
@@ -45161,6 +45165,7 @@ type SizePreviousValues {
   slug: String!
   productType: ProductType
   display: String!
+  type: SizeType
 }
 
 input SizeScalarWhereInput {
@@ -45392,6 +45397,22 @@ input SizeScalarWhereInput {
   All values not ending with the given string.
   """
   display_not_ends_with: String
+  type: SizeType
+
+  """
+  All values that are not equal to given value.
+  """
+  type_not: SizeType
+
+  """
+  All values that are contained in given list.
+  """
+  type_in: [SizeType!]
+
+  """
+  All values that are not contained in given list.
+  """
+  type_not_in: [SizeType!]
 }
 
 type SizeSubscriptionPayload {
@@ -45439,10 +45460,19 @@ input SizeSubscriptionWhereInput {
   node: SizeWhereInput
 }
 
+enum SizeType {
+  WxL
+  US
+  EU
+  JP
+  Letter
+}
+
 input SizeUpdateDataInput {
   slug: String
   productType: ProductType
   display: String
+  type: SizeType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
 }
@@ -45451,6 +45481,7 @@ input SizeUpdateInput {
   slug: String
   productType: ProductType
   display: String
+  type: SizeType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
 }
@@ -45459,6 +45490,7 @@ input SizeUpdateManyDataInput {
   slug: String
   productType: ProductType
   display: String
+  type: SizeType
 }
 
 input SizeUpdateManyInput {
@@ -45477,6 +45509,7 @@ input SizeUpdateManyMutationInput {
   slug: String
   productType: ProductType
   display: String
+  type: SizeType
 }
 
 input SizeUpdateManyWithWhereNestedInput {
@@ -45738,6 +45771,22 @@ input SizeWhereInput {
   All values not ending with the given string.
   """
   display_not_ends_with: String
+  type: SizeType
+
+  """
+  All values that are not equal to given value.
+  """
+  type_not: SizeType
+
+  """
+  All values that are contained in given list.
+  """
+  type_in: [SizeType!]
+
+  """
+  All values that are not contained in given list.
+  """
+  type_not_in: [SizeType!]
   top: TopSizeWhereInput
   bottom: BottomSizeWhereInput
 }

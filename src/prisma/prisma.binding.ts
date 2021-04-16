@@ -31541,6 +31541,7 @@ type Size implements Node {
   top: TopSize
   bottom: BottomSize
   display: String!
+  type: SizeType
 }
 
 """A connection to a list of items."""
@@ -31558,6 +31559,7 @@ input SizeCreateInput {
   slug: String!
   productType: ProductType
   display: String!
+  type: SizeType
   top: TopSizeCreateOneInput
   bottom: BottomSizeCreateOneInput
 }
@@ -31590,6 +31592,8 @@ enum SizeOrderByInput {
   productType_DESC
   display_ASC
   display_DESC
+  type_ASC
+  type_DESC
 }
 
 type SizePreviousValues {
@@ -31597,6 +31601,7 @@ type SizePreviousValues {
   slug: String!
   productType: ProductType
   display: String!
+  type: SizeType
 }
 
 input SizeScalarWhereInput {
@@ -31738,6 +31743,16 @@ input SizeScalarWhereInput {
 
   """All values not ending with the given string."""
   display_not_ends_with: String
+  type: SizeType
+
+  """All values that are not equal to given value."""
+  type_not: SizeType
+
+  """All values that are contained in given list."""
+  type_in: [SizeType!]
+
+  """All values that are not contained in given list."""
+  type_not_in: [SizeType!]
 }
 
 type SizeSubscriptionPayload {
@@ -31777,10 +31792,19 @@ input SizeSubscriptionWhereInput {
   node: SizeWhereInput
 }
 
+enum SizeType {
+  WxL
+  US
+  EU
+  JP
+  Letter
+}
+
 input SizeUpdateDataInput {
   slug: String
   productType: ProductType
   display: String
+  type: SizeType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
 }
@@ -31789,6 +31813,7 @@ input SizeUpdateInput {
   slug: String
   productType: ProductType
   display: String
+  type: SizeType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
 }
@@ -31797,6 +31822,7 @@ input SizeUpdateManyDataInput {
   slug: String
   productType: ProductType
   display: String
+  type: SizeType
 }
 
 input SizeUpdateManyInput {
@@ -31815,6 +31841,7 @@ input SizeUpdateManyMutationInput {
   slug: String
   productType: ProductType
   display: String
+  type: SizeType
 }
 
 input SizeUpdateManyWithWhereNestedInput {
@@ -31986,6 +32013,16 @@ input SizeWhereInput {
 
   """All values not ending with the given string."""
   display_not_ends_with: String
+  type: SizeType
+
+  """All values that are not equal to given value."""
+  type_not: SizeType
+
+  """All values that are contained in given list."""
+  type_in: [SizeType!]
+
+  """All values that are not contained in given list."""
+  type_not_in: [SizeType!]
   top: TopSizeWhereInput
   bottom: BottomSizeWhereInput
 }
@@ -38548,7 +38585,15 @@ export type SizeOrderByInput =   'id_ASC' |
   'productType_ASC' |
   'productType_DESC' |
   'display_ASC' |
-  'display_DESC'
+  'display_DESC' |
+  'type_ASC' |
+  'type_DESC'
+
+export type SizeType =   'WxL' |
+  'US' |
+  'EU' |
+  'JP' |
+  'Letter'
 
 export type SmsReceiptOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -52292,6 +52337,7 @@ export interface SizeCreateInput {
   slug: String
   productType?: ProductType | null
   display: String
+  type?: SizeType | null
   top?: TopSizeCreateOneInput | null
   bottom?: BottomSizeCreateOneInput | null
 }
@@ -52356,6 +52402,10 @@ export interface SizeScalarWhereInput {
   display_not_starts_with?: String | null
   display_ends_with?: String | null
   display_not_ends_with?: String | null
+  type?: SizeType | null
+  type_not?: SizeType | null
+  type_in?: SizeType[] | SizeType | null
+  type_not_in?: SizeType[] | SizeType | null
 }
 
 export interface SizeSubscriptionWhereInput {
@@ -52373,6 +52423,7 @@ export interface SizeUpdateDataInput {
   slug?: String | null
   productType?: ProductType | null
   display?: String | null
+  type?: SizeType | null
   top?: TopSizeUpdateOneInput | null
   bottom?: BottomSizeUpdateOneInput | null
 }
@@ -52381,6 +52432,7 @@ export interface SizeUpdateInput {
   slug?: String | null
   productType?: ProductType | null
   display?: String | null
+  type?: SizeType | null
   top?: TopSizeUpdateOneInput | null
   bottom?: BottomSizeUpdateOneInput | null
 }
@@ -52389,6 +52441,7 @@ export interface SizeUpdateManyDataInput {
   slug?: String | null
   productType?: ProductType | null
   display?: String | null
+  type?: SizeType | null
 }
 
 export interface SizeUpdateManyInput {
@@ -52407,6 +52460,7 @@ export interface SizeUpdateManyMutationInput {
   slug?: String | null
   productType?: ProductType | null
   display?: String | null
+  type?: SizeType | null
 }
 
 export interface SizeUpdateManyWithWhereNestedInput {
@@ -52489,6 +52543,10 @@ export interface SizeWhereInput {
   display_not_starts_with?: String | null
   display_ends_with?: String | null
   display_not_ends_with?: String | null
+  type?: SizeType | null
+  type_not?: SizeType | null
+  type_in?: SizeType[] | SizeType | null
+  type_not_in?: SizeType[] | SizeType | null
   top?: TopSizeWhereInput | null
   bottom?: BottomSizeWhereInput | null
 }
@@ -58058,6 +58116,7 @@ export interface Size extends Node {
   top?: TopSize | null
   bottom?: BottomSize | null
   display: String
+  type?: SizeType | null
 }
 
 /*
@@ -58084,6 +58143,7 @@ export interface SizePreviousValues {
   slug: String
   productType?: ProductType | null
   display: String
+  type?: SizeType | null
 }
 
 export interface SizeSubscriptionPayload {

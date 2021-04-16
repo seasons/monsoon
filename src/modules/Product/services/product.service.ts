@@ -236,9 +236,8 @@ export class ProductService {
       modelSize = await this.productUtils.upsertModelSize({
         slug,
         type: input.type,
-        modelSizeName: input.modelSizeName,
         modelSizeDisplay: input.modelSizeDisplay,
-        bottomSizeType: input.internalBottomSizeType,
+        sizeType: input.internalSizeType,
       })
     }
 
@@ -457,8 +456,9 @@ export class ProductService {
     const { brandCode, styleCode } = skuData
 
     return sizes
-      .map(({ sizeName, count }) => {
-        const sizeCode = this.utils.sizeNameToSizeCode(sizeName)
+      .map(({ internalSize, manufacturerSize, count }) => {
+        // FIXME: eventually we may want to create the sizeCode using the manufacturer name
+        const sizeCode = this.utils.sizeNameToSizeCode(internalSize)
         return Array.from(Array(count).keys()).map((_, index) => {
           const physicalProductIndex = `${index + 1}`.padStart(2, "0")
           return `${brandCode}-${colorCode}-${sizeCode}-${styleCode}-${physicalProductIndex}`
@@ -651,7 +651,7 @@ export class ProductService {
   }) {
     // Extract custom fields out
     const {
-      internalBottomSizeType,
+      internalSizeType,
       functions,
       images,
       modelSizeDisplay,
@@ -730,9 +730,8 @@ export class ProductService {
       const modelSize = await this.productUtils.upsertModelSize({
         slug: product.slug,
         type: product.type,
-        modelSizeName,
         modelSizeDisplay,
-        bottomSizeType: internalBottomSizeType,
+        sizeType: internalSizeType,
       })
       modelSizeID = modelSize.id
     }
@@ -871,19 +870,19 @@ export class ProductService {
     const internalSize = await this.productUtils.deepUpsertSize({
       slug: `${variant.sku}-internal`,
       type,
-      display: this.internalSizeNameToDisplaySize({
-        type,
-        sizeName: variant.internalSizeName,
-      }),
+      display: variant.internalSizeName,
       topSizeData: type === "Top" && {
+        // TODO: letter is deprecated, can eventually remove
         letter: (variant.internalSizeName as LetterSize) || null,
         ...pick(variant, ["sleeve", "shoulder", "chest", "neck", "length"]),
       },
       bottomSizeData: type === "Bottom" && {
-        type: (variant.internalBottomSizeType as BottomSizeType) || null,
+        // TODO: type and value are deprecated, can eventually remove
+        type: (variant.internalSizeType as BottomSizeType) || null,
         value: variant.internalSizeName || "",
         ...pick(variant, ["waist", "rise", "hem", "inseam"]),
       },
+      sizeType: variant.internalSizeType,
     })
 
     const manufacturerSizeIDs = await this.productVariantService.getManufacturerSizeIDs(
@@ -1322,26 +1321,6 @@ export class ProductService {
         })
       }
     }
-  }
-
-  private internalSizeNameToDisplaySize({
-    type,
-    sizeName,
-  }: {
-    type: ProductType
-    sizeName
-  }) {
-    let displaySize
-    switch (type) {
-      case "Bottom":
-        this.validateInternalBottomSizeName(sizeName)
-        displaySize = sizeName.split("x")[0]
-        break
-      default:
-        displaySize = sizeName
-    }
-
-    return displaySize
   }
 
   private validateInternalBottomSizeName(sizeName) {

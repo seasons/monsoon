@@ -243,20 +243,13 @@ export class ProductVariantService {
           if (!variant.sku) {
             throw new Error("No variant sku present in getManufacturerSizeIDs")
           }
-          const sizeType =
-            type === "Bottom" ? variant.manufacturerBottomSizeType : "Letter"
+          const sizeType = variant.manufacturerSizeType
           const slug = `${variant.sku}-manufacturer-${sizeType}-${sizeValue}`
           const size = await this.productUtils.deepUpsertSize({
             slug,
             type,
             display: sizeValue,
-            topSizeData: type === "Top" && {
-              letter: (sizeValue as LetterSize) || null,
-            },
-            bottomSizeData: type === "Bottom" && {
-              type: (sizeType as BottomSizeType) || null,
-              value: sizeValue || "",
-            },
+            sizeType,
           })
           return { id: size.id }
         })
@@ -273,11 +266,11 @@ export class ProductVariantService {
       shopifyProductVariant,
     } = input
 
-    const prodVarSize = await this.prisma.client
+    const internalSize = await this.prisma.client
       .productVariant({ id })
       .internalSize()
 
-    if (!prodVarSize) {
+    if (!internalSize) {
       return null
     }
     switch (productType) {
@@ -287,7 +280,7 @@ export class ProductVariantService {
         }
         await this.prisma.client.updateSize({
           data: { top: { update: topSizeValues } },
-          where: { id: prodVarSize.id },
+          where: { id: internalSize.id },
         })
         break
       case "Bottom":
@@ -296,7 +289,7 @@ export class ProductVariantService {
         }
         await this.prisma.client.updateSize({
           data: { bottom: { update: bottomSizeValues } },
-          where: { id: prodVarSize.id },
+          where: { id: internalSize.id },
         })
         break
     }
@@ -322,6 +315,11 @@ export class ProductVariantService {
       data.manufacturerSizes = {
         set: manufacturerSizeIDs,
       }
+      const displayShort = await this.productUtils.getVariantDisplayShort(
+        manufacturerSizeIDs,
+        internalSize.id
+      )
+      data.displayShort = displayShort
     }
 
     if (shopifyProductVariant) {
