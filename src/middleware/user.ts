@@ -15,7 +15,7 @@ export function createGetUserMiddleware(prisma) {
     const { sub } = auth0User
     const auth0Id = sub.split("|")[1]
     return prisma.user({ auth0Id }).then(prismaUser => {
-      if (!prismaUser && process.env.NODE_ENV === "production") {
+      if (!prismaUser && process.env.NODE_ENV !== "production") {
         // In some scenarios, the email/PW entered resolves to a user
         // on auth0, but not in prisma. Mostly for staging/local. In that
         // case, we want to reset the user object to null so it's as if
