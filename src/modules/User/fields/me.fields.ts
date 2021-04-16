@@ -21,7 +21,6 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async user(@User() user) {
-    console.log(`user in me: `, user)
     return user
   }
 
