@@ -7,6 +7,8 @@ export function createGetUserMiddleware(prisma) {
   return (req, res, next) => {
     // Get auth0 user from request
     const auth0User = req.user
+    console.log(`auth0User: `, auth0User)
+    console.log(`!auth0User: `, !auth0User)
     if (!auth0User) {
       return next()
     }
@@ -15,8 +17,16 @@ export function createGetUserMiddleware(prisma) {
     const { sub } = auth0User
     const auth0Id = sub.split("|")[1]
     return prisma.user({ auth0Id }).then(prismaUser => {
-      req.user = { ...req.user, ...prismaUser }
+      if (!prismaUser) {
+        // In some scenarios, the email/PW entered resolves to a user
+        // on auth0, but not in prisma. Mostly for staging/local. In that
+        // case, we want to reset the user object to null so it's as if
+        // the user was not able to login with their credentials
+        req.user = null
+        return next()
+      }
 
+      req.user = { ...req.user, ...prismaUser }
       try {
         // Add user context on Sentry
         if (prismaUser) {
@@ -27,7 +37,6 @@ export function createGetUserMiddleware(prisma) {
       } catch (e) {
         console.error(e)
       }
-
       return next()
     })
   }
