@@ -93,12 +93,14 @@ enum PackageStatus {
 
 enum ReservationStatus {
   Queued
+  Picked
   Packed
   Shipped
   Delivered
   Completed
   Cancelled
-  Blocked
+  Hold # For internal use, when ops needs to delay processing
+  Blocked # Used when shippo indicates the delivery is blocked
   Unknown
 
   Received
@@ -122,7 +124,16 @@ enum ProductType {
   Shoe
 }
 
+# This should be deprecated in favor of using SizeType in the future
 enum BottomSizeType {
+  WxL
+  US
+  EU
+  JP
+  Letter
+}
+
+enum SizeType {
   WxL
   US
   EU
@@ -1106,7 +1117,12 @@ type Reservation {
     @relation(link: INLINE, name: "SeasonsToCustomerPackage", onDelete: CASCADE)
   returnedPackage: Package
     @relation(link: INLINE, name: "CustomerToSeasonsPackage", onDelete: CASCADE)
+  # all items on the reservation
   products: [PhysicalProduct!]!
+    @relation(link: TABLE, name: "ReservationToAllProducts", onDelete: SET_NULL)
+  # items which were are not carrying over from a previous reservation
+  newProducts: [PhysicalProduct!]!
+    @relation(link: TABLE, name: "ReservationToNewProducts", onDelete: SET_NULL)
   packageEvents: [PackageTransitEvent!]
   reservationNumber: Int! @unique
   phase: ReservationPhase!
@@ -1314,6 +1330,7 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
+  type: SizeType
 }
 
 # Helper table for audit logs. Should only ever have 0 or 1 records.

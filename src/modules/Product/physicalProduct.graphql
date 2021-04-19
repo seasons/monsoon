@@ -133,9 +133,11 @@ input PhysicalProductSeasonsUIDsInput {
   brandID: ID!
   colorCode: String!
   sizes: [PhysicalProductSeasonsUIDSizes!]!
+  productID: ID # null if for a new product
 }
 
 input PhysicalProductSeasonsUIDSizes {
-  sizeName: String!
+  internalSize: String!
+  manufacturerSize: String!
   count: Int!
 }

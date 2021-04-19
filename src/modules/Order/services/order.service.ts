@@ -615,7 +615,7 @@ export class OrderService {
       invoice: {
         customer_id: userId,
       },
-      shippingAddress: this.getChargebeeShippingAddress({
+      shipping_address: this.getChargebeeShippingAddress({
         user,
         location: shippingAddress,
       }),
