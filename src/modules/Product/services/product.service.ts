@@ -622,15 +622,14 @@ export class ProductService {
       return null
     }
 
-    // TODO: If the product exists already but has no variants,
-    // don't increment the brand code. Speak to San.
-    let styleNumber = null
+    let styleNumber
     if (!!productID) {
       // valid style code if variants exist on the product, null otherwise
       styleNumber = await this.productUtils.getProductStyleCode(productID)
-    }
-
-    if (styleNumber === null) {
+      if (!styleNumber) {
+        throw new Error(`No style number found for productID: ${productID}`)
+      }
+    } else {
       const brandCount = await this.prisma.client
         .productsConnection({
           where: { brand: { id: brandID } },
