@@ -172,11 +172,12 @@ export class ProductQueriesResolver {
 
   @Query()
   async generatedSeasonsUIDs(@Args() { input }, @Info() info) {
-    const { brandID, colorCode, sizes } = input
+    const { brandID, colorCode, sizes, productID } = input
     return await this.productService.getGeneratedSeasonsUIDs({
       brandID,
       colorCode,
       sizes,
+      productID,
     })
   }
 
