@@ -25,7 +25,7 @@ import {
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
-import { head, pick } from "lodash"
+import { head, pick, tail } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -421,8 +421,8 @@ export class ProductService {
   }
 
   async getGeneratedVariantSKUs({ input }) {
-    const { brandID, colorCode, sizeNames } = input
-    const skuData = await this.getSKUData({ brandID, colorCode })
+    const { brandID, colorCode, sizeNames, productID } = input
+    const skuData = await this.getSKUData({ brandID, colorCode, productID })
     if (!skuData) {
       return null
     }
@@ -447,8 +447,8 @@ export class ProductService {
     return skus
   }
 
-  async getGeneratedSeasonsUIDs({ brandID, colorCode, sizes }) {
-    const skuData = await this.getSKUData({ brandID, colorCode })
+  async getGeneratedSeasonsUIDs({ brandID, colorCode, sizes, productID }) {
+    const skuData = await this.getSKUData({ brandID, colorCode, productID })
     if (!skuData) {
       return null
     }
@@ -614,7 +614,7 @@ export class ProductService {
     )) as ProductVariant[]
   }
 
-  async getSKUData({ brandID, colorCode }) {
+  async getSKUData({ brandID, colorCode, productID }) {
     const brand = await this.prisma.client.brand({ id: brandID })
     const color = await this.prisma.client.color({ colorCode })
 
@@ -622,17 +622,26 @@ export class ProductService {
       return null
     }
 
-    const brandCount = await this.prisma.client
-      .productsConnection({
-        where: { brand: { id: brandID } },
-      })
-      .aggregate()
-      .count()
-    if (brandCount === null) {
-      return null
+    let styleNumber
+    if (!!productID) {
+      // valid style code if variants exist on the product, null otherwise
+      styleNumber = await this.productUtils.getProductStyleCode(productID)
+      if (!styleNumber) {
+        throw new Error(`No style number found for productID: ${productID}`)
+      }
+    } else {
+      const brandCount = await this.prisma.client
+        .productsConnection({
+          where: { brand: { id: brandID } },
+        })
+        .aggregate()
+        .count()
+      if (brandCount === null) {
+        return null
+      }
+      styleNumber = brandCount + 1
     }
 
-    const styleNumber = brandCount + 1
     const styleCode = styleNumber.toString().padStart(3, "0")
     return {
       brandCode: brand.brandCode,
