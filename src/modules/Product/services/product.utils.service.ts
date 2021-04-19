@@ -56,7 +56,7 @@ export class ProductUtilsService {
     }`
     )
     const firstVariant = head(prod?.variants)
-    return !!firstVariant ? firstVariant.sku.split("-").pop() : null
+    return !!firstVariant ? this.getStyleCodeFromSKU(firstVariant.sku) : null
   }
 
   async getVariantDisplayShort(
@@ -620,5 +620,19 @@ export class ProductUtilsService {
     }
 
     return conversion
+  }
+
+  async getAllStyleCodesForBrand(brandID) {
+    const productVariants = await this.prisma.client.productVariants({
+      where: { product: { brand: { id: brandID } } },
+    })
+    const allStyleCodes = uniq(
+      productVariants.map(a => this.getStyleCodeFromSKU(a.sku))
+    )
+    return allStyleCodes
+  }
+
+  getStyleCodeFromSKU(sku) {
+    return sku?.split("-")?.pop()
   }
 }
