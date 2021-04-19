@@ -1,27 +1,18 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
   AdminActionLog,
-  AdminActionLogInterpretation,
-  AdminActionLogInterpretationWhereInput,
   AdminActionLogWhereInput,
   PhysicalProduct,
-  WarehouseLocation,
 } from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaDataLoader } from "@prisma/prisma.loader"
 
-import { PhysicalProductService } from "../services/physicalProduct.service"
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
 
 @Resolver("PhysicalProduct")
 export class PhysicalProductFieldsResolver {
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly physicalProductService: PhysicalProductService,
-    private readonly physicalProductUtils: PhysicalProductUtilsService,
-    private readonly utils: UtilsService
+    private readonly physicalProductUtils: PhysicalProductUtilsService
   ) {}
 
   @ResolveField()
@@ -53,14 +44,14 @@ export class PhysicalProductFieldsResolver {
           AND: [
             { entityId_in: keys },
             { tableName: "PhysicalProduct" },
-          ] as AdminActionLogInterpretationWhereInput,
+          ] as AdminActionLogWhereInput,
         }),
         keyToDataRelationship: "OneToMany",
         getKeys: a => [a.entityId],
       },
       includeInfo: true,
     })
-    logsLoader: PrismaDataLoader<AdminActionLogInterpretation[]>
+    logsLoader: PrismaDataLoader<AdminActionLog[]>
   ) {
     const logs = await logsLoader.load(physicalProduct.id)
     return logs
