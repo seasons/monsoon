@@ -65,7 +65,13 @@ const importProductsToShopify = async () => {
 
   try {
     const products = await ps.binding.query.products(
-      {},
+      {
+        where: {
+          brand: {
+            brandCode: "NANU",
+          },
+        },
+      },
       `
       {
         id

@@ -26,8 +26,8 @@ import { flatten, pick } from "lodash"
 type InvoiceCharge = {
   amount: number
   description: string
-  taxable: boolean
-  avalara_tax_code: string
+  taxable?: boolean
+  avalara_tax_code?: string
 }
 
 type InvoiceInput = {
@@ -943,7 +943,7 @@ export class OrderService {
   }: {
     orderLineItem: Pick<OrderLineItem, "recordType" | "price">
     productName: string
-    productTaxCode: string
+    productTaxCode?: string
     shippingDescription: string
   }): InvoiceCharge | null {
     if (
@@ -954,7 +954,7 @@ export class OrderService {
         amount: orderLineItem.price,
         taxable: true,
         description: productName,
-        avalara_tax_code: productTaxCode,
+        // avalara_tax_code: productTaxCode,
       }
     }
 
@@ -963,7 +963,7 @@ export class OrderService {
         amount: orderLineItem.price,
         taxable: true,
         description: shippingDescription,
-        avalara_tax_code: "FR020000",
+        // avalara_tax_code: "FR020000",
       }
     }
   }
