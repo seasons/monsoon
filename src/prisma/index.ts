@@ -18,6 +18,9 @@ export type Maybe<T> = T | undefined | null;
 export interface Exists {
   activeAdminUser: (where?: ActiveAdminUserWhereInput) => Promise<boolean>;
   adminActionLog: (where?: AdminActionLogWhereInput) => Promise<boolean>;
+  adminActionLogInterpretation: (
+    where?: AdminActionLogInterpretationWhereInput
+  ) => Promise<boolean>;
   bagItem: (where?: BagItemWhereInput) => Promise<boolean>;
   billingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>;
   blogPost: (where?: BlogPostWhereInput) => Promise<boolean>;
@@ -198,6 +201,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => AdminActionLogConnectionPromise;
+  adminActionLogInterpretation: (
+    where: AdminActionLogInterpretationWhereUniqueInput
+  ) => AdminActionLogInterpretationNullablePromise;
+  adminActionLogInterpretations: (args?: {
+    where?: AdminActionLogInterpretationWhereInput;
+    orderBy?: AdminActionLogInterpretationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<AdminActionLogInterpretation>;
+  adminActionLogInterpretationsConnection: (args?: {
+    where?: AdminActionLogInterpretationWhereInput;
+    orderBy?: AdminActionLogInterpretationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => AdminActionLogInterpretationConnectionPromise;
   bagItem: (where: BagItemWhereUniqueInput) => BagItemNullablePromise;
   bagItems: (args?: {
     where?: BagItemWhereInput;
@@ -1645,6 +1669,28 @@ export interface Prisma {
   deleteManyAdminActionLogs: (
     where?: AdminActionLogWhereInput
   ) => BatchPayloadPromise;
+  createAdminActionLogInterpretation: (
+    data: AdminActionLogInterpretationCreateInput
+  ) => AdminActionLogInterpretationPromise;
+  updateAdminActionLogInterpretation: (args: {
+    data: AdminActionLogInterpretationUpdateInput;
+    where: AdminActionLogInterpretationWhereUniqueInput;
+  }) => AdminActionLogInterpretationPromise;
+  updateManyAdminActionLogInterpretations: (args: {
+    data: AdminActionLogInterpretationUpdateManyMutationInput;
+    where?: AdminActionLogInterpretationWhereInput;
+  }) => BatchPayloadPromise;
+  upsertAdminActionLogInterpretation: (args: {
+    where: AdminActionLogInterpretationWhereUniqueInput;
+    create: AdminActionLogInterpretationCreateInput;
+    update: AdminActionLogInterpretationUpdateInput;
+  }) => AdminActionLogInterpretationPromise;
+  deleteAdminActionLogInterpretation: (
+    where: AdminActionLogInterpretationWhereUniqueInput
+  ) => AdminActionLogInterpretationPromise;
+  deleteManyAdminActionLogInterpretations: (
+    where?: AdminActionLogInterpretationWhereInput
+  ) => BatchPayloadPromise;
   createBagItem: (data: BagItemCreateInput) => BagItemPromise;
   updateBagItem: (args: {
     data: BagItemUpdateInput;
@@ -3002,6 +3048,9 @@ export interface Subscription {
   adminActionLog: (
     where?: AdminActionLogSubscriptionWhereInput
   ) => AdminActionLogSubscriptionPayloadSubscription;
+  adminActionLogInterpretation: (
+    where?: AdminActionLogInterpretationSubscriptionWhereInput
+  ) => AdminActionLogInterpretationSubscriptionPayloadSubscription;
   bagItem: (
     where?: BagItemSubscriptionWhereInput
   ) => BagItemSubscriptionPayloadSubscription;
@@ -3706,7 +3755,21 @@ export type AdminActionLogOrderByInput =
   | "changedFields_ASC"
   | "changedFields_DESC"
   | "statementOnly_ASC"
-  | "statementOnly_DESC";
+  | "statementOnly_DESC"
+  | "interpretedAt_ASC"
+  | "interpretedAt_DESC";
+
+export type AdminActionLogInterpretationOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "entityId_ASC"
+  | "entityId_DESC"
+  | "tableName_ASC"
+  | "tableName_DESC"
+  | "interpretation_ASC"
+  | "interpretation_DESC"
+  | "data_ASC"
+  | "data_DESC";
 
 export type CustomerStatus =
   | "Invited"
@@ -3859,6 +3922,10 @@ export type ReservationOrderByInput =
   | "reminderSentAt_DESC"
   | "statusUpdatedAt_ASC"
   | "statusUpdatedAt_DESC"
+  | "completedAt_ASC"
+  | "completedAt_DESC"
+  | "cancelledAt_ASC"
+  | "cancelledAt_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -7503,10 +7570,95 @@ export interface AdminActionLogWhereInput {
   action_not_in?: Maybe<AdminAction[] | AdminAction>;
   statementOnly?: Maybe<Boolean>;
   statementOnly_not?: Maybe<Boolean>;
+  interpretedAt?: Maybe<DateTimeInput>;
+  interpretedAt_not?: Maybe<DateTimeInput>;
+  interpretedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  interpretedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  interpretedAt_lt?: Maybe<DateTimeInput>;
+  interpretedAt_lte?: Maybe<DateTimeInput>;
+  interpretedAt_gt?: Maybe<DateTimeInput>;
+  interpretedAt_gte?: Maybe<DateTimeInput>;
+  interpretation?: Maybe<AdminActionLogInterpretationWhereInput>;
   AND?: Maybe<AdminActionLogWhereInput[] | AdminActionLogWhereInput>;
   OR?: Maybe<AdminActionLogWhereInput[] | AdminActionLogWhereInput>;
   NOT?: Maybe<AdminActionLogWhereInput[] | AdminActionLogWhereInput>;
 }
+
+export interface AdminActionLogInterpretationWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  log?: Maybe<AdminActionLogWhereInput>;
+  entityId?: Maybe<String>;
+  entityId_not?: Maybe<String>;
+  entityId_in?: Maybe<String[] | String>;
+  entityId_not_in?: Maybe<String[] | String>;
+  entityId_lt?: Maybe<String>;
+  entityId_lte?: Maybe<String>;
+  entityId_gt?: Maybe<String>;
+  entityId_gte?: Maybe<String>;
+  entityId_contains?: Maybe<String>;
+  entityId_not_contains?: Maybe<String>;
+  entityId_starts_with?: Maybe<String>;
+  entityId_not_starts_with?: Maybe<String>;
+  entityId_ends_with?: Maybe<String>;
+  entityId_not_ends_with?: Maybe<String>;
+  tableName?: Maybe<String>;
+  tableName_not?: Maybe<String>;
+  tableName_in?: Maybe<String[] | String>;
+  tableName_not_in?: Maybe<String[] | String>;
+  tableName_lt?: Maybe<String>;
+  tableName_lte?: Maybe<String>;
+  tableName_gt?: Maybe<String>;
+  tableName_gte?: Maybe<String>;
+  tableName_contains?: Maybe<String>;
+  tableName_not_contains?: Maybe<String>;
+  tableName_starts_with?: Maybe<String>;
+  tableName_not_starts_with?: Maybe<String>;
+  tableName_ends_with?: Maybe<String>;
+  tableName_not_ends_with?: Maybe<String>;
+  interpretation?: Maybe<String>;
+  interpretation_not?: Maybe<String>;
+  interpretation_in?: Maybe<String[] | String>;
+  interpretation_not_in?: Maybe<String[] | String>;
+  interpretation_lt?: Maybe<String>;
+  interpretation_lte?: Maybe<String>;
+  interpretation_gt?: Maybe<String>;
+  interpretation_gte?: Maybe<String>;
+  interpretation_contains?: Maybe<String>;
+  interpretation_not_contains?: Maybe<String>;
+  interpretation_starts_with?: Maybe<String>;
+  interpretation_not_starts_with?: Maybe<String>;
+  interpretation_ends_with?: Maybe<String>;
+  interpretation_not_ends_with?: Maybe<String>;
+  AND?: Maybe<
+    | AdminActionLogInterpretationWhereInput[]
+    | AdminActionLogInterpretationWhereInput
+  >;
+  OR?: Maybe<
+    | AdminActionLogInterpretationWhereInput[]
+    | AdminActionLogInterpretationWhereInput
+  >;
+  NOT?: Maybe<
+    | AdminActionLogInterpretationWhereInput[]
+    | AdminActionLogInterpretationWhereInput
+  >;
+}
+
+export type AdminActionLogInterpretationWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
 
 export type BagItemWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -8602,6 +8754,22 @@ export interface ReservationWhereInput {
   statusUpdatedAt_lte?: Maybe<DateTimeInput>;
   statusUpdatedAt_gt?: Maybe<DateTimeInput>;
   statusUpdatedAt_gte?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  completedAt_not?: Maybe<DateTimeInput>;
+  completedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  completedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  completedAt_lt?: Maybe<DateTimeInput>;
+  completedAt_lte?: Maybe<DateTimeInput>;
+  completedAt_gt?: Maybe<DateTimeInput>;
+  completedAt_gte?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
+  cancelledAt_not?: Maybe<DateTimeInput>;
+  cancelledAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  cancelledAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  cancelledAt_lt?: Maybe<DateTimeInput>;
+  cancelledAt_lte?: Maybe<DateTimeInput>;
+  cancelledAt_gt?: Maybe<DateTimeInput>;
+  cancelledAt_gte?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptWhereInput>;
   lastLocation?: Maybe<LocationWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
@@ -15421,6 +15589,21 @@ export interface AdminActionLogCreateInput {
   rowData: Json;
   changedFields?: Maybe<Json>;
   statementOnly: Boolean;
+  interpretedAt?: Maybe<DateTimeInput>;
+  interpretation?: Maybe<AdminActionLogInterpretationCreateOneWithoutLogInput>;
+}
+
+export interface AdminActionLogInterpretationCreateOneWithoutLogInput {
+  create?: Maybe<AdminActionLogInterpretationCreateWithoutLogInput>;
+  connect?: Maybe<AdminActionLogInterpretationWhereUniqueInput>;
+}
+
+export interface AdminActionLogInterpretationCreateWithoutLogInput {
+  id?: Maybe<ID_Input>;
+  entityId: String;
+  tableName: String;
+  interpretation?: Maybe<String>;
+  data?: Maybe<Json>;
 }
 
 export interface AdminActionLogUpdateInput {
@@ -15432,6 +15615,29 @@ export interface AdminActionLogUpdateInput {
   rowData?: Maybe<Json>;
   changedFields?: Maybe<Json>;
   statementOnly?: Maybe<Boolean>;
+  interpretedAt?: Maybe<DateTimeInput>;
+  interpretation?: Maybe<AdminActionLogInterpretationUpdateOneWithoutLogInput>;
+}
+
+export interface AdminActionLogInterpretationUpdateOneWithoutLogInput {
+  create?: Maybe<AdminActionLogInterpretationCreateWithoutLogInput>;
+  update?: Maybe<AdminActionLogInterpretationUpdateWithoutLogDataInput>;
+  upsert?: Maybe<AdminActionLogInterpretationUpsertWithoutLogInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<AdminActionLogInterpretationWhereUniqueInput>;
+}
+
+export interface AdminActionLogInterpretationUpdateWithoutLogDataInput {
+  entityId?: Maybe<String>;
+  tableName?: Maybe<String>;
+  interpretation?: Maybe<String>;
+  data?: Maybe<Json>;
+}
+
+export interface AdminActionLogInterpretationUpsertWithoutLogInput {
+  update: AdminActionLogInterpretationUpdateWithoutLogDataInput;
+  create: AdminActionLogInterpretationCreateWithoutLogInput;
 }
 
 export interface AdminActionLogUpdateManyMutationInput {
@@ -15442,6 +15648,73 @@ export interface AdminActionLogUpdateManyMutationInput {
   rowData?: Maybe<Json>;
   changedFields?: Maybe<Json>;
   statementOnly?: Maybe<Boolean>;
+  interpretedAt?: Maybe<DateTimeInput>;
+}
+
+export interface AdminActionLogInterpretationCreateInput {
+  id?: Maybe<ID_Input>;
+  log: AdminActionLogCreateOneWithoutInterpretationInput;
+  entityId: String;
+  tableName: String;
+  interpretation?: Maybe<String>;
+  data?: Maybe<Json>;
+}
+
+export interface AdminActionLogCreateOneWithoutInterpretationInput {
+  create?: Maybe<AdminActionLogCreateWithoutInterpretationInput>;
+  connect?: Maybe<AdminActionLogWhereUniqueInput>;
+}
+
+export interface AdminActionLogCreateWithoutInterpretationInput {
+  actionId?: Maybe<Int>;
+  entityId: String;
+  tableName: String;
+  activeAdminUser: UserCreateOneInput;
+  triggeredAt: DateTimeInput;
+  action: AdminAction;
+  rowData: Json;
+  changedFields?: Maybe<Json>;
+  statementOnly: Boolean;
+  interpretedAt?: Maybe<DateTimeInput>;
+}
+
+export interface AdminActionLogInterpretationUpdateInput {
+  log?: Maybe<AdminActionLogUpdateOneRequiredWithoutInterpretationInput>;
+  entityId?: Maybe<String>;
+  tableName?: Maybe<String>;
+  interpretation?: Maybe<String>;
+  data?: Maybe<Json>;
+}
+
+export interface AdminActionLogUpdateOneRequiredWithoutInterpretationInput {
+  create?: Maybe<AdminActionLogCreateWithoutInterpretationInput>;
+  update?: Maybe<AdminActionLogUpdateWithoutInterpretationDataInput>;
+  upsert?: Maybe<AdminActionLogUpsertWithoutInterpretationInput>;
+  connect?: Maybe<AdminActionLogWhereUniqueInput>;
+}
+
+export interface AdminActionLogUpdateWithoutInterpretationDataInput {
+  entityId?: Maybe<String>;
+  tableName?: Maybe<String>;
+  activeAdminUser?: Maybe<UserUpdateOneRequiredInput>;
+  triggeredAt?: Maybe<DateTimeInput>;
+  action?: Maybe<AdminAction>;
+  rowData?: Maybe<Json>;
+  changedFields?: Maybe<Json>;
+  statementOnly?: Maybe<Boolean>;
+  interpretedAt?: Maybe<DateTimeInput>;
+}
+
+export interface AdminActionLogUpsertWithoutInterpretationInput {
+  update: AdminActionLogUpdateWithoutInterpretationDataInput;
+  create: AdminActionLogCreateWithoutInterpretationInput;
+}
+
+export interface AdminActionLogInterpretationUpdateManyMutationInput {
+  entityId?: Maybe<String>;
+  tableName?: Maybe<String>;
+  interpretation?: Maybe<String>;
+  data?: Maybe<Json>;
 }
 
 export interface BagItemCreateInput {
@@ -15670,6 +15943,8 @@ export interface ReservationCreateWithoutCustomerInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   statusUpdatedAt?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationCreateOneInput>;
   shippingOption?: Maybe<ShippingOptionCreateOneInput>;
@@ -15775,6 +16050,8 @@ export interface ReservationCreateWithoutPackageEventsInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   statusUpdatedAt?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationCreateOneInput>;
   shippingOption?: Maybe<ShippingOptionCreateOneInput>;
@@ -16461,6 +16738,8 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   statusUpdatedAt?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
   shippingOption?: Maybe<ShippingOptionUpdateOneInput>;
@@ -16649,6 +16928,8 @@ export interface ReservationUpdateWithoutPackageEventsDataInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   statusUpdatedAt?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
   shippingOption?: Maybe<ShippingOptionUpdateOneInput>;
@@ -17610,6 +17891,22 @@ export interface ReservationScalarWhereInput {
   statusUpdatedAt_lte?: Maybe<DateTimeInput>;
   statusUpdatedAt_gt?: Maybe<DateTimeInput>;
   statusUpdatedAt_gte?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  completedAt_not?: Maybe<DateTimeInput>;
+  completedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  completedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  completedAt_lt?: Maybe<DateTimeInput>;
+  completedAt_lte?: Maybe<DateTimeInput>;
+  completedAt_gt?: Maybe<DateTimeInput>;
+  completedAt_gte?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
+  cancelledAt_not?: Maybe<DateTimeInput>;
+  cancelledAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  cancelledAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  cancelledAt_lt?: Maybe<DateTimeInput>;
+  cancelledAt_lte?: Maybe<DateTimeInput>;
+  cancelledAt_gt?: Maybe<DateTimeInput>;
+  cancelledAt_gte?: Maybe<DateTimeInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -17645,6 +17942,8 @@ export interface ReservationUpdateManyDataInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   statusUpdatedAt?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerUpsertWithoutBagItemsInput {
@@ -19719,6 +20018,8 @@ export interface ReservationCreateInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   statusUpdatedAt?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationCreateOneInput>;
   shippingOption?: Maybe<ShippingOptionCreateOneInput>;
@@ -19897,6 +20198,8 @@ export interface ReservationUpdateDataInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   statusUpdatedAt?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
   shippingOption?: Maybe<ShippingOptionUpdateOneInput>;
@@ -20076,6 +20379,8 @@ export interface ReservationUpdateInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   statusUpdatedAt?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
   shippingOption?: Maybe<ShippingOptionUpdateOneInput>;
@@ -20090,6 +20395,8 @@ export interface ReservationUpdateManyMutationInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   statusUpdatedAt?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
 }
 
 export interface ReservationFeedbackCreateInput {
@@ -20267,6 +20574,8 @@ export interface ReservationCreateWithoutReceiptInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   statusUpdatedAt?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
   lastLocation?: Maybe<LocationCreateOneInput>;
   shippingOption?: Maybe<ShippingOptionCreateOneInput>;
 }
@@ -20299,6 +20608,8 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   statusUpdatedAt?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
   shippingOption?: Maybe<ShippingOptionUpdateOneInput>;
 }
@@ -21178,6 +21489,26 @@ export interface AdminActionLogSubscriptionWhereInput {
   NOT?: Maybe<
     | AdminActionLogSubscriptionWhereInput[]
     | AdminActionLogSubscriptionWhereInput
+  >;
+}
+
+export interface AdminActionLogInterpretationSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<AdminActionLogInterpretationWhereInput>;
+  AND?: Maybe<
+    | AdminActionLogInterpretationSubscriptionWhereInput[]
+    | AdminActionLogInterpretationSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | AdminActionLogInterpretationSubscriptionWhereInput[]
+    | AdminActionLogInterpretationSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | AdminActionLogInterpretationSubscriptionWhereInput[]
+    | AdminActionLogInterpretationSubscriptionWhereInput
   >;
 }
 
@@ -25057,6 +25388,7 @@ export interface AdminActionLog {
   rowData: Json;
   changedFields?: Json;
   statementOnly: Boolean;
+  interpretedAt?: DateTimeOutput;
 }
 
 export interface AdminActionLogPromise
@@ -25071,6 +25403,8 @@ export interface AdminActionLogPromise
   rowData: () => Promise<Json>;
   changedFields: () => Promise<Json>;
   statementOnly: () => Promise<Boolean>;
+  interpretedAt: () => Promise<DateTimeOutput>;
+  interpretation: <T = AdminActionLogInterpretationPromise>() => T;
 }
 
 export interface AdminActionLogSubscription
@@ -25085,6 +25419,8 @@ export interface AdminActionLogSubscription
   rowData: () => Promise<AsyncIterator<Json>>;
   changedFields: () => Promise<AsyncIterator<Json>>;
   statementOnly: () => Promise<AsyncIterator<Boolean>>;
+  interpretedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  interpretation: <T = AdminActionLogInterpretationSubscription>() => T;
 }
 
 export interface AdminActionLogNullablePromise
@@ -25099,6 +25435,49 @@ export interface AdminActionLogNullablePromise
   rowData: () => Promise<Json>;
   changedFields: () => Promise<Json>;
   statementOnly: () => Promise<Boolean>;
+  interpretedAt: () => Promise<DateTimeOutput>;
+  interpretation: <T = AdminActionLogInterpretationPromise>() => T;
+}
+
+export interface AdminActionLogInterpretation {
+  id: ID_Output;
+  entityId: String;
+  tableName: String;
+  interpretation?: String;
+  data?: Json;
+}
+
+export interface AdminActionLogInterpretationPromise
+  extends Promise<AdminActionLogInterpretation>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  log: <T = AdminActionLogPromise>() => T;
+  entityId: () => Promise<String>;
+  tableName: () => Promise<String>;
+  interpretation: () => Promise<String>;
+  data: () => Promise<Json>;
+}
+
+export interface AdminActionLogInterpretationSubscription
+  extends Promise<AsyncIterator<AdminActionLogInterpretation>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  log: <T = AdminActionLogSubscription>() => T;
+  entityId: () => Promise<AsyncIterator<String>>;
+  tableName: () => Promise<AsyncIterator<String>>;
+  interpretation: () => Promise<AsyncIterator<String>>;
+  data: () => Promise<AsyncIterator<Json>>;
+}
+
+export interface AdminActionLogInterpretationNullablePromise
+  extends Promise<AdminActionLogInterpretation | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  log: <T = AdminActionLogPromise>() => T;
+  entityId: () => Promise<String>;
+  tableName: () => Promise<String>;
+  interpretation: () => Promise<String>;
+  data: () => Promise<Json>;
 }
 
 export interface AdminActionLogConnection {
@@ -25153,6 +25532,64 @@ export interface AggregateAdminActionLogPromise
 
 export interface AggregateAdminActionLogSubscription
   extends Promise<AsyncIterator<AggregateAdminActionLog>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface AdminActionLogInterpretationConnection {
+  pageInfo: PageInfo;
+  edges: AdminActionLogInterpretationEdge[];
+}
+
+export interface AdminActionLogInterpretationConnectionPromise
+  extends Promise<AdminActionLogInterpretationConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<AdminActionLogInterpretationEdge>>() => T;
+  aggregate: <T = AggregateAdminActionLogInterpretationPromise>() => T;
+}
+
+export interface AdminActionLogInterpretationConnectionSubscription
+  extends Promise<AsyncIterator<AdminActionLogInterpretationConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<AdminActionLogInterpretationEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateAdminActionLogInterpretationSubscription>() => T;
+}
+
+export interface AdminActionLogInterpretationEdge {
+  node: AdminActionLogInterpretation;
+  cursor: String;
+}
+
+export interface AdminActionLogInterpretationEdgePromise
+  extends Promise<AdminActionLogInterpretationEdge>,
+    Fragmentable {
+  node: <T = AdminActionLogInterpretationPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface AdminActionLogInterpretationEdgeSubscription
+  extends Promise<AsyncIterator<AdminActionLogInterpretationEdge>>,
+    Fragmentable {
+  node: <T = AdminActionLogInterpretationSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateAdminActionLogInterpretation {
+  count: Int;
+}
+
+export interface AggregateAdminActionLogInterpretationPromise
+  extends Promise<AggregateAdminActionLogInterpretation>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateAdminActionLogInterpretationSubscription
+  extends Promise<AsyncIterator<AggregateAdminActionLogInterpretation>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -25902,6 +26339,8 @@ export interface Reservation {
   receivedAt?: DateTimeOutput;
   reminderSentAt?: DateTimeOutput;
   statusUpdatedAt?: DateTimeOutput;
+  completedAt?: DateTimeOutput;
+  cancelledAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -25947,6 +26386,8 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
   statusUpdatedAt: () => Promise<DateTimeOutput>;
+  completedAt: () => Promise<DateTimeOutput>;
+  cancelledAt: () => Promise<DateTimeOutput>;
   receipt: <T = ReservationReceiptPromise>() => T;
   lastLocation: <T = LocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
@@ -26001,6 +26442,8 @@ export interface ReservationSubscription
   receivedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   reminderSentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   statusUpdatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  completedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  cancelledAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   receipt: <T = ReservationReceiptSubscription>() => T;
   lastLocation: <T = LocationSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -26051,6 +26494,8 @@ export interface ReservationNullablePromise
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
   statusUpdatedAt: () => Promise<DateTimeOutput>;
+  completedAt: () => Promise<DateTimeOutput>;
+  cancelledAt: () => Promise<DateTimeOutput>;
   receipt: <T = ReservationReceiptPromise>() => T;
   lastLocation: <T = LocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
@@ -31329,6 +31774,7 @@ export interface AdminActionLogPreviousValues {
   rowData: Json;
   changedFields?: Json;
   statementOnly: Boolean;
+  interpretedAt?: DateTimeOutput;
 }
 
 export interface AdminActionLogPreviousValuesPromise
@@ -31342,6 +31788,7 @@ export interface AdminActionLogPreviousValuesPromise
   rowData: () => Promise<Json>;
   changedFields: () => Promise<Json>;
   statementOnly: () => Promise<Boolean>;
+  interpretedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface AdminActionLogPreviousValuesSubscription
@@ -31355,6 +31802,66 @@ export interface AdminActionLogPreviousValuesSubscription
   rowData: () => Promise<AsyncIterator<Json>>;
   changedFields: () => Promise<AsyncIterator<Json>>;
   statementOnly: () => Promise<AsyncIterator<Boolean>>;
+  interpretedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface AdminActionLogInterpretationSubscriptionPayload {
+  mutation: MutationType;
+  node: AdminActionLogInterpretation;
+  updatedFields: String[];
+  previousValues: AdminActionLogInterpretationPreviousValues;
+}
+
+export interface AdminActionLogInterpretationSubscriptionPayloadPromise
+  extends Promise<AdminActionLogInterpretationSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = AdminActionLogInterpretationPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <
+    T = AdminActionLogInterpretationPreviousValuesPromise
+  >() => T;
+}
+
+export interface AdminActionLogInterpretationSubscriptionPayloadSubscription
+  extends Promise<
+      AsyncIterator<AdminActionLogInterpretationSubscriptionPayload>
+    >,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = AdminActionLogInterpretationSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = AdminActionLogInterpretationPreviousValuesSubscription
+  >() => T;
+}
+
+export interface AdminActionLogInterpretationPreviousValues {
+  id: ID_Output;
+  entityId: String;
+  tableName: String;
+  interpretation?: String;
+  data?: Json;
+}
+
+export interface AdminActionLogInterpretationPreviousValuesPromise
+  extends Promise<AdminActionLogInterpretationPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  entityId: () => Promise<String>;
+  tableName: () => Promise<String>;
+  interpretation: () => Promise<String>;
+  data: () => Promise<Json>;
+}
+
+export interface AdminActionLogInterpretationPreviousValuesSubscription
+  extends Promise<AsyncIterator<AdminActionLogInterpretationPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  entityId: () => Promise<AsyncIterator<String>>;
+  tableName: () => Promise<AsyncIterator<String>>;
+  interpretation: () => Promise<AsyncIterator<String>>;
+  data: () => Promise<AsyncIterator<Json>>;
 }
 
 export interface BagItemSubscriptionPayload {
@@ -34341,6 +34848,8 @@ export interface ReservationPreviousValues {
   receivedAt?: DateTimeOutput;
   reminderSentAt?: DateTimeOutput;
   statusUpdatedAt?: DateTimeOutput;
+  completedAt?: DateTimeOutput;
+  cancelledAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -34357,6 +34866,8 @@ export interface ReservationPreviousValuesPromise
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
   statusUpdatedAt: () => Promise<DateTimeOutput>;
+  completedAt: () => Promise<DateTimeOutput>;
+  cancelledAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -34373,6 +34884,8 @@ export interface ReservationPreviousValuesSubscription
   receivedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   reminderSentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   statusUpdatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  completedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  cancelledAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -36050,6 +36563,10 @@ export const models: Model[] = [
   },
   {
     name: "AdminActionLog",
+    embedded: false
+  },
+  {
+    name: "AdminActionLogInterpretation",
     embedded: false
   },
   {

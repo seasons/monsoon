@@ -96,6 +96,8 @@ type AdminActionLog {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+  interpretedAt: DateTime
+  interpretation: AdminActionLogInterpretation
 }
 
 type AdminActionLogConnection {
@@ -114,11 +116,215 @@ input AdminActionLogCreateInput {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+  interpretedAt: DateTime
+  interpretation: AdminActionLogInterpretationCreateOneWithoutLogInput
+}
+
+input AdminActionLogCreateOneWithoutInterpretationInput {
+  create: AdminActionLogCreateWithoutInterpretationInput
+  connect: AdminActionLogWhereUniqueInput
+}
+
+input AdminActionLogCreateWithoutInterpretationInput {
+  actionId: Int
+  entityId: String!
+  tableName: String!
+  activeAdminUser: UserCreateOneInput!
+  triggeredAt: DateTime!
+  action: AdminAction!
+  rowData: Json!
+  changedFields: Json
+  statementOnly: Boolean!
+  interpretedAt: DateTime
 }
 
 type AdminActionLogEdge {
   node: AdminActionLog!
   cursor: String!
+}
+
+type AdminActionLogInterpretation {
+  id: ID!
+  log: AdminActionLog!
+  entityId: String!
+  tableName: String!
+  interpretation: String
+  data: Json
+}
+
+type AdminActionLogInterpretationConnection {
+  pageInfo: PageInfo!
+  edges: [AdminActionLogInterpretationEdge]!
+  aggregate: AggregateAdminActionLogInterpretation!
+}
+
+input AdminActionLogInterpretationCreateInput {
+  id: ID
+  log: AdminActionLogCreateOneWithoutInterpretationInput!
+  entityId: String!
+  tableName: String!
+  interpretation: String
+  data: Json
+}
+
+input AdminActionLogInterpretationCreateOneWithoutLogInput {
+  create: AdminActionLogInterpretationCreateWithoutLogInput
+  connect: AdminActionLogInterpretationWhereUniqueInput
+}
+
+input AdminActionLogInterpretationCreateWithoutLogInput {
+  id: ID
+  entityId: String!
+  tableName: String!
+  interpretation: String
+  data: Json
+}
+
+type AdminActionLogInterpretationEdge {
+  node: AdminActionLogInterpretation!
+  cursor: String!
+}
+
+enum AdminActionLogInterpretationOrderByInput {
+  id_ASC
+  id_DESC
+  entityId_ASC
+  entityId_DESC
+  tableName_ASC
+  tableName_DESC
+  interpretation_ASC
+  interpretation_DESC
+  data_ASC
+  data_DESC
+}
+
+type AdminActionLogInterpretationPreviousValues {
+  id: ID!
+  entityId: String!
+  tableName: String!
+  interpretation: String
+  data: Json
+}
+
+type AdminActionLogInterpretationSubscriptionPayload {
+  mutation: MutationType!
+  node: AdminActionLogInterpretation
+  updatedFields: [String!]
+  previousValues: AdminActionLogInterpretationPreviousValues
+}
+
+input AdminActionLogInterpretationSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: AdminActionLogInterpretationWhereInput
+  AND: [AdminActionLogInterpretationSubscriptionWhereInput!]
+  OR: [AdminActionLogInterpretationSubscriptionWhereInput!]
+  NOT: [AdminActionLogInterpretationSubscriptionWhereInput!]
+}
+
+input AdminActionLogInterpretationUpdateInput {
+  log: AdminActionLogUpdateOneRequiredWithoutInterpretationInput
+  entityId: String
+  tableName: String
+  interpretation: String
+  data: Json
+}
+
+input AdminActionLogInterpretationUpdateManyMutationInput {
+  entityId: String
+  tableName: String
+  interpretation: String
+  data: Json
+}
+
+input AdminActionLogInterpretationUpdateOneWithoutLogInput {
+  create: AdminActionLogInterpretationCreateWithoutLogInput
+  update: AdminActionLogInterpretationUpdateWithoutLogDataInput
+  upsert: AdminActionLogInterpretationUpsertWithoutLogInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: AdminActionLogInterpretationWhereUniqueInput
+}
+
+input AdminActionLogInterpretationUpdateWithoutLogDataInput {
+  entityId: String
+  tableName: String
+  interpretation: String
+  data: Json
+}
+
+input AdminActionLogInterpretationUpsertWithoutLogInput {
+  update: AdminActionLogInterpretationUpdateWithoutLogDataInput!
+  create: AdminActionLogInterpretationCreateWithoutLogInput!
+}
+
+input AdminActionLogInterpretationWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  log: AdminActionLogWhereInput
+  entityId: String
+  entityId_not: String
+  entityId_in: [String!]
+  entityId_not_in: [String!]
+  entityId_lt: String
+  entityId_lte: String
+  entityId_gt: String
+  entityId_gte: String
+  entityId_contains: String
+  entityId_not_contains: String
+  entityId_starts_with: String
+  entityId_not_starts_with: String
+  entityId_ends_with: String
+  entityId_not_ends_with: String
+  tableName: String
+  tableName_not: String
+  tableName_in: [String!]
+  tableName_not_in: [String!]
+  tableName_lt: String
+  tableName_lte: String
+  tableName_gt: String
+  tableName_gte: String
+  tableName_contains: String
+  tableName_not_contains: String
+  tableName_starts_with: String
+  tableName_not_starts_with: String
+  tableName_ends_with: String
+  tableName_not_ends_with: String
+  interpretation: String
+  interpretation_not: String
+  interpretation_in: [String!]
+  interpretation_not_in: [String!]
+  interpretation_lt: String
+  interpretation_lte: String
+  interpretation_gt: String
+  interpretation_gte: String
+  interpretation_contains: String
+  interpretation_not_contains: String
+  interpretation_starts_with: String
+  interpretation_not_starts_with: String
+  interpretation_ends_with: String
+  interpretation_not_ends_with: String
+  AND: [AdminActionLogInterpretationWhereInput!]
+  OR: [AdminActionLogInterpretationWhereInput!]
+  NOT: [AdminActionLogInterpretationWhereInput!]
+}
+
+input AdminActionLogInterpretationWhereUniqueInput {
+  id: ID
 }
 
 enum AdminActionLogOrderByInput {
@@ -138,6 +344,8 @@ enum AdminActionLogOrderByInput {
   changedFields_DESC
   statementOnly_ASC
   statementOnly_DESC
+  interpretedAt_ASC
+  interpretedAt_DESC
 }
 
 type AdminActionLogPreviousValues {
@@ -149,6 +357,7 @@ type AdminActionLogPreviousValues {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+  interpretedAt: DateTime
 }
 
 type AdminActionLogSubscriptionPayload {
@@ -178,6 +387,8 @@ input AdminActionLogUpdateInput {
   rowData: Json
   changedFields: Json
   statementOnly: Boolean
+  interpretedAt: DateTime
+  interpretation: AdminActionLogInterpretationUpdateOneWithoutLogInput
 }
 
 input AdminActionLogUpdateManyMutationInput {
@@ -188,6 +399,31 @@ input AdminActionLogUpdateManyMutationInput {
   rowData: Json
   changedFields: Json
   statementOnly: Boolean
+  interpretedAt: DateTime
+}
+
+input AdminActionLogUpdateOneRequiredWithoutInterpretationInput {
+  create: AdminActionLogCreateWithoutInterpretationInput
+  update: AdminActionLogUpdateWithoutInterpretationDataInput
+  upsert: AdminActionLogUpsertWithoutInterpretationInput
+  connect: AdminActionLogWhereUniqueInput
+}
+
+input AdminActionLogUpdateWithoutInterpretationDataInput {
+  entityId: String
+  tableName: String
+  activeAdminUser: UserUpdateOneRequiredInput
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+  interpretedAt: DateTime
+}
+
+input AdminActionLogUpsertWithoutInterpretationInput {
+  update: AdminActionLogUpdateWithoutInterpretationDataInput!
+  create: AdminActionLogCreateWithoutInterpretationInput!
 }
 
 input AdminActionLogWhereInput {
@@ -242,6 +478,15 @@ input AdminActionLogWhereInput {
   action_not_in: [AdminAction!]
   statementOnly: Boolean
   statementOnly_not: Boolean
+  interpretedAt: DateTime
+  interpretedAt_not: DateTime
+  interpretedAt_in: [DateTime!]
+  interpretedAt_not_in: [DateTime!]
+  interpretedAt_lt: DateTime
+  interpretedAt_lte: DateTime
+  interpretedAt_gt: DateTime
+  interpretedAt_gte: DateTime
+  interpretation: AdminActionLogInterpretationWhereInput
   AND: [AdminActionLogWhereInput!]
   OR: [AdminActionLogWhereInput!]
   NOT: [AdminActionLogWhereInput!]
@@ -256,6 +501,10 @@ type AggregateActiveAdminUser {
 }
 
 type AggregateAdminActionLog {
+  count: Int!
+}
+
+type AggregateAdminActionLogInterpretation {
   count: Int!
 }
 
@@ -7791,6 +8040,12 @@ type Mutation {
   upsertAdminActionLog(where: AdminActionLogWhereUniqueInput!, create: AdminActionLogCreateInput!, update: AdminActionLogUpdateInput!): AdminActionLog!
   deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
+  createAdminActionLogInterpretation(data: AdminActionLogInterpretationCreateInput!): AdminActionLogInterpretation!
+  updateAdminActionLogInterpretation(data: AdminActionLogInterpretationUpdateInput!, where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
+  updateManyAdminActionLogInterpretations(data: AdminActionLogInterpretationUpdateManyMutationInput!, where: AdminActionLogInterpretationWhereInput): BatchPayload!
+  upsertAdminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!, create: AdminActionLogInterpretationCreateInput!, update: AdminActionLogInterpretationUpdateInput!): AdminActionLogInterpretation!
+  deleteAdminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
+  deleteManyAdminActionLogInterpretations(where: AdminActionLogInterpretationWhereInput): BatchPayload!
   createBagItem(data: BagItemCreateInput!): BagItem!
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
@@ -15595,6 +15850,9 @@ type Query {
   adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   adminActionLogs(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLog]!
   adminActionLogsConnection(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogConnection!
+  adminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
+  adminActionLogInterpretations(where: AdminActionLogInterpretationWhereInput, orderBy: AdminActionLogInterpretationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLogInterpretation]!
+  adminActionLogInterpretationsConnection(where: AdminActionLogInterpretationWhereInput, orderBy: AdminActionLogInterpretationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogInterpretationConnection!
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
@@ -15956,6 +16214,8 @@ type Reservation {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceipt
   lastLocation: Location
   createdAt: DateTime!
@@ -15986,6 +16246,8 @@ input ReservationCreateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -16027,6 +16289,8 @@ input ReservationCreateWithoutCustomerInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -16048,6 +16312,8 @@ input ReservationCreateWithoutPackageEventsInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -16070,6 +16336,8 @@ input ReservationCreateWithoutReceiptInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
 }
@@ -16293,6 +16561,10 @@ enum ReservationOrderByInput {
   reminderSentAt_DESC
   statusUpdatedAt_ASC
   statusUpdatedAt_DESC
+  completedAt_ASC
+  completedAt_DESC
+  cancelledAt_ASC
+  cancelledAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -16314,6 +16586,8 @@ type ReservationPreviousValues {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -16712,6 +16986,22 @@ input ReservationScalarWhereInput {
   statusUpdatedAt_lte: DateTime
   statusUpdatedAt_gt: DateTime
   statusUpdatedAt_gte: DateTime
+  completedAt: DateTime
+  completedAt_not: DateTime
+  completedAt_in: [DateTime!]
+  completedAt_not_in: [DateTime!]
+  completedAt_lt: DateTime
+  completedAt_lte: DateTime
+  completedAt_gt: DateTime
+  completedAt_gte: DateTime
+  cancelledAt: DateTime
+  cancelledAt_not: DateTime
+  cancelledAt_in: [DateTime!]
+  cancelledAt_not_in: [DateTime!]
+  cancelledAt_lt: DateTime
+  cancelledAt_lte: DateTime
+  cancelledAt_gt: DateTime
+  cancelledAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -16781,6 +17071,8 @@ input ReservationUpdateDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -16802,6 +17094,8 @@ input ReservationUpdateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -16816,6 +17110,8 @@ input ReservationUpdateManyDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyMutationInput {
@@ -16827,6 +17123,8 @@ input ReservationUpdateManyMutationInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -16884,6 +17182,8 @@ input ReservationUpdateWithoutCustomerDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -16904,6 +17204,8 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -16925,6 +17227,8 @@ input ReservationUpdateWithoutReceiptDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
 }
@@ -17033,6 +17337,22 @@ input ReservationWhereInput {
   statusUpdatedAt_lte: DateTime
   statusUpdatedAt_gt: DateTime
   statusUpdatedAt_gte: DateTime
+  completedAt: DateTime
+  completedAt_not: DateTime
+  completedAt_in: [DateTime!]
+  completedAt_not_in: [DateTime!]
+  completedAt_lt: DateTime
+  completedAt_lte: DateTime
+  completedAt_gt: DateTime
+  completedAt_gte: DateTime
+  cancelledAt: DateTime
+  cancelledAt_not: DateTime
+  cancelledAt_in: [DateTime!]
+  cancelledAt_not_in: [DateTime!]
+  cancelledAt_lt: DateTime
+  cancelledAt_lte: DateTime
+  cancelledAt_gt: DateTime
+  cancelledAt_gte: DateTime
   receipt: ReservationReceiptWhereInput
   lastLocation: LocationWhereInput
   createdAt: DateTime
@@ -18866,6 +19186,7 @@ input StylePreferencesWhereUniqueInput {
 type Subscription {
   activeAdminUser(where: ActiveAdminUserSubscriptionWhereInput): ActiveAdminUserSubscriptionPayload
   adminActionLog(where: AdminActionLogSubscriptionWhereInput): AdminActionLogSubscriptionPayload
+  adminActionLogInterpretation(where: AdminActionLogInterpretationSubscriptionWhereInput): AdminActionLogInterpretationSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   blogPost(where: BlogPostSubscriptionWhereInput): BlogPostSubscriptionPayload

@@ -1132,6 +1132,8 @@ type Reservation {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceipt
     @relation(
       link: INLINE
@@ -1357,6 +1359,22 @@ type AdminActionLog {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+  interpretedAt: DateTime
+  interpretation: AdminActionLogInterpretation
+    @relation(name: "AdminActionLogToAdminActionLogInterpretation")
+}
+
+type AdminActionLogInterpretation {
+  id: ID! @id
+  log: AdminActionLog!
+    @relation(
+      name: "AdminActionLogToAdminActionLogInterpretation"
+      link: INLINE
+    )
+  entityId: String!
+  tableName: String!
+  interpretation: String
+  data: Json # miscellaneous useful data for the client
 }
 
 enum SyncTimingType {

@@ -13,10 +13,12 @@ import { PrismaModule } from "@prisma/prisma.module"
 import { AnalyticsModule } from "../Analytics/analytics.module"
 import { DripModule } from "../Drip/drip.module"
 import { PaymentModule } from "../Payment/payment.module"
+import { ProductModule } from "../Product/product.module"
 import { SearchModule } from "../Search/search.module"
 import { SMSModule } from "../SMS/sms.module"
 import { AdmissionsScheduledJobs } from "./services/admissions.job.service"
 import { DataScheduledJobs } from "./services/data.job.service"
+import { LogsScheduledJobs } from "./services/logs.job.service"
 import { MarketingScheduledJobs } from "./services/marketing.job.service"
 import { MembershipScheduledJobs } from "./services/membership.job.service"
 import { ReservationScheduledJobs } from "./services/reservations.job.service"
@@ -41,6 +43,7 @@ import { SubscriptionsScheduledJobs } from "./services/subscriptions.job.service
     SearchModule,
     SMSModule,
     AnalyticsModule,
+    ProductModule,
   ],
   providers: [
     SubscriptionsScheduledJobs,
@@ -51,6 +54,7 @@ import { SubscriptionsScheduledJobs } from "./services/subscriptions.job.service
     SearchScheduledJobs,
     AdmissionsScheduledJobs,
     ShopifyScheduledJobs,
+    LogsScheduledJobs,
   ],
   exports: [DataScheduledJobs],
 })
