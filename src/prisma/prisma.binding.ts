@@ -33,6 +33,7 @@ export interface Query {
     productRequests: <T = Array<ProductRequest | null>>(args: { where?: ProductRequestWhereInput | null, orderBy?: ProductRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantWants: <T = Array<ProductVariantWant | null>>(args: { where?: ProductVariantWantWhereInput | null, orderBy?: ProductVariantWantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     activeAdminUsers: <T = Array<ActiveAdminUser | null>>(args: { where?: ActiveAdminUserWhereInput | null, orderBy?: ActiveAdminUserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    adminActionLogs: <T = Array<AdminActionLog | null>>(args: { where?: AdminActionLogWhereInput | null, orderBy?: AdminActionLogOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     adminActionLogInterpretations: <T = Array<AdminActionLogInterpretation | null>>(args: { where?: AdminActionLogInterpretationWhereInput | null, orderBy?: AdminActionLogInterpretationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     syncTimings: <T = Array<SyncTiming | null>>(args: { where?: SyncTimingWhereInput | null, orderBy?: SyncTimingOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     launches: <T = Array<Launch | null>>(args: { where?: LaunchWhereInput | null, orderBy?: LaunchOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -72,7 +73,6 @@ export interface Query {
     paymentPlans: <T = Array<PaymentPlan | null>>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     products: <T = Array<Product | null>>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    adminActionLogs: <T = Array<AdminActionLog | null>>(args: { where?: AdminActionLogWhereInput | null, orderBy?: AdminActionLogOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shippingOptions: <T = Array<ShippingOption | null>>(args: { where?: ShippingOptionWhereInput | null, orderBy?: ShippingOptionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetails: <T = Array<CustomerDetail | null>>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservations: <T = Array<Reservation | null>>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -105,6 +105,7 @@ export interface Query {
     productRequest: <T = ProductRequest | null>(args: { where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productVariantWant: <T = ProductVariantWant | null>(args: { where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     activeAdminUser: <T = ActiveAdminUser | null>(args: { where: ActiveAdminUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    adminActionLog: <T = AdminActionLog | null>(args: { where: AdminActionLogWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     adminActionLogInterpretation: <T = AdminActionLogInterpretation | null>(args: { where: AdminActionLogInterpretationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     syncTiming: <T = SyncTiming | null>(args: { where: SyncTimingWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     launch: <T = Launch | null>(args: { where: LaunchWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -144,7 +145,6 @@ export interface Query {
     paymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     product: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    adminActionLog: <T = AdminActionLog | null>(args: { where: AdminActionLogWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     shippingOption: <T = ShippingOption | null>(args: { where: ShippingOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -177,6 +177,7 @@ export interface Query {
     productRequestsConnection: <T = ProductRequestConnection>(args: { where?: ProductRequestWhereInput | null, orderBy?: ProductRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantWantsConnection: <T = ProductVariantWantConnection>(args: { where?: ProductVariantWantWhereInput | null, orderBy?: ProductVariantWantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     activeAdminUsersConnection: <T = ActiveAdminUserConnection>(args: { where?: ActiveAdminUserWhereInput | null, orderBy?: ActiveAdminUserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    adminActionLogsConnection: <T = AdminActionLogConnection>(args: { where?: AdminActionLogWhereInput | null, orderBy?: AdminActionLogOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     adminActionLogInterpretationsConnection: <T = AdminActionLogInterpretationConnection>(args: { where?: AdminActionLogInterpretationWhereInput | null, orderBy?: AdminActionLogInterpretationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     syncTimingsConnection: <T = SyncTimingConnection>(args: { where?: SyncTimingWhereInput | null, orderBy?: SyncTimingOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     launchesConnection: <T = LaunchConnection>(args: { where?: LaunchWhereInput | null, orderBy?: LaunchOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -216,7 +217,6 @@ export interface Query {
     paymentPlansConnection: <T = PaymentPlanConnection>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productsConnection: <T = ProductConnection>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    adminActionLogsConnection: <T = AdminActionLogConnection>(args: { where?: AdminActionLogWhereInput | null, orderBy?: AdminActionLogOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shippingOptionsConnection: <T = ShippingOptionConnection>(args: { where?: ShippingOptionWhereInput | null, orderBy?: ShippingOptionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetailsConnection: <T = CustomerDetailConnection>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationsConnection: <T = ReservationConnection>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -253,6 +253,7 @@ export interface Mutation {
     createProductRequest: <T = ProductRequest>(args: { data: ProductRequestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductVariantWant: <T = ProductVariantWant>(args: { data: ProductVariantWantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createActiveAdminUser: <T = ActiveAdminUser>(args: { data: ActiveAdminUserCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createAdminActionLog: <T = AdminActionLog>(args: { data: AdminActionLogCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createAdminActionLogInterpretation: <T = AdminActionLogInterpretation>(args: { data: AdminActionLogInterpretationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSyncTiming: <T = SyncTiming>(args: { data: SyncTimingCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createLaunch: <T = Launch>(args: { data: LaunchCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -292,7 +293,6 @@ export interface Mutation {
     createPaymentPlan: <T = PaymentPlan>(args: { data: PaymentPlanCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProduct: <T = Product>(args: { data: ProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createAdminActionLog: <T = AdminActionLog>(args: { data: AdminActionLogCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createShippingOption: <T = ShippingOption>(args: { data: ShippingOptionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerDetail: <T = CustomerDetail>(args: { data: CustomerDetailCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createReservation: <T = Reservation>(args: { data: ReservationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -325,6 +325,7 @@ export interface Mutation {
     updateProductRequest: <T = ProductRequest | null>(args: { data: ProductRequestUpdateInput, where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductVariantWant: <T = ProductVariantWant | null>(args: { data: ProductVariantWantUpdateInput, where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateActiveAdminUser: <T = ActiveAdminUser | null>(args: { data: ActiveAdminUserUpdateInput, where: ActiveAdminUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateAdminActionLog: <T = AdminActionLog | null>(args: { data: AdminActionLogUpdateInput, where: AdminActionLogWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateAdminActionLogInterpretation: <T = AdminActionLogInterpretation | null>(args: { data: AdminActionLogInterpretationUpdateInput, where: AdminActionLogInterpretationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSyncTiming: <T = SyncTiming | null>(args: { data: SyncTimingUpdateInput, where: SyncTimingWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateLaunch: <T = Launch | null>(args: { data: LaunchUpdateInput, where: LaunchWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -364,7 +365,6 @@ export interface Mutation {
     updatePaymentPlan: <T = PaymentPlan | null>(args: { data: PaymentPlanUpdateInput, where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProduct: <T = Product | null>(args: { data: ProductUpdateInput, where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateAdminActionLog: <T = AdminActionLog | null>(args: { data: AdminActionLogUpdateInput, where: AdminActionLogWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateShippingOption: <T = ShippingOption | null>(args: { data: ShippingOptionUpdateInput, where: ShippingOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerDetail: <T = CustomerDetail | null>(args: { data: CustomerDetailUpdateInput, where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateReservation: <T = Reservation | null>(args: { data: ReservationUpdateInput, where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -397,6 +397,7 @@ export interface Mutation {
     deleteProductRequest: <T = ProductRequest | null>(args: { where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductVariantWant: <T = ProductVariantWant | null>(args: { where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteActiveAdminUser: <T = ActiveAdminUser | null>(args: { where: ActiveAdminUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteAdminActionLog: <T = AdminActionLog | null>(args: { where: AdminActionLogWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteAdminActionLogInterpretation: <T = AdminActionLogInterpretation | null>(args: { where: AdminActionLogInterpretationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSyncTiming: <T = SyncTiming | null>(args: { where: SyncTimingWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteLaunch: <T = Launch | null>(args: { where: LaunchWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -436,7 +437,6 @@ export interface Mutation {
     deletePaymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProduct: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteAdminActionLog: <T = AdminActionLog | null>(args: { where: AdminActionLogWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteShippingOption: <T = ShippingOption | null>(args: { where: ShippingOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteReservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -469,6 +469,7 @@ export interface Mutation {
     upsertProductRequest: <T = ProductRequest>(args: { where: ProductRequestWhereUniqueInput, create: ProductRequestCreateInput, update: ProductRequestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductVariantWant: <T = ProductVariantWant>(args: { where: ProductVariantWantWhereUniqueInput, create: ProductVariantWantCreateInput, update: ProductVariantWantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertActiveAdminUser: <T = ActiveAdminUser>(args: { where: ActiveAdminUserWhereUniqueInput, create: ActiveAdminUserCreateInput, update: ActiveAdminUserUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertAdminActionLog: <T = AdminActionLog>(args: { where: AdminActionLogWhereUniqueInput, create: AdminActionLogCreateInput, update: AdminActionLogUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertAdminActionLogInterpretation: <T = AdminActionLogInterpretation>(args: { where: AdminActionLogInterpretationWhereUniqueInput, create: AdminActionLogInterpretationCreateInput, update: AdminActionLogInterpretationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSyncTiming: <T = SyncTiming>(args: { where: SyncTimingWhereUniqueInput, create: SyncTimingCreateInput, update: SyncTimingUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertLaunch: <T = Launch>(args: { where: LaunchWhereUniqueInput, create: LaunchCreateInput, update: LaunchUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -508,7 +509,6 @@ export interface Mutation {
     upsertPaymentPlan: <T = PaymentPlan>(args: { where: PaymentPlanWhereUniqueInput, create: PaymentPlanCreateInput, update: PaymentPlanUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProduct: <T = Product>(args: { where: ProductWhereUniqueInput, create: ProductCreateInput, update: ProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertAdminActionLog: <T = AdminActionLog>(args: { where: AdminActionLogWhereUniqueInput, create: AdminActionLogCreateInput, update: AdminActionLogUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertShippingOption: <T = ShippingOption>(args: { where: ShippingOptionWhereUniqueInput, create: ShippingOptionCreateInput, update: ShippingOptionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerDetail: <T = CustomerDetail>(args: { where: CustomerDetailWhereUniqueInput, create: CustomerDetailCreateInput, update: CustomerDetailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertReservation: <T = Reservation>(args: { where: ReservationWhereUniqueInput, create: ReservationCreateInput, update: ReservationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -539,6 +539,7 @@ export interface Mutation {
     updateManyPackageTransitEvents: <T = BatchPayload>(args: { data: PackageTransitEventUpdateManyMutationInput, where?: PackageTransitEventWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductRequests: <T = BatchPayload>(args: { data: ProductRequestUpdateManyMutationInput, where?: ProductRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductVariantWants: <T = BatchPayload>(args: { data: ProductVariantWantUpdateManyMutationInput, where?: ProductVariantWantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyAdminActionLogs: <T = BatchPayload>(args: { data: AdminActionLogUpdateManyMutationInput, where?: AdminActionLogWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyAdminActionLogInterpretations: <T = BatchPayload>(args: { data: AdminActionLogInterpretationUpdateManyMutationInput, where?: AdminActionLogInterpretationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySyncTimings: <T = BatchPayload>(args: { data: SyncTimingUpdateManyMutationInput, where?: SyncTimingWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyLaunches: <T = BatchPayload>(args: { data: LaunchUpdateManyMutationInput, where?: LaunchWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -578,7 +579,6 @@ export interface Mutation {
     updateManyPaymentPlans: <T = BatchPayload>(args: { data: PaymentPlanUpdateManyMutationInput, where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProducts: <T = BatchPayload>(args: { data: ProductUpdateManyMutationInput, where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyAdminActionLogs: <T = BatchPayload>(args: { data: AdminActionLogUpdateManyMutationInput, where?: AdminActionLogWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyShippingOptions: <T = BatchPayload>(args: { data: ShippingOptionUpdateManyMutationInput, where?: ShippingOptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerDetails: <T = BatchPayload>(args: { data: CustomerDetailUpdateManyMutationInput, where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyReservations: <T = BatchPayload>(args: { data: ReservationUpdateManyMutationInput, where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -611,6 +611,7 @@ export interface Mutation {
     deleteManyProductRequests: <T = BatchPayload>(args: { where?: ProductRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductVariantWants: <T = BatchPayload>(args: { where?: ProductVariantWantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyActiveAdminUsers: <T = BatchPayload>(args: { where?: ActiveAdminUserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyAdminActionLogs: <T = BatchPayload>(args: { where?: AdminActionLogWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyAdminActionLogInterpretations: <T = BatchPayload>(args: { where?: AdminActionLogInterpretationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySyncTimings: <T = BatchPayload>(args: { where?: SyncTimingWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyLaunches: <T = BatchPayload>(args: { where?: LaunchWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -650,7 +651,6 @@ export interface Mutation {
     deleteManyPaymentPlans: <T = BatchPayload>(args: { where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProducts: <T = BatchPayload>(args: { where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyAdminActionLogs: <T = BatchPayload>(args: { where?: AdminActionLogWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyShippingOptions: <T = BatchPayload>(args: { where?: ShippingOptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCustomerDetails: <T = BatchPayload>(args: { where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyReservations: <T = BatchPayload>(args: { where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> 
@@ -686,6 +686,7 @@ export interface Subscription {
     productRequest: <T = ProductRequestSubscriptionPayload | null>(args: { where?: ProductRequestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productVariantWant: <T = ProductVariantWantSubscriptionPayload | null>(args: { where?: ProductVariantWantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     activeAdminUser: <T = ActiveAdminUserSubscriptionPayload | null>(args: { where?: ActiveAdminUserSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    adminActionLog: <T = AdminActionLogSubscriptionPayload | null>(args: { where?: AdminActionLogSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     adminActionLogInterpretation: <T = AdminActionLogInterpretationSubscriptionPayload | null>(args: { where?: AdminActionLogInterpretationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     syncTiming: <T = SyncTimingSubscriptionPayload | null>(args: { where?: SyncTimingSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     launch: <T = LaunchSubscriptionPayload | null>(args: { where?: LaunchSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -725,7 +726,6 @@ export interface Subscription {
     paymentPlan: <T = PaymentPlanSubscriptionPayload | null>(args: { where?: PaymentPlanSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     product: <T = ProductSubscriptionPayload | null>(args: { where?: ProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    adminActionLog: <T = AdminActionLogSubscriptionPayload | null>(args: { where?: AdminActionLogSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     shippingOption: <T = ShippingOptionSubscriptionPayload | null>(args: { where?: ShippingOptionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customerDetail: <T = CustomerDetailSubscriptionPayload | null>(args: { where?: CustomerDetailSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     reservation: <T = ReservationSubscriptionPayload | null>(args: { where?: ReservationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> 
@@ -761,6 +761,7 @@ export interface Exists {
   ProductRequest: (where?: ProductRequestWhereInput) => Promise<boolean>
   ProductVariantWant: (where?: ProductVariantWantWhereInput) => Promise<boolean>
   ActiveAdminUser: (where?: ActiveAdminUserWhereInput) => Promise<boolean>
+  AdminActionLog: (where?: AdminActionLogWhereInput) => Promise<boolean>
   AdminActionLogInterpretation: (where?: AdminActionLogInterpretationWhereInput) => Promise<boolean>
   SyncTiming: (where?: SyncTimingWhereInput) => Promise<boolean>
   Launch: (where?: LaunchWhereInput) => Promise<boolean>
@@ -800,7 +801,6 @@ export interface Exists {
   PaymentPlan: (where?: PaymentPlanWhereInput) => Promise<boolean>
   Image: (where?: ImageWhereInput) => Promise<boolean>
   Product: (where?: ProductWhereInput) => Promise<boolean>
-  AdminActionLog: (where?: AdminActionLogWhereInput) => Promise<boolean>
   ShippingOption: (where?: ShippingOptionWhereInput) => Promise<boolean>
   CustomerDetail: (where?: CustomerDetailWhereInput) => Promise<boolean>
   Reservation: (where?: ReservationWhereInput) => Promise<boolean>
@@ -981,6 +981,7 @@ type AdminActionLog {
   changedFields: Json
   statementOnly: Boolean!
   interpretedAt: DateTime
+  interpretation: AdminActionLogInterpretation
 }
 
 """A connection to a list of items."""
@@ -1003,11 +1004,24 @@ input AdminActionLogCreateInput {
   statementOnly: Boolean!
   interpretedAt: DateTime
   activeAdminUser: UserCreateOneInput!
+  interpretation: AdminActionLogInterpretationCreateOneWithoutLogInput
 }
 
-input AdminActionLogCreateOneInput {
-  create: AdminActionLogCreateInput
+input AdminActionLogCreateOneWithoutInterpretationInput {
+  create: AdminActionLogCreateWithoutInterpretationInput
   connect: AdminActionLogWhereUniqueInput
+}
+
+input AdminActionLogCreateWithoutInterpretationInput {
+  entityId: String!
+  tableName: String!
+  triggeredAt: DateTime!
+  action: AdminAction!
+  rowData: Json!
+  changedFields: Json
+  statementOnly: Boolean!
+  interpretedAt: DateTime
+  activeAdminUser: UserCreateOneInput!
 }
 
 """An edge in a connection."""
@@ -1024,7 +1038,7 @@ type AdminActionLogInterpretation implements Node {
   log: AdminActionLog!
   entityId: String!
   tableName: String!
-  interpretation: String!
+  interpretation: String
   data: Json
 }
 
@@ -1042,9 +1056,22 @@ input AdminActionLogInterpretationCreateInput {
   id: ID
   entityId: String!
   tableName: String!
-  interpretation: String!
+  interpretation: String
   data: Json
-  log: AdminActionLogCreateOneInput!
+  log: AdminActionLogCreateOneWithoutInterpretationInput!
+}
+
+input AdminActionLogInterpretationCreateOneWithoutLogInput {
+  create: AdminActionLogInterpretationCreateWithoutLogInput
+  connect: AdminActionLogInterpretationWhereUniqueInput
+}
+
+input AdminActionLogInterpretationCreateWithoutLogInput {
+  id: ID
+  entityId: String!
+  tableName: String!
+  interpretation: String
+  data: Json
 }
 
 """An edge in a connection."""
@@ -1073,7 +1100,7 @@ type AdminActionLogInterpretationPreviousValues {
   id: ID!
   entityId: String!
   tableName: String!
-  interpretation: String!
+  interpretation: String
   data: Json
 }
 
@@ -1119,7 +1146,7 @@ input AdminActionLogInterpretationUpdateInput {
   tableName: String
   interpretation: String
   data: Json
-  log: AdminActionLogUpdateOneRequiredInput
+  log: AdminActionLogUpdateOneRequiredWithoutInterpretationInput
 }
 
 input AdminActionLogInterpretationUpdateManyMutationInput {
@@ -1127,6 +1154,27 @@ input AdminActionLogInterpretationUpdateManyMutationInput {
   tableName: String
   interpretation: String
   data: Json
+}
+
+input AdminActionLogInterpretationUpdateOneWithoutLogInput {
+  create: AdminActionLogInterpretationCreateWithoutLogInput
+  connect: AdminActionLogInterpretationWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: AdminActionLogInterpretationUpdateWithoutLogDataInput
+  upsert: AdminActionLogInterpretationUpsertWithoutLogInput
+}
+
+input AdminActionLogInterpretationUpdateWithoutLogDataInput {
+  entityId: String
+  tableName: String
+  interpretation: String
+  data: Json
+}
+
+input AdminActionLogInterpretationUpsertWithoutLogInput {
+  update: AdminActionLogInterpretationUpdateWithoutLogDataInput!
+  create: AdminActionLogInterpretationCreateWithoutLogInput!
 }
 
 input AdminActionLogInterpretationWhereInput {
@@ -1375,18 +1423,6 @@ input AdminActionLogSubscriptionWhereInput {
   node: AdminActionLogWhereInput
 }
 
-input AdminActionLogUpdateDataInput {
-  entityId: String
-  tableName: String
-  triggeredAt: DateTime
-  action: AdminAction
-  rowData: Json
-  changedFields: Json
-  statementOnly: Boolean
-  interpretedAt: DateTime
-  activeAdminUser: UserUpdateOneRequiredInput
-}
-
 input AdminActionLogUpdateInput {
   entityId: String
   tableName: String
@@ -1397,6 +1433,7 @@ input AdminActionLogUpdateInput {
   statementOnly: Boolean
   interpretedAt: DateTime
   activeAdminUser: UserUpdateOneRequiredInput
+  interpretation: AdminActionLogInterpretationUpdateOneWithoutLogInput
 }
 
 input AdminActionLogUpdateManyMutationInput {
@@ -1410,16 +1447,28 @@ input AdminActionLogUpdateManyMutationInput {
   interpretedAt: DateTime
 }
 
-input AdminActionLogUpdateOneRequiredInput {
-  create: AdminActionLogCreateInput
+input AdminActionLogUpdateOneRequiredWithoutInterpretationInput {
+  create: AdminActionLogCreateWithoutInterpretationInput
   connect: AdminActionLogWhereUniqueInput
-  update: AdminActionLogUpdateDataInput
-  upsert: AdminActionLogUpsertNestedInput
+  update: AdminActionLogUpdateWithoutInterpretationDataInput
+  upsert: AdminActionLogUpsertWithoutInterpretationInput
 }
 
-input AdminActionLogUpsertNestedInput {
-  update: AdminActionLogUpdateDataInput!
-  create: AdminActionLogCreateInput!
+input AdminActionLogUpdateWithoutInterpretationDataInput {
+  entityId: String
+  tableName: String
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+  interpretedAt: DateTime
+  activeAdminUser: UserUpdateOneRequiredInput
+}
+
+input AdminActionLogUpsertWithoutInterpretationInput {
+  update: AdminActionLogUpdateWithoutInterpretationDataInput!
+  create: AdminActionLogCreateWithoutInterpretationInput!
 }
 
 input AdminActionLogWhereInput {
@@ -1592,6 +1641,7 @@ input AdminActionLogWhereInput {
   """All values greater than or equal the given value."""
   interpretedAt_gte: DateTime
   activeAdminUser: UserWhereInput
+  interpretation: AdminActionLogInterpretationWhereInput
 }
 
 input AdminActionLogWhereUniqueInput {
@@ -14505,6 +14555,7 @@ type Mutation {
   createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
   createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
   createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
+  createAdminActionLog(data: AdminActionLogCreateInput!): AdminActionLog!
   createAdminActionLogInterpretation(data: AdminActionLogInterpretationCreateInput!): AdminActionLogInterpretation!
   createSyncTiming(data: SyncTimingCreateInput!): SyncTiming!
   createLaunch(data: LaunchCreateInput!): Launch!
@@ -14544,7 +14595,6 @@ type Mutation {
   createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
   createImage(data: ImageCreateInput!): Image!
   createProduct(data: ProductCreateInput!): Product!
-  createAdminActionLog(data: AdminActionLogCreateInput!): AdminActionLog!
   createShippingOption(data: ShippingOptionCreateInput!): ShippingOption!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createReservation(data: ReservationCreateInput!): Reservation!
@@ -14577,6 +14627,7 @@ type Mutation {
   updateProductRequest(data: ProductRequestUpdateInput!, where: ProductRequestWhereUniqueInput!): ProductRequest
   updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   updateActiveAdminUser(data: ActiveAdminUserUpdateInput!, where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  updateAdminActionLog(data: AdminActionLogUpdateInput!, where: AdminActionLogWhereUniqueInput!): AdminActionLog
   updateAdminActionLogInterpretation(data: AdminActionLogInterpretationUpdateInput!, where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
   updateSyncTiming(data: SyncTimingUpdateInput!, where: SyncTimingWhereUniqueInput!): SyncTiming
   updateLaunch(data: LaunchUpdateInput!, where: LaunchWhereUniqueInput!): Launch
@@ -14616,7 +14667,6 @@ type Mutation {
   updatePaymentPlan(data: PaymentPlanUpdateInput!, where: PaymentPlanWhereUniqueInput!): PaymentPlan
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
-  updateAdminActionLog(data: AdminActionLogUpdateInput!, where: AdminActionLogWhereUniqueInput!): AdminActionLog
   updateShippingOption(data: ShippingOptionUpdateInput!, where: ShippingOptionWhereUniqueInput!): ShippingOption
   updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
   updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
@@ -14649,6 +14699,7 @@ type Mutation {
   deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   deleteProductVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   deleteActiveAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   deleteAdminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
   deleteSyncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
   deleteLaunch(where: LaunchWhereUniqueInput!): Launch
@@ -14688,7 +14739,6 @@ type Mutation {
   deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   deleteImage(where: ImageWhereUniqueInput!): Image
   deleteProduct(where: ProductWhereUniqueInput!): Product
-  deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   deleteShippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
@@ -14721,6 +14771,7 @@ type Mutation {
   upsertProductRequest(where: ProductRequestWhereUniqueInput!, create: ProductRequestCreateInput!, update: ProductRequestUpdateInput!): ProductRequest!
   upsertProductVariantWant(where: ProductVariantWantWhereUniqueInput!, create: ProductVariantWantCreateInput!, update: ProductVariantWantUpdateInput!): ProductVariantWant!
   upsertActiveAdminUser(where: ActiveAdminUserWhereUniqueInput!, create: ActiveAdminUserCreateInput!, update: ActiveAdminUserUpdateInput!): ActiveAdminUser!
+  upsertAdminActionLog(where: AdminActionLogWhereUniqueInput!, create: AdminActionLogCreateInput!, update: AdminActionLogUpdateInput!): AdminActionLog!
   upsertAdminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!, create: AdminActionLogInterpretationCreateInput!, update: AdminActionLogInterpretationUpdateInput!): AdminActionLogInterpretation!
   upsertSyncTiming(where: SyncTimingWhereUniqueInput!, create: SyncTimingCreateInput!, update: SyncTimingUpdateInput!): SyncTiming!
   upsertLaunch(where: LaunchWhereUniqueInput!, create: LaunchCreateInput!, update: LaunchUpdateInput!): Launch!
@@ -14760,7 +14811,6 @@ type Mutation {
   upsertPaymentPlan(where: PaymentPlanWhereUniqueInput!, create: PaymentPlanCreateInput!, update: PaymentPlanUpdateInput!): PaymentPlan!
   upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
-  upsertAdminActionLog(where: AdminActionLogWhereUniqueInput!, create: AdminActionLogCreateInput!, update: AdminActionLogUpdateInput!): AdminActionLog!
   upsertShippingOption(where: ShippingOptionWhereUniqueInput!, create: ShippingOptionCreateInput!, update: ShippingOptionUpdateInput!): ShippingOption!
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
   upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
@@ -14791,6 +14841,7 @@ type Mutation {
   updateManyPackageTransitEvents(data: PackageTransitEventUpdateManyMutationInput!, where: PackageTransitEventWhereInput): BatchPayload!
   updateManyProductRequests(data: ProductRequestUpdateManyMutationInput!, where: ProductRequestWhereInput): BatchPayload!
   updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
+  updateManyAdminActionLogs(data: AdminActionLogUpdateManyMutationInput!, where: AdminActionLogWhereInput): BatchPayload!
   updateManyAdminActionLogInterpretations(data: AdminActionLogInterpretationUpdateManyMutationInput!, where: AdminActionLogInterpretationWhereInput): BatchPayload!
   updateManySyncTimings(data: SyncTimingUpdateManyMutationInput!, where: SyncTimingWhereInput): BatchPayload!
   updateManyLaunches(data: LaunchUpdateManyMutationInput!, where: LaunchWhereInput): BatchPayload!
@@ -14830,7 +14881,6 @@ type Mutation {
   updateManyPaymentPlans(data: PaymentPlanUpdateManyMutationInput!, where: PaymentPlanWhereInput): BatchPayload!
   updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
-  updateManyAdminActionLogs(data: AdminActionLogUpdateManyMutationInput!, where: AdminActionLogWhereInput): BatchPayload!
   updateManyShippingOptions(data: ShippingOptionUpdateManyMutationInput!, where: ShippingOptionWhereInput): BatchPayload!
   updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
   updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
@@ -14863,6 +14913,7 @@ type Mutation {
   deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
   deleteManyProductVariantWants(where: ProductVariantWantWhereInput): BatchPayload!
   deleteManyActiveAdminUsers(where: ActiveAdminUserWhereInput): BatchPayload!
+  deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
   deleteManyAdminActionLogInterpretations(where: AdminActionLogInterpretationWhereInput): BatchPayload!
   deleteManySyncTimings(where: SyncTimingWhereInput): BatchPayload!
   deleteManyLaunches(where: LaunchWhereInput): BatchPayload!
@@ -14902,7 +14953,6 @@ type Mutation {
   deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
   deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
-  deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
   deleteManyShippingOptions(where: ShippingOptionWhereInput): BatchPayload!
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
@@ -27391,6 +27441,7 @@ type Query {
   productRequests(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRequest]!
   productVariantWants(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantWant]!
   activeAdminUsers(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ActiveAdminUser]!
+  adminActionLogs(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLog]!
   adminActionLogInterpretations(where: AdminActionLogInterpretationWhereInput, orderBy: AdminActionLogInterpretationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLogInterpretation]!
   syncTimings(where: SyncTimingWhereInput, orderBy: SyncTimingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SyncTiming]!
   launches(where: LaunchWhereInput, orderBy: LaunchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Launch]!
@@ -27430,7 +27481,6 @@ type Query {
   paymentPlans(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PaymentPlan]!
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
-  adminActionLogs(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLog]!
   shippingOptions(where: ShippingOptionWhereInput, orderBy: ShippingOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShippingOption]!
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
@@ -27463,6 +27513,7 @@ type Query {
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   adminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
   syncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
   launch(where: LaunchWhereUniqueInput!): Launch
@@ -27502,7 +27553,6 @@ type Query {
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   image(where: ImageWhereUniqueInput!): Image
   product(where: ProductWhereUniqueInput!): Product
-  adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   shippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   reservation(where: ReservationWhereUniqueInput!): Reservation
@@ -27535,6 +27585,7 @@ type Query {
   productRequestsConnection(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductRequestConnection!
   productVariantWantsConnection(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantWantConnection!
   activeAdminUsersConnection(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ActiveAdminUserConnection!
+  adminActionLogsConnection(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogConnection!
   adminActionLogInterpretationsConnection(where: AdminActionLogInterpretationWhereInput, orderBy: AdminActionLogInterpretationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogInterpretationConnection!
   syncTimingsConnection(where: SyncTimingWhereInput, orderBy: SyncTimingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SyncTimingConnection!
   launchesConnection(where: LaunchWhereInput, orderBy: LaunchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LaunchConnection!
@@ -27574,7 +27625,6 @@ type Query {
   paymentPlansConnection(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PaymentPlanConnection!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
-  adminActionLogsConnection(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogConnection!
   shippingOptionsConnection(where: ShippingOptionWhereInput, orderBy: ShippingOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShippingOptionConnection!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
   reservationsConnection(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationConnection!
@@ -32920,6 +32970,7 @@ type Subscription {
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
   productVariantWant(where: ProductVariantWantSubscriptionWhereInput): ProductVariantWantSubscriptionPayload
   activeAdminUser(where: ActiveAdminUserSubscriptionWhereInput): ActiveAdminUserSubscriptionPayload
+  adminActionLog(where: AdminActionLogSubscriptionWhereInput): AdminActionLogSubscriptionPayload
   adminActionLogInterpretation(where: AdminActionLogInterpretationSubscriptionWhereInput): AdminActionLogInterpretationSubscriptionPayload
   syncTiming(where: SyncTimingSubscriptionWhereInput): SyncTimingSubscriptionPayload
   launch(where: LaunchSubscriptionWhereInput): LaunchSubscriptionPayload
@@ -32959,7 +33010,6 @@ type Subscription {
   paymentPlan(where: PaymentPlanSubscriptionWhereInput): PaymentPlanSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
-  adminActionLog(where: AdminActionLogSubscriptionWhereInput): AdminActionLogSubscriptionPayload
   shippingOption(where: ShippingOptionSubscriptionWhereInput): ShippingOptionSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
@@ -38829,20 +38879,46 @@ export interface AdminActionLogCreateInput {
   statementOnly: Boolean
   interpretedAt?: DateTime | null
   activeAdminUser: UserCreateOneInput
+  interpretation?: AdminActionLogInterpretationCreateOneWithoutLogInput | null
 }
 
-export interface AdminActionLogCreateOneInput {
-  create?: AdminActionLogCreateInput | null
+export interface AdminActionLogCreateOneWithoutInterpretationInput {
+  create?: AdminActionLogCreateWithoutInterpretationInput | null
   connect?: AdminActionLogWhereUniqueInput | null
+}
+
+export interface AdminActionLogCreateWithoutInterpretationInput {
+  entityId: String
+  tableName: String
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields?: Json | null
+  statementOnly: Boolean
+  interpretedAt?: DateTime | null
+  activeAdminUser: UserCreateOneInput
 }
 
 export interface AdminActionLogInterpretationCreateInput {
   id?: ID_Input | null
   entityId: String
   tableName: String
-  interpretation: String
+  interpretation?: String | null
   data?: Json | null
-  log: AdminActionLogCreateOneInput
+  log: AdminActionLogCreateOneWithoutInterpretationInput
+}
+
+export interface AdminActionLogInterpretationCreateOneWithoutLogInput {
+  create?: AdminActionLogInterpretationCreateWithoutLogInput | null
+  connect?: AdminActionLogInterpretationWhereUniqueInput | null
+}
+
+export interface AdminActionLogInterpretationCreateWithoutLogInput {
+  id?: ID_Input | null
+  entityId: String
+  tableName: String
+  interpretation?: String | null
+  data?: Json | null
 }
 
 export interface AdminActionLogInterpretationSubscriptionWhereInput {
@@ -38861,7 +38937,7 @@ export interface AdminActionLogInterpretationUpdateInput {
   tableName?: String | null
   interpretation?: String | null
   data?: Json | null
-  log?: AdminActionLogUpdateOneRequiredInput | null
+  log?: AdminActionLogUpdateOneRequiredWithoutInterpretationInput | null
 }
 
 export interface AdminActionLogInterpretationUpdateManyMutationInput {
@@ -38869,6 +38945,27 @@ export interface AdminActionLogInterpretationUpdateManyMutationInput {
   tableName?: String | null
   interpretation?: String | null
   data?: Json | null
+}
+
+export interface AdminActionLogInterpretationUpdateOneWithoutLogInput {
+  create?: AdminActionLogInterpretationCreateWithoutLogInput | null
+  connect?: AdminActionLogInterpretationWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: AdminActionLogInterpretationUpdateWithoutLogDataInput | null
+  upsert?: AdminActionLogInterpretationUpsertWithoutLogInput | null
+}
+
+export interface AdminActionLogInterpretationUpdateWithoutLogDataInput {
+  entityId?: String | null
+  tableName?: String | null
+  interpretation?: String | null
+  data?: Json | null
+}
+
+export interface AdminActionLogInterpretationUpsertWithoutLogInput {
+  update: AdminActionLogInterpretationUpdateWithoutLogDataInput
+  create: AdminActionLogInterpretationCreateWithoutLogInput
 }
 
 export interface AdminActionLogInterpretationWhereInput {
@@ -38949,18 +39046,6 @@ export interface AdminActionLogSubscriptionWhereInput {
   node?: AdminActionLogWhereInput | null
 }
 
-export interface AdminActionLogUpdateDataInput {
-  entityId?: String | null
-  tableName?: String | null
-  triggeredAt?: DateTime | null
-  action?: AdminAction | null
-  rowData?: Json | null
-  changedFields?: Json | null
-  statementOnly?: Boolean | null
-  interpretedAt?: DateTime | null
-  activeAdminUser?: UserUpdateOneRequiredInput | null
-}
-
 export interface AdminActionLogUpdateInput {
   entityId?: String | null
   tableName?: String | null
@@ -38971,6 +39056,7 @@ export interface AdminActionLogUpdateInput {
   statementOnly?: Boolean | null
   interpretedAt?: DateTime | null
   activeAdminUser?: UserUpdateOneRequiredInput | null
+  interpretation?: AdminActionLogInterpretationUpdateOneWithoutLogInput | null
 }
 
 export interface AdminActionLogUpdateManyMutationInput {
@@ -38984,16 +39070,28 @@ export interface AdminActionLogUpdateManyMutationInput {
   interpretedAt?: DateTime | null
 }
 
-export interface AdminActionLogUpdateOneRequiredInput {
-  create?: AdminActionLogCreateInput | null
+export interface AdminActionLogUpdateOneRequiredWithoutInterpretationInput {
+  create?: AdminActionLogCreateWithoutInterpretationInput | null
   connect?: AdminActionLogWhereUniqueInput | null
-  update?: AdminActionLogUpdateDataInput | null
-  upsert?: AdminActionLogUpsertNestedInput | null
+  update?: AdminActionLogUpdateWithoutInterpretationDataInput | null
+  upsert?: AdminActionLogUpsertWithoutInterpretationInput | null
 }
 
-export interface AdminActionLogUpsertNestedInput {
-  update: AdminActionLogUpdateDataInput
-  create: AdminActionLogCreateInput
+export interface AdminActionLogUpdateWithoutInterpretationDataInput {
+  entityId?: String | null
+  tableName?: String | null
+  triggeredAt?: DateTime | null
+  action?: AdminAction | null
+  rowData?: Json | null
+  changedFields?: Json | null
+  statementOnly?: Boolean | null
+  interpretedAt?: DateTime | null
+  activeAdminUser?: UserUpdateOneRequiredInput | null
+}
+
+export interface AdminActionLogUpsertWithoutInterpretationInput {
+  update: AdminActionLogUpdateWithoutInterpretationDataInput
+  create: AdminActionLogCreateWithoutInterpretationInput
 }
 
 export interface AdminActionLogWhereInput {
@@ -39059,6 +39157,7 @@ export interface AdminActionLogWhereInput {
   interpretedAt_gt?: DateTime | null
   interpretedAt_gte?: DateTime | null
   activeAdminUser?: UserWhereInput | null
+  interpretation?: AdminActionLogInterpretationWhereInput | null
 }
 
 export interface AdminActionLogWhereUniqueInput {
@@ -54956,6 +55055,7 @@ export interface AdminActionLog {
   changedFields?: Json | null
   statementOnly: Boolean
   interpretedAt?: DateTime | null
+  interpretation?: AdminActionLogInterpretation | null
 }
 
 /*
@@ -54982,7 +55082,7 @@ export interface AdminActionLogInterpretation extends Node {
   log: AdminActionLog
   entityId: String
   tableName: String
-  interpretation: String
+  interpretation?: String | null
   data?: Json | null
 }
 
@@ -55009,7 +55109,7 @@ export interface AdminActionLogInterpretationPreviousValues {
   id: ID_Output
   entityId: String
   tableName: String
-  interpretation: String
+  interpretation?: String | null
   data?: Json | null
 }
 

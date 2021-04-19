@@ -13,6 +13,7 @@ import { PrismaModule } from "@prisma/prisma.module"
 import { AnalyticsModule } from "../Analytics/analytics.module"
 import { DripModule } from "../Drip/drip.module"
 import { PaymentModule } from "../Payment/payment.module"
+import { ProductModule } from "../Product/product.module"
 import { SearchModule } from "../Search/search.module"
 import { SMSModule } from "../SMS/sms.module"
 import { AdmissionsScheduledJobs } from "./services/admissions.job.service"
@@ -42,6 +43,7 @@ import { SubscriptionsScheduledJobs } from "./services/subscriptions.job.service
     SearchModule,
     SMSModule,
     AnalyticsModule,
+    ProductModule,
   ],
   providers: [
     SubscriptionsScheduledJobs,

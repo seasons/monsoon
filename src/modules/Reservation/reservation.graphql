@@ -202,5 +202,5 @@ type AdminActionLog {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
-  interpretation: String
+  interpretation: AdminActionLogInterpretation
 }

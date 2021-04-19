@@ -7578,14 +7578,11 @@ export interface AdminActionLogWhereInput {
   interpretedAt_lte?: Maybe<DateTimeInput>;
   interpretedAt_gt?: Maybe<DateTimeInput>;
   interpretedAt_gte?: Maybe<DateTimeInput>;
+  interpretation?: Maybe<AdminActionLogInterpretationWhereInput>;
   AND?: Maybe<AdminActionLogWhereInput[] | AdminActionLogWhereInput>;
   OR?: Maybe<AdminActionLogWhereInput[] | AdminActionLogWhereInput>;
   NOT?: Maybe<AdminActionLogWhereInput[] | AdminActionLogWhereInput>;
 }
-
-export type AdminActionLogInterpretationWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
 
 export interface AdminActionLogInterpretationWhereInput {
   id?: Maybe<ID_Input>;
@@ -7658,6 +7655,10 @@ export interface AdminActionLogInterpretationWhereInput {
     | AdminActionLogInterpretationWhereInput
   >;
 }
+
+export type AdminActionLogInterpretationWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
 
 export type BagItemWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -15589,6 +15590,20 @@ export interface AdminActionLogCreateInput {
   changedFields?: Maybe<Json>;
   statementOnly: Boolean;
   interpretedAt?: Maybe<DateTimeInput>;
+  interpretation?: Maybe<AdminActionLogInterpretationCreateOneWithoutLogInput>;
+}
+
+export interface AdminActionLogInterpretationCreateOneWithoutLogInput {
+  create?: Maybe<AdminActionLogInterpretationCreateWithoutLogInput>;
+  connect?: Maybe<AdminActionLogInterpretationWhereUniqueInput>;
+}
+
+export interface AdminActionLogInterpretationCreateWithoutLogInput {
+  id?: Maybe<ID_Input>;
+  entityId: String;
+  tableName: String;
+  interpretation?: Maybe<String>;
+  data?: Maybe<Json>;
 }
 
 export interface AdminActionLogUpdateInput {
@@ -15601,6 +15616,28 @@ export interface AdminActionLogUpdateInput {
   changedFields?: Maybe<Json>;
   statementOnly?: Maybe<Boolean>;
   interpretedAt?: Maybe<DateTimeInput>;
+  interpretation?: Maybe<AdminActionLogInterpretationUpdateOneWithoutLogInput>;
+}
+
+export interface AdminActionLogInterpretationUpdateOneWithoutLogInput {
+  create?: Maybe<AdminActionLogInterpretationCreateWithoutLogInput>;
+  update?: Maybe<AdminActionLogInterpretationUpdateWithoutLogDataInput>;
+  upsert?: Maybe<AdminActionLogInterpretationUpsertWithoutLogInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<AdminActionLogInterpretationWhereUniqueInput>;
+}
+
+export interface AdminActionLogInterpretationUpdateWithoutLogDataInput {
+  entityId?: Maybe<String>;
+  tableName?: Maybe<String>;
+  interpretation?: Maybe<String>;
+  data?: Maybe<Json>;
+}
+
+export interface AdminActionLogInterpretationUpsertWithoutLogInput {
+  update: AdminActionLogInterpretationUpdateWithoutLogDataInput;
+  create: AdminActionLogInterpretationCreateWithoutLogInput;
 }
 
 export interface AdminActionLogUpdateManyMutationInput {
@@ -15616,34 +15653,47 @@ export interface AdminActionLogUpdateManyMutationInput {
 
 export interface AdminActionLogInterpretationCreateInput {
   id?: Maybe<ID_Input>;
-  log: AdminActionLogCreateOneInput;
+  log: AdminActionLogCreateOneWithoutInterpretationInput;
   entityId: String;
   tableName: String;
-  interpretation: String;
+  interpretation?: Maybe<String>;
   data?: Maybe<Json>;
 }
 
-export interface AdminActionLogCreateOneInput {
-  create?: Maybe<AdminActionLogCreateInput>;
+export interface AdminActionLogCreateOneWithoutInterpretationInput {
+  create?: Maybe<AdminActionLogCreateWithoutInterpretationInput>;
   connect?: Maybe<AdminActionLogWhereUniqueInput>;
 }
 
+export interface AdminActionLogCreateWithoutInterpretationInput {
+  actionId?: Maybe<Int>;
+  entityId: String;
+  tableName: String;
+  activeAdminUser: UserCreateOneInput;
+  triggeredAt: DateTimeInput;
+  action: AdminAction;
+  rowData: Json;
+  changedFields?: Maybe<Json>;
+  statementOnly: Boolean;
+  interpretedAt?: Maybe<DateTimeInput>;
+}
+
 export interface AdminActionLogInterpretationUpdateInput {
-  log?: Maybe<AdminActionLogUpdateOneRequiredInput>;
+  log?: Maybe<AdminActionLogUpdateOneRequiredWithoutInterpretationInput>;
   entityId?: Maybe<String>;
   tableName?: Maybe<String>;
   interpretation?: Maybe<String>;
   data?: Maybe<Json>;
 }
 
-export interface AdminActionLogUpdateOneRequiredInput {
-  create?: Maybe<AdminActionLogCreateInput>;
-  update?: Maybe<AdminActionLogUpdateDataInput>;
-  upsert?: Maybe<AdminActionLogUpsertNestedInput>;
+export interface AdminActionLogUpdateOneRequiredWithoutInterpretationInput {
+  create?: Maybe<AdminActionLogCreateWithoutInterpretationInput>;
+  update?: Maybe<AdminActionLogUpdateWithoutInterpretationDataInput>;
+  upsert?: Maybe<AdminActionLogUpsertWithoutInterpretationInput>;
   connect?: Maybe<AdminActionLogWhereUniqueInput>;
 }
 
-export interface AdminActionLogUpdateDataInput {
+export interface AdminActionLogUpdateWithoutInterpretationDataInput {
   entityId?: Maybe<String>;
   tableName?: Maybe<String>;
   activeAdminUser?: Maybe<UserUpdateOneRequiredInput>;
@@ -15655,9 +15705,9 @@ export interface AdminActionLogUpdateDataInput {
   interpretedAt?: Maybe<DateTimeInput>;
 }
 
-export interface AdminActionLogUpsertNestedInput {
-  update: AdminActionLogUpdateDataInput;
-  create: AdminActionLogCreateInput;
+export interface AdminActionLogUpsertWithoutInterpretationInput {
+  update: AdminActionLogUpdateWithoutInterpretationDataInput;
+  create: AdminActionLogCreateWithoutInterpretationInput;
 }
 
 export interface AdminActionLogInterpretationUpdateManyMutationInput {
@@ -25354,6 +25404,7 @@ export interface AdminActionLogPromise
   changedFields: () => Promise<Json>;
   statementOnly: () => Promise<Boolean>;
   interpretedAt: () => Promise<DateTimeOutput>;
+  interpretation: <T = AdminActionLogInterpretationPromise>() => T;
 }
 
 export interface AdminActionLogSubscription
@@ -25369,6 +25420,7 @@ export interface AdminActionLogSubscription
   changedFields: () => Promise<AsyncIterator<Json>>;
   statementOnly: () => Promise<AsyncIterator<Boolean>>;
   interpretedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  interpretation: <T = AdminActionLogInterpretationSubscription>() => T;
 }
 
 export interface AdminActionLogNullablePromise
@@ -25384,6 +25436,48 @@ export interface AdminActionLogNullablePromise
   changedFields: () => Promise<Json>;
   statementOnly: () => Promise<Boolean>;
   interpretedAt: () => Promise<DateTimeOutput>;
+  interpretation: <T = AdminActionLogInterpretationPromise>() => T;
+}
+
+export interface AdminActionLogInterpretation {
+  id: ID_Output;
+  entityId: String;
+  tableName: String;
+  interpretation?: String;
+  data?: Json;
+}
+
+export interface AdminActionLogInterpretationPromise
+  extends Promise<AdminActionLogInterpretation>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  log: <T = AdminActionLogPromise>() => T;
+  entityId: () => Promise<String>;
+  tableName: () => Promise<String>;
+  interpretation: () => Promise<String>;
+  data: () => Promise<Json>;
+}
+
+export interface AdminActionLogInterpretationSubscription
+  extends Promise<AsyncIterator<AdminActionLogInterpretation>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  log: <T = AdminActionLogSubscription>() => T;
+  entityId: () => Promise<AsyncIterator<String>>;
+  tableName: () => Promise<AsyncIterator<String>>;
+  interpretation: () => Promise<AsyncIterator<String>>;
+  data: () => Promise<AsyncIterator<Json>>;
+}
+
+export interface AdminActionLogInterpretationNullablePromise
+  extends Promise<AdminActionLogInterpretation | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  log: <T = AdminActionLogPromise>() => T;
+  entityId: () => Promise<String>;
+  tableName: () => Promise<String>;
+  interpretation: () => Promise<String>;
+  data: () => Promise<Json>;
 }
 
 export interface AdminActionLogConnection {
@@ -25440,47 +25534,6 @@ export interface AggregateAdminActionLogSubscription
   extends Promise<AsyncIterator<AggregateAdminActionLog>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface AdminActionLogInterpretation {
-  id: ID_Output;
-  entityId: String;
-  tableName: String;
-  interpretation: String;
-  data?: Json;
-}
-
-export interface AdminActionLogInterpretationPromise
-  extends Promise<AdminActionLogInterpretation>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  log: <T = AdminActionLogPromise>() => T;
-  entityId: () => Promise<String>;
-  tableName: () => Promise<String>;
-  interpretation: () => Promise<String>;
-  data: () => Promise<Json>;
-}
-
-export interface AdminActionLogInterpretationSubscription
-  extends Promise<AsyncIterator<AdminActionLogInterpretation>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  log: <T = AdminActionLogSubscription>() => T;
-  entityId: () => Promise<AsyncIterator<String>>;
-  tableName: () => Promise<AsyncIterator<String>>;
-  interpretation: () => Promise<AsyncIterator<String>>;
-  data: () => Promise<AsyncIterator<Json>>;
-}
-
-export interface AdminActionLogInterpretationNullablePromise
-  extends Promise<AdminActionLogInterpretation | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  log: <T = AdminActionLogPromise>() => T;
-  entityId: () => Promise<String>;
-  tableName: () => Promise<String>;
-  interpretation: () => Promise<String>;
-  data: () => Promise<Json>;
 }
 
 export interface AdminActionLogInterpretationConnection {
@@ -31787,7 +31840,7 @@ export interface AdminActionLogInterpretationPreviousValues {
   id: ID_Output;
   entityId: String;
   tableName: String;
-  interpretation: String;
+  interpretation?: String;
   data?: Json;
 }
 

@@ -86,7 +86,7 @@ type PhysicalProduct {
     last: Int
   ): [PhysicalProductQualityReport!]
   reservations(orderBy: ReservationOrderByInput): [Reservation!]!
-  adminLogs: [AdminActionLogInterpretation!]! @hasRole(roles: [Admin])
+  adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])
   createdAt: DateTime!
   updatedAt: DateTime!
 }

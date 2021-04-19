@@ -48,12 +48,11 @@ export class PhysicalProductFieldsResolver {
     @Parent() physicalProduct,
     @Loader({
       params: {
-        query: `adminActionLogInterpretations`,
+        query: `adminActionLogs`,
         formatWhere: keys => ({
           AND: [
             { entityId_in: keys },
             { tableName: "PhysicalProduct" },
-            { interpretation_not: null },
           ] as AdminActionLogInterpretationWhereInput,
         }),
         keyToDataRelationship: "OneToMany",

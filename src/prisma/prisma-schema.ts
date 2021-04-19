@@ -97,6 +97,7 @@ type AdminActionLog {
   changedFields: Json
   statementOnly: Boolean!
   interpretedAt: DateTime
+  interpretation: AdminActionLogInterpretation
 }
 
 type AdminActionLogConnection {
@@ -116,11 +117,25 @@ input AdminActionLogCreateInput {
   changedFields: Json
   statementOnly: Boolean!
   interpretedAt: DateTime
+  interpretation: AdminActionLogInterpretationCreateOneWithoutLogInput
 }
 
-input AdminActionLogCreateOneInput {
-  create: AdminActionLogCreateInput
+input AdminActionLogCreateOneWithoutInterpretationInput {
+  create: AdminActionLogCreateWithoutInterpretationInput
   connect: AdminActionLogWhereUniqueInput
+}
+
+input AdminActionLogCreateWithoutInterpretationInput {
+  actionId: Int
+  entityId: String!
+  tableName: String!
+  activeAdminUser: UserCreateOneInput!
+  triggeredAt: DateTime!
+  action: AdminAction!
+  rowData: Json!
+  changedFields: Json
+  statementOnly: Boolean!
+  interpretedAt: DateTime
 }
 
 type AdminActionLogEdge {
@@ -133,7 +148,7 @@ type AdminActionLogInterpretation {
   log: AdminActionLog!
   entityId: String!
   tableName: String!
-  interpretation: String!
+  interpretation: String
   data: Json
 }
 
@@ -145,10 +160,23 @@ type AdminActionLogInterpretationConnection {
 
 input AdminActionLogInterpretationCreateInput {
   id: ID
-  log: AdminActionLogCreateOneInput!
+  log: AdminActionLogCreateOneWithoutInterpretationInput!
   entityId: String!
   tableName: String!
-  interpretation: String!
+  interpretation: String
+  data: Json
+}
+
+input AdminActionLogInterpretationCreateOneWithoutLogInput {
+  create: AdminActionLogInterpretationCreateWithoutLogInput
+  connect: AdminActionLogInterpretationWhereUniqueInput
+}
+
+input AdminActionLogInterpretationCreateWithoutLogInput {
+  id: ID
+  entityId: String!
+  tableName: String!
+  interpretation: String
   data: Json
 }
 
@@ -174,7 +202,7 @@ type AdminActionLogInterpretationPreviousValues {
   id: ID!
   entityId: String!
   tableName: String!
-  interpretation: String!
+  interpretation: String
   data: Json
 }
 
@@ -197,7 +225,7 @@ input AdminActionLogInterpretationSubscriptionWhereInput {
 }
 
 input AdminActionLogInterpretationUpdateInput {
-  log: AdminActionLogUpdateOneRequiredInput
+  log: AdminActionLogUpdateOneRequiredWithoutInterpretationInput
   entityId: String
   tableName: String
   interpretation: String
@@ -209,6 +237,27 @@ input AdminActionLogInterpretationUpdateManyMutationInput {
   tableName: String
   interpretation: String
   data: Json
+}
+
+input AdminActionLogInterpretationUpdateOneWithoutLogInput {
+  create: AdminActionLogInterpretationCreateWithoutLogInput
+  update: AdminActionLogInterpretationUpdateWithoutLogDataInput
+  upsert: AdminActionLogInterpretationUpsertWithoutLogInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: AdminActionLogInterpretationWhereUniqueInput
+}
+
+input AdminActionLogInterpretationUpdateWithoutLogDataInput {
+  entityId: String
+  tableName: String
+  interpretation: String
+  data: Json
+}
+
+input AdminActionLogInterpretationUpsertWithoutLogInput {
+  update: AdminActionLogInterpretationUpdateWithoutLogDataInput!
+  create: AdminActionLogInterpretationCreateWithoutLogInput!
 }
 
 input AdminActionLogInterpretationWhereInput {
@@ -329,18 +378,6 @@ input AdminActionLogSubscriptionWhereInput {
   NOT: [AdminActionLogSubscriptionWhereInput!]
 }
 
-input AdminActionLogUpdateDataInput {
-  entityId: String
-  tableName: String
-  activeAdminUser: UserUpdateOneRequiredInput
-  triggeredAt: DateTime
-  action: AdminAction
-  rowData: Json
-  changedFields: Json
-  statementOnly: Boolean
-  interpretedAt: DateTime
-}
-
 input AdminActionLogUpdateInput {
   entityId: String
   tableName: String
@@ -351,6 +388,7 @@ input AdminActionLogUpdateInput {
   changedFields: Json
   statementOnly: Boolean
   interpretedAt: DateTime
+  interpretation: AdminActionLogInterpretationUpdateOneWithoutLogInput
 }
 
 input AdminActionLogUpdateManyMutationInput {
@@ -364,16 +402,28 @@ input AdminActionLogUpdateManyMutationInput {
   interpretedAt: DateTime
 }
 
-input AdminActionLogUpdateOneRequiredInput {
-  create: AdminActionLogCreateInput
-  update: AdminActionLogUpdateDataInput
-  upsert: AdminActionLogUpsertNestedInput
+input AdminActionLogUpdateOneRequiredWithoutInterpretationInput {
+  create: AdminActionLogCreateWithoutInterpretationInput
+  update: AdminActionLogUpdateWithoutInterpretationDataInput
+  upsert: AdminActionLogUpsertWithoutInterpretationInput
   connect: AdminActionLogWhereUniqueInput
 }
 
-input AdminActionLogUpsertNestedInput {
-  update: AdminActionLogUpdateDataInput!
-  create: AdminActionLogCreateInput!
+input AdminActionLogUpdateWithoutInterpretationDataInput {
+  entityId: String
+  tableName: String
+  activeAdminUser: UserUpdateOneRequiredInput
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+  interpretedAt: DateTime
+}
+
+input AdminActionLogUpsertWithoutInterpretationInput {
+  update: AdminActionLogUpdateWithoutInterpretationDataInput!
+  create: AdminActionLogCreateWithoutInterpretationInput!
 }
 
 input AdminActionLogWhereInput {
@@ -436,6 +486,7 @@ input AdminActionLogWhereInput {
   interpretedAt_lte: DateTime
   interpretedAt_gt: DateTime
   interpretedAt_gte: DateTime
+  interpretation: AdminActionLogInterpretationWhereInput
   AND: [AdminActionLogWhereInput!]
   OR: [AdminActionLogWhereInput!]
   NOT: [AdminActionLogWhereInput!]
