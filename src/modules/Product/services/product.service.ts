@@ -643,12 +643,15 @@ export class ProductService {
     }
 
     const styleCode = styleNumber.toString().padStart(3, "0")
-    const allStyleCodesForBrand = await this.productUtils.getAllStyleCodesForBrand(
-      brandID
-    )
-    if (!productID && allStyleCodesForBrand.includes(styleCode)) {
-      throw new Error(`Style code collision: ${styleCode}`)
+    if (!productID) {
+      const allStyleCodesForBrand = await this.productUtils.getAllStyleCodesForBrand(
+        brandID
+      )
+      if (allStyleCodesForBrand.includes(styleCode)) {
+        throw new Error(`Style code collision: ${styleCode}`)
+      }
     }
+
     return {
       brandCode: brand.brandCode,
       styleCode,
