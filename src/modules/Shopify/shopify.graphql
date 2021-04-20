@@ -7,7 +7,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ShopifyProductVariant]! @hasRole(roles: [Admin])
+  ): [ShopifyProductVariant]!
   externalShopifyIntegrations(
     where: ExternalShopifyIntegrationWhereInput
     orderBy: ExternalShopifyIntegrationOrderByInput
