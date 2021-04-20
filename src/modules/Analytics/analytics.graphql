@@ -34,5 +34,9 @@ type AnalyticsDashboardElement {
 type AnalyticsDashboard {
   id: ID!
   name: String
-  elements: [AnalyticsDashboardElement!]
+  elements(where: AnalyticsElementWhereInput): [AnalyticsDashboardElement!]
+}
+
+input AnalyticsElementWhereInput {
+  slug: String!
 }

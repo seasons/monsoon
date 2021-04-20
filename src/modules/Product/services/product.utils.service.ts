@@ -623,15 +623,9 @@ export class ProductUtilsService {
   }
 
   async getAllStyleCodesForBrand(brandID) {
-    const productVariants = await this.prisma.binding.query.productVariants(
-      {
-        where: { product: { brand: { id: brandID } } },
-      },
-      `{
-      id 
-      sku
-    }`
-    )
+    const productVariants = await this.prisma.client.productVariants({
+      where: { product: { brand: { id: brandID } } },
+    })
     const allStyleCodes = uniq(
       productVariants.map(a => this.getStyleCodeFromSKU(a.sku))
     )
