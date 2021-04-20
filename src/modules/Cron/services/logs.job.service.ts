@@ -14,7 +14,7 @@ export class LogsScheduledJobs {
     private readonly physicalProductService: PhysicalProductService
   ) {}
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_HOUR)
   async interpretPhysicalProductLogs() {
     const allLogs = (await this.prisma.client.adminActionLogs({
       where: { tableName: "PhysicalProduct" },
