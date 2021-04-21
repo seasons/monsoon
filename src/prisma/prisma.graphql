@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Apr 20 2021 12:12:10 GMT-0400 (Eastern Daylight Time)
+# timestamp: Wed Apr 21 2021 14:41:57 GMT-0700 (Pacific Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -205,8 +205,6 @@ type AdminActionLog {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
-  interpretedAt: DateTime
-  interpretation: AdminActionLogInterpretation
 }
 
 """
@@ -233,25 +231,6 @@ input AdminActionLogCreateInput {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
-  interpretedAt: DateTime
-  activeAdminUser: UserCreateOneInput!
-  interpretation: AdminActionLogInterpretationCreateOneWithoutLogInput
-}
-
-input AdminActionLogCreateOneWithoutInterpretationInput {
-  create: AdminActionLogCreateWithoutInterpretationInput
-  connect: AdminActionLogWhereUniqueInput
-}
-
-input AdminActionLogCreateWithoutInterpretationInput {
-  entityId: String!
-  tableName: String!
-  triggeredAt: DateTime!
-  action: AdminAction!
-  rowData: Json!
-  changedFields: Json
-  statementOnly: Boolean!
-  interpretedAt: DateTime
   activeAdminUser: UserCreateOneInput!
 }
 
@@ -268,456 +247,6 @@ type AdminActionLogEdge {
   A cursor for use in pagination.
   """
   cursor: String!
-}
-
-type AdminActionLogInterpretation implements Node {
-  id: ID!
-  log: AdminActionLog!
-  entityId: String!
-  tableName: String!
-  interpretation: String
-  data: Json
-}
-
-"""
-A connection to a list of items.
-"""
-type AdminActionLogInterpretationConnection {
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  A list of edges.
-  """
-  edges: [AdminActionLogInterpretationEdge]!
-  aggregate: AggregateAdminActionLogInterpretation!
-}
-
-input AdminActionLogInterpretationCreateInput {
-  id: ID
-  entityId: String!
-  tableName: String!
-  interpretation: String
-  data: Json
-  log: AdminActionLogCreateOneWithoutInterpretationInput!
-}
-
-input AdminActionLogInterpretationCreateOneWithoutLogInput {
-  create: AdminActionLogInterpretationCreateWithoutLogInput
-  connect: AdminActionLogInterpretationWhereUniqueInput
-}
-
-input AdminActionLogInterpretationCreateWithoutLogInput {
-  id: ID
-  entityId: String!
-  tableName: String!
-  interpretation: String
-  data: Json
-}
-
-"""
-An edge in a connection.
-"""
-type AdminActionLogInterpretationEdge {
-  """
-  The item at the end of the edge.
-  """
-  node: AdminActionLogInterpretation!
-
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-}
-
-enum AdminActionLogInterpretationOrderByInput {
-  id_ASC
-  id_DESC
-  entityId_ASC
-  entityId_DESC
-  tableName_ASC
-  tableName_DESC
-  interpretation_ASC
-  interpretation_DESC
-  data_ASC
-  data_DESC
-}
-
-type AdminActionLogInterpretationPreviousValues {
-  id: ID!
-  entityId: String!
-  tableName: String!
-  interpretation: String
-  data: Json
-}
-
-type AdminActionLogInterpretationSubscriptionPayload {
-  mutation: MutationType!
-  node: AdminActionLogInterpretation
-  updatedFields: [String!]
-  previousValues: AdminActionLogInterpretationPreviousValues
-}
-
-input AdminActionLogInterpretationSubscriptionWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [AdminActionLogInterpretationSubscriptionWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [AdminActionLogInterpretationSubscriptionWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [AdminActionLogInterpretationSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: AdminActionLogInterpretationWhereInput
-}
-
-input AdminActionLogInterpretationUpdateInput {
-  entityId: String
-  tableName: String
-  interpretation: String
-  data: Json
-  log: AdminActionLogUpdateOneRequiredWithoutInterpretationInput
-}
-
-input AdminActionLogInterpretationUpdateManyMutationInput {
-  entityId: String
-  tableName: String
-  interpretation: String
-  data: Json
-}
-
-input AdminActionLogInterpretationUpdateOneWithoutLogInput {
-  create: AdminActionLogInterpretationCreateWithoutLogInput
-  connect: AdminActionLogInterpretationWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: AdminActionLogInterpretationUpdateWithoutLogDataInput
-  upsert: AdminActionLogInterpretationUpsertWithoutLogInput
-}
-
-input AdminActionLogInterpretationUpdateWithoutLogDataInput {
-  entityId: String
-  tableName: String
-  interpretation: String
-  data: Json
-}
-
-input AdminActionLogInterpretationUpsertWithoutLogInput {
-  update: AdminActionLogInterpretationUpdateWithoutLogDataInput!
-  create: AdminActionLogInterpretationCreateWithoutLogInput!
-}
-
-input AdminActionLogInterpretationWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [AdminActionLogInterpretationWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [AdminActionLogInterpretationWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [AdminActionLogInterpretationWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  entityId: String
-
-  """
-  All values that are not equal to given value.
-  """
-  entityId_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  entityId_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  entityId_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  entityId_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  entityId_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  entityId_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  entityId_gte: String
-
-  """
-  All values containing the given string.
-  """
-  entityId_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  entityId_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  entityId_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  entityId_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  entityId_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  entityId_not_ends_with: String
-  tableName: String
-
-  """
-  All values that are not equal to given value.
-  """
-  tableName_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  tableName_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  tableName_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  tableName_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  tableName_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  tableName_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  tableName_gte: String
-
-  """
-  All values containing the given string.
-  """
-  tableName_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  tableName_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  tableName_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  tableName_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  tableName_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  tableName_not_ends_with: String
-  interpretation: String
-
-  """
-  All values that are not equal to given value.
-  """
-  interpretation_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  interpretation_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  interpretation_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  interpretation_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  interpretation_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  interpretation_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  interpretation_gte: String
-
-  """
-  All values containing the given string.
-  """
-  interpretation_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  interpretation_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  interpretation_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  interpretation_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  interpretation_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  interpretation_not_ends_with: String
-  log: AdminActionLogWhereInput
-}
-
-input AdminActionLogInterpretationWhereUniqueInput {
-  id: ID
 }
 
 enum AdminActionLogOrderByInput {
@@ -737,8 +266,6 @@ enum AdminActionLogOrderByInput {
   changedFields_DESC
   statementOnly_ASC
   statementOnly_DESC
-  interpretedAt_ASC
-  interpretedAt_DESC
 }
 
 type AdminActionLogPreviousValues {
@@ -750,7 +277,6 @@ type AdminActionLogPreviousValues {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
-  interpretedAt: DateTime
 }
 
 type AdminActionLogSubscriptionPayload {
@@ -806,9 +332,7 @@ input AdminActionLogUpdateInput {
   rowData: Json
   changedFields: Json
   statementOnly: Boolean
-  interpretedAt: DateTime
   activeAdminUser: UserUpdateOneRequiredInput
-  interpretation: AdminActionLogInterpretationUpdateOneWithoutLogInput
 }
 
 input AdminActionLogUpdateManyMutationInput {
@@ -819,31 +343,6 @@ input AdminActionLogUpdateManyMutationInput {
   rowData: Json
   changedFields: Json
   statementOnly: Boolean
-  interpretedAt: DateTime
-}
-
-input AdminActionLogUpdateOneRequiredWithoutInterpretationInput {
-  create: AdminActionLogCreateWithoutInterpretationInput
-  connect: AdminActionLogWhereUniqueInput
-  update: AdminActionLogUpdateWithoutInterpretationDataInput
-  upsert: AdminActionLogUpsertWithoutInterpretationInput
-}
-
-input AdminActionLogUpdateWithoutInterpretationDataInput {
-  entityId: String
-  tableName: String
-  triggeredAt: DateTime
-  action: AdminAction
-  rowData: Json
-  changedFields: Json
-  statementOnly: Boolean
-  interpretedAt: DateTime
-  activeAdminUser: UserUpdateOneRequiredInput
-}
-
-input AdminActionLogUpsertWithoutInterpretationInput {
-  update: AdminActionLogUpdateWithoutInterpretationDataInput!
-  create: AdminActionLogCreateWithoutInterpretationInput!
 }
 
 input AdminActionLogWhereInput {
@@ -1087,44 +586,7 @@ input AdminActionLogWhereInput {
   All values that are not equal to given value.
   """
   statementOnly_not: Boolean
-  interpretedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  interpretedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  interpretedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  interpretedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  interpretedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  interpretedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  interpretedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  interpretedAt_gte: DateTime
   activeAdminUser: UserWhereInput
-  interpretation: AdminActionLogInterpretationWhereInput
 }
 
 input AdminActionLogWhereUniqueInput {
@@ -1136,10 +598,6 @@ type AggregateActiveAdminUser {
 }
 
 type AggregateAdminActionLog {
-  count: Int!
-}
-
-type AggregateAdminActionLogInterpretation {
   count: Int!
 }
 
@@ -19439,9 +18897,6 @@ type Mutation {
   ): ProductVariantWant!
   createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
   createAdminActionLog(data: AdminActionLogCreateInput!): AdminActionLog!
-  createAdminActionLogInterpretation(
-    data: AdminActionLogInterpretationCreateInput!
-  ): AdminActionLogInterpretation!
   createSyncTiming(data: SyncTimingCreateInput!): SyncTiming!
   createLaunch(data: LaunchCreateInput!): Launch!
   createProductSeason(data: ProductSeasonCreateInput!): ProductSeason!
@@ -19612,10 +19067,6 @@ type Mutation {
     data: AdminActionLogUpdateInput!
     where: AdminActionLogWhereUniqueInput!
   ): AdminActionLog
-  updateAdminActionLogInterpretation(
-    data: AdminActionLogInterpretationUpdateInput!
-    where: AdminActionLogInterpretationWhereUniqueInput!
-  ): AdminActionLogInterpretation
   updateSyncTiming(
     data: SyncTimingUpdateInput!
     where: SyncTimingWhereUniqueInput!
@@ -19820,9 +19271,6 @@ type Mutation {
     where: ActiveAdminUserWhereUniqueInput!
   ): ActiveAdminUser
   deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
-  deleteAdminActionLogInterpretation(
-    where: AdminActionLogInterpretationWhereUniqueInput!
-  ): AdminActionLogInterpretation
   deleteSyncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
   deleteLaunch(where: LaunchWhereUniqueInput!): Launch
   deleteProductSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
@@ -20038,11 +19486,6 @@ type Mutation {
     create: AdminActionLogCreateInput!
     update: AdminActionLogUpdateInput!
   ): AdminActionLog!
-  upsertAdminActionLogInterpretation(
-    where: AdminActionLogInterpretationWhereUniqueInput!
-    create: AdminActionLogInterpretationCreateInput!
-    update: AdminActionLogInterpretationUpdateInput!
-  ): AdminActionLogInterpretation!
   upsertSyncTiming(
     where: SyncTimingWhereUniqueInput!
     create: SyncTimingCreateInput!
@@ -20360,10 +19803,6 @@ type Mutation {
     data: AdminActionLogUpdateManyMutationInput!
     where: AdminActionLogWhereInput
   ): BatchPayload!
-  updateManyAdminActionLogInterpretations(
-    data: AdminActionLogInterpretationUpdateManyMutationInput!
-    where: AdminActionLogInterpretationWhereInput
-  ): BatchPayload!
   updateManySyncTimings(
     data: SyncTimingUpdateManyMutationInput!
     where: SyncTimingWhereInput
@@ -20590,9 +20029,6 @@ type Mutation {
   ): BatchPayload!
   deleteManyActiveAdminUsers(where: ActiveAdminUserWhereInput): BatchPayload!
   deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
-  deleteManyAdminActionLogInterpretations(
-    where: AdminActionLogInterpretationWhereInput
-  ): BatchPayload!
   deleteManySyncTimings(where: SyncTimingWhereInput): BatchPayload!
   deleteManyLaunches(where: LaunchWhereInput): BatchPayload!
   deleteManyProductSeasons(where: ProductSeasonWhereInput): BatchPayload!
@@ -38438,15 +37874,6 @@ type Query {
     first: Int
     last: Int
   ): [AdminActionLog]!
-  adminActionLogInterpretations(
-    where: AdminActionLogInterpretationWhereInput
-    orderBy: AdminActionLogInterpretationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [AdminActionLogInterpretation]!
   syncTimings(
     where: SyncTimingWhereInput
     orderBy: SyncTimingOrderByInput
@@ -38878,9 +38305,6 @@ type Query {
   ): ProductVariantWant
   activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
   adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
-  adminActionLogInterpretation(
-    where: AdminActionLogInterpretationWhereUniqueInput!
-  ): AdminActionLogInterpretation
   syncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
   launch(where: LaunchWhereUniqueInput!): Launch
   productSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
@@ -39210,15 +38634,6 @@ type Query {
     first: Int
     last: Int
   ): AdminActionLogConnection!
-  adminActionLogInterpretationsConnection(
-    where: AdminActionLogInterpretationWhereInput
-    orderBy: AdminActionLogInterpretationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): AdminActionLogInterpretationConnection!
   syncTimingsConnection(
     where: SyncTimingWhereInput
     orderBy: SyncTimingOrderByInput
@@ -39969,8 +39384,6 @@ type Reservation implements Node {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   receipt: ReservationReceipt
   lastLocation: Location
   createdAt: DateTime!
@@ -40004,8 +39417,6 @@ input ReservationCreateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
@@ -40048,8 +39459,6 @@ input ReservationCreateWithoutCustomerInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserCreateOneInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
@@ -40071,8 +39480,6 @@ input ReservationCreateWithoutPackageEventsInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
@@ -40094,8 +39501,6 @@ input ReservationCreateWithoutReceiptInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
@@ -40602,10 +40007,6 @@ enum ReservationOrderByInput {
   reminderSentAt_DESC
   statusUpdatedAt_ASC
   statusUpdatedAt_DESC
-  completedAt_ASC
-  completedAt_DESC
-  cancelledAt_ASC
-  cancelledAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -40627,8 +40028,6 @@ type ReservationPreviousValues {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -41736,78 +41135,6 @@ input ReservationScalarWhereInput {
   All values greater than or equal the given value.
   """
   statusUpdatedAt_gte: DateTime
-  completedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  completedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  completedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  completedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  completedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  completedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  completedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  completedAt_gte: DateTime
-  cancelledAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  cancelledAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  cancelledAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  cancelledAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  cancelledAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  cancelledAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  cancelledAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  cancelledAt_gte: DateTime
   createdAt: DateTime
 
   """
@@ -41950,8 +41277,6 @@ input ReservationUpdateDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -41973,8 +41298,6 @@ input ReservationUpdateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -41996,8 +41319,6 @@ input ReservationUpdateManyDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyMutationInput {
@@ -42009,8 +41330,6 @@ input ReservationUpdateManyMutationInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -42062,8 +41381,6 @@ input ReservationUpdateWithoutCustomerDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
@@ -42084,8 +41401,6 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -42106,8 +41421,6 @@ input ReservationUpdateWithoutReceiptDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -42444,78 +41757,6 @@ input ReservationWhereInput {
   All values greater than or equal the given value.
   """
   statusUpdatedAt_gte: DateTime
-  completedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  completedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  completedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  completedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  completedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  completedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  completedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  completedAt_gte: DateTime
-  cancelledAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  cancelledAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  cancelledAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  cancelledAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  cancelledAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  cancelledAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  cancelledAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  cancelledAt_gte: DateTime
   createdAt: DateTime
 
   """
@@ -47143,9 +46384,6 @@ type Subscription {
   adminActionLog(
     where: AdminActionLogSubscriptionWhereInput
   ): AdminActionLogSubscriptionPayload
-  adminActionLogInterpretation(
-    where: AdminActionLogInterpretationSubscriptionWhereInput
-  ): AdminActionLogInterpretationSubscriptionPayload
   syncTiming(
     where: SyncTimingSubscriptionWhereInput
   ): SyncTimingSubscriptionPayload

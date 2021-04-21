@@ -34,7 +34,6 @@ export interface Query {
     productVariantWants: <T = Array<ProductVariantWant | null>>(args: { where?: ProductVariantWantWhereInput | null, orderBy?: ProductVariantWantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     activeAdminUsers: <T = Array<ActiveAdminUser | null>>(args: { where?: ActiveAdminUserWhereInput | null, orderBy?: ActiveAdminUserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     adminActionLogs: <T = Array<AdminActionLog | null>>(args: { where?: AdminActionLogWhereInput | null, orderBy?: AdminActionLogOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    adminActionLogInterpretations: <T = Array<AdminActionLogInterpretation | null>>(args: { where?: AdminActionLogInterpretationWhereInput | null, orderBy?: AdminActionLogInterpretationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     syncTimings: <T = Array<SyncTiming | null>>(args: { where?: SyncTimingWhereInput | null, orderBy?: SyncTimingOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     launches: <T = Array<Launch | null>>(args: { where?: LaunchWhereInput | null, orderBy?: LaunchOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productSeasons: <T = Array<ProductSeason | null>>(args: { where?: ProductSeasonWhereInput | null, orderBy?: ProductSeasonOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -106,7 +105,6 @@ export interface Query {
     productVariantWant: <T = ProductVariantWant | null>(args: { where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     activeAdminUser: <T = ActiveAdminUser | null>(args: { where: ActiveAdminUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     adminActionLog: <T = AdminActionLog | null>(args: { where: AdminActionLogWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    adminActionLogInterpretation: <T = AdminActionLogInterpretation | null>(args: { where: AdminActionLogInterpretationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     syncTiming: <T = SyncTiming | null>(args: { where: SyncTimingWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     launch: <T = Launch | null>(args: { where: LaunchWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productSeason: <T = ProductSeason | null>(args: { where: ProductSeasonWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -178,7 +176,6 @@ export interface Query {
     productVariantWantsConnection: <T = ProductVariantWantConnection>(args: { where?: ProductVariantWantWhereInput | null, orderBy?: ProductVariantWantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     activeAdminUsersConnection: <T = ActiveAdminUserConnection>(args: { where?: ActiveAdminUserWhereInput | null, orderBy?: ActiveAdminUserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     adminActionLogsConnection: <T = AdminActionLogConnection>(args: { where?: AdminActionLogWhereInput | null, orderBy?: AdminActionLogOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    adminActionLogInterpretationsConnection: <T = AdminActionLogInterpretationConnection>(args: { where?: AdminActionLogInterpretationWhereInput | null, orderBy?: AdminActionLogInterpretationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     syncTimingsConnection: <T = SyncTimingConnection>(args: { where?: SyncTimingWhereInput | null, orderBy?: SyncTimingOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     launchesConnection: <T = LaunchConnection>(args: { where?: LaunchWhereInput | null, orderBy?: LaunchOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productSeasonsConnection: <T = ProductSeasonConnection>(args: { where?: ProductSeasonWhereInput | null, orderBy?: ProductSeasonOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -254,7 +251,6 @@ export interface Mutation {
     createProductVariantWant: <T = ProductVariantWant>(args: { data: ProductVariantWantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createActiveAdminUser: <T = ActiveAdminUser>(args: { data: ActiveAdminUserCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createAdminActionLog: <T = AdminActionLog>(args: { data: AdminActionLogCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createAdminActionLogInterpretation: <T = AdminActionLogInterpretation>(args: { data: AdminActionLogInterpretationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSyncTiming: <T = SyncTiming>(args: { data: SyncTimingCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createLaunch: <T = Launch>(args: { data: LaunchCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductSeason: <T = ProductSeason>(args: { data: ProductSeasonCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -326,7 +322,6 @@ export interface Mutation {
     updateProductVariantWant: <T = ProductVariantWant | null>(args: { data: ProductVariantWantUpdateInput, where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateActiveAdminUser: <T = ActiveAdminUser | null>(args: { data: ActiveAdminUserUpdateInput, where: ActiveAdminUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateAdminActionLog: <T = AdminActionLog | null>(args: { data: AdminActionLogUpdateInput, where: AdminActionLogWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateAdminActionLogInterpretation: <T = AdminActionLogInterpretation | null>(args: { data: AdminActionLogInterpretationUpdateInput, where: AdminActionLogInterpretationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSyncTiming: <T = SyncTiming | null>(args: { data: SyncTimingUpdateInput, where: SyncTimingWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateLaunch: <T = Launch | null>(args: { data: LaunchUpdateInput, where: LaunchWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductSeason: <T = ProductSeason | null>(args: { data: ProductSeasonUpdateInput, where: ProductSeasonWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -398,7 +393,6 @@ export interface Mutation {
     deleteProductVariantWant: <T = ProductVariantWant | null>(args: { where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteActiveAdminUser: <T = ActiveAdminUser | null>(args: { where: ActiveAdminUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteAdminActionLog: <T = AdminActionLog | null>(args: { where: AdminActionLogWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteAdminActionLogInterpretation: <T = AdminActionLogInterpretation | null>(args: { where: AdminActionLogInterpretationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSyncTiming: <T = SyncTiming | null>(args: { where: SyncTimingWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteLaunch: <T = Launch | null>(args: { where: LaunchWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductSeason: <T = ProductSeason | null>(args: { where: ProductSeasonWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -470,7 +464,6 @@ export interface Mutation {
     upsertProductVariantWant: <T = ProductVariantWant>(args: { where: ProductVariantWantWhereUniqueInput, create: ProductVariantWantCreateInput, update: ProductVariantWantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertActiveAdminUser: <T = ActiveAdminUser>(args: { where: ActiveAdminUserWhereUniqueInput, create: ActiveAdminUserCreateInput, update: ActiveAdminUserUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertAdminActionLog: <T = AdminActionLog>(args: { where: AdminActionLogWhereUniqueInput, create: AdminActionLogCreateInput, update: AdminActionLogUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertAdminActionLogInterpretation: <T = AdminActionLogInterpretation>(args: { where: AdminActionLogInterpretationWhereUniqueInput, create: AdminActionLogInterpretationCreateInput, update: AdminActionLogInterpretationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSyncTiming: <T = SyncTiming>(args: { where: SyncTimingWhereUniqueInput, create: SyncTimingCreateInput, update: SyncTimingUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertLaunch: <T = Launch>(args: { where: LaunchWhereUniqueInput, create: LaunchCreateInput, update: LaunchUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductSeason: <T = ProductSeason>(args: { where: ProductSeasonWhereUniqueInput, create: ProductSeasonCreateInput, update: ProductSeasonUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -540,7 +533,6 @@ export interface Mutation {
     updateManyProductRequests: <T = BatchPayload>(args: { data: ProductRequestUpdateManyMutationInput, where?: ProductRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductVariantWants: <T = BatchPayload>(args: { data: ProductVariantWantUpdateManyMutationInput, where?: ProductVariantWantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyAdminActionLogs: <T = BatchPayload>(args: { data: AdminActionLogUpdateManyMutationInput, where?: AdminActionLogWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyAdminActionLogInterpretations: <T = BatchPayload>(args: { data: AdminActionLogInterpretationUpdateManyMutationInput, where?: AdminActionLogInterpretationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySyncTimings: <T = BatchPayload>(args: { data: SyncTimingUpdateManyMutationInput, where?: SyncTimingWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyLaunches: <T = BatchPayload>(args: { data: LaunchUpdateManyMutationInput, where?: LaunchWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductSeasons: <T = BatchPayload>(args: { data: ProductSeasonUpdateManyMutationInput, where?: ProductSeasonWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -612,7 +604,6 @@ export interface Mutation {
     deleteManyProductVariantWants: <T = BatchPayload>(args: { where?: ProductVariantWantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyActiveAdminUsers: <T = BatchPayload>(args: { where?: ActiveAdminUserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyAdminActionLogs: <T = BatchPayload>(args: { where?: AdminActionLogWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyAdminActionLogInterpretations: <T = BatchPayload>(args: { where?: AdminActionLogInterpretationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySyncTimings: <T = BatchPayload>(args: { where?: SyncTimingWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyLaunches: <T = BatchPayload>(args: { where?: LaunchWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductSeasons: <T = BatchPayload>(args: { where?: ProductSeasonWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -687,7 +678,6 @@ export interface Subscription {
     productVariantWant: <T = ProductVariantWantSubscriptionPayload | null>(args: { where?: ProductVariantWantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     activeAdminUser: <T = ActiveAdminUserSubscriptionPayload | null>(args: { where?: ActiveAdminUserSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     adminActionLog: <T = AdminActionLogSubscriptionPayload | null>(args: { where?: AdminActionLogSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    adminActionLogInterpretation: <T = AdminActionLogInterpretationSubscriptionPayload | null>(args: { where?: AdminActionLogInterpretationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     syncTiming: <T = SyncTimingSubscriptionPayload | null>(args: { where?: SyncTimingSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     launch: <T = LaunchSubscriptionPayload | null>(args: { where?: LaunchSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productSeason: <T = ProductSeasonSubscriptionPayload | null>(args: { where?: ProductSeasonSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -762,7 +752,6 @@ export interface Exists {
   ProductVariantWant: (where?: ProductVariantWantWhereInput) => Promise<boolean>
   ActiveAdminUser: (where?: ActiveAdminUserWhereInput) => Promise<boolean>
   AdminActionLog: (where?: AdminActionLogWhereInput) => Promise<boolean>
-  AdminActionLogInterpretation: (where?: AdminActionLogInterpretationWhereInput) => Promise<boolean>
   SyncTiming: (where?: SyncTimingWhereInput) => Promise<boolean>
   Launch: (where?: LaunchWhereInput) => Promise<boolean>
   ProductSeason: (where?: ProductSeasonWhereInput) => Promise<boolean>
@@ -980,8 +969,6 @@ type AdminActionLog {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
-  interpretedAt: DateTime
-  interpretation: AdminActionLogInterpretation
 }
 
 """A connection to a list of items."""
@@ -1002,25 +989,6 @@ input AdminActionLogCreateInput {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
-  interpretedAt: DateTime
-  activeAdminUser: UserCreateOneInput!
-  interpretation: AdminActionLogInterpretationCreateOneWithoutLogInput
-}
-
-input AdminActionLogCreateOneWithoutInterpretationInput {
-  create: AdminActionLogCreateWithoutInterpretationInput
-  connect: AdminActionLogWhereUniqueInput
-}
-
-input AdminActionLogCreateWithoutInterpretationInput {
-  entityId: String!
-  tableName: String!
-  triggeredAt: DateTime!
-  action: AdminAction!
-  rowData: Json!
-  changedFields: Json
-  statementOnly: Boolean!
-  interpretedAt: DateTime
   activeAdminUser: UserCreateOneInput!
 }
 
@@ -1031,326 +999,6 @@ type AdminActionLogEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
-}
-
-type AdminActionLogInterpretation implements Node {
-  id: ID!
-  log: AdminActionLog!
-  entityId: String!
-  tableName: String!
-  interpretation: String
-  data: Json
-}
-
-"""A connection to a list of items."""
-type AdminActionLogInterpretationConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [AdminActionLogInterpretationEdge]!
-  aggregate: AggregateAdminActionLogInterpretation!
-}
-
-input AdminActionLogInterpretationCreateInput {
-  id: ID
-  entityId: String!
-  tableName: String!
-  interpretation: String
-  data: Json
-  log: AdminActionLogCreateOneWithoutInterpretationInput!
-}
-
-input AdminActionLogInterpretationCreateOneWithoutLogInput {
-  create: AdminActionLogInterpretationCreateWithoutLogInput
-  connect: AdminActionLogInterpretationWhereUniqueInput
-}
-
-input AdminActionLogInterpretationCreateWithoutLogInput {
-  id: ID
-  entityId: String!
-  tableName: String!
-  interpretation: String
-  data: Json
-}
-
-"""An edge in a connection."""
-type AdminActionLogInterpretationEdge {
-  """The item at the end of the edge."""
-  node: AdminActionLogInterpretation!
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-
-enum AdminActionLogInterpretationOrderByInput {
-  id_ASC
-  id_DESC
-  entityId_ASC
-  entityId_DESC
-  tableName_ASC
-  tableName_DESC
-  interpretation_ASC
-  interpretation_DESC
-  data_ASC
-  data_DESC
-}
-
-type AdminActionLogInterpretationPreviousValues {
-  id: ID!
-  entityId: String!
-  tableName: String!
-  interpretation: String
-  data: Json
-}
-
-type AdminActionLogInterpretationSubscriptionPayload {
-  mutation: MutationType!
-  node: AdminActionLogInterpretation
-  updatedFields: [String!]
-  previousValues: AdminActionLogInterpretationPreviousValues
-}
-
-input AdminActionLogInterpretationSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [AdminActionLogInterpretationSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [AdminActionLogInterpretationSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [AdminActionLogInterpretationSubscriptionWhereInput!]
-
-  """The subscription event gets dispatched when it's listed in mutation_in"""
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: AdminActionLogInterpretationWhereInput
-}
-
-input AdminActionLogInterpretationUpdateInput {
-  entityId: String
-  tableName: String
-  interpretation: String
-  data: Json
-  log: AdminActionLogUpdateOneRequiredWithoutInterpretationInput
-}
-
-input AdminActionLogInterpretationUpdateManyMutationInput {
-  entityId: String
-  tableName: String
-  interpretation: String
-  data: Json
-}
-
-input AdminActionLogInterpretationUpdateOneWithoutLogInput {
-  create: AdminActionLogInterpretationCreateWithoutLogInput
-  connect: AdminActionLogInterpretationWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: AdminActionLogInterpretationUpdateWithoutLogDataInput
-  upsert: AdminActionLogInterpretationUpsertWithoutLogInput
-}
-
-input AdminActionLogInterpretationUpdateWithoutLogDataInput {
-  entityId: String
-  tableName: String
-  interpretation: String
-  data: Json
-}
-
-input AdminActionLogInterpretationUpsertWithoutLogInput {
-  update: AdminActionLogInterpretationUpdateWithoutLogDataInput!
-  create: AdminActionLogInterpretationCreateWithoutLogInput!
-}
-
-input AdminActionLogInterpretationWhereInput {
-  """Logical AND on all given filters."""
-  AND: [AdminActionLogInterpretationWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [AdminActionLogInterpretationWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [AdminActionLogInterpretationWhereInput!]
-  id: ID
-
-  """All values that are not equal to given value."""
-  id_not: ID
-
-  """All values that are contained in given list."""
-  id_in: [ID!]
-
-  """All values that are not contained in given list."""
-  id_not_in: [ID!]
-
-  """All values less than the given value."""
-  id_lt: ID
-
-  """All values less than or equal the given value."""
-  id_lte: ID
-
-  """All values greater than the given value."""
-  id_gt: ID
-
-  """All values greater than or equal the given value."""
-  id_gte: ID
-
-  """All values containing the given string."""
-  id_contains: ID
-
-  """All values not containing the given string."""
-  id_not_contains: ID
-
-  """All values starting with the given string."""
-  id_starts_with: ID
-
-  """All values not starting with the given string."""
-  id_not_starts_with: ID
-
-  """All values ending with the given string."""
-  id_ends_with: ID
-
-  """All values not ending with the given string."""
-  id_not_ends_with: ID
-  entityId: String
-
-  """All values that are not equal to given value."""
-  entityId_not: String
-
-  """All values that are contained in given list."""
-  entityId_in: [String!]
-
-  """All values that are not contained in given list."""
-  entityId_not_in: [String!]
-
-  """All values less than the given value."""
-  entityId_lt: String
-
-  """All values less than or equal the given value."""
-  entityId_lte: String
-
-  """All values greater than the given value."""
-  entityId_gt: String
-
-  """All values greater than or equal the given value."""
-  entityId_gte: String
-
-  """All values containing the given string."""
-  entityId_contains: String
-
-  """All values not containing the given string."""
-  entityId_not_contains: String
-
-  """All values starting with the given string."""
-  entityId_starts_with: String
-
-  """All values not starting with the given string."""
-  entityId_not_starts_with: String
-
-  """All values ending with the given string."""
-  entityId_ends_with: String
-
-  """All values not ending with the given string."""
-  entityId_not_ends_with: String
-  tableName: String
-
-  """All values that are not equal to given value."""
-  tableName_not: String
-
-  """All values that are contained in given list."""
-  tableName_in: [String!]
-
-  """All values that are not contained in given list."""
-  tableName_not_in: [String!]
-
-  """All values less than the given value."""
-  tableName_lt: String
-
-  """All values less than or equal the given value."""
-  tableName_lte: String
-
-  """All values greater than the given value."""
-  tableName_gt: String
-
-  """All values greater than or equal the given value."""
-  tableName_gte: String
-
-  """All values containing the given string."""
-  tableName_contains: String
-
-  """All values not containing the given string."""
-  tableName_not_contains: String
-
-  """All values starting with the given string."""
-  tableName_starts_with: String
-
-  """All values not starting with the given string."""
-  tableName_not_starts_with: String
-
-  """All values ending with the given string."""
-  tableName_ends_with: String
-
-  """All values not ending with the given string."""
-  tableName_not_ends_with: String
-  interpretation: String
-
-  """All values that are not equal to given value."""
-  interpretation_not: String
-
-  """All values that are contained in given list."""
-  interpretation_in: [String!]
-
-  """All values that are not contained in given list."""
-  interpretation_not_in: [String!]
-
-  """All values less than the given value."""
-  interpretation_lt: String
-
-  """All values less than or equal the given value."""
-  interpretation_lte: String
-
-  """All values greater than the given value."""
-  interpretation_gt: String
-
-  """All values greater than or equal the given value."""
-  interpretation_gte: String
-
-  """All values containing the given string."""
-  interpretation_contains: String
-
-  """All values not containing the given string."""
-  interpretation_not_contains: String
-
-  """All values starting with the given string."""
-  interpretation_starts_with: String
-
-  """All values not starting with the given string."""
-  interpretation_not_starts_with: String
-
-  """All values ending with the given string."""
-  interpretation_ends_with: String
-
-  """All values not ending with the given string."""
-  interpretation_not_ends_with: String
-  log: AdminActionLogWhereInput
-}
-
-input AdminActionLogInterpretationWhereUniqueInput {
-  id: ID
 }
 
 enum AdminActionLogOrderByInput {
@@ -1370,8 +1018,6 @@ enum AdminActionLogOrderByInput {
   changedFields_DESC
   statementOnly_ASC
   statementOnly_DESC
-  interpretedAt_ASC
-  interpretedAt_DESC
 }
 
 type AdminActionLogPreviousValues {
@@ -1383,7 +1029,6 @@ type AdminActionLogPreviousValues {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
-  interpretedAt: DateTime
 }
 
 type AdminActionLogSubscriptionPayload {
@@ -1431,9 +1076,7 @@ input AdminActionLogUpdateInput {
   rowData: Json
   changedFields: Json
   statementOnly: Boolean
-  interpretedAt: DateTime
   activeAdminUser: UserUpdateOneRequiredInput
-  interpretation: AdminActionLogInterpretationUpdateOneWithoutLogInput
 }
 
 input AdminActionLogUpdateManyMutationInput {
@@ -1444,31 +1087,6 @@ input AdminActionLogUpdateManyMutationInput {
   rowData: Json
   changedFields: Json
   statementOnly: Boolean
-  interpretedAt: DateTime
-}
-
-input AdminActionLogUpdateOneRequiredWithoutInterpretationInput {
-  create: AdminActionLogCreateWithoutInterpretationInput
-  connect: AdminActionLogWhereUniqueInput
-  update: AdminActionLogUpdateWithoutInterpretationDataInput
-  upsert: AdminActionLogUpsertWithoutInterpretationInput
-}
-
-input AdminActionLogUpdateWithoutInterpretationDataInput {
-  entityId: String
-  tableName: String
-  triggeredAt: DateTime
-  action: AdminAction
-  rowData: Json
-  changedFields: Json
-  statementOnly: Boolean
-  interpretedAt: DateTime
-  activeAdminUser: UserUpdateOneRequiredInput
-}
-
-input AdminActionLogUpsertWithoutInterpretationInput {
-  update: AdminActionLogUpdateWithoutInterpretationDataInput!
-  create: AdminActionLogCreateWithoutInterpretationInput!
 }
 
 input AdminActionLogWhereInput {
@@ -1618,30 +1236,7 @@ input AdminActionLogWhereInput {
 
   """All values that are not equal to given value."""
   statementOnly_not: Boolean
-  interpretedAt: DateTime
-
-  """All values that are not equal to given value."""
-  interpretedAt_not: DateTime
-
-  """All values that are contained in given list."""
-  interpretedAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  interpretedAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  interpretedAt_lt: DateTime
-
-  """All values less than or equal the given value."""
-  interpretedAt_lte: DateTime
-
-  """All values greater than the given value."""
-  interpretedAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  interpretedAt_gte: DateTime
   activeAdminUser: UserWhereInput
-  interpretation: AdminActionLogInterpretationWhereInput
 }
 
 input AdminActionLogWhereUniqueInput {
@@ -1653,10 +1248,6 @@ type AggregateActiveAdminUser {
 }
 
 type AggregateAdminActionLog {
-  count: Int!
-}
-
-type AggregateAdminActionLogInterpretation {
   count: Int!
 }
 
@@ -14556,7 +14147,6 @@ type Mutation {
   createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
   createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
   createAdminActionLog(data: AdminActionLogCreateInput!): AdminActionLog!
-  createAdminActionLogInterpretation(data: AdminActionLogInterpretationCreateInput!): AdminActionLogInterpretation!
   createSyncTiming(data: SyncTimingCreateInput!): SyncTiming!
   createLaunch(data: LaunchCreateInput!): Launch!
   createProductSeason(data: ProductSeasonCreateInput!): ProductSeason!
@@ -14628,7 +14218,6 @@ type Mutation {
   updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   updateActiveAdminUser(data: ActiveAdminUserUpdateInput!, where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
   updateAdminActionLog(data: AdminActionLogUpdateInput!, where: AdminActionLogWhereUniqueInput!): AdminActionLog
-  updateAdminActionLogInterpretation(data: AdminActionLogInterpretationUpdateInput!, where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
   updateSyncTiming(data: SyncTimingUpdateInput!, where: SyncTimingWhereUniqueInput!): SyncTiming
   updateLaunch(data: LaunchUpdateInput!, where: LaunchWhereUniqueInput!): Launch
   updateProductSeason(data: ProductSeasonUpdateInput!, where: ProductSeasonWhereUniqueInput!): ProductSeason
@@ -14700,7 +14289,6 @@ type Mutation {
   deleteProductVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   deleteActiveAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
   deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
-  deleteAdminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
   deleteSyncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
   deleteLaunch(where: LaunchWhereUniqueInput!): Launch
   deleteProductSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
@@ -14772,7 +14360,6 @@ type Mutation {
   upsertProductVariantWant(where: ProductVariantWantWhereUniqueInput!, create: ProductVariantWantCreateInput!, update: ProductVariantWantUpdateInput!): ProductVariantWant!
   upsertActiveAdminUser(where: ActiveAdminUserWhereUniqueInput!, create: ActiveAdminUserCreateInput!, update: ActiveAdminUserUpdateInput!): ActiveAdminUser!
   upsertAdminActionLog(where: AdminActionLogWhereUniqueInput!, create: AdminActionLogCreateInput!, update: AdminActionLogUpdateInput!): AdminActionLog!
-  upsertAdminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!, create: AdminActionLogInterpretationCreateInput!, update: AdminActionLogInterpretationUpdateInput!): AdminActionLogInterpretation!
   upsertSyncTiming(where: SyncTimingWhereUniqueInput!, create: SyncTimingCreateInput!, update: SyncTimingUpdateInput!): SyncTiming!
   upsertLaunch(where: LaunchWhereUniqueInput!, create: LaunchCreateInput!, update: LaunchUpdateInput!): Launch!
   upsertProductSeason(where: ProductSeasonWhereUniqueInput!, create: ProductSeasonCreateInput!, update: ProductSeasonUpdateInput!): ProductSeason!
@@ -14842,7 +14429,6 @@ type Mutation {
   updateManyProductRequests(data: ProductRequestUpdateManyMutationInput!, where: ProductRequestWhereInput): BatchPayload!
   updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
   updateManyAdminActionLogs(data: AdminActionLogUpdateManyMutationInput!, where: AdminActionLogWhereInput): BatchPayload!
-  updateManyAdminActionLogInterpretations(data: AdminActionLogInterpretationUpdateManyMutationInput!, where: AdminActionLogInterpretationWhereInput): BatchPayload!
   updateManySyncTimings(data: SyncTimingUpdateManyMutationInput!, where: SyncTimingWhereInput): BatchPayload!
   updateManyLaunches(data: LaunchUpdateManyMutationInput!, where: LaunchWhereInput): BatchPayload!
   updateManyProductSeasons(data: ProductSeasonUpdateManyMutationInput!, where: ProductSeasonWhereInput): BatchPayload!
@@ -14914,7 +14500,6 @@ type Mutation {
   deleteManyProductVariantWants(where: ProductVariantWantWhereInput): BatchPayload!
   deleteManyActiveAdminUsers(where: ActiveAdminUserWhereInput): BatchPayload!
   deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
-  deleteManyAdminActionLogInterpretations(where: AdminActionLogInterpretationWhereInput): BatchPayload!
   deleteManySyncTimings(where: SyncTimingWhereInput): BatchPayload!
   deleteManyLaunches(where: LaunchWhereInput): BatchPayload!
   deleteManyProductSeasons(where: ProductSeasonWhereInput): BatchPayload!
@@ -27442,7 +27027,6 @@ type Query {
   productVariantWants(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantWant]!
   activeAdminUsers(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ActiveAdminUser]!
   adminActionLogs(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLog]!
-  adminActionLogInterpretations(where: AdminActionLogInterpretationWhereInput, orderBy: AdminActionLogInterpretationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLogInterpretation]!
   syncTimings(where: SyncTimingWhereInput, orderBy: SyncTimingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SyncTiming]!
   launches(where: LaunchWhereInput, orderBy: LaunchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Launch]!
   productSeasons(where: ProductSeasonWhereInput, orderBy: ProductSeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductSeason]!
@@ -27514,7 +27098,6 @@ type Query {
   productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
   adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
-  adminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
   syncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
   launch(where: LaunchWhereUniqueInput!): Launch
   productSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
@@ -27586,7 +27169,6 @@ type Query {
   productVariantWantsConnection(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantWantConnection!
   activeAdminUsersConnection(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ActiveAdminUserConnection!
   adminActionLogsConnection(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogConnection!
-  adminActionLogInterpretationsConnection(where: AdminActionLogInterpretationWhereInput, orderBy: AdminActionLogInterpretationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogInterpretationConnection!
   syncTimingsConnection(where: SyncTimingWhereInput, orderBy: SyncTimingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SyncTimingConnection!
   launchesConnection(where: LaunchWhereInput, orderBy: LaunchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LaunchConnection!
   productSeasonsConnection(where: ProductSeasonWhereInput, orderBy: ProductSeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductSeasonConnection!
@@ -27887,8 +27469,6 @@ type Reservation implements Node {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   receipt: ReservationReceipt
   lastLocation: Location
   createdAt: DateTime!
@@ -27916,8 +27496,6 @@ input ReservationCreateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
@@ -27960,8 +27538,6 @@ input ReservationCreateWithoutCustomerInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserCreateOneInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
@@ -27983,8 +27559,6 @@ input ReservationCreateWithoutPackageEventsInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
@@ -28006,8 +27580,6 @@ input ReservationCreateWithoutReceiptInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
@@ -28374,10 +27946,6 @@ enum ReservationOrderByInput {
   reminderSentAt_DESC
   statusUpdatedAt_ASC
   statusUpdatedAt_DESC
-  completedAt_ASC
-  completedAt_DESC
-  cancelledAt_ASC
-  cancelledAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -28399,8 +27967,6 @@ type ReservationPreviousValues {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -29156,50 +28722,6 @@ input ReservationScalarWhereInput {
 
   """All values greater than or equal the given value."""
   statusUpdatedAt_gte: DateTime
-  completedAt: DateTime
-
-  """All values that are not equal to given value."""
-  completedAt_not: DateTime
-
-  """All values that are contained in given list."""
-  completedAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  completedAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  completedAt_lt: DateTime
-
-  """All values less than or equal the given value."""
-  completedAt_lte: DateTime
-
-  """All values greater than the given value."""
-  completedAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  completedAt_gte: DateTime
-  cancelledAt: DateTime
-
-  """All values that are not equal to given value."""
-  cancelledAt_not: DateTime
-
-  """All values that are contained in given list."""
-  cancelledAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  cancelledAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  cancelledAt_lt: DateTime
-
-  """All values less than or equal the given value."""
-  cancelledAt_lte: DateTime
-
-  """All values greater than the given value."""
-  cancelledAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  cancelledAt_gte: DateTime
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -29306,8 +28828,6 @@ input ReservationUpdateDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -29329,8 +28849,6 @@ input ReservationUpdateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -29352,8 +28870,6 @@ input ReservationUpdateManyDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyMutationInput {
@@ -29365,8 +28881,6 @@ input ReservationUpdateManyMutationInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -29418,8 +28932,6 @@ input ReservationUpdateWithoutCustomerDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
@@ -29440,8 +28952,6 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -29462,8 +28972,6 @@ input ReservationUpdateWithoutReceiptDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -29684,50 +29192,6 @@ input ReservationWhereInput {
 
   """All values greater than or equal the given value."""
   statusUpdatedAt_gte: DateTime
-  completedAt: DateTime
-
-  """All values that are not equal to given value."""
-  completedAt_not: DateTime
-
-  """All values that are contained in given list."""
-  completedAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  completedAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  completedAt_lt: DateTime
-
-  """All values less than or equal the given value."""
-  completedAt_lte: DateTime
-
-  """All values greater than the given value."""
-  completedAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  completedAt_gte: DateTime
-  cancelledAt: DateTime
-
-  """All values that are not equal to given value."""
-  cancelledAt_not: DateTime
-
-  """All values that are contained in given list."""
-  cancelledAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  cancelledAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  cancelledAt_lt: DateTime
-
-  """All values less than or equal the given value."""
-  cancelledAt_lte: DateTime
-
-  """All values greater than the given value."""
-  cancelledAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  cancelledAt_gte: DateTime
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -32971,7 +32435,6 @@ type Subscription {
   productVariantWant(where: ProductVariantWantSubscriptionWhereInput): ProductVariantWantSubscriptionPayload
   activeAdminUser(where: ActiveAdminUserSubscriptionWhereInput): ActiveAdminUserSubscriptionPayload
   adminActionLog(where: AdminActionLogSubscriptionWhereInput): AdminActionLogSubscriptionPayload
-  adminActionLogInterpretation(where: AdminActionLogInterpretationSubscriptionWhereInput): AdminActionLogInterpretationSubscriptionPayload
   syncTiming(where: SyncTimingSubscriptionWhereInput): SyncTimingSubscriptionPayload
   launch(where: LaunchSubscriptionWhereInput): LaunchSubscriptionPayload
   productSeason(where: ProductSeasonSubscriptionWhereInput): ProductSeasonSubscriptionPayload
@@ -37446,17 +36909,6 @@ export type AdminAction =   'Insert' |
   'Update' |
   'Truncate'
 
-export type AdminActionLogInterpretationOrderByInput =   'id_ASC' |
-  'id_DESC' |
-  'entityId_ASC' |
-  'entityId_DESC' |
-  'tableName_ASC' |
-  'tableName_DESC' |
-  'interpretation_ASC' |
-  'interpretation_DESC' |
-  'data_ASC' |
-  'data_DESC'
-
 export type AdminActionLogOrderByInput =   'actionId_ASC' |
   'actionId_DESC' |
   'entityId_ASC' |
@@ -37472,9 +36924,7 @@ export type AdminActionLogOrderByInput =   'actionId_ASC' |
   'changedFields_ASC' |
   'changedFields_DESC' |
   'statementOnly_ASC' |
-  'statementOnly_DESC' |
-  'interpretedAt_ASC' |
-  'interpretedAt_DESC'
+  'statementOnly_DESC'
 
 export type BagItemOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -38524,10 +37974,6 @@ export type ReservationOrderByInput =   'id_ASC' |
   'reminderSentAt_DESC' |
   'statusUpdatedAt_ASC' |
   'statusUpdatedAt_DESC' |
-  'completedAt_ASC' |
-  'completedAt_DESC' |
-  'cancelledAt_ASC' |
-  'cancelledAt_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -38877,162 +38323,7 @@ export interface AdminActionLogCreateInput {
   rowData: Json
   changedFields?: Json | null
   statementOnly: Boolean
-  interpretedAt?: DateTime | null
   activeAdminUser: UserCreateOneInput
-  interpretation?: AdminActionLogInterpretationCreateOneWithoutLogInput | null
-}
-
-export interface AdminActionLogCreateOneWithoutInterpretationInput {
-  create?: AdminActionLogCreateWithoutInterpretationInput | null
-  connect?: AdminActionLogWhereUniqueInput | null
-}
-
-export interface AdminActionLogCreateWithoutInterpretationInput {
-  entityId: String
-  tableName: String
-  triggeredAt: DateTime
-  action: AdminAction
-  rowData: Json
-  changedFields?: Json | null
-  statementOnly: Boolean
-  interpretedAt?: DateTime | null
-  activeAdminUser: UserCreateOneInput
-}
-
-export interface AdminActionLogInterpretationCreateInput {
-  id?: ID_Input | null
-  entityId: String
-  tableName: String
-  interpretation?: String | null
-  data?: Json | null
-  log: AdminActionLogCreateOneWithoutInterpretationInput
-}
-
-export interface AdminActionLogInterpretationCreateOneWithoutLogInput {
-  create?: AdminActionLogInterpretationCreateWithoutLogInput | null
-  connect?: AdminActionLogInterpretationWhereUniqueInput | null
-}
-
-export interface AdminActionLogInterpretationCreateWithoutLogInput {
-  id?: ID_Input | null
-  entityId: String
-  tableName: String
-  interpretation?: String | null
-  data?: Json | null
-}
-
-export interface AdminActionLogInterpretationSubscriptionWhereInput {
-  AND?: AdminActionLogInterpretationSubscriptionWhereInput[] | AdminActionLogInterpretationSubscriptionWhereInput | null
-  OR?: AdminActionLogInterpretationSubscriptionWhereInput[] | AdminActionLogInterpretationSubscriptionWhereInput | null
-  NOT?: AdminActionLogInterpretationSubscriptionWhereInput[] | AdminActionLogInterpretationSubscriptionWhereInput | null
-  mutation_in?: MutationType[] | MutationType | null
-  updatedFields_contains?: String | null
-  updatedFields_contains_every?: String[] | String | null
-  updatedFields_contains_some?: String[] | String | null
-  node?: AdminActionLogInterpretationWhereInput | null
-}
-
-export interface AdminActionLogInterpretationUpdateInput {
-  entityId?: String | null
-  tableName?: String | null
-  interpretation?: String | null
-  data?: Json | null
-  log?: AdminActionLogUpdateOneRequiredWithoutInterpretationInput | null
-}
-
-export interface AdminActionLogInterpretationUpdateManyMutationInput {
-  entityId?: String | null
-  tableName?: String | null
-  interpretation?: String | null
-  data?: Json | null
-}
-
-export interface AdminActionLogInterpretationUpdateOneWithoutLogInput {
-  create?: AdminActionLogInterpretationCreateWithoutLogInput | null
-  connect?: AdminActionLogInterpretationWhereUniqueInput | null
-  disconnect?: Boolean | null
-  delete?: Boolean | null
-  update?: AdminActionLogInterpretationUpdateWithoutLogDataInput | null
-  upsert?: AdminActionLogInterpretationUpsertWithoutLogInput | null
-}
-
-export interface AdminActionLogInterpretationUpdateWithoutLogDataInput {
-  entityId?: String | null
-  tableName?: String | null
-  interpretation?: String | null
-  data?: Json | null
-}
-
-export interface AdminActionLogInterpretationUpsertWithoutLogInput {
-  update: AdminActionLogInterpretationUpdateWithoutLogDataInput
-  create: AdminActionLogInterpretationCreateWithoutLogInput
-}
-
-export interface AdminActionLogInterpretationWhereInput {
-  AND?: AdminActionLogInterpretationWhereInput[] | AdminActionLogInterpretationWhereInput | null
-  OR?: AdminActionLogInterpretationWhereInput[] | AdminActionLogInterpretationWhereInput | null
-  NOT?: AdminActionLogInterpretationWhereInput[] | AdminActionLogInterpretationWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  entityId?: String | null
-  entityId_not?: String | null
-  entityId_in?: String[] | String | null
-  entityId_not_in?: String[] | String | null
-  entityId_lt?: String | null
-  entityId_lte?: String | null
-  entityId_gt?: String | null
-  entityId_gte?: String | null
-  entityId_contains?: String | null
-  entityId_not_contains?: String | null
-  entityId_starts_with?: String | null
-  entityId_not_starts_with?: String | null
-  entityId_ends_with?: String | null
-  entityId_not_ends_with?: String | null
-  tableName?: String | null
-  tableName_not?: String | null
-  tableName_in?: String[] | String | null
-  tableName_not_in?: String[] | String | null
-  tableName_lt?: String | null
-  tableName_lte?: String | null
-  tableName_gt?: String | null
-  tableName_gte?: String | null
-  tableName_contains?: String | null
-  tableName_not_contains?: String | null
-  tableName_starts_with?: String | null
-  tableName_not_starts_with?: String | null
-  tableName_ends_with?: String | null
-  tableName_not_ends_with?: String | null
-  interpretation?: String | null
-  interpretation_not?: String | null
-  interpretation_in?: String[] | String | null
-  interpretation_not_in?: String[] | String | null
-  interpretation_lt?: String | null
-  interpretation_lte?: String | null
-  interpretation_gt?: String | null
-  interpretation_gte?: String | null
-  interpretation_contains?: String | null
-  interpretation_not_contains?: String | null
-  interpretation_starts_with?: String | null
-  interpretation_not_starts_with?: String | null
-  interpretation_ends_with?: String | null
-  interpretation_not_ends_with?: String | null
-  log?: AdminActionLogWhereInput | null
-}
-
-export interface AdminActionLogInterpretationWhereUniqueInput {
-  id?: ID_Input | null
 }
 
 export interface AdminActionLogSubscriptionWhereInput {
@@ -39054,9 +38345,7 @@ export interface AdminActionLogUpdateInput {
   rowData?: Json | null
   changedFields?: Json | null
   statementOnly?: Boolean | null
-  interpretedAt?: DateTime | null
   activeAdminUser?: UserUpdateOneRequiredInput | null
-  interpretation?: AdminActionLogInterpretationUpdateOneWithoutLogInput | null
 }
 
 export interface AdminActionLogUpdateManyMutationInput {
@@ -39067,31 +38356,6 @@ export interface AdminActionLogUpdateManyMutationInput {
   rowData?: Json | null
   changedFields?: Json | null
   statementOnly?: Boolean | null
-  interpretedAt?: DateTime | null
-}
-
-export interface AdminActionLogUpdateOneRequiredWithoutInterpretationInput {
-  create?: AdminActionLogCreateWithoutInterpretationInput | null
-  connect?: AdminActionLogWhereUniqueInput | null
-  update?: AdminActionLogUpdateWithoutInterpretationDataInput | null
-  upsert?: AdminActionLogUpsertWithoutInterpretationInput | null
-}
-
-export interface AdminActionLogUpdateWithoutInterpretationDataInput {
-  entityId?: String | null
-  tableName?: String | null
-  triggeredAt?: DateTime | null
-  action?: AdminAction | null
-  rowData?: Json | null
-  changedFields?: Json | null
-  statementOnly?: Boolean | null
-  interpretedAt?: DateTime | null
-  activeAdminUser?: UserUpdateOneRequiredInput | null
-}
-
-export interface AdminActionLogUpsertWithoutInterpretationInput {
-  update: AdminActionLogUpdateWithoutInterpretationDataInput
-  create: AdminActionLogCreateWithoutInterpretationInput
 }
 
 export interface AdminActionLogWhereInput {
@@ -39148,16 +38412,7 @@ export interface AdminActionLogWhereInput {
   action_not_in?: AdminAction[] | AdminAction | null
   statementOnly?: Boolean | null
   statementOnly_not?: Boolean | null
-  interpretedAt?: DateTime | null
-  interpretedAt_not?: DateTime | null
-  interpretedAt_in?: DateTime[] | DateTime | null
-  interpretedAt_not_in?: DateTime[] | DateTime | null
-  interpretedAt_lt?: DateTime | null
-  interpretedAt_lte?: DateTime | null
-  interpretedAt_gt?: DateTime | null
-  interpretedAt_gte?: DateTime | null
   activeAdminUser?: UserWhereInput | null
-  interpretation?: AdminActionLogInterpretationWhereInput | null
 }
 
 export interface AdminActionLogWhereUniqueInput {
@@ -50722,8 +49977,6 @@ export interface ReservationCreateInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
-  completedAt?: DateTime | null
-  cancelledAt?: DateTime | null
   user: UserCreateOneInput
   customer: CustomerCreateOneWithoutReservationsInput
   sentPackage?: PackageCreateOneInput | null
@@ -50766,8 +50019,6 @@ export interface ReservationCreateWithoutCustomerInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
-  completedAt?: DateTime | null
-  cancelledAt?: DateTime | null
   user: UserCreateOneInput
   sentPackage?: PackageCreateOneInput | null
   returnedPackage?: PackageCreateOneInput | null
@@ -50789,8 +50040,6 @@ export interface ReservationCreateWithoutPackageEventsInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
-  completedAt?: DateTime | null
-  cancelledAt?: DateTime | null
   user: UserCreateOneInput
   customer: CustomerCreateOneWithoutReservationsInput
   sentPackage?: PackageCreateOneInput | null
@@ -50812,8 +50061,6 @@ export interface ReservationCreateWithoutReceiptInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
-  completedAt?: DateTime | null
-  cancelledAt?: DateTime | null
   user: UserCreateOneInput
   customer: CustomerCreateOneWithoutReservationsInput
   sentPackage?: PackageCreateOneInput | null
@@ -51282,22 +50529,6 @@ export interface ReservationScalarWhereInput {
   statusUpdatedAt_lte?: DateTime | null
   statusUpdatedAt_gt?: DateTime | null
   statusUpdatedAt_gte?: DateTime | null
-  completedAt?: DateTime | null
-  completedAt_not?: DateTime | null
-  completedAt_in?: DateTime[] | DateTime | null
-  completedAt_not_in?: DateTime[] | DateTime | null
-  completedAt_lt?: DateTime | null
-  completedAt_lte?: DateTime | null
-  completedAt_gt?: DateTime | null
-  completedAt_gte?: DateTime | null
-  cancelledAt?: DateTime | null
-  cancelledAt_not?: DateTime | null
-  cancelledAt_in?: DateTime[] | DateTime | null
-  cancelledAt_not_in?: DateTime[] | DateTime | null
-  cancelledAt_lt?: DateTime | null
-  cancelledAt_lte?: DateTime | null
-  cancelledAt_gt?: DateTime | null
-  cancelledAt_gte?: DateTime | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -51336,8 +50567,6 @@ export interface ReservationUpdateDataInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
-  completedAt?: DateTime | null
-  cancelledAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
   sentPackage?: PackageUpdateOneInput | null
@@ -51359,8 +50588,6 @@ export interface ReservationUpdateInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
-  completedAt?: DateTime | null
-  cancelledAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
   sentPackage?: PackageUpdateOneInput | null
@@ -51382,8 +50609,6 @@ export interface ReservationUpdateManyDataInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
-  completedAt?: DateTime | null
-  cancelledAt?: DateTime | null
 }
 
 export interface ReservationUpdateManyMutationInput {
@@ -51395,8 +50620,6 @@ export interface ReservationUpdateManyMutationInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
-  completedAt?: DateTime | null
-  cancelledAt?: DateTime | null
 }
 
 export interface ReservationUpdateManyWithoutCustomerInput {
@@ -51448,8 +50671,6 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
-  completedAt?: DateTime | null
-  cancelledAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   sentPackage?: PackageUpdateOneInput | null
   returnedPackage?: PackageUpdateOneInput | null
@@ -51470,8 +50691,6 @@ export interface ReservationUpdateWithoutPackageEventsDataInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
-  completedAt?: DateTime | null
-  cancelledAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
   sentPackage?: PackageUpdateOneInput | null
@@ -51492,8 +50711,6 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
-  completedAt?: DateTime | null
-  cancelledAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
   sentPackage?: PackageUpdateOneInput | null
@@ -51599,22 +50816,6 @@ export interface ReservationWhereInput {
   statusUpdatedAt_lte?: DateTime | null
   statusUpdatedAt_gt?: DateTime | null
   statusUpdatedAt_gte?: DateTime | null
-  completedAt?: DateTime | null
-  completedAt_not?: DateTime | null
-  completedAt_in?: DateTime[] | DateTime | null
-  completedAt_not_in?: DateTime[] | DateTime | null
-  completedAt_lt?: DateTime | null
-  completedAt_lte?: DateTime | null
-  completedAt_gt?: DateTime | null
-  completedAt_gte?: DateTime | null
-  cancelledAt?: DateTime | null
-  cancelledAt_not?: DateTime | null
-  cancelledAt_in?: DateTime[] | DateTime | null
-  cancelledAt_not_in?: DateTime[] | DateTime | null
-  cancelledAt_lt?: DateTime | null
-  cancelledAt_lte?: DateTime | null
-  cancelledAt_gt?: DateTime | null
-  cancelledAt_gte?: DateTime | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -55054,8 +54255,6 @@ export interface AdminActionLog {
   rowData: Json
   changedFields?: Json | null
   statementOnly: Boolean
-  interpretedAt?: DateTime | null
-  interpretation?: AdminActionLogInterpretation | null
 }
 
 /*
@@ -55077,49 +54276,6 @@ export interface AdminActionLogEdge {
   cursor: String
 }
 
-export interface AdminActionLogInterpretation extends Node {
-  id: ID_Output
-  log: AdminActionLog
-  entityId: String
-  tableName: String
-  interpretation?: String | null
-  data?: Json | null
-}
-
-/*
- * A connection to a list of items.
-
- */
-export interface AdminActionLogInterpretationConnection {
-  pageInfo: PageInfo
-  edges: Array<AdminActionLogInterpretationEdge | null>
-  aggregate: AggregateAdminActionLogInterpretation
-}
-
-/*
- * An edge in a connection.
-
- */
-export interface AdminActionLogInterpretationEdge {
-  node: AdminActionLogInterpretation
-  cursor: String
-}
-
-export interface AdminActionLogInterpretationPreviousValues {
-  id: ID_Output
-  entityId: String
-  tableName: String
-  interpretation?: String | null
-  data?: Json | null
-}
-
-export interface AdminActionLogInterpretationSubscriptionPayload {
-  mutation: MutationType
-  node?: AdminActionLogInterpretation | null
-  updatedFields?: Array<String> | null
-  previousValues?: AdminActionLogInterpretationPreviousValues | null
-}
-
 export interface AdminActionLogPreviousValues {
   actionId: Int
   entityId: String
@@ -55129,7 +54285,6 @@ export interface AdminActionLogPreviousValues {
   rowData: Json
   changedFields?: Json | null
   statementOnly: Boolean
-  interpretedAt?: DateTime | null
 }
 
 export interface AdminActionLogSubscriptionPayload {
@@ -55144,10 +54299,6 @@ export interface AggregateActiveAdminUser {
 }
 
 export interface AggregateAdminActionLog {
-  count: Int
-}
-
-export interface AggregateAdminActionLogInterpretation {
   count: Int
 }
 
@@ -57818,8 +56969,6 @@ export interface Reservation extends Node {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
-  completedAt?: DateTime | null
-  cancelledAt?: DateTime | null
   receipt?: ReservationReceipt | null
   lastLocation?: Location | null
   createdAt: DateTime
@@ -57903,8 +57052,6 @@ export interface ReservationPreviousValues {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   statusUpdatedAt?: DateTime | null
-  completedAt?: DateTime | null
-  cancelledAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
 }
