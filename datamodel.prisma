@@ -318,7 +318,7 @@ type Brand {
   websiteUrl: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  externalShopifyIntegration: ExternalShopifyIntegration
+  shopifyShop: ShopifyShop
 }
 type Category {
   id: ID! @id
@@ -484,7 +484,7 @@ type ProductVariantPrice {
   retailPrice: Float
 }
 
-type ExternalShopifyIntegration {
+type ShopifyShop {
   id: ID! @id
   shopName: String! @unique
   enabled: Boolean!
@@ -508,7 +508,7 @@ type ShopifyProductVariant {
     @relation(name: "ShopifyProductVariantToVariantSelectedOption")
   productVariant: ProductVariant
     @relation(name: "ShopifyProductVariantToVariant", link: INLINE)
-  shop: ExternalShopifyIntegration
+  shop: ShopifyShop
   brand: Brand
   title: String
   image: Image

@@ -568,10 +568,6 @@ type AggregateEmailReceipt {
   count: Int!
 }
 
-type AggregateExternalShopifyIntegration {
-  count: Int!
-}
-
 type AggregateFitPic {
   count: Int!
 }
@@ -729,6 +725,10 @@ type AggregateShopifyProductVariant {
 }
 
 type AggregateShopifyProductVariantSelectedOption {
+  count: Int!
+}
+
+type AggregateShopifyShop {
   count: Int!
 }
 
@@ -2010,7 +2010,7 @@ type Brand {
   websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
-  externalShopifyIntegration: ExternalShopifyIntegration
+  shopifyShop: ShopifyShop
 }
 
 type BrandConnection {
@@ -2037,7 +2037,7 @@ input BrandCreateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
+  shopifyShop: ShopifyShopCreateOneInput
 }
 
 input BrandCreateOneInput {
@@ -2067,7 +2067,7 @@ input BrandCreateWithoutProductsInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
+  shopifyShop: ShopifyShopCreateOneInput
 }
 
 type BrandEdge {
@@ -2176,7 +2176,7 @@ input BrandUpdateDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
 }
 
 input BrandUpdateInput {
@@ -2196,7 +2196,7 @@ input BrandUpdateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
 }
 
 input BrandUpdateManyMutationInput {
@@ -2247,7 +2247,7 @@ input BrandUpdateWithoutProductsDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
 }
 
 input BrandUpsertNestedInput {
@@ -2414,7 +2414,7 @@ input BrandWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  externalShopifyIntegration: ExternalShopifyIntegrationWhereInput
+  shopifyShop: ShopifyShopWhereInput
   AND: [BrandWhereInput!]
   OR: [BrandWhereInput!]
   NOT: [BrandWhereInput!]
@@ -5918,197 +5918,6 @@ input EmailReceiptWhereUniqueInput {
   id: ID
 }
 
-type ExternalShopifyIntegration {
-  id: ID!
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: [String!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type ExternalShopifyIntegrationConnection {
-  pageInfo: PageInfo!
-  edges: [ExternalShopifyIntegrationEdge]!
-  aggregate: AggregateExternalShopifyIntegration!
-}
-
-input ExternalShopifyIntegrationCreateInput {
-  id: ID
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: ExternalShopifyIntegrationCreatescopeInput
-}
-
-input ExternalShopifyIntegrationCreateOneInput {
-  create: ExternalShopifyIntegrationCreateInput
-  connect: ExternalShopifyIntegrationWhereUniqueInput
-}
-
-input ExternalShopifyIntegrationCreatescopeInput {
-  set: [String!]
-}
-
-type ExternalShopifyIntegrationEdge {
-  node: ExternalShopifyIntegration!
-  cursor: String!
-}
-
-enum ExternalShopifyIntegrationOrderByInput {
-  id_ASC
-  id_DESC
-  shopName_ASC
-  shopName_DESC
-  enabled_ASC
-  enabled_DESC
-  accessToken_ASC
-  accessToken_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type ExternalShopifyIntegrationPreviousValues {
-  id: ID!
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: [String!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type ExternalShopifyIntegrationSubscriptionPayload {
-  mutation: MutationType!
-  node: ExternalShopifyIntegration
-  updatedFields: [String!]
-  previousValues: ExternalShopifyIntegrationPreviousValues
-}
-
-input ExternalShopifyIntegrationSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: ExternalShopifyIntegrationWhereInput
-  AND: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-  OR: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-  NOT: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-}
-
-input ExternalShopifyIntegrationUpdateDataInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateManyMutationInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateOneInput {
-  create: ExternalShopifyIntegrationCreateInput
-  update: ExternalShopifyIntegrationUpdateDataInput
-  upsert: ExternalShopifyIntegrationUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: ExternalShopifyIntegrationWhereUniqueInput
-}
-
-input ExternalShopifyIntegrationUpdatescopeInput {
-  set: [String!]
-}
-
-input ExternalShopifyIntegrationUpsertNestedInput {
-  update: ExternalShopifyIntegrationUpdateDataInput!
-  create: ExternalShopifyIntegrationCreateInput!
-}
-
-input ExternalShopifyIntegrationWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  shopName: String
-  shopName_not: String
-  shopName_in: [String!]
-  shopName_not_in: [String!]
-  shopName_lt: String
-  shopName_lte: String
-  shopName_gt: String
-  shopName_gte: String
-  shopName_contains: String
-  shopName_not_contains: String
-  shopName_starts_with: String
-  shopName_not_starts_with: String
-  shopName_ends_with: String
-  shopName_not_ends_with: String
-  enabled: Boolean
-  enabled_not: Boolean
-  accessToken: String
-  accessToken_not: String
-  accessToken_in: [String!]
-  accessToken_not_in: [String!]
-  accessToken_lt: String
-  accessToken_lte: String
-  accessToken_gt: String
-  accessToken_gte: String
-  accessToken_contains: String
-  accessToken_not_contains: String
-  accessToken_starts_with: String
-  accessToken_not_starts_with: String
-  accessToken_ends_with: String
-  accessToken_not_ends_with: String
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  AND: [ExternalShopifyIntegrationWhereInput!]
-  OR: [ExternalShopifyIntegrationWhereInput!]
-  NOT: [ExternalShopifyIntegrationWhereInput!]
-}
-
-input ExternalShopifyIntegrationWhereUniqueInput {
-  id: ID
-  shopName: String
-}
-
 type FitPic {
   id: ID!
   image: Image!
@@ -8136,12 +7945,6 @@ type Mutation {
   upsertEmailReceipt(where: EmailReceiptWhereUniqueInput!, create: EmailReceiptCreateInput!, update: EmailReceiptUpdateInput!): EmailReceipt!
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
-  createExternalShopifyIntegration(data: ExternalShopifyIntegrationCreateInput!): ExternalShopifyIntegration!
-  updateExternalShopifyIntegration(data: ExternalShopifyIntegrationUpdateInput!, where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
-  updateManyExternalShopifyIntegrations(data: ExternalShopifyIntegrationUpdateManyMutationInput!, where: ExternalShopifyIntegrationWhereInput): BatchPayload!
-  upsertExternalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!, create: ExternalShopifyIntegrationCreateInput!, update: ExternalShopifyIntegrationUpdateInput!): ExternalShopifyIntegration!
-  deleteExternalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
-  deleteManyExternalShopifyIntegrations(where: ExternalShopifyIntegrationWhereInput): BatchPayload!
   createFitPic(data: FitPicCreateInput!): FitPic!
   updateFitPic(data: FitPicUpdateInput!, where: FitPicWhereUniqueInput!): FitPic
   updateManyFitPics(data: FitPicUpdateManyMutationInput!, where: FitPicWhereInput): BatchPayload!
@@ -8381,6 +8184,12 @@ type Mutation {
   upsertShopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionWhereUniqueInput!, create: ShopifyProductVariantSelectedOptionCreateInput!, update: ShopifyProductVariantSelectedOptionUpdateInput!): ShopifyProductVariantSelectedOption!
   deleteShopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionWhereUniqueInput!): ShopifyProductVariantSelectedOption
   deleteManyShopifyProductVariantSelectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput): BatchPayload!
+  createShopifyShop(data: ShopifyShopCreateInput!): ShopifyShop!
+  updateShopifyShop(data: ShopifyShopUpdateInput!, where: ShopifyShopWhereUniqueInput!): ShopifyShop
+  updateManyShopifyShops(data: ShopifyShopUpdateManyMutationInput!, where: ShopifyShopWhereInput): BatchPayload!
+  upsertShopifyShop(where: ShopifyShopWhereUniqueInput!, create: ShopifyShopCreateInput!, update: ShopifyShopUpdateInput!): ShopifyShop!
+  deleteShopifyShop(where: ShopifyShopWhereUniqueInput!): ShopifyShop
+  deleteManyShopifyShops(where: ShopifyShopWhereInput): BatchPayload!
   createSize(data: SizeCreateInput!): Size!
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
@@ -15898,9 +15707,6 @@ type Query {
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
-  externalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
-  externalShopifyIntegrations(where: ExternalShopifyIntegrationWhereInput, orderBy: ExternalShopifyIntegrationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExternalShopifyIntegration]!
-  externalShopifyIntegrationsConnection(where: ExternalShopifyIntegrationWhereInput, orderBy: ExternalShopifyIntegrationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExternalShopifyIntegrationConnection!
   fitPic(where: FitPicWhereUniqueInput!): FitPic
   fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic]!
   fitPicsConnection(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicConnection!
@@ -16021,6 +15827,9 @@ type Query {
   shopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionWhereUniqueInput!): ShopifyProductVariantSelectedOption
   shopifyProductVariantSelectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariantSelectedOption]!
   shopifyProductVariantSelectedOptionsConnection(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShopifyProductVariantSelectedOptionConnection!
+  shopifyShop(where: ShopifyShopWhereUniqueInput!): ShopifyShop
+  shopifyShops(where: ShopifyShopWhereInput, orderBy: ShopifyShopOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyShop]!
+  shopifyShopsConnection(where: ShopifyShopWhereInput, orderBy: ShopifyShopOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShopifyShopConnection!
   size(where: SizeWhereUniqueInput!): Size
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
@@ -17965,7 +17774,7 @@ type ShopifyProductVariant {
   displayName: String
   selectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariantSelectedOption!]
   productVariant: ProductVariant
-  shop: ExternalShopifyIntegration
+  shop: ShopifyShop
   brand: Brand
   title: String
   image: Image
@@ -17986,7 +17795,7 @@ input ShopifyProductVariantCreateInput {
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
   productVariant: ProductVariantCreateOneWithoutShopifyProductVariantInput
-  shop: ExternalShopifyIntegrationCreateOneInput
+  shop: ShopifyShopCreateOneInput
   brand: BrandCreateOneInput
   title: String
   image: ImageCreateOneInput
@@ -18005,7 +17814,7 @@ input ShopifyProductVariantCreateWithoutProductVariantInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
-  shop: ExternalShopifyIntegrationCreateOneInput
+  shop: ShopifyShopCreateOneInput
   brand: BrandCreateOneInput
   title: String
   image: ImageCreateOneInput
@@ -18278,7 +18087,7 @@ input ShopifyProductVariantUpdateInput {
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
   productVariant: ProductVariantUpdateOneWithoutShopifyProductVariantInput
-  shop: ExternalShopifyIntegrationUpdateOneInput
+  shop: ShopifyShopUpdateOneInput
   brand: BrandUpdateOneInput
   title: String
   image: ImageUpdateOneInput
@@ -18309,7 +18118,7 @@ input ShopifyProductVariantUpdateWithoutProductVariantDataInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
-  shop: ExternalShopifyIntegrationUpdateOneInput
+  shop: ShopifyShopUpdateOneInput
   brand: BrandUpdateOneInput
   title: String
   image: ImageUpdateOneInput
@@ -18370,7 +18179,7 @@ input ShopifyProductVariantWhereInput {
   selectedOptions_some: ShopifyProductVariantSelectedOptionWhereInput
   selectedOptions_none: ShopifyProductVariantSelectedOptionWhereInput
   productVariant: ProductVariantWhereInput
-  shop: ExternalShopifyIntegrationWhereInput
+  shop: ShopifyShopWhereInput
   brand: BrandWhereInput
   title: String
   title_not: String
@@ -18413,6 +18222,197 @@ input ShopifyProductVariantWhereInput {
 input ShopifyProductVariantWhereUniqueInput {
   id: ID
   externalId: String
+}
+
+type ShopifyShop {
+  id: ID!
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ShopifyShopConnection {
+  pageInfo: PageInfo!
+  edges: [ShopifyShopEdge]!
+  aggregate: AggregateShopifyShop!
+}
+
+input ShopifyShopCreateInput {
+  id: ID
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: ShopifyShopCreatescopeInput
+}
+
+input ShopifyShopCreateOneInput {
+  create: ShopifyShopCreateInput
+  connect: ShopifyShopWhereUniqueInput
+}
+
+input ShopifyShopCreatescopeInput {
+  set: [String!]
+}
+
+type ShopifyShopEdge {
+  node: ShopifyShop!
+  cursor: String!
+}
+
+enum ShopifyShopOrderByInput {
+  id_ASC
+  id_DESC
+  shopName_ASC
+  shopName_DESC
+  enabled_ASC
+  enabled_DESC
+  accessToken_ASC
+  accessToken_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ShopifyShopPreviousValues {
+  id: ID!
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ShopifyShopSubscriptionPayload {
+  mutation: MutationType!
+  node: ShopifyShop
+  updatedFields: [String!]
+  previousValues: ShopifyShopPreviousValues
+}
+
+input ShopifyShopSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ShopifyShopWhereInput
+  AND: [ShopifyShopSubscriptionWhereInput!]
+  OR: [ShopifyShopSubscriptionWhereInput!]
+  NOT: [ShopifyShopSubscriptionWhereInput!]
+}
+
+input ShopifyShopUpdateDataInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateManyMutationInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateOneInput {
+  create: ShopifyShopCreateInput
+  update: ShopifyShopUpdateDataInput
+  upsert: ShopifyShopUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ShopifyShopWhereUniqueInput
+}
+
+input ShopifyShopUpdatescopeInput {
+  set: [String!]
+}
+
+input ShopifyShopUpsertNestedInput {
+  update: ShopifyShopUpdateDataInput!
+  create: ShopifyShopCreateInput!
+}
+
+input ShopifyShopWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  shopName: String
+  shopName_not: String
+  shopName_in: [String!]
+  shopName_not_in: [String!]
+  shopName_lt: String
+  shopName_lte: String
+  shopName_gt: String
+  shopName_gte: String
+  shopName_contains: String
+  shopName_not_contains: String
+  shopName_starts_with: String
+  shopName_not_starts_with: String
+  shopName_ends_with: String
+  shopName_not_ends_with: String
+  enabled: Boolean
+  enabled_not: Boolean
+  accessToken: String
+  accessToken_not: String
+  accessToken_in: [String!]
+  accessToken_not_in: [String!]
+  accessToken_lt: String
+  accessToken_lte: String
+  accessToken_gt: String
+  accessToken_gte: String
+  accessToken_contains: String
+  accessToken_not_contains: String
+  accessToken_starts_with: String
+  accessToken_not_starts_with: String
+  accessToken_ends_with: String
+  accessToken_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ShopifyShopWhereInput!]
+  OR: [ShopifyShopWhereInput!]
+  NOT: [ShopifyShopWhereInput!]
+}
+
+input ShopifyShopWhereUniqueInput {
+  id: ID
+  shopName: String
 }
 
 type Size {
@@ -19202,7 +19202,6 @@ type Subscription {
   customerMembershipSubscriptionData(where: CustomerMembershipSubscriptionDataSubscriptionWhereInput): CustomerMembershipSubscriptionDataSubscriptionPayload
   customerNotificationBarReceipt(where: CustomerNotificationBarReceiptSubscriptionWhereInput): CustomerNotificationBarReceiptSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
-  externalShopifyIntegration(where: ExternalShopifyIntegrationSubscriptionWhereInput): ExternalShopifyIntegrationSubscriptionPayload
   fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload
   fitPicReport(where: FitPicReportSubscriptionWhereInput): FitPicReportSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
@@ -19243,6 +19242,7 @@ type Subscription {
   shippingOption(where: ShippingOptionSubscriptionWhereInput): ShippingOptionSubscriptionPayload
   shopifyProductVariant(where: ShopifyProductVariantSubscriptionWhereInput): ShopifyProductVariantSubscriptionPayload
   shopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionSubscriptionWhereInput): ShopifyProductVariantSelectedOptionSubscriptionPayload
+  shopifyShop(where: ShopifyShopSubscriptionWhereInput): ShopifyShopSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload

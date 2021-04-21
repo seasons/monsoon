@@ -52,13 +52,13 @@ export interface Query {
     userDeviceDatas: <T = Array<UserDeviceData | null>>(args: { where?: UserDeviceDataWhereInput | null, orderBy?: UserDeviceDataOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     colors: <T = Array<Color | null>>(args: { where?: ColorWhereInput | null, orderBy?: ColorOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     physicalProductPrices: <T = Array<PhysicalProductPrice | null>>(args: { where?: PhysicalProductPriceWhereInput | null, orderBy?: PhysicalProductPriceOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    externalShopifyIntegrations: <T = Array<ExternalShopifyIntegration | null>>(args: { where?: ExternalShopifyIntegrationWhereInput | null, orderBy?: ExternalShopifyIntegrationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shopifyProductVariantSelectedOptions: <T = Array<ShopifyProductVariantSelectedOption | null>>(args: { where?: ShopifyProductVariantSelectedOptionWhereInput | null, orderBy?: ShopifyProductVariantSelectedOptionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packages: <T = Array<Package | null>>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     topSizes: <T = Array<TopSize | null>>(args: { where?: TopSizeWhereInput | null, orderBy?: TopSizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shippingMethods: <T = Array<ShippingMethod | null>>(args: { where?: ShippingMethodWhereInput | null, orderBy?: ShippingMethodOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     brands: <T = Array<Brand | null>>(args: { where?: BrandWhereInput | null, orderBy?: BrandOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     userPushNotifications: <T = Array<UserPushNotification | null>>(args: { where?: UserPushNotificationWhereInput | null, orderBy?: UserPushNotificationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    shopifyShops: <T = Array<ShopifyShop | null>>(args: { where?: ShopifyShopWhereInput | null, orderBy?: ShopifyShopOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     categories: <T = Array<Category | null>>(args: { where?: CategoryWhereInput | null, orderBy?: CategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bottomSizes: <T = Array<BottomSize | null>>(args: { where?: BottomSizeWhereInput | null, orderBy?: BottomSizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     seasons: <T = Array<Season | null>>(args: { where?: SeasonWhereInput | null, orderBy?: SeasonOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -124,13 +124,13 @@ export interface Query {
     userDeviceData: <T = UserDeviceData | null>(args: { where: UserDeviceDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     color: <T = Color | null>(args: { where: ColorWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     physicalProductPrice: <T = PhysicalProductPrice | null>(args: { where: PhysicalProductPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    externalShopifyIntegration: <T = ExternalShopifyIntegration | null>(args: { where: ExternalShopifyIntegrationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     shopifyProductVariantSelectedOption: <T = ShopifyProductVariantSelectedOption | null>(args: { where: ShopifyProductVariantSelectedOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     package: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     topSize: <T = TopSize | null>(args: { where: TopSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     shippingMethod: <T = ShippingMethod | null>(args: { where: ShippingMethodWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     brand: <T = Brand | null>(args: { where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     userPushNotification: <T = UserPushNotification | null>(args: { where: UserPushNotificationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    shopifyShop: <T = ShopifyShop | null>(args: { where: ShopifyShopWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     category: <T = Category | null>(args: { where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     bottomSize: <T = BottomSize | null>(args: { where: BottomSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     season: <T = Season | null>(args: { where: SeasonWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -196,13 +196,13 @@ export interface Query {
     userDeviceDatasConnection: <T = UserDeviceDataConnection>(args: { where?: UserDeviceDataWhereInput | null, orderBy?: UserDeviceDataOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     colorsConnection: <T = ColorConnection>(args: { where?: ColorWhereInput | null, orderBy?: ColorOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     physicalProductPricesConnection: <T = PhysicalProductPriceConnection>(args: { where?: PhysicalProductPriceWhereInput | null, orderBy?: PhysicalProductPriceOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    externalShopifyIntegrationsConnection: <T = ExternalShopifyIntegrationConnection>(args: { where?: ExternalShopifyIntegrationWhereInput | null, orderBy?: ExternalShopifyIntegrationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shopifyProductVariantSelectedOptionsConnection: <T = ShopifyProductVariantSelectedOptionConnection>(args: { where?: ShopifyProductVariantSelectedOptionWhereInput | null, orderBy?: ShopifyProductVariantSelectedOptionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packagesConnection: <T = PackageConnection>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     topSizesConnection: <T = TopSizeConnection>(args: { where?: TopSizeWhereInput | null, orderBy?: TopSizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     shippingMethodsConnection: <T = ShippingMethodConnection>(args: { where?: ShippingMethodWhereInput | null, orderBy?: ShippingMethodOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     brandsConnection: <T = BrandConnection>(args: { where?: BrandWhereInput | null, orderBy?: BrandOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     userPushNotificationsConnection: <T = UserPushNotificationConnection>(args: { where?: UserPushNotificationWhereInput | null, orderBy?: UserPushNotificationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    shopifyShopsConnection: <T = ShopifyShopConnection>(args: { where?: ShopifyShopWhereInput | null, orderBy?: ShopifyShopOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     categoriesConnection: <T = CategoryConnection>(args: { where?: CategoryWhereInput | null, orderBy?: CategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bottomSizesConnection: <T = BottomSizeConnection>(args: { where?: BottomSizeWhereInput | null, orderBy?: BottomSizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     seasonsConnection: <T = SeasonConnection>(args: { where?: SeasonWhereInput | null, orderBy?: SeasonOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -272,13 +272,13 @@ export interface Mutation {
     createUserDeviceData: <T = UserDeviceData>(args: { data: UserDeviceDataCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createColor: <T = Color>(args: { data: ColorCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPhysicalProductPrice: <T = PhysicalProductPrice>(args: { data: PhysicalProductPriceCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createExternalShopifyIntegration: <T = ExternalShopifyIntegration>(args: { data: ExternalShopifyIntegrationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createShopifyProductVariantSelectedOption: <T = ShopifyProductVariantSelectedOption>(args: { data: ShopifyProductVariantSelectedOptionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPackage: <T = Package>(args: { data: PackageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createTopSize: <T = TopSize>(args: { data: TopSizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createShippingMethod: <T = ShippingMethod>(args: { data: ShippingMethodCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBrand: <T = Brand>(args: { data: BrandCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createUserPushNotification: <T = UserPushNotification>(args: { data: UserPushNotificationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createShopifyShop: <T = ShopifyShop>(args: { data: ShopifyShopCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCategory: <T = Category>(args: { data: CategoryCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBottomSize: <T = BottomSize>(args: { data: BottomSizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSeason: <T = Season>(args: { data: SeasonCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -344,13 +344,13 @@ export interface Mutation {
     updateUserDeviceData: <T = UserDeviceData | null>(args: { data: UserDeviceDataUpdateInput, where: UserDeviceDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateColor: <T = Color | null>(args: { data: ColorUpdateInput, where: ColorWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePhysicalProductPrice: <T = PhysicalProductPrice | null>(args: { data: PhysicalProductPriceUpdateInput, where: PhysicalProductPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateExternalShopifyIntegration: <T = ExternalShopifyIntegration | null>(args: { data: ExternalShopifyIntegrationUpdateInput, where: ExternalShopifyIntegrationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateShopifyProductVariantSelectedOption: <T = ShopifyProductVariantSelectedOption | null>(args: { data: ShopifyProductVariantSelectedOptionUpdateInput, where: ShopifyProductVariantSelectedOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePackage: <T = Package | null>(args: { data: PackageUpdateInput, where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateTopSize: <T = TopSize | null>(args: { data: TopSizeUpdateInput, where: TopSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateShippingMethod: <T = ShippingMethod | null>(args: { data: ShippingMethodUpdateInput, where: ShippingMethodWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBrand: <T = Brand | null>(args: { data: BrandUpdateInput, where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateUserPushNotification: <T = UserPushNotification | null>(args: { data: UserPushNotificationUpdateInput, where: UserPushNotificationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateShopifyShop: <T = ShopifyShop | null>(args: { data: ShopifyShopUpdateInput, where: ShopifyShopWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCategory: <T = Category | null>(args: { data: CategoryUpdateInput, where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBottomSize: <T = BottomSize | null>(args: { data: BottomSizeUpdateInput, where: BottomSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSeason: <T = Season | null>(args: { data: SeasonUpdateInput, where: SeasonWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -416,13 +416,13 @@ export interface Mutation {
     deleteUserDeviceData: <T = UserDeviceData | null>(args: { where: UserDeviceDataWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteColor: <T = Color | null>(args: { where: ColorWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePhysicalProductPrice: <T = PhysicalProductPrice | null>(args: { where: PhysicalProductPriceWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteExternalShopifyIntegration: <T = ExternalShopifyIntegration | null>(args: { where: ExternalShopifyIntegrationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteShopifyProductVariantSelectedOption: <T = ShopifyProductVariantSelectedOption | null>(args: { where: ShopifyProductVariantSelectedOptionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePackage: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteTopSize: <T = TopSize | null>(args: { where: TopSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteShippingMethod: <T = ShippingMethod | null>(args: { where: ShippingMethodWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBrand: <T = Brand | null>(args: { where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteUserPushNotification: <T = UserPushNotification | null>(args: { where: UserPushNotificationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteShopifyShop: <T = ShopifyShop | null>(args: { where: ShopifyShopWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCategory: <T = Category | null>(args: { where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBottomSize: <T = BottomSize | null>(args: { where: BottomSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSeason: <T = Season | null>(args: { where: SeasonWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -488,13 +488,13 @@ export interface Mutation {
     upsertUserDeviceData: <T = UserDeviceData>(args: { where: UserDeviceDataWhereUniqueInput, create: UserDeviceDataCreateInput, update: UserDeviceDataUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertColor: <T = Color>(args: { where: ColorWhereUniqueInput, create: ColorCreateInput, update: ColorUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPhysicalProductPrice: <T = PhysicalProductPrice>(args: { where: PhysicalProductPriceWhereUniqueInput, create: PhysicalProductPriceCreateInput, update: PhysicalProductPriceUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertExternalShopifyIntegration: <T = ExternalShopifyIntegration>(args: { where: ExternalShopifyIntegrationWhereUniqueInput, create: ExternalShopifyIntegrationCreateInput, update: ExternalShopifyIntegrationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertShopifyProductVariantSelectedOption: <T = ShopifyProductVariantSelectedOption>(args: { where: ShopifyProductVariantSelectedOptionWhereUniqueInput, create: ShopifyProductVariantSelectedOptionCreateInput, update: ShopifyProductVariantSelectedOptionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPackage: <T = Package>(args: { where: PackageWhereUniqueInput, create: PackageCreateInput, update: PackageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertTopSize: <T = TopSize>(args: { where: TopSizeWhereUniqueInput, create: TopSizeCreateInput, update: TopSizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertShippingMethod: <T = ShippingMethod>(args: { where: ShippingMethodWhereUniqueInput, create: ShippingMethodCreateInput, update: ShippingMethodUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBrand: <T = Brand>(args: { where: BrandWhereUniqueInput, create: BrandCreateInput, update: BrandUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertUserPushNotification: <T = UserPushNotification>(args: { where: UserPushNotificationWhereUniqueInput, create: UserPushNotificationCreateInput, update: UserPushNotificationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertShopifyShop: <T = ShopifyShop>(args: { where: ShopifyShopWhereUniqueInput, create: ShopifyShopCreateInput, update: ShopifyShopUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCategory: <T = Category>(args: { where: CategoryWhereUniqueInput, create: CategoryCreateInput, update: CategoryUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBottomSize: <T = BottomSize>(args: { where: BottomSizeWhereUniqueInput, create: BottomSizeCreateInput, update: BottomSizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSeason: <T = Season>(args: { where: SeasonWhereUniqueInput, create: SeasonCreateInput, update: SeasonUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -558,13 +558,13 @@ export interface Mutation {
     updateManyUserDeviceDatas: <T = BatchPayload>(args: { data: UserDeviceDataUpdateManyMutationInput, where?: UserDeviceDataWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyColors: <T = BatchPayload>(args: { data: ColorUpdateManyMutationInput, where?: ColorWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPhysicalProductPrices: <T = BatchPayload>(args: { data: PhysicalProductPriceUpdateManyMutationInput, where?: PhysicalProductPriceWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyExternalShopifyIntegrations: <T = BatchPayload>(args: { data: ExternalShopifyIntegrationUpdateManyMutationInput, where?: ExternalShopifyIntegrationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyShopifyProductVariantSelectedOptions: <T = BatchPayload>(args: { data: ShopifyProductVariantSelectedOptionUpdateManyMutationInput, where?: ShopifyProductVariantSelectedOptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPackages: <T = BatchPayload>(args: { data: PackageUpdateManyMutationInput, where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyTopSizes: <T = BatchPayload>(args: { data: TopSizeUpdateManyMutationInput, where?: TopSizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyShippingMethods: <T = BatchPayload>(args: { data: ShippingMethodUpdateManyMutationInput, where?: ShippingMethodWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBrands: <T = BatchPayload>(args: { data: BrandUpdateManyMutationInput, where?: BrandWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyUserPushNotifications: <T = BatchPayload>(args: { data: UserPushNotificationUpdateManyMutationInput, where?: UserPushNotificationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyShopifyShops: <T = BatchPayload>(args: { data: ShopifyShopUpdateManyMutationInput, where?: ShopifyShopWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCategories: <T = BatchPayload>(args: { data: CategoryUpdateManyMutationInput, where?: CategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBottomSizes: <T = BatchPayload>(args: { data: BottomSizeUpdateManyMutationInput, where?: BottomSizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySeasons: <T = BatchPayload>(args: { data: SeasonUpdateManyMutationInput, where?: SeasonWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -630,13 +630,13 @@ export interface Mutation {
     deleteManyUserDeviceDatas: <T = BatchPayload>(args: { where?: UserDeviceDataWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyColors: <T = BatchPayload>(args: { where?: ColorWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPhysicalProductPrices: <T = BatchPayload>(args: { where?: PhysicalProductPriceWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyExternalShopifyIntegrations: <T = BatchPayload>(args: { where?: ExternalShopifyIntegrationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyShopifyProductVariantSelectedOptions: <T = BatchPayload>(args: { where?: ShopifyProductVariantSelectedOptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPackages: <T = BatchPayload>(args: { where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyTopSizes: <T = BatchPayload>(args: { where?: TopSizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyShippingMethods: <T = BatchPayload>(args: { where?: ShippingMethodWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBrands: <T = BatchPayload>(args: { where?: BrandWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyUserPushNotifications: <T = BatchPayload>(args: { where?: UserPushNotificationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyShopifyShops: <T = BatchPayload>(args: { where?: ShopifyShopWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCategories: <T = BatchPayload>(args: { where?: CategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBottomSizes: <T = BatchPayload>(args: { where?: BottomSizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySeasons: <T = BatchPayload>(args: { where?: SeasonWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -705,13 +705,13 @@ export interface Subscription {
     userDeviceData: <T = UserDeviceDataSubscriptionPayload | null>(args: { where?: UserDeviceDataSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     color: <T = ColorSubscriptionPayload | null>(args: { where?: ColorSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     physicalProductPrice: <T = PhysicalProductPriceSubscriptionPayload | null>(args: { where?: PhysicalProductPriceSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    externalShopifyIntegration: <T = ExternalShopifyIntegrationSubscriptionPayload | null>(args: { where?: ExternalShopifyIntegrationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     shopifyProductVariantSelectedOption: <T = ShopifyProductVariantSelectedOptionSubscriptionPayload | null>(args: { where?: ShopifyProductVariantSelectedOptionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     package: <T = PackageSubscriptionPayload | null>(args: { where?: PackageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     topSize: <T = TopSizeSubscriptionPayload | null>(args: { where?: TopSizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     shippingMethod: <T = ShippingMethodSubscriptionPayload | null>(args: { where?: ShippingMethodSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     brand: <T = BrandSubscriptionPayload | null>(args: { where?: BrandSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     userPushNotification: <T = UserPushNotificationSubscriptionPayload | null>(args: { where?: UserPushNotificationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    shopifyShop: <T = ShopifyShopSubscriptionPayload | null>(args: { where?: ShopifyShopSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     category: <T = CategorySubscriptionPayload | null>(args: { where?: CategorySubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     bottomSize: <T = BottomSizeSubscriptionPayload | null>(args: { where?: BottomSizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     season: <T = SeasonSubscriptionPayload | null>(args: { where?: SeasonSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -780,13 +780,13 @@ export interface Exists {
   UserDeviceData: (where?: UserDeviceDataWhereInput) => Promise<boolean>
   Color: (where?: ColorWhereInput) => Promise<boolean>
   PhysicalProductPrice: (where?: PhysicalProductPriceWhereInput) => Promise<boolean>
-  ExternalShopifyIntegration: (where?: ExternalShopifyIntegrationWhereInput) => Promise<boolean>
   ShopifyProductVariantSelectedOption: (where?: ShopifyProductVariantSelectedOptionWhereInput) => Promise<boolean>
   Package: (where?: PackageWhereInput) => Promise<boolean>
   TopSize: (where?: TopSizeWhereInput) => Promise<boolean>
   ShippingMethod: (where?: ShippingMethodWhereInput) => Promise<boolean>
   Brand: (where?: BrandWhereInput) => Promise<boolean>
   UserPushNotification: (where?: UserPushNotificationWhereInput) => Promise<boolean>
+  ShopifyShop: (where?: ShopifyShopWhereInput) => Promise<boolean>
   Category: (where?: CategoryWhereInput) => Promise<boolean>
   BottomSize: (where?: BottomSizeWhereInput) => Promise<boolean>
   Season: (where?: SeasonWhereInput) => Promise<boolean>
@@ -1720,10 +1720,6 @@ type AggregateEmailReceipt {
   count: Int!
 }
 
-type AggregateExternalShopifyIntegration {
-  count: Int!
-}
-
 type AggregateFitPic {
   count: Int!
 }
@@ -1881,6 +1877,10 @@ type AggregateShopifyProductVariant {
 }
 
 type AggregateShopifyProductVariantSelectedOption {
+  count: Int!
+}
+
+type AggregateShopifyShop {
   count: Int!
 }
 
@@ -4260,7 +4260,7 @@ type Brand implements Node {
   websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
-  externalShopifyIntegration: ExternalShopifyIntegration
+  shopifyShop: ShopifyShop
 }
 
 """A connection to a list of items."""
@@ -4291,7 +4291,7 @@ input BrandCreateInput {
   logoImage: ImageCreateOneInput
   products: ProductCreateManyWithoutBrandInput
   images: ImageCreateManyInput
-  externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
+  shopifyShop: ShopifyShopCreateOneInput
 }
 
 input BrandCreateOneInput {
@@ -4321,7 +4321,7 @@ input BrandCreateWithoutProductsInput {
   websiteUrl: String
   logoImage: ImageCreateOneInput
   images: ImageCreateManyInput
-  externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
+  shopifyShop: ShopifyShopCreateOneInput
 }
 
 """An edge in a connection."""
@@ -4453,7 +4453,7 @@ input BrandUpdateDataInput {
   logoImage: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
 }
 
 input BrandUpdateInput {
@@ -4473,7 +4473,7 @@ input BrandUpdateInput {
   logoImage: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
 }
 
 input BrandUpdateManyMutationInput {
@@ -4524,7 +4524,7 @@ input BrandUpdateWithoutProductsDataInput {
   websiteUrl: String
   logoImage: ImageUpdateOneInput
   images: ImageUpdateManyInput
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
 }
 
 input BrandUpsertNestedInput {
@@ -4961,7 +4961,7 @@ input BrandWhereInput {
   images_every: ImageWhereInput
   images_some: ImageWhereInput
   images_none: ImageWhereInput
-  externalShopifyIntegration: ExternalShopifyIntegrationWhereInput
+  shopifyShop: ShopifyShopWhereInput
 }
 
 input BrandWhereUniqueInput {
@@ -10761,337 +10761,6 @@ input EmailReceiptWhereUniqueInput {
   id: ID
 }
 
-type ExternalShopifyIntegration implements Node {
-  id: ID!
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: [String!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-"""A connection to a list of items."""
-type ExternalShopifyIntegrationConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [ExternalShopifyIntegrationEdge]!
-  aggregate: AggregateExternalShopifyIntegration!
-}
-
-input ExternalShopifyIntegrationCreateInput {
-  id: ID
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: ExternalShopifyIntegrationCreatescopeInput
-}
-
-input ExternalShopifyIntegrationCreateOneInput {
-  create: ExternalShopifyIntegrationCreateInput
-  connect: ExternalShopifyIntegrationWhereUniqueInput
-}
-
-input ExternalShopifyIntegrationCreatescopeInput {
-  set: [String!]
-}
-
-"""An edge in a connection."""
-type ExternalShopifyIntegrationEdge {
-  """The item at the end of the edge."""
-  node: ExternalShopifyIntegration!
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-
-enum ExternalShopifyIntegrationOrderByInput {
-  id_ASC
-  id_DESC
-  shopName_ASC
-  shopName_DESC
-  enabled_ASC
-  enabled_DESC
-  accessToken_ASC
-  accessToken_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type ExternalShopifyIntegrationPreviousValues {
-  id: ID!
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: [String!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type ExternalShopifyIntegrationSubscriptionPayload {
-  mutation: MutationType!
-  node: ExternalShopifyIntegration
-  updatedFields: [String!]
-  previousValues: ExternalShopifyIntegrationPreviousValues
-}
-
-input ExternalShopifyIntegrationSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-
-  """The subscription event gets dispatched when it's listed in mutation_in"""
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: ExternalShopifyIntegrationWhereInput
-}
-
-input ExternalShopifyIntegrationUpdateDataInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateManyMutationInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateOneInput {
-  create: ExternalShopifyIntegrationCreateInput
-  connect: ExternalShopifyIntegrationWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: ExternalShopifyIntegrationUpdateDataInput
-  upsert: ExternalShopifyIntegrationUpsertNestedInput
-}
-
-input ExternalShopifyIntegrationUpdatescopeInput {
-  set: [String!]
-}
-
-input ExternalShopifyIntegrationUpsertNestedInput {
-  update: ExternalShopifyIntegrationUpdateDataInput!
-  create: ExternalShopifyIntegrationCreateInput!
-}
-
-input ExternalShopifyIntegrationWhereInput {
-  """Logical AND on all given filters."""
-  AND: [ExternalShopifyIntegrationWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [ExternalShopifyIntegrationWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ExternalShopifyIntegrationWhereInput!]
-  id: ID
-
-  """All values that are not equal to given value."""
-  id_not: ID
-
-  """All values that are contained in given list."""
-  id_in: [ID!]
-
-  """All values that are not contained in given list."""
-  id_not_in: [ID!]
-
-  """All values less than the given value."""
-  id_lt: ID
-
-  """All values less than or equal the given value."""
-  id_lte: ID
-
-  """All values greater than the given value."""
-  id_gt: ID
-
-  """All values greater than or equal the given value."""
-  id_gte: ID
-
-  """All values containing the given string."""
-  id_contains: ID
-
-  """All values not containing the given string."""
-  id_not_contains: ID
-
-  """All values starting with the given string."""
-  id_starts_with: ID
-
-  """All values not starting with the given string."""
-  id_not_starts_with: ID
-
-  """All values ending with the given string."""
-  id_ends_with: ID
-
-  """All values not ending with the given string."""
-  id_not_ends_with: ID
-  shopName: String
-
-  """All values that are not equal to given value."""
-  shopName_not: String
-
-  """All values that are contained in given list."""
-  shopName_in: [String!]
-
-  """All values that are not contained in given list."""
-  shopName_not_in: [String!]
-
-  """All values less than the given value."""
-  shopName_lt: String
-
-  """All values less than or equal the given value."""
-  shopName_lte: String
-
-  """All values greater than the given value."""
-  shopName_gt: String
-
-  """All values greater than or equal the given value."""
-  shopName_gte: String
-
-  """All values containing the given string."""
-  shopName_contains: String
-
-  """All values not containing the given string."""
-  shopName_not_contains: String
-
-  """All values starting with the given string."""
-  shopName_starts_with: String
-
-  """All values not starting with the given string."""
-  shopName_not_starts_with: String
-
-  """All values ending with the given string."""
-  shopName_ends_with: String
-
-  """All values not ending with the given string."""
-  shopName_not_ends_with: String
-  enabled: Boolean
-
-  """All values that are not equal to given value."""
-  enabled_not: Boolean
-  accessToken: String
-
-  """All values that are not equal to given value."""
-  accessToken_not: String
-
-  """All values that are contained in given list."""
-  accessToken_in: [String!]
-
-  """All values that are not contained in given list."""
-  accessToken_not_in: [String!]
-
-  """All values less than the given value."""
-  accessToken_lt: String
-
-  """All values less than or equal the given value."""
-  accessToken_lte: String
-
-  """All values greater than the given value."""
-  accessToken_gt: String
-
-  """All values greater than or equal the given value."""
-  accessToken_gte: String
-
-  """All values containing the given string."""
-  accessToken_contains: String
-
-  """All values not containing the given string."""
-  accessToken_not_contains: String
-
-  """All values starting with the given string."""
-  accessToken_starts_with: String
-
-  """All values not starting with the given string."""
-  accessToken_not_starts_with: String
-
-  """All values ending with the given string."""
-  accessToken_ends_with: String
-
-  """All values not ending with the given string."""
-  accessToken_not_ends_with: String
-  createdAt: DateTime
-
-  """All values that are not equal to given value."""
-  createdAt_not: DateTime
-
-  """All values that are contained in given list."""
-  createdAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  createdAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  createdAt_lt: DateTime
-
-  """All values less than or equal the given value."""
-  createdAt_lte: DateTime
-
-  """All values greater than the given value."""
-  createdAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """All values that are not equal to given value."""
-  updatedAt_not: DateTime
-
-  """All values that are contained in given list."""
-  updatedAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  updatedAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  updatedAt_lt: DateTime
-
-  """All values less than or equal the given value."""
-  updatedAt_lte: DateTime
-
-  """All values greater than the given value."""
-  updatedAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  updatedAt_gte: DateTime
-}
-
-input ExternalShopifyIntegrationWhereUniqueInput {
-  id: ID
-  shopName: String
-}
-
 type FitPic implements Node {
   id: ID!
   image: Image!
@@ -14574,13 +14243,13 @@ type Mutation {
   createUserDeviceData(data: UserDeviceDataCreateInput!): UserDeviceData!
   createColor(data: ColorCreateInput!): Color!
   createPhysicalProductPrice(data: PhysicalProductPriceCreateInput!): PhysicalProductPrice!
-  createExternalShopifyIntegration(data: ExternalShopifyIntegrationCreateInput!): ExternalShopifyIntegration!
   createShopifyProductVariantSelectedOption(data: ShopifyProductVariantSelectedOptionCreateInput!): ShopifyProductVariantSelectedOption!
   createPackage(data: PackageCreateInput!): Package!
   createTopSize(data: TopSizeCreateInput!): TopSize!
   createShippingMethod(data: ShippingMethodCreateInput!): ShippingMethod!
   createBrand(data: BrandCreateInput!): Brand!
   createUserPushNotification(data: UserPushNotificationCreateInput!): UserPushNotification!
+  createShopifyShop(data: ShopifyShopCreateInput!): ShopifyShop!
   createCategory(data: CategoryCreateInput!): Category!
   createBottomSize(data: BottomSizeCreateInput!): BottomSize!
   createSeason(data: SeasonCreateInput!): Season!
@@ -14646,13 +14315,13 @@ type Mutation {
   updateUserDeviceData(data: UserDeviceDataUpdateInput!, where: UserDeviceDataWhereUniqueInput!): UserDeviceData
   updateColor(data: ColorUpdateInput!, where: ColorWhereUniqueInput!): Color
   updatePhysicalProductPrice(data: PhysicalProductPriceUpdateInput!, where: PhysicalProductPriceWhereUniqueInput!): PhysicalProductPrice
-  updateExternalShopifyIntegration(data: ExternalShopifyIntegrationUpdateInput!, where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
   updateShopifyProductVariantSelectedOption(data: ShopifyProductVariantSelectedOptionUpdateInput!, where: ShopifyProductVariantSelectedOptionWhereUniqueInput!): ShopifyProductVariantSelectedOption
   updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
   updateTopSize(data: TopSizeUpdateInput!, where: TopSizeWhereUniqueInput!): TopSize
   updateShippingMethod(data: ShippingMethodUpdateInput!, where: ShippingMethodWhereUniqueInput!): ShippingMethod
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateUserPushNotification(data: UserPushNotificationUpdateInput!, where: UserPushNotificationWhereUniqueInput!): UserPushNotification
+  updateShopifyShop(data: ShopifyShopUpdateInput!, where: ShopifyShopWhereUniqueInput!): ShopifyShop
   updateCategory(data: CategoryUpdateInput!, where: CategoryWhereUniqueInput!): Category
   updateBottomSize(data: BottomSizeUpdateInput!, where: BottomSizeWhereUniqueInput!): BottomSize
   updateSeason(data: SeasonUpdateInput!, where: SeasonWhereUniqueInput!): Season
@@ -14718,13 +14387,13 @@ type Mutation {
   deleteUserDeviceData(where: UserDeviceDataWhereUniqueInput!): UserDeviceData
   deleteColor(where: ColorWhereUniqueInput!): Color
   deletePhysicalProductPrice(where: PhysicalProductPriceWhereUniqueInput!): PhysicalProductPrice
-  deleteExternalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
   deleteShopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionWhereUniqueInput!): ShopifyProductVariantSelectedOption
   deletePackage(where: PackageWhereUniqueInput!): Package
   deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
   deleteShippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
   deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteUserPushNotification(where: UserPushNotificationWhereUniqueInput!): UserPushNotification
+  deleteShopifyShop(where: ShopifyShopWhereUniqueInput!): ShopifyShop
   deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   deleteSeason(where: SeasonWhereUniqueInput!): Season
@@ -14790,13 +14459,13 @@ type Mutation {
   upsertUserDeviceData(where: UserDeviceDataWhereUniqueInput!, create: UserDeviceDataCreateInput!, update: UserDeviceDataUpdateInput!): UserDeviceData!
   upsertColor(where: ColorWhereUniqueInput!, create: ColorCreateInput!, update: ColorUpdateInput!): Color!
   upsertPhysicalProductPrice(where: PhysicalProductPriceWhereUniqueInput!, create: PhysicalProductPriceCreateInput!, update: PhysicalProductPriceUpdateInput!): PhysicalProductPrice!
-  upsertExternalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!, create: ExternalShopifyIntegrationCreateInput!, update: ExternalShopifyIntegrationUpdateInput!): ExternalShopifyIntegration!
   upsertShopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionWhereUniqueInput!, create: ShopifyProductVariantSelectedOptionCreateInput!, update: ShopifyProductVariantSelectedOptionUpdateInput!): ShopifyProductVariantSelectedOption!
   upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
   upsertTopSize(where: TopSizeWhereUniqueInput!, create: TopSizeCreateInput!, update: TopSizeUpdateInput!): TopSize!
   upsertShippingMethod(where: ShippingMethodWhereUniqueInput!, create: ShippingMethodCreateInput!, update: ShippingMethodUpdateInput!): ShippingMethod!
   upsertBrand(where: BrandWhereUniqueInput!, create: BrandCreateInput!, update: BrandUpdateInput!): Brand!
   upsertUserPushNotification(where: UserPushNotificationWhereUniqueInput!, create: UserPushNotificationCreateInput!, update: UserPushNotificationUpdateInput!): UserPushNotification!
+  upsertShopifyShop(where: ShopifyShopWhereUniqueInput!, create: ShopifyShopCreateInput!, update: ShopifyShopUpdateInput!): ShopifyShop!
   upsertCategory(where: CategoryWhereUniqueInput!, create: CategoryCreateInput!, update: CategoryUpdateInput!): Category!
   upsertBottomSize(where: BottomSizeWhereUniqueInput!, create: BottomSizeCreateInput!, update: BottomSizeUpdateInput!): BottomSize!
   upsertSeason(where: SeasonWhereUniqueInput!, create: SeasonCreateInput!, update: SeasonUpdateInput!): Season!
@@ -14860,13 +14529,13 @@ type Mutation {
   updateManyUserDeviceDatas(data: UserDeviceDataUpdateManyMutationInput!, where: UserDeviceDataWhereInput): BatchPayload!
   updateManyColors(data: ColorUpdateManyMutationInput!, where: ColorWhereInput): BatchPayload!
   updateManyPhysicalProductPrices(data: PhysicalProductPriceUpdateManyMutationInput!, where: PhysicalProductPriceWhereInput): BatchPayload!
-  updateManyExternalShopifyIntegrations(data: ExternalShopifyIntegrationUpdateManyMutationInput!, where: ExternalShopifyIntegrationWhereInput): BatchPayload!
   updateManyShopifyProductVariantSelectedOptions(data: ShopifyProductVariantSelectedOptionUpdateManyMutationInput!, where: ShopifyProductVariantSelectedOptionWhereInput): BatchPayload!
   updateManyPackages(data: PackageUpdateManyMutationInput!, where: PackageWhereInput): BatchPayload!
   updateManyTopSizes(data: TopSizeUpdateManyMutationInput!, where: TopSizeWhereInput): BatchPayload!
   updateManyShippingMethods(data: ShippingMethodUpdateManyMutationInput!, where: ShippingMethodWhereInput): BatchPayload!
   updateManyBrands(data: BrandUpdateManyMutationInput!, where: BrandWhereInput): BatchPayload!
   updateManyUserPushNotifications(data: UserPushNotificationUpdateManyMutationInput!, where: UserPushNotificationWhereInput): BatchPayload!
+  updateManyShopifyShops(data: ShopifyShopUpdateManyMutationInput!, where: ShopifyShopWhereInput): BatchPayload!
   updateManyCategories(data: CategoryUpdateManyMutationInput!, where: CategoryWhereInput): BatchPayload!
   updateManyBottomSizes(data: BottomSizeUpdateManyMutationInput!, where: BottomSizeWhereInput): BatchPayload!
   updateManySeasons(data: SeasonUpdateManyMutationInput!, where: SeasonWhereInput): BatchPayload!
@@ -14932,13 +14601,13 @@ type Mutation {
   deleteManyUserDeviceDatas(where: UserDeviceDataWhereInput): BatchPayload!
   deleteManyColors(where: ColorWhereInput): BatchPayload!
   deleteManyPhysicalProductPrices(where: PhysicalProductPriceWhereInput): BatchPayload!
-  deleteManyExternalShopifyIntegrations(where: ExternalShopifyIntegrationWhereInput): BatchPayload!
   deleteManyShopifyProductVariantSelectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput): BatchPayload!
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
   deleteManyTopSizes(where: TopSizeWhereInput): BatchPayload!
   deleteManyShippingMethods(where: ShippingMethodWhereInput): BatchPayload!
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
   deleteManyUserPushNotifications(where: UserPushNotificationWhereInput): BatchPayload!
+  deleteManyShopifyShops(where: ShopifyShopWhereInput): BatchPayload!
   deleteManyCategories(where: CategoryWhereInput): BatchPayload!
   deleteManyBottomSizes(where: BottomSizeWhereInput): BatchPayload!
   deleteManySeasons(where: SeasonWhereInput): BatchPayload!
@@ -27460,13 +27129,13 @@ type Query {
   userDeviceDatas(where: UserDeviceDataWhereInput, orderBy: UserDeviceDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserDeviceData]!
   colors(where: ColorWhereInput, orderBy: ColorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Color]!
   physicalProductPrices(where: PhysicalProductPriceWhereInput, orderBy: PhysicalProductPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductPrice]!
-  externalShopifyIntegrations(where: ExternalShopifyIntegrationWhereInput, orderBy: ExternalShopifyIntegrationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExternalShopifyIntegration]!
   shopifyProductVariantSelectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariantSelectedOption]!
   packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
   topSizes(where: TopSizeWhereInput, orderBy: TopSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TopSize]!
   shippingMethods(where: ShippingMethodWhereInput, orderBy: ShippingMethodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShippingMethod]!
   brands(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Brand]!
   userPushNotifications(where: UserPushNotificationWhereInput, orderBy: UserPushNotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserPushNotification]!
+  shopifyShops(where: ShopifyShopWhereInput, orderBy: ShopifyShopOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyShop]!
   categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category]!
   bottomSizes(where: BottomSizeWhereInput, orderBy: BottomSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BottomSize]!
   seasons(where: SeasonWhereInput, orderBy: SeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Season]!
@@ -27532,13 +27201,13 @@ type Query {
   userDeviceData(where: UserDeviceDataWhereUniqueInput!): UserDeviceData
   color(where: ColorWhereUniqueInput!): Color
   physicalProductPrice(where: PhysicalProductPriceWhereUniqueInput!): PhysicalProductPrice
-  externalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
   shopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionWhereUniqueInput!): ShopifyProductVariantSelectedOption
   package(where: PackageWhereUniqueInput!): Package
   topSize(where: TopSizeWhereUniqueInput!): TopSize
   shippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
   brand(where: BrandWhereUniqueInput!): Brand
   userPushNotification(where: UserPushNotificationWhereUniqueInput!): UserPushNotification
+  shopifyShop(where: ShopifyShopWhereUniqueInput!): ShopifyShop
   category(where: CategoryWhereUniqueInput!): Category
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   season(where: SeasonWhereUniqueInput!): Season
@@ -27604,13 +27273,13 @@ type Query {
   userDeviceDatasConnection(where: UserDeviceDataWhereInput, orderBy: UserDeviceDataOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserDeviceDataConnection!
   colorsConnection(where: ColorWhereInput, orderBy: ColorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ColorConnection!
   physicalProductPricesConnection(where: PhysicalProductPriceWhereInput, orderBy: PhysicalProductPriceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductPriceConnection!
-  externalShopifyIntegrationsConnection(where: ExternalShopifyIntegrationWhereInput, orderBy: ExternalShopifyIntegrationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExternalShopifyIntegrationConnection!
   shopifyProductVariantSelectedOptionsConnection(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShopifyProductVariantSelectedOptionConnection!
   packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
   topSizesConnection(where: TopSizeWhereInput, orderBy: TopSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TopSizeConnection!
   shippingMethodsConnection(where: ShippingMethodWhereInput, orderBy: ShippingMethodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShippingMethodConnection!
   brandsConnection(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BrandConnection!
   userPushNotificationsConnection(where: UserPushNotificationWhereInput, orderBy: UserPushNotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserPushNotificationConnection!
+  shopifyShopsConnection(where: ShopifyShopWhereInput, orderBy: ShopifyShopOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShopifyShopConnection!
   categoriesConnection(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CategoryConnection!
   bottomSizesConnection(where: BottomSizeWhereInput, orderBy: BottomSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BottomSizeConnection!
   seasonsConnection(where: SeasonWhereInput, orderBy: SeasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SeasonConnection!
@@ -30775,7 +30444,7 @@ type ShopifyProductVariant implements Node {
   displayName: String
   selectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariantSelectedOption!]
   productVariant: ProductVariant
-  shop: ExternalShopifyIntegration
+  shop: ShopifyShop
   brand: Brand
   title: String
   image: Image
@@ -30804,7 +30473,7 @@ input ShopifyProductVariantCreateInput {
   cacheExpiresAt: DateTime
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
   productVariant: ProductVariantCreateOneWithoutShopifyProductVariantInput
-  shop: ExternalShopifyIntegrationCreateOneInput
+  shop: ShopifyShopCreateOneInput
   brand: BrandCreateOneInput
   image: ImageCreateOneInput
 }
@@ -30823,7 +30492,7 @@ input ShopifyProductVariantCreateWithoutProductVariantInput {
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
-  shop: ExternalShopifyIntegrationCreateOneInput
+  shop: ShopifyShopCreateOneInput
   brand: BrandCreateOneInput
   image: ImageCreateOneInput
 }
@@ -31312,7 +30981,7 @@ input ShopifyProductVariantUpdateInput {
   cacheExpiresAt: DateTime
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
   productVariant: ProductVariantUpdateOneWithoutShopifyProductVariantInput
-  shop: ExternalShopifyIntegrationUpdateOneInput
+  shop: ShopifyShopUpdateOneInput
   brand: BrandUpdateOneInput
   image: ImageUpdateOneInput
 }
@@ -31343,7 +31012,7 @@ input ShopifyProductVariantUpdateWithoutProductVariantDataInput {
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
-  shop: ExternalShopifyIntegrationUpdateOneInput
+  shop: ShopifyShopUpdateOneInput
   brand: BrandUpdateOneInput
   image: ImageUpdateOneInput
 }
@@ -31574,7 +31243,7 @@ input ShopifyProductVariantWhereInput {
   selectedOptions_some: ShopifyProductVariantSelectedOptionWhereInput
   selectedOptions_none: ShopifyProductVariantSelectedOptionWhereInput
   productVariant: ProductVariantWhereInput
-  shop: ExternalShopifyIntegrationWhereInput
+  shop: ShopifyShopWhereInput
   brand: BrandWhereInput
   image: ImageWhereInput
 }
@@ -31582,6 +31251,337 @@ input ShopifyProductVariantWhereInput {
 input ShopifyProductVariantWhereUniqueInput {
   id: ID
   externalId: String
+}
+
+type ShopifyShop implements Node {
+  id: ID!
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type ShopifyShopConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ShopifyShopEdge]!
+  aggregate: AggregateShopifyShop!
+}
+
+input ShopifyShopCreateInput {
+  id: ID
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: ShopifyShopCreatescopeInput
+}
+
+input ShopifyShopCreateOneInput {
+  create: ShopifyShopCreateInput
+  connect: ShopifyShopWhereUniqueInput
+}
+
+input ShopifyShopCreatescopeInput {
+  set: [String!]
+}
+
+"""An edge in a connection."""
+type ShopifyShopEdge {
+  """The item at the end of the edge."""
+  node: ShopifyShop!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ShopifyShopOrderByInput {
+  id_ASC
+  id_DESC
+  shopName_ASC
+  shopName_DESC
+  enabled_ASC
+  enabled_DESC
+  accessToken_ASC
+  accessToken_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ShopifyShopPreviousValues {
+  id: ID!
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ShopifyShopSubscriptionPayload {
+  mutation: MutationType!
+  node: ShopifyShop
+  updatedFields: [String!]
+  previousValues: ShopifyShopPreviousValues
+}
+
+input ShopifyShopSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ShopifyShopSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ShopifyShopSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ShopifyShopSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ShopifyShopWhereInput
+}
+
+input ShopifyShopUpdateDataInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateManyMutationInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateOneInput {
+  create: ShopifyShopCreateInput
+  connect: ShopifyShopWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ShopifyShopUpdateDataInput
+  upsert: ShopifyShopUpsertNestedInput
+}
+
+input ShopifyShopUpdatescopeInput {
+  set: [String!]
+}
+
+input ShopifyShopUpsertNestedInput {
+  update: ShopifyShopUpdateDataInput!
+  create: ShopifyShopCreateInput!
+}
+
+input ShopifyShopWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ShopifyShopWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ShopifyShopWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ShopifyShopWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  shopName: String
+
+  """All values that are not equal to given value."""
+  shopName_not: String
+
+  """All values that are contained in given list."""
+  shopName_in: [String!]
+
+  """All values that are not contained in given list."""
+  shopName_not_in: [String!]
+
+  """All values less than the given value."""
+  shopName_lt: String
+
+  """All values less than or equal the given value."""
+  shopName_lte: String
+
+  """All values greater than the given value."""
+  shopName_gt: String
+
+  """All values greater than or equal the given value."""
+  shopName_gte: String
+
+  """All values containing the given string."""
+  shopName_contains: String
+
+  """All values not containing the given string."""
+  shopName_not_contains: String
+
+  """All values starting with the given string."""
+  shopName_starts_with: String
+
+  """All values not starting with the given string."""
+  shopName_not_starts_with: String
+
+  """All values ending with the given string."""
+  shopName_ends_with: String
+
+  """All values not ending with the given string."""
+  shopName_not_ends_with: String
+  enabled: Boolean
+
+  """All values that are not equal to given value."""
+  enabled_not: Boolean
+  accessToken: String
+
+  """All values that are not equal to given value."""
+  accessToken_not: String
+
+  """All values that are contained in given list."""
+  accessToken_in: [String!]
+
+  """All values that are not contained in given list."""
+  accessToken_not_in: [String!]
+
+  """All values less than the given value."""
+  accessToken_lt: String
+
+  """All values less than or equal the given value."""
+  accessToken_lte: String
+
+  """All values greater than the given value."""
+  accessToken_gt: String
+
+  """All values greater than or equal the given value."""
+  accessToken_gte: String
+
+  """All values containing the given string."""
+  accessToken_contains: String
+
+  """All values not containing the given string."""
+  accessToken_not_contains: String
+
+  """All values starting with the given string."""
+  accessToken_starts_with: String
+
+  """All values not starting with the given string."""
+  accessToken_not_starts_with: String
+
+  """All values ending with the given string."""
+  accessToken_ends_with: String
+
+  """All values not ending with the given string."""
+  accessToken_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
+input ShopifyShopWhereUniqueInput {
+  id: ID
+  shopName: String
 }
 
 type Size implements Node {
@@ -32989,13 +32989,13 @@ type Subscription {
   userDeviceData(where: UserDeviceDataSubscriptionWhereInput): UserDeviceDataSubscriptionPayload
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   physicalProductPrice(where: PhysicalProductPriceSubscriptionWhereInput): PhysicalProductPriceSubscriptionPayload
-  externalShopifyIntegration(where: ExternalShopifyIntegrationSubscriptionWhereInput): ExternalShopifyIntegrationSubscriptionPayload
   shopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionSubscriptionWhereInput): ShopifyProductVariantSelectedOptionSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
   shippingMethod(where: ShippingMethodSubscriptionWhereInput): ShippingMethodSubscriptionPayload
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   userPushNotification(where: UserPushNotificationSubscriptionWhereInput): UserPushNotificationSubscriptionPayload
+  shopifyShop(where: ShopifyShopSubscriptionWhereInput): ShopifyShopSubscriptionPayload
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   bottomSize(where: BottomSizeSubscriptionWhereInput): BottomSizeSubscriptionPayload
   season(where: SeasonSubscriptionWhereInput): SeasonSubscriptionPayload
@@ -37843,19 +37843,6 @@ export type EmailReceiptOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
 
-export type ExternalShopifyIntegrationOrderByInput =   'id_ASC' |
-  'id_DESC' |
-  'shopName_ASC' |
-  'shopName_DESC' |
-  'enabled_ASC' |
-  'enabled_DESC' |
-  'accessToken_ASC' |
-  'accessToken_DESC' |
-  'createdAt_ASC' |
-  'createdAt_DESC' |
-  'updatedAt_ASC' |
-  'updatedAt_DESC'
-
 export type FitPicOrderByInput =   'id_ASC' |
   'id_DESC' |
   'includeInstagramHandle_ASC' |
@@ -38627,6 +38614,19 @@ export type ShopifyProductVariantSelectedOptionOrderByInput =   'id_ASC' |
   'name_DESC' |
   'value_ASC' |
   'value_DESC'
+
+export type ShopifyShopOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'shopName_ASC' |
+  'shopName_DESC' |
+  'enabled_ASC' |
+  'enabled_DESC' |
+  'accessToken_ASC' |
+  'accessToken_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
 export type SizeOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -40081,7 +40081,7 @@ export interface BrandCreateInput {
   logoImage?: ImageCreateOneInput | null
   products?: ProductCreateManyWithoutBrandInput | null
   images?: ImageCreateManyInput | null
-  externalShopifyIntegration?: ExternalShopifyIntegrationCreateOneInput | null
+  shopifyShop?: ShopifyShopCreateOneInput | null
 }
 
 export interface BrandCreateOneInput {
@@ -40111,7 +40111,7 @@ export interface BrandCreateWithoutProductsInput {
   websiteUrl?: String | null
   logoImage?: ImageCreateOneInput | null
   images?: ImageCreateManyInput | null
-  externalShopifyIntegration?: ExternalShopifyIntegrationCreateOneInput | null
+  shopifyShop?: ShopifyShopCreateOneInput | null
 }
 
 export interface BrandSubscriptionWhereInput {
@@ -40142,7 +40142,7 @@ export interface BrandUpdateDataInput {
   logoImage?: ImageUpdateOneInput | null
   products?: ProductUpdateManyWithoutBrandInput | null
   images?: ImageUpdateManyInput | null
-  externalShopifyIntegration?: ExternalShopifyIntegrationUpdateOneInput | null
+  shopifyShop?: ShopifyShopUpdateOneInput | null
 }
 
 export interface BrandUpdateInput {
@@ -40162,7 +40162,7 @@ export interface BrandUpdateInput {
   logoImage?: ImageUpdateOneInput | null
   products?: ProductUpdateManyWithoutBrandInput | null
   images?: ImageUpdateManyInput | null
-  externalShopifyIntegration?: ExternalShopifyIntegrationUpdateOneInput | null
+  shopifyShop?: ShopifyShopUpdateOneInput | null
 }
 
 export interface BrandUpdateManyMutationInput {
@@ -40213,7 +40213,7 @@ export interface BrandUpdateWithoutProductsDataInput {
   websiteUrl?: String | null
   logoImage?: ImageUpdateOneInput | null
   images?: ImageUpdateManyInput | null
-  externalShopifyIntegration?: ExternalShopifyIntegrationUpdateOneInput | null
+  shopifyShop?: ShopifyShopUpdateOneInput | null
 }
 
 export interface BrandUpsertNestedInput {
@@ -40383,7 +40383,7 @@ export interface BrandWhereInput {
   images_every?: ImageWhereInput | null
   images_some?: ImageWhereInput | null
   images_none?: ImageWhereInput | null
-  externalShopifyIntegration?: ExternalShopifyIntegrationWhereInput | null
+  shopifyShop?: ShopifyShopWhereInput | null
 }
 
 export interface BrandWhereUniqueInput {
@@ -43165,144 +43165,6 @@ export interface EmailReceiptWhereInput {
 
 export interface EmailReceiptWhereUniqueInput {
   id?: ID_Input | null
-}
-
-export interface ExternalShopifyIntegrationCreateInput {
-  id?: ID_Input | null
-  shopName: String
-  enabled: Boolean
-  accessToken?: String | null
-  scope?: ExternalShopifyIntegrationCreatescopeInput | null
-}
-
-export interface ExternalShopifyIntegrationCreateOneInput {
-  create?: ExternalShopifyIntegrationCreateInput | null
-  connect?: ExternalShopifyIntegrationWhereUniqueInput | null
-}
-
-export interface ExternalShopifyIntegrationCreatescopeInput {
-  set?: String[] | String | null
-}
-
-export interface ExternalShopifyIntegrationSubscriptionWhereInput {
-  AND?: ExternalShopifyIntegrationSubscriptionWhereInput[] | ExternalShopifyIntegrationSubscriptionWhereInput | null
-  OR?: ExternalShopifyIntegrationSubscriptionWhereInput[] | ExternalShopifyIntegrationSubscriptionWhereInput | null
-  NOT?: ExternalShopifyIntegrationSubscriptionWhereInput[] | ExternalShopifyIntegrationSubscriptionWhereInput | null
-  mutation_in?: MutationType[] | MutationType | null
-  updatedFields_contains?: String | null
-  updatedFields_contains_every?: String[] | String | null
-  updatedFields_contains_some?: String[] | String | null
-  node?: ExternalShopifyIntegrationWhereInput | null
-}
-
-export interface ExternalShopifyIntegrationUpdateDataInput {
-  shopName?: String | null
-  enabled?: Boolean | null
-  accessToken?: String | null
-  scope?: ExternalShopifyIntegrationUpdatescopeInput | null
-}
-
-export interface ExternalShopifyIntegrationUpdateInput {
-  shopName?: String | null
-  enabled?: Boolean | null
-  accessToken?: String | null
-  scope?: ExternalShopifyIntegrationUpdatescopeInput | null
-}
-
-export interface ExternalShopifyIntegrationUpdateManyMutationInput {
-  shopName?: String | null
-  enabled?: Boolean | null
-  accessToken?: String | null
-  scope?: ExternalShopifyIntegrationUpdatescopeInput | null
-}
-
-export interface ExternalShopifyIntegrationUpdateOneInput {
-  create?: ExternalShopifyIntegrationCreateInput | null
-  connect?: ExternalShopifyIntegrationWhereUniqueInput | null
-  disconnect?: Boolean | null
-  delete?: Boolean | null
-  update?: ExternalShopifyIntegrationUpdateDataInput | null
-  upsert?: ExternalShopifyIntegrationUpsertNestedInput | null
-}
-
-export interface ExternalShopifyIntegrationUpdatescopeInput {
-  set?: String[] | String | null
-}
-
-export interface ExternalShopifyIntegrationUpsertNestedInput {
-  update: ExternalShopifyIntegrationUpdateDataInput
-  create: ExternalShopifyIntegrationCreateInput
-}
-
-export interface ExternalShopifyIntegrationWhereInput {
-  AND?: ExternalShopifyIntegrationWhereInput[] | ExternalShopifyIntegrationWhereInput | null
-  OR?: ExternalShopifyIntegrationWhereInput[] | ExternalShopifyIntegrationWhereInput | null
-  NOT?: ExternalShopifyIntegrationWhereInput[] | ExternalShopifyIntegrationWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  shopName?: String | null
-  shopName_not?: String | null
-  shopName_in?: String[] | String | null
-  shopName_not_in?: String[] | String | null
-  shopName_lt?: String | null
-  shopName_lte?: String | null
-  shopName_gt?: String | null
-  shopName_gte?: String | null
-  shopName_contains?: String | null
-  shopName_not_contains?: String | null
-  shopName_starts_with?: String | null
-  shopName_not_starts_with?: String | null
-  shopName_ends_with?: String | null
-  shopName_not_ends_with?: String | null
-  enabled?: Boolean | null
-  enabled_not?: Boolean | null
-  accessToken?: String | null
-  accessToken_not?: String | null
-  accessToken_in?: String[] | String | null
-  accessToken_not_in?: String[] | String | null
-  accessToken_lt?: String | null
-  accessToken_lte?: String | null
-  accessToken_gt?: String | null
-  accessToken_gte?: String | null
-  accessToken_contains?: String | null
-  accessToken_not_contains?: String | null
-  accessToken_starts_with?: String | null
-  accessToken_not_starts_with?: String | null
-  accessToken_ends_with?: String | null
-  accessToken_not_ends_with?: String | null
-  createdAt?: DateTime | null
-  createdAt_not?: DateTime | null
-  createdAt_in?: DateTime[] | DateTime | null
-  createdAt_not_in?: DateTime[] | DateTime | null
-  createdAt_lt?: DateTime | null
-  createdAt_lte?: DateTime | null
-  createdAt_gt?: DateTime | null
-  createdAt_gte?: DateTime | null
-  updatedAt?: DateTime | null
-  updatedAt_not?: DateTime | null
-  updatedAt_in?: DateTime[] | DateTime | null
-  updatedAt_not_in?: DateTime[] | DateTime | null
-  updatedAt_lt?: DateTime | null
-  updatedAt_lte?: DateTime | null
-  updatedAt_gt?: DateTime | null
-  updatedAt_gte?: DateTime | null
-}
-
-export interface ExternalShopifyIntegrationWhereUniqueInput {
-  id?: ID_Input | null
-  shopName?: String | null
 }
 
 export interface FitPicCreateInput {
@@ -52084,7 +51946,7 @@ export interface ShopifyProductVariantCreateInput {
   cacheExpiresAt?: DateTime | null
   selectedOptions?: ShopifyProductVariantSelectedOptionCreateManyInput | null
   productVariant?: ProductVariantCreateOneWithoutShopifyProductVariantInput | null
-  shop?: ExternalShopifyIntegrationCreateOneInput | null
+  shop?: ShopifyShopCreateOneInput | null
   brand?: BrandCreateOneInput | null
   image?: ImageCreateOneInput | null
 }
@@ -52103,7 +51965,7 @@ export interface ShopifyProductVariantCreateWithoutProductVariantInput {
   cachedAvailableForSale?: Boolean | null
   cacheExpiresAt?: DateTime | null
   selectedOptions?: ShopifyProductVariantSelectedOptionCreateManyInput | null
-  shop?: ExternalShopifyIntegrationCreateOneInput | null
+  shop?: ShopifyShopCreateOneInput | null
   brand?: BrandCreateOneInput | null
   image?: ImageCreateOneInput | null
 }
@@ -52298,7 +52160,7 @@ export interface ShopifyProductVariantUpdateInput {
   cacheExpiresAt?: DateTime | null
   selectedOptions?: ShopifyProductVariantSelectedOptionUpdateManyInput | null
   productVariant?: ProductVariantUpdateOneWithoutShopifyProductVariantInput | null
-  shop?: ExternalShopifyIntegrationUpdateOneInput | null
+  shop?: ShopifyShopUpdateOneInput | null
   brand?: BrandUpdateOneInput | null
   image?: ImageUpdateOneInput | null
 }
@@ -52329,7 +52191,7 @@ export interface ShopifyProductVariantUpdateWithoutProductVariantDataInput {
   cachedAvailableForSale?: Boolean | null
   cacheExpiresAt?: DateTime | null
   selectedOptions?: ShopifyProductVariantSelectedOptionUpdateManyInput | null
-  shop?: ExternalShopifyIntegrationUpdateOneInput | null
+  shop?: ShopifyShopUpdateOneInput | null
   brand?: BrandUpdateOneInput | null
   image?: ImageUpdateOneInput | null
 }
@@ -52421,7 +52283,7 @@ export interface ShopifyProductVariantWhereInput {
   selectedOptions_some?: ShopifyProductVariantSelectedOptionWhereInput | null
   selectedOptions_none?: ShopifyProductVariantSelectedOptionWhereInput | null
   productVariant?: ProductVariantWhereInput | null
-  shop?: ExternalShopifyIntegrationWhereInput | null
+  shop?: ShopifyShopWhereInput | null
   brand?: BrandWhereInput | null
   image?: ImageWhereInput | null
 }
@@ -52429,6 +52291,144 @@ export interface ShopifyProductVariantWhereInput {
 export interface ShopifyProductVariantWhereUniqueInput {
   id?: ID_Input | null
   externalId?: String | null
+}
+
+export interface ShopifyShopCreateInput {
+  id?: ID_Input | null
+  shopName: String
+  enabled: Boolean
+  accessToken?: String | null
+  scope?: ShopifyShopCreatescopeInput | null
+}
+
+export interface ShopifyShopCreateOneInput {
+  create?: ShopifyShopCreateInput | null
+  connect?: ShopifyShopWhereUniqueInput | null
+}
+
+export interface ShopifyShopCreatescopeInput {
+  set?: String[] | String | null
+}
+
+export interface ShopifyShopSubscriptionWhereInput {
+  AND?: ShopifyShopSubscriptionWhereInput[] | ShopifyShopSubscriptionWhereInput | null
+  OR?: ShopifyShopSubscriptionWhereInput[] | ShopifyShopSubscriptionWhereInput | null
+  NOT?: ShopifyShopSubscriptionWhereInput[] | ShopifyShopSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: ShopifyShopWhereInput | null
+}
+
+export interface ShopifyShopUpdateDataInput {
+  shopName?: String | null
+  enabled?: Boolean | null
+  accessToken?: String | null
+  scope?: ShopifyShopUpdatescopeInput | null
+}
+
+export interface ShopifyShopUpdateInput {
+  shopName?: String | null
+  enabled?: Boolean | null
+  accessToken?: String | null
+  scope?: ShopifyShopUpdatescopeInput | null
+}
+
+export interface ShopifyShopUpdateManyMutationInput {
+  shopName?: String | null
+  enabled?: Boolean | null
+  accessToken?: String | null
+  scope?: ShopifyShopUpdatescopeInput | null
+}
+
+export interface ShopifyShopUpdateOneInput {
+  create?: ShopifyShopCreateInput | null
+  connect?: ShopifyShopWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: ShopifyShopUpdateDataInput | null
+  upsert?: ShopifyShopUpsertNestedInput | null
+}
+
+export interface ShopifyShopUpdatescopeInput {
+  set?: String[] | String | null
+}
+
+export interface ShopifyShopUpsertNestedInput {
+  update: ShopifyShopUpdateDataInput
+  create: ShopifyShopCreateInput
+}
+
+export interface ShopifyShopWhereInput {
+  AND?: ShopifyShopWhereInput[] | ShopifyShopWhereInput | null
+  OR?: ShopifyShopWhereInput[] | ShopifyShopWhereInput | null
+  NOT?: ShopifyShopWhereInput[] | ShopifyShopWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  shopName?: String | null
+  shopName_not?: String | null
+  shopName_in?: String[] | String | null
+  shopName_not_in?: String[] | String | null
+  shopName_lt?: String | null
+  shopName_lte?: String | null
+  shopName_gt?: String | null
+  shopName_gte?: String | null
+  shopName_contains?: String | null
+  shopName_not_contains?: String | null
+  shopName_starts_with?: String | null
+  shopName_not_starts_with?: String | null
+  shopName_ends_with?: String | null
+  shopName_not_ends_with?: String | null
+  enabled?: Boolean | null
+  enabled_not?: Boolean | null
+  accessToken?: String | null
+  accessToken_not?: String | null
+  accessToken_in?: String[] | String | null
+  accessToken_not_in?: String[] | String | null
+  accessToken_lt?: String | null
+  accessToken_lte?: String | null
+  accessToken_gt?: String | null
+  accessToken_gte?: String | null
+  accessToken_contains?: String | null
+  accessToken_not_contains?: String | null
+  accessToken_starts_with?: String | null
+  accessToken_not_starts_with?: String | null
+  accessToken_ends_with?: String | null
+  accessToken_not_ends_with?: String | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+}
+
+export interface ShopifyShopWhereUniqueInput {
+  id?: ID_Input | null
+  shopName?: String | null
 }
 
 export interface SizeCreateInput {
@@ -55211,10 +55211,6 @@ export interface AggregateEmailReceipt {
   count: Int
 }
 
-export interface AggregateExternalShopifyIntegration {
-  count: Int
-}
-
 export interface AggregateFitPic {
   count: Int
 }
@@ -55372,6 +55368,10 @@ export interface AggregateShopifyProductVariant {
 }
 
 export interface AggregateShopifyProductVariantSelectedOption {
+  count: Int
+}
+
+export interface AggregateShopifyShop {
   count: Int
 }
 
@@ -55672,7 +55672,7 @@ export interface Brand extends Node {
   websiteUrl?: String | null
   createdAt: DateTime
   updatedAt: DateTime
-  externalShopifyIntegration?: ExternalShopifyIntegration | null
+  shopifyShop?: ShopifyShop | null
 }
 
 /*
@@ -56244,52 +56244,6 @@ export interface EmailReceiptSubscriptionPayload {
   node?: EmailReceipt | null
   updatedFields?: Array<String> | null
   previousValues?: EmailReceiptPreviousValues | null
-}
-
-export interface ExternalShopifyIntegration extends Node {
-  id: ID_Output
-  shopName: String
-  enabled: Boolean
-  accessToken?: String | null
-  scope: Array<String>
-  createdAt: DateTime
-  updatedAt: DateTime
-}
-
-/*
- * A connection to a list of items.
-
- */
-export interface ExternalShopifyIntegrationConnection {
-  pageInfo: PageInfo
-  edges: Array<ExternalShopifyIntegrationEdge | null>
-  aggregate: AggregateExternalShopifyIntegration
-}
-
-/*
- * An edge in a connection.
-
- */
-export interface ExternalShopifyIntegrationEdge {
-  node: ExternalShopifyIntegration
-  cursor: String
-}
-
-export interface ExternalShopifyIntegrationPreviousValues {
-  id: ID_Output
-  shopName: String
-  enabled: Boolean
-  accessToken?: String | null
-  scope: Array<String>
-  createdAt: DateTime
-  updatedAt: DateTime
-}
-
-export interface ExternalShopifyIntegrationSubscriptionPayload {
-  mutation: MutationType
-  node?: ExternalShopifyIntegration | null
-  updatedFields?: Array<String> | null
-  previousValues?: ExternalShopifyIntegrationPreviousValues | null
 }
 
 export interface FitPic extends Node {
@@ -58126,7 +58080,7 @@ export interface ShopifyProductVariant extends Node {
   displayName?: String | null
   selectedOptions?: Array<ShopifyProductVariantSelectedOption> | null
   productVariant?: ProductVariant | null
-  shop?: ExternalShopifyIntegration | null
+  shop?: ShopifyShop | null
   brand?: Brand | null
   title?: String | null
   image?: Image | null
@@ -58207,6 +58161,52 @@ export interface ShopifyProductVariantSubscriptionPayload {
   node?: ShopifyProductVariant | null
   updatedFields?: Array<String> | null
   previousValues?: ShopifyProductVariantPreviousValues | null
+}
+
+export interface ShopifyShop extends Node {
+  id: ID_Output
+  shopName: String
+  enabled: Boolean
+  accessToken?: String | null
+  scope: Array<String>
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface ShopifyShopConnection {
+  pageInfo: PageInfo
+  edges: Array<ShopifyShopEdge | null>
+  aggregate: AggregateShopifyShop
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface ShopifyShopEdge {
+  node: ShopifyShop
+  cursor: String
+}
+
+export interface ShopifyShopPreviousValues {
+  id: ID_Output
+  shopName: String
+  enabled: Boolean
+  accessToken?: String | null
+  scope: Array<String>
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface ShopifyShopSubscriptionPayload {
+  mutation: MutationType
+  node?: ShopifyShop | null
+  updatedFields?: Array<String> | null
+  previousValues?: ShopifyShopPreviousValues | null
 }
 
 export interface Size extends Node {

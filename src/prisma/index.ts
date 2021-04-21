@@ -44,9 +44,6 @@ export interface Exists {
     where?: CustomerNotificationBarReceiptWhereInput
   ) => Promise<boolean>;
   emailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>;
-  externalShopifyIntegration: (
-    where?: ExternalShopifyIntegrationWhereInput
-  ) => Promise<boolean>;
   fitPic: (where?: FitPicWhereInput) => Promise<boolean>;
   fitPicReport: (where?: FitPicReportWhereInput) => Promise<boolean>;
   image: (where?: ImageWhereInput) => Promise<boolean>;
@@ -119,6 +116,7 @@ export interface Exists {
   shopifyProductVariantSelectedOption: (
     where?: ShopifyProductVariantSelectedOptionWhereInput
   ) => Promise<boolean>;
+  shopifyShop: (where?: ShopifyShopWhereInput) => Promise<boolean>;
   size: (where?: SizeWhereInput) => Promise<boolean>;
   smsReceipt: (where?: SmsReceiptWhereInput) => Promise<boolean>;
   stylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>;
@@ -521,27 +519,6 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => EmailReceiptConnectionPromise;
-  externalShopifyIntegration: (
-    where: ExternalShopifyIntegrationWhereUniqueInput
-  ) => ExternalShopifyIntegrationNullablePromise;
-  externalShopifyIntegrations: (args?: {
-    where?: ExternalShopifyIntegrationWhereInput;
-    orderBy?: ExternalShopifyIntegrationOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => FragmentableArray<ExternalShopifyIntegration>;
-  externalShopifyIntegrationsConnection: (args?: {
-    where?: ExternalShopifyIntegrationWhereInput;
-    orderBy?: ExternalShopifyIntegrationOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => ExternalShopifyIntegrationConnectionPromise;
   fitPic: (where: FitPicWhereUniqueInput) => FitPicNullablePromise;
   fitPics: (args?: {
     where?: FitPicWhereInput;
@@ -1364,6 +1341,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ShopifyProductVariantSelectedOptionConnectionPromise;
+  shopifyShop: (
+    where: ShopifyShopWhereUniqueInput
+  ) => ShopifyShopNullablePromise;
+  shopifyShops: (args?: {
+    where?: ShopifyShopWhereInput;
+    orderBy?: ShopifyShopOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<ShopifyShop>;
+  shopifyShopsConnection: (args?: {
+    where?: ShopifyShopWhereInput;
+    orderBy?: ShopifyShopOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ShopifyShopConnectionPromise;
   size: (where: SizeWhereUniqueInput) => SizeNullablePromise;
   sizes: (args?: {
     where?: SizeWhereInput;
@@ -1966,28 +1964,6 @@ export interface Prisma {
   ) => EmailReceiptPromise;
   deleteManyEmailReceipts: (
     where?: EmailReceiptWhereInput
-  ) => BatchPayloadPromise;
-  createExternalShopifyIntegration: (
-    data: ExternalShopifyIntegrationCreateInput
-  ) => ExternalShopifyIntegrationPromise;
-  updateExternalShopifyIntegration: (args: {
-    data: ExternalShopifyIntegrationUpdateInput;
-    where: ExternalShopifyIntegrationWhereUniqueInput;
-  }) => ExternalShopifyIntegrationPromise;
-  updateManyExternalShopifyIntegrations: (args: {
-    data: ExternalShopifyIntegrationUpdateManyMutationInput;
-    where?: ExternalShopifyIntegrationWhereInput;
-  }) => BatchPayloadPromise;
-  upsertExternalShopifyIntegration: (args: {
-    where: ExternalShopifyIntegrationWhereUniqueInput;
-    create: ExternalShopifyIntegrationCreateInput;
-    update: ExternalShopifyIntegrationUpdateInput;
-  }) => ExternalShopifyIntegrationPromise;
-  deleteExternalShopifyIntegration: (
-    where: ExternalShopifyIntegrationWhereUniqueInput
-  ) => ExternalShopifyIntegrationPromise;
-  deleteManyExternalShopifyIntegrations: (
-    where?: ExternalShopifyIntegrationWhereInput
   ) => BatchPayloadPromise;
   createFitPic: (data: FitPicCreateInput) => FitPicPromise;
   updateFitPic: (args: {
@@ -2789,6 +2765,24 @@ export interface Prisma {
   deleteManyShopifyProductVariantSelectedOptions: (
     where?: ShopifyProductVariantSelectedOptionWhereInput
   ) => BatchPayloadPromise;
+  createShopifyShop: (data: ShopifyShopCreateInput) => ShopifyShopPromise;
+  updateShopifyShop: (args: {
+    data: ShopifyShopUpdateInput;
+    where: ShopifyShopWhereUniqueInput;
+  }) => ShopifyShopPromise;
+  updateManyShopifyShops: (args: {
+    data: ShopifyShopUpdateManyMutationInput;
+    where?: ShopifyShopWhereInput;
+  }) => BatchPayloadPromise;
+  upsertShopifyShop: (args: {
+    where: ShopifyShopWhereUniqueInput;
+    create: ShopifyShopCreateInput;
+    update: ShopifyShopUpdateInput;
+  }) => ShopifyShopPromise;
+  deleteShopifyShop: (where: ShopifyShopWhereUniqueInput) => ShopifyShopPromise;
+  deleteManyShopifyShops: (
+    where?: ShopifyShopWhereInput
+  ) => BatchPayloadPromise;
   createSize: (data: SizeCreateInput) => SizePromise;
   updateSize: (args: {
     data: SizeUpdateInput;
@@ -3096,9 +3090,6 @@ export interface Subscription {
   emailReceipt: (
     where?: EmailReceiptSubscriptionWhereInput
   ) => EmailReceiptSubscriptionPayloadSubscription;
-  externalShopifyIntegration: (
-    where?: ExternalShopifyIntegrationSubscriptionWhereInput
-  ) => ExternalShopifyIntegrationSubscriptionPayloadSubscription;
   fitPic: (
     where?: FitPicSubscriptionWhereInput
   ) => FitPicSubscriptionPayloadSubscription;
@@ -3219,6 +3210,9 @@ export interface Subscription {
   shopifyProductVariantSelectedOption: (
     where?: ShopifyProductVariantSelectedOptionSubscriptionWhereInput
   ) => ShopifyProductVariantSelectedOptionSubscriptionPayloadSubscription;
+  shopifyShop: (
+    where?: ShopifyShopSubscriptionWhereInput
+  ) => ShopifyShopSubscriptionPayloadSubscription;
   size: (
     where?: SizeSubscriptionWhereInput
   ) => SizeSubscriptionPayloadSubscription;
@@ -4233,20 +4227,6 @@ export type CustomerMembershipSubscriptionDataOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type ExternalShopifyIntegrationOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "shopName_ASC"
-  | "shopName_DESC"
-  | "enabled_ASC"
-  | "enabled_DESC"
-  | "accessToken_ASC"
-  | "accessToken_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
 export type InterestedUserOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -4610,6 +4590,20 @@ export type ShopifyProductVariantOrderByInput =
   | "cachedAvailableForSale_DESC"
   | "cacheExpiresAt_ASC"
   | "cacheExpiresAt_DESC";
+
+export type ShopifyShopOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "shopName_ASC"
+  | "shopName_DESC"
+  | "enabled_ASC"
+  | "enabled_DESC"
+  | "accessToken_ASC"
+  | "accessToken_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type StylePreferencesOrderByInput = "id_ASC" | "id_DESC";
 
@@ -6423,13 +6417,13 @@ export interface BrandWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationWhereInput>;
+  shopifyShop?: Maybe<ShopifyShopWhereInput>;
   AND?: Maybe<BrandWhereInput[] | BrandWhereInput>;
   OR?: Maybe<BrandWhereInput[] | BrandWhereInput>;
   NOT?: Maybe<BrandWhereInput[] | BrandWhereInput>;
 }
 
-export interface ExternalShopifyIntegrationWhereInput {
+export interface ShopifyShopWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -6490,18 +6484,9 @@ export interface ExternalShopifyIntegrationWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<
-    | ExternalShopifyIntegrationWhereInput[]
-    | ExternalShopifyIntegrationWhereInput
-  >;
-  OR?: Maybe<
-    | ExternalShopifyIntegrationWhereInput[]
-    | ExternalShopifyIntegrationWhereInput
-  >;
-  NOT?: Maybe<
-    | ExternalShopifyIntegrationWhereInput[]
-    | ExternalShopifyIntegrationWhereInput
-  >;
+  AND?: Maybe<ShopifyShopWhereInput[] | ShopifyShopWhereInput>;
+  OR?: Maybe<ShopifyShopWhereInput[] | ShopifyShopWhereInput>;
+  NOT?: Maybe<ShopifyShopWhereInput[] | ShopifyShopWhereInput>;
 }
 
 export interface CategoryWhereInput {
@@ -6957,7 +6942,7 @@ export interface ShopifyProductVariantWhereInput {
   selectedOptions_some?: Maybe<ShopifyProductVariantSelectedOptionWhereInput>;
   selectedOptions_none?: Maybe<ShopifyProductVariantSelectedOptionWhereInput>;
   productVariant?: Maybe<ProductVariantWhereInput>;
-  shop?: Maybe<ExternalShopifyIntegrationWhereInput>;
+  shop?: Maybe<ShopifyShopWhereInput>;
   brand?: Maybe<BrandWhereInput>;
   title?: Maybe<String>;
   title_not?: Maybe<String>;
@@ -9709,11 +9694,6 @@ export type EmailReceiptWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
-export type ExternalShopifyIntegrationWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  shopName?: Maybe<String>;
-}>;
-
 export type FitPicWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -10655,6 +10635,11 @@ export type ShopifyProductVariantSelectedOptionWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type ShopifyShopWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  shopName?: Maybe<String>;
+}>;
+
 export type SizeWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
@@ -11172,7 +11157,7 @@ export interface BrandCreateWithoutProductsInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
-  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationCreateOneInput>;
+  shopifyShop?: Maybe<ShopifyShopCreateOneInput>;
 }
 
 export interface ImageCreateManyInput {
@@ -11180,20 +11165,20 @@ export interface ImageCreateManyInput {
   connect?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>;
 }
 
-export interface ExternalShopifyIntegrationCreateOneInput {
-  create?: Maybe<ExternalShopifyIntegrationCreateInput>;
-  connect?: Maybe<ExternalShopifyIntegrationWhereUniqueInput>;
+export interface ShopifyShopCreateOneInput {
+  create?: Maybe<ShopifyShopCreateInput>;
+  connect?: Maybe<ShopifyShopWhereUniqueInput>;
 }
 
-export interface ExternalShopifyIntegrationCreateInput {
+export interface ShopifyShopCreateInput {
   id?: Maybe<ID_Input>;
   shopName: String;
   enabled: Boolean;
   accessToken?: Maybe<String>;
-  scope?: Maybe<ExternalShopifyIntegrationCreatescopeInput>;
+  scope?: Maybe<ShopifyShopCreatescopeInput>;
 }
 
-export interface ExternalShopifyIntegrationCreatescopeInput {
+export interface ShopifyShopCreatescopeInput {
   set?: Maybe<String[] | String>;
 }
 
@@ -11336,7 +11321,7 @@ export interface ShopifyProductVariantCreateWithoutProductVariantInput {
   externalId?: Maybe<String>;
   displayName?: Maybe<String>;
   selectedOptions?: Maybe<ShopifyProductVariantSelectedOptionCreateManyInput>;
-  shop?: Maybe<ExternalShopifyIntegrationCreateOneInput>;
+  shop?: Maybe<ShopifyShopCreateOneInput>;
   brand?: Maybe<BrandCreateOneInput>;
   title?: Maybe<String>;
   image?: Maybe<ImageCreateOneInput>;
@@ -11385,7 +11370,7 @@ export interface BrandCreateInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
-  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationCreateOneInput>;
+  shopifyShop?: Maybe<ShopifyShopCreateOneInput>;
 }
 
 export interface ProductCreateManyWithoutBrandInput {
@@ -12990,7 +12975,7 @@ export interface BrandUpdateWithoutProductsDataInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
-  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
+  shopifyShop?: Maybe<ShopifyShopUpdateOneInput>;
 }
 
 export interface ImageUpdateOneInput {
@@ -13155,29 +13140,29 @@ export interface ImageUpdateManyDataInput {
   title?: Maybe<String>;
 }
 
-export interface ExternalShopifyIntegrationUpdateOneInput {
-  create?: Maybe<ExternalShopifyIntegrationCreateInput>;
-  update?: Maybe<ExternalShopifyIntegrationUpdateDataInput>;
-  upsert?: Maybe<ExternalShopifyIntegrationUpsertNestedInput>;
+export interface ShopifyShopUpdateOneInput {
+  create?: Maybe<ShopifyShopCreateInput>;
+  update?: Maybe<ShopifyShopUpdateDataInput>;
+  upsert?: Maybe<ShopifyShopUpsertNestedInput>;
   delete?: Maybe<Boolean>;
   disconnect?: Maybe<Boolean>;
-  connect?: Maybe<ExternalShopifyIntegrationWhereUniqueInput>;
+  connect?: Maybe<ShopifyShopWhereUniqueInput>;
 }
 
-export interface ExternalShopifyIntegrationUpdateDataInput {
+export interface ShopifyShopUpdateDataInput {
   shopName?: Maybe<String>;
   enabled?: Maybe<Boolean>;
   accessToken?: Maybe<String>;
-  scope?: Maybe<ExternalShopifyIntegrationUpdatescopeInput>;
+  scope?: Maybe<ShopifyShopUpdatescopeInput>;
 }
 
-export interface ExternalShopifyIntegrationUpdatescopeInput {
+export interface ShopifyShopUpdatescopeInput {
   set?: Maybe<String[] | String>;
 }
 
-export interface ExternalShopifyIntegrationUpsertNestedInput {
-  update: ExternalShopifyIntegrationUpdateDataInput;
-  create: ExternalShopifyIntegrationCreateInput;
+export interface ShopifyShopUpsertNestedInput {
+  update: ShopifyShopUpdateDataInput;
+  create: ShopifyShopCreateInput;
 }
 
 export interface BrandUpsertWithoutProductsInput {
@@ -13405,7 +13390,7 @@ export interface ShopifyProductVariantUpdateWithoutProductVariantDataInput {
   externalId?: Maybe<String>;
   displayName?: Maybe<String>;
   selectedOptions?: Maybe<ShopifyProductVariantSelectedOptionUpdateManyInput>;
-  shop?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
+  shop?: Maybe<ShopifyShopUpdateOneInput>;
   brand?: Maybe<BrandUpdateOneInput>;
   title?: Maybe<String>;
   image?: Maybe<ImageUpdateOneInput>;
@@ -13562,7 +13547,7 @@ export interface BrandUpdateDataInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
-  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
+  shopifyShop?: Maybe<ShopifyShopUpdateOneInput>;
 }
 
 export interface ProductUpdateManyWithoutBrandInput {
@@ -18085,7 +18070,7 @@ export interface BrandUpdateInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
-  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
+  shopifyShop?: Maybe<ShopifyShopUpdateOneInput>;
 }
 
 export interface BrandUpdateManyMutationInput {
@@ -18640,20 +18625,6 @@ export interface UserUpsertWithoutEmailsInput {
 
 export interface EmailReceiptUpdateManyMutationInput {
   emailId?: Maybe<EmailId>;
-}
-
-export interface ExternalShopifyIntegrationUpdateInput {
-  shopName?: Maybe<String>;
-  enabled?: Maybe<Boolean>;
-  accessToken?: Maybe<String>;
-  scope?: Maybe<ExternalShopifyIntegrationUpdatescopeInput>;
-}
-
-export interface ExternalShopifyIntegrationUpdateManyMutationInput {
-  shopName?: Maybe<String>;
-  enabled?: Maybe<Boolean>;
-  accessToken?: Maybe<String>;
-  scope?: Maybe<ExternalShopifyIntegrationUpdatescopeInput>;
 }
 
 export interface FitPicCreateInput {
@@ -20671,7 +20642,7 @@ export interface ShopifyProductVariantCreateInput {
   productVariant?: Maybe<
     ProductVariantCreateOneWithoutShopifyProductVariantInput
   >;
-  shop?: Maybe<ExternalShopifyIntegrationCreateOneInput>;
+  shop?: Maybe<ShopifyShopCreateOneInput>;
   brand?: Maybe<BrandCreateOneInput>;
   title?: Maybe<String>;
   image?: Maybe<ImageCreateOneInput>;
@@ -20714,7 +20685,7 @@ export interface ShopifyProductVariantUpdateInput {
   productVariant?: Maybe<
     ProductVariantUpdateOneWithoutShopifyProductVariantInput
   >;
-  shop?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
+  shop?: Maybe<ShopifyShopUpdateOneInput>;
   brand?: Maybe<BrandUpdateOneInput>;
   title?: Maybe<String>;
   image?: Maybe<ImageUpdateOneInput>;
@@ -20775,6 +20746,20 @@ export interface ShopifyProductVariantSelectedOptionUpdateInput {
 export interface ShopifyProductVariantSelectedOptionUpdateManyMutationInput {
   name?: Maybe<String>;
   value?: Maybe<String>;
+}
+
+export interface ShopifyShopUpdateInput {
+  shopName?: Maybe<String>;
+  enabled?: Maybe<Boolean>;
+  accessToken?: Maybe<String>;
+  scope?: Maybe<ShopifyShopUpdatescopeInput>;
+}
+
+export interface ShopifyShopUpdateManyMutationInput {
+  shopName?: Maybe<String>;
+  enabled?: Maybe<Boolean>;
+  accessToken?: Maybe<String>;
+  scope?: Maybe<ShopifyShopUpdatescopeInput>;
 }
 
 export interface SizeUpdateInput {
@@ -21758,26 +21743,6 @@ export interface EmailReceiptSubscriptionWhereInput {
   >;
 }
 
-export interface ExternalShopifyIntegrationSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<ExternalShopifyIntegrationWhereInput>;
-  AND?: Maybe<
-    | ExternalShopifyIntegrationSubscriptionWhereInput[]
-    | ExternalShopifyIntegrationSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    | ExternalShopifyIntegrationSubscriptionWhereInput[]
-    | ExternalShopifyIntegrationSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    | ExternalShopifyIntegrationSubscriptionWhereInput[]
-    | ExternalShopifyIntegrationSubscriptionWhereInput
-  >;
-}
-
 export interface FitPicSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -22474,6 +22439,23 @@ export interface ShopifyProductVariantSelectedOptionSubscriptionWhereInput {
   NOT?: Maybe<
     | ShopifyProductVariantSelectedOptionSubscriptionWhereInput[]
     | ShopifyProductVariantSelectedOptionSubscriptionWhereInput
+  >;
+}
+
+export interface ShopifyShopSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ShopifyShopWhereInput>;
+  AND?: Maybe<
+    ShopifyShopSubscriptionWhereInput[] | ShopifyShopSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    ShopifyShopSubscriptionWhereInput[] | ShopifyShopSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    ShopifyShopSubscriptionWhereInput[] | ShopifyShopSubscriptionWhereInput
   >;
 }
 
@@ -24223,7 +24205,7 @@ export interface BrandPromise extends Promise<Brand>, Fragmentable {
   websiteUrl: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  externalShopifyIntegration: <T = ExternalShopifyIntegrationPromise>() => T;
+  shopifyShop: <T = ShopifyShopPromise>() => T;
 }
 
 export interface BrandSubscription
@@ -24264,9 +24246,7 @@ export interface BrandSubscription
   websiteUrl: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  externalShopifyIntegration: <
-    T = ExternalShopifyIntegrationSubscription
-  >() => T;
+  shopifyShop: <T = ShopifyShopSubscription>() => T;
 }
 
 export interface BrandNullablePromise
@@ -24307,10 +24287,10 @@ export interface BrandNullablePromise
   websiteUrl: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  externalShopifyIntegration: <T = ExternalShopifyIntegrationPromise>() => T;
+  shopifyShop: <T = ShopifyShopPromise>() => T;
 }
 
-export interface ExternalShopifyIntegration {
+export interface ShopifyShop {
   id: ID_Output;
   shopName: String;
   enabled: Boolean;
@@ -24320,9 +24300,7 @@ export interface ExternalShopifyIntegration {
   updatedAt: DateTimeOutput;
 }
 
-export interface ExternalShopifyIntegrationPromise
-  extends Promise<ExternalShopifyIntegration>,
-    Fragmentable {
+export interface ShopifyShopPromise extends Promise<ShopifyShop>, Fragmentable {
   id: () => Promise<ID_Output>;
   shopName: () => Promise<String>;
   enabled: () => Promise<Boolean>;
@@ -24332,8 +24310,8 @@ export interface ExternalShopifyIntegrationPromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface ExternalShopifyIntegrationSubscription
-  extends Promise<AsyncIterator<ExternalShopifyIntegration>>,
+export interface ShopifyShopSubscription
+  extends Promise<AsyncIterator<ShopifyShop>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   shopName: () => Promise<AsyncIterator<String>>;
@@ -24344,8 +24322,8 @@ export interface ExternalShopifyIntegrationSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface ExternalShopifyIntegrationNullablePromise
-  extends Promise<ExternalShopifyIntegration | null>,
+export interface ShopifyShopNullablePromise
+  extends Promise<ShopifyShop | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
   shopName: () => Promise<String>;
@@ -24808,7 +24786,7 @@ export interface ShopifyProductVariantPromise
     last?: Int;
   }) => T;
   productVariant: <T = ProductVariantPromise>() => T;
-  shop: <T = ExternalShopifyIntegrationPromise>() => T;
+  shop: <T = ShopifyShopPromise>() => T;
   brand: <T = BrandPromise>() => T;
   title: () => Promise<String>;
   image: <T = ImagePromise>() => T;
@@ -24835,7 +24813,7 @@ export interface ShopifyProductVariantSubscription
     last?: Int;
   }) => T;
   productVariant: <T = ProductVariantSubscription>() => T;
-  shop: <T = ExternalShopifyIntegrationSubscription>() => T;
+  shop: <T = ShopifyShopSubscription>() => T;
   brand: <T = BrandSubscription>() => T;
   title: () => Promise<AsyncIterator<String>>;
   image: <T = ImageSubscription>() => T;
@@ -24862,7 +24840,7 @@ export interface ShopifyProductVariantNullablePromise
     last?: Int;
   }) => T;
   productVariant: <T = ProductVariantPromise>() => T;
-  shop: <T = ExternalShopifyIntegrationPromise>() => T;
+  shop: <T = ShopifyShopPromise>() => T;
   brand: <T = BrandPromise>() => T;
   title: () => Promise<String>;
   image: <T = ImagePromise>() => T;
@@ -27993,64 +27971,6 @@ export interface AggregateEmailReceiptSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ExternalShopifyIntegrationConnection {
-  pageInfo: PageInfo;
-  edges: ExternalShopifyIntegrationEdge[];
-}
-
-export interface ExternalShopifyIntegrationConnectionPromise
-  extends Promise<ExternalShopifyIntegrationConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ExternalShopifyIntegrationEdge>>() => T;
-  aggregate: <T = AggregateExternalShopifyIntegrationPromise>() => T;
-}
-
-export interface ExternalShopifyIntegrationConnectionSubscription
-  extends Promise<AsyncIterator<ExternalShopifyIntegrationConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<ExternalShopifyIntegrationEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateExternalShopifyIntegrationSubscription>() => T;
-}
-
-export interface ExternalShopifyIntegrationEdge {
-  node: ExternalShopifyIntegration;
-  cursor: String;
-}
-
-export interface ExternalShopifyIntegrationEdgePromise
-  extends Promise<ExternalShopifyIntegrationEdge>,
-    Fragmentable {
-  node: <T = ExternalShopifyIntegrationPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface ExternalShopifyIntegrationEdgeSubscription
-  extends Promise<AsyncIterator<ExternalShopifyIntegrationEdge>>,
-    Fragmentable {
-  node: <T = ExternalShopifyIntegrationSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateExternalShopifyIntegration {
-  count: Int;
-}
-
-export interface AggregateExternalShopifyIntegrationPromise
-  extends Promise<AggregateExternalShopifyIntegration>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateExternalShopifyIntegrationSubscription
-  extends Promise<AsyncIterator<AggregateExternalShopifyIntegration>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
 export interface FitPicConnection {
   pageInfo: PageInfo;
   edges: FitPicEdge[];
@@ -30923,6 +30843,62 @@ export interface AggregateShopifyProductVariantSelectedOptionSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface ShopifyShopConnection {
+  pageInfo: PageInfo;
+  edges: ShopifyShopEdge[];
+}
+
+export interface ShopifyShopConnectionPromise
+  extends Promise<ShopifyShopConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ShopifyShopEdge>>() => T;
+  aggregate: <T = AggregateShopifyShopPromise>() => T;
+}
+
+export interface ShopifyShopConnectionSubscription
+  extends Promise<AsyncIterator<ShopifyShopConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ShopifyShopEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateShopifyShopSubscription>() => T;
+}
+
+export interface ShopifyShopEdge {
+  node: ShopifyShop;
+  cursor: String;
+}
+
+export interface ShopifyShopEdgePromise
+  extends Promise<ShopifyShopEdge>,
+    Fragmentable {
+  node: <T = ShopifyShopPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ShopifyShopEdgeSubscription
+  extends Promise<AsyncIterator<ShopifyShopEdge>>,
+    Fragmentable {
+  node: <T = ShopifyShopSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateShopifyShop {
+  count: Int;
+}
+
+export interface AggregateShopifyShopPromise
+  extends Promise<AggregateShopifyShop>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateShopifyShopSubscription
+  extends Promise<AsyncIterator<AggregateShopifyShop>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface SizeConnection {
   pageInfo: PageInfo;
   edges: SizeEdge[];
@@ -32897,67 +32873,6 @@ export interface EmailReceiptPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   emailId: () => Promise<AsyncIterator<EmailId>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface ExternalShopifyIntegrationSubscriptionPayload {
-  mutation: MutationType;
-  node: ExternalShopifyIntegration;
-  updatedFields: String[];
-  previousValues: ExternalShopifyIntegrationPreviousValues;
-}
-
-export interface ExternalShopifyIntegrationSubscriptionPayloadPromise
-  extends Promise<ExternalShopifyIntegrationSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = ExternalShopifyIntegrationPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ExternalShopifyIntegrationPreviousValuesPromise>() => T;
-}
-
-export interface ExternalShopifyIntegrationSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ExternalShopifyIntegrationSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ExternalShopifyIntegrationSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <
-    T = ExternalShopifyIntegrationPreviousValuesSubscription
-  >() => T;
-}
-
-export interface ExternalShopifyIntegrationPreviousValues {
-  id: ID_Output;
-  shopName: String;
-  enabled: Boolean;
-  accessToken?: String;
-  scope: String[];
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface ExternalShopifyIntegrationPreviousValuesPromise
-  extends Promise<ExternalShopifyIntegrationPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  shopName: () => Promise<String>;
-  enabled: () => Promise<Boolean>;
-  accessToken: () => Promise<String>;
-  scope: () => Promise<String[]>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface ExternalShopifyIntegrationPreviousValuesSubscription
-  extends Promise<AsyncIterator<ExternalShopifyIntegrationPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  shopName: () => Promise<AsyncIterator<String>>;
-  enabled: () => Promise<AsyncIterator<Boolean>>;
-  accessToken: () => Promise<AsyncIterator<String>>;
-  scope: () => Promise<AsyncIterator<String[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -35307,6 +35222,65 @@ export interface ShopifyProductVariantSelectedOptionPreviousValuesSubscription
   value: () => Promise<AsyncIterator<String>>;
 }
 
+export interface ShopifyShopSubscriptionPayload {
+  mutation: MutationType;
+  node: ShopifyShop;
+  updatedFields: String[];
+  previousValues: ShopifyShopPreviousValues;
+}
+
+export interface ShopifyShopSubscriptionPayloadPromise
+  extends Promise<ShopifyShopSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ShopifyShopPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ShopifyShopPreviousValuesPromise>() => T;
+}
+
+export interface ShopifyShopSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ShopifyShopSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ShopifyShopSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ShopifyShopPreviousValuesSubscription>() => T;
+}
+
+export interface ShopifyShopPreviousValues {
+  id: ID_Output;
+  shopName: String;
+  enabled: Boolean;
+  accessToken?: String;
+  scope: String[];
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface ShopifyShopPreviousValuesPromise
+  extends Promise<ShopifyShopPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  shopName: () => Promise<String>;
+  enabled: () => Promise<Boolean>;
+  accessToken: () => Promise<String>;
+  scope: () => Promise<String[]>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ShopifyShopPreviousValuesSubscription
+  extends Promise<AsyncIterator<ShopifyShopPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  shopName: () => Promise<AsyncIterator<String>>;
+  enabled: () => Promise<AsyncIterator<Boolean>>;
+  accessToken: () => Promise<AsyncIterator<String>>;
+  scope: () => Promise<AsyncIterator<String[]>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface SizeSubscriptionPayload {
   mutation: MutationType;
   node: Size;
@@ -36270,7 +36244,7 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "ExternalShopifyIntegration",
+    name: "ShopifyShop",
     embedded: false
   },
   {
