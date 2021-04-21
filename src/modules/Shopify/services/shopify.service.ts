@@ -104,13 +104,11 @@ export class ShopifyService {
       params: { code: authorizationCode, shop, state: nonce, timestamp },
     })
 
-    const externalShopifyIntegration = await this.prisma.client.externalShopifyIntegration(
-      {
-        shopName: this.getShopName(shop),
-      }
-    )
+    const shopifyShop = await this.prisma.client.shopifyShop({
+      shopName: this.getShopName(shop),
+    })
 
-    return externalShopifyIntegration && isValidHMAC
+    return shopifyShop && isValidHMAC
   }
 
   async getAccessToken({

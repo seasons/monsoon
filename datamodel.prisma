@@ -316,9 +316,9 @@ type Brand {
   published: Boolean! @default(value: true)
   featured: Boolean! @default(value: false)
   websiteUrl: String
+  shopifyShop: ShopifyShop
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  shopifyShop: ShopifyShop
 }
 type Category {
   id: ID! @id

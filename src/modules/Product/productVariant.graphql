@@ -132,7 +132,7 @@ type ShopifyProductVariant {
     last: Int
   ): [ShopifyProductVariantSelectedOption!]
   productVariant: ProductVariant
-  shop: ExternalShopifyIntegration
+  shop: ShopifyShop
   brand: Brand
   title: String
   image: Image

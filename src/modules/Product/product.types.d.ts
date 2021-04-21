@@ -29,10 +29,10 @@ export interface CustomBrandCreateOrUpdateData {
   products?: ProductCreateManyWithoutBrandInput
   logoImage?: any
   images?: any[]
-  externalShopifyIntegration?: ExternalShopifyIntegrationInput
+  shopifyShop?: ShopifyShopInput
 }
 
-interface ExternalShopifyIntegrationInput {
+interface ShopifyShopInput {
   shopName: string
   enabled: boolean
   accessToken?: string

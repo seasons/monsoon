@@ -8,9 +8,9 @@ export class BrandMutationsResolver {
 
   @Mutation()
   async createBrand(@Args() { input }) {
-    if (input.externalShopifyIntegration) {
-      input.externalShopifyIntegration = {
-        create: input.externalShopifyIntegration,
+    if (input.shopifyShop) {
+      input.shopifyShop = {
+        create: input.shopifyShop,
       }
     }
 
