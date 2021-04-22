@@ -373,7 +373,8 @@ export class PaymentService {
     customer,
     tokenType,
     couponID,
-    application
+    application,
+    shippingAddress
   ) {
     const customerWithUserData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
@@ -473,7 +474,9 @@ export class PaymentService {
       user.id,
       payload.customer,
       paymentSource.payment_source.card,
-      payload.subscription
+      payload.subscription,
+      null,
+      shippingAddress
     )
 
     this.segment.trackSubscribed(user.id, {

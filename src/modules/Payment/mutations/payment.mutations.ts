@@ -45,7 +45,7 @@ export class PaymentMutationsResolver {
    */
   @Mutation()
   async applePayCheckout(
-    @Args() { planID, token, tokenType, couponID },
+    @Args() { planID, token, tokenType, couponID, shipping },
     @Customer() customer,
     @Application() application
   ) {
@@ -55,7 +55,8 @@ export class PaymentMutationsResolver {
       customer,
       tokenType,
       couponID,
-      application
+      application,
+      shipping
     )
     return true
   }
