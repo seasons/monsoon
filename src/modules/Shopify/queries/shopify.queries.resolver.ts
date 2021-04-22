@@ -11,10 +11,7 @@ export class ShopifyQueriesResolver {
   }
 
   @Query()
-  async externalShopifyIntegrations(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.externalShopifyIntegrations(
-      args,
-      info
-    )
+  async shopifyShops(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.shopifyShops(args, info)
   }
 }

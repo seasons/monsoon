@@ -1,5 +1,5 @@
-# source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Apr 21 2021 15:07:35 GMT-0700 (Pacific Daylight Time)
+# source: https://monsoon-prisma-staging.herokuapp.com/monsoon/staging
+# timestamp: Wed Apr 21 2021 15:35:28 GMT-0500 (Colombia Standard Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -1203,10 +1203,6 @@ type AggregateEmailReceipt {
   count: Int!
 }
 
-type AggregateExternalShopifyIntegration {
-  count: Int!
-}
-
 type AggregateFitPic {
   count: Int!
 }
@@ -1364,6 +1360,10 @@ type AggregateShopifyProductVariant {
 }
 
 type AggregateShopifyProductVariantSelectedOption {
+  count: Int!
+}
+
+type AggregateShopifyShop {
   count: Int!
 }
 
@@ -4835,7 +4835,7 @@ type Brand implements Node {
   websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
-  externalShopifyIntegration: ExternalShopifyIntegration
+  shopifyShop: ShopifyShop
 }
 
 """
@@ -4872,7 +4872,7 @@ input BrandCreateInput {
   logoImage: ImageCreateOneInput
   products: ProductCreateManyWithoutBrandInput
   images: ImageCreateManyInput
-  externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
+  shopifyShop: ShopifyShopCreateOneInput
 }
 
 input BrandCreateOneInput {
@@ -4902,7 +4902,7 @@ input BrandCreateWithoutProductsInput {
   websiteUrl: String
   logoImage: ImageCreateOneInput
   images: ImageCreateManyInput
-  externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
+  shopifyShop: ShopifyShopCreateOneInput
 }
 
 """
@@ -5048,7 +5048,7 @@ input BrandUpdateDataInput {
   logoImage: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
 }
 
 input BrandUpdateInput {
@@ -5068,7 +5068,7 @@ input BrandUpdateInput {
   logoImage: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
 }
 
 input BrandUpdateManyMutationInput {
@@ -5119,7 +5119,7 @@ input BrandUpdateWithoutProductsDataInput {
   websiteUrl: String
   logoImage: ImageUpdateOneInput
   images: ImageUpdateManyInput
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
 }
 
 input BrandUpsertNestedInput {
@@ -5824,7 +5824,7 @@ input BrandWhereInput {
   images_every: ImageWhereInput
   images_some: ImageWhereInput
   images_none: ImageWhereInput
-  externalShopifyIntegration: ExternalShopifyIntegrationWhereInput
+  shopifyShop: ShopifyShopWhereInput
 }
 
 input BrandWhereUniqueInput {
@@ -13974,471 +13974,6 @@ input EmailReceiptWhereUniqueInput {
   id: ID
 }
 
-type ExternalShopifyIntegration implements Node {
-  id: ID!
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: [String!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-"""
-A connection to a list of items.
-"""
-type ExternalShopifyIntegrationConnection {
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-
-  """
-  A list of edges.
-  """
-  edges: [ExternalShopifyIntegrationEdge]!
-  aggregate: AggregateExternalShopifyIntegration!
-}
-
-input ExternalShopifyIntegrationCreateInput {
-  id: ID
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: ExternalShopifyIntegrationCreatescopeInput
-}
-
-input ExternalShopifyIntegrationCreateOneInput {
-  create: ExternalShopifyIntegrationCreateInput
-  connect: ExternalShopifyIntegrationWhereUniqueInput
-}
-
-input ExternalShopifyIntegrationCreatescopeInput {
-  set: [String!]
-}
-
-"""
-An edge in a connection.
-"""
-type ExternalShopifyIntegrationEdge {
-  """
-  The item at the end of the edge.
-  """
-  node: ExternalShopifyIntegration!
-
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-}
-
-enum ExternalShopifyIntegrationOrderByInput {
-  id_ASC
-  id_DESC
-  shopName_ASC
-  shopName_DESC
-  enabled_ASC
-  enabled_DESC
-  accessToken_ASC
-  accessToken_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type ExternalShopifyIntegrationPreviousValues {
-  id: ID!
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: [String!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type ExternalShopifyIntegrationSubscriptionPayload {
-  mutation: MutationType!
-  node: ExternalShopifyIntegration
-  updatedFields: [String!]
-  previousValues: ExternalShopifyIntegrationPreviousValues
-}
-
-input ExternalShopifyIntegrationSubscriptionWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: ExternalShopifyIntegrationWhereInput
-}
-
-input ExternalShopifyIntegrationUpdateDataInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateManyMutationInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateOneInput {
-  create: ExternalShopifyIntegrationCreateInput
-  connect: ExternalShopifyIntegrationWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: ExternalShopifyIntegrationUpdateDataInput
-  upsert: ExternalShopifyIntegrationUpsertNestedInput
-}
-
-input ExternalShopifyIntegrationUpdatescopeInput {
-  set: [String!]
-}
-
-input ExternalShopifyIntegrationUpsertNestedInput {
-  update: ExternalShopifyIntegrationUpdateDataInput!
-  create: ExternalShopifyIntegrationCreateInput!
-}
-
-input ExternalShopifyIntegrationWhereInput {
-  """
-  Logical AND on all given filters.
-  """
-  AND: [ExternalShopifyIntegrationWhereInput!]
-
-  """
-  Logical OR on all given filters.
-  """
-  OR: [ExternalShopifyIntegrationWhereInput!]
-
-  """
-  Logical NOT on all given filters combined by AND.
-  """
-  NOT: [ExternalShopifyIntegrationWhereInput!]
-  id: ID
-
-  """
-  All values that are not equal to given value.
-  """
-  id_not: ID
-
-  """
-  All values that are contained in given list.
-  """
-  id_in: [ID!]
-
-  """
-  All values that are not contained in given list.
-  """
-  id_not_in: [ID!]
-
-  """
-  All values less than the given value.
-  """
-  id_lt: ID
-
-  """
-  All values less than or equal the given value.
-  """
-  id_lte: ID
-
-  """
-  All values greater than the given value.
-  """
-  id_gt: ID
-
-  """
-  All values greater than or equal the given value.
-  """
-  id_gte: ID
-
-  """
-  All values containing the given string.
-  """
-  id_contains: ID
-
-  """
-  All values not containing the given string.
-  """
-  id_not_contains: ID
-
-  """
-  All values starting with the given string.
-  """
-  id_starts_with: ID
-
-  """
-  All values not starting with the given string.
-  """
-  id_not_starts_with: ID
-
-  """
-  All values ending with the given string.
-  """
-  id_ends_with: ID
-
-  """
-  All values not ending with the given string.
-  """
-  id_not_ends_with: ID
-  shopName: String
-
-  """
-  All values that are not equal to given value.
-  """
-  shopName_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  shopName_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  shopName_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  shopName_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  shopName_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  shopName_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  shopName_gte: String
-
-  """
-  All values containing the given string.
-  """
-  shopName_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  shopName_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  shopName_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  shopName_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  shopName_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  shopName_not_ends_with: String
-  enabled: Boolean
-
-  """
-  All values that are not equal to given value.
-  """
-  enabled_not: Boolean
-  accessToken: String
-
-  """
-  All values that are not equal to given value.
-  """
-  accessToken_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  accessToken_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  accessToken_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  accessToken_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  accessToken_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  accessToken_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  accessToken_gte: String
-
-  """
-  All values containing the given string.
-  """
-  accessToken_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  accessToken_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  accessToken_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  accessToken_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  accessToken_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  accessToken_not_ends_with: String
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  updatedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  updatedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  updatedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  updatedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  updatedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  updatedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  updatedAt_gte: DateTime
-}
-
-input ExternalShopifyIntegrationWhereUniqueInput {
-  id: ID
-  shopName: String
-}
-
 type FitPic implements Node {
   id: ID!
   image: Image!
@@ -19469,9 +19004,6 @@ type Mutation {
   createPhysicalProductPrice(
     data: PhysicalProductPriceCreateInput!
   ): PhysicalProductPrice!
-  createExternalShopifyIntegration(
-    data: ExternalShopifyIntegrationCreateInput!
-  ): ExternalShopifyIntegration!
   createShopifyProductVariantSelectedOption(
     data: ShopifyProductVariantSelectedOptionCreateInput!
   ): ShopifyProductVariantSelectedOption!
@@ -19482,6 +19014,7 @@ type Mutation {
   createUserPushNotification(
     data: UserPushNotificationCreateInput!
   ): UserPushNotification!
+  createShopifyShop(data: ShopifyShopCreateInput!): ShopifyShop!
   createCategory(data: CategoryCreateInput!): Category!
   createBottomSize(data: BottomSizeCreateInput!): BottomSize!
   createSeason(data: SeasonCreateInput!): Season!
@@ -19675,10 +19208,6 @@ type Mutation {
     data: PhysicalProductPriceUpdateInput!
     where: PhysicalProductPriceWhereUniqueInput!
   ): PhysicalProductPrice
-  updateExternalShopifyIntegration(
-    data: ExternalShopifyIntegrationUpdateInput!
-    where: ExternalShopifyIntegrationWhereUniqueInput!
-  ): ExternalShopifyIntegration
   updateShopifyProductVariantSelectedOption(
     data: ShopifyProductVariantSelectedOptionUpdateInput!
     where: ShopifyProductVariantSelectedOptionWhereUniqueInput!
@@ -19700,6 +19229,10 @@ type Mutation {
     data: UserPushNotificationUpdateInput!
     where: UserPushNotificationWhereUniqueInput!
   ): UserPushNotification
+  updateShopifyShop(
+    data: ShopifyShopUpdateInput!
+    where: ShopifyShopWhereUniqueInput!
+  ): ShopifyShop
   updateCategory(
     data: CategoryUpdateInput!
     where: CategoryWhereUniqueInput!
@@ -19854,9 +19387,6 @@ type Mutation {
   deletePhysicalProductPrice(
     where: PhysicalProductPriceWhereUniqueInput!
   ): PhysicalProductPrice
-  deleteExternalShopifyIntegration(
-    where: ExternalShopifyIntegrationWhereUniqueInput!
-  ): ExternalShopifyIntegration
   deleteShopifyProductVariantSelectedOption(
     where: ShopifyProductVariantSelectedOptionWhereUniqueInput!
   ): ShopifyProductVariantSelectedOption
@@ -19867,6 +19397,7 @@ type Mutation {
   deleteUserPushNotification(
     where: UserPushNotificationWhereUniqueInput!
   ): UserPushNotification
+  deleteShopifyShop(where: ShopifyShopWhereUniqueInput!): ShopifyShop
   deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   deleteSeason(where: SeasonWhereUniqueInput!): Season
@@ -20128,11 +19659,6 @@ type Mutation {
     create: PhysicalProductPriceCreateInput!
     update: PhysicalProductPriceUpdateInput!
   ): PhysicalProductPrice!
-  upsertExternalShopifyIntegration(
-    where: ExternalShopifyIntegrationWhereUniqueInput!
-    create: ExternalShopifyIntegrationCreateInput!
-    update: ExternalShopifyIntegrationUpdateInput!
-  ): ExternalShopifyIntegration!
   upsertShopifyProductVariantSelectedOption(
     where: ShopifyProductVariantSelectedOptionWhereUniqueInput!
     create: ShopifyProductVariantSelectedOptionCreateInput!
@@ -20163,6 +19689,11 @@ type Mutation {
     create: UserPushNotificationCreateInput!
     update: UserPushNotificationUpdateInput!
   ): UserPushNotification!
+  upsertShopifyShop(
+    where: ShopifyShopWhereUniqueInput!
+    create: ShopifyShopCreateInput!
+    update: ShopifyShopUpdateInput!
+  ): ShopifyShop!
   upsertCategory(
     where: CategoryWhereUniqueInput!
     create: CategoryCreateInput!
@@ -20432,10 +19963,6 @@ type Mutation {
     data: PhysicalProductPriceUpdateManyMutationInput!
     where: PhysicalProductPriceWhereInput
   ): BatchPayload!
-  updateManyExternalShopifyIntegrations(
-    data: ExternalShopifyIntegrationUpdateManyMutationInput!
-    where: ExternalShopifyIntegrationWhereInput
-  ): BatchPayload!
   updateManyShopifyProductVariantSelectedOptions(
     data: ShopifyProductVariantSelectedOptionUpdateManyMutationInput!
     where: ShopifyProductVariantSelectedOptionWhereInput
@@ -20459,6 +19986,10 @@ type Mutation {
   updateManyUserPushNotifications(
     data: UserPushNotificationUpdateManyMutationInput!
     where: UserPushNotificationWhereInput
+  ): BatchPayload!
+  updateManyShopifyShops(
+    data: ShopifyShopUpdateManyMutationInput!
+    where: ShopifyShopWhereInput
   ): BatchPayload!
   updateManyCategories(
     data: CategoryUpdateManyMutationInput!
@@ -20620,9 +20151,6 @@ type Mutation {
   deleteManyPhysicalProductPrices(
     where: PhysicalProductPriceWhereInput
   ): BatchPayload!
-  deleteManyExternalShopifyIntegrations(
-    where: ExternalShopifyIntegrationWhereInput
-  ): BatchPayload!
   deleteManyShopifyProductVariantSelectedOptions(
     where: ShopifyProductVariantSelectedOptionWhereInput
   ): BatchPayload!
@@ -20633,6 +20161,7 @@ type Mutation {
   deleteManyUserPushNotifications(
     where: UserPushNotificationWhereInput
   ): BatchPayload!
+  deleteManyShopifyShops(where: ShopifyShopWhereInput): BatchPayload!
   deleteManyCategories(where: CategoryWhereInput): BatchPayload!
   deleteManyBottomSizes(where: BottomSizeWhereInput): BatchPayload!
   deleteManySeasons(where: SeasonWhereInput): BatchPayload!
@@ -38600,15 +38129,6 @@ type Query {
     first: Int
     last: Int
   ): [PhysicalProductPrice]!
-  externalShopifyIntegrations(
-    where: ExternalShopifyIntegrationWhereInput
-    orderBy: ExternalShopifyIntegrationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [ExternalShopifyIntegration]!
   shopifyProductVariantSelectedOptions(
     where: ShopifyProductVariantSelectedOptionWhereInput
     orderBy: ShopifyProductVariantSelectedOptionOrderByInput
@@ -38663,6 +38183,15 @@ type Query {
     first: Int
     last: Int
   ): [UserPushNotification]!
+  shopifyShops(
+    where: ShopifyShopWhereInput
+    orderBy: ShopifyShopOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ShopifyShop]!
   categories(
     where: CategoryWhereInput
     orderBy: CategoryOrderByInput
@@ -38908,9 +38437,6 @@ type Query {
   physicalProductPrice(
     where: PhysicalProductPriceWhereUniqueInput!
   ): PhysicalProductPrice
-  externalShopifyIntegration(
-    where: ExternalShopifyIntegrationWhereUniqueInput!
-  ): ExternalShopifyIntegration
   shopifyProductVariantSelectedOption(
     where: ShopifyProductVariantSelectedOptionWhereUniqueInput!
   ): ShopifyProductVariantSelectedOption
@@ -38921,6 +38447,7 @@ type Query {
   userPushNotification(
     where: UserPushNotificationWhereUniqueInput!
   ): UserPushNotification
+  shopifyShop(where: ShopifyShopWhereUniqueInput!): ShopifyShop
   category(where: CategoryWhereUniqueInput!): Category
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   season(where: SeasonWhereUniqueInput!): Season
@@ -39372,15 +38899,6 @@ type Query {
     first: Int
     last: Int
   ): PhysicalProductPriceConnection!
-  externalShopifyIntegrationsConnection(
-    where: ExternalShopifyIntegrationWhereInput
-    orderBy: ExternalShopifyIntegrationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): ExternalShopifyIntegrationConnection!
   shopifyProductVariantSelectedOptionsConnection(
     where: ShopifyProductVariantSelectedOptionWhereInput
     orderBy: ShopifyProductVariantSelectedOptionOrderByInput
@@ -39435,6 +38953,15 @@ type Query {
     first: Int
     last: Int
   ): UserPushNotificationConnection!
+  shopifyShopsConnection(
+    where: ShopifyShopWhereInput
+    orderBy: ShopifyShopOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ShopifyShopConnection!
   categoriesConnection(
     where: CategoryWhereInput
     orderBy: CategoryOrderByInput
@@ -43979,7 +43506,7 @@ type ShopifyProductVariant implements Node {
     last: Int
   ): [ShopifyProductVariantSelectedOption!]
   productVariant: ProductVariant
-  shop: ExternalShopifyIntegration
+  shop: ShopifyShop
   brand: Brand
   title: String
   image: Image
@@ -44014,7 +43541,7 @@ input ShopifyProductVariantCreateInput {
   cacheExpiresAt: DateTime
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
   productVariant: ProductVariantCreateOneWithoutShopifyProductVariantInput
-  shop: ExternalShopifyIntegrationCreateOneInput
+  shop: ShopifyShopCreateOneInput
   brand: BrandCreateOneInput
   image: ImageCreateOneInput
 }
@@ -44033,7 +43560,7 @@ input ShopifyProductVariantCreateWithoutProductVariantInput {
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
-  shop: ExternalShopifyIntegrationCreateOneInput
+  shop: ShopifyShopCreateOneInput
   brand: BrandCreateOneInput
   image: ImageCreateOneInput
 }
@@ -44724,7 +44251,7 @@ input ShopifyProductVariantUpdateInput {
   cacheExpiresAt: DateTime
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
   productVariant: ProductVariantUpdateOneWithoutShopifyProductVariantInput
-  shop: ExternalShopifyIntegrationUpdateOneInput
+  shop: ShopifyShopUpdateOneInput
   brand: BrandUpdateOneInput
   image: ImageUpdateOneInput
 }
@@ -44755,7 +44282,7 @@ input ShopifyProductVariantUpdateWithoutProductVariantDataInput {
   cachedAvailableForSale: Boolean
   cacheExpiresAt: DateTime
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
-  shop: ExternalShopifyIntegrationUpdateOneInput
+  shop: ShopifyShopUpdateOneInput
   brand: BrandUpdateOneInput
   image: ImageUpdateOneInput
 }
@@ -45126,7 +44653,7 @@ input ShopifyProductVariantWhereInput {
   selectedOptions_some: ShopifyProductVariantSelectedOptionWhereInput
   selectedOptions_none: ShopifyProductVariantSelectedOptionWhereInput
   productVariant: ProductVariantWhereInput
-  shop: ExternalShopifyIntegrationWhereInput
+  shop: ShopifyShopWhereInput
   brand: BrandWhereInput
   image: ImageWhereInput
 }
@@ -45134,6 +44661,471 @@ input ShopifyProductVariantWhereInput {
 input ShopifyProductVariantWhereUniqueInput {
   id: ID
   externalId: String
+}
+
+type ShopifyShop implements Node {
+  id: ID!
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type ShopifyShopConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [ShopifyShopEdge]!
+  aggregate: AggregateShopifyShop!
+}
+
+input ShopifyShopCreateInput {
+  id: ID
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: ShopifyShopCreatescopeInput
+}
+
+input ShopifyShopCreateOneInput {
+  create: ShopifyShopCreateInput
+  connect: ShopifyShopWhereUniqueInput
+}
+
+input ShopifyShopCreatescopeInput {
+  set: [String!]
+}
+
+"""
+An edge in a connection.
+"""
+type ShopifyShopEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: ShopifyShop!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum ShopifyShopOrderByInput {
+  id_ASC
+  id_DESC
+  shopName_ASC
+  shopName_DESC
+  enabled_ASC
+  enabled_DESC
+  accessToken_ASC
+  accessToken_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ShopifyShopPreviousValues {
+  id: ID!
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ShopifyShopSubscriptionPayload {
+  mutation: MutationType!
+  node: ShopifyShop
+  updatedFields: [String!]
+  previousValues: ShopifyShopPreviousValues
+}
+
+input ShopifyShopSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ShopifyShopSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ShopifyShopSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ShopifyShopSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ShopifyShopWhereInput
+}
+
+input ShopifyShopUpdateDataInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateManyMutationInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateOneInput {
+  create: ShopifyShopCreateInput
+  connect: ShopifyShopWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ShopifyShopUpdateDataInput
+  upsert: ShopifyShopUpsertNestedInput
+}
+
+input ShopifyShopUpdatescopeInput {
+  set: [String!]
+}
+
+input ShopifyShopUpsertNestedInput {
+  update: ShopifyShopUpdateDataInput!
+  create: ShopifyShopCreateInput!
+}
+
+input ShopifyShopWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ShopifyShopWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ShopifyShopWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ShopifyShopWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  shopName: String
+
+  """
+  All values that are not equal to given value.
+  """
+  shopName_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  shopName_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  shopName_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  shopName_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  shopName_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  shopName_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  shopName_gte: String
+
+  """
+  All values containing the given string.
+  """
+  shopName_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  shopName_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  shopName_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  shopName_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  shopName_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  shopName_not_ends_with: String
+  enabled: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  enabled_not: Boolean
+  accessToken: String
+
+  """
+  All values that are not equal to given value.
+  """
+  accessToken_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  accessToken_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  accessToken_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  accessToken_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  accessToken_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  accessToken_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  accessToken_gte: String
+
+  """
+  All values containing the given string.
+  """
+  accessToken_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  accessToken_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  accessToken_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  accessToken_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  accessToken_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  accessToken_not_ends_with: String
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+}
+
+input ShopifyShopWhereUniqueInput {
+  id: ID
+  shopName: String
 }
 
 type Size implements Node {
@@ -47191,9 +47183,6 @@ type Subscription {
   physicalProductPrice(
     where: PhysicalProductPriceSubscriptionWhereInput
   ): PhysicalProductPriceSubscriptionPayload
-  externalShopifyIntegration(
-    where: ExternalShopifyIntegrationSubscriptionWhereInput
-  ): ExternalShopifyIntegrationSubscriptionPayload
   shopifyProductVariantSelectedOption(
     where: ShopifyProductVariantSelectedOptionSubscriptionWhereInput
   ): ShopifyProductVariantSelectedOptionSubscriptionPayload
@@ -47206,6 +47195,9 @@ type Subscription {
   userPushNotification(
     where: UserPushNotificationSubscriptionWhereInput
   ): UserPushNotificationSubscriptionPayload
+  shopifyShop(
+    where: ShopifyShopSubscriptionWhereInput
+  ): ShopifyShopSubscriptionPayload
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   bottomSize(
     where: BottomSizeSubscriptionWhereInput

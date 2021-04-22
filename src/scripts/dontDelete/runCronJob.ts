@@ -155,7 +155,7 @@ const run = async () => {
   // await marketingJobService.syncUnsubscribesFromDrip()
   // await marketingJobService.syncCustomersToDrip()
   // await membershipService.updatePausePendingToPaused()
-  // await shopifyJobService.importProductVariantsForExternalShopifyIntegrations()
+  // await shopifyJobService.importProductVariantsForShopifyShops()
   await logsJobService.interpretPhysicalProductLogs()
 }
 

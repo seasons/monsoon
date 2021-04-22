@@ -5,11 +5,11 @@ import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
   BagItem,
-  ExternalShopifyIntegration,
   InventoryStatus,
   PhysicalProductPrice,
   Product,
   ShopifyProductVariant,
+  ShopifyShop,
 } from "@app/prisma"
 import { Order, ProductVariant } from "@app/prisma/prisma.binding"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
@@ -342,7 +342,7 @@ export class ProductVariantFieldsResolver {
             buyNewEnabled
             brand {
               id
-              externalShopifyIntegration {
+              shopifyShop {
                 enabled
                 shopName
                 accessToken
@@ -366,8 +366,8 @@ export class ProductVariantFieldsResolver {
       }>
       product: Pick<Product, "buyNewEnabled"> & {
         brand: {
-          externalShopifyIntegration?: Pick<
-            ExternalShopifyIntegration,
+          shopifyShop?: Pick<
+            ShopifyShop,
             "enabled" | "shopName" | "accessToken"
           >
         }
@@ -412,15 +412,14 @@ export class ProductVariantFieldsResolver {
       const {
         cachedAvailableForSale: buyNewAvailableForSale,
         cachedPrice: buyNewPrice,
-      } = await (product?.brand?.externalShopifyIntegration?.enabled
+      } = await (product?.brand?.shopifyShop?.enabled
         ? Date.parse(shopifyProductVariant?.cacheExpiresAt) > Date.now()
           ? Promise.resolve(shopifyProductVariant)
           : this.shopify.cacheProductVariantBuyMetadata({
               shopifyProductVariantExternalId: shopifyProductVariant.externalId,
               shopifyProductVariantInternalId: shopifyProductVariant.id,
-              shopName: product?.brand?.externalShopifyIntegration?.shopName,
-              accessToken:
-                product?.brand?.externalShopifyIntegration?.accessToken,
+              shopName: product?.brand?.shopifyShop?.shopName,
+              accessToken: product?.brand?.shopifyShop?.accessToken,
             })
         : Promise.resolve({ cachedAvailableForSale: false, cachedPrice: null }))
       shopifyCacheData = {
