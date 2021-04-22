@@ -1,0 +1,1242 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ActiveAdminUser {
+  id    String  @id @default(cuid()) @db.VarChar(25)
+  admin String? @db.VarChar(25)
+  User  User?   @relation(fields: [admin], references: [id])
+}
+
+model AdminActionLog {
+  actionId                     Int                            @id @default(autoincrement())
+  entityId                     String
+  tableName                    String
+  triggeredAt                  DateTime
+  action                       String
+  rowData                      String
+  changedFields                String?
+  statementOnly                Boolean
+  activeAdminUser              String?                        @db.VarChar(25)
+  interpretedAt                DateTime?
+  User                         User?                          @relation(fields: [activeAdminUser], references: [id])
+  AdminActionLogInterpretation AdminActionLogInterpretation[]
+}
+
+model AdminActionLogInterpretation {
+  id             String          @id @default(cuid()) @db.VarChar(25)
+  entityId       String
+  tableName      String
+  interpretation String?
+  data           String?
+  log            Int?
+  AdminActionLog AdminActionLog? @relation(fields: [log], references: [actionId])
+}
+
+model BagItem {
+  id             String          @id @default(cuid()) @db.VarChar(25)
+  position       Int?
+  saved          Boolean?
+  status         String
+  customer       String?         @db.VarChar(25)
+  productVariant String?         @db.VarChar(25)
+  createdAt      DateTime
+  updatedAt      DateTime
+  Customer       Customer?       @relation(fields: [customer], references: [id])
+  ProductVariant ProductVariant? @relation(fields: [productVariant], references: [id])
+}
+
+model BillingInfo {
+  id               String     @id @default(cuid()) @db.VarChar(25)
+  brand            String
+  name             String?
+  last_digits      String
+  expiration_month Int
+  expiration_year  Int
+  street1          String?
+  street2          String?
+  city             String?
+  state            String?
+  country          String?
+  postal_code      String?
+  createdAt        DateTime
+  updatedAt        DateTime
+  Customer         Customer[]
+}
+
+model BlogPost {
+  id               String          @id @default(cuid()) @db.VarChar(25)
+  webflowId        String
+  webflowCreatedAt DateTime
+  webflowUpdatedAt DateTime
+  slug             String
+  name             String?
+  body             String?
+  summary          String?
+  thumbnailURL     String?
+  imageURL         String?
+  imageAlt         String?
+  url              String?
+  author           String?
+  category         String?
+  createdAt        DateTime
+  updatedAt        DateTime
+  publishedOn      DateTime
+  image            String?         @db.VarChar(25)
+  Image            Image?          @relation(fields: [image], references: [id])
+  BlogPost_tags    BlogPost_tags[]
+}
+
+model BlogPost_tags {
+  nodeId   String   @db.VarChar(25)
+  position Int
+  value    String
+  BlogPost BlogPost @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model BottomSize {
+  id     String   @id @default(cuid()) @db.VarChar(25)
+  type   String?
+  value  String?
+  waist  Decimal?
+  rise   Decimal?
+  hem    Decimal?
+  inseam Decimal?
+  Size   Size[]
+}
+
+model Brand {
+  id                       String                  @id @default(cuid()) @db.VarChar(25)
+  slug                     String                  @unique
+  brandCode                String                  @unique
+  description              String?
+  isPrimaryBrand           Boolean
+  name                     String
+  since                    DateTime?
+  tier                     String
+  websiteUrl               String?
+  createdAt                DateTime
+  updatedAt                DateTime
+  basedIn                  String?
+  designer                 String?
+  published                Boolean
+  featured                 Boolean
+  logo                     String?
+  logoImage                String?                 @db.VarChar(25)
+  shopifyShop              String?                 @db.VarChar(25)
+  Image_BrandToImage       Image?                  @relation(fields: [logoImage], references: [id])
+  ShopifyShop              ShopifyShop?            @relation(fields: [shopifyShop], references: [id])
+  Launch                   Launch[]
+  Product                  Product[]
+  ShopifyProductVariant    ShopifyProductVariant[]
+  Image_BrandToBrandImages Image[]                 @relation("BrandToBrandImages")
+}
+
+model Category {
+  id                          String                        @id @default(cuid()) @db.VarChar(25)
+  slug                        String                        @unique
+  name                        String                        @unique
+  description                 String?
+  image                       String?
+  visible                     Boolean
+  updatedAt                   DateTime?
+  Product                     Product[]
+  ProductMaterialCategory     ProductMaterialCategory[]
+  WarehouseLocationConstraint WarehouseLocationConstraint[]
+  Category_B                  Category[]                    @relation("CategoryToChildren")
+  Category_A                  Category[]                    @relation("CategoryToChildren")
+}
+
+model Collection {
+  id                      String                    @id @default(cuid()) @db.VarChar(25)
+  slug                    String                    @unique
+  title                   String?
+  subTitle                String?
+  published               Boolean
+  createdAt               DateTime
+  updatedAt               DateTime?
+  displayTextOverlay      Boolean
+  textOverlayColor        String?
+  Collection_descriptions Collection_descriptions[]
+  Collection_placements   Collection_placements[]
+  Launch                  Launch[]
+  Image                   Image[]
+  Product                 Product[]
+}
+
+model Collection_descriptions {
+  nodeId     String     @db.VarChar(25)
+  position   Int
+  value      String
+  Collection Collection @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model Collection_placements {
+  nodeId     String     @db.VarChar(25)
+  position   Int
+  value      String
+  Collection Collection @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model Color {
+  id                                    String           @id @default(cuid()) @db.VarChar(25)
+  slug                                  String           @unique
+  name                                  String
+  colorCode                             String           @unique
+  hexCode                               String
+  Product_ColorToProduct_color          Product[]        @relation("ColorToProduct_color")
+  Product_ColorToProduct_secondaryColor Product[]        @relation("ColorToProduct_secondaryColor")
+  ProductVariant                        ProductVariant[]
+}
+
+model Customer {
+  id                             String                           @id @default(cuid()) @db.VarChar(25)
+  status                         String?
+  detail                         String?                          @db.VarChar(25)
+  user                           String?                          @db.VarChar(25)
+  plan                           String?
+  billingInfo                    String?                          @db.VarChar(25)
+  createdAt                      DateTime
+  updatedAt                      DateTime
+  authorizedAt                   DateTime?
+  admissions                     String?                          @db.VarChar(25)
+  referralLink                   String?                          @unique
+  referrerId                     String?
+  referrer                       String?                          @db.VarChar(25)
+  utm                            String?                          @db.VarChar(25)
+  CustomerAdmissionsData         CustomerAdmissionsData?          @relation(fields: [admissions], references: [id])
+  BillingInfo                    BillingInfo?                     @relation(fields: [billingInfo], references: [id])
+  CustomerDetail                 CustomerDetail?                  @relation(fields: [detail], references: [id])
+  Customer                       Customer?                        @relation("CustomerToCustomer_referrer", fields: [referrer], references: [id])
+  User                           User?                            @relation(fields: [user], references: [id])
+  UTMData                        UTMData?                         @relation(fields: [utm], references: [id])
+  BagItem                        BagItem[]
+  other_Customer                 Customer[]                       @relation("CustomerToCustomer_referrer")
+  CustomerMembership             CustomerMembership[]
+  Order                          Order[]
+  ProductNotification            ProductNotification[]
+  RecentlyViewedProduct          RecentlyViewedProduct[]
+  Reservation                    Reservation[]
+  CustomerNotificationBarReceipt CustomerNotificationBarReceipt[] @relation("CustomerToCustomerNotificationBarReceipts")
+  Product                        Product[]                        @relation("CustomerToEmailedProducts")
+}
+
+model CustomerAdmissionsData {
+  id                          String     @id @default(cuid()) @db.VarChar(25)
+  inServiceableZipcode        Boolean
+  admissable                  Boolean
+  inAdmissableReason          String?
+  createdAt                   DateTime
+  updatedAt                   DateTime
+  authorizationsCount         Int
+  allAccessEnabled            Boolean
+  authorizationWindowClosesAt DateTime?
+  Customer                    Customer[]
+}
+
+model CustomerDetail {
+  id                        String                      @id @default(cuid()) @db.VarChar(25)
+  phoneNumber               String?
+  birthday                  DateTime?
+  height                    Int?
+  bodyType                  String?
+  averageTopSize            String?
+  averageWaistSize          String?
+  averagePantLength         String?
+  preferredPronouns         String?
+  profession                String?
+  partyFrequency            String?
+  travelFrequency           String?
+  shoppingFrequency         String?
+  averageSpend              String?
+  style                     String?
+  commuteStyle              String?
+  createdAt                 DateTime
+  updatedAt                 DateTime
+  shippingAddress           String?                     @db.VarChar(25)
+  phoneOS                   String?
+  insureShipment            Boolean
+  stylePreferences          String?                     @db.VarChar(25)
+  instagramHandle           String?
+  impactId                  String?
+  discoveryReference        String?
+  Location                  Location?                   @relation(fields: [shippingAddress], references: [id])
+  StylePreferences          StylePreferences?           @relation(fields: [stylePreferences], references: [id])
+  Customer                  Customer[]
+  CustomerDetail_styles     CustomerDetail_styles[]
+  CustomerDetail_topSizes   CustomerDetail_topSizes[]
+  CustomerDetail_waistSizes CustomerDetail_waistSizes[]
+  CustomerDetail_weight     CustomerDetail_weight[]
+}
+
+model CustomerDetail_styles {
+  nodeId         String         @db.VarChar(25)
+  position       Int
+  value          String
+  CustomerDetail CustomerDetail @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model CustomerDetail_topSizes {
+  nodeId         String         @db.VarChar(25)
+  position       Int
+  value          String
+  CustomerDetail CustomerDetail @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model CustomerDetail_waistSizes {
+  nodeId         String         @db.VarChar(25)
+  position       Int
+  value          Int
+  CustomerDetail CustomerDetail @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model CustomerDetail_weight {
+  nodeId         String         @db.VarChar(25)
+  position       Int
+  value          Int
+  CustomerDetail CustomerDetail @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model CustomerMembership {
+  id                                 String                              @id @default(cuid()) @db.VarChar(25)
+  subscriptionId                     String
+  customer                           String?                             @db.VarChar(25)
+  plan                               String?                             @db.VarChar(25)
+  giftId                             String?
+  subscription                       String?                             @db.VarChar(25)
+  Customer                           Customer?                           @relation(fields: [customer], references: [id])
+  PaymentPlan                        PaymentPlan?                        @relation(fields: [plan], references: [id])
+  CustomerMembershipSubscriptionData CustomerMembershipSubscriptionData? @relation(fields: [subscription], references: [id])
+  PauseRequest                       PauseRequest[]
+}
+
+model CustomerMembershipSubscriptionData {
+  id                 String               @id @default(cuid()) @db.VarChar(25)
+  planID             String
+  subscriptionId     String
+  currentTermStart   DateTime
+  currentTermEnd     DateTime
+  nextBillingAt      DateTime?
+  status             String
+  planPrice          Int
+  createdAt          DateTime
+  updatedAt          DateTime
+  CustomerMembership CustomerMembership[]
+}
+
+model CustomerNotificationBarReceipt {
+  id                String     @id @default(cuid()) @db.VarChar(25)
+  notificationBarId String
+  viewCount         Int
+  clickCount        Int
+  createdAt         DateTime
+  updatedAt         DateTime
+  Customer          Customer[] @relation("CustomerToCustomerNotificationBarReceipts")
+}
+
+model EmailReceipt {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  emailId   String
+  createdAt DateTime
+  updatedAt DateTime
+  user      String?  @db.VarChar(25)
+  User      User?    @relation(fields: [user], references: [id])
+}
+
+model FitPic {
+  id                     String         @id @default(cuid()) @db.VarChar(25)
+  status                 String
+  createdAt              DateTime
+  updatedAt              DateTime
+  location               String?        @db.VarChar(25)
+  user                   String?        @db.VarChar(25)
+  image                  String?        @db.VarChar(25)
+  includeInstagramHandle Boolean
+  Image                  Image?         @relation(fields: [image], references: [id])
+  Location               Location?      @relation(fields: [location], references: [id])
+  User                   User?          @relation(fields: [user], references: [id])
+  FitPicReport           FitPicReport[]
+  Product                Product[]
+}
+
+model FitPicReport {
+  id         String   @id @default(cuid()) @db.VarChar(25)
+  status     String
+  reportedAt DateTime
+  updatedAt  DateTime
+  reporter   String?  @db.VarChar(25)
+  reported   String?  @db.VarChar(25)
+  FitPic     FitPic?  @relation(fields: [reported], references: [id])
+  User       User?    @relation(fields: [reporter], references: [id])
+}
+
+model Image {
+  id                       String                  @id @default(cuid()) @db.VarChar(25)
+  caption                  String?
+  title                    String?
+  createdAt                DateTime
+  updatedAt                DateTime
+  url                      String                  @unique
+  height                   Int?
+  width                    Int?
+  alt                      String?
+  BlogPost                 BlogPost[]
+  Brand_BrandToImage       Brand[]
+  FitPic                   FitPic[]
+  ShopifyProductVariant    ShopifyProductVariant[]
+  Brand_BrandToBrandImages Brand[]                 @relation("BrandToBrandImages")
+  Collection               Collection[]
+  Product                  Product[]
+}
+
+model InterestedUser {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  email     String
+  zipcode   String?
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+model Label {
+  id             String    @id @default(cuid()) @db.VarChar(25)
+  name           String?
+  image          String?
+  trackingNumber String?
+  trackingURL    String?
+  Package        Package[]
+}
+
+model Launch {
+  id         String      @id @default(cuid()) @db.VarChar(25)
+  published  Boolean
+  launchAt   DateTime
+  createdAt  DateTime
+  updatedAt  DateTime
+  collection String?     @db.VarChar(25)
+  brand      String?     @db.VarChar(25)
+  Brand      Brand?      @relation(fields: [brand], references: [id])
+  Collection Collection? @relation(fields: [collection], references: [id])
+}
+
+model Location {
+  id                                                  String            @id @default(cuid()) @db.VarChar(25)
+  slug                                                String?           @unique
+  name                                                String?
+  company                                             String?
+  description                                         String?
+  address1                                            String?
+  address2                                            String?
+  city                                                String?
+  state                                               String?
+  zipCode                                             String
+  locationType                                        String?
+  lat                                                 Decimal?
+  lng                                                 Decimal?
+  createdAt                                           DateTime
+  updatedAt                                           DateTime
+  user                                                String?           @db.VarChar(25)
+  country                                             String?
+  User                                                User?             @relation(fields: [user], references: [id])
+  CustomerDetail                                      CustomerDetail[]
+  FitPic                                              FitPic[]
+  Package_LocationToPackage_fromAddress               Package[]         @relation("LocationToPackage_fromAddress")
+  Package_LocationToPackage_toAddress                 Package[]         @relation("LocationToPackage_toAddress")
+  PhysicalProduct                                     PhysicalProduct[]
+  Reservation                                         Reservation[]
+  ShippingOption_LocationToShippingOption_destination ShippingOption[]  @relation("LocationToShippingOption_destination")
+  ShippingOption_LocationToShippingOption_origin      ShippingOption[]  @relation("LocationToShippingOption_origin")
+}
+
+model Order {
+  id            String          @id @default(cuid()) @db.VarChar(25)
+  subTotal      Int?
+  total         Int?
+  couponID      String?
+  note          String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  type          String
+  status        String
+  cancelReason  String?
+  paymentStatus String
+  customer      String?         @db.VarChar(25)
+  sentPackage   String?         @db.VarChar(25)
+  orderNumber   String          @unique
+  externalID    String?         @db.VarChar(25)
+  Customer      Customer?       @relation(fields: [customer], references: [id])
+  Package       Package?        @relation(fields: [sentPackage], references: [id])
+  OrderLineItem OrderLineItem[]
+}
+
+model OrderLineItem {
+  id            String   @id @default(cuid()) @db.VarChar(25)
+  recordID      String   @db.VarChar(25)
+  recordType    String
+  needShipping  Boolean?
+  taxRate       Decimal?
+  taxName       String?
+  taxPercentage Decimal?
+  taxPrice      Int?
+  price         Int
+  currencyCode  String
+  createdAt     DateTime
+  updatedAt     DateTime
+  Order         Order[]
+}
+
+model Package {
+  id                                               String                @id @default(cuid()) @db.VarChar(25)
+  weight                                           Decimal?
+  createdAt                                        DateTime
+  updatedAt                                        DateTime
+  fromAddress                                      String?               @db.VarChar(25)
+  toAddress                                        String?               @db.VarChar(25)
+  shippingLabel                                    String?               @db.VarChar(25)
+  transactionID                                    String
+  cost                                             Int?
+  status                                           String?
+  Location_LocationToPackage_fromAddress           Location?             @relation("LocationToPackage_fromAddress", fields: [fromAddress], references: [id])
+  Label                                            Label?                @relation(fields: [shippingLabel], references: [id])
+  Location_LocationToPackage_toAddress             Location?             @relation("LocationToPackage_toAddress", fields: [toAddress], references: [id])
+  Order                                            Order[]
+  PackageTransitEvent                              PackageTransitEvent[]
+  Reservation_PackageToReservation_returnedPackage Reservation[]         @relation("PackageToReservation_returnedPackage")
+  Reservation_PackageToReservation_sentPackage     Reservation[]         @relation("PackageToReservation_sentPackage")
+  PhysicalProduct                                  PhysicalProduct[]
+}
+
+model PackageTransitEvent {
+  id          String       @id @default(cuid()) @db.VarChar(25)
+  status      String
+  subStatus   String
+  createdAt   DateTime
+  updatedAt   DateTime
+  data        String
+  package     String?      @db.VarChar(25)
+  reservation String?      @db.VarChar(25)
+  Package     Package?     @relation(fields: [package], references: [id])
+  Reservation Reservation? @relation(fields: [reservation], references: [id])
+}
+
+model PauseRequest {
+  id                 String              @id @default(cuid()) @db.VarChar(25)
+  createdAt          DateTime
+  updatedAt          DateTime
+  pausePending       Boolean
+  pauseDate          DateTime?
+  resumeDate         DateTime?
+  membership         String?             @db.VarChar(25)
+  notified           Boolean
+  pauseType          String
+  CustomerMembership CustomerMembership? @relation(fields: [membership], references: [id])
+}
+
+model PaymentPlan {
+  id                 String               @id @default(cuid()) @db.VarChar(25)
+  description        String?
+  planID             String               @unique
+  status             String?
+  name               String?
+  price              Int?
+  createdAt          DateTime
+  updatedAt          DateTime
+  tagline            String?
+  itemCount          Int?
+  tier               String?
+  CustomerMembership CustomerMembership[]
+}
+
+model PhysicalProduct {
+  id                                   String                         @id @default(cuid()) @db.VarChar(25)
+  seasonsUID                           String                         @unique
+  inventoryStatus                      String
+  productStatus                        String
+  createdAt                            DateTime
+  updatedAt                            DateTime
+  location                             String?                        @db.VarChar(25)
+  offloadMethod                        String?
+  offloadNotes                         String?
+  sequenceNumber                       Int
+  warehouseLocation                    String?                        @db.VarChar(25)
+  dateOrdered                          DateTime?
+  dateReceived                         DateTime?
+  unitCost                             Decimal?
+  barcoded                             Boolean?
+  price                                String?                        @db.VarChar(25)
+  Location                             Location?                      @relation(fields: [location], references: [id])
+  PhysicalProductPrice                 PhysicalProductPrice?          @relation(fields: [price], references: [id])
+  WarehouseLocation                    WarehouseLocation?             @relation(fields: [warehouseLocation], references: [id])
+  PhysicalProductQualityReport         PhysicalProductQualityReport[]
+  ProductNotification                  ProductNotification[]
+  ReservationReceiptItem               ReservationReceiptItem[]
+  Package                              Package[]
+  ProductVariant                       ProductVariant[]
+  Reservation_ReservationToAllProducts Reservation[]                  @relation("ReservationToAllProducts")
+  Reservation_ReservationToNewProducts Reservation[]                  @relation("ReservationToNewProducts")
+}
+
+model PhysicalProductPrice {
+  id              String            @id @default(cuid()) @db.VarChar(25)
+  buyUsedEnabled  Boolean
+  buyUsedPrice    Decimal?
+  PhysicalProduct PhysicalProduct[]
+}
+
+model PhysicalProductQualityReport {
+  id                                       String                                     @id @default(cuid()) @db.VarChar(25)
+  damageType                               String?
+  notes                                    String?
+  createdAt                                DateTime
+  updatedAt                                DateTime
+  physicalProduct                          String?                                    @db.VarChar(25)
+  user                                     String?                                    @db.VarChar(25)
+  PhysicalProduct                          PhysicalProduct?                           @relation(fields: [physicalProduct], references: [id])
+  User                                     User?                                      @relation(fields: [user], references: [id])
+  PhysicalProductQualityReport_damageTypes PhysicalProductQualityReport_damageTypes[]
+}
+
+model PhysicalProductQualityReport_damageTypes {
+  nodeId                       String                       @db.VarChar(25)
+  position                     Int
+  value                        String
+  PhysicalProductQualityReport PhysicalProductQualityReport @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model Product {
+  id                                  String                    @id @default(cuid()) @db.VarChar(25)
+  slug                                String                    @unique
+  name                                String
+  description                         String?
+  externalURL                         String?
+  retailPrice                         Int?
+  status                              String?
+  createdAt                           DateTime
+  updatedAt                           DateTime
+  category                            String?                   @db.VarChar(25)
+  color                               String?                   @db.VarChar(25)
+  secondaryColor                      String?                   @db.VarChar(25)
+  brand                               String?                   @db.VarChar(25)
+  type                                String?
+  modelSize                           String?                   @db.VarChar(25)
+  architecture                        String?
+  publishedAt                         DateTime?
+  photographyStatus                   String?
+  season                              String?                   @db.VarChar(25)
+  productFit                          String?
+  buyNewEnabled                       Boolean
+  tier                                String?                   @db.VarChar(25)
+  Brand                               Brand?                    @relation(fields: [brand], references: [id])
+  Category                            Category?                 @relation(fields: [category], references: [id])
+  Color_ColorToProduct_color          Color?                    @relation("ColorToProduct_color", fields: [color], references: [id])
+  Size                                Size?                     @relation(fields: [modelSize], references: [id])
+  ProductSeason                       ProductSeason?            @relation(fields: [season], references: [id])
+  Color_ColorToProduct_secondaryColor Color?                    @relation("ColorToProduct_secondaryColor", fields: [secondaryColor], references: [id])
+  ProductTier                         ProductTier?              @relation(fields: [tier], references: [id])
+  Product_innerMaterials              Product_innerMaterials[]
+  Product_outerMaterials              Product_outerMaterials[]
+  RecentlyViewedProduct               RecentlyViewedProduct[]
+  Collection                          Collection[]
+  Customer                            Customer[]                @relation("CustomerToEmailedProducts")
+  FitPic                              FitPic[]
+  Image                               Image[]
+  ProductFunction                     ProductFunction[]
+  ProductMaterialCategory             ProductMaterialCategory[]
+  ProductModel                        ProductModel[]
+  ProductVariant                      ProductVariant[]
+  Tag                                 Tag[]
+}
+
+model ProductFunction {
+  id      String    @id @default(cuid()) @db.VarChar(25)
+  name    String?   @unique
+  Product Product[]
+}
+
+model Product_innerMaterials {
+  nodeId   String  @db.VarChar(25)
+  position Int
+  value    String
+  Product  Product @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model ProductMaterialCategory {
+  id             String    @id @default(cuid()) @db.VarChar(25)
+  slug           String    @unique
+  category       String?   @db.VarChar(25)
+  lifeExpectancy Decimal
+  Category       Category? @relation(fields: [category], references: [id])
+  Product        Product[]
+}
+
+model ProductModel {
+  id      String    @id @default(cuid()) @db.VarChar(25)
+  name    String    @unique
+  height  Decimal
+  Product Product[]
+}
+
+model ProductNotification {
+  id              String           @id @default(cuid()) @db.VarChar(25)
+  type            String
+  shouldNotify    Boolean
+  createdAt       DateTime
+  updatedAt       DateTime
+  productVariant  String?          @db.VarChar(25)
+  physicalProduct String?          @db.VarChar(25)
+  customer        String?          @db.VarChar(25)
+  Customer        Customer?        @relation(fields: [customer], references: [id])
+  PhysicalProduct PhysicalProduct? @relation(fields: [physicalProduct], references: [id])
+  ProductVariant  ProductVariant?  @relation(fields: [productVariant], references: [id])
+}
+
+model Product_outerMaterials {
+  nodeId   String  @db.VarChar(25)
+  position Int
+  value    String
+  Product  Product @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model ProductRequest {
+  id                    String                  @id @default(cuid()) @db.VarChar(25)
+  sku                   String?
+  brand                 String?
+  description           String?
+  name                  String?
+  price                 Int?
+  priceCurrency         String?
+  productID             String?
+  url                   String
+  reason                String
+  user                  String?                 @db.VarChar(25)
+  User                  User?                   @relation(fields: [user], references: [id])
+  ProductRequest_images ProductRequest_images[]
+}
+
+model ProductRequest_images {
+  nodeId         String         @db.VarChar(25)
+  position       Int
+  value          String
+  ProductRequest ProductRequest @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model ProductSeason {
+  id                                          String                          @id @default(cuid()) @db.VarChar(25)
+  vendorSeason                                String?                         @db.VarChar(25)
+  internalSeason                              String?                         @db.VarChar(25)
+  Season_ProductSeason_internalSeasonToSeason Season?                         @relation("ProductSeason_internalSeasonToSeason", fields: [internalSeason], references: [id])
+  Season_ProductSeason_vendorSeasonToSeason   Season?                         @relation("ProductSeason_vendorSeasonToSeason", fields: [vendorSeason], references: [id])
+  Product                                     Product[]
+  ProductSeason_wearableSeasons               ProductSeason_wearableSeasons[]
+}
+
+model ProductSeason_wearableSeasons {
+  nodeId        String        @db.VarChar(25)
+  position      Int
+  value         String
+  ProductSeason ProductSeason @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model ProductTier {
+  id        String    @id @default(cuid()) @db.VarChar(25)
+  tier      String
+  price     Int
+  createdAt DateTime
+  updatedAt DateTime
+  Product   Product[]
+}
+
+model ProductVariant {
+  id                                  String                   @id @default(cuid()) @db.VarChar(25)
+  sku                                 String?                  @unique
+  weight                              Decimal?
+  height                              Decimal?
+  productID                           String
+  retailPrice                         Decimal?
+  total                               Int
+  reservable                          Int
+  reserved                            Int
+  nonReservable                       Int
+  createdAt                           DateTime
+  updatedAt                           DateTime
+  color                               String?                  @db.VarChar(25)
+  internalSize                        String?                  @db.VarChar(25)
+  offloaded                           Int
+  stored                              Int
+  displayShort                        String
+  price                               String?                  @db.VarChar(25)
+  Color                               Color?                   @relation(fields: [color], references: [id])
+  Size_ProductVariantToSize           Size?                    @relation(fields: [internalSize], references: [id])
+  ProductVariantPrice                 ProductVariantPrice?     @relation(fields: [price], references: [id])
+  BagItem                             BagItem[]
+  ProductNotification                 ProductNotification[]
+  ProductVariantFeedback              ProductVariantFeedback[]
+  ProductVariantWant                  ProductVariantWant[]
+  ShopifyProductVariant               ShopifyProductVariant[]
+  PhysicalProduct                     PhysicalProduct[]
+  Product                             Product[]
+  Size_ProductVariantManufacturerSize Size[]                   @relation("ProductVariantManufacturerSize")
+}
+
+model ProductVariantFeedback {
+  id                             String                           @id @default(cuid()) @db.VarChar(25)
+  isCompleted                    Boolean
+  variant                        String?                          @db.VarChar(25)
+  ProductVariant                 ProductVariant?                  @relation(fields: [variant], references: [id])
+  ProductVariantFeedbackQuestion ProductVariantFeedbackQuestion[]
+  ReservationFeedback            ReservationFeedback[]
+}
+
+model ProductVariantFeedbackQuestion {
+  id                                       String                                     @id @default(cuid()) @db.VarChar(25)
+  question                                 String
+  type                                     String
+  ProductVariantFeedbackQuestion_options   ProductVariantFeedbackQuestion_options[]
+  ProductVariantFeedbackQuestion_responses ProductVariantFeedbackQuestion_responses[]
+  ProductVariantFeedback                   ProductVariantFeedback[]
+}
+
+model ProductVariantFeedbackQuestion_options {
+  nodeId                         String                         @db.VarChar(25)
+  position                       Int
+  value                          String
+  ProductVariantFeedbackQuestion ProductVariantFeedbackQuestion @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model ProductVariantFeedbackQuestion_responses {
+  nodeId                         String                         @db.VarChar(25)
+  position                       Int
+  value                          String
+  ProductVariantFeedbackQuestion ProductVariantFeedbackQuestion @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model ProductVariantPrice {
+  id             String           @id @default(cuid()) @db.VarChar(25)
+  retailPrice    Decimal?
+  ProductVariant ProductVariant[]
+}
+
+model ProductVariantWant {
+  id             String          @id @default(cuid()) @db.VarChar(25)
+  isFulfilled    Boolean
+  productVariant String?         @db.VarChar(25)
+  user           String?         @db.VarChar(25)
+  ProductVariant ProductVariant? @relation(fields: [productVariant], references: [id])
+  User           User?           @relation(fields: [user], references: [id])
+}
+
+model PushNotificationReceipt {
+  id                   String                 @id @default(cuid()) @db.VarChar(25)
+  route                String?
+  screen               String?
+  uri                  String?
+  body                 String
+  title                String?
+  sentAt               DateTime
+  createdAt            DateTime
+  updatedAt            DateTime
+  interest             String?
+  recordID             String?
+  recordSlug           String?
+  notificationKey      String?
+  UserPushNotification UserPushNotification[]
+  User                 User[]                 @relation("UserToPushNotificationReceipts")
+}
+
+model RecentlyViewedProduct {
+  id        String    @id @default(cuid()) @db.VarChar(25)
+  viewCount Int
+  createdAt DateTime
+  updatedAt DateTime
+  product   String?   @db.VarChar(25)
+  customer  String?   @db.VarChar(25)
+  Customer  Customer? @relation(fields: [customer], references: [id])
+  Product   Product?  @relation(fields: [product], references: [id])
+}
+
+model Reservation {
+  id                                           String                @id @default(cuid()) @db.VarChar(25)
+  shipped                                      Boolean
+  createdAt                                    DateTime
+  updatedAt                                    DateTime
+  user                                         String?               @db.VarChar(25)
+  reservationNumber                            Int                   @unique
+  status                                       String
+  shippedAt                                    DateTime?
+  receivedAt                                   DateTime?
+  lastLocation                                 String?               @db.VarChar(25)
+  customer                                     String?               @db.VarChar(25)
+  sentPackage                                  String?               @db.VarChar(25)
+  returnedPackage                              String?               @db.VarChar(25)
+  reminderSentAt                               DateTime?
+  receipt                                      String?               @db.VarChar(25)
+  phase                                        String
+  statusUpdatedAt                              DateTime?
+  shippingOption                               String?               @db.VarChar(25)
+  completedAt                                  DateTime?
+  cancelledAt                                  DateTime?
+  Customer                                     Customer?             @relation(fields: [customer], references: [id])
+  Location                                     Location?             @relation(fields: [lastLocation], references: [id])
+  ReservationReceipt                           ReservationReceipt?   @relation(fields: [receipt], references: [id])
+  Package_PackageToReservation_returnedPackage Package?              @relation("PackageToReservation_returnedPackage", fields: [returnedPackage], references: [id])
+  Package_PackageToReservation_sentPackage     Package?              @relation("PackageToReservation_sentPackage", fields: [sentPackage], references: [id])
+  ShippingOption                               ShippingOption?       @relation(fields: [shippingOption], references: [id])
+  User                                         User?                 @relation(fields: [user], references: [id])
+  PackageTransitEvent                          PackageTransitEvent[]
+  ReservationFeedback                          ReservationFeedback[]
+  PhysicalProduct_ReservationToAllProducts     PhysicalProduct[]     @relation("ReservationToAllProducts")
+  PhysicalProduct_ReservationToNewProducts     PhysicalProduct[]     @relation("ReservationToNewProducts")
+}
+
+model ReservationFeedback {
+  id                     String                   @id @default(cuid()) @db.VarChar(25)
+  comment                String?
+  rating                 String?
+  user                   String?                  @db.VarChar(25)
+  createdAt              DateTime
+  updatedAt              DateTime
+  reservation            String?                  @db.VarChar(25)
+  respondedAt            DateTime?
+  Reservation            Reservation?             @relation(fields: [reservation], references: [id])
+  User                   User?                    @relation(fields: [user], references: [id])
+  ProductVariantFeedback ProductVariantFeedback[]
+}
+
+model ReservationReceipt {
+  id                     String                   @id @default(cuid()) @db.VarChar(25)
+  createdAt              DateTime
+  updatedAt              DateTime
+  Reservation            Reservation[]
+  ReservationReceiptItem ReservationReceiptItem[]
+}
+
+model ReservationReceiptItem {
+  id                 String               @id @default(cuid()) @db.VarChar(25)
+  productStatus      String
+  notes              String?
+  product            String?              @db.VarChar(25)
+  PhysicalProduct    PhysicalProduct?     @relation(fields: [product], references: [id])
+  ReservationReceipt ReservationReceipt[]
+}
+
+model Season {
+  id                                                 String          @id @default(cuid()) @db.VarChar(25)
+  year                                               Int?
+  seasonCode                                         String?
+  ProductSeason_ProductSeason_internalSeasonToSeason ProductSeason[] @relation("ProductSeason_internalSeasonToSeason")
+  ProductSeason_ProductSeason_vendorSeasonToSeason   ProductSeason[] @relation("ProductSeason_vendorSeasonToSeason")
+}
+
+model ShippingMethod {
+  id             String           @id @default(cuid()) @db.VarChar(25)
+  code           String
+  displayText    String
+  createdAt      DateTime
+  updatedAt      DateTime
+  ShippingOption ShippingOption[]
+}
+
+model ShippingOption {
+  id                                            String          @id @default(cuid()) @db.VarChar(25)
+  externalCost                                  Int?
+  averageDuration                               Int?
+  createdAt                                     DateTime
+  updatedAt                                     DateTime
+  destination                                   String?         @db.VarChar(25)
+  origin                                        String?         @db.VarChar(25)
+  shippingMethod                                String?         @db.VarChar(25)
+  Location_LocationToShippingOption_destination Location?       @relation("LocationToShippingOption_destination", fields: [destination], references: [id])
+  Location_LocationToShippingOption_origin      Location?       @relation("LocationToShippingOption_origin", fields: [origin], references: [id])
+  ShippingMethod                                ShippingMethod? @relation(fields: [shippingMethod], references: [id])
+  Reservation                                   Reservation[]
+}
+
+model ShopifyProductVariant {
+  id                                  String                                @id @default(cuid()) @db.VarChar(25)
+  externalId                          String?                               @unique
+  cachedPrice                         Decimal?
+  cachedAvailableForSale              Boolean?
+  cacheExpiresAt                      DateTime?
+  displayName                         String?
+  title                               String?
+  image                               String?                               @db.VarChar(25)
+  brand                               String?                               @db.VarChar(25)
+  productVariant                      String?                               @db.VarChar(25)
+  shop                                String?                               @db.VarChar(25)
+  Brand                               Brand?                                @relation(fields: [brand], references: [id])
+  Image                               Image?                                @relation(fields: [image], references: [id])
+  ProductVariant                      ProductVariant?                       @relation(fields: [productVariant], references: [id])
+  ShopifyShop                         ShopifyShop?                          @relation(fields: [shop], references: [id])
+  ShopifyProductVariantSelectedOption ShopifyProductVariantSelectedOption[] @relation("ShopifyProductVariantToVariantSelectedOption")
+}
+
+model ShopifyProductVariantSelectedOption {
+  id                    String                  @id @default(cuid()) @db.VarChar(25)
+  name                  String
+  value                 String
+  ShopifyProductVariant ShopifyProductVariant[] @relation("ShopifyProductVariantToVariantSelectedOption")
+}
+
+model ShopifyShop {
+  id                    String                  @id @default(cuid()) @db.VarChar(25)
+  shopName              String                  @unique
+  enabled               Boolean
+  accessToken           String?
+  createdAt             DateTime
+  updatedAt             DateTime
+  Brand                 Brand[]
+  ShopifyProductVariant ShopifyProductVariant[]
+  ShopifyShop_scope     ShopifyShop_scope[]
+}
+
+model ShopifyShop_scope {
+  nodeId      String      @db.VarChar(25)
+  position    Int
+  value       String
+  ShopifyShop ShopifyShop @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model Size {
+  id                                            String           @id @default(cuid()) @db.VarChar(25)
+  slug                                          String           @unique
+  productType                                   String?
+  display                                       String
+  top                                           String?          @db.VarChar(25)
+  bottom                                        String?          @db.VarChar(25)
+  type                                          String?
+  BottomSize                                    BottomSize?      @relation(fields: [bottom], references: [id])
+  TopSize                                       TopSize?         @relation(fields: [top], references: [id])
+  Product                                       Product[]
+  ProductVariant_ProductVariantToSize           ProductVariant[]
+  ProductVariant_ProductVariantManufacturerSize ProductVariant[] @relation("ProductVariantManufacturerSize")
+}
+
+model SmsReceipt {
+  id                   String                 @id @default(cuid()) @db.VarChar(25)
+  externalId           String?
+  body                 String
+  status               String
+  sentAt               DateTime
+  updatedAt            DateTime
+  smsId                String?
+  SmsReceipt_mediaUrls SmsReceipt_mediaUrls[]
+  User                 User[]                 @relation("UserToSmsReceipts")
+}
+
+model SmsReceipt_mediaUrls {
+  nodeId     String     @db.VarChar(25)
+  position   Int
+  value      String
+  SmsReceipt SmsReceipt @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model StylePreferences {
+  id                        String                      @id @default(cuid()) @db.VarChar(25)
+  CustomerDetail            CustomerDetail[]
+  StylePreferences_brands   StylePreferences_brands[]
+  StylePreferences_colors   StylePreferences_colors[]
+  StylePreferences_patterns StylePreferences_patterns[]
+  StylePreferences_styles   StylePreferences_styles[]
+}
+
+model StylePreferences_brands {
+  nodeId           String           @db.VarChar(25)
+  position         Int
+  value            String
+  StylePreferences StylePreferences @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model StylePreferences_colors {
+  nodeId           String           @db.VarChar(25)
+  position         Int
+  value            String
+  StylePreferences StylePreferences @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model StylePreferences_patterns {
+  nodeId           String           @db.VarChar(25)
+  position         Int
+  value            String
+  StylePreferences StylePreferences @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model StylePreferences_styles {
+  nodeId           String           @db.VarChar(25)
+  position         Int
+  value            String
+  StylePreferences StylePreferences @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model SyncTiming {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  createdAt DateTime
+  updatedAt DateTime
+  type      String
+  syncedAt  DateTime
+}
+
+model Tag {
+  id          String    @id @default(cuid()) @db.VarChar(25)
+  name        String    @unique
+  description String?
+  createdAt   DateTime
+  updatedAt   DateTime
+  Product     Product[]
+}
+
+model TopSize {
+  id       String   @id @default(cuid()) @db.VarChar(25)
+  letter   String?
+  sleeve   Decimal?
+  shoulder Decimal?
+  chest    Decimal?
+  neck     Decimal?
+  length   Decimal?
+  Size     Size[]
+}
+
+model User {
+  id                           String                         @id @default(cuid()) @db.VarChar(25)
+  auth0Id                      String                         @unique
+  email                        String                         @unique
+  firstName                    String
+  lastName                     String
+  role                         String
+  createdAt                    DateTime
+  updatedAt                    DateTime
+  pushNotificationStatus       String
+  verificationStatus           String
+  verificationMethod           String
+  pushNotification             String?                        @db.VarChar(25)
+  sendSystemEmails             Boolean
+  deviceData                   String?                        @db.VarChar(25)
+  UserDeviceData               UserDeviceData?                @relation(fields: [deviceData], references: [id])
+  UserPushNotification         UserPushNotification?          @relation(fields: [pushNotification], references: [id])
+  ActiveAdminUser              ActiveAdminUser[]
+  AdminActionLog               AdminActionLog[]
+  Customer                     Customer[]
+  EmailReceipt                 EmailReceipt[]
+  FitPic                       FitPic[]
+  FitPicReport                 FitPicReport[]
+  Location                     Location[]
+  PhysicalProductQualityReport PhysicalProductQualityReport[]
+  ProductRequest               ProductRequest[]
+  ProductVariantWant           ProductVariantWant[]
+  Reservation                  Reservation[]
+  ReservationFeedback          ReservationFeedback[]
+  UserPushNotificationInterest UserPushNotificationInterest[]
+  User_roles                   User_roles[]
+  PushNotificationReceipt      PushNotificationReceipt[]      @relation("UserToPushNotificationReceipts")
+  SmsReceipt                   SmsReceipt[]                   @relation("UserToSmsReceipts")
+}
+
+model UserDeviceData {
+  id         String  @id @default(cuid()) @db.VarChar(25)
+  iOSVersion String?
+  User       User[]
+}
+
+model UserPushNotification {
+  id                           String                         @id @default(cuid()) @db.VarChar(25)
+  status                       Boolean
+  User                         User[]
+  PushNotificationReceipt      PushNotificationReceipt[]
+  UserPushNotificationInterest UserPushNotificationInterest[]
+}
+
+model UserPushNotificationInterest {
+  id                   String                 @id @default(cuid()) @db.VarChar(25)
+  type                 String
+  value                String
+  status               Boolean
+  user                 String?                @db.VarChar(25)
+  User                 User?                  @relation(fields: [user], references: [id])
+  UserPushNotification UserPushNotification[]
+}
+
+model User_roles {
+  nodeId   String @db.VarChar(25)
+  position Int
+  value    String
+  User     User   @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model UTMData {
+  id        String     @id @default(cuid()) @db.VarChar(25)
+  source    String?
+  medium    String?
+  campaign  String?
+  term      String?
+  content   String?
+  createdAt DateTime
+  updatedAt DateTime
+  Customer  Customer[]
+}
+
+model WarehouseLocation {
+  id                          String                        @id @default(cuid()) @db.VarChar(25)
+  type                        String
+  barcode                     String                        @unique
+  locationCode                String
+  itemCode                    String
+  createdAt                   DateTime
+  updatedAt                   DateTime
+  PhysicalProduct             PhysicalProduct[]
+  WarehouseLocationConstraint WarehouseLocationConstraint[]
+}
+
+model WarehouseLocationConstraint {
+  id                String              @id @default(cuid()) @db.VarChar(25)
+  limit             Int
+  createdAt         DateTime
+  updatedAt         DateTime
+  category          String?             @db.VarChar(25)
+  Category          Category?           @relation(fields: [category], references: [id])
+  WarehouseLocation WarehouseLocation[]
+}

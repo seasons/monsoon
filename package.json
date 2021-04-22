@@ -171,6 +171,7 @@
     "prettier": "^2.0.0",
     "prettier-plugin-import-sort": "^0.0.4",
     "pretty-quick": "^2.0.1",
+    "prisma": "^2.21.2",
     "rimraf": "^3.0.0",
     "rxjs": "^6.0.0",
     "serverless-dotenv-plugin": "^2.1.1",
