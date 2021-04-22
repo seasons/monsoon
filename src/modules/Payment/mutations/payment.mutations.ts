@@ -22,7 +22,7 @@ export class PaymentMutationsResolver {
 
   @Mutation()
   async processPayment(
-    @Args() { planID, paymentMethodID, couponID, billing },
+    @Args() { planID, paymentMethodID, couponID, billing, shipping },
     @Customer() customer,
     @Application() application
   ) {
@@ -31,6 +31,7 @@ export class PaymentMutationsResolver {
       paymentMethodID,
       couponID,
       billing,
+      shipping,
       customer,
       application
     )
