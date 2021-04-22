@@ -171,6 +171,11 @@ export class LookerService {
           return acc
         }, {})
         return sanitizedValues
+      case "customer-retention":
+        return val.map(a => ({
+          cohort: a["subscription.created_month"],
+          counts: a["customer.count"]["invoices.date_month"],
+        }))
       default:
         return val?.[0]
     }
