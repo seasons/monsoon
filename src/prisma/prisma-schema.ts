@@ -2008,9 +2008,9 @@ type Brand {
   published: Boolean!
   featured: Boolean!
   websiteUrl: String
+  shopifyShop: ShopifyShop
   createdAt: DateTime!
   updatedAt: DateTime!
-  shopifyShop: ShopifyShop
 }
 
 type BrandConnection {
@@ -2398,6 +2398,7 @@ input BrandWhereInput {
   websiteUrl_not_starts_with: String
   websiteUrl_ends_with: String
   websiteUrl_not_ends_with: String
+  shopifyShop: ShopifyShopWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -2414,7 +2415,6 @@ input BrandWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  shopifyShop: ShopifyShopWhereInput
   AND: [BrandWhereInput!]
   OR: [BrandWhereInput!]
   NOT: [BrandWhereInput!]

@@ -6401,6 +6401,7 @@ export interface BrandWhereInput {
   websiteUrl_not_starts_with?: Maybe<String>;
   websiteUrl_ends_with?: Maybe<String>;
   websiteUrl_not_ends_with?: Maybe<String>;
+  shopifyShop?: Maybe<ShopifyShopWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -6417,7 +6418,6 @@ export interface BrandWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  shopifyShop?: Maybe<ShopifyShopWhereInput>;
   AND?: Maybe<BrandWhereInput[] | BrandWhereInput>;
   OR?: Maybe<BrandWhereInput[] | BrandWhereInput>;
   NOT?: Maybe<BrandWhereInput[] | BrandWhereInput>;
@@ -24203,9 +24203,9 @@ export interface BrandPromise extends Promise<Brand>, Fragmentable {
   published: () => Promise<Boolean>;
   featured: () => Promise<Boolean>;
   websiteUrl: () => Promise<String>;
+  shopifyShop: <T = ShopifyShopPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  shopifyShop: <T = ShopifyShopPromise>() => T;
 }
 
 export interface BrandSubscription
@@ -24244,9 +24244,9 @@ export interface BrandSubscription
   published: () => Promise<AsyncIterator<Boolean>>;
   featured: () => Promise<AsyncIterator<Boolean>>;
   websiteUrl: () => Promise<AsyncIterator<String>>;
+  shopifyShop: <T = ShopifyShopSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  shopifyShop: <T = ShopifyShopSubscription>() => T;
 }
 
 export interface BrandNullablePromise
@@ -24285,9 +24285,9 @@ export interface BrandNullablePromise
   published: () => Promise<Boolean>;
   featured: () => Promise<Boolean>;
   websiteUrl: () => Promise<String>;
+  shopifyShop: <T = ShopifyShopPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  shopifyShop: <T = ShopifyShopPromise>() => T;
 }
 
 export interface ShopifyShop {
