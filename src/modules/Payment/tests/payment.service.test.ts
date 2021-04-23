@@ -89,6 +89,13 @@ describe("Payment Service", () => {
           addressCountry: "USA",
         },
       }
+      const shippingAddress = {
+        address1: "1600 Pennsylvania Ave",
+        address2: "",
+        city: "Washington",
+        state: "DC",
+        zipCode: "20500",
+      }
       const { customer, cleanupFunc } = await testUtils.createTestCustomer({
         email: "test@seasons.nyc",
       })
@@ -111,13 +118,15 @@ describe("Payment Service", () => {
             ChargebeeMockFunction.SubscriptionCreateForCustomer
           )
         )
+
       await paymentService.stripeTokenCheckout(
         planID,
         token,
         customer,
         "apple_pay",
         process.env.REFERRAL_COUPON_ID,
-        "flare"
+        "flare",
+        shippingAddress
       )
 
       const newCustomer = await prisma.binding.query.customer(

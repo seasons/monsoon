@@ -3,7 +3,13 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { Customer, PaymentPlan, PaymentPlanTier, User } from "@app/prisma"
+import {
+  Customer,
+  Location,
+  PaymentPlan,
+  PaymentPlanTier,
+  User,
+} from "@app/prisma"
 import { PauseType } from "@app/prisma/prisma.binding"
 import { EmailService } from "@modules/Email/services/email.service"
 import { AuthService } from "@modules/User/services/auth.service"
@@ -242,6 +248,7 @@ export class PaymentService {
     paymentMethodID,
     couponID,
     billing,
+    shipping,
     customer,
     application
   ) {
@@ -271,6 +278,20 @@ export class PaymentService {
       `
     )
     const user = customerWithUserData?.user
+
+    let shippingAddress
+    if (shipping?.address) {
+      shippingAddress = {
+        name: `${shipping.firstName} ${shipping.lastName}`,
+        address1: shipping.address.line1,
+        address2: shipping.address.line2,
+        city: shipping.address.city,
+        country: shipping.address.country,
+        state: shipping.address.state,
+        zipCode: shipping.address.postal_code,
+        locationType: "Customer",
+      }
+    }
 
     const billingAddress = {
       first_name: billing.user.firstName || "",
@@ -325,7 +346,9 @@ export class PaymentService {
       customerWithUserData.user.id,
       subscriptionData.customer,
       subscriptionData.card,
-      subscriptionData.subscription
+      subscriptionData.subscription,
+      null,
+      shippingAddress
     )
 
     this.segment.trackSubscribed(user.id, {
@@ -350,7 +373,8 @@ export class PaymentService {
     customer,
     tokenType,
     couponID,
-    application
+    application,
+    shippingAddress
   ) {
     const customerWithUserData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
@@ -450,7 +474,9 @@ export class PaymentService {
       user.id,
       payload.customer,
       paymentSource.payment_source.card,
-      payload.subscription
+      payload.subscription,
+      null,
+      shippingAddress
     )
 
     this.segment.trackSubscribed(user.id, {
@@ -742,7 +768,8 @@ export class PaymentService {
     chargebeeCustomer: any,
     card: any,
     subscription: any,
-    giftID?: string
+    giftID?: string,
+    shippingAddress?: any
   ) {
     const subscriptionData: SubscriptionData = {
       nextBillingAt: DateTime.fromSeconds(subscription.next_billing_at).toISO(),
@@ -776,13 +803,35 @@ export class PaymentService {
       throw new Error(`Could not find customer with user id: ${prismaUser.id}`)
     }
 
-    await this.prisma.client.updateCustomer({
-      data: {
-        billingInfo: {
-          create: billingInfo,
-        },
-        status: "Active",
+    let updateData = {
+      billingInfo: {
+        create: billingInfo,
       },
+      status: "Active",
+    } as any
+
+    if (shippingAddress) {
+      updateData = {
+        ...updateData,
+        detail: {
+          upsert: {
+            create: {
+              shippingAddress: {
+                create: shippingAddress,
+              },
+            },
+            update: {
+              shippingAddress: {
+                create: shippingAddress,
+              },
+            },
+          },
+        },
+      }
+    }
+
+    await this.prisma.client.updateCustomer({
+      data: updateData,
       where: { id: prismaCustomer.id },
     })
 
