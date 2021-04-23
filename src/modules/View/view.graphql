@@ -1,6 +1,7 @@
 enum ViewType {
   Referral
   Banner
+  Select
 }
 
 type View {
