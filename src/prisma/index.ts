@@ -27077,7 +27077,7 @@ export interface BlogPost {
   updatedAt: DateTimeOutput;
   publishedOn: DateTimeOutput;
   content?: String;
-  published?: Boolean;
+  published: Boolean;
 }
 
 export interface BlogPostPromise extends Promise<BlogPost>, Fragmentable {
@@ -32056,7 +32056,7 @@ export interface BlogPostPreviousValues {
   updatedAt: DateTimeOutput;
   publishedOn: DateTimeOutput;
   content?: String;
-  published?: Boolean;
+  published: Boolean;
 }
 
 export interface BlogPostPreviousValuesPromise

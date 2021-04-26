@@ -30,7 +30,7 @@ const seed = async () => {
   try {
     for (const post of allPosts) {
       currentPost = post
-      if (!post.content) {
+      if (!post.content && post.published) {
         await timeout(2000)
         const item = await blog.getItem(post.webflowId)
         const content = item["post-content"]

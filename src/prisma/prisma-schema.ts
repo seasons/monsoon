@@ -1414,7 +1414,7 @@ type BlogPost {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
-  published: Boolean
+  published: Boolean!
 }
 
 type BlogPostConnection {
@@ -1515,7 +1515,7 @@ type BlogPostPreviousValues {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
-  published: Boolean
+  published: Boolean!
 }
 
 type BlogPostSubscriptionPayload {

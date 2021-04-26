@@ -297,7 +297,7 @@ type BlogPost {
   updatedAt: DateTime! @updatedAt
   publishedOn: DateTime!
   content: String
-  published: Boolean @default(value: true)
+  published: Boolean! @default(value: true)
 }
 
 type Brand {
