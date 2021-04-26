@@ -1414,6 +1414,7 @@ type BlogPost {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
+  published: Boolean
 }
 
 type BlogPostConnection {
@@ -1441,6 +1442,7 @@ input BlogPostCreateInput {
   category: String
   publishedOn: DateTime!
   content: String
+  published: Boolean
 }
 
 input BlogPostCreatetagsInput {
@@ -1489,6 +1491,8 @@ enum BlogPostOrderByInput {
   publishedOn_DESC
   content_ASC
   content_DESC
+  published_ASC
+  published_DESC
 }
 
 type BlogPostPreviousValues {
@@ -1511,6 +1515,7 @@ type BlogPostPreviousValues {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
+  published: Boolean
 }
 
 type BlogPostSubscriptionPayload {
@@ -1549,6 +1554,7 @@ input BlogPostUpdateInput {
   category: String
   publishedOn: DateTime
   content: String
+  published: Boolean
 }
 
 input BlogPostUpdateManyMutationInput {
@@ -1568,6 +1574,7 @@ input BlogPostUpdateManyMutationInput {
   category: String
   publishedOn: DateTime
   content: String
+  published: Boolean
 }
 
 input BlogPostUpdatetagsInput {
@@ -1798,6 +1805,8 @@ input BlogPostWhereInput {
   content_not_starts_with: String
   content_ends_with: String
   content_not_ends_with: String
+  published: Boolean
+  published_not: Boolean
   AND: [BlogPostWhereInput!]
   OR: [BlogPostWhereInput!]
   NOT: [BlogPostWhereInput!]

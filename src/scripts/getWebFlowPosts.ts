@@ -22,22 +22,30 @@ const seed = async () => {
   const webflow = new WebflowService()
   const blog = new BlogService(webflow, utils)
 
-  const allPosts = await ps.client.blogPosts()
+  const allPosts = await ps.client.blogPosts({ where: { published: true } })
   // const allPosts = await blog.getAllItems()
 
   let count = 0
-  for (const post of allPosts) {
-    await timeout(2000)
-    const item = await blog.getItem(post.webflowId)
-    const content = item["post-content"]
-    await ps.client.updateBlogPost({
-      where: { id: post.id },
-      data: {
-        content,
-      },
-    })
-    count++
-    console.log(`Updated ${count} of ${allPosts.length}`)
+  let currentPost
+  try {
+    for (const post of allPosts) {
+      currentPost = post
+      if (!post.content) {
+        await timeout(2000)
+        const item = await blog.getItem(post.webflowId)
+        const content = item["post-content"]
+        await ps.client.updateBlogPost({
+          where: { id: post.id },
+          data: {
+            content,
+          },
+        })
+      }
+      count++
+      console.log(`Updated ${count} of ${allPosts.length}`)
+    }
+  } catch (e) {
+    console.log("e", e, " / post: ", currentPost)
   }
 }
 

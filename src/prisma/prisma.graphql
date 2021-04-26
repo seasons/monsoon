@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Mon Apr 26 2021 11:48:55 GMT-0700 (Pacific Daylight Time)
+# timestamp: Mon Apr 26 2021 12:23:22 GMT-0700 (Pacific Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -3115,6 +3115,7 @@ type BlogPost implements Node {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
+  published: Boolean
 }
 
 """
@@ -3150,6 +3151,7 @@ input BlogPostCreateInput {
   category: String
   publishedOn: DateTime!
   content: String
+  published: Boolean
   tags: BlogPostCreatetagsInput
   image: ImageCreateOneInput
 }
@@ -3210,6 +3212,8 @@ enum BlogPostOrderByInput {
   publishedOn_DESC
   content_ASC
   content_DESC
+  published_ASC
+  published_DESC
 }
 
 type BlogPostPreviousValues {
@@ -3232,6 +3236,7 @@ type BlogPostPreviousValues {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
+  published: Boolean
 }
 
 type BlogPostSubscriptionPayload {
@@ -3295,6 +3300,7 @@ input BlogPostUpdateInput {
   category: String
   publishedOn: DateTime
   content: String
+  published: Boolean
   tags: BlogPostUpdatetagsInput
   image: ImageUpdateOneInput
 }
@@ -3315,6 +3321,7 @@ input BlogPostUpdateManyMutationInput {
   category: String
   publishedOn: DateTime
   content: String
+  published: Boolean
   tags: BlogPostUpdatetagsInput
 }
 
@@ -4375,6 +4382,12 @@ input BlogPostWhereInput {
   All values not ending with the given string.
   """
   content_not_ends_with: String
+  published: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  published_not: Boolean
   image: ImageWhereInput
 }
 

@@ -4045,7 +4045,9 @@ export type BlogPostOrderByInput =
   | "publishedOn_ASC"
   | "publishedOn_DESC"
   | "content_ASC"
-  | "content_DESC";
+  | "content_DESC"
+  | "published_ASC"
+  | "published_DESC";
 
 export type BottomSizeOrderByInput =
   | "id_ASC"
@@ -9548,6 +9550,8 @@ export interface BlogPostWhereInput {
   content_not_starts_with?: Maybe<String>;
   content_ends_with?: Maybe<String>;
   content_not_ends_with?: Maybe<String>;
+  published?: Maybe<Boolean>;
+  published_not?: Maybe<Boolean>;
   AND?: Maybe<BlogPostWhereInput[] | BlogPostWhereInput>;
   OR?: Maybe<BlogPostWhereInput[] | BlogPostWhereInput>;
   NOT?: Maybe<BlogPostWhereInput[] | BlogPostWhereInput>;
@@ -18006,6 +18010,7 @@ export interface BlogPostCreateInput {
   category?: Maybe<String>;
   publishedOn: DateTimeInput;
   content?: Maybe<String>;
+  published?: Maybe<Boolean>;
 }
 
 export interface BlogPostCreatetagsInput {
@@ -18030,6 +18035,7 @@ export interface BlogPostUpdateInput {
   category?: Maybe<String>;
   publishedOn?: Maybe<DateTimeInput>;
   content?: Maybe<String>;
+  published?: Maybe<Boolean>;
 }
 
 export interface BlogPostUpdatetagsInput {
@@ -18053,6 +18059,7 @@ export interface BlogPostUpdateManyMutationInput {
   category?: Maybe<String>;
   publishedOn?: Maybe<DateTimeInput>;
   content?: Maybe<String>;
+  published?: Maybe<Boolean>;
 }
 
 export interface BottomSizeUpdateInput {
@@ -27070,6 +27077,7 @@ export interface BlogPost {
   updatedAt: DateTimeOutput;
   publishedOn: DateTimeOutput;
   content?: String;
+  published?: Boolean;
 }
 
 export interface BlogPostPromise extends Promise<BlogPost>, Fragmentable {
@@ -27093,6 +27101,7 @@ export interface BlogPostPromise extends Promise<BlogPost>, Fragmentable {
   updatedAt: () => Promise<DateTimeOutput>;
   publishedOn: () => Promise<DateTimeOutput>;
   content: () => Promise<String>;
+  published: () => Promise<Boolean>;
 }
 
 export interface BlogPostSubscription
@@ -27118,6 +27127,7 @@ export interface BlogPostSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   publishedOn: () => Promise<AsyncIterator<DateTimeOutput>>;
   content: () => Promise<AsyncIterator<String>>;
+  published: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface BlogPostNullablePromise
@@ -27143,6 +27153,7 @@ export interface BlogPostNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
   publishedOn: () => Promise<DateTimeOutput>;
   content: () => Promise<String>;
+  published: () => Promise<Boolean>;
 }
 
 export interface BlogPostConnection {
@@ -32045,6 +32056,7 @@ export interface BlogPostPreviousValues {
   updatedAt: DateTimeOutput;
   publishedOn: DateTimeOutput;
   content?: String;
+  published?: Boolean;
 }
 
 export interface BlogPostPreviousValuesPromise
@@ -32069,6 +32081,7 @@ export interface BlogPostPreviousValuesPromise
   updatedAt: () => Promise<DateTimeOutput>;
   publishedOn: () => Promise<DateTimeOutput>;
   content: () => Promise<String>;
+  published: () => Promise<Boolean>;
 }
 
 export interface BlogPostPreviousValuesSubscription
@@ -32093,6 +32106,7 @@ export interface BlogPostPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   publishedOn: () => Promise<AsyncIterator<DateTimeOutput>>;
   content: () => Promise<AsyncIterator<String>>;
+  published: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface BottomSizeSubscriptionPayload {

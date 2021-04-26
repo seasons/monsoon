@@ -3104,6 +3104,7 @@ type BlogPost implements Node {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
+  published: Boolean
 }
 
 """A connection to a list of items."""
@@ -3133,6 +3134,7 @@ input BlogPostCreateInput {
   category: String
   publishedOn: DateTime!
   content: String
+  published: Boolean
   tags: BlogPostCreatetagsInput
   image: ImageCreateOneInput
 }
@@ -3187,6 +3189,8 @@ enum BlogPostOrderByInput {
   publishedOn_DESC
   content_ASC
   content_DESC
+  published_ASC
+  published_DESC
 }
 
 type BlogPostPreviousValues {
@@ -3209,6 +3213,7 @@ type BlogPostPreviousValues {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
+  published: Boolean
 }
 
 type BlogPostSubscriptionPayload {
@@ -3264,6 +3269,7 @@ input BlogPostUpdateInput {
   category: String
   publishedOn: DateTime
   content: String
+  published: Boolean
   tags: BlogPostUpdatetagsInput
   image: ImageUpdateOneInput
 }
@@ -3284,6 +3290,7 @@ input BlogPostUpdateManyMutationInput {
   category: String
   publishedOn: DateTime
   content: String
+  published: Boolean
   tags: BlogPostUpdatetagsInput
 }
 
@@ -3930,6 +3937,10 @@ input BlogPostWhereInput {
 
   """All values not ending with the given string."""
   content_not_ends_with: String
+  published: Boolean
+
+  """All values that are not equal to given value."""
+  published_not: Boolean
   image: ImageWhereInput
 }
 
@@ -37605,7 +37616,9 @@ export type BlogPostOrderByInput =   'id_ASC' |
   'publishedOn_ASC' |
   'publishedOn_DESC' |
   'content_ASC' |
-  'content_DESC'
+  'content_DESC' |
+  'published_ASC' |
+  'published_DESC'
 
 export type BottomSizeOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -39694,6 +39707,7 @@ export interface BlogPostCreateInput {
   category?: String | null
   publishedOn: DateTime
   content?: String | null
+  published?: Boolean | null
   tags?: BlogPostCreatetagsInput | null
   image?: ImageCreateOneInput | null
 }
@@ -39729,6 +39743,7 @@ export interface BlogPostUpdateInput {
   category?: String | null
   publishedOn?: DateTime | null
   content?: String | null
+  published?: Boolean | null
   tags?: BlogPostUpdatetagsInput | null
   image?: ImageUpdateOneInput | null
 }
@@ -39749,6 +39764,7 @@ export interface BlogPostUpdateManyMutationInput {
   category?: String | null
   publishedOn?: DateTime | null
   content?: String | null
+  published?: Boolean | null
   tags?: BlogPostUpdatetagsInput | null
 }
 
@@ -39982,6 +39998,8 @@ export interface BlogPostWhereInput {
   content_not_starts_with?: String | null
   content_ends_with?: String | null
   content_not_ends_with?: String | null
+  published?: Boolean | null
+  published_not?: Boolean | null
   image?: ImageWhereInput | null
 }
 
@@ -55626,6 +55644,7 @@ export interface BlogPost extends Node {
   updatedAt: DateTime
   publishedOn: DateTime
   content?: String | null
+  published?: Boolean | null
 }
 
 /*
@@ -55667,6 +55686,7 @@ export interface BlogPostPreviousValues {
   updatedAt: DateTime
   publishedOn: DateTime
   content?: String | null
+  published?: Boolean | null
 }
 
 export interface BlogPostSubscriptionPayload {
