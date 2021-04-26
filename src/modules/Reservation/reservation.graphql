@@ -166,6 +166,7 @@ type Reservation {
   feedback: ReservationFeedback
   lastLocation: Location
   products: [PhysicalProduct!]!
+  newProducts: [PhysicalProduct!]!
   packageEvents(
     where: PackageTransitEventWhereInput
     orderBy: PackageTransitEventOrderByInput
@@ -201,5 +202,5 @@ type AdminActionLog {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
-  interpretation: String
+  interpretation: AdminActionLogInterpretation
 }

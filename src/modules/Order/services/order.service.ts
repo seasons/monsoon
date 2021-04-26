@@ -295,7 +295,7 @@ export class OrderService {
           buyNewEnabled
           name
           brand {
-            externalShopifyIntegration {
+            shopifyShop {
               enabled
               shopName
               accessToken
@@ -353,7 +353,7 @@ export class OrderService {
 
     const { buyNewEnabled, name: productName } = productVariant?.product
     const { enabled, shopName, accessToken } =
-      productVariant?.product?.brand?.externalShopifyIntegration || {}
+      productVariant?.product?.brand?.shopifyShop || {}
     const {
       id: shopifyProductVariantInternalId,
       externalId: shopifyProductVariantExternalId,
@@ -615,7 +615,7 @@ export class OrderService {
       invoice: {
         customer_id: userId,
       },
-      shippingAddress: this.getChargebeeShippingAddress({
+      shipping_address: this.getChargebeeShippingAddress({
         user,
         location: shippingAddress,
       }),

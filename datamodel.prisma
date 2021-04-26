@@ -93,12 +93,14 @@ enum PackageStatus {
 
 enum ReservationStatus {
   Queued
+  Picked
   Packed
   Shipped
   Delivered
   Completed
   Cancelled
-  Blocked
+  Hold # For internal use, when ops needs to delay processing
+  Blocked # Used when shippo indicates the delivery is blocked
   Unknown
 
   Received
@@ -122,7 +124,16 @@ enum ProductType {
   Shoe
 }
 
+# This should be deprecated in favor of using SizeType in the future
 enum BottomSizeType {
+  WxL
+  US
+  EU
+  JP
+  Letter
+}
+
+enum SizeType {
   WxL
   US
   EU
@@ -306,9 +317,9 @@ type Brand {
   published: Boolean! @default(value: true)
   featured: Boolean! @default(value: false)
   websiteUrl: String
+  shopifyShop: ShopifyShop
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  externalShopifyIntegration: ExternalShopifyIntegration
 }
 type Category {
   id: ID! @id
@@ -474,7 +485,7 @@ type ProductVariantPrice {
   retailPrice: Float
 }
 
-type ExternalShopifyIntegration {
+type ShopifyShop {
   id: ID! @id
   shopName: String! @unique
   enabled: Boolean!
@@ -498,7 +509,7 @@ type ShopifyProductVariant {
     @relation(name: "ShopifyProductVariantToVariantSelectedOption")
   productVariant: ProductVariant
     @relation(name: "ShopifyProductVariantToVariant", link: INLINE)
-  shop: ExternalShopifyIntegration
+  shop: ShopifyShop
   brand: Brand
   title: String
   image: Image
@@ -564,7 +575,7 @@ type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
   location: Location
-  productVariant: ProductVariant! @relation(onDelete: CASCADE)
+  productVariant: ProductVariant! @relation(onDelete: SET_NULL)
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
@@ -576,7 +587,7 @@ type PhysicalProduct {
   dateReceived: DateTime
   unitCost: Float
   price: PhysicalProductPrice
-  reports: [PhysicalProductQualityReport!]!
+  reports: [PhysicalProductQualityReport!]! @relation(onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -1107,7 +1118,12 @@ type Reservation {
     @relation(link: INLINE, name: "SeasonsToCustomerPackage", onDelete: CASCADE)
   returnedPackage: Package
     @relation(link: INLINE, name: "CustomerToSeasonsPackage", onDelete: CASCADE)
+  # all items on the reservation
   products: [PhysicalProduct!]!
+    @relation(link: TABLE, name: "ReservationToAllProducts", onDelete: SET_NULL)
+  # items which were are not carrying over from a previous reservation
+  newProducts: [PhysicalProduct!]!
+    @relation(link: TABLE, name: "ReservationToNewProducts", onDelete: SET_NULL)
   packageEvents: [PackageTransitEvent!]
   reservationNumber: Int! @unique
   phase: ReservationPhase!
@@ -1117,6 +1133,8 @@ type Reservation {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceipt
     @relation(
       link: INLINE
@@ -1315,6 +1333,7 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
+  type: SizeType
 }
 
 # Helper table for audit logs. Should only ever have 0 or 1 records.
@@ -1341,6 +1360,22 @@ type AdminActionLog {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+  interpretedAt: DateTime
+  interpretation: AdminActionLogInterpretation
+    @relation(name: "AdminActionLogToAdminActionLogInterpretation")
+}
+
+type AdminActionLogInterpretation {
+  id: ID! @id
+  log: AdminActionLog!
+    @relation(
+      name: "AdminActionLogToAdminActionLogInterpretation"
+      link: INLINE
+    )
+  entityId: String!
+  tableName: String!
+  interpretation: String
+  data: Json # miscellaneous useful data for the client
 }
 
 enum SyncTimingType {

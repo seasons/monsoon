@@ -1,25 +1,18 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
   AdminActionLog,
   AdminActionLogWhereInput,
   PhysicalProduct,
-  WarehouseLocation,
 } from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaDataLoader } from "@prisma/prisma.loader"
 
-import { PhysicalProductService } from "../services/physicalProduct.service"
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
 
 @Resolver("PhysicalProduct")
 export class PhysicalProductFieldsResolver {
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly physicalProductService: PhysicalProductService,
-    private readonly physicalProductUtils: PhysicalProductUtilsService,
-    private readonly utils: UtilsService
+    private readonly physicalProductUtils: PhysicalProductUtilsService
   ) {}
 
   @ResolveField()
@@ -58,30 +51,10 @@ export class PhysicalProductFieldsResolver {
       },
       includeInfo: true,
     })
-    logsLoader: PrismaDataLoader<AdminActionLog[]>,
-    @Loader({
-      params: {
-        query: `warehouseLocations`,
-        formatWhere: keys => ({ id_in: keys }),
-        keyToDataRelationship: "OneToOne",
-        info: `{id barcode}`,
-      },
-    })
-    locationsLoader: PrismaDataLoader<WarehouseLocation[]>
+    logsLoader: PrismaDataLoader<AdminActionLog[]>
   ) {
     const logs = await logsLoader.load(physicalProduct.id)
-    const allReferencedWarehouseLocations = logs
-      .filter(a => !!a.changedFields)
-      .map(a => a.changedFields)
-      .filter(b => b["warehouseLocation"] != null)
-      .map(c => c["warehouseLocation"])
-    const warehouseLocations = await locationsLoader.loadMany(
-      allReferencedWarehouseLocations
-    )
-    return this.physicalProductService.interpretPhysicalProductLogs(
-      logs,
-      warehouseLocations as any
-    )
+    return logs
   }
 
   @ResolveField()

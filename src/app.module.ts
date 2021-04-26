@@ -66,6 +66,7 @@ const scheduleModule =
         ({
           typeDefs: await importSchema("src/schema.graphql"),
           path: "/",
+          tracing: true,
           installSubscriptionHandlers: true,
           resolverValidationOptions: {
             requireResolversForResolveType: false,

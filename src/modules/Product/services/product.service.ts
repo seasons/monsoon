@@ -25,7 +25,7 @@ import {
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
-import { head, pick } from "lodash"
+import { head, pick, tail } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -236,9 +236,8 @@ export class ProductService {
       modelSize = await this.productUtils.upsertModelSize({
         slug,
         type: input.type,
-        modelSizeName: input.modelSizeName,
         modelSizeDisplay: input.modelSizeDisplay,
-        bottomSizeType: input.internalBottomSizeType,
+        sizeType: input.internalSizeType,
       })
     }
 
@@ -422,8 +421,8 @@ export class ProductService {
   }
 
   async getGeneratedVariantSKUs({ input }) {
-    const { brandID, colorCode, sizeNames } = input
-    const skuData = await this.getSKUData({ brandID, colorCode })
+    const { brandID, colorCode, sizeNames, productID } = input
+    const skuData = await this.getSKUData({ brandID, colorCode, productID })
     if (!skuData) {
       return null
     }
@@ -448,8 +447,8 @@ export class ProductService {
     return skus
   }
 
-  async getGeneratedSeasonsUIDs({ brandID, colorCode, sizes }) {
-    const skuData = await this.getSKUData({ brandID, colorCode })
+  async getGeneratedSeasonsUIDs({ brandID, colorCode, sizes, productID }) {
+    const skuData = await this.getSKUData({ brandID, colorCode, productID })
     if (!skuData) {
       return null
     }
@@ -457,8 +456,9 @@ export class ProductService {
     const { brandCode, styleCode } = skuData
 
     return sizes
-      .map(({ sizeName, count }) => {
-        const sizeCode = this.utils.sizeNameToSizeCode(sizeName)
+      .map(({ internalSize, manufacturerSize, count }) => {
+        // FIXME: eventually we may want to create the sizeCode using the manufacturer name
+        const sizeCode = this.utils.sizeNameToSizeCode(internalSize)
         return Array.from(Array(count).keys()).map((_, index) => {
           const physicalProductIndex = `${index + 1}`.padStart(2, "0")
           return `${brandCode}-${colorCode}-${sizeCode}-${styleCode}-${physicalProductIndex}`
@@ -614,7 +614,7 @@ export class ProductService {
     )) as ProductVariant[]
   }
 
-  async getSKUData({ brandID, colorCode }) {
+  async getSKUData({ brandID, colorCode, productID }) {
     const brand = await this.prisma.client.brand({ id: brandID })
     const color = await this.prisma.client.color({ colorCode })
 
@@ -622,18 +622,36 @@ export class ProductService {
       return null
     }
 
-    const brandCount = await this.prisma.client
-      .productsConnection({
-        where: { brand: { id: brandID } },
-      })
-      .aggregate()
-      .count()
-    if (brandCount === null) {
-      return null
+    let styleNumber
+    if (!!productID) {
+      // valid style code if variants exist on the product, null otherwise
+      styleNumber = await this.productUtils.getProductStyleCode(productID)
+      if (!styleNumber) {
+        throw new Error(`No style number found for productID: ${productID}`)
+      }
+    } else {
+      const brandCount = await this.prisma.client
+        .productsConnection({
+          where: { brand: { id: brandID } },
+        })
+        .aggregate()
+        .count()
+      if (brandCount === null) {
+        return null
+      }
+      styleNumber = brandCount + 1
     }
 
-    const styleNumber = brandCount + 1
     const styleCode = styleNumber.toString().padStart(3, "0")
+    if (!productID) {
+      const allStyleCodesForBrand = await this.productUtils.getAllStyleCodesForBrand(
+        brandID
+      )
+      if (allStyleCodesForBrand.includes(styleCode)) {
+        throw new Error(`Style code collision: ${styleCode}`)
+      }
+    }
+
     return {
       brandCode: brand.brandCode,
       styleCode,
@@ -651,7 +669,7 @@ export class ProductService {
   }) {
     // Extract custom fields out
     const {
-      internalBottomSizeType,
+      internalSizeType,
       functions,
       images,
       modelSizeDisplay,
@@ -730,9 +748,8 @@ export class ProductService {
       const modelSize = await this.productUtils.upsertModelSize({
         slug: product.slug,
         type: product.type,
-        modelSizeName,
         modelSizeDisplay,
-        bottomSizeType: internalBottomSizeType,
+        sizeType: internalSizeType,
       })
       modelSizeID = modelSize.id
     }
@@ -871,19 +888,19 @@ export class ProductService {
     const internalSize = await this.productUtils.deepUpsertSize({
       slug: `${variant.sku}-internal`,
       type,
-      display: this.internalSizeNameToDisplaySize({
-        type,
-        sizeName: variant.internalSizeName,
-      }),
+      display: variant.internalSizeName,
       topSizeData: type === "Top" && {
+        // TODO: letter is deprecated, can eventually remove
         letter: (variant.internalSizeName as LetterSize) || null,
         ...pick(variant, ["sleeve", "shoulder", "chest", "neck", "length"]),
       },
       bottomSizeData: type === "Bottom" && {
-        type: (variant.internalBottomSizeType as BottomSizeType) || null,
+        // TODO: type and value are deprecated, can eventually remove
+        type: (variant.internalSizeType as BottomSizeType) || null,
         value: variant.internalSizeName || "",
         ...pick(variant, ["waist", "rise", "hem", "inseam"]),
       },
+      sizeType: variant.internalSizeType,
     })
 
     const manufacturerSizeIDs = await this.productVariantService.getManufacturerSizeIDs(
@@ -1322,26 +1339,6 @@ export class ProductService {
         })
       }
     }
-  }
-
-  private internalSizeNameToDisplaySize({
-    type,
-    sizeName,
-  }: {
-    type: ProductType
-    sizeName
-  }) {
-    let displaySize
-    switch (type) {
-      case "Bottom":
-        this.validateInternalBottomSizeName(sizeName)
-        displaySize = sizeName.split("x")[0]
-        break
-      default:
-        displaySize = sizeName
-    }
-
-    return displaySize
   }
 
   private validateInternalBottomSizeName(sizeName) {

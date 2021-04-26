@@ -302,14 +302,14 @@ type Brand @cacheControl(maxAge: 1000) {
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegration
+  shopifyShop: ShopifyShop
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
 input UpsertProductInput {
   architecture: String
-  internalBottomSizeType: BottomSizeType
+  internalSizeType: SizeType
   brandID: String!
   buyNewEnabled: Boolean
   buyUsedEnabled: Boolean!
@@ -385,7 +385,7 @@ input UpsertSeasonInput {
   vendorSeasonYear: Int
 }
 
-input ExternalShopifyIntegrationInput {
+input ShopifyShopInput {
   shopName: String!
   enabled: Boolean!
   accessToken: String
@@ -409,7 +409,7 @@ input CustomBrandCreateInput {
   # Custom fields
   logoImage: Upload
   images: [Upload!]
-  externalShopifyIntegration: ExternalShopifyIntegrationInput
+  shopifyShop: ShopifyShopInput
 }
 
 input CustomBrandUpdateInput {
@@ -429,7 +429,7 @@ input CustomBrandUpdateInput {
   # Custom fields
   logoImage: Upload
   images: [Upload!]
-  externalShopifyIntegration: ExternalShopifyIntegrationInput
+  shopifyShop: ShopifyShopInput
 }
 
 input CustomLaunchUpsertInput {

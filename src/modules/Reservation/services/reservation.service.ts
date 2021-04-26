@@ -420,6 +420,21 @@ export class ReservationService {
         }
       }`
     )
+
+    // If we're completing or cancelling the resy, set the timestamp
+    if (
+      reservationBeforeUpdate.status !== "Cancelled" &&
+      data.status === "Cancelled"
+    ) {
+      data["cancelledAt"] = new Date()
+    }
+    if (
+      reservationBeforeUpdate.status !== "Completed" &&
+      data.status === "Completed"
+    ) {
+      data["completedAt"] = new Date()
+    }
+
     await this.prisma.client.updateReservation({ data, where })
 
     // Reservation was just packed. Null out warehouse locations on attached products
@@ -644,6 +659,9 @@ export class ReservationService {
     const physicalProductSUIDs = allPhysicalProductsInReservation.map(p => ({
       seasonsUID: p.seasonsUID,
     }))
+    const newPhysicalProductSUIDs = physicalProductsBeingReserved.map(p => ({
+      seasonsUID: p.seasonsUID,
+    }))
 
     const customerShippingAddressRecordID = await this.prisma.client
       .customer({ id: customer.id })
@@ -658,6 +676,9 @@ export class ReservationService {
     let createData = {
       products: {
         connect: physicalProductSUIDs,
+      },
+      newProducts: {
+        connect: newPhysicalProductSUIDs,
       },
       customer: {
         connect: {

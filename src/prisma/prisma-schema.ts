@@ -96,6 +96,8 @@ type AdminActionLog {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+  interpretedAt: DateTime
+  interpretation: AdminActionLogInterpretation
 }
 
 type AdminActionLogConnection {
@@ -114,11 +116,215 @@ input AdminActionLogCreateInput {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+  interpretedAt: DateTime
+  interpretation: AdminActionLogInterpretationCreateOneWithoutLogInput
+}
+
+input AdminActionLogCreateOneWithoutInterpretationInput {
+  create: AdminActionLogCreateWithoutInterpretationInput
+  connect: AdminActionLogWhereUniqueInput
+}
+
+input AdminActionLogCreateWithoutInterpretationInput {
+  actionId: Int
+  entityId: String!
+  tableName: String!
+  activeAdminUser: UserCreateOneInput!
+  triggeredAt: DateTime!
+  action: AdminAction!
+  rowData: Json!
+  changedFields: Json
+  statementOnly: Boolean!
+  interpretedAt: DateTime
 }
 
 type AdminActionLogEdge {
   node: AdminActionLog!
   cursor: String!
+}
+
+type AdminActionLogInterpretation {
+  id: ID!
+  log: AdminActionLog!
+  entityId: String!
+  tableName: String!
+  interpretation: String
+  data: Json
+}
+
+type AdminActionLogInterpretationConnection {
+  pageInfo: PageInfo!
+  edges: [AdminActionLogInterpretationEdge]!
+  aggregate: AggregateAdminActionLogInterpretation!
+}
+
+input AdminActionLogInterpretationCreateInput {
+  id: ID
+  log: AdminActionLogCreateOneWithoutInterpretationInput!
+  entityId: String!
+  tableName: String!
+  interpretation: String
+  data: Json
+}
+
+input AdminActionLogInterpretationCreateOneWithoutLogInput {
+  create: AdminActionLogInterpretationCreateWithoutLogInput
+  connect: AdminActionLogInterpretationWhereUniqueInput
+}
+
+input AdminActionLogInterpretationCreateWithoutLogInput {
+  id: ID
+  entityId: String!
+  tableName: String!
+  interpretation: String
+  data: Json
+}
+
+type AdminActionLogInterpretationEdge {
+  node: AdminActionLogInterpretation!
+  cursor: String!
+}
+
+enum AdminActionLogInterpretationOrderByInput {
+  id_ASC
+  id_DESC
+  entityId_ASC
+  entityId_DESC
+  tableName_ASC
+  tableName_DESC
+  interpretation_ASC
+  interpretation_DESC
+  data_ASC
+  data_DESC
+}
+
+type AdminActionLogInterpretationPreviousValues {
+  id: ID!
+  entityId: String!
+  tableName: String!
+  interpretation: String
+  data: Json
+}
+
+type AdminActionLogInterpretationSubscriptionPayload {
+  mutation: MutationType!
+  node: AdminActionLogInterpretation
+  updatedFields: [String!]
+  previousValues: AdminActionLogInterpretationPreviousValues
+}
+
+input AdminActionLogInterpretationSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: AdminActionLogInterpretationWhereInput
+  AND: [AdminActionLogInterpretationSubscriptionWhereInput!]
+  OR: [AdminActionLogInterpretationSubscriptionWhereInput!]
+  NOT: [AdminActionLogInterpretationSubscriptionWhereInput!]
+}
+
+input AdminActionLogInterpretationUpdateInput {
+  log: AdminActionLogUpdateOneRequiredWithoutInterpretationInput
+  entityId: String
+  tableName: String
+  interpretation: String
+  data: Json
+}
+
+input AdminActionLogInterpretationUpdateManyMutationInput {
+  entityId: String
+  tableName: String
+  interpretation: String
+  data: Json
+}
+
+input AdminActionLogInterpretationUpdateOneWithoutLogInput {
+  create: AdminActionLogInterpretationCreateWithoutLogInput
+  update: AdminActionLogInterpretationUpdateWithoutLogDataInput
+  upsert: AdminActionLogInterpretationUpsertWithoutLogInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: AdminActionLogInterpretationWhereUniqueInput
+}
+
+input AdminActionLogInterpretationUpdateWithoutLogDataInput {
+  entityId: String
+  tableName: String
+  interpretation: String
+  data: Json
+}
+
+input AdminActionLogInterpretationUpsertWithoutLogInput {
+  update: AdminActionLogInterpretationUpdateWithoutLogDataInput!
+  create: AdminActionLogInterpretationCreateWithoutLogInput!
+}
+
+input AdminActionLogInterpretationWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  log: AdminActionLogWhereInput
+  entityId: String
+  entityId_not: String
+  entityId_in: [String!]
+  entityId_not_in: [String!]
+  entityId_lt: String
+  entityId_lte: String
+  entityId_gt: String
+  entityId_gte: String
+  entityId_contains: String
+  entityId_not_contains: String
+  entityId_starts_with: String
+  entityId_not_starts_with: String
+  entityId_ends_with: String
+  entityId_not_ends_with: String
+  tableName: String
+  tableName_not: String
+  tableName_in: [String!]
+  tableName_not_in: [String!]
+  tableName_lt: String
+  tableName_lte: String
+  tableName_gt: String
+  tableName_gte: String
+  tableName_contains: String
+  tableName_not_contains: String
+  tableName_starts_with: String
+  tableName_not_starts_with: String
+  tableName_ends_with: String
+  tableName_not_ends_with: String
+  interpretation: String
+  interpretation_not: String
+  interpretation_in: [String!]
+  interpretation_not_in: [String!]
+  interpretation_lt: String
+  interpretation_lte: String
+  interpretation_gt: String
+  interpretation_gte: String
+  interpretation_contains: String
+  interpretation_not_contains: String
+  interpretation_starts_with: String
+  interpretation_not_starts_with: String
+  interpretation_ends_with: String
+  interpretation_not_ends_with: String
+  AND: [AdminActionLogInterpretationWhereInput!]
+  OR: [AdminActionLogInterpretationWhereInput!]
+  NOT: [AdminActionLogInterpretationWhereInput!]
+}
+
+input AdminActionLogInterpretationWhereUniqueInput {
+  id: ID
 }
 
 enum AdminActionLogOrderByInput {
@@ -138,6 +344,8 @@ enum AdminActionLogOrderByInput {
   changedFields_DESC
   statementOnly_ASC
   statementOnly_DESC
+  interpretedAt_ASC
+  interpretedAt_DESC
 }
 
 type AdminActionLogPreviousValues {
@@ -149,6 +357,7 @@ type AdminActionLogPreviousValues {
   rowData: Json!
   changedFields: Json
   statementOnly: Boolean!
+  interpretedAt: DateTime
 }
 
 type AdminActionLogSubscriptionPayload {
@@ -178,6 +387,8 @@ input AdminActionLogUpdateInput {
   rowData: Json
   changedFields: Json
   statementOnly: Boolean
+  interpretedAt: DateTime
+  interpretation: AdminActionLogInterpretationUpdateOneWithoutLogInput
 }
 
 input AdminActionLogUpdateManyMutationInput {
@@ -188,6 +399,31 @@ input AdminActionLogUpdateManyMutationInput {
   rowData: Json
   changedFields: Json
   statementOnly: Boolean
+  interpretedAt: DateTime
+}
+
+input AdminActionLogUpdateOneRequiredWithoutInterpretationInput {
+  create: AdminActionLogCreateWithoutInterpretationInput
+  update: AdminActionLogUpdateWithoutInterpretationDataInput
+  upsert: AdminActionLogUpsertWithoutInterpretationInput
+  connect: AdminActionLogWhereUniqueInput
+}
+
+input AdminActionLogUpdateWithoutInterpretationDataInput {
+  entityId: String
+  tableName: String
+  activeAdminUser: UserUpdateOneRequiredInput
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+  interpretedAt: DateTime
+}
+
+input AdminActionLogUpsertWithoutInterpretationInput {
+  update: AdminActionLogUpdateWithoutInterpretationDataInput!
+  create: AdminActionLogCreateWithoutInterpretationInput!
 }
 
 input AdminActionLogWhereInput {
@@ -242,6 +478,15 @@ input AdminActionLogWhereInput {
   action_not_in: [AdminAction!]
   statementOnly: Boolean
   statementOnly_not: Boolean
+  interpretedAt: DateTime
+  interpretedAt_not: DateTime
+  interpretedAt_in: [DateTime!]
+  interpretedAt_not_in: [DateTime!]
+  interpretedAt_lt: DateTime
+  interpretedAt_lte: DateTime
+  interpretedAt_gt: DateTime
+  interpretedAt_gte: DateTime
+  interpretation: AdminActionLogInterpretationWhereInput
   AND: [AdminActionLogWhereInput!]
   OR: [AdminActionLogWhereInput!]
   NOT: [AdminActionLogWhereInput!]
@@ -256,6 +501,10 @@ type AggregateActiveAdminUser {
 }
 
 type AggregateAdminActionLog {
+  count: Int!
+}
+
+type AggregateAdminActionLogInterpretation {
   count: Int!
 }
 
@@ -316,10 +565,6 @@ type AggregateCustomerNotificationBarReceipt {
 }
 
 type AggregateEmailReceipt {
-  count: Int!
-}
-
-type AggregateExternalShopifyIntegration {
   count: Int!
 }
 
@@ -480,6 +725,10 @@ type AggregateShopifyProductVariant {
 }
 
 type AggregateShopifyProductVariantSelectedOption {
+  count: Int!
+}
+
+type AggregateShopifyShop {
   count: Int!
 }
 
@@ -1780,9 +2029,9 @@ type Brand {
   published: Boolean!
   featured: Boolean!
   websiteUrl: String
+  shopifyShop: ShopifyShop
   createdAt: DateTime!
   updatedAt: DateTime!
-  externalShopifyIntegration: ExternalShopifyIntegration
 }
 
 type BrandConnection {
@@ -1809,7 +2058,7 @@ input BrandCreateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
+  shopifyShop: ShopifyShopCreateOneInput
 }
 
 input BrandCreateOneInput {
@@ -1839,7 +2088,7 @@ input BrandCreateWithoutProductsInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
+  shopifyShop: ShopifyShopCreateOneInput
 }
 
 type BrandEdge {
@@ -1948,7 +2197,7 @@ input BrandUpdateDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
 }
 
 input BrandUpdateInput {
@@ -1968,7 +2217,7 @@ input BrandUpdateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
 }
 
 input BrandUpdateManyMutationInput {
@@ -2019,7 +2268,7 @@ input BrandUpdateWithoutProductsDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
 }
 
 input BrandUpsertNestedInput {
@@ -2170,6 +2419,7 @@ input BrandWhereInput {
   websiteUrl_not_starts_with: String
   websiteUrl_ends_with: String
   websiteUrl_not_ends_with: String
+  shopifyShop: ShopifyShopWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -2186,7 +2436,6 @@ input BrandWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  externalShopifyIntegration: ExternalShopifyIntegrationWhereInput
   AND: [BrandWhereInput!]
   OR: [BrandWhereInput!]
   NOT: [BrandWhereInput!]
@@ -5690,197 +5939,6 @@ input EmailReceiptWhereUniqueInput {
   id: ID
 }
 
-type ExternalShopifyIntegration {
-  id: ID!
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: [String!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type ExternalShopifyIntegrationConnection {
-  pageInfo: PageInfo!
-  edges: [ExternalShopifyIntegrationEdge]!
-  aggregate: AggregateExternalShopifyIntegration!
-}
-
-input ExternalShopifyIntegrationCreateInput {
-  id: ID
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: ExternalShopifyIntegrationCreatescopeInput
-}
-
-input ExternalShopifyIntegrationCreateOneInput {
-  create: ExternalShopifyIntegrationCreateInput
-  connect: ExternalShopifyIntegrationWhereUniqueInput
-}
-
-input ExternalShopifyIntegrationCreatescopeInput {
-  set: [String!]
-}
-
-type ExternalShopifyIntegrationEdge {
-  node: ExternalShopifyIntegration!
-  cursor: String!
-}
-
-enum ExternalShopifyIntegrationOrderByInput {
-  id_ASC
-  id_DESC
-  shopName_ASC
-  shopName_DESC
-  enabled_ASC
-  enabled_DESC
-  accessToken_ASC
-  accessToken_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type ExternalShopifyIntegrationPreviousValues {
-  id: ID!
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: [String!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type ExternalShopifyIntegrationSubscriptionPayload {
-  mutation: MutationType!
-  node: ExternalShopifyIntegration
-  updatedFields: [String!]
-  previousValues: ExternalShopifyIntegrationPreviousValues
-}
-
-input ExternalShopifyIntegrationSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: ExternalShopifyIntegrationWhereInput
-  AND: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-  OR: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-  NOT: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-}
-
-input ExternalShopifyIntegrationUpdateDataInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateManyMutationInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateOneInput {
-  create: ExternalShopifyIntegrationCreateInput
-  update: ExternalShopifyIntegrationUpdateDataInput
-  upsert: ExternalShopifyIntegrationUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: ExternalShopifyIntegrationWhereUniqueInput
-}
-
-input ExternalShopifyIntegrationUpdatescopeInput {
-  set: [String!]
-}
-
-input ExternalShopifyIntegrationUpsertNestedInput {
-  update: ExternalShopifyIntegrationUpdateDataInput!
-  create: ExternalShopifyIntegrationCreateInput!
-}
-
-input ExternalShopifyIntegrationWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  shopName: String
-  shopName_not: String
-  shopName_in: [String!]
-  shopName_not_in: [String!]
-  shopName_lt: String
-  shopName_lte: String
-  shopName_gt: String
-  shopName_gte: String
-  shopName_contains: String
-  shopName_not_contains: String
-  shopName_starts_with: String
-  shopName_not_starts_with: String
-  shopName_ends_with: String
-  shopName_not_ends_with: String
-  enabled: Boolean
-  enabled_not: Boolean
-  accessToken: String
-  accessToken_not: String
-  accessToken_in: [String!]
-  accessToken_not_in: [String!]
-  accessToken_lt: String
-  accessToken_lte: String
-  accessToken_gt: String
-  accessToken_gte: String
-  accessToken_contains: String
-  accessToken_not_contains: String
-  accessToken_starts_with: String
-  accessToken_not_starts_with: String
-  accessToken_ends_with: String
-  accessToken_not_ends_with: String
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  AND: [ExternalShopifyIntegrationWhereInput!]
-  OR: [ExternalShopifyIntegrationWhereInput!]
-  NOT: [ExternalShopifyIntegrationWhereInput!]
-}
-
-input ExternalShopifyIntegrationWhereUniqueInput {
-  id: ID
-  shopName: String
-}
-
 type FitPic {
   id: ID!
   image: Image!
@@ -7812,6 +7870,12 @@ type Mutation {
   upsertAdminActionLog(where: AdminActionLogWhereUniqueInput!, create: AdminActionLogCreateInput!, update: AdminActionLogUpdateInput!): AdminActionLog!
   deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
+  createAdminActionLogInterpretation(data: AdminActionLogInterpretationCreateInput!): AdminActionLogInterpretation!
+  updateAdminActionLogInterpretation(data: AdminActionLogInterpretationUpdateInput!, where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
+  updateManyAdminActionLogInterpretations(data: AdminActionLogInterpretationUpdateManyMutationInput!, where: AdminActionLogInterpretationWhereInput): BatchPayload!
+  upsertAdminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!, create: AdminActionLogInterpretationCreateInput!, update: AdminActionLogInterpretationUpdateInput!): AdminActionLogInterpretation!
+  deleteAdminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
+  deleteManyAdminActionLogInterpretations(where: AdminActionLogInterpretationWhereInput): BatchPayload!
   createBagItem(data: BagItemCreateInput!): BagItem!
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
@@ -7902,12 +7966,6 @@ type Mutation {
   upsertEmailReceipt(where: EmailReceiptWhereUniqueInput!, create: EmailReceiptCreateInput!, update: EmailReceiptUpdateInput!): EmailReceipt!
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
-  createExternalShopifyIntegration(data: ExternalShopifyIntegrationCreateInput!): ExternalShopifyIntegration!
-  updateExternalShopifyIntegration(data: ExternalShopifyIntegrationUpdateInput!, where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
-  updateManyExternalShopifyIntegrations(data: ExternalShopifyIntegrationUpdateManyMutationInput!, where: ExternalShopifyIntegrationWhereInput): BatchPayload!
-  upsertExternalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!, create: ExternalShopifyIntegrationCreateInput!, update: ExternalShopifyIntegrationUpdateInput!): ExternalShopifyIntegration!
-  deleteExternalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
-  deleteManyExternalShopifyIntegrations(where: ExternalShopifyIntegrationWhereInput): BatchPayload!
   createFitPic(data: FitPicCreateInput!): FitPic!
   updateFitPic(data: FitPicUpdateInput!, where: FitPicWhereUniqueInput!): FitPic
   updateManyFitPics(data: FitPicUpdateManyMutationInput!, where: FitPicWhereInput): BatchPayload!
@@ -8147,6 +8205,12 @@ type Mutation {
   upsertShopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionWhereUniqueInput!, create: ShopifyProductVariantSelectedOptionCreateInput!, update: ShopifyProductVariantSelectedOptionUpdateInput!): ShopifyProductVariantSelectedOption!
   deleteShopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionWhereUniqueInput!): ShopifyProductVariantSelectedOption
   deleteManyShopifyProductVariantSelectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput): BatchPayload!
+  createShopifyShop(data: ShopifyShopCreateInput!): ShopifyShop!
+  updateShopifyShop(data: ShopifyShopUpdateInput!, where: ShopifyShopWhereUniqueInput!): ShopifyShop
+  updateManyShopifyShops(data: ShopifyShopUpdateManyMutationInput!, where: ShopifyShopWhereInput): BatchPayload!
+  upsertShopifyShop(where: ShopifyShopWhereUniqueInput!, create: ShopifyShopCreateInput!, update: ShopifyShopUpdateInput!): ShopifyShop!
+  deleteShopifyShop(where: ShopifyShopWhereUniqueInput!): ShopifyShop
+  deleteManyShopifyShops(where: ShopifyShopWhereInput): BatchPayload!
   createSize(data: SizeCreateInput!): Size!
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
@@ -15616,6 +15680,9 @@ type Query {
   adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   adminActionLogs(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLog]!
   adminActionLogsConnection(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogConnection!
+  adminActionLogInterpretation(where: AdminActionLogInterpretationWhereUniqueInput!): AdminActionLogInterpretation
+  adminActionLogInterpretations(where: AdminActionLogInterpretationWhereInput, orderBy: AdminActionLogInterpretationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLogInterpretation]!
+  adminActionLogInterpretationsConnection(where: AdminActionLogInterpretationWhereInput, orderBy: AdminActionLogInterpretationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogInterpretationConnection!
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
@@ -15661,9 +15728,6 @@ type Query {
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
-  externalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
-  externalShopifyIntegrations(where: ExternalShopifyIntegrationWhereInput, orderBy: ExternalShopifyIntegrationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExternalShopifyIntegration]!
-  externalShopifyIntegrationsConnection(where: ExternalShopifyIntegrationWhereInput, orderBy: ExternalShopifyIntegrationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExternalShopifyIntegrationConnection!
   fitPic(where: FitPicWhereUniqueInput!): FitPic
   fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic]!
   fitPicsConnection(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicConnection!
@@ -15784,6 +15848,9 @@ type Query {
   shopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionWhereUniqueInput!): ShopifyProductVariantSelectedOption
   shopifyProductVariantSelectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariantSelectedOption]!
   shopifyProductVariantSelectedOptionsConnection(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShopifyProductVariantSelectedOptionConnection!
+  shopifyShop(where: ShopifyShopWhereUniqueInput!): ShopifyShop
+  shopifyShops(where: ShopifyShopWhereInput, orderBy: ShopifyShopOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyShop]!
+  shopifyShopsConnection(where: ShopifyShopWhereInput, orderBy: ShopifyShopOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShopifyShopConnection!
   size(where: SizeWhereUniqueInput!): Size
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
@@ -15967,6 +16034,7 @@ type Reservation {
   sentPackage: Package
   returnedPackage: Package
   products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  newProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   packageEvents(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PackageTransitEvent!]
   reservationNumber: Int!
   phase: ReservationPhase!
@@ -15976,6 +16044,8 @@ type Reservation {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceipt
   lastLocation: Location
   createdAt: DateTime!
@@ -15996,6 +16066,7 @@ input ReservationCreateInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
@@ -16005,6 +16076,8 @@ input ReservationCreateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -16036,6 +16109,7 @@ input ReservationCreateWithoutCustomerInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
@@ -16045,6 +16119,8 @@ input ReservationCreateWithoutCustomerInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -16057,6 +16133,7 @@ input ReservationCreateWithoutPackageEventsInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
@@ -16065,6 +16142,8 @@ input ReservationCreateWithoutPackageEventsInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -16077,6 +16156,7 @@ input ReservationCreateWithoutReceiptInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
@@ -16086,6 +16166,8 @@ input ReservationCreateWithoutReceiptInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
 }
@@ -16309,6 +16391,10 @@ enum ReservationOrderByInput {
   reminderSentAt_DESC
   statusUpdatedAt_ASC
   statusUpdatedAt_DESC
+  completedAt_ASC
+  completedAt_DESC
+  cancelledAt_ASC
+  cancelledAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -16330,6 +16416,8 @@ type ReservationPreviousValues {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -16728,6 +16816,22 @@ input ReservationScalarWhereInput {
   statusUpdatedAt_lte: DateTime
   statusUpdatedAt_gt: DateTime
   statusUpdatedAt_gte: DateTime
+  completedAt: DateTime
+  completedAt_not: DateTime
+  completedAt_in: [DateTime!]
+  completedAt_not_in: [DateTime!]
+  completedAt_lt: DateTime
+  completedAt_lte: DateTime
+  completedAt_gt: DateTime
+  completedAt_gte: DateTime
+  cancelledAt: DateTime
+  cancelledAt_not: DateTime
+  cancelledAt_in: [DateTime!]
+  cancelledAt_not_in: [DateTime!]
+  cancelledAt_lt: DateTime
+  cancelledAt_lte: DateTime
+  cancelledAt_gt: DateTime
+  cancelledAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -16751,11 +16855,13 @@ input ReservationScalarWhereInput {
 
 enum ReservationStatus {
   Queued
+  Picked
   Packed
   Shipped
   Delivered
   Completed
   Cancelled
+  Hold
   Blocked
   Unknown
   Received
@@ -16785,6 +16891,7 @@ input ReservationUpdateDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
@@ -16794,6 +16901,8 @@ input ReservationUpdateDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -16805,6 +16914,7 @@ input ReservationUpdateInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
@@ -16814,6 +16924,8 @@ input ReservationUpdateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -16828,6 +16940,8 @@ input ReservationUpdateManyDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyMutationInput {
@@ -16839,6 +16953,8 @@ input ReservationUpdateManyMutationInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -16886,6 +17002,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
@@ -16895,6 +17012,8 @@ input ReservationUpdateWithoutCustomerDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -16906,6 +17025,7 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
@@ -16914,6 +17034,8 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -16925,6 +17047,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
@@ -16934,6 +17057,8 @@ input ReservationUpdateWithoutReceiptDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
 }
@@ -16986,6 +17111,9 @@ input ReservationWhereInput {
   products_every: PhysicalProductWhereInput
   products_some: PhysicalProductWhereInput
   products_none: PhysicalProductWhereInput
+  newProducts_every: PhysicalProductWhereInput
+  newProducts_some: PhysicalProductWhereInput
+  newProducts_none: PhysicalProductWhereInput
   packageEvents_every: PackageTransitEventWhereInput
   packageEvents_some: PackageTransitEventWhereInput
   packageEvents_none: PackageTransitEventWhereInput
@@ -17039,6 +17167,22 @@ input ReservationWhereInput {
   statusUpdatedAt_lte: DateTime
   statusUpdatedAt_gt: DateTime
   statusUpdatedAt_gte: DateTime
+  completedAt: DateTime
+  completedAt_not: DateTime
+  completedAt_in: [DateTime!]
+  completedAt_not_in: [DateTime!]
+  completedAt_lt: DateTime
+  completedAt_lte: DateTime
+  completedAt_gt: DateTime
+  completedAt_gte: DateTime
+  cancelledAt: DateTime
+  cancelledAt_not: DateTime
+  cancelledAt_in: [DateTime!]
+  cancelledAt_not_in: [DateTime!]
+  cancelledAt_lt: DateTime
+  cancelledAt_lte: DateTime
+  cancelledAt_gt: DateTime
+  cancelledAt_gte: DateTime
   receipt: ReservationReceiptWhereInput
   lastLocation: LocationWhereInput
   createdAt: DateTime
@@ -17651,7 +17795,7 @@ type ShopifyProductVariant {
   displayName: String
   selectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariantSelectedOption!]
   productVariant: ProductVariant
-  shop: ExternalShopifyIntegration
+  shop: ShopifyShop
   brand: Brand
   title: String
   image: Image
@@ -17672,7 +17816,7 @@ input ShopifyProductVariantCreateInput {
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
   productVariant: ProductVariantCreateOneWithoutShopifyProductVariantInput
-  shop: ExternalShopifyIntegrationCreateOneInput
+  shop: ShopifyShopCreateOneInput
   brand: BrandCreateOneInput
   title: String
   image: ImageCreateOneInput
@@ -17691,7 +17835,7 @@ input ShopifyProductVariantCreateWithoutProductVariantInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
-  shop: ExternalShopifyIntegrationCreateOneInput
+  shop: ShopifyShopCreateOneInput
   brand: BrandCreateOneInput
   title: String
   image: ImageCreateOneInput
@@ -17964,7 +18108,7 @@ input ShopifyProductVariantUpdateInput {
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
   productVariant: ProductVariantUpdateOneWithoutShopifyProductVariantInput
-  shop: ExternalShopifyIntegrationUpdateOneInput
+  shop: ShopifyShopUpdateOneInput
   brand: BrandUpdateOneInput
   title: String
   image: ImageUpdateOneInput
@@ -17995,7 +18139,7 @@ input ShopifyProductVariantUpdateWithoutProductVariantDataInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
-  shop: ExternalShopifyIntegrationUpdateOneInput
+  shop: ShopifyShopUpdateOneInput
   brand: BrandUpdateOneInput
   title: String
   image: ImageUpdateOneInput
@@ -18056,7 +18200,7 @@ input ShopifyProductVariantWhereInput {
   selectedOptions_some: ShopifyProductVariantSelectedOptionWhereInput
   selectedOptions_none: ShopifyProductVariantSelectedOptionWhereInput
   productVariant: ProductVariantWhereInput
-  shop: ExternalShopifyIntegrationWhereInput
+  shop: ShopifyShopWhereInput
   brand: BrandWhereInput
   title: String
   title_not: String
@@ -18101,6 +18245,197 @@ input ShopifyProductVariantWhereUniqueInput {
   externalId: String
 }
 
+type ShopifyShop {
+  id: ID!
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ShopifyShopConnection {
+  pageInfo: PageInfo!
+  edges: [ShopifyShopEdge]!
+  aggregate: AggregateShopifyShop!
+}
+
+input ShopifyShopCreateInput {
+  id: ID
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: ShopifyShopCreatescopeInput
+}
+
+input ShopifyShopCreateOneInput {
+  create: ShopifyShopCreateInput
+  connect: ShopifyShopWhereUniqueInput
+}
+
+input ShopifyShopCreatescopeInput {
+  set: [String!]
+}
+
+type ShopifyShopEdge {
+  node: ShopifyShop!
+  cursor: String!
+}
+
+enum ShopifyShopOrderByInput {
+  id_ASC
+  id_DESC
+  shopName_ASC
+  shopName_DESC
+  enabled_ASC
+  enabled_DESC
+  accessToken_ASC
+  accessToken_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ShopifyShopPreviousValues {
+  id: ID!
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ShopifyShopSubscriptionPayload {
+  mutation: MutationType!
+  node: ShopifyShop
+  updatedFields: [String!]
+  previousValues: ShopifyShopPreviousValues
+}
+
+input ShopifyShopSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ShopifyShopWhereInput
+  AND: [ShopifyShopSubscriptionWhereInput!]
+  OR: [ShopifyShopSubscriptionWhereInput!]
+  NOT: [ShopifyShopSubscriptionWhereInput!]
+}
+
+input ShopifyShopUpdateDataInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateManyMutationInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateOneInput {
+  create: ShopifyShopCreateInput
+  update: ShopifyShopUpdateDataInput
+  upsert: ShopifyShopUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ShopifyShopWhereUniqueInput
+}
+
+input ShopifyShopUpdatescopeInput {
+  set: [String!]
+}
+
+input ShopifyShopUpsertNestedInput {
+  update: ShopifyShopUpdateDataInput!
+  create: ShopifyShopCreateInput!
+}
+
+input ShopifyShopWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  shopName: String
+  shopName_not: String
+  shopName_in: [String!]
+  shopName_not_in: [String!]
+  shopName_lt: String
+  shopName_lte: String
+  shopName_gt: String
+  shopName_gte: String
+  shopName_contains: String
+  shopName_not_contains: String
+  shopName_starts_with: String
+  shopName_not_starts_with: String
+  shopName_ends_with: String
+  shopName_not_ends_with: String
+  enabled: Boolean
+  enabled_not: Boolean
+  accessToken: String
+  accessToken_not: String
+  accessToken_in: [String!]
+  accessToken_not_in: [String!]
+  accessToken_lt: String
+  accessToken_lte: String
+  accessToken_gt: String
+  accessToken_gte: String
+  accessToken_contains: String
+  accessToken_not_contains: String
+  accessToken_starts_with: String
+  accessToken_not_starts_with: String
+  accessToken_ends_with: String
+  accessToken_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ShopifyShopWhereInput!]
+  OR: [ShopifyShopWhereInput!]
+  NOT: [ShopifyShopWhereInput!]
+}
+
+input ShopifyShopWhereUniqueInput {
+  id: ID
+  shopName: String
+}
+
 type Size {
   id: ID!
   slug: String!
@@ -18108,6 +18443,7 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
+  type: SizeType
 }
 
 type SizeConnection {
@@ -18123,6 +18459,7 @@ input SizeCreateInput {
   top: TopSizeCreateOneInput
   bottom: BottomSizeCreateOneInput
   display: String!
+  type: SizeType
 }
 
 input SizeCreateManyInput {
@@ -18149,6 +18486,8 @@ enum SizeOrderByInput {
   productType_DESC
   display_ASC
   display_DESC
+  type_ASC
+  type_DESC
 }
 
 type SizePreviousValues {
@@ -18156,6 +18495,7 @@ type SizePreviousValues {
   slug: String!
   productType: ProductType
   display: String!
+  type: SizeType
 }
 
 input SizeScalarWhereInput {
@@ -18205,6 +18545,10 @@ input SizeScalarWhereInput {
   display_not_starts_with: String
   display_ends_with: String
   display_not_ends_with: String
+  type: SizeType
+  type_not: SizeType
+  type_in: [SizeType!]
+  type_not_in: [SizeType!]
   AND: [SizeScalarWhereInput!]
   OR: [SizeScalarWhereInput!]
   NOT: [SizeScalarWhereInput!]
@@ -18228,12 +18572,21 @@ input SizeSubscriptionWhereInput {
   NOT: [SizeSubscriptionWhereInput!]
 }
 
+enum SizeType {
+  WxL
+  US
+  EU
+  JP
+  Letter
+}
+
 input SizeUpdateDataInput {
   slug: String
   productType: ProductType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
   display: String
+  type: SizeType
 }
 
 input SizeUpdateInput {
@@ -18242,12 +18595,14 @@ input SizeUpdateInput {
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
   display: String
+  type: SizeType
 }
 
 input SizeUpdateManyDataInput {
   slug: String
   productType: ProductType
   display: String
+  type: SizeType
 }
 
 input SizeUpdateManyInput {
@@ -18266,6 +18621,7 @@ input SizeUpdateManyMutationInput {
   slug: String
   productType: ProductType
   display: String
+  type: SizeType
 }
 
 input SizeUpdateManyWithWhereNestedInput {
@@ -18347,6 +18703,10 @@ input SizeWhereInput {
   display_not_starts_with: String
   display_ends_with: String
   display_not_ends_with: String
+  type: SizeType
+  type_not: SizeType
+  type_in: [SizeType!]
+  type_not_in: [SizeType!]
   AND: [SizeWhereInput!]
   OR: [SizeWhereInput!]
   NOT: [SizeWhereInput!]
@@ -18847,6 +19207,7 @@ input StylePreferencesWhereUniqueInput {
 type Subscription {
   activeAdminUser(where: ActiveAdminUserSubscriptionWhereInput): ActiveAdminUserSubscriptionPayload
   adminActionLog(where: AdminActionLogSubscriptionWhereInput): AdminActionLogSubscriptionPayload
+  adminActionLogInterpretation(where: AdminActionLogInterpretationSubscriptionWhereInput): AdminActionLogInterpretationSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   blogPost(where: BlogPostSubscriptionWhereInput): BlogPostSubscriptionPayload
@@ -18862,7 +19223,6 @@ type Subscription {
   customerMembershipSubscriptionData(where: CustomerMembershipSubscriptionDataSubscriptionWhereInput): CustomerMembershipSubscriptionDataSubscriptionPayload
   customerNotificationBarReceipt(where: CustomerNotificationBarReceiptSubscriptionWhereInput): CustomerNotificationBarReceiptSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
-  externalShopifyIntegration(where: ExternalShopifyIntegrationSubscriptionWhereInput): ExternalShopifyIntegrationSubscriptionPayload
   fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload
   fitPicReport(where: FitPicReportSubscriptionWhereInput): FitPicReportSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
@@ -18903,6 +19263,7 @@ type Subscription {
   shippingOption(where: ShippingOptionSubscriptionWhereInput): ShippingOptionSubscriptionPayload
   shopifyProductVariant(where: ShopifyProductVariantSubscriptionWhereInput): ShopifyProductVariantSubscriptionPayload
   shopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionSubscriptionWhereInput): ShopifyProductVariantSelectedOptionSubscriptionPayload
+  shopifyShop(where: ShopifyShopSubscriptionWhereInput): ShopifyShopSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload

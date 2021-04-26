@@ -8,18 +8,10 @@ import { PrismaService } from "../../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
-  const locationsToUpdate = await ps.client.locations({
-    // where: { OR: [{ lat: null }, { lng: null }] },
+  await ps.client.updateManyAdminActionLogs({
+    data: { interpretedAt: null },
+    where: { tableName: "PhysicalProduct" },
   })
-  for (const l of locationsToUpdate) {
-    const { latitude, longitude } = zipcodes.lookup(l.zipCode) || {}
-    if (!!latitude && !!longitude) {
-      await ps.client.updateLocation({
-        where: { id: l.id },
-        data: { lat: latitude, lng: longitude },
-      })
-    }
-  }
 }
 
 run()

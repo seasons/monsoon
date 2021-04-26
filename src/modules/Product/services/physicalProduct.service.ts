@@ -15,6 +15,7 @@ import {
   WarehouseLocationType,
   WarehouseLocationWhereUniqueInput,
 } from "@app/prisma"
+import { Reservation } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
@@ -208,7 +209,16 @@ export class PhysicalProductService {
 
   interpretPhysicalProductLogs(
     logs: AdminActionLog[],
-    warehouseLocations: Pick<WarehouseLocation, "id" | "barcode">[]
+    warehouseLocations: Pick<WarehouseLocation, "id" | "barcode">[],
+    reservations: Pick<
+      Reservation,
+      | "id"
+      | "createdAt"
+      | "cancelledAt"
+      | "completedAt"
+      | "reservationNumber"
+      | "products"
+    >[]
   ) {
     const keysWeDontCareAbout = [
       "id",
@@ -231,7 +241,30 @@ export class PhysicalProductService {
 
       if (keys.includes("warehouseLocation")) {
         if (changedFields["warehouseLocation"] === null) {
-          interpretation = "Picked"
+          const activeReservation = reservations.find(r => {
+            const physProdInReservation = r.products.find(
+              p => p.id === a.entityId
+            )
+            if (!physProdInReservation) {
+              return false
+            }
+
+            const createdAt = new Date(r.createdAt)
+            const cancelledAt = new Date(r.cancelledAt)
+            const completedAt = new Date(r.completedAt)
+            const logTimestamp = new Date(a.triggeredAt)
+
+            const loggedAfterReservationCreated = createdAt < logTimestamp
+            const loggedBeforeReservationEnded =
+              cancelledAt > logTimestamp || completedAt > logTimestamp
+
+            return loggedAfterReservationCreated && loggedBeforeReservationEnded
+          })
+          if (!!activeReservation) {
+            interpretation = `Picked for reservation ${activeReservation.reservationNumber}`
+          } else {
+            interpretation = "Unstowed"
+          }
         } else {
           interpretation = `Stowed at ${
             locationsMap[changedFields["warehouseLocation"]]

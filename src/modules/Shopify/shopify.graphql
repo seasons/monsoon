@@ -7,24 +7,24 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ShopifyProductVariant]! @hasRole(roles: [Admin])
-  externalShopifyIntegrations(
-    where: ExternalShopifyIntegrationWhereInput
-    orderBy: ExternalShopifyIntegrationOrderByInput
+  ): [ShopifyProductVariant]!
+  shopifyShops(
+    where: ShopifyShopWhereInput
+    orderBy: ShopifyShopOrderByInput
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
-  ): [ExternalShopifyIntegration]! @hasRole(roles: [Admin])
+  ): [ShopifyShop]! @hasRole(roles: [Admin])
 }
 
 type Mutation {
-  sendShopifyData(data: JSON): ExternalShopifyIntegration
+  sendShopifyData(data: JSON): ShopifyShop
   importShopifyData(shopName: String): Boolean
 }
 
-type ExternalShopifyIntegration {
+type ShopifyShop {
   # {shopName}.myshopify.com
   id: ID!
   shopName: String!
