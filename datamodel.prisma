@@ -278,10 +278,10 @@ enum ShippingCode {
 
 type BlogPost {
   id: ID! @id
+  slug: String! @unique
   webflowId: String!
   webflowCreatedAt: DateTime!
   webflowUpdatedAt: DateTime!
-  slug: String!
   name: String
   body: String
   summary: String

@@ -25,6 +25,7 @@ const seed = async () => {
   const allPosts = await ps.client.blogPosts()
   // const allPosts = await blog.getAllItems()
 
+  let count = 0
   for (const post of allPosts) {
     await timeout(2000)
     const item = await blog.getItem(post.webflowId)
@@ -35,6 +36,8 @@ const seed = async () => {
         content,
       },
     })
+    count++
+    console.log(`Updated ${count} of ${allPosts.length}`)
   }
 }
 
