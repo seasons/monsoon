@@ -630,27 +630,14 @@ export class ProductService {
         throw new Error(`No style number found for productID: ${productID}`)
       }
     } else {
-      const brandCount = await this.prisma.client
-        .productsConnection({
-          where: { brand: { id: brandID } },
-        })
-        .aggregate()
-        .count()
-      if (brandCount === null) {
-        return null
-      }
-      styleNumber = brandCount + 1
+      const allStyleCodesForBrand = (
+        await this.productUtils.getAllStyleCodesForBrand(brandID)
+      ).sort()
+      const highestStyleNumber = Number(allStyleCodesForBrand.pop()) || 0
+      styleNumber = highestStyleNumber + 1
     }
 
     const styleCode = styleNumber.toString().padStart(3, "0")
-    if (!productID) {
-      const allStyleCodesForBrand = await this.productUtils.getAllStyleCodesForBrand(
-        brandID
-      )
-      if (allStyleCodesForBrand.includes(styleCode)) {
-        throw new Error(`Style code collision: ${styleCode}`)
-      }
-    }
 
     return {
       brandCode: brand.brandCode,
