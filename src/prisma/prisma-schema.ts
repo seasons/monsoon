@@ -1395,10 +1395,10 @@ input BillingInfoWhereUniqueInput {
 
 type BlogPost {
   id: ID!
+  slug: String!
   webflowId: String!
   webflowCreatedAt: DateTime!
   webflowUpdatedAt: DateTime!
-  slug: String!
   name: String
   body: String
   summary: String
@@ -1413,6 +1413,8 @@ type BlogPost {
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedOn: DateTime!
+  content: String
+  published: Boolean!
 }
 
 type BlogPostConnection {
@@ -1423,10 +1425,10 @@ type BlogPostConnection {
 
 input BlogPostCreateInput {
   id: ID
+  slug: String!
   webflowId: String!
   webflowCreatedAt: DateTime!
   webflowUpdatedAt: DateTime!
-  slug: String!
   name: String
   body: String
   summary: String
@@ -1439,6 +1441,8 @@ input BlogPostCreateInput {
   author: String
   category: String
   publishedOn: DateTime!
+  content: String
+  published: Boolean
 }
 
 input BlogPostCreatetagsInput {
@@ -1453,14 +1457,14 @@ type BlogPostEdge {
 enum BlogPostOrderByInput {
   id_ASC
   id_DESC
+  slug_ASC
+  slug_DESC
   webflowId_ASC
   webflowId_DESC
   webflowCreatedAt_ASC
   webflowCreatedAt_DESC
   webflowUpdatedAt_ASC
   webflowUpdatedAt_DESC
-  slug_ASC
-  slug_DESC
   name_ASC
   name_DESC
   body_ASC
@@ -1485,14 +1489,18 @@ enum BlogPostOrderByInput {
   updatedAt_DESC
   publishedOn_ASC
   publishedOn_DESC
+  content_ASC
+  content_DESC
+  published_ASC
+  published_DESC
 }
 
 type BlogPostPreviousValues {
   id: ID!
+  slug: String!
   webflowId: String!
   webflowCreatedAt: DateTime!
   webflowUpdatedAt: DateTime!
-  slug: String!
   name: String
   body: String
   summary: String
@@ -1506,6 +1514,8 @@ type BlogPostPreviousValues {
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedOn: DateTime!
+  content: String
+  published: Boolean!
 }
 
 type BlogPostSubscriptionPayload {
@@ -1527,10 +1537,10 @@ input BlogPostSubscriptionWhereInput {
 }
 
 input BlogPostUpdateInput {
+  slug: String
   webflowId: String
   webflowCreatedAt: DateTime
   webflowUpdatedAt: DateTime
-  slug: String
   name: String
   body: String
   summary: String
@@ -1543,13 +1553,15 @@ input BlogPostUpdateInput {
   author: String
   category: String
   publishedOn: DateTime
+  content: String
+  published: Boolean
 }
 
 input BlogPostUpdateManyMutationInput {
+  slug: String
   webflowId: String
   webflowCreatedAt: DateTime
   webflowUpdatedAt: DateTime
-  slug: String
   name: String
   body: String
   summary: String
@@ -1561,6 +1573,8 @@ input BlogPostUpdateManyMutationInput {
   author: String
   category: String
   publishedOn: DateTime
+  content: String
+  published: Boolean
 }
 
 input BlogPostUpdatetagsInput {
@@ -1582,6 +1596,20 @@ input BlogPostWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
   webflowId: String
   webflowId_not: String
   webflowId_in: [String!]
@@ -1612,20 +1640,6 @@ input BlogPostWhereInput {
   webflowUpdatedAt_lte: DateTime
   webflowUpdatedAt_gt: DateTime
   webflowUpdatedAt_gte: DateTime
-  slug: String
-  slug_not: String
-  slug_in: [String!]
-  slug_not_in: [String!]
-  slug_lt: String
-  slug_lte: String
-  slug_gt: String
-  slug_gte: String
-  slug_contains: String
-  slug_not_contains: String
-  slug_starts_with: String
-  slug_not_starts_with: String
-  slug_ends_with: String
-  slug_not_ends_with: String
   name: String
   name_not: String
   name_in: [String!]
@@ -1777,6 +1791,22 @@ input BlogPostWhereInput {
   publishedOn_lte: DateTime
   publishedOn_gt: DateTime
   publishedOn_gte: DateTime
+  content: String
+  content_not: String
+  content_in: [String!]
+  content_not_in: [String!]
+  content_lt: String
+  content_lte: String
+  content_gt: String
+  content_gte: String
+  content_contains: String
+  content_not_contains: String
+  content_starts_with: String
+  content_not_starts_with: String
+  content_ends_with: String
+  content_not_ends_with: String
+  published: Boolean
+  published_not: Boolean
   AND: [BlogPostWhereInput!]
   OR: [BlogPostWhereInput!]
   NOT: [BlogPostWhereInput!]
@@ -1784,6 +1814,7 @@ input BlogPostWhereInput {
 
 input BlogPostWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 type BottomSize {

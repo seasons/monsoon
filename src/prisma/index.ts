@@ -4012,14 +4012,14 @@ export type BillingInfoOrderByInput =
 export type BlogPostOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
   | "webflowId_ASC"
   | "webflowId_DESC"
   | "webflowCreatedAt_ASC"
   | "webflowCreatedAt_DESC"
   | "webflowUpdatedAt_ASC"
   | "webflowUpdatedAt_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
   | "name_ASC"
   | "name_DESC"
   | "body_ASC"
@@ -4043,7 +4043,11 @@ export type BlogPostOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC"
   | "publishedOn_ASC"
-  | "publishedOn_DESC";
+  | "publishedOn_DESC"
+  | "content_ASC"
+  | "content_DESC"
+  | "published_ASC"
+  | "published_DESC";
 
 export type BottomSizeOrderByInput =
   | "id_ASC"
@@ -9319,6 +9323,7 @@ export type BillingInfoWhereUniqueInput = AtLeastOne<{
 
 export type BlogPostWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  slug?: Maybe<String>;
 }>;
 
 export interface BlogPostWhereInput {
@@ -9336,6 +9341,20 @@ export interface BlogPostWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  slug?: Maybe<String>;
+  slug_not?: Maybe<String>;
+  slug_in?: Maybe<String[] | String>;
+  slug_not_in?: Maybe<String[] | String>;
+  slug_lt?: Maybe<String>;
+  slug_lte?: Maybe<String>;
+  slug_gt?: Maybe<String>;
+  slug_gte?: Maybe<String>;
+  slug_contains?: Maybe<String>;
+  slug_not_contains?: Maybe<String>;
+  slug_starts_with?: Maybe<String>;
+  slug_not_starts_with?: Maybe<String>;
+  slug_ends_with?: Maybe<String>;
+  slug_not_ends_with?: Maybe<String>;
   webflowId?: Maybe<String>;
   webflowId_not?: Maybe<String>;
   webflowId_in?: Maybe<String[] | String>;
@@ -9366,20 +9385,6 @@ export interface BlogPostWhereInput {
   webflowUpdatedAt_lte?: Maybe<DateTimeInput>;
   webflowUpdatedAt_gt?: Maybe<DateTimeInput>;
   webflowUpdatedAt_gte?: Maybe<DateTimeInput>;
-  slug?: Maybe<String>;
-  slug_not?: Maybe<String>;
-  slug_in?: Maybe<String[] | String>;
-  slug_not_in?: Maybe<String[] | String>;
-  slug_lt?: Maybe<String>;
-  slug_lte?: Maybe<String>;
-  slug_gt?: Maybe<String>;
-  slug_gte?: Maybe<String>;
-  slug_contains?: Maybe<String>;
-  slug_not_contains?: Maybe<String>;
-  slug_starts_with?: Maybe<String>;
-  slug_not_starts_with?: Maybe<String>;
-  slug_ends_with?: Maybe<String>;
-  slug_not_ends_with?: Maybe<String>;
   name?: Maybe<String>;
   name_not?: Maybe<String>;
   name_in?: Maybe<String[] | String>;
@@ -9531,6 +9536,22 @@ export interface BlogPostWhereInput {
   publishedOn_lte?: Maybe<DateTimeInput>;
   publishedOn_gt?: Maybe<DateTimeInput>;
   publishedOn_gte?: Maybe<DateTimeInput>;
+  content?: Maybe<String>;
+  content_not?: Maybe<String>;
+  content_in?: Maybe<String[] | String>;
+  content_not_in?: Maybe<String[] | String>;
+  content_lt?: Maybe<String>;
+  content_lte?: Maybe<String>;
+  content_gt?: Maybe<String>;
+  content_gte?: Maybe<String>;
+  content_contains?: Maybe<String>;
+  content_not_contains?: Maybe<String>;
+  content_starts_with?: Maybe<String>;
+  content_not_starts_with?: Maybe<String>;
+  content_ends_with?: Maybe<String>;
+  content_not_ends_with?: Maybe<String>;
+  published?: Maybe<Boolean>;
+  published_not?: Maybe<Boolean>;
   AND?: Maybe<BlogPostWhereInput[] | BlogPostWhereInput>;
   OR?: Maybe<BlogPostWhereInput[] | BlogPostWhereInput>;
   NOT?: Maybe<BlogPostWhereInput[] | BlogPostWhereInput>;
@@ -17972,10 +17993,10 @@ export interface BillingInfoUpdateManyMutationInput {
 
 export interface BlogPostCreateInput {
   id?: Maybe<ID_Input>;
+  slug: String;
   webflowId: String;
   webflowCreatedAt: DateTimeInput;
   webflowUpdatedAt: DateTimeInput;
-  slug: String;
   name?: Maybe<String>;
   body?: Maybe<String>;
   summary?: Maybe<String>;
@@ -17988,6 +18009,8 @@ export interface BlogPostCreateInput {
   author?: Maybe<String>;
   category?: Maybe<String>;
   publishedOn: DateTimeInput;
+  content?: Maybe<String>;
+  published?: Maybe<Boolean>;
 }
 
 export interface BlogPostCreatetagsInput {
@@ -17995,10 +18018,10 @@ export interface BlogPostCreatetagsInput {
 }
 
 export interface BlogPostUpdateInput {
+  slug?: Maybe<String>;
   webflowId?: Maybe<String>;
   webflowCreatedAt?: Maybe<DateTimeInput>;
   webflowUpdatedAt?: Maybe<DateTimeInput>;
-  slug?: Maybe<String>;
   name?: Maybe<String>;
   body?: Maybe<String>;
   summary?: Maybe<String>;
@@ -18011,6 +18034,8 @@ export interface BlogPostUpdateInput {
   author?: Maybe<String>;
   category?: Maybe<String>;
   publishedOn?: Maybe<DateTimeInput>;
+  content?: Maybe<String>;
+  published?: Maybe<Boolean>;
 }
 
 export interface BlogPostUpdatetagsInput {
@@ -18018,10 +18043,10 @@ export interface BlogPostUpdatetagsInput {
 }
 
 export interface BlogPostUpdateManyMutationInput {
+  slug?: Maybe<String>;
   webflowId?: Maybe<String>;
   webflowCreatedAt?: Maybe<DateTimeInput>;
   webflowUpdatedAt?: Maybe<DateTimeInput>;
-  slug?: Maybe<String>;
   name?: Maybe<String>;
   body?: Maybe<String>;
   summary?: Maybe<String>;
@@ -18033,6 +18058,8 @@ export interface BlogPostUpdateManyMutationInput {
   author?: Maybe<String>;
   category?: Maybe<String>;
   publishedOn?: Maybe<DateTimeInput>;
+  content?: Maybe<String>;
+  published?: Maybe<Boolean>;
 }
 
 export interface BottomSizeUpdateInput {
@@ -27032,10 +27059,10 @@ export interface AggregateBillingInfoSubscription
 
 export interface BlogPost {
   id: ID_Output;
+  slug: String;
   webflowId: String;
   webflowCreatedAt: DateTimeOutput;
   webflowUpdatedAt: DateTimeOutput;
-  slug: String;
   name?: String;
   body?: String;
   summary?: String;
@@ -27049,14 +27076,16 @@ export interface BlogPost {
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   publishedOn: DateTimeOutput;
+  content?: String;
+  published: Boolean;
 }
 
 export interface BlogPostPromise extends Promise<BlogPost>, Fragmentable {
   id: () => Promise<ID_Output>;
+  slug: () => Promise<String>;
   webflowId: () => Promise<String>;
   webflowCreatedAt: () => Promise<DateTimeOutput>;
   webflowUpdatedAt: () => Promise<DateTimeOutput>;
-  slug: () => Promise<String>;
   name: () => Promise<String>;
   body: () => Promise<String>;
   summary: () => Promise<String>;
@@ -27071,16 +27100,18 @@ export interface BlogPostPromise extends Promise<BlogPost>, Fragmentable {
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   publishedOn: () => Promise<DateTimeOutput>;
+  content: () => Promise<String>;
+  published: () => Promise<Boolean>;
 }
 
 export interface BlogPostSubscription
   extends Promise<AsyncIterator<BlogPost>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  slug: () => Promise<AsyncIterator<String>>;
   webflowId: () => Promise<AsyncIterator<String>>;
   webflowCreatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   webflowUpdatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
   body: () => Promise<AsyncIterator<String>>;
   summary: () => Promise<AsyncIterator<String>>;
@@ -27095,16 +27126,18 @@ export interface BlogPostSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   publishedOn: () => Promise<AsyncIterator<DateTimeOutput>>;
+  content: () => Promise<AsyncIterator<String>>;
+  published: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface BlogPostNullablePromise
   extends Promise<BlogPost | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  slug: () => Promise<String>;
   webflowId: () => Promise<String>;
   webflowCreatedAt: () => Promise<DateTimeOutput>;
   webflowUpdatedAt: () => Promise<DateTimeOutput>;
-  slug: () => Promise<String>;
   name: () => Promise<String>;
   body: () => Promise<String>;
   summary: () => Promise<String>;
@@ -27119,6 +27152,8 @@ export interface BlogPostNullablePromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   publishedOn: () => Promise<DateTimeOutput>;
+  content: () => Promise<String>;
+  published: () => Promise<Boolean>;
 }
 
 export interface BlogPostConnection {
@@ -32003,10 +32038,10 @@ export interface BlogPostSubscriptionPayloadSubscription
 
 export interface BlogPostPreviousValues {
   id: ID_Output;
+  slug: String;
   webflowId: String;
   webflowCreatedAt: DateTimeOutput;
   webflowUpdatedAt: DateTimeOutput;
-  slug: String;
   name?: String;
   body?: String;
   summary?: String;
@@ -32020,16 +32055,18 @@ export interface BlogPostPreviousValues {
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   publishedOn: DateTimeOutput;
+  content?: String;
+  published: Boolean;
 }
 
 export interface BlogPostPreviousValuesPromise
   extends Promise<BlogPostPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  slug: () => Promise<String>;
   webflowId: () => Promise<String>;
   webflowCreatedAt: () => Promise<DateTimeOutput>;
   webflowUpdatedAt: () => Promise<DateTimeOutput>;
-  slug: () => Promise<String>;
   name: () => Promise<String>;
   body: () => Promise<String>;
   summary: () => Promise<String>;
@@ -32043,16 +32080,18 @@ export interface BlogPostPreviousValuesPromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   publishedOn: () => Promise<DateTimeOutput>;
+  content: () => Promise<String>;
+  published: () => Promise<Boolean>;
 }
 
 export interface BlogPostPreviousValuesSubscription
   extends Promise<AsyncIterator<BlogPostPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  slug: () => Promise<AsyncIterator<String>>;
   webflowId: () => Promise<AsyncIterator<String>>;
   webflowCreatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   webflowUpdatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
   body: () => Promise<AsyncIterator<String>>;
   summary: () => Promise<AsyncIterator<String>>;
@@ -32066,6 +32105,8 @@ export interface BlogPostPreviousValuesSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   publishedOn: () => Promise<AsyncIterator<DateTimeOutput>>;
+  content: () => Promise<AsyncIterator<String>>;
+  published: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface BottomSizeSubscriptionPayload {

@@ -278,10 +278,10 @@ enum ShippingCode {
 
 type BlogPost {
   id: ID! @id
+  slug: String! @unique
   webflowId: String!
   webflowCreatedAt: DateTime!
   webflowUpdatedAt: DateTime!
-  slug: String!
   name: String
   body: String
   summary: String
@@ -296,6 +296,8 @@ type BlogPost {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   publishedOn: DateTime!
+  content: String
+  published: Boolean! @default(value: true)
 }
 
 type Brand {
@@ -320,6 +322,7 @@ type Brand {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
+
 type Category {
   id: ID! @id
   slug: String! @unique
