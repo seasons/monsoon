@@ -3085,10 +3085,10 @@ input BillingInfoWhereUniqueInput {
 
 type BlogPost implements Node {
   id: ID!
+  slug: String!
   webflowId: String!
   webflowCreatedAt: DateTime!
   webflowUpdatedAt: DateTime!
-  slug: String!
   name: String
   body: String
   summary: String
@@ -3118,10 +3118,10 @@ type BlogPostConnection {
 
 input BlogPostCreateInput {
   id: ID
+  slug: String!
   webflowId: String!
   webflowCreatedAt: DateTime!
   webflowUpdatedAt: DateTime!
-  slug: String!
   name: String
   body: String
   summary: String
@@ -3153,14 +3153,14 @@ type BlogPostEdge {
 enum BlogPostOrderByInput {
   id_ASC
   id_DESC
+  slug_ASC
+  slug_DESC
   webflowId_ASC
   webflowId_DESC
   webflowCreatedAt_ASC
   webflowCreatedAt_DESC
   webflowUpdatedAt_ASC
   webflowUpdatedAt_DESC
-  slug_ASC
-  slug_DESC
   name_ASC
   name_DESC
   body_ASC
@@ -3191,10 +3191,10 @@ enum BlogPostOrderByInput {
 
 type BlogPostPreviousValues {
   id: ID!
+  slug: String!
   webflowId: String!
   webflowCreatedAt: DateTime!
   webflowUpdatedAt: DateTime!
-  slug: String!
   name: String
   body: String
   summary: String
@@ -3249,10 +3249,10 @@ input BlogPostSubscriptionWhereInput {
 }
 
 input BlogPostUpdateInput {
+  slug: String
   webflowId: String
   webflowCreatedAt: DateTime
   webflowUpdatedAt: DateTime
-  slug: String
   name: String
   body: String
   summary: String
@@ -3269,10 +3269,10 @@ input BlogPostUpdateInput {
 }
 
 input BlogPostUpdateManyMutationInput {
+  slug: String
   webflowId: String
   webflowCreatedAt: DateTime
   webflowUpdatedAt: DateTime
-  slug: String
   name: String
   body: String
   summary: String
@@ -3340,6 +3340,46 @@ input BlogPostWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  slug: String
+
+  """All values that are not equal to given value."""
+  slug_not: String
+
+  """All values that are contained in given list."""
+  slug_in: [String!]
+
+  """All values that are not contained in given list."""
+  slug_not_in: [String!]
+
+  """All values less than the given value."""
+  slug_lt: String
+
+  """All values less than or equal the given value."""
+  slug_lte: String
+
+  """All values greater than the given value."""
+  slug_gt: String
+
+  """All values greater than or equal the given value."""
+  slug_gte: String
+
+  """All values containing the given string."""
+  slug_contains: String
+
+  """All values not containing the given string."""
+  slug_not_contains: String
+
+  """All values starting with the given string."""
+  slug_starts_with: String
+
+  """All values not starting with the given string."""
+  slug_not_starts_with: String
+
+  """All values ending with the given string."""
+  slug_ends_with: String
+
+  """All values not ending with the given string."""
+  slug_not_ends_with: String
   webflowId: String
 
   """All values that are not equal to given value."""
@@ -3424,46 +3464,6 @@ input BlogPostWhereInput {
 
   """All values greater than or equal the given value."""
   webflowUpdatedAt_gte: DateTime
-  slug: String
-
-  """All values that are not equal to given value."""
-  slug_not: String
-
-  """All values that are contained in given list."""
-  slug_in: [String!]
-
-  """All values that are not contained in given list."""
-  slug_not_in: [String!]
-
-  """All values less than the given value."""
-  slug_lt: String
-
-  """All values less than or equal the given value."""
-  slug_lte: String
-
-  """All values greater than the given value."""
-  slug_gt: String
-
-  """All values greater than or equal the given value."""
-  slug_gte: String
-
-  """All values containing the given string."""
-  slug_contains: String
-
-  """All values not containing the given string."""
-  slug_not_contains: String
-
-  """All values starting with the given string."""
-  slug_starts_with: String
-
-  """All values not starting with the given string."""
-  slug_not_starts_with: String
-
-  """All values ending with the given string."""
-  slug_ends_with: String
-
-  """All values not ending with the given string."""
-  slug_not_ends_with: String
   name: String
 
   """All values that are not equal to given value."""
@@ -3935,6 +3935,7 @@ input BlogPostWhereInput {
 
 input BlogPostWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 type BottomSize implements Node {
@@ -4305,9 +4306,9 @@ type Brand implements Node {
   published: Boolean!
   featured: Boolean!
   websiteUrl: String
+  shopifyShop: ShopifyShop
   createdAt: DateTime!
   updatedAt: DateTime!
-  shopifyShop: ShopifyShop
 }
 
 """A connection to a list of items."""
@@ -37571,14 +37572,14 @@ export type BillingInfoOrderByInput =   'id_ASC' |
 
 export type BlogPostOrderByInput =   'id_ASC' |
   'id_DESC' |
+  'slug_ASC' |
+  'slug_DESC' |
   'webflowId_ASC' |
   'webflowId_DESC' |
   'webflowCreatedAt_ASC' |
   'webflowCreatedAt_DESC' |
   'webflowUpdatedAt_ASC' |
   'webflowUpdatedAt_DESC' |
-  'slug_ASC' |
-  'slug_DESC' |
   'name_ASC' |
   'name_DESC' |
   'body_ASC' |
@@ -39678,10 +39679,10 @@ export interface BillingInfoWhereUniqueInput {
 
 export interface BlogPostCreateInput {
   id?: ID_Input | null
+  slug: String
   webflowId: String
   webflowCreatedAt: DateTime
   webflowUpdatedAt: DateTime
-  slug: String
   name?: String | null
   body?: String | null
   summary?: String | null
@@ -39713,10 +39714,10 @@ export interface BlogPostSubscriptionWhereInput {
 }
 
 export interface BlogPostUpdateInput {
+  slug?: String | null
   webflowId?: String | null
   webflowCreatedAt?: DateTime | null
   webflowUpdatedAt?: DateTime | null
-  slug?: String | null
   name?: String | null
   body?: String | null
   summary?: String | null
@@ -39733,10 +39734,10 @@ export interface BlogPostUpdateInput {
 }
 
 export interface BlogPostUpdateManyMutationInput {
+  slug?: String | null
   webflowId?: String | null
   webflowCreatedAt?: DateTime | null
   webflowUpdatedAt?: DateTime | null
-  slug?: String | null
   name?: String | null
   body?: String | null
   summary?: String | null
@@ -39773,6 +39774,20 @@ export interface BlogPostWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
+  slug?: String | null
+  slug_not?: String | null
+  slug_in?: String[] | String | null
+  slug_not_in?: String[] | String | null
+  slug_lt?: String | null
+  slug_lte?: String | null
+  slug_gt?: String | null
+  slug_gte?: String | null
+  slug_contains?: String | null
+  slug_not_contains?: String | null
+  slug_starts_with?: String | null
+  slug_not_starts_with?: String | null
+  slug_ends_with?: String | null
+  slug_not_ends_with?: String | null
   webflowId?: String | null
   webflowId_not?: String | null
   webflowId_in?: String[] | String | null
@@ -39803,20 +39818,6 @@ export interface BlogPostWhereInput {
   webflowUpdatedAt_lte?: DateTime | null
   webflowUpdatedAt_gt?: DateTime | null
   webflowUpdatedAt_gte?: DateTime | null
-  slug?: String | null
-  slug_not?: String | null
-  slug_in?: String[] | String | null
-  slug_not_in?: String[] | String | null
-  slug_lt?: String | null
-  slug_lte?: String | null
-  slug_gt?: String | null
-  slug_gte?: String | null
-  slug_contains?: String | null
-  slug_not_contains?: String | null
-  slug_starts_with?: String | null
-  slug_not_starts_with?: String | null
-  slug_ends_with?: String | null
-  slug_not_ends_with?: String | null
   name?: String | null
   name_not?: String | null
   name_in?: String[] | String | null
@@ -39986,6 +39987,7 @@ export interface BlogPostWhereInput {
 
 export interface BlogPostWhereUniqueInput {
   id?: ID_Input | null
+  slug?: String | null
 }
 
 export interface BottomSizeCreateInput {
@@ -55605,10 +55607,10 @@ export interface BillingInfoSubscriptionPayload {
 
 export interface BlogPost extends Node {
   id: ID_Output
+  slug: String
   webflowId: String
   webflowCreatedAt: DateTime
   webflowUpdatedAt: DateTime
-  slug: String
   name?: String | null
   body?: String | null
   summary?: String | null
@@ -55647,10 +55649,10 @@ export interface BlogPostEdge {
 
 export interface BlogPostPreviousValues {
   id: ID_Output
+  slug: String
   webflowId: String
   webflowCreatedAt: DateTime
   webflowUpdatedAt: DateTime
-  slug: String
   name?: String | null
   body?: String | null
   summary?: String | null
@@ -55738,9 +55740,9 @@ export interface Brand extends Node {
   published: Boolean
   featured: Boolean
   websiteUrl?: String | null
+  shopifyShop?: ShopifyShop | null
   createdAt: DateTime
   updatedAt: DateTime
-  shopifyShop?: ShopifyShop | null
 }
 
 /*
