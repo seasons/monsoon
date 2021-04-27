@@ -113,7 +113,7 @@ export class ChargebeeController {
       transactionType: transaction.type,
       amount: transaction.amount,
       currency: "USD",
-      total: transaction.amount,
+      total: transaction.amount / 100,
       ...(!isNewCustomer
         ? {
             impactId: custWithData.detail?.impactId,
