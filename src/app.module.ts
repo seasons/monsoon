@@ -75,7 +75,14 @@ const scheduleModule =
           context: ({ req }) => ({
             req,
           }),
-          plugins: [responseCachePlugin()],
+          plugins: [
+            responseCachePlugin({
+              sessionId: ({ request }) => {
+                const token = request.http.headers.get("authorization")
+                return token || null
+              },
+            }),
+          ],
           cacheControl: {
             defaultMaxAge: process.env.CACHE_MAX_AGE || 5,
           },
