@@ -501,7 +501,7 @@ export class ReservationService {
                 type: MULTIPLE_CHOICE,
               },
               {
-                question: "Would you be interested in buying it?",
+                question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
                 options: {
                   set: [
                     "Buy used below retail",
