@@ -95,13 +95,12 @@ export class ChargebeeController {
       await this.email.sendReturnToGoodStandingEmail(custWithData.user)
     }
 
-    let isNewCustomer = false
-    if (!!subscription) {
-      isNewCustomer = this.utils.isSameDay(
+    let isRecurringSubscription =
+      !!subscription &&
+      !this.utils.isSameDay(
         new Date(subscription.created_at * 1000),
         new Date()
       )
-    }
     this.segment.track(customer.id, "Completed Transaction", {
       ...pick(custWithData.user, ["firstName", "lastName", "email"]),
       transactionID: transaction.id,
@@ -114,12 +113,9 @@ export class ChargebeeController {
       amount: transaction.amount,
       currency: "USD",
       total: transaction.amount / 100,
-      ...(!isNewCustomer
-        ? {
-            impactId: custWithData.detail?.impactId,
-            impactCustomerStatus: "Returning",
-          }
-        : {}),
+      impactId: custWithData.detail?.impactId,
+      impactCustomerStatus: "Returning",
+      text1: isRecurringSubscription ? "isRecurringSubscription" : "null",
       ...this.utils.formatUTMForSegment(custWithData.utm),
     })
   }
