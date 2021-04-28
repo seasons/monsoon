@@ -246,7 +246,7 @@ type Product @cacheControl(maxAge: 200) {
     last: Int
   ): [ProductVariant!]
   status: ProductStatus
-  isSaved: Boolean @cacheControl(maxAge: 10, scope: PRIVATE)
+  isSaved: Boolean @cacheControl(maxAge: 200, scope: PRIVATE)
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedAt: DateTime
