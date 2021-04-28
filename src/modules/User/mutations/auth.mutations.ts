@@ -72,6 +72,7 @@ export class AuthMutationsResolver {
       application,
       ...this.utils.formatUTMForSegment(utm),
       impactId: details?.impactId,
+      discoveryReference: details?.discoveryReference,
     })
 
     return {
