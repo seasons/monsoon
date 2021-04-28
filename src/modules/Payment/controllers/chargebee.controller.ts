@@ -114,7 +114,7 @@ export class ChargebeeController {
       currency: "USD",
       total: transaction.amount / 100,
       impactId: custWithData.detail?.impactId,
-      impactCustomerStatus: isRecurringSubscription ? "Returning" : "New",
+      impactCustomerStatus: isRecurringSubscription ? "Existing" : "New",
       text1: isRecurringSubscription ? "isRecurringSubscription" : "null",
       ...this.utils.formatUTMForSegment(custWithData.utm),
     })
