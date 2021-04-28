@@ -3104,7 +3104,7 @@ type BlogPost implements Node {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
-  published: Boolean
+  published: Boolean!
 }
 
 """A connection to a list of items."""
@@ -3213,7 +3213,7 @@ type BlogPostPreviousValues {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
-  published: Boolean
+  published: Boolean!
 }
 
 type BlogPostSubscriptionPayload {
@@ -55644,7 +55644,7 @@ export interface BlogPost extends Node {
   updatedAt: DateTime
   publishedOn: DateTime
   content?: String | null
-  published?: Boolean | null
+  published: Boolean
 }
 
 /*
@@ -55686,7 +55686,7 @@ export interface BlogPostPreviousValues {
   updatedAt: DateTime
   publishedOn: DateTime
   content?: String | null
-  published?: Boolean | null
+  published: Boolean
 }
 
 export interface BlogPostSubscriptionPayload {
