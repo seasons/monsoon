@@ -3,7 +3,7 @@
 # import AppRoute from "../PushNotification/pushNotification.graphql"
 
 type Query {
-  me: Me
+  me: Me @cacheControl(maxAge: 600, scope: PRIVATE)
   user(where: UserWhereUniqueInput!): User @hasRole(roles: [Admin])
   users(
     where: UserWhereInput
@@ -78,7 +78,7 @@ type ResetPasswordPayload {
   message: String!
 }
 
-type Me {
+type Me @cacheControl(maxAge: 600, scope: PRIVATE) {
   id: ID
   user: User
   customer: Customer

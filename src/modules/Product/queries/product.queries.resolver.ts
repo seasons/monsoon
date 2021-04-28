@@ -1,4 +1,4 @@
-import { Customer } from "@app/decorators"
+import { Customer, User } from "@app/decorators"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
@@ -13,7 +13,10 @@ export class ProductQueriesResolver {
   ) {}
 
   @Query()
-  async product(@Args() args, @Info() info, @Context() ctx) {
+  async product(@Args() args, @Info() info, @User() user) {
+    const scope = !!user ? "PRIVATE" : "PUBLIC"
+    info.cacheControl.setCacheHint({ maxAge: 600, scope })
+
     return await this.prisma.binding.query.product(
       args,
       addFragmentToInfo(

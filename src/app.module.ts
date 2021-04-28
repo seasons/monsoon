@@ -58,6 +58,30 @@ const scheduleModule =
     ? [ScheduleModule.forRoot()]
     : []
 
+const cache = (() => {
+  try {
+    const URL = process.env.REDIS_URL
+    if (URL.includes("redis://")) {
+      return new RedisCache(URL)
+    }
+
+    const redis_uri = url.parse(URL)
+    const config = {
+      port: redis_uri.port,
+      host: redis_uri.hostname,
+      password: redis_uri.auth.split(":")[1],
+      db: 0,
+      tls: {
+        rejectUnauthorized: false,
+        requestCert: true,
+        agent: false,
+      },
+    }
+    return new RedisCache(config)
+  } catch (e) {
+    console.error(e)
+  }
+})()
 @Module({
   imports: [
     ...scheduleModule,
@@ -75,7 +99,17 @@ const scheduleModule =
           context: ({ req }) => ({
             req,
           }),
-          plugins: [responseCachePlugin()],
+          plugins: [
+            responseCachePlugin({
+              sessionId: ({ request }) => {
+                const token = request.http.headers.get("authorization")
+                return token || null
+              },
+            }),
+          ],
+          persistedQueries: {
+            cache,
+          },
           cacheControl: {
             defaultMaxAge: process.env.CACHE_MAX_AGE || 5,
           },
@@ -92,30 +126,7 @@ const scheduleModule =
             JSON: GraphQLJSON,
           },
 
-          cache: (() => {
-            try {
-              const URL = process.env.REDIS_URL
-              if (URL.includes("redis://")) {
-                return new RedisCache(URL)
-              }
-
-              const redis_uri = url.parse(URL)
-              const config = {
-                port: redis_uri.port,
-                host: redis_uri.hostname,
-                password: redis_uri.auth.split(":")[1],
-                db: 0,
-                tls: {
-                  rejectUnauthorized: false,
-                  requestCert: true,
-                  agent: false,
-                },
-              }
-              return new RedisCache(config)
-            } catch (e) {
-              console.error(e)
-            }
-          })(),
+          cache,
         } as GqlModuleOptions),
     }),
     AdminModule,

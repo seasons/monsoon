@@ -3,7 +3,9 @@ type Mutation {
 }
 
 type Query {
-  dashboard(id: ID!): AnalyticsDashboard @hasRole(roles: [Admin])
+  dashboard(id: ID!): AnalyticsDashboard
+    @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 600)
 }
 
 enum AnalyticsViewType {
