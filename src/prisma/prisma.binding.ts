@@ -3104,7 +3104,7 @@ type BlogPost implements Node {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
-  published: Boolean
+  published: Boolean!
 }
 
 """A connection to a list of items."""
@@ -3213,7 +3213,7 @@ type BlogPostPreviousValues {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
-  published: Boolean
+  published: Boolean!
 }
 
 type BlogPostSubscriptionPayload {
@@ -10460,6 +10460,7 @@ enum EmailId {
   WelcomeToSeasons
   UnpaidMembership
   ReturnToGoodStanding
+  RecommendedItemsNurture
 }
 
 type EmailReceipt implements Node {
@@ -37895,7 +37896,8 @@ export type EmailId =   'CompleteAccount' |
   'Waitlisted' |
   'WelcomeToSeasons' |
   'UnpaidMembership' |
-  'ReturnToGoodStanding'
+  'ReturnToGoodStanding' |
+  'RecommendedItemsNurture'
 
 export type EmailReceiptOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -55644,7 +55646,7 @@ export interface BlogPost extends Node {
   updatedAt: DateTime
   publishedOn: DateTime
   content?: String | null
-  published?: Boolean | null
+  published: Boolean
 }
 
 /*
@@ -55686,7 +55688,7 @@ export interface BlogPostPreviousValues {
   updatedAt: DateTime
   publishedOn: DateTime
   content?: String | null
-  published?: Boolean | null
+  published: Boolean
 }
 
 export interface BlogPostSubscriptionPayload {

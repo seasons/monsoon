@@ -7,6 +7,7 @@ import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import moment from "moment"
 
+const EVERY_15_DAYS_AT_6PM = "0 0 18 1,15 * ?"
 @Injectable()
 export class MarketingScheduledJobs {
   private readonly logger = new Logger(MarketingScheduledJobs.name)
@@ -228,5 +229,34 @@ export class MarketingScheduledJobs {
       daySevenFollowupsSent,
       windowsClosed,
     })
+  }
+
+  @Cron(EVERY_15_DAYS_AT_6PM)
+  async admissableBimonthlyNurture() {
+    const waitlistedAdmissableCustomers = await this.prisma.binding.query.customers(
+      {
+        where: {
+          AND: [{ admissions: { admissable: true } }, { status: "Waitlisted" }],
+        },
+      },
+      `{
+      id
+      user {
+        id
+        email
+        firstName
+      }
+    }`
+    )
+
+    for (const cust of waitlistedAdmissableCustomers) {
+      const availableStyles = await this.admissions.getAvailableStyles({
+        id: cust.id,
+      })
+      await this.email.sendRecommendedItemsNurtureEmail(
+        cust.user,
+        availableStyles
+      )
+    }
   }
 }

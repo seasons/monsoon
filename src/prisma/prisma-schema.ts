@@ -5746,6 +5746,7 @@ enum EmailId {
   WelcomeToSeasons
   UnpaidMembership
   ReturnToGoodStanding
+  RecommendedItemsNurture
 }
 
 type EmailReceipt {

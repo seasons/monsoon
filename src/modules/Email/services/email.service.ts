@@ -57,6 +57,18 @@ export class EmailService {
     })
   }
 
+  async sendRecommendedItemsNurtureEmail(
+    user: EmailUser,
+    availableStyles: Product[]
+  ) {
+    await this.sendEmailWithReservableStyles({
+      user,
+      availableStyles,
+      renderEmailFunc: "recommendedItemsNurture",
+      emailId: "RecommendedItemsNurture",
+    })
+  }
+
   async sendAuthorizedDaySevenFollowup(
     user: EmailUser,
     availableStyles: Product[]
@@ -423,6 +435,7 @@ export class EmailService {
       | "authorizedDayThreeFollowup"
       | "authorizedDaySevenFollowup"
       | "rewaitlisted"
+      | "recommendedItemsNurture"
     emailId: EmailId
     renderData?: any
   }) {
