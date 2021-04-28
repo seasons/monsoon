@@ -1,5 +1,3 @@
-import "apollo-cache-control"
-
 import * as url from "url"
 import * as util from "util"
 
