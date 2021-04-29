@@ -67,6 +67,7 @@ export class EmailService {
       availableStyles,
       renderEmailFunc: "recommendedItemsNurture",
       emailId: "RecommendedItemsNurture",
+      numStylesToSend: 5,
     })
   }
 
@@ -430,6 +431,7 @@ export class EmailService {
     renderEmailFunc,
     emailId,
     renderData = {},
+    numStylesToSend = 4,
   }: {
     user: EmailUser
     availableStyles: ProductWithEmailData[]
@@ -441,9 +443,10 @@ export class EmailService {
       | "recommendedItemsNurture"
     emailId: EmailId
     renderData?: any
+    numStylesToSend?: number
   }) {
     const products = await this.emailUtils.getXReservableProductsForUser(
-      4,
+      numStylesToSend,
       user as User,
       availableStyles
     )
