@@ -1,5 +1,6 @@
 import { DripSyncService } from "@app/modules/Drip/services/dripSync.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { AdmissionsService } from "@app/modules/User/services/admissions.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -17,7 +18,8 @@ export class MarketingScheduledJobs {
     private readonly prisma: PrismaService,
     private readonly email: EmailService,
     private readonly admissions: AdmissionsService,
-    private readonly sms: SMSService
+    private readonly sms: SMSService,
+    private readonly error: ErrorService
   ) {}
 
   @Cron(CronExpression.EVERY_5_MINUTES)
@@ -233,6 +235,16 @@ export class MarketingScheduledJobs {
 
   @Cron(EVERY_15_DAYS_AT_6PM)
   async admissableBimonthlyNurture() {
+    // Just in case the cron expression is wrong, put a check
+    // to make sure we're doing it on the 1st and 15th only!
+    const todayDate = new Date().getDate()
+    if (![1, 15].includes(todayDate)) {
+      this.error.captureMessage(
+        `Tried to run admissable bimonthly nurture on wrong day: ${todayDate}`
+      )
+      return
+    }
+
     const waitlistedAdmissableCustomers = await this.prisma.binding.query.customers(
       {
         where: {
