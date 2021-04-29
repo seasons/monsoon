@@ -3,6 +3,7 @@
 
 type Query {
   brand(where: BrandWhereUniqueInput!, published: Boolean): Brand
+    @cacheControl(maxAge: 600)
   brands(
     where: BrandWhereInput
     orderBy: BrandOrderByInput
@@ -11,7 +12,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Brand]!
+  ): [Brand]! @cacheControl(maxAge: 600)
   brandsConnection(
     where: BrandWhereInput
     orderBy: BrandOrderByInput
@@ -20,8 +21,9 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): BrandConnection!
+  ): BrandConnection! @cacheControl(maxAge: 600)
   category(where: CategoryWhereUniqueInput!): Category
+    @cacheControl(maxAge: 600)
   categories(
     where: CategoryWhereInput
     orderBy: CategoryOrderByInput
@@ -30,7 +32,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Category]!
+  ): [Category]! @cacheControl(maxAge: 600)
   categoriesConnection(
     where: CategoryWhereInput
     orderBy: CategoryOrderByInput
@@ -81,7 +83,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Product]!
+  ): [Product]! @cacheControl(maxAge: 600)
   productsConnection(
     tops: [String]
     bottoms: [String]
@@ -98,7 +100,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): ProductConnection!
+  ): ProductConnection! @cacheControl(maxAge: 600)
   productFunctions(
     where: ProductFunctionWhereInput
     orderBy: ProductFunctionOrderByInput
