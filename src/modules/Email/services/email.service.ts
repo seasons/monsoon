@@ -23,6 +23,7 @@ import { UtilsService } from "../../Utils/services/utils.service"
 import {
   EmailUtilsService,
   MonsoonProductGridItem,
+  ProductWithEmailData,
 } from "./email.utils.service"
 
 type EmailUser = Pick<User, "email" | "firstName" | "id">
@@ -46,7 +47,7 @@ export class EmailService {
   async sendAuthorizedEmail(
     user: EmailUser,
     version: "manual" | "automatic",
-    availableStyles: Product[]
+    availableStyles: ProductWithEmailData[]
   ) {
     await this.sendEmailWithReservableStyles({
       user,
@@ -59,7 +60,7 @@ export class EmailService {
 
   async sendRecommendedItemsNurtureEmail(
     user: EmailUser,
-    availableStyles: Product[]
+    availableStyles: ProductWithEmailData[]
   ) {
     await this.sendEmailWithReservableStyles({
       user,
@@ -71,7 +72,7 @@ export class EmailService {
 
   async sendAuthorizedDaySevenFollowup(
     user: EmailUser,
-    availableStyles: Product[]
+    availableStyles: ProductWithEmailData[]
   ) {
     await this.sendEmailWithReservableStyles({
       user,
@@ -82,7 +83,7 @@ export class EmailService {
   }
   async sendAuthorizedDayThreeFollowup(
     user: EmailUser,
-    availableStyles: Product[],
+    availableStyles: ProductWithEmailData[],
     status: string = "Authorized"
   ) {
     await this.sendEmailWithReservableStyles({
@@ -106,7 +107,10 @@ export class EmailService {
     })
   }
 
-  async sendRewaitlistedEmail(user: EmailUser, availableStyles: Product[]) {
+  async sendRewaitlistedEmail(
+    user: EmailUser,
+    availableStyles: ProductWithEmailData[]
+  ) {
     await this.sendEmailWithReservableStyles({
       user,
       availableStyles,
@@ -288,7 +292,6 @@ export class EmailService {
       pausedWithItemsPrice,
       isExtension,
     }
-    console.log(data)
     const payload = await RenderEmail.paused(data)
 
     await this.sendPreRenderedTransactionalEmail({
@@ -429,7 +432,7 @@ export class EmailService {
     renderData = {},
   }: {
     user: EmailUser
-    availableStyles: Product[]
+    availableStyles: ProductWithEmailData[]
     renderEmailFunc:
       | "authorized"
       | "authorizedDayThreeFollowup"
