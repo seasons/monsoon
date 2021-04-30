@@ -909,6 +909,7 @@ type CustomerAdmissionsData {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime # If this customer did subscribe, when did that happen?
 }
 
 type UTMData {

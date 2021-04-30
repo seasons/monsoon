@@ -3378,6 +3378,7 @@ type CustomerAdmissionsData {
   createdAt: DateTime!
   updatedAt: DateTime!
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 type CustomerAdmissionsDataConnection {
@@ -3395,6 +3396,7 @@ input CustomerAdmissionsDataCreateInput {
   customer: CustomerCreateOneWithoutAdmissionsInput!
   authorizationsCount: Int!
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 input CustomerAdmissionsDataCreateOneWithoutCustomerInput {
@@ -3410,6 +3412,7 @@ input CustomerAdmissionsDataCreateWithoutCustomerInput {
   allAccessEnabled: Boolean
   authorizationsCount: Int!
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 type CustomerAdmissionsDataEdge {
@@ -3436,6 +3439,8 @@ enum CustomerAdmissionsDataOrderByInput {
   updatedAt_DESC
   authorizationWindowClosesAt_ASC
   authorizationWindowClosesAt_DESC
+  subscribedAt_ASC
+  subscribedAt_DESC
 }
 
 type CustomerAdmissionsDataPreviousValues {
@@ -3448,6 +3453,7 @@ type CustomerAdmissionsDataPreviousValues {
   createdAt: DateTime!
   updatedAt: DateTime!
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 type CustomerAdmissionsDataSubscriptionPayload {
@@ -3476,6 +3482,7 @@ input CustomerAdmissionsDataUpdateInput {
   customer: CustomerUpdateOneRequiredWithoutAdmissionsInput
   authorizationsCount: Int
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 input CustomerAdmissionsDataUpdateManyMutationInput {
@@ -3485,6 +3492,7 @@ input CustomerAdmissionsDataUpdateManyMutationInput {
   allAccessEnabled: Boolean
   authorizationsCount: Int
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 input CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
@@ -3503,6 +3511,7 @@ input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   allAccessEnabled: Boolean
   authorizationsCount: Int
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 input CustomerAdmissionsDataUpsertWithoutCustomerInput {
@@ -3568,6 +3577,14 @@ input CustomerAdmissionsDataWhereInput {
   authorizationWindowClosesAt_lte: DateTime
   authorizationWindowClosesAt_gt: DateTime
   authorizationWindowClosesAt_gte: DateTime
+  subscribedAt: DateTime
+  subscribedAt_not: DateTime
+  subscribedAt_in: [DateTime!]
+  subscribedAt_not_in: [DateTime!]
+  subscribedAt_lt: DateTime
+  subscribedAt_lte: DateTime
+  subscribedAt_gt: DateTime
+  subscribedAt_gte: DateTime
   AND: [CustomerAdmissionsDataWhereInput!]
   OR: [CustomerAdmissionsDataWhereInput!]
   NOT: [CustomerAdmissionsDataWhereInput!]

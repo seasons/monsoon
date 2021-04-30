@@ -3104,7 +3104,7 @@ type BlogPost implements Node {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
-  published: Boolean
+  published: Boolean!
 }
 
 """A connection to a list of items."""
@@ -3213,7 +3213,7 @@ type BlogPostPreviousValues {
   updatedAt: DateTime!
   publishedOn: DateTime!
   content: String
-  published: Boolean
+  published: Boolean!
 }
 
 type BlogPostSubscriptionPayload {
@@ -6564,6 +6564,7 @@ type CustomerAdmissionsData implements Node {
   createdAt: DateTime!
   updatedAt: DateTime!
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 """A connection to a list of items."""
@@ -6584,6 +6585,7 @@ input CustomerAdmissionsDataCreateInput {
   allAccessEnabled: Boolean
   authorizationsCount: Int!
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
   customer: CustomerCreateOneWithoutAdmissionsInput!
 }
 
@@ -6600,6 +6602,7 @@ input CustomerAdmissionsDataCreateWithoutCustomerInput {
   allAccessEnabled: Boolean
   authorizationsCount: Int!
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 """An edge in a connection."""
@@ -6630,6 +6633,8 @@ enum CustomerAdmissionsDataOrderByInput {
   updatedAt_DESC
   authorizationWindowClosesAt_ASC
   authorizationWindowClosesAt_DESC
+  subscribedAt_ASC
+  subscribedAt_DESC
 }
 
 type CustomerAdmissionsDataPreviousValues {
@@ -6642,6 +6647,7 @@ type CustomerAdmissionsDataPreviousValues {
   createdAt: DateTime!
   updatedAt: DateTime!
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 type CustomerAdmissionsDataSubscriptionPayload {
@@ -6688,6 +6694,7 @@ input CustomerAdmissionsDataUpdateInput {
   allAccessEnabled: Boolean
   authorizationsCount: Int
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
   customer: CustomerUpdateOneRequiredWithoutAdmissionsInput
 }
 
@@ -6698,6 +6705,7 @@ input CustomerAdmissionsDataUpdateManyMutationInput {
   allAccessEnabled: Boolean
   authorizationsCount: Int
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 input CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
@@ -6716,6 +6724,7 @@ input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   allAccessEnabled: Boolean
   authorizationsCount: Int
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 input CustomerAdmissionsDataUpsertWithoutCustomerInput {
@@ -6882,6 +6891,28 @@ input CustomerAdmissionsDataWhereInput {
 
   """All values greater than or equal the given value."""
   authorizationWindowClosesAt_gte: DateTime
+  subscribedAt: DateTime
+
+  """All values that are not equal to given value."""
+  subscribedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  subscribedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  subscribedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  subscribedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  subscribedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  subscribedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  subscribedAt_gte: DateTime
   customer: CustomerWhereInput
 }
 
@@ -37748,7 +37779,9 @@ export type CustomerAdmissionsDataOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC' |
   'authorizationWindowClosesAt_ASC' |
-  'authorizationWindowClosesAt_DESC'
+  'authorizationWindowClosesAt_DESC' |
+  'subscribedAt_ASC' |
+  'subscribedAt_DESC'
 
 export type CustomerDetailOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -41176,6 +41209,7 @@ export interface CustomerAdmissionsDataCreateInput {
   allAccessEnabled?: Boolean | null
   authorizationsCount: Int
   authorizationWindowClosesAt?: DateTime | null
+  subscribedAt?: DateTime | null
   customer: CustomerCreateOneWithoutAdmissionsInput
 }
 
@@ -41192,6 +41226,7 @@ export interface CustomerAdmissionsDataCreateWithoutCustomerInput {
   allAccessEnabled?: Boolean | null
   authorizationsCount: Int
   authorizationWindowClosesAt?: DateTime | null
+  subscribedAt?: DateTime | null
 }
 
 export interface CustomerAdmissionsDataSubscriptionWhereInput {
@@ -41212,6 +41247,7 @@ export interface CustomerAdmissionsDataUpdateInput {
   allAccessEnabled?: Boolean | null
   authorizationsCount?: Int | null
   authorizationWindowClosesAt?: DateTime | null
+  subscribedAt?: DateTime | null
   customer?: CustomerUpdateOneRequiredWithoutAdmissionsInput | null
 }
 
@@ -41222,6 +41258,7 @@ export interface CustomerAdmissionsDataUpdateManyMutationInput {
   allAccessEnabled?: Boolean | null
   authorizationsCount?: Int | null
   authorizationWindowClosesAt?: DateTime | null
+  subscribedAt?: DateTime | null
 }
 
 export interface CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
@@ -41240,6 +41277,7 @@ export interface CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   allAccessEnabled?: Boolean | null
   authorizationsCount?: Int | null
   authorizationWindowClosesAt?: DateTime | null
+  subscribedAt?: DateTime | null
 }
 
 export interface CustomerAdmissionsDataUpsertWithoutCustomerInput {
@@ -41307,6 +41345,14 @@ export interface CustomerAdmissionsDataWhereInput {
   authorizationWindowClosesAt_lte?: DateTime | null
   authorizationWindowClosesAt_gt?: DateTime | null
   authorizationWindowClosesAt_gte?: DateTime | null
+  subscribedAt?: DateTime | null
+  subscribedAt_not?: DateTime | null
+  subscribedAt_in?: DateTime[] | DateTime | null
+  subscribedAt_not_in?: DateTime[] | DateTime | null
+  subscribedAt_lt?: DateTime | null
+  subscribedAt_lte?: DateTime | null
+  subscribedAt_gt?: DateTime | null
+  subscribedAt_gte?: DateTime | null
   customer?: CustomerWhereInput | null
 }
 
@@ -55644,7 +55690,7 @@ export interface BlogPost extends Node {
   updatedAt: DateTime
   publishedOn: DateTime
   content?: String | null
-  published?: Boolean | null
+  published: Boolean
 }
 
 /*
@@ -55686,7 +55732,7 @@ export interface BlogPostPreviousValues {
   updatedAt: DateTime
   publishedOn: DateTime
   content?: String | null
-  published?: Boolean | null
+  published: Boolean
 }
 
 export interface BlogPostSubscriptionPayload {
@@ -55991,6 +56037,7 @@ export interface CustomerAdmissionsData extends Node {
   createdAt: DateTime
   updatedAt: DateTime
   authorizationWindowClosesAt?: DateTime | null
+  subscribedAt?: DateTime | null
 }
 
 /*
@@ -56022,6 +56069,7 @@ export interface CustomerAdmissionsDataPreviousValues {
   createdAt: DateTime
   updatedAt: DateTime
   authorizationWindowClosesAt?: DateTime | null
+  subscribedAt?: DateTime | null
 }
 
 export interface CustomerAdmissionsDataSubscriptionPayload {
