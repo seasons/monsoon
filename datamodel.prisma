@@ -960,6 +960,7 @@ type Customer {
       link: TABLE
       onDelete: CASCADE
     )
+  impactSyncTimings: [SyncTiming]
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -1384,12 +1385,14 @@ type AdminActionLogInterpretation {
 enum SyncTimingType {
   Drip
   Next
+  Impact
 }
 
 type SyncTiming {
   id: ID! @id
   type: SyncTimingType!
   syncedAt: DateTime!
+  detail: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

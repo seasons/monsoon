@@ -3363,6 +3363,7 @@ type Customer {
   authorizedAt: DateTime
   utm: UTMData
   notificationBarReceipts(where: CustomerNotificationBarReceiptWhereInput, orderBy: CustomerNotificationBarReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerNotificationBarReceipt!]
+  impactSyncTimings(where: SyncTimingWhereInput, orderBy: SyncTimingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SyncTiming!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3619,6 +3620,7 @@ input CustomerCreateInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateManyWithoutReferrerInput {
@@ -3684,6 +3686,7 @@ input CustomerCreateWithoutAdmissionsInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutBagItemsInput {
@@ -3704,6 +3707,7 @@ input CustomerCreateWithoutBagItemsInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutMembershipInput {
@@ -3724,6 +3728,7 @@ input CustomerCreateWithoutMembershipInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutNotificationBarReceiptsInput {
@@ -3744,6 +3749,7 @@ input CustomerCreateWithoutNotificationBarReceiptsInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutReferreesInput {
@@ -3764,6 +3770,7 @@ input CustomerCreateWithoutReferreesInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutReferrerInput {
@@ -3784,6 +3791,7 @@ input CustomerCreateWithoutReferrerInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -3804,6 +3812,7 @@ input CustomerCreateWithoutReservationsInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutUtmInput {
@@ -3824,6 +3833,7 @@ input CustomerCreateWithoutUtmInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 type CustomerDetail {
@@ -5313,6 +5323,7 @@ input CustomerUpdateDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateInput {
@@ -5333,6 +5344,7 @@ input CustomerUpdateInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateManyDataInput {
@@ -5443,6 +5455,7 @@ input CustomerUpdateWithoutAdmissionsDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutBagItemsDataInput {
@@ -5462,6 +5475,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
@@ -5481,6 +5495,7 @@ input CustomerUpdateWithoutMembershipDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutNotificationBarReceiptsDataInput {
@@ -5500,6 +5515,7 @@ input CustomerUpdateWithoutNotificationBarReceiptsDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutReferreesDataInput {
@@ -5519,6 +5535,7 @@ input CustomerUpdateWithoutReferreesDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutReferrerDataInput {
@@ -5538,6 +5555,7 @@ input CustomerUpdateWithoutReferrerDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -5557,6 +5575,7 @@ input CustomerUpdateWithoutReservationsDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutUtmDataInput {
@@ -5576,6 +5595,7 @@ input CustomerUpdateWithoutUtmDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithWhereUniqueWithoutReferrerInput {
@@ -5710,6 +5730,9 @@ input CustomerWhereInput {
   notificationBarReceipts_every: CustomerNotificationBarReceiptWhereInput
   notificationBarReceipts_some: CustomerNotificationBarReceiptWhereInput
   notificationBarReceipts_none: CustomerNotificationBarReceiptWhereInput
+  impactSyncTimings_every: SyncTimingWhereInput
+  impactSyncTimings_some: SyncTimingWhereInput
+  impactSyncTimings_none: SyncTimingWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -19310,6 +19333,7 @@ type SyncTiming {
   id: ID!
   type: SyncTimingType!
   syncedAt: DateTime!
+  detail: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -19324,6 +19348,12 @@ input SyncTimingCreateInput {
   id: ID
   type: SyncTimingType!
   syncedAt: DateTime!
+  detail: String
+}
+
+input SyncTimingCreateManyInput {
+  create: [SyncTimingCreateInput!]
+  connect: [SyncTimingWhereUniqueInput!]
 }
 
 type SyncTimingEdge {
@@ -19338,6 +19368,8 @@ enum SyncTimingOrderByInput {
   type_DESC
   syncedAt_ASC
   syncedAt_DESC
+  detail_ASC
+  detail_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -19348,8 +19380,71 @@ type SyncTimingPreviousValues {
   id: ID!
   type: SyncTimingType!
   syncedAt: DateTime!
+  detail: String
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input SyncTimingScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  type: SyncTimingType
+  type_not: SyncTimingType
+  type_in: [SyncTimingType!]
+  type_not_in: [SyncTimingType!]
+  syncedAt: DateTime
+  syncedAt_not: DateTime
+  syncedAt_in: [DateTime!]
+  syncedAt_not_in: [DateTime!]
+  syncedAt_lt: DateTime
+  syncedAt_lte: DateTime
+  syncedAt_gt: DateTime
+  syncedAt_gte: DateTime
+  detail: String
+  detail_not: String
+  detail_in: [String!]
+  detail_not_in: [String!]
+  detail_lt: String
+  detail_lte: String
+  detail_gt: String
+  detail_gte: String
+  detail_contains: String
+  detail_not_contains: String
+  detail_starts_with: String
+  detail_not_starts_with: String
+  detail_ends_with: String
+  detail_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [SyncTimingScalarWhereInput!]
+  OR: [SyncTimingScalarWhereInput!]
+  NOT: [SyncTimingScalarWhereInput!]
 }
 
 type SyncTimingSubscriptionPayload {
@@ -19373,16 +19468,59 @@ input SyncTimingSubscriptionWhereInput {
 enum SyncTimingType {
   Drip
   Next
+  Impact
+}
+
+input SyncTimingUpdateDataInput {
+  type: SyncTimingType
+  syncedAt: DateTime
+  detail: String
 }
 
 input SyncTimingUpdateInput {
   type: SyncTimingType
   syncedAt: DateTime
+  detail: String
+}
+
+input SyncTimingUpdateManyDataInput {
+  type: SyncTimingType
+  syncedAt: DateTime
+  detail: String
+}
+
+input SyncTimingUpdateManyInput {
+  create: [SyncTimingCreateInput!]
+  update: [SyncTimingUpdateWithWhereUniqueNestedInput!]
+  upsert: [SyncTimingUpsertWithWhereUniqueNestedInput!]
+  delete: [SyncTimingWhereUniqueInput!]
+  connect: [SyncTimingWhereUniqueInput!]
+  set: [SyncTimingWhereUniqueInput!]
+  disconnect: [SyncTimingWhereUniqueInput!]
+  deleteMany: [SyncTimingScalarWhereInput!]
+  updateMany: [SyncTimingUpdateManyWithWhereNestedInput!]
 }
 
 input SyncTimingUpdateManyMutationInput {
   type: SyncTimingType
   syncedAt: DateTime
+  detail: String
+}
+
+input SyncTimingUpdateManyWithWhereNestedInput {
+  where: SyncTimingScalarWhereInput!
+  data: SyncTimingUpdateManyDataInput!
+}
+
+input SyncTimingUpdateWithWhereUniqueNestedInput {
+  where: SyncTimingWhereUniqueInput!
+  data: SyncTimingUpdateDataInput!
+}
+
+input SyncTimingUpsertWithWhereUniqueNestedInput {
+  where: SyncTimingWhereUniqueInput!
+  update: SyncTimingUpdateDataInput!
+  create: SyncTimingCreateInput!
 }
 
 input SyncTimingWhereInput {
@@ -19412,6 +19550,20 @@ input SyncTimingWhereInput {
   syncedAt_lte: DateTime
   syncedAt_gt: DateTime
   syncedAt_gte: DateTime
+  detail: String
+  detail_not: String
+  detail_in: [String!]
+  detail_not_in: [String!]
+  detail_lt: String
+  detail_lte: String
+  detail_gt: String
+  detail_gte: String
+  detail_contains: String
+  detail_not_contains: String
+  detail_starts_with: String
+  detail_not_starts_with: String
+  detail_ends_with: String
+  detail_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

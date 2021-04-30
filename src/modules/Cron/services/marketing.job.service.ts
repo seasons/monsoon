@@ -5,6 +5,8 @@ import { AdmissionsService } from "@app/modules/User/services/admissions.service
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
+import sgMail from "@sendgrid/mail"
+import { Parser } from "json2csv"
 import moment from "moment"
 
 @Injectable()
@@ -228,5 +230,177 @@ export class MarketingScheduledJobs {
       daySevenFollowupsSent,
       windowsClosed,
     })
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
+  async syncEventsToImpact() {
+    const CampaignId = 12888
+    const AccountCreationActionTrackerId = 23949
+    const AuthorizedUserActionTrackerId = 23950
+    const InitialSubscriptionActionTrackerId = 23951
+
+    // const ImpactFileuploadEmail =
+    //   "42f56e88-c6ae-41dc-9c16-3f9522edb3df@batch.impact.com"
+    const ImpactFileuploadEmail = "faiyam@faiyamrahman.com"
+
+    const generateOrderId = () =>
+      Math.floor(Math.random() * 9000000000000) + 1000000000000
+    // Reference: https://docs.google.com/spreadsheets/d/1aAD5kDpGgYQfOwl7UBPRq8Q9jOiYej8EwXc2Z1t8ABU/edit?usp=sharing
+    // Reference: https://impact-helpdesk.freshdesk.com/support/solutions/articles/48001162591-submit-conversion-data-via-ftp-or-email
+
+    const parser = new Parser({
+      fields: [
+        "CampaignId",
+        "ActionTrackerId",
+        // "MediaPartnerId", // TODO: Fill this in on the data JSON
+        "OrderId",
+        "EventDate",
+        "Amount",
+        "CurrencyCode",
+        "CustomerId",
+      ],
+    })
+    const csvData = []
+
+    const customersWhoCreatedAccounts = await this.prisma.binding.query.customers(
+      {
+        where: {
+          detail: {
+            discoveryReference_in: ["onedapperstreet", "threadability"],
+            impactId: null,
+          },
+          impactSyncTimings_none: {
+            AND: [{ type: "Impact" }, { detail: "AccountCreation" }],
+          },
+        },
+      },
+      `{
+        id
+        createdAt
+        user {
+          id
+        }
+      }`
+    )
+    for (const cust of customersWhoCreatedAccounts) {
+      csvData.push({
+        CampaignId,
+        ActionTrackerId: AccountCreationActionTrackerId,
+        OrderId: generateOrderId(),
+        EventDate: cust.createdAt,
+        Amount: 0.0,
+        CurrencyCode: "USD",
+        CustomerId: cust.user.id,
+      })
+    }
+
+    const customersWhoBecameAuthorized = await this.prisma.binding.query.customers(
+      {
+        where: {
+          detail: {
+            discoveryReference_in: ["onedapperstreet", "threadability"],
+            impactId: null,
+          },
+          authorizedAt_not: null,
+          impactSyncTimings_none: {
+            AND: [{ type: "Impact" }, { detail: "AuthorizedUser" }],
+          },
+        },
+      },
+      `{
+        id
+        authorizedAt
+        user {
+          id
+        }
+      }`
+    )
+    for (const cust of customersWhoBecameAuthorized) {
+      csvData.push({
+        CampaignId,
+        ActionTrackerId: AuthorizedUserActionTrackerId,
+        OrderId: generateOrderId(),
+        EventDate: cust.authorizedAt,
+        Amount: 0.0,
+        CurrencyCode: "USD",
+        CustomerId: cust.user.id,
+      })
+    }
+
+    // Do the same for AuthorizedUser
+    const customersWhoSubscribed = await this.prisma.binding.query.customers(
+      {
+        where: {
+          detail: {
+            discoveryReference_in: ["onedapperstreet", "threadability"],
+            impactId: null,
+          },
+          admissions: { subscribedAt_not: null },
+          impactSyncTimings_none: {
+            AND: [{ type: "Impact" }, { detail: "InitialSubscription" }],
+          },
+        },
+      },
+      `{
+        id
+        admissions {
+          id
+          subscribedAt
+        }
+        user {
+          id
+        }
+      }`
+    )
+
+    // Do the same for Initial Subscription
+    for (const cust of customersWhoSubscribed) {
+      const Amount = 10.0 // TODO: Query chargebee for amount
+      csvData.push({
+        CampaignId,
+        ActionTrackerId: InitialSubscriptionActionTrackerId,
+        OrderId: generateOrderId(),
+        EventDate: cust.admissions.subscribedAt,
+        Amount,
+        CurrencyCode: "USD",
+        CustomerId: cust.user.id,
+      })
+    }
+
+    // TODO: Upload CSV to Impact
+    if (csvData.length === 0) {
+      // TODO: log something
+      return
+    }
+    const base64EncodedCSV = Buffer.from(
+      parser.parse(csvData),
+      "utf-8"
+    ).toString("base64")
+    const today = new Date()
+    const todayStringFormatted = `${
+      today.getMonth() + 1
+    }.${today.getDate()}.${today.getFullYear()}`
+    const msg = {
+      to: ImpactFileuploadEmail,
+      from: "membership@seasons.nyc",
+      subject: `${todayStringFormatted} Seasons Impact Extra Actions Upload`,
+      text: "Thanks",
+      attachments: [
+        {
+          content: base64EncodedCSV,
+          filename: `${todayStringFormatted}SeasonsImpactExtraActionsUpload.csv`,
+          type: "application/csv",
+          disposition: "attachment",
+        },
+      ],
+    }
+    try {
+      await sgMail.send(msg)
+    } catch (err) {
+      // TODO: Report to sentry
+      console.log(err)
+    }
+
+    // TODO: If the csv upload is successful, update the impact sync timings on each customer
   }
 }

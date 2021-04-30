@@ -106,6 +106,7 @@
     "graphql-upload": "^10.0.0",
     "handlebars": "^4.7.3",
     "image-size": "^0.8.3",
+    "json2csv": "^5.0.6",
     "jsonexport": "^3.0.1",
     "jsonwebtoken": "8.5.1",
     "jwks-rsa": "^1.6.0",

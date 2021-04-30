@@ -86,7 +86,6 @@ const run = async () => {
     utils
   )
   payment = new PaymentService(
-    auth,
     cs,
     email,
     paymentUtils,
@@ -152,11 +151,11 @@ const run = async () => {
   const shopifyJobService = new ShopifyScheduledJobs(shopify, ps)
   const logsJobService = new LogsScheduledJobs(ps, physicalProductService)
   // await reservationsJobService.sendReturnNotifications()
-  // await marketingJobService.syncUnsubscribesFromDrip()
+  await marketingJobService.syncEventsToImpact()
   // await marketingJobService.syncCustomersToDrip()
   // await membershipService.updatePausePendingToPaused()
   // await shopifyJobService.importProductVariantsForShopifyShops()
-  await logsJobService.interpretPhysicalProductLogs()
+  // await logsJobService.interpretPhysicalProductLogs()
 }
 
 run()

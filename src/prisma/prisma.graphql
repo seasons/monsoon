@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Fri Apr 30 2021 13:52:06 GMT-0400 (Eastern Daylight Time)
+# timestamp: Fri Apr 30 2021 14:28:00 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -8136,6 +8136,15 @@ type Customer implements Node {
     first: Int
     last: Int
   ): [CustomerNotificationBarReceipt!]
+  impactSyncTimings(
+    where: SyncTimingWhereInput
+    orderBy: SyncTimingOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [SyncTiming!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8676,6 +8685,7 @@ input CustomerCreateInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateManyWithoutReferrerInput {
@@ -8741,6 +8751,7 @@ input CustomerCreateWithoutAdmissionsInput {
   emailedProducts: ProductCreateManyInput
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutBagItemsInput {
@@ -8761,6 +8772,7 @@ input CustomerCreateWithoutBagItemsInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutMembershipInput {
@@ -8781,6 +8793,7 @@ input CustomerCreateWithoutMembershipInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutNotificationBarReceiptsInput {
@@ -8801,6 +8814,7 @@ input CustomerCreateWithoutNotificationBarReceiptsInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   utm: UTMDataCreateOneWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutReferreesInput {
@@ -8821,6 +8835,7 @@ input CustomerCreateWithoutReferreesInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutReferrerInput {
@@ -8841,6 +8856,7 @@ input CustomerCreateWithoutReferrerInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -8861,6 +8877,7 @@ input CustomerCreateWithoutReservationsInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutUtmInput {
@@ -8881,6 +8898,7 @@ input CustomerCreateWithoutUtmInput {
   emailedProducts: ProductCreateManyInput
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 type CustomerDetail implements Node {
@@ -12869,6 +12887,7 @@ input CustomerUpdateDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateInput {
@@ -12889,6 +12908,7 @@ input CustomerUpdateInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateManyDataInput {
@@ -12999,6 +13019,7 @@ input CustomerUpdateWithoutAdmissionsDataInput {
   emailedProducts: ProductUpdateManyInput
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutBagItemsDataInput {
@@ -13018,6 +13039,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
@@ -13037,6 +13059,7 @@ input CustomerUpdateWithoutMembershipDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutNotificationBarReceiptsDataInput {
@@ -13056,6 +13079,7 @@ input CustomerUpdateWithoutNotificationBarReceiptsDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutReferreesDataInput {
@@ -13075,6 +13099,7 @@ input CustomerUpdateWithoutReferreesDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutReferrerDataInput {
@@ -13094,6 +13119,7 @@ input CustomerUpdateWithoutReferrerDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -13113,6 +13139,7 @@ input CustomerUpdateWithoutReservationsDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutUtmDataInput {
@@ -13132,6 +13159,7 @@ input CustomerUpdateWithoutUtmDataInput {
   emailedProducts: ProductUpdateManyInput
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithWhereUniqueWithoutReferrerInput {
@@ -13560,6 +13588,9 @@ input CustomerWhereInput {
   notificationBarReceipts_every: CustomerNotificationBarReceiptWhereInput
   notificationBarReceipts_some: CustomerNotificationBarReceiptWhereInput
   notificationBarReceipts_none: CustomerNotificationBarReceiptWhereInput
+  impactSyncTimings_every: SyncTimingWhereInput
+  impactSyncTimings_some: SyncTimingWhereInput
+  impactSyncTimings_none: SyncTimingWhereInput
 }
 
 input CustomerWhereUniqueInput {
@@ -19109,7 +19140,6 @@ type Mutation {
   createAdminActionLogInterpretation(
     data: AdminActionLogInterpretationCreateInput!
   ): AdminActionLogInterpretation!
-  createSyncTiming(data: SyncTimingCreateInput!): SyncTiming!
   createLaunch(data: LaunchCreateInput!): Launch!
   createProductSeason(data: ProductSeasonCreateInput!): ProductSeason!
   createProductTier(data: ProductTierCreateInput!): ProductTier!
@@ -19143,6 +19173,7 @@ type Mutation {
   createTopSize(data: TopSizeCreateInput!): TopSize!
   createShippingMethod(data: ShippingMethodCreateInput!): ShippingMethod!
   createBrand(data: BrandCreateInput!): Brand!
+  createSyncTiming(data: SyncTimingCreateInput!): SyncTiming!
   createUserPushNotification(
     data: UserPushNotificationCreateInput!
   ): UserPushNotification!
@@ -19281,10 +19312,6 @@ type Mutation {
     data: AdminActionLogInterpretationUpdateInput!
     where: AdminActionLogInterpretationWhereUniqueInput!
   ): AdminActionLogInterpretation
-  updateSyncTiming(
-    data: SyncTimingUpdateInput!
-    where: SyncTimingWhereUniqueInput!
-  ): SyncTiming
   updateLaunch(data: LaunchUpdateInput!, where: LaunchWhereUniqueInput!): Launch
   updateProductSeason(
     data: ProductSeasonUpdateInput!
@@ -19357,6 +19384,10 @@ type Mutation {
     where: ShippingMethodWhereUniqueInput!
   ): ShippingMethod
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
+  updateSyncTiming(
+    data: SyncTimingUpdateInput!
+    where: SyncTimingWhereUniqueInput!
+  ): SyncTiming
   updateUserPushNotification(
     data: UserPushNotificationUpdateInput!
     where: UserPushNotificationWhereUniqueInput!
@@ -19488,7 +19519,6 @@ type Mutation {
   deleteAdminActionLogInterpretation(
     where: AdminActionLogInterpretationWhereUniqueInput!
   ): AdminActionLogInterpretation
-  deleteSyncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
   deleteLaunch(where: LaunchWhereUniqueInput!): Launch
   deleteProductSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
   deleteProductTier(where: ProductTierWhereUniqueInput!): ProductTier
@@ -19526,6 +19556,7 @@ type Mutation {
   deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
   deleteShippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
   deleteBrand(where: BrandWhereUniqueInput!): Brand
+  deleteSyncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
   deleteUserPushNotification(
     where: UserPushNotificationWhereUniqueInput!
   ): UserPushNotification
@@ -19706,11 +19737,6 @@ type Mutation {
     create: AdminActionLogInterpretationCreateInput!
     update: AdminActionLogInterpretationUpdateInput!
   ): AdminActionLogInterpretation!
-  upsertSyncTiming(
-    where: SyncTimingWhereUniqueInput!
-    create: SyncTimingCreateInput!
-    update: SyncTimingUpdateInput!
-  ): SyncTiming!
   upsertLaunch(
     where: LaunchWhereUniqueInput!
     create: LaunchCreateInput!
@@ -19816,6 +19842,11 @@ type Mutation {
     create: BrandCreateInput!
     update: BrandUpdateInput!
   ): Brand!
+  upsertSyncTiming(
+    where: SyncTimingWhereUniqueInput!
+    create: SyncTimingCreateInput!
+    update: SyncTimingUpdateInput!
+  ): SyncTiming!
   upsertUserPushNotification(
     where: UserPushNotificationWhereUniqueInput!
     create: UserPushNotificationCreateInput!
@@ -20027,10 +20058,6 @@ type Mutation {
     data: AdminActionLogInterpretationUpdateManyMutationInput!
     where: AdminActionLogInterpretationWhereInput
   ): BatchPayload!
-  updateManySyncTimings(
-    data: SyncTimingUpdateManyMutationInput!
-    where: SyncTimingWhereInput
-  ): BatchPayload!
   updateManyLaunches(
     data: LaunchUpdateManyMutationInput!
     where: LaunchWhereInput
@@ -20114,6 +20141,10 @@ type Mutation {
   updateManyBrands(
     data: BrandUpdateManyMutationInput!
     where: BrandWhereInput
+  ): BatchPayload!
+  updateManySyncTimings(
+    data: SyncTimingUpdateManyMutationInput!
+    where: SyncTimingWhereInput
   ): BatchPayload!
   updateManyUserPushNotifications(
     data: UserPushNotificationUpdateManyMutationInput!
@@ -20256,7 +20287,6 @@ type Mutation {
   deleteManyAdminActionLogInterpretations(
     where: AdminActionLogInterpretationWhereInput
   ): BatchPayload!
-  deleteManySyncTimings(where: SyncTimingWhereInput): BatchPayload!
   deleteManyLaunches(where: LaunchWhereInput): BatchPayload!
   deleteManyProductSeasons(where: ProductSeasonWhereInput): BatchPayload!
   deleteManyProductTiers(where: ProductTierWhereInput): BatchPayload!
@@ -20290,6 +20320,7 @@ type Mutation {
   deleteManyTopSizes(where: TopSizeWhereInput): BatchPayload!
   deleteManyShippingMethods(where: ShippingMethodWhereInput): BatchPayload!
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
+  deleteManySyncTimings(where: SyncTimingWhereInput): BatchPayload!
   deleteManyUserPushNotifications(
     where: UserPushNotificationWhereInput
   ): BatchPayload!
@@ -38108,15 +38139,6 @@ type Query {
     first: Int
     last: Int
   ): [AdminActionLogInterpretation]!
-  syncTimings(
-    where: SyncTimingWhereInput
-    orderBy: SyncTimingOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [SyncTiming]!
   launches(
     where: LaunchWhereInput
     orderBy: LaunchOrderByInput
@@ -38306,6 +38328,15 @@ type Query {
     first: Int
     last: Int
   ): [Brand]!
+  syncTimings(
+    where: SyncTimingWhereInput
+    orderBy: SyncTimingOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [SyncTiming]!
   userPushNotifications(
     where: UserPushNotificationWhereInput
     orderBy: UserPushNotificationOrderByInput
@@ -38542,7 +38573,6 @@ type Query {
   adminActionLogInterpretation(
     where: AdminActionLogInterpretationWhereUniqueInput!
   ): AdminActionLogInterpretation
-  syncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
   launch(where: LaunchWhereUniqueInput!): Launch
   productSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
   productTier(where: ProductTierWhereUniqueInput!): ProductTier
@@ -38576,6 +38606,7 @@ type Query {
   topSize(where: TopSizeWhereUniqueInput!): TopSize
   shippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
   brand(where: BrandWhereUniqueInput!): Brand
+  syncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
   userPushNotification(
     where: UserPushNotificationWhereUniqueInput!
   ): UserPushNotification
@@ -38878,15 +38909,6 @@ type Query {
     first: Int
     last: Int
   ): AdminActionLogInterpretationConnection!
-  syncTimingsConnection(
-    where: SyncTimingWhereInput
-    orderBy: SyncTimingOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): SyncTimingConnection!
   launchesConnection(
     where: LaunchWhereInput
     orderBy: LaunchOrderByInput
@@ -39076,6 +39098,15 @@ type Query {
     first: Int
     last: Int
   ): BrandConnection!
+  syncTimingsConnection(
+    where: SyncTimingWhereInput
+    orderBy: SyncTimingOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): SyncTimingConnection!
   userPushNotificationsConnection(
     where: UserPushNotificationWhereInput
     orderBy: UserPushNotificationOrderByInput
@@ -47270,9 +47301,6 @@ type Subscription {
   adminActionLogInterpretation(
     where: AdminActionLogInterpretationSubscriptionWhereInput
   ): AdminActionLogInterpretationSubscriptionPayload
-  syncTiming(
-    where: SyncTimingSubscriptionWhereInput
-  ): SyncTimingSubscriptionPayload
   launch(where: LaunchSubscriptionWhereInput): LaunchSubscriptionPayload
   productSeason(
     where: ProductSeasonSubscriptionWhereInput
@@ -47324,6 +47352,9 @@ type Subscription {
     where: ShippingMethodSubscriptionWhereInput
   ): ShippingMethodSubscriptionPayload
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
+  syncTiming(
+    where: SyncTimingSubscriptionWhereInput
+  ): SyncTimingSubscriptionPayload
   userPushNotification(
     where: UserPushNotificationSubscriptionWhereInput
   ): UserPushNotificationSubscriptionPayload
@@ -47371,6 +47402,7 @@ type SyncTiming implements Node {
   id: ID!
   type: SyncTimingType!
   syncedAt: DateTime!
+  detail: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -47395,6 +47427,12 @@ input SyncTimingCreateInput {
   id: ID
   type: SyncTimingType!
   syncedAt: DateTime!
+  detail: String
+}
+
+input SyncTimingCreateManyInput {
+  create: [SyncTimingCreateInput!]
+  connect: [SyncTimingWhereUniqueInput!]
 }
 
 """
@@ -47419,6 +47457,8 @@ enum SyncTimingOrderByInput {
   type_DESC
   syncedAt_ASC
   syncedAt_DESC
+  detail_ASC
+  detail_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -47429,8 +47469,282 @@ type SyncTimingPreviousValues {
   id: ID!
   type: SyncTimingType!
   syncedAt: DateTime!
+  detail: String
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input SyncTimingScalarWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [SyncTimingScalarWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [SyncTimingScalarWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [SyncTimingScalarWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  type: SyncTimingType
+
+  """
+  All values that are not equal to given value.
+  """
+  type_not: SyncTimingType
+
+  """
+  All values that are contained in given list.
+  """
+  type_in: [SyncTimingType!]
+
+  """
+  All values that are not contained in given list.
+  """
+  type_not_in: [SyncTimingType!]
+  syncedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  syncedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  syncedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  syncedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  syncedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  syncedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  syncedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  syncedAt_gte: DateTime
+  detail: String
+
+  """
+  All values that are not equal to given value.
+  """
+  detail_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  detail_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  detail_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  detail_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  detail_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  detail_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  detail_gte: String
+
+  """
+  All values containing the given string.
+  """
+  detail_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  detail_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  detail_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  detail_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  detail_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  detail_not_ends_with: String
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
 }
 
 type SyncTimingSubscriptionPayload {
@@ -47481,16 +47795,59 @@ input SyncTimingSubscriptionWhereInput {
 enum SyncTimingType {
   Drip
   Next
+  Impact
+}
+
+input SyncTimingUpdateDataInput {
+  type: SyncTimingType
+  syncedAt: DateTime
+  detail: String
 }
 
 input SyncTimingUpdateInput {
   type: SyncTimingType
   syncedAt: DateTime
+  detail: String
+}
+
+input SyncTimingUpdateManyDataInput {
+  type: SyncTimingType
+  syncedAt: DateTime
+  detail: String
+}
+
+input SyncTimingUpdateManyInput {
+  create: [SyncTimingCreateInput!]
+  connect: [SyncTimingWhereUniqueInput!]
+  set: [SyncTimingWhereUniqueInput!]
+  disconnect: [SyncTimingWhereUniqueInput!]
+  delete: [SyncTimingWhereUniqueInput!]
+  update: [SyncTimingUpdateWithWhereUniqueNestedInput!]
+  updateMany: [SyncTimingUpdateManyWithWhereNestedInput!]
+  deleteMany: [SyncTimingScalarWhereInput!]
+  upsert: [SyncTimingUpsertWithWhereUniqueNestedInput!]
 }
 
 input SyncTimingUpdateManyMutationInput {
   type: SyncTimingType
   syncedAt: DateTime
+  detail: String
+}
+
+input SyncTimingUpdateManyWithWhereNestedInput {
+  where: SyncTimingScalarWhereInput!
+  data: SyncTimingUpdateManyDataInput!
+}
+
+input SyncTimingUpdateWithWhereUniqueNestedInput {
+  where: SyncTimingWhereUniqueInput!
+  data: SyncTimingUpdateDataInput!
+}
+
+input SyncTimingUpsertWithWhereUniqueNestedInput {
+  where: SyncTimingWhereUniqueInput!
+  update: SyncTimingUpdateDataInput!
+  create: SyncTimingCreateInput!
 }
 
 input SyncTimingWhereInput {
@@ -47626,6 +47983,72 @@ input SyncTimingWhereInput {
   All values greater than or equal the given value.
   """
   syncedAt_gte: DateTime
+  detail: String
+
+  """
+  All values that are not equal to given value.
+  """
+  detail_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  detail_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  detail_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  detail_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  detail_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  detail_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  detail_gte: String
+
+  """
+  All values containing the given string.
+  """
+  detail_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  detail_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  detail_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  detail_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  detail_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  detail_not_ends_with: String
   createdAt: DateTime
 
   """
