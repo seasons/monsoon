@@ -92,7 +92,8 @@ const run = async () => {
     ps,
     utils,
     segment,
-    error
+    error,
+    auth
   )
   const shopify = new ShopifyService(ps)
   const admissionsJobService = new AdmissionsScheduledJobs(ps, as, cs, error)
@@ -111,7 +112,8 @@ const run = async () => {
     ps,
     email,
     as,
-    sms
+    sms,
+    error
   )
   const membershipService = new MembershipScheduledJobs(
     ps,

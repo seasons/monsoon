@@ -51,7 +51,9 @@ export class PaymentService {
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
     private readonly segment: SegmentService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    @Inject(forwardRef(() => AuthService))
+    private readonly auth: AuthService
   ) {}
 
   async addShippingCharge(customer, shippingCode) {

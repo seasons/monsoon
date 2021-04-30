@@ -51,6 +51,7 @@ export class AuthService {
     private readonly email: EmailService,
     private readonly error: ErrorService,
     private readonly utils: UtilsService,
+    @Inject(forwardRef(() => PaymentService))
     private readonly payment: PaymentService
   ) {}
 
