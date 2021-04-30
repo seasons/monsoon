@@ -51,6 +51,8 @@
     "@nestjs/platform-express": "^7.2.0",
     "@nestjs/schedule": "^0.4.0",
     "@nestjs/testing": "^7.2.0",
+    "@paljs/plugins": "^3.0.11",
+    "@prisma/client": "^2.21.2",
     "@pusher/push-notifications-server": "^1.2.0",
     "@seasons/wind": "^2.5.20",
     "@sendgrid/mail": "^6.4.0",
@@ -171,6 +173,7 @@
     "nodemon": "^1.19.2",
     "prettier": "^2.0.0",
     "prettier-plugin-import-sort": "^0.0.4",
+    "prettier-plugin-prisma": "^0.8.0",
     "pretty-quick": "^2.0.1",
     "prisma": "^2.21.2",
     "rimraf": "^3.0.0",
@@ -223,7 +226,7 @@
   "_moduleAliases": {
     "@app": "dist",
     "@modules": "dist/modules",
-    "@prisma": "dist/prisma"
+    "@prisma1": "dist/prisma"
   },
   "importSort": {
     ".js, .jsx, .ts, .tsx": {

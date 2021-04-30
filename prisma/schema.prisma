@@ -14,7 +14,7 @@ model ActiveAdminUser {
 }
 
 model AdminActionLog {
-  actionId                     Int                            @id @default(autoincrement())
+  actionId                     Int                           @id @default(autoincrement())
   entityId                     String
   tableName                    String
   triggeredAt                  DateTime
@@ -22,10 +22,10 @@ model AdminActionLog {
   rowData                      String
   changedFields                String?
   statementOnly                Boolean
-  activeAdminUser              String?                        @db.VarChar(25)
   interpretedAt                DateTime?
-  User                         User?                          @relation(fields: [activeAdminUser], references: [id])
-  AdminActionLogInterpretation AdminActionLogInterpretation[]
+  activeAdminUser              String?                       @db.VarChar(25)
+  User                         User?                         @relation(fields: [activeAdminUser], references: [id])
+  AdminActionLogInterpretation AdminActionLogInterpretation?
 }
 
 model AdminActionLogInterpretation {
@@ -34,7 +34,7 @@ model AdminActionLogInterpretation {
   tableName      String
   interpretation String?
   data           String?
-  log            Int?
+  log            Int?            @unique
   AdminActionLog AdminActionLog? @relation(fields: [log], references: [actionId])
 }
 
@@ -43,10 +43,10 @@ model BagItem {
   position       Int?
   saved          Boolean?
   status         String
+  createdAt      DateTime
+  updatedAt      DateTime        @updatedAt
   customer       String?         @db.VarChar(25)
   productVariant String?         @db.VarChar(25)
-  createdAt      DateTime
-  updatedAt      DateTime
   Customer       Customer?       @relation(fields: [customer], references: [id])
   ProductVariant ProductVariant? @relation(fields: [productVariant], references: [id])
 }
@@ -65,7 +65,7 @@ model BillingInfo {
   country          String?
   postal_code      String?
   createdAt        DateTime
-  updatedAt        DateTime
+  updatedAt        DateTime   @updatedAt
   Customer         Customer[]
 }
 
@@ -85,7 +85,7 @@ model BlogPost {
   author           String?
   category         String?
   createdAt        DateTime
-  updatedAt        DateTime
+  updatedAt        DateTime        @updatedAt
   publishedOn      DateTime
   image            String?         @db.VarChar(25)
   Image            Image?          @relation(fields: [image], references: [id])
@@ -113,40 +113,40 @@ model BottomSize {
 }
 
 model Brand {
-  id                       String                  @id @default(cuid()) @db.VarChar(25)
-  slug                     String                  @unique
-  brandCode                String                  @unique
-  description              String?
-  isPrimaryBrand           Boolean
-  name                     String
-  since                    DateTime?
-  tier                     String
-  websiteUrl               String?
-  createdAt                DateTime
-  updatedAt                DateTime
-  basedIn                  String?
-  designer                 String?
-  published                Boolean
-  featured                 Boolean
-  logo                     String?
-  logoImage                String?                 @db.VarChar(25)
-  shopifyShop              String?                 @db.VarChar(25)
-  Image_BrandToImage       Image?                  @relation(fields: [logoImage], references: [id])
-  ShopifyShop              ShopifyShop?            @relation(fields: [shopifyShop], references: [id])
-  Launch                   Launch[]
-  Product                  Product[]
-  ShopifyProductVariant    ShopifyProductVariant[]
-  Image_BrandToBrandImages Image[]                 @relation("BrandToBrandImages")
+  id                         String                      @id @default(cuid()) @db.VarChar(25)
+  slug                       String                      @unique
+  brandCode                  String                      @unique
+  description                String?
+  isPrimaryBrand             Boolean                     @default(false)
+  logo                       String?
+  name                       String
+  designer                   String?
+  basedIn                    String?
+  since                      DateTime?
+  tier                       String
+  published                  Boolean                     @default(true)
+  featured                   Boolean                     @default(false)
+  websiteUrl                 String?
+  createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime                    @updatedAt
+  logoImage                  String?                     @db.VarChar(25)
+  externalShopifyIntegration String?                     @db.VarChar(25)
+  ExternalShopifyIntegration ExternalShopifyIntegration? @relation(fields: [externalShopifyIntegration], references: [id])
+  Image_BrandToImage         Image?                      @relation(fields: [logoImage], references: [id])
+  Launch                     Launch[]
+  Product                    Product[]
+  ShopifyProductVariant      ShopifyProductVariant[]
+  Image_BrandToBrandImages   Image[]                     @relation("BrandToBrandImages")
 }
 
 model Category {
   id                          String                        @id @default(cuid()) @db.VarChar(25)
   slug                        String                        @unique
   name                        String                        @unique
-  description                 String?
   image                       String?
-  visible                     Boolean
-  updatedAt                   DateTime?
+  description                 String?
+  visible                     Boolean                       @default(false)
+  updatedAt                   DateTime?                     @updatedAt
   Product                     Product[]
   ProductMaterialCategory     ProductMaterialCategory[]
   WarehouseLocationConstraint WarehouseLocationConstraint[]
@@ -159,11 +159,11 @@ model Collection {
   slug                    String                    @unique
   title                   String?
   subTitle                String?
-  published               Boolean
-  createdAt               DateTime
-  updatedAt               DateTime?
-  displayTextOverlay      Boolean
+  displayTextOverlay      Boolean                   @default(false)
   textOverlayColor        String?
+  published               Boolean                   @default(false)
+  createdAt               DateTime
+  updatedAt               DateTime?                 @updatedAt
   Collection_descriptions Collection_descriptions[]
   Collection_placements   Collection_placements[]
   Launch                  Launch[]
@@ -203,18 +203,18 @@ model Color {
 model Customer {
   id                             String                           @id @default(cuid()) @db.VarChar(25)
   status                         String?
-  detail                         String?                          @db.VarChar(25)
-  user                           String?                          @db.VarChar(25)
   plan                           String?
-  billingInfo                    String?                          @db.VarChar(25)
-  createdAt                      DateTime
-  updatedAt                      DateTime
-  authorizedAt                   DateTime?
-  admissions                     String?                          @db.VarChar(25)
   referralLink                   String?                          @unique
   referrerId                     String?
-  referrer                       String?                          @db.VarChar(25)
+  authorizedAt                   DateTime?
+  createdAt                      DateTime
+  updatedAt                      DateTime                         @updatedAt
+  admissions                     String?                          @db.VarChar(25)
+  billingInfo                    String?                          @db.VarChar(25)
+  user                           String?                          @db.VarChar(25)
   utm                            String?                          @db.VarChar(25)
+  referrer                       String?                          @db.VarChar(25)
+  detail                         String?                          @db.VarChar(25)
   CustomerAdmissionsData         CustomerAdmissionsData?          @relation(fields: [admissions], references: [id])
   BillingInfo                    BillingInfo?                     @relation(fields: [billingInfo], references: [id])
   CustomerDetail                 CustomerDetail?                  @relation(fields: [detail], references: [id])
@@ -223,13 +223,12 @@ model Customer {
   UTMData                        UTMData?                         @relation(fields: [utm], references: [id])
   BagItem                        BagItem[]
   other_Customer                 Customer[]                       @relation("CustomerToCustomer_referrer")
-  CustomerMembership             CustomerMembership[]
+  CustomerMembership             CustomerMembership?
   Order                          Order[]
   ProductNotification            ProductNotification[]
   RecentlyViewedProduct          RecentlyViewedProduct[]
   Reservation                    Reservation[]
   CustomerNotificationBarReceipt CustomerNotificationBarReceipt[] @relation("CustomerToCustomerNotificationBarReceipts")
-  Product                        Product[]                        @relation("CustomerToEmailedProducts")
 }
 
 model CustomerAdmissionsData {
@@ -237,10 +236,10 @@ model CustomerAdmissionsData {
   inServiceableZipcode        Boolean
   admissable                  Boolean
   inAdmissableReason          String?
-  createdAt                   DateTime
-  updatedAt                   DateTime
+  allAccessEnabled            Boolean    @default(true)
   authorizationsCount         Int
-  allAccessEnabled            Boolean
+  createdAt                   DateTime
+  updatedAt                   DateTime   @updatedAt
   authorizationWindowClosesAt DateTime?
   Customer                    Customer[]
 }
@@ -262,15 +261,15 @@ model CustomerDetail {
   averageSpend              String?
   style                     String?
   commuteStyle              String?
-  createdAt                 DateTime
-  updatedAt                 DateTime
-  shippingAddress           String?                     @db.VarChar(25)
   phoneOS                   String?
-  insureShipment            Boolean
-  stylePreferences          String?                     @db.VarChar(25)
+  insureShipment            Boolean                     @default(false)
   instagramHandle           String?
-  impactId                  String?
   discoveryReference        String?
+  impactId                  String?
+  createdAt                 DateTime
+  updatedAt                 DateTime                    @updatedAt
+  stylePreferences          String?                     @db.VarChar(25)
+  shippingAddress           String?                     @db.VarChar(25)
   Location                  Location?                   @relation(fields: [shippingAddress], references: [id])
   StylePreferences          StylePreferences?           @relation(fields: [stylePreferences], references: [id])
   Customer                  Customer[]
@@ -319,10 +318,10 @@ model CustomerDetail_weight {
 model CustomerMembership {
   id                                 String                              @id @default(cuid()) @db.VarChar(25)
   subscriptionId                     String
-  customer                           String?                             @db.VarChar(25)
-  plan                               String?                             @db.VarChar(25)
   giftId                             String?
   subscription                       String?                             @db.VarChar(25)
+  customer                           String?                             @unique @db.VarChar(25)
+  plan                               String?                             @db.VarChar(25)
   Customer                           Customer?                           @relation(fields: [customer], references: [id])
   PaymentPlan                        PaymentPlan?                        @relation(fields: [plan], references: [id])
   CustomerMembershipSubscriptionData CustomerMembershipSubscriptionData? @relation(fields: [subscription], references: [id])
@@ -339,17 +338,17 @@ model CustomerMembershipSubscriptionData {
   status             String
   planPrice          Int
   createdAt          DateTime
-  updatedAt          DateTime
+  updatedAt          DateTime             @updatedAt
   CustomerMembership CustomerMembership[]
 }
 
 model CustomerNotificationBarReceipt {
   id                String     @id @default(cuid()) @db.VarChar(25)
   notificationBarId String
-  viewCount         Int
-  clickCount        Int
+  viewCount         Int        @default(0)
+  clickCount        Int        @default(0)
   createdAt         DateTime
-  updatedAt         DateTime
+  updatedAt         DateTime   @updatedAt
   Customer          Customer[] @relation("CustomerToCustomerNotificationBarReceipts")
 }
 
@@ -357,32 +356,32 @@ model EmailReceipt {
   id        String   @id @default(cuid()) @db.VarChar(25)
   emailId   String
   createdAt DateTime
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
   user      String?  @db.VarChar(25)
   User      User?    @relation(fields: [user], references: [id])
 }
 
 model FitPic {
   id                     String         @id @default(cuid()) @db.VarChar(25)
-  status                 String
+  includeInstagramHandle Boolean        @default(false)
+  status                 String         @default("Submitted")
   createdAt              DateTime
-  updatedAt              DateTime
+  updatedAt              DateTime       @updatedAt
   location               String?        @db.VarChar(25)
   user                   String?        @db.VarChar(25)
   image                  String?        @db.VarChar(25)
-  includeInstagramHandle Boolean
   Image                  Image?         @relation(fields: [image], references: [id])
   Location               Location?      @relation(fields: [location], references: [id])
   User                   User?          @relation(fields: [user], references: [id])
   FitPicReport           FitPicReport[]
-  Product                Product[]
+  product                Product[]
 }
 
 model FitPicReport {
   id         String   @id @default(cuid()) @db.VarChar(25)
-  status     String
+  status     String   @default("Pending")
   reportedAt DateTime
-  updatedAt  DateTime
+  updatedAt  DateTime @updatedAt
   reporter   String?  @db.VarChar(25)
   reported   String?  @db.VarChar(25)
   FitPic     FitPic?  @relation(fields: [reported], references: [id])
@@ -392,13 +391,13 @@ model FitPicReport {
 model Image {
   id                       String                  @id @default(cuid()) @db.VarChar(25)
   caption                  String?
-  title                    String?
-  createdAt                DateTime
-  updatedAt                DateTime
   url                      String                  @unique
+  alt                      String?
   height                   Int?
   width                    Int?
-  alt                      String?
+  title                    String?
+  createdAt                DateTime
+  updatedAt                DateTime                @updatedAt
   BlogPost                 BlogPost[]
   Brand_BrandToImage       Brand[]
   FitPic                   FitPic[]
@@ -413,7 +412,7 @@ model InterestedUser {
   email     String
   zipcode   String?
   createdAt DateTime
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 }
 
 model Label {
@@ -427,10 +426,10 @@ model Label {
 
 model Launch {
   id         String      @id @default(cuid()) @db.VarChar(25)
-  published  Boolean
+  published  Boolean     @default(false)
   launchAt   DateTime
-  createdAt  DateTime
-  updatedAt  DateTime
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
   collection String?     @db.VarChar(25)
   brand      String?     @db.VarChar(25)
   Brand      Brand?      @relation(fields: [brand], references: [id])
@@ -446,15 +445,15 @@ model Location {
   address1                                            String?
   address2                                            String?
   city                                                String?
+  country                                             String?
   state                                               String?
   zipCode                                             String
   locationType                                        String?
   lat                                                 Decimal?
   lng                                                 Decimal?
   createdAt                                           DateTime
-  updatedAt                                           DateTime
+  updatedAt                                           DateTime          @updatedAt
   user                                                String?           @db.VarChar(25)
-  country                                             String?
   User                                                User?             @relation(fields: [user], references: [id])
   CustomerDetail                                      CustomerDetail[]
   FitPic                                              FitPic[]
@@ -468,20 +467,20 @@ model Location {
 
 model Order {
   id            String          @id @default(cuid()) @db.VarChar(25)
+  externalID    String?         @db.VarChar(25)
+  orderNumber   String          @unique
+  type          String
+  status        String          @default("Drafted")
   subTotal      Int?
   total         Int?
+  cancelReason  String?
   couponID      String?
+  paymentStatus String          @default("NotPaid")
   note          String?
   createdAt     DateTime
-  updatedAt     DateTime
-  type          String
-  status        String
-  cancelReason  String?
-  paymentStatus String
+  updatedAt     DateTime        @updatedAt
   customer      String?         @db.VarChar(25)
   sentPackage   String?         @db.VarChar(25)
-  orderNumber   String          @unique
-  externalID    String?         @db.VarChar(25)
   Customer      Customer?       @relation(fields: [customer], references: [id])
   Package       Package?        @relation(fields: [sentPackage], references: [id])
   OrderLineItem OrderLineItem[]
@@ -499,21 +498,21 @@ model OrderLineItem {
   price         Int
   currencyCode  String
   createdAt     DateTime
-  updatedAt     DateTime
+  updatedAt     DateTime @updatedAt
   Order         Order[]
 }
 
 model Package {
   id                                               String                @id @default(cuid()) @db.VarChar(25)
+  transactionID                                    String
   weight                                           Decimal?
+  cost                                             Int?
+  status                                           String?
   createdAt                                        DateTime
-  updatedAt                                        DateTime
+  updatedAt                                        DateTime              @updatedAt
   fromAddress                                      String?               @db.VarChar(25)
   toAddress                                        String?               @db.VarChar(25)
   shippingLabel                                    String?               @db.VarChar(25)
-  transactionID                                    String
-  cost                                             Int?
-  status                                           String?
   Location_LocationToPackage_fromAddress           Location?             @relation("LocationToPackage_fromAddress", fields: [fromAddress], references: [id])
   Label                                            Label?                @relation(fields: [shippingLabel], references: [id])
   Location_LocationToPackage_toAddress             Location?             @relation("LocationToPackage_toAddress", fields: [toAddress], references: [id])
@@ -528,9 +527,9 @@ model PackageTransitEvent {
   id          String       @id @default(cuid()) @db.VarChar(25)
   status      String
   subStatus   String
-  createdAt   DateTime
-  updatedAt   DateTime
   data        String
+  createdAt   DateTime
+  updatedAt   DateTime     @updatedAt
   package     String?      @db.VarChar(25)
   reservation String?      @db.VarChar(25)
   Package     Package?     @relation(fields: [package], references: [id])
@@ -540,13 +539,13 @@ model PackageTransitEvent {
 model PauseRequest {
   id                 String              @id @default(cuid()) @db.VarChar(25)
   createdAt          DateTime
-  updatedAt          DateTime
+  updatedAt          DateTime            @updatedAt
   pausePending       Boolean
+  pauseType          String              @default("WithoutItems")
   pauseDate          DateTime?
   resumeDate         DateTime?
+  notified           Boolean             @default(false)
   membership         String?             @db.VarChar(25)
-  notified           Boolean
-  pauseType          String
   CustomerMembership CustomerMembership? @relation(fields: [membership], references: [id])
 }
 
@@ -557,11 +556,11 @@ model PaymentPlan {
   status             String?
   name               String?
   price              Int?
-  createdAt          DateTime
-  updatedAt          DateTime
-  tagline            String?
   itemCount          Int?
+  tagline            String?
   tier               String?
+  createdAt          DateTime
+  updatedAt          DateTime             @updatedAt
   CustomerMembership CustomerMembership[]
 }
 
@@ -570,18 +569,18 @@ model PhysicalProduct {
   seasonsUID                           String                         @unique
   inventoryStatus                      String
   productStatus                        String
-  createdAt                            DateTime
-  updatedAt                            DateTime
-  location                             String?                        @db.VarChar(25)
   offloadMethod                        String?
   offloadNotes                         String?
   sequenceNumber                       Int
-  warehouseLocation                    String?                        @db.VarChar(25)
+  barcoded                             Boolean?                       @default(false)
   dateOrdered                          DateTime?
   dateReceived                         DateTime?
   unitCost                             Decimal?
-  barcoded                             Boolean?
+  createdAt                            DateTime
+  updatedAt                            DateTime                       @updatedAt
   price                                String?                        @db.VarChar(25)
+  location                             String?                        @db.VarChar(25)
+  warehouseLocation                    String?                        @db.VarChar(25)
   Location                             Location?                      @relation(fields: [location], references: [id])
   PhysicalProductPrice                 PhysicalProductPrice?          @relation(fields: [price], references: [id])
   WarehouseLocation                    WarehouseLocation?             @relation(fields: [warehouseLocation], references: [id])
@@ -596,7 +595,7 @@ model PhysicalProduct {
 
 model PhysicalProductPrice {
   id              String            @id @default(cuid()) @db.VarChar(25)
-  buyUsedEnabled  Boolean
+  buyUsedEnabled  Boolean           @default(false)
   buyUsedPrice    Decimal?
   PhysicalProduct PhysicalProduct[]
 }
@@ -606,7 +605,7 @@ model PhysicalProductQualityReport {
   damageType                               String?
   notes                                    String?
   createdAt                                DateTime
-  updatedAt                                DateTime
+  updatedAt                                DateTime                                   @updatedAt
   physicalProduct                          String?                                    @db.VarChar(25)
   user                                     String?                                    @db.VarChar(25)
   PhysicalProduct                          PhysicalProduct?                           @relation(fields: [physicalProduct], references: [id])
@@ -624,47 +623,48 @@ model PhysicalProductQualityReport_damageTypes {
 }
 
 model Product {
-  id                                  String                    @id @default(cuid()) @db.VarChar(25)
-  slug                                String                    @unique
-  name                                String
-  description                         String?
-  externalURL                         String?
-  retailPrice                         Int?
-  status                              String?
-  createdAt                           DateTime
-  updatedAt                           DateTime
-  category                            String?                   @db.VarChar(25)
-  color                               String?                   @db.VarChar(25)
-  secondaryColor                      String?                   @db.VarChar(25)
-  brand                               String?                   @db.VarChar(25)
-  type                                String?
-  modelSize                           String?                   @db.VarChar(25)
-  architecture                        String?
-  publishedAt                         DateTime?
-  photographyStatus                   String?
-  season                              String?                   @db.VarChar(25)
-  productFit                          String?
-  buyNewEnabled                       Boolean
-  tier                                String?                   @db.VarChar(25)
-  Brand                               Brand?                    @relation(fields: [brand], references: [id])
-  Category                            Category?                 @relation(fields: [category], references: [id])
-  Color_ColorToProduct_color          Color?                    @relation("ColorToProduct_color", fields: [color], references: [id])
-  Size                                Size?                     @relation(fields: [modelSize], references: [id])
-  ProductSeason                       ProductSeason?            @relation(fields: [season], references: [id])
-  Color_ColorToProduct_secondaryColor Color?                    @relation("ColorToProduct_secondaryColor", fields: [secondaryColor], references: [id])
-  ProductTier                         ProductTier?              @relation(fields: [tier], references: [id])
-  Product_innerMaterials              Product_innerMaterials[]
-  Product_outerMaterials              Product_outerMaterials[]
-  RecentlyViewedProduct               RecentlyViewedProduct[]
-  Collection                          Collection[]
-  Customer                            Customer[]                @relation("CustomerToEmailedProducts")
-  FitPic                              FitPic[]
-  Image                               Image[]
-  ProductFunction                     ProductFunction[]
-  ProductMaterialCategory             ProductMaterialCategory[]
-  ProductModel                        ProductModel[]
-  ProductVariant                      ProductVariant[]
-  Tag                                 Tag[]
+  id                    String                    @id @default(cuid()) @db.VarChar(25)
+  architecture          String?
+  description           String?
+  externalURL           String?
+  buyNewEnabled         Boolean                   @default(false)
+  name                  String
+  photographyStatus     String?
+  productFit            String?
+  publishedAt           DateTime?
+  retailPrice           Int?
+  slug                  String                    @unique
+  status                String?                   @default("Available")
+  type                  String?
+  createdAt             DateTime
+  updatedAt             DateTime                  @updatedAt
+  category              String?                   @db.VarChar(25)
+  color                 String?                   @db.VarChar(25)
+  season                String?                   @db.VarChar(25)
+  tier                  String?                   @db.VarChar(25)
+  modelSize             String?                   @db.VarChar(25)
+  secondaryColor        String?                   @db.VarChar(25)
+  brand                 String?                   @db.VarChar(25)
+  Brand                 Brand?                    @relation(fields: [brand], references: [id])
+  Category              Category?                 @relation(fields: [category], references: [id])
+  Color                 Color?                    @relation("ColorToProduct_color", fields: [color], references: [id])
+  size                  Size?                     @relation(fields: [modelSize], references: [id])
+  Season                ProductSeason?            @relation(fields: [season], references: [id])
+  SecondaryColor        Color?                    @relation("ColorToProduct_secondaryColor", fields: [secondaryColor], references: [id])
+  productTier           ProductTier?              @relation(fields: [tier], references: [id])
+  innerMaterials        Product_innerMaterials[]
+  outerMaterials        Product_outerMaterials[]
+  collections           Collection[]
+  images                Image[]
+  functions             ProductFunction[]
+  materialCategory      ProductMaterialCategory[]
+  model                 ProductModel[]
+  variants              ProductVariant[]
+  tags                  Tag[]
+  RecentlyViewedProduct RecentlyViewedProduct[]
+  customerId            String?
+  FitPic                FitPic?                   @relation(fields: [fitPicId], references: [id])
+  fitPicId              String?                   @db.VarChar(25)
 }
 
 model ProductFunction {
@@ -685,8 +685,8 @@ model Product_innerMaterials {
 model ProductMaterialCategory {
   id             String    @id @default(cuid()) @db.VarChar(25)
   slug           String    @unique
-  category       String?   @db.VarChar(25)
   lifeExpectancy Decimal
+  category       String?   @db.VarChar(25)
   Category       Category? @relation(fields: [category], references: [id])
   Product        Product[]
 }
@@ -701,9 +701,9 @@ model ProductModel {
 model ProductNotification {
   id              String           @id @default(cuid()) @db.VarChar(25)
   type            String
-  shouldNotify    Boolean
+  shouldNotify    Boolean          @default(true)
   createdAt       DateTime
-  updatedAt       DateTime
+  updatedAt       DateTime         @updatedAt
   productVariant  String?          @db.VarChar(25)
   physicalProduct String?          @db.VarChar(25)
   customer        String?          @db.VarChar(25)
@@ -723,15 +723,15 @@ model Product_outerMaterials {
 
 model ProductRequest {
   id                    String                  @id @default(cuid()) @db.VarChar(25)
-  sku                   String?
   brand                 String?
   description           String?
   name                  String?
   price                 Int?
   priceCurrency         String?
   productID             String?
-  url                   String
   reason                String
+  sku                   String?
+  url                   String
   user                  String?                 @db.VarChar(25)
   User                  User?                   @relation(fields: [user], references: [id])
   ProductRequest_images ProductRequest_images[]
@@ -770,13 +770,14 @@ model ProductTier {
   tier      String
   price     Int
   createdAt DateTime
-  updatedAt DateTime
+  updatedAt DateTime  @updatedAt
   Product   Product[]
 }
 
 model ProductVariant {
   id                                  String                   @id @default(cuid()) @db.VarChar(25)
   sku                                 String?                  @unique
+  displayShort                        String
   weight                              Decimal?
   height                              Decimal?
   productID                           String
@@ -785,13 +786,12 @@ model ProductVariant {
   reservable                          Int
   reserved                            Int
   nonReservable                       Int
-  createdAt                           DateTime
-  updatedAt                           DateTime
-  color                               String?                  @db.VarChar(25)
-  internalSize                        String?                  @db.VarChar(25)
   offloaded                           Int
   stored                              Int
-  displayShort                        String
+  createdAt                           DateTime
+  updatedAt                           DateTime                 @updatedAt
+  color                               String?                  @db.VarChar(25)
+  internalSize                        String?                  @db.VarChar(25)
   price                               String?                  @db.VarChar(25)
   Color                               Color?                   @relation(fields: [color], references: [id])
   Size_ProductVariantToSize           Size?                    @relation(fields: [internalSize], references: [id])
@@ -800,7 +800,7 @@ model ProductVariant {
   ProductNotification                 ProductNotification[]
   ProductVariantFeedback              ProductVariantFeedback[]
   ProductVariantWant                  ProductVariantWant[]
-  ShopifyProductVariant               ShopifyProductVariant[]
+  ShopifyProductVariant               ShopifyProductVariant?
   PhysicalProduct                     PhysicalProduct[]
   Product                             Product[]
   Size_ProductVariantManufacturerSize Size[]                   @relation("ProductVariantManufacturerSize")
@@ -862,24 +862,24 @@ model PushNotificationReceipt {
   route                String?
   screen               String?
   uri                  String?
+  interest             String?
   body                 String
   title                String?
-  sentAt               DateTime
-  createdAt            DateTime
-  updatedAt            DateTime
-  interest             String?
   recordID             String?
   recordSlug           String?
   notificationKey      String?
+  sentAt               DateTime
+  createdAt            DateTime
+  updatedAt            DateTime               @updatedAt
   UserPushNotification UserPushNotification[]
   User                 User[]                 @relation("UserToPushNotificationReceipts")
 }
 
 model RecentlyViewedProduct {
   id        String    @id @default(cuid()) @db.VarChar(25)
-  viewCount Int
+  viewCount Int       @default(0)
   createdAt DateTime
-  updatedAt DateTime
+  updatedAt DateTime  @updatedAt
   product   String?   @db.VarChar(25)
   customer  String?   @db.VarChar(25)
   Customer  Customer? @relation(fields: [customer], references: [id])
@@ -888,25 +888,25 @@ model RecentlyViewedProduct {
 
 model Reservation {
   id                                           String                @id @default(cuid()) @db.VarChar(25)
-  shipped                                      Boolean
-  createdAt                                    DateTime
-  updatedAt                                    DateTime
-  user                                         String?               @db.VarChar(25)
   reservationNumber                            Int                   @unique
+  phase                                        String
+  shipped                                      Boolean
   status                                       String
   shippedAt                                    DateTime?
   receivedAt                                   DateTime?
-  lastLocation                                 String?               @db.VarChar(25)
-  customer                                     String?               @db.VarChar(25)
-  sentPackage                                  String?               @db.VarChar(25)
-  returnedPackage                              String?               @db.VarChar(25)
   reminderSentAt                               DateTime?
-  receipt                                      String?               @db.VarChar(25)
-  phase                                        String
   statusUpdatedAt                              DateTime?
-  shippingOption                               String?               @db.VarChar(25)
   completedAt                                  DateTime?
   cancelledAt                                  DateTime?
+  createdAt                                    DateTime
+  updatedAt                                    DateTime              @updatedAt
+  sentPackage                                  String?               @db.VarChar(25)
+  user                                         String?               @db.VarChar(25)
+  returnedPackage                              String?               @db.VarChar(25)
+  customer                                     String?               @db.VarChar(25)
+  receipt                                      String?               @db.VarChar(25)
+  lastLocation                                 String?               @db.VarChar(25)
+  shippingOption                               String?               @db.VarChar(25)
   Customer                                     Customer?             @relation(fields: [customer], references: [id])
   Location                                     Location?             @relation(fields: [lastLocation], references: [id])
   ReservationReceipt                           ReservationReceipt?   @relation(fields: [receipt], references: [id])
@@ -924,11 +924,11 @@ model ReservationFeedback {
   id                     String                   @id @default(cuid()) @db.VarChar(25)
   comment                String?
   rating                 String?
-  user                   String?                  @db.VarChar(25)
   createdAt              DateTime
-  updatedAt              DateTime
-  reservation            String?                  @db.VarChar(25)
+  updatedAt              DateTime                 @updatedAt
   respondedAt            DateTime?
+  user                   String?                  @db.VarChar(25)
+  reservation            String?                  @db.VarChar(25)
   Reservation            Reservation?             @relation(fields: [reservation], references: [id])
   User                   User?                    @relation(fields: [user], references: [id])
   ProductVariantFeedback ProductVariantFeedback[]
@@ -937,7 +937,7 @@ model ReservationFeedback {
 model ReservationReceipt {
   id                     String                   @id @default(cuid()) @db.VarChar(25)
   createdAt              DateTime
-  updatedAt              DateTime
+  updatedAt              DateTime                 @updatedAt
   Reservation            Reservation[]
   ReservationReceiptItem ReservationReceiptItem[]
 }
@@ -964,7 +964,7 @@ model ShippingMethod {
   code           String
   displayText    String
   createdAt      DateTime
-  updatedAt      DateTime
+  updatedAt      DateTime         @updatedAt
   ShippingOption ShippingOption[]
 }
 
@@ -973,7 +973,7 @@ model ShippingOption {
   externalCost                                  Int?
   averageDuration                               Int?
   createdAt                                     DateTime
-  updatedAt                                     DateTime
+  updatedAt                                     DateTime        @updatedAt
   destination                                   String?         @db.VarChar(25)
   origin                                        String?         @db.VarChar(25)
   shippingMethod                                String?         @db.VarChar(25)
@@ -986,19 +986,19 @@ model ShippingOption {
 model ShopifyProductVariant {
   id                                  String                                @id @default(cuid()) @db.VarChar(25)
   externalId                          String?                               @unique
+  displayName                         String?
+  title                               String?
   cachedPrice                         Decimal?
   cachedAvailableForSale              Boolean?
   cacheExpiresAt                      DateTime?
-  displayName                         String?
-  title                               String?
+  productVariant                      String?                               @unique @db.VarChar(25)
   image                               String?                               @db.VarChar(25)
-  brand                               String?                               @db.VarChar(25)
-  productVariant                      String?                               @db.VarChar(25)
   shop                                String?                               @db.VarChar(25)
+  brand                               String?                               @db.VarChar(25)
   Brand                               Brand?                                @relation(fields: [brand], references: [id])
   Image                               Image?                                @relation(fields: [image], references: [id])
   ProductVariant                      ProductVariant?                       @relation(fields: [productVariant], references: [id])
-  ShopifyShop                         ShopifyShop?                          @relation(fields: [shop], references: [id])
+  ExternalShopifyIntegration          ExternalShopifyIntegration?           @relation(fields: [shop], references: [id])
   ShopifyProductVariantSelectedOption ShopifyProductVariantSelectedOption[] @relation("ShopifyProductVariantToVariantSelectedOption")
 }
 
@@ -1009,35 +1009,14 @@ model ShopifyProductVariantSelectedOption {
   ShopifyProductVariant ShopifyProductVariant[] @relation("ShopifyProductVariantToVariantSelectedOption")
 }
 
-model ShopifyShop {
-  id                    String                  @id @default(cuid()) @db.VarChar(25)
-  shopName              String                  @unique
-  enabled               Boolean
-  accessToken           String?
-  createdAt             DateTime
-  updatedAt             DateTime
-  Brand                 Brand[]
-  ShopifyProductVariant ShopifyProductVariant[]
-  ShopifyShop_scope     ShopifyShop_scope[]
-}
-
-model ShopifyShop_scope {
-  nodeId      String      @db.VarChar(25)
-  position    Int
-  value       String
-  ShopifyShop ShopifyShop @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
-}
-
 model Size {
   id                                            String           @id @default(cuid()) @db.VarChar(25)
   slug                                          String           @unique
   productType                                   String?
   display                                       String
+  type                                          String?
   top                                           String?          @db.VarChar(25)
   bottom                                        String?          @db.VarChar(25)
-  type                                          String?
   BottomSize                                    BottomSize?      @relation(fields: [bottom], references: [id])
   TopSize                                       TopSize?         @relation(fields: [top], references: [id])
   Product                                       Product[]
@@ -1050,9 +1029,9 @@ model SmsReceipt {
   externalId           String?
   body                 String
   status               String
-  sentAt               DateTime
-  updatedAt            DateTime
   smsId                String?
+  sentAt               DateTime
+  updatedAt            DateTime               @updatedAt
   SmsReceipt_mediaUrls SmsReceipt_mediaUrls[]
   User                 User[]                 @relation("UserToSmsReceipts")
 }
@@ -1113,10 +1092,10 @@ model StylePreferences_styles {
 
 model SyncTiming {
   id        String   @id @default(cuid()) @db.VarChar(25)
-  createdAt DateTime
-  updatedAt DateTime
   type      String
   syncedAt  DateTime
+  createdAt DateTime
+  updatedAt DateTime @updatedAt
 }
 
 model Tag {
@@ -1124,7 +1103,7 @@ model Tag {
   name        String    @unique
   description String?
   createdAt   DateTime
-  updatedAt   DateTime
+  updatedAt   DateTime  @updatedAt
   Product     Product[]
 }
 
@@ -1145,15 +1124,15 @@ model User {
   email                        String                         @unique
   firstName                    String
   lastName                     String
-  role                         String
+  role                         String                         @default("Customer")
+  pushNotificationStatus       String                         @default("Denied")
+  sendSystemEmails             Boolean                        @default(true)
+  verificationStatus           String                         @default("Pending")
+  verificationMethod           String                         @default("None")
   createdAt                    DateTime
-  updatedAt                    DateTime
-  pushNotificationStatus       String
-  verificationStatus           String
-  verificationMethod           String
-  pushNotification             String?                        @db.VarChar(25)
-  sendSystemEmails             Boolean
+  updatedAt                    DateTime                       @updatedAt
   deviceData                   String?                        @db.VarChar(25)
+  pushNotification             String?                        @db.VarChar(25)
   UserDeviceData               UserDeviceData?                @relation(fields: [deviceData], references: [id])
   UserPushNotification         UserPushNotification?          @relation(fields: [pushNotification], references: [id])
   ActiveAdminUser              ActiveAdminUser[]
@@ -1182,7 +1161,7 @@ model UserDeviceData {
 
 model UserPushNotification {
   id                           String                         @id @default(cuid()) @db.VarChar(25)
-  status                       Boolean
+  status                       Boolean                        @default(true)
   User                         User[]
   PushNotificationReceipt      PushNotificationReceipt[]
   UserPushNotificationInterest UserPushNotificationInterest[]
@@ -1192,7 +1171,7 @@ model UserPushNotificationInterest {
   id                   String                 @id @default(cuid()) @db.VarChar(25)
   type                 String
   value                String
-  status               Boolean
+  status               Boolean                @default(true)
   user                 String?                @db.VarChar(25)
   User                 User?                  @relation(fields: [user], references: [id])
   UserPushNotification UserPushNotification[]
@@ -1215,7 +1194,7 @@ model UTMData {
   term      String?
   content   String?
   createdAt DateTime
-  updatedAt DateTime
+  updatedAt DateTime   @updatedAt
   Customer  Customer[]
 }
 
@@ -1226,7 +1205,7 @@ model WarehouseLocation {
   locationCode                String
   itemCode                    String
   createdAt                   DateTime
-  updatedAt                   DateTime
+  updatedAt                   DateTime                      @updatedAt
   PhysicalProduct             PhysicalProduct[]
   WarehouseLocationConstraint WarehouseLocationConstraint[]
 }
@@ -1235,8 +1214,29 @@ model WarehouseLocationConstraint {
   id                String              @id @default(cuid()) @db.VarChar(25)
   limit             Int
   createdAt         DateTime
-  updatedAt         DateTime
+  updatedAt         DateTime            @updatedAt
   category          String?             @db.VarChar(25)
   Category          Category?           @relation(fields: [category], references: [id])
   WarehouseLocation WarehouseLocation[]
+}
+
+model ExternalShopifyIntegration {
+  id                               String                             @id @db.VarChar(25)
+  shopName                         String                             @unique
+  enabled                          Boolean
+  accessToken                      String?
+  createdAt                        DateTime
+  updatedAt                        DateTime                           @updatedAt
+  Brand                            Brand[]
+  ExternalShopifyIntegration_scope ExternalShopifyIntegration_scope[]
+  ShopifyProductVariant            ShopifyProductVariant[]
+}
+
+model ExternalShopifyIntegration_scope {
+  nodeId                     String                     @db.VarChar(25)
+  position                   Int
+  value                      String
+  ExternalShopifyIntegration ExternalShopifyIntegration @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
 }

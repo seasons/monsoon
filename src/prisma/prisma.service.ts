@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common"
 
 import { Prisma as PrismaClient, prisma } from "./"
 import { Prisma as PrismaBinding } from "./prisma.binding"
-
+import { PrismaClient as PrismaClient2 } from '@prisma/client'
 @Injectable()
 export class PrismaService implements UpdatableConnection {
   binding: PrismaBinding = new PrismaBinding({
@@ -12,6 +12,7 @@ export class PrismaService implements UpdatableConnection {
     debug: false,
   })
   client: PrismaClient = prisma
+  client2: PrismaClient2 = new PrismaClient2()
 
   updateConnection({ secret, endpoint }: { secret: string; endpoint: string }) {
     this.binding = new PrismaBinding({
@@ -24,5 +25,6 @@ export class PrismaService implements UpdatableConnection {
       endpoint,
       debug: false,
     })
+
   }
 }
