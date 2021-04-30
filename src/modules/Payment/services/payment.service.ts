@@ -260,6 +260,7 @@ export class PaymentService {
           detail {
             id
             impactId
+            discoveryReference
           }
           user {
             id
@@ -361,6 +362,7 @@ export class PaymentService {
       impactId: customerWithUserData.detail?.impactId,
       total: amountDue,
       application,
+      discoveryReference: customerWithUserData.detail?.discoveryReference,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
 
@@ -384,6 +386,7 @@ export class PaymentService {
           detail {
             id
             impactId
+            discoveryReference
           }
           user {
             id
@@ -487,6 +490,7 @@ export class PaymentService {
       lastName: user.lastName,
       email: user.email,
       impactId: customerWithUserData.detail?.impactId,
+      discoveryReference: customerWithUserData?.detail?.discoveryReference,
       total,
       application,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
