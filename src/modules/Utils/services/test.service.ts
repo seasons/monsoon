@@ -5,7 +5,7 @@ import {
   ProductCreateInput,
   UserPushNotificationInterestType,
 } from "@app/prisma"
-import { PrismaService } from "@prisma/prisma.service"
+import { PrismaService } from "@prisma1/prisma.service"
 
 import {
   CreateTestCustomerInput,

@@ -7,12 +7,12 @@ import { Injectable } from "@nestjs/common"
 import {
   BrandWhereUniqueInput,
   ExternalShopifyIntegrationUpdateOneInput,
-} from "@prisma/index"
+} from "@prisma1/index"
 import {
   BrandUpdateOneInput,
   Brand as PrismaBindingBrand,
-} from "@prisma/prisma.binding"
-import { PrismaService } from "@prisma/prisma.service"
+} from "@prisma1/prisma.binding"
+import { PrismaService } from "@prisma1/prisma.service"
 
 @Injectable()
 export class BrandService {

@@ -4,7 +4,7 @@ import { PhysicalProductUtilsService } from "@app/modules/Product"
 import { SlackService } from "@modules/Slack/services/slack.service"
 import { Injectable } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { PrismaService } from "@prisma/prisma.service"
+import { PrismaService } from "@prisma1/prisma.service"
 import { head, pick } from "lodash"
 import zipcodes from "zipcodes"
 

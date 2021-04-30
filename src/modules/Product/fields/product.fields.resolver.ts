@@ -8,7 +8,7 @@ import { ImageService } from "@modules/Image/services/image.service"
 import { ProductService } from "@modules/Product/services/product.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
+import { PrismaService } from "@prisma1/prisma.service"
 import { sortedUniqBy } from "lodash"
 
 @Resolver("Product")

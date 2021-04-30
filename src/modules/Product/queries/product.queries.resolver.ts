@@ -1,6 +1,7 @@
 import { Customer } from "@app/decorators"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
+import { PrismaSelect } from "@paljs/plugins"
+import { PrismaService } from "@prisma1/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
 
 import { ProductService } from "../services/product.service"
@@ -13,15 +14,22 @@ export class ProductQueriesResolver {
   ) {}
 
   @Query()
-  async product(@Args() args, @Info() info, @Context() ctx) {
-    return await this.prisma.binding.query.product(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on Product { id }`
-      )
-    )
+  async product(@Args() { where }, @Info() info, @Context() ctx) {
+    const select = new PrismaSelect(info).value
+    const data = await this.prisma.client2.product.findUnique({
+      where,
+      ...select,
+    })
+
+    return data
+    // return await this.prisma.binding.query.product(
+    //   args,
+    //   addFragmentToInfo(
+    //     info,
+    //     // for computed fields
+    //     `fragment EnsureId on Product { id }`
+    //   )
+    // )
   }
 
   @Query()
