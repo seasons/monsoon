@@ -157,7 +157,7 @@ input ReserveItemsOptions {
   dryRun: Boolean
 }
 
-type Reservation {
+type Reservation @cacheControl(maxAge: 0) {
   id: ID!
   user: User!
   customer: Customer!
