@@ -291,13 +291,11 @@ export class ProductService {
       innerMaterials: { set: input.innerMaterials },
       outerMaterials: { set: input.outerMaterials },
     }
-    console.log("297", "about to call upsert product")
     const product = await this.prisma.client.upsertProduct({
       create: data,
       update: data,
       where: { slug },
     })
-    console.log("297", "finished calling upsert product")
 
     // Add the product tier
     const tier = await this.getProductTier(product)
