@@ -3386,7 +3386,6 @@ type Customer {
 
 type CustomerAdmissionsData {
   id: ID!
-  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -3407,7 +3406,6 @@ type CustomerAdmissionsDataConnection {
 
 input CustomerAdmissionsDataCreateInput {
   id: ID
-  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -3425,7 +3423,6 @@ input CustomerAdmissionsDataCreateOneWithoutCustomerInput {
 
 input CustomerAdmissionsDataCreateWithoutCustomerInput {
   id: ID
-  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -3443,8 +3440,6 @@ type CustomerAdmissionsDataEdge {
 enum CustomerAdmissionsDataOrderByInput {
   id_ASC
   id_DESC
-  test_ASC
-  test_DESC
   inServiceableZipcode_ASC
   inServiceableZipcode_DESC
   admissable_ASC
@@ -3467,7 +3462,6 @@ enum CustomerAdmissionsDataOrderByInput {
 
 type CustomerAdmissionsDataPreviousValues {
   id: ID!
-  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -3498,7 +3492,6 @@ input CustomerAdmissionsDataSubscriptionWhereInput {
 }
 
 input CustomerAdmissionsDataUpdateInput {
-  test: String
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
@@ -3510,7 +3503,6 @@ input CustomerAdmissionsDataUpdateInput {
 }
 
 input CustomerAdmissionsDataUpdateManyMutationInput {
-  test: String
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
@@ -3530,7 +3522,6 @@ input CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
 }
 
 input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
-  test: String
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
@@ -3560,20 +3551,6 @@ input CustomerAdmissionsDataWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  test: String
-  test_not: String
-  test_in: [String!]
-  test_not_in: [String!]
-  test_lt: String
-  test_lte: String
-  test_gt: String
-  test_gte: String
-  test_contains: String
-  test_not_contains: String
-  test_starts_with: String
-  test_not_starts_with: String
-  test_ends_with: String
-  test_not_ends_with: String
   inServiceableZipcode: Boolean
   inServiceableZipcode_not: Boolean
   admissable: Boolean
@@ -10633,9 +10610,11 @@ type PhysicalProductQualityReport {
   damageType: PhysicalProductDamageType
   damageTypes: [PhysicalProductDamageType!]!
   notes: String
+  score: Int
   physicalProduct: PhysicalProduct!
   createdAt: DateTime!
   updatedAt: DateTime!
+  published: Boolean!
 }
 
 type PhysicalProductQualityReportConnection {
@@ -10654,7 +10633,9 @@ input PhysicalProductQualityReportCreateInput {
   damageType: PhysicalProductDamageType
   damageTypes: PhysicalProductQualityReportCreatedamageTypesInput
   notes: String
+  score: Int
   physicalProduct: PhysicalProductCreateOneWithoutReportsInput!
+  published: Boolean
 }
 
 input PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput {
@@ -10668,6 +10649,8 @@ input PhysicalProductQualityReportCreateWithoutPhysicalProductInput {
   damageType: PhysicalProductDamageType
   damageTypes: PhysicalProductQualityReportCreatedamageTypesInput
   notes: String
+  score: Int
+  published: Boolean
 }
 
 type PhysicalProductQualityReportEdge {
@@ -10682,10 +10665,14 @@ enum PhysicalProductQualityReportOrderByInput {
   damageType_DESC
   notes_ASC
   notes_DESC
+  score_ASC
+  score_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  published_ASC
+  published_DESC
 }
 
 type PhysicalProductQualityReportPreviousValues {
@@ -10693,8 +10680,10 @@ type PhysicalProductQualityReportPreviousValues {
   damageType: PhysicalProductDamageType
   damageTypes: [PhysicalProductDamageType!]!
   notes: String
+  score: Int
   createdAt: DateTime!
   updatedAt: DateTime!
+  published: Boolean!
 }
 
 input PhysicalProductQualityReportScalarWhereInput {
@@ -10730,6 +10719,14 @@ input PhysicalProductQualityReportScalarWhereInput {
   notes_not_starts_with: String
   notes_ends_with: String
   notes_not_ends_with: String
+  score: Int
+  score_not: Int
+  score_in: [Int!]
+  score_not_in: [Int!]
+  score_lt: Int
+  score_lte: Int
+  score_gt: Int
+  score_gte: Int
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -10746,6 +10743,8 @@ input PhysicalProductQualityReportScalarWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  published: Boolean
+  published_not: Boolean
   AND: [PhysicalProductQualityReportScalarWhereInput!]
   OR: [PhysicalProductQualityReportScalarWhereInput!]
   NOT: [PhysicalProductQualityReportScalarWhereInput!]
@@ -10778,19 +10777,25 @@ input PhysicalProductQualityReportUpdateInput {
   damageType: PhysicalProductDamageType
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   notes: String
+  score: Int
   physicalProduct: PhysicalProductUpdateOneRequiredWithoutReportsInput
+  published: Boolean
 }
 
 input PhysicalProductQualityReportUpdateManyDataInput {
   damageType: PhysicalProductDamageType
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   notes: String
+  score: Int
+  published: Boolean
 }
 
 input PhysicalProductQualityReportUpdateManyMutationInput {
   damageType: PhysicalProductDamageType
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   notes: String
+  score: Int
+  published: Boolean
 }
 
 input PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput {
@@ -10815,6 +10820,8 @@ input PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput {
   damageType: PhysicalProductDamageType
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   notes: String
+  score: Int
+  published: Boolean
 }
 
 input PhysicalProductQualityReportUpdateWithWhereUniqueWithoutPhysicalProductInput {
@@ -10862,6 +10869,14 @@ input PhysicalProductQualityReportWhereInput {
   notes_not_starts_with: String
   notes_ends_with: String
   notes_not_ends_with: String
+  score: Int
+  score_not: Int
+  score_in: [Int!]
+  score_not_in: [Int!]
+  score_lt: Int
+  score_lte: Int
+  score_gt: Int
+  score_gte: Int
   physicalProduct: PhysicalProductWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
@@ -10879,6 +10894,8 @@ input PhysicalProductQualityReportWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  published: Boolean
+  published_not: Boolean
   AND: [PhysicalProductQualityReportWhereInput!]
   OR: [PhysicalProductQualityReportWhereInput!]
   NOT: [PhysicalProductQualityReportWhereInput!]

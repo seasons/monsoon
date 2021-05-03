@@ -6572,7 +6572,6 @@ type Customer implements Node {
 
 type CustomerAdmissionsData implements Node {
   id: ID!
-  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -6597,7 +6596,6 @@ type CustomerAdmissionsDataConnection {
 
 input CustomerAdmissionsDataCreateInput {
   id: ID
-  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -6615,7 +6613,6 @@ input CustomerAdmissionsDataCreateOneWithoutCustomerInput {
 
 input CustomerAdmissionsDataCreateWithoutCustomerInput {
   id: ID
-  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -6637,8 +6634,6 @@ type CustomerAdmissionsDataEdge {
 enum CustomerAdmissionsDataOrderByInput {
   id_ASC
   id_DESC
-  test_ASC
-  test_DESC
   inServiceableZipcode_ASC
   inServiceableZipcode_DESC
   admissable_ASC
@@ -6661,7 +6656,6 @@ enum CustomerAdmissionsDataOrderByInput {
 
 type CustomerAdmissionsDataPreviousValues {
   id: ID!
-  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -6711,7 +6705,6 @@ input CustomerAdmissionsDataSubscriptionWhereInput {
 }
 
 input CustomerAdmissionsDataUpdateInput {
-  test: String
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
@@ -6723,7 +6716,6 @@ input CustomerAdmissionsDataUpdateInput {
 }
 
 input CustomerAdmissionsDataUpdateManyMutationInput {
-  test: String
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
@@ -6743,7 +6735,6 @@ input CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
 }
 
 input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
-  test: String
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
@@ -6807,46 +6798,6 @@ input CustomerAdmissionsDataWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  test: String
-
-  """All values that are not equal to given value."""
-  test_not: String
-
-  """All values that are contained in given list."""
-  test_in: [String!]
-
-  """All values that are not contained in given list."""
-  test_not_in: [String!]
-
-  """All values less than the given value."""
-  test_lt: String
-
-  """All values less than or equal the given value."""
-  test_lte: String
-
-  """All values greater than the given value."""
-  test_gt: String
-
-  """All values greater than or equal the given value."""
-  test_gte: String
-
-  """All values containing the given string."""
-  test_contains: String
-
-  """All values not containing the given string."""
-  test_not_contains: String
-
-  """All values starting with the given string."""
-  test_starts_with: String
-
-  """All values not starting with the given string."""
-  test_not_starts_with: String
-
-  """All values ending with the given string."""
-  test_ends_with: String
-
-  """All values not ending with the given string."""
-  test_not_ends_with: String
   inServiceableZipcode: Boolean
 
   """All values that are not equal to given value."""
@@ -18607,9 +18558,11 @@ type PhysicalProductQualityReport implements Node {
   damageType: PhysicalProductDamageType
   damageTypes: [PhysicalProductDamageType!]!
   notes: String
+  score: Int
   physicalProduct: PhysicalProduct!
   createdAt: DateTime!
   updatedAt: DateTime!
+  published: Boolean!
 }
 
 """A connection to a list of items."""
@@ -18630,6 +18583,8 @@ input PhysicalProductQualityReportCreateInput {
   id: ID
   damageType: PhysicalProductDamageType
   notes: String
+  score: Int
+  published: Boolean
   damageTypes: PhysicalProductQualityReportCreatedamageTypesInput
   user: UserCreateOneInput!
   physicalProduct: PhysicalProductCreateOneWithoutReportsInput!
@@ -18644,6 +18599,8 @@ input PhysicalProductQualityReportCreateWithoutPhysicalProductInput {
   id: ID
   damageType: PhysicalProductDamageType
   notes: String
+  score: Int
+  published: Boolean
   damageTypes: PhysicalProductQualityReportCreatedamageTypesInput
   user: UserCreateOneInput!
 }
@@ -18664,10 +18621,14 @@ enum PhysicalProductQualityReportOrderByInput {
   damageType_DESC
   notes_ASC
   notes_DESC
+  score_ASC
+  score_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  published_ASC
+  published_DESC
 }
 
 type PhysicalProductQualityReportPreviousValues {
@@ -18675,8 +18636,10 @@ type PhysicalProductQualityReportPreviousValues {
   damageType: PhysicalProductDamageType
   damageTypes: [PhysicalProductDamageType!]!
   notes: String
+  score: Int
   createdAt: DateTime!
   updatedAt: DateTime!
+  published: Boolean!
 }
 
 input PhysicalProductQualityReportScalarWhereInput {
@@ -18778,6 +18741,28 @@ input PhysicalProductQualityReportScalarWhereInput {
 
   """All values not ending with the given string."""
   notes_not_ends_with: String
+  score: Int
+
+  """All values that are not equal to given value."""
+  score_not: Int
+
+  """All values that are contained in given list."""
+  score_in: [Int!]
+
+  """All values that are not contained in given list."""
+  score_not_in: [Int!]
+
+  """All values less than the given value."""
+  score_lt: Int
+
+  """All values less than or equal the given value."""
+  score_lte: Int
+
+  """All values greater than the given value."""
+  score_gt: Int
+
+  """All values greater than or equal the given value."""
+  score_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -18822,6 +18807,10 @@ input PhysicalProductQualityReportScalarWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  published: Boolean
+
+  """All values that are not equal to given value."""
+  published_not: Boolean
 }
 
 type PhysicalProductQualityReportSubscriptionPayload {
@@ -18868,6 +18857,8 @@ input PhysicalProductQualityReportUpdatedamageTypesInput {
 input PhysicalProductQualityReportUpdateInput {
   damageType: PhysicalProductDamageType
   notes: String
+  score: Int
+  published: Boolean
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   user: UserUpdateOneRequiredInput
   physicalProduct: PhysicalProductUpdateOneRequiredWithoutReportsInput
@@ -18876,12 +18867,16 @@ input PhysicalProductQualityReportUpdateInput {
 input PhysicalProductQualityReportUpdateManyDataInput {
   damageType: PhysicalProductDamageType
   notes: String
+  score: Int
+  published: Boolean
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
 }
 
 input PhysicalProductQualityReportUpdateManyMutationInput {
   damageType: PhysicalProductDamageType
   notes: String
+  score: Int
+  published: Boolean
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
 }
 
@@ -18905,6 +18900,8 @@ input PhysicalProductQualityReportUpdateManyWithWhereNestedInput {
 input PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput {
   damageType: PhysicalProductDamageType
   notes: String
+  score: Int
+  published: Boolean
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   user: UserUpdateOneRequiredInput
 }
@@ -19019,6 +19016,28 @@ input PhysicalProductQualityReportWhereInput {
 
   """All values not ending with the given string."""
   notes_not_ends_with: String
+  score: Int
+
+  """All values that are not equal to given value."""
+  score_not: Int
+
+  """All values that are contained in given list."""
+  score_in: [Int!]
+
+  """All values that are not contained in given list."""
+  score_not_in: [Int!]
+
+  """All values less than the given value."""
+  score_lt: Int
+
+  """All values less than or equal the given value."""
+  score_lte: Int
+
+  """All values greater than the given value."""
+  score_gt: Int
+
+  """All values greater than or equal the given value."""
+  score_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -19063,6 +19082,10 @@ input PhysicalProductQualityReportWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  published: Boolean
+
+  """All values that are not equal to given value."""
+  published_not: Boolean
   user: UserWhereInput
   physicalProduct: PhysicalProductWhereInput
 }
@@ -38140,8 +38163,6 @@ export type ColorOrderByInput =   'id_ASC' |
 
 export type CustomerAdmissionsDataOrderByInput =   'id_ASC' |
   'id_DESC' |
-  'test_ASC' |
-  'test_DESC' |
   'inServiceableZipcode_ASC' |
   'inServiceableZipcode_DESC' |
   'admissable_ASC' |
@@ -38718,10 +38739,14 @@ export type PhysicalProductQualityReportOrderByInput =   'id_ASC' |
   'damageType_DESC' |
   'notes_ASC' |
   'notes_DESC' |
+  'score_ASC' |
+  'score_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
-  'updatedAt_DESC'
+  'updatedAt_DESC' |
+  'published_ASC' |
+  'published_DESC'
 
 export type PhysicalProductStatus =   'New' |
   'Used' |
@@ -41599,7 +41624,6 @@ export interface ColorWhereUniqueInput {
 
 export interface CustomerAdmissionsDataCreateInput {
   id?: ID_Input | null
-  test?: String | null
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason?: InAdmissableReason | null
@@ -41617,7 +41641,6 @@ export interface CustomerAdmissionsDataCreateOneWithoutCustomerInput {
 
 export interface CustomerAdmissionsDataCreateWithoutCustomerInput {
   id?: ID_Input | null
-  test?: String | null
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason?: InAdmissableReason | null
@@ -41639,7 +41662,6 @@ export interface CustomerAdmissionsDataSubscriptionWhereInput {
 }
 
 export interface CustomerAdmissionsDataUpdateInput {
-  test?: String | null
   inServiceableZipcode?: Boolean | null
   admissable?: Boolean | null
   inAdmissableReason?: InAdmissableReason | null
@@ -41651,7 +41673,6 @@ export interface CustomerAdmissionsDataUpdateInput {
 }
 
 export interface CustomerAdmissionsDataUpdateManyMutationInput {
-  test?: String | null
   inServiceableZipcode?: Boolean | null
   admissable?: Boolean | null
   inAdmissableReason?: InAdmissableReason | null
@@ -41671,7 +41692,6 @@ export interface CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
 }
 
 export interface CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
-  test?: String | null
   inServiceableZipcode?: Boolean | null
   admissable?: Boolean | null
   inAdmissableReason?: InAdmissableReason | null
@@ -41704,20 +41724,6 @@ export interface CustomerAdmissionsDataWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
-  test?: String | null
-  test_not?: String | null
-  test_in?: String[] | String | null
-  test_not_in?: String[] | String | null
-  test_lt?: String | null
-  test_lte?: String | null
-  test_gt?: String | null
-  test_gte?: String | null
-  test_contains?: String | null
-  test_not_contains?: String | null
-  test_starts_with?: String | null
-  test_not_starts_with?: String | null
-  test_ends_with?: String | null
-  test_not_ends_with?: String | null
   inServiceableZipcode?: Boolean | null
   inServiceableZipcode_not?: Boolean | null
   admissable?: Boolean | null
@@ -46803,6 +46809,8 @@ export interface PhysicalProductQualityReportCreateInput {
   id?: ID_Input | null
   damageType?: PhysicalProductDamageType | null
   notes?: String | null
+  score?: Int | null
+  published?: Boolean | null
   damageTypes?: PhysicalProductQualityReportCreatedamageTypesInput | null
   user: UserCreateOneInput
   physicalProduct: PhysicalProductCreateOneWithoutReportsInput
@@ -46817,6 +46825,8 @@ export interface PhysicalProductQualityReportCreateWithoutPhysicalProductInput {
   id?: ID_Input | null
   damageType?: PhysicalProductDamageType | null
   notes?: String | null
+  score?: Int | null
+  published?: Boolean | null
   damageTypes?: PhysicalProductQualityReportCreatedamageTypesInput | null
   user: UserCreateOneInput
 }
@@ -46857,6 +46867,14 @@ export interface PhysicalProductQualityReportScalarWhereInput {
   notes_not_starts_with?: String | null
   notes_ends_with?: String | null
   notes_not_ends_with?: String | null
+  score?: Int | null
+  score_not?: Int | null
+  score_in?: Int[] | Int | null
+  score_not_in?: Int[] | Int | null
+  score_lt?: Int | null
+  score_lte?: Int | null
+  score_gt?: Int | null
+  score_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -46873,6 +46891,8 @@ export interface PhysicalProductQualityReportScalarWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
+  published?: Boolean | null
+  published_not?: Boolean | null
 }
 
 export interface PhysicalProductQualityReportSubscriptionWhereInput {
@@ -46893,6 +46913,8 @@ export interface PhysicalProductQualityReportUpdatedamageTypesInput {
 export interface PhysicalProductQualityReportUpdateInput {
   damageType?: PhysicalProductDamageType | null
   notes?: String | null
+  score?: Int | null
+  published?: Boolean | null
   damageTypes?: PhysicalProductQualityReportUpdatedamageTypesInput | null
   user?: UserUpdateOneRequiredInput | null
   physicalProduct?: PhysicalProductUpdateOneRequiredWithoutReportsInput | null
@@ -46901,12 +46923,16 @@ export interface PhysicalProductQualityReportUpdateInput {
 export interface PhysicalProductQualityReportUpdateManyDataInput {
   damageType?: PhysicalProductDamageType | null
   notes?: String | null
+  score?: Int | null
+  published?: Boolean | null
   damageTypes?: PhysicalProductQualityReportUpdatedamageTypesInput | null
 }
 
 export interface PhysicalProductQualityReportUpdateManyMutationInput {
   damageType?: PhysicalProductDamageType | null
   notes?: String | null
+  score?: Int | null
+  published?: Boolean | null
   damageTypes?: PhysicalProductQualityReportUpdatedamageTypesInput | null
 }
 
@@ -46930,6 +46956,8 @@ export interface PhysicalProductQualityReportUpdateManyWithWhereNestedInput {
 export interface PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput {
   damageType?: PhysicalProductDamageType | null
   notes?: String | null
+  score?: Int | null
+  published?: Boolean | null
   damageTypes?: PhysicalProductQualityReportUpdatedamageTypesInput | null
   user?: UserUpdateOneRequiredInput | null
 }
@@ -46981,6 +47009,14 @@ export interface PhysicalProductQualityReportWhereInput {
   notes_not_starts_with?: String | null
   notes_ends_with?: String | null
   notes_not_ends_with?: String | null
+  score?: Int | null
+  score_not?: Int | null
+  score_in?: Int[] | Int | null
+  score_not_in?: Int[] | Int | null
+  score_lt?: Int | null
+  score_lte?: Int | null
+  score_gt?: Int | null
+  score_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -46997,6 +47033,8 @@ export interface PhysicalProductQualityReportWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
+  published?: Boolean | null
+  published_not?: Boolean | null
   user?: UserWhereInput | null
   physicalProduct?: PhysicalProductWhereInput | null
 }
@@ -56617,7 +56655,6 @@ export interface Customer extends Node {
 
 export interface CustomerAdmissionsData extends Node {
   id: ID_Output
-  test?: String | null
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason?: InAdmissableReason | null
@@ -56651,7 +56688,6 @@ export interface CustomerAdmissionsDataEdge {
 
 export interface CustomerAdmissionsDataPreviousValues {
   id: ID_Output
-  test?: String | null
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason?: InAdmissableReason | null
@@ -57737,9 +57773,11 @@ export interface PhysicalProductQualityReport extends Node {
   damageType?: PhysicalProductDamageType | null
   damageTypes: Array<PhysicalProductDamageType>
   notes?: String | null
+  score?: Int | null
   physicalProduct: PhysicalProduct
   createdAt: DateTime
   updatedAt: DateTime
+  published: Boolean
 }
 
 /*
@@ -57766,8 +57804,10 @@ export interface PhysicalProductQualityReportPreviousValues {
   damageType?: PhysicalProductDamageType | null
   damageTypes: Array<PhysicalProductDamageType>
   notes?: String | null
+  score?: Int | null
   createdAt: DateTime
   updatedAt: DateTime
+  published: Boolean
 }
 
 export interface PhysicalProductQualityReportSubscriptionPayload {
