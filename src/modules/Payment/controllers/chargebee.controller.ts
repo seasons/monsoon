@@ -181,6 +181,7 @@ export class ChargebeeController {
           detail {
             id
             impactId
+            discoveryReference
           }
           utm {
             source
@@ -226,6 +227,8 @@ export class ChargebeeController {
           impactId: customerWithBillingAndUserData.detail?.impactId,
           application: "flare", // must be flare since its ChargebeeHostedCheckout
           total,
+          discoveryReference:
+            customerWithBillingAndUserData.detail?.discoveryReference,
           ...this.utils.formatUTMForSegment(customerWithBillingAndUserData.utm),
         })
         // Only create the billing info and send welcome email if user used chargebee checkout

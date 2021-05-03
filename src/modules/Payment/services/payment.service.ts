@@ -3,15 +3,10 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import {
-  Customer,
-  Location,
-  PaymentPlan,
-  PaymentPlanTier,
-  User,
-} from "@app/prisma"
+import { Customer, PaymentPlan, PaymentPlanTier, User } from "@app/prisma"
 import { PauseType } from "@app/prisma/prisma.binding"
 import { EmailService } from "@modules/Email/services/email.service"
+import { EmailUser } from "@modules/Email/services/email.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
@@ -49,8 +44,6 @@ export interface SubscriptionData {
 @Injectable()
 export class PaymentService {
   constructor(
-    @Inject(forwardRef(() => AuthService))
-    private readonly authService: AuthService,
     @Inject(forwardRef(() => CustomerService))
     private readonly customerService: CustomerService,
     private readonly emailService: EmailService,
@@ -58,7 +51,9 @@ export class PaymentService {
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
     private readonly segment: SegmentService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    @Inject(forwardRef(() => AuthService))
+    private readonly auth: AuthService
   ) {}
 
   async addShippingCharge(customer, shippingCode) {
@@ -260,6 +255,7 @@ export class PaymentService {
           detail {
             id
             impactId
+            discoveryReference
           }
           user {
             id
@@ -361,6 +357,7 @@ export class PaymentService {
       impactId: customerWithUserData.detail?.impactId,
       total: amountDue,
       application,
+      discoveryReference: customerWithUserData.detail?.discoveryReference,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
 
@@ -384,6 +381,7 @@ export class PaymentService {
           detail {
             id
             impactId
+            discoveryReference
           }
           user {
             id
@@ -487,6 +485,7 @@ export class PaymentService {
       lastName: user.lastName,
       email: user.email,
       impactId: customerWithUserData.detail?.impactId,
+      discoveryReference: customerWithUserData?.detail?.discoveryReference,
       total,
       application,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
@@ -792,15 +791,24 @@ export class PaymentService {
     )
 
     // Save to prisma
-    const prismaUser = await this.prisma.client.user({ id: userID })
-    if (!prismaUser) {
-      throw new Error(`Could not find user with id: ${userID}`)
-    }
-    const prismaCustomer = await this.authService.getCustomerFromUserID(
-      prismaUser.id
-    )
+    const prismaCustomer = head(
+      await this.prisma.binding.query.customers(
+        {
+          where: { user: { id: userID } },
+        },
+        `{
+        id
+        user {
+          id
+          email
+          firstName
+        }
+      }`
+      )
+    ) as Pick<Customer, "id"> & { user: EmailUser }
+
     if (!prismaCustomer) {
-      throw new Error(`Could not find customer with user id: ${prismaUser.id}`)
+      throw new Error(`Could not find customer with user id: ${userID}`)
     }
 
     let updateData = {
@@ -808,6 +816,17 @@ export class PaymentService {
         create: billingInfo,
       },
       status: "Active",
+      admissions: {
+        upsert: {
+          create: {
+            subscribedAt: new Date(),
+            inServiceableZipcode: true,
+            admissable: true,
+            authorizationsCount: 1,
+          },
+          update: { subscribedAt: new Date() },
+        },
+      },
     } as any
 
     if (shippingAddress) {
@@ -846,7 +865,7 @@ export class PaymentService {
     })
 
     // Send welcome to seasons email
-    await this.emailService.sendSubscribedEmail(prismaUser)
+    await this.emailService.sendSubscribedEmail(prismaCustomer.user)
   }
 
   getPaymentPlanTier(planID): PaymentPlanTier {

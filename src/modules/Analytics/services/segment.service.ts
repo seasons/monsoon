@@ -11,6 +11,7 @@ type SubscribedProperties = CommonTrackProperties & {
   planID: string
   method: "ApplePay" | "ChargebeeHostedCheckout" | "CreditCard"
   total: number
+  discoveryReference?: string
 }
 
 type TrackingEvent =
@@ -42,6 +43,7 @@ interface CommonTrackProperties {
 type BecameAuthorizedProperties = CommonTrackProperties & {
   previousStatus: CustomerStatus
   method: "Manual" | "Automatic"
+  discoveryReference?: string
 }
 
 @Injectable()

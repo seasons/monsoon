@@ -26,7 +26,7 @@ import {
   ProductWithEmailData,
 } from "./email.utils.service"
 
-type EmailUser = Pick<User, "email" | "firstName" | "id">
+export type EmailUser = Pick<User, "email" | "firstName" | "id">
 
 @Injectable()
 export class EmailService {

@@ -11,6 +11,7 @@ const commonStaticOrigins = [
   /wearseasons\.com$/,
   /vercel\.app/,
   /shopifypreview\.com/,
+  /studio\.apollographql\.com/,
 ]
 
 const STATIC_ORIGINS =

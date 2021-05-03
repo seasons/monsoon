@@ -3866,6 +3866,8 @@ export type NotificationBarID =
   | "TestDismissable"
   | "AuthorizedReminder";
 
+export type SyncTimingType = "Drip" | "Next" | "Impact";
+
 export type PauseRequestOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -3975,6 +3977,20 @@ export type CustomerNotificationBarReceiptOrderByInput =
   | "viewCount_DESC"
   | "clickCount_ASC"
   | "clickCount_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type SyncTimingOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "type_ASC"
+  | "type_DESC"
+  | "syncedAt_ASC"
+  | "syncedAt_DESC"
+  | "detail_ASC"
+  | "detail_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -4152,7 +4168,9 @@ export type CustomerAdmissionsDataOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC"
   | "authorizationWindowClosesAt_ASC"
-  | "authorizationWindowClosesAt_DESC";
+  | "authorizationWindowClosesAt_DESC"
+  | "subscribedAt_ASC"
+  | "subscribedAt_DESC";
 
 export type CustomerDetailOrderByInput =
   | "id_ASC"
@@ -4611,20 +4629,6 @@ export type ShopifyShopOrderByInput =
   | "updatedAt_DESC";
 
 export type StylePreferencesOrderByInput = "id_ASC" | "id_DESC";
-
-export type SyncTimingType = "Drip" | "Next";
-
-export type SyncTimingOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "type_ASC"
-  | "type_DESC"
-  | "syncedAt_ASC"
-  | "syncedAt_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
 
 export type TopSizeOrderByInput =
   | "id_ASC"
@@ -8101,6 +8105,9 @@ export interface CustomerWhereInput {
   notificationBarReceipts_none?: Maybe<
     CustomerNotificationBarReceiptWhereInput
   >;
+  impactSyncTimings_every?: Maybe<SyncTimingWhereInput>;
+  impactSyncTimings_some?: Maybe<SyncTimingWhereInput>;
+  impactSyncTimings_none?: Maybe<SyncTimingWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -9134,6 +9141,14 @@ export interface CustomerAdmissionsDataWhereInput {
   authorizationWindowClosesAt_lte?: Maybe<DateTimeInput>;
   authorizationWindowClosesAt_gt?: Maybe<DateTimeInput>;
   authorizationWindowClosesAt_gte?: Maybe<DateTimeInput>;
+  subscribedAt?: Maybe<DateTimeInput>;
+  subscribedAt_not?: Maybe<DateTimeInput>;
+  subscribedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  subscribedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  subscribedAt_lt?: Maybe<DateTimeInput>;
+  subscribedAt_lte?: Maybe<DateTimeInput>;
+  subscribedAt_gt?: Maybe<DateTimeInput>;
+  subscribedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<
     CustomerAdmissionsDataWhereInput[] | CustomerAdmissionsDataWhereInput
   >;
@@ -9316,6 +9331,68 @@ export interface CustomerNotificationBarReceiptWhereInput {
     | CustomerNotificationBarReceiptWhereInput[]
     | CustomerNotificationBarReceiptWhereInput
   >;
+}
+
+export interface SyncTimingWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  type?: Maybe<SyncTimingType>;
+  type_not?: Maybe<SyncTimingType>;
+  type_in?: Maybe<SyncTimingType[] | SyncTimingType>;
+  type_not_in?: Maybe<SyncTimingType[] | SyncTimingType>;
+  syncedAt?: Maybe<DateTimeInput>;
+  syncedAt_not?: Maybe<DateTimeInput>;
+  syncedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  syncedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  syncedAt_lt?: Maybe<DateTimeInput>;
+  syncedAt_lte?: Maybe<DateTimeInput>;
+  syncedAt_gt?: Maybe<DateTimeInput>;
+  syncedAt_gte?: Maybe<DateTimeInput>;
+  detail?: Maybe<String>;
+  detail_not?: Maybe<String>;
+  detail_in?: Maybe<String[] | String>;
+  detail_not_in?: Maybe<String[] | String>;
+  detail_lt?: Maybe<String>;
+  detail_lte?: Maybe<String>;
+  detail_gt?: Maybe<String>;
+  detail_gte?: Maybe<String>;
+  detail_contains?: Maybe<String>;
+  detail_not_contains?: Maybe<String>;
+  detail_starts_with?: Maybe<String>;
+  detail_not_starts_with?: Maybe<String>;
+  detail_ends_with?: Maybe<String>;
+  detail_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
+  OR?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
+  NOT?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
 }
 
 export type BillingInfoWhereUniqueInput = AtLeastOne<{
@@ -10678,54 +10755,6 @@ export type StylePreferencesWhereUniqueInput = AtLeastOne<{
 export type SyncTimingWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
-
-export interface SyncTimingWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  type?: Maybe<SyncTimingType>;
-  type_not?: Maybe<SyncTimingType>;
-  type_in?: Maybe<SyncTimingType[] | SyncTimingType>;
-  type_not_in?: Maybe<SyncTimingType[] | SyncTimingType>;
-  syncedAt?: Maybe<DateTimeInput>;
-  syncedAt_not?: Maybe<DateTimeInput>;
-  syncedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  syncedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  syncedAt_lt?: Maybe<DateTimeInput>;
-  syncedAt_lte?: Maybe<DateTimeInput>;
-  syncedAt_gt?: Maybe<DateTimeInput>;
-  syncedAt_gte?: Maybe<DateTimeInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
-  OR?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
-  NOT?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
-}
 
 export type TagWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -15758,6 +15787,7 @@ export interface CustomerCreateWithoutBagItemsInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface CustomerDetailCreateOneInput {
@@ -16089,6 +16119,7 @@ export interface CustomerCreateWithoutReservationsInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface BagItemCreateManyWithoutCustomerInput {
@@ -16161,6 +16192,7 @@ export interface CustomerCreateWithoutReferreesInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface CustomerAdmissionsDataCreateOneWithoutCustomerInput {
@@ -16176,6 +16208,7 @@ export interface CustomerAdmissionsDataCreateWithoutCustomerInput {
   allAccessEnabled?: Maybe<Boolean>;
   authorizationsCount: Int;
   authorizationWindowClosesAt?: Maybe<DateTimeInput>;
+  subscribedAt?: Maybe<DateTimeInput>;
 }
 
 export interface UTMDataCreateOneWithoutCustomerInput {
@@ -16210,6 +16243,18 @@ export interface CustomerNotificationBarReceiptCreateWithoutCustomerInput {
   clickCount?: Maybe<Int>;
 }
 
+export interface SyncTimingCreateManyInput {
+  create?: Maybe<SyncTimingCreateInput[] | SyncTimingCreateInput>;
+  connect?: Maybe<SyncTimingWhereUniqueInput[] | SyncTimingWhereUniqueInput>;
+}
+
+export interface SyncTimingCreateInput {
+  id?: Maybe<ID_Input>;
+  type: SyncTimingType;
+  syncedAt: DateTimeInput;
+  detail?: Maybe<String>;
+}
+
 export interface CustomerCreateManyWithoutReferrerInput {
   create?: Maybe<
     CustomerCreateWithoutReferrerInput[] | CustomerCreateWithoutReferrerInput
@@ -16237,6 +16282,7 @@ export interface CustomerCreateWithoutReferrerInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface ReservationReceiptCreateOneWithoutReservationInput {
@@ -16378,6 +16424,7 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerDetailUpdateOneInput {
@@ -16968,6 +17015,7 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface BagItemUpdateManyWithoutCustomerInput {
@@ -17136,6 +17184,7 @@ export interface CustomerUpdateWithoutReferreesDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
@@ -17154,6 +17203,7 @@ export interface CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   allAccessEnabled?: Maybe<Boolean>;
   authorizationsCount?: Maybe<Int>;
   authorizationWindowClosesAt?: Maybe<DateTimeInput>;
+  subscribedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerAdmissionsDataUpsertWithoutCustomerInput {
@@ -17315,6 +17365,117 @@ export interface CustomerNotificationBarReceiptUpdateManyDataInput {
   clickCount?: Maybe<Int>;
 }
 
+export interface SyncTimingUpdateManyInput {
+  create?: Maybe<SyncTimingCreateInput[] | SyncTimingCreateInput>;
+  update?: Maybe<
+    | SyncTimingUpdateWithWhereUniqueNestedInput[]
+    | SyncTimingUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | SyncTimingUpsertWithWhereUniqueNestedInput[]
+    | SyncTimingUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<SyncTimingWhereUniqueInput[] | SyncTimingWhereUniqueInput>;
+  connect?: Maybe<SyncTimingWhereUniqueInput[] | SyncTimingWhereUniqueInput>;
+  set?: Maybe<SyncTimingWhereUniqueInput[] | SyncTimingWhereUniqueInput>;
+  disconnect?: Maybe<SyncTimingWhereUniqueInput[] | SyncTimingWhereUniqueInput>;
+  deleteMany?: Maybe<SyncTimingScalarWhereInput[] | SyncTimingScalarWhereInput>;
+  updateMany?: Maybe<
+    | SyncTimingUpdateManyWithWhereNestedInput[]
+    | SyncTimingUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface SyncTimingUpdateWithWhereUniqueNestedInput {
+  where: SyncTimingWhereUniqueInput;
+  data: SyncTimingUpdateDataInput;
+}
+
+export interface SyncTimingUpdateDataInput {
+  type?: Maybe<SyncTimingType>;
+  syncedAt?: Maybe<DateTimeInput>;
+  detail?: Maybe<String>;
+}
+
+export interface SyncTimingUpsertWithWhereUniqueNestedInput {
+  where: SyncTimingWhereUniqueInput;
+  update: SyncTimingUpdateDataInput;
+  create: SyncTimingCreateInput;
+}
+
+export interface SyncTimingScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  type?: Maybe<SyncTimingType>;
+  type_not?: Maybe<SyncTimingType>;
+  type_in?: Maybe<SyncTimingType[] | SyncTimingType>;
+  type_not_in?: Maybe<SyncTimingType[] | SyncTimingType>;
+  syncedAt?: Maybe<DateTimeInput>;
+  syncedAt_not?: Maybe<DateTimeInput>;
+  syncedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  syncedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  syncedAt_lt?: Maybe<DateTimeInput>;
+  syncedAt_lte?: Maybe<DateTimeInput>;
+  syncedAt_gt?: Maybe<DateTimeInput>;
+  syncedAt_gte?: Maybe<DateTimeInput>;
+  detail?: Maybe<String>;
+  detail_not?: Maybe<String>;
+  detail_in?: Maybe<String[] | String>;
+  detail_not_in?: Maybe<String[] | String>;
+  detail_lt?: Maybe<String>;
+  detail_lte?: Maybe<String>;
+  detail_gt?: Maybe<String>;
+  detail_gte?: Maybe<String>;
+  detail_contains?: Maybe<String>;
+  detail_not_contains?: Maybe<String>;
+  detail_starts_with?: Maybe<String>;
+  detail_not_starts_with?: Maybe<String>;
+  detail_ends_with?: Maybe<String>;
+  detail_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<SyncTimingScalarWhereInput[] | SyncTimingScalarWhereInput>;
+  OR?: Maybe<SyncTimingScalarWhereInput[] | SyncTimingScalarWhereInput>;
+  NOT?: Maybe<SyncTimingScalarWhereInput[] | SyncTimingScalarWhereInput>;
+}
+
+export interface SyncTimingUpdateManyWithWhereNestedInput {
+  where: SyncTimingScalarWhereInput;
+  data: SyncTimingUpdateManyDataInput;
+}
+
+export interface SyncTimingUpdateManyDataInput {
+  type?: Maybe<SyncTimingType>;
+  syncedAt?: Maybe<DateTimeInput>;
+  detail?: Maybe<String>;
+}
+
 export interface CustomerUpsertWithoutReferreesInput {
   update: CustomerUpdateWithoutReferreesDataInput;
   create: CustomerCreateWithoutReferreesInput;
@@ -17367,6 +17528,7 @@ export interface CustomerUpdateWithoutReferrerDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpsertWithWhereUniqueWithoutReferrerInput {
@@ -18225,6 +18387,7 @@ export interface CustomerCreateInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface CustomerUpdateInput {
@@ -18247,6 +18410,7 @@ export interface CustomerUpdateInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpdateManyMutationInput {
@@ -18266,6 +18430,7 @@ export interface CustomerAdmissionsDataCreateInput {
   customer: CustomerCreateOneWithoutAdmissionsInput;
   authorizationsCount: Int;
   authorizationWindowClosesAt?: Maybe<DateTimeInput>;
+  subscribedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerCreateOneWithoutAdmissionsInput {
@@ -18293,6 +18458,7 @@ export interface CustomerCreateWithoutAdmissionsInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface CustomerAdmissionsDataUpdateInput {
@@ -18303,6 +18469,7 @@ export interface CustomerAdmissionsDataUpdateInput {
   customer?: Maybe<CustomerUpdateOneRequiredWithoutAdmissionsInput>;
   authorizationsCount?: Maybe<Int>;
   authorizationWindowClosesAt?: Maybe<DateTimeInput>;
+  subscribedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerUpdateOneRequiredWithoutAdmissionsInput {
@@ -18331,6 +18498,7 @@ export interface CustomerUpdateWithoutAdmissionsDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpsertWithoutAdmissionsInput {
@@ -18345,6 +18513,7 @@ export interface CustomerAdmissionsDataUpdateManyMutationInput {
   allAccessEnabled?: Maybe<Boolean>;
   authorizationsCount?: Maybe<Int>;
   authorizationWindowClosesAt?: Maybe<DateTimeInput>;
+  subscribedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerDetailUpdateInput {
@@ -18438,6 +18607,7 @@ export interface CustomerCreateWithoutMembershipInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface CustomerMembershipUpdateInput {
@@ -18475,6 +18645,7 @@ export interface CustomerUpdateWithoutMembershipDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpsertWithoutMembershipInput {
@@ -18538,6 +18709,7 @@ export interface CustomerCreateWithoutNotificationBarReceiptsInput {
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface CustomerNotificationBarReceiptUpdateInput {
@@ -18573,6 +18745,7 @@ export interface CustomerUpdateWithoutNotificationBarReceiptsDataInput {
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpsertWithoutNotificationBarReceiptsInput {
@@ -19008,6 +19181,7 @@ export interface CustomerUpdateDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpsertNestedInput {
@@ -20836,20 +21010,16 @@ export interface StylePreferencesUpdateManyMutationInput {
   brands?: Maybe<StylePreferencesUpdatebrandsInput>;
 }
 
-export interface SyncTimingCreateInput {
-  id?: Maybe<ID_Input>;
-  type: SyncTimingType;
-  syncedAt: DateTimeInput;
-}
-
 export interface SyncTimingUpdateInput {
   type?: Maybe<SyncTimingType>;
   syncedAt?: Maybe<DateTimeInput>;
+  detail?: Maybe<String>;
 }
 
 export interface SyncTimingUpdateManyMutationInput {
   type?: Maybe<SyncTimingType>;
   syncedAt?: Maybe<DateTimeInput>;
+  detail?: Maybe<String>;
 }
 
 export interface TagCreateInput {
@@ -21027,6 +21197,7 @@ export interface CustomerCreateWithoutUtmInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface UTMDataUpdateInput {
@@ -21064,6 +21235,7 @@ export interface CustomerUpdateWithoutUtmDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpsertWithoutUtmInput {
@@ -25718,6 +25890,15 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  impactSyncTimings: <T = FragmentableArray<SyncTiming>>(args?: {
+    where?: SyncTimingWhereInput;
+    orderBy?: SyncTimingOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -25785,6 +25966,17 @@ export interface CustomerSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  impactSyncTimings: <
+    T = Promise<AsyncIterator<SyncTimingSubscription>>
+  >(args?: {
+    where?: SyncTimingWhereInput;
+    orderBy?: SyncTimingOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -25846,6 +26038,15 @@ export interface CustomerNullablePromise
   >(args?: {
     where?: CustomerNotificationBarReceiptWhereInput;
     orderBy?: CustomerNotificationBarReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  impactSyncTimings: <T = FragmentableArray<SyncTiming>>(args?: {
+    where?: SyncTimingWhereInput;
+    orderBy?: SyncTimingOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -26805,6 +27006,7 @@ export interface CustomerAdmissionsData {
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   authorizationWindowClosesAt?: DateTimeOutput;
+  subscribedAt?: DateTimeOutput;
 }
 
 export interface CustomerAdmissionsDataPromise
@@ -26820,6 +27022,7 @@ export interface CustomerAdmissionsDataPromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   authorizationWindowClosesAt: () => Promise<DateTimeOutput>;
+  subscribedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerAdmissionsDataSubscription
@@ -26835,6 +27038,7 @@ export interface CustomerAdmissionsDataSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   authorizationWindowClosesAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  subscribedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface CustomerAdmissionsDataNullablePromise
@@ -26850,6 +27054,7 @@ export interface CustomerAdmissionsDataNullablePromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   authorizationWindowClosesAt: () => Promise<DateTimeOutput>;
+  subscribedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface UTMData {
@@ -26944,6 +27149,46 @@ export interface CustomerNotificationBarReceiptNullablePromise
   viewCount: () => Promise<Int>;
   clickCount: () => Promise<Int>;
   customer: <T = CustomerPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface SyncTiming {
+  id: ID_Output;
+  type: SyncTimingType;
+  syncedAt: DateTimeOutput;
+  detail?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface SyncTimingPromise extends Promise<SyncTiming>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  type: () => Promise<SyncTimingType>;
+  syncedAt: () => Promise<DateTimeOutput>;
+  detail: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface SyncTimingSubscription
+  extends Promise<AsyncIterator<SyncTiming>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  type: () => Promise<AsyncIterator<SyncTimingType>>;
+  syncedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  detail: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface SyncTimingNullablePromise
+  extends Promise<SyncTiming | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  type: () => Promise<SyncTimingType>;
+  syncedAt: () => Promise<DateTimeOutput>;
+  detail: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -31101,42 +31346,6 @@ export interface AggregateStylePreferencesSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface SyncTiming {
-  id: ID_Output;
-  type: SyncTimingType;
-  syncedAt: DateTimeOutput;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface SyncTimingPromise extends Promise<SyncTiming>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  type: () => Promise<SyncTimingType>;
-  syncedAt: () => Promise<DateTimeOutput>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface SyncTimingSubscription
-  extends Promise<AsyncIterator<SyncTiming>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  type: () => Promise<AsyncIterator<SyncTimingType>>;
-  syncedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface SyncTimingNullablePromise
-  extends Promise<SyncTiming | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  type: () => Promise<SyncTimingType>;
-  syncedAt: () => Promise<DateTimeOutput>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
 export interface SyncTimingConnection {
   pageInfo: PageInfo;
   edges: SyncTimingEdge[];
@@ -32535,6 +32744,7 @@ export interface CustomerAdmissionsDataPreviousValues {
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   authorizationWindowClosesAt?: DateTimeOutput;
+  subscribedAt?: DateTimeOutput;
 }
 
 export interface CustomerAdmissionsDataPreviousValuesPromise
@@ -32549,6 +32759,7 @@ export interface CustomerAdmissionsDataPreviousValuesPromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   authorizationWindowClosesAt: () => Promise<DateTimeOutput>;
+  subscribedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerAdmissionsDataPreviousValuesSubscription
@@ -32563,6 +32774,7 @@ export interface CustomerAdmissionsDataPreviousValuesSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   authorizationWindowClosesAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  subscribedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface CustomerDetailSubscriptionPayload {
@@ -35520,6 +35732,7 @@ export interface SyncTimingPreviousValues {
   id: ID_Output;
   type: SyncTimingType;
   syncedAt: DateTimeOutput;
+  detail?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -35530,6 +35743,7 @@ export interface SyncTimingPreviousValuesPromise
   id: () => Promise<ID_Output>;
   type: () => Promise<SyncTimingType>;
   syncedAt: () => Promise<DateTimeOutput>;
+  detail: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -35540,6 +35754,7 @@ export interface SyncTimingPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   type: () => Promise<AsyncIterator<SyncTimingType>>;
   syncedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  detail: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

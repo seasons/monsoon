@@ -910,6 +910,7 @@ type CustomerAdmissionsData {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime # If this customer did subscribe, when did that happen?
 }
 
 type UTMData {
@@ -960,6 +961,7 @@ type Customer {
       link: TABLE
       onDelete: CASCADE
     )
+  impactSyncTimings: [SyncTiming]
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -1384,12 +1386,14 @@ type AdminActionLogInterpretation {
 enum SyncTimingType {
   Drip
   Next
+  Impact
 }
 
 type SyncTiming {
   id: ID! @id
   type: SyncTimingType!
   syncedAt: DateTime!
+  detail: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
