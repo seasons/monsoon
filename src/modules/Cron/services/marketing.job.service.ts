@@ -12,7 +12,7 @@ import { Parser } from "json2csv"
 import { head, isEmpty } from "lodash"
 import moment from "moment"
 
-const EVERY_15_DAYS_AT_6PM = "0 0 18 1,15 * ?"
+const EVERY_15_DAYS_AT_6PM = "0 0 18 5,20 * ?"
 @Injectable()
 export class MarketingScheduledJobs {
   private readonly logger = new Logger(MarketingScheduledJobs.name)
