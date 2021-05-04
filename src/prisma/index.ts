@@ -3290,7 +3290,8 @@ export type EmailId =
   | "Waitlisted"
   | "WelcomeToSeasons"
   | "UnpaidMembership"
-  | "ReturnToGoodStanding";
+  | "ReturnToGoodStanding"
+  | "RecommendedItemsNurture";
 
 export type UserPushNotificationInterestType =
   | "Bag"

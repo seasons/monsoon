@@ -328,6 +328,7 @@ input UpsertProductInput {
   modelID: String
   modelSizeDisplay: String
   modelSizeName: String
+  modelSizeType: SizeType
   name: String!
   outerMaterials: [String!]!
   productFit: ProductFit
@@ -375,6 +376,7 @@ input CustomProductUpdateInput {
   images: [Upload!]
   modelSizeDisplay: String
   modelSizeName: String
+  modelSizeType: SizeType
   tags: [String!]
   buyNewEnabled: Boolean
   buyUsedEnabled: Boolean

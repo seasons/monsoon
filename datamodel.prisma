@@ -208,6 +208,7 @@ enum EmailId {
   WelcomeToSeasons
   UnpaidMembership
   ReturnToGoodStanding
+  RecommendedItemsNurture
 }
 
 enum PackageTransitEventStatus {

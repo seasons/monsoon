@@ -10530,6 +10530,7 @@ enum EmailId {
   WelcomeToSeasons
   UnpaidMembership
   ReturnToGoodStanding
+  RecommendedItemsNurture
 }
 
 type EmailReceipt implements Node {
@@ -38254,7 +38255,8 @@ export type EmailId =   'CompleteAccount' |
   'Waitlisted' |
   'WelcomeToSeasons' |
   'UnpaidMembership' |
-  'ReturnToGoodStanding'
+  'ReturnToGoodStanding' |
+  'RecommendedItemsNurture'
 
 export type EmailReceiptOrderByInput =   'id_ASC' |
   'id_DESC' |

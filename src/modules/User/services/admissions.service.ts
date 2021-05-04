@@ -1,4 +1,5 @@
 import { ApplicationType } from "@app/decorators/application.decorator"
+import { ProductWithEmailData } from "@app/modules/Email/services/email.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerStatus, CustomerWhereUniqueInput, Product } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
@@ -21,8 +22,8 @@ export interface ZipcodeAllowedResult extends TriageFuncResult {
   }
 }
 export interface ReservableInventoryForCustomerResultDetail {
-  availableBottomStyles: Product[]
-  availableTopStyles: Product[]
+  availableBottomStyles: ProductWithEmailData[]
+  availableTopStyles: ProductWithEmailData[]
 }
 
 export interface HaveSufficientInventoryToServiceCustomerResult
@@ -169,7 +170,7 @@ export class AdmissionsService {
 
   async getAvailableStyles(
     where: CustomerWhereUniqueInput
-  ): Promise<Product[]> {
+  ): Promise<ProductWithEmailData[]> {
     const {
       detail: { availableTopStyles, availableBottomStyles },
     } = await this.haveSufficientInventoryToServiceCustomer(where)
@@ -224,7 +225,7 @@ export class AdmissionsService {
     where: CustomerWhereUniqueInput,
     productType: "Top" | "Bottom"
   ): Promise<{
-    reservableStyles: Product[]
+    reservableStyles: ProductWithEmailData[]
     adjustedReservableStyles: number
   }> {
     const customer = await this.prisma.binding.query.customer(
@@ -288,8 +289,11 @@ export class AdmissionsService {
         brand {
           name
         }
+        category {
+          slug
+        }
     }`
-    )) as Product[]
+    )) as ProductWithEmailData[]
 
     // Find the competing users. Note that we assume all active customers without an active
     // reservation may be a competing user, regardless of how long it's been since their last reservation

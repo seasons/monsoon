@@ -237,7 +237,7 @@ export class ProductService {
         slug,
         type: input.type,
         modelSizeDisplay: input.modelSizeDisplay,
-        sizeType: input.internalSizeType,
+        sizeType: input.modelSizeType,
       })
     }
 
@@ -271,7 +271,6 @@ export class ProductService {
       materialCategory: input.materialCategorySlug && {
         connect: { slug: input.materialCategorySlug },
       },
-      modelHeight: model && model.height,
       model: model && {
         connect: { id: model.id },
       },
@@ -662,6 +661,7 @@ export class ProductService {
       images,
       modelSizeDisplay,
       modelSizeName,
+      modelSizeType,
       tags,
       status,
       variants,
@@ -737,7 +737,7 @@ export class ProductService {
         slug: product.slug,
         type: product.type,
         modelSizeDisplay,
-        sizeType: internalSizeType,
+        sizeType: modelSizeType,
       })
       modelSizeID = modelSize.id
     }
