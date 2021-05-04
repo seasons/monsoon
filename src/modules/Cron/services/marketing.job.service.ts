@@ -12,6 +12,7 @@ import { Parser } from "json2csv"
 import { head, isEmpty } from "lodash"
 import moment from "moment"
 
+const EVERY_15_DAYS_AT_6PM = "0 0 18 1,15 * ?"
 @Injectable()
 export class MarketingScheduledJobs {
   private readonly logger = new Logger(MarketingScheduledJobs.name)
@@ -236,6 +237,45 @@ export class MarketingScheduledJobs {
     })
   }
 
+  @Cron(EVERY_15_DAYS_AT_6PM)
+  async admissableBimonthlyNurture() {
+    // Just in case the cron expression is wrong, put a check
+    // to make sure we're doing it on the 1st and 15th only!
+    const todayDate = new Date().getDate()
+    if (![1, 15].includes(todayDate)) {
+      this.error.captureMessage(
+        `Tried to run admissable bimonthly nurture on wrong day: ${todayDate}`
+      )
+      return
+    }
+
+    const waitlistedAdmissableCustomers = await this.prisma.binding.query.customers(
+      {
+        where: {
+          AND: [{ admissions: { admissable: true } }, { status: "Waitlisted" }],
+        },
+      },
+      `{
+      id
+      user {
+        id
+        email
+        firstName
+      }
+    }`
+    )
+
+    for (const cust of waitlistedAdmissableCustomers) {
+      const availableStyles = await this.admissions.getAvailableStyles({
+        id: cust.id,
+      })
+      await this.email.sendRecommendedItemsNurtureEmail(
+        cust.user,
+        availableStyles
+      )
+    }
+  }
+
   /*  
     Reference: https://docs.google.com/spreadsheets/d/1aAD5kDpGgYQfOwl7UBPRq8Q9jOiYej8EwXc2Z1t8ABU/edit?usp=sharing
     Reference: https://impact-helpdesk.freshdesk.com/support/solutions/articles/48001162591-submit-conversion-data-via-ftp-or-email
@@ -303,25 +343,25 @@ export class MarketingScheduledJobs {
         },
       },
       `{
-      id
-      createdAt
-      authorizedAt
-      admissions {
         id
-        subscribedAt
-      }
-      user {
-        id
-      }
-      impactSyncTimings {
-        type
-        detail
-      }
-      detail {
-        id
-        discoveryReference
-      }
-    }`
+        createdAt
+        authorizedAt
+        admissions {
+          id
+          subscribedAt
+        }
+        user {
+          id
+        }
+        impactSyncTimings {
+          type
+          detail
+        }
+        detail {
+          id
+          discoveryReference
+        }
+      }`
     )
 
     const syncTimingUpdates = []
