@@ -257,6 +257,7 @@ export class ProductService {
         "photographyStatus",
         "buyNewEnabled",
       ]),
+      styles: input?.styles?.length > 0 && { set: input.styles },
       season: productSeason && { connect: { id: productSeason.id } },
       brand: {
         connect: { id: input.brandID },
@@ -802,6 +803,7 @@ export class ProductService {
         modelSize: modelSizeID && { connect: { id: modelSizeID } },
         tags: tagIDs && { set: tagIDs },
         status,
+        styles: data?.styles?.length > 0 && { set: data.styles },
         season: productSeason && { connect: { id: productSeason.id } },
         photographyStatus,
       },

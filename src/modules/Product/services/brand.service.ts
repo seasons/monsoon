@@ -25,6 +25,7 @@ export class BrandService {
 
     return await this.prisma.client.createBrand({
       ...input,
+      styles: input?.styles?.length > 0 && { set: input.styles },
       logoImage: logoID && { connect: { id: logoID } },
       images: imageIDs && { connect: imageIDs },
     })
@@ -96,6 +97,7 @@ export class BrandService {
       where,
       data: {
         ...data,
+        styles: data?.styles?.length > 0 && { set: data.styles },
         logoImage: brandImages &&
           brandImages.logoID && { connect: { id: brandImages.logoID } },
         images: brandImages &&

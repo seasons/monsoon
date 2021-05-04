@@ -4318,6 +4318,7 @@ type Brand implements Node {
   featured: Boolean!
   websiteUrl: String
   shopifyShop: ShopifyShop
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4347,6 +4348,7 @@ input BrandCreateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandCreatestylesInput
   logoImage: ImageCreateOneInput
   products: ProductCreateManyWithoutBrandInput
   images: ImageCreateManyInput
@@ -4361,6 +4363,10 @@ input BrandCreateOneInput {
 input BrandCreateOneWithoutProductsInput {
   create: BrandCreateWithoutProductsInput
   connect: BrandWhereUniqueInput
+}
+
+input BrandCreatestylesInput {
+  set: [CustomerStyle!]
 }
 
 input BrandCreateWithoutProductsInput {
@@ -4378,6 +4384,7 @@ input BrandCreateWithoutProductsInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandCreatestylesInput
   logoImage: ImageCreateOneInput
   images: ImageCreateManyInput
   shopifyShop: ShopifyShopCreateOneInput
@@ -4442,6 +4449,7 @@ type BrandPreviousValues {
   published: Boolean!
   featured: Boolean!
   websiteUrl: String
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4509,6 +4517,7 @@ input BrandUpdateDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandUpdatestylesInput
   logoImage: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
@@ -4529,6 +4538,7 @@ input BrandUpdateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandUpdatestylesInput
   logoImage: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
@@ -4549,6 +4559,7 @@ input BrandUpdateManyMutationInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandUpdatestylesInput
 }
 
 input BrandUpdateOneInput {
@@ -4567,6 +4578,10 @@ input BrandUpdateOneRequiredWithoutProductsInput {
   upsert: BrandUpsertWithoutProductsInput
 }
 
+input BrandUpdatestylesInput {
+  set: [CustomerStyle!]
+}
+
 input BrandUpdateWithoutProductsDataInput {
   slug: String
   brandCode: String
@@ -4581,6 +4596,7 @@ input BrandUpdateWithoutProductsDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandUpdatestylesInput
   logoImage: ImageUpdateOneInput
   images: ImageUpdateManyInput
   shopifyShop: ShopifyShopUpdateOneInput
@@ -19953,6 +19969,7 @@ type Product implements Node {
   tier: ProductTier
   type: ProductType
   variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -19993,6 +20010,7 @@ input ProductCreateInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
@@ -20052,6 +20070,10 @@ input ProductCreateouterMaterialsInput {
   set: [String!]
 }
 
+input ProductCreatestylesInput {
+  set: [CustomerStyle!]
+}
+
 input ProductCreateWithoutBrandInput {
   id: ID
   architecture: ProductArchitecture
@@ -20068,6 +20090,7 @@ input ProductCreateWithoutBrandInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   category: CategoryCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
   functions: ProductFunctionCreateManyInput
@@ -20098,6 +20121,7 @@ input ProductCreateWithoutCategoryInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   brand: BrandCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
   functions: ProductFunctionCreateManyInput
@@ -20128,6 +20152,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
@@ -20158,6 +20183,7 @@ input ProductCreateWithoutModelInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
@@ -20188,6 +20214,7 @@ input ProductCreateWithoutTagsInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
@@ -20218,6 +20245,7 @@ input ProductCreateWithoutVariantsInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
@@ -21341,6 +21369,7 @@ type ProductPreviousValues {
   slug: String!
   status: ProductStatus
   type: ProductType
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -22761,6 +22790,7 @@ input ProductUpdateDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
@@ -22795,6 +22825,7 @@ input ProductUpdateInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
@@ -22825,6 +22856,7 @@ input ProductUpdateManyDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateManyInput {
@@ -22854,6 +22886,7 @@ input ProductUpdateManyMutationInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateManyWithoutBrandInput {
@@ -22939,6 +22972,10 @@ input ProductUpdateouterMaterialsInput {
   set: [String!]
 }
 
+input ProductUpdatestylesInput {
+  set: [CustomerStyle!]
+}
+
 input ProductUpdateWithoutBrandDataInput {
   architecture: ProductArchitecture
   description: String
@@ -22954,6 +22991,7 @@ input ProductUpdateWithoutBrandDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
   functions: ProductFunctionUpdateManyInput
@@ -22983,6 +23021,7 @@ input ProductUpdateWithoutCategoryDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
   functions: ProductFunctionUpdateManyInput
@@ -23012,6 +23051,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
@@ -23041,6 +23081,7 @@ input ProductUpdateWithoutModelDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
@@ -23070,6 +23111,7 @@ input ProductUpdateWithoutTagsDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
@@ -23099,6 +23141,7 @@ input ProductUpdateWithoutVariantsDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
@@ -40483,6 +40526,7 @@ export interface BrandCreateInput {
   published?: Boolean | null
   featured?: Boolean | null
   websiteUrl?: String | null
+  styles?: BrandCreatestylesInput | null
   logoImage?: ImageCreateOneInput | null
   products?: ProductCreateManyWithoutBrandInput | null
   images?: ImageCreateManyInput | null
@@ -40497,6 +40541,10 @@ export interface BrandCreateOneInput {
 export interface BrandCreateOneWithoutProductsInput {
   create?: BrandCreateWithoutProductsInput | null
   connect?: BrandWhereUniqueInput | null
+}
+
+export interface BrandCreatestylesInput {
+  set?: CustomerStyle[] | CustomerStyle | null
 }
 
 export interface BrandCreateWithoutProductsInput {
@@ -40514,6 +40562,7 @@ export interface BrandCreateWithoutProductsInput {
   published?: Boolean | null
   featured?: Boolean | null
   websiteUrl?: String | null
+  styles?: BrandCreatestylesInput | null
   logoImage?: ImageCreateOneInput | null
   images?: ImageCreateManyInput | null
   shopifyShop?: ShopifyShopCreateOneInput | null
@@ -40544,6 +40593,7 @@ export interface BrandUpdateDataInput {
   published?: Boolean | null
   featured?: Boolean | null
   websiteUrl?: String | null
+  styles?: BrandUpdatestylesInput | null
   logoImage?: ImageUpdateOneInput | null
   products?: ProductUpdateManyWithoutBrandInput | null
   images?: ImageUpdateManyInput | null
@@ -40564,6 +40614,7 @@ export interface BrandUpdateInput {
   published?: Boolean | null
   featured?: Boolean | null
   websiteUrl?: String | null
+  styles?: BrandUpdatestylesInput | null
   logoImage?: ImageUpdateOneInput | null
   products?: ProductUpdateManyWithoutBrandInput | null
   images?: ImageUpdateManyInput | null
@@ -40584,6 +40635,7 @@ export interface BrandUpdateManyMutationInput {
   published?: Boolean | null
   featured?: Boolean | null
   websiteUrl?: String | null
+  styles?: BrandUpdatestylesInput | null
 }
 
 export interface BrandUpdateOneInput {
@@ -40602,6 +40654,10 @@ export interface BrandUpdateOneRequiredWithoutProductsInput {
   upsert?: BrandUpsertWithoutProductsInput | null
 }
 
+export interface BrandUpdatestylesInput {
+  set?: CustomerStyle[] | CustomerStyle | null
+}
+
 export interface BrandUpdateWithoutProductsDataInput {
   slug?: String | null
   brandCode?: String | null
@@ -40616,6 +40672,7 @@ export interface BrandUpdateWithoutProductsDataInput {
   published?: Boolean | null
   featured?: Boolean | null
   websiteUrl?: String | null
+  styles?: BrandUpdatestylesInput | null
   logoImage?: ImageUpdateOneInput | null
   images?: ImageUpdateManyInput | null
   shopifyShop?: ShopifyShopUpdateOneInput | null
@@ -47399,6 +47456,7 @@ export interface ProductCreateInput {
   type?: ProductType | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
+  styles?: ProductCreatestylesInput | null
   brand: BrandCreateOneWithoutProductsInput
   category: CategoryCreateOneWithoutProductsInput
   color: ColorCreateOneInput
@@ -47458,6 +47516,10 @@ export interface ProductCreateouterMaterialsInput {
   set?: String[] | String | null
 }
 
+export interface ProductCreatestylesInput {
+  set?: CustomerStyle[] | CustomerStyle | null
+}
+
 export interface ProductCreateWithoutBrandInput {
   id?: ID_Input | null
   architecture?: ProductArchitecture | null
@@ -47474,6 +47536,7 @@ export interface ProductCreateWithoutBrandInput {
   type?: ProductType | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
+  styles?: ProductCreatestylesInput | null
   category: CategoryCreateOneWithoutProductsInput
   color: ColorCreateOneInput
   functions?: ProductFunctionCreateManyInput | null
@@ -47504,6 +47567,7 @@ export interface ProductCreateWithoutCategoryInput {
   type?: ProductType | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
+  styles?: ProductCreatestylesInput | null
   brand: BrandCreateOneWithoutProductsInput
   color: ColorCreateOneInput
   functions?: ProductFunctionCreateManyInput | null
@@ -47534,6 +47598,7 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   type?: ProductType | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
+  styles?: ProductCreatestylesInput | null
   brand: BrandCreateOneWithoutProductsInput
   category: CategoryCreateOneWithoutProductsInput
   color: ColorCreateOneInput
@@ -47564,6 +47629,7 @@ export interface ProductCreateWithoutModelInput {
   type?: ProductType | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
+  styles?: ProductCreatestylesInput | null
   brand: BrandCreateOneWithoutProductsInput
   category: CategoryCreateOneWithoutProductsInput
   color: ColorCreateOneInput
@@ -47594,6 +47660,7 @@ export interface ProductCreateWithoutTagsInput {
   type?: ProductType | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
+  styles?: ProductCreatestylesInput | null
   brand: BrandCreateOneWithoutProductsInput
   category: CategoryCreateOneWithoutProductsInput
   color: ColorCreateOneInput
@@ -47624,6 +47691,7 @@ export interface ProductCreateWithoutVariantsInput {
   type?: ProductType | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
+  styles?: ProductCreatestylesInput | null
   brand: BrandCreateOneWithoutProductsInput
   category: CategoryCreateOneWithoutProductsInput
   color: ColorCreateOneInput
@@ -48633,6 +48701,7 @@ export interface ProductUpdateDataInput {
   type?: ProductType | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
+  styles?: ProductUpdatestylesInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
   color?: ColorUpdateOneRequiredInput | null
@@ -48667,6 +48736,7 @@ export interface ProductUpdateInput {
   type?: ProductType | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
+  styles?: ProductUpdatestylesInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
   color?: ColorUpdateOneRequiredInput | null
@@ -48697,6 +48767,7 @@ export interface ProductUpdateManyDataInput {
   type?: ProductType | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
+  styles?: ProductUpdatestylesInput | null
 }
 
 export interface ProductUpdateManyInput {
@@ -48726,6 +48797,7 @@ export interface ProductUpdateManyMutationInput {
   type?: ProductType | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
+  styles?: ProductUpdatestylesInput | null
 }
 
 export interface ProductUpdateManyWithoutBrandInput {
@@ -48811,6 +48883,10 @@ export interface ProductUpdateouterMaterialsInput {
   set?: String[] | String | null
 }
 
+export interface ProductUpdatestylesInput {
+  set?: CustomerStyle[] | CustomerStyle | null
+}
+
 export interface ProductUpdateWithoutBrandDataInput {
   architecture?: ProductArchitecture | null
   description?: String | null
@@ -48826,6 +48902,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   type?: ProductType | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
+  styles?: ProductUpdatestylesInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
   color?: ColorUpdateOneRequiredInput | null
   functions?: ProductFunctionUpdateManyInput | null
@@ -48855,6 +48932,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   type?: ProductType | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
+  styles?: ProductUpdatestylesInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   color?: ColorUpdateOneRequiredInput | null
   functions?: ProductFunctionUpdateManyInput | null
@@ -48884,6 +48962,7 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
   type?: ProductType | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
+  styles?: ProductUpdatestylesInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
   color?: ColorUpdateOneRequiredInput | null
@@ -48913,6 +48992,7 @@ export interface ProductUpdateWithoutModelDataInput {
   type?: ProductType | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
+  styles?: ProductUpdatestylesInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
   color?: ColorUpdateOneRequiredInput | null
@@ -48942,6 +49022,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   type?: ProductType | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
+  styles?: ProductUpdatestylesInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
   color?: ColorUpdateOneRequiredInput | null
@@ -48971,6 +49052,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   type?: ProductType | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
+  styles?: ProductUpdatestylesInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
   color?: ColorUpdateOneRequiredInput | null
@@ -56239,6 +56321,7 @@ export interface Brand extends Node {
   featured: Boolean
   websiteUrl?: String | null
   shopifyShop?: ShopifyShop | null
+  styles: Array<CustomerStyle>
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -56277,6 +56360,7 @@ export interface BrandPreviousValues {
   published: Boolean
   featured: Boolean
   websiteUrl?: String | null
+  styles: Array<CustomerStyle>
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -57655,6 +57739,7 @@ export interface Product extends Node {
   tier?: ProductTier | null
   type?: ProductType | null
   variants?: Array<ProductVariant> | null
+  styles: Array<CustomerStyle>
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -57854,6 +57939,7 @@ export interface ProductPreviousValues {
   slug: String
   status?: ProductStatus | null
   type?: ProductType | null
+  styles: Array<CustomerStyle>
   createdAt: DateTime
   updatedAt: DateTime
 }

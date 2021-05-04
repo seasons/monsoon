@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Fri Apr 30 2021 17:06:42 GMT-0400 (Eastern Daylight Time)
+# timestamp: Tue May 04 2021 09:51:12 GMT-0700 (Pacific Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -4921,6 +4921,7 @@ type Brand implements Node {
   featured: Boolean!
   websiteUrl: String
   shopifyShop: ShopifyShop
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4956,6 +4957,7 @@ input BrandCreateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandCreatestylesInput
   logoImage: ImageCreateOneInput
   products: ProductCreateManyWithoutBrandInput
   images: ImageCreateManyInput
@@ -4970,6 +4972,10 @@ input BrandCreateOneInput {
 input BrandCreateOneWithoutProductsInput {
   create: BrandCreateWithoutProductsInput
   connect: BrandWhereUniqueInput
+}
+
+input BrandCreatestylesInput {
+  set: [CustomerStyle!]
 }
 
 input BrandCreateWithoutProductsInput {
@@ -4987,6 +4993,7 @@ input BrandCreateWithoutProductsInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandCreatestylesInput
   logoImage: ImageCreateOneInput
   images: ImageCreateManyInput
   shopifyShop: ShopifyShopCreateOneInput
@@ -5057,6 +5064,7 @@ type BrandPreviousValues {
   published: Boolean!
   featured: Boolean!
   websiteUrl: String
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5132,6 +5140,7 @@ input BrandUpdateDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandUpdatestylesInput
   logoImage: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
@@ -5152,6 +5161,7 @@ input BrandUpdateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandUpdatestylesInput
   logoImage: ImageUpdateOneInput
   products: ProductUpdateManyWithoutBrandInput
   images: ImageUpdateManyInput
@@ -5172,6 +5182,7 @@ input BrandUpdateManyMutationInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandUpdatestylesInput
 }
 
 input BrandUpdateOneInput {
@@ -5190,6 +5201,10 @@ input BrandUpdateOneRequiredWithoutProductsInput {
   upsert: BrandUpsertWithoutProductsInput
 }
 
+input BrandUpdatestylesInput {
+  set: [CustomerStyle!]
+}
+
 input BrandUpdateWithoutProductsDataInput {
   slug: String
   brandCode: String
@@ -5204,6 +5219,7 @@ input BrandUpdateWithoutProductsDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandUpdatestylesInput
   logoImage: ImageUpdateOneInput
   images: ImageUpdateManyInput
   shopifyShop: ShopifyShopUpdateOneInput
@@ -27729,6 +27745,7 @@ type Product implements Node {
     first: Int
     last: Int
   ): [ProductVariant!]
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -27775,6 +27792,7 @@ input ProductCreateInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
@@ -27834,6 +27852,10 @@ input ProductCreateouterMaterialsInput {
   set: [String!]
 }
 
+input ProductCreatestylesInput {
+  set: [CustomerStyle!]
+}
+
 input ProductCreateWithoutBrandInput {
   id: ID
   architecture: ProductArchitecture
@@ -27850,6 +27872,7 @@ input ProductCreateWithoutBrandInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   category: CategoryCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
   functions: ProductFunctionCreateManyInput
@@ -27880,6 +27903,7 @@ input ProductCreateWithoutCategoryInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   brand: BrandCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
   functions: ProductFunctionCreateManyInput
@@ -27910,6 +27934,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
@@ -27940,6 +27965,7 @@ input ProductCreateWithoutModelInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
@@ -27970,6 +27996,7 @@ input ProductCreateWithoutTagsInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
@@ -28000,6 +28027,7 @@ input ProductCreateWithoutVariantsInput {
   type: ProductType
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  styles: ProductCreatestylesInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   color: ColorCreateOneInput!
@@ -29553,6 +29581,7 @@ type ProductPreviousValues {
   slug: String!
   status: ProductStatus
   type: ProductType
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -31631,6 +31660,7 @@ input ProductUpdateDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
@@ -31665,6 +31695,7 @@ input ProductUpdateInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
@@ -31695,6 +31726,7 @@ input ProductUpdateManyDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateManyInput {
@@ -31724,6 +31756,7 @@ input ProductUpdateManyMutationInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateManyWithoutBrandInput {
@@ -31809,6 +31842,10 @@ input ProductUpdateouterMaterialsInput {
   set: [String!]
 }
 
+input ProductUpdatestylesInput {
+  set: [CustomerStyle!]
+}
+
 input ProductUpdateWithoutBrandDataInput {
   architecture: ProductArchitecture
   description: String
@@ -31824,6 +31861,7 @@ input ProductUpdateWithoutBrandDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
   functions: ProductFunctionUpdateManyInput
@@ -31853,6 +31891,7 @@ input ProductUpdateWithoutCategoryDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
   functions: ProductFunctionUpdateManyInput
@@ -31882,6 +31921,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
@@ -31911,6 +31951,7 @@ input ProductUpdateWithoutModelDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
@@ -31940,6 +31981,7 @@ input ProductUpdateWithoutTagsDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput
@@ -31969,6 +32011,7 @@ input ProductUpdateWithoutVariantsDataInput {
   type: ProductType
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  styles: ProductUpdatestylesInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   color: ColorUpdateOneRequiredInput

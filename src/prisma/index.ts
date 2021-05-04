@@ -3625,6 +3625,14 @@ export type ImageOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type CustomerStyle =
+  | "AvantGarde"
+  | "Bold"
+  | "Classic"
+  | "Minimalist"
+  | "Streetwear"
+  | "Techwear";
+
 export type CategoryOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -3775,14 +3783,6 @@ export type CustomerStatus =
   | "PaymentFailed"
   | "Paused"
   | "Deactivated";
-
-export type CustomerStyle =
-  | "AvantGarde"
-  | "Bold"
-  | "Classic"
-  | "Minimalist"
-  | "Streetwear"
-  | "Techwear";
 
 export type Plan = "AllAccess" | "Essential";
 
@@ -11183,6 +11183,7 @@ export interface ProductCreateWithoutVariantsInput {
   tags?: Maybe<TagCreateManyWithoutProductsInput>;
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface BrandCreateOneWithoutProductsInput {
@@ -11208,6 +11209,7 @@ export interface BrandCreateWithoutProductsInput {
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
   shopifyShop?: Maybe<ShopifyShopCreateOneInput>;
+  styles?: Maybe<BrandCreatestylesInput>;
 }
 
 export interface ImageCreateManyInput {
@@ -11230,6 +11232,10 @@ export interface ShopifyShopCreateInput {
 
 export interface ShopifyShopCreatescopeInput {
   set?: Maybe<String[] | String>;
+}
+
+export interface BrandCreatestylesInput {
+  set?: Maybe<CustomerStyle[] | CustomerStyle>;
 }
 
 export interface CategoryCreateOneWithoutProductsInput {
@@ -11301,6 +11307,7 @@ export interface ProductCreateWithoutCategoryInput {
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface ColorCreateOneInput {
@@ -11421,6 +11428,7 @@ export interface BrandCreateInput {
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
   shopifyShop?: Maybe<ShopifyShopCreateOneInput>;
+  styles?: Maybe<BrandCreatestylesInput>;
 }
 
 export interface ProductCreateManyWithoutBrandInput {
@@ -11460,6 +11468,7 @@ export interface ProductCreateWithoutBrandInput {
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface ProductFunctionCreateManyInput {
@@ -11758,6 +11767,10 @@ export interface PhysicalProductQualityReportCreatedamageTypesInput {
   set?: Maybe<PhysicalProductDamageType[] | PhysicalProductDamageType>;
 }
 
+export interface ProductCreatestylesInput {
+  set?: Maybe<CustomerStyle[] | CustomerStyle>;
+}
+
 export interface ProductCreateManyInput {
   create?: Maybe<ProductCreateInput[] | ProductCreateInput>;
   connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
@@ -11794,6 +11807,7 @@ export interface ProductCreateInput {
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface FitPicReportCreateManyWithoutReportedInput {
@@ -13000,6 +13014,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface BrandUpdateOneRequiredWithoutProductsInput {
@@ -13026,6 +13041,7 @@ export interface BrandUpdateWithoutProductsDataInput {
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
   shopifyShop?: Maybe<ShopifyShopUpdateOneInput>;
+  styles?: Maybe<BrandUpdatestylesInput>;
 }
 
 export interface ImageUpdateOneInput {
@@ -13215,6 +13231,10 @@ export interface ShopifyShopUpsertNestedInput {
   create: ShopifyShopCreateInput;
 }
 
+export interface BrandUpdatestylesInput {
+  set?: Maybe<CustomerStyle[] | CustomerStyle>;
+}
+
 export interface BrandUpsertWithoutProductsInput {
   update: BrandUpdateWithoutProductsDataInput;
   create: BrandCreateWithoutProductsInput;
@@ -13330,6 +13350,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ColorUpdateOneRequiredInput {
@@ -13598,6 +13619,7 @@ export interface BrandUpdateDataInput {
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
   shopifyShop?: Maybe<ShopifyShopUpdateOneInput>;
+  styles?: Maybe<BrandUpdatestylesInput>;
 }
 
 export interface ProductUpdateManyWithoutBrandInput {
@@ -13657,6 +13679,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductFunctionUpdateManyInput {
@@ -14925,6 +14948,10 @@ export interface ProductVariantUpdateManyDataInput {
   stored?: Maybe<Int>;
 }
 
+export interface ProductUpdatestylesInput {
+  set?: Maybe<CustomerStyle[] | CustomerStyle>;
+}
+
 export interface ProductUpsertWithWhereUniqueWithoutBrandInput {
   where: ProductWhereUniqueInput;
   update: ProductUpdateWithoutBrandDataInput;
@@ -15081,6 +15108,7 @@ export interface ProductUpdateManyDataInput {
   slug?: Maybe<String>;
   status?: Maybe<ProductStatus>;
   type?: Maybe<ProductType>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface BrandUpsertNestedInput {
@@ -15278,6 +15306,7 @@ export interface ProductUpdateDataInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueNestedInput {
@@ -18260,6 +18289,7 @@ export interface BrandUpdateInput {
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
   shopifyShop?: Maybe<ShopifyShopUpdateOneInput>;
+  styles?: Maybe<BrandUpdatestylesInput>;
 }
 
 export interface BrandUpdateManyMutationInput {
@@ -18276,6 +18306,7 @@ export interface BrandUpdateManyMutationInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
+  styles?: Maybe<BrandUpdatestylesInput>;
 }
 
 export interface CategoryUpdateInput {
@@ -19697,6 +19728,7 @@ export interface ProductUpdateInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductUpdateManyMutationInput {
@@ -19714,6 +19746,7 @@ export interface ProductUpdateManyMutationInput {
   slug?: Maybe<String>;
   status?: Maybe<ProductStatus>;
   type?: Maybe<ProductType>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductFunctionUpdateInput {
@@ -19768,6 +19801,7 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface ProductMaterialCategoryUpdateInput {
@@ -19833,6 +19867,7 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutMaterialCategoryInput {
@@ -19890,6 +19925,7 @@ export interface ProductCreateWithoutModelInput {
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface ProductModelUpdateInput {
@@ -19955,6 +19991,7 @@ export interface ProductUpdateWithoutModelDataInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutModelInput {
@@ -21065,6 +21102,7 @@ export interface ProductCreateWithoutTagsInput {
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface TagUpdateInput {
@@ -21130,6 +21168,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutTagsInput {
@@ -24146,6 +24185,7 @@ export interface Product {
   slug: String;
   status?: ProductStatus;
   type?: ProductType;
+  styles: CustomerStyle[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -24211,6 +24251,7 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  styles: () => Promise<CustomerStyle[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -24278,6 +24319,7 @@ export interface ProductSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  styles: () => Promise<AsyncIterator<CustomerStyle[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -24345,6 +24387,7 @@ export interface ProductNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  styles: () => Promise<CustomerStyle[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -24364,6 +24407,7 @@ export interface Brand {
   published: Boolean;
   featured: Boolean;
   websiteUrl?: String;
+  styles: CustomerStyle[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -24403,6 +24447,7 @@ export interface BrandPromise extends Promise<Brand>, Fragmentable {
   featured: () => Promise<Boolean>;
   websiteUrl: () => Promise<String>;
   shopifyShop: <T = ShopifyShopPromise>() => T;
+  styles: () => Promise<CustomerStyle[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -24444,6 +24489,7 @@ export interface BrandSubscription
   featured: () => Promise<AsyncIterator<Boolean>>;
   websiteUrl: () => Promise<AsyncIterator<String>>;
   shopifyShop: <T = ShopifyShopSubscription>() => T;
+  styles: () => Promise<AsyncIterator<CustomerStyle[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -24485,6 +24531,7 @@ export interface BrandNullablePromise
   featured: () => Promise<Boolean>;
   websiteUrl: () => Promise<String>;
   shopifyShop: <T = ShopifyShopPromise>() => T;
+  styles: () => Promise<CustomerStyle[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -32417,6 +32464,7 @@ export interface BrandPreviousValues {
   published: Boolean;
   featured: Boolean;
   websiteUrl?: String;
+  styles: CustomerStyle[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -32438,6 +32486,7 @@ export interface BrandPreviousValuesPromise
   published: () => Promise<Boolean>;
   featured: () => Promise<Boolean>;
   websiteUrl: () => Promise<String>;
+  styles: () => Promise<CustomerStyle[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -32459,6 +32508,7 @@ export interface BrandPreviousValuesSubscription
   published: () => Promise<AsyncIterator<Boolean>>;
   featured: () => Promise<AsyncIterator<Boolean>>;
   websiteUrl: () => Promise<AsyncIterator<String>>;
+  styles: () => Promise<AsyncIterator<CustomerStyle[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -34169,6 +34219,7 @@ export interface ProductPreviousValues {
   slug: String;
   status?: ProductStatus;
   type?: ProductType;
+  styles: CustomerStyle[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -34191,6 +34242,7 @@ export interface ProductPreviousValuesPromise
   slug: () => Promise<String>;
   status: () => Promise<ProductStatus>;
   type: () => Promise<ProductType>;
+  styles: () => Promise<CustomerStyle[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -34213,6 +34265,7 @@ export interface ProductPreviousValuesSubscription
   slug: () => Promise<AsyncIterator<String>>;
   status: () => Promise<AsyncIterator<ProductStatus>>;
   type: () => Promise<AsyncIterator<ProductType>>;
+  styles: () => Promise<AsyncIterator<CustomerStyle[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

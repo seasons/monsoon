@@ -319,6 +319,7 @@ type Brand {
   featured: Boolean! @default(value: false)
   websiteUrl: String
   shopifyShop: ShopifyShop
+  styles: [CustomerStyle!] @scalarList(strategy: RELATION)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -437,6 +438,7 @@ type Product {
   tier: ProductTier @relation(name: "ProductToProductTier", onDelete: SET_NULL)
   type: ProductType
   variants: [ProductVariant!]! @relation(link: TABLE, onDelete: CASCADE)
+  styles: [CustomerStyle!] @scalarList(strategy: RELATION)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
