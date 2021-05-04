@@ -242,7 +242,7 @@ export class MarketingScheduledJobs {
     // Just in case the cron expression is wrong, put a check
     // to make sure we're doing it on the 1st and 15th only!
     const todayDate = new Date().getDate()
-    if (![1, 15].includes(todayDate)) {
+    if (![5, 20].includes(todayDate)) {
       this.error.captureMessage(
         `Tried to run admissable bimonthly nurture on wrong day: ${todayDate}`
       )
