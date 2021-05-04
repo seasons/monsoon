@@ -2568,15 +2568,15 @@
     "@angular-devkit/core" "9.1.9"
     "@angular-devkit/schematics" "9.1.9"
 
-"@seasons/wind@^2.5.20":
-  version "2.5.20"
-  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.5.20.tgz#a0ad13ef87b867784e8a41934446bb9ac659c1e2"
-  integrity sha512-z5CynNGRYa1PVrmR7DFi5+BOYjZLhP0KipkWnwyqoXjWNovZjXDcIliEdDbxfdcZCkxk7mbABySmHYv18YkBnw==
+"@seasons/wind@^2.6.0":
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.6.0.tgz#5eb110010aaba07eaa547186a12ecf2754b5dc10"
+  integrity sha512-/VwklWCvk6wnYGqsnC0Ob0gHvBuChfAAxAnS2eLdOOgwWiX+Qg55sfrl9488LmVEEXY0vf86xvsBfMlttLIv9Q==
   dependencies:
     "@types/node" "^14.0.23"
     child_process "^1.0.2"
     handlebars "^4.7.6"
-    lodash "^4.17.20"
+    lodash "^4.17.21"
     mjml "^4.7.0-beta.1"
     moment "^2.29.1"
     open "^7.3.0"
@@ -11793,7 +11793,7 @@ lodash@^4.17.19, lodash@^4.17.20:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
 
-lodash@^4.17.4:
+lodash@^4.17.21, lodash@^4.17.4:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==

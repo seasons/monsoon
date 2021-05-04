@@ -1,6 +1,16 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ImageService } from "@app/modules/Image/services/image.service"
-import { ID_Input, Order, Product, User } from "@app/prisma"
+import {
+  Brand,
+  Category,
+  ID_Input,
+  Image,
+  Order,
+  Product,
+  ProductVariant,
+  User,
+} from "@app/prisma"
+import { Product as ProductBinding } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import { ProductGridItem } from "@seasons/wind"
 import { head, pick, sampleSize, uniq } from "lodash"
@@ -9,6 +19,16 @@ import { PrismaService } from "../../../prisma/prisma.service"
 
 export type MonsoonProductGridItem = ProductGridItem & {
   id: ID_Input
+}
+
+export type ProductWithEmailData = Pick<
+  ProductBinding,
+  "id" | "type" | "name" | "retailPrice"
+> & {
+  images: Pick<Image, "url">
+  variants: Pick<ProductVariant, "displayShort">
+  brand: Pick<Brand, "name">
+  category: Pick<Category, "slug">
 }
 
 @Injectable()
@@ -20,25 +40,31 @@ export class EmailUtilsService {
   ) {}
 
   productInfoForGridData = `
-  id
-  type
-  name
-  brand {
+    id
+    type
     name
-  }
-  retailPrice
-  variants {
-    displayShort
-  }
-  images {
-    url
-  }
+    brand {
+      name
+    }
+    retailPrice
+    variants {
+      displayShort
+    }
+    images {
+      url
+    }
+    category {
+      slug
+    }
+    slug
     `
 
   async createGridPayload(products: { id: string }[]) {
     const productsWithData = await this.prisma.binding.query.products(
       {
-        where: { id_in: products.map(a => a.id) },
+        where: {
+          AND: [{ id_in: products.map(a => a.id) }],
+        },
       },
       `{${this.productInfoForGridData}}`
     )
@@ -50,7 +76,9 @@ export class EmailUtilsService {
   ): Promise<MonsoonProductGridItem[]> {
     const xLatestProducts = await this.prisma.binding.query.products(
       {
-        where: { status: "Available" },
+        where: {
+          AND: [{ status: "Available" }, { category: { slug_not: "tees" } }],
+        },
         orderBy: "publishedAt_DESC",
         first: numProducts,
       },
@@ -62,9 +90,12 @@ export class EmailUtilsService {
   async getXReservableProductsForUser(
     numProducts: number,
     user: User,
-    products: Product[]
+    products: ProductWithEmailData[]
   ): Promise<MonsoonProductGridItem[] | null> {
     let returnProducts = []
+
+    // Filter out tees. We don't want those in emails
+    const productsWithoutTees = products.filter(a => a.category.slug !== "tees")
 
     // Filter out from products we've already emailed to the user
     const customer = head(
@@ -81,7 +112,7 @@ export class EmailUtilsService {
       )
     ) as any
     const emailedProductsIDs = customer.emailedProducts.map(a => a.id)
-    const reservableProductsWeHaventAlreadySent = products.filter(
+    const reservableProductsWeHaventAlreadySent = productsWithoutTees.filter(
       a => !emailedProductsIDs.includes(a.id)
     )
 
@@ -92,9 +123,11 @@ export class EmailUtilsService {
           this.productToGridPayload
         )
       )
-    } else if (products.length >= numProducts) {
+    } else if (productsWithoutTees.length >= numProducts) {
       returnProducts = await Promise.all(
-        sampleSize(products, numProducts).map(this.productToGridPayload)
+        sampleSize(productsWithoutTees, numProducts).map(
+          this.productToGridPayload
+        )
       )
     }
 
@@ -186,7 +219,7 @@ export class EmailUtilsService {
       { fm: "jpg" }
     )
     const payload = {
-      ...pick(product, ["id", "name", "retailPrice"]),
+      ...pick(product, ["id", "name", "retailPrice", "slug"]),
       sizes: `${sizes}`.replace(/,/g, " "),
       // @ts-ignore
       smallImageSrc,
