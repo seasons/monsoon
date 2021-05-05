@@ -203,6 +203,7 @@ type Product @cacheControl(maxAge: 200) {
   externalURL: String
   buyNewEnabled: Boolean!
   buyUsedEnabled: Boolean!
+  styles: [CustomerStyle!]
   buyUsedPrice: Int
   materialCategory: ProductMaterialCategory
   model: ProductModel
@@ -304,6 +305,7 @@ type Brand @cacheControl(maxAge: 1000) {
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
+  styles: [CustomerStyle!]
   shopifyShop: ShopifyShop
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -338,7 +340,7 @@ input UpsertProductInput {
   tags: [String!]!
   type: ProductType!
   variants: [UpsertVariantInput!]!
-
+  styles: [CustomerStyle!]
   # Is this a new one?
   createNew: Boolean!
 }
@@ -367,7 +369,7 @@ input CustomProductUpdateInput {
   variants: ProductVariantUpdateManyWithoutProductInput
   publishedAt: DateTime
   photographyStatus: PhotographyStatus
-
+  styles: [CustomerStyle!]
   # Custom fields
   bottomSizeType: BottomSizeType
   functions: [String!]
@@ -409,6 +411,7 @@ input CustomBrandCreateInput {
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
+  styles: [CustomerStyle!]
   products: ProductCreateManyWithoutBrandInput
   # Custom fields
   logoImage: Upload
@@ -432,6 +435,7 @@ input CustomBrandUpdateInput {
   websiteUrl: String
   # Custom fields
   logoImage: Upload
+  styles: [CustomerStyle!]
   images: [Upload!]
   shopifyShop: ShopifyShopInput
 }

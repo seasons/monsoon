@@ -2040,6 +2040,7 @@ type Brand {
   featured: Boolean!
   websiteUrl: String
   shopifyShop: ShopifyShop
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2069,6 +2070,7 @@ input BrandCreateInput {
   featured: Boolean
   websiteUrl: String
   shopifyShop: ShopifyShopCreateOneInput
+  styles: BrandCreatestylesInput
 }
 
 input BrandCreateOneInput {
@@ -2079,6 +2081,10 @@ input BrandCreateOneInput {
 input BrandCreateOneWithoutProductsInput {
   create: BrandCreateWithoutProductsInput
   connect: BrandWhereUniqueInput
+}
+
+input BrandCreatestylesInput {
+  set: [CustomerStyle!]
 }
 
 input BrandCreateWithoutProductsInput {
@@ -2099,6 +2105,7 @@ input BrandCreateWithoutProductsInput {
   featured: Boolean
   websiteUrl: String
   shopifyShop: ShopifyShopCreateOneInput
+  styles: BrandCreatestylesInput
 }
 
 type BrandEdge {
@@ -2156,6 +2163,7 @@ type BrandPreviousValues {
   published: Boolean!
   featured: Boolean!
   websiteUrl: String
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2208,6 +2216,7 @@ input BrandUpdateDataInput {
   featured: Boolean
   websiteUrl: String
   shopifyShop: ShopifyShopUpdateOneInput
+  styles: BrandUpdatestylesInput
 }
 
 input BrandUpdateInput {
@@ -2228,6 +2237,7 @@ input BrandUpdateInput {
   featured: Boolean
   websiteUrl: String
   shopifyShop: ShopifyShopUpdateOneInput
+  styles: BrandUpdatestylesInput
 }
 
 input BrandUpdateManyMutationInput {
@@ -2244,6 +2254,7 @@ input BrandUpdateManyMutationInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandUpdatestylesInput
 }
 
 input BrandUpdateOneInput {
@@ -2260,6 +2271,10 @@ input BrandUpdateOneRequiredWithoutProductsInput {
   update: BrandUpdateWithoutProductsDataInput
   upsert: BrandUpsertWithoutProductsInput
   connect: BrandWhereUniqueInput
+}
+
+input BrandUpdatestylesInput {
+  set: [CustomerStyle!]
 }
 
 input BrandUpdateWithoutProductsDataInput {
@@ -2279,6 +2294,7 @@ input BrandUpdateWithoutProductsDataInput {
   featured: Boolean
   websiteUrl: String
   shopifyShop: ShopifyShopUpdateOneInput
+  styles: BrandUpdatestylesInput
 }
 
 input BrandUpsertNestedInput {
@@ -11404,6 +11420,7 @@ type Product {
   tier: ProductTier
   type: ProductType
   variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -11453,6 +11470,7 @@ input ProductCreateInput {
   tier: ProductTierCreateOneInput
   type: ProductType
   variants: ProductVariantCreateManyWithoutProductInput
+  styles: ProductCreatestylesInput
 }
 
 input ProductCreateManyInput {
@@ -11499,6 +11517,10 @@ input ProductCreateouterMaterialsInput {
   set: [String!]
 }
 
+input ProductCreatestylesInput {
+  set: [CustomerStyle!]
+}
+
 input ProductCreateWithoutBrandInput {
   id: ID
   architecture: ProductArchitecture
@@ -11527,6 +11549,7 @@ input ProductCreateWithoutBrandInput {
   tier: ProductTierCreateOneInput
   type: ProductType
   variants: ProductVariantCreateManyWithoutProductInput
+  styles: ProductCreatestylesInput
 }
 
 input ProductCreateWithoutCategoryInput {
@@ -11557,6 +11580,7 @@ input ProductCreateWithoutCategoryInput {
   tier: ProductTierCreateOneInput
   type: ProductType
   variants: ProductVariantCreateManyWithoutProductInput
+  styles: ProductCreatestylesInput
 }
 
 input ProductCreateWithoutMaterialCategoryInput {
@@ -11587,6 +11611,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   tier: ProductTierCreateOneInput
   type: ProductType
   variants: ProductVariantCreateManyWithoutProductInput
+  styles: ProductCreatestylesInput
 }
 
 input ProductCreateWithoutModelInput {
@@ -11617,6 +11642,7 @@ input ProductCreateWithoutModelInput {
   tier: ProductTierCreateOneInput
   type: ProductType
   variants: ProductVariantCreateManyWithoutProductInput
+  styles: ProductCreatestylesInput
 }
 
 input ProductCreateWithoutTagsInput {
@@ -11647,6 +11673,7 @@ input ProductCreateWithoutTagsInput {
   tier: ProductTierCreateOneInput
   type: ProductType
   variants: ProductVariantCreateManyWithoutProductInput
+  styles: ProductCreatestylesInput
 }
 
 input ProductCreateWithoutVariantsInput {
@@ -11677,6 +11704,7 @@ input ProductCreateWithoutVariantsInput {
   tags: TagCreateManyWithoutProductsInput
   tier: ProductTierCreateOneInput
   type: ProductType
+  styles: ProductCreatestylesInput
 }
 
 type ProductEdge {
@@ -12353,6 +12381,7 @@ type ProductPreviousValues {
   slug: String!
   status: ProductStatus
   type: ProductType
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -13100,6 +13129,7 @@ input ProductUpdateDataInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateinnerMaterialsInput {
@@ -13134,6 +13164,7 @@ input ProductUpdateInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateManyDataInput {
@@ -13151,6 +13182,7 @@ input ProductUpdateManyDataInput {
   slug: String
   status: ProductStatus
   type: ProductType
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateManyInput {
@@ -13180,6 +13212,7 @@ input ProductUpdateManyMutationInput {
   slug: String
   status: ProductStatus
   type: ProductType
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateManyWithoutBrandInput {
@@ -13265,6 +13298,10 @@ input ProductUpdateouterMaterialsInput {
   set: [String!]
 }
 
+input ProductUpdatestylesInput {
+  set: [CustomerStyle!]
+}
+
 input ProductUpdateWithoutBrandDataInput {
   architecture: ProductArchitecture
   category: CategoryUpdateOneRequiredWithoutProductsInput
@@ -13292,6 +13329,7 @@ input ProductUpdateWithoutBrandDataInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateWithoutCategoryDataInput {
@@ -13321,6 +13359,7 @@ input ProductUpdateWithoutCategoryDataInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateWithoutMaterialCategoryDataInput {
@@ -13350,6 +13389,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateWithoutModelDataInput {
@@ -13379,6 +13419,7 @@ input ProductUpdateWithoutModelDataInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateWithoutTagsDataInput {
@@ -13408,6 +13449,7 @@ input ProductUpdateWithoutTagsDataInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateWithoutVariantsDataInput {
@@ -13437,6 +13479,7 @@ input ProductUpdateWithoutVariantsDataInput {
   tags: TagUpdateManyWithoutProductsInput
   tier: ProductTierUpdateOneInput
   type: ProductType
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateWithWhereUniqueNestedInput {
