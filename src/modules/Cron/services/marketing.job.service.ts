@@ -413,7 +413,7 @@ export class MarketingScheduledJobs {
       const shouldUploadInitialSubscription =
         isEmpty(
           impactSyncTimings.filter(a => a.detail === "InitialSubscription")
-        ) && !!cust.admissions.subscribedAt
+        ) && !!cust.admissions?.subscribedAt
 
       if (shouldUploadAccountCreation) {
         csvData.push({
