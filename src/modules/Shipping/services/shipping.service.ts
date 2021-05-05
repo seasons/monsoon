@@ -2,6 +2,8 @@ import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { Customer, ID_Input, Location, ShippingCode, User } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
+import { ApolloError } from "apollo-server-errors"
+import { pick } from "lodash"
 import shippo from "shippo"
 
 import {
@@ -153,8 +155,28 @@ export class ShippingService {
     })
 
     const validationResults = result.validation_results
+
+    // Patchwork case for invalid city/state/zip combo, pending
+    // response from shippo about why their validator doesn't properly
+    // handle this case
     const isValid = result.validation_results.is_valid
+    const invalidCityStateZipCombo = validationResults.messages
+      .map(a => a.code)
+      .includes("Invalid City/State/Zip")
+    if (isValid && invalidCityStateZipCombo) {
+      throw new ApolloError("Invalid City/State/Zip Combo", "400", {
+        suggestedAddress: pick(result, [
+          "city",
+          "country",
+          "state",
+          "street1",
+          "street2",
+          "zip",
+        ]),
+      })
+    }
     const message = validationResults?.messages?.[0]
+
     return {
       isValid,
       code: message?.code,
