@@ -144,6 +144,7 @@ export class ProductUtilsService {
     const brands = args.brands || [brand]
     const orderBy = args.orderBy || "createdAt_DESC"
     const sizes = args.sizes || []
+    const colors = args.colors || []
 
     // Add filtering by sizes in query
     const where = args.where || {}
@@ -174,6 +175,7 @@ export class ProductUtilsService {
     let brandFilter = { where: {} }
     let categoryFilter = { where: {} }
     let variantsFilter = { where: {} }
+    let colorsFilter = { where: {} }
 
     let paramFilters = {}
 
@@ -191,6 +193,10 @@ export class ProductUtilsService {
           brand: { slug_in: args.brands },
         },
       }
+    }
+
+    if (args.colors?.length > 0) {
+      colorsFilter = { where: { color: { slug_in: args.colors } } }
     }
 
     const andArray = []
@@ -335,6 +341,7 @@ export class ProductUtilsService {
         ...brandFilter.where,
         ...categoryFilter.where,
         ...variantsFilter.where,
+        ...colorsFilter.where,
       },
     }
   }

@@ -39,6 +39,7 @@ type Collection {
     category: String
     brand: String
     brands: [String]
+    colors: [String]
     where: ProductWhereInput
     orderBy: ProductOrderByInput
     skip: Int
