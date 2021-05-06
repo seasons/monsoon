@@ -59,7 +59,7 @@ type PhysicalProductPrice {
   buyUsedEnabled: Boolean!
 }
 
-type PhysicalProduct {
+type PhysicalProduct @cacheControl(maxAge: 0) {
   id: ID!
   seasonsUID: String!
   location: Location
