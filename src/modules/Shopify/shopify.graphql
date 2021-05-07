@@ -7,7 +7,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ShopifyProductVariant]!
+  ): [ShopifyProductVariant]! @cacheControl(maxAge: 0)
   shopifyShops(
     where: ShopifyShopWhereInput
     orderBy: ShopifyShopOrderByInput
@@ -16,7 +16,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ShopifyShop]! @hasRole(roles: [Admin])
+  ): [ShopifyShop]! @hasRole(roles: [Admin]) @cacheControl(maxAge: 0)
 }
 
 type Mutation {

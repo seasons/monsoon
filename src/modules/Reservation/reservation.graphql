@@ -1,6 +1,7 @@
 type Query {
   reservation(where: ReservationWhereUniqueInput!): Reservation
     @hasRole(roles: [Customer, Admin, Partner])
+    @cacheControl(maxAge: 0)
   reservations(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput
@@ -9,7 +10,9 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Reservation]! @hasRole(roles: [Customer, Admin, Partner])
+  ): [Reservation]!
+    @hasRole(roles: [Customer, Admin, Partner])
+    @cacheControl(maxAge: 0)
   reservationsConnection(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput
@@ -18,8 +21,10 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): ReservationConnection! @hasRole(roles: [Customer, Admin, Partner])
-  reservationFeedback: ReservationFeedback
+  ): ReservationConnection!
+    @hasRole(roles: [Customer, Admin, Partner])
+    @cacheControl(maxAge: 0)
+  reservationFeedback: ReservationFeedback @cacheControl(maxAge: 0)
 }
 
 type Mutation {

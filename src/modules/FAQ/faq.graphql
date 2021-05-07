@@ -1,5 +1,5 @@
 type Query {
-  faq(sectionType: SectionType): Faq
+  faq(sectionType: SectionType): Faq @cacheControl(maxAge: 0)
 }
 
 type Faq {
