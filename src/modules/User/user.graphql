@@ -3,8 +3,10 @@
 # import AppRoute from "../PushNotification/pushNotification.graphql"
 
 type Query {
-  me: Me
-  user(where: UserWhereUniqueInput!): User @hasRole(roles: [Admin])
+  me: Me @cacheControl(maxAge: 0)
+  user(where: UserWhereUniqueInput!): User
+    @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 0)
   users(
     where: UserWhereInput
     orderBy: UserOrderByInput
@@ -13,7 +15,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [User]! @hasRole(roles: [Admin])
+  ): [User]! @hasRole(roles: [Admin]) @cacheControl(maxAge: 0)
   usersConnection(
     where: UserWhereInput
     orderBy: UserOrderByInput
@@ -22,8 +24,8 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): UserConnection! @hasRole(roles: [Admin])
-  zipcodeServiced(zipcode: String!): Boolean!
+  ): UserConnection! @hasRole(roles: [Admin]) @cacheControl(maxAge: 0)
+  zipcodeServiced(zipcode: String!): Boolean! @cacheControl(maxAge: 0)
 }
 
 type Mutation {

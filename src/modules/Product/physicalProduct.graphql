@@ -1,5 +1,6 @@
 type Query {
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
+    @cacheControl(maxAge: 0)
   physicalProducts(
     where: PhysicalProductWhereInput
     orderBy: PhysicalProductOrderByInput
@@ -8,7 +9,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [PhysicalProduct]!
+  ): [PhysicalProduct]! @cacheControl(maxAge: 0)
   physicalProductsConnection(
     where: PhysicalProductWhereInput
     orderBy: PhysicalProductOrderByInput
@@ -17,7 +18,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): PhysicalProductConnection!
+  ): PhysicalProductConnection! @cacheControl(maxAge: 0)
   warehouseLocations(
     where: WarehouseLocationWhereInput
     orderBy: WarehouseLocationOrderByInput
@@ -26,9 +27,10 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [WarehouseLocation]! @hasRole(roles: [Admin])
+  ): [WarehouseLocation]! @hasRole(roles: [Admin]) @cacheControl(maxAge: 0)
   generatedSeasonsUIDs(input: PhysicalProductSeasonsUIDsInput!): [String!]
-  surpriseProductVariants: [ProductVariant]!
+    @cacheControl(maxAge: 0)
+  surpriseProductVariants: [ProductVariant]! @cacheControl(maxAge: 0)
   newestBrandProducts(
     first: Int
     skip: Int
@@ -36,7 +38,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Product!]
+  ): [Product!] @cacheControl(maxAge: 0)
 }
 
 type Mutation {
