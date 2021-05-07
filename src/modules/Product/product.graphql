@@ -87,6 +87,7 @@ type Query {
   productsConnection(
     tops: [String]
     bottoms: [String]
+    colors: [String]
     availableOnly: Boolean
     sizes: [String!]
     category: String
