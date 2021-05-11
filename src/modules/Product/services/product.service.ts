@@ -803,7 +803,7 @@ export class ProductService {
         modelSize: modelSizeID && { connect: { id: modelSizeID } },
         tags: tagIDs && { set: tagIDs },
         status,
-        styles: data?.styles?.length > 0 && { set: data.styles },
+        styles: data?.styles?.length > 0 ? { set: data.styles } : { set: [] },
         season: productSeason && { connect: { id: productSeason.id } },
         photographyStatus,
       },
