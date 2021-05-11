@@ -1,7 +1,7 @@
 import { Customer } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import { Image, Product } from "@app/prisma"
+import { Image, Product, ProductModel } from "@app/prisma"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
@@ -26,20 +26,28 @@ export class ProductFieldsResolver {
   }
 
   @ResolveField()
-  async modelHeight(@Parent() product) {
-    const productWithModel = await this.prisma.binding.query.product(
-      {
-        where: { id: product.id },
+  async modelHeight(
+    @Parent() product,
+    @Loader({
+      params: {
+        query: "products",
+        info: `
+        {
+          id
+          model {
+            id
+            height
+          }
+        }
+      `,
       },
-      `
-    {
-      model {
-        id
-        height
-      }
-    }
-    `
-    )
+    })
+    productLoader: PrismaDataLoader<{
+      id: string
+      model: Pick<ProductModel, "id" | "height">
+    }>
+  ) {
+    const productWithModel = await productLoader.load(product.id)
 
     return productWithModel.model?.height
   }
