@@ -31,10 +31,7 @@ yarn prisma:deploy
 # 4. Install monsoon-cli (command line interface)
 yarn global add ts-node && yarn link
 
-# 6. Seed the database
-monsoon airtable:prisma all --prisma local
-
-# 7. Start server (runs on http://localhost:4000/playground) and open GraphQL Playground
+# 5. Start server (runs on http://localhost:4000/playground) and open GraphQL Playground
 yarn start
 ```
 
@@ -92,6 +89,10 @@ For details on the arguments and options for each command, use `--help`. e.g `mo
 Note that you may need to run `yarn tsc` to generate the files used by the monsoon cli.
 
 > **Note**: We recommend that you're using `yarn dev` during development as it will give you access to the GraphQL API or your server (defined by the [application schema](./src/schema.graphql)) as well as to the Prisma API directly (defined by the [Prisma database schema](./generated/prisma.graphql)). If you're starting the server with `yarn start`, you'll only be able to access the API of the application schema.
+
+### Some useful prisma links
+
+[PRISMA MIGRATE](https://www.prisma.io/docs/concepts/components/prisma-migrate)
 
 ### Testing
 
