@@ -271,31 +271,26 @@ export class ProductVariantFieldsResolver {
   }
 
   @ResolveField()
-  async size(@Parent() parent) {
-    const productVariant = await this.prisma.binding.query.productVariant(
-      {
-        where: {
-          id: parent.id,
-        },
-      },
-      `
-    {
-      id
-      internalSize {
-        top {
-          letter
-        }
-        bottom {
+  async size(
+    @Parent() parent,
+    @Loader({
+      params: {
+        query: "productVariants",
+        info: `
+        {
           id
-          type
-          value
+          internalSize {
+            id
+            display
+          }
         }
-        display
-        productType
-      }
-    }
-    `
-    )
+        `,
+      },
+    })
+    productVariantLoader: PrismaDataLoader<ProductVariant>
+  ) {
+    console.log("run size field resolver on prod var")
+    const productVariant = await productVariantLoader.load(parent.id)
     return productVariant?.internalSize?.display
   }
 
