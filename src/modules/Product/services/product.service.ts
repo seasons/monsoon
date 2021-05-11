@@ -257,7 +257,7 @@ export class ProductService {
         "photographyStatus",
         "buyNewEnabled",
       ]),
-      styles: input?.styles?.length > 0 && { set: input.styles },
+      styles: input?.styles?.length > 0 ? { set: input.styles } : { set: [] },
       season: productSeason && { connect: { id: productSeason.id } },
       brand: {
         connect: { id: input.brandID },
