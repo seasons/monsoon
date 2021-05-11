@@ -104,7 +104,6 @@ export class ProductQueriesResolver {
 
   @Query()
   async productVariant(@Args() args, @Info() info, @Context() ctx) {
-    console.log("run product variant resolver")
     return await this.prisma.binding.query.productVariant(
       args,
       addFragmentToInfo(
