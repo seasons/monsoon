@@ -22,7 +22,19 @@ export class ProductQueriesResolver {
     })
 
     return data
-    // return await this.prisma.binding.query.product(
+  }
+
+  @Query()
+  async products(@Args() { where }, @Info() info) {
+    const select = new PrismaSelect(info).value
+    const data = await this.prisma.client2.product.findMany({
+      where,
+      ...select,
+    })
+
+    return data
+
+    // return await this.productService.getProducts(
     //   args,
     //   addFragmentToInfo(
     //     info,
@@ -30,18 +42,6 @@ export class ProductQueriesResolver {
     //     `fragment EnsureId on Product { id }`
     //   )
     // )
-  }
-
-  @Query()
-  async products(@Args() args, @Info() info) {
-    return await this.productService.getProducts(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on Product { id }`
-      )
-    )
   }
 
   @Query()
