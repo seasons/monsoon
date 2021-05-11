@@ -46,7 +46,6 @@ export class ProductQueriesResolver {
 
   @Query()
   async productsConnection(@Args() args, @Info() info) {
-    console.log(`run productsConnection resolver`)
     const result = await this.productService.getProductsConnection(
       args,
       addFragmentToInfo(
@@ -55,8 +54,6 @@ export class ProductQueriesResolver {
         `fragment EnsureId on ProductConnection { edges { node { id } } }`
       )
     )
-    console.log(`products connection query done`)
-    console.log(util.inspect(result, { depth: null }))
     return result
   }
 
