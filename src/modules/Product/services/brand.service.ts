@@ -97,7 +97,7 @@ export class BrandService {
       where,
       data: {
         ...data,
-        styles: data?.styles?.length > 0 && { set: data.styles },
+        styles: data?.styles?.length > 0 ? { set: data.styles } : { set: [] },
         logoImage: brandImages &&
           brandImages.logoID && { connect: { id: brandImages.logoID } },
         images: brandImages &&
