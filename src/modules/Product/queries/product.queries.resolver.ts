@@ -1,4 +1,9 @@
+import * as util from "util"
+
 import { Customer, User } from "@app/decorators"
+import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
+import { Product } from "@app/prisma/prisma.binding"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
@@ -13,18 +18,45 @@ export class ProductQueriesResolver {
   ) {}
 
   @Query()
-  async product(@Args() args, @Info() info, @User() user) {
+  async product(
+    @Args() { id, slug },
+    @Info() info,
+    @User() user,
+    @Loader({
+      params: {
+        query: "products",
+        formatWhere: keys => ({ slug_in: keys }),
+        getKeys: a => [a.slug],
+        infoFragment: `fragment EnsureId on Product { id }`,
+      },
+      includeInfo: true,
+    })
+    productBySlugLoader: PrismaDataLoader<Product>,
+    @Loader({
+      params: {
+        query: "products",
+        formatWhere: keys => ({ id_in: keys }),
+        getKeys: a => [a.id],
+        infoFragment: `fragment EnsureId on Product { id }`,
+      },
+      includeInfo: true,
+    })
+    productByIdLoader: PrismaDataLoader<Product>
+  ) {
     const scope = !!user ? "PRIVATE" : "PUBLIC"
     info.cacheControl.setCacheHint({ maxAge: 600, scope })
+    console.log(`run product resolver`)
 
-    return await this.prisma.binding.query.product(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on Product { id }`
-      )
-    )
+    let prod
+    if (!!slug) {
+      prod = await productBySlugLoader.load(slug)
+    } else if (!!id) {
+      prod = await productByIdLoader.load(id)
+    } else {
+      throw new Error(`Expected slug or id in product resolver`)
+    }
+
+    return prod
   }
 
   @Query()
@@ -41,7 +73,8 @@ export class ProductQueriesResolver {
 
   @Query()
   async productsConnection(@Args() args, @Info() info) {
-    return await this.productService.getProductsConnection(
+    console.log(`run productsConnection resolver`)
+    const result = await this.productService.getProductsConnection(
       args,
       addFragmentToInfo(
         info,
@@ -49,6 +82,9 @@ export class ProductQueriesResolver {
         `fragment EnsureId on ProductConnection { edges { node { id } } }`
       )
     )
+    console.log(`products connection query done`)
+    console.log(util.inspect(result, { depth: null }))
+    return result
   }
 
   @Query()
@@ -77,6 +113,7 @@ export class ProductQueriesResolver {
     @Info() info,
     @Customer() customer
   ) {
+    console.log("run product variant connection resolver")
     if (args.personalizedForCurrentUser) {
       const products = await this.productService.availableProductVariantsConnectionForCustomer(
         customer.id,
@@ -98,6 +135,7 @@ export class ProductQueriesResolver {
 
   @Query()
   async productVariant(@Args() args, @Info() info, @Context() ctx) {
+    console.log("run product variant resolver")
     return await this.prisma.binding.query.productVariant(
       args,
       addFragmentToInfo(
