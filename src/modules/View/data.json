@@ -39,6 +39,7 @@
         { "label": "Press article", "value": "pressArticle" },
         { "label": "Blog", "value": "blog" },
         { "label": "Instagram", "value": "instagram" },
+        { "label": "TikTok", "value": "tiktok" },
         { "label": "Google", "value": "google" },
         { "label": "Podcast", "value": "podcast" },
         { "label": "Throwing Fits", "value": "throwingFits" },
