@@ -1,4 +1,9 @@
+import * as util from "util"
+
 import { Customer, User } from "@app/decorators"
+import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
+import { Product } from "@app/prisma/prisma.binding"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
@@ -41,7 +46,7 @@ export class ProductQueriesResolver {
 
   @Query()
   async productsConnection(@Args() args, @Info() info) {
-    return await this.productService.getProductsConnection(
+    const result = await this.productService.getProductsConnection(
       args,
       addFragmentToInfo(
         info,
@@ -49,6 +54,7 @@ export class ProductQueriesResolver {
         `fragment EnsureId on ProductConnection { edges { node { id } } }`
       )
     )
+    return result
   }
 
   @Query()

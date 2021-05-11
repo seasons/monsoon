@@ -9,7 +9,7 @@ export class PrismaService implements UpdatableConnection {
   binding: PrismaBinding = new PrismaBinding({
     secret: process.env.PRISMA_SECRET,
     endpoint: process.env.PRISMA_ENDPOINT,
-    debug: false,
+    debug: false, 
   })
   client: PrismaClient = prisma
 
