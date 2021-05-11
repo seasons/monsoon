@@ -83,7 +83,6 @@ export class ProductQueriesResolver {
     @Info() info,
     @Customer() customer
   ) {
-    console.log("run product variant connection resolver")
     if (args.personalizedForCurrentUser) {
       const products = await this.productService.availableProductVariantsConnectionForCustomer(
         customer.id,
