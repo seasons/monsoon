@@ -18,45 +18,18 @@ export class ProductQueriesResolver {
   ) {}
 
   @Query()
-  async product(
-    @Args() { id, slug },
-    @Info() info,
-    @User() user,
-    @Loader({
-      params: {
-        query: "products",
-        formatWhere: keys => ({ slug_in: keys }),
-        getKeys: a => [a.slug],
-        infoFragment: `fragment EnsureId on Product { id }`,
-      },
-      includeInfo: true,
-    })
-    productBySlugLoader: PrismaDataLoader<Product>,
-    @Loader({
-      params: {
-        query: "products",
-        formatWhere: keys => ({ id_in: keys }),
-        getKeys: a => [a.id],
-        infoFragment: `fragment EnsureId on Product { id }`,
-      },
-      includeInfo: true,
-    })
-    productByIdLoader: PrismaDataLoader<Product>
-  ) {
+  async product(@Args() args, @Info() info, @User() user) {
     const scope = !!user ? "PRIVATE" : "PUBLIC"
     info.cacheControl.setCacheHint({ maxAge: 600, scope })
-    console.log(`run product resolver`)
 
-    let prod
-    if (!!slug) {
-      prod = await productBySlugLoader.load(slug)
-    } else if (!!id) {
-      prod = await productByIdLoader.load(id)
-    } else {
-      throw new Error(`Expected slug or id in product resolver`)
-    }
-
-    return prod
+    return await this.prisma.binding.query.product(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on Product { id }`
+      )
+    )
   }
 
   @Query()

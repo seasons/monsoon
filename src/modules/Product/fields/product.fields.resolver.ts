@@ -214,7 +214,6 @@ export class ProductFieldsResolver {
       images: Pick<Image, "id" | "url" | "updatedAt">[]
     }>
   ) {
-    console.log(`run images field resolver`)
     // Fetch the product's images sorted by url to ensure order is maintained
     // since image URLs for a product are the same except for the index at the end
     const product = await productLoader.load(parent.id)

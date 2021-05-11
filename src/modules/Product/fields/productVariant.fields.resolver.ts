@@ -289,7 +289,6 @@ export class ProductVariantFieldsResolver {
     })
     productVariantLoader: PrismaDataLoader<ProductVariant>
   ) {
-    console.log("run size field resolver on prod var")
     const productVariant = await productVariantLoader.load(parent.id)
     return productVariant?.internalSize?.display
   }
