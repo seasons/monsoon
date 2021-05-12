@@ -18558,9 +18558,11 @@ type PhysicalProductQualityReport implements Node {
   damageType: PhysicalProductDamageType
   damageTypes: [PhysicalProductDamageType!]!
   notes: String
+  score: Int
   physicalProduct: PhysicalProduct!
   createdAt: DateTime!
   updatedAt: DateTime!
+  published: Boolean!
 }
 
 """A connection to a list of items."""
@@ -18581,6 +18583,8 @@ input PhysicalProductQualityReportCreateInput {
   id: ID
   damageType: PhysicalProductDamageType
   notes: String
+  score: Int
+  published: Boolean
   damageTypes: PhysicalProductQualityReportCreatedamageTypesInput
   user: UserCreateOneInput!
   physicalProduct: PhysicalProductCreateOneWithoutReportsInput!
@@ -18595,6 +18599,8 @@ input PhysicalProductQualityReportCreateWithoutPhysicalProductInput {
   id: ID
   damageType: PhysicalProductDamageType
   notes: String
+  score: Int
+  published: Boolean
   damageTypes: PhysicalProductQualityReportCreatedamageTypesInput
   user: UserCreateOneInput!
 }
@@ -18615,10 +18621,14 @@ enum PhysicalProductQualityReportOrderByInput {
   damageType_DESC
   notes_ASC
   notes_DESC
+  score_ASC
+  score_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  published_ASC
+  published_DESC
 }
 
 type PhysicalProductQualityReportPreviousValues {
@@ -18626,8 +18636,10 @@ type PhysicalProductQualityReportPreviousValues {
   damageType: PhysicalProductDamageType
   damageTypes: [PhysicalProductDamageType!]!
   notes: String
+  score: Int
   createdAt: DateTime!
   updatedAt: DateTime!
+  published: Boolean!
 }
 
 input PhysicalProductQualityReportScalarWhereInput {
@@ -18729,6 +18741,28 @@ input PhysicalProductQualityReportScalarWhereInput {
 
   """All values not ending with the given string."""
   notes_not_ends_with: String
+  score: Int
+
+  """All values that are not equal to given value."""
+  score_not: Int
+
+  """All values that are contained in given list."""
+  score_in: [Int!]
+
+  """All values that are not contained in given list."""
+  score_not_in: [Int!]
+
+  """All values less than the given value."""
+  score_lt: Int
+
+  """All values less than or equal the given value."""
+  score_lte: Int
+
+  """All values greater than the given value."""
+  score_gt: Int
+
+  """All values greater than or equal the given value."""
+  score_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -18773,6 +18807,10 @@ input PhysicalProductQualityReportScalarWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  published: Boolean
+
+  """All values that are not equal to given value."""
+  published_not: Boolean
 }
 
 type PhysicalProductQualityReportSubscriptionPayload {
@@ -18819,6 +18857,8 @@ input PhysicalProductQualityReportUpdatedamageTypesInput {
 input PhysicalProductQualityReportUpdateInput {
   damageType: PhysicalProductDamageType
   notes: String
+  score: Int
+  published: Boolean
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   user: UserUpdateOneRequiredInput
   physicalProduct: PhysicalProductUpdateOneRequiredWithoutReportsInput
@@ -18827,12 +18867,16 @@ input PhysicalProductQualityReportUpdateInput {
 input PhysicalProductQualityReportUpdateManyDataInput {
   damageType: PhysicalProductDamageType
   notes: String
+  score: Int
+  published: Boolean
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
 }
 
 input PhysicalProductQualityReportUpdateManyMutationInput {
   damageType: PhysicalProductDamageType
   notes: String
+  score: Int
+  published: Boolean
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
 }
 
@@ -18856,6 +18900,8 @@ input PhysicalProductQualityReportUpdateManyWithWhereNestedInput {
 input PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput {
   damageType: PhysicalProductDamageType
   notes: String
+  score: Int
+  published: Boolean
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   user: UserUpdateOneRequiredInput
 }
@@ -18970,6 +19016,28 @@ input PhysicalProductQualityReportWhereInput {
 
   """All values not ending with the given string."""
   notes_not_ends_with: String
+  score: Int
+
+  """All values that are not equal to given value."""
+  score_not: Int
+
+  """All values that are contained in given list."""
+  score_in: [Int!]
+
+  """All values that are not contained in given list."""
+  score_not_in: [Int!]
+
+  """All values less than the given value."""
+  score_lt: Int
+
+  """All values less than or equal the given value."""
+  score_lte: Int
+
+  """All values greater than the given value."""
+  score_gt: Int
+
+  """All values greater than or equal the given value."""
+  score_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -19014,6 +19082,10 @@ input PhysicalProductQualityReportWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  published: Boolean
+
+  """All values that are not equal to given value."""
+  published_not: Boolean
   user: UserWhereInput
   physicalProduct: PhysicalProductWhereInput
 }
@@ -38667,10 +38739,14 @@ export type PhysicalProductQualityReportOrderByInput =   'id_ASC' |
   'damageType_DESC' |
   'notes_ASC' |
   'notes_DESC' |
+  'score_ASC' |
+  'score_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
-  'updatedAt_DESC'
+  'updatedAt_DESC' |
+  'published_ASC' |
+  'published_DESC'
 
 export type PhysicalProductStatus =   'New' |
   'Used' |
@@ -46733,6 +46809,8 @@ export interface PhysicalProductQualityReportCreateInput {
   id?: ID_Input | null
   damageType?: PhysicalProductDamageType | null
   notes?: String | null
+  score?: Int | null
+  published?: Boolean | null
   damageTypes?: PhysicalProductQualityReportCreatedamageTypesInput | null
   user: UserCreateOneInput
   physicalProduct: PhysicalProductCreateOneWithoutReportsInput
@@ -46747,6 +46825,8 @@ export interface PhysicalProductQualityReportCreateWithoutPhysicalProductInput {
   id?: ID_Input | null
   damageType?: PhysicalProductDamageType | null
   notes?: String | null
+  score?: Int | null
+  published?: Boolean | null
   damageTypes?: PhysicalProductQualityReportCreatedamageTypesInput | null
   user: UserCreateOneInput
 }
@@ -46787,6 +46867,14 @@ export interface PhysicalProductQualityReportScalarWhereInput {
   notes_not_starts_with?: String | null
   notes_ends_with?: String | null
   notes_not_ends_with?: String | null
+  score?: Int | null
+  score_not?: Int | null
+  score_in?: Int[] | Int | null
+  score_not_in?: Int[] | Int | null
+  score_lt?: Int | null
+  score_lte?: Int | null
+  score_gt?: Int | null
+  score_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -46803,6 +46891,8 @@ export interface PhysicalProductQualityReportScalarWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
+  published?: Boolean | null
+  published_not?: Boolean | null
 }
 
 export interface PhysicalProductQualityReportSubscriptionWhereInput {
@@ -46823,6 +46913,8 @@ export interface PhysicalProductQualityReportUpdatedamageTypesInput {
 export interface PhysicalProductQualityReportUpdateInput {
   damageType?: PhysicalProductDamageType | null
   notes?: String | null
+  score?: Int | null
+  published?: Boolean | null
   damageTypes?: PhysicalProductQualityReportUpdatedamageTypesInput | null
   user?: UserUpdateOneRequiredInput | null
   physicalProduct?: PhysicalProductUpdateOneRequiredWithoutReportsInput | null
@@ -46831,12 +46923,16 @@ export interface PhysicalProductQualityReportUpdateInput {
 export interface PhysicalProductQualityReportUpdateManyDataInput {
   damageType?: PhysicalProductDamageType | null
   notes?: String | null
+  score?: Int | null
+  published?: Boolean | null
   damageTypes?: PhysicalProductQualityReportUpdatedamageTypesInput | null
 }
 
 export interface PhysicalProductQualityReportUpdateManyMutationInput {
   damageType?: PhysicalProductDamageType | null
   notes?: String | null
+  score?: Int | null
+  published?: Boolean | null
   damageTypes?: PhysicalProductQualityReportUpdatedamageTypesInput | null
 }
 
@@ -46860,6 +46956,8 @@ export interface PhysicalProductQualityReportUpdateManyWithWhereNestedInput {
 export interface PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput {
   damageType?: PhysicalProductDamageType | null
   notes?: String | null
+  score?: Int | null
+  published?: Boolean | null
   damageTypes?: PhysicalProductQualityReportUpdatedamageTypesInput | null
   user?: UserUpdateOneRequiredInput | null
 }
@@ -46911,6 +47009,14 @@ export interface PhysicalProductQualityReportWhereInput {
   notes_not_starts_with?: String | null
   notes_ends_with?: String | null
   notes_not_ends_with?: String | null
+  score?: Int | null
+  score_not?: Int | null
+  score_in?: Int[] | Int | null
+  score_not_in?: Int[] | Int | null
+  score_lt?: Int | null
+  score_lte?: Int | null
+  score_gt?: Int | null
+  score_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -46927,6 +47033,8 @@ export interface PhysicalProductQualityReportWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
+  published?: Boolean | null
+  published_not?: Boolean | null
   user?: UserWhereInput | null
   physicalProduct?: PhysicalProductWhereInput | null
 }
@@ -57665,9 +57773,11 @@ export interface PhysicalProductQualityReport extends Node {
   damageType?: PhysicalProductDamageType | null
   damageTypes: Array<PhysicalProductDamageType>
   notes?: String | null
+  score?: Int | null
   physicalProduct: PhysicalProduct
   createdAt: DateTime
   updatedAt: DateTime
+  published: Boolean
 }
 
 /*
@@ -57694,8 +57804,10 @@ export interface PhysicalProductQualityReportPreviousValues {
   damageType?: PhysicalProductDamageType | null
   damageTypes: Array<PhysicalProductDamageType>
   notes?: String | null
+  score?: Int | null
   createdAt: DateTime
   updatedAt: DateTime
+  published: Boolean
 }
 
 export interface PhysicalProductQualityReportSubscriptionPayload {

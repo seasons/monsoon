@@ -6,15 +6,17 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
   BagItem,
   InventoryStatus,
+  PhysicalProduct,
   PhysicalProductPrice,
+  PhysicalProductQualityReport,
   Product,
   ShopifyProductVariant,
   ShopifyShop,
 } from "@app/prisma"
 import { Order, ProductVariant } from "@app/prisma/prisma.binding"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
-import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
+import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
 
 type EUSize = "44" | "46" | "48" | "50" | "52" | "54" | "56"
@@ -291,6 +293,88 @@ export class ProductVariantFieldsResolver {
   ) {
     const productVariant = await productVariantLoader.load(parent.id)
     return productVariant?.internalSize?.display
+  }
+
+  @ResolveField()
+  async nextReservablePhysicalProduct(
+    @Parent() parent,
+    @Info() info,
+    @Loader({
+      params: {
+        query: "physicalProducts",
+        formatWhere: keys => ({
+          AND: [
+            { inventoryStatus: "Reservable" },
+            { productVariant: { id_in: keys } },
+          ],
+        }),
+        info: `{
+          id 
+          productVariant {
+            id
+          }
+          reports(orderBy: createdAt_DESC, first: 1) {
+            score
+          }
+        }`,
+        keyToDataRelationship: "OneToMany",
+        getKeys: a => [a?.productVariant?.id],
+        fallbackValue: [],
+      },
+    })
+    physicalProductsLoader: PrismaDataLoader<
+      Array<{
+        id: string
+        productVariant: { id: string }
+        reports?: Array<{ score?: number }>
+      }>
+    >,
+    @Loader({
+      params: {
+        query: "physicalProducts",
+      },
+      includeInfo: true,
+    })
+    physicalProductInfoLoader: PrismaDataLoader<PhysicalProduct>
+  ) {
+    const physicalProducts = await physicalProductsLoader.load(parent.id)
+
+    const qualityReportByPhysicalProductId = physicalProducts.reduce(
+      (memo, physicalProduct, idx) => {
+        return {
+          ...memo,
+          ...(physicalProduct.reports && physicalProduct.reports.length > 0
+            ? { [physicalProducts[idx].id]: physicalProduct.reports[0] }
+            : {}),
+        }
+      },
+      {}
+    )
+
+    physicalProducts.sort((a, b) => {
+      const aQualityReport = qualityReportByPhysicalProductId[a.id]
+      const bQualityReport = qualityReportByPhysicalProductId[b.id]
+
+      // sort physical product without a quality report more highly
+      if (!bQualityReport && !aQualityReport) {
+        return 0
+      }
+      if (bQualityReport && !aQualityReport) {
+        return -1
+      }
+      if (aQualityReport && !bQualityReport) {
+        return 1
+      }
+
+      // sort physical product according to quality score
+      return (bQualityReport.score || 0) - (aQualityReport.score || 0)
+    })
+
+    if (physicalProducts.length === 0) {
+      return null
+    }
+
+    return physicalProductInfoLoader.load(physicalProducts[0].id)
   }
 
   @ResolveField()

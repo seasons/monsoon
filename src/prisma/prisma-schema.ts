@@ -10610,9 +10610,11 @@ type PhysicalProductQualityReport {
   damageType: PhysicalProductDamageType
   damageTypes: [PhysicalProductDamageType!]!
   notes: String
+  score: Int
   physicalProduct: PhysicalProduct!
   createdAt: DateTime!
   updatedAt: DateTime!
+  published: Boolean!
 }
 
 type PhysicalProductQualityReportConnection {
@@ -10631,7 +10633,9 @@ input PhysicalProductQualityReportCreateInput {
   damageType: PhysicalProductDamageType
   damageTypes: PhysicalProductQualityReportCreatedamageTypesInput
   notes: String
+  score: Int
   physicalProduct: PhysicalProductCreateOneWithoutReportsInput!
+  published: Boolean
 }
 
 input PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput {
@@ -10645,6 +10649,8 @@ input PhysicalProductQualityReportCreateWithoutPhysicalProductInput {
   damageType: PhysicalProductDamageType
   damageTypes: PhysicalProductQualityReportCreatedamageTypesInput
   notes: String
+  score: Int
+  published: Boolean
 }
 
 type PhysicalProductQualityReportEdge {
@@ -10659,10 +10665,14 @@ enum PhysicalProductQualityReportOrderByInput {
   damageType_DESC
   notes_ASC
   notes_DESC
+  score_ASC
+  score_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  published_ASC
+  published_DESC
 }
 
 type PhysicalProductQualityReportPreviousValues {
@@ -10670,8 +10680,10 @@ type PhysicalProductQualityReportPreviousValues {
   damageType: PhysicalProductDamageType
   damageTypes: [PhysicalProductDamageType!]!
   notes: String
+  score: Int
   createdAt: DateTime!
   updatedAt: DateTime!
+  published: Boolean!
 }
 
 input PhysicalProductQualityReportScalarWhereInput {
@@ -10707,6 +10719,14 @@ input PhysicalProductQualityReportScalarWhereInput {
   notes_not_starts_with: String
   notes_ends_with: String
   notes_not_ends_with: String
+  score: Int
+  score_not: Int
+  score_in: [Int!]
+  score_not_in: [Int!]
+  score_lt: Int
+  score_lte: Int
+  score_gt: Int
+  score_gte: Int
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -10723,6 +10743,8 @@ input PhysicalProductQualityReportScalarWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  published: Boolean
+  published_not: Boolean
   AND: [PhysicalProductQualityReportScalarWhereInput!]
   OR: [PhysicalProductQualityReportScalarWhereInput!]
   NOT: [PhysicalProductQualityReportScalarWhereInput!]
@@ -10755,19 +10777,25 @@ input PhysicalProductQualityReportUpdateInput {
   damageType: PhysicalProductDamageType
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   notes: String
+  score: Int
   physicalProduct: PhysicalProductUpdateOneRequiredWithoutReportsInput
+  published: Boolean
 }
 
 input PhysicalProductQualityReportUpdateManyDataInput {
   damageType: PhysicalProductDamageType
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   notes: String
+  score: Int
+  published: Boolean
 }
 
 input PhysicalProductQualityReportUpdateManyMutationInput {
   damageType: PhysicalProductDamageType
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   notes: String
+  score: Int
+  published: Boolean
 }
 
 input PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput {
@@ -10792,6 +10820,8 @@ input PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInput {
   damageType: PhysicalProductDamageType
   damageTypes: PhysicalProductQualityReportUpdatedamageTypesInput
   notes: String
+  score: Int
+  published: Boolean
 }
 
 input PhysicalProductQualityReportUpdateWithWhereUniqueWithoutPhysicalProductInput {
@@ -10839,6 +10869,14 @@ input PhysicalProductQualityReportWhereInput {
   notes_not_starts_with: String
   notes_ends_with: String
   notes_not_ends_with: String
+  score: Int
+  score_not: Int
+  score_in: [Int!]
+  score_not_in: [Int!]
+  score_lt: Int
+  score_lte: Int
+  score_gt: Int
+  score_gte: Int
   physicalProduct: PhysicalProductWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
@@ -10856,6 +10894,8 @@ input PhysicalProductQualityReportWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  published: Boolean
+  published_not: Boolean
   AND: [PhysicalProductQualityReportWhereInput!]
   OR: [PhysicalProductQualityReportWhereInput!]
   NOT: [PhysicalProductQualityReportWhereInput!]
