@@ -1,9 +1,4 @@
-import * as util from "util"
-
 import { Customer, User } from "@app/decorators"
-import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import { Product } from "@app/prisma/prisma.binding"
-import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaSelect } from "@paljs/plugins"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -24,10 +19,12 @@ export class ProductQueriesResolver {
     info.cacheControl.setCacheHint({ maxAge: 600, scope })
 
     const select = new PrismaSelect(info).value
+
     const data = await this.prisma.client2.product.findUnique({
       where,
       ...select,
     })
+    return data
   }
 
   @Query()
