@@ -638,7 +638,8 @@ model Product {
   secondaryColor        String?                   @db.VarChar(25)
   brand                 String?                   @db.VarChar(25)
   type                  String?
-  modelSize             String?                   @db.VarChar(25)
+  modelSizeId           String?                   @map("modelSize") @db.VarChar(25)
+  modelSize             Size?                     @relation(fields: [modelSizeId], references: [id])
   architecture          String?
   publishedAt           DateTime?
   photographyStatus     String?
@@ -649,7 +650,6 @@ model Product {
   Brand                 Brand?                    @relation(fields: [brand], references: [id])
   Category              Category?                 @relation(fields: [category], references: [id])
   Color                 Color?                    @relation("ColorToProduct_color", fields: [color], references: [id])
-  size                  Size?                     @relation(fields: [modelSize], references: [id])
   Season                ProductSeason?            @relation(fields: [season], references: [id])
   SecondaryColor        Color?                    @relation("ColorToProduct_secondaryColor", fields: [secondaryColor], references: [id])
   productTier           ProductTier?              @relation(fields: [tier], references: [id])
