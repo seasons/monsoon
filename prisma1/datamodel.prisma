@@ -208,6 +208,7 @@ enum EmailId {
   WelcomeToSeasons
   UnpaidMembership
   ReturnToGoodStanding
+  RecommendedItemsNurture
 }
 
 enum PackageTransitEventStatus {
@@ -278,10 +279,10 @@ enum ShippingCode {
 
 type BlogPost {
   id: ID! @id
+  slug: String! @unique
   webflowId: String!
   webflowCreatedAt: DateTime!
   webflowUpdatedAt: DateTime!
-  slug: String!
   name: String
   body: String
   summary: String
@@ -296,6 +297,8 @@ type BlogPost {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   publishedOn: DateTime!
+  content: String
+  published: Boolean! @default(value: true)
 }
 
 type Brand {
@@ -316,10 +319,12 @@ type Brand {
   published: Boolean! @default(value: true)
   featured: Boolean! @default(value: false)
   websiteUrl: String
+  shopifyShop: ShopifyShop
+  styles: [CustomerStyle!] @scalarList(strategy: RELATION)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  externalShopifyIntegration: ExternalShopifyIntegration
 }
+
 type Category {
   id: ID! @id
   slug: String! @unique
@@ -434,6 +439,7 @@ type Product {
   tier: ProductTier @relation(name: "ProductToProductTier", onDelete: SET_NULL)
   type: ProductType
   variants: [ProductVariant!]! @relation(link: TABLE, onDelete: CASCADE)
+  styles: [CustomerStyle!] @scalarList(strategy: RELATION)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -484,7 +490,7 @@ type ProductVariantPrice {
   retailPrice: Float
 }
 
-type ExternalShopifyIntegration {
+type ShopifyShop {
   id: ID! @id
   shopName: String! @unique
   enabled: Boolean!
@@ -508,7 +514,7 @@ type ShopifyProductVariant {
     @relation(name: "ShopifyProductVariantToVariantSelectedOption")
   productVariant: ProductVariant
     @relation(name: "ShopifyProductVariantToVariant", link: INLINE)
-  shop: ExternalShopifyIntegration
+  shop: ShopifyShop
   brand: Brand
   title: String
   image: Image
@@ -574,7 +580,7 @@ type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
   location: Location
-  productVariant: ProductVariant! @relation(onDelete: CASCADE)
+  productVariant: ProductVariant! @relation(onDelete: SET_NULL)
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
@@ -586,7 +592,7 @@ type PhysicalProduct {
   dateReceived: DateTime
   unitCost: Float
   price: PhysicalProductPrice
-  reports: [PhysicalProductQualityReport!]!
+  reports: [PhysicalProductQualityReport!]! @relation(onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -906,6 +912,7 @@ type CustomerAdmissionsData {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime # If this customer did subscribe, when did that happen?
 }
 
 type UTMData {
@@ -956,6 +963,7 @@ type Customer {
       link: TABLE
       onDelete: CASCADE
     )
+  impactSyncTimings: [SyncTiming]
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -1380,12 +1388,14 @@ type AdminActionLogInterpretation {
 enum SyncTimingType {
   Drip
   Next
+  Impact
 }
 
 type SyncTiming {
   id: ID! @id
   type: SyncTimingType!
   syncedAt: DateTime!
+  detail: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

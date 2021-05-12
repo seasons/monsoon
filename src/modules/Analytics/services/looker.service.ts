@@ -171,6 +171,17 @@ export class LookerService {
           return acc
         }, {})
         return sanitizedValues
+      case "customer-retention":
+        return val.map(a => ({
+          cohort: a["subscription.created_month"],
+          counts: a["customer.count"]["invoices.date_month"],
+        }))
+      case 'discovery-reference-pivot-"all-time"':
+      case "discovery-reference-pivot-last-30-days":
+        return val.map(a => ({
+          discoveryReference: a["customer_detail.discovery_reference"],
+          counts: a["customer.count"],
+        }))
       default:
         return val?.[0]
     }

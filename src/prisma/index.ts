@@ -44,9 +44,6 @@ export interface Exists {
     where?: CustomerNotificationBarReceiptWhereInput
   ) => Promise<boolean>;
   emailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>;
-  externalShopifyIntegration: (
-    where?: ExternalShopifyIntegrationWhereInput
-  ) => Promise<boolean>;
   fitPic: (where?: FitPicWhereInput) => Promise<boolean>;
   fitPicReport: (where?: FitPicReportWhereInput) => Promise<boolean>;
   image: (where?: ImageWhereInput) => Promise<boolean>;
@@ -119,6 +116,7 @@ export interface Exists {
   shopifyProductVariantSelectedOption: (
     where?: ShopifyProductVariantSelectedOptionWhereInput
   ) => Promise<boolean>;
+  shopifyShop: (where?: ShopifyShopWhereInput) => Promise<boolean>;
   size: (where?: SizeWhereInput) => Promise<boolean>;
   smsReceipt: (where?: SmsReceiptWhereInput) => Promise<boolean>;
   stylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>;
@@ -521,27 +519,6 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => EmailReceiptConnectionPromise;
-  externalShopifyIntegration: (
-    where: ExternalShopifyIntegrationWhereUniqueInput
-  ) => ExternalShopifyIntegrationNullablePromise;
-  externalShopifyIntegrations: (args?: {
-    where?: ExternalShopifyIntegrationWhereInput;
-    orderBy?: ExternalShopifyIntegrationOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => FragmentableArray<ExternalShopifyIntegration>;
-  externalShopifyIntegrationsConnection: (args?: {
-    where?: ExternalShopifyIntegrationWhereInput;
-    orderBy?: ExternalShopifyIntegrationOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => ExternalShopifyIntegrationConnectionPromise;
   fitPic: (where: FitPicWhereUniqueInput) => FitPicNullablePromise;
   fitPics: (args?: {
     where?: FitPicWhereInput;
@@ -1364,6 +1341,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ShopifyProductVariantSelectedOptionConnectionPromise;
+  shopifyShop: (
+    where: ShopifyShopWhereUniqueInput
+  ) => ShopifyShopNullablePromise;
+  shopifyShops: (args?: {
+    where?: ShopifyShopWhereInput;
+    orderBy?: ShopifyShopOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<ShopifyShop>;
+  shopifyShopsConnection: (args?: {
+    where?: ShopifyShopWhereInput;
+    orderBy?: ShopifyShopOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ShopifyShopConnectionPromise;
   size: (where: SizeWhereUniqueInput) => SizeNullablePromise;
   sizes: (args?: {
     where?: SizeWhereInput;
@@ -1966,28 +1964,6 @@ export interface Prisma {
   ) => EmailReceiptPromise;
   deleteManyEmailReceipts: (
     where?: EmailReceiptWhereInput
-  ) => BatchPayloadPromise;
-  createExternalShopifyIntegration: (
-    data: ExternalShopifyIntegrationCreateInput
-  ) => ExternalShopifyIntegrationPromise;
-  updateExternalShopifyIntegration: (args: {
-    data: ExternalShopifyIntegrationUpdateInput;
-    where: ExternalShopifyIntegrationWhereUniqueInput;
-  }) => ExternalShopifyIntegrationPromise;
-  updateManyExternalShopifyIntegrations: (args: {
-    data: ExternalShopifyIntegrationUpdateManyMutationInput;
-    where?: ExternalShopifyIntegrationWhereInput;
-  }) => BatchPayloadPromise;
-  upsertExternalShopifyIntegration: (args: {
-    where: ExternalShopifyIntegrationWhereUniqueInput;
-    create: ExternalShopifyIntegrationCreateInput;
-    update: ExternalShopifyIntegrationUpdateInput;
-  }) => ExternalShopifyIntegrationPromise;
-  deleteExternalShopifyIntegration: (
-    where: ExternalShopifyIntegrationWhereUniqueInput
-  ) => ExternalShopifyIntegrationPromise;
-  deleteManyExternalShopifyIntegrations: (
-    where?: ExternalShopifyIntegrationWhereInput
   ) => BatchPayloadPromise;
   createFitPic: (data: FitPicCreateInput) => FitPicPromise;
   updateFitPic: (args: {
@@ -2789,6 +2765,24 @@ export interface Prisma {
   deleteManyShopifyProductVariantSelectedOptions: (
     where?: ShopifyProductVariantSelectedOptionWhereInput
   ) => BatchPayloadPromise;
+  createShopifyShop: (data: ShopifyShopCreateInput) => ShopifyShopPromise;
+  updateShopifyShop: (args: {
+    data: ShopifyShopUpdateInput;
+    where: ShopifyShopWhereUniqueInput;
+  }) => ShopifyShopPromise;
+  updateManyShopifyShops: (args: {
+    data: ShopifyShopUpdateManyMutationInput;
+    where?: ShopifyShopWhereInput;
+  }) => BatchPayloadPromise;
+  upsertShopifyShop: (args: {
+    where: ShopifyShopWhereUniqueInput;
+    create: ShopifyShopCreateInput;
+    update: ShopifyShopUpdateInput;
+  }) => ShopifyShopPromise;
+  deleteShopifyShop: (where: ShopifyShopWhereUniqueInput) => ShopifyShopPromise;
+  deleteManyShopifyShops: (
+    where?: ShopifyShopWhereInput
+  ) => BatchPayloadPromise;
   createSize: (data: SizeCreateInput) => SizePromise;
   updateSize: (args: {
     data: SizeUpdateInput;
@@ -3096,9 +3090,6 @@ export interface Subscription {
   emailReceipt: (
     where?: EmailReceiptSubscriptionWhereInput
   ) => EmailReceiptSubscriptionPayloadSubscription;
-  externalShopifyIntegration: (
-    where?: ExternalShopifyIntegrationSubscriptionWhereInput
-  ) => ExternalShopifyIntegrationSubscriptionPayloadSubscription;
   fitPic: (
     where?: FitPicSubscriptionWhereInput
   ) => FitPicSubscriptionPayloadSubscription;
@@ -3219,6 +3210,9 @@ export interface Subscription {
   shopifyProductVariantSelectedOption: (
     where?: ShopifyProductVariantSelectedOptionSubscriptionWhereInput
   ) => ShopifyProductVariantSelectedOptionSubscriptionPayloadSubscription;
+  shopifyShop: (
+    where?: ShopifyShopSubscriptionWhereInput
+  ) => ShopifyShopSubscriptionPayloadSubscription;
   size: (
     where?: SizeSubscriptionWhereInput
   ) => SizeSubscriptionPayloadSubscription;
@@ -3296,7 +3290,8 @@ export type EmailId =
   | "Waitlisted"
   | "WelcomeToSeasons"
   | "UnpaidMembership"
-  | "ReturnToGoodStanding";
+  | "ReturnToGoodStanding"
+  | "RecommendedItemsNurture";
 
 export type UserPushNotificationInterestType =
   | "Bag"
@@ -3631,6 +3626,14 @@ export type ImageOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type CustomerStyle =
+  | "AvantGarde"
+  | "Bold"
+  | "Classic"
+  | "Minimalist"
+  | "Streetwear"
+  | "Techwear";
+
 export type CategoryOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -3782,14 +3785,6 @@ export type CustomerStatus =
   | "Paused"
   | "Deactivated";
 
-export type CustomerStyle =
-  | "AvantGarde"
-  | "Bold"
-  | "Classic"
-  | "Minimalist"
-  | "Streetwear"
-  | "Techwear";
-
 export type Plan = "AllAccess" | "Essential";
 
 export type PaymentPlanTier = "Essential" | "AllAccess" | "Pause";
@@ -3870,6 +3865,8 @@ export type NotificationBarID =
   | "PastDueInvoice"
   | "TestDismissable"
   | "AuthorizedReminder";
+
+export type SyncTimingType = "Drip" | "Next" | "Impact";
 
 export type PauseRequestOrderByInput =
   | "id_ASC"
@@ -3985,6 +3982,20 @@ export type CustomerNotificationBarReceiptOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type SyncTimingOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "type_ASC"
+  | "type_DESC"
+  | "syncedAt_ASC"
+  | "syncedAt_DESC"
+  | "detail_ASC"
+  | "detail_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
 export type BillingInfoOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -4018,14 +4029,14 @@ export type BillingInfoOrderByInput =
 export type BlogPostOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
   | "webflowId_ASC"
   | "webflowId_DESC"
   | "webflowCreatedAt_ASC"
   | "webflowCreatedAt_DESC"
   | "webflowUpdatedAt_ASC"
   | "webflowUpdatedAt_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
   | "name_ASC"
   | "name_DESC"
   | "body_ASC"
@@ -4049,7 +4060,11 @@ export type BlogPostOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC"
   | "publishedOn_ASC"
-  | "publishedOn_DESC";
+  | "publishedOn_DESC"
+  | "content_ASC"
+  | "content_DESC"
+  | "published_ASC"
+  | "published_DESC";
 
 export type BottomSizeOrderByInput =
   | "id_ASC"
@@ -4153,7 +4168,9 @@ export type CustomerAdmissionsDataOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC"
   | "authorizationWindowClosesAt_ASC"
-  | "authorizationWindowClosesAt_DESC";
+  | "authorizationWindowClosesAt_DESC"
+  | "subscribedAt_ASC"
+  | "subscribedAt_DESC";
 
 export type CustomerDetailOrderByInput =
   | "id_ASC"
@@ -4228,20 +4245,6 @@ export type CustomerMembershipSubscriptionDataOrderByInput =
   | "status_DESC"
   | "planPrice_ASC"
   | "planPrice_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
-export type ExternalShopifyIntegrationOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "shopName_ASC"
-  | "shopName_DESC"
-  | "enabled_ASC"
-  | "enabled_DESC"
-  | "accessToken_ASC"
-  | "accessToken_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -4611,21 +4614,21 @@ export type ShopifyProductVariantOrderByInput =
   | "cacheExpiresAt_ASC"
   | "cacheExpiresAt_DESC";
 
-export type StylePreferencesOrderByInput = "id_ASC" | "id_DESC";
-
-export type SyncTimingType = "Drip" | "Next";
-
-export type SyncTimingOrderByInput =
+export type ShopifyShopOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "type_ASC"
-  | "type_DESC"
-  | "syncedAt_ASC"
-  | "syncedAt_DESC"
+  | "shopName_ASC"
+  | "shopName_DESC"
+  | "enabled_ASC"
+  | "enabled_DESC"
+  | "accessToken_ASC"
+  | "accessToken_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type StylePreferencesOrderByInput = "id_ASC" | "id_DESC";
 
 export type TopSizeOrderByInput =
   | "id_ASC"
@@ -6407,6 +6410,7 @@ export interface BrandWhereInput {
   websiteUrl_not_starts_with?: Maybe<String>;
   websiteUrl_ends_with?: Maybe<String>;
   websiteUrl_not_ends_with?: Maybe<String>;
+  shopifyShop?: Maybe<ShopifyShopWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -6423,13 +6427,12 @@ export interface BrandWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationWhereInput>;
   AND?: Maybe<BrandWhereInput[] | BrandWhereInput>;
   OR?: Maybe<BrandWhereInput[] | BrandWhereInput>;
   NOT?: Maybe<BrandWhereInput[] | BrandWhereInput>;
 }
 
-export interface ExternalShopifyIntegrationWhereInput {
+export interface ShopifyShopWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -6490,18 +6493,9 @@ export interface ExternalShopifyIntegrationWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<
-    | ExternalShopifyIntegrationWhereInput[]
-    | ExternalShopifyIntegrationWhereInput
-  >;
-  OR?: Maybe<
-    | ExternalShopifyIntegrationWhereInput[]
-    | ExternalShopifyIntegrationWhereInput
-  >;
-  NOT?: Maybe<
-    | ExternalShopifyIntegrationWhereInput[]
-    | ExternalShopifyIntegrationWhereInput
-  >;
+  AND?: Maybe<ShopifyShopWhereInput[] | ShopifyShopWhereInput>;
+  OR?: Maybe<ShopifyShopWhereInput[] | ShopifyShopWhereInput>;
+  NOT?: Maybe<ShopifyShopWhereInput[] | ShopifyShopWhereInput>;
 }
 
 export interface CategoryWhereInput {
@@ -6957,7 +6951,7 @@ export interface ShopifyProductVariantWhereInput {
   selectedOptions_some?: Maybe<ShopifyProductVariantSelectedOptionWhereInput>;
   selectedOptions_none?: Maybe<ShopifyProductVariantSelectedOptionWhereInput>;
   productVariant?: Maybe<ProductVariantWhereInput>;
-  shop?: Maybe<ExternalShopifyIntegrationWhereInput>;
+  shop?: Maybe<ShopifyShopWhereInput>;
   brand?: Maybe<BrandWhereInput>;
   title?: Maybe<String>;
   title_not?: Maybe<String>;
@@ -8111,6 +8105,9 @@ export interface CustomerWhereInput {
   notificationBarReceipts_none?: Maybe<
     CustomerNotificationBarReceiptWhereInput
   >;
+  impactSyncTimings_every?: Maybe<SyncTimingWhereInput>;
+  impactSyncTimings_some?: Maybe<SyncTimingWhereInput>;
+  impactSyncTimings_none?: Maybe<SyncTimingWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -9144,6 +9141,14 @@ export interface CustomerAdmissionsDataWhereInput {
   authorizationWindowClosesAt_lte?: Maybe<DateTimeInput>;
   authorizationWindowClosesAt_gt?: Maybe<DateTimeInput>;
   authorizationWindowClosesAt_gte?: Maybe<DateTimeInput>;
+  subscribedAt?: Maybe<DateTimeInput>;
+  subscribedAt_not?: Maybe<DateTimeInput>;
+  subscribedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  subscribedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  subscribedAt_lt?: Maybe<DateTimeInput>;
+  subscribedAt_lte?: Maybe<DateTimeInput>;
+  subscribedAt_gt?: Maybe<DateTimeInput>;
+  subscribedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<
     CustomerAdmissionsDataWhereInput[] | CustomerAdmissionsDataWhereInput
   >;
@@ -9328,12 +9333,75 @@ export interface CustomerNotificationBarReceiptWhereInput {
   >;
 }
 
+export interface SyncTimingWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  type?: Maybe<SyncTimingType>;
+  type_not?: Maybe<SyncTimingType>;
+  type_in?: Maybe<SyncTimingType[] | SyncTimingType>;
+  type_not_in?: Maybe<SyncTimingType[] | SyncTimingType>;
+  syncedAt?: Maybe<DateTimeInput>;
+  syncedAt_not?: Maybe<DateTimeInput>;
+  syncedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  syncedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  syncedAt_lt?: Maybe<DateTimeInput>;
+  syncedAt_lte?: Maybe<DateTimeInput>;
+  syncedAt_gt?: Maybe<DateTimeInput>;
+  syncedAt_gte?: Maybe<DateTimeInput>;
+  detail?: Maybe<String>;
+  detail_not?: Maybe<String>;
+  detail_in?: Maybe<String[] | String>;
+  detail_not_in?: Maybe<String[] | String>;
+  detail_lt?: Maybe<String>;
+  detail_lte?: Maybe<String>;
+  detail_gt?: Maybe<String>;
+  detail_gte?: Maybe<String>;
+  detail_contains?: Maybe<String>;
+  detail_not_contains?: Maybe<String>;
+  detail_starts_with?: Maybe<String>;
+  detail_not_starts_with?: Maybe<String>;
+  detail_ends_with?: Maybe<String>;
+  detail_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
+  OR?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
+  NOT?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
+}
+
 export type BillingInfoWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
 export type BlogPostWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  slug?: Maybe<String>;
 }>;
 
 export interface BlogPostWhereInput {
@@ -9351,6 +9419,20 @@ export interface BlogPostWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  slug?: Maybe<String>;
+  slug_not?: Maybe<String>;
+  slug_in?: Maybe<String[] | String>;
+  slug_not_in?: Maybe<String[] | String>;
+  slug_lt?: Maybe<String>;
+  slug_lte?: Maybe<String>;
+  slug_gt?: Maybe<String>;
+  slug_gte?: Maybe<String>;
+  slug_contains?: Maybe<String>;
+  slug_not_contains?: Maybe<String>;
+  slug_starts_with?: Maybe<String>;
+  slug_not_starts_with?: Maybe<String>;
+  slug_ends_with?: Maybe<String>;
+  slug_not_ends_with?: Maybe<String>;
   webflowId?: Maybe<String>;
   webflowId_not?: Maybe<String>;
   webflowId_in?: Maybe<String[] | String>;
@@ -9381,20 +9463,6 @@ export interface BlogPostWhereInput {
   webflowUpdatedAt_lte?: Maybe<DateTimeInput>;
   webflowUpdatedAt_gt?: Maybe<DateTimeInput>;
   webflowUpdatedAt_gte?: Maybe<DateTimeInput>;
-  slug?: Maybe<String>;
-  slug_not?: Maybe<String>;
-  slug_in?: Maybe<String[] | String>;
-  slug_not_in?: Maybe<String[] | String>;
-  slug_lt?: Maybe<String>;
-  slug_lte?: Maybe<String>;
-  slug_gt?: Maybe<String>;
-  slug_gte?: Maybe<String>;
-  slug_contains?: Maybe<String>;
-  slug_not_contains?: Maybe<String>;
-  slug_starts_with?: Maybe<String>;
-  slug_not_starts_with?: Maybe<String>;
-  slug_ends_with?: Maybe<String>;
-  slug_not_ends_with?: Maybe<String>;
   name?: Maybe<String>;
   name_not?: Maybe<String>;
   name_in?: Maybe<String[] | String>;
@@ -9546,6 +9614,22 @@ export interface BlogPostWhereInput {
   publishedOn_lte?: Maybe<DateTimeInput>;
   publishedOn_gt?: Maybe<DateTimeInput>;
   publishedOn_gte?: Maybe<DateTimeInput>;
+  content?: Maybe<String>;
+  content_not?: Maybe<String>;
+  content_in?: Maybe<String[] | String>;
+  content_not_in?: Maybe<String[] | String>;
+  content_lt?: Maybe<String>;
+  content_lte?: Maybe<String>;
+  content_gt?: Maybe<String>;
+  content_gte?: Maybe<String>;
+  content_contains?: Maybe<String>;
+  content_not_contains?: Maybe<String>;
+  content_starts_with?: Maybe<String>;
+  content_not_starts_with?: Maybe<String>;
+  content_ends_with?: Maybe<String>;
+  content_not_ends_with?: Maybe<String>;
+  published?: Maybe<Boolean>;
+  published_not?: Maybe<Boolean>;
   AND?: Maybe<BlogPostWhereInput[] | BlogPostWhereInput>;
   OR?: Maybe<BlogPostWhereInput[] | BlogPostWhereInput>;
   NOT?: Maybe<BlogPostWhereInput[] | BlogPostWhereInput>;
@@ -9707,11 +9791,6 @@ export type CustomerNotificationBarReceiptWhereUniqueInput = AtLeastOne<{
 
 export type EmailReceiptWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
-}>;
-
-export type ExternalShopifyIntegrationWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  shopName?: Maybe<String>;
 }>;
 
 export type FitPicWhereUniqueInput = AtLeastOne<{
@@ -10655,6 +10734,11 @@ export type ShopifyProductVariantSelectedOptionWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type ShopifyShopWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  shopName?: Maybe<String>;
+}>;
+
 export type SizeWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
@@ -10671,54 +10755,6 @@ export type StylePreferencesWhereUniqueInput = AtLeastOne<{
 export type SyncTimingWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
-
-export interface SyncTimingWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  type?: Maybe<SyncTimingType>;
-  type_not?: Maybe<SyncTimingType>;
-  type_in?: Maybe<SyncTimingType[] | SyncTimingType>;
-  type_not_in?: Maybe<SyncTimingType[] | SyncTimingType>;
-  syncedAt?: Maybe<DateTimeInput>;
-  syncedAt_not?: Maybe<DateTimeInput>;
-  syncedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  syncedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  syncedAt_lt?: Maybe<DateTimeInput>;
-  syncedAt_lte?: Maybe<DateTimeInput>;
-  syncedAt_gt?: Maybe<DateTimeInput>;
-  syncedAt_gte?: Maybe<DateTimeInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
-  OR?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
-  NOT?: Maybe<SyncTimingWhereInput[] | SyncTimingWhereInput>;
-}
 
 export type TagWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -11148,6 +11184,7 @@ export interface ProductCreateWithoutVariantsInput {
   tags?: Maybe<TagCreateManyWithoutProductsInput>;
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface BrandCreateOneWithoutProductsInput {
@@ -11172,7 +11209,8 @@ export interface BrandCreateWithoutProductsInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
-  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationCreateOneInput>;
+  shopifyShop?: Maybe<ShopifyShopCreateOneInput>;
+  styles?: Maybe<BrandCreatestylesInput>;
 }
 
 export interface ImageCreateManyInput {
@@ -11180,21 +11218,25 @@ export interface ImageCreateManyInput {
   connect?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>;
 }
 
-export interface ExternalShopifyIntegrationCreateOneInput {
-  create?: Maybe<ExternalShopifyIntegrationCreateInput>;
-  connect?: Maybe<ExternalShopifyIntegrationWhereUniqueInput>;
+export interface ShopifyShopCreateOneInput {
+  create?: Maybe<ShopifyShopCreateInput>;
+  connect?: Maybe<ShopifyShopWhereUniqueInput>;
 }
 
-export interface ExternalShopifyIntegrationCreateInput {
+export interface ShopifyShopCreateInput {
   id?: Maybe<ID_Input>;
   shopName: String;
   enabled: Boolean;
   accessToken?: Maybe<String>;
-  scope?: Maybe<ExternalShopifyIntegrationCreatescopeInput>;
+  scope?: Maybe<ShopifyShopCreatescopeInput>;
 }
 
-export interface ExternalShopifyIntegrationCreatescopeInput {
+export interface ShopifyShopCreatescopeInput {
   set?: Maybe<String[] | String>;
+}
+
+export interface BrandCreatestylesInput {
+  set?: Maybe<CustomerStyle[] | CustomerStyle>;
 }
 
 export interface CategoryCreateOneWithoutProductsInput {
@@ -11266,6 +11308,7 @@ export interface ProductCreateWithoutCategoryInput {
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface ColorCreateOneInput {
@@ -11336,7 +11379,7 @@ export interface ShopifyProductVariantCreateWithoutProductVariantInput {
   externalId?: Maybe<String>;
   displayName?: Maybe<String>;
   selectedOptions?: Maybe<ShopifyProductVariantSelectedOptionCreateManyInput>;
-  shop?: Maybe<ExternalShopifyIntegrationCreateOneInput>;
+  shop?: Maybe<ShopifyShopCreateOneInput>;
   brand?: Maybe<BrandCreateOneInput>;
   title?: Maybe<String>;
   image?: Maybe<ImageCreateOneInput>;
@@ -11385,7 +11428,8 @@ export interface BrandCreateInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
-  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationCreateOneInput>;
+  shopifyShop?: Maybe<ShopifyShopCreateOneInput>;
+  styles?: Maybe<BrandCreatestylesInput>;
 }
 
 export interface ProductCreateManyWithoutBrandInput {
@@ -11425,6 +11469,7 @@ export interface ProductCreateWithoutBrandInput {
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface ProductFunctionCreateManyInput {
@@ -11723,6 +11768,10 @@ export interface PhysicalProductQualityReportCreatedamageTypesInput {
   set?: Maybe<PhysicalProductDamageType[] | PhysicalProductDamageType>;
 }
 
+export interface ProductCreatestylesInput {
+  set?: Maybe<CustomerStyle[] | CustomerStyle>;
+}
+
 export interface ProductCreateManyInput {
   create?: Maybe<ProductCreateInput[] | ProductCreateInput>;
   connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
@@ -11759,6 +11808,7 @@ export interface ProductCreateInput {
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface FitPicReportCreateManyWithoutReportedInput {
@@ -12965,6 +13015,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface BrandUpdateOneRequiredWithoutProductsInput {
@@ -12990,7 +13041,8 @@ export interface BrandUpdateWithoutProductsDataInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
-  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
+  shopifyShop?: Maybe<ShopifyShopUpdateOneInput>;
+  styles?: Maybe<BrandUpdatestylesInput>;
 }
 
 export interface ImageUpdateOneInput {
@@ -13155,29 +13207,33 @@ export interface ImageUpdateManyDataInput {
   title?: Maybe<String>;
 }
 
-export interface ExternalShopifyIntegrationUpdateOneInput {
-  create?: Maybe<ExternalShopifyIntegrationCreateInput>;
-  update?: Maybe<ExternalShopifyIntegrationUpdateDataInput>;
-  upsert?: Maybe<ExternalShopifyIntegrationUpsertNestedInput>;
+export interface ShopifyShopUpdateOneInput {
+  create?: Maybe<ShopifyShopCreateInput>;
+  update?: Maybe<ShopifyShopUpdateDataInput>;
+  upsert?: Maybe<ShopifyShopUpsertNestedInput>;
   delete?: Maybe<Boolean>;
   disconnect?: Maybe<Boolean>;
-  connect?: Maybe<ExternalShopifyIntegrationWhereUniqueInput>;
+  connect?: Maybe<ShopifyShopWhereUniqueInput>;
 }
 
-export interface ExternalShopifyIntegrationUpdateDataInput {
+export interface ShopifyShopUpdateDataInput {
   shopName?: Maybe<String>;
   enabled?: Maybe<Boolean>;
   accessToken?: Maybe<String>;
-  scope?: Maybe<ExternalShopifyIntegrationUpdatescopeInput>;
+  scope?: Maybe<ShopifyShopUpdatescopeInput>;
 }
 
-export interface ExternalShopifyIntegrationUpdatescopeInput {
+export interface ShopifyShopUpdatescopeInput {
   set?: Maybe<String[] | String>;
 }
 
-export interface ExternalShopifyIntegrationUpsertNestedInput {
-  update: ExternalShopifyIntegrationUpdateDataInput;
-  create: ExternalShopifyIntegrationCreateInput;
+export interface ShopifyShopUpsertNestedInput {
+  update: ShopifyShopUpdateDataInput;
+  create: ShopifyShopCreateInput;
+}
+
+export interface BrandUpdatestylesInput {
+  set?: Maybe<CustomerStyle[] | CustomerStyle>;
 }
 
 export interface BrandUpsertWithoutProductsInput {
@@ -13295,6 +13351,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ColorUpdateOneRequiredInput {
@@ -13405,7 +13462,7 @@ export interface ShopifyProductVariantUpdateWithoutProductVariantDataInput {
   externalId?: Maybe<String>;
   displayName?: Maybe<String>;
   selectedOptions?: Maybe<ShopifyProductVariantSelectedOptionUpdateManyInput>;
-  shop?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
+  shop?: Maybe<ShopifyShopUpdateOneInput>;
   brand?: Maybe<BrandUpdateOneInput>;
   title?: Maybe<String>;
   image?: Maybe<ImageUpdateOneInput>;
@@ -13562,7 +13619,8 @@ export interface BrandUpdateDataInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
-  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
+  shopifyShop?: Maybe<ShopifyShopUpdateOneInput>;
+  styles?: Maybe<BrandUpdatestylesInput>;
 }
 
 export interface ProductUpdateManyWithoutBrandInput {
@@ -13622,6 +13680,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductFunctionUpdateManyInput {
@@ -14890,6 +14949,10 @@ export interface ProductVariantUpdateManyDataInput {
   stored?: Maybe<Int>;
 }
 
+export interface ProductUpdatestylesInput {
+  set?: Maybe<CustomerStyle[] | CustomerStyle>;
+}
+
 export interface ProductUpsertWithWhereUniqueWithoutBrandInput {
   where: ProductWhereUniqueInput;
   update: ProductUpdateWithoutBrandDataInput;
@@ -15046,6 +15109,7 @@ export interface ProductUpdateManyDataInput {
   slug?: Maybe<String>;
   status?: Maybe<ProductStatus>;
   type?: Maybe<ProductType>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface BrandUpsertNestedInput {
@@ -15243,6 +15307,7 @@ export interface ProductUpdateDataInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueNestedInput {
@@ -15751,6 +15816,7 @@ export interface CustomerCreateWithoutBagItemsInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface CustomerDetailCreateOneInput {
@@ -16082,6 +16148,7 @@ export interface CustomerCreateWithoutReservationsInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface BagItemCreateManyWithoutCustomerInput {
@@ -16154,6 +16221,7 @@ export interface CustomerCreateWithoutReferreesInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface CustomerAdmissionsDataCreateOneWithoutCustomerInput {
@@ -16169,6 +16237,7 @@ export interface CustomerAdmissionsDataCreateWithoutCustomerInput {
   allAccessEnabled?: Maybe<Boolean>;
   authorizationsCount: Int;
   authorizationWindowClosesAt?: Maybe<DateTimeInput>;
+  subscribedAt?: Maybe<DateTimeInput>;
 }
 
 export interface UTMDataCreateOneWithoutCustomerInput {
@@ -16203,6 +16272,18 @@ export interface CustomerNotificationBarReceiptCreateWithoutCustomerInput {
   clickCount?: Maybe<Int>;
 }
 
+export interface SyncTimingCreateManyInput {
+  create?: Maybe<SyncTimingCreateInput[] | SyncTimingCreateInput>;
+  connect?: Maybe<SyncTimingWhereUniqueInput[] | SyncTimingWhereUniqueInput>;
+}
+
+export interface SyncTimingCreateInput {
+  id?: Maybe<ID_Input>;
+  type: SyncTimingType;
+  syncedAt: DateTimeInput;
+  detail?: Maybe<String>;
+}
+
 export interface CustomerCreateManyWithoutReferrerInput {
   create?: Maybe<
     CustomerCreateWithoutReferrerInput[] | CustomerCreateWithoutReferrerInput
@@ -16230,6 +16311,7 @@ export interface CustomerCreateWithoutReferrerInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface ReservationReceiptCreateOneWithoutReservationInput {
@@ -16371,6 +16453,7 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerDetailUpdateOneInput {
@@ -16961,6 +17044,7 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface BagItemUpdateManyWithoutCustomerInput {
@@ -17129,6 +17213,7 @@ export interface CustomerUpdateWithoutReferreesDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
@@ -17147,6 +17232,7 @@ export interface CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   allAccessEnabled?: Maybe<Boolean>;
   authorizationsCount?: Maybe<Int>;
   authorizationWindowClosesAt?: Maybe<DateTimeInput>;
+  subscribedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerAdmissionsDataUpsertWithoutCustomerInput {
@@ -17308,6 +17394,117 @@ export interface CustomerNotificationBarReceiptUpdateManyDataInput {
   clickCount?: Maybe<Int>;
 }
 
+export interface SyncTimingUpdateManyInput {
+  create?: Maybe<SyncTimingCreateInput[] | SyncTimingCreateInput>;
+  update?: Maybe<
+    | SyncTimingUpdateWithWhereUniqueNestedInput[]
+    | SyncTimingUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | SyncTimingUpsertWithWhereUniqueNestedInput[]
+    | SyncTimingUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<SyncTimingWhereUniqueInput[] | SyncTimingWhereUniqueInput>;
+  connect?: Maybe<SyncTimingWhereUniqueInput[] | SyncTimingWhereUniqueInput>;
+  set?: Maybe<SyncTimingWhereUniqueInput[] | SyncTimingWhereUniqueInput>;
+  disconnect?: Maybe<SyncTimingWhereUniqueInput[] | SyncTimingWhereUniqueInput>;
+  deleteMany?: Maybe<SyncTimingScalarWhereInput[] | SyncTimingScalarWhereInput>;
+  updateMany?: Maybe<
+    | SyncTimingUpdateManyWithWhereNestedInput[]
+    | SyncTimingUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface SyncTimingUpdateWithWhereUniqueNestedInput {
+  where: SyncTimingWhereUniqueInput;
+  data: SyncTimingUpdateDataInput;
+}
+
+export interface SyncTimingUpdateDataInput {
+  type?: Maybe<SyncTimingType>;
+  syncedAt?: Maybe<DateTimeInput>;
+  detail?: Maybe<String>;
+}
+
+export interface SyncTimingUpsertWithWhereUniqueNestedInput {
+  where: SyncTimingWhereUniqueInput;
+  update: SyncTimingUpdateDataInput;
+  create: SyncTimingCreateInput;
+}
+
+export interface SyncTimingScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  type?: Maybe<SyncTimingType>;
+  type_not?: Maybe<SyncTimingType>;
+  type_in?: Maybe<SyncTimingType[] | SyncTimingType>;
+  type_not_in?: Maybe<SyncTimingType[] | SyncTimingType>;
+  syncedAt?: Maybe<DateTimeInput>;
+  syncedAt_not?: Maybe<DateTimeInput>;
+  syncedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  syncedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  syncedAt_lt?: Maybe<DateTimeInput>;
+  syncedAt_lte?: Maybe<DateTimeInput>;
+  syncedAt_gt?: Maybe<DateTimeInput>;
+  syncedAt_gte?: Maybe<DateTimeInput>;
+  detail?: Maybe<String>;
+  detail_not?: Maybe<String>;
+  detail_in?: Maybe<String[] | String>;
+  detail_not_in?: Maybe<String[] | String>;
+  detail_lt?: Maybe<String>;
+  detail_lte?: Maybe<String>;
+  detail_gt?: Maybe<String>;
+  detail_gte?: Maybe<String>;
+  detail_contains?: Maybe<String>;
+  detail_not_contains?: Maybe<String>;
+  detail_starts_with?: Maybe<String>;
+  detail_not_starts_with?: Maybe<String>;
+  detail_ends_with?: Maybe<String>;
+  detail_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<SyncTimingScalarWhereInput[] | SyncTimingScalarWhereInput>;
+  OR?: Maybe<SyncTimingScalarWhereInput[] | SyncTimingScalarWhereInput>;
+  NOT?: Maybe<SyncTimingScalarWhereInput[] | SyncTimingScalarWhereInput>;
+}
+
+export interface SyncTimingUpdateManyWithWhereNestedInput {
+  where: SyncTimingScalarWhereInput;
+  data: SyncTimingUpdateManyDataInput;
+}
+
+export interface SyncTimingUpdateManyDataInput {
+  type?: Maybe<SyncTimingType>;
+  syncedAt?: Maybe<DateTimeInput>;
+  detail?: Maybe<String>;
+}
+
 export interface CustomerUpsertWithoutReferreesInput {
   update: CustomerUpdateWithoutReferreesDataInput;
   create: CustomerCreateWithoutReferreesInput;
@@ -17360,6 +17557,7 @@ export interface CustomerUpdateWithoutReferrerDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpsertWithWhereUniqueWithoutReferrerInput {
@@ -17987,10 +18185,10 @@ export interface BillingInfoUpdateManyMutationInput {
 
 export interface BlogPostCreateInput {
   id?: Maybe<ID_Input>;
+  slug: String;
   webflowId: String;
   webflowCreatedAt: DateTimeInput;
   webflowUpdatedAt: DateTimeInput;
-  slug: String;
   name?: Maybe<String>;
   body?: Maybe<String>;
   summary?: Maybe<String>;
@@ -18003,6 +18201,8 @@ export interface BlogPostCreateInput {
   author?: Maybe<String>;
   category?: Maybe<String>;
   publishedOn: DateTimeInput;
+  content?: Maybe<String>;
+  published?: Maybe<Boolean>;
 }
 
 export interface BlogPostCreatetagsInput {
@@ -18010,10 +18210,10 @@ export interface BlogPostCreatetagsInput {
 }
 
 export interface BlogPostUpdateInput {
+  slug?: Maybe<String>;
   webflowId?: Maybe<String>;
   webflowCreatedAt?: Maybe<DateTimeInput>;
   webflowUpdatedAt?: Maybe<DateTimeInput>;
-  slug?: Maybe<String>;
   name?: Maybe<String>;
   body?: Maybe<String>;
   summary?: Maybe<String>;
@@ -18026,6 +18226,8 @@ export interface BlogPostUpdateInput {
   author?: Maybe<String>;
   category?: Maybe<String>;
   publishedOn?: Maybe<DateTimeInput>;
+  content?: Maybe<String>;
+  published?: Maybe<Boolean>;
 }
 
 export interface BlogPostUpdatetagsInput {
@@ -18033,10 +18235,10 @@ export interface BlogPostUpdatetagsInput {
 }
 
 export interface BlogPostUpdateManyMutationInput {
+  slug?: Maybe<String>;
   webflowId?: Maybe<String>;
   webflowCreatedAt?: Maybe<DateTimeInput>;
   webflowUpdatedAt?: Maybe<DateTimeInput>;
-  slug?: Maybe<String>;
   name?: Maybe<String>;
   body?: Maybe<String>;
   summary?: Maybe<String>;
@@ -18048,6 +18250,8 @@ export interface BlogPostUpdateManyMutationInput {
   author?: Maybe<String>;
   category?: Maybe<String>;
   publishedOn?: Maybe<DateTimeInput>;
+  content?: Maybe<String>;
+  published?: Maybe<Boolean>;
 }
 
 export interface BottomSizeUpdateInput {
@@ -18085,7 +18289,8 @@ export interface BrandUpdateInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
-  externalShopifyIntegration?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
+  shopifyShop?: Maybe<ShopifyShopUpdateOneInput>;
+  styles?: Maybe<BrandUpdatestylesInput>;
 }
 
 export interface BrandUpdateManyMutationInput {
@@ -18102,6 +18307,7 @@ export interface BrandUpdateManyMutationInput {
   published?: Maybe<Boolean>;
   featured?: Maybe<Boolean>;
   websiteUrl?: Maybe<String>;
+  styles?: Maybe<BrandUpdatestylesInput>;
 }
 
 export interface CategoryUpdateInput {
@@ -18212,6 +18418,7 @@ export interface CustomerCreateInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface CustomerUpdateInput {
@@ -18234,6 +18441,7 @@ export interface CustomerUpdateInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpdateManyMutationInput {
@@ -18253,6 +18461,7 @@ export interface CustomerAdmissionsDataCreateInput {
   customer: CustomerCreateOneWithoutAdmissionsInput;
   authorizationsCount: Int;
   authorizationWindowClosesAt?: Maybe<DateTimeInput>;
+  subscribedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerCreateOneWithoutAdmissionsInput {
@@ -18280,6 +18489,7 @@ export interface CustomerCreateWithoutAdmissionsInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface CustomerAdmissionsDataUpdateInput {
@@ -18290,6 +18500,7 @@ export interface CustomerAdmissionsDataUpdateInput {
   customer?: Maybe<CustomerUpdateOneRequiredWithoutAdmissionsInput>;
   authorizationsCount?: Maybe<Int>;
   authorizationWindowClosesAt?: Maybe<DateTimeInput>;
+  subscribedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerUpdateOneRequiredWithoutAdmissionsInput {
@@ -18318,6 +18529,7 @@ export interface CustomerUpdateWithoutAdmissionsDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpsertWithoutAdmissionsInput {
@@ -18332,6 +18544,7 @@ export interface CustomerAdmissionsDataUpdateManyMutationInput {
   allAccessEnabled?: Maybe<Boolean>;
   authorizationsCount?: Maybe<Int>;
   authorizationWindowClosesAt?: Maybe<DateTimeInput>;
+  subscribedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerDetailUpdateInput {
@@ -18425,6 +18638,7 @@ export interface CustomerCreateWithoutMembershipInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface CustomerMembershipUpdateInput {
@@ -18462,6 +18676,7 @@ export interface CustomerUpdateWithoutMembershipDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpsertWithoutMembershipInput {
@@ -18525,6 +18740,7 @@ export interface CustomerCreateWithoutNotificationBarReceiptsInput {
   admissions?: Maybe<CustomerAdmissionsDataCreateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataCreateOneWithoutCustomerInput>;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface CustomerNotificationBarReceiptUpdateInput {
@@ -18560,6 +18776,7 @@ export interface CustomerUpdateWithoutNotificationBarReceiptsDataInput {
   admissions?: Maybe<CustomerAdmissionsDataUpdateOneWithoutCustomerInput>;
   authorizedAt?: Maybe<DateTimeInput>;
   utm?: Maybe<UTMDataUpdateOneWithoutCustomerInput>;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpsertWithoutNotificationBarReceiptsInput {
@@ -18640,20 +18857,6 @@ export interface UserUpsertWithoutEmailsInput {
 
 export interface EmailReceiptUpdateManyMutationInput {
   emailId?: Maybe<EmailId>;
-}
-
-export interface ExternalShopifyIntegrationUpdateInput {
-  shopName?: Maybe<String>;
-  enabled?: Maybe<Boolean>;
-  accessToken?: Maybe<String>;
-  scope?: Maybe<ExternalShopifyIntegrationUpdatescopeInput>;
-}
-
-export interface ExternalShopifyIntegrationUpdateManyMutationInput {
-  shopName?: Maybe<String>;
-  enabled?: Maybe<Boolean>;
-  accessToken?: Maybe<String>;
-  scope?: Maybe<ExternalShopifyIntegrationUpdatescopeInput>;
 }
 
 export interface FitPicCreateInput {
@@ -19009,6 +19212,7 @@ export interface CustomerUpdateDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpsertNestedInput {
@@ -19525,6 +19729,7 @@ export interface ProductUpdateInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductUpdateManyMutationInput {
@@ -19542,6 +19747,7 @@ export interface ProductUpdateManyMutationInput {
   slug?: Maybe<String>;
   status?: Maybe<ProductStatus>;
   type?: Maybe<ProductType>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductFunctionUpdateInput {
@@ -19596,6 +19802,7 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface ProductMaterialCategoryUpdateInput {
@@ -19661,6 +19868,7 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutMaterialCategoryInput {
@@ -19718,6 +19926,7 @@ export interface ProductCreateWithoutModelInput {
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface ProductModelUpdateInput {
@@ -19783,6 +19992,7 @@ export interface ProductUpdateWithoutModelDataInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutModelInput {
@@ -20671,7 +20881,7 @@ export interface ShopifyProductVariantCreateInput {
   productVariant?: Maybe<
     ProductVariantCreateOneWithoutShopifyProductVariantInput
   >;
-  shop?: Maybe<ExternalShopifyIntegrationCreateOneInput>;
+  shop?: Maybe<ShopifyShopCreateOneInput>;
   brand?: Maybe<BrandCreateOneInput>;
   title?: Maybe<String>;
   image?: Maybe<ImageCreateOneInput>;
@@ -20714,7 +20924,7 @@ export interface ShopifyProductVariantUpdateInput {
   productVariant?: Maybe<
     ProductVariantUpdateOneWithoutShopifyProductVariantInput
   >;
-  shop?: Maybe<ExternalShopifyIntegrationUpdateOneInput>;
+  shop?: Maybe<ShopifyShopUpdateOneInput>;
   brand?: Maybe<BrandUpdateOneInput>;
   title?: Maybe<String>;
   image?: Maybe<ImageUpdateOneInput>;
@@ -20777,6 +20987,20 @@ export interface ShopifyProductVariantSelectedOptionUpdateManyMutationInput {
   value?: Maybe<String>;
 }
 
+export interface ShopifyShopUpdateInput {
+  shopName?: Maybe<String>;
+  enabled?: Maybe<Boolean>;
+  accessToken?: Maybe<String>;
+  scope?: Maybe<ShopifyShopUpdatescopeInput>;
+}
+
+export interface ShopifyShopUpdateManyMutationInput {
+  shopName?: Maybe<String>;
+  enabled?: Maybe<Boolean>;
+  accessToken?: Maybe<String>;
+  scope?: Maybe<ShopifyShopUpdatescopeInput>;
+}
+
 export interface SizeUpdateInput {
   slug?: Maybe<String>;
   productType?: Maybe<ProductType>;
@@ -20823,20 +21047,16 @@ export interface StylePreferencesUpdateManyMutationInput {
   brands?: Maybe<StylePreferencesUpdatebrandsInput>;
 }
 
-export interface SyncTimingCreateInput {
-  id?: Maybe<ID_Input>;
-  type: SyncTimingType;
-  syncedAt: DateTimeInput;
-}
-
 export interface SyncTimingUpdateInput {
   type?: Maybe<SyncTimingType>;
   syncedAt?: Maybe<DateTimeInput>;
+  detail?: Maybe<String>;
 }
 
 export interface SyncTimingUpdateManyMutationInput {
   type?: Maybe<SyncTimingType>;
   syncedAt?: Maybe<DateTimeInput>;
+  detail?: Maybe<String>;
 }
 
 export interface TagCreateInput {
@@ -20883,6 +21103,7 @@ export interface ProductCreateWithoutTagsInput {
   tier?: Maybe<ProductTierCreateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  styles?: Maybe<ProductCreatestylesInput>;
 }
 
 export interface TagUpdateInput {
@@ -20948,6 +21169,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   tier?: Maybe<ProductTierUpdateOneInput>;
   type?: Maybe<ProductType>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  styles?: Maybe<ProductUpdatestylesInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutTagsInput {
@@ -21014,6 +21236,7 @@ export interface CustomerCreateWithoutUtmInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
 }
 
 export interface UTMDataUpdateInput {
@@ -21051,6 +21274,7 @@ export interface CustomerUpdateWithoutUtmDataInput {
   notificationBarReceipts?: Maybe<
     CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
   >;
+  impactSyncTimings?: Maybe<SyncTimingUpdateManyInput>;
 }
 
 export interface CustomerUpsertWithoutUtmInput {
@@ -21758,26 +21982,6 @@ export interface EmailReceiptSubscriptionWhereInput {
   >;
 }
 
-export interface ExternalShopifyIntegrationSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<ExternalShopifyIntegrationWhereInput>;
-  AND?: Maybe<
-    | ExternalShopifyIntegrationSubscriptionWhereInput[]
-    | ExternalShopifyIntegrationSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    | ExternalShopifyIntegrationSubscriptionWhereInput[]
-    | ExternalShopifyIntegrationSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    | ExternalShopifyIntegrationSubscriptionWhereInput[]
-    | ExternalShopifyIntegrationSubscriptionWhereInput
-  >;
-}
-
 export interface FitPicSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -22474,6 +22678,23 @@ export interface ShopifyProductVariantSelectedOptionSubscriptionWhereInput {
   NOT?: Maybe<
     | ShopifyProductVariantSelectedOptionSubscriptionWhereInput[]
     | ShopifyProductVariantSelectedOptionSubscriptionWhereInput
+  >;
+}
+
+export interface ShopifyShopSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ShopifyShopWhereInput>;
+  AND?: Maybe<
+    ShopifyShopSubscriptionWhereInput[] | ShopifyShopSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    ShopifyShopSubscriptionWhereInput[] | ShopifyShopSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    ShopifyShopSubscriptionWhereInput[] | ShopifyShopSubscriptionWhereInput
   >;
 }
 
@@ -23965,6 +24186,7 @@ export interface Product {
   slug: String;
   status?: ProductStatus;
   type?: ProductType;
+  styles: CustomerStyle[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -24030,6 +24252,7 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  styles: () => Promise<CustomerStyle[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -24097,6 +24320,7 @@ export interface ProductSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  styles: () => Promise<AsyncIterator<CustomerStyle[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -24164,6 +24388,7 @@ export interface ProductNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  styles: () => Promise<CustomerStyle[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -24183,6 +24408,7 @@ export interface Brand {
   published: Boolean;
   featured: Boolean;
   websiteUrl?: String;
+  styles: CustomerStyle[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -24221,9 +24447,10 @@ export interface BrandPromise extends Promise<Brand>, Fragmentable {
   published: () => Promise<Boolean>;
   featured: () => Promise<Boolean>;
   websiteUrl: () => Promise<String>;
+  shopifyShop: <T = ShopifyShopPromise>() => T;
+  styles: () => Promise<CustomerStyle[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  externalShopifyIntegration: <T = ExternalShopifyIntegrationPromise>() => T;
 }
 
 export interface BrandSubscription
@@ -24262,11 +24489,10 @@ export interface BrandSubscription
   published: () => Promise<AsyncIterator<Boolean>>;
   featured: () => Promise<AsyncIterator<Boolean>>;
   websiteUrl: () => Promise<AsyncIterator<String>>;
+  shopifyShop: <T = ShopifyShopSubscription>() => T;
+  styles: () => Promise<AsyncIterator<CustomerStyle[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  externalShopifyIntegration: <
-    T = ExternalShopifyIntegrationSubscription
-  >() => T;
 }
 
 export interface BrandNullablePromise
@@ -24305,12 +24531,13 @@ export interface BrandNullablePromise
   published: () => Promise<Boolean>;
   featured: () => Promise<Boolean>;
   websiteUrl: () => Promise<String>;
+  shopifyShop: <T = ShopifyShopPromise>() => T;
+  styles: () => Promise<CustomerStyle[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  externalShopifyIntegration: <T = ExternalShopifyIntegrationPromise>() => T;
 }
 
-export interface ExternalShopifyIntegration {
+export interface ShopifyShop {
   id: ID_Output;
   shopName: String;
   enabled: Boolean;
@@ -24320,9 +24547,7 @@ export interface ExternalShopifyIntegration {
   updatedAt: DateTimeOutput;
 }
 
-export interface ExternalShopifyIntegrationPromise
-  extends Promise<ExternalShopifyIntegration>,
-    Fragmentable {
+export interface ShopifyShopPromise extends Promise<ShopifyShop>, Fragmentable {
   id: () => Promise<ID_Output>;
   shopName: () => Promise<String>;
   enabled: () => Promise<Boolean>;
@@ -24332,8 +24557,8 @@ export interface ExternalShopifyIntegrationPromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface ExternalShopifyIntegrationSubscription
-  extends Promise<AsyncIterator<ExternalShopifyIntegration>>,
+export interface ShopifyShopSubscription
+  extends Promise<AsyncIterator<ShopifyShop>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   shopName: () => Promise<AsyncIterator<String>>;
@@ -24344,8 +24569,8 @@ export interface ExternalShopifyIntegrationSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface ExternalShopifyIntegrationNullablePromise
-  extends Promise<ExternalShopifyIntegration | null>,
+export interface ShopifyShopNullablePromise
+  extends Promise<ShopifyShop | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
   shopName: () => Promise<String>;
@@ -24808,7 +25033,7 @@ export interface ShopifyProductVariantPromise
     last?: Int;
   }) => T;
   productVariant: <T = ProductVariantPromise>() => T;
-  shop: <T = ExternalShopifyIntegrationPromise>() => T;
+  shop: <T = ShopifyShopPromise>() => T;
   brand: <T = BrandPromise>() => T;
   title: () => Promise<String>;
   image: <T = ImagePromise>() => T;
@@ -24835,7 +25060,7 @@ export interface ShopifyProductVariantSubscription
     last?: Int;
   }) => T;
   productVariant: <T = ProductVariantSubscription>() => T;
-  shop: <T = ExternalShopifyIntegrationSubscription>() => T;
+  shop: <T = ShopifyShopSubscription>() => T;
   brand: <T = BrandSubscription>() => T;
   title: () => Promise<AsyncIterator<String>>;
   image: <T = ImageSubscription>() => T;
@@ -24862,7 +25087,7 @@ export interface ShopifyProductVariantNullablePromise
     last?: Int;
   }) => T;
   productVariant: <T = ProductVariantPromise>() => T;
-  shop: <T = ExternalShopifyIntegrationPromise>() => T;
+  shop: <T = ShopifyShopPromise>() => T;
   brand: <T = BrandPromise>() => T;
   title: () => Promise<String>;
   image: <T = ImagePromise>() => T;
@@ -25712,6 +25937,15 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  impactSyncTimings: <T = FragmentableArray<SyncTiming>>(args?: {
+    where?: SyncTimingWhereInput;
+    orderBy?: SyncTimingOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -25779,6 +26013,17 @@ export interface CustomerSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  impactSyncTimings: <
+    T = Promise<AsyncIterator<SyncTimingSubscription>>
+  >(args?: {
+    where?: SyncTimingWhereInput;
+    orderBy?: SyncTimingOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -25840,6 +26085,15 @@ export interface CustomerNullablePromise
   >(args?: {
     where?: CustomerNotificationBarReceiptWhereInput;
     orderBy?: CustomerNotificationBarReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  impactSyncTimings: <T = FragmentableArray<SyncTiming>>(args?: {
+    where?: SyncTimingWhereInput;
+    orderBy?: SyncTimingOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -26799,6 +27053,7 @@ export interface CustomerAdmissionsData {
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   authorizationWindowClosesAt?: DateTimeOutput;
+  subscribedAt?: DateTimeOutput;
 }
 
 export interface CustomerAdmissionsDataPromise
@@ -26814,6 +27069,7 @@ export interface CustomerAdmissionsDataPromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   authorizationWindowClosesAt: () => Promise<DateTimeOutput>;
+  subscribedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerAdmissionsDataSubscription
@@ -26829,6 +27085,7 @@ export interface CustomerAdmissionsDataSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   authorizationWindowClosesAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  subscribedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface CustomerAdmissionsDataNullablePromise
@@ -26844,6 +27101,7 @@ export interface CustomerAdmissionsDataNullablePromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   authorizationWindowClosesAt: () => Promise<DateTimeOutput>;
+  subscribedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface UTMData {
@@ -26938,6 +27196,46 @@ export interface CustomerNotificationBarReceiptNullablePromise
   viewCount: () => Promise<Int>;
   clickCount: () => Promise<Int>;
   customer: <T = CustomerPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface SyncTiming {
+  id: ID_Output;
+  type: SyncTimingType;
+  syncedAt: DateTimeOutput;
+  detail?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface SyncTimingPromise extends Promise<SyncTiming>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  type: () => Promise<SyncTimingType>;
+  syncedAt: () => Promise<DateTimeOutput>;
+  detail: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface SyncTimingSubscription
+  extends Promise<AsyncIterator<SyncTiming>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  type: () => Promise<AsyncIterator<SyncTimingType>>;
+  syncedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  detail: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface SyncTimingNullablePromise
+  extends Promise<SyncTiming | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  type: () => Promise<SyncTimingType>;
+  syncedAt: () => Promise<DateTimeOutput>;
+  detail: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -27054,10 +27352,10 @@ export interface AggregateBillingInfoSubscription
 
 export interface BlogPost {
   id: ID_Output;
+  slug: String;
   webflowId: String;
   webflowCreatedAt: DateTimeOutput;
   webflowUpdatedAt: DateTimeOutput;
-  slug: String;
   name?: String;
   body?: String;
   summary?: String;
@@ -27071,14 +27369,16 @@ export interface BlogPost {
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   publishedOn: DateTimeOutput;
+  content?: String;
+  published: Boolean;
 }
 
 export interface BlogPostPromise extends Promise<BlogPost>, Fragmentable {
   id: () => Promise<ID_Output>;
+  slug: () => Promise<String>;
   webflowId: () => Promise<String>;
   webflowCreatedAt: () => Promise<DateTimeOutput>;
   webflowUpdatedAt: () => Promise<DateTimeOutput>;
-  slug: () => Promise<String>;
   name: () => Promise<String>;
   body: () => Promise<String>;
   summary: () => Promise<String>;
@@ -27093,16 +27393,18 @@ export interface BlogPostPromise extends Promise<BlogPost>, Fragmentable {
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   publishedOn: () => Promise<DateTimeOutput>;
+  content: () => Promise<String>;
+  published: () => Promise<Boolean>;
 }
 
 export interface BlogPostSubscription
   extends Promise<AsyncIterator<BlogPost>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  slug: () => Promise<AsyncIterator<String>>;
   webflowId: () => Promise<AsyncIterator<String>>;
   webflowCreatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   webflowUpdatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
   body: () => Promise<AsyncIterator<String>>;
   summary: () => Promise<AsyncIterator<String>>;
@@ -27117,16 +27419,18 @@ export interface BlogPostSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   publishedOn: () => Promise<AsyncIterator<DateTimeOutput>>;
+  content: () => Promise<AsyncIterator<String>>;
+  published: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface BlogPostNullablePromise
   extends Promise<BlogPost | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  slug: () => Promise<String>;
   webflowId: () => Promise<String>;
   webflowCreatedAt: () => Promise<DateTimeOutput>;
   webflowUpdatedAt: () => Promise<DateTimeOutput>;
-  slug: () => Promise<String>;
   name: () => Promise<String>;
   body: () => Promise<String>;
   summary: () => Promise<String>;
@@ -27141,6 +27445,8 @@ export interface BlogPostNullablePromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   publishedOn: () => Promise<DateTimeOutput>;
+  content: () => Promise<String>;
+  published: () => Promise<Boolean>;
 }
 
 export interface BlogPostConnection {
@@ -27989,64 +28295,6 @@ export interface AggregateEmailReceiptPromise
 
 export interface AggregateEmailReceiptSubscription
   extends Promise<AsyncIterator<AggregateEmailReceipt>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface ExternalShopifyIntegrationConnection {
-  pageInfo: PageInfo;
-  edges: ExternalShopifyIntegrationEdge[];
-}
-
-export interface ExternalShopifyIntegrationConnectionPromise
-  extends Promise<ExternalShopifyIntegrationConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ExternalShopifyIntegrationEdge>>() => T;
-  aggregate: <T = AggregateExternalShopifyIntegrationPromise>() => T;
-}
-
-export interface ExternalShopifyIntegrationConnectionSubscription
-  extends Promise<AsyncIterator<ExternalShopifyIntegrationConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<ExternalShopifyIntegrationEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateExternalShopifyIntegrationSubscription>() => T;
-}
-
-export interface ExternalShopifyIntegrationEdge {
-  node: ExternalShopifyIntegration;
-  cursor: String;
-}
-
-export interface ExternalShopifyIntegrationEdgePromise
-  extends Promise<ExternalShopifyIntegrationEdge>,
-    Fragmentable {
-  node: <T = ExternalShopifyIntegrationPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface ExternalShopifyIntegrationEdgeSubscription
-  extends Promise<AsyncIterator<ExternalShopifyIntegrationEdge>>,
-    Fragmentable {
-  node: <T = ExternalShopifyIntegrationSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateExternalShopifyIntegration {
-  count: Int;
-}
-
-export interface AggregateExternalShopifyIntegrationPromise
-  extends Promise<AggregateExternalShopifyIntegration>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateExternalShopifyIntegrationSubscription
-  extends Promise<AsyncIterator<AggregateExternalShopifyIntegration>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -30923,6 +31171,62 @@ export interface AggregateShopifyProductVariantSelectedOptionSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface ShopifyShopConnection {
+  pageInfo: PageInfo;
+  edges: ShopifyShopEdge[];
+}
+
+export interface ShopifyShopConnectionPromise
+  extends Promise<ShopifyShopConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ShopifyShopEdge>>() => T;
+  aggregate: <T = AggregateShopifyShopPromise>() => T;
+}
+
+export interface ShopifyShopConnectionSubscription
+  extends Promise<AsyncIterator<ShopifyShopConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ShopifyShopEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateShopifyShopSubscription>() => T;
+}
+
+export interface ShopifyShopEdge {
+  node: ShopifyShop;
+  cursor: String;
+}
+
+export interface ShopifyShopEdgePromise
+  extends Promise<ShopifyShopEdge>,
+    Fragmentable {
+  node: <T = ShopifyShopPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ShopifyShopEdgeSubscription
+  extends Promise<AsyncIterator<ShopifyShopEdge>>,
+    Fragmentable {
+  node: <T = ShopifyShopSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateShopifyShop {
+  count: Int;
+}
+
+export interface AggregateShopifyShopPromise
+  extends Promise<AggregateShopifyShop>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateShopifyShopSubscription
+  extends Promise<AsyncIterator<AggregateShopifyShop>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface SizeConnection {
   pageInfo: PageInfo;
   edges: SizeEdge[];
@@ -31087,42 +31391,6 @@ export interface AggregateStylePreferencesSubscription
   extends Promise<AsyncIterator<AggregateStylePreferences>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface SyncTiming {
-  id: ID_Output;
-  type: SyncTimingType;
-  syncedAt: DateTimeOutput;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface SyncTimingPromise extends Promise<SyncTiming>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  type: () => Promise<SyncTimingType>;
-  syncedAt: () => Promise<DateTimeOutput>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface SyncTimingSubscription
-  extends Promise<AsyncIterator<SyncTiming>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  type: () => Promise<AsyncIterator<SyncTimingType>>;
-  syncedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface SyncTimingNullablePromise
-  extends Promise<SyncTiming | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  type: () => Promise<SyncTimingType>;
-  syncedAt: () => Promise<DateTimeOutput>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface SyncTimingConnection {
@@ -32027,10 +32295,10 @@ export interface BlogPostSubscriptionPayloadSubscription
 
 export interface BlogPostPreviousValues {
   id: ID_Output;
+  slug: String;
   webflowId: String;
   webflowCreatedAt: DateTimeOutput;
   webflowUpdatedAt: DateTimeOutput;
-  slug: String;
   name?: String;
   body?: String;
   summary?: String;
@@ -32044,16 +32312,18 @@ export interface BlogPostPreviousValues {
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   publishedOn: DateTimeOutput;
+  content?: String;
+  published: Boolean;
 }
 
 export interface BlogPostPreviousValuesPromise
   extends Promise<BlogPostPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  slug: () => Promise<String>;
   webflowId: () => Promise<String>;
   webflowCreatedAt: () => Promise<DateTimeOutput>;
   webflowUpdatedAt: () => Promise<DateTimeOutput>;
-  slug: () => Promise<String>;
   name: () => Promise<String>;
   body: () => Promise<String>;
   summary: () => Promise<String>;
@@ -32067,16 +32337,18 @@ export interface BlogPostPreviousValuesPromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   publishedOn: () => Promise<DateTimeOutput>;
+  content: () => Promise<String>;
+  published: () => Promise<Boolean>;
 }
 
 export interface BlogPostPreviousValuesSubscription
   extends Promise<AsyncIterator<BlogPostPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  slug: () => Promise<AsyncIterator<String>>;
   webflowId: () => Promise<AsyncIterator<String>>;
   webflowCreatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   webflowUpdatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
   body: () => Promise<AsyncIterator<String>>;
   summary: () => Promise<AsyncIterator<String>>;
@@ -32090,6 +32362,8 @@ export interface BlogPostPreviousValuesSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   publishedOn: () => Promise<AsyncIterator<DateTimeOutput>>;
+  content: () => Promise<AsyncIterator<String>>;
+  published: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface BottomSizeSubscriptionPayload {
@@ -32191,6 +32465,7 @@ export interface BrandPreviousValues {
   published: Boolean;
   featured: Boolean;
   websiteUrl?: String;
+  styles: CustomerStyle[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -32212,6 +32487,7 @@ export interface BrandPreviousValuesPromise
   published: () => Promise<Boolean>;
   featured: () => Promise<Boolean>;
   websiteUrl: () => Promise<String>;
+  styles: () => Promise<CustomerStyle[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -32233,6 +32509,7 @@ export interface BrandPreviousValuesSubscription
   published: () => Promise<AsyncIterator<Boolean>>;
   featured: () => Promise<AsyncIterator<Boolean>>;
   websiteUrl: () => Promise<AsyncIterator<String>>;
+  styles: () => Promise<AsyncIterator<CustomerStyle[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -32517,6 +32794,7 @@ export interface CustomerAdmissionsDataPreviousValues {
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   authorizationWindowClosesAt?: DateTimeOutput;
+  subscribedAt?: DateTimeOutput;
 }
 
 export interface CustomerAdmissionsDataPreviousValuesPromise
@@ -32531,6 +32809,7 @@ export interface CustomerAdmissionsDataPreviousValuesPromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   authorizationWindowClosesAt: () => Promise<DateTimeOutput>;
+  subscribedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerAdmissionsDataPreviousValuesSubscription
@@ -32545,6 +32824,7 @@ export interface CustomerAdmissionsDataPreviousValuesSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   authorizationWindowClosesAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  subscribedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface CustomerDetailSubscriptionPayload {
@@ -32897,67 +33177,6 @@ export interface EmailReceiptPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   emailId: () => Promise<AsyncIterator<EmailId>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface ExternalShopifyIntegrationSubscriptionPayload {
-  mutation: MutationType;
-  node: ExternalShopifyIntegration;
-  updatedFields: String[];
-  previousValues: ExternalShopifyIntegrationPreviousValues;
-}
-
-export interface ExternalShopifyIntegrationSubscriptionPayloadPromise
-  extends Promise<ExternalShopifyIntegrationSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = ExternalShopifyIntegrationPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ExternalShopifyIntegrationPreviousValuesPromise>() => T;
-}
-
-export interface ExternalShopifyIntegrationSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ExternalShopifyIntegrationSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ExternalShopifyIntegrationSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <
-    T = ExternalShopifyIntegrationPreviousValuesSubscription
-  >() => T;
-}
-
-export interface ExternalShopifyIntegrationPreviousValues {
-  id: ID_Output;
-  shopName: String;
-  enabled: Boolean;
-  accessToken?: String;
-  scope: String[];
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface ExternalShopifyIntegrationPreviousValuesPromise
-  extends Promise<ExternalShopifyIntegrationPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  shopName: () => Promise<String>;
-  enabled: () => Promise<Boolean>;
-  accessToken: () => Promise<String>;
-  scope: () => Promise<String[]>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface ExternalShopifyIntegrationPreviousValuesSubscription
-  extends Promise<AsyncIterator<ExternalShopifyIntegrationPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  shopName: () => Promise<AsyncIterator<String>>;
-  enabled: () => Promise<AsyncIterator<Boolean>>;
-  accessToken: () => Promise<AsyncIterator<String>>;
-  scope: () => Promise<AsyncIterator<String[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -34001,6 +34220,7 @@ export interface ProductPreviousValues {
   slug: String;
   status?: ProductStatus;
   type?: ProductType;
+  styles: CustomerStyle[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -34023,6 +34243,7 @@ export interface ProductPreviousValuesPromise
   slug: () => Promise<String>;
   status: () => Promise<ProductStatus>;
   type: () => Promise<ProductType>;
+  styles: () => Promise<CustomerStyle[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -34045,6 +34266,7 @@ export interface ProductPreviousValuesSubscription
   slug: () => Promise<AsyncIterator<String>>;
   status: () => Promise<AsyncIterator<ProductStatus>>;
   type: () => Promise<AsyncIterator<ProductType>>;
+  styles: () => Promise<AsyncIterator<CustomerStyle[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -35307,6 +35529,65 @@ export interface ShopifyProductVariantSelectedOptionPreviousValuesSubscription
   value: () => Promise<AsyncIterator<String>>;
 }
 
+export interface ShopifyShopSubscriptionPayload {
+  mutation: MutationType;
+  node: ShopifyShop;
+  updatedFields: String[];
+  previousValues: ShopifyShopPreviousValues;
+}
+
+export interface ShopifyShopSubscriptionPayloadPromise
+  extends Promise<ShopifyShopSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ShopifyShopPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ShopifyShopPreviousValuesPromise>() => T;
+}
+
+export interface ShopifyShopSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ShopifyShopSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ShopifyShopSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ShopifyShopPreviousValuesSubscription>() => T;
+}
+
+export interface ShopifyShopPreviousValues {
+  id: ID_Output;
+  shopName: String;
+  enabled: Boolean;
+  accessToken?: String;
+  scope: String[];
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface ShopifyShopPreviousValuesPromise
+  extends Promise<ShopifyShopPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  shopName: () => Promise<String>;
+  enabled: () => Promise<Boolean>;
+  accessToken: () => Promise<String>;
+  scope: () => Promise<String[]>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ShopifyShopPreviousValuesSubscription
+  extends Promise<AsyncIterator<ShopifyShopPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  shopName: () => Promise<AsyncIterator<String>>;
+  enabled: () => Promise<AsyncIterator<Boolean>>;
+  accessToken: () => Promise<AsyncIterator<String>>;
+  scope: () => Promise<AsyncIterator<String[]>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface SizeSubscriptionPayload {
   mutation: MutationType;
   node: Size;
@@ -35504,6 +35785,7 @@ export interface SyncTimingPreviousValues {
   id: ID_Output;
   type: SyncTimingType;
   syncedAt: DateTimeOutput;
+  detail?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -35514,6 +35796,7 @@ export interface SyncTimingPreviousValuesPromise
   id: () => Promise<ID_Output>;
   type: () => Promise<SyncTimingType>;
   syncedAt: () => Promise<DateTimeOutput>;
+  detail: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -35524,6 +35807,7 @@ export interface SyncTimingPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   type: () => Promise<AsyncIterator<SyncTimingType>>;
   syncedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  detail: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -36270,7 +36554,7 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "ExternalShopifyIntegration",
+    name: "ShopifyShop",
     embedded: false
   },
   {

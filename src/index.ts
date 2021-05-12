@@ -4,6 +4,7 @@ import { NestFactory } from "@nestjs/core"
 import { ExpressAdapter } from "@nestjs/platform-express"
 import * as Sentry from "@sentry/node"
 import bodyParser from "body-parser"
+import compression from "compression"
 import express from "express"
 
 import { AppModule } from "./app.module"
@@ -29,6 +30,7 @@ async function bootstrap() {
   const cors = await createCorsMiddleware(prisma)
 
   server.use(
+    compression(),
     cors,
     checkJwt,
     createGetUserMiddleware(prisma),

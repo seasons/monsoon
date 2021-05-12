@@ -237,7 +237,7 @@ export class ProductService {
         slug,
         type: input.type,
         modelSizeDisplay: input.modelSizeDisplay,
-        sizeType: input.internalSizeType,
+        sizeType: input.modelSizeType,
       })
     }
 
@@ -257,6 +257,7 @@ export class ProductService {
         "photographyStatus",
         "buyNewEnabled",
       ]),
+      styles: input?.styles?.length > 0 ? { set: input.styles } : { set: [] },
       season: productSeason && { connect: { id: productSeason.id } },
       brand: {
         connect: { id: input.brandID },
@@ -270,7 +271,6 @@ export class ProductService {
       materialCategory: input.materialCategorySlug && {
         connect: { slug: input.materialCategorySlug },
       },
-      modelHeight: model && model.height,
       model: model && {
         connect: { id: model.id },
       },
@@ -630,27 +630,14 @@ export class ProductService {
         throw new Error(`No style number found for productID: ${productID}`)
       }
     } else {
-      const brandCount = await this.prisma.client
-        .productsConnection({
-          where: { brand: { id: brandID } },
-        })
-        .aggregate()
-        .count()
-      if (brandCount === null) {
-        return null
-      }
-      styleNumber = brandCount + 1
+      const allStyleCodesForBrand = (
+        await this.productUtils.getAllStyleCodesForBrand(brandID)
+      ).sort()
+      const highestStyleNumber = Number(allStyleCodesForBrand.pop()) || 0
+      styleNumber = highestStyleNumber + 1
     }
 
     const styleCode = styleNumber.toString().padStart(3, "0")
-    if (!productID) {
-      const allStyleCodesForBrand = await this.productUtils.getAllStyleCodesForBrand(
-        brandID
-      )
-      if (allStyleCodesForBrand.includes(styleCode)) {
-        throw new Error(`Style code collision: ${styleCode}`)
-      }
-    }
 
     return {
       brandCode: brand.brandCode,
@@ -674,6 +661,7 @@ export class ProductService {
       images,
       modelSizeDisplay,
       modelSizeName,
+      modelSizeType,
       tags,
       status,
       variants,
@@ -749,7 +737,7 @@ export class ProductService {
         slug: product.slug,
         type: product.type,
         modelSizeDisplay,
-        sizeType: internalSizeType,
+        sizeType: modelSizeType,
       })
       modelSizeID = modelSize.id
     }
@@ -815,6 +803,7 @@ export class ProductService {
         modelSize: modelSizeID && { connect: { id: modelSizeID } },
         tags: tagIDs && { set: tagIDs },
         status,
+        styles: data?.styles?.length > 0 ? { set: data.styles } : { set: [] },
         season: productSeason && { connect: { id: productSeason.id } },
         photographyStatus,
       },

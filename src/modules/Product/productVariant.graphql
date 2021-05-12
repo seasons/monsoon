@@ -8,10 +8,12 @@ type Query {
     first: Int
     last: Int
     personalizedForCurrentUser: Boolean
-  ): ProductVariantConnection!
+  ): ProductVariantConnection! @cacheControl(maxAge: 0)
   generatedVariantSKUs(input: ProductVariantSKUsInput!): [String!]
+    @cacheControl(maxAge: 0)
 
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
+    @cacheControl(maxAge: 0)
   bottomSizes(
     where: BottomSizeWhereInput
     orderBy: BottomSizeOrderByInput
@@ -20,9 +22,10 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [BottomSize]!
+  ): [BottomSize]! @cacheControl(maxAge: 0)
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
-  size(where: SizeWhereUniqueInput!): Size
+    @cacheControl(maxAge: 0)
+  size(where: SizeWhereUniqueInput!): Size @cacheControl(maxAge: 0)
   sizes(
     where: SizeWhereInput
     orderBy: SizeOrderByInput
@@ -31,7 +34,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Size]!
+  ): [Size]! @cacheControl(maxAge: 0)
   sizesConnection(
     where: SizeWhereInput
     orderBy: SizeOrderByInput
@@ -40,8 +43,8 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): SizeConnection!
-  topSize(where: TopSizeWhereUniqueInput!): TopSize
+  ): SizeConnection! @cacheControl(maxAge: 0)
+  topSize(where: TopSizeWhereUniqueInput!): TopSize @cacheControl(maxAge: 0)
   topSizes(
     where: TopSizeWhereInput
     orderBy: TopSizeOrderByInput
@@ -50,7 +53,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [TopSize]!
+  ): [TopSize]! @cacheControl(maxAge: 0)
 }
 
 type Mutation {
@@ -132,7 +135,7 @@ type ShopifyProductVariant {
     last: Int
   ): [ShopifyProductVariantSelectedOption!]
   productVariant: ProductVariant
-  shop: ExternalShopifyIntegration
+  shop: ShopifyShop
   brand: Brand
   title: String
   image: Image

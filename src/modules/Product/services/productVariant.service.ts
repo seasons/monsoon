@@ -80,15 +80,23 @@ export class ProductVariantService {
       })
     )
 
-    await this.prisma.client.updateProductVariant({
-      where: {
-        id: productVariant.id,
-      },
-      data: {
-        total: productVariant.total + count,
-        nonReservable: productVariant.nonReservable + 1,
-      },
-    })
+    try {
+      await this.prisma.client.updateProductVariant({
+        where: {
+          id: productVariant.id,
+        },
+        data: {
+          total: productVariant.total + count,
+          nonReservable: productVariant.nonReservable + count,
+        },
+      })
+    } catch (err) {
+      // Makeshift rollback
+      for (const physProd of newPhysicalProducts) {
+        await this.prisma.client.deletePhysicalProduct({ id: physProd.id })
+      }
+      throw err
+    }
 
     return newPhysicalProducts
   }

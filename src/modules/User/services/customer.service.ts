@@ -56,6 +56,7 @@ export class CustomerService {
       topSizes
       waistSizes
       impactId
+      discoveryReference
     }
     utm {
       source
@@ -359,6 +360,7 @@ export class CustomerService {
             zipCode
           }
           impactId
+          discoveryReference
         }
         status
         admissions {
@@ -458,6 +460,7 @@ export class CustomerService {
         method: "Manual",
         application,
         impactId: customer.detail?.impactId,
+        discoveryReference: customer.detail?.discoveryReference,
         ...this.utils.formatUTMForSegment(customer.utm),
       })
     }
@@ -576,6 +579,7 @@ export class CustomerService {
           method: "Automatic",
           application,
           impactId: customer.detail?.impactId,
+          discoveryReference: customer.detail?.discoveryReference,
           ...this.utils.formatUTMForSegment(customer.utm),
         })
 

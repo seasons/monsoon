@@ -1,17 +1,12 @@
-import * as url from "url"
-
 import { BrandUtilsService } from "@modules/Product/services/brand.utils.service"
 import { IndexKey } from "@modules/Search/services/algolia.service"
 import { SearchService } from "@modules/Search/services/search.service"
 import { Injectable } from "@nestjs/common"
 import {
   BrandWhereUniqueInput,
-  ExternalShopifyIntegrationUpdateOneInput,
+  ShopifyShopUpdateOneInput,
 } from "@prisma1/index"
-import {
-  BrandUpdateOneInput,
-  Brand as PrismaBindingBrand,
-} from "@prisma1/prisma.binding"
+import { Brand as PrismaBindingBrand } from "@prisma1/prisma.binding"
 import { PrismaService } from "@prisma1/prisma.service"
 
 @Injectable()
@@ -28,6 +23,7 @@ export class BrandService {
 
     return await this.prisma.client.createBrand({
       ...input,
+      styles: input?.styles?.length > 0 ? { set: input.styles } : { set: [] },
       logoImage: logoID && { connect: { id: logoID } },
       images: imageIDs && { connect: imageIDs },
     })
@@ -44,7 +40,7 @@ export class BrandService {
       { where },
       `{
           id
-          externalShopifyIntegration {
+          shopifyShop {
             id
           }
       }`
@@ -57,14 +53,14 @@ export class BrandService {
       /** noop **/
     }
 
-    if (data.externalShopifyIntegration) {
-      const shopName = data.externalShopifyIntegration.shopName
+    if (data.shopifyShop) {
+      const shopName = data.shopifyShop.shopName
 
-      data.externalShopifyIntegration = {
+      data.shopifyShop = {
         connect: {
           shopName,
         },
-      } as ExternalShopifyIntegrationUpdateOneInput
+      } as ShopifyShopUpdateOneInput
       const shopifyProductVariants = await this.prisma.client.shopifyProductVariants(
         {
           where: {
@@ -91,14 +87,15 @@ export class BrandService {
       }
 
       // Index shopify product variants into algolia
-    } else if (brand?.externalShopifyIntegration?.id) {
-      data.externalShopifyIntegration = { delete: true }
+    } else if (brand?.shopifyShop?.id) {
+      data.shopifyShop = { delete: true }
     }
 
     const updatedBrand = await this.prisma.client.updateBrand({
       where,
       data: {
         ...data,
+        styles: data?.styles?.length > 0 ? { set: data.styles } : { set: [] },
         logoImage: brandImages &&
           brandImages.logoID && { connect: { id: brandImages.logoID } },
         images: brandImages &&
@@ -106,7 +103,7 @@ export class BrandService {
       },
     })
 
-    if (data.externalShopifyIntegration) {
+    if (data.shopifyShop) {
       await this.search.indexShopifyProductVariants(
         [IndexKey.Default, IndexKey.Admin, IndexKey.ShopifyProductVariant],
         updatedBrand.id

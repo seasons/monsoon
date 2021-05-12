@@ -568,10 +568,6 @@ type AggregateEmailReceipt {
   count: Int!
 }
 
-type AggregateExternalShopifyIntegration {
-  count: Int!
-}
-
 type AggregateFitPic {
   count: Int!
 }
@@ -729,6 +725,10 @@ type AggregateShopifyProductVariant {
 }
 
 type AggregateShopifyProductVariantSelectedOption {
+  count: Int!
+}
+
+type AggregateShopifyShop {
   count: Int!
 }
 
@@ -1395,10 +1395,10 @@ input BillingInfoWhereUniqueInput {
 
 type BlogPost {
   id: ID!
+  slug: String!
   webflowId: String!
   webflowCreatedAt: DateTime!
   webflowUpdatedAt: DateTime!
-  slug: String!
   name: String
   body: String
   summary: String
@@ -1413,6 +1413,8 @@ type BlogPost {
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedOn: DateTime!
+  content: String
+  published: Boolean!
 }
 
 type BlogPostConnection {
@@ -1423,10 +1425,10 @@ type BlogPostConnection {
 
 input BlogPostCreateInput {
   id: ID
+  slug: String!
   webflowId: String!
   webflowCreatedAt: DateTime!
   webflowUpdatedAt: DateTime!
-  slug: String!
   name: String
   body: String
   summary: String
@@ -1439,6 +1441,8 @@ input BlogPostCreateInput {
   author: String
   category: String
   publishedOn: DateTime!
+  content: String
+  published: Boolean
 }
 
 input BlogPostCreatetagsInput {
@@ -1453,14 +1457,14 @@ type BlogPostEdge {
 enum BlogPostOrderByInput {
   id_ASC
   id_DESC
+  slug_ASC
+  slug_DESC
   webflowId_ASC
   webflowId_DESC
   webflowCreatedAt_ASC
   webflowCreatedAt_DESC
   webflowUpdatedAt_ASC
   webflowUpdatedAt_DESC
-  slug_ASC
-  slug_DESC
   name_ASC
   name_DESC
   body_ASC
@@ -1485,14 +1489,18 @@ enum BlogPostOrderByInput {
   updatedAt_DESC
   publishedOn_ASC
   publishedOn_DESC
+  content_ASC
+  content_DESC
+  published_ASC
+  published_DESC
 }
 
 type BlogPostPreviousValues {
   id: ID!
+  slug: String!
   webflowId: String!
   webflowCreatedAt: DateTime!
   webflowUpdatedAt: DateTime!
-  slug: String!
   name: String
   body: String
   summary: String
@@ -1506,6 +1514,8 @@ type BlogPostPreviousValues {
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedOn: DateTime!
+  content: String
+  published: Boolean!
 }
 
 type BlogPostSubscriptionPayload {
@@ -1527,10 +1537,10 @@ input BlogPostSubscriptionWhereInput {
 }
 
 input BlogPostUpdateInput {
+  slug: String
   webflowId: String
   webflowCreatedAt: DateTime
   webflowUpdatedAt: DateTime
-  slug: String
   name: String
   body: String
   summary: String
@@ -1543,13 +1553,15 @@ input BlogPostUpdateInput {
   author: String
   category: String
   publishedOn: DateTime
+  content: String
+  published: Boolean
 }
 
 input BlogPostUpdateManyMutationInput {
+  slug: String
   webflowId: String
   webflowCreatedAt: DateTime
   webflowUpdatedAt: DateTime
-  slug: String
   name: String
   body: String
   summary: String
@@ -1561,6 +1573,8 @@ input BlogPostUpdateManyMutationInput {
   author: String
   category: String
   publishedOn: DateTime
+  content: String
+  published: Boolean
 }
 
 input BlogPostUpdatetagsInput {
@@ -1582,6 +1596,20 @@ input BlogPostWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
   webflowId: String
   webflowId_not: String
   webflowId_in: [String!]
@@ -1612,20 +1640,6 @@ input BlogPostWhereInput {
   webflowUpdatedAt_lte: DateTime
   webflowUpdatedAt_gt: DateTime
   webflowUpdatedAt_gte: DateTime
-  slug: String
-  slug_not: String
-  slug_in: [String!]
-  slug_not_in: [String!]
-  slug_lt: String
-  slug_lte: String
-  slug_gt: String
-  slug_gte: String
-  slug_contains: String
-  slug_not_contains: String
-  slug_starts_with: String
-  slug_not_starts_with: String
-  slug_ends_with: String
-  slug_not_ends_with: String
   name: String
   name_not: String
   name_in: [String!]
@@ -1777,6 +1791,22 @@ input BlogPostWhereInput {
   publishedOn_lte: DateTime
   publishedOn_gt: DateTime
   publishedOn_gte: DateTime
+  content: String
+  content_not: String
+  content_in: [String!]
+  content_not_in: [String!]
+  content_lt: String
+  content_lte: String
+  content_gt: String
+  content_gte: String
+  content_contains: String
+  content_not_contains: String
+  content_starts_with: String
+  content_not_starts_with: String
+  content_ends_with: String
+  content_not_ends_with: String
+  published: Boolean
+  published_not: Boolean
   AND: [BlogPostWhereInput!]
   OR: [BlogPostWhereInput!]
   NOT: [BlogPostWhereInput!]
@@ -1784,6 +1814,7 @@ input BlogPostWhereInput {
 
 input BlogPostWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 type BottomSize {
@@ -2008,9 +2039,10 @@ type Brand {
   published: Boolean!
   featured: Boolean!
   websiteUrl: String
+  shopifyShop: ShopifyShop
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  externalShopifyIntegration: ExternalShopifyIntegration
 }
 
 type BrandConnection {
@@ -2037,7 +2069,8 @@ input BrandCreateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
+  shopifyShop: ShopifyShopCreateOneInput
+  styles: BrandCreatestylesInput
 }
 
 input BrandCreateOneInput {
@@ -2048,6 +2081,10 @@ input BrandCreateOneInput {
 input BrandCreateOneWithoutProductsInput {
   create: BrandCreateWithoutProductsInput
   connect: BrandWhereUniqueInput
+}
+
+input BrandCreatestylesInput {
+  set: [CustomerStyle!]
 }
 
 input BrandCreateWithoutProductsInput {
@@ -2067,7 +2104,8 @@ input BrandCreateWithoutProductsInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationCreateOneInput
+  shopifyShop: ShopifyShopCreateOneInput
+  styles: BrandCreatestylesInput
 }
 
 type BrandEdge {
@@ -2125,6 +2163,7 @@ type BrandPreviousValues {
   published: Boolean!
   featured: Boolean!
   websiteUrl: String
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2176,7 +2215,8 @@ input BrandUpdateDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
+  styles: BrandUpdatestylesInput
 }
 
 input BrandUpdateInput {
@@ -2196,7 +2236,8 @@ input BrandUpdateInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
+  styles: BrandUpdatestylesInput
 }
 
 input BrandUpdateManyMutationInput {
@@ -2213,6 +2254,7 @@ input BrandUpdateManyMutationInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
+  styles: BrandUpdatestylesInput
 }
 
 input BrandUpdateOneInput {
@@ -2231,6 +2273,10 @@ input BrandUpdateOneRequiredWithoutProductsInput {
   connect: BrandWhereUniqueInput
 }
 
+input BrandUpdatestylesInput {
+  set: [CustomerStyle!]
+}
+
 input BrandUpdateWithoutProductsDataInput {
   slug: String
   brandCode: String
@@ -2247,7 +2293,8 @@ input BrandUpdateWithoutProductsDataInput {
   published: Boolean
   featured: Boolean
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegrationUpdateOneInput
+  shopifyShop: ShopifyShopUpdateOneInput
+  styles: BrandUpdatestylesInput
 }
 
 input BrandUpsertNestedInput {
@@ -2398,6 +2445,7 @@ input BrandWhereInput {
   websiteUrl_not_starts_with: String
   websiteUrl_ends_with: String
   websiteUrl_not_ends_with: String
+  shopifyShop: ShopifyShopWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -2414,7 +2462,6 @@ input BrandWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  externalShopifyIntegration: ExternalShopifyIntegrationWhereInput
   AND: [BrandWhereInput!]
   OR: [BrandWhereInput!]
   NOT: [BrandWhereInput!]
@@ -3332,6 +3379,7 @@ type Customer {
   authorizedAt: DateTime
   utm: UTMData
   notificationBarReceipts(where: CustomerNotificationBarReceiptWhereInput, orderBy: CustomerNotificationBarReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerNotificationBarReceipt!]
+  impactSyncTimings(where: SyncTimingWhereInput, orderBy: SyncTimingOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SyncTiming!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3347,6 +3395,7 @@ type CustomerAdmissionsData {
   createdAt: DateTime!
   updatedAt: DateTime!
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 type CustomerAdmissionsDataConnection {
@@ -3364,6 +3413,7 @@ input CustomerAdmissionsDataCreateInput {
   customer: CustomerCreateOneWithoutAdmissionsInput!
   authorizationsCount: Int!
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 input CustomerAdmissionsDataCreateOneWithoutCustomerInput {
@@ -3379,6 +3429,7 @@ input CustomerAdmissionsDataCreateWithoutCustomerInput {
   allAccessEnabled: Boolean
   authorizationsCount: Int!
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 type CustomerAdmissionsDataEdge {
@@ -3405,6 +3456,8 @@ enum CustomerAdmissionsDataOrderByInput {
   updatedAt_DESC
   authorizationWindowClosesAt_ASC
   authorizationWindowClosesAt_DESC
+  subscribedAt_ASC
+  subscribedAt_DESC
 }
 
 type CustomerAdmissionsDataPreviousValues {
@@ -3417,6 +3470,7 @@ type CustomerAdmissionsDataPreviousValues {
   createdAt: DateTime!
   updatedAt: DateTime!
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 type CustomerAdmissionsDataSubscriptionPayload {
@@ -3445,6 +3499,7 @@ input CustomerAdmissionsDataUpdateInput {
   customer: CustomerUpdateOneRequiredWithoutAdmissionsInput
   authorizationsCount: Int
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 input CustomerAdmissionsDataUpdateManyMutationInput {
@@ -3454,6 +3509,7 @@ input CustomerAdmissionsDataUpdateManyMutationInput {
   allAccessEnabled: Boolean
   authorizationsCount: Int
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 input CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
@@ -3472,6 +3528,7 @@ input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
   allAccessEnabled: Boolean
   authorizationsCount: Int
   authorizationWindowClosesAt: DateTime
+  subscribedAt: DateTime
 }
 
 input CustomerAdmissionsDataUpsertWithoutCustomerInput {
@@ -3537,6 +3594,14 @@ input CustomerAdmissionsDataWhereInput {
   authorizationWindowClosesAt_lte: DateTime
   authorizationWindowClosesAt_gt: DateTime
   authorizationWindowClosesAt_gte: DateTime
+  subscribedAt: DateTime
+  subscribedAt_not: DateTime
+  subscribedAt_in: [DateTime!]
+  subscribedAt_not_in: [DateTime!]
+  subscribedAt_lt: DateTime
+  subscribedAt_lte: DateTime
+  subscribedAt_gt: DateTime
+  subscribedAt_gte: DateTime
   AND: [CustomerAdmissionsDataWhereInput!]
   OR: [CustomerAdmissionsDataWhereInput!]
   NOT: [CustomerAdmissionsDataWhereInput!]
@@ -3571,6 +3636,7 @@ input CustomerCreateInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateManyWithoutReferrerInput {
@@ -3636,6 +3702,7 @@ input CustomerCreateWithoutAdmissionsInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutBagItemsInput {
@@ -3656,6 +3723,7 @@ input CustomerCreateWithoutBagItemsInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutMembershipInput {
@@ -3676,6 +3744,7 @@ input CustomerCreateWithoutMembershipInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutNotificationBarReceiptsInput {
@@ -3696,6 +3765,7 @@ input CustomerCreateWithoutNotificationBarReceiptsInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutReferreesInput {
@@ -3716,6 +3786,7 @@ input CustomerCreateWithoutReferreesInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutReferrerInput {
@@ -3736,6 +3807,7 @@ input CustomerCreateWithoutReferrerInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -3756,6 +3828,7 @@ input CustomerCreateWithoutReservationsInput {
   authorizedAt: DateTime
   utm: UTMDataCreateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 input CustomerCreateWithoutUtmInput {
@@ -3776,6 +3849,7 @@ input CustomerCreateWithoutUtmInput {
   admissions: CustomerAdmissionsDataCreateOneWithoutCustomerInput
   authorizedAt: DateTime
   notificationBarReceipts: CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingCreateManyInput
 }
 
 type CustomerDetail {
@@ -5265,6 +5339,7 @@ input CustomerUpdateDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateInput {
@@ -5285,6 +5360,7 @@ input CustomerUpdateInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateManyDataInput {
@@ -5395,6 +5471,7 @@ input CustomerUpdateWithoutAdmissionsDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutBagItemsDataInput {
@@ -5414,6 +5491,7 @@ input CustomerUpdateWithoutBagItemsDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutMembershipDataInput {
@@ -5433,6 +5511,7 @@ input CustomerUpdateWithoutMembershipDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutNotificationBarReceiptsDataInput {
@@ -5452,6 +5531,7 @@ input CustomerUpdateWithoutNotificationBarReceiptsDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutReferreesDataInput {
@@ -5471,6 +5551,7 @@ input CustomerUpdateWithoutReferreesDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutReferrerDataInput {
@@ -5490,6 +5571,7 @@ input CustomerUpdateWithoutReferrerDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -5509,6 +5591,7 @@ input CustomerUpdateWithoutReservationsDataInput {
   authorizedAt: DateTime
   utm: UTMDataUpdateOneWithoutCustomerInput
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithoutUtmDataInput {
@@ -5528,6 +5611,7 @@ input CustomerUpdateWithoutUtmDataInput {
   admissions: CustomerAdmissionsDataUpdateOneWithoutCustomerInput
   authorizedAt: DateTime
   notificationBarReceipts: CustomerNotificationBarReceiptUpdateManyWithoutCustomerInput
+  impactSyncTimings: SyncTimingUpdateManyInput
 }
 
 input CustomerUpdateWithWhereUniqueWithoutReferrerInput {
@@ -5662,6 +5746,9 @@ input CustomerWhereInput {
   notificationBarReceipts_every: CustomerNotificationBarReceiptWhereInput
   notificationBarReceipts_some: CustomerNotificationBarReceiptWhereInput
   notificationBarReceipts_none: CustomerNotificationBarReceiptWhereInput
+  impactSyncTimings_every: SyncTimingWhereInput
+  impactSyncTimings_some: SyncTimingWhereInput
+  impactSyncTimings_none: SyncTimingWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -5715,6 +5802,7 @@ enum EmailId {
   WelcomeToSeasons
   UnpaidMembership
   ReturnToGoodStanding
+  RecommendedItemsNurture
 }
 
 type EmailReceipt {
@@ -5916,197 +6004,6 @@ input EmailReceiptWhereInput {
 
 input EmailReceiptWhereUniqueInput {
   id: ID
-}
-
-type ExternalShopifyIntegration {
-  id: ID!
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: [String!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type ExternalShopifyIntegrationConnection {
-  pageInfo: PageInfo!
-  edges: [ExternalShopifyIntegrationEdge]!
-  aggregate: AggregateExternalShopifyIntegration!
-}
-
-input ExternalShopifyIntegrationCreateInput {
-  id: ID
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: ExternalShopifyIntegrationCreatescopeInput
-}
-
-input ExternalShopifyIntegrationCreateOneInput {
-  create: ExternalShopifyIntegrationCreateInput
-  connect: ExternalShopifyIntegrationWhereUniqueInput
-}
-
-input ExternalShopifyIntegrationCreatescopeInput {
-  set: [String!]
-}
-
-type ExternalShopifyIntegrationEdge {
-  node: ExternalShopifyIntegration!
-  cursor: String!
-}
-
-enum ExternalShopifyIntegrationOrderByInput {
-  id_ASC
-  id_DESC
-  shopName_ASC
-  shopName_DESC
-  enabled_ASC
-  enabled_DESC
-  accessToken_ASC
-  accessToken_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type ExternalShopifyIntegrationPreviousValues {
-  id: ID!
-  shopName: String!
-  enabled: Boolean!
-  accessToken: String
-  scope: [String!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type ExternalShopifyIntegrationSubscriptionPayload {
-  mutation: MutationType!
-  node: ExternalShopifyIntegration
-  updatedFields: [String!]
-  previousValues: ExternalShopifyIntegrationPreviousValues
-}
-
-input ExternalShopifyIntegrationSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: ExternalShopifyIntegrationWhereInput
-  AND: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-  OR: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-  NOT: [ExternalShopifyIntegrationSubscriptionWhereInput!]
-}
-
-input ExternalShopifyIntegrationUpdateDataInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateManyMutationInput {
-  shopName: String
-  enabled: Boolean
-  accessToken: String
-  scope: ExternalShopifyIntegrationUpdatescopeInput
-}
-
-input ExternalShopifyIntegrationUpdateOneInput {
-  create: ExternalShopifyIntegrationCreateInput
-  update: ExternalShopifyIntegrationUpdateDataInput
-  upsert: ExternalShopifyIntegrationUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: ExternalShopifyIntegrationWhereUniqueInput
-}
-
-input ExternalShopifyIntegrationUpdatescopeInput {
-  set: [String!]
-}
-
-input ExternalShopifyIntegrationUpsertNestedInput {
-  update: ExternalShopifyIntegrationUpdateDataInput!
-  create: ExternalShopifyIntegrationCreateInput!
-}
-
-input ExternalShopifyIntegrationWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  shopName: String
-  shopName_not: String
-  shopName_in: [String!]
-  shopName_not_in: [String!]
-  shopName_lt: String
-  shopName_lte: String
-  shopName_gt: String
-  shopName_gte: String
-  shopName_contains: String
-  shopName_not_contains: String
-  shopName_starts_with: String
-  shopName_not_starts_with: String
-  shopName_ends_with: String
-  shopName_not_ends_with: String
-  enabled: Boolean
-  enabled_not: Boolean
-  accessToken: String
-  accessToken_not: String
-  accessToken_in: [String!]
-  accessToken_not_in: [String!]
-  accessToken_lt: String
-  accessToken_lte: String
-  accessToken_gt: String
-  accessToken_gte: String
-  accessToken_contains: String
-  accessToken_not_contains: String
-  accessToken_starts_with: String
-  accessToken_not_starts_with: String
-  accessToken_ends_with: String
-  accessToken_not_ends_with: String
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  AND: [ExternalShopifyIntegrationWhereInput!]
-  OR: [ExternalShopifyIntegrationWhereInput!]
-  NOT: [ExternalShopifyIntegrationWhereInput!]
-}
-
-input ExternalShopifyIntegrationWhereUniqueInput {
-  id: ID
-  shopName: String
 }
 
 type FitPic {
@@ -8136,12 +8033,6 @@ type Mutation {
   upsertEmailReceipt(where: EmailReceiptWhereUniqueInput!, create: EmailReceiptCreateInput!, update: EmailReceiptUpdateInput!): EmailReceipt!
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
-  createExternalShopifyIntegration(data: ExternalShopifyIntegrationCreateInput!): ExternalShopifyIntegration!
-  updateExternalShopifyIntegration(data: ExternalShopifyIntegrationUpdateInput!, where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
-  updateManyExternalShopifyIntegrations(data: ExternalShopifyIntegrationUpdateManyMutationInput!, where: ExternalShopifyIntegrationWhereInput): BatchPayload!
-  upsertExternalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!, create: ExternalShopifyIntegrationCreateInput!, update: ExternalShopifyIntegrationUpdateInput!): ExternalShopifyIntegration!
-  deleteExternalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
-  deleteManyExternalShopifyIntegrations(where: ExternalShopifyIntegrationWhereInput): BatchPayload!
   createFitPic(data: FitPicCreateInput!): FitPic!
   updateFitPic(data: FitPicUpdateInput!, where: FitPicWhereUniqueInput!): FitPic
   updateManyFitPics(data: FitPicUpdateManyMutationInput!, where: FitPicWhereInput): BatchPayload!
@@ -8381,6 +8272,12 @@ type Mutation {
   upsertShopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionWhereUniqueInput!, create: ShopifyProductVariantSelectedOptionCreateInput!, update: ShopifyProductVariantSelectedOptionUpdateInput!): ShopifyProductVariantSelectedOption!
   deleteShopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionWhereUniqueInput!): ShopifyProductVariantSelectedOption
   deleteManyShopifyProductVariantSelectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput): BatchPayload!
+  createShopifyShop(data: ShopifyShopCreateInput!): ShopifyShop!
+  updateShopifyShop(data: ShopifyShopUpdateInput!, where: ShopifyShopWhereUniqueInput!): ShopifyShop
+  updateManyShopifyShops(data: ShopifyShopUpdateManyMutationInput!, where: ShopifyShopWhereInput): BatchPayload!
+  upsertShopifyShop(where: ShopifyShopWhereUniqueInput!, create: ShopifyShopCreateInput!, update: ShopifyShopUpdateInput!): ShopifyShop!
+  deleteShopifyShop(where: ShopifyShopWhereUniqueInput!): ShopifyShop
+  deleteManyShopifyShops(where: ShopifyShopWhereInput): BatchPayload!
   createSize(data: SizeCreateInput!): Size!
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
@@ -11523,6 +11420,7 @@ type Product {
   tier: ProductTier
   type: ProductType
   variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -11572,6 +11470,7 @@ input ProductCreateInput {
   tier: ProductTierCreateOneInput
   type: ProductType
   variants: ProductVariantCreateManyWithoutProductInput
+  styles: ProductCreatestylesInput
 }
 
 input ProductCreateManyInput {
@@ -11618,6 +11517,10 @@ input ProductCreateouterMaterialsInput {
   set: [String!]
 }
 
+input ProductCreatestylesInput {
+  set: [CustomerStyle!]
+}
+
 input ProductCreateWithoutBrandInput {
   id: ID
   architecture: ProductArchitecture
@@ -11646,6 +11549,7 @@ input ProductCreateWithoutBrandInput {
   tier: ProductTierCreateOneInput
   type: ProductType
   variants: ProductVariantCreateManyWithoutProductInput
+  styles: ProductCreatestylesInput
 }
 
 input ProductCreateWithoutCategoryInput {
@@ -11676,6 +11580,7 @@ input ProductCreateWithoutCategoryInput {
   tier: ProductTierCreateOneInput
   type: ProductType
   variants: ProductVariantCreateManyWithoutProductInput
+  styles: ProductCreatestylesInput
 }
 
 input ProductCreateWithoutMaterialCategoryInput {
@@ -11706,6 +11611,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   tier: ProductTierCreateOneInput
   type: ProductType
   variants: ProductVariantCreateManyWithoutProductInput
+  styles: ProductCreatestylesInput
 }
 
 input ProductCreateWithoutModelInput {
@@ -11736,6 +11642,7 @@ input ProductCreateWithoutModelInput {
   tier: ProductTierCreateOneInput
   type: ProductType
   variants: ProductVariantCreateManyWithoutProductInput
+  styles: ProductCreatestylesInput
 }
 
 input ProductCreateWithoutTagsInput {
@@ -11766,6 +11673,7 @@ input ProductCreateWithoutTagsInput {
   tier: ProductTierCreateOneInput
   type: ProductType
   variants: ProductVariantCreateManyWithoutProductInput
+  styles: ProductCreatestylesInput
 }
 
 input ProductCreateWithoutVariantsInput {
@@ -11796,6 +11704,7 @@ input ProductCreateWithoutVariantsInput {
   tags: TagCreateManyWithoutProductsInput
   tier: ProductTierCreateOneInput
   type: ProductType
+  styles: ProductCreatestylesInput
 }
 
 type ProductEdge {
@@ -12472,6 +12381,7 @@ type ProductPreviousValues {
   slug: String!
   status: ProductStatus
   type: ProductType
+  styles: [CustomerStyle!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -13219,6 +13129,7 @@ input ProductUpdateDataInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateinnerMaterialsInput {
@@ -13253,6 +13164,7 @@ input ProductUpdateInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateManyDataInput {
@@ -13270,6 +13182,7 @@ input ProductUpdateManyDataInput {
   slug: String
   status: ProductStatus
   type: ProductType
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateManyInput {
@@ -13299,6 +13212,7 @@ input ProductUpdateManyMutationInput {
   slug: String
   status: ProductStatus
   type: ProductType
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateManyWithoutBrandInput {
@@ -13384,6 +13298,10 @@ input ProductUpdateouterMaterialsInput {
   set: [String!]
 }
 
+input ProductUpdatestylesInput {
+  set: [CustomerStyle!]
+}
+
 input ProductUpdateWithoutBrandDataInput {
   architecture: ProductArchitecture
   category: CategoryUpdateOneRequiredWithoutProductsInput
@@ -13411,6 +13329,7 @@ input ProductUpdateWithoutBrandDataInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateWithoutCategoryDataInput {
@@ -13440,6 +13359,7 @@ input ProductUpdateWithoutCategoryDataInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateWithoutMaterialCategoryDataInput {
@@ -13469,6 +13389,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateWithoutModelDataInput {
@@ -13498,6 +13419,7 @@ input ProductUpdateWithoutModelDataInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateWithoutTagsDataInput {
@@ -13527,6 +13449,7 @@ input ProductUpdateWithoutTagsDataInput {
   tier: ProductTierUpdateOneInput
   type: ProductType
   variants: ProductVariantUpdateManyWithoutProductInput
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateWithoutVariantsDataInput {
@@ -13556,6 +13479,7 @@ input ProductUpdateWithoutVariantsDataInput {
   tags: TagUpdateManyWithoutProductsInput
   tier: ProductTierUpdateOneInput
   type: ProductType
+  styles: ProductUpdatestylesInput
 }
 
 input ProductUpdateWithWhereUniqueNestedInput {
@@ -15898,9 +15822,6 @@ type Query {
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
-  externalShopifyIntegration(where: ExternalShopifyIntegrationWhereUniqueInput!): ExternalShopifyIntegration
-  externalShopifyIntegrations(where: ExternalShopifyIntegrationWhereInput, orderBy: ExternalShopifyIntegrationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ExternalShopifyIntegration]!
-  externalShopifyIntegrationsConnection(where: ExternalShopifyIntegrationWhereInput, orderBy: ExternalShopifyIntegrationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExternalShopifyIntegrationConnection!
   fitPic(where: FitPicWhereUniqueInput!): FitPic
   fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic]!
   fitPicsConnection(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicConnection!
@@ -16021,6 +15942,9 @@ type Query {
   shopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionWhereUniqueInput!): ShopifyProductVariantSelectedOption
   shopifyProductVariantSelectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariantSelectedOption]!
   shopifyProductVariantSelectedOptionsConnection(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShopifyProductVariantSelectedOptionConnection!
+  shopifyShop(where: ShopifyShopWhereUniqueInput!): ShopifyShop
+  shopifyShops(where: ShopifyShopWhereInput, orderBy: ShopifyShopOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyShop]!
+  shopifyShopsConnection(where: ShopifyShopWhereInput, orderBy: ShopifyShopOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ShopifyShopConnection!
   size(where: SizeWhereUniqueInput!): Size
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
@@ -17965,7 +17889,7 @@ type ShopifyProductVariant {
   displayName: String
   selectedOptions(where: ShopifyProductVariantSelectedOptionWhereInput, orderBy: ShopifyProductVariantSelectedOptionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ShopifyProductVariantSelectedOption!]
   productVariant: ProductVariant
-  shop: ExternalShopifyIntegration
+  shop: ShopifyShop
   brand: Brand
   title: String
   image: Image
@@ -17986,7 +17910,7 @@ input ShopifyProductVariantCreateInput {
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
   productVariant: ProductVariantCreateOneWithoutShopifyProductVariantInput
-  shop: ExternalShopifyIntegrationCreateOneInput
+  shop: ShopifyShopCreateOneInput
   brand: BrandCreateOneInput
   title: String
   image: ImageCreateOneInput
@@ -18005,7 +17929,7 @@ input ShopifyProductVariantCreateWithoutProductVariantInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionCreateManyInput
-  shop: ExternalShopifyIntegrationCreateOneInput
+  shop: ShopifyShopCreateOneInput
   brand: BrandCreateOneInput
   title: String
   image: ImageCreateOneInput
@@ -18278,7 +18202,7 @@ input ShopifyProductVariantUpdateInput {
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
   productVariant: ProductVariantUpdateOneWithoutShopifyProductVariantInput
-  shop: ExternalShopifyIntegrationUpdateOneInput
+  shop: ShopifyShopUpdateOneInput
   brand: BrandUpdateOneInput
   title: String
   image: ImageUpdateOneInput
@@ -18309,7 +18233,7 @@ input ShopifyProductVariantUpdateWithoutProductVariantDataInput {
   externalId: String
   displayName: String
   selectedOptions: ShopifyProductVariantSelectedOptionUpdateManyInput
-  shop: ExternalShopifyIntegrationUpdateOneInput
+  shop: ShopifyShopUpdateOneInput
   brand: BrandUpdateOneInput
   title: String
   image: ImageUpdateOneInput
@@ -18370,7 +18294,7 @@ input ShopifyProductVariantWhereInput {
   selectedOptions_some: ShopifyProductVariantSelectedOptionWhereInput
   selectedOptions_none: ShopifyProductVariantSelectedOptionWhereInput
   productVariant: ProductVariantWhereInput
-  shop: ExternalShopifyIntegrationWhereInput
+  shop: ShopifyShopWhereInput
   brand: BrandWhereInput
   title: String
   title_not: String
@@ -18413,6 +18337,197 @@ input ShopifyProductVariantWhereInput {
 input ShopifyProductVariantWhereUniqueInput {
   id: ID
   externalId: String
+}
+
+type ShopifyShop {
+  id: ID!
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ShopifyShopConnection {
+  pageInfo: PageInfo!
+  edges: [ShopifyShopEdge]!
+  aggregate: AggregateShopifyShop!
+}
+
+input ShopifyShopCreateInput {
+  id: ID
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: ShopifyShopCreatescopeInput
+}
+
+input ShopifyShopCreateOneInput {
+  create: ShopifyShopCreateInput
+  connect: ShopifyShopWhereUniqueInput
+}
+
+input ShopifyShopCreatescopeInput {
+  set: [String!]
+}
+
+type ShopifyShopEdge {
+  node: ShopifyShop!
+  cursor: String!
+}
+
+enum ShopifyShopOrderByInput {
+  id_ASC
+  id_DESC
+  shopName_ASC
+  shopName_DESC
+  enabled_ASC
+  enabled_DESC
+  accessToken_ASC
+  accessToken_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ShopifyShopPreviousValues {
+  id: ID!
+  shopName: String!
+  enabled: Boolean!
+  accessToken: String
+  scope: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ShopifyShopSubscriptionPayload {
+  mutation: MutationType!
+  node: ShopifyShop
+  updatedFields: [String!]
+  previousValues: ShopifyShopPreviousValues
+}
+
+input ShopifyShopSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ShopifyShopWhereInput
+  AND: [ShopifyShopSubscriptionWhereInput!]
+  OR: [ShopifyShopSubscriptionWhereInput!]
+  NOT: [ShopifyShopSubscriptionWhereInput!]
+}
+
+input ShopifyShopUpdateDataInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateManyMutationInput {
+  shopName: String
+  enabled: Boolean
+  accessToken: String
+  scope: ShopifyShopUpdatescopeInput
+}
+
+input ShopifyShopUpdateOneInput {
+  create: ShopifyShopCreateInput
+  update: ShopifyShopUpdateDataInput
+  upsert: ShopifyShopUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ShopifyShopWhereUniqueInput
+}
+
+input ShopifyShopUpdatescopeInput {
+  set: [String!]
+}
+
+input ShopifyShopUpsertNestedInput {
+  update: ShopifyShopUpdateDataInput!
+  create: ShopifyShopCreateInput!
+}
+
+input ShopifyShopWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  shopName: String
+  shopName_not: String
+  shopName_in: [String!]
+  shopName_not_in: [String!]
+  shopName_lt: String
+  shopName_lte: String
+  shopName_gt: String
+  shopName_gte: String
+  shopName_contains: String
+  shopName_not_contains: String
+  shopName_starts_with: String
+  shopName_not_starts_with: String
+  shopName_ends_with: String
+  shopName_not_ends_with: String
+  enabled: Boolean
+  enabled_not: Boolean
+  accessToken: String
+  accessToken_not: String
+  accessToken_in: [String!]
+  accessToken_not_in: [String!]
+  accessToken_lt: String
+  accessToken_lte: String
+  accessToken_gt: String
+  accessToken_gte: String
+  accessToken_contains: String
+  accessToken_not_contains: String
+  accessToken_starts_with: String
+  accessToken_not_starts_with: String
+  accessToken_ends_with: String
+  accessToken_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ShopifyShopWhereInput!]
+  OR: [ShopifyShopWhereInput!]
+  NOT: [ShopifyShopWhereInput!]
+}
+
+input ShopifyShopWhereUniqueInput {
+  id: ID
+  shopName: String
 }
 
 type Size {
@@ -19202,7 +19317,6 @@ type Subscription {
   customerMembershipSubscriptionData(where: CustomerMembershipSubscriptionDataSubscriptionWhereInput): CustomerMembershipSubscriptionDataSubscriptionPayload
   customerNotificationBarReceipt(where: CustomerNotificationBarReceiptSubscriptionWhereInput): CustomerNotificationBarReceiptSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
-  externalShopifyIntegration(where: ExternalShopifyIntegrationSubscriptionWhereInput): ExternalShopifyIntegrationSubscriptionPayload
   fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload
   fitPicReport(where: FitPicReportSubscriptionWhereInput): FitPicReportSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
@@ -19243,6 +19357,7 @@ type Subscription {
   shippingOption(where: ShippingOptionSubscriptionWhereInput): ShippingOptionSubscriptionPayload
   shopifyProductVariant(where: ShopifyProductVariantSubscriptionWhereInput): ShopifyProductVariantSubscriptionPayload
   shopifyProductVariantSelectedOption(where: ShopifyProductVariantSelectedOptionSubscriptionWhereInput): ShopifyProductVariantSelectedOptionSubscriptionPayload
+  shopifyShop(where: ShopifyShopSubscriptionWhereInput): ShopifyShopSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
@@ -19262,6 +19377,7 @@ type SyncTiming {
   id: ID!
   type: SyncTimingType!
   syncedAt: DateTime!
+  detail: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -19276,6 +19392,12 @@ input SyncTimingCreateInput {
   id: ID
   type: SyncTimingType!
   syncedAt: DateTime!
+  detail: String
+}
+
+input SyncTimingCreateManyInput {
+  create: [SyncTimingCreateInput!]
+  connect: [SyncTimingWhereUniqueInput!]
 }
 
 type SyncTimingEdge {
@@ -19290,6 +19412,8 @@ enum SyncTimingOrderByInput {
   type_DESC
   syncedAt_ASC
   syncedAt_DESC
+  detail_ASC
+  detail_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -19300,8 +19424,71 @@ type SyncTimingPreviousValues {
   id: ID!
   type: SyncTimingType!
   syncedAt: DateTime!
+  detail: String
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input SyncTimingScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  type: SyncTimingType
+  type_not: SyncTimingType
+  type_in: [SyncTimingType!]
+  type_not_in: [SyncTimingType!]
+  syncedAt: DateTime
+  syncedAt_not: DateTime
+  syncedAt_in: [DateTime!]
+  syncedAt_not_in: [DateTime!]
+  syncedAt_lt: DateTime
+  syncedAt_lte: DateTime
+  syncedAt_gt: DateTime
+  syncedAt_gte: DateTime
+  detail: String
+  detail_not: String
+  detail_in: [String!]
+  detail_not_in: [String!]
+  detail_lt: String
+  detail_lte: String
+  detail_gt: String
+  detail_gte: String
+  detail_contains: String
+  detail_not_contains: String
+  detail_starts_with: String
+  detail_not_starts_with: String
+  detail_ends_with: String
+  detail_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [SyncTimingScalarWhereInput!]
+  OR: [SyncTimingScalarWhereInput!]
+  NOT: [SyncTimingScalarWhereInput!]
 }
 
 type SyncTimingSubscriptionPayload {
@@ -19325,16 +19512,59 @@ input SyncTimingSubscriptionWhereInput {
 enum SyncTimingType {
   Drip
   Next
+  Impact
+}
+
+input SyncTimingUpdateDataInput {
+  type: SyncTimingType
+  syncedAt: DateTime
+  detail: String
 }
 
 input SyncTimingUpdateInput {
   type: SyncTimingType
   syncedAt: DateTime
+  detail: String
+}
+
+input SyncTimingUpdateManyDataInput {
+  type: SyncTimingType
+  syncedAt: DateTime
+  detail: String
+}
+
+input SyncTimingUpdateManyInput {
+  create: [SyncTimingCreateInput!]
+  update: [SyncTimingUpdateWithWhereUniqueNestedInput!]
+  upsert: [SyncTimingUpsertWithWhereUniqueNestedInput!]
+  delete: [SyncTimingWhereUniqueInput!]
+  connect: [SyncTimingWhereUniqueInput!]
+  set: [SyncTimingWhereUniqueInput!]
+  disconnect: [SyncTimingWhereUniqueInput!]
+  deleteMany: [SyncTimingScalarWhereInput!]
+  updateMany: [SyncTimingUpdateManyWithWhereNestedInput!]
 }
 
 input SyncTimingUpdateManyMutationInput {
   type: SyncTimingType
   syncedAt: DateTime
+  detail: String
+}
+
+input SyncTimingUpdateManyWithWhereNestedInput {
+  where: SyncTimingScalarWhereInput!
+  data: SyncTimingUpdateManyDataInput!
+}
+
+input SyncTimingUpdateWithWhereUniqueNestedInput {
+  where: SyncTimingWhereUniqueInput!
+  data: SyncTimingUpdateDataInput!
+}
+
+input SyncTimingUpsertWithWhereUniqueNestedInput {
+  where: SyncTimingWhereUniqueInput!
+  update: SyncTimingUpdateDataInput!
+  create: SyncTimingCreateInput!
 }
 
 input SyncTimingWhereInput {
@@ -19364,6 +19594,20 @@ input SyncTimingWhereInput {
   syncedAt_lte: DateTime
   syncedAt_gt: DateTime
   syncedAt_gte: DateTime
+  detail: String
+  detail_not: String
+  detail_in: [String!]
+  detail_not_in: [String!]
+  detail_lt: String
+  detail_lte: String
+  detail_gt: String
+  detail_gte: String
+  detail_contains: String
+  detail_not_contains: String
+  detail_starts_with: String
+  detail_not_starts_with: String
+  detail_ends_with: String
+  detail_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

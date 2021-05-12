@@ -3,6 +3,7 @@
 
 type Query {
   brand(where: BrandWhereUniqueInput!, published: Boolean): Brand
+    @cacheControl(maxAge: 600)
   brands(
     where: BrandWhereInput
     orderBy: BrandOrderByInput
@@ -11,7 +12,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Brand]!
+  ): [Brand]! @cacheControl(maxAge: 600)
   brandsConnection(
     where: BrandWhereInput
     orderBy: BrandOrderByInput
@@ -20,8 +21,9 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): BrandConnection!
+  ): BrandConnection! @cacheControl(maxAge: 600)
   category(where: CategoryWhereUniqueInput!): Category
+    @cacheControl(maxAge: 600)
   categories(
     where: CategoryWhereInput
     orderBy: CategoryOrderByInput
@@ -30,7 +32,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Category]!
+  ): [Category]! @cacheControl(maxAge: 600)
   categoriesConnection(
     where: CategoryWhereInput
     orderBy: CategoryOrderByInput
@@ -39,7 +41,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): CategoryConnection!
+  ): CategoryConnection! @cacheControl(maxAge: 0)
   colors(
     where: ColorWhereInput
     orderBy: ColorOrderByInput
@@ -48,8 +50,8 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Color]!
-  launch(where: LaunchWhereUniqueInput!): Launch
+  ): [Color]! @cacheControl(maxAge: 0)
+  launch(where: LaunchWhereUniqueInput!): Launch @cacheControl(maxAge: 0)
   launches(
     upcoming: Boolean
     where: LaunchWhereInput
@@ -59,7 +61,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Launch]!
+  ): [Launch]! @cacheControl(maxAge: 0)
   launchesConnection(
     where: LaunchWhereInput
     orderBy: LaunchOrderByInput
@@ -68,8 +70,8 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): LaunchConnection!
-  product(where: ProductWhereUniqueInput!): Product
+  ): LaunchConnection! @cacheControl(maxAge: 0)
+  product(where: ProductWhereUniqueInput!): Product @cacheControl(maxAge: 0)
   products(
     category: String
     brand: String
@@ -81,10 +83,11 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Product]!
+  ): [Product]! @cacheControl(maxAge: 600)
   productsConnection(
     tops: [String]
     bottoms: [String]
+    colors: [String]
     availableOnly: Boolean
     sizes: [String!]
     category: String
@@ -98,7 +101,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): ProductConnection!
+  ): ProductConnection! @cacheControl(maxAge: 600)
   productFunctions(
     where: ProductFunctionWhereInput
     orderBy: ProductFunctionOrderByInput
@@ -107,7 +110,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ProductFunction]!
+  ): [ProductFunction]! @cacheControl(maxAge: 0)
   productMaterialCategories(
     where: ProductMaterialCategoryWhereInput
     orderBy: ProductMaterialCategoryOrderByInput
@@ -116,7 +119,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ProductMaterialCategory]!
+  ): [ProductMaterialCategory]! @cacheControl(maxAge: 0)
   productModels(
     where: ProductModelWhereInput
     orderBy: ProductModelOrderByInput
@@ -125,7 +128,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ProductModel]!
+  ): [ProductModel]! @cacheControl(maxAge: 0)
   productNotifications(
     where: ProductNotificationWhereInput
     orderBy: ProductNotificationOrderByInput
@@ -134,7 +137,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ProductNotification]!
+  ): [ProductNotification]! @cacheControl(maxAge: 0)
   productRequests(
     where: ProductRequestWhereInput
     orderBy: ProductRequestOrderByInput
@@ -143,7 +146,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ProductRequest]!
+  ): [ProductRequest]! @cacheControl(maxAge: 0)
   tags(
     where: TagWhereInput
     orderBy: TagOrderByInput
@@ -152,7 +155,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Tag]!
+  ): [Tag]! @cacheControl(maxAge: 0)
 }
 
 type Mutation {
@@ -201,6 +204,7 @@ type Product @cacheControl(maxAge: 200) {
   externalURL: String
   buyNewEnabled: Boolean!
   buyUsedEnabled: Boolean!
+  styles: [CustomerStyle!]
   buyUsedPrice: Int
   materialCategory: ProductMaterialCategory
   model: ProductModel
@@ -246,7 +250,7 @@ type Product @cacheControl(maxAge: 200) {
     last: Int
   ): [ProductVariant!]
   status: ProductStatus
-  isSaved: Boolean @cacheControl(maxAge: 0)
+  isSaved: Boolean @cacheControl(maxAge: 200, scope: PRIVATE)
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedAt: DateTime
@@ -302,7 +306,8 @@ type Brand @cacheControl(maxAge: 1000) {
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
-  externalShopifyIntegration: ExternalShopifyIntegration
+  styles: [CustomerStyle!]
+  shopifyShop: ShopifyShop
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -324,6 +329,7 @@ input UpsertProductInput {
   modelID: String
   modelSizeDisplay: String
   modelSizeName: String
+  modelSizeType: SizeType
   name: String!
   outerMaterials: [String!]!
   productFit: ProductFit
@@ -335,7 +341,7 @@ input UpsertProductInput {
   tags: [String!]!
   type: ProductType!
   variants: [UpsertVariantInput!]!
-
+  styles: [CustomerStyle!]
   # Is this a new one?
   createNew: Boolean!
 }
@@ -364,13 +370,14 @@ input CustomProductUpdateInput {
   variants: ProductVariantUpdateManyWithoutProductInput
   publishedAt: DateTime
   photographyStatus: PhotographyStatus
-
+  styles: [CustomerStyle!]
   # Custom fields
   bottomSizeType: BottomSizeType
   functions: [String!]
   images: [Upload!]
   modelSizeDisplay: String
   modelSizeName: String
+  modelSizeType: SizeType
   tags: [String!]
   buyNewEnabled: Boolean
   buyUsedEnabled: Boolean
@@ -385,7 +392,7 @@ input UpsertSeasonInput {
   vendorSeasonYear: Int
 }
 
-input ExternalShopifyIntegrationInput {
+input ShopifyShopInput {
   shopName: String!
   enabled: Boolean!
   accessToken: String
@@ -405,11 +412,12 @@ input CustomBrandCreateInput {
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
+  styles: [CustomerStyle!]
   products: ProductCreateManyWithoutBrandInput
   # Custom fields
   logoImage: Upload
   images: [Upload!]
-  externalShopifyIntegration: ExternalShopifyIntegrationInput
+  shopifyShop: ShopifyShopInput
 }
 
 input CustomBrandUpdateInput {
@@ -428,8 +436,9 @@ input CustomBrandUpdateInput {
   websiteUrl: String
   # Custom fields
   logoImage: Upload
+  styles: [CustomerStyle!]
   images: [Upload!]
-  externalShopifyIntegration: ExternalShopifyIntegrationInput
+  shopifyShop: ShopifyShopInput
 }
 
 input CustomLaunchUpsertInput {

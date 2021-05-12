@@ -95,13 +95,12 @@ export class ChargebeeController {
       await this.email.sendReturnToGoodStandingEmail(custWithData.user)
     }
 
-    let isNewCustomer = false
-    if (!!subscription) {
-      isNewCustomer = this.utils.isSameDay(
+    let isRecurringSubscription =
+      !!subscription &&
+      !this.utils.isSameDay(
         new Date(subscription.created_at * 1000),
         new Date()
       )
-    }
     this.segment.track(customer.id, "Completed Transaction", {
       ...pick(custWithData.user, ["firstName", "lastName", "email"]),
       transactionID: transaction.id,
@@ -113,13 +112,10 @@ export class ChargebeeController {
       transactionType: transaction.type,
       amount: transaction.amount,
       currency: "USD",
-      total: transaction.amount,
-      ...(!isNewCustomer
-        ? {
-            impactId: custWithData.detail?.impactId,
-            impactCustomerStatus: "Returning",
-          }
-        : {}),
+      total: transaction.amount / 100,
+      impactId: custWithData.detail?.impactId,
+      impactCustomerStatus: isRecurringSubscription ? "Existing" : null,
+      text1: isRecurringSubscription ? "isRecurringSubscription" : "null",
       ...this.utils.formatUTMForSegment(custWithData.utm),
     })
   }
@@ -185,6 +181,7 @@ export class ChargebeeController {
           detail {
             id
             impactId
+            discoveryReference
           }
           utm {
             source
@@ -230,6 +227,8 @@ export class ChargebeeController {
           impactId: customerWithBillingAndUserData.detail?.impactId,
           application: "flare", // must be flare since its ChargebeeHostedCheckout
           total,
+          discoveryReference:
+            customerWithBillingAndUserData.detail?.discoveryReference,
           ...this.utils.formatUTMForSegment(customerWithBillingAndUserData.utm),
         })
         // Only create the billing info and send welcome email if user used chargebee checkout

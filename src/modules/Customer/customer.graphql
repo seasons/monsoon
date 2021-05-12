@@ -1,7 +1,9 @@
 # import NotificationBar from "../User/user.graphql"
 
 type Query {
-  customer(where: CustomerWhereUniqueInput!): Customer @hasRole(roles: [Admin])
+  customer(where: CustomerWhereUniqueInput!): Customer
+    @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 0)
   customers(
     where: CustomerWhereInput
     orderBy: CustomerOrderByInput
@@ -10,7 +12,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Customer]! @hasRole(roles: [Admin])
+  ): [Customer]! @hasRole(roles: [Admin]) @cacheControl(maxAge: 0)
   customersConnection(
     where: CustomerWhereInput
     orderBy: CustomerOrderByInput
@@ -19,7 +21,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): CustomerConnection! @hasRole(roles: [Admin])
+  ): CustomerConnection! @hasRole(roles: [Admin]) @cacheControl(maxAge: 0)
 }
 
 type Mutation {

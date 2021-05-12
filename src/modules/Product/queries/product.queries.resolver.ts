@@ -1,4 +1,9 @@
-import { Customer } from "@app/decorators"
+import * as util from "util"
+
+import { Customer, User } from "@app/decorators"
+import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
+import { Product } from "@app/prisma/prisma.binding"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaSelect } from "@paljs/plugins"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -14,14 +19,15 @@ export class ProductQueriesResolver {
   ) {}
 
   @Query()
-  async product(@Args() { where }, @Info() info, @Context() ctx) {
+  async product(@Args() { where }, @Info() info, @Context() ctx, @User() user) {
+    const scope = !!user ? "PRIVATE" : "PUBLIC"
+    info.cacheControl.setCacheHint({ maxAge: 600, scope })
+
     const select = new PrismaSelect(info).value
     const data = await this.prisma.client2.product.findUnique({
       where,
       ...select,
     })
-
-    return data
   }
 
   @Query()
@@ -33,20 +39,11 @@ export class ProductQueriesResolver {
     })
 
     return data
-
-    // return await this.productService.getProducts(
-    //   args,
-    //   addFragmentToInfo(
-    //     info,
-    //     // for computed fields
-    //     `fragment EnsureId on Product { id }`
-    //   )
-    // )
   }
 
   @Query()
   async productsConnection(@Args() args, @Info() info) {
-    return await this.productService.getProductsConnection(
+    const result = await this.productService.getProductsConnection(
       args,
       addFragmentToInfo(
         info,
@@ -54,6 +51,7 @@ export class ProductQueriesResolver {
         `fragment EnsureId on ProductConnection { edges { node { id } } }`
       )
     )
+    return result
   }
 
   @Query()

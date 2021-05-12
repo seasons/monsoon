@@ -1,7 +1,7 @@
 type Query {
   pushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
-  ): PushNotificationReceipt @hasRole(roles: [Admin])
+  ): PushNotificationReceipt @hasRole(roles: [Admin]) @cacheControl(maxAge: 0)
   pushNotificationReceipts(
     where: PushNotificationReceiptWhereInput
     orderBy: PushNotificationReceiptOrderByInput
@@ -10,7 +10,9 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [PushNotificationReceipt]! @hasRole(roles: [Admin])
+  ): [PushNotificationReceipt]!
+    @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 0)
   pushNotificationReceiptsConnection(
     where: PushNotificationReceiptWhereInput
     orderBy: PushNotificationReceiptOrderByInput
@@ -19,7 +21,9 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): PushNotificationReceiptConnection! @hasRole(roles: [Admin])
+  ): PushNotificationReceiptConnection!
+    @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 0)
 }
 
 type Mutation {

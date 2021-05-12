@@ -23,9 +23,10 @@ import { UtilsService } from "../../Utils/services/utils.service"
 import {
   EmailUtilsService,
   MonsoonProductGridItem,
+  ProductWithEmailData,
 } from "./email.utils.service"
 
-type EmailUser = Pick<User, "email" | "firstName" | "id">
+export type EmailUser = Pick<User, "email" | "firstName" | "id">
 
 @Injectable()
 export class EmailService {
@@ -46,7 +47,7 @@ export class EmailService {
   async sendAuthorizedEmail(
     user: EmailUser,
     version: "manual" | "automatic",
-    availableStyles: Product[]
+    availableStyles: ProductWithEmailData[]
   ) {
     await this.sendEmailWithReservableStyles({
       user,
@@ -57,9 +58,22 @@ export class EmailService {
     })
   }
 
+  async sendRecommendedItemsNurtureEmail(
+    user: EmailUser,
+    availableStyles: ProductWithEmailData[]
+  ) {
+    await this.sendEmailWithReservableStyles({
+      user,
+      availableStyles,
+      renderEmailFunc: "recommendedItemsNurture",
+      emailId: "RecommendedItemsNurture",
+      numStylesToSend: 5,
+    })
+  }
+
   async sendAuthorizedDaySevenFollowup(
     user: EmailUser,
-    availableStyles: Product[]
+    availableStyles: ProductWithEmailData[]
   ) {
     await this.sendEmailWithReservableStyles({
       user,
@@ -70,7 +84,7 @@ export class EmailService {
   }
   async sendAuthorizedDayThreeFollowup(
     user: EmailUser,
-    availableStyles: Product[],
+    availableStyles: ProductWithEmailData[],
     status: string = "Authorized"
   ) {
     await this.sendEmailWithReservableStyles({
@@ -94,7 +108,10 @@ export class EmailService {
     })
   }
 
-  async sendRewaitlistedEmail(user: EmailUser, availableStyles: Product[]) {
+  async sendRewaitlistedEmail(
+    user: EmailUser,
+    availableStyles: ProductWithEmailData[]
+  ) {
     await this.sendEmailWithReservableStyles({
       user,
       availableStyles,
@@ -276,7 +293,6 @@ export class EmailService {
       pausedWithItemsPrice,
       isExtension,
     }
-    console.log(data)
     const payload = await RenderEmail.paused(data)
 
     await this.sendPreRenderedTransactionalEmail({
@@ -415,19 +431,22 @@ export class EmailService {
     renderEmailFunc,
     emailId,
     renderData = {},
+    numStylesToSend = 4,
   }: {
     user: EmailUser
-    availableStyles: Product[]
+    availableStyles: ProductWithEmailData[]
     renderEmailFunc:
       | "authorized"
       | "authorizedDayThreeFollowup"
       | "authorizedDaySevenFollowup"
       | "rewaitlisted"
+      | "recommendedItemsNurture"
     emailId: EmailId
     renderData?: any
+    numStylesToSend?: number
   }) {
     const products = await this.emailUtils.getXReservableProductsForUser(
-      4,
+      numStylesToSend,
       user as User,
       availableStyles
     )

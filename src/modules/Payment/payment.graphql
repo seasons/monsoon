@@ -4,13 +4,17 @@ type Query {
     userIDHash: String
     email: String
     couponID: String
-  ): ChargebeeHostedPagePayload
+  ): ChargebeeHostedPagePayload @cacheControl(maxAge: 0)
   chargebeeGiftCheckout(planID: String!): ChargebeeHostedPagePayload
+    @cacheControl(maxAge: 0)
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
+    @cacheControl(maxAge: 0)
   hostedChargebeeCheckout(planID: String!): ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
+    @cacheControl(maxAge: 0)
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+    @cacheControl(maxAge: 0)
   paymentPlans(
     where: PaymentPlanWhereInput
     orderBy: PaymentPlanOrderByInput
@@ -19,8 +23,8 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [PaymentPlan]
-  gift(id: String!): ChargebeeGift
+  ): [PaymentPlan] @cacheControl(maxAge: 0)
+  gift(id: String!): ChargebeeGift @cacheControl(maxAge: 0)
 }
 
 type Mutation {
@@ -29,6 +33,7 @@ type Mutation {
     planID: String!
     couponID: String
     billing: JSON
+    shipping: JSON
   ): JSON
   updatePaymentMethod(
     paymentMethodID: String!
@@ -40,6 +45,7 @@ type Mutation {
     token: StripeToken!
     tokenType: String
     couponID: String
+    shipping: JSON
   ): Boolean @hasRole(roles: [Customer])
   applePayUpdatePaymentMethod(
     planID: String!

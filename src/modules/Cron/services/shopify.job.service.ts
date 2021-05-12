@@ -13,32 +13,28 @@ export class ShopifyScheduledJobs {
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
-  async importProductVariantsForExternalShopifyIntegrations() {
+  async importProductVariantsForShopifyShops() {
     this.logger.log(
       "Run import product variants for external shopify integrations"
     )
-    const externalShopifyIntegrations = await this.prisma.client.externalShopifyIntegrations(
-      {
-        where: {
-          accessToken_not: null,
-          AND: {
-            shopName_not: null,
-          },
+    const shopifyShops = await this.prisma.client.shopifyShops({
+      where: {
+        accessToken_not: null,
+        AND: {
+          shopName_not: null,
         },
-      }
-    )
+      },
+    })
 
-    for (const { shopName, accessToken, id } of externalShopifyIntegrations) {
+    for (const { shopName, accessToken, id } of shopifyShops) {
       const brands = await this.prisma.client.brands({
         where: {
-          externalShopifyIntegration: { id },
+          shopifyShop: { id },
         },
       })
 
       if (!brands || brands.length === 0) {
-        this.logger.log(
-          `Unable to find brand for ExternalShopifyIntegration: ${id}`
-        )
+        this.logger.log(`Unable to find brand for ShopifyShop: ${id}`)
         continue
       }
 

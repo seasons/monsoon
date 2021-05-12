@@ -28,5 +28,26 @@
       },
       "published": true
     }
+  },
+  "HowDidYouFindOutAboutUs": {
+    "id": "howDidYouFindOutAboutUs",
+    "type": "Select",
+    "title": "How did you hear about us?",
+    "properties": {
+      "options": [
+        { "label": "Friend", "value": "friend" },
+        { "label": "Press article", "value": "pressArticle" },
+        { "label": "Blog", "value": "blog" },
+        { "label": "Instagram", "value": "instagram" },
+        { "label": "TikTok", "value": "tiktok" },
+        { "label": "Google", "value": "google" },
+        { "label": "Podcast", "value": "podcast" },
+        { "label": "Throwing Fits", "value": "throwingFits" },
+        { "label": "Lean Luxe", "value": "leanLuxe" },
+        { "label": "Threadability", "value": "threadability" },
+        { "label": "One Dapper Street", "value": "onedapperstreet" },
+        { "label": "Other", "value": "other" }
+      ]
+    }
   }
 }

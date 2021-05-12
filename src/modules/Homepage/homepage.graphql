@@ -1,5 +1,5 @@
 type Query {
-  homepage: Homepage
+  homepage: Homepage @cacheControl(maxAge: 0)
 }
 
 type Homepage {

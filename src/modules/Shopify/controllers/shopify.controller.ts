@@ -76,7 +76,7 @@ export class ShopifyController {
       shop,
     })
 
-    await this.prisma.client.updateExternalShopifyIntegration({
+    await this.prisma.client.updateShopifyShop({
       where: { shopName: this.shopify.getShopName(shop) },
       data: {
         accessToken,
