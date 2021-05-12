@@ -21,13 +21,14 @@
     "debug:test": "node --inspect -r dotenv/config node_modules/.bin/jest --runInBand",
     "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'",
     "prettier": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}' --ignore-path ./.prettierignore",
+    "prisma:deploy": "scripty",
+    "prisma:forceDeploy": "scripty",
+    "prisma:deploy-staging": "yarn prisma1 deploy -e .env.staging",
+    "prisma:deploy-production": "yarn prisma1 deploy -e .env.production",
     "prisma:update-bindings": "graphql get-schema --project database && graphql codegen --project database",
-    "prisma:deploy-production": "prisma1 deploy -e .env.production && yarn prisma:update-bindings",
-    "prisma:deploy-staging": "prisma1 deploy -e .env.staging  && yarn prisma:update-bindings",
-    "prisma:deploy": "prisma1 deploy && yarn prisma:update-bindings",
-    "prisma:token-production": "prisma1 token -e .env.production",
-    "prisma:token-staging": "prisma1 token -e .env.staging",
-    "prisma:token": "prisma1 token",
+    "prisma:token": "yarn prisma1 token",
+    "prisma:token-staging": "yarn prisma1 token -e .env.staging",
+    "prisma:token-production": "yarn prisma1 token -e .env.production",
     "postinstall": "yarn build",
     "start:server": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "start": "docker-compose up -d && concurrently --kill-others 'yarn tsc -w' 'yarn start:server'",
@@ -50,6 +51,8 @@
     "@nestjs/platform-express": "^7.2.0",
     "@nestjs/schedule": "^0.4.0",
     "@nestjs/testing": "^7.2.0",
+    "@paljs/plugins": "^3.0.11",
+    "@prisma/client": "^2.21.2",
     "@pusher/push-notifications-server": "^1.2.0",
     "@seasons/wind": "^2.6.0",
     "@sendgrid/mail": "^6.4.0",
@@ -172,9 +175,12 @@
     "nodemon": "^1.19.2",
     "prettier": "^2.0.0",
     "prettier-plugin-import-sort": "^0.0.4",
+    "prettier-plugin-prisma": "^0.8.0",
     "pretty-quick": "^2.0.1",
+    "prisma": "^2.21.2",
     "rimraf": "^3.0.0",
     "rxjs": "^6.0.0",
+    "scripty": "^2.0.0",
     "serverless-dotenv-plugin": "^2.1.1",
     "serverless-offline": "^5.10.1",
     "serverless-plugin-include-dependencies": "^3.2.1",
@@ -217,13 +223,13 @@
     "moduleNameMapper": {
       "^@app/(.*)$": "<rootDir>/src/$1",
       "^@modules/(.*)$": "<rootDir>/src/modules/$1",
-      "^@prisma/(.*)$": "<rootDir>/src/prisma/$1"
+      "^@prisma1/(.*)$": "<rootDir>/src/prisma/$1"
     }
   },
   "_moduleAliases": {
     "@app": "dist",
     "@modules": "dist/modules",
-    "@prisma": "dist/prisma"
+    "@prisma1": "dist/prisma"
   },
   "importSort": {
     ".js, .jsx, .ts, .tsx": {

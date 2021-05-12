@@ -3,7 +3,7 @@ import { ProductModule } from "@modules/Product/product.module"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { ShopifyModule } from "@modules/Shopify/shopify.module"
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "@prisma/prisma.module"
+import { PrismaModule } from "@prisma1/prisma.module"
 
 import { AnalyticsModule } from "../Analytics/analytics.module"
 import { EmailModule } from "../Email/email.module"

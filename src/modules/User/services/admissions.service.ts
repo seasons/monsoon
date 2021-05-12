@@ -3,7 +3,7 @@ import { ProductWithEmailData } from "@app/modules/Email/services/email.utils.se
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerStatus, CustomerWhereUniqueInput, Product } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "@prisma/prisma.service"
+import { PrismaService } from "@prisma1/prisma.service"
 import { head, intersection, uniqBy } from "lodash"
 import moment from "moment"
 import zipcodes from "zipcodes"

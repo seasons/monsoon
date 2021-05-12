@@ -1,15 +1,13 @@
-import * as url from "url"
-
 import { BrandUtilsService } from "@modules/Product/services/brand.utils.service"
 import { IndexKey } from "@modules/Search/services/algolia.service"
 import { SearchService } from "@modules/Search/services/search.service"
 import { Injectable } from "@nestjs/common"
-import { BrandWhereUniqueInput, ShopifyShopUpdateOneInput } from "@prisma/index"
 import {
-  BrandUpdateOneInput,
-  Brand as PrismaBindingBrand,
-} from "@prisma/prisma.binding"
-import { PrismaService } from "@prisma/prisma.service"
+  BrandWhereUniqueInput,
+  ShopifyShopUpdateOneInput,
+} from "@prisma1/index"
+import { Brand as PrismaBindingBrand } from "@prisma1/prisma.binding"
+import { PrismaService } from "@prisma1/prisma.service"
 
 @Injectable()
 export class BrandService {

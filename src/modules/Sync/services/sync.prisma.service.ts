@@ -3,7 +3,7 @@ import fs from "fs"
 
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
-import { Prisma } from "@prisma/prisma.binding"
+import { Prisma } from "@prisma1/prisma.binding"
 import readlineSync from "readline-sync"
 
 type dbEnv = "staging" | "local" | "production"
