@@ -136,7 +136,7 @@ model Brand {
   Launch                     Launch[]
   Product                    Product[]
   ShopifyProductVariant      ShopifyProductVariant[]
-  Image_BrandToBrandImages   Image[]                     @relation("BrandToBrandImages")
+  images                     Image[]                     @relation("BrandToBrandImages")
 }
 
 model Category {

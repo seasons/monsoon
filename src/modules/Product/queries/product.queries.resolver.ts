@@ -30,7 +30,7 @@ export class ProductQueriesResolver {
 
     console.log(productFields)
     Object.values(productFields).forEach((field, index) => {
-      const fieldSelect = prismaSelect.valueOf(field.name)
+      const fieldSelect = prismaSelect.valueOf(field.name, field.type)
       if (typeof fieldSelect === "object" && isEmpty(fieldSelect)) {
         return
       }
