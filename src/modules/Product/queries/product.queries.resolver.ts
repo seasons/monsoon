@@ -1,3 +1,5 @@
+import * as util from "util"
+
 import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
@@ -24,6 +26,7 @@ export class ProductQueriesResolver {
     const scope = !!user ? "PRIVATE" : "PUBLIC"
     info.cacheControl.setCacheHint({ maxAge: 600, scope })
 
+    console.log(util.inspect(select, { depth: null }))
     const data = await this.prisma.client2.product.findUnique({
       where,
       ...select,

@@ -646,12 +646,12 @@ model Product {
   architecture          String?
   publishedAt           DateTime?
   photographyStatus     String?
-  season                String?                   @db.VarChar(25)
+  seasonId              String?                   @map("season") @db.VarChar(25)
+  season                ProductSeason?            @relation(fields: [seasonId], references: [id])
   productFit            String?
   buyNewEnabled         Boolean
   tier                  String?                   @db.VarChar(25)
   Category              Category?                 @relation(fields: [category], references: [id])
-  Season                ProductSeason?            @relation(fields: [season], references: [id])
   productTier           ProductTier?              @relation(fields: [tier], references: [id])
   innerMaterials        Product_innerMaterials[]
   outerMaterials        Product_outerMaterials[]
@@ -747,13 +747,13 @@ model ProductRequest_images {
 }
 
 model ProductSeason {
-  id                                          String                          @id @default(cuid()) @db.VarChar(25)
-  vendorSeason                                String?                         @db.VarChar(25)
-  internalSeason                              String?                         @db.VarChar(25)
-  Season_ProductSeason_internalSeasonToSeason Season?                         @relation("ProductSeason_internalSeasonToSeason", fields: [internalSeason], references: [id])
-  Season_ProductSeason_vendorSeasonToSeason   Season?                         @relation("ProductSeason_vendorSeasonToSeason", fields: [vendorSeason], references: [id])
-  Product                                     Product[]
-  ProductSeason_wearableSeasons               ProductSeason_wearableSeasons[]
+  id               String                          @id @default(cuid()) @db.VarChar(25)
+  vendorSeasonId   String?                         @map("vendorSeason") @db.VarChar(25)
+  internalSeasonId String?                         @map("internalSeason") @db.VarChar(25)
+  internalSeason   Season?                         @relation("ProductSeason_internalSeasonToSeason", fields: [internalSeasonId], references: [id])
+  vendorSeason     Season?                         @relation("ProductSeason_vendorSeasonToSeason", fields: [vendorSeasonId], references: [id])
+  product          Product[]
+  wearableSeasons  ProductSeason_wearableSeasons[]
 }
 
 model ProductSeason_wearableSeasons {
