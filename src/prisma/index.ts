@@ -4153,6 +4153,8 @@ export type ColorOrderByInput =
 export type CustomerAdmissionsDataOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "test_ASC"
+  | "test_DESC"
   | "inServiceableZipcode_ASC"
   | "inServiceableZipcode_DESC"
   | "admissable_ASC"
@@ -9098,6 +9100,20 @@ export interface CustomerAdmissionsDataWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  test?: Maybe<String>;
+  test_not?: Maybe<String>;
+  test_in?: Maybe<String[] | String>;
+  test_not_in?: Maybe<String[] | String>;
+  test_lt?: Maybe<String>;
+  test_lte?: Maybe<String>;
+  test_gt?: Maybe<String>;
+  test_gte?: Maybe<String>;
+  test_contains?: Maybe<String>;
+  test_not_contains?: Maybe<String>;
+  test_starts_with?: Maybe<String>;
+  test_not_starts_with?: Maybe<String>;
+  test_ends_with?: Maybe<String>;
+  test_not_ends_with?: Maybe<String>;
   inServiceableZipcode?: Maybe<Boolean>;
   inServiceableZipcode_not?: Maybe<Boolean>;
   admissable?: Maybe<Boolean>;
@@ -16231,6 +16247,7 @@ export interface CustomerAdmissionsDataCreateOneWithoutCustomerInput {
 
 export interface CustomerAdmissionsDataCreateWithoutCustomerInput {
   id?: Maybe<ID_Input>;
+  test?: Maybe<String>;
   inServiceableZipcode: Boolean;
   admissable: Boolean;
   inAdmissableReason?: Maybe<InAdmissableReason>;
@@ -17226,6 +17243,7 @@ export interface CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
 }
 
 export interface CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
+  test?: Maybe<String>;
   inServiceableZipcode?: Maybe<Boolean>;
   admissable?: Maybe<Boolean>;
   inAdmissableReason?: Maybe<InAdmissableReason>;
@@ -18454,6 +18472,7 @@ export interface CustomerUpdateManyMutationInput {
 
 export interface CustomerAdmissionsDataCreateInput {
   id?: Maybe<ID_Input>;
+  test?: Maybe<String>;
   inServiceableZipcode: Boolean;
   admissable: Boolean;
   inAdmissableReason?: Maybe<InAdmissableReason>;
@@ -18493,6 +18512,7 @@ export interface CustomerCreateWithoutAdmissionsInput {
 }
 
 export interface CustomerAdmissionsDataUpdateInput {
+  test?: Maybe<String>;
   inServiceableZipcode?: Maybe<Boolean>;
   admissable?: Maybe<Boolean>;
   inAdmissableReason?: Maybe<InAdmissableReason>;
@@ -18538,6 +18558,7 @@ export interface CustomerUpsertWithoutAdmissionsInput {
 }
 
 export interface CustomerAdmissionsDataUpdateManyMutationInput {
+  test?: Maybe<String>;
   inServiceableZipcode?: Maybe<Boolean>;
   admissable?: Maybe<Boolean>;
   inAdmissableReason?: Maybe<InAdmissableReason>;
@@ -27045,6 +27066,7 @@ export interface ReservationReceiptItemNullablePromise
 
 export interface CustomerAdmissionsData {
   id: ID_Output;
+  test?: String;
   inServiceableZipcode: Boolean;
   admissable: Boolean;
   inAdmissableReason?: InAdmissableReason;
@@ -27060,6 +27082,7 @@ export interface CustomerAdmissionsDataPromise
   extends Promise<CustomerAdmissionsData>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  test: () => Promise<String>;
   inServiceableZipcode: () => Promise<Boolean>;
   admissable: () => Promise<Boolean>;
   inAdmissableReason: () => Promise<InAdmissableReason>;
@@ -27076,6 +27099,7 @@ export interface CustomerAdmissionsDataSubscription
   extends Promise<AsyncIterator<CustomerAdmissionsData>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  test: () => Promise<AsyncIterator<String>>;
   inServiceableZipcode: () => Promise<AsyncIterator<Boolean>>;
   admissable: () => Promise<AsyncIterator<Boolean>>;
   inAdmissableReason: () => Promise<AsyncIterator<InAdmissableReason>>;
@@ -27092,6 +27116,7 @@ export interface CustomerAdmissionsDataNullablePromise
   extends Promise<CustomerAdmissionsData | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  test: () => Promise<String>;
   inServiceableZipcode: () => Promise<Boolean>;
   admissable: () => Promise<Boolean>;
   inAdmissableReason: () => Promise<InAdmissableReason>;
@@ -32786,6 +32811,7 @@ export interface CustomerAdmissionsDataSubscriptionPayloadSubscription
 
 export interface CustomerAdmissionsDataPreviousValues {
   id: ID_Output;
+  test?: String;
   inServiceableZipcode: Boolean;
   admissable: Boolean;
   inAdmissableReason?: InAdmissableReason;
@@ -32801,6 +32827,7 @@ export interface CustomerAdmissionsDataPreviousValuesPromise
   extends Promise<CustomerAdmissionsDataPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  test: () => Promise<String>;
   inServiceableZipcode: () => Promise<Boolean>;
   admissable: () => Promise<Boolean>;
   inAdmissableReason: () => Promise<InAdmissableReason>;
@@ -32816,6 +32843,7 @@ export interface CustomerAdmissionsDataPreviousValuesSubscription
   extends Promise<AsyncIterator<CustomerAdmissionsDataPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  test: () => Promise<AsyncIterator<String>>;
   inServiceableZipcode: () => Promise<AsyncIterator<Boolean>>;
   admissable: () => Promise<AsyncIterator<Boolean>>;
   inAdmissableReason: () => Promise<AsyncIterator<InAdmissableReason>>;

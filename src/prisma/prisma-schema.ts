@@ -3386,6 +3386,7 @@ type Customer {
 
 type CustomerAdmissionsData {
   id: ID!
+  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -3406,6 +3407,7 @@ type CustomerAdmissionsDataConnection {
 
 input CustomerAdmissionsDataCreateInput {
   id: ID
+  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -3423,6 +3425,7 @@ input CustomerAdmissionsDataCreateOneWithoutCustomerInput {
 
 input CustomerAdmissionsDataCreateWithoutCustomerInput {
   id: ID
+  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -3440,6 +3443,8 @@ type CustomerAdmissionsDataEdge {
 enum CustomerAdmissionsDataOrderByInput {
   id_ASC
   id_DESC
+  test_ASC
+  test_DESC
   inServiceableZipcode_ASC
   inServiceableZipcode_DESC
   admissable_ASC
@@ -3462,6 +3467,7 @@ enum CustomerAdmissionsDataOrderByInput {
 
 type CustomerAdmissionsDataPreviousValues {
   id: ID!
+  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -3492,6 +3498,7 @@ input CustomerAdmissionsDataSubscriptionWhereInput {
 }
 
 input CustomerAdmissionsDataUpdateInput {
+  test: String
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
@@ -3503,6 +3510,7 @@ input CustomerAdmissionsDataUpdateInput {
 }
 
 input CustomerAdmissionsDataUpdateManyMutationInput {
+  test: String
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
@@ -3522,6 +3530,7 @@ input CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
 }
 
 input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
+  test: String
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
@@ -3551,6 +3560,20 @@ input CustomerAdmissionsDataWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  test: String
+  test_not: String
+  test_in: [String!]
+  test_not_in: [String!]
+  test_lt: String
+  test_lte: String
+  test_gt: String
+  test_gte: String
+  test_contains: String
+  test_not_contains: String
+  test_starts_with: String
+  test_not_starts_with: String
+  test_ends_with: String
+  test_not_ends_with: String
   inServiceableZipcode: Boolean
   inServiceableZipcode_not: Boolean
   admissable: Boolean

@@ -6572,6 +6572,7 @@ type Customer implements Node {
 
 type CustomerAdmissionsData implements Node {
   id: ID!
+  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -6596,6 +6597,7 @@ type CustomerAdmissionsDataConnection {
 
 input CustomerAdmissionsDataCreateInput {
   id: ID
+  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -6613,6 +6615,7 @@ input CustomerAdmissionsDataCreateOneWithoutCustomerInput {
 
 input CustomerAdmissionsDataCreateWithoutCustomerInput {
   id: ID
+  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -6634,6 +6637,8 @@ type CustomerAdmissionsDataEdge {
 enum CustomerAdmissionsDataOrderByInput {
   id_ASC
   id_DESC
+  test_ASC
+  test_DESC
   inServiceableZipcode_ASC
   inServiceableZipcode_DESC
   admissable_ASC
@@ -6656,6 +6661,7 @@ enum CustomerAdmissionsDataOrderByInput {
 
 type CustomerAdmissionsDataPreviousValues {
   id: ID!
+  test: String
   inServiceableZipcode: Boolean!
   admissable: Boolean!
   inAdmissableReason: InAdmissableReason
@@ -6705,6 +6711,7 @@ input CustomerAdmissionsDataSubscriptionWhereInput {
 }
 
 input CustomerAdmissionsDataUpdateInput {
+  test: String
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
@@ -6716,6 +6723,7 @@ input CustomerAdmissionsDataUpdateInput {
 }
 
 input CustomerAdmissionsDataUpdateManyMutationInput {
+  test: String
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
@@ -6735,6 +6743,7 @@ input CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
 }
 
 input CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
+  test: String
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason: InAdmissableReason
@@ -6798,6 +6807,46 @@ input CustomerAdmissionsDataWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  test: String
+
+  """All values that are not equal to given value."""
+  test_not: String
+
+  """All values that are contained in given list."""
+  test_in: [String!]
+
+  """All values that are not contained in given list."""
+  test_not_in: [String!]
+
+  """All values less than the given value."""
+  test_lt: String
+
+  """All values less than or equal the given value."""
+  test_lte: String
+
+  """All values greater than the given value."""
+  test_gt: String
+
+  """All values greater than or equal the given value."""
+  test_gte: String
+
+  """All values containing the given string."""
+  test_contains: String
+
+  """All values not containing the given string."""
+  test_not_contains: String
+
+  """All values starting with the given string."""
+  test_starts_with: String
+
+  """All values not starting with the given string."""
+  test_not_starts_with: String
+
+  """All values ending with the given string."""
+  test_ends_with: String
+
+  """All values not ending with the given string."""
+  test_not_ends_with: String
   inServiceableZipcode: Boolean
 
   """All values that are not equal to given value."""
@@ -38091,6 +38140,8 @@ export type ColorOrderByInput =   'id_ASC' |
 
 export type CustomerAdmissionsDataOrderByInput =   'id_ASC' |
   'id_DESC' |
+  'test_ASC' |
+  'test_DESC' |
   'inServiceableZipcode_ASC' |
   'inServiceableZipcode_DESC' |
   'admissable_ASC' |
@@ -41548,6 +41599,7 @@ export interface ColorWhereUniqueInput {
 
 export interface CustomerAdmissionsDataCreateInput {
   id?: ID_Input | null
+  test?: String | null
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason?: InAdmissableReason | null
@@ -41565,6 +41617,7 @@ export interface CustomerAdmissionsDataCreateOneWithoutCustomerInput {
 
 export interface CustomerAdmissionsDataCreateWithoutCustomerInput {
   id?: ID_Input | null
+  test?: String | null
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason?: InAdmissableReason | null
@@ -41586,6 +41639,7 @@ export interface CustomerAdmissionsDataSubscriptionWhereInput {
 }
 
 export interface CustomerAdmissionsDataUpdateInput {
+  test?: String | null
   inServiceableZipcode?: Boolean | null
   admissable?: Boolean | null
   inAdmissableReason?: InAdmissableReason | null
@@ -41597,6 +41651,7 @@ export interface CustomerAdmissionsDataUpdateInput {
 }
 
 export interface CustomerAdmissionsDataUpdateManyMutationInput {
+  test?: String | null
   inServiceableZipcode?: Boolean | null
   admissable?: Boolean | null
   inAdmissableReason?: InAdmissableReason | null
@@ -41616,6 +41671,7 @@ export interface CustomerAdmissionsDataUpdateOneWithoutCustomerInput {
 }
 
 export interface CustomerAdmissionsDataUpdateWithoutCustomerDataInput {
+  test?: String | null
   inServiceableZipcode?: Boolean | null
   admissable?: Boolean | null
   inAdmissableReason?: InAdmissableReason | null
@@ -41648,6 +41704,20 @@ export interface CustomerAdmissionsDataWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
+  test?: String | null
+  test_not?: String | null
+  test_in?: String[] | String | null
+  test_not_in?: String[] | String | null
+  test_lt?: String | null
+  test_lte?: String | null
+  test_gt?: String | null
+  test_gte?: String | null
+  test_contains?: String | null
+  test_not_contains?: String | null
+  test_starts_with?: String | null
+  test_not_starts_with?: String | null
+  test_ends_with?: String | null
+  test_not_ends_with?: String | null
   inServiceableZipcode?: Boolean | null
   inServiceableZipcode_not?: Boolean | null
   admissable?: Boolean | null
@@ -56547,6 +56617,7 @@ export interface Customer extends Node {
 
 export interface CustomerAdmissionsData extends Node {
   id: ID_Output
+  test?: String | null
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason?: InAdmissableReason | null
@@ -56580,6 +56651,7 @@ export interface CustomerAdmissionsDataEdge {
 
 export interface CustomerAdmissionsDataPreviousValues {
   id: ID_Output
+  test?: String | null
   inServiceableZipcode: Boolean
   admissable: Boolean
   inAdmissableReason?: InAdmissableReason | null
