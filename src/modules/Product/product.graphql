@@ -320,7 +320,7 @@ input UpsertProductInput {
   buyNewEnabled: Boolean
   buyUsedEnabled: Boolean!
   buyUsedPrice: Int!
-  categoryName: String!
+  categoryID: String!
   colorCode: String!
   description: String!
   functions: [String!]!
