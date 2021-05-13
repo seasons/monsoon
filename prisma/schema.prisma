@@ -634,9 +634,12 @@ model Product {
   createdAt             DateTime
   updatedAt             DateTime                  @updatedAt
   category              String?                   @db.VarChar(25)
-  color                 String?                   @db.VarChar(25)
-  secondaryColor        String?                   @db.VarChar(25)
-  brand                 String?                   @db.VarChar(25)
+  colorId               String?                   @map("color") @db.VarChar(25)
+  color                 Color?                    @relation("ColorToProduct_color", fields: [colorId], references: [id])
+  secondaryColor        Color?                    @relation("ColorToProduct_secondaryColor", fields: [secondaryColorId], references: [id])
+  secondaryColorId      String?                   @map("secondaryColor") @db.VarChar(25)
+  brandId               String?                   @map("brand") @db.VarChar(25)
+  brand                 Brand?                    @relation(fields: [brandId], references: [id])
   type                  String?
   modelSizeId           String?                   @map("modelSize") @db.VarChar(25)
   modelSize             Size?                     @relation(fields: [modelSizeId], references: [id])
@@ -647,11 +650,8 @@ model Product {
   productFit            String?
   buyNewEnabled         Boolean
   tier                  String?                   @db.VarChar(25)
-  Brand                 Brand?                    @relation(fields: [brand], references: [id])
   Category              Category?                 @relation(fields: [category], references: [id])
-  Color                 Color?                    @relation("ColorToProduct_color", fields: [color], references: [id])
   Season                ProductSeason?            @relation(fields: [season], references: [id])
-  SecondaryColor        Color?                    @relation("ColorToProduct_secondaryColor", fields: [secondaryColor], references: [id])
   productTier           ProductTier?              @relation(fields: [tier], references: [id])
   innerMaterials        Product_innerMaterials[]
   outerMaterials        Product_outerMaterials[]
@@ -716,7 +716,7 @@ model Product_outerMaterials {
   nodeId   String  @db.VarChar(25)
   position Int
   value    String
-  Product  Product @relation(fields: [nodeId], references: [id])
+  product  Product @relation(fields: [nodeId], references: [id])
 
   @@id([nodeId, position])
 }

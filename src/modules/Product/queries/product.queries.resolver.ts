@@ -1,8 +1,13 @@
+import * as util from "util"
+
 import { Customer, User } from "@app/decorators"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaSelect } from "@paljs/plugins"
+import { Product } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
+import { isEmpty } from "lodash"
+import { keys } from "ts-transformer-keys"
 
 import { ProductService } from "../services/product.service"
 
@@ -18,13 +23,35 @@ export class ProductQueriesResolver {
     const scope = !!user ? "PRIVATE" : "PUBLIC"
     info.cacheControl.setCacheHint({ maxAge: 600, scope })
 
-    const select = new PrismaSelect(info).value
+    let select = { select: { id: true } }
+    const prismaSelect = new PrismaSelect(info)
+    const productFields = prismaSelect.dataModel.find(a => a.name === "Product")
+      .fields
 
-    const data = await this.prisma.client2.product.findUnique({
+    console.log(productFields)
+    Object.values(productFields).forEach((field, index) => {
+      const fieldSelect = prismaSelect.valueOf(field.name)
+      if (typeof fieldSelect === "object" && isEmpty(fieldSelect)) {
+        return
+      }
+
+      select = PrismaSelect.mergeDeep(
+        { select: { [field.name]: fieldSelect } },
+        select
+      )
+    })
+    console.log(util.inspect(select, { depth: null }))
+
+    const data = (await this.prisma.client2.product.findUnique({
       where,
       ...select,
-    })
-    return data
+    })) as any
+    const sanitizedData = {
+      ...data,
+      outerMaterials: data?.outerMaterials?.map(a => a.value),
+      innerMaterials: data?.innerMaterials?.map(b => b.value),
+    }
+    return sanitizedData
   }
 
   @Query()
