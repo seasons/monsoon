@@ -571,9 +571,11 @@ type PhysicalProductQualityReport {
   damageType: PhysicalProductDamageType
   damageTypes: [PhysicalProductDamageType!] @scalarList(strategy: RELATION)
   notes: String
+  score: Int
   physicalProduct: PhysicalProduct!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  published: Boolean! @default(value: false)
 }
 
 type PhysicalProduct {

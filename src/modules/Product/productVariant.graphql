@@ -174,6 +174,7 @@ type ProductVariant {
     first: Int
     last: Int
   ): [PhysicalProduct!]
+  nextReservablePhysicalProduct: PhysicalProduct
   total: Int!
   reservable: Int!
   reserved: Int!

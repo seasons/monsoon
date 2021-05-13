@@ -1,9 +1,4 @@
-import * as util from "util"
-
 import { Customer, User } from "@app/decorators"
-import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import { Product } from "@app/prisma/prisma.binding"
-import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"

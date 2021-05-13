@@ -3711,10 +3711,14 @@ export type PhysicalProductQualityReportOrderByInput =
   | "damageType_DESC"
   | "notes_ASC"
   | "notes_DESC"
+  | "score_ASC"
+  | "score_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
-  | "updatedAt_DESC";
+  | "updatedAt_DESC"
+  | "published_ASC"
+  | "published_DESC";
 
 export type ShippingOptionOrderByInput =
   | "id_ASC"
@@ -7271,6 +7275,14 @@ export interface PhysicalProductQualityReportWhereInput {
   notes_not_starts_with?: Maybe<String>;
   notes_ends_with?: Maybe<String>;
   notes_not_ends_with?: Maybe<String>;
+  score?: Maybe<Int>;
+  score_not?: Maybe<Int>;
+  score_in?: Maybe<Int[] | Int>;
+  score_not_in?: Maybe<Int[] | Int>;
+  score_lt?: Maybe<Int>;
+  score_lte?: Maybe<Int>;
+  score_gt?: Maybe<Int>;
+  score_gte?: Maybe<Int>;
   physicalProduct?: Maybe<PhysicalProductWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
@@ -7288,6 +7300,8 @@ export interface PhysicalProductQualityReportWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  published?: Maybe<Boolean>;
+  published_not?: Maybe<Boolean>;
   AND?: Maybe<
     | PhysicalProductQualityReportWhereInput[]
     | PhysicalProductQualityReportWhereInput
@@ -11762,6 +11776,8 @@ export interface PhysicalProductQualityReportCreateWithoutPhysicalProductInput {
   damageType?: Maybe<PhysicalProductDamageType>;
   damageTypes?: Maybe<PhysicalProductQualityReportCreatedamageTypesInput>;
   notes?: Maybe<String>;
+  score?: Maybe<Int>;
+  published?: Maybe<Boolean>;
 }
 
 export interface PhysicalProductQualityReportCreatedamageTypesInput {
@@ -14535,6 +14551,8 @@ export interface PhysicalProductQualityReportUpdateWithoutPhysicalProductDataInp
   damageType?: Maybe<PhysicalProductDamageType>;
   damageTypes?: Maybe<PhysicalProductQualityReportUpdatedamageTypesInput>;
   notes?: Maybe<String>;
+  score?: Maybe<Int>;
+  published?: Maybe<Boolean>;
 }
 
 export interface PhysicalProductQualityReportUpdatedamageTypesInput {
@@ -14584,6 +14602,14 @@ export interface PhysicalProductQualityReportScalarWhereInput {
   notes_not_starts_with?: Maybe<String>;
   notes_ends_with?: Maybe<String>;
   notes_not_ends_with?: Maybe<String>;
+  score?: Maybe<Int>;
+  score_not?: Maybe<Int>;
+  score_in?: Maybe<Int[] | Int>;
+  score_not_in?: Maybe<Int[] | Int>;
+  score_lt?: Maybe<Int>;
+  score_lte?: Maybe<Int>;
+  score_gt?: Maybe<Int>;
+  score_gte?: Maybe<Int>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -14600,6 +14626,8 @@ export interface PhysicalProductQualityReportScalarWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  published?: Maybe<Boolean>;
+  published_not?: Maybe<Boolean>;
   AND?: Maybe<
     | PhysicalProductQualityReportScalarWhereInput[]
     | PhysicalProductQualityReportScalarWhereInput
@@ -14623,6 +14651,8 @@ export interface PhysicalProductQualityReportUpdateManyDataInput {
   damageType?: Maybe<PhysicalProductDamageType>;
   damageTypes?: Maybe<PhysicalProductQualityReportUpdatedamageTypesInput>;
   notes?: Maybe<String>;
+  score?: Maybe<Int>;
+  published?: Maybe<Boolean>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput {
@@ -19624,7 +19654,9 @@ export interface PhysicalProductQualityReportCreateInput {
   damageType?: Maybe<PhysicalProductDamageType>;
   damageTypes?: Maybe<PhysicalProductQualityReportCreatedamageTypesInput>;
   notes?: Maybe<String>;
+  score?: Maybe<Int>;
   physicalProduct: PhysicalProductCreateOneWithoutReportsInput;
+  published?: Maybe<Boolean>;
 }
 
 export interface PhysicalProductCreateOneWithoutReportsInput {
@@ -19657,7 +19689,9 @@ export interface PhysicalProductQualityReportUpdateInput {
   damageType?: Maybe<PhysicalProductDamageType>;
   damageTypes?: Maybe<PhysicalProductQualityReportUpdatedamageTypesInput>;
   notes?: Maybe<String>;
+  score?: Maybe<Int>;
   physicalProduct?: Maybe<PhysicalProductUpdateOneRequiredWithoutReportsInput>;
+  published?: Maybe<Boolean>;
 }
 
 export interface PhysicalProductUpdateOneRequiredWithoutReportsInput {
@@ -19697,6 +19731,8 @@ export interface PhysicalProductQualityReportUpdateManyMutationInput {
   damageType?: Maybe<PhysicalProductDamageType>;
   damageTypes?: Maybe<PhysicalProductQualityReportUpdatedamageTypesInput>;
   notes?: Maybe<String>;
+  score?: Maybe<Int>;
+  published?: Maybe<Boolean>;
 }
 
 export interface ProductUpdateInput {
@@ -25331,8 +25367,10 @@ export interface PhysicalProductQualityReport {
   damageType?: PhysicalProductDamageType;
   damageTypes: PhysicalProductDamageType[];
   notes?: String;
+  score?: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  published: Boolean;
 }
 
 export interface PhysicalProductQualityReportPromise
@@ -25343,9 +25381,11 @@ export interface PhysicalProductQualityReportPromise
   damageType: () => Promise<PhysicalProductDamageType>;
   damageTypes: () => Promise<PhysicalProductDamageType[]>;
   notes: () => Promise<String>;
+  score: () => Promise<Int>;
   physicalProduct: <T = PhysicalProductPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  published: () => Promise<Boolean>;
 }
 
 export interface PhysicalProductQualityReportSubscription
@@ -25356,9 +25396,11 @@ export interface PhysicalProductQualityReportSubscription
   damageType: () => Promise<AsyncIterator<PhysicalProductDamageType>>;
   damageTypes: () => Promise<AsyncIterator<PhysicalProductDamageType[]>>;
   notes: () => Promise<AsyncIterator<String>>;
+  score: () => Promise<AsyncIterator<Int>>;
   physicalProduct: <T = PhysicalProductSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  published: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface PhysicalProductQualityReportNullablePromise
@@ -25369,9 +25411,11 @@ export interface PhysicalProductQualityReportNullablePromise
   damageType: () => Promise<PhysicalProductDamageType>;
   damageTypes: () => Promise<PhysicalProductDamageType[]>;
   notes: () => Promise<String>;
+  score: () => Promise<Int>;
   physicalProduct: <T = PhysicalProductPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  published: () => Promise<Boolean>;
 }
 
 export interface ShippingOption {
@@ -34153,8 +34197,10 @@ export interface PhysicalProductQualityReportPreviousValues {
   damageType?: PhysicalProductDamageType;
   damageTypes: PhysicalProductDamageType[];
   notes?: String;
+  score?: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  published: Boolean;
 }
 
 export interface PhysicalProductQualityReportPreviousValuesPromise
@@ -34164,8 +34210,10 @@ export interface PhysicalProductQualityReportPreviousValuesPromise
   damageType: () => Promise<PhysicalProductDamageType>;
   damageTypes: () => Promise<PhysicalProductDamageType[]>;
   notes: () => Promise<String>;
+  score: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  published: () => Promise<Boolean>;
 }
 
 export interface PhysicalProductQualityReportPreviousValuesSubscription
@@ -34175,8 +34223,10 @@ export interface PhysicalProductQualityReportPreviousValuesSubscription
   damageType: () => Promise<AsyncIterator<PhysicalProductDamageType>>;
   damageTypes: () => Promise<AsyncIterator<PhysicalProductDamageType[]>>;
   notes: () => Promise<AsyncIterator<String>>;
+  score: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  published: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface ProductSubscriptionPayload {
