@@ -1,13 +1,9 @@
-import * as util from "util"
-
 import { Customer, User } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaSelect } from "@paljs/plugins"
-import { Product } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
-import { isEmpty } from "lodash"
-import { keys } from "ts-transformer-keys"
 
 import { ProductService } from "../services/product.service"
 
@@ -19,11 +15,14 @@ export class ProductQueriesResolver {
   ) {}
 
   @Query()
-  async product(@Args() { where }, @Info() info, @User() user) {
+  async product(
+    @Args() { where },
+    @Info() info,
+    @User() user,
+    @Select() select
+  ) {
     const scope = !!user ? "PRIVATE" : "PUBLIC"
     info.cacheControl.setCacheHint({ maxAge: 600, scope })
-
-    const select = this.prisma.infoToSelect(info, "Product")
 
     const data = await this.prisma.client2.product.findUnique({
       where,
