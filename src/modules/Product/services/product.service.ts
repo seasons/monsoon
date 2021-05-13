@@ -16,13 +16,13 @@ import {
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
   Tag,
-} from "@prisma1/index"
+} from "@prisma/index"
 import {
   Customer,
   Product as PrismaBindingProduct,
   ProductVariantConnection,
-} from "@prisma1/prisma.binding"
-import { PrismaService } from "@prisma1/prisma.service"
+} from "@prisma/prisma.binding"
+import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
 import { head, pick, tail } from "lodash"

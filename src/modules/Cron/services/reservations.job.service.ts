@@ -6,7 +6,7 @@ import { EmailService } from "@modules/Email/services/email.service"
 import { ErrorService } from "@modules/Error/services/error.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { PrismaService } from "@prisma1/prisma.service"
+import { PrismaService } from "@prisma/prisma.service"
 import moment from "moment"
 
 @Injectable()

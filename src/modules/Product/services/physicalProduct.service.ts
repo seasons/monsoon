@@ -17,7 +17,7 @@ import {
 } from "@app/prisma"
 import { Reservation } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "@prisma1/prisma.service"
+import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
 import { cloneDeep, head, identity, omit, pick } from "lodash"

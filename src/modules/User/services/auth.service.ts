@@ -12,8 +12,8 @@ import {
   CustomerDetailCreateInput,
   CustomerMembershipSubscriptionData,
   UserPushNotificationInterestType,
-} from "@prisma1/index"
-import { PrismaService } from "@prisma1/prisma.service"
+} from "@prisma/index"
+import { PrismaService } from "@prisma/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
 import { head } from "lodash"
 import { DateTime } from "luxon"

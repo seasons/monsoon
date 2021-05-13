@@ -10,8 +10,8 @@ import {
   Reservation,
   SyncTimingType,
   UTMData,
-} from "@prisma1/index"
-import { PrismaService } from "@prisma1/prisma.service"
+} from "@prisma/index"
+import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import graphqlFields from "graphql-fields"
 import {
