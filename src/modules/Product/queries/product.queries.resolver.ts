@@ -19,38 +19,18 @@ export class ProductQueriesResolver {
   ) {}
 
   @Query()
-  async product(@Args() { where }, @Info() info, @Context() ctx, @User() user) {
+  async product(@Args() { where }, @Info() info, @User() user) {
     const scope = !!user ? "PRIVATE" : "PUBLIC"
     info.cacheControl.setCacheHint({ maxAge: 600, scope })
 
-    let select = { select: { id: true } }
-    const prismaSelect = new PrismaSelect(info)
-    const productFields = prismaSelect.dataModel.find(a => a.name === "Product")
-      .fields
+    const select = this.prisma.infoToSelect(info, "Product")
 
-    console.log(productFields)
-    Object.values(productFields).forEach((field, index) => {
-      const fieldSelect = prismaSelect.valueOf(field.name, field.type)
-      if (typeof fieldSelect === "object" && isEmpty(fieldSelect)) {
-        return
-      }
-
-      select = PrismaSelect.mergeDeep(
-        { select: { [field.name]: fieldSelect } },
-        select
-      )
-    })
-    console.log(util.inspect(select, { depth: null }))
-
-    const data = (await this.prisma.client2.product.findUnique({
+    const data = await this.prisma.client2.product.findUnique({
       where,
       ...select,
-    })) as any
-    const sanitizedData = {
-      ...data,
-      outerMaterials: data?.outerMaterials?.map(a => a.value),
-      innerMaterials: data?.innerMaterials?.map(b => b.value),
-    }
+    })
+    const sanitizedData = this.prisma.sanitizeScalarLists(data, "Product")
+
     return sanitizedData
   }
 
