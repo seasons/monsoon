@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
-import { Location } from "@prisma1/prisma.binding"
-import { PrismaService } from "@prisma1/prisma.service"
+import { Location } from "@prisma/prisma.binding"
+import { PrismaService } from "@prisma/prisma.service"
 import axios from "axios"
 
 @Injectable()

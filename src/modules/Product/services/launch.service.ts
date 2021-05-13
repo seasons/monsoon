@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
-import { LaunchWhereUniqueInput } from "@prisma1/index"
-import { PrismaService } from "@prisma1/prisma.service"
+import { LaunchWhereUniqueInput } from "@prisma/index"
+import { PrismaService } from "@prisma/prisma.service"
 import { omit } from "lodash"
 
 @Injectable()

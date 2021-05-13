@@ -4,7 +4,7 @@ import { ImageModule } from "@modules/Image/image.module"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "@prisma1/prisma.module"
+import { PrismaModule } from "@prisma/prisma.module"
 
 import { PusherService } from "../PushNotification/services/pusher.service"
 import { PushNotificationDataProvider } from "../PushNotification/services/pushNotification.data.service"

@@ -75,6 +75,5 @@ export class PrismaService implements UpdatableConnection {
       endpoint,
       debug: false,
     })
-
   }
 }
