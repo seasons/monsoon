@@ -32,6 +32,7 @@ type Query {
     before: String
     first: Int
     last: Int
+    childLeavesOnly: Boolean
   ): [Category]! @cacheControl(maxAge: 600)
   categoriesConnection(
     where: CategoryWhereInput

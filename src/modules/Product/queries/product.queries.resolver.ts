@@ -156,7 +156,19 @@ export class ProductQueriesResolver {
 
   @Query()
   async categories(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.categories(args, info)
+    if (!!args.childLeavesOnly) {
+      return await this.prisma.binding.query.categories(
+        {
+          ...args,
+          where: {
+            children_every: { id: null },
+          },
+        },
+        info
+      )
+    } else {
+      return await this.prisma.binding.query.categories(args, info)
+    }
   }
 
   @Query()
@@ -166,7 +178,19 @@ export class ProductQueriesResolver {
 
   @Query()
   async categoriesConnection(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.categoriesConnection(args, info)
+    if (!!args.childLeavesOnly) {
+      return await this.prisma.binding.query.categoriesConnection(
+        {
+          ...args,
+          where: {
+            children_every: [],
+          },
+        },
+        info
+      )
+    } else {
+      return await this.prisma.binding.query.categoriesConnection(args, info)
+    }
   }
 
   @Query()
