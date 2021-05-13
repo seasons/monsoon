@@ -572,19 +572,19 @@ model PhysicalProduct {
   productStatus                        String
   createdAt                            DateTime
   updatedAt                            DateTime                       @updatedAt
-  location                             String?                        @db.VarChar(25)
+  locationId                           String?                        @map("location") @db.VarChar(25)
+  location                             Location?                      @relation(fields: [locationId], references: [id])
   offloadMethod                        String?
   offloadNotes                         String?
   sequenceNumber                       Int
-  warehouseLocation                    String?                        @db.VarChar(25)
+  warehouseLocationId                  String?                        @map("warehouseLocation") @db.VarChar(25)
+  warehouseLocation                    WarehouseLocation?             @relation(fields: [warehouseLocationId], references: [id])
   dateOrdered                          DateTime?
   dateReceived                         DateTime?
   unitCost                             Decimal?
   barcoded                             Boolean?
-  price                                String?                        @db.VarChar(25)
-  Location                             Location?                      @relation(fields: [location], references: [id])
-  PhysicalProductPrice                 PhysicalProductPrice?          @relation(fields: [price], references: [id])
-  WarehouseLocation                    WarehouseLocation?             @relation(fields: [warehouseLocation], references: [id])
+  priceId                              String?                        @map("price") @db.VarChar(25)
+  price                                PhysicalProductPrice?          @relation(fields: [priceId], references: [id])
   PhysicalProductQualityReport         PhysicalProductQualityReport[]
   ProductNotification                  ProductNotification[]
   ReservationReceiptItem               ReservationReceiptItem[]
@@ -624,47 +624,47 @@ model PhysicalProductQualityReport_damageTypes {
 }
 
 model Product {
-  id                    String                    @id @default(cuid()) @db.VarChar(25)
-  slug                  String                    @unique
-  name                  String
-  description           String?
-  externalURL           String?
-  retailPrice           Int?
-  status                String?
-  createdAt             DateTime
-  updatedAt             DateTime                  @updatedAt
-  category              String?                   @db.VarChar(25)
-  colorId               String?                   @map("color") @db.VarChar(25)
-  color                 Color?                    @relation("ColorToProduct_color", fields: [colorId], references: [id])
-  secondaryColor        Color?                    @relation("ColorToProduct_secondaryColor", fields: [secondaryColorId], references: [id])
-  secondaryColorId      String?                   @map("secondaryColor") @db.VarChar(25)
-  brandId               String?                   @map("brand") @db.VarChar(25)
-  brand                 Brand?                    @relation(fields: [brandId], references: [id])
-  type                  String?
-  modelSizeId           String?                   @map("modelSize") @db.VarChar(25)
-  modelSize             Size?                     @relation(fields: [modelSizeId], references: [id])
-  architecture          String?
-  publishedAt           DateTime?
-  photographyStatus     String?
-  seasonId              String?                   @map("season") @db.VarChar(25)
-  season                ProductSeason?            @relation(fields: [seasonId], references: [id])
-  productFit            String?
-  buyNewEnabled         Boolean
-  tier                  String?                   @db.VarChar(25)
-  Category              Category?                 @relation(fields: [category], references: [id])
-  productTier           ProductTier?              @relation(fields: [tier], references: [id])
-  innerMaterials        Product_innerMaterials[]
-  outerMaterials        Product_outerMaterials[]
-  RecentlyViewedProduct RecentlyViewedProduct[]
-  collections           Collection[]
-  Customer              Customer[]                @relation("CustomerToEmailedProducts")
-  FitPic                FitPic[]
-  images                Image[]
-  functions             ProductFunction[]
-  materialCategory      ProductMaterialCategory[]
-  model                 ProductModel[]
-  variants              ProductVariant[]
-  tags                  Tag[]
+  id                          String                    @id @default(cuid()) @db.VarChar(25)
+  slug                        String                    @unique
+  name                        String
+  description                 String?
+  externalURL                 String?
+  retailPrice                 Int?
+  status                      String?
+  createdAt                   DateTime
+  updatedAt                   DateTime                  @updatedAt
+  categoryId                  String?                   @map("category") @db.VarChar(25)
+  category                    Category?                 @relation(fields: [categoryId], references: [id])
+  colorId                     String?                   @map("color") @db.VarChar(25)
+  color                       Color?                    @relation("ColorToProduct_color", fields: [colorId], references: [id])
+  secondaryColor              Color?                    @relation("ColorToProduct_secondaryColor", fields: [secondaryColorId], references: [id])
+  secondaryColorId            String?                   @map("secondaryColor") @db.VarChar(25)
+  brandId                     String?                   @map("brand") @db.VarChar(25)
+  brand                       Brand?                    @relation(fields: [brandId], references: [id])
+  type                        String?
+  modelSizeId                 String?                   @map("modelSize") @db.VarChar(25)
+  modelSize                   Size?                     @relation(fields: [modelSizeId], references: [id])
+  architecture                String?
+  publishedAt                 DateTime?
+  photographyStatus           String?
+  seasonId                    String?                   @map("season") @db.VarChar(25)
+  season                      ProductSeason?            @relation(fields: [seasonId], references: [id])
+  productFit                  String?
+  buyNewEnabled               Boolean
+  tier                        String?                   @db.VarChar(25)
+  productTier                 ProductTier?              @relation(fields: [tier], references: [id])
+  innerMaterials              Product_innerMaterials[]
+  outerMaterials              Product_outerMaterials[]
+  recentlyViewedProduct       RecentlyViewedProduct[]
+  collection                  Collection[]
+  customersEmailedWithProduct Customer[]                @relation("CustomerToEmailedProducts")
+  fitPics                     FitPic[]
+  images                      Image[]
+  functions                   ProductFunction[]
+  materialCategory            ProductMaterialCategory[]
+  model                       ProductModel[]
+  variants                    ProductVariant[]
+  tags                        Tag[]
 }
 
 model ProductFunction {
@@ -775,35 +775,35 @@ model ProductTier {
 }
 
 model ProductVariant {
-  id                                  String                   @id @default(cuid()) @db.VarChar(25)
-  sku                                 String?                  @unique
-  weight                              Decimal?
-  height                              Decimal?
-  productID                           String
-  retailPrice                         Decimal?
-  total                               Int
-  reservable                          Int
-  reserved                            Int
-  nonReservable                       Int
-  createdAt                           DateTime
-  updatedAt                           DateTime                 @updatedAt
-  color                               String?                  @db.VarChar(25)
-  internalSize                        String?                  @db.VarChar(25)
-  offloaded                           Int
-  stored                              Int
-  displayShort                        String
-  price                               String?                  @db.VarChar(25)
-  Color                               Color?                   @relation(fields: [color], references: [id])
-  Size_ProductVariantToSize           Size?                    @relation(fields: [internalSize], references: [id])
-  ProductVariantPrice                 ProductVariantPrice?     @relation(fields: [price], references: [id])
-  BagItem                             BagItem[]
-  ProductNotification                 ProductNotification[]
-  ProductVariantFeedback              ProductVariantFeedback[]
-  ProductVariantWant                  ProductVariantWant[]
-  ShopifyProductVariant               ShopifyProductVariant[]
-  PhysicalProduct                     PhysicalProduct[]
-  Product                             Product[]
-  Size_ProductVariantManufacturerSize Size[]                   @relation("ProductVariantManufacturerSize")
+  id                     String                   @id @default(cuid()) @db.VarChar(25)
+  sku                    String?                  @unique
+  weight                 Decimal?
+  height                 Decimal?
+  productID              String
+  retailPrice            Decimal?
+  total                  Int
+  reservable             Int
+  reserved               Int
+  nonReservable          Int
+  createdAt              DateTime
+  updatedAt              DateTime                 @updatedAt
+  colorId                String?                  @map("color") @db.VarChar(25)
+  color                  Color?                   @relation(fields: [colorId], references: [id])
+  internalSizeId         String?                  @map("internalSize") @db.VarChar(25)
+  internalSize           Size?                    @relation(fields: [internalSizeId], references: [id])
+  offloaded              Int
+  stored                 Int
+  displayShort           String
+  priceId                String?                  @map("price") @db.VarChar(25)
+  price                  ProductVariantPrice?     @relation(fields: [priceId], references: [id])
+  BagItem                BagItem[]
+  ProductNotification    ProductNotification[]
+  ProductVariantFeedback ProductVariantFeedback[]
+  ProductVariantWant     ProductVariantWant[]
+  ShopifyProductVariant  ShopifyProductVariant[]
+  PhysicalProduct        PhysicalProduct[]
+  product                Product[]
+  manufacturerSizes      Size[]                   @relation("ProductVariantManufacturerSize")
 }
 
 model ProductVariantFeedback {
@@ -876,14 +876,14 @@ model PushNotificationReceipt {
 }
 
 model RecentlyViewedProduct {
-  id        String    @id @default(cuid()) @db.VarChar(25)
-  viewCount Int
-  createdAt DateTime
-  updatedAt DateTime  @updatedAt
-  product   String?   @db.VarChar(25)
-  customer  String?   @db.VarChar(25)
-  Customer  Customer? @relation(fields: [customer], references: [id])
-  Product   Product?  @relation(fields: [product], references: [id])
+  id         String    @id @default(cuid()) @db.VarChar(25)
+  viewCount  Int
+  createdAt  DateTime
+  updatedAt  DateTime  @updatedAt
+  productId  String?   @map("product") @db.VarChar(25)
+  product    Product?  @relation(fields: [productId], references: [id])
+  customerId String?   @map("customer") @db.VarChar(25)
+  customer   Customer? @relation(fields: [customerId], references: [id])
 }
 
 model Reservation {
