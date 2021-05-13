@@ -4,7 +4,7 @@ import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { UserModule } from "@modules/User/user.module"
 import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module, forwardRef } from "@nestjs/common"
-import { PrismaModule } from "@prisma1/prisma.module"
+import { PrismaModule } from "@prisma/prisma.module"
 
 import { ErrorModule } from "../Error/error.module"
 import { ChargebeeController } from "./controllers/chargebee.controller"

@@ -27,8 +27,8 @@ import {
   ReservationWhereUniqueInput,
   ShippingCode,
   User,
-} from "@prisma1/index"
-import { PrismaService } from "@prisma1/prisma.service"
+} from "@prisma/index"
+import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { addFragmentToInfo } from "graphql-binding"

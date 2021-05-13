@@ -1,6 +1,6 @@
 import { ImageModule } from "@modules/Image/image.module"
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "@prisma1/prisma.module"
+import { PrismaModule } from "@prisma/prisma.module"
 
 import { HomepageFieldsResolver } from "./fields/homepage.fields.resolver"
 import { HomepageResultFieldsResolver } from "./fields/homepageResult.fields.resolver"

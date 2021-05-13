@@ -1,7 +1,7 @@
 import { Customer, User } from "@app/decorators"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { Info, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
+import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
 
 import { CustomerService } from "../services/customer.service"

@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "@prisma1/prisma.module"
+import { PrismaModule } from "@prisma/prisma.module"
 import { CommandModule } from "nestjs-command"
 
 import { DripModule } from "../Drip/drip.module"

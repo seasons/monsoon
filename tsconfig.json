@@ -15,7 +15,7 @@
     "paths": {
       "@app/*": ["./*"],
       "@modules/*": ["modules/*"],
-      "@prisma1/*": ["prisma/*"]
+      "@prisma/*": ["prisma/*"]
     }
   },
   "exclude": ["src/scripts", "./bin"]

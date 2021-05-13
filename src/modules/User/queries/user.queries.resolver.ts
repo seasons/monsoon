@@ -1,6 +1,6 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
+import { PrismaService } from "@prisma/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
 
 import { AdmissionsService } from "../services/admissions.service"
