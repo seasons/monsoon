@@ -147,22 +147,19 @@ model Brand {
 
 }
 
-// TODO: Clean up
-// Tricky one -- how to handle relations to the same record type?
-
 model Category {
-  id                          String                        @id @default(cuid()) @db.VarChar(25)
-  slug                        String                        @unique
-  name                        String                        @unique
-  description                 String?
-  image                       String?
-  visible                     Boolean
-  updatedAt                   DateTime?                     @updatedAt
-  products                    Product[]
-  ProductMaterialCategory     ProductMaterialCategory[]
-  WarehouseLocationConstraint WarehouseLocationConstraint[]
-  Category_B                  Category[]                    @relation("CategoryToChildren")
-  Category_A                  Category[]                    @relation("CategoryToChildren")
+  id                           String                        @id @default(cuid()) @db.VarChar(25)
+  slug                         String                        @unique
+  name                         String                        @unique
+  description                  String?
+  image                        String?
+  visible                      Boolean
+  updatedAt                    DateTime?                     @updatedAt
+  products                     Product[]
+  productMaterialCategories    ProductMaterialCategory[]
+  warehouseLocationConstraints WarehouseLocationConstraint[]
+  children                     Category[]                    @relation("CategoryToChildren")
+  parents                      Category[]                    @relation("CategoryToChildren")
 }
 
 model Collection {
@@ -595,35 +592,35 @@ model PaymentPlan {
   customerMembership CustomerMembership?
 }
 
-// TODO: Clean up
-
 model PhysicalProduct {
-  id                                   String                         @id @default(cuid()) @db.VarChar(25)
-  seasonsUID                           String                         @unique
-  inventoryStatus                      String
-  productStatus                        String
-  createdAt                            DateTime
-  updatedAt                            DateTime                       @updatedAt
-  locationId                           String?                        @map("location") @db.VarChar(25)
-  location                             Location?                      @relation(fields: [locationId], references: [id])
-  offloadMethod                        String?
-  offloadNotes                         String?
-  sequenceNumber                       Int
-  warehouseLocationId                  String?                        @map("warehouseLocation") @db.VarChar(25)
-  warehouseLocation                    WarehouseLocation?             @relation(fields: [warehouseLocationId], references: [id])
-  dateOrdered                          DateTime?
-  dateReceived                         DateTime?
-  unitCost                             Decimal?
-  barcoded                             Boolean?
-  priceId                              String?                        @map("price") @db.VarChar(25)
-  price                                PhysicalProductPrice?          @relation(fields: [priceId], references: [id])
-  PhysicalProductQualityReport         PhysicalProductQualityReport[]
-  ProductNotification                  ProductNotification[]
-  ReservationReceiptItem               ReservationReceiptItem[]
-  Package                              Package[]
-  ProductVariant                       ProductVariant[]
-  Reservation_ReservationToAllProducts Reservation[]                  @relation("ReservationToAllProducts")
-  Reservation_ReservationToNewProducts Reservation[]                  @relation("ReservationToNewProducts")
+  id                      String                         @id @default(cuid()) @db.VarChar(25)
+  seasonsUID              String                         @unique
+  inventoryStatus         String
+  productStatus           String
+  createdAt               DateTime
+  updatedAt               DateTime                       @updatedAt
+  locationId              String?                        @map("location") @db.VarChar(25)
+  location                Location?                      @relation(fields: [locationId], references: [id])
+  offloadMethod           String?
+  offloadNotes            String?
+  sequenceNumber          Int
+  warehouseLocationId     String?                        @map("warehouseLocation") @db.VarChar(25)
+  warehouseLocation       WarehouseLocation?             @relation(fields: [warehouseLocationId], references: [id])
+  dateOrdered             DateTime?
+  dateReceived            DateTime?
+  unitCost                Decimal?
+  barcoded                Boolean?
+  priceId                 String?                        @map("price") @db.VarChar(25)
+  price                   PhysicalProductPrice?          @relation(fields: [priceId], references: [id])
+  qualityReports          PhysicalProductQualityReport[]
+  productNotifications    ProductNotification[]
+  reservationReceiptItems ReservationReceiptItem[]
+  packages                Package[]
+  reservationsAllProducts Reservation[]                  @relation("ReservationToAllProducts")
+  reservationsNewProducts Reservation[]                  @relation("ReservationToNewProducts")
+
+  // Should be a singleton. Will get fixed with full prisma2 migration
+  variant ProductVariant[]
 }
 
 model PhysicalProductPrice {
@@ -654,8 +651,6 @@ model PhysicalProductQualityReport_damageTypes {
 
   @@id([nodeId, position])
 }
-
-// TODO: Clean up
 
 model Product {
   id                          String                   @id @default(cuid()) @db.VarChar(25)
@@ -689,7 +684,7 @@ model Product {
   tier                        ProductTier?             @relation(fields: [tierId], references: [id])
   innerMaterials              Product_innerMaterials[]
   outerMaterials              Product_outerMaterials[]
-  recentlyViewedProduct       RecentlyViewedProduct[]
+  recentlyViewedProducts      RecentlyViewedProduct[]
   collections                 Collection[]
   customersEmailedWithProduct Customer[]               @relation("CustomerToEmailedProducts")
   fitPics                     FitPic[]
@@ -703,12 +698,10 @@ model Product {
   materialCategory ProductMaterialCategory[]
 }
 
-// TODO: Clean up
-
 model ProductFunction {
-  id      String    @id @default(cuid()) @db.VarChar(25)
-  name    String?   @unique
-  Product Product[]
+  id       String    @id @default(cuid()) @db.VarChar(25)
+  name     String?   @unique
+  products Product[]
 }
 
 model Product_innerMaterials {
@@ -813,38 +806,39 @@ model ProductTier {
   product   Product?
 }
 
-// TODO: Clean up
-
 model ProductVariant {
-  id                     String                   @id @default(cuid()) @db.VarChar(25)
-  sku                    String?                  @unique
-  weight                 Decimal?
-  height                 Decimal?
-  productID              String
-  retailPrice            Decimal?
-  total                  Int
-  reservable             Int
-  reserved               Int
-  nonReservable          Int
-  createdAt              DateTime
-  updatedAt              DateTime                 @updatedAt
-  colorId                String?                  @map("color") @db.VarChar(25)
-  color                  Color?                   @relation(fields: [colorId], references: [id])
-  internalSizeId         String?                  @map("internalSize") @db.VarChar(25)
-  internalSize           Size?                    @relation(fields: [internalSizeId], references: [id])
-  offloaded              Int
-  stored                 Int
-  displayShort           String
-  priceId                String?                  @map("price") @db.VarChar(25)
-  price                  ProductVariantPrice?     @relation(fields: [priceId], references: [id])
-  BagItem                BagItem[]
-  ProductNotification    ProductNotification[]
-  ProductVariantFeedback ProductVariantFeedback[]
-  ProductVariantWant     ProductVariantWant[]
-  ShopifyProductVariant  ShopifyProductVariant[]
-  PhysicalProduct        PhysicalProduct[]
-  product                Product[]
-  manufacturerSizes      Size[]                   @relation("ProductVariantManufacturerSize")
+  id                      String                   @id @default(cuid()) @db.VarChar(25)
+  sku                     String?                  @unique
+  weight                  Decimal?
+  height                  Decimal?
+  productID               String
+  retailPrice             Decimal?
+  total                   Int
+  reservable              Int
+  reserved                Int
+  nonReservable           Int
+  createdAt               DateTime
+  updatedAt               DateTime                 @updatedAt
+  colorId                 String?                  @map("color") @db.VarChar(25)
+  color                   Color?                   @relation(fields: [colorId], references: [id])
+  internalSizeId          String?                  @map("internalSize") @db.VarChar(25)
+  internalSize            Size?                    @relation(fields: [internalSizeId], references: [id])
+  offloaded               Int
+  stored                  Int
+  displayShort            String
+  priceId                 String?                  @map("price") @db.VarChar(25)
+  price                   ProductVariantPrice?     @relation(fields: [priceId], references: [id])
+  physicalProducts        PhysicalProduct[]
+  bagItems                BagItem[]
+  productNotifications    ProductNotification[]
+  productVariantFeedbacks ProductVariantFeedback[]
+  productVariantWant      ProductVariantWant?
+  shopifyProductVariant   ShopifyProductVariant?
+  manufacturerSizes       Size[]                   @relation("ProductVariantManufacturerSize")
+
+  // Should be singleton. Will be fixed via full prisma2 migration
+  product Product[]
+
 }
 
 model ProductVariantFeedback {
@@ -933,73 +927,70 @@ model RecentlyViewedProduct {
   customer   Customer? @relation(fields: [customerId], references: [id])
 }
 
-// TODO: Clean up
-
 model Reservation {
-  id                                           String                @id @default(cuid()) @db.VarChar(25)
-  shipped                                      Boolean
-  createdAt                                    DateTime
-  updatedAt                                    DateTime              @updatedAt
-  user                                         String?               @db.VarChar(25)
-  reservationNumber                            Int                   @unique
-  status                                       String
-  shippedAt                                    DateTime?
-  receivedAt                                   DateTime?
-  lastLocation                                 String?               @db.VarChar(25)
-  customerId                                   String?               @map("customer") @db.VarChar(25)
-  customer                                     Customer?             @relation(fields: [customerId], references: [id])
-  sentPackage                                  String?               @db.VarChar(25)
-  returnedPackage                              String?               @db.VarChar(25)
-  reminderSentAt                               DateTime?
-  receipt                                      String?               @db.VarChar(25)
-  phase                                        String
-  statusUpdatedAt                              DateTime?
-  shippingOption                               String?               @db.VarChar(25)
-  completedAt                                  DateTime?
-  cancelledAt                                  DateTime?
-  Location                                     Location?             @relation(fields: [lastLocation], references: [id])
-  ReservationReceipt                           ReservationReceipt?   @relation(fields: [receipt], references: [id])
-  Package_PackageToReservation_returnedPackage Package?              @relation("PackageToReservation_returnedPackage", fields: [returnedPackage], references: [id])
-  Package_PackageToReservation_sentPackage     Package?              @relation("PackageToReservation_sentPackage", fields: [sentPackage], references: [id])
-  ShippingOption                               ShippingOption?       @relation(fields: [shippingOption], references: [id])
-  User                                         User?                 @relation(fields: [user], references: [id])
-  PackageTransitEvent                          PackageTransitEvent[]
-  ReservationFeedback                          ReservationFeedback[]
-  PhysicalProduct_ReservationToAllProducts     PhysicalProduct[]     @relation("ReservationToAllProducts")
-  PhysicalProduct_ReservationToNewProducts     PhysicalProduct[]     @relation("ReservationToNewProducts")
+  id                String                @id @default(cuid()) @db.VarChar(25)
+  shipped           Boolean
+  createdAt         DateTime
+  updatedAt         DateTime              @updatedAt
+  userId            String?               @map("user") @db.VarChar(25)
+  User              User?                 @relation(fields: [userId], references: [id])
+  reservationNumber Int                   @unique
+  status            String
+  shippedAt         DateTime?
+  receivedAt        DateTime?
+  lastLocationId    String?               @map("lastLocation") @db.VarChar(25)
+  lastLocation      Location?             @relation(fields: [lastLocationId], references: [id])
+  customerId        String?               @map("customer") @db.VarChar(25)
+  customer          Customer?             @relation(fields: [customerId], references: [id])
+  sentPackageId     String?               @map("sentPackage") @db.VarChar(25)
+  sentPackage       Package?              @relation("PackageToReservation_sentPackage", fields: [sentPackageId], references: [id])
+  returnedPackageId String?               @map("returnedPackage") @db.VarChar(25)
+  returnedPackage   Package?              @relation("PackageToReservation_returnedPackage", fields: [returnedPackageId], references: [id])
+  reminderSentAt    DateTime?
+  receiptId         String?               @map("receipt") @db.VarChar(25)
+  receipt           ReservationReceipt?   @relation(fields: [receiptId], references: [id])
+  phase             String
+  statusUpdatedAt   DateTime?
+  shippingOptionId  String?               @map("shippingOption") @db.VarChar(25)
+  shippingOption    ShippingOption?       @relation(fields: [shippingOptionId], references: [id])
+  completedAt       DateTime?
+  cancelledAt       DateTime?
+  packageEvents     PackageTransitEvent[]
+  feedback          ReservationFeedback?
+  products          PhysicalProduct[]     @relation("ReservationToAllProducts")
+  newProducts       PhysicalProduct[]     @relation("ReservationToNewProducts")
 }
 
-// TODO: Clean up
-
 model ReservationFeedback {
-  id                     String                   @id @default(cuid()) @db.VarChar(25)
-  comment                String?
-  rating                 String?
-  user                   String?                  @db.VarChar(25)
-  createdAt              DateTime
-  updatedAt              DateTime                 @updatedAt
-  reservation            String?                  @db.VarChar(25)
-  respondedAt            DateTime?
-  Reservation            Reservation?             @relation(fields: [reservation], references: [id])
-  User                   User?                    @relation(fields: [user], references: [id])
-  ProductVariantFeedback ProductVariantFeedback[]
+  id            String                   @id @default(cuid()) @db.VarChar(25)
+  comment       String?
+  rating        String?
+  userId        String?                  @map("user") @db.VarChar(25)
+  user          User?                    @relation(fields: [userId], references: [id])
+  createdAt     DateTime
+  updatedAt     DateTime                 @updatedAt
+  reservationId String?                  @map("reservation") @db.VarChar(25)
+  reservation   Reservation?             @relation(fields: [reservationId], references: [id])
+  respondedAt   DateTime?
+  feedbacks     ProductVariantFeedback[]
 }
 
 model ReservationReceipt {
   id          String                   @id @default(cuid()) @db.VarChar(25)
   createdAt   DateTime
   updatedAt   DateTime                 @updatedAt
-  reservation Reservation
+  reservation Reservation?
   items       ReservationReceiptItem[]
 }
 
 model ReservationReceiptItem {
-  id            String             @id @default(cuid()) @db.VarChar(25)
-  productStatus String
-  notes         String?
-  productId     String?            @map("product") @db.VarChar(25)
-  product       PhysicalProduct?   @relation(fields: [productId], references: [id])
-  receipt       ReservationReceipt
+  id                   String             @id @default(cuid()) @db.VarChar(25)
+  productStatus        String
+  notes                String?
+  productId            String?            @map("product") @db.VarChar(25)
+  product              PhysicalProduct?   @relation(fields: [productId], references: [id])
+  receipt              ReservationReceipt @relation(fields: [reservationReceiptId], references: [id])
+  reservationReceiptId String             @map("reservationReceipt") @db.VarChar(25)
 }
 
 model Season {
@@ -1054,8 +1045,6 @@ model ShopifyProductVariant {
   shop                   ExternalShopifyIntegration?           @relation(fields: [shopId], references: [id])
   selectedOptions        ShopifyProductVariantSelectedOption[] @relation("ShopifyProductVariantToVariantSelectedOption")
 }
-
-// TODO: Clean up
 
 model ShopifyProductVariantSelectedOption {
   id    String @id @default(cuid()) @db.VarChar(25)
@@ -1151,17 +1140,14 @@ model StylePreferences_styles {
   @@id([nodeId, position])
 }
 
-// TODO: Clean up
-
 model SyncTiming {
   id        String   @id @default(cuid()) @db.VarChar(25)
   createdAt DateTime
   updatedAt DateTime @updatedAt
+  detail    String
   type      String
   syncedAt  DateTime
 }
-
-// TODO: Clean up
 
 model Tag {
   id          String    @id @default(cuid()) @db.VarChar(25)
@@ -1169,10 +1155,8 @@ model Tag {
   description String?
   createdAt   DateTime
   updatedAt   DateTime  @updatedAt
-  Product     Product[]
+  products    Product[]
 }
-
-// TODO: Clean up
 
 model TopSize {
   id       String   @id @default(cuid()) @db.VarChar(25)
@@ -1182,44 +1166,42 @@ model TopSize {
   chest    Decimal?
   neck     Decimal?
   length   Decimal?
-  Size     Size[]
+  size     Size?
 }
 
-// TODO: Clean up
-
 model User {
-  id                           String                         @id @default(cuid()) @db.VarChar(25)
-  auth0Id                      String                         @unique
-  email                        String                         @unique
-  firstName                    String
-  lastName                     String
-  role                         String
-  createdAt                    DateTime
-  updatedAt                    DateTime                       @updatedAt
-  pushNotificationStatus       String
-  verificationStatus           String
-  verificationMethod           String
-  pushNotification             String?                        @db.VarChar(25)
-  sendSystemEmails             Boolean
-  deviceDataId                 String?                        @map("deviceData") @db.VarChar(25)
-  deviceData                   UserDeviceData?                @relation(fields: [deviceDataId], references: [id])
-  UserPushNotification         UserPushNotification?          @relation(fields: [pushNotification], references: [id])
-  ActiveAdminUser              ActiveAdminUser[]
-  AdminActionLog               AdminActionLog[]
-  Customer                     Customer[]
-  EmailReceipt                 EmailReceipt[]
-  FitPic                       FitPic[]
-  FitPicReport                 FitPicReport[]
-  Location                     Location[]
-  PhysicalProductQualityReport PhysicalProductQualityReport[]
-  ProductRequest               ProductRequest[]
-  ProductVariantWant           ProductVariantWant[]
-  Reservation                  Reservation[]
-  ReservationFeedback          ReservationFeedback[]
-  UserPushNotificationInterest UserPushNotificationInterest[]
-  User_roles                   User_roles[]
-  PushNotificationReceipt      PushNotificationReceipt[]      @relation("UserToPushNotificationReceipts")
-  SmsReceipt                   SmsReceipt[]                   @relation("UserToSmsReceipts")
+  id                            String                         @id @default(cuid()) @db.VarChar(25)
+  auth0Id                       String                         @unique
+  email                         String                         @unique
+  firstName                     String
+  lastName                      String
+  role                          String
+  createdAt                     DateTime
+  updatedAt                     DateTime                       @updatedAt
+  pushNotificationStatus        String
+  verificationStatus            String
+  verificationMethod            String
+  pushNotificationId            String?                        @map("pushNotification") @db.VarChar(25)
+  pushNotification              UserPushNotification?          @relation(fields: [pushNotificationId], references: [id])
+  sendSystemEmails              Boolean
+  deviceDataId                  String?                        @map("deviceData") @db.VarChar(25)
+  deviceData                    UserDeviceData?                @relation(fields: [deviceDataId], references: [id])
+  activeAdminUser               ActiveAdminUser?
+  adminActionLogs               AdminActionLog[]
+  customer                      Customer?
+  emails                        EmailReceipt[]
+  fitPics                       FitPic[]
+  fitPicsRported                FitPicReport[]
+  locations                     Location[]
+  physicalProductQualityReportS PhysicalProductQualityReport[]
+  productRequests               ProductRequest[]
+  productVariantWants           ProductVariantWant[]
+  reservations                  Reservation[]
+  reservationFeedbacks          ReservationFeedback[]
+  userPushNotificationInterests UserPushNotificationInterest[]
+  roles                         User_roles[]
+  pushNotifications             PushNotificationReceipt[]      @relation("UserToPushNotificationReceipts")
+  smsReceipts                   SmsReceipt[]                   @relation("UserToSmsReceipts")
 }
 
 model UserDeviceData {
