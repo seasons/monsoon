@@ -3,7 +3,6 @@ import * as util from "util"
 import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaSelect } from "@paljs/plugins"
 import { PrismaService } from "@prisma1/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
 
@@ -26,7 +25,6 @@ export class ProductQueriesResolver {
     const scope = !!user ? "PRIVATE" : "PUBLIC"
     info.cacheControl.setCacheHint({ maxAge: 600, scope })
 
-    console.log(util.inspect(select, { depth: null }))
     const data = await this.prisma.client2.product.findUnique({
       where,
       ...select,
@@ -37,14 +35,17 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async products(@Args() { where }, @Info() info) {
-    const select = new PrismaSelect(info).value
-    const data = await this.prisma.client2.product.findMany({
-      where,
-      ...select,
-    })
-
-    return data
+  async products(@Args() args, @Info() info) {
+    // Will need to update this library before updating this resolver:
+    // https://github.com/prisma/binding-argument-transform/commits/master
+    return await this.productService.getProducts(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on Product { id }`
+      )
+    )
   }
 
   @Query()

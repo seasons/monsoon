@@ -36,7 +36,8 @@ export class PrismaService implements UpdatableConnection {
 
   infoToSelect(info, modelName) {
     const prismaSelect = new PrismaSelect(info)
-    const fields = graphqlFields(info)
+    let fields = graphqlFields(info)
+    
 
     // TODO: Cache this in a class
     const modelFields = prismaSelect.dataModel.find(a => a.name === modelName)
@@ -46,8 +47,7 @@ export class PrismaService implements UpdatableConnection {
     }
 
     let select = { select: {} }
-    Object.values(modelFields).forEach((field, index) => {
-      console.log(field.name, field.type)
+    modelFields.forEach((field, index) => {
       let fieldSelect
       switch (field.kind) {
         // If it's a scalar, valueOf works great, so we run it.
@@ -67,8 +67,23 @@ export class PrismaService implements UpdatableConnection {
               fieldSelect = true
             } else {
               // Otherwise recurse down
-              const subFieldNodes = info.fieldNodes[0].selectionSet.selections.find(a => a.name.value === field.name)
-              fieldSelect = this.infoToSelect({fieldNodes: [subFieldNodes], returnType: field.type}, field.type)
+              let subFieldNodes = info.fieldNodes[0].selectionSet.selections.find(a => a.name.value === field.name)
+              if (!!subFieldNodes) {
+                fieldSelect = this.infoToSelect({fieldNodes: [subFieldNodes], returnType: field.type, fragments: info.fragments}, field.type)
+              } else {
+                // field is coming from one or more fragments. get the field nodes accordingly
+                const returnType = typeof info.returnType === "object" ? info.returnType.name : info.returnType
+                const parentFragments = Object.keys(info.fragments).filter(k => info.fragments[k].typeCondition.name.value === returnType).map(k2 => info.fragments[k2])
+                fieldSelect = parentFragments.reduce((accumulatedFieldSelect: any, currentFragment: any) => {
+                  const currentFieldNodes = currentFragment.selectionSet.selections.find(a => a.name.value === field.name)
+                  const currentFieldSelect = this.infoToSelect({fieldNodes: [currentFieldNodes], returnType: field.type, fragments: info.fragments}, field.type) 
+                  return PrismaSelect.mergeDeep(
+                    currentFieldSelect,
+                    accumulatedFieldSelect
+                  )
+                }, {})
+              }
+              
             }          
           }
           break
