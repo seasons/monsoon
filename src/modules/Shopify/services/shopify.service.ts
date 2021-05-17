@@ -35,6 +35,27 @@ const OAUTH_SCOPES = [
   "write_customers",
 ]
 
+const ProductVariantFragment = `
+  id
+  displayName
+  title
+  availableForSale
+  price
+  selectedOptions {
+    name
+    value
+  }
+  product {
+    images(first: 1) {
+      edges {
+        node {
+          transformedSrc
+        }
+      }
+    }
+  }
+`
+
 @Injectable()
 export class ShopifyService {
   constructor(private readonly prisma: PrismaService) {}
@@ -217,6 +238,30 @@ export class ShopifyService {
     }
   }
 
+  async getShopifyProductVariantsByIds(
+    ids: string[],
+    shopName: string,
+    accessToken: string
+  ) {
+    const query = `
+      {
+        productVariants: nodes(ids: ${JSON.stringify(ids)}) {
+          ... on ProductVariant {
+            ${ProductVariantFragment}
+          }
+        }
+      }
+    `
+
+    const data: any = await this.shopifyGraphQLRequest({
+      query,
+      shopName,
+      accessToken,
+    })
+
+    return data.productVariants
+  }
+
   async getShopifyProductVariants({
     after,
     first,
@@ -242,24 +287,7 @@ export class ShopifyService {
       productVariants(${!!after ? `after: "${after}", ` : ""}first: ${first}) {
         edges {
           node {
-            id
-            displayName
-            title
-            availableForSale
-            price
-            selectedOptions {
-              name
-              value
-            }
-            product {
-              images(first: 1) {
-                edges {
-                  node {
-                    transformedSrc
-                  }
-                }
-              }
-            }
+            ${ProductVariantFragment}
           }
           cursor
         }
@@ -667,10 +695,12 @@ export class ShopifyService {
     brandId,
     shopName,
     accessToken,
+    ids,
   }: {
     brandId?: string
     shopName: string
     accessToken: string
+    ids?: string[]
   }): Promise<Array<ShopifyProductVariant>> {
     function timeout(ms) {
       return new Promise(resolve => setTimeout(resolve, ms))
@@ -778,8 +808,17 @@ export class ShopifyService {
 
       return updatedProductVariants
     }
+    if (!!ids) {
+      const productVariants = await this.getShopifyProductVariantsByIds(
+        ids,
+        shopName,
+        accessToken
+      )
 
-    await loop({ after: "", productVariants: [] })
+      await processVariants(productVariants)
+    } else {
+      await loop({ after: "", productVariants: [] })
+    }
 
     return shopifyProductVariantResults
   }
