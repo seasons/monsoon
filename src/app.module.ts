@@ -7,6 +7,7 @@ import { Module, forwardRef } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
 import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
 import { ScheduleModule } from "@nestjs/schedule"
+import { PrismaSelect } from "@paljs/plugins"
 import sgMail from "@sendgrid/mail"
 import { RedisCache } from "apollo-server-cache-redis"
 import responseCachePlugin from "apollo-server-plugin-response-cache"
@@ -43,6 +44,7 @@ import { AnalyticsModule } from "./modules/Analytics/analytics.module"
 import { EmailModule } from "./modules/Email/email.module"
 import { TwilioModule } from "./modules/Twilio/twilio.module"
 import { UtilsModule } from "./modules/Utils/utils.module"
+import { PrismaService } from "./prisma/prisma.service"
 
 // make the call to chargebee
 chargebee.configure({
@@ -98,6 +100,7 @@ const cache = (() => {
           directiveResolvers,
           context: ({ req }) => ({
             req,
+            dataModel: new PrismaSelect(null).dataModel,
           }),
           plugins: [
             responseCachePlugin({

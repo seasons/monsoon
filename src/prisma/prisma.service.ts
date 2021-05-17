@@ -6,9 +6,8 @@ import { Prisma as PrismaBinding } from "./prisma.binding"
 import { PrismaClient as PrismaClient2 } from '@prisma/client'
 import { PrismaSelect } from "@paljs/plugins"
 import { isArray, isEmpty } from "lodash"
-import graphqlFields from "graphql-fields"
 
-const SCALAR_LIST_FIELD_NAMES = {
+export const SCALAR_LIST_FIELD_NAMES = {
   "Brand": ["styles"],
   "Collection": ["descriptions", "placements"],
   "Product": ["outerMaterials", "innerMaterials", "styles"],
@@ -33,78 +32,7 @@ export class PrismaService implements UpdatableConnection {
   })
   client: PrismaClient = prisma
   client2: PrismaClient2 = new PrismaClient2()
-
-  infoToSelect(info, modelName) {
-    const prismaSelect = new PrismaSelect(info)
-    let fields = graphqlFields(info)
-    
-
-    // TODO: Cache this in a class
-    const modelFields = prismaSelect.dataModel.find(a => a.name === modelName)
-      .fields
-    if (isEmpty(modelFields)) {
-      throw new Error (`Invalid record type: ${modelName}`)
-    }
-
-    let select = { select: {} }
-    modelFields.forEach((field, index) => {
-      let fieldSelect
-      switch (field.kind) {
-        // If it's a scalar, valueOf works great, so we run it.
-        case "scalar":
-          fieldSelect = prismaSelect.valueOf(field.name, field.type)
-          break
-        // If it's an object, valueOf would break if there's a 
-        // scalar list in the object. So we handle it differently
-        case "object":
-          // Is the field in the selection set?
-          const fieldInSelectionSet = Object.keys(fields).includes(field.name)
-          
-          // If so...
-          if (fieldInSelectionSet) {
-            // If it's a scalar list, return true
-            if (SCALAR_LIST_FIELD_NAMES[modelName]?.includes(field.name)) {
-              fieldSelect = true
-            } else {
-              // Otherwise recurse down
-              let subFieldNodes = info.fieldNodes[0].selectionSet.selections.find(a => a.name.value === field.name)
-              if (!!subFieldNodes) {
-                fieldSelect = this.infoToSelect({fieldNodes: [subFieldNodes], returnType: field.type, fragments: info.fragments}, field.type)
-              } else {
-                // field is coming from one or more fragments. get the field nodes accordingly
-                const returnType = typeof info.returnType === "object" ? info.returnType.name : info.returnType
-                const parentFragments = Object.keys(info.fragments).filter(k => info.fragments[k].typeCondition.name.value === returnType).map(k2 => info.fragments[k2])
-                fieldSelect = parentFragments.reduce((accumulatedFieldSelect: any, currentFragment: any) => {
-                  const currentFieldNodes = currentFragment.selectionSet.selections.find(a => a.name.value === field.name)
-                  const currentFieldSelect = this.infoToSelect({fieldNodes: [currentFieldNodes], returnType: field.type, fragments: info.fragments}, field.type) 
-                  return PrismaSelect.mergeDeep(
-                    currentFieldSelect,
-                    accumulatedFieldSelect
-                  )
-                }, {})
-              }
-              
-            }          
-          }
-          break
-        default:
-          throw new Error(`unknown kind: ${field.kind}`)
-      }
-
-      if (typeof fieldSelect === "object" && isEmpty(fieldSelect)) {
-        return 
-      }
-
-      if (!!fieldSelect) {
-        select = PrismaSelect.mergeDeep(
-          { select: { [field.name]: fieldSelect } },
-          select
-        )
-      }
-    })
-
-    return select
-  }
+  private prismaSelect = new PrismaSelect(null)
 
   /* While transitioning from prisma1 to prisma2, we are not able to
   directly query scalar lists in prisma2. This is a helper function that
@@ -123,7 +51,7 @@ export class PrismaService implements UpdatableConnection {
     })
 
     // Sanitize nested scalar lists
-    const dataModel = new PrismaSelect(null).dataModel
+    const dataModel = this.prismaSelect.dataModel
     const model = dataModel.find(a => a.name === modelName)
     model.fields.forEach((field) => {
       const fieldInPayload = !!payload[field.name]
