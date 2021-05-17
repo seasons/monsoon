@@ -690,12 +690,12 @@ model Product {
   fitPics                     FitPic[]
   images                      Image[]
   functions                   ProductFunction[]
-  model                       ProductModel[]
   variants                    ProductVariant[]
   tags                        Tag[]
 
-  // should be singleton. Will be fixed in prisma2 upgrade
+  // should be singletons. Will be fixed in prisma2 upgrade
   materialCategory ProductMaterialCategory[]
+  model                       ProductModel[]
 }
 
 model ProductFunction {

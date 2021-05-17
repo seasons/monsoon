@@ -5,7 +5,7 @@ import { Prisma as PrismaClient, prisma } from "./"
 import { Prisma as PrismaBinding } from "./prisma.binding"
 import { PrismaClient as PrismaClient2 } from '@prisma/client'
 import { PrismaSelect } from "@paljs/plugins"
-import { isArray, isEmpty } from "lodash"
+import { head, isArray, isEmpty } from "lodash"
 
 export const SCALAR_LIST_FIELD_NAMES = {
   "Brand": ["styles"],
@@ -23,6 +23,21 @@ export const SCALAR_LIST_FIELD_NAMES = {
   "ProductRequest": ["images"]
 }
 
+const SINGLETON_RELATIONS_POSING_AS_ARRAYS = {
+  "Product": ["materialCategory", "model"],
+  "ProductVariant": ["product"],
+  "ProductVariantFeedback": ["reservationFeedback"],
+  "ProductVariantFeedbackQuestion": ["variantFeedback"],
+  "PushNotificationReceipt": ["userPushNotification"],
+  "ShopifyProductVariantSelectedOption": ["shopifyProductVariant"],
+  "SmsReceipt": ["user"],
+  "StylePreferences": ["customerDetail"],
+  "UserPushNotificationInterest": ["UserPushNotification"],
+  "AdminActionLog": ["interpretation"],
+  "CustomerNotificationBarReceipt": ["customer"],
+  "PhysicalProduct": ["variant"]
+}
+
 @Injectable()
 export class PrismaService implements UpdatableConnection {
   binding: PrismaBinding = new PrismaBinding({
@@ -34,32 +49,55 @@ export class PrismaService implements UpdatableConnection {
   client2: PrismaClient2 = new PrismaClient2()
   private prismaSelect = new PrismaSelect(null)
 
-  /* While transitioning from prisma1 to prisma2, we are not able to
-  directly query scalar lists in prisma2. This is a helper function that
-  allows us to bridge the gap */
-  sanitizeScalarLists(payload: any, modelName: string) {
-    const scalarListFieldNames = SCALAR_LIST_FIELD_NAMES[modelName] || []
 
+  /*
+  Because we're migrating from prisma1 to prisma2 in pieces, there are some
+  sticky points we need to navigate until we've finished the whole thing. 
+
+  One thing is that scalar lists will look like objects in prisma2 until we 
+  complete the migration. This sanitizer extracts out the value so we can still
+  return it as a list.
+
+  Another thing is that some 1:1 and 1:n relations look like m:n relations to prisma2. 
+  This sanitizer extracts out the value from the array so we can still return it
+  in the format we had it in prisma1
+  */
+  sanitize(payload: any, modelName: string) {
     if (isArray(payload)) {
-      return payload.map(a => this.sanitizeScalarLists(a, modelName))
+      return payload.map(a => this.sanitize(a, modelName))
     }
-    
-    // Sanitize scalar lists on the top level of the object
+
     let returnPayload = {...payload}
+
+    // Sanitize the top level of the object
+    const scalarListFieldNames = SCALAR_LIST_FIELD_NAMES[modelName] || []
+    const singleRelationFieldNames = SINGLETON_RELATIONS_POSING_AS_ARRAYS[modelName] || []
     scalarListFieldNames.forEach((fieldName) => {
-      returnPayload[fieldName] = payload?.[fieldName]?.map(a => a.value)
+      const fieldInPayload = !!payload[fieldName]
+      if (!!fieldInPayload) {
+        returnPayload[fieldName] = payload?.[fieldName]?.map(a => a.value)
+      }
+      
+    })
+    singleRelationFieldNames.forEach((fieldName) => {
+      const fieldInPayload = !!payload[fieldName]
+      if (!!fieldInPayload) {
+        returnPayload[fieldName] = head(payload?.[fieldName])
+      }
     })
 
-    // Sanitize nested scalar lists
+    // Sanitize nested objects
     const dataModel = this.prismaSelect.dataModel
     const model = dataModel.find(a => a.name === modelName)
     model.fields.forEach((field) => {
       const fieldInPayload = !!payload[field.name]
+      const fieldNotSingletonRelationPosingAsArray = !singleRelationFieldNames.includes(field.name)
       const fieldIsNotScalarList = !scalarListFieldNames.includes(field.name)
-      if (fieldInPayload && field.kind === "object" && fieldIsNotScalarList) {
-        returnPayload[field.name] = this.sanitizeScalarLists(payload[field.name], field.type)
+      if (fieldInPayload && field.kind === "object" && fieldNotSingletonRelationPosingAsArray && fieldIsNotScalarList) {
+        returnPayload[field.name] = this.sanitize(payload[field.name], field.type)
       }
     })
+
 
     return returnPayload
   }

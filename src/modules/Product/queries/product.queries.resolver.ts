@@ -29,7 +29,7 @@ export class ProductQueriesResolver {
       where,
       ...select,
     })
-    const sanitizedData = this.prisma.sanitizeScalarLists(data, "Product")
+    const sanitizedData = this.prisma.sanitize(data, "Product")
 
     return sanitizedData
   }
