@@ -36,17 +36,12 @@ export class ShopifyMutationsResolver {
           ...mutationData,
         },
       })
-
-      await this.shopify.importProductVariants({
-        shopName: data.shop,
-        accessToken: data.accessToken,
-      })
     }
     console.log(data)
   }
 
   @Mutation()
-  async importShopifyData(@Args() { shopName }) {
+  async importShopifyData(@Args() { shopName, ids }) {
     const shopifyShop = await this.prisma.client.shopifyShop({
       shopName,
     })
@@ -54,6 +49,7 @@ export class ShopifyMutationsResolver {
     await this.shopify.importProductVariants({
       shopName: shopifyShop.shopName,
       accessToken: shopifyShop.accessToken,
+      ids,
     })
 
     return true
