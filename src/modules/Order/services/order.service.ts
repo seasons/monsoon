@@ -604,7 +604,7 @@ export class OrderService {
         needShipping: true,
       },
       {
-        recordID: shippingRate.handle || "137" + Math.random() * 10,
+        recordID: "137" + Math.random().toString(36).slice(2),
         recordType: "Package" as OrderLineItemRecordType,
         price: shippingRate.price,
         currencyCode: "USD",
