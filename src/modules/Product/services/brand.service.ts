@@ -1,3 +1,5 @@
+import * as url from "url"
+
 import { BrandUtilsService } from "@modules/Product/services/brand.utils.service"
 import { IndexKey } from "@modules/Search/services/algolia.service"
 import { SearchService } from "@modules/Search/services/search.service"
@@ -6,7 +8,10 @@ import {
   BrandWhereUniqueInput,
   ShopifyShopUpdateOneInput,
 } from "@prisma1/index"
-import { Brand as PrismaBindingBrand } from "@prisma1/prisma.binding"
+import {
+  BrandUpdateOneInput,
+  Brand as PrismaBindingBrand,
+} from "@prisma1/prisma.binding"
 import { PrismaService } from "@prisma1/prisma.service"
 
 @Injectable()

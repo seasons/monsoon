@@ -45,7 +45,6 @@ import { AnalyticsModule } from "./modules/Analytics/analytics.module"
 import { EmailModule } from "./modules/Email/email.module"
 import { TwilioModule } from "./modules/Twilio/twilio.module"
 import { UtilsModule } from "./modules/Utils/utils.module"
-import { PrismaService } from "./prisma/prisma.service"
 
 // make the call to chargebee
 chargebee.configure({

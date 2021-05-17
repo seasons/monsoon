@@ -5,7 +5,7 @@ import { Prisma as PrismaClient, prisma } from "./"
 import { Prisma as PrismaBinding } from "./prisma.binding"
 import { PrismaClient as PrismaClient2 } from '@prisma/client'
 import { PrismaSelect } from "@paljs/plugins"
-import { head, isArray, isEmpty } from "lodash"
+import { head, isArray } from "lodash"
 
 export const SCALAR_LIST_FIELD_NAMES = {
   "Brand": ["styles"],
