@@ -2,7 +2,7 @@ projects:
   database:
     schemaPath: src/prisma/prisma.graphql
     extensions:
-      prisma: "prisma.yml"
+      prisma: "prisma1.yml"
       endpoints:
         default: "${env:PRISMA_ENDPOINT}"
       codegen:

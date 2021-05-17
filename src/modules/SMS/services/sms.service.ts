@@ -13,8 +13,8 @@ import {
   SmsStatus,
   UserVerificationStatus,
   UserWhereUniqueInput,
-} from "@prisma/index"
-import { PrismaService } from "@prisma/prisma.service"
+} from "@prisma1/index"
+import { PrismaService } from "@prisma1/prisma.service"
 import { LinksAndEmails } from "@seasons/wind"
 import { head } from "lodash"
 import moment from "moment"

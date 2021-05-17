@@ -4,8 +4,8 @@ import {
   ID_Input,
   PhysicalProduct,
   ProductVariant,
-} from "@prisma/index"
-import { PrismaService } from "@prisma/prisma.service"
+} from "@prisma1/index"
+import { PrismaService } from "@prisma1/prisma.service"
 import { head, uniqBy } from "lodash"
 
 import { ProductUtilsService } from "./product.utils.service"

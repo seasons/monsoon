@@ -1,6 +1,6 @@
 import { ShopifyShopCreateInput, ShopifyShopUpdateInput } from "@app/prisma"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
+import { PrismaService } from "@prisma1/prisma.service"
 
 import { ShopifyService } from "../services/shopify.service"
 

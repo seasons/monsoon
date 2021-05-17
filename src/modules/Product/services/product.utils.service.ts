@@ -7,8 +7,8 @@ import {
   Product,
   ProductMaterialCategoryCreateInput,
   SizeType,
-} from "@prisma/index"
-import { PrismaService } from "@prisma/prisma.service"
+} from "@prisma1/index"
+import { PrismaService } from "@prisma1/prisma.service"
 import { head, identity, pickBy, size, union, uniq, uniqBy } from "lodash"
 import slugify from "slugify"
 

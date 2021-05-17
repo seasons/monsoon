@@ -18,7 +18,7 @@ import {
 import { OrderLineItemRecordType } from "@app/prisma"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "@prisma/prisma.service"
+import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
 import { GraphQLResolveInfo } from "graphql"
 import { flatten, pick } from "lodash"
