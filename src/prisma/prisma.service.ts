@@ -70,6 +70,10 @@ export class PrismaService implements UpdatableConnection {
   in the format we had it in prisma1
   */
   sanitize(payload: any, modelName: string) {
+    if (!payload) {
+      return
+    }
+    
     if (isArray(payload)) {
       return payload.map(a => this.sanitize(a, modelName))
     }

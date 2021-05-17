@@ -55,6 +55,15 @@ chargebee.configure({
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
+const dataModel = new PrismaSelect(null).dataModel
+const context = {
+  dataModel,
+  modelFieldsByModelName: dataModel.reduce((accumulator, currentModel) => {
+    accumulator[currentModel.name] = currentModel.fields
+    return accumulator
+  }, {}),
+}
+
 // Don't run cron jobs in dev mode, or on web workers. Only on production cron workers
 const scheduleModule =
   process.env.NODE_ENV === "production" && process.env.DYNO?.includes("cron")
@@ -98,20 +107,7 @@ const cache = (() => {
             requireResolversForResolveType: false,
           },
           directiveResolvers,
-          context: ({ req }) => {
-            const dataModel = new PrismaSelect(null).dataModel
-            return {
-              req,
-              dataModel,
-              modelFieldsByModelName: dataModel.reduce(
-                (accumulator, currentModel) => {
-                  accumulator[currentModel.name] = currentModel.fields
-                  return accumulator
-                },
-                {}
-              ),
-            }
-          },
+          context: ({ req }) => ({ req, ...context }),
           plugins: [
             responseCachePlugin({
               sessionId: ({ request }) => {

@@ -21,7 +21,7 @@ const infoToSelect = (info, modelName, modelFieldsByModelName) => {
   const prismaSelect = new PrismaSelect(info)
   let fields = graphqlFields(info)
 
-  const modelFields = modelFieldsByModelName[modelName].fields
+  const modelFields = modelFieldsByModelName[modelName]
   if (isEmpty(modelFields)) {
     throw new Error(`Invalid record type: ${modelName}`)
   }
