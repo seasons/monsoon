@@ -10,6 +10,7 @@ import { ScheduleModule } from "@nestjs/schedule"
 import { PrismaSelect } from "@paljs/plugins"
 import sgMail from "@sendgrid/mail"
 import { RedisCache } from "apollo-server-cache-redis"
+import { ApolloServerPluginInlineTrace } from "apollo-server-core"
 import responseCachePlugin from "apollo-server-plugin-response-cache"
 import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
@@ -92,7 +93,7 @@ const cache = (() => {
         ({
           typeDefs: await importSchema("src/schema.graphql"),
           path: "/",
-          tracing: true,
+          // tracing: true,
           installSubscriptionHandlers: true,
           resolverValidationOptions: {
             requireResolversForResolveType: false,
@@ -109,6 +110,7 @@ const cache = (() => {
                 return token || null
               },
             }),
+            ApolloServerPluginInlineTrace(),
           ],
           persistedQueries: {
             cache,
