@@ -47,7 +47,14 @@ export class PrismaService implements UpdatableConnection {
   })
   client: PrismaClient = prisma
   client2: PrismaClient2 = new PrismaClient2()
-  private prismaSelect = new PrismaSelect(null)
+
+  private modelFieldsByModelName = new PrismaSelect(null).dataModel.reduce(
+    (accumulator, currentModel) => {
+      accumulator[currentModel.name] = currentModel.fields
+      return accumulator
+    },
+    {}
+  )
 
 
   /*
@@ -87,13 +94,10 @@ export class PrismaService implements UpdatableConnection {
     })
 
     // Sanitize nested objects
-    const dataModel = this.prismaSelect.dataModel
-    const model = dataModel.find(a => a.name === modelName)
-    model.fields.forEach((field) => {
+    const modelFields = this.modelFieldsByModelName[modelName]
+    modelFields.forEach((field) => {
       const fieldInPayload = !!payload[field.name]
-      const fieldNotSingletonRelationPosingAsArray = !singleRelationFieldNames.includes(field.name)
-      const fieldIsNotScalarList = !scalarListFieldNames.includes(field.name)
-      if (fieldInPayload && field.kind === "object" && fieldNotSingletonRelationPosingAsArray && fieldIsNotScalarList) {
+      if (fieldInPayload && field.kind === "object" && !singleRelationFieldNames.includes(field.name) && !scalarListFieldNames.includes(field.name)) {
         returnPayload[field.name] = this.sanitize(payload[field.name], field.type)
       }
     })

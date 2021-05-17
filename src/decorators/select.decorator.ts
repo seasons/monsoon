@@ -12,16 +12,16 @@ export const Select = createParamDecorator(
     const [obj, args, ctx, info] = context.getArgs()
     const modelName = info.returnType.name
 
-    const select = infoToSelect(info, modelName, ctx.dataModel)
+    const select = infoToSelect(info, modelName, ctx.modelFieldsByModelName)
     return select
   }
 )
 
-const infoToSelect = (info, modelName, dataModel) => {
+const infoToSelect = (info, modelName, modelFieldsByModelName) => {
   const prismaSelect = new PrismaSelect(info)
   let fields = graphqlFields(info)
 
-  const modelFields = dataModel.find(a => a.name === modelName).fields
+  const modelFields = modelFieldsByModelName[modelName].fields
   if (isEmpty(modelFields)) {
     throw new Error(`Invalid record type: ${modelName}`)
   }
@@ -58,7 +58,7 @@ const infoToSelect = (info, modelName, dataModel) => {
                   fragments: info.fragments,
                 },
                 field.type,
-                dataModel
+                modelFieldsByModelName
               )
             } else {
               // field is coming from one or more fragments. get the field nodes accordingly
@@ -83,7 +83,7 @@ const infoToSelect = (info, modelName, dataModel) => {
                       fragments: info.fragments,
                     },
                     field.type,
-                    dataModel
+                    modelFieldsByModelName
                   )
                   return PrismaSelect.mergeDeep(
                     currentFieldSelect,

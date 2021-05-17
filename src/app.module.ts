@@ -98,10 +98,20 @@ const cache = (() => {
             requireResolversForResolveType: false,
           },
           directiveResolvers,
-          context: ({ req }) => ({
-            req,
-            dataModel: new PrismaSelect(null).dataModel,
-          }),
+          context: ({ req }) => {
+            const dataModel = new PrismaSelect(null).dataModel
+            return {
+              req,
+              dataModel,
+              modelFieldsByModelName: dataModel.reduce(
+                (accumulator, currentModel) => {
+                  accumulator[currentModel.name] = currentModel.fields
+                  return accumulator
+                },
+                {}
+              ),
+            }
+          },
           plugins: [
             responseCachePlugin({
               sessionId: ({ request }) => {
