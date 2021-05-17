@@ -48,7 +48,8 @@ const run = async () => {
     twilioUtils,
     paymentUtils,
     error,
-    email
+    email,
+    utils
   )
   const pusher = new PusherService()
   const pushNotifData = new PushNotificationDataProvider()
@@ -81,15 +82,14 @@ const run = async () => {
     payment
   )
   payment = new PaymentService(
-    shippingService,
-    authService,
     customerService,
     email,
     paymentUtils,
     ps,
     utils,
     segmentService,
-    error
+    error,
+    authService
   )
   customerService = new CustomerService(
     authService,
@@ -119,12 +119,13 @@ const run = async () => {
     email,
     pushNotifs,
     reservationUtils,
-    error
+    error,
+    utils
   )
 
   const productVariantIDs = [
-    "cklh7w038320v0761r527lshm",
-    "cklifyhgs3adw0714t93m4xb5",
+    "ckoag00u50pwi0711rcdnt7w5",
+    "ckoam781f2y5n0711arvcna3z",
   ]
 
   const returnedPhysicalProducts = await ps.client.productVariants({
@@ -133,9 +134,9 @@ const run = async () => {
     },
   })
 
-  const prismaUser = await ps.client.user({ id: "ckltvlfkx00bg0770u8jyx7vp" })
+  const prismaUser = await ps.client.user({ id: "ckosw2k9v01sx0950zmugwhr7" })
   const reservation = await ps.client.reservation({
-    id: "ckltwj7xp00wy0770ritd6z65",
+    id: "ckosw6zfe02900950gqp4s0gr",
   })
 
   await reservationService.createReservationFeedbacksForVariants(
