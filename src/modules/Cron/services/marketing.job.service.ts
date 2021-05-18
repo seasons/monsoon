@@ -129,13 +129,17 @@ export class MarketingScheduledJobs {
       )
       const daySevenFollowupSent =
         receivedEmails.includes("DaySevenAuthorizationFollowup") ||
-        receivedEmails.includes("TwentyFourHourAuthorizationFollowup") // previous, deprecated email id. Maintain for backwards compatibility.
+        // previous, deprecated email id. Maintain for backwards compatibility.
+        receivedEmails.includes("TwentyFourHourAuthorizationFollowup") ||
+        receivedSMSs.includes("TwentyFourHourLeftAuthorizationFollowup")
 
-      const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
+      const rewaitlisted =
+        receivedEmails.includes("Rewaitlisted") ||
+        receivedSMSs.includes("Rewaitlisted")
 
       // Send rewaitlist email as needed
       if (windowClosed) {
-        if (!rewaitlistEmailSent) {
+        if (!rewaitlisted) {
           const availableStyles = await this.admissions.getAvailableStyles({
             id: cust.id,
           })
