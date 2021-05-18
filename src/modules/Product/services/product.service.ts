@@ -413,9 +413,13 @@ export class ProductService {
     const reservedIds = reservedBagItems.map(a => a.productVariant.id)
     const newItems = items.filter(a => !reservedIds.includes(a))
 
-    await this.productVariantService.updateProductVariantCounts(newItems, {
-      dryRun: true,
-    })
+    await this.productVariantService.updateProductVariantCounts(
+      newItems,
+      customer.id,
+      {
+        dryRun: true,
+      }
+    )
 
     return true
   }
