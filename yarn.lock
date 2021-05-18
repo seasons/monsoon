@@ -17237,6 +17237,11 @@ ts-node@^8.8.1:
     source-map-support "^0.5.17"
     yn "3.1.1"
 
+ts-transformer-keys@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/ts-transformer-keys/-/ts-transformer-keys-0.4.3.tgz#d62389a40f430c00ef98fb9575fb6778a196e3ed"
+  integrity sha512-pOTLlet1SnAvhKNr9tMAFwuv5283OkUNiq1fXTEK+vrSv+kxU3e2Ijr/UkqyX2vuMmvcNHdpXC31hob7ljH//g==
+
 tsconfig-paths-webpack-plugin@3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/tsconfig-paths-webpack-plugin/-/tsconfig-paths-webpack-plugin-3.2.0.tgz#6e70bd42915ad0efb64d3385163f0c1270f3e04d"
