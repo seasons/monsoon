@@ -150,7 +150,7 @@ export class ProductVariantService {
         where: {
           customer: {
             id: customerId,
-          }
+          },
           productVariant: {
             id_in: unavailableVariantsIDS,
           },
