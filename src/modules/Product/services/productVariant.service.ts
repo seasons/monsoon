@@ -104,6 +104,7 @@ export class ProductVariantService {
   async updateProductVariantCounts(
     /* array of product variant ids */
     items: ID_Input[],
+    customerId: ID_Input,
     { dryRun } = { dryRun: false }
   ): Promise<
     [Product[], PhysicalProductWithReservationSpecificData[], () => void]
@@ -147,6 +148,9 @@ export class ProductVariantService {
       // Move the items from the bag to saved items
       await this.prisma.client.updateManyBagItems({
         where: {
+          customer: {
+            id: customerId,
+          },
           productVariant: {
             id_in: unavailableVariantsIDS,
           },

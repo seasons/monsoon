@@ -119,7 +119,8 @@ export class ReservationService {
         physicalProductsBeingReserved,
         rollbackUpdateProductVariantCounts,
       ] = await this.productVariantService.updateProductVariantCounts(
-        newProductVariantsBeingReserved
+        newProductVariantsBeingReserved,
+        customer.id
       )
       rollbackFuncs.push(rollbackUpdateProductVariantCounts)
       // tslint:disable-next-line:max-line-length
