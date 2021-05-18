@@ -41,7 +41,7 @@ export class MarketingScheduledJobs {
     this.logger.log(`Drip Unsubscribe job unsucrbied ${count} users`)
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_6_HOURS)
   async authWindowFollowups() {
     this.logger.log("Run auth window followups job")
     const daySevenFollowupsSent = []
