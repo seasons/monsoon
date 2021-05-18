@@ -10,7 +10,7 @@ import {
 } from "@modules/Payment/payment.types"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
+import { PrismaService } from "@prisma1/prisma.service"
 import { head, isObject } from "lodash"
 
 const getUserIDGenerateParams = {

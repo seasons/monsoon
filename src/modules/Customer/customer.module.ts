@@ -1,5 +1,5 @@
 import { Module, forwardRef } from "@nestjs/common"
-import { PrismaModule } from "@prisma/prisma.module"
+import { PrismaModule } from "@prisma1/prisma.module"
 
 import { PaymentPlanFieldsResolver } from "../Payment/fields/paymentPlan.fields.resolver"
 import { CustomerFieldsResolver } from "./fields/customer.fields.resolver"

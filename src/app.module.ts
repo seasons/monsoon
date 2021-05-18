@@ -7,6 +7,7 @@ import { Module, forwardRef } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
 import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
 import { ScheduleModule } from "@nestjs/schedule"
+import { PrismaSelect } from "@paljs/plugins"
 import sgMail from "@sendgrid/mail"
 import { RedisCache } from "apollo-server-cache-redis"
 import { ApolloServerPluginInlineTrace } from "apollo-server-core"
@@ -53,6 +54,15 @@ chargebee.configure({
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
+const dataModel = new PrismaSelect(null).dataModel
+const context = {
+  dataModel,
+  modelFieldsByModelName: dataModel.reduce((accumulator, currentModel) => {
+    accumulator[currentModel.name] = currentModel.fields
+    return accumulator
+  }, {}),
+}
+
 // Don't run cron jobs in dev mode, or on web workers. Only on production cron workers
 const scheduleModule =
   process.env.NODE_ENV === "production" && process.env.DYNO?.includes("cron")
@@ -96,9 +106,7 @@ const cache = (() => {
             requireResolversForResolveType: false,
           },
           directiveResolvers,
-          context: ({ req }) => ({
-            req,
-          }),
+          context: ({ req }) => ({ req, ...context }),
           plugins: [
             responseCachePlugin({
               sessionId: ({ request }) => {

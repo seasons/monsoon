@@ -1,0 +1,1295 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ActiveAdminUser {
+  id      String  @id @default(cuid()) @db.VarChar(25)
+  adminId String? @map("admin") @db.VarChar(25)
+  admin   User?   @relation(fields: [adminId], references: [id])
+}
+
+model AdminActionLog {
+  actionId          Int       @id @default(autoincrement())
+  entityId          String
+  tableName         String
+  triggeredAt       DateTime
+  action            String
+  rowData           String
+  changedFields     String?
+  statementOnly     Boolean
+  activeAdminUserId String?   @map("activeAdminUser") @db.VarChar(25)
+  activeAdminUser   User?     @relation(fields: [activeAdminUserId], references: [id])
+  interpretedAt     DateTime?
+
+  // should be a single record. will be fixed by full prisma2 migration
+  interpretation AdminActionLogInterpretation[]
+}
+
+model AdminActionLogInterpretation {
+  id             String          @id @default(cuid()) @db.VarChar(25)
+  entityId       String
+  tableName      String
+  interpretation String?
+  data           String?
+  logId          Int?            @map("log")
+  AdminActionLog AdminActionLog? @relation(fields: [logId], references: [actionId])
+}
+
+model BagItem {
+  id               String          @id @default(cuid()) @db.VarChar(25)
+  createdAt        DateTime
+  updatedAt        DateTime        @updatedAt
+  position         Int?
+  saved            Boolean?
+  status           String
+  customerId       String?         @map("customer") @db.VarChar(25)
+  customer         Customer?       @relation(fields: [customerId], references: [id])
+  productVariantId String?         @map("productVariantId") @db.VarChar(25)
+  productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
+}
+
+model BillingInfo {
+  id               String    @id @default(cuid()) @db.VarChar(25)
+  brand            String
+  name             String?
+  last_digits      String
+  expiration_month Int
+  expiration_year  Int
+  street1          String?
+  street2          String?
+  city             String?
+  state            String?
+  country          String?
+  postal_code      String?
+  createdAt        DateTime
+  updatedAt        DateTime  @updatedAt
+  customer         Customer?
+}
+
+model BlogPost {
+  id               String          @id @default(cuid()) @db.VarChar(25)
+  webflowId        String
+  webflowCreatedAt DateTime
+  webflowUpdatedAt DateTime
+  slug             String
+  name             String?
+  body             String?
+  summary          String?
+  thumbnailURL     String?
+  imageURL         String?
+  imageAlt         String?
+  url              String?
+  author           String?
+  category         String?
+  createdAt        DateTime
+  updatedAt        DateTime        @updatedAt
+  publishedOn      DateTime
+  imageId          String?         @map("image") @db.VarChar(25)
+  image            Image?          @relation(fields: [imageId], references: [id])
+  tags             BlogPost_tags[]
+}
+
+model BlogPost_tags {
+  nodeId   String   @db.VarChar(25)
+  position Int
+  value    String
+  BlogPost BlogPost @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model BottomSize {
+  id     String   @id @default(cuid()) @db.VarChar(25)
+  type   String?
+  value  String?
+  waist  Decimal?
+  rise   Decimal?
+  hem    Decimal?
+  inseam Decimal?
+
+  // Do not use. Artifact of prisma2 migration
+  Sizes Size[]
+}
+
+model Brand {
+  id                           String                      @id @default(cuid()) @db.VarChar(25)
+  slug                         String                      @unique
+  brandCode                    String                      @unique
+  description                  String?
+  isPrimaryBrand               Boolean
+  name                         String
+  since                        DateTime?
+  tier                         String
+  websiteUrl                   String?
+  createdAt                    DateTime
+  updatedAt                    DateTime                    @updatedAt
+  basedIn                      String?
+  designer                     String?
+  published                    Boolean
+  featured                     Boolean
+  logo                         String?
+  logoImageId                  String?                     @map("logoImage") @db.VarChar(25)
+  logoImage                    Image?                      @relation(fields: [logoImageId], references: [id])
+  externalShopifyIntegrationId String?                     @map("externalShopifyIntegration") @db.VarChar(25)
+  externalShopifyIntegration   ExternalShopifyIntegration? @relation(fields: [externalShopifyIntegrationId], references: [id])
+  images                       Image[]                     @relation("BrandToBrandImages")
+  products                     Product[]
+  shopifyProductVariants       ShopifyProductVariant[]
+
+
+  // Do not use. Artifact of Prisma2 migration
+  Launch Launch[]
+
+}
+
+model Category {
+  id                           String                        @id @default(cuid()) @db.VarChar(25)
+  slug                         String                        @unique
+  name                         String                        @unique
+  description                  String?
+  image                        String?
+  visible                      Boolean
+  updatedAt                    DateTime?                     @updatedAt
+  products                     Product[]
+  productMaterialCategories    ProductMaterialCategory[]
+  warehouseLocationConstraints WarehouseLocationConstraint[]
+  children                     Category[]                    @relation("CategoryToChildren")
+  parents                      Category[]                    @relation("CategoryToChildren")
+}
+
+model Collection {
+  id                 String                    @id @default(cuid()) @db.VarChar(25)
+  slug               String                    @unique
+  title              String?
+  subTitle           String?
+  published          Boolean
+  createdAt          DateTime
+  updatedAt          DateTime?                 @updatedAt
+  displayTextOverlay Boolean
+  textOverlayColor   String?
+  descriptions       Collection_descriptions[]
+  placements         Collection_placements[]
+  images             Image[]
+  products           Product[]
+
+  // Do not use. Artifact of prisma2 migration
+  Launch Launch[]
+}
+
+model Collection_descriptions {
+  nodeId     String     @db.VarChar(25)
+  position   Int
+  value      String
+  Collection Collection @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model Collection_placements {
+  nodeId     String     @db.VarChar(25)
+  position   Int
+  value      String
+  Collection Collection @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model Color {
+  id              String           @id @default(cuid()) @db.VarChar(25)
+  slug            String           @unique
+  name            String
+  colorCode       String           @unique
+  hexCode         String
+  productVariants ProductVariant[]
+
+
+  // Do not use. Artifact of prisma2 migration
+  Product_ColorToProduct_color          Product[] @relation("ColorToProduct_color")
+  Product_ColorToProduct_secondaryColor Product[] @relation("ColorToProduct_secondaryColor")
+}
+
+model Customer {
+  id                      String                           @id @default(cuid()) @db.VarChar(25)
+  status                  String?
+  detailId                String?                          @map("detail") @db.VarChar(25)
+  detail                  CustomerDetail?                  @relation(fields: [detailId], references: [id])
+  userId                  String?                          @map("user") @db.VarChar(25)
+  user                    User?                            @relation(fields: [userId], references: [id])
+  plan                    String?
+  billingInfoId           String?                          @map("billingInfo") @db.VarChar(25)
+  billingInfo             BillingInfo?                     @relation(fields: [billingInfoId], references: [id])
+  createdAt               DateTime
+  updatedAt               DateTime                         @updatedAt
+  authorizedAt            DateTime?
+  admissionsId            String?                          @map("admissions") @db.VarChar(25)
+  admissions              CustomerAdmissionsData?          @relation(fields: [admissionsId], references: [id])
+  referralLink            String?                          @unique
+  referrerId              String?                          @db.VarChar(25)
+  referrer                Customer?                        @relation("CustomerToCustomer_referrer", fields: [referrerId], references: [id])
+  referrees               Customer[]                       @relation("CustomerToCustomer_referrer")
+  utmId                   String?                          @map("utm") @db.VarChar(25)
+  UTMData                 UTMData?                         @relation(fields: [utmId], references: [id])
+  bagItems                BagItem[]
+  membership              CustomerMembership? // should be required, need to look into that
+  orders                  Order[]
+  productNotifications    ProductNotification[]
+  recentlyViewedProducts  RecentlyViewedProduct[]
+  reservations            Reservation[]
+  notificationBarReceipts CustomerNotificationBarReceipt[] @relation("CustomerToCustomerNotificationBarReceipts")
+  emailedProducts         Product[]                        @relation("CustomerToEmailedProducts")
+
+}
+
+model CustomerAdmissionsData {
+  id                          String    @id @default(cuid()) @db.VarChar(25)
+  inServiceableZipcode        Boolean
+  admissable                  Boolean
+  inAdmissableReason          String?
+  createdAt                   DateTime
+  updatedAt                   DateTime  @updatedAt
+  authorizationsCount         Int
+  allAccessEnabled            Boolean
+  authorizationWindowClosesAt DateTime?
+  customer                    Customer?
+}
+
+model CustomerDetail {
+  id                 String                      @id @default(cuid()) @db.VarChar(25)
+  phoneNumber        String?
+  birthday           DateTime?
+  height             Int?
+  bodyType           String?
+  averageTopSize     String?
+  averageWaistSize   String?
+  averagePantLength  String?
+  preferredPronouns  String?
+  profession         String?
+  partyFrequency     String?
+  travelFrequency    String?
+  shoppingFrequency  String?
+  averageSpend       String?
+  style              String?
+  commuteStyle       String?
+  createdAt          DateTime
+  updatedAt          DateTime                    @updatedAt
+  shippingAddressId  String?                     @map("shippingAddress") @db.VarChar(25)
+  shippingAddress    Location?                   @relation(fields: [shippingAddressId], references: [id])
+  phoneOS            String?
+  insureShipment     Boolean
+  stylePreferencesId String?                     @map("stylePreferences") @db.VarChar(25)
+  stylePreferences   StylePreferences?           @relation(fields: [stylePreferencesId], references: [id])
+  instagramHandle    String?
+  impactId           String?
+  discoveryReference String?
+  customer           Customer?
+  styles             CustomerDetail_styles[]
+  topSizes           CustomerDetail_topSizes[]
+  waistSizes         CustomerDetail_waistSizes[]
+  weight             CustomerDetail_weight[]
+}
+
+model CustomerDetail_styles {
+  nodeId         String         @db.VarChar(25)
+  position       Int
+  value          String
+  CustomerDetail CustomerDetail @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model CustomerDetail_topSizes {
+  nodeId         String         @db.VarChar(25)
+  position       Int
+  value          String
+  CustomerDetail CustomerDetail @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model CustomerDetail_waistSizes {
+  nodeId         String         @db.VarChar(25)
+  position       Int
+  value          Int
+  CustomerDetail CustomerDetail @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model CustomerDetail_weight {
+  nodeId         String         @db.VarChar(25)
+  position       Int
+  value          Int
+  CustomerDetail CustomerDetail @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model CustomerMembership {
+  id                       String                              @id @default(cuid()) @db.VarChar(25)
+  subscriptionId           String
+  customerId               String                              @map("customer") @db.VarChar(25)
+  customer                 Customer                            @relation(fields: [customerId], references: [id])
+  planId                   String?                             @map("plan") @db.VarChar(25)
+  plan                     PaymentPlan?                        @relation(fields: [planId], references: [id])
+  giftId                   String?
+  membershipSubscriptionId String?                             @map("subscription") @db.VarChar(25)
+  subscription             CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
+  pauseRequests            PauseRequest[]
+}
+
+model CustomerMembershipSubscriptionData {
+  id               String              @id @default(cuid()) @db.VarChar(25)
+  planID           String
+  subscriptionId   String
+  currentTermStart DateTime
+  currentTermEnd   DateTime
+  nextBillingAt    DateTime?
+  status           String
+  planPrice        Int
+  createdAt        DateTime
+  updatedAt        DateTime            @updatedAt
+  membership       CustomerMembership?
+}
+
+model CustomerNotificationBarReceipt {
+  id                String   @id @default(cuid()) @db.VarChar(25)
+  notificationBarId String
+  viewCount         Int
+  clickCount        Int
+  createdAt         DateTime
+  updatedAt         DateTime @updatedAt
+
+  // Should be a singleton. Will be fixed with full prisma2 migration and a db migration
+  customer Customer[] @relation("CustomerToCustomerNotificationBarReceipts")
+}
+
+model EmailReceipt {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  emailId   String
+  createdAt DateTime
+  updatedAt DateTime @updatedAt
+  user      User?    @relation(fields: [userId], references: [id])
+
+  // Private fields
+  userId String? @map("user") @db.VarChar(25)
+}
+
+model FitPic {
+  id                     String         @id @default(cuid()) @db.VarChar(25)
+  status                 String
+  createdAt              DateTime
+  updatedAt              DateTime       @updatedAt
+  locationId             String?        @map("location") @db.VarChar(25)
+  location               Location?      @relation(fields: [locationId], references: [id])
+  userId                 String?        @map("user") @db.VarChar(25)
+  user                   User?          @relation(fields: [userId], references: [id])
+  imageId                String?        @map("image") @db.VarChar(25)
+  image                  Image?         @relation(fields: [imageId], references: [id])
+  includeInstagramHandle Boolean
+  reports                FitPicReport[]
+  products               Product[]
+}
+
+model FitPicReport {
+  id         String   @id @default(cuid()) @db.VarChar(25)
+  status     String
+  reportedAt DateTime
+  updatedAt  DateTime @updatedAt
+  reporterId String?  @map("reporter") @db.VarChar(25)
+  reportedId String?  @map("reported") @db.VarChar(25)
+  reported   FitPic?  @relation(fields: [reportedId], references: [id])
+  reporter   User?    @relation(fields: [reporterId], references: [id])
+}
+
+model Image {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  caption   String?
+  title     String?
+  createdAt DateTime
+  updatedAt DateTime @updatedAt
+  url       String   @unique
+  height    Int?
+  width     Int?
+  alt       String?
+
+  // Do not use. Artifacts of prisma2 migration
+  BlogPost                 BlogPost[]
+  Brand_BrandToImage       Brand[]
+  FitPic                   FitPic[]
+  ShopifyProductVariant    ShopifyProductVariant[]
+  Brand_BrandToBrandImages Brand[]                 @relation("BrandToBrandImages")
+  Collection               Collection[]
+  Product                  Product[]
+}
+
+model InterestedUser {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  email     String
+  zipcode   String?
+  createdAt DateTime
+  updatedAt DateTime @updatedAt
+}
+
+model Label {
+  id             String   @id @default(cuid()) @db.VarChar(25)
+  name           String?
+  image          String?
+  trackingNumber String?
+  trackingURL    String?
+  package        Package?
+}
+
+model Launch {
+  id           String      @id @default(cuid()) @db.VarChar(25)
+  published    Boolean
+  launchAt     DateTime
+  createdAt    DateTime
+  updatedAt    DateTime    @updatedAt
+  collectionId String?     @map("collection") @db.VarChar(25)
+  collection   Collection? @relation(fields: [collectionId], references: [id])
+  brandId      String?     @map("brand") @db.VarChar(25)
+  brand        Brand?      @relation(fields: [brandId], references: [id])
+}
+
+model Location {
+  id               String            @id @default(cuid()) @db.VarChar(25)
+  slug             String?           @unique
+  name             String?
+  company          String?
+  description      String?
+  address1         String?
+  address2         String?
+  city             String?
+  state            String?
+  zipCode          String
+  locationType     String?
+  lat              Decimal?
+  lng              Decimal?
+  createdAt        DateTime
+  updatedAt        DateTime          @updatedAt
+  userId           String?           @map("user") @db.VarChar(25)
+  user             User?             @relation(fields: [userId], references: [id])
+  country          String?
+  physicalProducts PhysicalProduct[]
+  shippingOptions  ShippingOption[]  @relation("LocationToShippingOption_destination")
+
+  // Do not use. Artifacts of prisma 2 migration
+  CustomerDetail                                 CustomerDetail[]
+  FitPic                                         FitPic[]
+  Package_LocationToPackage_fromAddress          Package[]        @relation("LocationToPackage_fromAddress")
+  Package_LocationToPackage_toAddress            Package[]        @relation("LocationToPackage_toAddress")
+  Reservation                                    Reservation[]
+  ShippingOption_LocationToShippingOption_origin ShippingOption[] @relation("LocationToShippingOption_origin")
+}
+
+model Order {
+  id            String          @id @default(cuid()) @db.VarChar(25)
+  subTotal      Int?
+  total         Int?
+  couponID      String?
+  note          String?
+  createdAt     DateTime
+  updatedAt     DateTime        @updatedAt
+  type          String
+  status        String
+  cancelReason  String?
+  paymentStatus String
+  customerId    String?         @map("customer") @db.VarChar(25)
+  customer      Customer?       @relation(fields: [customerId], references: [id])
+  sentPackageId String?         @map("sentPackage") @db.VarChar(25)
+  sentPackage   Package?        @relation(fields: [sentPackageId], references: [id])
+  orderNumber   String          @unique
+  // The ID of the order in an external system (e.g. Shopify )
+  externalID    String?         @db.VarChar(25)
+  lineItems     OrderLineItem[]
+}
+
+model OrderLineItem {
+  id            String   @id @default(cuid()) @db.VarChar(25)
+  recordID      String   @db.VarChar(25)
+  recordType    String
+  needShipping  Boolean?
+  taxRate       Decimal?
+  taxName       String?
+  taxPercentage Decimal?
+  taxPrice      Int?
+  price         Int
+  currencyCode  String
+  createdAt     DateTime
+  updatedAt     DateTime @updatedAt
+
+  // Do not use. Artifact of prisma2 migration
+  Order Order[]
+}
+
+model Package {
+  id              String                @id @default(cuid()) @db.VarChar(25)
+  weight          Decimal?
+  createdAt       DateTime
+  updatedAt       DateTime              @updatedAt
+  fromAddressId   String?               @map("fromAddress") @db.VarChar(25)
+  fromAddress     Location?             @relation("LocationToPackage_fromAddress", fields: [fromAddressId], references: [id])
+  toAddressId     String?               @map("toAddress") @db.VarChar(25)
+  toAddress       Location?             @relation("LocationToPackage_toAddress", fields: [toAddressId], references: [id])
+  shippingLabelId String                @map("shippingLabel") @db.VarChar(25)
+  shippingLabel   Label                 @relation(fields: [shippingLabelId], references: [id])
+  transactionID   String
+  cost            Int?
+  status          String?
+  items           PhysicalProduct[]
+  events          PackageTransitEvent[]
+  order           Order?
+
+  // Do not use. Artifacts from prisma2 migration
+  Reservation_PackageToReservation_returnedPackage Reservation[] @relation("PackageToReservation_returnedPackage")
+  Reservation_PackageToReservation_sentPackage     Reservation[] @relation("PackageToReservation_sentPackage")
+
+}
+
+model PackageTransitEvent {
+  id            String       @id @default(cuid()) @db.VarChar(25)
+  status        String
+  subStatus     String
+  createdAt     DateTime
+  updatedAt     DateTime     @updatedAt
+  data          String
+  packageId     String?      @map("package") @db.VarChar(25)
+  reservationId String?      @map("reservation") @db.VarChar(25)
+  package       Package?     @relation(fields: [packageId], references: [id])
+  reservation   Reservation? @relation(fields: [reservationId], references: [id])
+}
+
+model PauseRequest {
+  id           String              @id @default(cuid()) @db.VarChar(25)
+  createdAt    DateTime
+  updatedAt    DateTime            @updatedAt
+  pausePending Boolean
+  pauseDate    DateTime?
+  resumeDate   DateTime?
+  membershipId String?             @map("membership") @db.VarChar(25)
+  membership   CustomerMembership? @relation(fields: [membershipId], references: [id])
+  notified     Boolean
+  pauseType    String
+}
+
+model PaymentPlan {
+  id                 String              @id @default(cuid()) @db.VarChar(25)
+  description        String?
+  planID             String              @unique
+  status             String?
+  name               String?
+  price              Int?
+  createdAt          DateTime
+  updatedAt          DateTime            @updatedAt
+  tagline            String?
+  itemCount          Int?
+  tier               String?
+  customerMembership CustomerMembership?
+}
+
+model PhysicalProduct {
+  id                      String                         @id @default(cuid()) @db.VarChar(25)
+  seasonsUID              String                         @unique
+  inventoryStatus         String
+  productStatus           String
+  createdAt               DateTime
+  updatedAt               DateTime                       @updatedAt
+  locationId              String?                        @map("location") @db.VarChar(25)
+  location                Location?                      @relation(fields: [locationId], references: [id])
+  offloadMethod           String?
+  offloadNotes            String?
+  sequenceNumber          Int
+  warehouseLocationId     String?                        @map("warehouseLocation") @db.VarChar(25)
+  warehouseLocation       WarehouseLocation?             @relation(fields: [warehouseLocationId], references: [id])
+  dateOrdered             DateTime?
+  dateReceived            DateTime?
+  unitCost                Decimal?
+  barcoded                Boolean?
+  priceId                 String?                        @map("price") @db.VarChar(25)
+  price                   PhysicalProductPrice?          @relation(fields: [priceId], references: [id])
+  qualityReports          PhysicalProductQualityReport[]
+  productNotifications    ProductNotification[]
+  reservationReceiptItems ReservationReceiptItem[]
+  packages                Package[]
+  reservationsAllProducts Reservation[]                  @relation("ReservationToAllProducts")
+  reservationsNewProducts Reservation[]                  @relation("ReservationToNewProducts")
+
+  // Should be a singleton. Will get fixed with full prisma2 migration
+  variant ProductVariant[]
+}
+
+model PhysicalProductPrice {
+  id              String           @id @default(cuid()) @db.VarChar(25)
+  buyUsedEnabled  Boolean
+  buyUsedPrice    Decimal?
+  physicalProduct PhysicalProduct?
+}
+
+model PhysicalProductQualityReport {
+  id                String                                     @id @default(cuid()) @db.VarChar(25)
+  damageType        String?
+  notes             String?
+  createdAt         DateTime
+  updatedAt         DateTime                                   @updatedAt
+  physicalProductId String?                                    @map("physicalProduct") @db.VarChar(25)
+  physicalProduct   PhysicalProduct?                           @relation(fields: [physicalProductId], references: [id])
+  userId            String?                                    @map("user") @db.VarChar(25)
+  user              User?                                      @relation(fields: [userId], references: [id])
+  damageTypes       PhysicalProductQualityReport_damageTypes[]
+}
+
+model PhysicalProductQualityReport_damageTypes {
+  nodeId                       String                       @db.VarChar(25)
+  position                     Int
+  value                        String
+  PhysicalProductQualityReport PhysicalProductQualityReport @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model Product {
+  id                          String                   @id @default(cuid()) @db.VarChar(25)
+  slug                        String                   @unique
+  name                        String
+  description                 String?
+  externalURL                 String?
+  retailPrice                 Int?
+  status                      String?
+  createdAt                   DateTime
+  updatedAt                   DateTime                 @updatedAt
+  categoryId                  String?                  @map("category") @db.VarChar(25)
+  category                    Category?                @relation(fields: [categoryId], references: [id])
+  colorId                     String?                  @map("color") @db.VarChar(25)
+  color                       Color?                   @relation("ColorToProduct_color", fields: [colorId], references: [id])
+  secondaryColorId            String?                  @map("secondaryColor") @db.VarChar(25)
+  secondaryColor              Color?                   @relation("ColorToProduct_secondaryColor", fields: [secondaryColorId], references: [id])
+  brandId                     String?                  @map("brand") @db.VarChar(25)
+  brand                       Brand?                   @relation(fields: [brandId], references: [id])
+  type                        String?
+  modelSizeId                 String?                  @map("modelSize") @db.VarChar(25)
+  modelSize                   Size?                    @relation(fields: [modelSizeId], references: [id])
+  architecture                String?
+  publishedAt                 DateTime?
+  photographyStatus           String?
+  seasonId                    String?                  @map("season") @db.VarChar(25)
+  season                      ProductSeason?           @relation(fields: [seasonId], references: [id])
+  productFit                  String?
+  buyNewEnabled               Boolean
+  tierId                      String?                  @map("tier") @db.VarChar(25)
+  tier                        ProductTier?             @relation(fields: [tierId], references: [id])
+  innerMaterials              Product_innerMaterials[]
+  outerMaterials              Product_outerMaterials[]
+  recentlyViewedProducts      RecentlyViewedProduct[]
+  collections                 Collection[]
+  customersEmailedWithProduct Customer[]               @relation("CustomerToEmailedProducts")
+  fitPics                     FitPic[]
+  images                      Image[]
+  functions                   ProductFunction[]
+  variants                    ProductVariant[]
+  tags                        Tag[]
+
+  // should be singletons. Will be fixed in prisma2 upgrade
+  materialCategory ProductMaterialCategory[]
+  model                       ProductModel[]
+}
+
+model ProductFunction {
+  id       String    @id @default(cuid()) @db.VarChar(25)
+  name     String?   @unique
+  products Product[]
+}
+
+model Product_innerMaterials {
+  nodeId   String  @db.VarChar(25)
+  position Int
+  value    String
+  Product  Product @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model ProductMaterialCategory {
+  id             String    @id @default(cuid()) @db.VarChar(25)
+  slug           String    @unique
+  categoryId     String?   @map("category") @db.VarChar(25)
+  category       Category? @relation(fields: [categoryId], references: [id])
+  lifeExpectancy Decimal
+  products       Product[]
+}
+
+model ProductModel {
+  id       String    @id @default(cuid()) @db.VarChar(25)
+  name     String    @unique
+  height   Decimal
+  products Product[]
+}
+
+model ProductNotification {
+  id                String           @id @default(cuid()) @db.VarChar(25)
+  type              String
+  shouldNotify      Boolean
+  createdAt         DateTime
+  updatedAt         DateTime         @updatedAt
+  productVariantId  String?          @map("productVariant") @db.VarChar(25)
+  productVariant    ProductVariant?  @relation(fields: [productVariantId], references: [id])
+  physicalProductId String?          @map("physicalProduct") @db.VarChar(25)
+  physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
+  customerId        String?          @map("customer") @db.VarChar(25)
+  customer          Customer?        @relation(fields: [customerId], references: [id])
+}
+
+model Product_outerMaterials {
+  nodeId   String  @db.VarChar(25)
+  position Int
+  value    String
+  product  Product @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model ProductRequest {
+  id            String                  @id @default(cuid()) @db.VarChar(25)
+  sku           String?
+  brand         String?
+  description   String?
+  name          String?
+  price         Int?
+  priceCurrency String?
+  productID     String?
+  url           String
+  reason        String
+  userId        String?                 @map("user") @db.VarChar(25)
+  user          User?                   @relation(fields: [userId], references: [id])
+  images        ProductRequest_images[]
+}
+
+model ProductRequest_images {
+  nodeId         String         @db.VarChar(25)
+  position       Int
+  value          String
+  ProductRequest ProductRequest @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model ProductSeason {
+  id               String                          @id @default(cuid()) @db.VarChar(25)
+  vendorSeasonId   String?                         @map("vendorSeason") @db.VarChar(25)
+  vendorSeason     Season?                         @relation("ProductSeason_vendorSeasonToSeason", fields: [vendorSeasonId], references: [id])
+  internalSeasonId String?                         @map("internalSeason") @db.VarChar(25)
+  internalSeason   Season?                         @relation("ProductSeason_internalSeasonToSeason", fields: [internalSeasonId], references: [id])
+  wearableSeasons  ProductSeason_wearableSeasons[]
+  product          Product?
+
+}
+
+model ProductSeason_wearableSeasons {
+  nodeId        String        @db.VarChar(25)
+  position      Int
+  value         String
+  ProductSeason ProductSeason @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model ProductTier {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  tier      String
+  price     Int
+  createdAt DateTime
+  updatedAt DateTime @updatedAt
+  product   Product?
+}
+
+model ProductVariant {
+  id                      String                   @id @default(cuid()) @db.VarChar(25)
+  sku                     String?                  @unique
+  weight                  Decimal?
+  height                  Decimal?
+  productID               String
+  retailPrice             Decimal?
+  total                   Int
+  reservable              Int
+  reserved                Int
+  nonReservable           Int
+  createdAt               DateTime
+  updatedAt               DateTime                 @updatedAt
+  colorId                 String?                  @map("color") @db.VarChar(25)
+  color                   Color?                   @relation(fields: [colorId], references: [id])
+  internalSizeId          String?                  @map("internalSize") @db.VarChar(25)
+  internalSize            Size?                    @relation(fields: [internalSizeId], references: [id])
+  offloaded               Int
+  stored                  Int
+  displayShort            String
+  priceId                 String?                  @map("price") @db.VarChar(25)
+  price                   ProductVariantPrice?     @relation(fields: [priceId], references: [id])
+  physicalProducts        PhysicalProduct[]
+  bagItems                BagItem[]
+  productNotifications    ProductNotification[]
+  productVariantFeedbacks ProductVariantFeedback[]
+  productVariantWant      ProductVariantWant?
+  shopifyProductVariant   ShopifyProductVariant?
+  manufacturerSizes       Size[]                   @relation("ProductVariantManufacturerSize")
+
+  // Should be singleton. Will be fixed via full prisma2 migration
+  product Product[]
+
+}
+
+model ProductVariantFeedback {
+  id          String                           @id @default(cuid()) @db.VarChar(25)
+  isCompleted Boolean
+  variantId   String?                          @map("variant") @db.VarChar(25)
+  variant     ProductVariant?                  @relation(fields: [variantId], references: [id])
+  questions   ProductVariantFeedbackQuestion[]
+
+  // should be singleton. will be fixed in full prisma2 upgrade
+  reservationFeedback ReservationFeedback[]
+}
+
+model ProductVariantFeedbackQuestion {
+  id              String                                     @id @default(cuid()) @db.VarChar(25)
+  question        String
+  type            String
+  options         ProductVariantFeedbackQuestion_options[]
+  responses       ProductVariantFeedbackQuestion_responses[]
+  // should be singleton. will be fixed in full prisma2 upgrade
+  variantFeedback ProductVariantFeedback[]
+}
+
+model ProductVariantFeedbackQuestion_options {
+  nodeId                         String                         @db.VarChar(25)
+  position                       Int
+  value                          String
+  ProductVariantFeedbackQuestion ProductVariantFeedbackQuestion @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model ProductVariantFeedbackQuestion_responses {
+  nodeId                         String                         @db.VarChar(25)
+  position                       Int
+  value                          String
+  ProductVariantFeedbackQuestion ProductVariantFeedbackQuestion @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model ProductVariantPrice {
+  id             String          @id @default(cuid()) @db.VarChar(25)
+  retailPrice    Decimal?
+  productVariant ProductVariant?
+}
+
+model ProductVariantWant {
+  id               String          @id @default(cuid()) @db.VarChar(25)
+  isFulfilled      Boolean
+  productVariantId String?         @map("productVariant") @db.VarChar(25)
+  productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
+  userId           String?         @map("user") @db.VarChar(25)
+  user             User?           @relation(fields: [userId], references: [id])
+}
+
+model PushNotificationReceipt {
+  id              String   @id @default(cuid()) @db.VarChar(25)
+  route           String?
+  screen          String?
+  uri             String?
+  body            String
+  title           String?
+  sentAt          DateTime
+  createdAt       DateTime
+  updatedAt       DateTime @updatedAt
+  interest        String?
+  recordID        String?
+  recordSlug      String?
+  notificationKey String?
+  users           User[]   @relation("UserToPushNotificationReceipts")
+
+  // should be singleton. will be fixed in prisma2 full migration
+  userPushNotification UserPushNotification[]
+
+}
+
+model RecentlyViewedProduct {
+  id         String    @id @default(cuid()) @db.VarChar(25)
+  viewCount  Int
+  createdAt  DateTime
+  updatedAt  DateTime  @updatedAt
+  productId  String?   @map("product") @db.VarChar(25)
+  product    Product?  @relation(fields: [productId], references: [id])
+  customerId String?   @map("customer") @db.VarChar(25)
+  customer   Customer? @relation(fields: [customerId], references: [id])
+}
+
+model Reservation {
+  id                String                @id @default(cuid()) @db.VarChar(25)
+  shipped           Boolean
+  createdAt         DateTime
+  updatedAt         DateTime              @updatedAt
+  userId            String?               @map("user") @db.VarChar(25)
+  User              User?                 @relation(fields: [userId], references: [id])
+  reservationNumber Int                   @unique
+  status            String
+  shippedAt         DateTime?
+  receivedAt        DateTime?
+  lastLocationId    String?               @map("lastLocation") @db.VarChar(25)
+  lastLocation      Location?             @relation(fields: [lastLocationId], references: [id])
+  customerId        String?               @map("customer") @db.VarChar(25)
+  customer          Customer?             @relation(fields: [customerId], references: [id])
+  sentPackageId     String?               @map("sentPackage") @db.VarChar(25)
+  sentPackage       Package?              @relation("PackageToReservation_sentPackage", fields: [sentPackageId], references: [id])
+  returnedPackageId String?               @map("returnedPackage") @db.VarChar(25)
+  returnedPackage   Package?              @relation("PackageToReservation_returnedPackage", fields: [returnedPackageId], references: [id])
+  reminderSentAt    DateTime?
+  receiptId         String?               @map("receipt") @db.VarChar(25)
+  receipt           ReservationReceipt?   @relation(fields: [receiptId], references: [id])
+  phase             String
+  statusUpdatedAt   DateTime?
+  shippingOptionId  String?               @map("shippingOption") @db.VarChar(25)
+  shippingOption    ShippingOption?       @relation(fields: [shippingOptionId], references: [id])
+  completedAt       DateTime?
+  cancelledAt       DateTime?
+  packageEvents     PackageTransitEvent[]
+  feedback          ReservationFeedback?
+  products          PhysicalProduct[]     @relation("ReservationToAllProducts")
+  newProducts       PhysicalProduct[]     @relation("ReservationToNewProducts")
+}
+
+model ReservationFeedback {
+  id            String                   @id @default(cuid()) @db.VarChar(25)
+  comment       String?
+  rating        String?
+  userId        String?                  @map("user") @db.VarChar(25)
+  user          User?                    @relation(fields: [userId], references: [id])
+  createdAt     DateTime
+  updatedAt     DateTime                 @updatedAt
+  reservationId String?                  @map("reservation") @db.VarChar(25)
+  reservation   Reservation?             @relation(fields: [reservationId], references: [id])
+  respondedAt   DateTime?
+  feedbacks     ProductVariantFeedback[]
+}
+
+model ReservationReceipt {
+  id          String                   @id @default(cuid()) @db.VarChar(25)
+  createdAt   DateTime
+  updatedAt   DateTime                 @updatedAt
+  reservation Reservation?
+  items       ReservationReceiptItem[]
+}
+
+model ReservationReceiptItem {
+  id                   String             @id @default(cuid()) @db.VarChar(25)
+  productStatus        String
+  notes                String?
+  productId            String?            @map("product") @db.VarChar(25)
+  product              PhysicalProduct?   @relation(fields: [productId], references: [id])
+  receipt              ReservationReceipt @relation(fields: [reservationReceiptId], references: [id])
+  reservationReceiptId String             @map("reservationReceipt") @db.VarChar(25)
+}
+
+model Season {
+  id         String  @id @default(cuid()) @db.VarChar(25)
+  year       Int?
+  seasonCode String?
+
+  // Do not use. Artifact from Prisma2 migration
+  ProductSeason_ProductSeason_internalSeasonToSeason ProductSeason[] @relation("ProductSeason_internalSeasonToSeason")
+  ProductSeason_ProductSeason_vendorSeasonToSeason   ProductSeason[] @relation("ProductSeason_vendorSeasonToSeason")
+}
+
+model ShippingMethod {
+  id             String          @id @default(cuid()) @db.VarChar(25)
+  code           String
+  displayText    String
+  createdAt      DateTime
+  updatedAt      DateTime        @updatedAt
+  shippingOption ShippingOption?
+}
+
+model ShippingOption {
+  id               String          @id @default(cuid()) @db.VarChar(25)
+  externalCost     Int?
+  averageDuration  Int?
+  createdAt        DateTime
+  updatedAt        DateTime        @updatedAt
+  destinationId    String?         @map("destination") @db.VarChar(25)
+  destination      Location?       @relation("LocationToShippingOption_destination", fields: [destinationId], references: [id])
+  originId         String?         @map("origin") @db.VarChar(25)
+  origin           Location?       @relation("LocationToShippingOption_origin", fields: [originId], references: [id])
+  shippingMethodId String?         @map("shippingMethod") @db.VarChar(25)
+  shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
+  reservation      Reservation?
+}
+
+model ShopifyProductVariant {
+  id                     String                                @id @default(cuid()) @db.VarChar(25)
+  externalId             String?                               @unique
+  cachedPrice            Decimal?
+  cachedAvailableForSale Boolean?
+  cacheExpiresAt         DateTime?
+  displayName            String?
+  title                  String?
+  imageId                String?                               @map("image") @db.VarChar(25)
+  image                  Image?                                @relation(fields: [imageId], references: [id])
+  brandId                String?                               @map("brand") @db.VarChar(25)
+  brand                  Brand?                                @relation(fields: [brandId], references: [id])
+  productVariantId       String?                               @map("productVariant") @db.VarChar(25)
+  productVariant         ProductVariant?                       @relation(fields: [productVariantId], references: [id])
+  shopId                 String?                               @map("shop") @db.VarChar(25)
+  shop                   ExternalShopifyIntegration?           @relation(fields: [shopId], references: [id])
+  selectedOptions        ShopifyProductVariantSelectedOption[] @relation("ShopifyProductVariantToVariantSelectedOption")
+}
+
+model ShopifyProductVariantSelectedOption {
+  id    String @id @default(cuid()) @db.VarChar(25)
+  name  String
+  value String
+
+  // Should be singleton. Will be fixed in full prisma2 migration
+  shopifyProductVariant ShopifyProductVariant[] @relation("ShopifyProductVariantToVariantSelectedOption")
+}
+
+model Size {
+  id                          String           @id @default(cuid()) @db.VarChar(25)
+  slug                        String           @unique
+  productType                 String?
+  display                     String
+  topId                       String?          @map("top") @db.VarChar(25)
+  top                         TopSize?         @relation(fields: [topId], references: [id])
+  bottomId                    String?          @map("bottom") @db.VarChar(25)
+  bottom                      BottomSize?      @relation(fields: [bottomId], references: [id])
+  type                        String?
+  product                     Product[]
+  productVariantsInternal     ProductVariant[]
+  productVariantsManufacturer ProductVariant[] @relation("ProductVariantManufacturerSize")
+}
+
+model SmsReceipt {
+  id         String                 @id @default(cuid()) @db.VarChar(25)
+  externalId String?
+  body       String
+  status     String
+  sentAt     DateTime
+  updatedAt  DateTime               @updatedAt
+  smsId      String?
+  mediaUrls  SmsReceipt_mediaUrls[]
+
+  // Should be singleton. Will be fixed on full prisma2 upgrade
+  user User[] @relation("UserToSmsReceipts")
+}
+
+model SmsReceipt_mediaUrls {
+  nodeId     String     @db.VarChar(25)
+  position   Int
+  value      String
+  SmsReceipt SmsReceipt @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model StylePreferences {
+  id       String                      @id @default(cuid()) @db.VarChar(25)
+  brands   StylePreferences_brands[]
+  colors   StylePreferences_colors[]
+  patterns StylePreferences_patterns[]
+  styles   StylePreferences_styles[]
+
+  // Should be singleton. Will get fixed with full prisma2 migration
+  customerDetail CustomerDetail[]
+}
+
+model StylePreferences_brands {
+  nodeId           String           @db.VarChar(25)
+  position         Int
+  value            String
+  StylePreferences StylePreferences @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model StylePreferences_colors {
+  nodeId           String           @db.VarChar(25)
+  position         Int
+  value            String
+  StylePreferences StylePreferences @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model StylePreferences_patterns {
+  nodeId           String           @db.VarChar(25)
+  position         Int
+  value            String
+  StylePreferences StylePreferences @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model StylePreferences_styles {
+  nodeId           String           @db.VarChar(25)
+  position         Int
+  value            String
+  StylePreferences StylePreferences @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model SyncTiming {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  createdAt DateTime
+  updatedAt DateTime @updatedAt
+  detail    String
+  type      String
+  syncedAt  DateTime
+}
+
+model Tag {
+  id          String    @id @default(cuid()) @db.VarChar(25)
+  name        String    @unique
+  description String?
+  createdAt   DateTime
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model TopSize {
+  id       String   @id @default(cuid()) @db.VarChar(25)
+  letter   String?
+  sleeve   Decimal?
+  shoulder Decimal?
+  chest    Decimal?
+  neck     Decimal?
+  length   Decimal?
+  size     Size?
+}
+
+model User {
+  id                            String                         @id @default(cuid()) @db.VarChar(25)
+  auth0Id                       String                         @unique
+  email                         String                         @unique
+  firstName                     String
+  lastName                      String
+  role                          String
+  createdAt                     DateTime
+  updatedAt                     DateTime                       @updatedAt
+  pushNotificationStatus        String
+  verificationStatus            String
+  verificationMethod            String
+  pushNotificationId            String?                        @map("pushNotification") @db.VarChar(25)
+  pushNotification              UserPushNotification?          @relation(fields: [pushNotificationId], references: [id])
+  sendSystemEmails              Boolean
+  deviceDataId                  String?                        @map("deviceData") @db.VarChar(25)
+  deviceData                    UserDeviceData?                @relation(fields: [deviceDataId], references: [id])
+  activeAdminUser               ActiveAdminUser?
+  adminActionLogs               AdminActionLog[]
+  customer                      Customer?
+  emails                        EmailReceipt[]
+  fitPics                       FitPic[]
+  fitPicsRported                FitPicReport[]
+  locations                     Location[]
+  physicalProductQualityReportS PhysicalProductQualityReport[]
+  productRequests               ProductRequest[]
+  productVariantWants           ProductVariantWant[]
+  reservations                  Reservation[]
+  reservationFeedbacks          ReservationFeedback[]
+  userPushNotificationInterests UserPushNotificationInterest[]
+  roles                         User_roles[]
+  pushNotifications             PushNotificationReceipt[]      @relation("UserToPushNotificationReceipts")
+  smsReceipts                   SmsReceipt[]                   @relation("UserToSmsReceipts")
+}
+
+model UserDeviceData {
+  id         String  @id @default(cuid()) @db.VarChar(25)
+  iOSVersion String?
+  user       User?
+}
+
+model UserPushNotification {
+  id        String                         @id @default(cuid()) @db.VarChar(25)
+  status    Boolean
+  interests UserPushNotificationInterest[]
+  history   PushNotificationReceipt[]
+  user      User?
+}
+
+model UserPushNotificationInterest {
+  id     String  @id @default(cuid()) @db.VarChar(25)
+  type   String
+  value  String
+  status Boolean
+  userId String? @map("user") @db.VarChar(25)
+  user   User?   @relation(fields: [userId], references: [id])
+
+  // Do not use. Artifact of prisma 2 migration
+  UserPushNotification UserPushNotification[]
+}
+
+model User_roles {
+  nodeId   String @db.VarChar(25)
+  position Int
+  value    String
+  User     User   @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
+model UTMData {
+  id        String    @id @default(cuid()) @db.VarChar(25)
+  source    String?
+  medium    String?
+  campaign  String?
+  term      String?
+  content   String?
+  createdAt DateTime
+  updatedAt DateTime  @updatedAt
+  customer  Customer?
+}
+
+model WarehouseLocation {
+  id               String                        @id @default(cuid()) @db.VarChar(25)
+  type             String
+  barcode          String                        @unique
+  locationCode     String
+  itemCode         String
+  createdAt        DateTime
+  updatedAt        DateTime                      @updatedAt
+  physicalProducts PhysicalProduct[]
+  constraints      WarehouseLocationConstraint[]
+}
+
+model WarehouseLocationConstraint {
+  id         String              @id @default(cuid()) @db.VarChar(25)
+  limit      Int
+  createdAt  DateTime
+  updatedAt  DateTime            @updatedAt
+  categoryId String?             @map("category") @db.VarChar(25)
+  category   Category?           @relation(fields: [categoryId], references: [id])
+  locations  WarehouseLocation[]
+}
+
+model ExternalShopifyIntegration {
+  id                     String                             @id @db.VarChar(25)
+  shopName               String                             @unique
+  enabled                Boolean
+  accessToken            String?
+  createdAt              DateTime
+  updatedAt              DateTime                           @updatedAt
+  brand                  Brand?
+  scope                  ExternalShopifyIntegration_scope[]
+  shopifyProductVariants ShopifyProductVariant[]
+}
+
+model ExternalShopifyIntegration_scope {
+  nodeId                     String                     @db.VarChar(25)
+  position                   Int
+  value                      String
+  ExternalShopifyIntegration ExternalShopifyIntegration @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}

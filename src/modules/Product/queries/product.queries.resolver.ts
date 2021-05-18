@@ -1,6 +1,9 @@
+import * as util from "util"
+
 import { Customer, User } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
+import { PrismaService } from "@prisma1/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
 
 import { ProductService } from "../services/product.service"
@@ -13,22 +16,28 @@ export class ProductQueriesResolver {
   ) {}
 
   @Query()
-  async product(@Args() args, @Info() info, @User() user) {
+  async product(
+    @Args() { where },
+    @Info() info,
+    @User() user,
+    @Select() select
+  ) {
     const scope = !!user ? "PRIVATE" : "PUBLIC"
     info.cacheControl.setCacheHint({ maxAge: 600, scope })
 
-    return await this.prisma.binding.query.product(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on Product { id }`
-      )
-    )
+    const data = await this.prisma.client2.product.findUnique({
+      where,
+      ...select,
+    })
+    const sanitizedData = this.prisma.sanitize(data, "Product")
+
+    return sanitizedData
   }
 
   @Query()
   async products(@Args() args, @Info() info) {
+    // Will need to update this library before updating this resolver:
+    // https://github.com/prisma/binding-argument-transform/commits/master
     return await this.productService.getProducts(
       args,
       addFragmentToInfo(

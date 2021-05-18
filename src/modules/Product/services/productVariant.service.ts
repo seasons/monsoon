@@ -6,8 +6,8 @@ import {
   LetterSize,
   Product,
   ProductVariant,
-} from "@prisma/index"
-import { PrismaService } from "@prisma/prisma.service"
+} from "@prisma1/index"
+import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
 

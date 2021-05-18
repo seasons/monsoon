@@ -20,8 +20,8 @@ import {
   NotificationBarID,
   ShippingOption,
   User,
-} from "@prisma/index"
-import { PrismaService } from "@prisma/prisma.service"
+} from "@prisma1/index"
+import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { head, pick } from "lodash"

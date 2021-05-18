@@ -16,7 +16,7 @@ import {
 import { Order, ProductVariant } from "@app/prisma/prisma.binding"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
+import { PrismaService } from "@prisma1/prisma.service"
 import { head } from "lodash"
 
 type EUSize = "44" | "46" | "48" | "50" | "52" | "54" | "56"

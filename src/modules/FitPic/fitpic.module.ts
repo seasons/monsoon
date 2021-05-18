@@ -2,7 +2,7 @@ import { ImageModule } from "@modules/Image/image.module"
 import { PushNotificationModule } from "@modules/PushNotification"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "@prisma/prisma.module"
+import { PrismaModule } from "@prisma1/prisma.module"
 
 import { FitPicFieldsResolver } from "./fields/fitpic.fields.resolver"
 import { FitPicMutationsResolver } from "./mutations/fitpic.mutations.resolver"

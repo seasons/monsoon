@@ -4,8 +4,8 @@ import {
   Order,
   Product as PrismaBindingProduct,
   ProductNotificationType,
-} from "@prisma/prisma.binding"
-import { PrismaService } from "@prisma/prisma.service"
+} from "@prisma1/prisma.binding"
+import { PrismaService } from "@prisma1/prisma.service"
 import { head } from "lodash"
 
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
