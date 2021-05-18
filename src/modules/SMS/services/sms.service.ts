@@ -173,7 +173,7 @@ export class SMSService {
     const cust = head(
       await this.prisma.binding.query.customers(
         { where: { user: to } },
-        `{ user { roles email } detail { phoneNumber } }`
+        `{ user { roles email sendSystemEmails } detail { phoneNumber } }`
       )
     ) as any
 
@@ -184,7 +184,8 @@ export class SMSService {
 
     const shouldSend =
       process.env.NODE_ENV === "production" ||
-      cust.user.email.includes("seasons.nyc")
+      cust.user.email.includes("seasons.nyc") ||
+      !cust.user.sendSystemEmails
     if (!shouldSend) {
       return "Undelivered"
     }
