@@ -173,7 +173,7 @@ export class SMSService {
     const cust = head(
       await this.prisma.binding.query.customers(
         { where: { user: to } },
-        `{ user { roles email } detail { phoneNumber } }`
+        `{ user { roles email sendSystemEmails } detail { phoneNumber } }`
       )
     ) as any
 
@@ -182,9 +182,12 @@ export class SMSService {
       throw new Error(`Could not find a phone number for the indicated user.`)
     }
 
+    // If we decide in the future to send non-marketing, more critical text messsages,
+    // update this to not block on sendSystemEmails
     const shouldSend =
-      process.env.NODE_ENV === "production" ||
-      cust.user.email.includes("seasons.nyc")
+      cust.user.sendSystemEmails &&
+      (process.env.NODE_ENV === "production" ||
+        cust.user.email.includes("seasons.nyc"))
     if (!shouldSend) {
       return "Undelivered"
     }
