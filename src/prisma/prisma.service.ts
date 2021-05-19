@@ -38,6 +38,16 @@ const SINGLETON_RELATIONS_POSING_AS_ARRAYS = {
   "PhysicalProduct": ["variant"]
 }
 
+// What was stored and interpreted as JSON in prisma1 will look like
+// a string to prisma2 until we complete the migration
+const JSON_FIELD_NAMES = {
+  "AdminActionLog": ["changedFields", "rowData"],
+  "AdminActionLogInterpretation": ["data"],
+  "PackageTransitEvent": ["data"],
+  "Brand": ["logo"],
+  "Category": ["image"]
+}
+
 @Injectable()
 export class PrismaService implements UpdatableConnection {
   binding: PrismaBinding = new PrismaBinding({
@@ -83,6 +93,7 @@ export class PrismaService implements UpdatableConnection {
     // Sanitize the top level of the object
     const scalarListFieldNames = SCALAR_LIST_FIELD_NAMES[modelName] || []
     const singleRelationFieldNames = SINGLETON_RELATIONS_POSING_AS_ARRAYS[modelName] || []
+    const jsonFieldNames = JSON_FIELD_NAMES[modelName] || []
     scalarListFieldNames.forEach((fieldName) => {
       const fieldInPayload = !!payload[fieldName]
       if (!!fieldInPayload) {
@@ -94,6 +105,12 @@ export class PrismaService implements UpdatableConnection {
       const fieldInPayload = !!payload[fieldName]
       if (!!fieldInPayload) {
         returnPayload[fieldName] = head(payload?.[fieldName])
+      }
+    })
+    jsonFieldNames.forEach((fieldName) => {
+      const fieldInPayload = !!payload[fieldName]
+      if (!!fieldInPayload) {
+        returnPayload[fieldName] = JSON.parse(payload?.[fieldName])
       }
     })
 
