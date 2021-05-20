@@ -5,7 +5,7 @@ import { Prisma as PrismaClient, prisma } from "./"
 import { Prisma as PrismaBinding } from "./prisma.binding"
 import { PrismaClient as PrismaClient2 } from '@prisma/client'
 import { PrismaSelect } from "@paljs/plugins"
-import { head, isArray } from "lodash"
+import { head, isArray, uniq } from "lodash"
 
 export const SCALAR_LIST_FIELD_NAMES = {
   "Brand": ["styles"],
@@ -38,6 +38,17 @@ const SINGLETON_RELATIONS_POSING_AS_ARRAYS = {
   "PhysicalProduct": ["variant"]
 }
 
+// What was stored and interpreted as JSON in prisma1 will look like
+// a string to prisma2 until we complete the migration
+const JSON_FIELD_NAMES = {
+  "AdminActionLog": ["changedFields", "rowData"],
+  "AdminActionLogInterpretation": ["data"],
+  "PackageTransitEvent": ["data"],
+  "Brand": ["logo"],
+  "Category": ["image"]
+}
+
+const MODELS_TO_SANITIZE = uniq([...Object.keys(JSON_FIELD_NAMES), ...Object.keys(SINGLETON_RELATIONS_POSING_AS_ARRAYS), ...Object.keys(SCALAR_LIST_FIELD_NAMES)])
 @Injectable()
 export class PrismaService implements UpdatableConnection {
   binding: PrismaBinding = new PrismaBinding({
@@ -74,6 +85,11 @@ export class PrismaService implements UpdatableConnection {
       return
     }
     
+    // If we don't need to sanitize anything, just return
+    if (!MODELS_TO_SANITIZE.includes(modelName)) {
+      return payload 
+    }
+    
     if (isArray(payload)) {
       return payload.map(a => this.sanitize(a, modelName))
     }
@@ -83,6 +99,7 @@ export class PrismaService implements UpdatableConnection {
     // Sanitize the top level of the object
     const scalarListFieldNames = SCALAR_LIST_FIELD_NAMES[modelName] || []
     const singleRelationFieldNames = SINGLETON_RELATIONS_POSING_AS_ARRAYS[modelName] || []
+    const jsonFieldNames = JSON_FIELD_NAMES[modelName] || []
     scalarListFieldNames.forEach((fieldName) => {
       const fieldInPayload = !!payload[fieldName]
       if (!!fieldInPayload) {
@@ -94,6 +111,12 @@ export class PrismaService implements UpdatableConnection {
       const fieldInPayload = !!payload[fieldName]
       if (!!fieldInPayload) {
         returnPayload[fieldName] = head(payload?.[fieldName])
+      }
+    })
+    jsonFieldNames.forEach((fieldName) => {
+      const fieldInPayload = !!payload[fieldName]
+      if (!!fieldInPayload) {
+        returnPayload[fieldName] = JSON.parse(payload?.[fieldName])
       }
     })
 

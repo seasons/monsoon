@@ -151,13 +151,17 @@ const run = async () => {
     utils
   )
   const shopifyJobService = new ShopifyScheduledJobs(shopify, ps)
-  const logsJobService = new LogsScheduledJobs(ps, physicalProductService)
+  const logsJobService = new LogsScheduledJobs(
+    ps,
+    physicalProductService,
+    error
+  )
   // await reservationsJobService.sendReturnNotifications()
-  await marketingJobService.syncEventsToImpact()
+  // await marketingJobService.syncEventsToImpact()
   // await marketingJobService.syncCustomersToDrip()
   // await membershipService.updatePausePendingToPaused()
   // await shopifyJobService.importProductVariantsForShopifyShops()
-  // await logsJobService.interpretPhysicalProductLogs()
+  await logsJobService.interpretPhysicalProductLogs()
 }
 
 run()

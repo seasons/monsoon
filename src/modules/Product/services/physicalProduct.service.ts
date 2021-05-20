@@ -1,7 +1,6 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
-  AdminActionLog,
   Brand,
   ID_Input,
   InventoryStatus,
@@ -17,6 +16,7 @@ import {
 } from "@app/prisma"
 import { Reservation } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
+import { AdminActionLog } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
@@ -210,16 +210,11 @@ export class PhysicalProductService {
   interpretPhysicalProductLogs(
     logs: AdminActionLog[],
     warehouseLocations: Pick<WarehouseLocation, "id" | "barcode">[],
-    reservations: Pick<
+    reservations: (Pick<
       Reservation,
-      | "id"
-      | "createdAt"
-      | "cancelledAt"
-      | "completedAt"
-      | "reservationNumber"
-      | "products"
-    >[]
-  ) {
+      "id" | "createdAt" | "cancelledAt" | "completedAt" | "reservationNumber"
+    > & { products: Pick<PhysicalProduct, "id">[] })[]
+  ): (AdminActionLog & { interpretation: string })[] {
     const keysWeDontCareAbout = [
       "id",
       "price",

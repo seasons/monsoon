@@ -1,9 +1,9 @@
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PhysicalProductService } from "@app/modules/Product"
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { AdminActionLog, Reservation } from "@app/prisma"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
+import { chunk, head } from "lodash"
 
 @Injectable()
 export class LogsScheduledJobs {
@@ -11,58 +11,50 @@ export class LogsScheduledJobs {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly physicalProductService: PhysicalProductService
+    private readonly physicalProductService: PhysicalProductService,
+    private readonly error: ErrorService
   ) {}
 
   @Cron(CronExpression.EVERY_HOUR)
   async interpretPhysicalProductLogs() {
-    const allLogs = (await this.prisma.client.adminActionLogs({
-      where: { tableName: "PhysicalProduct" },
-    })) as AdminActionLog[]
-    const logsToInterpret = allLogs.filter(a => !a.interpretedAt)
+    let logsToInterpret = await this.prisma.client2.adminActionLog.findMany({
+      where: {
+        AND: [{ tableName: "PhysicalProduct" }, { interpretedAt: null }],
+      },
+    })
+    logsToInterpret = this.prisma.sanitize(logsToInterpret, "AdminActionLog")
 
     const allReferencedWarehouseLocationIDs = logsToInterpret
       .filter(a => !!a.changedFields)
       .map(a => a.changedFields)
       .filter(b => b["warehouseLocation"] != null)
       .map(c => c["warehouseLocation"])
-    const allReferencedWarehouseLocations = await this.prisma.binding.query.warehouseLocations(
-      { where: { id_in: allReferencedWarehouseLocationIDs } },
-      `{
-        id
-        barcode
-      }`
+    let allReferencedWarehouseLocations = await this.prisma.client2.warehouseLocation.findMany(
+      {
+        where: { id: { in: allReferencedWarehouseLocationIDs } },
+        select: { id: true, barcode: true },
+      }
+    )
+    allReferencedWarehouseLocations = this.prisma.sanitize(
+      allReferencedWarehouseLocations,
+      "WarehouseLocation"
     )
 
     const allPhysProdIDs = logsToInterpret.map(a => a.entityId)
 
-    // For some reason, binding won't let us query completedAt and cancelledAt...
-    // So we hack around it by doing two queries and merging the data
-    let allRelevantReservations = (await this.prisma.binding.query.reservations(
+    const allRelevantReservations = await this.prisma.client2.reservation.findMany(
       {
-        where: { products_some: { id_in: allPhysProdIDs } },
-      },
-      `{
-          id
-          products {
-            id
-          }
-        }`
-    )) as Reservation[]
-    const allRelevantReservationsWithCompletedAndCancelledAtDates = (await this.prisma.client.reservations(
-      {
-        where: { products_some: { id_in: allPhysProdIDs } },
+        where: { products: { some: { id: { in: allPhysProdIDs } } } },
+        select: {
+          id: true,
+          createdAt: true,
+          cancelledAt: true,
+          completedAt: true,
+          reservationNumber: true,
+          products: { select: { id: true } },
+        },
       }
-    )) as Reservation[]
-    allRelevantReservationsWithCompletedAndCancelledAtDates.forEach(a => {
-      const matchingReservationIndex = allRelevantReservations.findIndex(
-        b => a.id === b.id
-      )
-      allRelevantReservations[matchingReservationIndex] = {
-        ...allRelevantReservations[matchingReservationIndex],
-        ...a,
-      }
-    })
+    )
 
     const interpretations = this.physicalProductService.interpretPhysicalProductLogs(
       logsToInterpret,
@@ -73,22 +65,72 @@ export class LogsScheduledJobs {
       a => !!a.interpretation
     )
 
-    for (const log of logsToInterpret) {
-      const interpretedLog = nonNullInterpretations.find(
-        a => a.actionId == log.actionId
-      )
-      if (!!interpretedLog) {
-        await this.prisma.client.createAdminActionLogInterpretation({
-          log: { connect: { actionId: log.actionId } },
-          entityId: log.entityId,
+    const createInterpretationsPayloads = nonNullInterpretations.reduce(
+      (acc, curval) => {
+        acc[curval.actionId] = {
+          logId: curval.actionId,
+          entityId: curval.entityId,
           tableName: "PhysicalProduct",
-          interpretation: interpretedLog.interpretation || "", // may be undefined,
-        })
+          interpretation: curval.interpretation || "",
+        }
+        return acc
+      },
+      {}
+    )
+
+    let i = 0
+    let numLogsInterpreted = 0
+    let numErrors = 0
+    for (const batch of chunk(logsToInterpret, 10)) {
+      if (i++ >= 1000) {
+        // At around 1160 chunks, we start getting mysterious DB errors
+        // saying we're trying to insert a value that's too big for a varchar(25).
+        // So just stop short of that so the job runs clean
+        break
       }
-      await this.prisma.client.updateAdminActionLog({
-        where: { actionId: log.actionId },
-        data: { interpretedAt: new Date() },
-      })
+      const createManyPayload = batch
+        .map(a => createInterpretationsPayloads[a.actionId])
+        .filter(b => !!b)
+      try {
+        await this.prisma.client2.adminActionLogInterpretation.createMany({
+          data: createManyPayload,
+        })
+        await this.prisma.client2.adminActionLog.updateMany({
+          where: { actionId: { in: batch.map(a => a.actionId) } },
+          data: { interpretedAt: new Date() },
+        })
+        numLogsInterpreted += 10
+      } catch (err) {
+        // If the batch failed, try doing it one at a time
+        for (const log of batch) {
+          try {
+            const payload = createInterpretationsPayloads[log.actionId]
+            if (!!payload) {
+              await this.prisma.client2.adminActionLogInterpretation.create({
+                data: payload,
+              })
+            }
+            await this.prisma.client2.adminActionLog.update({
+              where: { actionId: log.actionId },
+              data: { interpretedAt: new Date() },
+            })
+            numLogsInterpreted += 1
+          } catch (err) {
+            this.logger.log(err)
+            numErrors++
+          }
+        }
+      }
+    }
+
+    this.logger.log(`${numErrors} errors in admin action log interpreter`)
+    this.logger.log(
+      `${numLogsInterpreted} admin action logs succesfully interpreted`
+    )
+    if (numErrors > 0) {
+      this.error.captureMessage(
+        `${numErrors} errors in admin action log interpreter`
+      )
     }
   }
 }
