@@ -153,7 +153,29 @@ export class PrismaService implements UpdatableConnection {
       }
     })
 
-    return returnWhere
+    return this.notNullToNotUndefined(returnWhere)
+  }
+
+  // The @prisma/binding-argument-transform library has a bug in it 
+  // in which {not: null} should be translated to {not: undefined}, 
+  // but isn't. So we clean it up ex post facto for now. If prisma
+  // doesn't fix it, we may fork the library and fix it ourselves later.
+  notNullToNotUndefined(obj: any) {
+    const returnObj = {...obj}
+
+    if (isArray(returnObj)) {
+      return returnObj.map(this.notNullToNotUndefined)
+    }
+
+    for (const key of Object.keys(returnObj)) {
+      if (key === "not" && returnObj[key] === null) {
+        returnObj[key] = undefined
+      } else if (typeof returnObj[key] === "object") {
+        returnObj[key] = this.notNullToNotUndefined(returnObj[key])
+      }
+    }
+
+    return returnObj
   }
 
   updateConnection({ secret, endpoint }: { secret: string; endpoint: string }) {
