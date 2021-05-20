@@ -79,9 +79,9 @@ export class LogsScheduledJobs {
     )
 
     let i = 0
+    let numLogsInterpreted = 0
     let numErrors = 0
-    const total = chunk(interpretations, 10).length
-    for (const batch of chunk(interpretations, 10)) {
+    for (const batch of chunk(logsToInterpret, 10)) {
       if (i++ >= 1000) {
         // At around 1160 chunks, we start getting mysterious DB errors
         // saying we're trying to insert a value that's too big for a varchar(25).
@@ -99,6 +99,7 @@ export class LogsScheduledJobs {
           where: { actionId: { in: batch.map(a => a.actionId) } },
           data: { interpretedAt: new Date() },
         })
+        numLogsInterpreted += 10
       } catch (err) {
         // If the batch failed, try doing it one at a time
         for (const log of batch) {
@@ -113,6 +114,7 @@ export class LogsScheduledJobs {
               where: { actionId: log.actionId },
               data: { interpretedAt: new Date() },
             })
+            numLogsInterpreted += 1
           } catch (err) {
             this.logger.log(err)
             numErrors++
@@ -122,6 +124,9 @@ export class LogsScheduledJobs {
     }
 
     this.logger.log(`${numErrors} errors in admin action log interpreter`)
+    this.logger.log(
+      `${numLogsInterpreted} admin action logs succesfully interpreted`
+    )
     if (numErrors > 0) {
       this.error.captureMessage(
         `${numErrors} errors in admin action log interpreter`
