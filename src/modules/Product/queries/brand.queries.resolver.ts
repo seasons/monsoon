@@ -24,9 +24,12 @@ export class BrandQueriesResolver {
       } else {
         throw new ApolloError("Brand not found", "404")
       }
-    } else {
-      return await this.prisma.binding.query.brand(args, info)
     }
+
+    return await this.prisma.client2.brand.findFirst({
+      ...select,
+      ...args,
+    })
   }
 
   @Query()
