@@ -1,7 +1,4 @@
-import {
-  PrismaService,
-  SCALAR_LIST_FIELD_NAMES,
-} from "@app/prisma/prisma.service"
+import { SCALAR_LIST_FIELD_NAMES } from "@app/prisma/prisma.service"
 import { ExecutionContext, createParamDecorator } from "@nestjs/common"
 import { PrismaSelect } from "@paljs/plugins"
 import graphqlFields from "graphql-fields"

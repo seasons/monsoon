@@ -1,12 +1,7 @@
-import * as util from "util"
-
 import { Customer, User } from "@app/decorators"
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
-import {
-  makeOrderByPrisma2Compatible,
-  makeWherePrisma2Compatible,
-} from "@prisma/binding-argument-transform"
 import { PrismaService } from "@prisma1/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
 
@@ -135,31 +130,9 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async physicalProducts(@Args() args, @Select() select) {
-    const { where, orderBy, skip, first, last, after, before } = args
-    const prisma2Where = makeWherePrisma2Compatible(where)
-    const sanitizedPrisma2Where = this.prisma.sanitizeWhere(
-      prisma2Where,
-      "PhysicalProduct"
-    )
-    const prisma2OrderBy = makeOrderByPrisma2Compatible(orderBy)
-    const skipValue = skip || 0
-    const prisma2Skip = Boolean(before) ? skipValue + 1 : skipValue
-    const prisma2Take = Boolean(last) ? -last : first
-    const prisma2Before = { id: before }
-    const prisma2After = { id: after }
-    const prisma2Cursor =
-      !Boolean(before) && !Boolean(after)
-        ? undefined
-        : Boolean(before)
-        ? prisma2Before
-        : prisma2After
+  async physicalProducts(@FindManyArgs() args, @Select() select) {
     const data = await this.prisma.client2.physicalProduct.findMany({
-      where: sanitizedPrisma2Where,
-      orderBy: prisma2OrderBy,
-      skip: prisma2Skip,
-      cursor: prisma2Cursor,
-      take: prisma2Take,
+      ...args,
       ...select,
     })
     const sanitizedData = this.prisma.sanitizePayload(data, "PhysicalProduct")
