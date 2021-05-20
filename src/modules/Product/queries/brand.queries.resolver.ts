@@ -11,7 +11,7 @@ export class BrandQueriesResolver {
   @Query()
   async brand(@Args() args, @Info() info, @Select() select) {
     if (typeof args?.published === "boolean") {
-      const brand: any = await this.prisma.client2.brand.findFirst({
+      const brand: any = await this.prisma.client2.brand.findUnique({
         select: {
           ...select.select,
           published: true,
@@ -26,7 +26,7 @@ export class BrandQueriesResolver {
       }
     }
 
-    return await this.prisma.client2.brand.findFirst({
+    return await this.prisma.client2.brand.findUnique({
       ...select,
       ...args,
     })
