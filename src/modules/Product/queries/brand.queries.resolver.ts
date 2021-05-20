@@ -1,3 +1,4 @@
+import { Select } from "@app/decorators/select.decorator"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
@@ -8,23 +9,27 @@ export class BrandQueriesResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @Query()
-  async brand(@Args() args, @Info() info) {
+  async brand(@Args() args, @Info() info, @Select() select) {
     if (typeof args?.published === "boolean") {
-      const brand = await this.prisma.binding.query.brand(
-        args,
-        addFragmentToInfo(
-          info,
-          `fragment EnsurePublished on Brand { published }`
-        )
-      )
+      const brand: any = await this.prisma.client2.brand.findFirst({
+        select: {
+          ...select.select,
+          published: true,
+        },
+        where: { ...args.where },
+      })
+
       if (args?.published === brand?.published) {
         return brand
       } else {
         throw new ApolloError("Brand not found", "404")
       }
-    } else {
-      return await this.prisma.binding.query.brand(args, info)
     }
+
+    return await this.prisma.client2.brand.findFirst({
+      ...select,
+      ...args,
+    })
   }
 
   @Query()
