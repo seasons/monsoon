@@ -3,6 +3,10 @@ import * as util from "util"
 import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
+import {
+  makeOrderByPrisma2Compatible,
+  makeWherePrisma2Compatible,
+} from "@prisma/binding-argument-transform"
 import { PrismaService } from "@prisma1/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
 
@@ -29,7 +33,7 @@ export class ProductQueriesResolver {
       where,
       ...select,
     })
-    const sanitizedData = this.prisma.sanitize(data, "Product")
+    const sanitizedData = this.prisma.sanitizePayload(data, "Product")
 
     return sanitizedData
   }
@@ -131,15 +135,36 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async physicalProducts(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.physicalProducts(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on PhysicalProduct { id }`
-      )
+  async physicalProducts(@Args() args, @Select() select) {
+    const { where, orderBy, skip, first, last, after, before } = args
+    const prisma2Where = makeWherePrisma2Compatible(where)
+    const sanitizedPrisma2Where = this.prisma.sanitizeWhere(
+      prisma2Where,
+      "PhysicalProduct"
     )
+    const prisma2OrderBy = makeOrderByPrisma2Compatible(orderBy)
+    const skipValue = skip || 0
+    const prisma2Skip = Boolean(before) ? skipValue + 1 : skipValue
+    const prisma2Take = Boolean(last) ? -last : first
+    const prisma2Before = { id: before }
+    const prisma2After = { id: after }
+    const prisma2Cursor =
+      !Boolean(before) && !Boolean(after)
+        ? undefined
+        : Boolean(before)
+        ? prisma2Before
+        : prisma2After
+    const data = await this.prisma.client2.physicalProduct.findMany({
+      where: sanitizedPrisma2Where,
+      orderBy: prisma2OrderBy,
+      skip: prisma2Skip,
+      cursor: prisma2Cursor,
+      take: prisma2Take,
+      ...select,
+    })
+    const sanitizedData = this.prisma.sanitizePayload(data, "PhysicalProduct")
+
+    return sanitizedData
   }
 
   @Query()

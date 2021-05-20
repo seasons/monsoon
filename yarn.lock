@@ -2537,6 +2537,14 @@
   resolved "https://registry.yarnpkg.com/@paljs/types/-/types-3.2.0.tgz#7cd14d62eac969158f79bb501260457c6ce51ebc"
   integrity sha512-8Lu8SVVbrCKUQq5WqL224hjVFbpGR90cA+cNtyPJPhKJIBSrUL4CX1sDvbKAegzzzAcrXsr2IKoZ4+ttYSJ4cQ==
 
+"@prisma/binding-argument-transform@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@prisma/binding-argument-transform/-/binding-argument-transform-0.3.1.tgz#6634da47c138e9852fa11552f8ea8ad301068db3"
+  integrity sha512-Gf84csKWoqVlTZqrXBsL+FENTv4ww/0sknsEFKfOJ8TWfRzuGDm/j7AwA58BpyrkXz0HwzFmUvCmnz5GiYpUew==
+  dependencies:
+    lodash "^4.17.19"
+    lodash-es "^4.17.15"
+
 "@prisma/client@^2.23.0":
   version "2.23.0"
   resolved "https://registry.yarnpkg.com/@prisma/client/-/client-2.23.0.tgz#4bf16ab19b140873ba79bd159da86842b1746e0a"
@@ -11839,6 +11847,11 @@ locate-path@^5.0.0:
   integrity sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==
   dependencies:
     p-locate "^4.1.0"
+
+lodash-es@^4.17.15:
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
+  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
 
 lodash.ary@^4.1.1:
   version "4.1.1"

@@ -35,7 +35,7 @@ const SINGLETON_RELATIONS_POSING_AS_ARRAYS = {
   "UserPushNotificationInterest": ["UserPushNotification"],
   "AdminActionLog": ["interpretation"],
   "CustomerNotificationBarReceipt": ["customer"],
-  "PhysicalProduct": ["variant"]
+  "PhysicalProduct": ["productVariant"]
 }
 
 // What was stored and interpreted as JSON in prisma1 will look like
@@ -49,6 +49,7 @@ const JSON_FIELD_NAMES = {
 }
 
 const MODELS_TO_SANITIZE = uniq([...Object.keys(JSON_FIELD_NAMES), ...Object.keys(SINGLETON_RELATIONS_POSING_AS_ARRAYS), ...Object.keys(SCALAR_LIST_FIELD_NAMES)])
+
 @Injectable()
 export class PrismaService implements UpdatableConnection {
   binding: PrismaBinding = new PrismaBinding({
@@ -80,7 +81,7 @@ export class PrismaService implements UpdatableConnection {
   This sanitizer extracts out the value from the array so we can still return it
   in the format we had it in prisma1
   */
-  sanitize(payload: any, modelName: string) {
+  sanitizePayload(payload: any, modelName: string) {
     if (!payload) {
       return
     }
@@ -91,7 +92,7 @@ export class PrismaService implements UpdatableConnection {
     }
     
     if (isArray(payload)) {
-      return payload.map(a => this.sanitize(a, modelName))
+      return payload.map(a => this.sanitizePayload(a, modelName))
     }
 
     let returnPayload = {...payload}
@@ -125,12 +126,34 @@ export class PrismaService implements UpdatableConnection {
     modelFields.forEach((field) => {
       const fieldInPayload = !!payload[field.name]
       if (fieldInPayload && field.kind === "object" && !singleRelationFieldNames.includes(field.name) && !scalarListFieldNames.includes(field.name)) {
-        returnPayload[field.name] = this.sanitize(payload[field.name], field.type)
+        returnPayload[field.name] = this.sanitizePayload(payload[field.name], field.type)
       }
     })
 
 
     return returnPayload
+  }
+
+  sanitizeWhere(where: any, modelName: string) {
+    let returnWhere = {...where}
+
+    if (!!returnWhere["AND"]) {
+      return {AND: returnWhere.AND.map(a => this.sanitizeWhere(a, modelName))}
+    }
+    if (!!returnWhere["OR"]) {
+      return {OR: returnWhere.OR.map(a => this.sanitizeWhere(a, modelName))}
+    }
+
+    // TODO: We probably also need to sanitize wheres on scalar lists
+    const singleRelationFieldNames = SINGLETON_RELATIONS_POSING_AS_ARRAYS[modelName] || []
+    singleRelationFieldNames.forEach((fieldName) => {
+      const fieldInWhere = !!where[fieldName]
+      if (!!fieldInWhere) {
+        returnWhere[fieldName] = {every: where[fieldName]}
+      }
+    })
+
+    return returnWhere
   }
 
   updateConnection({ secret, endpoint }: { secret: string; endpoint: string }) {

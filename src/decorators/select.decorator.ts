@@ -10,13 +10,20 @@ import { isEmpty } from "lodash"
 export const Select = createParamDecorator(
   (data, context: ExecutionContext): any => {
     const [obj, args, ctx, info] = context.getArgs()
-    const modelName = info.returnType.name
+    const modelName = getReturnTypeFromInfo(info)
 
     const select = infoToSelect(info, modelName, ctx.modelFieldsByModelName)
     return select
   }
 )
 
+const getReturnTypeFromInfo = info => {
+  if (typeof info === "object") {
+    return info.returnType.name || info.returnType.ofType?.ofType?.name
+  } else {
+    return info.returnType
+  }
+}
 const infoToSelect = (info, modelName, modelFieldsByModelName) => {
   const prismaSelect = new PrismaSelect(info)
   let fields = graphqlFields(info)
@@ -62,10 +69,7 @@ const infoToSelect = (info, modelName, modelFieldsByModelName) => {
               )
             } else {
               // field is coming from one or more fragments. get the field nodes accordingly
-              const returnType =
-                typeof info.returnType === "object"
-                  ? info.returnType.name
-                  : info.returnType
+              const returnType = getReturnTypeFromInfo(info)
               const parentFragments = Object.keys(info.fragments)
                 .filter(
                   k => info.fragments[k].typeCondition.name.value === returnType

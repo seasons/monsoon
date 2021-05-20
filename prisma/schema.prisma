@@ -620,7 +620,7 @@ model PhysicalProduct {
   reservationsNewProducts Reservation[]                  @relation("ReservationToNewProducts")
 
   // Should be a singleton. Will get fixed with full prisma2 migration
-  variant ProductVariant[]
+  productVariant ProductVariant[]
 }
 
 model PhysicalProductPrice {
