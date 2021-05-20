@@ -214,7 +214,7 @@ export class PhysicalProductService {
       Reservation,
       "id" | "createdAt" | "cancelledAt" | "completedAt" | "reservationNumber"
     > & { products: Pick<PhysicalProduct, "id">[] })[]
-  ) {
+  ): (AdminActionLog & { interpretation: string })[] {
     const keysWeDontCareAbout = [
       "id",
       "price",

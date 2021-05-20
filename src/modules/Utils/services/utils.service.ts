@@ -3,10 +3,11 @@ import * as fs from "fs"
 
 import { UTMData as BindingUTMData, DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
+import { AdminActionLog } from "@prisma/client"
 import {
-  AdminActionLog,
   Location,
   PauseRequest,
+  AdminActionLog as PrismaOneAdminActionLog,
   Reservation,
   SyncTimingType,
   UTMData,
@@ -408,13 +409,19 @@ export class UtilsService {
     return planID
   }
 
-  filterAdminLogs(logs: AdminActionLog[], ignoreKeys = []) {
+  filterAdminLogs(
+    logs: AdminActionLog[] | PrismaOneAdminActionLog[],
+    ignoreKeys = []
+  ) {
     const isEmptyUpdate = b =>
       b.action === "Update" && Object.keys(b.changedFields).length === 0
 
-    return logs
-      .map(a => ({ ...a, changedFields: omit(a.changedFields, ignoreKeys) }))
-      .filter(b => !isEmptyUpdate(b))
+    return (
+      logs
+        //@ts-ignore
+        .map(a => ({ ...a, changedFields: omit(a.changedFields, ignoreKeys) }))
+        .filter(b => !isEmptyUpdate(b))
+    )
   }
 
   private caseify = (obj: any, caseFunc: (str: string) => string): any => {
