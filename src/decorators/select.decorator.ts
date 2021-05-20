@@ -4,6 +4,8 @@ import { PrismaSelect } from "@paljs/plugins"
 import graphqlFields from "graphql-fields"
 import { isEmpty } from "lodash"
 
+import { getReturnTypeFromInfo } from "./utils"
+
 export const Select = createParamDecorator(
   (data, context: ExecutionContext): any => {
     const [obj, args, ctx, info] = context.getArgs()
@@ -14,13 +16,6 @@ export const Select = createParamDecorator(
   }
 )
 
-const getReturnTypeFromInfo = info => {
-  if (typeof info === "object") {
-    return info.returnType.name || info.returnType.ofType?.ofType?.name
-  } else {
-    return info.returnType
-  }
-}
 const infoToSelect = (info, modelName, modelFieldsByModelName) => {
   const prismaSelect = new PrismaSelect(info)
   let fields = graphqlFields(info)

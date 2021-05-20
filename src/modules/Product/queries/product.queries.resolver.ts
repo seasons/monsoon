@@ -198,8 +198,13 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async warehouseLocations(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.warehouseLocations(args, info)
+  async warehouseLocations(@FindManyArgs() args, @Select() select) {
+    const data = await this.prisma.client2.warehouseLocation.findMany({
+      ...args,
+      ...select,
+    })
+    const sanitizedData = this.prisma.sanitizePayload(data, "WarehouseLocation")
+    return sanitizedData
   }
 
   @Query()

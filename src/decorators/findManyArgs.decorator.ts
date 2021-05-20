@@ -6,18 +6,29 @@ import {
 } from "@prisma/binding-argument-transform"
 import { isArray } from "lodash"
 
+import { getReturnTypeFromInfo } from "./utils"
+
 export const FindManyArgs = createParamDecorator(
   (data, context: ExecutionContext): any => {
     const [obj, args, ctx, info] = context.getArgs()
+    const modelName = getReturnTypeFromInfo(info)
+
     const { where, orderBy, skip, first, last, after, before } = args
+
     const prisma2Where = makeWherePrisma2Compatible(where)
-    const sanitizedPrisma2Where = sanitizeWhere(prisma2Where, "PhysicalProduct")
+    const sanitizedPrisma2Where = sanitizeWhere(prisma2Where, modelName)
+
     const prisma2OrderBy = makeOrderByPrisma2Compatible(orderBy)
+
     const skipValue = skip || 0
     const prisma2Skip = Boolean(before) ? skipValue + 1 : skipValue
+
     const prisma2Take = Boolean(last) ? -last : first
+
     const prisma2Before = { id: before }
+
     const prisma2After = { id: after }
+
     const prisma2Cursor =
       !Boolean(before) && !Boolean(after)
         ? undefined
