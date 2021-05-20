@@ -5,7 +5,7 @@ import { Prisma as PrismaClient, prisma } from "./"
 import { Prisma as PrismaBinding } from "./prisma.binding"
 import { PrismaClient as PrismaClient2 } from '@prisma/client'
 import { PrismaSelect } from "@paljs/plugins"
-import { head, isArray } from "lodash"
+import { head, isArray, uniq } from "lodash"
 
 export const SCALAR_LIST_FIELD_NAMES = {
   "Brand": ["styles"],
@@ -48,6 +48,7 @@ const JSON_FIELD_NAMES = {
   "Category": ["image"]
 }
 
+const MODELS_TO_SANITIZE = uniq([...Object.keys(JSON_FIELD_NAMES), ...Object.keys(SINGLETON_RELATIONS_POSING_AS_ARRAYS), ...Object.keys(SCALAR_LIST_FIELD_NAMES)])
 @Injectable()
 export class PrismaService implements UpdatableConnection {
   binding: PrismaBinding = new PrismaBinding({
@@ -82,6 +83,11 @@ export class PrismaService implements UpdatableConnection {
   sanitize(payload: any, modelName: string) {
     if (!payload) {
       return
+    }
+    
+    // If we don't need to sanitize anything, just return
+    if (!MODELS_TO_SANITIZE.includes(modelName)) {
+      return payload 
     }
     
     if (isArray(payload)) {
