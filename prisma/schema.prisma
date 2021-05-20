@@ -421,8 +421,8 @@ model Image {
   BlogPost                 BlogPost[]
   Brand_BrandToImage       Brand[]
   FitPic                   FitPic[]
-  ShopifyProductVariant    ShopifyProductVariant[]
-  brands Brand[]                 @relation("BrandToBrandImages")
+  ShopifyProductVariant    ShopifyProductVariant[] 
+  brands                   Brand[]                 @relation("BrandToBrandImages")
   Collection               Collection[]
   Product                  Product[]
 }
