@@ -115,7 +115,8 @@ export class PrismaService implements UpdatableConnection {
     singleRelationFieldNames.forEach((fieldName) => {
       const fieldInPayload = !!payload[fieldName]
       if (!!fieldInPayload) {
-        returnPayload[fieldName] = head(payload?.[fieldName])
+        const valueType = this.modelFieldsByModelName[modelName].find(a => a.name === fieldName).type
+        returnPayload[fieldName] = this.sanitizePayload(head(payload?.[fieldName]), valueType)
       }
     })
     jsonFieldNames.forEach((fieldName) => {
