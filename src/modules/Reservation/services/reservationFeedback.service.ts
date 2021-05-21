@@ -37,7 +37,34 @@ const RESERVATION_FEEDBACK_FRAGMENT = `
 export class ReservationFeedbackService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getReservationFeedback(user) {
+  async updateProductReservationFeedback(
+    productReservationID,
+    input,
+    responses
+  ) {
+    const responsesArray = Object.keys(responses)
+    for (const key of responsesArray) {
+      await this.prisma.client.updateProductVariantFeedbackQuestion({
+        where: {
+          id: key,
+        },
+        data: {
+          responses: {
+            set: [responses[key]],
+          },
+        },
+      })
+    }
+
+    return await this.prisma.client.updateProductVariantFeedback({
+      where: {
+        id: productReservationID,
+      },
+      data: input,
+    })
+  }
+
+  async getReservationFeedback(user, info) {
     if (!user) return null
     const feedbacks = await this.prisma.binding.query.reservationFeedbacks(
       {
@@ -51,7 +78,7 @@ export class ReservationFeedbackService {
         },
         orderBy: "createdAt_DESC",
       },
-      RESERVATION_FEEDBACK_FRAGMENT
+      info ?? RESERVATION_FEEDBACK_FRAGMENT
     )
     const reservationFeedbacks = feedbacks.length > 0 ? head(feedbacks) : null
     return reservationFeedbacks

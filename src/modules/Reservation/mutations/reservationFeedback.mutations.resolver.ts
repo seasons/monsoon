@@ -9,6 +9,18 @@ export class ReservationFeedbackMutationsResolver {
   ) {}
 
   @Mutation()
+  async updateProductReservationFeedback(
+    @Args() { productReservationID, input, responses }
+  ) {
+    const reservationFeedback = await this.reservationFeedbackService.updateProductReservationFeedback(
+      productReservationID,
+      input,
+      responses
+    )
+    return reservationFeedback
+  }
+
+  @Mutation()
   async updateReservationFeedback(@Args() { feedbackID, input }) {
     const reservationFeedback = await this.reservationFeedbackService.updateReservationFeedback(
       feedbackID,

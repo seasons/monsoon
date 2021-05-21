@@ -1,5 +1,5 @@
 import { User } from "@app/decorators"
-import { Query, Resolver } from "@nestjs/graphql"
+import { Info, Query, Resolver } from "@nestjs/graphql"
 
 import { ReservationFeedbackService } from "../services/reservationFeedback.service"
 
@@ -10,7 +10,10 @@ export class ReservationFeedbackQueriesResolver {
   ) {}
 
   @Query()
-  async reservationFeedback(@User() user) {
-    return await this.reservationFeedbackService.getReservationFeedback(user)
+  async reservationFeedback(@User() user, @Info() info) {
+    return await this.reservationFeedbackService.getReservationFeedback(
+      user,
+      info
+    )
   }
 }

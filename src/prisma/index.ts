@@ -4536,7 +4536,11 @@ export type ProductVariantFeedbackOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "isCompleted_ASC"
-  | "isCompleted_DESC";
+  | "isCompleted_DESC"
+  | "rating_ASC"
+  | "rating_DESC"
+  | "review_ASC"
+  | "review_DESC";
 
 export type ProductVariantPriceOrderByInput =
   | "id_ASC"
@@ -10531,6 +10535,28 @@ export interface ProductVariantFeedbackWhereInput {
   id_not_ends_with?: Maybe<ID_Input>;
   isCompleted?: Maybe<Boolean>;
   isCompleted_not?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  rating_not?: Maybe<Float>;
+  rating_in?: Maybe<Float[] | Float>;
+  rating_not_in?: Maybe<Float[] | Float>;
+  rating_lt?: Maybe<Float>;
+  rating_lte?: Maybe<Float>;
+  rating_gt?: Maybe<Float>;
+  rating_gte?: Maybe<Float>;
+  review?: Maybe<String>;
+  review_not?: Maybe<String>;
+  review_in?: Maybe<String[] | String>;
+  review_not_in?: Maybe<String[] | String>;
+  review_lt?: Maybe<String>;
+  review_lte?: Maybe<String>;
+  review_gt?: Maybe<String>;
+  review_gte?: Maybe<String>;
+  review_contains?: Maybe<String>;
+  review_not_contains?: Maybe<String>;
+  review_starts_with?: Maybe<String>;
+  review_not_starts_with?: Maybe<String>;
+  review_ends_with?: Maybe<String>;
+  review_not_ends_with?: Maybe<String>;
   questions_every?: Maybe<ProductVariantFeedbackQuestionWhereInput>;
   questions_some?: Maybe<ProductVariantFeedbackQuestionWhereInput>;
   questions_none?: Maybe<ProductVariantFeedbackQuestionWhereInput>;
@@ -20194,6 +20220,8 @@ export interface ProductVariantUpdateManyMutationInput {
 export interface ProductVariantFeedbackCreateInput {
   id?: Maybe<ID_Input>;
   isCompleted: Boolean;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
   questions?: Maybe<
     ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
   >;
@@ -20273,6 +20301,8 @@ export interface ReservationCreateInput {
 
 export interface ProductVariantFeedbackUpdateInput {
   isCompleted?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
   questions?: Maybe<
     ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
   >;
@@ -20463,6 +20493,8 @@ export interface ReservationFeedbackUpsertWithoutFeedbacksInput {
 
 export interface ProductVariantFeedbackUpdateManyMutationInput {
   isCompleted?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
 }
 
 export interface ProductVariantFeedbackQuestionCreateInput {
@@ -20482,6 +20514,8 @@ export interface ProductVariantFeedbackCreateOneWithoutQuestionsInput {
 export interface ProductVariantFeedbackCreateWithoutQuestionsInput {
   id?: Maybe<ID_Input>;
   isCompleted: Boolean;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput;
   variant: ProductVariantCreateOneInput;
 }
@@ -20505,6 +20539,8 @@ export interface ProductVariantFeedbackUpdateOneRequiredWithoutQuestionsInput {
 
 export interface ProductVariantFeedbackUpdateWithoutQuestionsDataInput {
   isCompleted?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
   reservationFeedback?: Maybe<
     ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput
   >;
@@ -20671,6 +20707,8 @@ export interface ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
 export interface ProductVariantFeedbackCreateWithoutReservationFeedbackInput {
   id?: Maybe<ID_Input>;
   isCompleted: Boolean;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
   questions?: Maybe<
     ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
   >;
@@ -20734,6 +20772,8 @@ export interface ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFe
 
 export interface ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput {
   isCompleted?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
   questions?: Maybe<
     ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
   >;
@@ -20763,6 +20803,28 @@ export interface ProductVariantFeedbackScalarWhereInput {
   id_not_ends_with?: Maybe<ID_Input>;
   isCompleted?: Maybe<Boolean>;
   isCompleted_not?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  rating_not?: Maybe<Float>;
+  rating_in?: Maybe<Float[] | Float>;
+  rating_not_in?: Maybe<Float[] | Float>;
+  rating_lt?: Maybe<Float>;
+  rating_lte?: Maybe<Float>;
+  rating_gt?: Maybe<Float>;
+  rating_gte?: Maybe<Float>;
+  review?: Maybe<String>;
+  review_not?: Maybe<String>;
+  review_in?: Maybe<String[] | String>;
+  review_not_in?: Maybe<String[] | String>;
+  review_lt?: Maybe<String>;
+  review_lte?: Maybe<String>;
+  review_gt?: Maybe<String>;
+  review_gte?: Maybe<String>;
+  review_contains?: Maybe<String>;
+  review_not_contains?: Maybe<String>;
+  review_starts_with?: Maybe<String>;
+  review_not_starts_with?: Maybe<String>;
+  review_ends_with?: Maybe<String>;
+  review_not_ends_with?: Maybe<String>;
   AND?: Maybe<
     | ProductVariantFeedbackScalarWhereInput[]
     | ProductVariantFeedbackScalarWhereInput
@@ -20784,6 +20846,8 @@ export interface ProductVariantFeedbackUpdateManyWithWhereNestedInput {
 
 export interface ProductVariantFeedbackUpdateManyDataInput {
   isCompleted?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
 }
 
 export interface ReservationFeedbackUpdateManyMutationInput {
@@ -30101,6 +30165,8 @@ export interface AggregateProductVariantSubscription
 export interface ProductVariantFeedback {
   id: ID_Output;
   isCompleted: Boolean;
+  rating?: Float;
+  review?: String;
 }
 
 export interface ProductVariantFeedbackPromise
@@ -30108,6 +30174,8 @@ export interface ProductVariantFeedbackPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   isCompleted: () => Promise<Boolean>;
+  rating: () => Promise<Float>;
+  review: () => Promise<String>;
   questions: <T = FragmentableArray<ProductVariantFeedbackQuestion>>(args?: {
     where?: ProductVariantFeedbackQuestionWhereInput;
     orderBy?: ProductVariantFeedbackQuestionOrderByInput;
@@ -30126,6 +30194,8 @@ export interface ProductVariantFeedbackSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   isCompleted: () => Promise<AsyncIterator<Boolean>>;
+  rating: () => Promise<AsyncIterator<Float>>;
+  review: () => Promise<AsyncIterator<String>>;
   questions: <
     T = Promise<AsyncIterator<ProductVariantFeedbackQuestionSubscription>>
   >(args?: {
@@ -30146,6 +30216,8 @@ export interface ProductVariantFeedbackNullablePromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   isCompleted: () => Promise<Boolean>;
+  rating: () => Promise<Float>;
+  review: () => Promise<String>;
   questions: <T = FragmentableArray<ProductVariantFeedbackQuestion>>(args?: {
     where?: ProductVariantFeedbackQuestionWhereInput;
     orderBy?: ProductVariantFeedbackQuestionOrderByInput;
@@ -34793,6 +34865,8 @@ export interface ProductVariantFeedbackSubscriptionPayloadSubscription
 export interface ProductVariantFeedbackPreviousValues {
   id: ID_Output;
   isCompleted: Boolean;
+  rating?: Float;
+  review?: String;
 }
 
 export interface ProductVariantFeedbackPreviousValuesPromise
@@ -34800,6 +34874,8 @@ export interface ProductVariantFeedbackPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   isCompleted: () => Promise<Boolean>;
+  rating: () => Promise<Float>;
+  review: () => Promise<String>;
 }
 
 export interface ProductVariantFeedbackPreviousValuesSubscription
@@ -34807,6 +34883,8 @@ export interface ProductVariantFeedbackPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   isCompleted: () => Promise<AsyncIterator<Boolean>>;
+  rating: () => Promise<AsyncIterator<Float>>;
+  review: () => Promise<AsyncIterator<String>>;
 }
 
 export interface ProductVariantFeedbackQuestionSubscriptionPayload {
