@@ -76,7 +76,7 @@ model BlogPost {
   webflowId        String
   webflowCreatedAt DateTime
   webflowUpdatedAt DateTime
-  slug             String
+  slug             String          @unique()
   name             String?
   body             String?
   summary          String?
@@ -86,6 +86,7 @@ model BlogPost {
   url              String?
   author           String?
   category         String?
+  content          String
   createdAt        DateTime
   updatedAt        DateTime        @updatedAt
   publishedOn      DateTime

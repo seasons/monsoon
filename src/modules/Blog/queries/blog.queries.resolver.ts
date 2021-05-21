@@ -10,8 +10,13 @@ export class BlogQueriesResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @Query()
-  async blogPost(@Args() args, @Info() info) {
-    return this.prisma.binding.query.blogPost(args, info)
+  async blogPost(@Args() { where }, @Select() select) {
+    const data = await this.prisma.client2.blogPost.findUnique({
+      where,
+      ...select,
+    })
+    const sanitizedData = this.prisma.sanitizePayload(data, "BlogPost")
+    return sanitizedData
   }
 
   @Query()

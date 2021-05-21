@@ -8,6 +8,7 @@ import { PrismaSelect } from "@paljs/plugins"
 import { head, isArray, uniq } from "lodash"
 
 export const SCALAR_LIST_FIELD_NAMES = {
+  "BlogPost": ["tags"],
   "Brand": ["styles"],
   "Collection": ["descriptions", "placements"],
   "Product": ["outerMaterials", "innerMaterials", "styles"],
