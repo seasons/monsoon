@@ -34,16 +34,15 @@ export class BrandQueriesResolver {
 
   @Query()
   async brands(@FindManyArgs() args, @Select() select) {
-    const data = await this.prisma.client2.physicalProduct.findMany({
+    const data = await this.prisma.client2.brand.findMany({
       ...args,
       ...select,
     })
-    const sanitizedData = this.prisma.sanitizePayload(data, "PhysicalProduct")
+    const sanitizedData = this.prisma.sanitizePayload(data, "Brand")
 
     return sanitizedData
   }
 
-  @Query()
   async brandsConnection(@Args() args, @Info() info) {
     return this.prisma.binding.query.brandsConnection(args, info)
   }
