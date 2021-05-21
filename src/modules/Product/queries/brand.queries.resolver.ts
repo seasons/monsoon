@@ -1,8 +1,8 @@
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { addFragmentToInfo } from "graphql-binding"
 
 @Resolver()
 export class BrandQueriesResolver {
@@ -33,8 +33,14 @@ export class BrandQueriesResolver {
   }
 
   @Query()
-  async brands(@Args() args, @Info() info) {
-    return this.prisma.binding.query.brands(args, info)
+  async brands(@FindManyArgs() args, @Select() select) {
+    const data = await this.prisma.client2.physicalProduct.findMany({
+      ...args,
+      ...select,
+    })
+    const sanitizedData = this.prisma.sanitizePayload(data, "PhysicalProduct")
+
+    return sanitizedData
   }
 
   @Query()

@@ -56,7 +56,6 @@ const sanitizeWhere = (where: any, modelName: string) => {
     return { OR: returnWhere.OR.map(a => sanitizeWhere(a, modelName)) }
   }
 
-  // TODO: We probably also need to sanitize wheres on scalar lists
   const singleRelationFieldNames =
     SINGLETON_RELATIONS_POSING_AS_ARRAYS[modelName] || []
   singleRelationFieldNames.forEach(fieldName => {
