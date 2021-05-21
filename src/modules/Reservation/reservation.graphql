@@ -39,6 +39,7 @@ type Mutation {
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback! @hasRole(roles: [Customer, Admin])
   updateProductReservationFeedback(
+    reservationFeedbackID: ID!
     productReservationID: ID!
     input: ProductVariantFeedbackUpdateInput!
     responses: JSON

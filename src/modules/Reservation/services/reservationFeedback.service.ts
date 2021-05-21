@@ -38,6 +38,7 @@ export class ReservationFeedbackService {
   constructor(private readonly prisma: PrismaService) {}
 
   async updateProductReservationFeedback(
+    reservationFeedbackID,
     productReservationID,
     input,
     responses
@@ -55,6 +56,15 @@ export class ReservationFeedbackService {
         },
       })
     }
+
+    await this.prisma.client.updateReservationFeedback({
+      where: {
+        id: reservationFeedbackID,
+      },
+      data: {
+        respondedAt: new Date(),
+      },
+    })
 
     return await this.prisma.client.updateProductVariantFeedback({
       where: {
