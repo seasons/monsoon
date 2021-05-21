@@ -108,10 +108,10 @@ model BottomSize {
   id     String   @id @default(cuid()) @db.VarChar(25)
   type   String?
   value  String?
-  waist  Decimal?
-  rise   Decimal?
-  hem    Decimal?
-  inseam Decimal?
+  waist  Float?
+  rise   Float?
+  hem    Float?
+  inseam Float?
 
   // Do not use. Artifact of prisma2 migration
   Sizes Size[]
@@ -469,8 +469,8 @@ model Location {
   state            String?
   zipCode          String
   locationType     String?
-  lat              Decimal?
-  lng              Decimal?
+  lat              Float?
+  lng              Float?
   createdAt        DateTime
   updatedAt        DateTime          @updatedAt
   userId           String?           @map("user") @db.VarChar(25)
@@ -515,9 +515,9 @@ model OrderLineItem {
   recordID      String   @db.VarChar(25)
   recordType    String
   needShipping  Boolean?
-  taxRate       Decimal?
+  taxRate       Float?
   taxName       String?
-  taxPercentage Decimal?
+  taxPercentage Float?
   taxPrice      Int?
   price         Int
   currencyCode  String
@@ -530,7 +530,7 @@ model OrderLineItem {
 
 model Package {
   id              String                @id @default(cuid()) @db.VarChar(25)
-  weight          Decimal?
+  weight          Float?
   createdAt       DateTime
   updatedAt       DateTime              @updatedAt
   fromAddressId   String?               @map("fromAddress") @db.VarChar(25)
@@ -609,7 +609,7 @@ model PhysicalProduct {
   warehouseLocation       WarehouseLocation?             @relation(fields: [warehouseLocationId], references: [id])
   dateOrdered             DateTime?
   dateReceived            DateTime?
-  unitCost                Decimal?
+  unitCost                Float?
   barcoded                Boolean?
   priceId                 String?                        @map("price") @db.VarChar(25)
   price                   PhysicalProductPrice?          @relation(fields: [priceId], references: [id])
@@ -627,7 +627,7 @@ model PhysicalProduct {
 model PhysicalProductPrice {
   id              String           @id @default(cuid()) @db.VarChar(25)
   buyUsedEnabled  Boolean
-  buyUsedPrice    Decimal?
+  buyUsedPrice    Float?
   physicalProduct PhysicalProduct?
 }
 
@@ -719,14 +719,14 @@ model ProductMaterialCategory {
   slug           String    @unique
   categoryId     String?   @map("category") @db.VarChar(25)
   category       Category? @relation(fields: [categoryId], references: [id])
-  lifeExpectancy Decimal
+  lifeExpectancy Float
   products       Product[]
 }
 
 model ProductModel {
   id       String    @id @default(cuid()) @db.VarChar(25)
   name     String    @unique
-  height   Decimal
+  height   Float
   products Product[]
 }
 
@@ -810,10 +810,10 @@ model ProductTier {
 model ProductVariant {
   id                      String                   @id @default(cuid()) @db.VarChar(25)
   sku                     String?                  @unique
-  weight                  Decimal?
-  height                  Decimal?
+  weight                  Float?
+  height                  Float?
   productID               String
-  retailPrice             Decimal?
+  retailPrice             Float?
   total                   Int
   reservable              Int
   reserved                Int
@@ -883,7 +883,7 @@ model ProductVariantFeedbackQuestion_responses {
 
 model ProductVariantPrice {
   id             String          @id @default(cuid()) @db.VarChar(25)
-  retailPrice    Decimal?
+  retailPrice    Float?
   productVariant ProductVariant?
 }
 
@@ -1031,7 +1031,7 @@ model ShippingOption {
 model ShopifyProductVariant {
   id                     String                                @id @default(cuid()) @db.VarChar(25)
   externalId             String?                               @unique
-  cachedPrice            Decimal?
+  cachedPrice            Float?
   cachedAvailableForSale Boolean?
   cacheExpiresAt         DateTime?
   displayName            String?
@@ -1162,11 +1162,11 @@ model Tag {
 model TopSize {
   id       String   @id @default(cuid()) @db.VarChar(25)
   letter   String?
-  sleeve   Decimal?
-  shoulder Decimal?
-  chest    Decimal?
-  neck     Decimal?
-  length   Decimal?
+  sleeve   Float?
+  shoulder Float?
+  chest    Float?
+  neck     Float?
+  length   Float?
   size     Size?
 }
 
