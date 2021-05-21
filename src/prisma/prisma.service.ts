@@ -68,6 +68,10 @@ export class PrismaService implements UpdatableConnection {
     {}
   )
 
+  sanitizeConnection(result) {
+    result['aggregate'] = {count: result.totalCount}
+    return result
+  }
 
   /*
   Because we're migrating from prisma1 to prisma2 in pieces, there are some

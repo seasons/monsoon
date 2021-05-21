@@ -11,7 +11,10 @@ import { getReturnTypeFromInfo } from "./utils"
 export const FindManyArgs = createParamDecorator(
   (data, context: ExecutionContext): any => {
     const [obj, args, ctx, info] = context.getArgs()
-    const modelName = getReturnTypeFromInfo(info)
+    let modelName = getReturnTypeFromInfo(info)
+    if (modelName.includes("Connection")) {
+      modelName = modelName.replace("Connection", "") // e.g BlogPostConnection => BlogPost
+    }
 
     const { where, orderBy, skip, first, last, after, before } = args
 
@@ -46,7 +49,7 @@ export const FindManyArgs = createParamDecorator(
   }
 )
 
-export const sanitizeWhere = (where: any, modelName: string) => {
+const sanitizeWhere = (where: any, modelName: string) => {
   let returnWhere = { ...where }
 
   if (!!returnWhere["AND"]) {

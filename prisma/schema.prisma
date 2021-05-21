@@ -89,6 +89,7 @@ model BlogPost {
   createdAt        DateTime
   updatedAt        DateTime        @updatedAt
   publishedOn      DateTime
+  published        Boolean         @default(true)
   imageId          String?         @map("image") @db.VarChar(25)
   image            Image?          @relation(fields: [imageId], references: [id])
   tags             BlogPost_tags[]

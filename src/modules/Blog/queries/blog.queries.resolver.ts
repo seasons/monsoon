@@ -1,12 +1,9 @@
-import { sanitizeWhere } from "@app/decorators/findManyArgs.decorator"
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import {
-  makeOrderByPrisma2Compatible,
-  makeWherePrisma2Compatible,
-} from "@prisma/binding-argument-transform"
+import { isEmpty } from "lodash"
 
 @Resolver()
 export class BlogQueriesResolver {
@@ -31,23 +28,23 @@ export class BlogQueriesResolver {
   }
 
   @Query()
-  async blogPostsConnection(@Args() args, @Select() select) {
-    const prisma2Where = makeWherePrisma2Compatible(args.where)
-    const sanitizedPrisma2Where = sanitizeWhere(prisma2Where, "BlogPost")
-    const prisma2OrderBy = makeOrderByPrisma2Compatible(args.orderBy)
-
+  async blogPostsConnection(
+    @Args() args,
+    @FindManyArgs() { where, orderBy },
+    @Select() select
+  ) {
     const result = await findManyCursorConnection(
       args =>
         this.prisma.client2.blogPost.findMany({
           ...args,
           ...select,
-          where: sanitizedPrisma2Where,
-          orderBy: { webflowCreatedAt: "desc", ...prisma2OrderBy },
+          where,
+          orderBy: isEmpty(orderBy) ? { webflowCreatedAt: "desc" } : orderBy,
         }),
-      () =>
-        this.prisma.client2.blogPost.count({ where: sanitizedPrisma2Where }),
+      () => this.prisma.client2.blogPost.count({ where }),
       { ...args } // typeof ConnectionArguments
     )
-    return { ...result, aggregate: { count: result.totalCount } }
+    const sanitizedResult = this.prisma.sanitizeConnection(result)
+    return sanitizedResult
   }
 }
