@@ -24,6 +24,9 @@ const run = async () => {
   const c = await ps.client.categories({
     where: { children_some: { name: "Tees" } },
   })
+  const c = await ps.client2.blogPost.findMany({
+    orderBy: { webflowCreatedAt: "asc" },
+  })
   console.log(util.inspect(c, { depth: null }))
 }
 run()

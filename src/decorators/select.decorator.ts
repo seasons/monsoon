@@ -11,7 +11,10 @@ export const Select = createParamDecorator(
     const [obj, args, ctx, info] = context.getArgs()
     const modelName = getReturnTypeFromInfo(info)
 
-    const select = infoToSelect(info, modelName, ctx.modelFieldsByModelName)
+    let select = infoToSelect(info, modelName, ctx.modelFieldsByModelName)
+    if (isEmpty(select.select)) {
+      select = null
+    }
     return select
   }
 )
@@ -19,6 +22,26 @@ export const Select = createParamDecorator(
 const infoToSelect = (info, modelName, modelFieldsByModelName) => {
   const prismaSelect = new PrismaSelect(info)
   let fields = graphqlFields(info)
+
+  // If it's a Connection query, get the select for the node on the edges
+  if (modelName.includes("Connection")) {
+    const edgesSelection = info.fieldNodes[0].selectionSet.selections.find(
+      a => a.name.value === "edges"
+    )
+    const nodeSelection = edgesSelection?.selectionSet?.selections?.find(
+      a => a.name.value === "node"
+    )
+    const returnType = modelName.replace("Connection", "")
+    return infoToSelect(
+      {
+        fieldNodes: [nodeSelection],
+        returnType,
+        fragments: info.fragments,
+      },
+      returnType,
+      modelFieldsByModelName
+    )
+  }
 
   const modelFields = modelFieldsByModelName[modelName]
   if (isEmpty(modelFields)) {

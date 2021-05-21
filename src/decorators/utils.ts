@@ -1,6 +1,10 @@
 export const getReturnTypeFromInfo = info => {
   if (typeof info === "object") {
-    return info.returnType.name || info.returnType.ofType?.ofType?.name
+    return (
+      info.returnType.name ||
+      info.returnType.ofType?.ofType?.name ||
+      info.returnType.ofType?.name
+    )
   } else {
     return info.returnType
   }

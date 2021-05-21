@@ -1371,6 +1371,11 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@devoxa/prisma-relay-cursor-connection@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@devoxa/prisma-relay-cursor-connection/-/prisma-relay-cursor-connection-2.0.0.tgz#239234281944087f417169baba82cad3e59295ba"
+  integrity sha512-pOpNHXypYUuxOZpbCW8HX0wh6pbcOIvpZdIKQ9ahJa7EQkioEM5vWjCgy0KwSuGSU8yFWNN2ZUWuKJ/fE9z99w==
+
 "@dsherret/to-absolute-glob@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@dsherret/to-absolute-glob/-/to-absolute-glob-2.0.2.tgz#1f6475dc8bd974cea07a2daf3864b317b1dd332c"
