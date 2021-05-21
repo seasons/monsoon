@@ -16,7 +16,18 @@ export const FindManyArgs = createParamDecorator(
       modelName = modelName.replace("Connection", "") // e.g BlogPostConnection => BlogPost
     }
 
-    const { where, orderBy, skip, first, last, after, before } = args
+    const {
+      where,
+      orderBy,
+      skip,
+      first: _first,
+      last,
+      after,
+      before,
+      count,
+    } = args
+    // to support count on e.g blogPosts query
+    const first = count || _first
 
     const prisma2Where = makeWherePrisma2Compatible(where)
     const sanitizedPrisma2Where = sanitizeWhere(prisma2Where, modelName)

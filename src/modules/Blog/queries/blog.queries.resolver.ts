@@ -20,16 +20,15 @@ export class BlogQueriesResolver {
   }
 
   @Query()
-  async blogPosts(@Args() { skip, count, ...args }, @Info() info) {
-    return this.prisma.binding.query.blogPosts(
-      {
-        orderBy: "webflowCreatedAt_DESC",
-        skip,
-        first: count,
-        ...args,
-      },
-      info
-    )
+  async blogPosts(@FindManyArgs() { orderBy, ...args }, @Select() select) {
+    const data = await this.prisma.client2.blogPost.findMany({
+      ...args,
+      orderBy: orderBy || { webflowCreatedAt: "desc" },
+      ...select,
+    })
+    const sanitizedData = this.prisma.sanitizePayload(data, "BlogPost")
+
+    return sanitizedData
   }
 
   @Query()
