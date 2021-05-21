@@ -50,8 +50,11 @@ export const FindManyArgs = createParamDecorator(
 )
 
 const sanitizeWhere = (where: any, modelName: string) => {
-  let returnWhere = { ...where }
+  if (!where) {
+    return where
+  }
 
+  let returnWhere = { ...where }
   if (!!returnWhere["AND"]) {
     return { AND: returnWhere.AND.map(a => sanitizeWhere(a, modelName)) }
   }
