@@ -31,7 +31,7 @@ async function bootstrap() {
 
   server.use(
     compression(),
-    // cors,
+    cors,
     checkJwt,
     createGetUserMiddleware(prisma),
     bodyParser.json(),
