@@ -1,6 +1,5 @@
-import * as util from "util"
-
 import { Customer, User } from "@app/decorators"
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -29,7 +28,7 @@ export class ProductQueriesResolver {
       where,
       ...select,
     })
-    const sanitizedData = this.prisma.sanitize(data, "Product")
+    const sanitizedData = this.prisma.sanitizePayload(data, "Product")
 
     return sanitizedData
   }
@@ -131,15 +130,14 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async physicalProducts(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.physicalProducts(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on PhysicalProduct { id }`
-      )
-    )
+  async physicalProducts(@FindManyArgs() args, @Select() select) {
+    const data = await this.prisma.client2.physicalProduct.findMany({
+      ...args,
+      ...select,
+    })
+    const sanitizedData = this.prisma.sanitizePayload(data, "PhysicalProduct")
+
+    return sanitizedData
   }
 
   @Query()
@@ -200,8 +198,13 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async warehouseLocations(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.warehouseLocations(args, info)
+  async warehouseLocations(@FindManyArgs() args, @Select() select) {
+    const data = await this.prisma.client2.warehouseLocation.findMany({
+      ...args,
+      ...select,
+    })
+    const sanitizedData = this.prisma.sanitizePayload(data, "WarehouseLocation")
+    return sanitizedData
   }
 
   @Query()
