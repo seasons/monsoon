@@ -1184,6 +1184,8 @@ type ReservationFeedback {
 type ProductVariantFeedback {
   id: ID! @id
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions: [ProductVariantFeedbackQuestion!]! @relation(link: TABLE)
   reservationFeedback: ReservationFeedback!
   variant: ProductVariant!

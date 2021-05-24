@@ -38,6 +38,12 @@ type Mutation {
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback! @hasRole(roles: [Customer, Admin])
+  updateProductReservationFeedback(
+    reservationFeedbackID: ID!
+    productReservationID: ID!
+    input: ProductVariantFeedbackUpdateInput!
+    responses: JSON
+  ): ProductVariantFeedback! @hasRole(roles: [Customer])
   processReservation(data: ReservationProcessReturnInput!): ReservationReceipt
     @hasRole(roles: [Admin, Partner])
   updateReservation(
@@ -45,6 +51,28 @@ type Mutation {
     where: ReservationWhereUniqueInput!
   ): Reservation @hasRole(roles: [Admin])
   returnItems(items: [ID!]!): Reservation @hasRole(roles: [Customer])
+}
+
+type ReservationFeedback {
+  id: ID!
+  comment: String
+    @deprecated(reason: "replaced with ProductVariantFeedback.review")
+  feedbacks(
+    where: ProductVariantFeedbackWhereInput
+    orderBy: ProductVariantFeedbackOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductVariantFeedback!]
+  rating: Rating
+    @deprecated(reason: "replaced with ProductVariantFeedback.rating")
+  user: User!
+  reservation: Reservation!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  respondedAt: DateTime
 }
 
 input ReservationWhereInput {

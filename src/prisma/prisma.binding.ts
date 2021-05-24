@@ -23488,6 +23488,8 @@ type ProductVariantEdge {
 type ProductVariantFeedback implements Node {
   id: ID!
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedbackQuestion!]
   reservationFeedback: ReservationFeedback!
   variant: ProductVariant!
@@ -23506,6 +23508,8 @@ type ProductVariantFeedbackConnection {
 input ProductVariantFeedbackCreateInput {
   id: ID
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput!
   variant: ProductVariantCreateOneInput!
@@ -23524,6 +23528,8 @@ input ProductVariantFeedbackCreateOneWithoutQuestionsInput {
 input ProductVariantFeedbackCreateWithoutQuestionsInput {
   id: ID
   isCompleted: Boolean!
+  rating: Float
+  review: String
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput!
   variant: ProductVariantCreateOneInput!
 }
@@ -23531,6 +23537,8 @@ input ProductVariantFeedbackCreateWithoutQuestionsInput {
 input ProductVariantFeedbackCreateWithoutReservationFeedbackInput {
   id: ID
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
   variant: ProductVariantCreateOneInput!
 }
@@ -23549,11 +23557,17 @@ enum ProductVariantFeedbackOrderByInput {
   id_DESC
   isCompleted_ASC
   isCompleted_DESC
+  rating_ASC
+  rating_DESC
+  review_ASC
+  review_DESC
 }
 
 type ProductVariantFeedbackPreviousValues {
   id: ID!
   isCompleted: Boolean!
+  rating: Float
+  review: String
 }
 
 type ProductVariantFeedbackQuestion implements Node {
@@ -23993,6 +24007,68 @@ input ProductVariantFeedbackScalarWhereInput {
 
   """All values that are not equal to given value."""
   isCompleted_not: Boolean
+  rating: Float
+
+  """All values that are not equal to given value."""
+  rating_not: Float
+
+  """All values that are contained in given list."""
+  rating_in: [Float!]
+
+  """All values that are not contained in given list."""
+  rating_not_in: [Float!]
+
+  """All values less than the given value."""
+  rating_lt: Float
+
+  """All values less than or equal the given value."""
+  rating_lte: Float
+
+  """All values greater than the given value."""
+  rating_gt: Float
+
+  """All values greater than or equal the given value."""
+  rating_gte: Float
+  review: String
+
+  """All values that are not equal to given value."""
+  review_not: String
+
+  """All values that are contained in given list."""
+  review_in: [String!]
+
+  """All values that are not contained in given list."""
+  review_not_in: [String!]
+
+  """All values less than the given value."""
+  review_lt: String
+
+  """All values less than or equal the given value."""
+  review_lte: String
+
+  """All values greater than the given value."""
+  review_gt: String
+
+  """All values greater than or equal the given value."""
+  review_gte: String
+
+  """All values containing the given string."""
+  review_contains: String
+
+  """All values not containing the given string."""
+  review_not_contains: String
+
+  """All values starting with the given string."""
+  review_starts_with: String
+
+  """All values not starting with the given string."""
+  review_not_starts_with: String
+
+  """All values ending with the given string."""
+  review_ends_with: String
+
+  """All values not ending with the given string."""
+  review_not_ends_with: String
 }
 
 type ProductVariantFeedbackSubscriptionPayload {
@@ -24034,6 +24110,8 @@ input ProductVariantFeedbackSubscriptionWhereInput {
 
 input ProductVariantFeedbackUpdateInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
   reservationFeedback: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput
   variant: ProductVariantUpdateOneRequiredInput
@@ -24041,10 +24119,14 @@ input ProductVariantFeedbackUpdateInput {
 
 input ProductVariantFeedbackUpdateManyDataInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
 }
 
 input ProductVariantFeedbackUpdateManyMutationInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
 }
 
 input ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput {
@@ -24073,12 +24155,16 @@ input ProductVariantFeedbackUpdateOneRequiredWithoutQuestionsInput {
 
 input ProductVariantFeedbackUpdateWithoutQuestionsDataInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
   reservationFeedback: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput
   variant: ProductVariantUpdateOneRequiredInput
 }
 
 input ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
   variant: ProductVariantUpdateOneRequiredInput
 }
@@ -24152,6 +24238,68 @@ input ProductVariantFeedbackWhereInput {
 
   """All values that are not equal to given value."""
   isCompleted_not: Boolean
+  rating: Float
+
+  """All values that are not equal to given value."""
+  rating_not: Float
+
+  """All values that are contained in given list."""
+  rating_in: [Float!]
+
+  """All values that are not contained in given list."""
+  rating_not_in: [Float!]
+
+  """All values less than the given value."""
+  rating_lt: Float
+
+  """All values less than or equal the given value."""
+  rating_lte: Float
+
+  """All values greater than the given value."""
+  rating_gt: Float
+
+  """All values greater than or equal the given value."""
+  rating_gte: Float
+  review: String
+
+  """All values that are not equal to given value."""
+  review_not: String
+
+  """All values that are contained in given list."""
+  review_in: [String!]
+
+  """All values that are not contained in given list."""
+  review_not_in: [String!]
+
+  """All values less than the given value."""
+  review_lt: String
+
+  """All values less than or equal the given value."""
+  review_lte: String
+
+  """All values greater than the given value."""
+  review_gt: String
+
+  """All values greater than or equal the given value."""
+  review_gte: String
+
+  """All values containing the given string."""
+  review_contains: String
+
+  """All values not containing the given string."""
+  review_not_contains: String
+
+  """All values starting with the given string."""
+  review_starts_with: String
+
+  """All values not starting with the given string."""
+  review_not_starts_with: String
+
+  """All values ending with the given string."""
+  review_ends_with: String
+
+  """All values not ending with the given string."""
+  review_not_ends_with: String
   questions_every: ProductVariantFeedbackQuestionWhereInput
   questions_some: ProductVariantFeedbackQuestionWhereInput
   questions_none: ProductVariantFeedbackQuestionWhereInput
@@ -38955,7 +39103,11 @@ export type ProductType =   'Top' |
 export type ProductVariantFeedbackOrderByInput =   'id_ASC' |
   'id_DESC' |
   'isCompleted_ASC' |
-  'isCompleted_DESC'
+  'isCompleted_DESC' |
+  'rating_ASC' |
+  'rating_DESC' |
+  'review_ASC' |
+  'review_DESC'
 
 export type ProductVariantFeedbackQuestionOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -49466,6 +49618,8 @@ export interface ProductVariantCreateWithoutShopifyProductVariantInput {
 export interface ProductVariantFeedbackCreateInput {
   id?: ID_Input | null
   isCompleted: Boolean
+  rating?: Float | null
+  review?: String | null
   questions?: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput | null
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput
   variant: ProductVariantCreateOneInput
@@ -49484,6 +49638,8 @@ export interface ProductVariantFeedbackCreateOneWithoutQuestionsInput {
 export interface ProductVariantFeedbackCreateWithoutQuestionsInput {
   id?: ID_Input | null
   isCompleted: Boolean
+  rating?: Float | null
+  review?: String | null
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput
   variant: ProductVariantCreateOneInput
 }
@@ -49491,6 +49647,8 @@ export interface ProductVariantFeedbackCreateWithoutQuestionsInput {
 export interface ProductVariantFeedbackCreateWithoutReservationFeedbackInput {
   id?: ID_Input | null
   isCompleted: Boolean
+  rating?: Float | null
+  review?: String | null
   questions?: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput | null
   variant: ProductVariantCreateOneInput
 }
@@ -49702,6 +49860,28 @@ export interface ProductVariantFeedbackScalarWhereInput {
   id_not_ends_with?: ID_Input | null
   isCompleted?: Boolean | null
   isCompleted_not?: Boolean | null
+  rating?: Float | null
+  rating_not?: Float | null
+  rating_in?: Float[] | Float | null
+  rating_not_in?: Float[] | Float | null
+  rating_lt?: Float | null
+  rating_lte?: Float | null
+  rating_gt?: Float | null
+  rating_gte?: Float | null
+  review?: String | null
+  review_not?: String | null
+  review_in?: String[] | String | null
+  review_not_in?: String[] | String | null
+  review_lt?: String | null
+  review_lte?: String | null
+  review_gt?: String | null
+  review_gte?: String | null
+  review_contains?: String | null
+  review_not_contains?: String | null
+  review_starts_with?: String | null
+  review_not_starts_with?: String | null
+  review_ends_with?: String | null
+  review_not_ends_with?: String | null
 }
 
 export interface ProductVariantFeedbackSubscriptionWhereInput {
@@ -49717,6 +49897,8 @@ export interface ProductVariantFeedbackSubscriptionWhereInput {
 
 export interface ProductVariantFeedbackUpdateInput {
   isCompleted?: Boolean | null
+  rating?: Float | null
+  review?: String | null
   questions?: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput | null
   reservationFeedback?: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput | null
   variant?: ProductVariantUpdateOneRequiredInput | null
@@ -49724,10 +49906,14 @@ export interface ProductVariantFeedbackUpdateInput {
 
 export interface ProductVariantFeedbackUpdateManyDataInput {
   isCompleted?: Boolean | null
+  rating?: Float | null
+  review?: String | null
 }
 
 export interface ProductVariantFeedbackUpdateManyMutationInput {
   isCompleted?: Boolean | null
+  rating?: Float | null
+  review?: String | null
 }
 
 export interface ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput {
@@ -49756,12 +49942,16 @@ export interface ProductVariantFeedbackUpdateOneRequiredWithoutQuestionsInput {
 
 export interface ProductVariantFeedbackUpdateWithoutQuestionsDataInput {
   isCompleted?: Boolean | null
+  rating?: Float | null
+  review?: String | null
   reservationFeedback?: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput | null
   variant?: ProductVariantUpdateOneRequiredInput | null
 }
 
 export interface ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput {
   isCompleted?: Boolean | null
+  rating?: Float | null
+  review?: String | null
   questions?: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput | null
   variant?: ProductVariantUpdateOneRequiredInput | null
 }
@@ -49802,6 +49992,28 @@ export interface ProductVariantFeedbackWhereInput {
   id_not_ends_with?: ID_Input | null
   isCompleted?: Boolean | null
   isCompleted_not?: Boolean | null
+  rating?: Float | null
+  rating_not?: Float | null
+  rating_in?: Float[] | Float | null
+  rating_not_in?: Float[] | Float | null
+  rating_lt?: Float | null
+  rating_lte?: Float | null
+  rating_gt?: Float | null
+  rating_gte?: Float | null
+  review?: String | null
+  review_not?: String | null
+  review_in?: String[] | String | null
+  review_not_in?: String[] | String | null
+  review_lt?: String | null
+  review_lte?: String | null
+  review_gt?: String | null
+  review_gte?: String | null
+  review_contains?: String | null
+  review_not_contains?: String | null
+  review_starts_with?: String | null
+  review_not_starts_with?: String | null
+  review_ends_with?: String | null
+  review_not_ends_with?: String | null
   questions_every?: ProductVariantFeedbackQuestionWhereInput | null
   questions_some?: ProductVariantFeedbackQuestionWhereInput | null
   questions_none?: ProductVariantFeedbackQuestionWhereInput | null
@@ -58360,6 +58572,8 @@ export interface ProductVariantEdge {
 export interface ProductVariantFeedback extends Node {
   id: ID_Output
   isCompleted: Boolean
+  rating?: Float | null
+  review?: String | null
   questions?: Array<ProductVariantFeedbackQuestion> | null
   reservationFeedback: ReservationFeedback
   variant: ProductVariant
@@ -58387,6 +58601,8 @@ export interface ProductVariantFeedbackEdge {
 export interface ProductVariantFeedbackPreviousValues {
   id: ID_Output
   isCompleted: Boolean
+  rating?: Float | null
+  review?: String | null
 }
 
 export interface ProductVariantFeedbackQuestion extends Node {
