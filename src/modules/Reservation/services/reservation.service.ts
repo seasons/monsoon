@@ -490,24 +490,20 @@ export class ReservationService {
           questions: {
             create: [
               {
-                question: `How many times did you wear this ${variantInfo.name}?`,
+                question: `What did you think about this?`,
                 options: {
-                  set: [
-                    "More than 6 times",
-                    "3-5 times",
-                    "1-2 times",
-                    "0 times",
-                  ],
+                  set: ["Disliked", "It was OK", "Loved it"],
                 },
                 type: MULTIPLE_CHOICE,
               },
               {
-                question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
+                question: `How many times did you wear this?`,
                 options: {
                   set: [
-                    "Buy used below retail",
-                    "Buy new at retail",
-                    "Would only rent",
+                    "Never wore it",
+                    "1-2 times",
+                    "3-5 times",
+                    "More than 6 times",
                   ],
                 },
                 type: MULTIPLE_CHOICE,
@@ -515,12 +511,14 @@ export class ReservationService {
               {
                 question: `Did it fit as expected?`,
                 options: {
-                  set: [
-                    "Ran oversized",
-                    "Fit true to size",
-                    "Ran small",
-                    "Didn’t fit at all",
-                  ],
+                  set: ["Fit small", "Fit true to size", "Fit oversized"],
+                },
+                type: MULTIPLE_CHOICE,
+              },
+              {
+                question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
+                options: {
+                  set: ["No", "Yes", "Buy below retail", "Would only rent"],
                 },
                 type: MULTIPLE_CHOICE,
               },

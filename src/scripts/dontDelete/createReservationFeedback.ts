@@ -124,8 +124,8 @@ const run = async () => {
   )
 
   const productVariantIDs = [
-    "ckoag00u50pwi0711rcdnt7w5",
-    "ckoam781f2y5n0711arvcna3z",
+    "ckokc81353rck0736zf95tzsp",
+    "ckokeko1f4g0r0736zrriej5t",
   ]
 
   const returnedPhysicalProducts = await ps.client.productVariants({
@@ -134,9 +134,9 @@ const run = async () => {
     },
   })
 
-  const prismaUser = await ps.client.user({ id: "ckosw2k9v01sx0950zmugwhr7" })
+  const prismaUser = await ps.client.user({ id: "ckoubweo703q60950jfp2kzwf" })
   const reservation = await ps.client.reservation({
-    id: "ckosw6zfe02900950gqp4s0gr",
+    id: "ckoud6xdb047m0950g2ppv7kn",
   })
 
   await reservationService.createReservationFeedbacksForVariants(

@@ -13773,6 +13773,8 @@ type ProductVariantEdge {
 type ProductVariantFeedback {
   id: ID!
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedbackQuestion!]
   reservationFeedback: ReservationFeedback!
   variant: ProductVariant!
@@ -13787,6 +13789,8 @@ type ProductVariantFeedbackConnection {
 input ProductVariantFeedbackCreateInput {
   id: ID
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput!
   variant: ProductVariantCreateOneInput!
@@ -13805,6 +13809,8 @@ input ProductVariantFeedbackCreateOneWithoutQuestionsInput {
 input ProductVariantFeedbackCreateWithoutQuestionsInput {
   id: ID
   isCompleted: Boolean!
+  rating: Float
+  review: String
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput!
   variant: ProductVariantCreateOneInput!
 }
@@ -13812,6 +13818,8 @@ input ProductVariantFeedbackCreateWithoutQuestionsInput {
 input ProductVariantFeedbackCreateWithoutReservationFeedbackInput {
   id: ID
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
   variant: ProductVariantCreateOneInput!
 }
@@ -13826,11 +13834,17 @@ enum ProductVariantFeedbackOrderByInput {
   id_DESC
   isCompleted_ASC
   isCompleted_DESC
+  rating_ASC
+  rating_DESC
+  review_ASC
+  review_DESC
 }
 
 type ProductVariantFeedbackPreviousValues {
   id: ID!
   isCompleted: Boolean!
+  rating: Float
+  review: String
 }
 
 type ProductVariantFeedbackQuestion {
@@ -14081,6 +14095,28 @@ input ProductVariantFeedbackScalarWhereInput {
   id_not_ends_with: ID
   isCompleted: Boolean
   isCompleted_not: Boolean
+  rating: Float
+  rating_not: Float
+  rating_in: [Float!]
+  rating_not_in: [Float!]
+  rating_lt: Float
+  rating_lte: Float
+  rating_gt: Float
+  rating_gte: Float
+  review: String
+  review_not: String
+  review_in: [String!]
+  review_not_in: [String!]
+  review_lt: String
+  review_lte: String
+  review_gt: String
+  review_gte: String
+  review_contains: String
+  review_not_contains: String
+  review_starts_with: String
+  review_not_starts_with: String
+  review_ends_with: String
+  review_not_ends_with: String
   AND: [ProductVariantFeedbackScalarWhereInput!]
   OR: [ProductVariantFeedbackScalarWhereInput!]
   NOT: [ProductVariantFeedbackScalarWhereInput!]
@@ -14106,6 +14142,8 @@ input ProductVariantFeedbackSubscriptionWhereInput {
 
 input ProductVariantFeedbackUpdateInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
   reservationFeedback: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput
   variant: ProductVariantUpdateOneRequiredInput
@@ -14113,10 +14151,14 @@ input ProductVariantFeedbackUpdateInput {
 
 input ProductVariantFeedbackUpdateManyDataInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
 }
 
 input ProductVariantFeedbackUpdateManyMutationInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
 }
 
 input ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput {
@@ -14145,12 +14187,16 @@ input ProductVariantFeedbackUpdateOneRequiredWithoutQuestionsInput {
 
 input ProductVariantFeedbackUpdateWithoutQuestionsDataInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
   reservationFeedback: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput
   variant: ProductVariantUpdateOneRequiredInput
 }
 
 input ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
   variant: ProductVariantUpdateOneRequiredInput
 }
@@ -14188,6 +14234,28 @@ input ProductVariantFeedbackWhereInput {
   id_not_ends_with: ID
   isCompleted: Boolean
   isCompleted_not: Boolean
+  rating: Float
+  rating_not: Float
+  rating_in: [Float!]
+  rating_not_in: [Float!]
+  rating_lt: Float
+  rating_lte: Float
+  rating_gt: Float
+  rating_gte: Float
+  review: String
+  review_not: String
+  review_in: [String!]
+  review_not_in: [String!]
+  review_lt: String
+  review_lte: String
+  review_gt: String
+  review_gte: String
+  review_contains: String
+  review_not_contains: String
+  review_starts_with: String
+  review_not_starts_with: String
+  review_ends_with: String
+  review_not_ends_with: String
   questions_every: ProductVariantFeedbackQuestionWhereInput
   questions_some: ProductVariantFeedbackQuestionWhereInput
   questions_none: ProductVariantFeedbackQuestionWhereInput
