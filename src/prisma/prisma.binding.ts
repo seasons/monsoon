@@ -27782,6 +27782,7 @@ type Reservation implements Node {
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -27811,6 +27812,7 @@ input ReservationCreateInput {
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -27856,6 +27858,7 @@ input ReservationCreateWithoutCustomerInput {
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -27880,6 +27883,7 @@ input ReservationCreateWithoutPackageEventsInput {
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -27904,6 +27908,7 @@ input ReservationCreateWithoutReceiptInput {
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -28269,6 +28274,8 @@ enum ReservationOrderByInput {
   shipped_DESC
   status_ASC
   status_DESC
+  returnedAt_ASC
+  returnedAt_DESC
   shippedAt_ASC
   shippedAt_DESC
   receivedAt_ASC
@@ -28298,6 +28305,7 @@ type ReservationPreviousValues {
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -28971,6 +28979,28 @@ input ReservationScalarWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [ReservationStatus!]
+  returnedAt: DateTime
+
+  """All values that are not equal to given value."""
+  returnedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  returnedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  returnedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  returnedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  returnedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  returnedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  returnedAt_gte: DateTime
   shippedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -29205,6 +29235,7 @@ input ReservationUpdateDataInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29229,6 +29260,7 @@ input ReservationUpdateInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29253,6 +29285,7 @@ input ReservationUpdateManyDataInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29266,6 +29299,7 @@ input ReservationUpdateManyMutationInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29319,6 +29353,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29342,6 +29377,7 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29365,6 +29401,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29504,6 +29541,28 @@ input ReservationWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [ReservationStatus!]
+  returnedAt: DateTime
+
+  """All values that are not equal to given value."""
+  returnedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  returnedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  returnedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  returnedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  returnedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  returnedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  returnedAt_gte: DateTime
   shippedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -39016,6 +39075,8 @@ export type ReservationOrderByInput =   'id_ASC' |
   'shipped_DESC' |
   'status_ASC' |
   'status_DESC' |
+  'returnedAt_ASC' |
+  'returnedAt_DESC' |
   'shippedAt_ASC' |
   'shippedAt_DESC' |
   'receivedAt_ASC' |
@@ -51225,6 +51286,7 @@ export interface ReservationCreateInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51270,6 +51332,7 @@ export interface ReservationCreateWithoutCustomerInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51294,6 +51357,7 @@ export interface ReservationCreateWithoutPackageEventsInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51318,6 +51382,7 @@ export interface ReservationCreateWithoutReceiptInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51761,6 +51826,14 @@ export interface ReservationScalarWhereInput {
   status_not?: ReservationStatus | null
   status_in?: ReservationStatus[] | ReservationStatus | null
   status_not_in?: ReservationStatus[] | ReservationStatus | null
+  returnedAt?: DateTime | null
+  returnedAt_not?: DateTime | null
+  returnedAt_in?: DateTime[] | DateTime | null
+  returnedAt_not_in?: DateTime[] | DateTime | null
+  returnedAt_lt?: DateTime | null
+  returnedAt_lte?: DateTime | null
+  returnedAt_gt?: DateTime | null
+  returnedAt_gte?: DateTime | null
   shippedAt?: DateTime | null
   shippedAt_not?: DateTime | null
   shippedAt_in?: DateTime[] | DateTime | null
@@ -51843,6 +51916,7 @@ export interface ReservationUpdateDataInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51867,6 +51941,7 @@ export interface ReservationUpdateInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51891,6 +51966,7 @@ export interface ReservationUpdateManyDataInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51904,6 +51980,7 @@ export interface ReservationUpdateManyMutationInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51957,6 +52034,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51980,6 +52058,7 @@ export interface ReservationUpdateWithoutPackageEventsDataInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -52003,6 +52082,7 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -52083,6 +52163,14 @@ export interface ReservationWhereInput {
   status_not?: ReservationStatus | null
   status_in?: ReservationStatus[] | ReservationStatus | null
   status_not_in?: ReservationStatus[] | ReservationStatus | null
+  returnedAt?: DateTime | null
+  returnedAt_not?: DateTime | null
+  returnedAt_in?: DateTime[] | DateTime | null
+  returnedAt_not_in?: DateTime[] | DateTime | null
+  returnedAt_lt?: DateTime | null
+  returnedAt_lte?: DateTime | null
+  returnedAt_gt?: DateTime | null
+  returnedAt_gte?: DateTime | null
   shippedAt?: DateTime | null
   shippedAt_not?: DateTime | null
   shippedAt_in?: DateTime[] | DateTime | null
@@ -58565,6 +58653,7 @@ export interface Reservation extends Node {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -58650,6 +58739,7 @@ export interface ReservationPreviousValues {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
