@@ -50,6 +50,7 @@ type Mutation {
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
   ): Reservation @hasRole(roles: [Admin])
+  returnItems(items: [ID!]!): Reservation @hasRole(roles: [Customer])
 }
 
 type ReservationFeedback {
@@ -200,6 +201,7 @@ type Reservation @cacheControl(maxAge: 0) {
   lastLocation: Location
   products: [PhysicalProduct!]!
   newProducts: [PhysicalProduct!]!
+  returnedProducts: [PhysicalProduct!]!
   packageEvents(
     where: PackageTransitEventWhereInput
     orderBy: PackageTransitEventOrderByInput
@@ -219,6 +221,7 @@ type Reservation @cacheControl(maxAge: 0) {
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
   returnAt: DateTime
+  returnedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
   adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])

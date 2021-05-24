@@ -16237,11 +16237,13 @@ type Reservation {
   returnedPackage: Package
   products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   newProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  returnedProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   packageEvents(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PackageTransitEvent!]
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -16269,11 +16271,13 @@ input ReservationCreateInput {
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
   newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -16312,11 +16316,13 @@ input ReservationCreateWithoutCustomerInput {
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
   newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -16336,10 +16342,12 @@ input ReservationCreateWithoutPackageEventsInput {
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
   newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -16359,11 +16367,13 @@ input ReservationCreateWithoutReceiptInput {
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
   newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -16585,6 +16595,8 @@ enum ReservationOrderByInput {
   shipped_DESC
   status_ASC
   status_DESC
+  returnedAt_ASC
+  returnedAt_DESC
   shippedAt_ASC
   shippedAt_DESC
   receivedAt_ASC
@@ -16614,6 +16626,7 @@ type ReservationPreviousValues {
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -16986,6 +16999,14 @@ input ReservationScalarWhereInput {
   status_not: ReservationStatus
   status_in: [ReservationStatus!]
   status_not_in: [ReservationStatus!]
+  returnedAt: DateTime
+  returnedAt_not: DateTime
+  returnedAt_in: [DateTime!]
+  returnedAt_not_in: [DateTime!]
+  returnedAt_lt: DateTime
+  returnedAt_lte: DateTime
+  returnedAt_gt: DateTime
+  returnedAt_gte: DateTime
   shippedAt: DateTime
   shippedAt_not: DateTime
   shippedAt_in: [DateTime!]
@@ -17094,11 +17115,13 @@ input ReservationUpdateDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17117,11 +17140,13 @@ input ReservationUpdateInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17138,6 +17163,7 @@ input ReservationUpdateManyDataInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17151,6 +17177,7 @@ input ReservationUpdateManyMutationInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17205,11 +17232,13 @@ input ReservationUpdateWithoutCustomerDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17228,10 +17257,12 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17250,11 +17281,13 @@ input ReservationUpdateWithoutReceiptDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17316,6 +17349,9 @@ input ReservationWhereInput {
   newProducts_every: PhysicalProductWhereInput
   newProducts_some: PhysicalProductWhereInput
   newProducts_none: PhysicalProductWhereInput
+  returnedProducts_every: PhysicalProductWhereInput
+  returnedProducts_some: PhysicalProductWhereInput
+  returnedProducts_none: PhysicalProductWhereInput
   packageEvents_every: PackageTransitEventWhereInput
   packageEvents_some: PackageTransitEventWhereInput
   packageEvents_none: PackageTransitEventWhereInput
@@ -17337,6 +17373,14 @@ input ReservationWhereInput {
   status_not: ReservationStatus
   status_in: [ReservationStatus!]
   status_not_in: [ReservationStatus!]
+  returnedAt: DateTime
+  returnedAt_not: DateTime
+  returnedAt_in: [DateTime!]
+  returnedAt_not_in: [DateTime!]
+  returnedAt_lt: DateTime
+  returnedAt_lte: DateTime
+  returnedAt_gt: DateTime
+  returnedAt_gte: DateTime
   shippedAt: DateTime
   shippedAt_not: DateTime
   shippedAt_in: [DateTime!]
