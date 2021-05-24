@@ -233,8 +233,6 @@ export class ReservationService {
       )
     }
 
-    // Check if receivedAt has been set, if it has don't update the reservation again
-
     await this.prisma.client2.reservation.update({
       data: {
         returnedProducts: {
