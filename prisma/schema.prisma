@@ -49,7 +49,7 @@ model BagItem {
   status           String
   customerId       String?         @map("customer") @db.VarChar(25)
   customer         Customer?       @relation(fields: [customerId], references: [id])
-  productVariantId String?         @map("productVariantId") @db.VarChar(25)
+  productVariantId String?         @map("productVariant") @db.VarChar(25)
   productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
 }
 
