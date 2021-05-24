@@ -9,13 +9,14 @@ import { isArray } from "lodash"
 import { getReturnTypeFromInfo } from "./utils"
 
 export const FindManyArgs = createParamDecorator(
-  (data, context: ExecutionContext): any => {
+  ({ transformArgs = args => args }, context: ExecutionContext): any => {
     const [obj, args, ctx, info] = context.getArgs()
     let modelName = getReturnTypeFromInfo(info)
     if (modelName.includes("Connection")) {
       modelName = modelName.replace("Connection", "") // e.g BlogPostConnection => BlogPost
     }
 
+    const transformedArgs = transformArgs(args)
     const {
       where,
       orderBy,
@@ -25,7 +26,7 @@ export const FindManyArgs = createParamDecorator(
       after,
       before,
       count,
-    } = args
+    } = transformedArgs
     // to support count on e.g blogPosts query
     const first = count || _first
 

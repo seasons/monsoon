@@ -10,7 +10,8 @@ export class BrandQueriesResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @Query()
-  async brand(@Args() args, @Info() info, @Select() select) {
+  async brand(@Args() args, @Select() select) {
+    let data
     if (typeof args?.published === "boolean") {
       const brand: any = await this.prisma.client2.brand.findUnique({
         select: {
@@ -21,16 +22,22 @@ export class BrandQueriesResolver {
       })
 
       if (args?.published === brand?.published) {
-        return brand
+        data = brand
       } else {
         throw new ApolloError("Brand not found", "404")
       }
     }
 
-    return await this.prisma.client2.brand.findUnique({
-      ...select,
-      ...args,
-    })
+    if (!data) {
+      data = await this.prisma.client2.brand.findUnique({
+        ...select,
+        ...args,
+      })
+    }
+
+    const sanitizedData = this.prisma.sanitizePayload(data, "Brand")
+
+    return sanitizedData
   }
 
   @Query()
@@ -50,6 +57,7 @@ export class BrandQueriesResolver {
     @FindManyArgs() { where, orderBy },
     @Select() select
   ) {
+    // TODO: Need to sanitize the edges
     const result = await findManyCursorConnection(
       args =>
         this.prisma.client2.brand.findMany({
