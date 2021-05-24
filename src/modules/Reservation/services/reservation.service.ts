@@ -32,7 +32,7 @@ import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { addFragmentToInfo } from "graphql-binding"
-import { head, omit } from "lodash"
+import { head, intersection, omit } from "lodash"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
 
@@ -213,6 +213,39 @@ export class ReservationService {
     }
 
     return reservationReturnData
+  }
+
+  async returnItems(items: string[], customer: Customer) {
+    const lastReservation = await this.reservationUtils.getLatestReservation(
+      customer
+    )
+
+    // If there's an item being returned that isn't in the current reservation
+    // throw an error
+    if (
+      intersection(
+        lastReservation.products.map(p => p.id),
+        items
+      ).length !== items.length
+    ) {
+      throw new Error(
+        "One of the returned items isn't in the current reservation"
+      )
+    }
+
+    // Check if receivedAt has been set, if it has don't update the reservation again
+
+    await this.prisma.client2.reservation.update({
+      data: {
+        returnedProducts: {
+          set: items.map(item => ({ id: item })),
+        },
+        returnedAt: new Date(),
+      },
+      where: { id: String(lastReservation.id) },
+    })
+
+    return lastReservation
   }
 
   async removeRestockNotifications(items, customer) {
