@@ -1,8 +1,9 @@
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
+import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { addFragmentToInfo } from "graphql-binding"
 
 @Resolver()
 export class BrandQueriesResolver {
@@ -33,12 +34,34 @@ export class BrandQueriesResolver {
   }
 
   @Query()
-  async brands(@Args() args, @Info() info) {
-    return this.prisma.binding.query.brands(args, info)
+  async brands(@FindManyArgs() args, @Select() select) {
+    const data = await this.prisma.client2.brand.findMany({
+      ...args,
+      ...select,
+    })
+    const sanitizedData = this.prisma.sanitizePayload(data, "Brand")
+
+    return sanitizedData
   }
 
   @Query()
-  async brandsConnection(@Args() args, @Info() info) {
-    return this.prisma.binding.query.brandsConnection(args, info)
+  async brandsConnection(
+    @Args() args,
+    @FindManyArgs() { where, orderBy },
+    @Select() select
+  ) {
+    const result = await findManyCursorConnection(
+      args =>
+        this.prisma.client2.brand.findMany({
+          ...args,
+          ...select,
+          where,
+          orderBy,
+        }),
+      () => this.prisma.client2.brand.count({ where }),
+      { ...args }
+    )
+    const sanitizedResult = this.prisma.sanitizeConnection(result)
+    return sanitizedResult
   }
 }

@@ -22,7 +22,10 @@ export class LogsScheduledJobs {
         AND: [{ tableName: "PhysicalProduct" }, { interpretedAt: null }],
       },
     })
-    logsToInterpret = this.prisma.sanitize(logsToInterpret, "AdminActionLog")
+    logsToInterpret = this.prisma.sanitizePayload(
+      logsToInterpret,
+      "AdminActionLog"
+    )
 
     const allReferencedWarehouseLocationIDs = logsToInterpret
       .filter(a => !!a.changedFields)
@@ -35,7 +38,7 @@ export class LogsScheduledJobs {
         select: { id: true, barcode: true },
       }
     )
-    allReferencedWarehouseLocations = this.prisma.sanitize(
+    allReferencedWarehouseLocations = this.prisma.sanitizePayload(
       allReferencedWarehouseLocations,
       "WarehouseLocation"
     )

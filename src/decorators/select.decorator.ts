@@ -1,18 +1,20 @@
-import {
-  PrismaService,
-  SCALAR_LIST_FIELD_NAMES,
-} from "@app/prisma/prisma.service"
+import { SCALAR_LIST_FIELD_NAMES } from "@app/prisma/prisma.service"
 import { ExecutionContext, createParamDecorator } from "@nestjs/common"
 import { PrismaSelect } from "@paljs/plugins"
 import graphqlFields from "graphql-fields"
 import { isEmpty } from "lodash"
 
+import { getReturnTypeFromInfo } from "./utils"
+
 export const Select = createParamDecorator(
   (data, context: ExecutionContext): any => {
     const [obj, args, ctx, info] = context.getArgs()
-    const modelName = info.returnType.name
+    const modelName = getReturnTypeFromInfo(info)
 
-    const select = infoToSelect(info, modelName, ctx.modelFieldsByModelName)
+    let select = infoToSelect(info, modelName, ctx.modelFieldsByModelName)
+    if (isEmpty(select.select)) {
+      select = null
+    }
     return select
   }
 )
@@ -20,6 +22,26 @@ export const Select = createParamDecorator(
 const infoToSelect = (info, modelName, modelFieldsByModelName) => {
   const prismaSelect = new PrismaSelect(info)
   let fields = graphqlFields(info)
+
+  // If it's a Connection query, get the select for the node on the edges
+  if (modelName.includes("Connection")) {
+    const edgesSelection = info.fieldNodes[0].selectionSet.selections.find(
+      a => a.name.value === "edges"
+    )
+    const nodeSelection = edgesSelection?.selectionSet?.selections?.find(
+      a => a.name.value === "node"
+    )
+    const returnType = modelName.replace("Connection", "")
+    return infoToSelect(
+      {
+        fieldNodes: [nodeSelection],
+        returnType,
+        fragments: info.fragments,
+      },
+      returnType,
+      modelFieldsByModelName
+    )
+  }
 
   const modelFields = modelFieldsByModelName[modelName]
   if (isEmpty(modelFields)) {
@@ -62,10 +84,7 @@ const infoToSelect = (info, modelName, modelFieldsByModelName) => {
               )
             } else {
               // field is coming from one or more fragments. get the field nodes accordingly
-              const returnType =
-                typeof info.returnType === "object"
-                  ? info.returnType.name
-                  : info.returnType
+              const returnType = getReturnTypeFromInfo(info)
               const parentFragments = Object.keys(info.fragments)
                 .filter(
                   k => info.fragments[k].typeCondition.name.value === returnType
