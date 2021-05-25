@@ -14,36 +14,36 @@ export class SizeQueriesResolver {
 
   @Query()
   async bottomSize(@Args() { where }, @Select({}) select) {
-    return this.queryUtils.resolveFindUnique(where, select, "BottomSize")
+    return this.queryUtils.resolveFindUnique({ where, select }, "BottomSize")
   }
 
   @Query()
   async bottomSizes(@FindManyArgs({}) args, @Select({}) select) {
-    return this.queryUtils.resolveFindMany(args, select, "BottomSize")
+    return this.queryUtils.resolveFindMany({ ...args, select }, "BottomSize")
   }
 
   @Query()
   async topSize(@Args() { where }, @Select({}) select) {
-    return this.queryUtils.resolveFindUnique(where, select, "TopSize")
+    return this.queryUtils.resolveFindUnique({ where, select }, "TopSize")
   }
 
   @Query()
   async topSizes(@FindManyArgs({}) args, @Select({}) select) {
-    return this.queryUtils.resolveFindMany(args, select, "TopSize")
+    return this.queryUtils.resolveFindMany({ ...args, select }, "TopSize")
   }
 
   @Query()
   async size(@Args() { where }, @Select({}) select) {
-    return this.queryUtils.resolveFindUnique(where, select, "Size")
+    return this.queryUtils.resolveFindUnique({ where, select }, "Size")
   }
 
   @Query()
   async sizes(@FindManyArgs({}) args, @Select({}) select) {
-    return this.queryUtils.resolveFindMany(args, select, "Size")
+    return this.queryUtils.resolveFindMany({ ...args, select }, "Size")
   }
 
   @Query()
   async sizesConnection(@Args() args, @Select({}) select) {
-    return this.queryUtils.resolveConnection(args, select, "Size")
+    return this.queryUtils.resolveConnection({ ...args, select }, "Size")
   }
 }

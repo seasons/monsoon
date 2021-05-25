@@ -113,27 +113,39 @@ export class QueryUtilsService {
     return returnObj
   }
 
-  async resolveFindMany(findManyArgs, select, modelName) {
+  async resolveFindMany(findManyArgs, modelName) {
     const data = await this.prisma.client2[lowerFirst(modelName)].findMany({
       ...findManyArgs,
-      ...select,
     })
     const sanitizedData = this.prisma.sanitizePayload(data, modelName)
 
     return sanitizedData
   }
 
-  async resolveFindUnique(where, select, modelName) {
-    const data = await this.prisma.client2[lowerFirst(modelName)].findUnique({
-      where,
-      ...select,
-    })
+  async resolveFindUnique(
+    findUniqueArgs: { where: any; select?: any; include?: any },
+    modelName
+  ) {
+    const data = await this.prisma.client2[lowerFirst(modelName)].findUnique(
+      findUniqueArgs
+    )
     const sanitizedData = this.prisma.sanitizePayload(data, modelName)
 
     return sanitizedData
   }
 
-  async resolveConnection(args, select, modelName) {
+  async resolveConnection(
+    args: {
+      where?: any
+      orderBy?: any
+      first?: number
+      last?: number
+      before?: string
+      after?: string
+      select?: any
+    },
+    modelName
+  ) {
     const { where, orderBy } = QueryUtilsService.prismaOneToPrismaTwoArgs(
       args,
       modelName
@@ -144,7 +156,6 @@ export class QueryUtilsService {
       async args => {
         const data = await modelPrismaClient.findMany({
           ...args,
-          ...select,
           where,
           orderBy,
         })

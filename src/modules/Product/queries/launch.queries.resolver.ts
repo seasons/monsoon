@@ -7,14 +7,11 @@ import { PrismaService } from "@prisma1/prisma.service"
 
 @Resolver()
 export class LaunchQueriesResolver {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly queryUtils: QueryUtilsService
-  ) {}
+  constructor(private readonly queryUtils: QueryUtilsService) {}
 
   @Query()
-  async launch(@Args() args, @Select({}) select) {
-    return this.queryUtils.resolveFindUnique(args.where, select, "Launch")
+  async launch(@Args() { where }, @Select({}) select) {
+    return this.queryUtils.resolveFindUnique({ where, select }, "Launch")
   }
 
   @Query()
@@ -44,11 +41,11 @@ export class LaunchQueriesResolver {
     args,
     @Select({}) select
   ) {
-    return this.queryUtils.resolveFindMany(args, select, "Launch")
+    return this.queryUtils.resolveFindMany({ ...args, select }, "Launch")
   }
 
   @Query()
   async launchesConnection(@Args() args, @Select({}) select) {
-    return this.queryUtils.resolveConnection(args, select, "Launch")
+    return this.queryUtils.resolveConnection({ ...args, select }, "Launch")
   }
 }

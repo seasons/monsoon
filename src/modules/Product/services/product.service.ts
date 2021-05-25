@@ -21,7 +21,6 @@ import {
 import {
   Customer,
   Product as PrismaBindingProduct,
-  ProductVariantConnection,
 } from "@prisma1/prisma.binding"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
@@ -58,15 +57,17 @@ export class ProductService {
       "Product"
     )
 
-    return this.queryUtils.resolveFindMany(findManyArgs, select, "Product")
+    return this.queryUtils.resolveFindMany(
+      { ...findManyArgs, select },
+      "Product"
+    )
   }
 
   async getProductsConnection(args, select) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
 
     return this.queryUtils.resolveConnection(
-      { ...args, ...queryOptions },
-      select,
+      { ...args, ...queryOptions, select },
       "Product"
     )
   }
@@ -560,8 +561,7 @@ export class ProductService {
     }
 
     return this.queryUtils.resolveConnection(
-      argsWithCustomerWhere,
-      select,
+      { ...argsWithCustomerWhere, select },
       "ProductVariant"
     )
   }

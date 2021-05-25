@@ -33,7 +33,7 @@ export const Select: (
     if (isEmpty(select.select)) {
       select = null
     }
-    return select
+    return select.select
   }
 )
 

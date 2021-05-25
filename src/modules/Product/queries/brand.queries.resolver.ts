@@ -46,11 +46,11 @@ export class BrandQueriesResolver {
 
   @Query()
   async brands(@FindManyArgs({}) args, @Select({}) select) {
-    return this.queryUtils.resolveFindMany(args, select, "Brand")
+    return this.queryUtils.resolveFindMany({ ...args, select }, "Brand")
   }
 
   @Query()
   async brandsConnection(@Args() args, @Select({}) select) {
-    return this.queryUtils.resolveConnection(args, select, "Brand")
+    return this.queryUtils.resolveConnection({ ...args, select }, "Brand")
   }
 }

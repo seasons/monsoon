@@ -2,16 +2,13 @@ import { Customer, User } from "@app/decorators"
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
-import { addFragmentToInfo } from "graphql-binding"
+import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 
 import { ProductService } from "../services/product.service"
 
 @Resolver()
 export class ProductQueriesResolver {
   constructor(
-    private readonly prisma: PrismaService,
     private readonly productService: ProductService,
     private readonly queryUtils: QueryUtilsService
   ) {}
@@ -26,7 +23,7 @@ export class ProductQueriesResolver {
     const scope = !!user ? "PRIVATE" : "PUBLIC"
     info.cacheControl.setCacheHint({ maxAge: 600, scope })
 
-    return await this.queryUtils.resolveFindUnique(where, select, "Product")
+    return await this.queryUtils.resolveFindUnique({ where, select }, "Product")
   }
 
   @Query()
@@ -53,14 +50,16 @@ export class ProductQueriesResolver {
 
   @Query()
   async productRequests(@FindManyArgs({}) args, @Select({}) select) {
-    return await this.queryUtils.resolveFindMany(args, select, "ProductRequest")
+    return await this.queryUtils.resolveFindMany(
+      { ...args, select },
+      "ProductRequest"
+    )
   }
 
   @Query()
   async productFunctions(@FindManyArgs({}) args, @Select({}) select) {
     return await this.queryUtils.resolveFindMany(
-      args,
-      select,
+      { ...args, select },
       "ProductFunction"
     )
   }
@@ -68,15 +67,17 @@ export class ProductQueriesResolver {
   @Query()
   async productMaterialCategories(@FindManyArgs({}) args, @Select({}) select) {
     return await this.queryUtils.resolveFindMany(
-      args,
-      select,
+      { ...args, select },
       "ProductMaterialCategory"
     )
   }
 
   @Query()
   async productModels(@FindManyArgs({}) args, @Select({}) select) {
-    return await this.queryUtils.resolveFindMany(args, select, "ProductModel")
+    return await this.queryUtils.resolveFindMany(
+      { ...args, select },
+      "ProductModel"
+    )
   }
 
   @Query()
@@ -97,7 +98,10 @@ export class ProductQueriesResolver {
       return products
     }
 
-    return this.queryUtils.resolveConnection(args, select, "ProductVariant")
+    return this.queryUtils.resolveConnection(
+      { ...args, select },
+      "ProductVariant"
+    )
   }
 
   @Query()
@@ -106,7 +110,10 @@ export class ProductQueriesResolver {
     @Select({ withFragment: `fragment EnsureId on ProductVariant { id }` })
     select
   ) {
-    return this.queryUtils.resolveFindUnique(where, select, "ProductVariant")
+    return this.queryUtils.resolveFindUnique(
+      { where, select },
+      "ProductVariant"
+    )
   }
 
   @Query()
@@ -115,12 +122,18 @@ export class ProductQueriesResolver {
     @Select({ withFragment: `fragment EnsureId on PhysicalProduct { id }` })
     select
   ) {
-    return this.queryUtils.resolveFindUnique(where, select, "PhysicalProduct")
+    return this.queryUtils.resolveFindUnique(
+      { where, select },
+      "PhysicalProduct"
+    )
   }
 
   @Query()
   async physicalProducts(@FindManyArgs({}) args, @Select({}) select) {
-    return this.queryUtils.resolveFindMany(args, select, "PhysicalProduct")
+    return this.queryUtils.resolveFindMany(
+      { ...args, select },
+      "PhysicalProduct"
+    )
   }
 
   @Query()
@@ -131,27 +144,36 @@ export class ProductQueriesResolver {
     })
     select
   ) {
-    return this.queryUtils.resolveConnection(args, select, "PhysicalProduct")
+    return this.queryUtils.resolveConnection(
+      { ...args, select },
+      "PhysicalProduct"
+    )
   }
 
   @Query()
   async categories(@FindManyArgs({}) args, @Select({}) select) {
-    return await this.queryUtils.resolveFindMany(args, select, "Category")
+    return await this.queryUtils.resolveFindMany(
+      { ...args, select },
+      "Category"
+    )
   }
 
   @Query()
   async category(@Args() { where }, @Select({}) select) {
-    return await this.queryUtils.resolveFindUnique(where, select, "Category")
+    return await this.queryUtils.resolveFindUnique(
+      { where, select },
+      "Category"
+    )
   }
 
   @Query()
   async categoriesConnection(@Args() args, @Select({}) select) {
-    return this.queryUtils.resolveConnection(args, select, "Category")
+    return this.queryUtils.resolveConnection({ ...args, select }, "Category")
   }
 
   @Query()
   async colors(@FindManyArgs({}) args, @Select({}) select) {
-    return await this.queryUtils.resolveFindMany(args, select, "Color")
+    return await this.queryUtils.resolveFindMany({ ...args, select }, "Color")
   }
 
   @Query()
@@ -172,14 +194,13 @@ export class ProductQueriesResolver {
 
   @Query()
   async tags(@FindManyArgs({}) args, @Select({}) select) {
-    return await this.queryUtils.resolveFindMany(args, select, "Tag")
+    return await this.queryUtils.resolveFindMany({ ...args, select }, "Tag")
   }
 
   @Query()
   async warehouseLocations(@FindManyArgs({}) args, @Select({}) select) {
     return await this.queryUtils.resolveFindMany(
-      args,
-      select,
+      { ...args, select },
       "WarehouseLocation"
     )
   }
