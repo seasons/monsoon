@@ -114,9 +114,8 @@ export class QueryUtilsService {
   }
 
   async resolveFindMany(findManyArgs, modelName) {
-    const data = await this.prisma.client2[lowerFirst(modelName)].findMany({
-      ...findManyArgs,
-    })
+    const modelClient = this.prisma.client2[lowerFirst(modelName)]
+    const data = await modelClient.findMany(findManyArgs)
     const sanitizedData = this.prisma.sanitizePayload(data, modelName)
 
     return sanitizedData
@@ -126,16 +125,15 @@ export class QueryUtilsService {
     findUniqueArgs: { where: any; select?: any; include?: any },
     modelName
   ) {
-    const data = await this.prisma.client2[lowerFirst(modelName)].findUnique(
-      findUniqueArgs
-    )
+    const modelClient = this.prisma.client2[lowerFirst(modelName)]
+    const data = await modelClient.findUnique(findUniqueArgs)
     const sanitizedData = this.prisma.sanitizePayload(data, modelName)
 
     return sanitizedData
   }
 
   async resolveConnection(
-    args: {
+    queryArgs: {
       where?: any
       orderBy?: any
       first?: number
@@ -147,22 +145,23 @@ export class QueryUtilsService {
     modelName
   ) {
     const { where, orderBy } = QueryUtilsService.prismaOneToPrismaTwoArgs(
-      args,
+      queryArgs,
       modelName
     )
 
-    const modelPrismaClient = this.prisma.client2[lowerFirst(modelName)]
+    const modelClient = this.prisma.client2[lowerFirst(modelName)]
     const result = await findManyCursorConnection(
       async args => {
-        const data = await modelPrismaClient.findMany({
+        const data = await modelClient.findMany({
           ...args,
           where,
           orderBy,
+          select: queryArgs.select,
         })
         return this.prisma.sanitizePayload(data, modelName)
       },
-      () => modelPrismaClient.count({ where }),
-      { ...args }
+      () => modelClient.count({ where }),
+      pick(queryArgs, ["first", "last", "after", "before"])
     )
 
     const sanitizedResult = this.prisma.sanitizeConnection(result)
