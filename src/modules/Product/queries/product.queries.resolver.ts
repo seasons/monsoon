@@ -39,7 +39,7 @@ export class ProductQueriesResolver {
 
   @Query()
   async productsConnection(
-    @FindManyArgs({}) args,
+    @Args() args,
     @Select({
       withFragment: `fragment EnsureId on ProductConnection { edges { node { id } } }`,
     })
