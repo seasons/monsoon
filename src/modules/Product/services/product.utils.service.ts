@@ -139,22 +139,13 @@ export class ProductUtilsService {
   }
 
   async queryOptionsForProducts(args) {
-    const category = args.category || "all"
-    const brand = args.brand || "all"
-    const brands = args.brands || [brand]
+    const where = args.where || {}
     const orderBy = args.orderBy || "createdAt_DESC"
     const sizes = args.sizes || []
-    const colors = args.colors || []
 
     // Add filtering by sizes in query
-    const where = args.where || {}
     if (sizes && sizes.length > 0) {
       where.variants_some = { displayShort: { display_in: sizes } }
-    }
-    // If client wants to sort by name, we will assume that they
-    // want to sort by brand name as well
-    if (orderBy.includes("name_")) {
-      return await this.productsAlphabetically(category, orderBy, sizes, brands)
     }
 
     const filters = await this.filters(args)
@@ -430,66 +421,6 @@ export class ProductUtilsService {
       (acc, curVal) => union(acc, curVal.physicalProducts),
       []
     )
-  }
-
-  private async productsAlphabetically(
-    category: string,
-    orderBy: BrandOrderByInput,
-    sizes: [string],
-    brands: [string]
-  ) {
-    const brandsQuery =
-      brands.length > 0 && brands?.[0] !== "all"
-        ? `brand: { slug_in: ${brands} },`
-        : ""
-
-    const _brands = await this.prisma.binding.query.brands(
-      { orderBy },
-      `
-      {
-        name
-        products(
-          orderBy: name_ASC,
-          where: {
-            ${category !== "all" ? `category: { slug: "${category}" },` : ""}
-            ${brandsQuery}
-            status: Available,
-            variants_some: { size_in: [${sizes}] }
-          }
-        ) {
-          id
-          name
-          description
-          images {
-            id
-            url
-          }
-          modelSize
-          modelHeight
-          externalURL
-          tags
-          retailPrice
-          status
-          createdAt
-          updatedAt
-          brand {
-            id
-            name
-          }
-          variants {
-            id
-            size
-            total
-            reservable
-            nonReservable
-            reserved
-          }
-        }
-      }
-      `
-    )
-    const products = _brands.map(b => b.products).flat()
-    return products
   }
 
   async deepUpsertSize({

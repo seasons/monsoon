@@ -10,7 +10,7 @@ export class BlogQueriesResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @Query()
-  async blogPost(@Args() { where }, @Select() select) {
+  async blogPost(@Args() { where }, @Select({}) select) {
     const data = await this.prisma.client2.blogPost.findUnique({
       where,
       ...select,
@@ -20,7 +20,7 @@ export class BlogQueriesResolver {
   }
 
   @Query()
-  async blogPosts(@FindManyArgs({}) { orderBy, ...args }, @Select() select) {
+  async blogPosts(@FindManyArgs({}) { orderBy, ...args }, @Select({}) select) {
     const data = await this.prisma.client2.blogPost.findMany({
       ...args,
       orderBy: orderBy || { webflowCreatedAt: "desc" },
@@ -35,7 +35,7 @@ export class BlogQueriesResolver {
   async blogPostsConnection(
     @Args() args,
     @FindManyArgs({}) { where, orderBy },
-    @Select() select
+    @Select({}) select
   ) {
     const result = await findManyCursorConnection(
       args =>

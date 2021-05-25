@@ -10,7 +10,7 @@ export class BrandQueriesResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @Query()
-  async brand(@Args() args, @Select() select) {
+  async brand(@Args() args, @Select({}) select) {
     let data
     if (typeof args?.published === "boolean") {
       const brand: any = await this.prisma.client2.brand.findUnique({
@@ -41,7 +41,7 @@ export class BrandQueriesResolver {
   }
 
   @Query()
-  async brands(@FindManyArgs({}) args, @Select() select) {
+  async brands(@FindManyArgs({}) args, @Select({}) select) {
     const data = await this.prisma.client2.brand.findMany({
       ...args,
       ...select,
@@ -55,7 +55,7 @@ export class BrandQueriesResolver {
   async brandsConnection(
     @Args() args,
     @FindManyArgs({}) { where, orderBy },
-    @Select() select
+    @Select({}) select
   ) {
     // TODO: Need to sanitize the edges
     const result = await findManyCursorConnection(

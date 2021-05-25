@@ -9,7 +9,7 @@ export class LaunchQueriesResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @Query()
-  async launch(@Args() args, @Select() select) {
+  async launch(@Args() args, @Select({}) select) {
     const data = await this.prisma.client2.launch.findUnique({
       ...select,
       ...args,
@@ -45,7 +45,7 @@ export class LaunchQueriesResolver {
       },
     })
     args,
-    @Select() select
+    @Select({}) select
   ) {
     const data = await this.prisma.client2.launch.findMany({
       ...args,
@@ -60,7 +60,7 @@ export class LaunchQueriesResolver {
   async launchesConnection(
     @Args() args,
     @FindManyArgs({}) { where, orderBy },
-    @Select() select
+    @Select({}) select
   ) {
     // TODO: Need to sanitize the edges
     const result = await findManyCursorConnection(

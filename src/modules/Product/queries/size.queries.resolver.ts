@@ -9,7 +9,7 @@ export class SizeQueriesResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @Query()
-  async bottomSize(@Args() args, @Select() select) {
+  async bottomSize(@Args() args, @Select({}) select) {
     const data = await this.prisma.client2.bottomSize.findUnique({
       ...select,
       ...args,
@@ -21,7 +21,7 @@ export class SizeQueriesResolver {
   }
 
   @Query()
-  async bottomSizes(@FindManyArgs({}) args, @Select() select) {
+  async bottomSizes(@FindManyArgs({}) args, @Select({}) select) {
     const data = await this.prisma.client2.bottomSize.findMany({
       ...args,
       ...select,
@@ -32,7 +32,7 @@ export class SizeQueriesResolver {
   }
 
   @Query()
-  async topSize(@Args() args, @Select() select) {
+  async topSize(@Args() args, @Select({}) select) {
     const data = await this.prisma.client2.topSize.findUnique({
       ...select,
       ...args,
@@ -44,7 +44,7 @@ export class SizeQueriesResolver {
   }
 
   @Query()
-  async topSizes(@FindManyArgs({}) args, @Select() select) {
+  async topSizes(@FindManyArgs({}) args, @Select({}) select) {
     const data = await this.prisma.client2.topSize.findMany({
       ...args,
       ...select,
@@ -55,7 +55,7 @@ export class SizeQueriesResolver {
   }
 
   @Query()
-  async size(@Args() args, @Select() select) {
+  async size(@Args() args, @Select({}) select) {
     const data = await this.prisma.client2.size.findUnique({
       ...select,
       ...args,
@@ -67,7 +67,7 @@ export class SizeQueriesResolver {
   }
 
   @Query()
-  async sizes(@FindManyArgs({}) args, @Select() select) {
+  async sizes(@FindManyArgs({}) args, @Select({}) select) {
     const data = await this.prisma.client2.size.findMany({
       ...args,
       ...select,
@@ -81,7 +81,7 @@ export class SizeQueriesResolver {
   async sizesConnection(
     @Args() args,
     @FindManyArgs({}) { where, orderBy },
-    @Select() select
+    @Select({}) select
   ) {
     // TODO: Need to sanitize the edges
     const result = await findManyCursorConnection(

@@ -19,7 +19,7 @@ export class ProductQueriesResolver {
     @Args() { where },
     @Info() info,
     @User() user,
-    @Select() select
+    @Select({}) select
   ) {
     const scope = !!user ? "PRIVATE" : "PUBLIC"
     info.cacheControl.setCacheHint({ maxAge: 600, scope })
@@ -35,22 +35,13 @@ export class ProductQueriesResolver {
 
   @Query()
   async products(
-    //@ts-ignore
-    @FindManyArgs({})
-    args,
-    @Info() info,
-    @Select() select
+    @Args() args,
+    @Select({
+      withFragment: `fragment EnsureId on Product { id }`,
+    })
+    select
   ) {
-    // Will need to update this library before updating this resolver:
-    // https://github.com/prisma/binding-argument-transform/commits/master
-    return await this.productService.getProducts(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on Product { id }`
-      )
-    )
+    return await this.productService.getProducts(args, select)
   }
 
   @Query()
@@ -136,7 +127,7 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async physicalProducts(@FindManyArgs({}) args, @Select() select) {
+  async physicalProducts(@FindManyArgs({}) args, @Select({}) select) {
     const data = await this.prisma.client2.physicalProduct.findMany({
       ...args,
       ...select,
@@ -204,7 +195,7 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async warehouseLocations(@FindManyArgs({}) args, @Select() select) {
+  async warehouseLocations(@FindManyArgs({}) args, @Select({}) select) {
     const data = await this.prisma.client2.warehouseLocation.findMany({
       ...args,
       ...select,

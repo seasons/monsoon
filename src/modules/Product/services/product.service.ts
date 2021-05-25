@@ -1,3 +1,4 @@
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
@@ -46,17 +47,22 @@ export class ProductService {
     private readonly utils: UtilsService
   ) {}
 
-  async transformProductsArgs(args) {
-    return args
-    // TODO
-  }
-  async getProducts(args, info) {
+  async getProducts(args, select) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
-    const products = await this.prisma.binding.query.products(
-      { ...args, ...queryOptions },
-      info
+    const findManyArgs = QueryUtilsService.prismaOneToPrismaTwoArgs(
+      {
+        ...args,
+        ...queryOptions,
+      },
+      "Product"
     )
-    return products
+
+    const data = await this.prisma.client2.product.findMany({
+      ...findManyArgs,
+      ...select,
+    })
+    const sanitizedData = this.prisma.sanitizePayload(data, "Product")
+    return sanitizedData
   }
 
   async getProductsConnection(args, info) {
