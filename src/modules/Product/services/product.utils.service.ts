@@ -1,6 +1,7 @@
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
+import { ProductVariant } from "@prisma/client"
 import {
   BrandOrderByInput,
   Category,
@@ -43,18 +44,13 @@ export class ProductUtilsService {
   }
 
   async getProductStyleCode(productID) {
-    const prod = await this.prisma.binding.query.product(
-      {
+    const prod = this.prisma.sanitizePayload(
+      await this.prisma.client2.product.findUnique({
         where: { id: productID },
-      },
-      `{
-        id
-        variants {
-          id
-          sku
-        }
-    }`
-    )
+        select: { id: true, variants: { select: { id: true, sku: true } } },
+      }),
+      "Product"
+    ) as Product & { variants: [ProductVariant] }
     const firstVariant = head(prod?.variants)
     return !!firstVariant ? this.getStyleCodeFromSKU(firstVariant.sku) : null
   }
@@ -561,14 +557,14 @@ export class ProductUtilsService {
   }
 
   async getAllStyleCodesForBrand(brandID) {
-    const productVariants = await this.prisma.binding.query.productVariants(
-      {
-        where: { product: { brand: { id: brandID } } },
-      },
-      `{
-      id 
-      sku
-    }`
+    const _productVariants = await this.prisma.client2.productVariant.findMany({
+      // TODO: SCHEMABREAK
+      where: { product: { every: { brand: { id: brandID } } } },
+      select: { id: true, sku: true },
+    })
+    const productVariants = this.prisma.sanitizePayload(
+      _productVariants,
+      "ProductVariant"
     )
     const allStyleCodes = uniq(
       productVariants.map(a => this.getStyleCodeFromSKU(a.sku))

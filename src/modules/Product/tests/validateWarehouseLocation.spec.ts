@@ -4,6 +4,7 @@ import {
   PusherService,
 } from "@app/modules/PushNotification"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Brand } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -48,7 +49,8 @@ describe("Validate Warehouse Location", () => {
         productUtilsService,
         productVariantService,
         new PhysicalProductUtilsService(prismaService, productUtilsService),
-        utilsService
+        utilsService,
+        new QueryUtilsService(prismaService)
       ),
       physicalProductUtilsService,
       utilsService

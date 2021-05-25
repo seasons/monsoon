@@ -70,7 +70,7 @@ export class PrismaService implements UpdatableConnection {
   )
 
   sanitizeConnection(result) {
-    result['aggregate'] = {count: result.totalCount}
+    result['aggregate'] = { count: result.totalCount }
     return result
   }
 
@@ -86,7 +86,7 @@ export class PrismaService implements UpdatableConnection {
   This sanitizer extracts out the value from the array so we can still return it
   in the format we had it in prisma1
   */
-  sanitizePayload(payload: any, modelName: string) {
+  sanitizePayload<T>(payload: T, modelName: string): T {
     if (!payload) {
       return
     }
@@ -97,6 +97,7 @@ export class PrismaService implements UpdatableConnection {
     }
     
     if (isArray(payload)) {
+      //@ts-ignore
       return payload.map(a => this.sanitizePayload(a, modelName))
     }
 

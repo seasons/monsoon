@@ -1,101 +1,49 @@
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 
 @Resolver()
 export class SizeQueriesResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly queryUtils: QueryUtilsService
+  ) {}
 
   @Query()
-  async bottomSize(@Args() args, @Select({}) select) {
-    const data = await this.prisma.client2.bottomSize.findUnique({
-      ...select,
-      ...args,
-    })
-
-    const sanitizedData = this.prisma.sanitizePayload(data, "BottomSize")
-
-    return sanitizedData
+  async bottomSize(@Args() { where }, @Select({}) select) {
+    return this.queryUtils.resolveFindUnique(where, select, "BottomSize")
   }
 
   @Query()
   async bottomSizes(@FindManyArgs({}) args, @Select({}) select) {
-    const data = await this.prisma.client2.bottomSize.findMany({
-      ...args,
-      ...select,
-    })
-    const sanitizedData = this.prisma.sanitizePayload(data, "BottomSize")
-
-    return sanitizedData
+    return this.queryUtils.resolveFindMany(args, select, "BottomSize")
   }
 
   @Query()
-  async topSize(@Args() args, @Select({}) select) {
-    const data = await this.prisma.client2.topSize.findUnique({
-      ...select,
-      ...args,
-    })
-
-    const sanitizedData = this.prisma.sanitizePayload(data, "TopSize")
-
-    return sanitizedData
+  async topSize(@Args() { where }, @Select({}) select) {
+    return this.queryUtils.resolveFindUnique(where, select, "TopSize")
   }
 
   @Query()
   async topSizes(@FindManyArgs({}) args, @Select({}) select) {
-    const data = await this.prisma.client2.topSize.findMany({
-      ...args,
-      ...select,
-    })
-    const sanitizedData = this.prisma.sanitizePayload(data, "TopSize")
-
-    return sanitizedData
+    return this.queryUtils.resolveFindMany(args, select, "TopSize")
   }
 
   @Query()
-  async size(@Args() args, @Select({}) select) {
-    const data = await this.prisma.client2.size.findUnique({
-      ...select,
-      ...args,
-    })
-
-    const sanitizedData = this.prisma.sanitizePayload(data, "Size")
-
-    return sanitizedData
+  async size(@Args() { where }, @Select({}) select) {
+    return this.queryUtils.resolveFindUnique(where, select, "Size")
   }
 
   @Query()
   async sizes(@FindManyArgs({}) args, @Select({}) select) {
-    const data = await this.prisma.client2.size.findMany({
-      ...args,
-      ...select,
-    })
-    const sanitizedData = this.prisma.sanitizePayload(data, "Size")
-
-    return sanitizedData
+    return this.queryUtils.resolveFindMany(args, select, "Size")
   }
 
   @Query()
-  async sizesConnection(
-    @Args() args,
-    @FindManyArgs({}) { where, orderBy },
-    @Select({}) select
-  ) {
-    // TODO: Need to sanitize the edges
-    const result = await findManyCursorConnection(
-      args =>
-        this.prisma.client2.size.findMany({
-          ...args,
-          ...select,
-          where,
-          orderBy,
-        }),
-      () => this.prisma.client2.size.count({ where }),
-      { ...args }
-    )
-    const sanitizedResult = this.prisma.sanitizeConnection(result)
-    return sanitizedResult
+  async sizesConnection(@Args() args, @Select({}) select) {
+    return this.queryUtils.resolveConnection(args, select, "Size")
   }
 }

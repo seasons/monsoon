@@ -22,6 +22,7 @@ import { UtilsService } from "./services/utils.service"
     TestUtilsService,
     PaymentUtilsService,
     StatementsService,
+    QueryUtilsService,
   ],
 })
 export class UtilsModule {}

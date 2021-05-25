@@ -1,3 +1,4 @@
+import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
 import { Injectable } from "@nestjs/common"
 import {
   makeOrderByPrisma2Compatible,
@@ -7,7 +8,7 @@ import {
   PrismaService,
   SINGLETON_RELATIONS_POSING_AS_ARRAYS,
 } from "@prisma1/prisma.service"
-import { get, head, isArray, pick } from "lodash"
+import { get, head, isArray, lowerFirst, pick } from "lodash"
 
 @Injectable()
 export class QueryUtilsService {
@@ -110,5 +111,50 @@ export class QueryUtilsService {
     }
 
     return returnObj
+  }
+
+  async resolveFindMany(findManyArgs, select, modelName) {
+    const data = await this.prisma.client2[lowerFirst(modelName)].findMany({
+      ...findManyArgs,
+      ...select,
+    })
+    const sanitizedData = this.prisma.sanitizePayload(data, modelName)
+
+    return sanitizedData
+  }
+
+  async resolveFindUnique(where, select, modelName) {
+    const data = await this.prisma.client2[lowerFirst(modelName)].findUnique({
+      where,
+      ...select,
+    })
+    const sanitizedData = this.prisma.sanitizePayload(data, modelName)
+
+    return sanitizedData
+  }
+
+  async resolveConnection(args, select, modelName) {
+    const { where, orderBy } = QueryUtilsService.prismaOneToPrismaTwoArgs(
+      args,
+      modelName
+    )
+
+    const modelPrismaClient = this.prisma.client2[lowerFirst(modelName)]
+    const result = await findManyCursorConnection(
+      async args => {
+        const data = await modelPrismaClient.findMany({
+          ...args,
+          ...select,
+          where,
+          orderBy,
+        })
+        return this.prisma.sanitizePayload(data, modelName)
+      },
+      () => modelPrismaClient.count({ where }),
+      { ...args }
+    )
+
+    const sanitizedResult = this.prisma.sanitizeConnection(result)
+    return sanitizedResult
   }
 }
