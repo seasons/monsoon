@@ -96,12 +96,16 @@ export class QueryUtilsService {
   // but isn't. So we clean it up ex post facto for now. If prisma
   // doesn't fix it, we may fork the library and fix it ourselves later.
   static notNullToNotUndefined = (obj: any) => {
-    const returnObj = { ...obj }
-
-    if (isArray(returnObj)) {
-      return returnObj.map(QueryUtilsService.notNullToNotUndefined)
+    // Base case
+    if (typeof obj !== "object") {
+      return
     }
 
+    if (isArray(obj)) {
+      return obj.map(QueryUtilsService.notNullToNotUndefined)
+    }
+
+    const returnObj = { ...obj }
     for (const key of Object.keys(returnObj)) {
       if (key === "not" && returnObj[key] === null) {
         returnObj[key] = undefined

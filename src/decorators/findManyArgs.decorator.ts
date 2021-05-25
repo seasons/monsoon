@@ -1,11 +1,5 @@
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { SINGLETON_RELATIONS_POSING_AS_ARRAYS } from "@app/prisma/prisma.service"
 import { ExecutionContext, createParamDecorator } from "@nestjs/common"
-import {
-  makeOrderByPrisma2Compatible,
-  makeWherePrisma2Compatible,
-} from "@prisma/binding-argument-transform"
-import { isArray } from "lodash"
 
 import { getReturnTypeFromInfo } from "./utils"
 
