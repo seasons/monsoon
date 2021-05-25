@@ -1,8 +1,7 @@
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
-import { Args, Info, Query, Resolver } from "@nestjs/graphql"
+import { Args, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 
@@ -14,12 +13,18 @@ export class BrandQueriesResolver {
   ) {}
 
   @Query()
-  async brand(@Args() args, @Select({}) select) {
+  async brand(
+    @Args() args,
+    @Select({
+      withFragment: `fragment EnsureSlug on Brand { slug }`,
+    })
+    select
+  ) {
     let data
     if (typeof args?.published === "boolean") {
       const brand: any = await this.prisma.client2.brand.findUnique({
         select: {
-          ...select.select,
+          ...select,
           published: true,
         },
         where: { ...args.where },
@@ -34,8 +39,8 @@ export class BrandQueriesResolver {
 
     if (!data) {
       data = await this.prisma.client2.brand.findUnique({
-        ...select,
         ...args,
+        select,
       })
     }
 
@@ -45,7 +50,10 @@ export class BrandQueriesResolver {
   }
 
   @Query()
-  async brands(@FindManyArgs({}) args, @Select({}) select) {
+  async brands(
+    @FindManyArgs({}) args,
+    @Select({ withFragment: `fragment EnsureSlug on Brand { slug }` }) select
+  ) {
     return this.queryUtils.resolveFindMany({ ...args, select }, "Brand")
   }
 
