@@ -59,7 +59,7 @@ export class LaunchQueriesResolver {
   @Query()
   async launchesConnection(
     @Args() args,
-    @FindManyArgs() { where, orderBy },
+    @FindManyArgs({}) { where, orderBy },
     @Select() select
   ) {
     // TODO: Need to sanitize the edges

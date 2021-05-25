@@ -46,6 +46,10 @@ export class ProductService {
     private readonly utils: UtilsService
   ) {}
 
+  async transformProductsArgs(args) {
+    return args
+    // TODO
+  }
   async getProducts(args, info) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
     const products = await this.prisma.binding.query.products(

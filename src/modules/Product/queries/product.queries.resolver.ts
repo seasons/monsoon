@@ -34,7 +34,13 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async products(@Args() args, @Info() info) {
+  async products(
+    //@ts-ignore
+    @FindManyArgs({})
+    args,
+    @Info() info,
+    @Select() select
+  ) {
     // Will need to update this library before updating this resolver:
     // https://github.com/prisma/binding-argument-transform/commits/master
     return await this.productService.getProducts(
@@ -130,7 +136,7 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async physicalProducts(@FindManyArgs() args, @Select() select) {
+  async physicalProducts(@FindManyArgs({}) args, @Select() select) {
     const data = await this.prisma.client2.physicalProduct.findMany({
       ...args,
       ...select,
@@ -198,7 +204,7 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async warehouseLocations(@FindManyArgs() args, @Select() select) {
+  async warehouseLocations(@FindManyArgs({}) args, @Select() select) {
     const data = await this.prisma.client2.warehouseLocation.findMany({
       ...args,
       ...select,

@@ -41,7 +41,7 @@ export class BrandQueriesResolver {
   }
 
   @Query()
-  async brands(@FindManyArgs() args, @Select() select) {
+  async brands(@FindManyArgs({}) args, @Select() select) {
     const data = await this.prisma.client2.brand.findMany({
       ...args,
       ...select,
@@ -54,7 +54,7 @@ export class BrandQueriesResolver {
   @Query()
   async brandsConnection(
     @Args() args,
-    @FindManyArgs() { where, orderBy },
+    @FindManyArgs({}) { where, orderBy },
     @Select() select
   ) {
     // TODO: Need to sanitize the edges

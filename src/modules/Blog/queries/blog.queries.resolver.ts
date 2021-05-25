@@ -20,7 +20,7 @@ export class BlogQueriesResolver {
   }
 
   @Query()
-  async blogPosts(@FindManyArgs() { orderBy, ...args }, @Select() select) {
+  async blogPosts(@FindManyArgs({}) { orderBy, ...args }, @Select() select) {
     const data = await this.prisma.client2.blogPost.findMany({
       ...args,
       orderBy: orderBy || { webflowCreatedAt: "desc" },
@@ -34,7 +34,7 @@ export class BlogQueriesResolver {
   @Query()
   async blogPostsConnection(
     @Args() args,
-    @FindManyArgs() { where, orderBy },
+    @FindManyArgs({}) { where, orderBy },
     @Select() select
   ) {
     const result = await findManyCursorConnection(

@@ -21,7 +21,7 @@ export class SizeQueriesResolver {
   }
 
   @Query()
-  async bottomSizes(@FindManyArgs() args, @Select() select) {
+  async bottomSizes(@FindManyArgs({}) args, @Select() select) {
     const data = await this.prisma.client2.bottomSize.findMany({
       ...args,
       ...select,
@@ -44,7 +44,7 @@ export class SizeQueriesResolver {
   }
 
   @Query()
-  async topSizes(@FindManyArgs() args, @Select() select) {
+  async topSizes(@FindManyArgs({}) args, @Select() select) {
     const data = await this.prisma.client2.topSize.findMany({
       ...args,
       ...select,
@@ -67,7 +67,7 @@ export class SizeQueriesResolver {
   }
 
   @Query()
-  async sizes(@FindManyArgs() args, @Select() select) {
+  async sizes(@FindManyArgs({}) args, @Select() select) {
     const data = await this.prisma.client2.size.findMany({
       ...args,
       ...select,
@@ -80,7 +80,7 @@ export class SizeQueriesResolver {
   @Query()
   async sizesConnection(
     @Args() args,
-    @FindManyArgs() { where, orderBy },
+    @FindManyArgs({}) { where, orderBy },
     @Select() select
   ) {
     // TODO: Need to sanitize the edges
