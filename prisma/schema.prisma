@@ -86,7 +86,7 @@ model BlogPost {
   url              String?
   author           String?
   category         String?
-  content          String
+  content          String?
   createdAt        DateTime
   updatedAt        DateTime        @updatedAt
   publishedOn      DateTime
