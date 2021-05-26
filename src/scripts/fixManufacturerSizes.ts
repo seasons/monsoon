@@ -34,10 +34,14 @@ const run = async () => {
   }`
   )
 
+  let count = 0
   for (const productVariant of productVariants) {
     const size = head(productVariant.manufacturerSizes)
+    if (!size) {
+      return console.log("???", productVariant.id)
+    }
     // Fix for JP sizes
-    if (size.type === "EU") {
+    if (size.type === "EU" && size.productType === "Bottom") {
       const display = productUtils.coerceSizeDisplayIfNeeded(
         size.display,
         size.type,
@@ -52,12 +56,12 @@ const run = async () => {
           " / New display ",
           display
         )
-        await ps.client.updateProductVariant({
-          where: { id: productVariant.id },
-          data: {
-            displayShort: display,
-          },
-        })
+        // await ps.client.updateProductVariant({
+        //   where: { id: productVariant.id },
+        //   data: {
+        //     displayShort: display,
+        //   },
+        // })
       }
     }
   }

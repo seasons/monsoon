@@ -1,5 +1,7 @@
 import "module-alias/register"
 
+import { head } from "lodash"
+
 import { SegmentService } from "../../modules/Analytics/services/segment.service"
 // import { EmailDataProvider } from "../../modules/Email/services/email.data.service"
 import { EmailService } from "../../modules/Email/services/email.service"
@@ -26,10 +28,6 @@ import { PaymentUtilsService } from "../../modules/Utils/services/paymentUtils.s
 import { UtilsService } from "../../modules/Utils/services/utils.service"
 import { PrismaService } from "../../prisma/prisma.service"
 
-/*
- *  Use: This script can be used to make a reservation feedback object on a specific user for testing purposes
- *  Reason not to delete: This is helpful for testing the reservation feedback flow
- */
 const run = async () => {
   const ps = new PrismaService()
   const error = new ErrorService()
@@ -123,10 +121,31 @@ const run = async () => {
     utils
   )
 
-  const productVariantIDs = [
-    "ckokc81353rck0736zf95tzsp",
-    "ckokeko1f4g0r0736zrriej5t",
-  ]
+  const userID = "ckp5v95u000r00950nuvkvugj"
+
+  const prismaUser = await ps.client.user({ id: userID })
+  const reservations = await ps.binding.query.reservations(
+    {
+      where: {
+        user: {
+          id: userID,
+        },
+      },
+      orderBy: "createdAt_DESC",
+    },
+    `{
+      id
+      products {
+        id
+        productVariant {
+          id
+        }
+      }
+    }`
+  )
+
+  const _reservation = head(reservations)
+  const productVariantIDs = _reservation.products.map(p => p.productVariant.id)
 
   const returnedPhysicalProducts = await ps.client.productVariants({
     where: {
@@ -134,11 +153,7 @@ const run = async () => {
     },
   })
 
-  const prismaUser = await ps.client.user({ id: "ckoubweo703q60950jfp2kzwf" })
-  const reservation = await ps.client.reservation({
-    id: "ckoud6xdb047m0950g2ppv7kn",
-  })
-
+  const reservation = await ps.client.reservation({ id: _reservation.id })
   await reservationService.createReservationFeedbacksForVariants(
     returnedPhysicalProducts,
     prismaUser,
