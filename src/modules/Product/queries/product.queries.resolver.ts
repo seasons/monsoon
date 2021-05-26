@@ -170,13 +170,11 @@ export class ProductQueriesResolver {
     return this.queryUtils.resolveFindMany({ ...args, select }, "Color")
   }
 
-  // TODO:
   @Query()
   async generatedVariantSKUs(@Args() args) {
     return this.productService.getGeneratedVariantSKUs(args)
   }
 
-  // TODO:
   @Query()
   async generatedSeasonsUIDs(@Args() { input }) {
     const { brandID, colorCode, sizes, productID } = input
@@ -188,7 +186,6 @@ export class ProductQueriesResolver {
     })
   }
 
-  // TODO:
   @Query()
   async tags(@FindManyArgs({}) args, @Select({}) select) {
     return this.queryUtils.resolveFindMany({ ...args, select }, "Tag")
@@ -202,7 +199,6 @@ export class ProductQueriesResolver {
     )
   }
 
-  // TODO:
   @Query()
   async surpriseProductVariants(@Customer() customer, @Select({}) select) {
     const products = this.productService.availableProductVariantsForCustomer(
