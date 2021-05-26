@@ -152,18 +152,12 @@ export class ProductQueriesResolver {
 
   @Query()
   async categories(@FindManyArgs({}) args, @Select({}) select) {
-    return await this.queryUtils.resolveFindMany(
-      { ...args, select },
-      "Category"
-    )
+    return this.queryUtils.resolveFindMany({ ...args, select }, "Category")
   }
 
   @Query()
   async category(@Args() { where }, @Select({}) select) {
-    return await this.queryUtils.resolveFindUnique(
-      { where, select },
-      "Category"
-    )
+    return this.queryUtils.resolveFindUnique({ where, select }, "Category")
   }
 
   @Query()
@@ -173,18 +167,20 @@ export class ProductQueriesResolver {
 
   @Query()
   async colors(@FindManyArgs({}) args, @Select({}) select) {
-    return await this.queryUtils.resolveFindMany({ ...args, select }, "Color")
+    return this.queryUtils.resolveFindMany({ ...args, select }, "Color")
   }
 
+  // TODO:
   @Query()
   async generatedVariantSKUs(@Args() args) {
-    return await this.productService.getGeneratedVariantSKUs(args)
+    return this.productService.getGeneratedVariantSKUs(args)
   }
 
+  // TODO:
   @Query()
   async generatedSeasonsUIDs(@Args() { input }) {
     const { brandID, colorCode, sizes, productID } = input
-    return await this.productService.getGeneratedSeasonsUIDs({
+    return this.productService.getGeneratedSeasonsUIDs({
       brandID,
       colorCode,
       sizes,
@@ -192,22 +188,24 @@ export class ProductQueriesResolver {
     })
   }
 
+  // TODO:
   @Query()
   async tags(@FindManyArgs({}) args, @Select({}) select) {
-    return await this.queryUtils.resolveFindMany({ ...args, select }, "Tag")
+    return this.queryUtils.resolveFindMany({ ...args, select }, "Tag")
   }
 
   @Query()
   async warehouseLocations(@FindManyArgs({}) args, @Select({}) select) {
-    return await this.queryUtils.resolveFindMany(
+    return this.queryUtils.resolveFindMany(
       { ...args, select },
       "WarehouseLocation"
     )
   }
 
+  // TODO:
   @Query()
   async surpriseProductVariants(@Customer() customer, @Select({}) select) {
-    const products = await this.productService.availableProductVariantsForCustomer(
+    const products = this.productService.availableProductVariantsForCustomer(
       { id: customer.id },
       select
     )
@@ -218,6 +216,6 @@ export class ProductQueriesResolver {
   @Query()
   async newestBrandProducts(@Args() args, @Select({}) select) {
     // Returns products from the most recent brand to be added
-    return await this.productService.newestBrandProducts(args, select)
+    return this.productService.newestBrandProducts(args, select)
   }
 }

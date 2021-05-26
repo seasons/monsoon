@@ -1,16 +1,11 @@
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
-import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
+import { Args, Query, Resolver } from "@nestjs/graphql"
 
 @Resolver()
 export class SizeQueriesResolver {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly queryUtils: QueryUtilsService
-  ) {}
+  constructor(private readonly queryUtils: QueryUtilsService) {}
 
   @Query()
   async bottomSize(@Args() { where }, @Select({}) select) {

@@ -588,14 +588,12 @@ export class ProductService {
                 internalSize: {
                   top: {
                     letter: {
-                      // TODO: SCHEMABREAK
-                      in: (customer.detail.topSizes as unknown[]) as string[],
+                      in: (customer.detail.topSizes as unknown) as string[],
                     },
                   },
                 },
               },
               { reservable: { gte: 1 } },
-              // TODO: SCHEMABREAK
               {
                 product: {
                   every: { AND: [{ status: "Available" }, { type: "Top" }] },
