@@ -42,6 +42,7 @@ import {
       {
         model,
         select,
+        orderBy,
         fallbackValue, 
         formatData = identity,
         getKeys = a => [a.id],
@@ -50,7 +51,7 @@ import {
       }: PrismaTwoGenerateParams
     ) {
       const _data = await this.prisma.client2[lowerFirst(model)].findMany(
-          { where: formatWhere(keys), select},
+          { where: formatWhere(keys), select, orderBy },
         )
       const data = this.prisma.sanitizePayload(_data, model)
   

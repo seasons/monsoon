@@ -10,8 +10,9 @@ import {
   createParamDecorator,
 } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
+import { makeOrderByPrisma2Compatible } from "@prisma/binding-argument-transform"
 import { addFragmentToInfo } from "graphql-binding"
-import { cloneDeep, isNull, isUndefined, omit } from "lodash"
+import { cloneDeep, isUndefined, omit } from "lodash"
 import sha1 from "sha1"
 
 import {
@@ -72,10 +73,8 @@ export const Loader: (
     if (data.includeInfo === true) {
       if (type === PrismaTwoLoader.name) {
         let adjustedInfo = info as any
-        if (
-          typeof info === "object" &&
-          !isNull(adjustedOptions.params.infoFragment)
-        ) {
+        // TODO: Test
+        if (!!adjustedOptions.params.infoFragment) {
           adjustedInfo = addFragmentToInfo(
             info,
             adjustedOptions.params.infoFragment
@@ -86,16 +85,22 @@ export const Loader: (
           adjustedInfo,
           modelName,
           ctx.modelFieldsByModelName
-        )
+        ).select
       } else if (type === PrismaLoader.name) {
         ;(adjustedOptions.params as PrismaOneGenerateParams).info = info
       }
     }
 
     // If needed, get the orderBy from the context
-    if (data.includeOrderBy === true && type === PrismaLoader.name) {
-      ;(adjustedOptions.params as PrismaOneGenerateParams).orderBy =
-        args.orderBy
+    if (data.includeOrderBy === true) {
+      if (type === PrismaLoader.name) {
+        ;(adjustedOptions.params as PrismaTwoGenerateParams).orderBy =
+          args.orderBy
+      } else if (type === PrismaTwoLoader.name) {
+        ;(adjustedOptions.params as PrismaOneGenerateParams).orderBy = makeOrderByPrisma2Compatible(
+          args.orderBy
+        )
+      }
     }
 
     return ctx.getDataLoader(adjustedOptions)

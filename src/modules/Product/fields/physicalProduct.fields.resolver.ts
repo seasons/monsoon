@@ -1,10 +1,9 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
+import { PhysicalProduct } from "@app/prisma"
 import {
-  AdminActionLog,
-  AdminActionLogWhereInput,
-  PhysicalProduct,
-} from "@app/prisma"
-import { PrismaTwoLoader } from "@app/prisma/prisma2.loader"
+  PrismaTwoDataLoader,
+  PrismaTwoLoader,
+} from "@app/prisma/prisma2.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaDataLoader } from "@prisma1/prisma.loader"
 
@@ -40,20 +39,18 @@ export class PhysicalProductFieldsResolver {
   async adminLogs(
     @Parent() physicalProduct,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: `adminActionLogs`,
+        model: `AdminActionLog`,
         formatWhere: keys => ({
-          AND: [
-            { entityId_in: keys },
-            { tableName: "PhysicalProduct" },
-          ] as AdminActionLogWhereInput,
+          AND: [{ entityId: { in: keys } }, { tableName: "PhysicalProduct" }],
         }),
         keyToDataRelationship: "OneToMany",
         getKeys: a => [a.entityId],
       },
       includeInfo: true,
     })
-    logsLoader: PrismaDataLoader<AdminActionLog[]>
+    logsLoader: PrismaTwoDataLoader
   ) {
     const logs = await logsLoader.load(physicalProduct.id)
     return logs
@@ -63,11 +60,14 @@ export class PhysicalProductFieldsResolver {
   async reservations(
     @Parent() physicalProduct,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "reservations",
+        model: "Reservation",
         formatWhere: ids => ({
-          products_some: {
-            id_in: ids,
+          products: {
+            some: {
+              id: { in: ids },
+            },
           },
         }),
         infoFragment: `fragment EnsureProductIDs on Reservation {products {id}}`,

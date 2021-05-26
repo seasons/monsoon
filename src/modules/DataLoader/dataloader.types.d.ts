@@ -15,7 +15,6 @@ export type PrismaOneGenerateParams = CommonPrismaGenerateParams & {
   // basic parameters to construct the prisma call
   query: string
   info?: string | any
-  orderBy?: any
 }
 
 export type PrismaTwoGenerateParams = CommonPrismaGenerateParams & {
@@ -25,6 +24,8 @@ export type PrismaTwoGenerateParams = CommonPrismaGenerateParams & {
 }
 
 interface CommonPrismaGenerateParams {
+  orderBy?: any
+
   // if a given key does not resolve to any return value, what should we return?
   fallbackValue?: any
 
