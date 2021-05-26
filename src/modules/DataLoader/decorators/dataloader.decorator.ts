@@ -1,6 +1,9 @@
 import qs from "querystring"
 
+import { getReturnTypeFromInfo } from "@app/decorators/utils"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { PrismaLoader } from "@app/prisma/prisma.loader"
+import { PrismaTwoLoader } from "@app/prisma/prisma2.loader"
 import {
   ExecutionContext,
   InternalServerErrorException,
@@ -8,10 +11,15 @@ import {
 } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
 import { addFragmentToInfo } from "graphql-binding"
-import { cloneDeep, isUndefined, omit } from "lodash"
+import { cloneDeep, isNull, isUndefined, omit } from "lodash"
 import sha1 from "sha1"
 
-import { DataloaderContext, LoaderParams } from "../dataloader.types"
+import {
+  DataloaderContext,
+  LoaderParams,
+  PrismaOneGenerateParams,
+  PrismaTwoGenerateParams,
+} from "../dataloader.types"
 import { DataLoaderInterceptor } from "../interceptors/dataloader.interceptor"
 
 export const Loader: (
@@ -62,12 +70,32 @@ export const Loader: (
 
     // If needed, get the info from the context
     if (data.includeInfo === true) {
-      adjustedOptions.params.info = info
+      if (type === PrismaTwoLoader.name) {
+        let adjustedInfo = info as any
+        if (
+          typeof info === "object" &&
+          !isNull(adjustedOptions.params.infoFragment)
+        ) {
+          adjustedInfo = addFragmentToInfo(
+            info,
+            adjustedOptions.params.infoFragment
+          )
+        }
+        const modelName = getReturnTypeFromInfo(info)
+        ;(adjustedOptions.params as PrismaTwoGenerateParams).select = QueryUtilsService.infoToSelect(
+          adjustedInfo,
+          modelName,
+          ctx.modelFieldsByModelName
+        )
+      } else if (type === PrismaLoader.name) {
+        ;(adjustedOptions.params as PrismaOneGenerateParams).info = info
+      }
     }
 
     // If needed, get the orderBy from the context
-    if (data.includeOrderBy === true) {
-      adjustedOptions.params.orderBy = args.orderBy
+    if (data.includeOrderBy === true && type === PrismaLoader.name) {
+      ;(adjustedOptions.params as PrismaOneGenerateParams).orderBy =
+        args.orderBy
     }
 
     return ctx.getDataLoader(adjustedOptions)

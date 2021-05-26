@@ -4,6 +4,7 @@ import {
   AdminActionLogWhereInput,
   PhysicalProduct,
 } from "@app/prisma"
+import { PrismaTwoLoader } from "@app/prisma/prisma2.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaDataLoader } from "@prisma1/prisma.loader"
 
@@ -19,9 +20,10 @@ export class PhysicalProductFieldsResolver {
   async barcode(
     @Parent() physicalProduct,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "physicalProducts",
-        info: `{ id sequenceNumber }`,
+        model: "PhysicalProduct",
+        select: { id: true, sequenceNumber: true },
       },
     })
     physicalProductsLoader: PrismaDataLoader<PhysicalProduct>

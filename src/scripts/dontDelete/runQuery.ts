@@ -2,31 +2,86 @@ import "module-alias/register"
 
 import * as util from "util"
 
+import { Prisma } from "@prisma/client"
 import zipcodes from "zipcodes"
 
 import { DripService } from "../../modules/Drip/services/drip.service"
-import { UtilsService } from "../../modules/Utils/services/utils.service"
+import { QueryUtilsService } from "../../modules/Utils/services/queryUtils.service"
 import { PrismaService } from "../../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
-  // const c = await ps.binding.query.categories(
-  //   { where: { name: "Tops" } },
-  //   `{
-  //     id
-  //     name
-  //     children {
-  //       id
-  //       name
-  //     }
-  // }`
-  // )
-  const c = await ps.client.categories({
-    where: { children_some: { name: "Tees" } },
+  const prisma1Where = {
+    where: {
+      OR: [
+        {
+          AND: [
+            {
+              internalSize: {
+                top: {
+                  letter_in: [],
+                },
+              },
+            },
+            { reservable_gte: 1 },
+            {
+              product: {
+                AND: [{ status: "Available" }, { type: "Top" }],
+              },
+            },
+          ],
+        },
+        {
+          AND: [
+            {
+              internalSize: {
+                display_in: [],
+              },
+            },
+            { reservable_gte: 1 },
+            {
+              product: {
+                AND: [{ status: "Available" }, { type: "Bottom" }],
+              },
+            },
+          ],
+        },
+      ],
+    },
+  }
+  const {
+    where: productVariantWhere,
+  } = QueryUtilsService.prismaOneToPrismaTwoArgs(prisma1Where, "ProductVariant")
+  await ps.client2.productVariant.findMany({
+    where: {
+      OR: [
+        {
+          AND: [
+            {
+              internalSize: { top: { letter: { in: [] } } },
+            },
+            { reservable: { gte: 1 } },
+            {
+              product: {
+                every: { AND: [{ status: "Available" }, { type: "Top" }] },
+              },
+            },
+          ],
+        },
+        {
+          AND: [
+            { internalSize: { display: { in: [] } } },
+            { reservable: { gte: 1 } },
+            {
+              product: {
+                every: { AND: [{ status: "Available" }, { type: "Bottom" }] },
+              },
+            },
+          ],
+        },
+      ],
+    },
   })
-  const c = await ps.client2.blogPost.findMany({
-    orderBy: { webflowCreatedAt: "asc" },
-  })
-  console.log(util.inspect(c, { depth: null }))
+  console.log(util.inspect(productVariantWhere, { depth: null }))
 }
 run()
