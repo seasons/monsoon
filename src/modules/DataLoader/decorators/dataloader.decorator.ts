@@ -102,7 +102,9 @@ export const Loader: (
       }
     }
 
-    adjustedOptions.params.ctx = ctx
+    if (!!adjustedOptions.params) {
+      adjustedOptions.params.ctx = ctx
+    }
     return ctx.getDataLoader(adjustedOptions)
   }
 )

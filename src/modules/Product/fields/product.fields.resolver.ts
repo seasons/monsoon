@@ -22,7 +22,7 @@ export class ProductFieldsResolver {
     private readonly imageService: ImageService
   ) {}
 
-  @ResolveField() //TODO:
+  @ResolveField()
   async isSaved(@Parent() product, @Customer() customer) {
     return this.productService.isSaved(product, customer)
   }
