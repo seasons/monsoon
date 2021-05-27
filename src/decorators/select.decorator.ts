@@ -32,9 +32,6 @@ export const Select: (
       modelName,
       ctx.modelFieldsByModelName
     )
-    if (isEmpty(select.select)) {
-      select = null
-    }
-    return select !== null ? select.select : select
+    return select
   }
 )

@@ -37,14 +37,13 @@ export const FindManyArgs: (
       modelName,
       ctx.modelFieldsByModelName
     )
-
     const findManyArgs = QueryUtilsService.prismaOneToPrismaTwoArgs(
       transformedArgs,
       modelName
     )
     return {
       ...findManyArgs,
-      ...select,
+      select,
     }
   }
 )
