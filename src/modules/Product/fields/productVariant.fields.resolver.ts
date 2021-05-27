@@ -25,8 +25,6 @@ import {
 } from "@prisma/client"
 import { head } from "lodash"
 
-import { ProductVariantService } from "../services/productVariant.service"
-
 type EUSize = "44" | "46" | "48" | "50" | "52" | "54" | "56"
 type JPSize = "0" | "1" | "2" | "3" | "4"
 
@@ -112,8 +110,8 @@ export class ProductVariantFieldsResolver {
         physicalProductIDs
       )
 
-      const physicalProductIDS = physicalProducts?.map(p => p.productVariant.id)
-      return physicalProductIDS.includes(productVariant.id)
+      const productVariantIDs = physicalProducts?.map(p => p.productVariant.id)
+      return productVariantIDs.includes(productVariant.id)
     } else {
       return false
     }

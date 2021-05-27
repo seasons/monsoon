@@ -5,6 +5,7 @@ import {
   PrismaTwoLoader,
 } from "@app/prisma/prisma2.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Prisma } from "@prisma/client"
 import { PrismaDataLoader } from "@prisma1/prisma.loader"
 
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
@@ -22,7 +23,10 @@ export class PhysicalProductFieldsResolver {
       type: PrismaTwoLoader.name,
       params: {
         model: "PhysicalProduct",
-        select: { id: true, sequenceNumber: true },
+        select: Prisma.validator<Prisma.PhysicalProductSelect>()({
+          id: true,
+          sequenceNumber: true,
+        }),
       },
     })
     physicalProductsLoader: PrismaDataLoader<PhysicalProduct>

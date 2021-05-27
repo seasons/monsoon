@@ -43,6 +43,7 @@ export class PrismaLoader implements NestDataLoader {
     {
       query,
       info,
+      ctx,
       fallbackValue, 
       orderBy = null,
       infoFragment = null,
@@ -59,7 +60,7 @@ export class PrismaLoader implements NestDataLoader {
     }
     
     const data = await this.prisma.binding.query[query](
-        { where: formatWhere(keys), orderBy},
+        { where: formatWhere(keys, ctx), orderBy},
         adjustedInfo
       )
 

@@ -44,7 +44,7 @@ export const Loader: (
 
     const { operationName, variables } = ctx.req.body
 
-    const adjustedOptions = cloneDeep({ type, ...data, ctx })
+    const adjustedOptions = cloneDeep({ type, ...data })
 
     // If includeInfo from context, ensure we key dataloaders using the origin query information, and prevent
     // stale results from data based on loader params alone, as the underlying prisma query will be different.
@@ -73,7 +73,6 @@ export const Loader: (
     if (data.includeInfo === true) {
       if (type === PrismaTwoLoader.name) {
         let adjustedInfo = info as any
-        // TODO: Test
         if (!!adjustedOptions.params.infoFragment) {
           adjustedInfo = addFragmentToInfo(
             info,
@@ -85,7 +84,7 @@ export const Loader: (
           adjustedInfo,
           modelName,
           ctx.modelFieldsByModelName
-        ).select
+        )
       } else if (type === PrismaLoader.name) {
         ;(adjustedOptions.params as PrismaOneGenerateParams).info = info
       }
@@ -103,6 +102,7 @@ export const Loader: (
       }
     }
 
+    adjustedOptions.params.ctx = ctx
     return ctx.getDataLoader(adjustedOptions)
   }
 )
