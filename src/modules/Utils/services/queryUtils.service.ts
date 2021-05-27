@@ -138,7 +138,8 @@ export class QueryUtilsService {
       }
     })
 
-    return callType === "recursive" ? select : select.select
+    const finalReturnValue = isEmpty(select.select) ? null : select.select
+    return callType === "recursive" ? select : finalReturnValue
   }
 
   static prismaOneToPrismaTwoArgs(args, modelName) {
