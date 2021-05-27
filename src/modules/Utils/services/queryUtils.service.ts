@@ -18,7 +18,12 @@ import { isArray, isEmpty, lowerFirst, pick } from "lodash"
 export class QueryUtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  static infoToSelect(info, modelName, modelFieldsByModelName) {
+  static infoToSelect(
+    info,
+    modelName,
+    modelFieldsByModelName,
+    callType: "initial" | "recursive" = "initial"
+  ) {
     const prismaSelect = new PrismaSelect(info)
     let fields = graphqlFields(info)
 
@@ -79,7 +84,8 @@ export class QueryUtilsService {
                     fragments: info.fragments,
                   },
                   field.type,
-                  modelFieldsByModelName
+                  modelFieldsByModelName,
+                  "recursive"
                 )
               } else {
                 // field is coming from one or more fragments. get the field nodes accordingly
@@ -102,7 +108,8 @@ export class QueryUtilsService {
                         fragments: info.fragments,
                       },
                       field.type,
-                      modelFieldsByModelName
+                      modelFieldsByModelName,
+                      "recursive"
                     )
                     return PrismaSelect.mergeDeep(
                       currentFieldSelect,
@@ -131,7 +138,7 @@ export class QueryUtilsService {
       }
     })
 
-    return select
+    return callType === "recursive" ? select : select.select
   }
 
   static prismaOneToPrismaTwoArgs(args, modelName) {
