@@ -8,11 +8,10 @@ import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import sgMail from "@sendgrid/mail"
 import chargebee from "chargebee"
-import { Parser } from "json2csv"
+import Parser from "json2csv"
 import { head, isEmpty } from "lodash"
 import moment from "moment"
 
-const EVERY_15_DAYS_AT_6PM = "0 0 18 5,20 * ?"
 @Injectable()
 export class MarketingScheduledJobs {
   private readonly logger = new Logger(MarketingScheduledJobs.name)
@@ -49,7 +48,6 @@ export class MarketingScheduledJobs {
     const dayThreeFollowupsSent = []
     const dayTwoFollowupsSent = []
     const windowsClosed = []
-
     const customers = await this.prisma.binding.query.customers(
       {
         where: {
@@ -84,10 +82,8 @@ export class MarketingScheduledJobs {
         }
       }`
     )
-
     for (const cust of customers) {
       const now = moment()
-
       const dayTwoStarted = moment(cust.authorizedAt)
         .add(1, "d")
         .isSameOrBefore(now)
@@ -109,7 +105,6 @@ export class MarketingScheduledJobs {
       const windowClosed = moment(now).isAfter(
         cust.admissions?.authorizationWindowClosesAt
       )
-
       const receivedEmails = cust.user.emails.map(a => a.emailId)
       const receivedSMSs = cust.user.smsReceipts.map(a => a.smsId)
       const dayTwoFollowupSent = receivedEmails.includes(
@@ -132,11 +127,9 @@ export class MarketingScheduledJobs {
         // previous, deprecated email id. Maintain for backwards compatibility.
         receivedEmails.includes("TwentyFourHourAuthorizationFollowup") ||
         receivedSMSs.includes("TwentyFourHourLeftAuthorizationFollowup")
-
       const rewaitlisted =
         receivedEmails.includes("Rewaitlisted") ||
         receivedSMSs.includes("Rewaitlisted")
-
       // Send rewaitlist email as needed
       if (windowClosed) {
         if (!rewaitlisted) {
@@ -157,7 +150,6 @@ export class MarketingScheduledJobs {
         }
         continue
       }
-
       // Send day 7 email as needed
       if (daySevenStarted) {
         if (!daySevenFollowupSent) {
@@ -177,7 +169,6 @@ export class MarketingScheduledJobs {
         }
         continue
       }
-
       // Send day 6 email as needed
       if (daySixStarted) {
         if (!daySixFollowupSent) {
@@ -185,7 +176,6 @@ export class MarketingScheduledJobs {
         }
         continue
       }
-
       // Send day 5 email if needed
       if (dayFiveStarted) {
         // TODO: Send email
@@ -199,7 +189,6 @@ export class MarketingScheduledJobs {
         }
         continue
       }
-
       // Send day 4 email if needed
       if (dayFourStarted) {
         // TODO: Send email
@@ -207,7 +196,6 @@ export class MarketingScheduledJobs {
         }
         continue
       }
-
       // Send day 3 email if needed
       if (dayThreeStarted) {
         if (!dayThreeFollowupSent) {
@@ -222,7 +210,6 @@ export class MarketingScheduledJobs {
         }
         continue
       }
-
       // Send day 2 email if needed
       if (dayTwoStarted) {
         if (!dayTwoFollowupSent) {
@@ -241,18 +228,16 @@ export class MarketingScheduledJobs {
     })
   }
 
-  @Cron(EVERY_15_DAYS_AT_6PM)
+  @Cron(CronExpression.EVERY_DAY_AT_6PM)
   async admissableBimonthlyNurture() {
-    // Just in case the cron expression is wrong, put a check
-    // to make sure we're doing it on the 1st and 15th only!
+    // Make sure we're doing it every 15 days only
     const todayDate = new Date().getDate()
-    if (![5, 20].includes(todayDate)) {
-      this.error.captureMessage(
-        `Tried to run admissable bimonthly nurture on wrong day: ${todayDate}`
+    if (![1, 15].includes(todayDate)) {
+      this.logger.log(
+        `Not running admissable bimonthly nurture because day is ${todayDate}`
       )
       return
     }
-
     const waitlistedAdmissableCustomers = await this.prisma.binding.query.customers(
       {
         where: {
@@ -268,7 +253,6 @@ export class MarketingScheduledJobs {
       }
     }`
     )
-
     for (const cust of waitlistedAdmissableCustomers) {
       const availableStyles = await this.admissions.getAvailableStyles({
         id: cust.id,
@@ -296,7 +280,6 @@ export class MarketingScheduledJobs {
     const oneDapperStreetMediaPartnerId = 183668
     const threadabilityMediaPartnerId = 2253589
     const faiyamRahmanMediaPartnerId = 2729780
-
     const customersToUpdate = await this.prisma.binding.query.customers(
       {
         where: {
@@ -367,7 +350,6 @@ export class MarketingScheduledJobs {
         }
       }`
     )
-
     const syncTimingUpdates = []
     const createSyncTimingUpdateFunc = (cust, detail) => async () =>
       this.prisma.client.updateCustomer({
@@ -402,7 +384,6 @@ export class MarketingScheduledJobs {
       MediaPartnerId: getMediaPartnerId(cust.detail.discoveryReference),
       Amount: 0.0,
     })
-
     const csvData = []
     for (const cust of customersToUpdate) {
       const impactSyncTimings = cust.impactSyncTimings.filter(
@@ -418,7 +399,6 @@ export class MarketingScheduledJobs {
         isEmpty(
           impactSyncTimings.filter(a => a.detail === "InitialSubscription")
         ) && !!cust.admissions?.subscribedAt
-
       if (shouldUploadAccountCreation) {
         csvData.push({
           ...createCommonFields(cust),
@@ -452,12 +432,10 @@ export class MarketingScheduledJobs {
         )
       }
     }
-
     if (csvData.length === 0) {
       this.logger.log(`No events to sync`)
       return
     }
-
     const parser = new Parser({
       fields: [
         "CampaignId",
@@ -492,7 +470,6 @@ export class MarketingScheduledJobs {
         },
       ],
     }
-
     try {
       await sgMail.send(msg)
       await Promise.all(syncTimingUpdates.map(a => a()))
