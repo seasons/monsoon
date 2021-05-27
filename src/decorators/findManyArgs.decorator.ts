@@ -14,9 +14,10 @@ export const FindManyArgs: (
 ) => ParameterDecorator = createParamDecorator(
   (options: FindManyArgsParams = {}, context: ExecutionContext): any => {
     const [obj, args, ctx, info] = context.getArgs()
-    let modelName = getReturnTypeFromInfo(info)
-    if (modelName.includes("Connection")) {
-      modelName = modelName.replace("Connection", "")
+    const _modelName = getReturnTypeFromInfo(info)
+    let modelName = _modelName
+    if (_modelName.includes("Connection")) {
+      modelName = _modelName.replace("Connection", "")
     }
 
     const { transformArgs = args => args, withFragment } = options
@@ -34,12 +35,12 @@ export const FindManyArgs: (
 
     let select = QueryUtilsService.infoToSelect(
       _info,
-      modelName,
+      _modelName, // Preserve "Connection" if it's there
       ctx.modelFieldsByModelName
     )
     const findManyArgs = QueryUtilsService.prismaOneToPrismaTwoArgs(
       transformedArgs,
-      modelName
+      modelName // Without "Connection"
     )
     return {
       ...findManyArgs,

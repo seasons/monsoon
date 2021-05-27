@@ -13,12 +13,11 @@ export class BlogQueriesResolver {
   }
 
   @Query()
-  async blogPosts(@FindManyArgs({}) { orderBy, ...args }, @Select() select) {
+  async blogPosts(@FindManyArgs() { orderBy, ...args }) {
     return this.queryUtils.resolveFindMany(
       {
         ...args,
         orderBy: orderBy || { webflowCreatedAt: "desc" },
-        select,
       },
       "BlogPost"
     )
