@@ -51,14 +51,14 @@ export class BrandQueriesResolver {
 
   @Query()
   async brands(
-    @FindManyArgs({}) args,
-    @Select({ withFragment: `fragment EnsureSlug on Brand { slug }` }) select
+    @FindManyArgs({ withFragment: `fragment EnsureSlug on Brand { slug }` })
+    args
   ) {
-    return this.queryUtils.resolveFindMany({ ...args, select }, "Brand")
+    return this.queryUtils.resolveFindMany(args, "Brand")
   }
 
   @Query()
-  async brandsConnection(@Args() args, @Select({}) select) {
+  async brandsConnection(@Args() args, @Select() select) {
     return this.queryUtils.resolveConnection({ ...args, select }, "Brand")
   }
 }

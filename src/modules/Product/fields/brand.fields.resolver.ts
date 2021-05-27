@@ -13,7 +13,7 @@ export class BrandFieldsResolver {
   ) {}
 
   @ResolveField()
-  async productsConnection(@Parent() brand, @Args() args, @Select({}) select) {
+  async productsConnection(@Parent() brand, @Args() args, @Select() select) {
     let brandSlug = brand.slug
     if (!brandSlug) {
       brandSlug = (

@@ -8,12 +8,12 @@ export class BlogQueriesResolver {
   constructor(private readonly queryUtils: QueryUtilsService) {}
 
   @Query()
-  async blogPost(@Args() { where }, @Select({}) select) {
+  async blogPost(@Args() { where }, @Select() select) {
     return this.queryUtils.resolveFindUnique({ where, select }, "BlogPost")
   }
 
   @Query()
-  async blogPosts(@FindManyArgs({}) { orderBy, ...args }, @Select({}) select) {
+  async blogPosts(@FindManyArgs({}) { orderBy, ...args }, @Select() select) {
     return this.queryUtils.resolveFindMany(
       {
         ...args,
@@ -25,7 +25,7 @@ export class BlogQueriesResolver {
   }
 
   @Query()
-  async blogPostsConnection(@Args() args, @Select({}) select) {
+  async blogPostsConnection(@Args() args, @Select() select) {
     return this.queryUtils.resolveConnection({ ...args, select }, "BlogPost")
   }
 }
