@@ -1,10 +1,6 @@
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { SCALAR_LIST_FIELD_NAMES } from "@app/prisma/prisma.service"
 import { ExecutionContext, createParamDecorator } from "@nestjs/common"
-import { PrismaSelect } from "@paljs/plugins"
 import { addFragmentToInfo } from "graphql-binding"
-import graphqlFields from "graphql-fields"
-import { isEmpty } from "lodash"
 
 import { getReturnTypeFromInfo } from "./utils"
 
@@ -13,9 +9,9 @@ export interface SelectParams {
 }
 
 export const Select: (
-  params: SelectParams
+  params?: SelectParams
 ) => ParameterDecorator = createParamDecorator(
-  (options: SelectParams, context: ExecutionContext): any => {
+  (options: SelectParams = {}, context: ExecutionContext): any => {
     const [obj, args, ctx, info] = context.getArgs()
     const modelName = getReturnTypeFromInfo(info)
 
@@ -35,9 +31,6 @@ export const Select: (
       modelName,
       ctx.modelFieldsByModelName
     )
-    if (isEmpty(select.select)) {
-      select = null
-    }
-    return select !== null ? select.select : select
+    return select
   }
 )

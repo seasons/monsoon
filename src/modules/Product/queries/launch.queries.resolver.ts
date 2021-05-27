@@ -1,16 +1,14 @@
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
-import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
+import { Args, Query, Resolver } from "@nestjs/graphql"
 
 @Resolver()
 export class LaunchQueriesResolver {
   constructor(private readonly queryUtils: QueryUtilsService) {}
 
   @Query()
-  async launch(@Args() { where }, @Select({}) select) {
+  async launch(@Args() { where }, @Select() select) {
     return this.queryUtils.resolveFindUnique({ where, select }, "Launch")
   }
 
@@ -38,14 +36,13 @@ export class LaunchQueriesResolver {
         return _args
       },
     })
-    args,
-    @Select({}) select
+    args
   ) {
-    return this.queryUtils.resolveFindMany({ ...args, select }, "Launch")
+    return this.queryUtils.resolveFindMany(args, "Launch")
   }
 
   @Query()
-  async launchesConnection(@Args() args, @Select({}) select) {
+  async launchesConnection(@Args() args, @Select() select) {
     return this.queryUtils.resolveConnection({ ...args, select }, "Launch")
   }
 }

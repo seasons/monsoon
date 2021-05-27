@@ -13,7 +13,6 @@ import {
   ProductStatus,
   ProductTier,
   ProductType,
-  ProductVariant,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
   Tag,
@@ -25,7 +24,7 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
-import { head, pick, tail } from "lodash"
+import { head, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"

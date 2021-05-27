@@ -18,7 +18,7 @@ export class ProductQueriesResolver {
     @Args() { where },
     @Info() info,
     @User() user,
-    @Select({}) select
+    @Select() select
   ) {
     const scope = !!user ? "PRIVATE" : "PUBLIC"
     info.cacheControl.setCacheHint({ maxAge: 600, scope })
@@ -49,35 +49,26 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async productRequests(@FindManyArgs({}) args, @Select({}) select) {
-    return await this.queryUtils.resolveFindMany(
-      { ...args, select },
-      "ProductRequest"
-    )
+  async productRequests(@FindManyArgs() args) {
+    return await this.queryUtils.resolveFindMany(args, "ProductRequest")
   }
 
   @Query()
-  async productFunctions(@FindManyArgs({}) args, @Select({}) select) {
-    return await this.queryUtils.resolveFindMany(
-      { ...args, select },
-      "ProductFunction"
-    )
+  async productFunctions(@FindManyArgs() args) {
+    return await this.queryUtils.resolveFindMany(args, "ProductFunction")
   }
 
   @Query()
-  async productMaterialCategories(@FindManyArgs({}) args, @Select({}) select) {
+  async productMaterialCategories(@FindManyArgs() args) {
     return await this.queryUtils.resolveFindMany(
-      { ...args, select },
+      args,
       "ProductMaterialCategory"
     )
   }
 
   @Query()
-  async productModels(@FindManyArgs({}) args, @Select({}) select) {
-    return await this.queryUtils.resolveFindMany(
-      { ...args, select },
-      "ProductModel"
-    )
+  async productModels(@FindManyArgs() args) {
+    return await this.queryUtils.resolveFindMany(args, "ProductModel")
   }
 
   @Query()
@@ -129,11 +120,8 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async physicalProducts(@FindManyArgs({}) args, @Select({}) select) {
-    return this.queryUtils.resolveFindMany(
-      { ...args, select },
-      "PhysicalProduct"
-    )
+  async physicalProducts(@FindManyArgs() args) {
+    return this.queryUtils.resolveFindMany(args, "PhysicalProduct")
   }
 
   @Query()
@@ -151,23 +139,23 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async categories(@FindManyArgs({}) args, @Select({}) select) {
-    return this.queryUtils.resolveFindMany({ ...args, select }, "Category")
+  async categories(@FindManyArgs() args) {
+    return this.queryUtils.resolveFindMany(args, "Category")
   }
 
   @Query()
-  async category(@Args() { where }, @Select({}) select) {
+  async category(@Args() { where }, @Select() select) {
     return this.queryUtils.resolveFindUnique({ where, select }, "Category")
   }
 
   @Query()
-  async categoriesConnection(@Args() args, @Select({}) select) {
+  async categoriesConnection(@Args() args, @Select() select) {
     return this.queryUtils.resolveConnection({ ...args, select }, "Category")
   }
 
   @Query()
-  async colors(@FindManyArgs({}) args, @Select({}) select) {
-    return this.queryUtils.resolveFindMany({ ...args, select }, "Color")
+  async colors(@FindManyArgs() args) {
+    return this.queryUtils.resolveFindMany(args, "Color")
   }
 
   @Query()
@@ -187,20 +175,17 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async tags(@FindManyArgs({}) args, @Select({}) select) {
-    return this.queryUtils.resolveFindMany({ ...args, select }, "Tag")
+  async tags(@FindManyArgs() args) {
+    return this.queryUtils.resolveFindMany(args, "Tag")
   }
 
   @Query()
-  async warehouseLocations(@FindManyArgs({}) args, @Select({}) select) {
-    return this.queryUtils.resolveFindMany(
-      { ...args, select },
-      "WarehouseLocation"
-    )
+  async warehouseLocations(@FindManyArgs() args) {
+    return this.queryUtils.resolveFindMany(args, "WarehouseLocation")
   }
 
   @Query()
-  async surpriseProductVariants(@Customer() customer, @Select({}) select) {
+  async surpriseProductVariants(@Customer() customer, @Select() select) {
     const products = this.productService.availableProductVariantsForCustomer(
       { id: customer.id },
       select
@@ -210,7 +195,7 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async newestBrandProducts(@Args() args, @Select({}) select) {
+  async newestBrandProducts(@Args() args, @Select() select) {
     // Returns products from the most recent brand to be added
     return this.productService.newestBrandProducts(args, select)
   }

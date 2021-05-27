@@ -21,8 +21,9 @@ export class QueryUtilsService {
 
   static infoToSelect(
     info,
-    modelName: Prisma.ModelName,
-    modelFieldsByModelName
+    modelName,
+    modelFieldsByModelName,
+    callType: "initial" | "recursive" = "initial"
   ) {
     const prismaSelect = new PrismaSelect(info)
     let fields = graphqlFields(info)
@@ -84,7 +85,8 @@ export class QueryUtilsService {
                     fragments: info.fragments,
                   },
                   field.type,
-                  modelFieldsByModelName
+                  modelFieldsByModelName,
+                  "recursive"
                 )
               } else {
                 // field is coming from one or more fragments. get the field nodes accordingly
@@ -107,7 +109,8 @@ export class QueryUtilsService {
                         fragments: info.fragments,
                       },
                       field.type,
-                      modelFieldsByModelName
+                      modelFieldsByModelName,
+                      "recursive"
                     )
                     return PrismaSelect.mergeDeep(
                       currentFieldSelect,
@@ -136,10 +139,10 @@ export class QueryUtilsService {
       }
     })
 
-    return select
+    return callType === "recursive" ? select : select.select
   }
 
-  static prismaOneToPrismaTwoArgs(args, modelName: Prisma.ModelName) {
+  static prismaOneToPrismaTwoArgs(args, modelName) {
     const {
       where,
       orderBy,
@@ -180,6 +183,7 @@ export class QueryUtilsService {
       skip: prisma2Skip,
       cursor: prisma2Cursor,
       take: prisma2Take,
+      select: {},
     }
   }
 
