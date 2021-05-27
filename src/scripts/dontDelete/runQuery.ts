@@ -2,6 +2,7 @@ import "module-alias/register"
 
 import * as util from "util"
 
+import { PrismaSelect } from "@paljs/plugins"
 import { Prisma } from "@prisma/client"
 import zipcodes from "zipcodes"
 
@@ -9,79 +10,35 @@ import { DripService } from "../../modules/Drip/services/drip.service"
 import { QueryUtilsService } from "../../modules/Utils/services/queryUtils.service"
 import { PrismaService } from "../../prisma/prisma.service"
 
+const context = {
+  modelFieldsByModelName: new PrismaSelect(null).dataModel.reduce(
+    (accumulator, currentModel) => {
+      accumulator[currentModel.name] = currentModel.fields
+      return accumulator
+    },
+    {}
+  ),
+}
+
 const run = async () => {
   const ps = new PrismaService()
-  const prisma1Where = {
-    where: {
-      OR: [
-        {
-          AND: [
-            {
-              internalSize: {
-                top: {
-                  letter_in: [],
-                },
-              },
-            },
-            { reservable_gte: 1 },
-            {
-              product: {
-                AND: [{ status: "Available" }, { type: "Top" }],
-              },
-            },
-          ],
-        },
-        {
-          AND: [
-            {
-              internalSize: {
-                display_in: [],
-              },
-            },
-            { reservable_gte: 1 },
-            {
-              product: {
-                AND: [{ status: "Available" }, { type: "Bottom" }],
-              },
-            },
-          ],
-        },
-      ],
-    },
-  }
-  const {
-    where: productVariantWhere,
-  } = QueryUtilsService.prismaOneToPrismaTwoArgs(prisma1Where, "ProductVariant")
-  await ps.client2.productVariant.findMany({
-    where: {
-      OR: [
-        {
-          AND: [
-            {
-              internalSize: { top: { letter: { in: [] } } },
-            },
-            { reservable: { gte: 1 } },
-            {
-              product: {
-                every: { AND: [{ status: "Available" }, { type: "Top" }] },
-              },
-            },
-          ],
-        },
-        {
-          AND: [
-            { internalSize: { display: { in: [] } } },
-            { reservable: { gte: 1 } },
-            {
-              product: {
-                every: { AND: [{ status: "Available" }, { type: "Bottom" }] },
-              },
-            },
-          ],
-        },
-      ],
-    },
-  })
-  console.log(util.inspect(productVariantWhere, { depth: null }))
+  const info = `{
+    id
+    status
+    customer {
+      id
+    }
+    lineItems {
+        id
+        recordType
+        recordID
+    }
+  }`
+  const select = QueryUtilsService.infoToSelect(
+    info,
+    "ProductVariant",
+    context.modelFieldsByModelName
+  )
+  console.log(util.inspect(select, { depth: null }))
 }
 run()

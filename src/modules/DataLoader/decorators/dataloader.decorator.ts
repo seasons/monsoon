@@ -44,7 +44,7 @@ export const Loader: (
 
     const { operationName, variables } = ctx.req.body
 
-    const adjustedOptions = cloneDeep({ type, ...data })
+    const adjustedOptions = cloneDeep({ type, ...data, ctx })
 
     // If includeInfo from context, ensure we key dataloaders using the origin query information, and prevent
     // stale results from data based on loader params alone, as the underlying prisma query will be different.

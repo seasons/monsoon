@@ -3,24 +3,26 @@ import { Application } from "@app/decorators/application.decorator"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { Image, Product, ProductModel } from "@app/prisma"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import {
+  PrismaTwoDataLoader,
+  PrismaTwoLoader,
+} from "@app/prisma/prisma2.loader"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { ProductService } from "@modules/Product/services/product.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
 import { sortedUniqBy } from "lodash"
 
 @Resolver("Product")
 export class ProductFieldsResolver {
   constructor(
-    private readonly prisma: PrismaService,
     private readonly productService: ProductService,
     private readonly productUtilsService: ProductUtilsService,
     private readonly imageService: ImageService
   ) {}
 
-  @ResolveField()
+  @ResolveField() //TODO:
   async isSaved(@Parent() product, @Customer() customer) {
     return this.productService.isSaved(product, customer)
   }
@@ -29,20 +31,13 @@ export class ProductFieldsResolver {
   async modelHeight(
     @Parent() product,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "products",
-        info: `
-        {
-          id
-          model {
-            id
-            height
-          }
-        }
-      `,
+        model: "Product",
+        select: { id: true, model: { select: { id: true, height: true } } },
       },
     })
-    productLoader: PrismaDataLoader<{
+    productLoader: PrismaTwoDataLoader<{
       id: string
       model: Pick<ProductModel, "id" | "height">
     }>
@@ -55,13 +50,12 @@ export class ProductFieldsResolver {
   @ResolveField()
   async variants(
     @Parent() parent,
-    @Info() info,
-    @Application() application,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "productVariants",
+        model: "ProductVariant",
         formatWhere: ids => ({
-          product: { id_in: ids },
+          product: { every: { id: { in: ids } } },
         }),
         infoFragment: `
           fragment EnsureDisplay on ProductVariant {
@@ -111,18 +105,19 @@ export class ProductFieldsResolver {
   async buyUsedEnabled(
     @Parent() product: Pick<Product, "id">,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "products",
-        info: `{
-          id
-          variants {
-            physicalProducts {
-              price {
-                buyUsedEnabled
-              }
-            }
-          }
-        }`,
+        model: "Product",
+        select: {
+          id: true,
+          variants: {
+            select: {
+              physicalProducts: {
+                select: { price: { select: { buyUsedEnabled: true } } },
+              },
+            },
+          },
+        },
       },
     })
     productLoader: PrismaDataLoader<{
@@ -151,18 +146,19 @@ export class ProductFieldsResolver {
   async buyUsedPrice(
     @Parent() product: Pick<Product, "id">,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "products",
-        info: `{
-          id
-          variants {
-            physicalProducts {
-              price {
-                buyUsedPrice
-              }
-            }
-          }
-        }`,
+        model: "Product",
+        select: {
+          id: true,
+          variants: {
+            select: {
+              physicalProducts: {
+                select: { price: { select: { buyUsedPrice: true } } },
+              },
+            },
+          },
+        },
       },
     })
     productLoader: PrismaDataLoader<{
@@ -195,18 +191,13 @@ export class ProductFieldsResolver {
     @Args("size") size: ImageSize = "Medium",
     @Args("options") options: ImageOptions,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "products",
-        info: `
-        {
-          id
-          images(orderBy: url_ASC) {
-            id
-            url
-            updatedAt
-          }
-        }
-        `,
+        model: "Product",
+        select: {
+          id: true,
+          images: { select: { id: true, url: true, updatedAt: true } },
+        },
       },
     })
     productLoader: PrismaDataLoader<{

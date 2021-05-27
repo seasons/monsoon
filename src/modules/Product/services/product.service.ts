@@ -163,33 +163,34 @@ export class ProductService {
   }
 
   async isSaved(
-    product: { id: ID_Input } | Product,
-    customer: { id: ID_Input } | Customer | null
+    product: { id: string } | Product,
+    customer: { id: string } | Customer | null
   ) {
     if (!customer) {
       return false
     }
-    const productVariants = await this.prisma.client.productVariants({
+    const productVariants = await this.prisma.client2.productVariant.findMany({
       where: {
         product: {
-          id: product.id,
+          every: { id: product.id },
         },
       },
+      select: { id: true },
     })
 
-    const bagItem = await this.prisma.client.bagItems({
+    const bagItemCount = await this.prisma.client2.bagItem.count({
       where: {
         customer: {
           id: customer.id,
         },
         productVariant: {
-          id_in: productVariants.map(a => a.id),
+          id: { in: productVariants.map(a => a.id) },
         },
         saved: true,
       },
     })
 
-    return bagItem.length > 0
+    return bagItemCount > 0
   }
 
   async deepUpsertProduct(input) {

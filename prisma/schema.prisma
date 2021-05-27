@@ -840,7 +840,6 @@ model ProductVariant {
 
   // Should be singleton. Will be fixed via full prisma2 migration
   product Product[]
-
 }
 
 model ProductVariantFeedback {

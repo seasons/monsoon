@@ -4,20 +4,28 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
-  BagItem,
   InventoryStatus,
-  PhysicalProduct,
-  PhysicalProductPrice,
-  PhysicalProductQualityReport,
-  Product,
   ShopifyProductVariant,
   ShopifyShop,
 } from "@app/prisma"
 import { Order, ProductVariant } from "@app/prisma/prisma.binding"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import {
+  PrismaTwoDataLoader,
+  PrismaTwoLoader,
+} from "@app/prisma/prisma2.loader"
 import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
+import {
+  BagItem,
+  PhysicalProduct,
+  PhysicalProductPrice,
+  Prisma,
+  Product,
+  ProductNotification,
+} from "@prisma/client"
 import { head } from "lodash"
+
+import { ProductVariantService } from "../services/productVariant.service"
 
 type EUSize = "44" | "46" | "48" | "50" | "52" | "54" | "56"
 type JPSize = "0" | "1" | "2" | "3" | "4"
@@ -31,10 +39,9 @@ interface SizeConversion {
 export class ProductVariantFieldsResolver {
   sizeConversion: SizeConversion
   constructor(
-    private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
-    private readonly shopify: ShopifyService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly shopify: ShopifyService
   ) {
     this.sizeConversion = this.utils.parseJSONFile(
       "src/modules/Product/sizeConversion"
@@ -46,29 +53,35 @@ export class ProductVariantFieldsResolver {
     @Parent() productVariant: ProductVariant,
     @Customer() customer,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "orders",
-        info: `{
-          id
-          status
-          customer {
-            id
-          }
-          lineItems {
-              id
-              recordType
-              recordID
-          }
-        }`,
+        model: "Order",
+        select: Prisma.validator<Prisma.OrderSelect>()({
+          id: true,
+          status: true,
+          customer: { select: { id: true } },
+          lineItems: { select: { id: true, recordType: true, recordID: true } },
+        }),
         formatWhere: ids => ({
-          AND: [{ customer: { id_in: ids } }, { status: "Submitted" }],
+          AND: [{ customer: { id: { in: ids } } }, { status: "Submitted" }],
         }),
         getKeys: a => [a.customer.id],
         fallbackValue: null,
         keyToDataRelationship: "OneToMany",
       },
     })
-    ordersLoader: PrismaDataLoader<Order[]>
+    ordersLoader: PrismaTwoDataLoader<Order[]>,
+    @Loader({
+      type: PrismaTwoLoader.name,
+      params: {
+        model: "PhysicalProduct",
+        select: Prisma.validator<Prisma.PhysicalProductSelect>()({
+          id: true,
+          productVariant: { select: { id: true } },
+        }),
+      },
+    })
+    physicalProductsLoader: PrismaTwoDataLoader
   ) {
     if (!customer?.id) {
       return false
@@ -95,18 +108,8 @@ export class ProductVariantFieldsResolver {
     }
 
     if (physicalProductIDs.length > 0) {
-      const physicalProducts = await this.prisma.binding.query.physicalProducts(
-        {
-          where: { id_in: physicalProductIDs },
-        },
-        `
-        {
-          id
-          productVariant {
-            id
-          }
-        }
-        `
+      const physicalProducts = await physicalProductsLoader.loadMany(
+        physicalProductIDs
       )
 
       const physicalProductIDS = physicalProducts?.map(p => p.productVariant.id)
@@ -120,26 +123,20 @@ export class ProductVariantFieldsResolver {
   async displayLong(
     @Parent() parent,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "productVariants",
-        info: `
-        {
-          id
-          displayShort
-          internalSize {
-            id
-            type
-            display
-          }
-          manufacturerSizes {
-            id
-            type
-            display
-          }
-        }`,
+        model: "ProductVariant",
+        select: Prisma.validator<Prisma.ProductVariantSelect>()({
+          id: true,
+          displayShort: true,
+          internalSize: { select: { id: true, type: true, display: true } },
+          manufacturerSizes: {
+            select: { id: true, type: true, display: true },
+          },
+        }),
       },
     })
-    productVariantLoader: PrismaDataLoader<ProductVariant>
+    productVariantLoader: PrismaTwoDataLoader<ProductVariant>
   ) {
     const variant = await productVariantLoader.load(parent.id)
 
@@ -182,60 +179,103 @@ export class ProductVariantFieldsResolver {
   }
 
   @ResolveField()
-  async isInBag(@Parent() parent, @Customer() customer) {
-    if (!customer) return false
-
-    const bagItems = await this.prisma.client.bagItems({
-      where: {
-        productVariant: {
-          id: parent.id,
-        },
-        customer: {
-          id: customer.id,
-        },
-        saved: false,
+  async isInBag(
+    @Parent() parent,
+    @Customer() customer,
+    @Loader({
+      type: PrismaTwoLoader.name,
+      params: {
+        model: "BagItem",
+        select: Prisma.validator<Prisma.BagItemSelect>()({
+          id: true,
+        }),
+        formatWhere: (ids, ctx) =>
+          Prisma.validator<Prisma.BagItemWhereInput>()({
+            productVariant: {
+              id: { in: ids },
+            },
+            customer: {
+              id: ctx.customer?.id,
+            },
+            saved: false,
+          }),
       },
     })
+    bagItemloader: PrismaTwoDataLoader
+  ) {
+    if (!customer) return false
+
+    const bagItems = await bagItemloader.load(parent.id)
 
     return bagItems.length > 0
   }
 
   @ResolveField()
-  async isSaved(@Parent() parent, @Customer() customer) {
-    if (!customer) return false
-
-    const bagItems = await this.prisma.client.bagItems({
-      where: {
-        productVariant: {
-          id: parent.id,
-        },
-        customer: {
-          id: customer.id,
-        },
-        saved: true,
+  async isSaved(
+    @Parent() parent,
+    @Customer() customer,
+    @Loader({
+      type: PrismaTwoLoader.name,
+      params: {
+        model: "BagItem",
+        select: Prisma.validator<Prisma.BagItemSelect>()({
+          id: true,
+        }),
+        formatWhere: (ids, ctx) =>
+          Prisma.validator<Prisma.BagItemWhereInput>()({
+            productVariant: {
+              id: { in: ids },
+            },
+            customer: {
+              id: ctx.customer?.id,
+            },
+            saved: true,
+          }),
       },
     })
+    bagItemloader: PrismaTwoDataLoader
+  ) {
+    if (!customer) return false
+
+    const bagItems = await bagItemloader.load(parent.id)
 
     return bagItems.length > 0
   }
 
   @ResolveField()
-  async hasRestockNotification(@Parent() parent, @Customer() customer) {
+  async hasRestockNotification(
+    @Parent() parent,
+    @Customer() customer,
+    @Loader({
+      type: PrismaTwoLoader.name,
+      params: {
+        model: "ProductNotification",
+        select: Prisma.validator<Prisma.ProductNotificationSelect>()({
+          id: true,
+        }),
+        formatWhere: (ids, ctx) =>
+          Prisma.validator<Prisma.ProductNotificationWhereInput>()({
+            customer: {
+              id: ctx.customer.id,
+            },
+            AND: {
+              productVariant: {
+                id: { in: ids },
+              },
+            },
+          }),
+        orderBy: Prisma.validator<Prisma.ProductNotificationOrderByInput>()({
+          createdAt: "desc",
+        }),
+      },
+    })
+    productNotificationsLoader: PrismaTwoDataLoader
+  ) {
     if (!customer) return false
 
-    const restockNotifications = await this.prisma.client.productNotifications({
-      where: {
-        customer: {
-          id: customer.id,
-        },
-        AND: {
-          productVariant: {
-            id: parent.id,
-          },
-        },
-      },
-      orderBy: "createdAt_DESC",
-    })
+    const restockNotifications = (await productNotificationsLoader.load(
+      parent.id
+    )) as ProductNotification[]
 
     const firstNotification = head(restockNotifications)
     const hasRestockNotification =
@@ -245,28 +285,32 @@ export class ProductVariantFieldsResolver {
   }
 
   @ResolveField()
-  async isWanted(@Parent() parent, @User() user) {
-    if (!user) return false
-
-    const productVariant = await this.prisma.client.productVariant({
-      id: parent.id,
-    })
-    if (!productVariant) {
-      return false
-    }
-
-    const productVariantWants = await this.prisma.client.productVariantWants({
-      where: {
-        user: {
-          id: user.id,
-        },
-        AND: {
-          productVariant: {
-            id: productVariant.id,
-          },
-        },
+  async isWanted(
+    @Parent() parent,
+    @User() user,
+    @Loader({
+      type: PrismaTwoLoader.name,
+      params: {
+        model: "ProductVariantWant",
+        select: { id: true },
+        formatWhere: (ids, ctx) =>
+          Prisma.validator<Prisma.ProductVariantWantWhereInput>()({
+            user: {
+              id: ctx.user.id,
+            },
+            AND: {
+              productVariant: {
+                id: { in: ids },
+              },
+            },
+          }),
       },
     })
+    wantsLoader
+  ) {
+    if (!user) return false
+
+    const productVariantWants = await wantsLoader.load(parent.id)
 
     const exists = productVariantWants && productVariantWants.length > 0
     return exists
@@ -276,17 +320,13 @@ export class ProductVariantFieldsResolver {
   async size(
     @Parent() parent,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "productVariants",
-        info: `
-        {
-          id
-          internalSize {
-            id
-            display
-          }
-        }
-        `,
+        model: "ProductVariant",
+        select: Prisma.validator<Prisma.ProductVariantSelect>()({
+          id: true,
+          internalSize: { select: { id: true, display: true } },
+        }),
       },
     })
     productVariantLoader: PrismaDataLoader<ProductVariant>
@@ -295,6 +335,7 @@ export class ProductVariantFieldsResolver {
     return productVariant?.internalSize?.display
   }
 
+  // TODO:
   @ResolveField()
   async nextReservablePhysicalProduct(
     @Parent() parent,
@@ -382,59 +423,71 @@ export class ProductVariantFieldsResolver {
     @Parent() productVariant: Pick<ProductVariant, "id">,
     @Customer() customer,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "customers",
-        info: `{
-          id
-          bagItems {
-            id
-            status
-            productVariant {
-              id
-            }
-          }
-        }`,
+        model: "Customer",
+        select: Prisma.validator<Prisma.CustomerSelect>()({
+          id: true,
+          bagItems: {
+            select: {
+              id: true,
+              status: true,
+              productVariant: { select: { id: true } },
+            },
+          },
+        }),
       },
     })
-    customerLoader: PrismaDataLoader<{
+    customerLoader: PrismaTwoDataLoader<{
       bagItems: Array<
-        Pick<BagItem, "status"> & { productVariant: Pick<ProductVariant, "id"> }
+        Pick<BagItem, "status"> & {
+          productVariant: Pick<ProductVariant, "id">
+        }
       >
     }>,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "productVariants",
-        info: `{ 
-          id
-          physicalProducts {
-            id
-            price {
-              id
-              buyUsedPrice
-              buyUsedEnabled
-            }
-            inventoryStatus
-          }
-          product {
-            id
-            buyNewEnabled
-            brand {
-              id
-              shopifyShop {
-                enabled
-                shopName
-                accessToken
-              }
-            }
-          }
-          shopifyProductVariant {
-            id
-            cacheExpiresAt
-            cachedAvailableForSale
-            cachedPrice
-            externalId
-          }
-        }`,
+        model: "ProductVariant",
+        select: Prisma.validator<Prisma.ProductVariantSelect>()({
+          id: true,
+          physicalProducts: {
+            select: {
+              id: true,
+              inventoryStatus: true,
+              price: {
+                select: { id: true, buyUsedPrice: true, buyUsedEnabled: true },
+              },
+            },
+          },
+          product: {
+            select: {
+              id: true,
+              buyNewEnabled: true,
+              brand: {
+                select: {
+                  id: true,
+                  shopifyShop: {
+                    select: {
+                      enabled: true,
+                      shopName: true,
+                      accessToken: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          shopifyProductVariant: {
+            select: {
+              id: true,
+              cacheExpiresAt: true,
+              cachedAvailableForSale: true,
+              cachedPrice: true,
+              externalId: true,
+            },
+          },
+        }),
       },
     })
     productVariantLoader: PrismaDataLoader<{

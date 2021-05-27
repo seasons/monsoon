@@ -24,6 +24,7 @@ export type PrismaTwoGenerateParams = CommonPrismaGenerateParams & {
 }
 
 interface CommonPrismaGenerateParams {
+  ctx?: any
   orderBy?: any
 
   // if a given key does not resolve to any return value, what should we return?
@@ -31,7 +32,7 @@ interface CommonPrismaGenerateParams {
 
   // Given a set of keys, what is where clause to pass into prisma?
   // For example, the function (keys) => {id: {in: keys}} would result in a query input of {where: {id: {in: keys}}}
-  formatWhere?: (keys: string[]) => any
+  formatWhere?: (keys: string[], ctx: any) => any
 
   // If pulling the info from the graphql execution context, pass this to
   // add a fragment to it.

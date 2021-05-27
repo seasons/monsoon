@@ -6,6 +6,7 @@ import {
   makeOrderByPrisma2Compatible,
   makeWherePrisma2Compatible,
 } from "@prisma/binding-argument-transform"
+import { Prisma } from "@prisma/client"
 import {
   PrismaService,
   SCALAR_LIST_FIELD_NAMES,
@@ -18,7 +19,11 @@ import { get, head, isArray, isEmpty, lowerFirst, pick } from "lodash"
 export class QueryUtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  static infoToSelect(info, modelName, modelFieldsByModelName) {
+  static infoToSelect(
+    info,
+    modelName: Prisma.ModelName,
+    modelFieldsByModelName
+  ) {
     const prismaSelect = new PrismaSelect(info)
     let fields = graphqlFields(info)
 
@@ -134,7 +139,7 @@ export class QueryUtilsService {
     return select
   }
 
-  static prismaOneToPrismaTwoArgs(args, modelName) {
+  static prismaOneToPrismaTwoArgs(args, modelName: Prisma.ModelName) {
     const {
       where,
       orderBy,
@@ -237,7 +242,7 @@ export class QueryUtilsService {
     return returnObj
   }
 
-  async resolveFindMany(findManyArgs, modelName) {
+  async resolveFindMany(findManyArgs, modelName: Prisma.ModelName) {
     const modelClient = this.prisma.client2[lowerFirst(modelName)]
     const data = await modelClient.findMany(findManyArgs)
     const sanitizedData = this.prisma.sanitizePayload(data, modelName)
@@ -247,7 +252,7 @@ export class QueryUtilsService {
 
   async resolveFindUnique(
     findUniqueArgs: { where: any; select?: any; include?: any },
-    modelName
+    modelName: Prisma.ModelName
   ) {
     const modelClient = this.prisma.client2[lowerFirst(modelName)]
     const data = await modelClient.findUnique(findUniqueArgs)
@@ -266,7 +271,7 @@ export class QueryUtilsService {
       after?: string
       select?: any
     },
-    modelName
+    modelName: Prisma.ModelName
   ) {
     const { where, orderBy } = QueryUtilsService.prismaOneToPrismaTwoArgs(
       queryArgs,
