@@ -63,6 +63,16 @@ export class QueryUtilsService {
     callStack.push({ type: modelName, field: info.fieldName, fields })
     const prismaSelect = new PrismaSelect(adjustedInfo as GraphQLResolveInfo)
 
+    // Fields that we'll need to pass in for recursive calls so that
+    // the PrismaSelect library can properly parse the info. Not all
+    // are *definitely* needed, but we err on the side of caution
+    const globalInfoFields = pick(info, [
+      "fragments",
+      "operation",
+      "schema",
+      "variableValues",
+    ])
+
     // If it's a Connection query, get the select for the node on the edges
     if (modelName.includes("Connection")) {
       const edgesSelection = info.fieldNodes[0].selectionSet.selections.find(
@@ -77,7 +87,7 @@ export class QueryUtilsService {
           fieldName: "node",
           fieldNodes: [nodeSelection],
           returnType,
-          fragments: info.fragments,
+          ...globalInfoFields,
         },
         modelName: returnType as Prisma.ModelName,
         modelFieldsByModelName,
@@ -123,7 +133,7 @@ export class QueryUtilsService {
                       ? [subFieldNodes]
                       : emptyFieldNodes,
                     returnType: field.type,
-                    fragments: info.fragments,
+                    ...globalInfoFields,
                   },
                   modelName: field.type,
                   modelFieldsByModelName,
@@ -153,7 +163,7 @@ export class QueryUtilsService {
                           ? [currentFieldNodes]
                           : emptyFieldNodes,
                         returnType: field.type,
-                        fragments: info.fragments,
+                        ...globalInfoFields,
                       },
                       modelName: field.type,
                       modelFieldsByModelName,

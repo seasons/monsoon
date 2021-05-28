@@ -13773,6 +13773,8 @@ type ProductVariantEdge {
 type ProductVariantFeedback {
   id: ID!
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedbackQuestion!]
   reservationFeedback: ReservationFeedback!
   variant: ProductVariant!
@@ -13787,6 +13789,8 @@ type ProductVariantFeedbackConnection {
 input ProductVariantFeedbackCreateInput {
   id: ID
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput!
   variant: ProductVariantCreateOneInput!
@@ -13805,6 +13809,8 @@ input ProductVariantFeedbackCreateOneWithoutQuestionsInput {
 input ProductVariantFeedbackCreateWithoutQuestionsInput {
   id: ID
   isCompleted: Boolean!
+  rating: Float
+  review: String
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput!
   variant: ProductVariantCreateOneInput!
 }
@@ -13812,6 +13818,8 @@ input ProductVariantFeedbackCreateWithoutQuestionsInput {
 input ProductVariantFeedbackCreateWithoutReservationFeedbackInput {
   id: ID
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
   variant: ProductVariantCreateOneInput!
 }
@@ -13826,11 +13834,17 @@ enum ProductVariantFeedbackOrderByInput {
   id_DESC
   isCompleted_ASC
   isCompleted_DESC
+  rating_ASC
+  rating_DESC
+  review_ASC
+  review_DESC
 }
 
 type ProductVariantFeedbackPreviousValues {
   id: ID!
   isCompleted: Boolean!
+  rating: Float
+  review: String
 }
 
 type ProductVariantFeedbackQuestion {
@@ -14081,6 +14095,28 @@ input ProductVariantFeedbackScalarWhereInput {
   id_not_ends_with: ID
   isCompleted: Boolean
   isCompleted_not: Boolean
+  rating: Float
+  rating_not: Float
+  rating_in: [Float!]
+  rating_not_in: [Float!]
+  rating_lt: Float
+  rating_lte: Float
+  rating_gt: Float
+  rating_gte: Float
+  review: String
+  review_not: String
+  review_in: [String!]
+  review_not_in: [String!]
+  review_lt: String
+  review_lte: String
+  review_gt: String
+  review_gte: String
+  review_contains: String
+  review_not_contains: String
+  review_starts_with: String
+  review_not_starts_with: String
+  review_ends_with: String
+  review_not_ends_with: String
   AND: [ProductVariantFeedbackScalarWhereInput!]
   OR: [ProductVariantFeedbackScalarWhereInput!]
   NOT: [ProductVariantFeedbackScalarWhereInput!]
@@ -14106,6 +14142,8 @@ input ProductVariantFeedbackSubscriptionWhereInput {
 
 input ProductVariantFeedbackUpdateInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
   reservationFeedback: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput
   variant: ProductVariantUpdateOneRequiredInput
@@ -14113,10 +14151,14 @@ input ProductVariantFeedbackUpdateInput {
 
 input ProductVariantFeedbackUpdateManyDataInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
 }
 
 input ProductVariantFeedbackUpdateManyMutationInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
 }
 
 input ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput {
@@ -14145,12 +14187,16 @@ input ProductVariantFeedbackUpdateOneRequiredWithoutQuestionsInput {
 
 input ProductVariantFeedbackUpdateWithoutQuestionsDataInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
   reservationFeedback: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput
   variant: ProductVariantUpdateOneRequiredInput
 }
 
 input ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
   variant: ProductVariantUpdateOneRequiredInput
 }
@@ -14188,6 +14234,28 @@ input ProductVariantFeedbackWhereInput {
   id_not_ends_with: ID
   isCompleted: Boolean
   isCompleted_not: Boolean
+  rating: Float
+  rating_not: Float
+  rating_in: [Float!]
+  rating_not_in: [Float!]
+  rating_lt: Float
+  rating_lte: Float
+  rating_gt: Float
+  rating_gte: Float
+  review: String
+  review_not: String
+  review_in: [String!]
+  review_not_in: [String!]
+  review_lt: String
+  review_lte: String
+  review_gt: String
+  review_gte: String
+  review_contains: String
+  review_not_contains: String
+  review_starts_with: String
+  review_not_starts_with: String
+  review_ends_with: String
+  review_not_ends_with: String
   questions_every: ProductVariantFeedbackQuestionWhereInput
   questions_some: ProductVariantFeedbackQuestionWhereInput
   questions_none: ProductVariantFeedbackQuestionWhereInput
@@ -16169,11 +16237,13 @@ type Reservation {
   returnedPackage: Package
   products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   newProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  returnedProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   packageEvents(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PackageTransitEvent!]
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -16201,11 +16271,13 @@ input ReservationCreateInput {
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
   newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -16244,11 +16316,13 @@ input ReservationCreateWithoutCustomerInput {
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
   newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -16268,10 +16342,12 @@ input ReservationCreateWithoutPackageEventsInput {
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
   newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -16291,11 +16367,13 @@ input ReservationCreateWithoutReceiptInput {
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
   newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -16517,6 +16595,8 @@ enum ReservationOrderByInput {
   shipped_DESC
   status_ASC
   status_DESC
+  returnedAt_ASC
+  returnedAt_DESC
   shippedAt_ASC
   shippedAt_DESC
   receivedAt_ASC
@@ -16546,6 +16626,7 @@ type ReservationPreviousValues {
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -16918,6 +16999,14 @@ input ReservationScalarWhereInput {
   status_not: ReservationStatus
   status_in: [ReservationStatus!]
   status_not_in: [ReservationStatus!]
+  returnedAt: DateTime
+  returnedAt_not: DateTime
+  returnedAt_in: [DateTime!]
+  returnedAt_not_in: [DateTime!]
+  returnedAt_lt: DateTime
+  returnedAt_lte: DateTime
+  returnedAt_gt: DateTime
+  returnedAt_gte: DateTime
   shippedAt: DateTime
   shippedAt_not: DateTime
   shippedAt_in: [DateTime!]
@@ -17026,11 +17115,13 @@ input ReservationUpdateDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17049,11 +17140,13 @@ input ReservationUpdateInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17070,6 +17163,7 @@ input ReservationUpdateManyDataInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17083,6 +17177,7 @@ input ReservationUpdateManyMutationInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17137,11 +17232,13 @@ input ReservationUpdateWithoutCustomerDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17160,10 +17257,12 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17182,11 +17281,13 @@ input ReservationUpdateWithoutReceiptDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -17248,6 +17349,9 @@ input ReservationWhereInput {
   newProducts_every: PhysicalProductWhereInput
   newProducts_some: PhysicalProductWhereInput
   newProducts_none: PhysicalProductWhereInput
+  returnedProducts_every: PhysicalProductWhereInput
+  returnedProducts_some: PhysicalProductWhereInput
+  returnedProducts_none: PhysicalProductWhereInput
   packageEvents_every: PackageTransitEventWhereInput
   packageEvents_some: PackageTransitEventWhereInput
   packageEvents_none: PackageTransitEventWhereInput
@@ -17269,6 +17373,14 @@ input ReservationWhereInput {
   status_not: ReservationStatus
   status_in: [ReservationStatus!]
   status_not_in: [ReservationStatus!]
+  returnedAt: DateTime
+  returnedAt_not: DateTime
+  returnedAt_in: [DateTime!]
+  returnedAt_not_in: [DateTime!]
+  returnedAt_lt: DateTime
+  returnedAt_lte: DateTime
+  returnedAt_gt: DateTime
+  returnedAt_gte: DateTime
   shippedAt: DateTime
   shippedAt_not: DateTime
   shippedAt_in: [DateTime!]

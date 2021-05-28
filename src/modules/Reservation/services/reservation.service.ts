@@ -32,7 +32,7 @@ import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { addFragmentToInfo } from "graphql-binding"
-import { head, omit } from "lodash"
+import { head, intersection, omit } from "lodash"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
 
@@ -213,6 +213,37 @@ export class ReservationService {
     }
 
     return reservationReturnData
+  }
+
+  async returnItems(items: string[], customer: Customer) {
+    const lastReservation = await this.reservationUtils.getLatestReservation(
+      customer
+    )
+
+    // If there's an item being returned that isn't in the current reservation
+    // throw an error
+    if (
+      intersection(
+        lastReservation.products.map(p => p.id),
+        items
+      ).length !== items.length
+    ) {
+      throw new Error(
+        "One of the returned items isn't in the current reservation"
+      )
+    }
+
+    await this.prisma.client2.reservation.update({
+      data: {
+        returnedProducts: {
+          set: items.map(item => ({ id: item })),
+        },
+        returnedAt: new Date(),
+      },
+      where: { id: String(lastReservation.id) },
+    })
+
+    return lastReservation
   }
 
   async removeRestockNotifications(items, customer) {
@@ -490,24 +521,20 @@ export class ReservationService {
           questions: {
             create: [
               {
-                question: `How many times did you wear this ${variantInfo.name}?`,
+                question: `What did you think about this?`,
                 options: {
-                  set: [
-                    "More than 6 times",
-                    "3-5 times",
-                    "1-2 times",
-                    "0 times",
-                  ],
+                  set: ["Disliked", "It was OK", "Loved it"],
                 },
                 type: MULTIPLE_CHOICE,
               },
               {
-                question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
+                question: `How many times did you wear this?`,
                 options: {
                   set: [
-                    "Buy used below retail",
-                    "Buy new at retail",
-                    "Would only rent",
+                    "Never wore it",
+                    "1-2 times",
+                    "3-5 times",
+                    "More than 6 times",
                   ],
                 },
                 type: MULTIPLE_CHOICE,
@@ -515,12 +542,14 @@ export class ReservationService {
               {
                 question: `Did it fit as expected?`,
                 options: {
-                  set: [
-                    "Ran oversized",
-                    "Fit true to size",
-                    "Ran small",
-                    "Didn’t fit at all",
-                  ],
+                  set: ["Fit small", "Fit true to size", "Fit oversized"],
+                },
+                type: MULTIPLE_CHOICE,
+              },
+              {
+                question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
+                options: {
+                  set: ["No", "Yes", "Buy below retail", "Would only rent"],
                 },
                 type: MULTIPLE_CHOICE,
               },

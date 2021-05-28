@@ -1102,7 +1102,7 @@ type OrderLineItem {
 
 type Order {
   id: ID! @id
-  externalID: ID # 
+  externalID: ID #
   customer: Customer!
   sentPackage: Package
   lineItems: [OrderLineItem!]!
@@ -1133,11 +1133,18 @@ type Reservation {
   # items which were are not carrying over from a previous reservation
   newProducts: [PhysicalProduct!]!
     @relation(link: TABLE, name: "ReservationToNewProducts", onDelete: SET_NULL)
+  returnedProducts: [PhysicalProduct!]!
+    @relation(
+      link: TABLE
+      name: "ReservationToReturnedProducts"
+      onDelete: SET_NULL
+    )
   packageEvents: [PackageTransitEvent!]
   reservationNumber: Int! @unique
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -1177,6 +1184,8 @@ type ReservationFeedback {
 type ProductVariantFeedback {
   id: ID! @id
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions: [ProductVariantFeedbackQuestion!]! @relation(link: TABLE)
   reservationFeedback: ReservationFeedback!
   variant: ProductVariant!

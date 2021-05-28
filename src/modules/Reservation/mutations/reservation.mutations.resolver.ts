@@ -58,4 +58,9 @@ export class ReservationMutationsResolver {
 
     return result
   }
+
+  @Mutation()
+  async returnItems(@Args() { items }, @Customer() customer) {
+    return this.reservation.returnItems(items, customer)
+  }
 }
