@@ -231,7 +231,7 @@ export class ProductVariantFieldsResolver {
             saved: true,
           }),
         fallbackValue: null,
-        getKeys: bagItem => [bagItem.productVariant.id],
+        // getKeys: bagItem => [bagItem.productVariant.id],
       },
     })
     bagItemloader: PrismaTwoDataLoader

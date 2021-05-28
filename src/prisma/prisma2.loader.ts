@@ -66,7 +66,7 @@ import {
       }     
       const result = keys.map(key => map[key] || fallbackValue)
       
-      if (data.length !== 0 && result.reduce((acc, curval) => acc && isEqual(curval, fallbackValue), true)) {
+      if (data.length !== 0 && result.every(a => isEqual(a, fallbackValue))) {
         throw new Error(`Dataloader on type ${model} returned ${data.length} results but was unable to map them to keys.` + ` You most likely forgot to enter a value for getKeys`)
       }
       return Promise.resolve(result)
