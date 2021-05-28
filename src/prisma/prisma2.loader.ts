@@ -7,7 +7,7 @@ import {
   import { Injectable } from "@nestjs/common"
   import DataLoader from "dataloader"
   import { PrismaService } from "./prisma.service"
-  import { identity, cloneDeep, lowerFirst } from "lodash"
+  import { identity, cloneDeep, lowerFirst, isEqual } from "lodash"
   
   
   export type PrismaTwoDataLoader<V=any> = DataLoader<string, V>
@@ -66,6 +66,9 @@ import {
       }     
       const result = keys.map(key => map[key] || fallbackValue)
       
+      if (data.length !== 0 && result.reduce((acc, curval) => acc && isEqual(curval, fallbackValue), true)) {
+        throw new Error(`Dataloader on type ${model} returned ${data.length} results but was unable to map them to keys.` + ` You most likely forgot to enter a value for getKeys`)
+      }
       return Promise.resolve(result)
     }
   
