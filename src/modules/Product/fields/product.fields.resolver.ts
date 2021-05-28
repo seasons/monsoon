@@ -1,5 +1,4 @@
 import { Customer } from "@app/decorators"
-import { Application } from "@app/decorators/application.decorator"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { Image, Product, ProductModel } from "@app/prisma"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
@@ -9,22 +8,47 @@ import {
 } from "@app/prisma/prisma2.loader"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
-import { ProductService } from "@modules/Product/services/product.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
-import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Prisma } from "@prisma/client"
 import { sortedUniqBy } from "lodash"
 
 @Resolver("Product")
 export class ProductFieldsResolver {
   constructor(
-    private readonly productService: ProductService,
     private readonly productUtilsService: ProductUtilsService,
     private readonly imageService: ImageService
   ) {}
 
   @ResolveField()
-  async isSaved(@Parent() product, @Customer() customer) {
-    return this.productService.isSaved(product, customer)
+  async isSaved(
+    @Parent() product,
+    @Customer() customer,
+    @Loader({
+      type: PrismaTwoLoader.name,
+      params: {
+        model: "BagItem",
+        select: Prisma.validator<Prisma.BagItemSelect>()({
+          id: true,
+          productVariant: { select: { product: { select: { id: true } } } },
+        }),
+        formatWhere: (keys, ctx) =>
+          Prisma.validator<Prisma.BagItemWhereInput>()({
+            customer: { id: ctx.customer.id },
+            productVariant: { product: { every: { id: { in: keys } } } },
+            saved: true,
+          }),
+        getKeys: bagItem => [bagItem.productVariant.product.id],
+        keyToDataRelationship: "OneToMany",
+      },
+    })
+    bagItemsLoader
+  ) {
+    if (!customer) {
+      return false
+    }
+    const bagItems = await bagItemsLoader.load(product.id)
+    return bagItems.length > 0
   }
 
   @ResolveField()
@@ -34,7 +58,10 @@ export class ProductFieldsResolver {
       type: PrismaTwoLoader.name,
       params: {
         model: "Product",
-        select: { id: true, model: { select: { id: true, height: true } } },
+        select: Prisma.validator<Prisma.ProductSelect>()({
+          id: true,
+          model: { select: { id: true, height: true } },
+        }),
       },
     })
     productLoader: PrismaTwoDataLoader<{
@@ -108,7 +135,7 @@ export class ProductFieldsResolver {
       type: PrismaTwoLoader.name,
       params: {
         model: "Product",
-        select: {
+        select: Prisma.validator<Prisma.ProductSelect>()({
           id: true,
           variants: {
             select: {
@@ -117,7 +144,7 @@ export class ProductFieldsResolver {
               },
             },
           },
-        },
+        }),
       },
     })
     productLoader: PrismaDataLoader<{
@@ -149,7 +176,7 @@ export class ProductFieldsResolver {
       type: PrismaTwoLoader.name,
       params: {
         model: "Product",
-        select: {
+        select: Prisma.validator<Prisma.ProductSelect>()({
           id: true,
           variants: {
             select: {
@@ -158,10 +185,10 @@ export class ProductFieldsResolver {
               },
             },
           },
-        },
+        }),
       },
     })
-    productLoader: PrismaDataLoader<{
+    productLoader: PrismaTwoDataLoader<{
       variants?: Array<{
         physicalProducts?: Array<{
           price?: {
@@ -194,10 +221,10 @@ export class ProductFieldsResolver {
       type: PrismaTwoLoader.name,
       params: {
         model: "Product",
-        select: {
+        select: Prisma.validator<Prisma.ProductSelect>()({
           id: true,
           images: { select: { id: true, url: true, updatedAt: true } },
-        },
+        }),
       },
     })
     productLoader: PrismaDataLoader<{
@@ -205,6 +232,7 @@ export class ProductFieldsResolver {
       images: Pick<Image, "id" | "url" | "updatedAt">[]
     }>
   ) {
+    // TODO: Sort images by url
     // Fetch the product's images sorted by url to ensure order is maintained
     // since image URLs for a product are the same except for the index at the end
     const product = await productLoader.load(parent.id)

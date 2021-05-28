@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client"
 import DataLoader from "dataloader"
 import { Request } from "express"
 import { GraphQLResolveInfo } from "graphql"
@@ -19,7 +20,7 @@ export type PrismaOneGenerateParams = CommonPrismaGenerateParams & {
 
 export type PrismaTwoGenerateParams = CommonPrismaGenerateParams & {
   // basic parameters to construct the prisma call
-  model: string
+  model: Prisma.ModelName
   select?: any
 }
 

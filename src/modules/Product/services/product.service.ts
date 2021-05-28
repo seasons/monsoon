@@ -161,37 +161,6 @@ export class ProductService {
     }
   }
 
-  async isSaved(
-    product: { id: string } | Product,
-    customer: { id: string } | Customer | null
-  ) {
-    if (!customer) {
-      return false
-    }
-    const productVariants = await this.prisma.client2.productVariant.findMany({
-      where: {
-        product: {
-          every: { id: product.id },
-        },
-      },
-      select: { id: true },
-    })
-
-    const bagItemCount = await this.prisma.client2.bagItem.count({
-      where: {
-        customer: {
-          id: customer.id,
-        },
-        productVariant: {
-          id: { in: productVariants.map(a => a.id) },
-        },
-        saved: true,
-      },
-    })
-
-    return bagItemCount > 0
-  }
-
   async deepUpsertProduct(input) {
     // Bottom size name validation
     if (input.type === "Bottom") {
