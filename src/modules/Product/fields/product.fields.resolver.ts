@@ -53,7 +53,7 @@ export class ProductFieldsResolver {
 
   @ResolveField()
   async modelHeight(
-    @Parent() product,
+    @Parent() parent,
     @Loader({
       type: PrismaTwoLoader.name,
       params: {
@@ -69,9 +69,12 @@ export class ProductFieldsResolver {
       model: Pick<ProductModel, "id" | "height">
     }>
   ) {
-    const productWithModel = await productLoader.load(product.id)
+    let product = parent
+    if (!parent.model?.height) {
+      product = await productLoader.load(product.id)
+    }
 
-    return productWithModel.model?.height
+    return product.model?.height
   }
 
   @ResolveField()
