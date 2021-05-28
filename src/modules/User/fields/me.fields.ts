@@ -101,7 +101,6 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async notificationBar(@Customer() customer) {
-    console.log(customer)
     if (!customer) {
       return null
     }

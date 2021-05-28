@@ -620,6 +620,7 @@ model PhysicalProduct {
   packages                Package[]
   reservationsAllProducts Reservation[]                  @relation("ReservationToAllProducts")
   reservationsNewProducts Reservation[]                  @relation("ReservationToNewProducts")
+  reservationsReturnedProducts Reservation[] @relation("ReservationToReturnedProducts")
 
   // Should be a singleton. Will get fixed with full prisma2 migration
   productVariant ProductVariant[]
@@ -849,6 +850,8 @@ model ProductVariantFeedback {
   variantId   String?                          @map("variant") @db.VarChar(25)
   variant     ProductVariant?                  @relation(fields: [variantId], references: [id])
   questions   ProductVariantFeedbackQuestion[]
+  rating      Float
+  review      String
 
   // should be singleton. will be fixed in full prisma2 upgrade
   reservationFeedback ReservationFeedback[]
@@ -957,10 +960,12 @@ model Reservation {
   shippingOption    ShippingOption?       @relation(fields: [shippingOptionId], references: [id])
   completedAt       DateTime?
   cancelledAt       DateTime?
+  returnedAt        DateTime?
   packageEvents     PackageTransitEvent[]
   feedback          ReservationFeedback?
   products          PhysicalProduct[]     @relation("ReservationToAllProducts")
   newProducts       PhysicalProduct[]     @relation("ReservationToNewProducts")
+  returnedProducts  PhysicalProduct[]     @relation("ReservationToReturnedProducts")
 }
 
 model ReservationFeedback {

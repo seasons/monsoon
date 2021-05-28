@@ -3915,6 +3915,8 @@ export type ReservationOrderByInput =
   | "shipped_DESC"
   | "status_ASC"
   | "status_DESC"
+  | "returnedAt_ASC"
+  | "returnedAt_DESC"
   | "shippedAt_ASC"
   | "shippedAt_DESC"
   | "receivedAt_ASC"
@@ -4536,7 +4538,11 @@ export type ProductVariantFeedbackOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "isCompleted_ASC"
-  | "isCompleted_DESC";
+  | "isCompleted_DESC"
+  | "rating_ASC"
+  | "rating_DESC"
+  | "review_ASC"
+  | "review_DESC";
 
 export type ProductVariantPriceOrderByInput =
   | "id_ASC"
@@ -8712,6 +8718,9 @@ export interface ReservationWhereInput {
   newProducts_every?: Maybe<PhysicalProductWhereInput>;
   newProducts_some?: Maybe<PhysicalProductWhereInput>;
   newProducts_none?: Maybe<PhysicalProductWhereInput>;
+  returnedProducts_every?: Maybe<PhysicalProductWhereInput>;
+  returnedProducts_some?: Maybe<PhysicalProductWhereInput>;
+  returnedProducts_none?: Maybe<PhysicalProductWhereInput>;
   packageEvents_every?: Maybe<PackageTransitEventWhereInput>;
   packageEvents_some?: Maybe<PackageTransitEventWhereInput>;
   packageEvents_none?: Maybe<PackageTransitEventWhereInput>;
@@ -8733,6 +8742,14 @@ export interface ReservationWhereInput {
   status_not?: Maybe<ReservationStatus>;
   status_in?: Maybe<ReservationStatus[] | ReservationStatus>;
   status_not_in?: Maybe<ReservationStatus[] | ReservationStatus>;
+  returnedAt?: Maybe<DateTimeInput>;
+  returnedAt_not?: Maybe<DateTimeInput>;
+  returnedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  returnedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  returnedAt_lt?: Maybe<DateTimeInput>;
+  returnedAt_lte?: Maybe<DateTimeInput>;
+  returnedAt_gt?: Maybe<DateTimeInput>;
+  returnedAt_gte?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
   shippedAt_not?: Maybe<DateTimeInput>;
   shippedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -10531,6 +10548,28 @@ export interface ProductVariantFeedbackWhereInput {
   id_not_ends_with?: Maybe<ID_Input>;
   isCompleted?: Maybe<Boolean>;
   isCompleted_not?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  rating_not?: Maybe<Float>;
+  rating_in?: Maybe<Float[] | Float>;
+  rating_not_in?: Maybe<Float[] | Float>;
+  rating_lt?: Maybe<Float>;
+  rating_lte?: Maybe<Float>;
+  rating_gt?: Maybe<Float>;
+  rating_gte?: Maybe<Float>;
+  review?: Maybe<String>;
+  review_not?: Maybe<String>;
+  review_in?: Maybe<String[] | String>;
+  review_not_in?: Maybe<String[] | String>;
+  review_lt?: Maybe<String>;
+  review_lte?: Maybe<String>;
+  review_gt?: Maybe<String>;
+  review_gte?: Maybe<String>;
+  review_contains?: Maybe<String>;
+  review_not_contains?: Maybe<String>;
+  review_starts_with?: Maybe<String>;
+  review_not_starts_with?: Maybe<String>;
+  review_ends_with?: Maybe<String>;
+  review_not_ends_with?: Maybe<String>;
   questions_every?: Maybe<ProductVariantFeedbackQuestionWhereInput>;
   questions_some?: Maybe<ProductVariantFeedbackQuestionWhereInput>;
   questions_none?: Maybe<ProductVariantFeedbackQuestionWhereInput>;
@@ -16030,11 +16069,13 @@ export interface ReservationCreateWithoutCustomerInput {
   returnedPackage?: Maybe<PackageCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   newProducts?: Maybe<PhysicalProductCreateManyInput>;
+  returnedProducts?: Maybe<PhysicalProductCreateManyInput>;
   packageEvents?: Maybe<PackageTransitEventCreateManyWithoutReservationInput>;
   reservationNumber: Int;
   phase: ReservationPhase;
   shipped: Boolean;
   status: ReservationStatus;
+  returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
@@ -16138,10 +16179,12 @@ export interface ReservationCreateWithoutPackageEventsInput {
   returnedPackage?: Maybe<PackageCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   newProducts?: Maybe<PhysicalProductCreateManyInput>;
+  returnedProducts?: Maybe<PhysicalProductCreateManyInput>;
   reservationNumber: Int;
   phase: ReservationPhase;
   shipped: Boolean;
   status: ReservationStatus;
+  returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
@@ -16842,11 +16885,13 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   newProducts?: Maybe<PhysicalProductUpdateManyInput>;
+  returnedProducts?: Maybe<PhysicalProductUpdateManyInput>;
   packageEvents?: Maybe<PackageTransitEventUpdateManyWithoutReservationInput>;
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
+  returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
@@ -17033,10 +17078,12 @@ export interface ReservationUpdateWithoutPackageEventsDataInput {
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   newProducts?: Maybe<PhysicalProductUpdateManyInput>;
+  returnedProducts?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
+  returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
@@ -18087,6 +18134,14 @@ export interface ReservationScalarWhereInput {
   status_not?: Maybe<ReservationStatus>;
   status_in?: Maybe<ReservationStatus[] | ReservationStatus>;
   status_not_in?: Maybe<ReservationStatus[] | ReservationStatus>;
+  returnedAt?: Maybe<DateTimeInput>;
+  returnedAt_not?: Maybe<DateTimeInput>;
+  returnedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  returnedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  returnedAt_lt?: Maybe<DateTimeInput>;
+  returnedAt_lte?: Maybe<DateTimeInput>;
+  returnedAt_gt?: Maybe<DateTimeInput>;
+  returnedAt_gte?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
   shippedAt_not?: Maybe<DateTimeInput>;
   shippedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -18166,6 +18221,7 @@ export interface ReservationUpdateManyDataInput {
   phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
+  returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
@@ -20194,6 +20250,8 @@ export interface ProductVariantUpdateManyMutationInput {
 export interface ProductVariantFeedbackCreateInput {
   id?: Maybe<ID_Input>;
   isCompleted: Boolean;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
   questions?: Maybe<
     ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
   >;
@@ -20255,11 +20313,13 @@ export interface ReservationCreateInput {
   returnedPackage?: Maybe<PackageCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   newProducts?: Maybe<PhysicalProductCreateManyInput>;
+  returnedProducts?: Maybe<PhysicalProductCreateManyInput>;
   packageEvents?: Maybe<PackageTransitEventCreateManyWithoutReservationInput>;
   reservationNumber: Int;
   phase: ReservationPhase;
   shipped: Boolean;
   status: ReservationStatus;
+  returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
@@ -20273,6 +20333,8 @@ export interface ReservationCreateInput {
 
 export interface ProductVariantFeedbackUpdateInput {
   isCompleted?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
   questions?: Maybe<
     ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
   >;
@@ -20435,11 +20497,13 @@ export interface ReservationUpdateDataInput {
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   newProducts?: Maybe<PhysicalProductUpdateManyInput>;
+  returnedProducts?: Maybe<PhysicalProductUpdateManyInput>;
   packageEvents?: Maybe<PackageTransitEventUpdateManyWithoutReservationInput>;
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
+  returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
@@ -20463,6 +20527,8 @@ export interface ReservationFeedbackUpsertWithoutFeedbacksInput {
 
 export interface ProductVariantFeedbackUpdateManyMutationInput {
   isCompleted?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
 }
 
 export interface ProductVariantFeedbackQuestionCreateInput {
@@ -20482,6 +20548,8 @@ export interface ProductVariantFeedbackCreateOneWithoutQuestionsInput {
 export interface ProductVariantFeedbackCreateWithoutQuestionsInput {
   id?: Maybe<ID_Input>;
   isCompleted: Boolean;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput;
   variant: ProductVariantCreateOneInput;
 }
@@ -20505,6 +20573,8 @@ export interface ProductVariantFeedbackUpdateOneRequiredWithoutQuestionsInput {
 
 export interface ProductVariantFeedbackUpdateWithoutQuestionsDataInput {
   isCompleted?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
   reservationFeedback?: Maybe<
     ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput
   >;
@@ -20616,11 +20686,13 @@ export interface ReservationUpdateInput {
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   newProducts?: Maybe<PhysicalProductUpdateManyInput>;
+  returnedProducts?: Maybe<PhysicalProductUpdateManyInput>;
   packageEvents?: Maybe<PackageTransitEventUpdateManyWithoutReservationInput>;
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
+  returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
@@ -20637,6 +20709,7 @@ export interface ReservationUpdateManyMutationInput {
   phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
+  returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
@@ -20671,6 +20744,8 @@ export interface ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
 export interface ProductVariantFeedbackCreateWithoutReservationFeedbackInput {
   id?: Maybe<ID_Input>;
   isCompleted: Boolean;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
   questions?: Maybe<
     ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
   >;
@@ -20734,6 +20809,8 @@ export interface ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFe
 
 export interface ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput {
   isCompleted?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
   questions?: Maybe<
     ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
   >;
@@ -20763,6 +20840,28 @@ export interface ProductVariantFeedbackScalarWhereInput {
   id_not_ends_with?: Maybe<ID_Input>;
   isCompleted?: Maybe<Boolean>;
   isCompleted_not?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  rating_not?: Maybe<Float>;
+  rating_in?: Maybe<Float[] | Float>;
+  rating_not_in?: Maybe<Float[] | Float>;
+  rating_lt?: Maybe<Float>;
+  rating_lte?: Maybe<Float>;
+  rating_gt?: Maybe<Float>;
+  rating_gte?: Maybe<Float>;
+  review?: Maybe<String>;
+  review_not?: Maybe<String>;
+  review_in?: Maybe<String[] | String>;
+  review_not_in?: Maybe<String[] | String>;
+  review_lt?: Maybe<String>;
+  review_lte?: Maybe<String>;
+  review_gt?: Maybe<String>;
+  review_gte?: Maybe<String>;
+  review_contains?: Maybe<String>;
+  review_not_contains?: Maybe<String>;
+  review_starts_with?: Maybe<String>;
+  review_not_starts_with?: Maybe<String>;
+  review_ends_with?: Maybe<String>;
+  review_not_ends_with?: Maybe<String>;
   AND?: Maybe<
     | ProductVariantFeedbackScalarWhereInput[]
     | ProductVariantFeedbackScalarWhereInput
@@ -20784,6 +20883,8 @@ export interface ProductVariantFeedbackUpdateManyWithWhereNestedInput {
 
 export interface ProductVariantFeedbackUpdateManyDataInput {
   isCompleted?: Maybe<Boolean>;
+  rating?: Maybe<Float>;
+  review?: Maybe<String>;
 }
 
 export interface ReservationFeedbackUpdateManyMutationInput {
@@ -20811,11 +20912,13 @@ export interface ReservationCreateWithoutReceiptInput {
   returnedPackage?: Maybe<PackageCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   newProducts?: Maybe<PhysicalProductCreateManyInput>;
+  returnedProducts?: Maybe<PhysicalProductCreateManyInput>;
   packageEvents?: Maybe<PackageTransitEventCreateManyWithoutReservationInput>;
   reservationNumber: Int;
   phase: ReservationPhase;
   shipped: Boolean;
   status: ReservationStatus;
+  returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
@@ -20845,11 +20948,13 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   newProducts?: Maybe<PhysicalProductUpdateManyInput>;
+  returnedProducts?: Maybe<PhysicalProductUpdateManyInput>;
   packageEvents?: Maybe<PackageTransitEventUpdateManyWithoutReservationInput>;
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
+  returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
@@ -26633,6 +26738,7 @@ export interface Reservation {
   phase: ReservationPhase;
   shipped: Boolean;
   status: ReservationStatus;
+  returnedAt?: DateTimeOutput;
   shippedAt?: DateTimeOutput;
   receivedAt?: DateTimeOutput;
   reminderSentAt?: DateTimeOutput;
@@ -26667,6 +26773,15 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  returnedProducts: <T = FragmentableArray<PhysicalProduct>>(args?: {
+    where?: PhysicalProductWhereInput;
+    orderBy?: PhysicalProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   packageEvents: <T = FragmentableArray<PackageTransitEvent>>(args?: {
     where?: PackageTransitEventWhereInput;
     orderBy?: PackageTransitEventOrderByInput;
@@ -26680,6 +26795,7 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
   phase: () => Promise<ReservationPhase>;
   shipped: () => Promise<Boolean>;
   status: () => Promise<ReservationStatus>;
+  returnedAt: () => Promise<DateTimeOutput>;
   shippedAt: () => Promise<DateTimeOutput>;
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
@@ -26721,6 +26837,17 @@ export interface ReservationSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  returnedProducts: <
+    T = Promise<AsyncIterator<PhysicalProductSubscription>>
+  >(args?: {
+    where?: PhysicalProductWhereInput;
+    orderBy?: PhysicalProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   packageEvents: <
     T = Promise<AsyncIterator<PackageTransitEventSubscription>>
   >(args?: {
@@ -26736,6 +26863,7 @@ export interface ReservationSubscription
   phase: () => Promise<AsyncIterator<ReservationPhase>>;
   shipped: () => Promise<AsyncIterator<Boolean>>;
   status: () => Promise<AsyncIterator<ReservationStatus>>;
+  returnedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   shippedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   receivedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   reminderSentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -26775,6 +26903,15 @@ export interface ReservationNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  returnedProducts: <T = FragmentableArray<PhysicalProduct>>(args?: {
+    where?: PhysicalProductWhereInput;
+    orderBy?: PhysicalProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   packageEvents: <T = FragmentableArray<PackageTransitEvent>>(args?: {
     where?: PackageTransitEventWhereInput;
     orderBy?: PackageTransitEventOrderByInput;
@@ -26788,6 +26925,7 @@ export interface ReservationNullablePromise
   phase: () => Promise<ReservationPhase>;
   shipped: () => Promise<Boolean>;
   status: () => Promise<ReservationStatus>;
+  returnedAt: () => Promise<DateTimeOutput>;
   shippedAt: () => Promise<DateTimeOutput>;
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
@@ -30101,6 +30239,8 @@ export interface AggregateProductVariantSubscription
 export interface ProductVariantFeedback {
   id: ID_Output;
   isCompleted: Boolean;
+  rating?: Float;
+  review?: String;
 }
 
 export interface ProductVariantFeedbackPromise
@@ -30108,6 +30248,8 @@ export interface ProductVariantFeedbackPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   isCompleted: () => Promise<Boolean>;
+  rating: () => Promise<Float>;
+  review: () => Promise<String>;
   questions: <T = FragmentableArray<ProductVariantFeedbackQuestion>>(args?: {
     where?: ProductVariantFeedbackQuestionWhereInput;
     orderBy?: ProductVariantFeedbackQuestionOrderByInput;
@@ -30126,6 +30268,8 @@ export interface ProductVariantFeedbackSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   isCompleted: () => Promise<AsyncIterator<Boolean>>;
+  rating: () => Promise<AsyncIterator<Float>>;
+  review: () => Promise<AsyncIterator<String>>;
   questions: <
     T = Promise<AsyncIterator<ProductVariantFeedbackQuestionSubscription>>
   >(args?: {
@@ -30146,6 +30290,8 @@ export interface ProductVariantFeedbackNullablePromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   isCompleted: () => Promise<Boolean>;
+  rating: () => Promise<Float>;
+  review: () => Promise<String>;
   questions: <T = FragmentableArray<ProductVariantFeedbackQuestion>>(args?: {
     where?: ProductVariantFeedbackQuestionWhereInput;
     orderBy?: ProductVariantFeedbackQuestionOrderByInput;
@@ -34793,6 +34939,8 @@ export interface ProductVariantFeedbackSubscriptionPayloadSubscription
 export interface ProductVariantFeedbackPreviousValues {
   id: ID_Output;
   isCompleted: Boolean;
+  rating?: Float;
+  review?: String;
 }
 
 export interface ProductVariantFeedbackPreviousValuesPromise
@@ -34800,6 +34948,8 @@ export interface ProductVariantFeedbackPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   isCompleted: () => Promise<Boolean>;
+  rating: () => Promise<Float>;
+  review: () => Promise<String>;
 }
 
 export interface ProductVariantFeedbackPreviousValuesSubscription
@@ -34807,6 +34957,8 @@ export interface ProductVariantFeedbackPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   isCompleted: () => Promise<AsyncIterator<Boolean>>;
+  rating: () => Promise<AsyncIterator<Float>>;
+  review: () => Promise<AsyncIterator<String>>;
 }
 
 export interface ProductVariantFeedbackQuestionSubscriptionPayload {
@@ -35116,6 +35268,7 @@ export interface ReservationPreviousValues {
   phase: ReservationPhase;
   shipped: Boolean;
   status: ReservationStatus;
+  returnedAt?: DateTimeOutput;
   shippedAt?: DateTimeOutput;
   receivedAt?: DateTimeOutput;
   reminderSentAt?: DateTimeOutput;
@@ -35134,6 +35287,7 @@ export interface ReservationPreviousValuesPromise
   phase: () => Promise<ReservationPhase>;
   shipped: () => Promise<Boolean>;
   status: () => Promise<ReservationStatus>;
+  returnedAt: () => Promise<DateTimeOutput>;
   shippedAt: () => Promise<DateTimeOutput>;
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
@@ -35152,6 +35306,7 @@ export interface ReservationPreviousValuesSubscription
   phase: () => Promise<AsyncIterator<ReservationPhase>>;
   shipped: () => Promise<AsyncIterator<Boolean>>;
   status: () => Promise<AsyncIterator<ReservationStatus>>;
+  returnedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   shippedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   receivedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   reminderSentAt: () => Promise<AsyncIterator<DateTimeOutput>>;

@@ -23488,6 +23488,8 @@ type ProductVariantEdge {
 type ProductVariantFeedback implements Node {
   id: ID!
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedbackQuestion!]
   reservationFeedback: ReservationFeedback!
   variant: ProductVariant!
@@ -23506,6 +23508,8 @@ type ProductVariantFeedbackConnection {
 input ProductVariantFeedbackCreateInput {
   id: ID
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput!
   variant: ProductVariantCreateOneInput!
@@ -23524,6 +23528,8 @@ input ProductVariantFeedbackCreateOneWithoutQuestionsInput {
 input ProductVariantFeedbackCreateWithoutQuestionsInput {
   id: ID
   isCompleted: Boolean!
+  rating: Float
+  review: String
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput!
   variant: ProductVariantCreateOneInput!
 }
@@ -23531,6 +23537,8 @@ input ProductVariantFeedbackCreateWithoutQuestionsInput {
 input ProductVariantFeedbackCreateWithoutReservationFeedbackInput {
   id: ID
   isCompleted: Boolean!
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
   variant: ProductVariantCreateOneInput!
 }
@@ -23549,11 +23557,17 @@ enum ProductVariantFeedbackOrderByInput {
   id_DESC
   isCompleted_ASC
   isCompleted_DESC
+  rating_ASC
+  rating_DESC
+  review_ASC
+  review_DESC
 }
 
 type ProductVariantFeedbackPreviousValues {
   id: ID!
   isCompleted: Boolean!
+  rating: Float
+  review: String
 }
 
 type ProductVariantFeedbackQuestion implements Node {
@@ -23993,6 +24007,68 @@ input ProductVariantFeedbackScalarWhereInput {
 
   """All values that are not equal to given value."""
   isCompleted_not: Boolean
+  rating: Float
+
+  """All values that are not equal to given value."""
+  rating_not: Float
+
+  """All values that are contained in given list."""
+  rating_in: [Float!]
+
+  """All values that are not contained in given list."""
+  rating_not_in: [Float!]
+
+  """All values less than the given value."""
+  rating_lt: Float
+
+  """All values less than or equal the given value."""
+  rating_lte: Float
+
+  """All values greater than the given value."""
+  rating_gt: Float
+
+  """All values greater than or equal the given value."""
+  rating_gte: Float
+  review: String
+
+  """All values that are not equal to given value."""
+  review_not: String
+
+  """All values that are contained in given list."""
+  review_in: [String!]
+
+  """All values that are not contained in given list."""
+  review_not_in: [String!]
+
+  """All values less than the given value."""
+  review_lt: String
+
+  """All values less than or equal the given value."""
+  review_lte: String
+
+  """All values greater than the given value."""
+  review_gt: String
+
+  """All values greater than or equal the given value."""
+  review_gte: String
+
+  """All values containing the given string."""
+  review_contains: String
+
+  """All values not containing the given string."""
+  review_not_contains: String
+
+  """All values starting with the given string."""
+  review_starts_with: String
+
+  """All values not starting with the given string."""
+  review_not_starts_with: String
+
+  """All values ending with the given string."""
+  review_ends_with: String
+
+  """All values not ending with the given string."""
+  review_not_ends_with: String
 }
 
 type ProductVariantFeedbackSubscriptionPayload {
@@ -24034,6 +24110,8 @@ input ProductVariantFeedbackSubscriptionWhereInput {
 
 input ProductVariantFeedbackUpdateInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
   reservationFeedback: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput
   variant: ProductVariantUpdateOneRequiredInput
@@ -24041,10 +24119,14 @@ input ProductVariantFeedbackUpdateInput {
 
 input ProductVariantFeedbackUpdateManyDataInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
 }
 
 input ProductVariantFeedbackUpdateManyMutationInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
 }
 
 input ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput {
@@ -24073,12 +24155,16 @@ input ProductVariantFeedbackUpdateOneRequiredWithoutQuestionsInput {
 
 input ProductVariantFeedbackUpdateWithoutQuestionsDataInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
   reservationFeedback: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput
   variant: ProductVariantUpdateOneRequiredInput
 }
 
 input ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput {
   isCompleted: Boolean
+  rating: Float
+  review: String
   questions: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
   variant: ProductVariantUpdateOneRequiredInput
 }
@@ -24152,6 +24238,68 @@ input ProductVariantFeedbackWhereInput {
 
   """All values that are not equal to given value."""
   isCompleted_not: Boolean
+  rating: Float
+
+  """All values that are not equal to given value."""
+  rating_not: Float
+
+  """All values that are contained in given list."""
+  rating_in: [Float!]
+
+  """All values that are not contained in given list."""
+  rating_not_in: [Float!]
+
+  """All values less than the given value."""
+  rating_lt: Float
+
+  """All values less than or equal the given value."""
+  rating_lte: Float
+
+  """All values greater than the given value."""
+  rating_gt: Float
+
+  """All values greater than or equal the given value."""
+  rating_gte: Float
+  review: String
+
+  """All values that are not equal to given value."""
+  review_not: String
+
+  """All values that are contained in given list."""
+  review_in: [String!]
+
+  """All values that are not contained in given list."""
+  review_not_in: [String!]
+
+  """All values less than the given value."""
+  review_lt: String
+
+  """All values less than or equal the given value."""
+  review_lte: String
+
+  """All values greater than the given value."""
+  review_gt: String
+
+  """All values greater than or equal the given value."""
+  review_gte: String
+
+  """All values containing the given string."""
+  review_contains: String
+
+  """All values not containing the given string."""
+  review_not_contains: String
+
+  """All values starting with the given string."""
+  review_starts_with: String
+
+  """All values not starting with the given string."""
+  review_not_starts_with: String
+
+  """All values ending with the given string."""
+  review_ends_with: String
+
+  """All values not ending with the given string."""
+  review_not_ends_with: String
   questions_every: ProductVariantFeedbackQuestionWhereInput
   questions_some: ProductVariantFeedbackQuestionWhereInput
   questions_none: ProductVariantFeedbackQuestionWhereInput
@@ -27776,11 +27924,13 @@ type Reservation implements Node {
   returnedPackage: Package
   products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   newProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  returnedProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   packageEvents(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PackageTransitEvent!]
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -27810,6 +27960,7 @@ input ReservationCreateInput {
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -27822,6 +27973,7 @@ input ReservationCreateInput {
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
   newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
@@ -27854,6 +28006,7 @@ input ReservationCreateWithoutCustomerInput {
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -27865,6 +28018,7 @@ input ReservationCreateWithoutCustomerInput {
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
   newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
@@ -27877,6 +28031,7 @@ input ReservationCreateWithoutPackageEventsInput {
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -27889,6 +28044,7 @@ input ReservationCreateWithoutPackageEventsInput {
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
   newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -27900,6 +28056,7 @@ input ReservationCreateWithoutReceiptInput {
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -27912,6 +28069,7 @@ input ReservationCreateWithoutReceiptInput {
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
   newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -28264,6 +28422,8 @@ enum ReservationOrderByInput {
   shipped_DESC
   status_ASC
   status_DESC
+  returnedAt_ASC
+  returnedAt_DESC
   shippedAt_ASC
   shippedAt_DESC
   receivedAt_ASC
@@ -28293,6 +28453,7 @@ type ReservationPreviousValues {
   phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -28966,6 +29127,28 @@ input ReservationScalarWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [ReservationStatus!]
+  returnedAt: DateTime
+
+  """All values that are not equal to given value."""
+  returnedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  returnedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  returnedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  returnedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  returnedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  returnedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  returnedAt_gte: DateTime
   shippedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -29200,6 +29383,7 @@ input ReservationUpdateDataInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29212,6 +29396,7 @@ input ReservationUpdateDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
@@ -29223,6 +29408,7 @@ input ReservationUpdateInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29235,6 +29421,7 @@ input ReservationUpdateInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
@@ -29246,6 +29433,7 @@ input ReservationUpdateManyDataInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29259,6 +29447,7 @@ input ReservationUpdateManyMutationInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29312,6 +29501,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29323,6 +29513,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
@@ -29334,6 +29525,7 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29346,6 +29538,7 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -29356,6 +29549,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
@@ -29368,6 +29562,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -29494,6 +29689,28 @@ input ReservationWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [ReservationStatus!]
+  returnedAt: DateTime
+
+  """All values that are not equal to given value."""
+  returnedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  returnedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  returnedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  returnedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  returnedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  returnedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  returnedAt_gte: DateTime
   shippedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -29680,6 +29897,9 @@ input ReservationWhereInput {
   newProducts_every: PhysicalProductWhereInput
   newProducts_some: PhysicalProductWhereInput
   newProducts_none: PhysicalProductWhereInput
+  returnedProducts_every: PhysicalProductWhereInput
+  returnedProducts_some: PhysicalProductWhereInput
+  returnedProducts_none: PhysicalProductWhereInput
   packageEvents_every: PackageTransitEventWhereInput
   packageEvents_some: PackageTransitEventWhereInput
   packageEvents_none: PackageTransitEventWhereInput
@@ -38883,7 +39103,11 @@ export type ProductType =   'Top' |
 export type ProductVariantFeedbackOrderByInput =   'id_ASC' |
   'id_DESC' |
   'isCompleted_ASC' |
-  'isCompleted_DESC'
+  'isCompleted_DESC' |
+  'rating_ASC' |
+  'rating_DESC' |
+  'review_ASC' |
+  'review_DESC'
 
 export type ProductVariantFeedbackQuestionOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -39003,6 +39227,8 @@ export type ReservationOrderByInput =   'id_ASC' |
   'shipped_DESC' |
   'status_ASC' |
   'status_DESC' |
+  'returnedAt_ASC' |
+  'returnedAt_DESC' |
   'shippedAt_ASC' |
   'shippedAt_DESC' |
   'receivedAt_ASC' |
@@ -49392,6 +49618,8 @@ export interface ProductVariantCreateWithoutShopifyProductVariantInput {
 export interface ProductVariantFeedbackCreateInput {
   id?: ID_Input | null
   isCompleted: Boolean
+  rating?: Float | null
+  review?: String | null
   questions?: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput | null
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput
   variant: ProductVariantCreateOneInput
@@ -49410,6 +49638,8 @@ export interface ProductVariantFeedbackCreateOneWithoutQuestionsInput {
 export interface ProductVariantFeedbackCreateWithoutQuestionsInput {
   id?: ID_Input | null
   isCompleted: Boolean
+  rating?: Float | null
+  review?: String | null
   reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput
   variant: ProductVariantCreateOneInput
 }
@@ -49417,6 +49647,8 @@ export interface ProductVariantFeedbackCreateWithoutQuestionsInput {
 export interface ProductVariantFeedbackCreateWithoutReservationFeedbackInput {
   id?: ID_Input | null
   isCompleted: Boolean
+  rating?: Float | null
+  review?: String | null
   questions?: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput | null
   variant: ProductVariantCreateOneInput
 }
@@ -49628,6 +49860,28 @@ export interface ProductVariantFeedbackScalarWhereInput {
   id_not_ends_with?: ID_Input | null
   isCompleted?: Boolean | null
   isCompleted_not?: Boolean | null
+  rating?: Float | null
+  rating_not?: Float | null
+  rating_in?: Float[] | Float | null
+  rating_not_in?: Float[] | Float | null
+  rating_lt?: Float | null
+  rating_lte?: Float | null
+  rating_gt?: Float | null
+  rating_gte?: Float | null
+  review?: String | null
+  review_not?: String | null
+  review_in?: String[] | String | null
+  review_not_in?: String[] | String | null
+  review_lt?: String | null
+  review_lte?: String | null
+  review_gt?: String | null
+  review_gte?: String | null
+  review_contains?: String | null
+  review_not_contains?: String | null
+  review_starts_with?: String | null
+  review_not_starts_with?: String | null
+  review_ends_with?: String | null
+  review_not_ends_with?: String | null
 }
 
 export interface ProductVariantFeedbackSubscriptionWhereInput {
@@ -49643,6 +49897,8 @@ export interface ProductVariantFeedbackSubscriptionWhereInput {
 
 export interface ProductVariantFeedbackUpdateInput {
   isCompleted?: Boolean | null
+  rating?: Float | null
+  review?: String | null
   questions?: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput | null
   reservationFeedback?: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput | null
   variant?: ProductVariantUpdateOneRequiredInput | null
@@ -49650,10 +49906,14 @@ export interface ProductVariantFeedbackUpdateInput {
 
 export interface ProductVariantFeedbackUpdateManyDataInput {
   isCompleted?: Boolean | null
+  rating?: Float | null
+  review?: String | null
 }
 
 export interface ProductVariantFeedbackUpdateManyMutationInput {
   isCompleted?: Boolean | null
+  rating?: Float | null
+  review?: String | null
 }
 
 export interface ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput {
@@ -49682,12 +49942,16 @@ export interface ProductVariantFeedbackUpdateOneRequiredWithoutQuestionsInput {
 
 export interface ProductVariantFeedbackUpdateWithoutQuestionsDataInput {
   isCompleted?: Boolean | null
+  rating?: Float | null
+  review?: String | null
   reservationFeedback?: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput | null
   variant?: ProductVariantUpdateOneRequiredInput | null
 }
 
 export interface ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput {
   isCompleted?: Boolean | null
+  rating?: Float | null
+  review?: String | null
   questions?: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput | null
   variant?: ProductVariantUpdateOneRequiredInput | null
 }
@@ -49728,6 +49992,28 @@ export interface ProductVariantFeedbackWhereInput {
   id_not_ends_with?: ID_Input | null
   isCompleted?: Boolean | null
   isCompleted_not?: Boolean | null
+  rating?: Float | null
+  rating_not?: Float | null
+  rating_in?: Float[] | Float | null
+  rating_not_in?: Float[] | Float | null
+  rating_lt?: Float | null
+  rating_lte?: Float | null
+  rating_gt?: Float | null
+  rating_gte?: Float | null
+  review?: String | null
+  review_not?: String | null
+  review_in?: String[] | String | null
+  review_not_in?: String[] | String | null
+  review_lt?: String | null
+  review_lte?: String | null
+  review_gt?: String | null
+  review_gte?: String | null
+  review_contains?: String | null
+  review_not_contains?: String | null
+  review_starts_with?: String | null
+  review_not_starts_with?: String | null
+  review_ends_with?: String | null
+  review_not_ends_with?: String | null
   questions_every?: ProductVariantFeedbackQuestionWhereInput | null
   questions_some?: ProductVariantFeedbackQuestionWhereInput | null
   questions_none?: ProductVariantFeedbackQuestionWhereInput | null
@@ -51212,6 +51498,7 @@ export interface ReservationCreateInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51224,6 +51511,7 @@ export interface ReservationCreateInput {
   returnedPackage?: PackageCreateOneInput | null
   products?: PhysicalProductCreateManyInput | null
   newProducts?: PhysicalProductCreateManyInput | null
+  returnedProducts?: PhysicalProductCreateManyInput | null
   packageEvents?: PackageTransitEventCreateManyWithoutReservationInput | null
   receipt?: ReservationReceiptCreateOneWithoutReservationInput | null
   lastLocation?: LocationCreateOneInput | null
@@ -51256,6 +51544,7 @@ export interface ReservationCreateWithoutCustomerInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51267,6 +51556,7 @@ export interface ReservationCreateWithoutCustomerInput {
   returnedPackage?: PackageCreateOneInput | null
   products?: PhysicalProductCreateManyInput | null
   newProducts?: PhysicalProductCreateManyInput | null
+  returnedProducts?: PhysicalProductCreateManyInput | null
   packageEvents?: PackageTransitEventCreateManyWithoutReservationInput | null
   receipt?: ReservationReceiptCreateOneWithoutReservationInput | null
   lastLocation?: LocationCreateOneInput | null
@@ -51279,6 +51569,7 @@ export interface ReservationCreateWithoutPackageEventsInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51291,6 +51582,7 @@ export interface ReservationCreateWithoutPackageEventsInput {
   returnedPackage?: PackageCreateOneInput | null
   products?: PhysicalProductCreateManyInput | null
   newProducts?: PhysicalProductCreateManyInput | null
+  returnedProducts?: PhysicalProductCreateManyInput | null
   receipt?: ReservationReceiptCreateOneWithoutReservationInput | null
   lastLocation?: LocationCreateOneInput | null
   shippingOption?: ShippingOptionCreateOneInput | null
@@ -51302,6 +51594,7 @@ export interface ReservationCreateWithoutReceiptInput {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51314,6 +51607,7 @@ export interface ReservationCreateWithoutReceiptInput {
   returnedPackage?: PackageCreateOneInput | null
   products?: PhysicalProductCreateManyInput | null
   newProducts?: PhysicalProductCreateManyInput | null
+  returnedProducts?: PhysicalProductCreateManyInput | null
   packageEvents?: PackageTransitEventCreateManyWithoutReservationInput | null
   lastLocation?: LocationCreateOneInput | null
   shippingOption?: ShippingOptionCreateOneInput | null
@@ -51744,6 +52038,14 @@ export interface ReservationScalarWhereInput {
   status_not?: ReservationStatus | null
   status_in?: ReservationStatus[] | ReservationStatus | null
   status_not_in?: ReservationStatus[] | ReservationStatus | null
+  returnedAt?: DateTime | null
+  returnedAt_not?: DateTime | null
+  returnedAt_in?: DateTime[] | DateTime | null
+  returnedAt_not_in?: DateTime[] | DateTime | null
+  returnedAt_lt?: DateTime | null
+  returnedAt_lte?: DateTime | null
+  returnedAt_gt?: DateTime | null
+  returnedAt_gte?: DateTime | null
   shippedAt?: DateTime | null
   shippedAt_not?: DateTime | null
   shippedAt_in?: DateTime[] | DateTime | null
@@ -51826,6 +52128,7 @@ export interface ReservationUpdateDataInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51838,6 +52141,7 @@ export interface ReservationUpdateDataInput {
   returnedPackage?: PackageUpdateOneInput | null
   products?: PhysicalProductUpdateManyInput | null
   newProducts?: PhysicalProductUpdateManyInput | null
+  returnedProducts?: PhysicalProductUpdateManyInput | null
   packageEvents?: PackageTransitEventUpdateManyWithoutReservationInput | null
   receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
   lastLocation?: LocationUpdateOneInput | null
@@ -51849,6 +52153,7 @@ export interface ReservationUpdateInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51861,6 +52166,7 @@ export interface ReservationUpdateInput {
   returnedPackage?: PackageUpdateOneInput | null
   products?: PhysicalProductUpdateManyInput | null
   newProducts?: PhysicalProductUpdateManyInput | null
+  returnedProducts?: PhysicalProductUpdateManyInput | null
   packageEvents?: PackageTransitEventUpdateManyWithoutReservationInput | null
   receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
   lastLocation?: LocationUpdateOneInput | null
@@ -51872,6 +52178,7 @@ export interface ReservationUpdateManyDataInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51885,6 +52192,7 @@ export interface ReservationUpdateManyMutationInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51938,6 +52246,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51949,6 +52258,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   returnedPackage?: PackageUpdateOneInput | null
   products?: PhysicalProductUpdateManyInput | null
   newProducts?: PhysicalProductUpdateManyInput | null
+  returnedProducts?: PhysicalProductUpdateManyInput | null
   packageEvents?: PackageTransitEventUpdateManyWithoutReservationInput | null
   receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
   lastLocation?: LocationUpdateOneInput | null
@@ -51960,6 +52270,7 @@ export interface ReservationUpdateWithoutPackageEventsDataInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51972,6 +52283,7 @@ export interface ReservationUpdateWithoutPackageEventsDataInput {
   returnedPackage?: PackageUpdateOneInput | null
   products?: PhysicalProductUpdateManyInput | null
   newProducts?: PhysicalProductUpdateManyInput | null
+  returnedProducts?: PhysicalProductUpdateManyInput | null
   receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
   lastLocation?: LocationUpdateOneInput | null
   shippingOption?: ShippingOptionUpdateOneInput | null
@@ -51982,6 +52294,7 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   phase?: ReservationPhase | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -51994,6 +52307,7 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   returnedPackage?: PackageUpdateOneInput | null
   products?: PhysicalProductUpdateManyInput | null
   newProducts?: PhysicalProductUpdateManyInput | null
+  returnedProducts?: PhysicalProductUpdateManyInput | null
   packageEvents?: PackageTransitEventUpdateManyWithoutReservationInput | null
   lastLocation?: LocationUpdateOneInput | null
   shippingOption?: ShippingOptionUpdateOneInput | null
@@ -52061,6 +52375,14 @@ export interface ReservationWhereInput {
   status_not?: ReservationStatus | null
   status_in?: ReservationStatus[] | ReservationStatus | null
   status_not_in?: ReservationStatus[] | ReservationStatus | null
+  returnedAt?: DateTime | null
+  returnedAt_not?: DateTime | null
+  returnedAt_in?: DateTime[] | DateTime | null
+  returnedAt_not_in?: DateTime[] | DateTime | null
+  returnedAt_lt?: DateTime | null
+  returnedAt_lte?: DateTime | null
+  returnedAt_gt?: DateTime | null
+  returnedAt_gte?: DateTime | null
   shippedAt?: DateTime | null
   shippedAt_not?: DateTime | null
   shippedAt_in?: DateTime[] | DateTime | null
@@ -52135,6 +52457,9 @@ export interface ReservationWhereInput {
   newProducts_every?: PhysicalProductWhereInput | null
   newProducts_some?: PhysicalProductWhereInput | null
   newProducts_none?: PhysicalProductWhereInput | null
+  returnedProducts_every?: PhysicalProductWhereInput | null
+  returnedProducts_some?: PhysicalProductWhereInput | null
+  returnedProducts_none?: PhysicalProductWhereInput | null
   packageEvents_every?: PackageTransitEventWhereInput | null
   packageEvents_some?: PackageTransitEventWhereInput | null
   packageEvents_none?: PackageTransitEventWhereInput | null
@@ -58247,6 +58572,8 @@ export interface ProductVariantEdge {
 export interface ProductVariantFeedback extends Node {
   id: ID_Output
   isCompleted: Boolean
+  rating?: Float | null
+  review?: String | null
   questions?: Array<ProductVariantFeedbackQuestion> | null
   reservationFeedback: ReservationFeedback
   variant: ProductVariant
@@ -58274,6 +58601,8 @@ export interface ProductVariantFeedbackEdge {
 export interface ProductVariantFeedbackPreviousValues {
   id: ID_Output
   isCompleted: Boolean
+  rating?: Float | null
+  review?: String | null
 }
 
 export interface ProductVariantFeedbackQuestion extends Node {
@@ -58534,11 +58863,13 @@ export interface Reservation extends Node {
   returnedPackage?: Package | null
   products?: Array<PhysicalProduct> | null
   newProducts?: Array<PhysicalProduct> | null
+  returnedProducts?: Array<PhysicalProduct> | null
   packageEvents?: Array<PackageTransitEvent> | null
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
@@ -58624,6 +58955,7 @@ export interface ReservationPreviousValues {
   phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
+  returnedAt?: DateTime | null
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
