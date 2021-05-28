@@ -81,9 +81,11 @@ export const Loader: (
         }
         const modelName = getReturnTypeFromInfo(info)
         ;(adjustedOptions.params as PrismaTwoGenerateParams).select = QueryUtilsService.infoToSelect(
-          adjustedInfo,
-          modelName,
-          ctx.modelFieldsByModelName
+          {
+            info: adjustedInfo,
+            modelName,
+            modelFieldsByModelName: ctx.modelFieldsByModelName,
+          }
         )
       } else if (type === PrismaLoader.name) {
         ;(adjustedOptions.params as PrismaOneGenerateParams).info = info

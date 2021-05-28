@@ -26,11 +26,11 @@ export const Select: (
       )
     }
 
-    let select = QueryUtilsService.infoToSelect(
-      _info,
+    let select = QueryUtilsService.infoToSelect({
+      info: _info,
       modelName,
-      ctx.modelFieldsByModelName
-    )
+      modelFieldsByModelName: ctx.modelFieldsByModelName,
+    })
     return select
   }
 )

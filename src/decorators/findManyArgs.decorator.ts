@@ -33,11 +33,11 @@ export const FindManyArgs: (
       )
     }
 
-    let select = QueryUtilsService.infoToSelect(
-      _info,
-      _modelName, // Preserve "Connection" if it's there
-      ctx.modelFieldsByModelName
-    )
+    let select = QueryUtilsService.infoToSelect({
+      info: _info,
+      modelName: _modelName, // Preserve "Connection" if it's there
+      modelFieldsByModelName: ctx.modelFieldsByModelName,
+    })
     const findManyArgs = QueryUtilsService.prismaOneToPrismaTwoArgs(
       transformedArgs,
       modelName // Without "Connection"

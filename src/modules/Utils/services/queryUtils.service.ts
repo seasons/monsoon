@@ -1,3 +1,5 @@
+import * as util from "util"
+
 import { getReturnTypeFromInfo } from "@app/decorators/utils"
 import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
 import { Injectable } from "@nestjs/common"
@@ -12,21 +14,54 @@ import {
   SCALAR_LIST_FIELD_NAMES,
   SINGLETON_RELATIONS_POSING_AS_ARRAYS,
 } from "@prisma1/prisma.service"
+import { GraphQLResolveInfo } from "graphql"
+import { addFragmentToInfo } from "graphql-binding"
 import graphqlFields from "graphql-fields"
-import { get, head, isArray, isEmpty, lowerFirst, pick } from "lodash"
+import {
+  cloneDeep,
+  find,
+  get,
+  isArray,
+  isEmpty,
+  lowerFirst,
+  pick,
+} from "lodash"
+
+interface InfoToSelectParams {
+  info: GraphQLResolveInfo | any
+  modelName: Prisma.ModelName
+  modelFieldsByModelName: any
+  metadata?: {
+    callType: "initial" | "recursive"
+    parentCallStack: { field: string; type: Prisma.ModelName; fields: any }[]
+  }
+}
 
 @Injectable()
 export class QueryUtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  static infoToSelect(
-    info,
-    modelName,
-    modelFieldsByModelName,
-    callType: "initial" | "recursive" = "initial"
-  ) {
-    const prismaSelect = new PrismaSelect(info)
-    let fields = graphqlFields(info)
+  static infoToSelect(params: InfoToSelectParams): any {
+    const {
+      info,
+      modelName,
+      modelFieldsByModelName,
+      metadata: { callType, parentCallStack } = {
+        callType: "initial",
+        parentCallStack: [],
+      },
+    } = params
+
+    // If a selection set was defined for the current field by way of a fragment on an ancestral
+    // field, we need to incorporate that into the current info or PrismaSelect won't know about it
+    // e.g fragment A on type B { B {someField {anotherField {id}}}}. If we're analyzing at the
+    // level of "anotherField", we need to register that fragment A asked for "id" on "anotherField"
+    const adjustedInfo = this.adjustInfoForAncestralFragments(params)
+
+    let callStack = cloneDeep(parentCallStack)
+    let fields = graphqlFields(adjustedInfo)
+    callStack.push({ type: modelName, field: info.fieldName, fields })
+    const prismaSelect = new PrismaSelect(adjustedInfo as GraphQLResolveInfo)
 
     // If it's a Connection query, get the select for the node on the edges
     if (modelName.includes("Connection")) {
@@ -37,15 +72,16 @@ export class QueryUtilsService {
         a => a.name.value === "node"
       )
       const returnType = modelName.replace("Connection", "")
-      return this.infoToSelect(
-        {
+      return this.infoToSelect({
+        info: {
+          fieldName: "node",
           fieldNodes: [nodeSelection],
           returnType,
           fragments: info.fragments,
         },
-        returnType,
-        modelFieldsByModelName
-      )
+        modelName: returnType as Prisma.ModelName,
+        modelFieldsByModelName,
+      })
     }
 
     const modelFields = modelFieldsByModelName[modelName]
@@ -54,6 +90,8 @@ export class QueryUtilsService {
     }
 
     let select = { select: {} }
+
+    const emptyFieldNodes = [{ selectionSet: { selections: [] } }] // for recursions
     modelFields.forEach(field => {
       let fieldSelect
       switch (field.kind) {
@@ -78,16 +116,22 @@ export class QueryUtilsService {
                 a => a.name.value === field.name
               )
               if (!!subFieldNodes) {
-                fieldSelect = this.infoToSelect(
-                  {
-                    fieldNodes: [subFieldNodes],
+                fieldSelect = this.infoToSelect({
+                  info: {
+                    fieldName: field.name,
+                    fieldNodes: !!subFieldNodes
+                      ? [subFieldNodes]
+                      : emptyFieldNodes,
                     returnType: field.type,
                     fragments: info.fragments,
                   },
-                  field.type,
+                  modelName: field.type,
                   modelFieldsByModelName,
-                  "recursive"
-                )
+                  metadata: {
+                    callType: "recursive",
+                    parentCallStack: callStack,
+                  },
+                })
               } else {
                 // field is coming from one or more fragments. get the field nodes accordingly
                 const returnType = getReturnTypeFromInfo(info)
@@ -102,16 +146,22 @@ export class QueryUtilsService {
                     const currentFieldNodes = currentFragment.selectionSet.selections.find(
                       a => a.name.value === field.name
                     )
-                    const currentFieldSelect = this.infoToSelect(
-                      {
-                        fieldNodes: [currentFieldNodes],
+                    const currentFieldSelect = this.infoToSelect({
+                      info: {
+                        fieldName: field.name,
+                        fieldNodes: !!currentFieldNodes
+                          ? [currentFieldNodes]
+                          : emptyFieldNodes,
                         returnType: field.type,
                         fragments: info.fragments,
                       },
-                      field.type,
+                      modelName: field.type,
                       modelFieldsByModelName,
-                      "recursive"
-                    )
+                      metadata: {
+                        callType: "recursive",
+                        parentCallStack: callStack,
+                      },
+                    })
                     return PrismaSelect.mergeDeep(
                       currentFieldSelect,
                       accumulatedFieldSelect
@@ -225,7 +275,7 @@ export class QueryUtilsService {
   // in which {not: null} should be translated to {not: undefined},
   // but isn't. So we clean it up ex post facto for now. If prisma
   // doesn't fix it, we may fork the library and fix it ourselves later.
-  static notNullToNotUndefined = (obj: any) => {
+  private static notNullToNotUndefined = (obj: any) => {
     // Base case
     if (typeof obj !== "object") {
       return
@@ -247,9 +297,54 @@ export class QueryUtilsService {
     return returnObj
   }
 
+  private static adjustInfoForAncestralFragments(params: InfoToSelectParams) {
+    const { info, modelName, metadata } = params
+    const parentCallStack = metadata?.parentCallStack || []
+
+    const ancestralTypes = parentCallStack.map(a => a.type)
+    const fragmentExistsOnParentType = !!find(Object.keys(info.fragments), k =>
+      ancestralTypes.includes(info.fragments[k].typeCondition.name.value)
+    )
+    let selectionSetFromFragmentOnAncestor =
+      fragmentExistsOnParentType &&
+      get(
+        parentCallStack[0],
+        // e.g fields.product.productVariant.internalSize.bottom
+        `fields${parentCallStack
+          .splice(1, parentCallStack.length)
+          .reduce((acc, curval) => acc + "." + curval.field, "")}.${
+          info.fieldName
+        }`
+      )
+    const ancestralFragment =
+      !!selectionSetFromFragmentOnAncestor &&
+      `fragment EnsureFragmentFields on ${modelName} ${this.fieldObjectToFragmentString(
+        selectionSetFromFragmentOnAncestor
+      )}`
+    const adjustedInfo = !!ancestralFragment
+      ? addFragmentToInfo(info, ancestralFragment)
+      : info
+
+    return adjustedInfo
+  }
+
+  private static fieldObjectToFragmentString(obj) {
+    let string = "{ "
+    for (const k of Object.keys(obj)) {
+      string = string + k + " "
+      if (!isEmpty(obj[k])) {
+        string = string + this.fieldObjectToFragmentString(obj[k]) + " "
+      }
+    }
+    string = string + "}"
+    return string
+  }
+
   async resolveFindMany(findManyArgs, modelName: Prisma.ModelName) {
     const modelClient = this.prisma.client2[lowerFirst(modelName)]
-    const data = await modelClient.findMany(findManyArgs)
+    const data = await modelClient.findMany({
+      ...findManyArgs,
+    })
     const sanitizedData = this.prisma.sanitizePayload(data, modelName)
 
     return sanitizedData
