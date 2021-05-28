@@ -288,7 +288,7 @@ export class QueryUtilsService {
   private static notNullToNotUndefined = (obj: any) => {
     // Base case
     if (typeof obj !== "object") {
-      return
+      return obj
     }
 
     if (isArray(obj)) {
