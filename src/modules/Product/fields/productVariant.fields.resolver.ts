@@ -253,6 +253,7 @@ export class ProductVariantFieldsResolver {
         model: "ProductNotification",
         select: Prisma.validator<Prisma.ProductNotificationSelect>()({
           id: true,
+          productVariant: { select: { id: true } },
         }),
         formatWhere: (ids, ctx) =>
           Prisma.validator<Prisma.ProductNotificationWhereInput>()({
@@ -268,6 +269,7 @@ export class ProductVariantFieldsResolver {
         orderBy: Prisma.validator<Prisma.ProductNotificationOrderByInput>()({
           createdAt: "desc",
         }),
+        getKeys: notification => [notification.productVariant.id],
       },
     })
     productNotificationsLoader: PrismaTwoDataLoader
@@ -293,18 +295,20 @@ export class ProductVariantFieldsResolver {
       type: PrismaTwoLoader.name,
       params: {
         model: "ProductVariantWant",
-        select: { id: true },
+        select: Prisma.validator<Prisma.ProductVariantWantSelect>()({
+          id: true,
+          productVariant: { select: { id: true } },
+        }),
         formatWhere: (ids, ctx) =>
           Prisma.validator<Prisma.ProductVariantWantWhereInput>()({
             user: {
               id: ctx.user.id,
             },
-            AND: {
-              productVariant: {
-                id: { in: ids },
-              },
+            productVariant: {
+              id: { in: ids },
             },
           }),
+        getKeys: want => [want.productVariant.id],
       },
     })
     wantsLoader
