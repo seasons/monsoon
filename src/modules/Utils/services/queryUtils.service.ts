@@ -67,7 +67,6 @@ export class QueryUtilsService {
     const extractFinalSelect = select =>
       isEmpty(select.select) ? null : select.select
 
-    // Get the query key for this particular query underneath its parent operation
     const queryKey = this.getQuerykey(info)
 
     const opName = info.operation?.name?.value || info.operation
@@ -235,7 +234,9 @@ export class QueryUtilsService {
       let level = info.path
       const pathKeys = []
       while (!!level.prev && level.key !== "node") {
-        pathKeys.push(level.key)
+        if (typeof level.key === "string") {
+          pathKeys.push(level.key)
+        }
         level = level.prev
       }
       if (pathKeys.length > 0) {
@@ -413,7 +414,10 @@ export class QueryUtilsService {
     return string
   }
 
-  async resolveFindMany(findManyArgs, modelName: Prisma.ModelName) {
+  async resolveFindMany<T>(
+    findManyArgs,
+    modelName: Prisma.ModelName
+  ): Promise<T[]> {
     const modelClient = this.prisma.client2[lowerFirst(modelName)]
     const data = await modelClient.findMany({
       ...findManyArgs,
@@ -423,10 +427,10 @@ export class QueryUtilsService {
     return sanitizedData
   }
 
-  async resolveFindUnique(
+  async resolveFindUnique<T>(
     findUniqueArgs: { where: any; select?: any; include?: any },
     modelName: Prisma.ModelName
-  ) {
+  ): Promise<T> {
     const modelClient = this.prisma.client2[lowerFirst(modelName)]
     const data = await modelClient.findUnique(findUniqueArgs)
     const sanitizedData = this.prisma.sanitizePayload(data, modelName)
