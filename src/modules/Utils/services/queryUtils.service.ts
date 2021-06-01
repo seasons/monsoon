@@ -1,6 +1,3 @@
-import * as util from "util"
-
-import { getReturnTypeFromInfo } from "@app/decorators/utils"
 import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
 import { Injectable } from "@nestjs/common"
 import { PrismaSelect } from "@paljs/plugins"
@@ -39,7 +36,22 @@ interface InfoToSelectParams {
 
 @Injectable()
 export class QueryUtilsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {
+    QueryUtilsService.selectCache.clear()
+  }
+
+  // e.g {GetBrowseProducts: {brands: ..., products: ...}}
+  private static selectCache = new Map() as Map<string, Map<string, any>>
+
+  static getQuerykey = info => {
+    let queryKey = info.path.key
+    let level = info.path
+    while (!!level.prev) {
+      level = level.prev
+      queryKey = level.key
+    }
+    return queryKey
+  }
 
   static infoToSelect(params: InfoToSelectParams): any {
     const {
@@ -51,6 +63,26 @@ export class QueryUtilsService {
         parentCallStack: [],
       },
     } = params
+
+    const extractFinalSelect = select =>
+      isEmpty(select.select) ? null : select.select
+
+    // Get the query key for this particular query underneath its parent operation
+    const queryKey = this.getQuerykey(info)
+
+    const opName = info.operation?.name?.value || info.operation
+    const isTopLevelkeyInOperation = !info.path.prev
+    if (
+      callType === "initial" &&
+      isTopLevelkeyInOperation &&
+      process.env.CACHE_SELECTS === "true" &&
+      this.selectCache.has(opName) &&
+      this.selectCache.get(opName).has(queryKey)
+    ) {
+      const cachedSelect = this.selectCache.get(opName).get(queryKey)
+      const processedCachedSelect = extractFinalSelect(cachedSelect)
+      return processedCachedSelect
+    }
 
     // If a selection set was defined for the current field by way of a fragment on an ancestral
     // field, we need to incorporate that into the current info or PrismaSelect won't know about it
@@ -71,6 +103,7 @@ export class QueryUtilsService {
       "operation",
       "schema",
       "variableValues",
+      "path",
     ])
 
     // If it's a Connection query, get the select for the node on the edges
@@ -100,7 +133,6 @@ export class QueryUtilsService {
     }
 
     let select = { select: {} }
-
     const emptyFieldNodes = [{ selectionSet: { selections: [] } }] // for recursions
     modelFields.forEach(field => {
       let fieldSelect
@@ -125,61 +157,22 @@ export class QueryUtilsService {
               let subFieldNodes = info.fieldNodes[0].selectionSet.selections.find(
                 a => a.name.value === field.name
               )
-              if (!!subFieldNodes) {
-                fieldSelect = this.infoToSelect({
-                  info: {
-                    fieldName: field.name,
-                    fieldNodes: !!subFieldNodes
-                      ? [subFieldNodes]
-                      : emptyFieldNodes,
-                    returnType: field.type,
-                    ...globalInfoFields,
-                  },
-                  modelName: field.type,
-                  modelFieldsByModelName,
-                  metadata: {
-                    callType: "recursive",
-                    parentCallStack: callStack,
-                  },
-                })
-              } else {
-                // field is coming from one or more fragments. get the field nodes accordingly
-                const returnType = getReturnTypeFromInfo(info)
-                const parentFragments = Object.keys(info.fragments)
-                  .filter(
-                    k =>
-                      info.fragments[k].typeCondition.name.value === returnType
-                  )
-                  .map(k2 => info.fragments[k2])
-                fieldSelect = parentFragments.reduce(
-                  (accumulatedFieldSelect: any, currentFragment: any) => {
-                    const currentFieldNodes = currentFragment.selectionSet.selections.find(
-                      a => a.name.value === field.name
-                    )
-                    const currentFieldSelect = this.infoToSelect({
-                      info: {
-                        fieldName: field.name,
-                        fieldNodes: !!currentFieldNodes
-                          ? [currentFieldNodes]
-                          : emptyFieldNodes,
-                        returnType: field.type,
-                        ...globalInfoFields,
-                      },
-                      modelName: field.type,
-                      modelFieldsByModelName,
-                      metadata: {
-                        callType: "recursive",
-                        parentCallStack: callStack,
-                      },
-                    })
-                    return PrismaSelect.mergeDeep(
-                      currentFieldSelect,
-                      accumulatedFieldSelect
-                    )
-                  },
-                  {}
-                )
-              }
+              fieldSelect = this.infoToSelect({
+                info: {
+                  fieldName: field.name,
+                  fieldNodes: !!subFieldNodes
+                    ? [subFieldNodes]
+                    : emptyFieldNodes,
+                  returnType: field.type,
+                  ...globalInfoFields,
+                },
+                modelName: field.type,
+                modelFieldsByModelName,
+                metadata: {
+                  callType: "recursive",
+                  parentCallStack: callStack,
+                },
+              })
             }
           }
           break
@@ -187,6 +180,7 @@ export class QueryUtilsService {
           throw new Error(`unknown kind: ${field.kind}`)
       }
 
+      // this means we're not selecting anything on that type
       if (typeof fieldSelect === "object" && isEmpty(fieldSelect)) {
         return
       }
@@ -199,10 +193,79 @@ export class QueryUtilsService {
       }
     })
 
-    const finalReturnValue = isEmpty(select.select) ? null : select.select
-    return callType === "recursive" ? select : finalReturnValue
+    // Deep merge the select object defined at the top most level of
+    // the query for this given querykey, so we can ensure that any fields
+    // lost are retrieved. This was prompted by the GetBrowseProducts query,
+    // which queries variants on products. Since variants is a field resolver as
+    // well as a first class field on products, the select defined at the variants
+    // level was not registering the selection set defined on variants in the parent query
+    // By deep merging here, we gaurd against that.
+    select = this.deepMergeWithSelectFromTopNode(
+      select,
+      info,
+      callStack,
+      callType,
+      opName,
+      queryKey,
+      isTopLevelkeyInOperation
+    )
+
+    return callType === "recursive" ? select : extractFinalSelect(select)
   }
 
+  static deepMergeWithSelectFromTopNode(
+    select,
+    info,
+    callStack,
+    callType,
+    opName,
+    queryKey,
+    isTopLevelkeyInOperation
+  ) {
+    let newSelect = select
+    if (
+      this.selectCache.has(opName) &&
+      this.selectCache.get(opName).has(queryKey) &&
+      !isTopLevelkeyInOperation
+    ) {
+      const selectForQuery = this.selectCache.get(opName).get(queryKey)
+      let getString = "select"
+
+      // Start the get string with the path object
+      let level = info.path
+      const pathKeys = []
+      while (!!level.prev && level.key !== "node") {
+        pathKeys.push(level.key)
+        level = level.prev
+      }
+      if (pathKeys.length > 0) {
+        getString += "." + pathKeys.reverse().join(".select.")
+      }
+
+      // Complete it via the callStack
+      const callStackGetString = cloneDeep(callStack)
+        .splice(1, callStack.length)
+        .map(a => a.field)
+        .join(".select.")
+      const pathKeysSelect = pathKeys.length > 0 ? "select." : ""
+      getString += "." + pathKeysSelect + callStackGetString
+
+      // Get the select at this level
+      const selectForField = get(selectForQuery, getString)
+
+      if (!!selectForField) {
+        newSelect = PrismaSelect.mergeDeep(selectForField, select)
+      }
+    } else {
+      if (callType === "initial") {
+        const opSelectCache = this.selectCache.get(opName) || new Map()
+        opSelectCache.set(queryKey, select)
+        this.selectCache.set(opName, opSelectCache)
+      }
+    }
+
+    return newSelect
+  }
   static prismaOneToPrismaTwoArgs(args, modelName) {
     const {
       where,
@@ -309,7 +372,7 @@ export class QueryUtilsService {
 
   private static adjustInfoForAncestralFragments(params: InfoToSelectParams) {
     const { info, modelName, metadata } = params
-    const parentCallStack = metadata?.parentCallStack || []
+    const parentCallStack = cloneDeep(metadata?.parentCallStack) || []
 
     const ancestralTypes = parentCallStack.map(a => a.type)
     const fragmentExistsOnParentType = !!find(Object.keys(info.fragments), k =>

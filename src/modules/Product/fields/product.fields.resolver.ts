@@ -88,7 +88,7 @@ export class ProductFieldsResolver {
           product: { every: { id: { in: ids } } },
         }),
         infoFragment: `
-          fragment EnsureDisplay on ProductVariant {
+          fragment EnsureDisplayAndProductId on ProductVariant {
               id
               product {
                 id
