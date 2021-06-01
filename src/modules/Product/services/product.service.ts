@@ -1,9 +1,10 @@
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
+import { Brand } from "@prisma/client"
 import {
   BottomSizeType,
-  CustomerWhereUniqueInput,
   ID_Input,
   InventoryStatus,
   LetterSize,
@@ -12,7 +13,6 @@ import {
   ProductStatus,
   ProductTier,
   ProductType,
-  ProductVariant,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
   Tag,
@@ -20,12 +20,11 @@ import {
 import {
   Customer,
   Product as PrismaBindingProduct,
-  ProductVariantConnection,
 } from "@prisma1/prisma.binding"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
-import { head, pick, tail } from "lodash"
+import { head, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -43,25 +42,33 @@ export class ProductService {
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
     private readonly physicalProductUtils: PhysicalProductUtilsService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
-  async getProducts(args, info) {
+  async getProducts(args, select) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
-    const products = await this.prisma.binding.query.products(
-      { ...args, ...queryOptions },
-      info
+    const findManyArgs = QueryUtilsService.prismaOneToPrismaTwoArgs(
+      {
+        ...args,
+        ...queryOptions,
+      },
+      "Product"
     )
-    return products
+
+    return this.queryUtils.resolveFindMany(
+      { ...findManyArgs, select },
+      "Product"
+    )
   }
 
-  async getProductsConnection(args, info) {
+  async getProductsConnection(args, select) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
-    const products = await this.prisma.binding.query.productsConnection(
-      { ...args, ...queryOptions },
-      info
+
+    return this.queryUtils.resolveConnection(
+      { ...args, ...queryOptions, select },
+      "Product"
     )
-    return products
   }
 
   async publishProducts(productIDs) {
@@ -441,9 +448,9 @@ export class ProductService {
     // This check was added because Judy Turner had some colliding SKUs
     // that most likely arose from a manual record delete. It's hard to say
     // exactly what went wrong, so we just check for collisions
-    const collidingVariants = await this.prisma.client.productVariants({
-      where: { sku_in: skus },
-    })
+    const collidingVariants = await this.prisma.client2.productVariant.findMany(
+      { where: { sku: { in: skus } }, select: { sku: true } }
+    )
     if (collidingVariants.length > 0) {
       throw new Error(`SKU collisions: ${collidingVariants.map(a => a.sku)}`)
     }
@@ -498,129 +505,136 @@ export class ProductService {
 
   async availableProductVariantsConnectionForCustomer(
     customerID: string,
-    info: GraphQLResolveInfo,
-    args: any
+    args: any,
+    select: any
   ) {
-    const customer = await this.prisma.binding.query.customer(
-      {
+    const customer = this.prisma.sanitizePayload(
+      await this.prisma.client2.customer.findUnique({
         where: { id: customerID },
-      },
-      `{
-        id
-        detail {
-          topSizes
-          waistSizes
-        }
-      }`
+        select: {
+          id: true,
+          detail: { select: { topSizes: true, waistSizes: true } },
+        },
+      }),
+      "Product"
     )
 
-    return (await this.prisma.binding.query.productVariantsConnection(
-      {
-        ...args,
-        where: {
-          OR: [
-            {
-              AND: [
-                {
-                  internalSize: {
-                    top: {
-                      letter_in: customer.detail.topSizes,
-                    },
+    const argsWithCustomerWhere = {
+      ...args,
+      where: {
+        OR: [
+          {
+            AND: [
+              {
+                internalSize: {
+                  top: {
+                    letter_in: customer.detail.topSizes,
                   },
                 },
-                { reservable_gte: 1 },
-                {
-                  product: {
-                    AND: [{ status: "Available" }, { type: "Top" }],
-                  },
+              },
+              { reservable_gte: 1 },
+              {
+                product: {
+                  AND: [{ status: "Available" }, { type: "Top" }],
                 },
-              ],
-            },
-            {
-              AND: [
-                {
-                  internalSize: {
-                    display_in: customer.detail.waistSizes.map(a => `${a}`),
-                  },
+              },
+            ],
+          },
+          {
+            AND: [
+              {
+                internalSize: {
+                  display_in: customer.detail.waistSizes.map(a => `${a}`),
                 },
-                { reservable_gte: 1 },
-                {
-                  product: {
-                    AND: [{ status: "Available" }, { type: "Bottom" }],
-                  },
+              },
+              { reservable_gte: 1 },
+              {
+                product: {
+                  AND: [{ status: "Available" }, { type: "Bottom" }],
                 },
-              ],
-            },
-          ],
-        },
+              },
+            ],
+          },
+        ],
       },
-      info
-    )) as ProductVariantConnection
+    }
+
+    return this.queryUtils.resolveConnection(
+      { ...argsWithCustomerWhere, select },
+      "ProductVariant"
+    )
   }
 
   async availableProductVariantsForCustomer(
-    where: CustomerWhereUniqueInput,
-    info: GraphQLResolveInfo
+    where: { id: string },
+    select: any
   ) {
-    const customer = (await this.prisma.binding.query.customer(
-      {
-        where,
+    const _customer = await this.prisma.client2.customer.findUnique({
+      where,
+      select: {
+        id: true,
+        detail: { select: { topSizes: true, waistSizes: true } },
       },
-      `{
-        id
-        detail {
-          topSizes
-          waistSizes
-        }
-      }`
-    )) as Customer
+    })
+    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
-    return (await this.prisma.binding.query.productVariants(
-      {
-        where: {
-          OR: [
-            {
-              AND: [
-                {
-                  internalSize: {
-                    top: {
-                      letter_in: customer.detail.topSizes as LetterSize[],
+    const _data = await this.prisma.client2.productVariant.findMany({
+      where: {
+        OR: [
+          {
+            AND: [
+              {
+                internalSize: {
+                  top: {
+                    letter: {
+                      in: (customer.detail.topSizes as unknown) as string[],
                     },
                   },
                 },
-                { reservable_gte: 1 },
-                {
-                  product: {
-                    AND: [{ status: "Available" }, { type: "Top" }],
-                  },
+              },
+              { reservable: { gte: 1 } },
+              {
+                product: {
+                  every: { AND: [{ status: "Available" }, { type: "Top" }] },
                 },
-              ],
-            },
-            {
-              AND: [
-                {
-                  internalSize: {
-                    display_in: customer.detail.waistSizes.map(a => `${a}`),
-                  },
+              },
+            ],
+          },
+          {
+            AND: [
+              {
+                internalSize: {
+                  display: { in: customer.detail.waistSizes.map(a => `${a}`) },
                 },
-                { reservable_gte: 1 },
-                {
-                  product: {
-                    AND: [{ status: "Available" }, { type: "Bottom" }],
-                  },
+              },
+              { reservable: { gte: 1 } },
+              {
+                product: {
+                  every: { AND: [{ status: "Available" }, { type: "Bottom" }] },
                 },
-              ],
-            },
-          ],
-        },
+              },
+            ],
+          },
+        ],
       },
-      info
-    )) as ProductVariant[]
+      select,
+    })
+    return this.prisma.sanitizePayload(_data, "ProductVariant")
   }
 
   async getSKUData({ brandID, colorCode, productID }) {
-    const brand = await this.prisma.client.brand({ id: brandID })
-    const color = await this.prisma.client.color({ colorCode })
+    const brand = this.prisma.sanitizePayload(
+      await this.prisma.client2.brand.findUnique({
+        where: { id: brandID },
+      }),
+      "Brand"
+    )
+    const color = this.prisma.sanitizePayload(
+      await this.prisma.client2.color.findUnique({
+        where: { colorCode },
+      }),
+      "Color"
+    )
 
     if (!brand || !color) {
       return null
@@ -1016,21 +1030,19 @@ export class ProductService {
     return head(tiers)
   }
 
-  async newestBrandProducts(args, info): Promise<[Product]> {
-    const newestProducts = await this.prisma.binding.query.products(
-      {
-        where: {
-          AND: [{ tags_none: { name: "Vintage" } }, { status: "Available" }],
-        },
-        orderBy: "publishedAt_DESC",
-        first: 1,
+  async newestBrandProducts(args, select): Promise<[Product]> {
+    const _newestProducts = (await this.prisma.client2.product.findMany({
+      where: {
+        // TODO: SCHEMABREAK
+        AND: [{ tags: { none: { name: "Vintage" } } }, { status: "Available" }],
       },
-      `{
-        id
-        brand {
-          id
-        }
-      }`
+      orderBy: { publishedAt: "desc" },
+      take: 1,
+      select: { id: true, brand: { select: { id: true } } },
+    })) as [Product & { brand: Brand }]
+    const newestProducts = this.prisma.sanitizePayload(
+      _newestProducts,
+      "Product"
     )
 
     const newestProduct = head(newestProducts)
@@ -1039,19 +1051,17 @@ export class ProductService {
       return null
     }
 
-    return await this.prisma.binding.query.products(
-      {
-        ...args,
-        where: {
-          AND: [
-            { brand: { id: newestProduct.brand.id } },
-            { status: "Available" },
-          ],
-        },
-        orderBy: "publishedAt_DESC",
+    const _data = (await this.prisma.client2.product.findMany({
+      where: {
+        AND: [
+          { brand: { id: newestProduct.brand.id } },
+          { status: "Available" },
+        ],
       },
-      info
-    )
+      orderBy: { publishedAt: "desc" },
+      select,
+    })) as [Product]
+    return this.prisma.sanitizePayload(_data, "Product")
   }
 
   private async upsertFunctions(

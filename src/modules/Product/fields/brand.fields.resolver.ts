@@ -1,3 +1,4 @@
+import { Select } from "@app/decorators/select.decorator"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { addFragmentToInfo } from "graphql-binding"
@@ -12,18 +13,19 @@ export class BrandFieldsResolver {
   ) {}
 
   @ResolveField()
-  async productsConnection(@Parent() brand, @Args() args, @Info() info) {
-    const brandSlug = await this.prisma.client.brand({ id: brand.id }).slug()
+  async productsConnection(@Parent() brand, @Args() args, @Select() select) {
+    let brandSlug = brand.slug
+    if (!brandSlug) {
+      brandSlug = (
+        await this.prisma.client2.brand.findUnique({
+          where: { id: brand.id },
+          select: { slug: true },
+        })
+      ).slug
+    }
     const newArgs = Object.assign({}, args, {
       brand: brandSlug,
     })
-    return await this.productService.getProductsConnection(
-      newArgs,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on ProductConnection { edges { node { id } } }`
-      )
-    )
+    return await this.productService.getProductsConnection(newArgs, select)
   }
 }

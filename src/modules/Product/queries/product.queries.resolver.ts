@@ -1,17 +1,16 @@
 import { Customer, User } from "@app/decorators"
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
-import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
-import { addFragmentToInfo } from "graphql-binding"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 
 import { ProductService } from "../services/product.service"
 
 @Resolver()
 export class ProductQueriesResolver {
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly productService: ProductService
+    private readonly productService: ProductService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   @Query()
@@ -24,167 +23,150 @@ export class ProductQueriesResolver {
     const scope = !!user ? "PRIVATE" : "PUBLIC"
     info.cacheControl.setCacheHint({ maxAge: 600, scope })
 
-    const data = await this.prisma.client2.product.findUnique({
-      where,
-      ...select,
+    return await this.queryUtils.resolveFindUnique({ where, select }, "Product")
+  }
+
+  @Query()
+  async products(
+    @Args() args,
+    @Select({
+      withFragment: `fragment EnsureId on Product { id }`,
     })
-    const sanitizedData = this.prisma.sanitizePayload(data, "Product")
-
-    return sanitizedData
+    select
+  ) {
+    return await this.productService.getProducts(args, select)
   }
 
   @Query()
-  async products(@Args() args, @Info() info) {
-    // Will need to update this library before updating this resolver:
-    // https://github.com/prisma/binding-argument-transform/commits/master
-    return await this.productService.getProducts(
+  async productsConnection(
+    @Args() args,
+    @Select({
+      withFragment: `fragment EnsureId on ProductConnection { edges { node { id } } }`,
+    })
+    select
+  ) {
+    return this.productService.getProductsConnection(args, select)
+  }
+
+  @Query()
+  async productRequests(@FindManyArgs() args) {
+    return await this.queryUtils.resolveFindMany(args, "ProductRequest")
+  }
+
+  @Query()
+  async productFunctions(@FindManyArgs() args) {
+    return await this.queryUtils.resolveFindMany(args, "ProductFunction")
+  }
+
+  @Query()
+  async productMaterialCategories(@FindManyArgs() args) {
+    return await this.queryUtils.resolveFindMany(
       args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on Product { id }`
-      )
+      "ProductMaterialCategory"
     )
   }
 
   @Query()
-  async productsConnection(@Args() args, @Info() info) {
-    const result = await this.productService.getProductsConnection(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on ProductConnection { edges { node { id } } }`
-      )
-    )
-    return result
-  }
-
-  @Query()
-  async productRequests(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.productRequests(args, info)
-  }
-
-  @Query()
-  async productFunctions(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.productFunctions(args, info)
-  }
-
-  @Query()
-  async productMaterialCategories(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.productMaterialCategories(args, info)
-  }
-
-  @Query()
-  async productModels(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.productModels(args, info)
+  async productModels(@FindManyArgs() args) {
+    return await this.queryUtils.resolveFindMany(args, "ProductModel")
   }
 
   @Query()
   async productVariantsConnection(
     @Args() args,
-    @Info() info,
+    @Select({
+      withFragment: `fragment EnsureId on ProductVariantConnection { edges { node { id } } }`,
+    })
+    select,
     @Customer() customer
   ) {
     if (args.personalizedForCurrentUser) {
       const products = await this.productService.availableProductVariantsConnectionForCustomer(
         customer.id,
-        info,
-        args
+        args,
+        select
       )
       return products
     }
 
-    return await this.prisma.binding.query.productVariantsConnection(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on ProductVariantConnection { edges { node { id } } }`
-      )
+    return this.queryUtils.resolveConnection(
+      { ...args, select },
+      "ProductVariant"
     )
   }
 
   @Query()
-  async productVariant(@Args() args, @Info() info, @Context() ctx) {
-    return await this.prisma.binding.query.productVariant(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on ProductVariant { id }`
-      )
+  async productVariant(
+    @Args() { where },
+    @Select({ withFragment: `fragment EnsureId on ProductVariant { id }` })
+    select
+  ) {
+    return this.queryUtils.resolveFindUnique(
+      { where, select },
+      "ProductVariant"
     )
   }
 
   @Query()
-  async physicalProduct(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.physicalProduct(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on PhysicalProduct { id }`
-      )
+  async physicalProduct(
+    @Args() { where },
+    @Select({ withFragment: `fragment EnsureId on PhysicalProduct { id }` })
+    select
+  ) {
+    return this.queryUtils.resolveFindUnique(
+      { where, select },
+      "PhysicalProduct"
     )
   }
 
   @Query()
-  async physicalProducts(@FindManyArgs() args, @Select() select) {
-    const data = await this.prisma.client2.physicalProduct.findMany({
-      ...args,
-      ...select,
-    })
-    const sanitizedData = this.prisma.sanitizePayload(data, "PhysicalProduct")
-
-    return sanitizedData
+  async physicalProducts(@FindManyArgs() args) {
+    return this.queryUtils.resolveFindMany(args, "PhysicalProduct")
   }
 
   @Query()
   async physicalProductsConnection(
     @Args() args,
-    @Info() info,
-    @Customer() customer
+    @Select({
+      withFragment: `fragment EnsureId on PhysicalProductConnection { edges { node { id } } }`,
+    })
+    select
   ) {
-    return await this.prisma.binding.query.physicalProductsConnection(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on PhysicalProductConnection { edges { node { id } } }`
-      )
+    return this.queryUtils.resolveConnection(
+      { ...args, select },
+      "PhysicalProduct"
     )
   }
 
   @Query()
-  async categories(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.categories(args, info)
+  async categories(@FindManyArgs() args) {
+    return this.queryUtils.resolveFindMany(args, "Category")
   }
 
   @Query()
-  async category(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.category(args, info)
+  async category(@Args() { where }, @Select() select) {
+    return this.queryUtils.resolveFindUnique({ where, select }, "Category")
   }
 
   @Query()
-  async categoriesConnection(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.categoriesConnection(args, info)
+  async categoriesConnection(@Args() args, @Select() select) {
+    return this.queryUtils.resolveConnection({ ...args, select }, "Category")
   }
 
   @Query()
-  async colors(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.colors(args, info)
+  async colors(@FindManyArgs() args) {
+    return this.queryUtils.resolveFindMany(args, "Color")
   }
 
   @Query()
-  async generatedVariantSKUs(@Args() args, @Info() info) {
-    return await this.productService.getGeneratedVariantSKUs(args)
+  async generatedVariantSKUs(@Args() args) {
+    return this.productService.getGeneratedVariantSKUs(args)
   }
 
   @Query()
-  async generatedSeasonsUIDs(@Args() { input }, @Info() info) {
+  async generatedSeasonsUIDs(@Args() { input }) {
     const { brandID, colorCode, sizes, productID } = input
-    return await this.productService.getGeneratedSeasonsUIDs({
+    return this.productService.getGeneratedSeasonsUIDs({
       brandID,
       colorCode,
       sizes,
@@ -193,33 +175,28 @@ export class ProductQueriesResolver {
   }
 
   @Query()
-  async tags(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.tags(args, info)
+  async tags(@FindManyArgs() args) {
+    return this.queryUtils.resolveFindMany(args, "Tag")
   }
 
   @Query()
-  async warehouseLocations(@FindManyArgs() args, @Select() select) {
-    const data = await this.prisma.client2.warehouseLocation.findMany({
-      ...args,
-      ...select,
-    })
-    const sanitizedData = this.prisma.sanitizePayload(data, "WarehouseLocation")
-    return sanitizedData
+  async warehouseLocations(@FindManyArgs() args) {
+    return this.queryUtils.resolveFindMany(args, "WarehouseLocation")
   }
 
   @Query()
-  async surpriseProductVariants(@Customer() customer, @Info() info) {
-    const products = await this.productService.availableProductVariantsForCustomer(
+  async surpriseProductVariants(@Customer() customer, @Select() select) {
+    const products = this.productService.availableProductVariantsForCustomer(
       { id: customer.id },
-      info
+      select
     )
 
     return products
   }
 
   @Query()
-  async newestBrandProducts(@Args() args, @Info() info) {
+  async newestBrandProducts(@Args() args, @Select() select) {
     // Returns products from the most recent brand to be added
-    return await this.productService.newestBrandProducts(args, info)
+    return this.productService.newestBrandProducts(args, select)
   }
 }
