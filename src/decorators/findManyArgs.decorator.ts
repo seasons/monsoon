@@ -1,108 +1,50 @@
-import { SINGLETON_RELATIONS_POSING_AS_ARRAYS } from "@app/prisma/prisma.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { ExecutionContext, createParamDecorator } from "@nestjs/common"
-import {
-  makeOrderByPrisma2Compatible,
-  makeWherePrisma2Compatible,
-} from "@prisma/binding-argument-transform"
-import { isArray } from "lodash"
+import { addFragmentToInfo } from "graphql-binding"
 
 import { getReturnTypeFromInfo } from "./utils"
 
-export const FindManyArgs = createParamDecorator(
-  (data, context: ExecutionContext): any => {
+export interface FindManyArgsParams {
+  transformArgs?: (args: any) => any
+  withFragment?: ((args, ctx, info) => string) | string
+}
+
+export const FindManyArgs: (
+  params?: FindManyArgsParams
+) => ParameterDecorator = createParamDecorator(
+  (options: FindManyArgsParams = {}, context: ExecutionContext): any => {
     const [obj, args, ctx, info] = context.getArgs()
-    let modelName = getReturnTypeFromInfo(info)
-    if (modelName.includes("Connection")) {
-      modelName = modelName.replace("Connection", "") // e.g BlogPostConnection => BlogPost
+    const _modelName = getReturnTypeFromInfo(info)
+    let modelName = _modelName
+    if (_modelName.includes("Connection")) {
+      modelName = _modelName.replace("Connection", "")
     }
 
-    const {
-      where,
-      orderBy,
-      skip,
-      first: _first,
-      last,
-      after,
-      before,
-      count,
-    } = args
-    // to support count on e.g blogPosts query
-    const first = count || _first
+    const { transformArgs = args => args, withFragment } = options
+    const transformedArgs = transformArgs(args)
 
-    const prisma2Where = makeWherePrisma2Compatible(where)
-    const sanitizedPrisma2Where = sanitizeWhere(prisma2Where, modelName)
+    let _info = info
+    if (!!withFragment) {
+      _info = addFragmentToInfo(
+        info,
+        typeof withFragment === "string"
+          ? withFragment
+          : withFragment(args, ctx, info)
+      )
+    }
 
-    const prisma2OrderBy = makeOrderByPrisma2Compatible(orderBy)
-
-    const skipValue = skip || 0
-    const prisma2Skip = Boolean(before) ? skipValue + 1 : skipValue
-
-    const prisma2Take = Boolean(last) ? -last : first
-
-    const prisma2Before = { id: before }
-
-    const prisma2After = { id: after }
-
-    const prisma2Cursor =
-      !Boolean(before) && !Boolean(after)
-        ? undefined
-        : Boolean(before)
-        ? prisma2Before
-        : prisma2After
-
+    let select = QueryUtilsService.infoToSelect(
+      _info,
+      _modelName, // Preserve "Connection" if it's there
+      ctx.modelFieldsByModelName
+    )
+    const findManyArgs = QueryUtilsService.prismaOneToPrismaTwoArgs(
+      transformedArgs,
+      modelName // Without "Connection"
+    )
     return {
-      where: sanitizedPrisma2Where,
-      orderBy: prisma2OrderBy,
-      skip: prisma2Skip,
-      cursor: prisma2Cursor,
-      take: prisma2Take,
+      ...findManyArgs,
+      select,
     }
   }
 )
-
-const sanitizeWhere = (where: any, modelName: string) => {
-  if (!where) {
-    return where
-  }
-
-  let returnWhere = { ...where }
-  if (!!returnWhere["AND"]) {
-    return { AND: returnWhere.AND.map(a => sanitizeWhere(a, modelName)) }
-  }
-  if (!!returnWhere["OR"]) {
-    return { OR: returnWhere.OR.map(a => sanitizeWhere(a, modelName)) }
-  }
-
-  const singleRelationFieldNames =
-    SINGLETON_RELATIONS_POSING_AS_ARRAYS[modelName] || []
-  singleRelationFieldNames.forEach(fieldName => {
-    const fieldInWhere = !!where[fieldName]
-    if (!!fieldInWhere) {
-      returnWhere[fieldName] = { every: where[fieldName] }
-    }
-  })
-
-  return notNullToNotUndefined(returnWhere)
-}
-
-// The @prisma/binding-argument-transform library has a bug in it
-// in which {not: null} should be translated to {not: undefined},
-// but isn't. So we clean it up ex post facto for now. If prisma
-// doesn't fix it, we may fork the library and fix it ourselves later.
-const notNullToNotUndefined = (obj: any) => {
-  const returnObj = { ...obj }
-
-  if (isArray(returnObj)) {
-    return returnObj.map(notNullToNotUndefined)
-  }
-
-  for (const key of Object.keys(returnObj)) {
-    if (key === "not" && returnObj[key] === null) {
-      returnObj[key] = undefined
-    } else if (typeof returnObj[key] === "object") {
-      returnObj[key] = notNullToNotUndefined(returnObj[key])
-    }
-  }
-
-  return returnObj
-}
