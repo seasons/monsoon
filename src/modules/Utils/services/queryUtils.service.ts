@@ -196,7 +196,7 @@ export class QueryUtilsService {
     // the query for this given querykey, so we can ensure that any fields
     // lost are retrieved. This was prompted by the GetBrowseProducts query,
     // which queries variants on products. Since variants is a field resolver as
-    // well as a first class field on products, the select defined at the variants
+    // well as a first class field on products, the select defined at the variants field resolver
     // level was not registering the selection set defined on variants in the parent query
     // By deep merging here, we gaurd against that.
     select = this.deepMergeWithSelectFromTopNode(
