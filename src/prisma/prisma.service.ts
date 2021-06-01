@@ -59,7 +59,9 @@ export class PrismaService implements UpdatableConnection {
     debug: false, 
   })
   client: PrismaClient = prisma
-  client2: PrismaClient2 = new PrismaClient2()
+  client2: PrismaClient2 = new PrismaClient2({ 
+    log: ['query', 'info', 'warn', 'error']
+  })
 
   private modelFieldsByModelName = new PrismaSelect(null).dataModel.reduce(
     (accumulator, currentModel) => {
