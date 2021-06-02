@@ -31,9 +31,12 @@ import {
   export class PrismaTwoLoader implements NestDataLoader {
     constructor(private readonly prisma: PrismaService) {}
   
+    // TODO: Add support for custom `batchScheduleFn`s which we can use to coalesce queries
+    // across tickets of the event loop. See https://www.npmjs.com/package/dataloader#batching for details
+    // This is applicable, for example, when resolving queries on deeply nested field resolvers (e.g products -> variants -> hasRestockNotification)
     generateDataLoader(params: PrismaTwoGenerateParams): PrismaTwoDataLoader {
       return new DataLoader<string, any>((keys: any[]) =>
-        this.fetchData(keys, params)
+          this.fetchData(keys, params)
       )
     }
   
@@ -51,8 +54,9 @@ import {
         keyToDataRelationship = "OneToOne"
       }: PrismaTwoGenerateParams
     ) {
+      const where = formatWhere(keys, ctx)
       const _data = await this.prisma.client2[lowerFirst(model)].findMany(
-          { where: formatWhere(keys, ctx), select, orderBy },
+          { where, select, orderBy },
         )
       const data = this.prisma.sanitizePayload(_data, model)
   

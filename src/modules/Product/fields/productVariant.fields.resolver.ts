@@ -259,37 +259,34 @@ export class ProductVariantFieldsResolver {
         select: Prisma.validator<Prisma.ProductNotificationSelect>()({
           id: true,
           productVariant: { select: { id: true } },
+          shouldNotify: true,
         }),
         formatWhere: (ids, ctx) =>
           Prisma.validator<Prisma.ProductNotificationWhereInput>()({
             customer: {
               id: ctx.customer.id,
             },
-            AND: {
-              productVariant: {
-                id: { in: ids },
-              },
+            productVariant: {
+              id: { in: ids },
             },
           }),
         orderBy: Prisma.validator<Prisma.ProductNotificationOrderByInput>()({
           createdAt: "desc",
         }),
         getKeys: notification => [notification.productVariant.id],
+        keyToDataRelationship: "OneToMany",
       },
     })
-    productNotificationsLoader: PrismaTwoDataLoader
+    productNotificationsLoader: PrismaTwoDataLoader<ProductNotification[]>
   ) {
     if (!customer) return false
 
-    const restockNotifications = (await productNotificationsLoader.load(
+    const restockNotifications = await productNotificationsLoader.load(
       parent.id
-    )) as ProductNotification[]
+    )
 
-    const firstNotification = head(restockNotifications)
-    const hasRestockNotification =
-      firstNotification && firstNotification?.shouldNotify === true
-
-    return !!hasRestockNotification
+    const latestNotification = head(restockNotifications)
+    return !!latestNotification?.shouldNotify
   }
 
   @ResolveField()
@@ -307,23 +304,23 @@ export class ProductVariantFieldsResolver {
         formatWhere: (ids, ctx) =>
           Prisma.validator<Prisma.ProductVariantWantWhereInput>()({
             user: {
-              id: ctx.user.id,
+              id: ctx.req.user.id,
             },
             productVariant: {
               id: { in: ids },
             },
           }),
         getKeys: want => [want.productVariant.id],
+        fallbackValue: null,
       },
     })
     wantsLoader
   ) {
     if (!user) return false
 
-    const productVariantWants = await wantsLoader.load(parent.id)
+    const productVariantWant = await wantsLoader.load(parent.id)
 
-    const exists = productVariantWants && productVariantWants.length > 0
-    return exists
+    return !!productVariantWant
   }
 
   @ResolveField()
