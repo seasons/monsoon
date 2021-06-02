@@ -1,6 +1,5 @@
 import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
 import { Injectable } from "@nestjs/common"
-import { PrismaSelect } from "@paljs/plugins"
 import {
   makeOrderByPrisma2Compatible,
   makeWherePrisma2Compatible,
@@ -12,15 +11,14 @@ import {
   SINGLETON_RELATIONS_POSING_AS_ARRAYS,
 } from "@prisma1/prisma.service"
 import { GraphQLResolveInfo } from "graphql"
-import { addFragmentToInfo } from "graphql-binding"
 import graphqlFields from "graphql-fields"
 import {
   cloneDeep,
-  find,
   get,
   isArray,
   isEmpty,
   lowerFirst,
+  merge,
   pick,
 } from "lodash"
 
@@ -28,20 +26,16 @@ interface InfoToSelectParams {
   info: GraphQLResolveInfo | any
   modelName: Prisma.ModelName
   modelFieldsByModelName: any
-  metadata?: {
-    callType: "initial" | "recursive"
-    parentCallStack: { field: string; type: Prisma.ModelName; fields: any }[]
-  }
 }
 
 @Injectable()
 export class QueryUtilsService {
   constructor(private readonly prisma: PrismaService) {
-    QueryUtilsService.selectCache.clear()
+    QueryUtilsService.fieldCache.clear()
   }
 
   // e.g {GetBrowseProducts: {brands: ..., products: ...}}
-  private static selectCache = new Map() as Map<string, Map<string, any>>
+  private static fieldCache = new Map() as Map<string, Map<string, any>>
 
   static getQuerykey = info => {
     let queryKey = info.path.key
@@ -54,219 +48,124 @@ export class QueryUtilsService {
   }
 
   static infoToSelect(params: InfoToSelectParams): any {
-    const {
-      info,
-      modelName,
-      modelFieldsByModelName,
-      metadata: { callType, parentCallStack } = {
-        callType: "initial",
-        parentCallStack: [],
-      },
-    } = params
+    const { info, modelName, modelFieldsByModelName } = params
 
-    const extractFinalSelect = select =>
-      isEmpty(select.select) ? null : select.select
+    // Parse the fields object
+    let fields = graphqlFields(info)
 
+    // Depending on whether or not we're analyzing at the level of a top-level query key,
+    // either cache the fields object or deepmerge with the relevant cached fields object
+    const opName = info.operation?.name?.value || info.operation // TODO: How to handle queries without operation names?
     const queryKey = this.getQuerykey(info)
-
-    const opName = info.operation?.name?.value || info.operation
     const isTopLevelkeyInOperation = !info.path.prev
-    if (
-      callType === "initial" &&
-      isTopLevelkeyInOperation &&
-      process.env.CACHE_SELECTS === "true" &&
-      this.selectCache.has(opName) &&
-      this.selectCache.get(opName).has(queryKey)
-    ) {
-      const cachedSelect = this.selectCache.get(opName).get(queryKey)
-      const processedCachedSelect = extractFinalSelect(cachedSelect)
-      return processedCachedSelect
+
+    if (isTopLevelkeyInOperation) {
+      const fieldCache = this.fieldCache.get(opName) || new Map()
+      fieldCache.set(queryKey, fields)
+      this.fieldCache.set(opName, fieldCache)
+    } else {
+      fields = this.deepMergeWithFieldsFromQueryKey(
+        fields,
+        info,
+        opName,
+        queryKey
+      )
     }
 
-    // If a selection set was defined for the current field by way of a fragment on an ancestral
-    // field, we need to incorporate that into the current info or PrismaSelect won't know about it
-    // e.g fragment A on type B { B {someField {anotherField {id}}}}. If we're analyzing at the
-    // level of "anotherField", we need to register that fragment A asked for "id" on "anotherField"
-    const adjustedInfo = this.adjustInfoForAncestralFragments(params)
+    const select = this.fieldsToSelect(
+      fields,
+      modelFieldsByModelName,
+      modelName
+    )
 
-    let callStack = cloneDeep(parentCallStack)
-    let fields = graphqlFields(adjustedInfo)
-    callStack.push({ type: modelName, field: info.fieldName, fields })
-    const prismaSelect = new PrismaSelect(adjustedInfo as GraphQLResolveInfo)
+    return select
+  }
 
-    // Fields that we'll need to pass in for recursive calls so that
-    // the PrismaSelect library can properly parse the info. Not all
-    // are *definitely* needed, but we err on the side of caution
-    const globalInfoFields = pick(info, [
-      "fragments",
-      "operation",
-      "schema",
-      "variableValues",
-      "path",
-    ])
+  static fieldsToSelect(
+    fields,
+    modelFieldsByModelName,
+    modelName: Prisma.ModelName,
+    { callType } = { callType: "initial" }
+  ) {
+    let fieldsToParse = fields
+    let _modelName = modelName
 
-    // If it's a Connection query, get the select for the node on the edges
+    // If it's a connection, grab the fields at edges.node
     if (modelName.includes("Connection")) {
-      const edgesSelection = info.fieldNodes[0].selectionSet.selections.find(
-        a => a.name.value === "edges"
-      )
-      const nodeSelection = edgesSelection?.selectionSet?.selections?.find(
-        a => a.name.value === "node"
-      )
-      const returnType = modelName.replace("Connection", "")
-      return this.infoToSelect({
-        info: {
-          fieldName: "node",
-          fieldNodes: [nodeSelection],
-          returnType,
-          ...globalInfoFields,
-        },
-        modelName: returnType as Prisma.ModelName,
-        modelFieldsByModelName,
-      })
+      _modelName = modelName.replace("Connection", "") as Prisma.ModelName
+      fieldsToParse = fields.edges?.node
+      if (!fieldsToParse) {
+        return null
+      }
     }
 
-    const modelFields = modelFieldsByModelName[modelName]
+    const modelFields = modelFieldsByModelName[_modelName]
     if (isEmpty(modelFields)) {
       throw new Error(`Invalid record type: ${modelName}`)
     }
 
     let select = { select: {} }
-    const emptyFieldNodes = [{ selectionSet: { selections: [] } }] // for recursions
+    const requestedFields = new Set(Object.keys(fieldsToParse))
     modelFields.forEach(field => {
-      let fieldSelect
-      switch (field.kind) {
-        // If it's a scalar, valueOf works great, so we run it.
-        case "scalar":
-          fieldSelect = prismaSelect.valueOf(field.name, field.type)
-          break
-        // If it's an object, valueOf would break if there's a
-        // scalar list in the object. So we handle it differently
-        case "object":
-          // Is the field in the selection set?
-          const fieldInSelectionSet = Object.keys(fields).includes(field.name)
-
-          // If so...
-          if (fieldInSelectionSet) {
-            // If it's a scalar list, return true
-            if (SCALAR_LIST_FIELD_NAMES[modelName]?.includes(field.name)) {
-              fieldSelect = true
-            } else {
-              // Otherwise recurse down
-              let subFieldNodes = info.fieldNodes[0].selectionSet.selections.find(
-                a => a.name.value === field.name
-              )
-              fieldSelect = this.infoToSelect({
-                info: {
-                  fieldName: field.name,
-                  fieldNodes: !!subFieldNodes
-                    ? [subFieldNodes]
-                    : emptyFieldNodes,
-                  returnType: field.type,
-                  ...globalInfoFields,
-                },
-                modelName: field.type,
-                modelFieldsByModelName,
-                metadata: {
-                  callType: "recursive",
-                  parentCallStack: callStack,
-                },
-              })
-            }
-          }
-          break
-        default:
-          throw new Error(`unknown kind: ${field.kind}`)
-      }
-
-      // this means we're not selecting anything on that type
-      if (typeof fieldSelect === "object" && isEmpty(fieldSelect)) {
+      if (!requestedFields.has(field.name)) {
         return
       }
 
-      if (!!fieldSelect) {
-        select = PrismaSelect.mergeDeep(
-          { select: { [field.name]: fieldSelect } },
-          select
-        )
+      switch (field.kind) {
+        case "scalar":
+          select.select[field.name] = true
+          break
+        case "object":
+          // If it's a scalar list, return true
+          if (SCALAR_LIST_FIELD_NAMES[modelName]?.includes(field.name)) {
+            select.select[field.name] = true
+          } else {
+            // Otherwise recurse down
+            select.select[field.name] = this.fieldsToSelect(
+              fieldsToParse[field.name],
+              modelFieldsByModelName,
+              field.type,
+              { callType: "recursive" }
+            )
+          }
       }
     })
 
-    // Deep merge the select object defined at the top most level of
-    // the query for this given querykey, so we can ensure that any fields
-    // lost are retrieved. This was prompted by the GetBrowseProducts query,
-    // which queries variants on products. Since variants is a field resolver as
-    // well as a first class field on products, the select defined at the variants field resolver
-    // level was not registering the selection set defined on variants in the parent query
-    // By deep merging here, we gaurd against that.
-    select = this.deepMergeWithSelectFromTopNode(
-      select,
-      info,
-      callStack,
-      callType,
-      opName,
-      queryKey,
-      isTopLevelkeyInOperation
-    )
-
-    return callType === "recursive" ? select : extractFinalSelect(select)
+    return callType === "initial" ? select.select : select
   }
 
-  static deepMergeWithSelectFromTopNode(
-    select,
-    info,
-    callStack,
-    callType,
-    opName,
-    queryKey,
-    isTopLevelkeyInOperation
-  ) {
-    let newSelect = select
-    if (
-      this.selectCache.has(opName) &&
-      this.selectCache.get(opName).has(queryKey) &&
-      !isTopLevelkeyInOperation
-    ) {
-      const selectForQuery = this.selectCache.get(opName).get(queryKey)
-      let getString = "select"
+  static deepMergeWithFieldsFromQueryKey(fields, info, opName, queryKey) {
+    let newFields = cloneDeep(fields)
 
-      // Start the get string with the path object
-      let level = info.path
-      const pathKeys = []
-      while (!!level.prev && level.key !== "node") {
-        if (typeof level.key === "string") {
-          pathKeys.push(level.key)
-        }
-        level = level.prev
-      }
-      if (pathKeys.length > 0) {
-        getString += "." + pathKeys.reverse().join(".select.")
-      }
-
-      // Complete it via the callStack
-      const callStackGetString = cloneDeep(callStack)
-        .splice(1, callStack.length)
-        .map(a => a.field)
-        .join(".select.")
-      const pathKeysSelect = pathKeys.length > 0 ? "select." : ""
-      getString += "." + pathKeysSelect + callStackGetString
-
-      // Get the select at this level
-      const selectForField = get(selectForQuery, getString)
-
-      if (!!selectForField) {
-        newSelect = PrismaSelect.mergeDeep(selectForField, select)
-      }
-    } else {
-      if (callType === "initial") {
-        const opSelectCache = this.selectCache.get(opName) || new Map()
-        opSelectCache.set(queryKey, select)
-        this.selectCache.set(opName, opSelectCache)
-      }
+    const cachedFieldsForQueryKey = this.fieldCache.get(opName)?.get(queryKey)
+    if (!cachedFieldsForQueryKey) {
+      throw new Error(
+        `Query key ${queryKey} on operation ${opName} not in fieldCache`
+      )
     }
 
-    return newSelect
+    // Use path object to construct a get string
+    let level = info.path
+    const pathKeys = []
+    while (!!level.prev && level.key !== "node") {
+      if (typeof level.key === "string") {
+        pathKeys.push(level.key)
+      }
+      level = level.prev
+    }
+    if (pathKeys.length < 1) {
+      throw new Error(`Can not deep merge with fields if path has length 0`)
+    }
+    const getString = pathKeys.reverse().join(".")
+
+    // Get the select at this level
+    const fieldsToMerge = get(cachedFieldsForQueryKey, getString)
+
+    newFields = merge(fieldsToMerge, newFields)
+
+    return newFields
   }
+
   static prismaOneToPrismaTwoArgs(args, modelName) {
     const {
       where,
@@ -369,49 +268,6 @@ export class QueryUtilsService {
     }
 
     return returnObj
-  }
-
-  private static adjustInfoForAncestralFragments(params: InfoToSelectParams) {
-    const { info, modelName, metadata } = params
-    const parentCallStack = cloneDeep(metadata?.parentCallStack) || []
-
-    const ancestralTypes = parentCallStack.map(a => a.type)
-    const fragmentExistsOnParentType = !!find(Object.keys(info.fragments), k =>
-      ancestralTypes.includes(info.fragments[k].typeCondition.name.value)
-    )
-    let selectionSetFromFragmentOnAncestor =
-      fragmentExistsOnParentType &&
-      get(
-        parentCallStack[0],
-        // e.g fields.product.productVariant.internalSize.bottom
-        `fields${parentCallStack
-          .splice(1, parentCallStack.length)
-          .reduce((acc, curval) => acc + "." + curval.field, "")}.${
-          info.fieldName
-        }`
-      )
-    const ancestralFragment =
-      !!selectionSetFromFragmentOnAncestor &&
-      `fragment EnsureFragmentFields on ${modelName} ${this.fieldObjectToFragmentString(
-        selectionSetFromFragmentOnAncestor
-      )}`
-    const adjustedInfo = !!ancestralFragment
-      ? addFragmentToInfo(info, ancestralFragment)
-      : info
-
-    return adjustedInfo
-  }
-
-  private static fieldObjectToFragmentString(obj) {
-    let string = "{ "
-    for (const k of Object.keys(obj)) {
-      string = string + k + " "
-      if (!isEmpty(obj[k])) {
-        string = string + this.fieldObjectToFragmentString(obj[k]) + " "
-      }
-    }
-    string = string + "}"
-    return string
   }
 
   async resolveFindMany<T>(

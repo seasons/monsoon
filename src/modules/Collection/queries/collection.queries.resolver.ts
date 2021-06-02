@@ -1,9 +1,7 @@
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import { Collection } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
-import { addFragmentToInfo } from "graphql-binding"
 
 @Resolver()
 export class CollectionQueriesResolver {
@@ -23,7 +21,7 @@ export class CollectionQueriesResolver {
       withFragment: args =>
         args?.placements?.length > 0
           ? `fragment EnsurePlacements on Collection { placements }`
-          : "fragment DefaultFragment on Collection {id}",
+          : "fragment DefaultFragment on Collection { id }",
     })
     args
   ) {
