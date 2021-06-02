@@ -9,12 +9,11 @@ import {
   ShopifyShop,
 } from "@app/prisma"
 import { Order, ProductVariant } from "@app/prisma/prisma.binding"
-import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import {
   PrismaTwoDataLoader,
   PrismaTwoLoader,
 } from "@app/prisma/prisma2.loader"
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import {
   BagItem,
   PhysicalProduct,
@@ -23,7 +22,7 @@ import {
   Product,
   ProductNotification,
 } from "@prisma/client"
-import { head } from "lodash"
+import { head, orderBy } from "lodash"
 
 type EUSize = "44" | "46" | "48" | "50" | "52" | "54" | "56"
 type JPSize = "0" | "1" | "2" | "3" | "4"
@@ -334,70 +333,78 @@ export class ProductVariantFieldsResolver {
         }),
       },
     })
-    productVariantLoader: PrismaDataLoader<ProductVariant>
+    productVariantLoader: PrismaTwoDataLoader<ProductVariant>
   ) {
     const productVariant = await productVariantLoader.load(parent.id)
     return productVariant?.internalSize?.display
   }
 
-  // TODO:
   @ResolveField()
   async nextReservablePhysicalProduct(
     @Parent() parent,
-    @Info() info,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "physicalProducts",
+        model: "PhysicalProduct",
         formatWhere: keys => ({
           AND: [
             { inventoryStatus: "Reservable" },
-            { productVariant: { id_in: keys } },
+            { productVariant: { every: { id: { in: keys } } } },
           ],
         }),
-        info: `{
-          id 
-          productVariant {
-            id
-          }
-          reports(orderBy: createdAt_DESC, first: 1) {
-            score
-          }
-        }`,
+        select: Prisma.validator<Prisma.PhysicalProductSelect>()({
+          id: true,
+          productVariant: { select: { id: true } },
+          reports: { select: { score: true, createdAt: true } },
+        }),
         keyToDataRelationship: "OneToMany",
-        getKeys: a => [a?.productVariant?.id],
-        fallbackValue: [],
+        getKeys: a => [a.productVariant.id],
       },
     })
-    physicalProductsLoader: PrismaDataLoader<
+    physicalProductsLoader: PrismaTwoDataLoader<
       Array<{
         id: string
         productVariant: { id: string }
-        reports?: Array<{ score?: number }>
+        reports?: Array<{ score?: number; createdAt: Date }>
       }>
     >,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "physicalProducts",
+        model: "PhysicalProduct",
+        infoFragment: `fragment EnsureID on PhysicalProduct {
+          id
+        }`,
       },
       includeInfo: true,
     })
-    physicalProductInfoLoader: PrismaDataLoader<PhysicalProduct>
+    physicalProductInfoLoader: PrismaTwoDataLoader<PhysicalProduct>
   ) {
-    const physicalProducts = await physicalProductsLoader.load(parent.id)
+    const reservablePhysicalProducts = await physicalProductsLoader.load(
+      parent.id
+    )
 
-    const qualityReportByPhysicalProductId = physicalProducts.reduce(
-      (memo, physicalProduct, idx) => {
-        return {
-          ...memo,
-          ...(physicalProduct.reports && physicalProduct.reports.length > 0
-            ? { [physicalProducts[idx].id]: physicalProduct.reports[0] }
-            : {}),
+    if (reservablePhysicalProducts.length === 0) {
+      return null
+    }
+
+    const qualityReportByPhysicalProductId = reservablePhysicalProducts.reduce(
+      (acc, physicalProduct) => {
+        const newAcc = { ...acc }
+        if (physicalProduct.reports?.length > 0) {
+          const latestReport = orderBy(
+            physicalProduct.reports,
+            a => new Date(a.createdAt),
+            ["desc"]
+          )?.[0]
+          newAcc[physicalProduct.id] = latestReport
         }
+        return newAcc
       },
       {}
     )
 
-    physicalProducts.sort((a, b) => {
+    reservablePhysicalProducts.sort((a, b) => {
       const aQualityReport = qualityReportByPhysicalProductId[a.id]
       const bQualityReport = qualityReportByPhysicalProductId[b.id]
 
@@ -416,11 +423,7 @@ export class ProductVariantFieldsResolver {
       return (bQualityReport.score || 0) - (aQualityReport.score || 0)
     })
 
-    if (physicalProducts.length === 0) {
-      return null
-    }
-
-    return physicalProductInfoLoader.load(physicalProducts[0].id)
+    return physicalProductInfoLoader.load(reservablePhysicalProducts[0].id)
   }
 
   @ResolveField()
@@ -495,7 +498,7 @@ export class ProductVariantFieldsResolver {
         }),
       },
     })
-    productVariantLoader: PrismaDataLoader<{
+    productVariantLoader: PrismaTwoDataLoader<{
       physicalProducts: Array<{
         price: Pick<PhysicalProductPrice, "buyUsedPrice" | "buyUsedEnabled">
         inventoryStatus: InventoryStatus

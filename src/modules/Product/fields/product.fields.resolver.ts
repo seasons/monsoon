@@ -11,7 +11,7 @@ import { ImageService } from "@modules/Image/services/image.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"
-import { sortedUniqBy } from "lodash"
+import { sortBy, sortedUniqBy } from "lodash"
 
 @Resolver("Product")
 export class ProductFieldsResolver {
@@ -235,12 +235,12 @@ export class ProductFieldsResolver {
       images: Pick<Image, "id" | "url" | "updatedAt">[]
     }>
   ) {
-    // TODO: Sort images by url
-    // Fetch the product's images sorted by url to ensure order is maintained
-    // since image URLs for a product are the same except for the index at the end
     const product = await productLoader.load(parent.id)
 
-    return product?.images.map(async image => {
+    // Sort images by url to ensure order is maintained
+    // since image URLs for a product are the same except for the index at the end
+    const sortedImages = sortBy(product?.images, a => a.url)
+    return sortedImages.map(async image => {
       const url = await this.imageService.resizeImage(image?.url, size, {
         ...options,
         w: width,
