@@ -1,3 +1,4 @@
+import { InvoicesForCustomersLoader } from "@app/modules/Payment/loaders/invoicesForCustomers.loaders"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
@@ -144,7 +145,6 @@ export class ProductUtilsService {
     const brands = args.brands || [brand]
     const orderBy = args.orderBy || "createdAt_DESC"
     const sizes = args.sizes || []
-    const colors = args.colors || []
 
     // Add filtering by sizes in query
     const where = args.where || {}
@@ -176,8 +176,7 @@ export class ProductUtilsService {
     let categoryFilter = { where: {} }
     let variantsFilter = { where: {} }
     let colorsFilter = { where: {} }
-
-    let paramFilters = {}
+    let forSaleFilter = { where: {} }
 
     if (args.brand && args.brand !== "all") {
       brandFilter = {
@@ -199,14 +198,14 @@ export class ProductUtilsService {
       colorsFilter = { where: { color: { slug_in: args.colors } } }
     }
 
-    const andArray = []
+    const productVariantWhereArray = []
 
     if (args.availableOnly) {
-      andArray.push({ reservable_not: 0 })
+      productVariantWhereArray.push({ reservable_not: 0 })
     }
 
     if (args.bottoms?.length > 0 && args.tops?.length > 0) {
-      andArray.push(
+      productVariantWhereArray.push(
         { displayShort_in: [...args.bottoms, ...args.tops] },
         {
           OR: [
@@ -223,13 +222,8 @@ export class ProductUtilsService {
           ],
         }
       )
-      paramFilters = {
-        variants_some: {
-          AND: andArray,
-        },
-      }
     } else if (args.bottoms?.length > 0) {
-      andArray.push(
+      productVariantWhereArray.push(
         { displayShort_in: args.bottoms },
         {
           OR: [
@@ -246,13 +240,8 @@ export class ProductUtilsService {
           ],
         }
       )
-      paramFilters = {
-        variants_some: {
-          AND: andArray,
-        },
-      }
     } else if (args.tops?.length > 0) {
-      andArray.push(
+      productVariantWhereArray.push(
         { displayShort_in: args.tops },
         {
           OR: [
@@ -269,21 +258,16 @@ export class ProductUtilsService {
           ],
         }
       )
-      paramFilters = {
-        variants_some: {
-          AND: andArray,
-        },
-      }
-    } else if (args.availableOnly) {
-      paramFilters = {
-        variants_some: { reservable_not: 0 },
-      }
     }
 
-    variantsFilter = {
-      where: {
-        ...paramFilters,
-      },
+    if (productVariantWhereArray.length > 0) {
+      variantsFilter = {
+        where: {
+          variants_some: {
+            AND: productVariantWhereArray,
+          },
+        },
+      }
     }
 
     if (args.category && args.category !== "all") {
@@ -336,13 +320,42 @@ export class ProductUtilsService {
             }
     }
 
-    return {
-      where: {
-        ...brandFilter.where,
-        ...categoryFilter.where,
-        ...variantsFilter.where,
-        ...colorsFilter.where,
-      },
+    if (args.forSaleOnly) {
+      return {
+        where: {
+          OR: [
+            {
+              buyNewEnabled: true,
+              ...brandFilter.where,
+              ...categoryFilter.where,
+              ...colorsFilter.where,
+              ...variantsFilter.where,
+            },
+            {
+              ...brandFilter.where,
+              ...categoryFilter.where,
+              ...colorsFilter.where,
+              variants_some: {
+                AND: [
+                  ...productVariantWhereArray,
+                  {
+                    physicalProducts_some: { price: { buyUsedEnabled: true } },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      }
+    } else {
+      return {
+        where: {
+          ...brandFilter.where,
+          ...categoryFilter.where,
+          ...colorsFilter.where,
+          ...variantsFilter.where,
+        },
+      }
     }
   }
   async getReservedBagItems(customer) {
