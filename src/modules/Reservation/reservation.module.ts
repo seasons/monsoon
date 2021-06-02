@@ -42,6 +42,6 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
     ReservationService,
     ReservationMutationsResolver,
   ],
-  exports: [ReservationService],
+  exports: [ReservationService, ReservationUtilsService],
 })
 export class ReservationModule {}
