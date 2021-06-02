@@ -59,9 +59,13 @@ export class ProductVariantFieldsResolver {
           customer: { select: { id: true } },
           lineItems: { select: { id: true, recordType: true, recordID: true } },
         }),
-        formatWhere: ids => ({
-          AND: [{ customer: { id: { in: ids } } }, { status: "Submitted" }],
-        }),
+        formatWhere: ids =>
+          Prisma.validator<Prisma.OrderWhereInput>()({
+            AND: [
+              { customer: { id: { in: ids } } },
+              { status: { in: ["Submitted", "Fulfilled"] } },
+            ],
+          }),
         getKeys: a => [a.customer.id],
         fallbackValue: null,
         keyToDataRelationship: "OneToMany",
@@ -85,24 +89,23 @@ export class ProductVariantFieldsResolver {
     }
 
     const orders = await ordersLoader.load(customer.id)
-    const physicalProductIDs = []
-
     const inOrders = orders?.some(order => {
-      return order?.lineItems?.some(item => {
-        if (
+      return order?.lineItems?.some(
+        item =>
           item.recordType === "ProductVariant" &&
           item.recordID === productVariant.id
-        ) {
-          return true
-        } else if (item.recordType === "PhysicalProduct") {
-          physicalProductIDs.push(item.recordID)
-        }
-      })
+      )
     })
 
     if (inOrders) {
       return true
     }
+
+    const physicalProductIDs =
+      orders
+        ?.flatMap(a => a.lineItems)
+        ?.filter(a => a.recordType === "PhysicalProduct")
+        ?.map(a => a.recordID) || []
 
     if (physicalProductIDs.length > 0) {
       const physicalProducts = await physicalProductsLoader.loadMany(
@@ -111,9 +114,9 @@ export class ProductVariantFieldsResolver {
 
       const productVariantIDs = physicalProducts?.map(p => p.productVariant.id)
       return productVariantIDs.includes(productVariant.id)
-    } else {
-      return false
     }
+
+    return false
   }
 
   @ResolveField()
