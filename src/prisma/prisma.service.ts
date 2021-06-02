@@ -5,7 +5,7 @@ import { Prisma as PrismaClient, prisma } from "./"
 import { Prisma as PrismaBinding } from "./prisma.binding"
 import { PrismaClient as PrismaClient2 } from '@prisma/client'
 import { PrismaSelect } from "@paljs/plugins"
-import { head, isArray, uniq } from "lodash"
+import { head, intersection, isArray, uniq } from "lodash"
 
 export const SCALAR_LIST_FIELD_NAMES = {
   "BlogPost": ["tags"],
@@ -50,7 +50,6 @@ const JSON_FIELD_NAMES = {
 }
 
 const MODELS_TO_SANITIZE = uniq([...Object.keys(JSON_FIELD_NAMES), ...Object.keys(SINGLETON_RELATIONS_POSING_AS_ARRAYS), ...Object.keys(SCALAR_LIST_FIELD_NAMES)])
-
 @Injectable()
 export class PrismaService implements UpdatableConnection {
   binding: PrismaBinding = new PrismaBinding({
@@ -70,7 +69,7 @@ export class PrismaService implements UpdatableConnection {
   )
 
   sanitizeConnection(result) {
-    result['aggregate'] = {count: result.totalCount}
+    result['aggregate'] = { count: result.totalCount }
     return result
   }
 
@@ -86,17 +85,19 @@ export class PrismaService implements UpdatableConnection {
   This sanitizer extracts out the value from the array so we can still return it
   in the format we had it in prisma1
   */
-  sanitizePayload(payload: any, modelName: string) {
+  sanitizePayload<T>(payload: T, modelName: string): T {
     if (!payload) {
       return
     }
     
     // If we don't need to sanitize anything, just return
-    if (!MODELS_TO_SANITIZE.includes(modelName)) {
+    const allTypesInPayload = this.getAllTypes(payload, modelName)
+    if (intersection(MODELS_TO_SANITIZE, allTypesInPayload).length === 0) {
       return payload 
     }
     
     if (isArray(payload)) {
+      //@ts-ignore
       return payload.map(a => this.sanitizePayload(a, modelName))
     }
 
@@ -140,6 +141,29 @@ export class PrismaService implements UpdatableConnection {
     return returnPayload
   }
 
+  private getAllTypes(payload: any, payloadType: string): string[] {
+    let types = new Set([payloadType])
+
+    if (!payload || typeof payload !== "object") {
+      return [...types]
+    }
+
+    if (isArray(payload) && payload.length > 0) {
+      return this.getAllTypes(payload[0], payloadType)
+    }
+
+    for (const k of Object.keys(payload)) {
+      const typeOfK = this.modelFieldsByModelName[payloadType].find(a => a.name === k).type
+      const isScalarList = SCALAR_LIST_FIELD_NAMES[payloadType]?.includes(k)
+      const isJSON = JSON_FIELD_NAMES[payloadType]?.includes(k)
+      if (typeof payload[k] === "object" && !isScalarList && !isJSON) {
+        this.getAllTypes(payload[k], typeOfK).forEach(a => types.add(a))
+      } else {
+        types.add(typeOfK)
+      }
+    }
+    return [...types]
+  }
   
 
   updateConnection({ secret, endpoint }: { secret: string; endpoint: string }) {

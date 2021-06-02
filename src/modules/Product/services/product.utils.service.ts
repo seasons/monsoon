@@ -1,6 +1,7 @@
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
+import { ProductVariant } from "@prisma/client"
 import {
   BrandOrderByInput,
   Category,
@@ -43,18 +44,13 @@ export class ProductUtilsService {
   }
 
   async getProductStyleCode(productID) {
-    const prod = await this.prisma.binding.query.product(
-      {
+    const prod = this.prisma.sanitizePayload(
+      await this.prisma.client2.product.findUnique({
         where: { id: productID },
-      },
-      `{
-        id
-        variants {
-          id
-          sku
-        }
-    }`
-    )
+        select: { id: true, variants: { select: { id: true, sku: true } } },
+      }),
+      "Product"
+    ) as Product & { variants: [ProductVariant] }
     const firstVariant = head(prod?.variants)
     return !!firstVariant ? this.getStyleCodeFromSKU(firstVariant.sku) : null
   }
@@ -139,22 +135,13 @@ export class ProductUtilsService {
   }
 
   async queryOptionsForProducts(args) {
-    const category = args.category || "all"
-    const brand = args.brand || "all"
-    const brands = args.brands || [brand]
+    const where = args.where || {}
     const orderBy = args.orderBy || "createdAt_DESC"
     const sizes = args.sizes || []
-    const colors = args.colors || []
 
     // Add filtering by sizes in query
-    const where = args.where || {}
     if (sizes && sizes.length > 0) {
       where.variants_some = { displayShort: { display_in: sizes } }
-    }
-    // If client wants to sort by name, we will assume that they
-    // want to sort by brand name as well
-    if (orderBy.includes("name_")) {
-      return await this.productsAlphabetically(category, orderBy, sizes, brands)
     }
 
     const filters = await this.filters(args)
@@ -432,66 +419,6 @@ export class ProductUtilsService {
     )
   }
 
-  private async productsAlphabetically(
-    category: string,
-    orderBy: BrandOrderByInput,
-    sizes: [string],
-    brands: [string]
-  ) {
-    const brandsQuery =
-      brands.length > 0 && brands?.[0] !== "all"
-        ? `brand: { slug_in: ${brands} },`
-        : ""
-
-    const _brands = await this.prisma.binding.query.brands(
-      { orderBy },
-      `
-      {
-        name
-        products(
-          orderBy: name_ASC,
-          where: {
-            ${category !== "all" ? `category: { slug: "${category}" },` : ""}
-            ${brandsQuery}
-            status: Available,
-            variants_some: { size_in: [${sizes}] }
-          }
-        ) {
-          id
-          name
-          description
-          images {
-            id
-            url
-          }
-          modelSize
-          modelHeight
-          externalURL
-          tags
-          retailPrice
-          status
-          createdAt
-          updatedAt
-          brand {
-            id
-            name
-          }
-          variants {
-            id
-            size
-            total
-            reservable
-            nonReservable
-            reserved
-          }
-        }
-      }
-      `
-    )
-    const products = _brands.map(b => b.products).flat()
-    return products
-  }
-
   async deepUpsertSize({
     slug,
     type,
@@ -630,14 +557,14 @@ export class ProductUtilsService {
   }
 
   async getAllStyleCodesForBrand(brandID) {
-    const productVariants = await this.prisma.binding.query.productVariants(
-      {
-        where: { product: { brand: { id: brandID } } },
-      },
-      `{
-      id 
-      sku
-    }`
+    const _productVariants = await this.prisma.client2.productVariant.findMany({
+      // TODO: SCHEMABREAK
+      where: { product: { every: { brand: { id: brandID } } } },
+      select: { id: true, sku: true },
+    })
+    const productVariants = this.prisma.sanitizePayload(
+      _productVariants,
+      "ProductVariant"
     )
     const allStyleCodes = uniq(
       productVariants.map(a => this.getStyleCodeFromSKU(a.sku))
