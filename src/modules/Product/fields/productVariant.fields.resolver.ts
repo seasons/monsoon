@@ -188,6 +188,7 @@ export class ProductVariantFieldsResolver {
         model: "BagItem",
         select: Prisma.validator<Prisma.BagItemSelect>()({
           id: true,
+          productVariant: { select: { id: true } },
         }),
         formatWhere: (ids, ctx) =>
           Prisma.validator<Prisma.BagItemWhereInput>()({
@@ -195,19 +196,21 @@ export class ProductVariantFieldsResolver {
               id: { in: ids },
             },
             customer: {
-              id: ctx.customer?.id,
+              id: ctx.customer.id,
             },
             saved: false,
           }),
+        getKeys: a => [a.productVariant.id],
+        fallbackValue: null,
       },
     })
     bagItemloader: PrismaTwoDataLoader
   ) {
     if (!customer) return false
 
-    const bagItems = await bagItemloader.load(parent.id)
+    const bagItem = await bagItemloader.load(parent.id)
 
-    return bagItems.length > 0
+    return !!bagItem
   }
 
   @ResolveField()
