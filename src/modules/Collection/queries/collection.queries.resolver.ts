@@ -1,10 +1,14 @@
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
-import { addFragmentToInfo } from "graphql-binding"
 
 @Resolver()
 export class CollectionQueriesResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly queryUtils: QueryUtilsService
+  ) {}
 
   @Query()
   async collection(@Args() args, @Info() info) {
@@ -12,20 +16,25 @@ export class CollectionQueriesResolver {
   }
 
   @Query()
-  async collections(@Args() args, @Info() info) {
+  async collections(
+    @FindManyArgs({
+      withFragment: args =>
+        args?.placements?.length > 0
+          ? `fragment EnsurePlacements on Collection { placements }`
+          : "fragment DefaultFragment on Collection { id }",
+    })
+    args
+  ) {
+    const collections = await this.queryUtils.resolveFindMany<any>(
+      args,
+      "Collection"
+    )
     if (args?.placements?.length > 0) {
-      const collections = await this.prisma.binding.query.collections(
-        args,
-        addFragmentToInfo(
-          info,
-          `fragment EnsurePlacements on Collection { placements }`
-        )
-      )
       return collections.filter(collection => {
         return collection?.placements?.some(p => args?.placements.includes(p))
       })
     } else {
-      return await this.prisma.binding.query.collections(args, info)
+      return collections
     }
   }
 

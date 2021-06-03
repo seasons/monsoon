@@ -3,6 +3,7 @@ export const getReturnTypeFromInfo = info => {
     return (
       info.returnType.name ||
       info.returnType.ofType?.ofType?.name ||
+      info.returnType.ofType?.ofType?.ofType?.name ||
       info.returnType.ofType?.name
     )
   } else {

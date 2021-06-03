@@ -1,6 +1,6 @@
 
 import {
-  GenerateParams,
+  PrismaOneGenerateParams,
   NestDataLoader,
   KeyToDataRelationship,
 } from "@modules/DataLoader/dataloader.types"
@@ -32,7 +32,7 @@ interface UpdateMapInput {
 export class PrismaLoader implements NestDataLoader {
   constructor(private readonly prisma: PrismaService) {}
 
-  generateDataLoader(params: GenerateParams): PrismaDataLoader {
+  generateDataLoader(params: PrismaOneGenerateParams): PrismaDataLoader {
     return new DataLoader<string, any>((keys: any[]) =>
       this.fetchData(keys, params)
     )
@@ -43,6 +43,7 @@ export class PrismaLoader implements NestDataLoader {
     {
       query,
       info,
+      ctx,
       fallbackValue, 
       orderBy = null,
       infoFragment = null,
@@ -50,7 +51,7 @@ export class PrismaLoader implements NestDataLoader {
       getKeys = a => [a.id],
       formatWhere = (keys: string[]) => ({id_in: keys}),
       keyToDataRelationship = "OneToOne"
-    }: GenerateParams
+    }: PrismaOneGenerateParams
   ) {
     
     let adjustedInfo = info as any
@@ -59,7 +60,7 @@ export class PrismaLoader implements NestDataLoader {
     }
     
     const data = await this.prisma.binding.query[query](
-        { where: formatWhere(keys), orderBy},
+        { where: formatWhere(keys, ctx), orderBy},
         adjustedInfo
       )
 

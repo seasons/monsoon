@@ -4,10 +4,10 @@ import querystring from "querystring"
 import {
   BillingInfo,
   Location,
-  ShopifyProductVariant,
   ShopifyProductVariantUpdateInput,
 } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import { ShopifyProductVariant } from "@prisma/client"
 import { minBy, pick } from "lodash"
 import { DateTime } from "luxon"
 import request from "request"
@@ -845,18 +845,18 @@ export class ShopifyService {
       }
     )
 
-    return this.prisma.client.updateShopifyProductVariant({
+    const cacheExpiresAt = DateTime.local()
+      .plus({
+        seconds: PRODUCT_VARIANT_CACHE_SECONDS,
+      })
+      .toISO()
+    return this.prisma.client2.shopifyProductVariant.update({
       where: { id: shopifyProductVariantInternalId },
       data: {
         externalId: externalShopifyProductVariant.externalId,
-
         cachedPrice: externalShopifyProductVariant.price,
         cachedAvailableForSale: externalShopifyProductVariant.availableForSale,
-        cacheExpiresAt: DateTime.local()
-          .plus({
-            seconds: PRODUCT_VARIANT_CACHE_SECONDS,
-          })
-          .toISO(),
+        cacheExpiresAt,
       },
     })
   }

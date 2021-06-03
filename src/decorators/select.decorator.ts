@@ -1,7 +1,6 @@
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { ExecutionContext, createParamDecorator } from "@nestjs/common"
 import { addFragmentToInfo } from "graphql-binding"
-import { isEmpty } from "lodash"
 
 import { getReturnTypeFromInfo } from "./utils"
 
@@ -27,11 +26,11 @@ export const Select: (
       )
     }
 
-    let select = QueryUtilsService.infoToSelect(
-      _info,
+    let select = QueryUtilsService.infoToSelect({
+      info: _info,
       modelName,
-      ctx.modelFieldsByModelName
-    )
+      modelFieldsByModelName: ctx.modelFieldsByModelName,
+    })
     return select
   }
 )
