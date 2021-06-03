@@ -436,26 +436,24 @@ export class ProductVariantFieldsResolver {
     @Loader({
       type: PrismaTwoLoader.name,
       params: {
-        model: "Customer",
-        select: Prisma.validator<Prisma.CustomerSelect>()({
+        model: "BagItem",
+        select: Prisma.validator<Prisma.BagItemSelect>()({
           id: true,
-          bagItems: {
-            select: {
-              id: true,
-              status: true,
-              productVariant: { select: { id: true } },
-            },
-          },
+          productVariant: { select: { id: true } },
         }),
+        formatWhere: (keys, ctx) =>
+          Prisma.validator<Prisma.BagItemWhereInput>()({
+            productVariant: { id: { in: keys } },
+            customer: { id: ctx.customer.id },
+            status: "Reserved",
+          }),
+        getKeys: a => [a.productVariant.id],
+        fallbackValue: null,
       },
     })
-    customerLoader: PrismaTwoDataLoader<{
-      bagItems: Array<
-        Pick<BagItem, "status"> & {
-          productVariant: Pick<ProductVariant, "id">
-        }
-      >
-    }>,
+    reservedBagItemLoader: PrismaTwoDataLoader<
+      Pick<BagItem, "id"> & { productVariant: Pick<ProductVariant, "id"> }[]
+    >,
     @Loader({
       type: PrismaTwoLoader.name,
       params: {
@@ -524,80 +522,82 @@ export class ProductVariantFieldsResolver {
       >
     }>
   ) {
-    const [productVariantResult, customerResult] = await Promise.all([
-      productVariantLoader.load(productVariant.id),
-      customer ? customerLoader.load(customer.id) : Promise.resolve(null),
-    ])
+    const productVariantResult = await productVariantLoader.load(
+      productVariant.id
+    )
     const {
       physicalProducts,
       product,
       shopifyProductVariant,
     } = productVariantResult
 
-    const usedPhysicalProduct = [...physicalProducts]
-      .sort((a, b) => {
-        const aValue = a?.price?.buyUsedPrice || Number.MIN_VALUE
-        const bValue = b?.price?.buyUsedPrice || Number.MIN_VALUE
-
-        return bValue - aValue
-      })
-      .shift()
-
     /**
+     * BUY NEW PRICE
+     *
      * If external shopify integration is enabled, use the cached shopify
      * product variant if it is valid, otherwise re-fetch from shopify and
      * persist the updated cache. Noop if shopify integration is disabled
      * for the brand.
      */
-    let shopifyCacheData = {}
+    let buyNewPrice = {
+      buyNewAvailableForSale: false,
+      buyNewPrice: null,
+      buyNewEnabled: product.buyNewEnabled,
+    }
     try {
-      const {
-        cachedAvailableForSale: buyNewAvailableForSale,
-        cachedPrice: buyNewPrice,
-      } = await (product?.brand?.shopifyShop?.enabled
-        ? Date.parse(shopifyProductVariant?.cacheExpiresAt) > Date.now()
-          ? Promise.resolve(shopifyProductVariant)
-          : this.shopify.cacheProductVariantBuyMetadata({
-              shopifyProductVariantExternalId: shopifyProductVariant.externalId,
-              shopifyProductVariantInternalId: shopifyProductVariant.id,
-              shopName: product?.brand?.shopifyShop?.shopName,
-              accessToken: product?.brand?.shopifyShop?.accessToken,
-            })
-        : Promise.resolve({ cachedAvailableForSale: false, cachedPrice: null }))
-      shopifyCacheData = {
-        buyNewAvailableForSale,
-        buyNewPrice,
+      let result
+      if (product?.brand?.shopifyShop?.enabled) {
+        const cacheExpired =
+          Date.parse(shopifyProductVariant?.cacheExpiresAt) < Date.now()
+        if (cacheExpired) {
+          result = await this.shopify.cacheProductVariantBuyMetadata({
+            shopifyProductVariantExternalId: shopifyProductVariant.externalId,
+            shopifyProductVariantInternalId: shopifyProductVariant.id,
+            shopName: product?.brand?.shopifyShop?.shopName,
+            accessToken: product?.brand?.shopifyShop?.accessToken,
+          })
+        } else {
+          result = shopifyProductVariant
+        }
+        buyNewPrice["buyNewAvailableForSale"] = result.cachedAvailableForSale
+        buyNewPrice["buyNewPrice"] = result.cachedPrice
       }
     } catch (e) {
       this.error.captureError(e)
-      shopifyCacheData = {
-        buyNewAvailableForSale: false,
-        buyNewPrice: null,
-      }
     }
 
-    const isProductVariantReserved = (customerResult?.bagItems || []).some(
-      ({ status, productVariant: { id: productVariantId } }) =>
-        status === "Reserved" && productVariantId === productVariant.id
-    )
+    // BUY USED PRICE
     const buyUsedEnabled = physicalProducts.some(p => p?.price?.buyUsedEnabled)
-    const buyUsedAvailableForSale = physicalProducts.some(
-      physicalProduct =>
-        physicalProduct.price &&
-        physicalProduct.price.buyUsedEnabled &&
-        ((physicalProduct.inventoryStatus === "Reserved" &&
-          isProductVariantReserved) ||
-          physicalProduct.inventoryStatus === "Reservable" ||
-          physicalProduct.inventoryStatus === "Stored")
-    )
+    const buyUsedPrice = {
+      buyUsedEnabled,
+      buyUsedAvailableForSale: false,
+      buyUsedPrice: 0,
+    }
+    if (buyUsedEnabled) {
+      let reservedBagItem =
+        !!customer && (await reservedBagItemLoader.load(productVariant.id))
+      const isProductVariantReserved = !!reservedBagItem
+      const mostExpensiveUsedPhysicalProduct = head(
+        orderBy(physicalProducts, a => a.price?.buyUsedPrice || 0, "desc")
+      )
+      const buyUsedAvailableForSale = physicalProducts.some(
+        physicalProduct =>
+          !!physicalProduct.price?.buyUsedEnabled &&
+          ((physicalProduct.inventoryStatus === "Reserved" &&
+            isProductVariantReserved) ||
+            physicalProduct.inventoryStatus === "Reservable" ||
+            physicalProduct.inventoryStatus === "Stored")
+      )
+
+      buyUsedPrice.buyUsedAvailableForSale = buyUsedAvailableForSale
+      buyUsedPrice.buyUsedPrice =
+        mostExpensiveUsedPhysicalProduct?.price?.buyUsedPrice
+    }
 
     return {
       id: productVariant.id,
-      buyUsedEnabled,
-      buyUsedAvailableForSale,
-      buyUsedPrice: usedPhysicalProduct?.price?.buyUsedPrice,
-      buyNewEnabled: product.buyNewEnabled,
-      ...shopifyCacheData,
+      ...buyNewPrice,
+      ...buyUsedPrice,
     }
   }
 }
