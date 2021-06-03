@@ -115,22 +115,6 @@ export class PushNotificationService {
           notificationPayload,
         } = this.data.getPushNotifData(pushNotifID, vars)
 
-        // Before sending to all customers, make sure none of them have
-        const pushNotificationReceipt = await this.prisma.client2.pushNotificationReceipt.findMany(
-          {
-            where: {
-              title: notificationPayload.apns.alert.title,
-              users: {
-                some: {
-                  email: {
-                    in: targetEmails,
-                  },
-                },
-              },
-            },
-          }
-        )
-
         // Filter any emails that have received this push notification before
 
         await this.pusher.client.publishToUsers(
