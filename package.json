@@ -13,7 +13,7 @@
   },
   "scripts": {
     "apollo": "apollo service:push",
-    "build": "rimraf dist && tsc",
+    "build": "yarn prisma generate && rimraf dist && tsc",
     "check:parity": "node -r dotenv/config -r ts-node/register src/scripts/queryParity.ts dotenv_config_path=.env",
     "debug": "concurrently --kill-others 'yarn tsc -w' 'yarn debug:server'",
     "debug:server": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
@@ -126,7 +126,7 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "path": "^0.12.7",
-    "prisma": "2.22.1",
+    "prisma": "^2.24.1",
     "prisma-binding": "^2.3.16",
     "prisma-client-lib": "^1.34.9",
     "prisma1": "^1.34.12",
