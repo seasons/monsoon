@@ -121,10 +121,10 @@ const createKey = (type, operationName, variables, data) => {
   for (const key of Object.keys(data || {})) {
     paramString += paramToString(data[key])
   }
-  if (!!data.params.formatWhere) {
+  if (!!data?.params?.formatWhere) {
     paramString += data.params.formatWhere.toString()
   }
-  if (!!data.params.getKeys) {
+  if (!!data?.params?.getKeys) {
     paramString += data.params.getKeys.toString()
   }
 
