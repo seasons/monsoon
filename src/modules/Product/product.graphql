@@ -89,6 +89,7 @@ type Query {
     bottoms: [String]
     colors: [String]
     availableOnly: Boolean
+    forSaleOnly: Boolean
     sizes: [String!]
     category: String
     brand: String
