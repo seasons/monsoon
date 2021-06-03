@@ -11,6 +11,7 @@ import {
 } from "@modules/Product"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
+import { Prisma } from "@prisma/client"
 import {
   AdminActionLog,
   Customer,
@@ -569,9 +570,7 @@ export class ReservationService {
     })
   }
 
-  private checkLastReservation(
-    lastReservation: ReservationWithProductVariantData
-  ) {
+  private checkLastReservation(lastReservation) {
     if (
       !!lastReservation &&
       ![
@@ -586,7 +585,7 @@ export class ReservationService {
   }
 
   private async getNewProductVariantsBeingReserved(
-    lastReservation: ReservationWithProductVariantData,
+    lastReservation,
     items: ID_Input[]
   ): Promise<ID_Input[]> {
     return new Promise(async (resolve, reject) => {
@@ -616,7 +615,7 @@ export class ReservationService {
 
   private async getHeldPhysicalProducts(
     customer: Customer,
-    lastReservation: ReservationWithProductVariantData
+    lastReservation
   ): Promise<PhysicalProduct[]> {
     if (lastReservation == null) return []
 

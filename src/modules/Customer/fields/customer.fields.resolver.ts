@@ -1,5 +1,6 @@
-import { User } from "@app/decorators"
+import { Customer, User } from "@app/decorators"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
+import { ReservationUtilsService } from "@app/modules/Reservation/services/reservation.utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Loader } from "@modules/DataLoader/decorators/dataloader.decorator"
 import { InvoicesForCustomersLoader } from "@modules/Payment/loaders/invoicesForCustomers.loaders"
@@ -12,6 +13,7 @@ import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head, isObject } from "lodash"
+import { DateTime } from "luxon"
 
 const getUserIDGenerateParams = {
   query: `customers`,
@@ -27,7 +29,8 @@ const getUserIDGenerateParams = {
 export class CustomerFieldsResolver {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly paymentService: PaymentService
+    private readonly paymentService: PaymentService,
+    private readonly reservationUtils: ReservationUtilsService
   ) {}
 
   @ResolveField()
@@ -138,6 +141,25 @@ export class CustomerFieldsResolver {
         return false
       }
     }
+  }
+
+  @ResolveField()
+  async shouldPayForNextReservation(@Customer() customer) {
+    // TODO: add loader
+    const lastReservation = await this.reservationUtils.getLatestReservation(
+      customer
+    )
+
+    if (!lastReservation) {
+      return false
+    }
+
+    const receivedAtPlus30Days = DateTime.fromJSDate(
+      lastReservation?.receivedAt
+    ).plus({ days: 30 })
+    const now = DateTime.local()
+
+    return receivedAtPlus30Days <= now
   }
 
   @ResolveField()

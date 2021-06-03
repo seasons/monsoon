@@ -115,6 +115,8 @@ export class PushNotificationService {
           notificationPayload,
         } = this.data.getPushNotifData(pushNotifID, vars)
 
+        // Filter any emails that have received this push notification before
+
         await this.pusher.client.publishToUsers(
           targetEmails,
           notificationPayload as any
