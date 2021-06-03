@@ -5,6 +5,7 @@ import { Injectable } from "@nestjs/common"
 import { head } from "lodash"
 
 import { ReservationWithProductVariantData } from "./reservation.service"
+import { Prisma } from ".prisma/client"
 
 @Injectable()
 export class ReservationUtilsService {
@@ -21,44 +22,39 @@ export class ReservationUtilsService {
       .inventoryStatus
   }
 
-  async getLatestReservation(
-    customer: Customer
-  ): Promise<ReservationWithProductVariantData | null> {
-    return new Promise(async (resolve, reject) => {
-      const allCustomerReservationsOrderedByCreatedAt = await this.prisma.client
-        .customer({ id: customer.id })
-        .reservations({
-          orderBy: "createdAt_DESC",
-        })
-
-      const latestReservation = head(
-        allCustomerReservationsOrderedByCreatedAt
-      ) as Reservation
-      if (latestReservation == null) {
-        return resolve(null)
-      } else {
-        const res = (await this.prisma.binding.query.reservation(
-          {
-            where: { id: latestReservation.id },
+  async getLatestReservation(customer: Customer) {
+    const latestReservation = await this.prisma.client2.reservation.findFirst({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: Prisma.validator<Prisma.ReservationSelect>()({
+        id: true,
+        products: {
+          select: {
+            id: true,
+            seasonsUID: true,
+            inventoryStatus: true,
+            productStatus: true,
+            productVariant: { select: { id: true } },
           },
-          `{
-                id
-                products {
-                    id
-                    seasonsUID
-                    inventoryStatus
-                    productStatus
-                    productVariant {
-                        id
-                    }
-                }
-                status
-                reservationNumber
-             }`
-        )) as ReservationWithProductVariantData
-        return resolve(res)
-      }
+        },
+        receivedAt: true,
+        status: true,
+        reservationNumber: true,
+        createdAt: true,
+      }),
     })
+
+    if (latestReservation == null) {
+      return null
+    }
+
+    return latestReservation
   }
 
   async updateUsersBagItemsOnCompletedReservation(

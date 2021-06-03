@@ -3,12 +3,13 @@ import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import { Brand } from "@prisma/client"
+import { Product } from "@prisma/client"
 import {
   BottomSizeType,
   ID_Input,
   InventoryStatus,
   LetterSize,
-  Product,
+  Product as PrismaOneProduct,
   ProductFunction,
   ProductStatus,
   ProductTier,
@@ -159,36 +160,6 @@ export class ProductService {
         viewCount: 1,
       })
     }
-  }
-
-  async isSaved(
-    product: { id: ID_Input } | Product,
-    customer: { id: ID_Input } | Customer | null
-  ) {
-    if (!customer) {
-      return false
-    }
-    const productVariants = await this.prisma.client.productVariants({
-      where: {
-        product: {
-          id: product.id,
-        },
-      },
-    })
-
-    const bagItem = await this.prisma.client.bagItems({
-      where: {
-        customer: {
-          id: customer.id,
-        },
-        productVariant: {
-          id_in: productVariants.map(a => a.id),
-        },
-        saved: true,
-      },
-    })
-
-    return bagItem.length > 0
   }
 
   async deepUpsertProduct(input) {
@@ -1016,7 +987,7 @@ export class ProductService {
     return prodVar
   }
 
-  async getProductTier(prod: Product): Promise<ProductTier> {
+  async getProductTier(prod: PrismaOneProduct): Promise<ProductTier> {
     const allProductCategories = await this.productUtils.getAllCategories(prod)
     const luxThreshold = allProductCategories
       .map(a => a.name)
@@ -1033,13 +1004,12 @@ export class ProductService {
   async newestBrandProducts(args, select): Promise<[Product]> {
     const _newestProducts = (await this.prisma.client2.product.findMany({
       where: {
-        // TODO: SCHEMABREAK
         AND: [{ tags: { none: { name: "Vintage" } } }, { status: "Available" }],
       },
       orderBy: { publishedAt: "desc" },
       take: 1,
       select: { id: true, brand: { select: { id: true } } },
-    })) as [Product & { brand: Brand }]
+    })) as [Product & { brand: Pick<Brand, "id"> }]
     const newestProducts = this.prisma.sanitizePayload(
       _newestProducts,
       "Product"
@@ -1051,6 +1021,10 @@ export class ProductService {
       return null
     }
 
+    const { skip, cursor, take } = QueryUtilsService.prismaOneToPrismaTwoArgs(
+      args,
+      "Product"
+    )
     const _data = (await this.prisma.client2.product.findMany({
       where: {
         AND: [
@@ -1060,6 +1034,9 @@ export class ProductService {
       },
       orderBy: { publishedAt: "desc" },
       select,
+      skip,
+      cursor,
+      take,
     })) as [Product]
     return this.prisma.sanitizePayload(_data, "Product")
   }

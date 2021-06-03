@@ -81,6 +81,7 @@ type Customer {
   id: ID!
   user: User!
   shouldRequestFeedback: Boolean
+  shouldPayForNextReservation: Boolean
   status: CustomerStatus
   detail: CustomerDetail
   billingInfo: BillingInfo
