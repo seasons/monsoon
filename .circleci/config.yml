@@ -38,6 +38,10 @@ jobs:
           command: yarn install
 
       - run:
+          name: Generate Prisma Client
+          command: yarn prisma generate
+
+      - run:
           name: Create Testing File
           command: bash src/tests/create_testing_env_file.sh
 
