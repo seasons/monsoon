@@ -24,7 +24,7 @@ import {
 
 interface InfoToSelectParams {
   info: GraphQLResolveInfo | any
-  modelName: Prisma.ModelName
+  modelName: Prisma.ModelName | "Me"
   modelFieldsByModelName: any
 }
 
@@ -70,6 +70,12 @@ export class QueryUtilsService {
         opName,
         queryKey
       )
+    }
+
+    // We run select on "Me" only to cache the fields object for selects calculated
+    // further down the selection set hierarchy. So exit early.
+    if (modelName === "Me") {
+      return null
     }
 
     const select = this.fieldsToSelect(
