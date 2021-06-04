@@ -2,7 +2,7 @@ import { InvoicesForCustomersLoader } from "@app/modules/Payment/loaders/invoice
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
-import { ProductVariant } from "@prisma/client"
+import { Prisma, ProductVariant } from "@prisma/client"
 import {
   BrandOrderByInput,
   Category,
@@ -142,7 +142,7 @@ export class ProductUtilsService {
 
     // Add filtering by sizes in query
     if (sizes && sizes.length > 0) {
-      where.variants_some = { displayShort: { display_in: sizes } }
+      where.variants_some = { displayShort: { display: { in: sizes } } }
     }
 
     const filters = await this.filters(args)
@@ -164,7 +164,6 @@ export class ProductUtilsService {
     let categoryFilter = { where: {} }
     let variantsFilter = { where: {} }
     let colorsFilter = { where: {} }
-    let forSaleFilter = { where: {} }
 
     if (args.brand && args.brand !== "all") {
       brandFilter = {
@@ -177,34 +176,36 @@ export class ProductUtilsService {
     if (args.brands?.length > 0 && !args.brands?.includes("all")) {
       brandFilter = {
         where: {
-          brand: { slug_in: args.brands },
+          brand: { slug: { in: args.brands } },
         },
       }
     }
 
     if (args.colors?.length > 0) {
-      colorsFilter = { where: { color: { slug_in: args.colors } } }
+      colorsFilter = { where: { color: { slug: { in: args.colors } } } }
     }
 
     const productVariantWhereArray = []
 
     if (args.availableOnly) {
-      productVariantWhereArray.push({ reservable_not: 0 })
+      productVariantWhereArray.push({ reservable: { not: 0 } })
     }
 
     if (args.bottoms?.length > 0 && args.tops?.length > 0) {
       productVariantWhereArray.push(
-        { displayShort_in: [...args.bottoms, ...args.tops] },
+        { displayShort: { in: [...args.bottoms, ...args.tops] } },
         {
           OR: [
             {
-              manufacturerSizes_some: {
-                productType_in: ["Bottom", "Top"],
+              manufacturerSizes: {
+                some: {
+                  productType: { in: ["Bottom", "Top"] },
+                },
               },
             },
             {
               internalSize: {
-                productType_in: ["Bottom", "Top"],
+                productType: { in: ["Bottom", "Top"] },
               },
             },
           ],
@@ -212,12 +213,14 @@ export class ProductUtilsService {
       )
     } else if (args.bottoms?.length > 0) {
       productVariantWhereArray.push(
-        { displayShort_in: args.bottoms },
+        { displayShort: { in: args.bottoms } },
         {
           OR: [
             {
-              manufacturerSizes_every: {
-                productType: "Bottom",
+              manufacturerSizes: {
+                every: {
+                  productType: "Bottom",
+                },
               },
             },
             {
@@ -230,12 +233,14 @@ export class ProductUtilsService {
       )
     } else if (args.tops?.length > 0) {
       productVariantWhereArray.push(
-        { displayShort_in: args.tops },
+        { displayShort: { in: args.tops } },
         {
           OR: [
             {
-              manufacturerSizes_every: {
-                productType: "Top",
+              manufacturerSizes: {
+                every: {
+                  productType: "Top",
+                },
               },
             },
             {
@@ -251,8 +256,10 @@ export class ProductUtilsService {
     if (productVariantWhereArray.length > 0) {
       variantsFilter = {
         where: {
-          variants_some: {
-            AND: productVariantWhereArray,
+          variants: {
+            some: {
+              AND: productVariantWhereArray,
+            },
           },
         },
       }
@@ -296,7 +303,7 @@ export class ProductUtilsService {
               where: {
                 ...args.where,
                 ...brandFilter.where,
-                category: { slug_in: uniq(children) },
+                category: { slug: { in: uniq(children) } },
               },
             }
           : {
@@ -323,13 +330,19 @@ export class ProductUtilsService {
               ...brandFilter.where,
               ...categoryFilter.where,
               ...colorsFilter.where,
-              variants_some: {
-                AND: [
-                  ...productVariantWhereArray,
-                  {
-                    physicalProducts_some: { price: { buyUsedEnabled: true } },
-                  },
-                ],
+              variants: {
+                some: {
+                  AND: [
+                    ...productVariantWhereArray,
+                    {
+                      physicalProducts: {
+                        some: {
+                          price: { buyUsedEnabled: true },
+                        },
+                      },
+                    },
+                  ],
+                },
               },
             },
           ],
