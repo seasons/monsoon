@@ -225,6 +225,7 @@ export class QueryUtilsService {
     let returnWhere = { ...where }
     if (!!returnWhere["AND"]) {
       return {
+        ...where,
         AND: returnWhere.AND.map(a =>
           QueryUtilsService.sanitizeWhere(a, modelName)
         ),
@@ -232,6 +233,7 @@ export class QueryUtilsService {
     }
     if (!!returnWhere["OR"]) {
       return {
+        ...where,
         OR: returnWhere.OR.map(a =>
           QueryUtilsService.sanitizeWhere(a, modelName)
         ),
