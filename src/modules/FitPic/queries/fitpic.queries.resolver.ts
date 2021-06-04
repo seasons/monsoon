@@ -1,4 +1,5 @@
 import { User } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
 import { UserRole } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
@@ -13,7 +14,7 @@ export class FitPicQueriesResolver {
   }
 
   @Query()
-  async fitPics(@Args() args, @Info() info, @User() user) {
+  async fitPics(@Args() args, @Info() info, @User() user, @Select() select) {
     return await this.prisma.binding.query.fitPics(
       await this.sanitized({ args, forUser: user }),
       info
@@ -21,7 +22,12 @@ export class FitPicQueriesResolver {
   }
 
   @Query()
-  async fitPicsConnection(@Args() args, @Info() info, @User() user) {
+  async fitPicsConnection(
+    @Args() args,
+    @Info() info,
+    @User() user,
+    @Select() select
+  ) {
     return await this.prisma.binding.query.fitPicsConnection(
       await this.sanitized({ args, forUser: user }),
       info

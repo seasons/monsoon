@@ -74,14 +74,14 @@ export class QueryUtilsService {
 
     // We run select on "Me" only to cache the fields object for selects calculated
     // further down the selection set hierarchy. So exit early.
-    if (modelName === "Me") {
+    if (["Me", "Homepage"].includes(modelName)) {
       return null
     }
 
     const select = this.fieldsToSelect(
       fields,
       modelFieldsByModelName,
-      modelName
+      modelName as Prisma.ModelName
     )
 
     return select
