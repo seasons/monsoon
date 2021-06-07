@@ -111,20 +111,24 @@ export class ProductRequestUtilsService {
     url: string
   ) {
     try {
-      const productRequest = await this.prisma.client.createProductRequest({
-        brand,
-        description,
-        images: { set: images },
-        name,
-        price,
-        priceCurrency,
-        productID,
-        reason,
-        sku,
-        url,
-        user: {
-          connect: {
-            id: user.id,
+      const productRequest = await this.prisma.client2.productRequest.create({
+        data: {
+          brand,
+          description,
+          images: {
+            create: images.map((val, idx) => ({ position: idx, value: val })),
+          },
+          name,
+          price,
+          priceCurrency,
+          productID,
+          reason,
+          sku,
+          url,
+          user: {
+            connect: {
+              id: user.id,
+            },
           },
         },
       })

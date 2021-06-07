@@ -2,7 +2,7 @@ import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.servic
 import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
-import { Brand } from "@prisma/client"
+import { Brand, Prisma } from "@prisma/client"
 import { Product } from "@prisma/client"
 import {
   BottomSizeType,
@@ -127,26 +127,21 @@ export class ProductService {
     }
   }
 
-  async addViewedProduct(item, customer) {
-    const viewedProducts = await this.prisma.client.recentlyViewedProducts({
-      where: {
-        customer: { id: customer.id },
-        product: { id: item },
-      },
-    })
-    const viewedProduct: RecentlyViewedProduct = head(viewedProducts)
-
-    if (viewedProduct) {
-      return await this.prisma.client.updateRecentlyViewedProduct({
-        where: {
-          id: viewedProduct.id,
-        },
-        data: {
-          viewCount: viewedProduct.viewCount++,
-        },
-      })
-    } else {
-      return await this.prisma.client.createRecentlyViewedProduct({
+  async addViewedProduct(
+    productId: string,
+    customer: Pick<Customer, "id">,
+    select: Prisma.RecentlyViewedProductSelect
+  ) {
+    const viewedProduct = await this.prisma.client2.recentlyViewedProduct.findFirst(
+      {
+        where: { customer: { id: customer.id }, product: { id: productId } },
+        select: { id: true, viewCount: true },
+      }
+    )
+    const result = await this.prisma.client2.recentlyViewedProduct.upsert({
+      where: { id: viewedProduct?.id || "" },
+      update: { viewCount: viewedProduct?.viewCount + 1 },
+      create: {
         customer: {
           connect: {
             id: customer.id,
@@ -154,12 +149,15 @@ export class ProductService {
         },
         product: {
           connect: {
-            id: item,
+            id: productId,
           },
         },
         viewCount: 1,
-      })
-    }
+      },
+      select,
+    })
+
+    return result
   }
 
   async deepUpsertProduct(input) {

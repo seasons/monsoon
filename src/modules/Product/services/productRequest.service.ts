@@ -52,12 +52,14 @@ export class ProductRequestService {
 
         // Otherwise, means we failed to scrape URL so just store
         // the reason and URL itself
-        productRequest = await this.prisma.client.createProductRequest({
-          reason,
-          url,
-          user: {
-            connect: {
-              id: user.id,
+        productRequest = await this.prisma.client2.productRequest.create({
+          data: {
+            reason,
+            url,
+            user: {
+              connect: {
+                id: user.id,
+              },
             },
           },
         })

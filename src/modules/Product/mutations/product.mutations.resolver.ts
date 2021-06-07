@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 
 import { BagService } from "../services/bag.service"
@@ -19,13 +20,20 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async addToBag(@Args() { item }, @Customer() customer) {
-    return await this.bagService.addToBag(item, customer)
+  async addToBag(@Args() { item }, @Customer() customer, @Select() select) {
+    if (!customer) {
+      throw new Error(`Can not add to bag without a logged in customer`)
+    }
+    return await this.bagService.addToBag(item, customer, select)
   }
 
   @Mutation()
-  async addViewedProduct(@Args() { item }, @Customer() customer) {
-    return await this.productService.addViewedProduct(item, customer)
+  async addViewedProduct(
+    @Args() { item },
+    @Customer() customer,
+    @Select() select
+  ) {
+    return await this.productService.addViewedProduct(item, customer, select)
   }
 
   @Mutation()
