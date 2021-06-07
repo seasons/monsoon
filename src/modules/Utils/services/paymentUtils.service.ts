@@ -159,7 +159,7 @@ export class PaymentUtilsService {
       ? { specific_date: DateTime.fromISO(date).toSeconds() }
       : "immediately"
 
-    const pausePlanIDs = ["pause-1", "pause-2", "pause-3"]
+    const pausePlanIDs = ["pause-1", "pause-2", "pause-3", "pause-6"]
 
     const customerWithInfo = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
@@ -197,6 +197,8 @@ export class PaymentUtilsService {
           newPlanID = "essential-2"
         } else if (itemCount === 3) {
           newPlanID = "essential"
+        } else if (itemCount === 6) {
+          newPlanID = "essential-6"
         }
         // Customer is paused with items on a pause plan
         // Check if the user is on a pause plan and switch plans instead of updating chargebee
