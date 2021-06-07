@@ -225,6 +225,7 @@ export class QueryUtilsService {
     let returnWhere = { ...where }
     if (!!returnWhere["AND"]) {
       return {
+        ...where,
         AND: returnWhere.AND.map(a =>
           QueryUtilsService.sanitizeWhere(a, modelName)
         ),
@@ -232,6 +233,7 @@ export class QueryUtilsService {
     }
     if (!!returnWhere["OR"]) {
       return {
+        ...where,
         OR: returnWhere.OR.map(a =>
           QueryUtilsService.sanitizeWhere(a, modelName)
         ),
@@ -309,6 +311,7 @@ export class QueryUtilsService {
       before?: string
       after?: string
       select?: any
+      skip?: number
     },
     modelName: Prisma.ModelName
   ) {
@@ -318,13 +321,15 @@ export class QueryUtilsService {
     )
 
     const modelClient = this.prisma.client2[lowerFirst(modelName)]
+    const findManyArgs = { where, orderBy, select: queryArgs.select }
+    if (!!queryArgs.skip) {
+      findManyArgs["skip"] = queryArgs.skip
+    }
     const result = await findManyCursorConnection(
       async args => {
         const data = await modelClient.findMany({
           ...args,
-          where,
-          orderBy,
-          select: queryArgs.select,
+          ...findManyArgs,
         })
         return this.prisma.sanitizePayload(data, modelName)
       },
