@@ -138,9 +138,11 @@ export class ProductService {
         select: { id: true, viewCount: true },
       }
     )
+
+    const priorViewCount = viewedProduct?.viewCount || 0
     const result = await this.prisma.client2.recentlyViewedProduct.upsert({
       where: { id: viewedProduct?.id || "" },
-      update: { viewCount: viewedProduct?.viewCount + 1 },
+      update: { viewCount: priorViewCount + 1 },
       create: {
         customer: {
           connect: {
