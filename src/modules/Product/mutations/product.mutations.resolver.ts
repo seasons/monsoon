@@ -30,7 +30,7 @@ export class ProductMutationsResolver {
       select
     )
   }
-  x
+
   @Mutation()
   async addToBag(@Args() { item }, @Customer() customer, @Select() select) {
     if (!customer) {

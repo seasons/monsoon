@@ -39,12 +39,11 @@ export class BagService {
       throw new ApolloError("Bag is full", "514")
     }
 
-    // If bag item is in saved list delete it
     const existingSavedItemForVariant = savedItems.find(
       a => a.productVariant.id === itemId
     )
     const result = await this.prisma.client2.bagItem.upsert({
-      where: { id: existingSavedItemForVariant.id || "" },
+      where: { id: existingSavedItemForVariant?.id || "" },
       create: {
         customer: {
           connect: {
