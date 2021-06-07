@@ -15,10 +15,22 @@ export class ProductMutationsResolver {
   ) {}
 
   @Mutation()
-  async addProductRequest(@Args() { reason, url }, @User() user) {
-    return await this.productRequestService.addProductRequest(reason, url, user)
+  async addProductRequest(
+    @Args() { reason, url },
+    @User() user,
+    @Select() select
+  ) {
+    if (!user) {
+      throw new Error(`Can not add product request in logged out state`)
+    }
+    return await this.productRequestService.addProductRequest(
+      reason,
+      url,
+      user,
+      select
+    )
   }
-
+  x
   @Mutation()
   async addToBag(@Args() { item }, @Customer() customer, @Select() select) {
     if (!customer) {

@@ -1,15 +1,21 @@
 import { Injectable } from "@nestjs/common"
-import { User } from "@prisma1/index"
+import { Prisma, User } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 
 @Injectable()
 export class ProductRequestUtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async scrapeLDJSON($, reason: string, url: string, user: User) {
+  async scrapeLDJSON(
+    $,
+    reason: string,
+    url: string,
+    user: Pick<User, "id">,
+    select: Prisma.ProductRequestSelect
+  ) {
     // Search for json+ld in HTML body
     const ldJSONHTML = $("script[type='application/ld+json']").html()
-    const ldJSON = JSON.parse(ldJSONHTML)
+    const ldJSON = ldJSONHTML !== "" && JSON.parse(ldJSONHTML)
     if (!ldJSON) {
       // Failed to extract json+ld from URL
       return null
@@ -43,7 +49,8 @@ export class ProductRequestUtilsService {
         productID,
         reason,
         sku,
-        url
+        url,
+        select
       )
     } else {
       // Incorrectly formatted json+ld
@@ -51,7 +58,13 @@ export class ProductRequestUtilsService {
     }
   }
 
-  async scrapeOGTags($, reason: string, url: string, user: User) {
+  async scrapeOGTags(
+    $,
+    reason: string,
+    url: string,
+    user: Pick<User, "id">,
+    select: Prisma.ProductRequestSelect
+  ) {
     const ogDescription = $('meta[property="og:description"]').attr("content")
     const ogPriceAmount = parseInt(
       $('meta[property="og:price:amount"]').attr("content")
@@ -90,7 +103,8 @@ export class ProductRequestUtilsService {
         productID,
         reason,
         ogSKU,
-        url
+        url,
+        select
       )
     } else {
       return null
@@ -98,7 +112,7 @@ export class ProductRequestUtilsService {
   }
 
   async createProductRequest(
-    user: User,
+    user: Pick<User, "id">,
     brand: string,
     description: string,
     images: string[],
@@ -108,33 +122,34 @@ export class ProductRequestUtilsService {
     productID: string,
     reason: string,
     sku: string,
-    url: string
+    url: string,
+    select: Prisma.ProductRequestSelect
   ) {
-    try {
-      const productRequest = await this.prisma.client2.productRequest.create({
-        data: {
-          brand,
-          description,
-          images: {
-            create: images.map((val, idx) => ({ position: idx, value: val })),
-          },
-          name,
-          price,
-          priceCurrency,
-          productID,
-          reason,
-          sku,
-          url,
-          user: {
-            connect: {
-              id: user.id,
-            },
+    const productRequest = await this.prisma.client2.productRequest.create({
+      data: {
+        brand,
+        description,
+        images: {
+          create: images.map((val, idx) => ({
+            position: (idx + 1) * 1000,
+            value: val,
+          })),
+        },
+        name,
+        price,
+        priceCurrency,
+        productID,
+        reason,
+        sku,
+        url,
+        user: {
+          connect: {
+            id: user.id,
           },
         },
-      })
-      return productRequest
-    } catch (e) {
-      return null
-    }
+      },
+      select,
+    })
+    return productRequest
   }
 }
