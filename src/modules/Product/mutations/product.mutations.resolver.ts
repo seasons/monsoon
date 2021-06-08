@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 
 import { BagService } from "../services/bag.service"
@@ -29,7 +30,7 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async upsertProduct(@Args() { input }, @User() user) {
+  async upsertProduct(@Args() { input }, @User() user, @Select() select) {
     return await this.productService.deepUpsertProduct(input)
   }
 
@@ -60,7 +61,7 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async updateProduct(@Args() { where, data }, @Info() info) {
+  async updateProduct(@Args() { where, data }, @Info() info, @Select() select) {
     return await this.productService.updateProduct({ where, data, info })
   }
 
