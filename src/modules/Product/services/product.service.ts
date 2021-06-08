@@ -2,21 +2,18 @@ import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.servic
 import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
-import { Brand, Prisma } from "@prisma/client"
-import { Product } from "@prisma/client"
+import { Brand, Prisma, Season } from "@prisma/client"
+import { Product, ProductTier, Tag } from "@prisma/client"
 import {
   BottomSizeType,
   ID_Input,
   InventoryStatus,
   LetterSize,
-  Product as PrismaOneProduct,
   ProductFunction,
   ProductStatus,
-  ProductTier,
   ProductType,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
-  Tag,
 } from "@prisma1/index"
 import {
   Customer,
@@ -162,20 +159,35 @@ export class ProductService {
     return result
   }
 
-  async deepUpsertProduct(input) {
+  async deepUpsertProduct(input, select: Prisma.ProductSelect) {
     // Bottom size name validation
     if (input.type === "Bottom") {
-      for (const variant of input.variants) {
-        this.validateInternalBottomSizeName(variant.internalSizeName)
-      }
+      input.variants?.forEach(a =>
+        this.validateInternalBottomSizeName(a.internalSizeName)
+      )
     }
 
     // get records whose associated data we need for other parts of the upsert
-    const brand = await this.prisma.client.brand({ id: input.brandID })
-    const color = await this.prisma.client.color({ colorCode: input.colorCode })
+    const brand = this.prisma.sanitizePayload(
+      await this.prisma.client2.brand.findUnique({
+        where: { id: input.brandID },
+      }),
+      "Brand"
+    )
+    const color = this.prisma.sanitizePayload(
+      await this.prisma.client2.color.findUnique({
+        where: { colorCode: input.colorCode },
+      }),
+      "Color"
+    )
     const model =
       input.modelID &&
-      (await this.prisma.client.productModel({ id: input.modelID }))
+      this.prisma.sanitizePayload(
+        await this.prisma.client2.productModel.findUnique({
+          where: { id: input.modelID },
+        }),
+        "ProductModel"
+      )
 
     // Get the functionIDs which we will connect to the product
     const functionIDs = await this.upsertFunctions(input.functions)
@@ -222,7 +234,11 @@ export class ProductService {
     // Create all necessary tag records
     const tagIDs = await this.upsertTags(input.tags)
 
-    const data = {
+    const prodForSlug = await this.prisma.client2.product.findUnique({
+      where: { slug },
+      select: { id: true },
+    })
+    const commonData = {
       slug,
       ...pick(input, [
         "name",
@@ -235,7 +251,8 @@ export class ProductService {
         "photographyStatus",
         "buyNewEnabled",
       ]),
-      styles: input?.styles?.length > 0 ? { set: input.styles } : { set: [] },
+      // We haven't ever set styles on a product. So leave this commented out for now, for simplicity's sake
+      // styles: input?.styles?.length > 0 ? { set: input.styles } : { set: [] },
       season: productSeason && { connect: { id: productSeason.id } },
       brand: {
         connect: { id: input.brandID },
@@ -267,18 +284,42 @@ export class ProductService {
       functions: {
         connect: functionIDs,
       },
-      innerMaterials: { set: input.innerMaterials },
-      outerMaterials: { set: input.outerMaterials },
     }
-    const product = await this.prisma.client.upsertProduct({
-      create: data,
-      update: data,
+    const createData = Prisma.validator<Prisma.ProductCreateInput>()({
+      ...commonData,
+      innerMaterials: this.queryUtils.createScalarListMutateInput(
+        input.innerMaterials,
+        prodForSlug?.id,
+        "create"
+      ),
+      outerMaterials: this.queryUtils.createScalarListMutateInput(
+        input.outerMaterials,
+        prodForSlug?.id,
+        "create"
+      ),
+    })
+    const updateData = Prisma.validator<Prisma.ProductUpdateInput>()({
+      ...commonData,
+      innerMaterials: this.queryUtils.createScalarListMutateInput<any>(
+        input.innerMaterials,
+        prodForSlug?.id,
+        "update"
+      ),
+      outerMaterials: this.queryUtils.createScalarListMutateInput<any>(
+        input.outerMaterials,
+        prodForSlug?.id,
+        "update"
+      ),
+    })
+    const product = await this.prisma.client2.product.upsert({
+      create: createData,
+      update: updateData,
       where: { slug },
     })
 
     // Add the product tier
     const tier = await this.getProductTier(product)
-    await this.prisma.client.updateProduct({
+    await this.prisma.client2.product.update({
       where: { id: product.id },
       data: { tier: { connect: { id: tier.id } } },
     })
@@ -304,7 +345,10 @@ export class ProductService {
         })
       })
     )
-    return product
+    return await this.prisma.client2.product.findUnique({
+      where: { id: product.id },
+      select,
+    })
   }
 
   async saveProduct(item, save, info, customer) {
@@ -987,7 +1031,7 @@ export class ProductService {
     return prodVar
   }
 
-  async getProductTier(prod: PrismaOneProduct): Promise<ProductTier> {
+  async getProductTier(prod: Product): Promise<ProductTier> {
     const allProductCategories = await this.productUtils.getAllCategories(prod)
     const luxThreshold = allProductCategories
       .map(a => a.name)
@@ -995,10 +1039,10 @@ export class ProductService {
       ? 400
       : 300
     const tierName = prod.retailPrice > luxThreshold ? "Luxury" : "Standard"
-    const tiers = await this.prisma.client.productTiers({
+    const tiers = await this.prisma.client2.productTier.findMany({
       where: { tier: tierName },
     })
-    return head(tiers)
+    return this.prisma.sanitizePayload(head(tiers), "ProductTier")
   }
 
   async newestBrandProducts(args, select): Promise<[Product]> {
@@ -1043,14 +1087,15 @@ export class ProductService {
 
   private async upsertFunctions(
     functions: string[]
-  ): Promise<{ id: ID_Input }[]> {
+  ): Promise<{ id: string }[]> {
     const productFunctions = await Promise.all(
       functions.map(
         async functionName =>
-          await this.prisma.client.upsertProductFunction({
+          await this.prisma.client2.productFunction.upsert({
             create: { name: functionName },
             update: { name: functionName },
             where: { name: functionName },
+            select: { id: true },
           })
       )
     )
@@ -1059,118 +1104,137 @@ export class ProductService {
       .map((func: ProductFunction) => ({ id: func.id }))
   }
 
-  private async upsertProductSeason(season, productSlug) {
-    let internalSeason
-    let vendorSeason
+  private validateUpsertSeasonInput(input) {
+    const {
+      internalSeasonSeasonCode,
+      internalSeasonYear,
+      vendorSeasonSeasonCode,
+      vendorSeasonYear,
+    } = input
+
+    if (internalSeasonSeasonCode || internalSeasonYear) {
+      const bothDefined = !!internalSeasonYear && internalSeasonSeasonCode
+      if (!bothDefined) {
+        throw new Error(
+          "If setting a season, you must provide both a season and a year"
+        )
+      }
+    }
+
+    if (vendorSeasonSeasonCode || vendorSeasonYear) {
+      const bothDefined = !!vendorSeasonSeasonCode && !!vendorSeasonYear
+      if (!bothDefined) {
+        throw new Error(
+          "If setting a season, you must provide both a season and a year"
+        )
+      }
+    }
+  }
+  private async upsertProductSeason(seasonInput, productSlug) {
+    let internalSeason: Pick<Season, "id">
+    let vendorSeason: Pick<Season, "id">
+
+    this.validateUpsertSeasonInput(seasonInput)
+
     const {
       wearableSeasons,
       internalSeasonSeasonCode,
       internalSeasonYear,
       vendorSeasonSeasonCode,
       vendorSeasonYear,
-    } = season
-    if (internalSeasonSeasonCode || internalSeasonYear) {
-      let where
-      if (internalSeasonSeasonCode && internalSeasonYear) {
-        where = {
-          AND: [
-            { year: internalSeasonYear },
-            { seasonCode: internalSeasonSeasonCode },
-          ],
-        }
-      } else {
-        throw new Error("You must provide both a season and a year")
-      }
-      const existingSeason = head(
-        await this.prisma.binding.query.seasons(
-          {
-            where,
-          },
-          `{
-            id
-        }`
-        )
-      ) as any
-      if (existingSeason?.id) {
-        internalSeason = existingSeason
-      } else {
-        internalSeason = await this.prisma.client.createSeason({
+    } = seasonInput
+
+    const internalSeasonInInput = !!internalSeasonSeasonCode
+    if (internalSeasonInInput) {
+      const existingSeason = await this.prisma.client2.season.findFirst({
+        where: {
           year: internalSeasonYear,
           seasonCode: internalSeasonSeasonCode,
-        })
-      }
+        },
+        select: { id: true },
+      })
+      internalSeason = await this.prisma.client2.season.upsert({
+        where: { id: existingSeason?.id || "" },
+        create: {
+          year: internalSeasonYear,
+          seasonCode: internalSeasonSeasonCode,
+        },
+        update: {},
+      })
     }
 
-    if (vendorSeasonSeasonCode || vendorSeasonYear) {
-      let where
-      if (vendorSeasonSeasonCode && vendorSeasonYear) {
-        where = {
-          AND: [
-            { year: vendorSeasonYear },
-            { seasonCode: vendorSeasonSeasonCode },
-          ],
-        }
-      } else {
-        throw new Error("You must provide both a season and a year")
-      }
-      const existingSeason = head(
-        await this.prisma.binding.query.seasons(
-          {
-            where,
-          },
-          `{
-            id
-        }`
-        )
-      ) as any
-
-      if (existingSeason?.id) {
-        vendorSeason = existingSeason
-      } else {
-        vendorSeason = await this.prisma.client.createSeason({
+    const vendorSeasonInInput = !!vendorSeasonSeasonCode
+    if (vendorSeasonInInput) {
+      const existingSeason = await this.prisma.client2.season.findFirst({
+        where: {
           year: vendorSeasonYear,
           seasonCode: vendorSeasonSeasonCode,
-        })
-      }
+        },
+        select: { id: true },
+      })
+      vendorSeason = await this.prisma.client2.season.upsert({
+        where: { id: existingSeason?.id || "" },
+        create: {
+          year: vendorSeasonYear,
+          seasonCode: vendorSeasonSeasonCode,
+        },
+        update: {},
+      })
     }
 
-    const product = await this.prisma.binding.query.product(
-      {
-        where: { slug: productSlug },
-      },
-      `{
-        id
-        season {
-          id
-        }
-      }`
-    )
+    const productForSlug = await this.prisma.client2.product.findUnique({
+      where: { slug: productSlug },
+      select: { id: true, season: { select: { id: true } } },
+    })
 
-    const upsertData = {
+    const commonData = {
       internalSeason: {
         connect: internalSeason && { id: internalSeason?.id },
       },
       vendorSeason: vendorSeason && {
         connect: { id: vendorSeason?.id },
       },
-      wearableSeasons: wearableSeasons && { set: wearableSeasons },
     }
 
-    return await this.prisma.client.upsertProductSeason({
-      where: { id: product?.season?.id || "" },
-      create: upsertData,
-      update: upsertData,
+    const createData = Prisma.validator<
+      Prisma.ProductSeasonCreateWithoutProductInput
+    >()({
+      ...commonData,
+      wearableSeasons:
+        wearableSeasons &&
+        this.queryUtils.createScalarListMutateInput<
+          Prisma.ProductSeason_wearableSeasonsCreateNestedManyWithoutProductSeasonInput
+        >(wearableSeasons, productForSlug?.season?.id, "create"),
+    })
+    const updateData = Prisma.validator<
+      Prisma.ProductSeasonUpdateWithoutProductInput
+    >()({
+      ...commonData,
+      wearableSeasons:
+        wearableSeasons &&
+        this.queryUtils.createScalarListMutateInput<any>(
+          wearableSeasons,
+          productForSlug?.season?.id,
+          "update"
+        ),
+    })
+
+    return await this.prisma.client2.productSeason.upsert({
+      where: { id: productForSlug?.season?.id || "" },
+      create: createData,
+      update: updateData,
     })
   }
 
-  private async upsertTags(tags: string[]): Promise<{ id: ID_Input }[]> {
+  private async upsertTags(tags: string[]): Promise<{ id: string }[]> {
     const prismaTags = await Promise.all(
       tags.map(
         async tag =>
-          await this.prisma.client.upsertTag({
+          await this.prisma.client2.tag.upsert({
             create: { name: tag },
             update: { name: tag },
             where: { name: tag },
+            select: { id: true },
           })
       )
     )

@@ -3,10 +3,9 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
 import { ProductVariant } from "@prisma/client"
+import { Category, Prisma, Product, Size } from "@prisma/client"
 import {
   BrandOrderByInput,
-  Category,
-  Product,
   ProductMaterialCategoryCreateInput,
   SizeType,
 } from "@prisma1/index"
@@ -14,14 +13,7 @@ import { PrismaService } from "@prisma1/prisma.service"
 import { head, identity, pickBy, size, union, uniq, uniqBy } from "lodash"
 import slugify from "slugify"
 
-import {
-  BottomSizeCreateInput,
-  BottomSizeType,
-  LetterSize,
-  ProductType,
-  Size,
-  TopSizeCreateInput,
-} from "../../../prisma"
+import { BottomSizeType, LetterSize, ProductType } from "../../../prisma"
 import { ProductWithPhysicalProducts } from "../product.types"
 
 type JPSize = "0" | "1" | "2" | "3" | "4"
@@ -114,19 +106,28 @@ export class ProductUtilsService {
   }
 
   async getAllCategories(prod: Product): Promise<Category[]> {
-    const thisCategory = await this.prisma.client
-      .product({ id: prod.id })
-      .category()
+    const _prodWithCategory = await this.prisma.client2.product.findUnique({
+      where: { id: prod.id },
+      include: { category: true },
+    })
+    const prodWithCategory = this.prisma.sanitizePayload(
+      _prodWithCategory,
+      "Product"
+    )
+    const thisCategory = prodWithCategory.category
     return [...(await this.getAllParentCategories(thisCategory)), thisCategory]
   }
 
   private async getAllParentCategories(
     category: Category
   ): Promise<Category[]> {
-    const parent = head(
-      await this.prisma.client.categories({
-        where: { children_some: { id: category.id } },
-      })
+    const parent = this.prisma.sanitizePayload(
+      head(
+        await this.prisma.client2.category.findMany({
+          where: { children: { some: { id: category.id } } },
+        })
+      ),
+      "Category"
     )
     if (!parent) {
       return []
@@ -415,11 +416,11 @@ export class ProductUtilsService {
   ) {
     const pureSlug = slugify(brandCode + " " + name + " " + color).toLowerCase()
     if (createNew) {
-      const productsWithSlug = await this.prisma.client.products({
-        where: { slug_starts_with: pureSlug },
+      const numProductsWithSlug = await this.prisma.client2.product.count({
+        where: { slug: { startsWith: pureSlug } },
       })
       return `${pureSlug}${
-        productsWithSlug.length > 0 ? "-" + productsWithSlug.length : ""
+        numProductsWithSlug > 0 ? "-" + numProductsWithSlug : ""
       }`
     }
 
@@ -445,11 +446,11 @@ export class ProductUtilsService {
     type: ProductType
     sizeType: SizeType
     display: string
-    topSizeData?: TopSizeCreateInput
-    bottomSizeData?: BottomSizeCreateInput
+    topSizeData?: Prisma.TopSizeCreateInput
+    bottomSizeData?: Prisma.BottomSizeCreateInput
   }): Promise<Size> {
     const sizeData = { slug, productType: type, display, type: sizeType }
-    const sizeRecord = await this.prisma.client.upsertSize({
+    const sizeRecord = await this.prisma.client2.size.upsert({
       where: { slug },
       create: { ...sizeData },
       update: { ...sizeData },
@@ -457,36 +458,22 @@ export class ProductUtilsService {
     if (!!bottomSizeData || !!topSizeData) {
       switch (type) {
         case "Top":
-          const prismaTopSize = await this.prisma.client
-            .size({ id: sizeRecord.id })
-            .top()
-          const topSize = await this.prisma.client.upsertTopSize({
-            where: { id: prismaTopSize?.id || "" },
-            update: { ...topSizeData },
-            create: { ...topSizeData },
+          await this.prisma.client2.size.update({
+            where: { slug },
+            data: {
+              top: { upsert: { create: topSizeData, update: topSizeData } },
+            },
           })
-          if (!prismaTopSize) {
-            await this.prisma.client.updateSize({
-              where: { slug },
-              data: { top: { connect: { id: topSize.id } } },
-            })
-          }
           break
         case "Bottom":
-          const prismaBottomSize = await this.prisma.client
-            .size({ id: sizeRecord?.id })
-            .bottom()
-          const bottomSize = await this.prisma.client.upsertBottomSize({
-            where: { id: prismaBottomSize?.id || "" },
-            create: { ...bottomSizeData },
-            update: { ...bottomSizeData },
+          await this.prisma.client2.size.update({
+            where: { slug },
+            data: {
+              bottom: {
+                upsert: { create: bottomSizeData, update: bottomSizeData },
+              },
+            },
           })
-          if (!prismaBottomSize) {
-            await this.prisma.client.updateSize({
-              where: { slug },
-              data: { bottom: { connect: { id: bottomSize.id } } },
-            })
-          }
       }
     }
 
@@ -506,10 +493,11 @@ export class ProductUtilsService {
   async getImageIDs(imageDatas: ImageData[], slug: string) {
     const prismaImages = await Promise.all(
       imageDatas.map(async imageData => {
-        return await this.prisma.client.upsertImage({
+        return await this.prisma.client2.image.upsert({
           where: { url: imageData.url },
           create: { ...imageData, title: slug },
           update: { ...imageData, title: slug },
+          select: { id: true },
         })
       })
     )

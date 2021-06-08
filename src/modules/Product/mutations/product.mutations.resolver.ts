@@ -49,8 +49,8 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async upsertProduct(@Args() { input }, @User() user) {
-    return await this.productService.deepUpsertProduct(input)
+  async upsertProduct(@Args() { input }, @Select() select) {
+    return await this.productService.deepUpsertProduct(input, select)
   }
 
   @Mutation()

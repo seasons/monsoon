@@ -289,6 +289,45 @@ export class QueryUtilsService {
     return sanitizedData
   }
 
+  createScalarListMutateInput<T>(
+    values: string[],
+    nodeId: string,
+    type: "create" | "update"
+  ): T {
+    if (type === "create") {
+      return {
+        createMany: {
+          data: values.map((val, idx) => ({
+            position: (idx + 1) * 1000, // 1000, 2000, 3000
+            value: val,
+          })),
+          skipDuplicates: true,
+        },
+      } as any
+    }
+    if (type === "update") {
+      return {
+        upsert: values.map((value, idx) => ({
+          where: {
+            nodeId_position: {
+              nodeId: nodeId || "",
+              position: (idx + 1) * 1000, // 1000, 2000, 3000
+            },
+          },
+          create: { position: (idx + 1) * 1000, value },
+          update: { value },
+        })),
+        // If we're updating the list to have fewer values than before,
+        // we need to remove some values. If the new list has 2 values,
+        // this would say to delete all values with position > 3000 for
+        // the given nodeId
+        deleteMany: {
+          nodeId: nodeId || "",
+          position: { gte: (values.length + 1) * 1000 },
+        },
+      } as any
+    }
+  }
   async resolveFindUnique<T>(
     findUniqueArgs: { where: any; select?: any; include?: any },
     modelName: Prisma.ModelName
