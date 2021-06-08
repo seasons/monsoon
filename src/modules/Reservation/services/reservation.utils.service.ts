@@ -23,7 +23,7 @@ export class ReservationUtilsService {
   }
 
   async getLatestReservation(customer: Customer) {
-    const latestReservation = await this.prisma.client2.reservation.findFirst({
+    const _latestReservation = await this.prisma.client2.reservation.findFirst({
       where: {
         customer: {
           id: customer.id,
@@ -50,10 +50,14 @@ export class ReservationUtilsService {
       }),
     })
 
-    if (latestReservation == null) {
+    if (_latestReservation == null) {
       return null
     }
 
+    const latestReservation = this.prisma.sanitizePayload(
+      _latestReservation,
+      "Reservation"
+    )
     return latestReservation
   }
 
