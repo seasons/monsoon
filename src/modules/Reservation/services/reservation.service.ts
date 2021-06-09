@@ -94,7 +94,7 @@ export class ReservationService {
       }
     )
     const customerPlanItemCount =
-      customerWithPlanItemCount.membership.plan.itemCount
+      customerWithPlanItemCount?.membership?.plan?.itemCount
 
     try {
       // Do a quick validation on the data
