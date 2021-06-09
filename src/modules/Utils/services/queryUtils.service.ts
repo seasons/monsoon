@@ -283,6 +283,7 @@ export class QueryUtilsService {
     modelName: Prisma.ModelName
   ): Promise<T[]> {
     const modelClient = this.prisma.client2[lowerFirst(modelName)]
+    console.log("findManyArgs", findManyArgs)
     const data = await modelClient.findMany({
       ...findManyArgs,
     })

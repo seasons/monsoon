@@ -155,6 +155,7 @@ model Category {
   name                         String                        @unique
   description                  String?
   image                        String?
+  productType                  String?
   visible                      Boolean
   updatedAt                    DateTime?                     @updatedAt
   products                     Product[]
