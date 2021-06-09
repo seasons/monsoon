@@ -17,16 +17,17 @@ export class CollectionQueriesResolver {
 
   @Query()
   async collections(
+    @Args() args,
     @FindManyArgs({
       withFragment: args =>
         args?.placements?.length > 0
           ? `fragment EnsurePlacements on Collection { placements }`
           : "fragment DefaultFragment on Collection { id }",
     })
-    args
+    findManyArgs
   ) {
     const collections = await this.queryUtils.resolveFindMany<any>(
-      args,
+      findManyArgs,
       "Collection"
     )
     if (args?.placements?.length > 0) {

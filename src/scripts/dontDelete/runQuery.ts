@@ -23,37 +23,34 @@ const context = {
 
 const run = async () => {
   const ps = new PrismaService()
-  const a = await ps.client2.product.findMany({
+  const status = "Completed"
+  const _latestReservation = await ps.client2.reservation.findFirst({
     where: {
-      brand: { shopifyShop: { enabled: true } },
-      variants: {
-        some: { shopifyProductVariant: { cacheExpiresAt: { lt: new Date() } } },
+      customer: {
+        id: "ck2gf2ri406e507578uvm2nk5",
       },
+      status,
     },
-  })
-  const b = head(
-    await ps.client2.physicalProduct.findMany({
-      where: { price: { buyUsedEnabled: true }, inventoryStatus: "Reserved" },
-      select: {
-        inventoryStatus: true,
-        productVariant: {
-          select: { product: { select: { slug: true } }, id: true },
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: Prisma.validator<Prisma.ReservationSelect>()({
+      id: true,
+      products: {
+        select: {
+          id: true,
+          seasonsUID: true,
+          inventoryStatus: true,
+          productStatus: true,
+          productVariant: { select: { id: true } },
         },
       },
-    })
-  )
-  const c = await ps.client2.bagItem.findFirst({
-    where: {
-      productVariant: { id: b.productVariant[0].id },
-      status: "Reserved",
-    },
-    select: {
-      customer: { select: { user: { select: { email: true } } } },
-      productVariant: {
-        select: { product: { select: { slug: true } }, sku: true },
-      },
-    },
+      receivedAt: true,
+      status: true,
+      reservationNumber: true,
+      createdAt: true,
+    }),
   })
-  console.dir(c, { depth: null })
+  console.dir(_latestReservation)
 }
 run()

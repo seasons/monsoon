@@ -348,24 +348,19 @@ export class ProductUtilsService {
     }
   }
   async getReservedBagItems(customer) {
-    const reservedBagItems = await this.prisma.binding.query.bagItems(
-      {
-        where: {
-          customer: {
-            id: customer.id,
-          },
-          status: "Reserved",
-        },
+    const _reservedBagItems = await this.prisma.client2.bagItem.findMany({
+      where: { customer: { id: customer.id }, status: "Reserved" },
+      select: {
+        id: true,
+        status: true,
+        position: true,
+        saved: true,
+        productVariant: { select: { id: true } },
       },
-      `{
-          id
-          status
-          position
-          saved
-          productVariant {
-            id
-          }
-      }`
+    })
+    const reservedBagItems = this.prisma.sanitizePayload(
+      _reservedBagItems,
+      "BagItem"
     )
     return reservedBagItems
   }
