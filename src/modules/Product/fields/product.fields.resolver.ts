@@ -90,18 +90,12 @@ export class ProductFieldsResolver {
         infoFragment: `
           fragment EnsureDisplayAndProductId on ProductVariant {
               id
+              offloaded
+              total
+              displayShort
               product {
                 id
               }
-              internalSize {
-                  display
-                  bottom {
-                    value
-                  }
-                  productType
-              }
-              offloaded
-              total
           }
         `,
         keyToDataRelationship: "OneToMany",
@@ -113,22 +107,7 @@ export class ProductFieldsResolver {
   ) {
     const productVariants = await productVariantLoader.load(parent.id)
 
-    const type = productVariants?.[0]?.internalSize?.productType
-
-    if (type === "Top") {
-      return this.productUtilsService.sortVariants(productVariants)
-    } else {
-      // type === "Bottom". Note that if we add a new type, we may need to update this
-      const sortedVariants = productVariants.sort((a, b) => {
-        // @ts-ignore
-        return a?.internalSize?.display - b?.internalSize?.display
-      })
-      const uniqueVariants = sortedUniqBy(
-        sortedVariants,
-        (a: any) => a?.internalSize?.bottom?.value
-      )
-      return uniqueVariants
-    }
+    return this.productUtilsService.sortVariants(productVariants)
   }
 
   @ResolveField()
