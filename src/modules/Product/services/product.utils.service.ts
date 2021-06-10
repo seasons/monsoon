@@ -347,24 +347,19 @@ export class ProductUtilsService {
     }
   }
   async getReservedBagItems(customer) {
-    const reservedBagItems = await this.prisma.binding.query.bagItems(
-      {
-        where: {
-          customer: {
-            id: customer.id,
-          },
-          status: "Reserved",
-        },
+    const _reservedBagItems = await this.prisma.client2.bagItem.findMany({
+      where: { customer: { id: customer.id }, status: "Reserved" },
+      select: {
+        id: true,
+        status: true,
+        position: true,
+        saved: true,
+        productVariant: { select: { id: true } },
       },
-      `{
-          id
-          status
-          position
-          saved
-          productVariant {
-            id
-          }
-      }`
+    })
+    const reservedBagItems = this.prisma.sanitizePayload(
+      _reservedBagItems,
+      "BagItem"
     )
     return reservedBagItems
   }
@@ -391,19 +386,33 @@ export class ProductUtilsService {
       },
     }
 
-    const uniqueArray = uniqBy(variants, "internalSize.display")
+    const getSortWeight = displayShort => {
+      switch (displayShort.toLowerCase()) {
+        case "xxs":
+          return 0
+        case "xs":
+          return 1
+        case "s":
+          return 2
+        case "m":
+          return 3
+        case "l":
+          return 4
+        case "xl":
+          return 5
+        case "xxl":
+          return 6
+        default:
+          return displayShort
+      }
+    }
+
+    const uniqueArray = uniqBy(variants, "displayShort")
     return uniqueArray.sort((variantA: any, variantB: any) => {
-      const sortWeightA =
-        (variantA.internalSize?.display &&
-          sizes[variantA.internalSize?.display.toLowerCase()] &&
-          sizes[variantA.internalSize?.display.toLowerCase()].sortWeight) ||
-        0
-      const sortWeightB =
-        (variantB.internalSize?.display &&
-          sizes[variantB.internalSize?.display.toLowerCase()] &&
-          sizes[variantB.internalSize?.display.toLowerCase()].sortWeight) ||
-        0
-      return sortWeightA - sortWeightB
+      const a = getSortWeight(variantA.displayShort) || 0
+      const b = getSortWeight(variantB.displayShort) || 0
+
+      return a - b
     })
   }
 

@@ -33,7 +33,7 @@ import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { addFragmentToInfo } from "graphql-binding"
-import { head, intersection, omit } from "lodash"
+import { head, intersection } from "lodash"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
 
@@ -85,11 +85,16 @@ export class ReservationService {
     let reservationReturnData
     const rollbackFuncs = []
 
-    const customerPlanItemCount = await this.prisma.client
-      .customer({ id: customer.id })
-      .membership()
-      .plan()
-      .itemCount()
+    const customerWithPlanItemCount = await this.prisma.client2.customer.findUnique(
+      {
+        where: { id: customer.id },
+        select: {
+          membership: { select: { plan: { select: { itemCount: true } } } },
+        },
+      }
+    )
+    const customerPlanItemCount =
+      customerWithPlanItemCount?.membership?.plan?.itemCount
 
     try {
       // Do a quick validation on the data
@@ -105,13 +110,20 @@ export class ReservationService {
         customer
       )
       this.checkLastReservation(lastReservation)
+      const lastCompletedReservation = !!lastReservation
+        ? lastReservation.status === "Completed"
+          ? lastReservation
+          : await this.reservationUtils.getLatestReservation(
+              customer,
+              "Completed"
+            )
+        : null
       const newProductVariantsBeingReserved = await this.getNewProductVariantsBeingReserved(
-        lastReservation,
-        items
+        { productVariantIDs: items, customerId: customer.id }
       )
       const heldPhysicalProducts = await this.getHeldPhysicalProducts(
         customer,
-        lastReservation
+        lastCompletedReservation
       )
 
       // Get product data, update variant counts, update physical product statuses
@@ -594,40 +606,104 @@ export class ReservationService {
     }
   }
 
-  private async getNewProductVariantsBeingReserved(
-    lastReservation,
-    items: ID_Input[]
-  ): Promise<ID_Input[]> {
-    return new Promise(async (resolve, reject) => {
-      if (lastReservation == null) {
-        return resolve(items)
+  private async getNewProductVariantsBeingReserved({
+    productVariantIDs,
+    customerId,
+  }: {
+    productVariantIDs: string[]
+    customerId: string
+  }): Promise<string[]> {
+    const _customerReservations = await this.prisma.client2.reservation.findMany(
+      {
+        where: { customer: { id: customerId } },
+        orderBy: { createdAt: "desc" }, // reverse chronological order
+        select: {
+          id: true,
+          createdAt: true,
+          status: true,
+          products: {
+            select: {
+              id: true,
+              seasonsUID: true,
+              productVariant: { select: { id: true } },
+              inventoryStatus: true,
+            },
+          },
+        },
       }
-      const productVariantsInLastReservation = lastReservation.products.map(
-        prod => prod.productVariant.id
+    )
+    const customerReservations = this.prisma.sanitizePayload(
+      _customerReservations,
+      "Reservation"
+    )
+
+    const lastCompletedReservation = customerReservations.find(
+      a => a.status === "Completed"
+    )
+    const indexOfLastCompletedReservation = customerReservations.findIndex(
+      a => a.status === "Completed"
+    )
+    const cancelledReservationssSinceLastCompletedReservation = [
+      ...customerReservations,
+    ].splice(0, indexOfLastCompletedReservation)
+
+    // If they don't have any reservation history, all items are new.
+    if (!lastCompletedReservation) {
+      return productVariantIDs
+    }
+
+    const newVariantsBeingReserved = []
+    const productVariantsInLastCompletedReservation = lastCompletedReservation.products.map(
+      prod => (prod.productVariant as any).id
+    )
+    productVariantIDs.forEach(id => {
+      // If it's not in the last completed reservation, its new
+      const inLastCompletedReservation = productVariantsInLastCompletedReservation.includes(
+        id
       )
-      const newProductVariantBeingReserved = items.filter(prodVarId => {
-        const notInLastReservation = !productVariantsInLastReservation.includes(
-          prodVarId as string
+      if (!inLastCompletedReservation) {
+        newVariantsBeingReserved.push(id)
+        return
+      }
+
+      // If it's in the last completed reservation, and they've cancelled 1 or more reservations since then,
+      // and it's not in each of those cancelled orders, its new
+      const hasCancelledOrdersSinceLastCompletedReservation =
+        cancelledReservationssSinceLastCompletedReservation.length > 0
+      if (hasCancelledOrdersSinceLastCompletedReservation) {
+        const carriedOverItemOnAllCancelledOrders = cancelledReservationssSinceLastCompletedReservation.every(
+          a =>
+            a.products.flatMap(b => (b.productVariant as any).id).includes(id)
         )
-        const inLastReservationButNowReservable =
-          productVariantsInLastReservation.includes(prodVarId as string) &&
-          this.reservationUtils.inventoryStatusOf(
-            lastReservation,
-            prodVarId
-          ) === "Reservable"
+        if (!carriedOverItemOnAllCancelledOrders) {
+          newVariantsBeingReserved.push(id)
+        }
+      }
 
-        return notInLastReservation || inLastReservationButNowReservable
-      })
-
-      resolve(newProductVariantBeingReserved)
+      // If it's in the last completed reservation, and there are no cancelled reservations since then,
+      // and the inventory status of the item is Reservable, it's new (they returned it and are re-reserving right away)
+      const isReordering =
+        cancelledReservationssSinceLastCompletedReservation.length === 0 &&
+        this.reservationUtils.inventoryStatusOf(
+          lastCompletedReservation as any,
+          id
+        ) === "Reservable"
+      if (isReordering) {
+        newVariantsBeingReserved.push(id)
+      }
     })
+
+    if (newVariantsBeingReserved.length === 0) {
+      throw new Error(`Must reserve at least 1 new item`)
+    }
+    return newVariantsBeingReserved
   }
 
   private async getHeldPhysicalProducts(
     customer: Customer,
-    lastReservation
+    lastCompletedReservation
   ): Promise<PhysicalProduct[]> {
-    if (lastReservation == null) return []
+    if (lastCompletedReservation == null) return []
 
     const reservedBagItems = await this.productUtils.getReservedBagItems(
       customer
@@ -636,7 +712,7 @@ export class ReservationService {
       a => a.productVariant.id
     )
 
-    return lastReservation.products
+    return lastCompletedReservation.products
       .filter(prod => prod.inventoryStatus === "Reserved")
       .filter(a =>
         reservedProductVariantIds.includes(a.productVariant.id as string)
