@@ -56,10 +56,10 @@ export class ProductMutationsResolver {
   @Mutation()
   async saveProduct(
     @Args() { item, save = false },
-    @Info() info,
+    @Select() select,
     @Customer() customer
   ) {
-    return await this.productService.saveProduct(item, save, info, customer)
+    return await this.productService.saveProduct(item, save, select, customer)
   }
 
   @Mutation()
@@ -80,8 +80,8 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async updateProduct(@Args() { where, data }, @Info() info, @Select() select) {
-    return await this.productService.updateProduct({ where, data, info })
+  async updateProduct(@Args() { where, data }, @Select() select) {
+    return await this.productService.updateProduct({ where, data, select })
   }
 
   @Mutation()

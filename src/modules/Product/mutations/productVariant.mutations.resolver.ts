@@ -129,7 +129,7 @@ export class ProductVariantMutationsResolver {
           sequenceNumbers: sequenceNumbers[index],
           variant: input,
           colorCode: product.color.colorCode,
-          productID,
+          productSlug: productID,
           retailPrice: product.retailPrice,
           status: product.status,
           type: product.type,

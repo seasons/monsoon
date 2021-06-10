@@ -66,7 +66,7 @@ export class BagService {
   }
 
   async removeFromBag(item, saved, customer) {
-    const bagItems = await this.prisma.client.bagItems({
+    const bagItem = await this.prisma.client2.bagItem.findFirst({
       where: {
         customer: {
           id: customer.id,
@@ -76,8 +76,8 @@ export class BagService {
         },
         saved,
       },
+      select: { id: true },
     })
-    const bagItem = head(bagItems)
 
     if (!bagItem) {
       throw new ApolloError("Item can not be found", "514")

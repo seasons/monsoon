@@ -258,7 +258,7 @@ export class PhysicalProductService {
           if (!!activeReservation) {
             interpretation = `Picked for reservation ${activeReservation.reservationNumber}`
           } else {
-            interpretation = "Unstowed"
+            interpretation = "Picked (no reservation)"
           }
         } else {
           interpretation = `Stowed at ${

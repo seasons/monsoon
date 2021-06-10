@@ -278,6 +278,39 @@ export class QueryUtilsService {
     return returnObj
   }
 
+  prismaOneToPrismaTwoMutateArgs(
+    prismaOneArgs,
+    record: { id: string },
+    modelName: Prisma.ModelName,
+    type: "create" | "update"
+  ) {
+    const scalarListFieldNames = SCALAR_LIST_FIELD_NAMES[modelName]
+
+    let args = cloneDeep(prismaOneArgs)
+    const mutateKeys = Object.keys(prismaOneArgs)
+
+    // Translate scalar list fields
+    scalarListFieldNames.forEach(field => {
+      if (!mutateKeys.includes(field) || !args[field]) {
+        return
+      }
+      args[field] = this.createScalarListMutateInput(
+        args[field]["set"],
+        record.id,
+        type
+      )
+    })
+
+    // Change nulls to undefined
+    mutateKeys.forEach(k => {
+      if (args[k] === null) {
+        args[k] = undefined
+      }
+    })
+
+    return args
+  }
+
   async resolveFindMany<T>(
     findManyArgs,
     modelName: Prisma.ModelName
@@ -296,6 +329,9 @@ export class QueryUtilsService {
     nodeId: string,
     type: "create" | "update"
   ): T {
+    if (!values) {
+      return undefined
+    }
     if (type === "create") {
       return {
         createMany: {

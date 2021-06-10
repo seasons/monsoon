@@ -611,7 +611,7 @@ model PhysicalProduct {
   dateOrdered             DateTime?
   dateReceived            DateTime?
   unitCost                Float?
-  barcoded                Boolean?
+  barcoded                Boolean                        @default(value: false)
   priceId                 String?                        @map("price") @db.VarChar(25)
   price                   PhysicalProductPrice?          @relation(fields: [priceId], references: [id])
   reports                 PhysicalProductQualityReport[]
@@ -620,7 +620,7 @@ model PhysicalProduct {
   packages                Package[]
   reservationsAllProducts Reservation[]                  @relation("ReservationToAllProducts")
   reservationsNewProducts Reservation[]                  @relation("ReservationToNewProducts")
-  reservationsReturnedProducts Reservation[] @relation("ReservationToReturnedProducts")
+  reservationsReturnedProducts Reservation[]             @relation("ReservationToReturnedProducts")
 
   // Should be a singleton. Will get fixed with full prisma2 migration
   productVariant ProductVariant[]
@@ -689,6 +689,7 @@ model Product {
   tier                        ProductTier?             @relation(fields: [tierId], references: [id])
   innerMaterials              Product_innerMaterials[]
   outerMaterials              Product_outerMaterials[]
+  styles                      Product_styles[]
   recentlyViewedProducts      RecentlyViewedProduct[]
   collections                 Collection[]
   customersEmailedWithProduct Customer[]               @relation("CustomerToEmailedProducts")
@@ -717,6 +718,16 @@ model Product_innerMaterials {
 
   @@id([nodeId, position])
 }
+
+model Product_styles {
+  nodeId   String  @db.VarChar(25)
+  position Int
+  value    String
+  Product  Product @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
 
 model ProductMaterialCategory {
   id             String    @id @default(cuid()) @db.VarChar(25)

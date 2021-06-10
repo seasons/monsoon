@@ -21,23 +21,23 @@ export class PhysicalProductUtilsService {
   async getPhysicalProductsWithReservationSpecificData(
     items: ID_Input[]
   ): Promise<PhysicalProductWithReservationSpecificData[]> {
-    return await this.prisma.binding.query.physicalProducts(
-      {
-        where: {
-          productVariant: {
-            id_in: items as string[],
-          },
+    const _prods = await this.prisma.client2.physicalProduct.findMany({
+      where: {
+        productVariant: {
+          every: { id: { in: items as string[] } },
         },
       },
-      `{
-            id
-            seasonsUID
-            inventoryStatus
-            productVariant {
-                id
-            }
-        }`
-    )
+      select: {
+        id: true,
+        seasonsUID: true,
+        inventoryStatus: true,
+        productVariant: { select: { id: true } },
+      },
+    })
+    return (this.prisma.sanitizePayload(
+      _prods,
+      "PhysicalProduct"
+    ) as unknown) as PhysicalProductWithReservationSpecificData[]
   }
 
   extractUniqueReservablePhysicalProducts(

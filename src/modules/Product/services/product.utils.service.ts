@@ -52,29 +52,23 @@ export class ProductUtilsService {
     manufacturerSizeIDs = [],
     internalSizeID
   ): Promise<string> {
-    const query = `{
-      id
-      display
-      productType
-      type
-      bottom {
-        id
-        value
-        type
-      }
-      top {
-        id
-        letter
-      }
-    }`
+    const select = Prisma.validator<Prisma.SizeSelect>()({
+      id: true,
+      display: true,
+      productType: true,
+      type: true,
+      bottom: { select: { id: true, value: true, type: true } },
+      top: { select: { id: true, letter: true } },
+    })
 
-    const manufacturerSizes = await this.prisma.binding.query.sizes(
-      {
-        where: { id_in: manufacturerSizeIDs.map(a => a?.id) },
-      },
-      query
+    const _manufacturerSize = await this.prisma.client2.size.findFirst({
+      where: { id: { in: manufacturerSizeIDs.map(a => a?.id) } },
+      select,
+    })
+    const manufacturerSize = this.prisma.sanitizePayload(
+      _manufacturerSize,
+      "Size"
     )
-    const manufacturerSize = head(manufacturerSizes)
 
     // There *should* always be a manufacturer size display,
     // but just to be safe we fallback to internal size display
@@ -82,19 +76,17 @@ export class ProductUtilsService {
     if (manufacturerSize?.display) {
       displayShort = this.coerceSizeDisplayIfNeeded(
         manufacturerSize.display,
-        manufacturerSize.type,
-        manufacturerSize.productType
+        manufacturerSize.type as SizeType,
+        manufacturerSize.productType as ProductType
       )
       if (manufacturerSize.type === "WxL") {
         displayShort = displayShort.split("x")[0]
       }
     } else {
-      const internalSize = await this.prisma.binding.query.size(
-        {
-          where: { id: internalSizeID },
-        },
-        query
-      )
+      const internalSize = await this.prisma.client2.size.findUnique({
+        where: { id: internalSizeID },
+        select,
+      })
       displayShort = internalSize.display
 
       if (internalSize.type === "WxL") {

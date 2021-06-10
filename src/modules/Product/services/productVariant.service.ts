@@ -103,15 +103,21 @@ export class ProductVariantService {
 
   async updateProductVariantCounts(
     /* array of product variant ids */
-    items: ID_Input[],
-    customerId: ID_Input,
+    items: string[],
+    customerId: string,
     { dryRun } = { dryRun: false }
   ): Promise<
     [Product[], PhysicalProductWithReservationSpecificData[], () => void]
   > {
-    const prismaProductVariants = await this.prisma.client.productVariants({
-      where: { id_in: items },
-    })
+    const _prismaProductVariants = await this.prisma.client2.productVariant.findMany(
+      {
+        where: { id: { in: items } },
+      }
+    )
+    const prismaProductVariants = this.prisma.sanitizePayload(
+      _prismaProductVariants,
+      "ProductVariant"
+    )
 
     const physicalProducts = await this.physicalProductUtilsService.getPhysicalProductsWithReservationSpecificData(
       items
@@ -146,19 +152,12 @@ export class ProductVariantService {
 
     if (unavailableVariantsIDS.length > 0) {
       // Move the items from the bag to saved items
-      await this.prisma.client.updateManyBagItems({
+      await this.prisma.client2.bagItem.updateMany({
         where: {
-          customer: {
-            id: customerId,
-          },
-          productVariant: {
-            id_in: unavailableVariantsIDS,
-          },
+          customer: { id: customerId },
+          productVariant: { id: { in: unavailableVariantsIDS } },
         },
-        data: {
-          saved: true,
-          status: "Added",
-        },
+        data: { saved: true, status: "Added" },
       })
 
       throw new ApolloError(
@@ -247,7 +246,7 @@ export class ProductVariantService {
     })
   }
 
-  async getManufacturerSizeIDs(variant, type) {
+  async getManufacturerSizeIDs(variant, type): Promise<{ id: string }[]> {
     const IDs =
       variant.manufacturerSizeNames &&
       (await Promise.all(
@@ -266,7 +265,7 @@ export class ProductVariantService {
           return { id: size.id }
         })
       ))
-    return IDs
+    return IDs as { id: string }[]
   }
 
   async updateProductVariant(input, info): Promise<ProductVariant> {

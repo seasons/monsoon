@@ -371,7 +371,7 @@ input CustomProductUpdateInput {
   variants: ProductVariantUpdateManyWithoutProductInput
   publishedAt: DateTime
   photographyStatus: PhotographyStatus
-  styles: [CustomerStyle!]
+  styles: ProductUpdatestylesInput
   # Custom fields
   bottomSizeType: BottomSizeType
   functions: [String!]
