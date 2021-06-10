@@ -389,7 +389,17 @@ export class ReservationService {
 
     // Mark reservation as completed
     await this.prisma.client.updateReservation({
-      data: { status: "Completed" },
+      data: {
+        status: "Completed",
+        returnedAt: new Date(),
+        returnedProducts: {
+          connect: productStates
+            .filter(a => a.returned)
+            .map(productState => ({
+              seasonsUID: productState.productUID,
+            })),
+        },
+      },
       where: { reservationNumber },
     })
 
