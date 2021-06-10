@@ -76,7 +76,7 @@ model BlogPost {
   webflowId        String
   webflowCreatedAt DateTime
   webflowUpdatedAt DateTime
-  slug             String          @unique()
+  slug             String          @unique
   name             String?
   body             String?
   summary          String?
@@ -106,7 +106,7 @@ model BlogPost_tags {
 }
 
 model BottomSize {
-  id     String   @id @default(cuid()) @db.VarChar(25)
+  id     String  @id @default(cuid()) @db.VarChar(25)
   type   String?
   value  String?
   waist  Float?
@@ -119,29 +119,29 @@ model BottomSize {
 }
 
 model Brand {
-  id                           String                      @id @default(cuid()) @db.VarChar(25)
-  slug                         String                      @unique
-  brandCode                    String                      @unique
-  description                  String?
-  isPrimaryBrand               Boolean
-  name                         String
-  since                        DateTime?
-  tier                         String
-  websiteUrl                   String?
-  createdAt                    DateTime
-  updatedAt                    DateTime                    @updatedAt
-  basedIn                      String?
-  designer                     String?
-  published                    Boolean
-  featured                     Boolean
-  logo                         String?
-  logoImageId                  String?                     @map("logoImage") @db.VarChar(25)
-  logoImage                    Image?                      @relation(fields: [logoImageId], references: [id])
-  shopifyShopId                String?                     @map("shopifyShop") @db.VarChar(25)
-  shopifyShop                  ShopifyShop? @relation(fields: [shopifyShopId], references: [id])
-  images                       Image[]                     @relation("BrandToBrandImages")
-  products                     Product[]
-  shopifyProductVariants       ShopifyProductVariant[]
+  id                     String                  @id @default(cuid()) @db.VarChar(25)
+  slug                   String                  @unique
+  brandCode              String                  @unique
+  description            String?
+  isPrimaryBrand         Boolean
+  name                   String
+  since                  DateTime?
+  tier                   String
+  websiteUrl             String?
+  createdAt              DateTime
+  updatedAt              DateTime                @updatedAt
+  basedIn                String?
+  designer               String?
+  published              Boolean
+  featured               Boolean
+  logo                   String?
+  logoImageId            String?                 @map("logoImage") @db.VarChar(25)
+  logoImage              Image?                  @relation(fields: [logoImageId], references: [id])
+  shopifyShopId          String?                 @map("shopifyShop") @db.VarChar(25)
+  shopifyShop            ShopifyShop?            @relation(fields: [shopifyShopId], references: [id])
+  images                 Image[]                 @relation("BrandToBrandImages")
+  products               Product[]
+  shopifyProductVariants ShopifyProductVariant[]
 
 
   // Do not use. Artifact of Prisma2 migration
@@ -420,13 +420,13 @@ model Image {
   alt       String?
 
   // Do not use. Artifacts of prisma2 migration
-  BlogPost                 BlogPost[]
-  Brand_BrandToImage       Brand[]
-  FitPic                   FitPic[]
-  ShopifyProductVariant    ShopifyProductVariant[] 
-  brands                   Brand[]                 @relation("BrandToBrandImages")
-  Collection               Collection[]
-  Product                  Product[]
+  BlogPost              BlogPost[]
+  Brand_BrandToImage    Brand[]
+  FitPic                FitPic[]
+  ShopifyProductVariant ShopifyProductVariant[]
+  brands                Brand[]                 @relation("BrandToBrandImages")
+  Collection            Collection[]
+  Product               Product[]
 }
 
 model InterestedUser {
@@ -595,32 +595,32 @@ model PaymentPlan {
 }
 
 model PhysicalProduct {
-  id                      String                         @id @default(cuid()) @db.VarChar(25)
-  seasonsUID              String                         @unique
-  inventoryStatus         String
-  productStatus           String
-  createdAt               DateTime
-  updatedAt               DateTime                       @updatedAt
-  locationId              String?                        @map("location") @db.VarChar(25)
-  location                Location?                      @relation(fields: [locationId], references: [id])
-  offloadMethod           String?
-  offloadNotes            String?
-  sequenceNumber          Int
-  warehouseLocationId     String?                        @map("warehouseLocation") @db.VarChar(25)
-  warehouseLocation       WarehouseLocation?             @relation(fields: [warehouseLocationId], references: [id])
-  dateOrdered             DateTime?
-  dateReceived            DateTime?
-  unitCost                Float?
-  barcoded                Boolean?
-  priceId                 String?                        @map("price") @db.VarChar(25)
-  price                   PhysicalProductPrice?          @relation(fields: [priceId], references: [id])
-  reports                 PhysicalProductQualityReport[]
-  productNotifications    ProductNotification[]
-  reservationReceiptItems ReservationReceiptItem[]
-  packages                Package[]
-  reservationsAllProducts Reservation[]                  @relation("ReservationToAllProducts")
-  reservationsNewProducts Reservation[]                  @relation("ReservationToNewProducts")
-  reservationsReturnedProducts Reservation[] @relation("ReservationToReturnedProducts")
+  id                           String                         @id @default(cuid()) @db.VarChar(25)
+  seasonsUID                   String                         @unique
+  inventoryStatus              String
+  productStatus                String
+  createdAt                    DateTime
+  updatedAt                    DateTime                       @updatedAt
+  locationId                   String?                        @map("location") @db.VarChar(25)
+  location                     Location?                      @relation(fields: [locationId], references: [id])
+  offloadMethod                String?
+  offloadNotes                 String?
+  sequenceNumber               Int
+  warehouseLocationId          String?                        @map("warehouseLocation") @db.VarChar(25)
+  warehouseLocation            WarehouseLocation?             @relation(fields: [warehouseLocationId], references: [id])
+  dateOrdered                  DateTime?
+  dateReceived                 DateTime?
+  unitCost                     Float?
+  barcoded                     Boolean?
+  priceId                      String?                        @map("price") @db.VarChar(25)
+  price                        PhysicalProductPrice?          @relation(fields: [priceId], references: [id])
+  reports                      PhysicalProductQualityReport[]
+  productNotifications         ProductNotification[]
+  reservationReceiptItems      ReservationReceiptItem[]
+  packages                     Package[]
+  reservationsAllProducts      Reservation[]                  @relation("ReservationToAllProducts")
+  reservationsNewProducts      Reservation[]                  @relation("ReservationToNewProducts")
+  reservationsReturnedProducts Reservation[]                  @relation("ReservationToReturnedProducts")
 
   // Should be a singleton. Will get fixed with full prisma2 migration
   productVariant ProductVariant[]
@@ -700,7 +700,7 @@ model Product {
 
   // should be singletons. Will be fixed in prisma2 upgrade
   materialCategory ProductMaterialCategory[]
-  model                       ProductModel[]
+  model            ProductModel[]
 }
 
 model ProductFunction {
@@ -988,17 +988,16 @@ model ReservationReceipt {
   createdAt   DateTime
   updatedAt   DateTime                 @updatedAt
   reservation Reservation?
-  items       ReservationReceiptItem[]
+  items       ReservationReceiptItem[] @relation("ReservationReceiptToReservationReceiptItem")
 }
 
 model ReservationReceiptItem {
-  id                   String             @id @default(cuid()) @db.VarChar(25)
-  productStatus        String
-  notes                String?
-  productId            String?            @map("product") @db.VarChar(25)
-  product              PhysicalProduct?   @relation(fields: [productId], references: [id])
-  receipt              ReservationReceipt @relation(fields: [reservationReceiptId], references: [id])
-  reservationReceiptId String             @map("reservationReceipt") @db.VarChar(25)
+  id            String               @id @default(cuid()) @db.VarChar(25)
+  productStatus String
+  notes         String?
+  productId     String?              @map("product") @db.VarChar(25)
+  product       PhysicalProduct?     @relation(fields: [productId], references: [id])
+  receipt       ReservationReceipt[] @relation("ReservationReceiptToReservationReceiptItem")
 }
 
 model Season {
@@ -1050,7 +1049,7 @@ model ShopifyProductVariant {
   productVariantId       String?                               @map("productVariant") @db.VarChar(25)
   productVariant         ProductVariant?                       @relation(fields: [productVariantId], references: [id])
   shopId                 String?                               @map("shop") @db.VarChar(25)
-  shop                   ShopifyShop?           @relation(fields: [shopId], references: [id])
+  shop                   ShopifyShop?                          @relation(fields: [shopId], references: [id])
   selectedOptions        ShopifyProductVariantSelectedOption[] @relation("ShopifyProductVariantToVariantSelectedOption")
 }
 
@@ -1167,7 +1166,7 @@ model Tag {
 }
 
 model TopSize {
-  id       String   @id @default(cuid()) @db.VarChar(25)
+  id       String  @id @default(cuid()) @db.VarChar(25)
   letter   String?
   sleeve   Float?
   shoulder Float?
@@ -1282,21 +1281,21 @@ model WarehouseLocationConstraint {
 }
 
 model ShopifyShop {
-  id                     String                             @id @db.VarChar(25)
-  shopName               String                             @unique
+  id                     String                  @id @db.VarChar(25)
+  shopName               String                  @unique
   enabled                Boolean
   accessToken            String?
   createdAt              DateTime
-  updatedAt              DateTime                           @updatedAt
+  updatedAt              DateTime                @updatedAt
   brand                  Brand?
   scope                  ShopifyShop_scope[]
   shopifyProductVariants ShopifyProductVariant[]
 }
 
 model ShopifyShop_scope {
-  nodeId                     String                     @db.VarChar(25)
-  position                   Int
-  value                      String
+  nodeId      String      @db.VarChar(25)
+  position    Int
+  value       String
   ShopifyShop ShopifyShop @relation(fields: [nodeId], references: [id])
 
   @@id([nodeId, position])
