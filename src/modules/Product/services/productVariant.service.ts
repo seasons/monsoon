@@ -286,6 +286,15 @@ export class ProductVariantService {
       return null
     }
     switch (productType) {
+      case "Accessory":
+        const accessorySizeValues = {
+          ...pick(input, ["bridge", "length", "width"]),
+        }
+        await this.prisma.client.updateSize({
+          data: { top: { update: accessorySizeValues } },
+          where: { id: internalSize.id },
+        })
+        break
       case "Top":
         const topSizeValues = {
           ...pick(input, ["sleeve", "shoulder", "chest", "neck", "length"]),
