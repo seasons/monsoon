@@ -9,8 +9,8 @@ datasource db {
 
 model AccessorySize {
   id       String   @id @default(cuid()) @db.VarChar(25)
-  bridge   String?
-  length   String?
+  bridge   Float?
+  length   Float?
   width    Float?
 
   // Do not use. Artifact of prisma2 migration

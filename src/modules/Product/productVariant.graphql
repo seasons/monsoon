@@ -116,6 +116,7 @@ type Size {
   slug: String!
   productType: ProductType
   top: TopSize
+  accessory: AccessorySize
   bottom: BottomSize
   display: String!
   type: SizeType
