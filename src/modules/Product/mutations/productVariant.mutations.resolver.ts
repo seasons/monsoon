@@ -134,7 +134,7 @@ export class ProductVariantMutationsResolver {
         type: product.type,
       })
     })
-    // TODO: Fix so it only returns physical products
+    // TODO: Fix so it only returns variants
     return await this.prisma.client2.$transaction(variantPromises)
   }
 

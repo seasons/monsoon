@@ -412,23 +412,14 @@ export class ProductUtilsService {
     })
   }
 
-  async getProductSlug(
-    brandCode: string,
-    name: string,
-    color: string,
-    createNew: boolean
-  ) {
+  async createProductSlug(brandCode: string, name: string, color: string) {
     const pureSlug = slugify(brandCode + " " + name + " " + color).toLowerCase()
-    if (createNew) {
-      const numProductsWithSlug = await this.prisma.client2.product.count({
-        where: { slug: { startsWith: pureSlug } },
-      })
-      return `${pureSlug}${
-        numProductsWithSlug > 0 ? "-" + numProductsWithSlug : ""
-      }`
-    }
-
-    return pureSlug
+    const numProductsWithSlug = await this.prisma.client2.product.count({
+      where: { slug: { startsWith: pureSlug } },
+    })
+    return `${pureSlug}${
+      numProductsWithSlug > 0 ? "-" + numProductsWithSlug : ""
+    }`
   }
 
   physicalProductsForProduct(product: ProductWithPhysicalProducts) {

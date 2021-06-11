@@ -59,7 +59,7 @@ export class PrismaService implements UpdatableConnection {
   })
   client: PrismaClient = prisma
   client2: PrismaClient2 = new PrismaClient2({ 
-    // log: process.env.NODE_ENV === "production" ? ['warn', 'error'] : ['query', 'info', 'warn', 'error']
+    log: process.env.NODE_ENV === "production" ? ['warn', 'error'] : ['query', 'info', 'warn', 'error']
   })
 
   private modelFieldsByModelName = new PrismaSelect(null).dataModel.reduce(

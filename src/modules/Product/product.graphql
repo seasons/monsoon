@@ -166,7 +166,7 @@ type Mutation {
     data: CustomProductUpdateInput!
   ): Product! @hasRole(roles: [Admin])
   addViewedProduct(item: ID!): RecentlyViewedProduct!
-  upsertProduct(input: UpsertProductInput!): Product @hasRole(roles: [Admin])
+  createProduct(input: ProductCreateInput!): Product @hasRole(roles: [Admin])
   addProductRequest(reason: String!, url: String!): ProductRequest!
   createBrand(input: CustomBrandCreateInput!): Brand @hasRole(roles: [Admin])
   updateBrand(
@@ -313,7 +313,7 @@ type Brand @cacheControl(maxAge: 1000) {
   updatedAt: DateTime!
 }
 
-input UpsertProductInput {
+input ProductCreateInput {
   architecture: String
   internalSizeType: SizeType
   brandID: String!
@@ -343,8 +343,6 @@ input UpsertProductInput {
   type: ProductType!
   variants: [UpsertVariantInput!]!
   styles: [CustomerStyle!]
-  # Is this a new one?
-  createNew: Boolean!
 }
 
 input CustomProductUpdateInput {
