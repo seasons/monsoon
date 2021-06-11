@@ -2,7 +2,153 @@
   // Please don't change this file manually but run `prisma generate` to update it.
   // For more information, please read the docs: https://www.prisma.io/docs/prisma-client/
 
-export const typeDefs = /* GraphQL */ `type ActiveAdminUser {
+export const typeDefs = /* GraphQL */ `type AccessorySize {
+  id: ID!
+  bridge: Float
+  length: Float
+  width: Float
+}
+
+type AccessorySizeConnection {
+  pageInfo: PageInfo!
+  edges: [AccessorySizeEdge]!
+  aggregate: AggregateAccessorySize!
+}
+
+input AccessorySizeCreateInput {
+  id: ID
+  bridge: Float
+  length: Float
+  width: Float
+}
+
+input AccessorySizeCreateOneInput {
+  create: AccessorySizeCreateInput
+  connect: AccessorySizeWhereUniqueInput
+}
+
+type AccessorySizeEdge {
+  node: AccessorySize!
+  cursor: String!
+}
+
+enum AccessorySizeOrderByInput {
+  id_ASC
+  id_DESC
+  bridge_ASC
+  bridge_DESC
+  length_ASC
+  length_DESC
+  width_ASC
+  width_DESC
+}
+
+type AccessorySizePreviousValues {
+  id: ID!
+  bridge: Float
+  length: Float
+  width: Float
+}
+
+type AccessorySizeSubscriptionPayload {
+  mutation: MutationType!
+  node: AccessorySize
+  updatedFields: [String!]
+  previousValues: AccessorySizePreviousValues
+}
+
+input AccessorySizeSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: AccessorySizeWhereInput
+  AND: [AccessorySizeSubscriptionWhereInput!]
+  OR: [AccessorySizeSubscriptionWhereInput!]
+  NOT: [AccessorySizeSubscriptionWhereInput!]
+}
+
+input AccessorySizeUpdateDataInput {
+  bridge: Float
+  length: Float
+  width: Float
+}
+
+input AccessorySizeUpdateInput {
+  bridge: Float
+  length: Float
+  width: Float
+}
+
+input AccessorySizeUpdateManyMutationInput {
+  bridge: Float
+  length: Float
+  width: Float
+}
+
+input AccessorySizeUpdateOneInput {
+  create: AccessorySizeCreateInput
+  update: AccessorySizeUpdateDataInput
+  upsert: AccessorySizeUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: AccessorySizeWhereUniqueInput
+}
+
+input AccessorySizeUpsertNestedInput {
+  update: AccessorySizeUpdateDataInput!
+  create: AccessorySizeCreateInput!
+}
+
+input AccessorySizeWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  bridge: Float
+  bridge_not: Float
+  bridge_in: [Float!]
+  bridge_not_in: [Float!]
+  bridge_lt: Float
+  bridge_lte: Float
+  bridge_gt: Float
+  bridge_gte: Float
+  length: Float
+  length_not: Float
+  length_in: [Float!]
+  length_not_in: [Float!]
+  length_lt: Float
+  length_lte: Float
+  length_gt: Float
+  length_gte: Float
+  width: Float
+  width_not: Float
+  width_in: [Float!]
+  width_not_in: [Float!]
+  width_lt: Float
+  width_lte: Float
+  width_gt: Float
+  width_gte: Float
+  AND: [AccessorySizeWhereInput!]
+  OR: [AccessorySizeWhereInput!]
+  NOT: [AccessorySizeWhereInput!]
+}
+
+input AccessorySizeWhereUniqueInput {
+  id: ID
+}
+
+type ActiveAdminUser {
   id: ID!
   admin: User!
 }
@@ -494,6 +640,10 @@ input AdminActionLogWhereInput {
 
 input AdminActionLogWhereUniqueInput {
   actionId: Int
+}
+
+type AggregateAccessorySize {
+  count: Int!
 }
 
 type AggregateActiveAdminUser {
@@ -2483,6 +2633,7 @@ type Category {
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   children(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category!]
   updatedAt: DateTime
+  productType: ProductType
 }
 
 type CategoryConnection {
@@ -2500,6 +2651,7 @@ input CategoryCreateInput {
   visible: Boolean
   products: ProductCreateManyWithoutCategoryInput
   children: CategoryCreateManyWithoutChildrenInput
+  productType: ProductType
 }
 
 input CategoryCreateManyWithoutChildrenInput {
@@ -2525,6 +2677,7 @@ input CategoryCreateWithoutChildrenInput {
   description: String
   visible: Boolean
   products: ProductCreateManyWithoutCategoryInput
+  productType: ProductType
 }
 
 input CategoryCreateWithoutProductsInput {
@@ -2535,6 +2688,7 @@ input CategoryCreateWithoutProductsInput {
   description: String
   visible: Boolean
   children: CategoryCreateManyWithoutChildrenInput
+  productType: ProductType
 }
 
 type CategoryEdge {
@@ -2557,6 +2711,8 @@ enum CategoryOrderByInput {
   visible_DESC
   updatedAt_ASC
   updatedAt_DESC
+  productType_ASC
+  productType_DESC
 }
 
 type CategoryPreviousValues {
@@ -2567,6 +2723,7 @@ type CategoryPreviousValues {
   description: String
   visible: Boolean!
   updatedAt: DateTime
+  productType: ProductType
 }
 
 input CategoryScalarWhereInput {
@@ -2636,6 +2793,10 @@ input CategoryScalarWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  productType: ProductType
+  productType_not: ProductType
+  productType_in: [ProductType!]
+  productType_not_in: [ProductType!]
   AND: [CategoryScalarWhereInput!]
   OR: [CategoryScalarWhereInput!]
   NOT: [CategoryScalarWhereInput!]
@@ -2667,6 +2828,7 @@ input CategoryUpdateDataInput {
   visible: Boolean
   products: ProductUpdateManyWithoutCategoryInput
   children: CategoryUpdateManyWithoutChildrenInput
+  productType: ProductType
 }
 
 input CategoryUpdateInput {
@@ -2677,6 +2839,7 @@ input CategoryUpdateInput {
   visible: Boolean
   products: ProductUpdateManyWithoutCategoryInput
   children: CategoryUpdateManyWithoutChildrenInput
+  productType: ProductType
 }
 
 input CategoryUpdateManyDataInput {
@@ -2685,6 +2848,7 @@ input CategoryUpdateManyDataInput {
   image: Json
   description: String
   visible: Boolean
+  productType: ProductType
 }
 
 input CategoryUpdateManyMutationInput {
@@ -2693,6 +2857,7 @@ input CategoryUpdateManyMutationInput {
   image: Json
   description: String
   visible: Boolean
+  productType: ProductType
 }
 
 input CategoryUpdateManyWithoutChildrenInput {
@@ -2733,6 +2898,7 @@ input CategoryUpdateWithoutChildrenDataInput {
   description: String
   visible: Boolean
   products: ProductUpdateManyWithoutCategoryInput
+  productType: ProductType
 }
 
 input CategoryUpdateWithoutProductsDataInput {
@@ -2742,6 +2908,7 @@ input CategoryUpdateWithoutProductsDataInput {
   description: String
   visible: Boolean
   children: CategoryUpdateManyWithoutChildrenInput
+  productType: ProductType
 }
 
 input CategoryUpdateWithWhereUniqueWithoutChildrenInput {
@@ -2838,6 +3005,10 @@ input CategoryWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  productType: ProductType
+  productType_not: ProductType
+  productType_in: [ProductType!]
+  productType_not_in: [ProductType!]
   AND: [CategoryWhereInput!]
   OR: [CategoryWhereInput!]
   NOT: [CategoryWhereInput!]
@@ -7926,6 +8097,12 @@ input LocationWhereUniqueInput {
 scalar Long
 
 type Mutation {
+  createAccessorySize(data: AccessorySizeCreateInput!): AccessorySize!
+  updateAccessorySize(data: AccessorySizeUpdateInput!, where: AccessorySizeWhereUniqueInput!): AccessorySize
+  updateManyAccessorySizes(data: AccessorySizeUpdateManyMutationInput!, where: AccessorySizeWhereInput): BatchPayload!
+  upsertAccessorySize(where: AccessorySizeWhereUniqueInput!, create: AccessorySizeCreateInput!, update: AccessorySizeUpdateInput!): AccessorySize!
+  deleteAccessorySize(where: AccessorySizeWhereUniqueInput!): AccessorySize
+  deleteManyAccessorySizes(where: AccessorySizeWhereInput): BatchPayload!
   createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
   updateActiveAdminUser(data: ActiveAdminUserUpdateInput!, where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
   upsertActiveAdminUser(where: ActiveAdminUserWhereUniqueInput!, create: ActiveAdminUserCreateInput!, update: ActiveAdminUserUpdateInput!): ActiveAdminUser!
@@ -15876,6 +16053,9 @@ enum PushNotificationStatus {
 }
 
 type Query {
+  accessorySize(where: AccessorySizeWhereUniqueInput!): AccessorySize
+  accessorySizes(where: AccessorySizeWhereInput, orderBy: AccessorySizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AccessorySize]!
+  accessorySizesConnection(where: AccessorySizeWhereInput, orderBy: AccessorySizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AccessorySizeConnection!
   activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
   activeAdminUsers(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ActiveAdminUser]!
   activeAdminUsersConnection(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ActiveAdminUserConnection!
@@ -18688,6 +18868,7 @@ type Size {
   productType: ProductType
   top: TopSize
   bottom: BottomSize
+  accessory: AccessorySize
   display: String!
   type: SizeType
 }
@@ -18704,6 +18885,7 @@ input SizeCreateInput {
   productType: ProductType
   top: TopSizeCreateOneInput
   bottom: BottomSizeCreateOneInput
+  accessory: AccessorySizeCreateOneInput
   display: String!
   type: SizeType
 }
@@ -18824,6 +19006,7 @@ enum SizeType {
   EU
   JP
   Letter
+  Universal
 }
 
 input SizeUpdateDataInput {
@@ -18831,6 +19014,7 @@ input SizeUpdateDataInput {
   productType: ProductType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
+  accessory: AccessorySizeUpdateOneInput
   display: String
   type: SizeType
 }
@@ -18840,6 +19024,7 @@ input SizeUpdateInput {
   productType: ProductType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
+  accessory: AccessorySizeUpdateOneInput
   display: String
   type: SizeType
 }
@@ -18935,6 +19120,7 @@ input SizeWhereInput {
   productType_not_in: [ProductType!]
   top: TopSizeWhereInput
   bottom: BottomSizeWhereInput
+  accessory: AccessorySizeWhereInput
   display: String
   display_not: String
   display_in: [String!]
@@ -19451,6 +19637,7 @@ input StylePreferencesWhereUniqueInput {
 }
 
 type Subscription {
+  accessorySize(where: AccessorySizeSubscriptionWhereInput): AccessorySizeSubscriptionPayload
   activeAdminUser(where: ActiveAdminUserSubscriptionWhereInput): ActiveAdminUserSubscriptionPayload
   adminActionLog(where: AdminActionLogSubscriptionWhereInput): AdminActionLogSubscriptionPayload
   adminActionLogInterpretation(where: AdminActionLogInterpretationSubscriptionWhereInput): AdminActionLogInterpretationSubscriptionPayload

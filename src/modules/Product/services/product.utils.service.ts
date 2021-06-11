@@ -5,9 +5,12 @@ import { Injectable } from "@nestjs/common"
 import { ProductVariant } from "@prisma/client"
 import { Category, Prisma, Product, Size } from "@prisma/client"
 import {
+  AccessorySizeCreateInput,
+  BottomSizeCreateInput,
   BrandOrderByInput,
   ProductMaterialCategoryCreateInput,
   SizeType,
+  TopSizeCreateInput,
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head, identity, pickBy, size, union, uniq, uniqBy } from "lodash"
@@ -379,19 +382,33 @@ export class ProductUtilsService {
       },
     }
 
-    const uniqueArray = uniqBy(variants, "internalSize.display")
+    const getSortWeight = displayShort => {
+      switch (displayShort.toLowerCase()) {
+        case "xxs":
+          return 0
+        case "xs":
+          return 1
+        case "s":
+          return 2
+        case "m":
+          return 3
+        case "l":
+          return 4
+        case "xl":
+          return 5
+        case "xxl":
+          return 6
+        default:
+          return displayShort
+      }
+    }
+
+    const uniqueArray = uniqBy(variants, "displayShort")
     return uniqueArray.sort((variantA: any, variantB: any) => {
-      const sortWeightA =
-        (variantA.internalSize?.display &&
-          sizes[variantA.internalSize?.display.toLowerCase()] &&
-          sizes[variantA.internalSize?.display.toLowerCase()].sortWeight) ||
-        0
-      const sortWeightB =
-        (variantB.internalSize?.display &&
-          sizes[variantB.internalSize?.display.toLowerCase()] &&
-          sizes[variantB.internalSize?.display.toLowerCase()].sortWeight) ||
-        0
-      return sortWeightA - sortWeightB
+      const a = getSortWeight(variantA.displayShort) || 0
+      const b = getSortWeight(variantB.displayShort) || 0
+
+      return a - b
     })
   }
 
@@ -427,14 +444,16 @@ export class ProductUtilsService {
     display,
     topSizeData,
     bottomSizeData,
+    accessorySizeData,
     sizeType,
   }: {
     slug: string
     type: ProductType
     sizeType: SizeType
     display: string
-    topSizeData?: Prisma.TopSizeCreateInput
-    bottomSizeData?: Prisma.BottomSizeCreateInput
+    topSizeData?: TopSizeCreateInput
+    bottomSizeData?: BottomSizeCreateInput
+    accessorySizeData?: AccessorySizeCreateInput
   }): Promise<Size> {
     const sizeData = { slug, productType: type, display, type: sizeType }
     const sizeRecord = await this.prisma.client2.size.upsert({
@@ -442,13 +461,31 @@ export class ProductUtilsService {
       create: { ...sizeData },
       update: { ...sizeData },
     })
-    if (!!bottomSizeData || !!topSizeData) {
+    if (!!bottomSizeData || !!topSizeData || !!accessorySizeData) {
       switch (type) {
+        case "Accessory":
+          const prismaAccessorySize = await this.prisma.client
+            .size({ id: sizeRecord.id })
+            .accessory()
+          const accessorySize = await this.prisma.client.upsertAccessorySize({
+            where: { id: prismaAccessorySize?.id || "" },
+            update: { ...accessorySizeData },
+            create: { ...accessorySizeData },
+          })
+          if (!prismaAccessorySize) {
+            await this.prisma.client.updateSize({
+              where: { slug },
+              data: { accessory: { connect: { id: accessorySize.id } } },
+            })
+          }
+          break
         case "Top":
           await this.prisma.client2.size.update({
             where: { slug },
             data: {
-              top: { upsert: { create: topSizeData, update: topSizeData } },
+              top: {
+                upsert: { create: topSizeData as any, update: topSizeData },
+              },
             },
           })
           break
@@ -457,7 +494,10 @@ export class ProductUtilsService {
             where: { slug },
             data: {
               bottom: {
-                upsert: { create: bottomSizeData, update: bottomSizeData },
+                upsert: {
+                  create: bottomSizeData as any,
+                  update: bottomSizeData,
+                },
               },
             },
           })

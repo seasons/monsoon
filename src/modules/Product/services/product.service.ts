@@ -333,6 +333,8 @@ export class ProductService {
       display: input.modelSizeDisplay,
       type: input.modelSizeType,
     }
+
+    // TODO: Update the size data to also account for accesories
     const productPromise = this.prisma.client2.product.upsert({
       create: {
         ..._commonData,
@@ -1063,6 +1065,10 @@ export class ProductService {
       stored: 0,
       ...pick(variant, ["weight", "total", "sku"]),
     }
+    // TODO: Update to account for accesory size
+    //       accessorySizeData: type === "Accessory" && {
+    // ...pick(variant, ["bridge", "length", "width"]),
+    // },
     const prodVarPromise = this.prisma.client2.productVariant.upsert({
       where: { sku: variant.sku },
       create: {
