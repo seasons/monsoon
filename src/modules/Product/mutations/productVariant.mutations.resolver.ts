@@ -124,7 +124,7 @@ export class ProductVariantMutationsResolver {
     )
 
     const variantPromises = inputs.map(async (input, index) => {
-      return this.productService.getDeepUpsertProductVariantPromises({
+      return this.productService.getMutateProductVariantPromises({
         sequenceNumbers: sequenceNumbers[index],
         variant: input,
         colorCode: product.color.colorCode,
