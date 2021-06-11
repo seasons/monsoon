@@ -38,6 +38,7 @@ enum ProductSize {
   XL = "XL",
   XXL = "XXL",
   XXXL = "XXXL",
+  Universal = "Universal",
 }
 
 // TODO: As needed, support other types. We just need to update the code
@@ -265,7 +266,7 @@ export class UtilsService {
   sizeNameToSizeCode(sizeName: ProductSize | string) {
     switch (sizeName) {
       case ProductSize.XXS:
-        return "XS"
+        return "XXS"
       case ProductSize.XS:
         return "XS"
       case ProductSize.S:
@@ -280,6 +281,8 @@ export class UtilsService {
         return "XXL"
       case ProductSize.XXXL:
         return "XXXL"
+      case ProductSize.Universal:
+        return "UNI"
     }
 
     // If we get here, we're expecting a bottom with size WxL e.g 32x28 or 27x8
