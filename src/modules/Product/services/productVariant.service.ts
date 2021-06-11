@@ -16,6 +16,7 @@ import {
   PhysicalProductWithReservationSpecificData,
 } from "./physicalProduct.utils.service"
 import { ProductUtilsService } from "./product.utils.service"
+import { PrismaPromise } from ".prisma/client"
 
 @Injectable()
 export class ProductVariantService {
@@ -230,20 +231,23 @@ export class ProductVariantService {
     oldInventoryStatus,
     newInventoryStatus,
   }: {
-    id: ID_Input
+    id: string
     oldInventoryStatus: InventoryStatus
     newInventoryStatus: InventoryStatus
   }) {
-    const prodVar = await this.prisma.client.productVariant({ id })
-    const data = {}
+    const productVariant = await this.prisma.client2.productVariant.findUnique({
+      where: { id },
+    })
+
     const oldInventoryCountKey = lowerFirst(oldInventoryStatus)
     const newInventoryCountKey = lowerFirst(newInventoryStatus)
-    data[oldInventoryCountKey] = prodVar[oldInventoryCountKey] - 1
-    data[newInventoryCountKey] = prodVar[newInventoryCountKey] + 1
 
-    await this.prisma.client.updateProductVariant({
+    return this.prisma.client2.productVariant.update({
       where: { id },
-      data,
+      data: {
+        [oldInventoryCountKey]: productVariant[oldInventoryCountKey] - 1,
+        [newInventoryCountKey]: productVariant[newInventoryCountKey] + 1,
+      },
     })
   }
 

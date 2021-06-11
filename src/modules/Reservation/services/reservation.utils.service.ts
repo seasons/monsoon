@@ -66,13 +66,17 @@ export class ReservationUtilsService {
     prismaReservation: any,
     returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields
   ) {
-    return await this.prisma.client.deleteManyBagItems({
-      customer: { id: prismaReservation.customer.id },
-      saved: false,
-      productVariant: {
-        id_in: returnedPhysicalProducts.map(p => p.productVariant.id),
+    return await this.prisma.client2.bagItem.deleteMany({
+      where: {
+        customer: prismaReservation.customer.id,
+        saved: false,
+        productVariant: {
+          id: {
+            in: returnedPhysicalProducts.map(p => p.productVariant.id),
+          },
+        },
+        status: "Reserved",
       },
-      status: "Reserved",
     })
   }
 

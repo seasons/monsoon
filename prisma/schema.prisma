@@ -939,7 +939,7 @@ model Reservation {
   createdAt         DateTime
   updatedAt         DateTime              @updatedAt
   userId            String?               @map("user") @db.VarChar(25)
-  User              User?                 @relation(fields: [userId], references: [id])
+  user              User?                 @relation(fields: [userId], references: [id])
   reservationNumber Int                   @unique
   status            String
   shippedAt         DateTime?
