@@ -16,6 +16,7 @@ export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
 export type Maybe<T> = T | undefined | null;
 
 export interface Exists {
+  accessorySize: (where?: AccessorySizeWhereInput) => Promise<boolean>;
   activeAdminUser: (where?: ActiveAdminUserWhereInput) => Promise<boolean>;
   adminActionLog: (where?: AdminActionLogWhereInput) => Promise<boolean>;
   adminActionLogInterpretation: (
@@ -157,6 +158,27 @@ export interface Prisma {
    * Queries
    */
 
+  accessorySize: (
+    where: AccessorySizeWhereUniqueInput
+  ) => AccessorySizeNullablePromise;
+  accessorySizes: (args?: {
+    where?: AccessorySizeWhereInput;
+    orderBy?: AccessorySizeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<AccessorySize>;
+  accessorySizesConnection: (args?: {
+    where?: AccessorySizeWhereInput;
+    orderBy?: AccessorySizeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => AccessorySizeConnectionPromise;
   activeAdminUser: (
     where: ActiveAdminUserWhereUniqueInput
   ) => ActiveAdminUserNullablePromise;
@@ -1627,6 +1649,26 @@ export interface Prisma {
    * Mutations
    */
 
+  createAccessorySize: (data: AccessorySizeCreateInput) => AccessorySizePromise;
+  updateAccessorySize: (args: {
+    data: AccessorySizeUpdateInput;
+    where: AccessorySizeWhereUniqueInput;
+  }) => AccessorySizePromise;
+  updateManyAccessorySizes: (args: {
+    data: AccessorySizeUpdateManyMutationInput;
+    where?: AccessorySizeWhereInput;
+  }) => BatchPayloadPromise;
+  upsertAccessorySize: (args: {
+    where: AccessorySizeWhereUniqueInput;
+    create: AccessorySizeCreateInput;
+    update: AccessorySizeUpdateInput;
+  }) => AccessorySizePromise;
+  deleteAccessorySize: (
+    where: AccessorySizeWhereUniqueInput
+  ) => AccessorySizePromise;
+  deleteManyAccessorySizes: (
+    where?: AccessorySizeWhereInput
+  ) => BatchPayloadPromise;
   createActiveAdminUser: (
     data: ActiveAdminUserCreateInput
   ) => ActiveAdminUserPromise;
@@ -3036,6 +3078,9 @@ export interface Prisma {
 }
 
 export interface Subscription {
+  accessorySize: (
+    where?: AccessorySizeSubscriptionWhereInput
+  ) => AccessorySizeSubscriptionPayloadSubscription;
   activeAdminUser: (
     where?: ActiveAdminUserSubscriptionWhereInput
   ) => ActiveAdminUserSubscriptionPayloadSubscription;
@@ -3262,6 +3307,16 @@ export interface ClientConstructor<T> {
  * Types
  */
 
+export type AccessorySizeOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "bridge_ASC"
+  | "bridge_DESC"
+  | "length_ASC"
+  | "length_DESC"
+  | "width_ASC"
+  | "width_DESC";
+
 export type UserRole = "Admin" | "Customer" | "Partner" | "Marketer";
 
 export type PushNotificationStatus = "Blocked" | "Granted" | "Denied";
@@ -3326,7 +3381,7 @@ export type LetterSize = "XXS" | "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL";
 
 export type BottomSizeType = "WxL" | "US" | "EU" | "JP" | "Letter";
 
-export type SizeType = "WxL" | "US" | "EU" | "JP" | "Letter";
+export type SizeType = "WxL" | "US" | "EU" | "JP" | "Letter" | "Universal";
 
 export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple";
 
@@ -3648,7 +3703,9 @@ export type CategoryOrderByInput =
   | "visible_ASC"
   | "visible_DESC"
   | "updatedAt_ASC"
-  | "updatedAt_DESC";
+  | "updatedAt_DESC"
+  | "productType_ASC"
+  | "productType_DESC";
 
 export type ProductFunctionOrderByInput =
   | "id_ASC"
@@ -4687,6 +4744,54 @@ export type UserPushNotificationOrderByInput =
   | "status_DESC";
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
+
+export type AccessorySizeWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface AccessorySizeWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  bridge?: Maybe<Float>;
+  bridge_not?: Maybe<Float>;
+  bridge_in?: Maybe<Float[] | Float>;
+  bridge_not_in?: Maybe<Float[] | Float>;
+  bridge_lt?: Maybe<Float>;
+  bridge_lte?: Maybe<Float>;
+  bridge_gt?: Maybe<Float>;
+  bridge_gte?: Maybe<Float>;
+  length?: Maybe<Float>;
+  length_not?: Maybe<Float>;
+  length_in?: Maybe<Float[] | Float>;
+  length_not_in?: Maybe<Float[] | Float>;
+  length_lt?: Maybe<Float>;
+  length_lte?: Maybe<Float>;
+  length_gt?: Maybe<Float>;
+  length_gte?: Maybe<Float>;
+  width?: Maybe<Float>;
+  width_not?: Maybe<Float>;
+  width_in?: Maybe<Float[] | Float>;
+  width_not_in?: Maybe<Float[] | Float>;
+  width_lt?: Maybe<Float>;
+  width_lte?: Maybe<Float>;
+  width_gt?: Maybe<Float>;
+  width_gte?: Maybe<Float>;
+  AND?: Maybe<AccessorySizeWhereInput[] | AccessorySizeWhereInput>;
+  OR?: Maybe<AccessorySizeWhereInput[] | AccessorySizeWhereInput>;
+  NOT?: Maybe<AccessorySizeWhereInput[] | AccessorySizeWhereInput>;
+}
 
 export type ActiveAdminUserWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -5974,6 +6079,7 @@ export interface SizeWhereInput {
   productType_not_in?: Maybe<ProductType[] | ProductType>;
   top?: Maybe<TopSizeWhereInput>;
   bottom?: Maybe<BottomSizeWhereInput>;
+  accessory?: Maybe<AccessorySizeWhereInput>;
   display?: Maybe<String>;
   display_not?: Maybe<String>;
   display_in?: Maybe<String[] | String>;
@@ -6581,6 +6687,10 @@ export interface CategoryWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  productType?: Maybe<ProductType>;
+  productType_not?: Maybe<ProductType>;
+  productType_in?: Maybe<ProductType[] | ProductType>;
+  productType_not_in?: Maybe<ProductType[] | ProductType>;
   AND?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
   OR?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
   NOT?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
@@ -10849,6 +10959,25 @@ export type WarehouseLocationConstraintWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export interface AccessorySizeCreateInput {
+  id?: Maybe<ID_Input>;
+  bridge?: Maybe<Float>;
+  length?: Maybe<Float>;
+  width?: Maybe<Float>;
+}
+
+export interface AccessorySizeUpdateInput {
+  bridge?: Maybe<Float>;
+  length?: Maybe<Float>;
+  width?: Maybe<Float>;
+}
+
+export interface AccessorySizeUpdateManyMutationInput {
+  bridge?: Maybe<Float>;
+  length?: Maybe<Float>;
+  width?: Maybe<Float>;
+}
+
 export interface ActiveAdminUserCreateInput {
   id?: Maybe<ID_Input>;
   admin: UserCreateOneInput;
@@ -11163,6 +11292,7 @@ export interface SizeCreateInput {
   productType?: Maybe<ProductType>;
   top?: Maybe<TopSizeCreateOneInput>;
   bottom?: Maybe<BottomSizeCreateOneInput>;
+  accessory?: Maybe<AccessorySizeCreateOneInput>;
   display: String;
   type?: Maybe<SizeType>;
 }
@@ -11195,6 +11325,11 @@ export interface BottomSizeCreateInput {
   rise?: Maybe<Float>;
   hem?: Maybe<Float>;
   inseam?: Maybe<Float>;
+}
+
+export interface AccessorySizeCreateOneInput {
+  create?: Maybe<AccessorySizeCreateInput>;
+  connect?: Maybe<AccessorySizeWhereUniqueInput>;
 }
 
 export interface SizeCreateManyInput {
@@ -11305,6 +11440,7 @@ export interface CategoryCreateWithoutProductsInput {
   description?: Maybe<String>;
   visible?: Maybe<Boolean>;
   children?: Maybe<CategoryCreateManyWithoutChildrenInput>;
+  productType?: Maybe<ProductType>;
 }
 
 export interface CategoryCreateManyWithoutChildrenInput {
@@ -11322,6 +11458,7 @@ export interface CategoryCreateWithoutChildrenInput {
   description?: Maybe<String>;
   visible?: Maybe<Boolean>;
   products?: Maybe<ProductCreateManyWithoutCategoryInput>;
+  productType?: Maybe<ProductType>;
 }
 
 export interface ProductCreateManyWithoutCategoryInput {
@@ -11567,6 +11704,7 @@ export interface CategoryCreateInput {
   visible?: Maybe<Boolean>;
   products?: Maybe<ProductCreateManyWithoutCategoryInput>;
   children?: Maybe<CategoryCreateManyWithoutChildrenInput>;
+  productType?: Maybe<ProductType>;
 }
 
 export interface ProductModelCreateOneWithoutProductsInput {
@@ -12880,6 +13018,7 @@ export interface SizeUpdateDataInput {
   productType?: Maybe<ProductType>;
   top?: Maybe<TopSizeUpdateOneInput>;
   bottom?: Maybe<BottomSizeUpdateOneInput>;
+  accessory?: Maybe<AccessorySizeUpdateOneInput>;
   display?: Maybe<String>;
   type?: Maybe<SizeType>;
 }
@@ -12928,6 +13067,26 @@ export interface BottomSizeUpdateDataInput {
 export interface BottomSizeUpsertNestedInput {
   update: BottomSizeUpdateDataInput;
   create: BottomSizeCreateInput;
+}
+
+export interface AccessorySizeUpdateOneInput {
+  create?: Maybe<AccessorySizeCreateInput>;
+  update?: Maybe<AccessorySizeUpdateDataInput>;
+  upsert?: Maybe<AccessorySizeUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<AccessorySizeWhereUniqueInput>;
+}
+
+export interface AccessorySizeUpdateDataInput {
+  bridge?: Maybe<Float>;
+  length?: Maybe<Float>;
+  width?: Maybe<Float>;
+}
+
+export interface AccessorySizeUpsertNestedInput {
+  update: AccessorySizeUpdateDataInput;
+  create: AccessorySizeCreateInput;
 }
 
 export interface SizeUpsertNestedInput {
@@ -13310,6 +13469,7 @@ export interface CategoryUpdateWithoutProductsDataInput {
   description?: Maybe<String>;
   visible?: Maybe<Boolean>;
   children?: Maybe<CategoryUpdateManyWithoutChildrenInput>;
+  productType?: Maybe<ProductType>;
 }
 
 export interface CategoryUpdateManyWithoutChildrenInput {
@@ -13347,6 +13507,7 @@ export interface CategoryUpdateWithoutChildrenDataInput {
   description?: Maybe<String>;
   visible?: Maybe<Boolean>;
   products?: Maybe<ProductUpdateManyWithoutCategoryInput>;
+  productType?: Maybe<ProductType>;
 }
 
 export interface ProductUpdateManyWithoutCategoryInput {
@@ -13867,6 +14028,7 @@ export interface CategoryUpdateDataInput {
   visible?: Maybe<Boolean>;
   products?: Maybe<ProductUpdateManyWithoutCategoryInput>;
   children?: Maybe<CategoryUpdateManyWithoutChildrenInput>;
+  productType?: Maybe<ProductType>;
 }
 
 export interface CategoryUpsertNestedInput {
@@ -15276,6 +15438,10 @@ export interface CategoryScalarWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  productType?: Maybe<ProductType>;
+  productType_not?: Maybe<ProductType>;
+  productType_in?: Maybe<ProductType[] | ProductType>;
+  productType_not_in?: Maybe<ProductType[] | ProductType>;
   AND?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
   OR?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
   NOT?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
@@ -15292,6 +15458,7 @@ export interface CategoryUpdateManyDataInput {
   image?: Maybe<Json>;
   description?: Maybe<String>;
   visible?: Maybe<Boolean>;
+  productType?: Maybe<ProductType>;
 }
 
 export interface CategoryUpsertWithoutProductsInput {
@@ -18404,6 +18571,7 @@ export interface CategoryUpdateInput {
   visible?: Maybe<Boolean>;
   products?: Maybe<ProductUpdateManyWithoutCategoryInput>;
   children?: Maybe<CategoryUpdateManyWithoutChildrenInput>;
+  productType?: Maybe<ProductType>;
 }
 
 export interface CategoryUpdateManyMutationInput {
@@ -18412,6 +18580,7 @@ export interface CategoryUpdateManyMutationInput {
   image?: Maybe<Json>;
   description?: Maybe<String>;
   visible?: Maybe<Boolean>;
+  productType?: Maybe<ProductType>;
 }
 
 export interface CollectionCreateInput {
@@ -21147,6 +21316,7 @@ export interface SizeUpdateInput {
   productType?: Maybe<ProductType>;
   top?: Maybe<TopSizeUpdateOneInput>;
   bottom?: Maybe<BottomSizeUpdateOneInput>;
+  accessory?: Maybe<AccessorySizeUpdateOneInput>;
   display?: Maybe<String>;
   type?: Maybe<SizeType>;
 }
@@ -21815,6 +21985,23 @@ export interface WarehouseLocationUpdateManyDataInput {
 
 export interface WarehouseLocationConstraintUpdateManyMutationInput {
   limit?: Maybe<Int>;
+}
+
+export interface AccessorySizeSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<AccessorySizeWhereInput>;
+  AND?: Maybe<
+    AccessorySizeSubscriptionWhereInput[] | AccessorySizeSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    AccessorySizeSubscriptionWhereInput[] | AccessorySizeSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    AccessorySizeSubscriptionWhereInput[] | AccessorySizeSubscriptionWhereInput
+  >;
 }
 
 export interface ActiveAdminUserSubscriptionWhereInput {
@@ -23052,6 +23239,119 @@ export interface NodeNode {
   id: ID_Output;
 }
 
+export interface AccessorySize {
+  id: ID_Output;
+  bridge?: Float;
+  length?: Float;
+  width?: Float;
+}
+
+export interface AccessorySizePromise
+  extends Promise<AccessorySize>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  bridge: () => Promise<Float>;
+  length: () => Promise<Float>;
+  width: () => Promise<Float>;
+}
+
+export interface AccessorySizeSubscription
+  extends Promise<AsyncIterator<AccessorySize>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  bridge: () => Promise<AsyncIterator<Float>>;
+  length: () => Promise<AsyncIterator<Float>>;
+  width: () => Promise<AsyncIterator<Float>>;
+}
+
+export interface AccessorySizeNullablePromise
+  extends Promise<AccessorySize | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  bridge: () => Promise<Float>;
+  length: () => Promise<Float>;
+  width: () => Promise<Float>;
+}
+
+export interface AccessorySizeConnection {
+  pageInfo: PageInfo;
+  edges: AccessorySizeEdge[];
+}
+
+export interface AccessorySizeConnectionPromise
+  extends Promise<AccessorySizeConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<AccessorySizeEdge>>() => T;
+  aggregate: <T = AggregateAccessorySizePromise>() => T;
+}
+
+export interface AccessorySizeConnectionSubscription
+  extends Promise<AsyncIterator<AccessorySizeConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<AccessorySizeEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateAccessorySizeSubscription>() => T;
+}
+
+export interface PageInfo {
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String;
+  endCursor?: String;
+}
+
+export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>;
+  hasPreviousPage: () => Promise<Boolean>;
+  startCursor: () => Promise<String>;
+  endCursor: () => Promise<String>;
+}
+
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfo>>,
+    Fragmentable {
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
+  startCursor: () => Promise<AsyncIterator<String>>;
+  endCursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AccessorySizeEdge {
+  node: AccessorySize;
+  cursor: String;
+}
+
+export interface AccessorySizeEdgePromise
+  extends Promise<AccessorySizeEdge>,
+    Fragmentable {
+  node: <T = AccessorySizePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface AccessorySizeEdgeSubscription
+  extends Promise<AsyncIterator<AccessorySizeEdge>>,
+    Fragmentable {
+  node: <T = AccessorySizeSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateAccessorySize {
+  count: Int;
+}
+
+export interface AggregateAccessorySizePromise
+  extends Promise<AggregateAccessorySize>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateAccessorySizeSubscription
+  extends Promise<AsyncIterator<AggregateAccessorySize>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface ActiveAdminUser {
   id: ID_Output;
 }
@@ -24195,6 +24495,7 @@ export interface SizePromise extends Promise<Size>, Fragmentable {
   productType: () => Promise<ProductType>;
   top: <T = TopSizePromise>() => T;
   bottom: <T = BottomSizePromise>() => T;
+  accessory: <T = AccessorySizePromise>() => T;
   display: () => Promise<String>;
   type: () => Promise<SizeType>;
 }
@@ -24207,6 +24508,7 @@ export interface SizeSubscription
   productType: () => Promise<AsyncIterator<ProductType>>;
   top: <T = TopSizeSubscription>() => T;
   bottom: <T = BottomSizeSubscription>() => T;
+  accessory: <T = AccessorySizeSubscription>() => T;
   display: () => Promise<AsyncIterator<String>>;
   type: () => Promise<AsyncIterator<SizeType>>;
 }
@@ -24219,6 +24521,7 @@ export interface SizeNullablePromise
   productType: () => Promise<ProductType>;
   top: <T = TopSizePromise>() => T;
   bottom: <T = BottomSizePromise>() => T;
+  accessory: <T = AccessorySizePromise>() => T;
   display: () => Promise<String>;
   type: () => Promise<SizeType>;
 }
@@ -24730,6 +25033,7 @@ export interface Category {
   description?: String;
   visible: Boolean;
   updatedAt?: DateTimeOutput;
+  productType?: ProductType;
 }
 
 export interface CategoryPromise extends Promise<Category>, Fragmentable {
@@ -24758,6 +25062,7 @@ export interface CategoryPromise extends Promise<Category>, Fragmentable {
     last?: Int;
   }) => T;
   updatedAt: () => Promise<DateTimeOutput>;
+  productType: () => Promise<ProductType>;
 }
 
 export interface CategorySubscription
@@ -24788,6 +25093,7 @@ export interface CategorySubscription
     last?: Int;
   }) => T;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  productType: () => Promise<AsyncIterator<ProductType>>;
 }
 
 export interface CategoryNullablePromise
@@ -24818,6 +25124,7 @@ export interface CategoryNullablePromise
     last?: Int;
   }) => T;
   updatedAt: () => Promise<DateTimeOutput>;
+  productType: () => Promise<ProductType>;
 }
 
 export interface ProductFunction {
@@ -25693,29 +26000,6 @@ export interface ActiveAdminUserConnectionSubscription
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<ActiveAdminUserEdgeSubscription>>>() => T;
   aggregate: <T = AggregateActiveAdminUserSubscription>() => T;
-}
-
-export interface PageInfo {
-  hasNextPage: Boolean;
-  hasPreviousPage: Boolean;
-  startCursor?: String;
-  endCursor?: String;
-}
-
-export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>;
-  hasPreviousPage: () => Promise<Boolean>;
-  startCursor: () => Promise<String>;
-  endCursor: () => Promise<String>;
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfo>>,
-    Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
-  startCursor: () => Promise<AsyncIterator<String>>;
-  endCursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface ActiveAdminUserEdge {
@@ -32157,6 +32441,56 @@ export interface BatchPayloadSubscription
   count: () => Promise<AsyncIterator<Long>>;
 }
 
+export interface AccessorySizeSubscriptionPayload {
+  mutation: MutationType;
+  node: AccessorySize;
+  updatedFields: String[];
+  previousValues: AccessorySizePreviousValues;
+}
+
+export interface AccessorySizeSubscriptionPayloadPromise
+  extends Promise<AccessorySizeSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = AccessorySizePromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = AccessorySizePreviousValuesPromise>() => T;
+}
+
+export interface AccessorySizeSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<AccessorySizeSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = AccessorySizeSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = AccessorySizePreviousValuesSubscription>() => T;
+}
+
+export interface AccessorySizePreviousValues {
+  id: ID_Output;
+  bridge?: Float;
+  length?: Float;
+  width?: Float;
+}
+
+export interface AccessorySizePreviousValuesPromise
+  extends Promise<AccessorySizePreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  bridge: () => Promise<Float>;
+  length: () => Promise<Float>;
+  width: () => Promise<Float>;
+}
+
+export interface AccessorySizePreviousValuesSubscription
+  extends Promise<AsyncIterator<AccessorySizePreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  bridge: () => Promise<AsyncIterator<Float>>;
+  length: () => Promise<AsyncIterator<Float>>;
+  width: () => Promise<AsyncIterator<Float>>;
+}
+
 export interface ActiveAdminUserSubscriptionPayload {
   mutation: MutationType;
   node: ActiveAdminUser;
@@ -32737,6 +33071,7 @@ export interface CategoryPreviousValues {
   description?: String;
   visible: Boolean;
   updatedAt?: DateTimeOutput;
+  productType?: ProductType;
 }
 
 export interface CategoryPreviousValuesPromise
@@ -32749,6 +33084,7 @@ export interface CategoryPreviousValuesPromise
   description: () => Promise<String>;
   visible: () => Promise<Boolean>;
   updatedAt: () => Promise<DateTimeOutput>;
+  productType: () => Promise<ProductType>;
 }
 
 export interface CategoryPreviousValuesSubscription
@@ -32761,6 +33097,7 @@ export interface CategoryPreviousValuesSubscription
   description: () => Promise<AsyncIterator<String>>;
   visible: () => Promise<AsyncIterator<Boolean>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  productType: () => Promise<AsyncIterator<ProductType>>;
 }
 
 export interface CollectionSubscriptionPayload {
@@ -36532,9 +36869,24 @@ export type ID_Input = string | number;
 export type ID_Output = string;
 
 /*
+The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).
+*/
+export type Float = number;
+
+/*
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+*/
+export type Int = number;
+
+/*
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
 export type String = string;
+
+/*
+The `Boolean` scalar type represents `true` or `false`.
+*/
+export type Boolean = boolean;
 
 /*
 DateTime scalar input type, allowing Date
@@ -36545,21 +36897,6 @@ export type DateTimeInput = Date | string;
 DateTime scalar output type, which is always a string
 */
 export type DateTimeOutput = string;
-
-/*
-The `Boolean` scalar type represents `true` or `false`.
-*/
-export type Boolean = boolean;
-
-/*
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-*/
-export type Int = number;
-
-/*
-The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).
-*/
-export type Float = number;
 
 export type Json = any;
 
@@ -37032,6 +37369,10 @@ export const models: Model[] = [
   },
   {
     name: "TopSize",
+    embedded: false
+  },
+  {
+    name: "AccessorySize",
     embedded: false
   },
   {

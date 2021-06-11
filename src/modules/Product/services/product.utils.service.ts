@@ -4,6 +4,7 @@ import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
 import { ProductVariant } from "@prisma/client"
 import {
+  AccessorySizeCreateInput,
   BrandOrderByInput,
   Category,
   Product,
@@ -448,6 +449,7 @@ export class ProductUtilsService {
     display,
     topSizeData,
     bottomSizeData,
+    accessorySizeData,
     sizeType,
   }: {
     slug: string
@@ -456,6 +458,7 @@ export class ProductUtilsService {
     display: string
     topSizeData?: TopSizeCreateInput
     bottomSizeData?: BottomSizeCreateInput
+    accessorySizeData?: AccessorySizeCreateInput
   }): Promise<Size> {
     const sizeData = { slug, productType: type, display, type: sizeType }
     const sizeRecord = await this.prisma.client.upsertSize({
@@ -463,8 +466,24 @@ export class ProductUtilsService {
       create: { ...sizeData },
       update: { ...sizeData },
     })
-    if (!!bottomSizeData || !!topSizeData) {
+    if (!!bottomSizeData || !!topSizeData || !!accessorySizeData) {
       switch (type) {
+        case "Accessory":
+          const prismaAccessorySize = await this.prisma.client
+            .size({ id: sizeRecord.id })
+            .accessory()
+          const accessorySize = await this.prisma.client.upsertAccessorySize({
+            where: { id: prismaAccessorySize?.id || "" },
+            update: { ...accessorySizeData },
+            create: { ...accessorySizeData },
+          })
+          if (!prismaAccessorySize) {
+            await this.prisma.client.updateSize({
+              where: { slug },
+              data: { accessory: { connect: { id: accessorySize.id } } },
+            })
+          }
+          break
         case "Top":
           const prismaTopSize = await this.prisma.client
             .size({ id: sizeRecord.id })

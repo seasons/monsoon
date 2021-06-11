@@ -70,6 +70,7 @@ export interface Query {
     physicalProducts: <T = Array<PhysicalProduct | null>>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     users: <T = Array<User | null>>(args: { where?: UserWhereInput | null, orderBy?: UserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariants: <T = Array<ProductVariant | null>>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    accessorySizes: <T = Array<AccessorySize | null>>(args: { where?: AccessorySizeWhereInput | null, orderBy?: AccessorySizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     paymentPlans: <T = Array<PaymentPlan | null>>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     products: <T = Array<Product | null>>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -142,6 +143,7 @@ export interface Query {
     physicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     user: <T = User | null>(args: { where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    accessorySize: <T = AccessorySize | null>(args: { where: AccessorySizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     paymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     product: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -214,6 +216,7 @@ export interface Query {
     physicalProductsConnection: <T = PhysicalProductConnection>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     usersConnection: <T = UserConnection>(args: { where?: UserWhereInput | null, orderBy?: UserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantsConnection: <T = ProductVariantConnection>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    accessorySizesConnection: <T = AccessorySizeConnection>(args: { where?: AccessorySizeWhereInput | null, orderBy?: AccessorySizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     paymentPlansConnection: <T = PaymentPlanConnection>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productsConnection: <T = ProductConnection>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -290,6 +293,7 @@ export interface Mutation {
     createPhysicalProduct: <T = PhysicalProduct>(args: { data: PhysicalProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createUser: <T = User>(args: { data: UserCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductVariant: <T = ProductVariant>(args: { data: ProductVariantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createAccessorySize: <T = AccessorySize>(args: { data: AccessorySizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPaymentPlan: <T = PaymentPlan>(args: { data: PaymentPlanCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProduct: <T = Product>(args: { data: ProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -362,6 +366,7 @@ export interface Mutation {
     updatePhysicalProduct: <T = PhysicalProduct | null>(args: { data: PhysicalProductUpdateInput, where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateUser: <T = User | null>(args: { data: UserUpdateInput, where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductVariant: <T = ProductVariant | null>(args: { data: ProductVariantUpdateInput, where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateAccessorySize: <T = AccessorySize | null>(args: { data: AccessorySizeUpdateInput, where: AccessorySizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePaymentPlan: <T = PaymentPlan | null>(args: { data: PaymentPlanUpdateInput, where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProduct: <T = Product | null>(args: { data: ProductUpdateInput, where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -434,6 +439,7 @@ export interface Mutation {
     deletePhysicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteUser: <T = User | null>(args: { where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteAccessorySize: <T = AccessorySize | null>(args: { where: AccessorySizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePaymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProduct: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -506,6 +512,7 @@ export interface Mutation {
     upsertPhysicalProduct: <T = PhysicalProduct>(args: { where: PhysicalProductWhereUniqueInput, create: PhysicalProductCreateInput, update: PhysicalProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertUser: <T = User>(args: { where: UserWhereUniqueInput, create: UserCreateInput, update: UserUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductVariant: <T = ProductVariant>(args: { where: ProductVariantWhereUniqueInput, create: ProductVariantCreateInput, update: ProductVariantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertAccessorySize: <T = AccessorySize>(args: { where: AccessorySizeWhereUniqueInput, create: AccessorySizeCreateInput, update: AccessorySizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPaymentPlan: <T = PaymentPlan>(args: { where: PaymentPlanWhereUniqueInput, create: PaymentPlanCreateInput, update: PaymentPlanUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProduct: <T = Product>(args: { where: ProductWhereUniqueInput, create: ProductCreateInput, update: ProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -576,6 +583,7 @@ export interface Mutation {
     updateManyPhysicalProducts: <T = BatchPayload>(args: { data: PhysicalProductUpdateManyMutationInput, where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyUsers: <T = BatchPayload>(args: { data: UserUpdateManyMutationInput, where?: UserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductVariants: <T = BatchPayload>(args: { data: ProductVariantUpdateManyMutationInput, where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyAccessorySizes: <T = BatchPayload>(args: { data: AccessorySizeUpdateManyMutationInput, where?: AccessorySizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPaymentPlans: <T = BatchPayload>(args: { data: PaymentPlanUpdateManyMutationInput, where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProducts: <T = BatchPayload>(args: { data: ProductUpdateManyMutationInput, where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -648,6 +656,7 @@ export interface Mutation {
     deleteManyPhysicalProducts: <T = BatchPayload>(args: { where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyUsers: <T = BatchPayload>(args: { where?: UserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductVariants: <T = BatchPayload>(args: { where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyAccessorySizes: <T = BatchPayload>(args: { where?: AccessorySizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPaymentPlans: <T = BatchPayload>(args: { where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProducts: <T = BatchPayload>(args: { where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -723,6 +732,7 @@ export interface Subscription {
     physicalProduct: <T = PhysicalProductSubscriptionPayload | null>(args: { where?: PhysicalProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     user: <T = UserSubscriptionPayload | null>(args: { where?: UserSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productVariant: <T = ProductVariantSubscriptionPayload | null>(args: { where?: ProductVariantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    accessorySize: <T = AccessorySizeSubscriptionPayload | null>(args: { where?: AccessorySizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     paymentPlan: <T = PaymentPlanSubscriptionPayload | null>(args: { where?: PaymentPlanSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     product: <T = ProductSubscriptionPayload | null>(args: { where?: ProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -798,6 +808,7 @@ export interface Exists {
   PhysicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>
   User: (where?: UserWhereInput) => Promise<boolean>
   ProductVariant: (where?: ProductVariantWhereInput) => Promise<boolean>
+  AccessorySize: (where?: AccessorySizeWhereInput) => Promise<boolean>
   PaymentPlan: (where?: PaymentPlanWhereInput) => Promise<boolean>
   Image: (where?: ImageWhereInput) => Promise<boolean>
   Product: (where?: ProductWhereInput) => Promise<boolean>
@@ -828,7 +839,253 @@ export interface BindingConstructor<T> {
  * Type Defs
 */
 
-const typeDefs = `type ActiveAdminUser implements Node {
+const typeDefs = `type AccessorySize implements Node {
+  id: ID!
+  bridge: Float
+  length: Float
+  width: Float
+}
+
+"""A connection to a list of items."""
+type AccessorySizeConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AccessorySizeEdge]!
+  aggregate: AggregateAccessorySize!
+}
+
+input AccessorySizeCreateInput {
+  id: ID
+  bridge: Float
+  length: Float
+  width: Float
+}
+
+input AccessorySizeCreateOneInput {
+  create: AccessorySizeCreateInput
+  connect: AccessorySizeWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type AccessorySizeEdge {
+  """The item at the end of the edge."""
+  node: AccessorySize!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum AccessorySizeOrderByInput {
+  id_ASC
+  id_DESC
+  bridge_ASC
+  bridge_DESC
+  length_ASC
+  length_DESC
+  width_ASC
+  width_DESC
+}
+
+type AccessorySizePreviousValues {
+  id: ID!
+  bridge: Float
+  length: Float
+  width: Float
+}
+
+type AccessorySizeSubscriptionPayload {
+  mutation: MutationType!
+  node: AccessorySize
+  updatedFields: [String!]
+  previousValues: AccessorySizePreviousValues
+}
+
+input AccessorySizeSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AccessorySizeSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AccessorySizeSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AccessorySizeSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: AccessorySizeWhereInput
+}
+
+input AccessorySizeUpdateDataInput {
+  bridge: Float
+  length: Float
+  width: Float
+}
+
+input AccessorySizeUpdateInput {
+  bridge: Float
+  length: Float
+  width: Float
+}
+
+input AccessorySizeUpdateManyMutationInput {
+  bridge: Float
+  length: Float
+  width: Float
+}
+
+input AccessorySizeUpdateOneInput {
+  create: AccessorySizeCreateInput
+  connect: AccessorySizeWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: AccessorySizeUpdateDataInput
+  upsert: AccessorySizeUpsertNestedInput
+}
+
+input AccessorySizeUpsertNestedInput {
+  update: AccessorySizeUpdateDataInput!
+  create: AccessorySizeCreateInput!
+}
+
+input AccessorySizeWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AccessorySizeWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AccessorySizeWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AccessorySizeWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  bridge: Float
+
+  """All values that are not equal to given value."""
+  bridge_not: Float
+
+  """All values that are contained in given list."""
+  bridge_in: [Float!]
+
+  """All values that are not contained in given list."""
+  bridge_not_in: [Float!]
+
+  """All values less than the given value."""
+  bridge_lt: Float
+
+  """All values less than or equal the given value."""
+  bridge_lte: Float
+
+  """All values greater than the given value."""
+  bridge_gt: Float
+
+  """All values greater than or equal the given value."""
+  bridge_gte: Float
+  length: Float
+
+  """All values that are not equal to given value."""
+  length_not: Float
+
+  """All values that are contained in given list."""
+  length_in: [Float!]
+
+  """All values that are not contained in given list."""
+  length_not_in: [Float!]
+
+  """All values less than the given value."""
+  length_lt: Float
+
+  """All values less than or equal the given value."""
+  length_lte: Float
+
+  """All values greater than the given value."""
+  length_gt: Float
+
+  """All values greater than or equal the given value."""
+  length_gte: Float
+  width: Float
+
+  """All values that are not equal to given value."""
+  width_not: Float
+
+  """All values that are contained in given list."""
+  width_in: [Float!]
+
+  """All values that are not contained in given list."""
+  width_not_in: [Float!]
+
+  """All values less than the given value."""
+  width_lt: Float
+
+  """All values less than or equal the given value."""
+  width_lte: Float
+
+  """All values greater than the given value."""
+  width_gt: Float
+
+  """All values greater than or equal the given value."""
+  width_gte: Float
+}
+
+input AccessorySizeWhereUniqueInput {
+  id: ID
+}
+
+type ActiveAdminUser implements Node {
   id: ID!
   admin: User!
 }
@@ -1646,6 +1903,10 @@ input AdminActionLogWhereInput {
 
 input AdminActionLogWhereUniqueInput {
   actionId: Int
+}
+
+type AggregateAccessorySize {
+  count: Int!
 }
 
 type AggregateActiveAdminUser {
@@ -5055,6 +5316,7 @@ type Category implements Node {
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   children(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category!]
   updatedAt: DateTime
+  productType: ProductType
 }
 
 """A connection to a list of items."""
@@ -5074,6 +5336,7 @@ input CategoryCreateInput {
   image: Json
   description: String
   visible: Boolean
+  productType: ProductType
   products: ProductCreateManyWithoutCategoryInput
   children: CategoryCreateManyInput
 }
@@ -5100,6 +5363,7 @@ input CategoryCreateWithoutProductsInput {
   image: Json
   description: String
   visible: Boolean
+  productType: ProductType
   children: CategoryCreateManyInput
 }
 
@@ -5127,6 +5391,8 @@ enum CategoryOrderByInput {
   visible_DESC
   updatedAt_ASC
   updatedAt_DESC
+  productType_ASC
+  productType_DESC
 }
 
 type CategoryPreviousValues {
@@ -5137,6 +5403,7 @@ type CategoryPreviousValues {
   description: String
   visible: Boolean!
   updatedAt: DateTime
+  productType: ProductType
 }
 
 input CategoryScalarWhereInput {
@@ -5334,6 +5601,16 @@ input CategoryScalarWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  productType: ProductType
+
+  """All values that are not equal to given value."""
+  productType_not: ProductType
+
+  """All values that are contained in given list."""
+  productType_in: [ProductType!]
+
+  """All values that are not contained in given list."""
+  productType_not_in: [ProductType!]
 }
 
 type CategorySubscriptionPayload {
@@ -5379,6 +5656,7 @@ input CategoryUpdateDataInput {
   image: Json
   description: String
   visible: Boolean
+  productType: ProductType
   products: ProductUpdateManyWithoutCategoryInput
   children: CategoryUpdateManyInput
 }
@@ -5389,6 +5667,7 @@ input CategoryUpdateInput {
   image: Json
   description: String
   visible: Boolean
+  productType: ProductType
   products: ProductUpdateManyWithoutCategoryInput
   children: CategoryUpdateManyInput
 }
@@ -5399,6 +5678,7 @@ input CategoryUpdateManyDataInput {
   image: Json
   description: String
   visible: Boolean
+  productType: ProductType
 }
 
 input CategoryUpdateManyInput {
@@ -5419,6 +5699,7 @@ input CategoryUpdateManyMutationInput {
   image: Json
   description: String
   visible: Boolean
+  productType: ProductType
 }
 
 input CategoryUpdateManyWithWhereNestedInput {
@@ -5446,6 +5727,7 @@ input CategoryUpdateWithoutProductsDataInput {
   image: Json
   description: String
   visible: Boolean
+  productType: ProductType
   children: CategoryUpdateManyInput
 }
 
@@ -5665,6 +5947,16 @@ input CategoryWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  productType: ProductType
+
+  """All values that are not equal to given value."""
+  productType_not: ProductType
+
+  """All values that are contained in given list."""
+  productType_in: [ProductType!]
+
+  """All values that are not contained in given list."""
+  productType_not_in: [ProductType!]
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
@@ -14391,6 +14683,7 @@ type Mutation {
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
   createUser(data: UserCreateInput!): User!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
+  createAccessorySize(data: AccessorySizeCreateInput!): AccessorySize!
   createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
   createImage(data: ImageCreateInput!): Image!
   createProduct(data: ProductCreateInput!): Product!
@@ -14463,6 +14756,7 @@ type Mutation {
   updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateProductVariant(data: ProductVariantUpdateInput!, where: ProductVariantWhereUniqueInput!): ProductVariant
+  updateAccessorySize(data: AccessorySizeUpdateInput!, where: AccessorySizeWhereUniqueInput!): AccessorySize
   updatePaymentPlan(data: PaymentPlanUpdateInput!, where: PaymentPlanWhereUniqueInput!): PaymentPlan
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
@@ -14535,6 +14829,7 @@ type Mutation {
   deletePhysicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   deleteUser(where: UserWhereUniqueInput!): User
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
+  deleteAccessorySize(where: AccessorySizeWhereUniqueInput!): AccessorySize
   deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   deleteImage(where: ImageWhereUniqueInput!): Image
   deleteProduct(where: ProductWhereUniqueInput!): Product
@@ -14607,6 +14902,7 @@ type Mutation {
   upsertPhysicalProduct(where: PhysicalProductWhereUniqueInput!, create: PhysicalProductCreateInput!, update: PhysicalProductUpdateInput!): PhysicalProduct!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
+  upsertAccessorySize(where: AccessorySizeWhereUniqueInput!, create: AccessorySizeCreateInput!, update: AccessorySizeUpdateInput!): AccessorySize!
   upsertPaymentPlan(where: PaymentPlanWhereUniqueInput!, create: PaymentPlanCreateInput!, update: PaymentPlanUpdateInput!): PaymentPlan!
   upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
@@ -14677,6 +14973,7 @@ type Mutation {
   updateManyPhysicalProducts(data: PhysicalProductUpdateManyMutationInput!, where: PhysicalProductWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyProductVariants(data: ProductVariantUpdateManyMutationInput!, where: ProductVariantWhereInput): BatchPayload!
+  updateManyAccessorySizes(data: AccessorySizeUpdateManyMutationInput!, where: AccessorySizeWhereInput): BatchPayload!
   updateManyPaymentPlans(data: PaymentPlanUpdateManyMutationInput!, where: PaymentPlanWhereInput): BatchPayload!
   updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
@@ -14749,6 +15046,7 @@ type Mutation {
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
+  deleteManyAccessorySizes(where: AccessorySizeWhereInput): BatchPayload!
   deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
   deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
@@ -27524,6 +27822,7 @@ type Query {
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
+  accessorySizes(where: AccessorySizeWhereInput, orderBy: AccessorySizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AccessorySize]!
   paymentPlans(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PaymentPlan]!
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
@@ -27596,6 +27895,7 @@ type Query {
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   user(where: UserWhereUniqueInput!): User
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
+  accessorySize(where: AccessorySizeWhereUniqueInput!): AccessorySize
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   image(where: ImageWhereUniqueInput!): Image
   product(where: ProductWhereUniqueInput!): Product
@@ -27668,6 +27968,7 @@ type Query {
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
+  accessorySizesConnection(where: AccessorySizeWhereInput, orderBy: AccessorySizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AccessorySizeConnection!
   paymentPlansConnection(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PaymentPlanConnection!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
@@ -32039,6 +32340,7 @@ type Size implements Node {
   productType: ProductType
   top: TopSize
   bottom: BottomSize
+  accessory: AccessorySize
   display: String!
   type: SizeType
 }
@@ -32061,6 +32363,7 @@ input SizeCreateInput {
   type: SizeType
   top: TopSizeCreateOneInput
   bottom: BottomSizeCreateOneInput
+  accessory: AccessorySizeCreateOneInput
 }
 
 input SizeCreateManyInput {
@@ -32297,6 +32600,7 @@ enum SizeType {
   EU
   JP
   Letter
+  Universal
 }
 
 input SizeUpdateDataInput {
@@ -32306,6 +32610,7 @@ input SizeUpdateDataInput {
   type: SizeType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
+  accessory: AccessorySizeUpdateOneInput
 }
 
 input SizeUpdateInput {
@@ -32315,6 +32620,7 @@ input SizeUpdateInput {
   type: SizeType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
+  accessory: AccessorySizeUpdateOneInput
 }
 
 input SizeUpdateManyDataInput {
@@ -32524,6 +32830,7 @@ input SizeWhereInput {
   type_not_in: [SizeType!]
   top: TopSizeWhereInput
   bottom: BottomSizeWhereInput
+  accessory: AccessorySizeWhereInput
 }
 
 input SizeWhereUniqueInput {
@@ -33456,6 +33763,7 @@ type Subscription {
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
+  accessorySize(where: AccessorySizeSubscriptionWhereInput): AccessorySizeSubscriptionPayload
   paymentPlan(where: PaymentPlanSubscriptionWhereInput): PaymentPlanSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
@@ -38147,6 +38455,15 @@ export const Prisma = makePrismaBindingClass<BindingConstructor<Prisma>>({typeDe
  * Types
 */
 
+export type AccessorySizeOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'bridge_ASC' |
+  'bridge_DESC' |
+  'length_ASC' |
+  'length_DESC' |
+  'width_ASC' |
+  'width_DESC'
+
 export type ActiveAdminUserOrderByInput =   'id_ASC' |
   'id_DESC'
 
@@ -38347,7 +38664,9 @@ export type CategoryOrderByInput =   'id_ASC' |
   'visible_ASC' |
   'visible_DESC' |
   'updatedAt_ASC' |
-  'updatedAt_DESC'
+  'updatedAt_DESC' |
+  'productType_ASC' |
+  'productType_DESC'
 
 export type CollectionOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -39369,7 +39688,8 @@ export type SizeType =   'WxL' |
   'US' |
   'EU' |
   'JP' |
-  'Letter'
+  'Letter' |
+  'Universal'
 
 export type SmsReceiptOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -39552,6 +39872,109 @@ export type WarehouseLocationOrderByInput =   'id_ASC' |
 export type WarehouseLocationType =   'Conveyor' |
   'Rail' |
   'Bin'
+
+export interface AccessorySizeCreateInput {
+  id?: ID_Input | null
+  bridge?: Float | null
+  length?: Float | null
+  width?: Float | null
+}
+
+export interface AccessorySizeCreateOneInput {
+  create?: AccessorySizeCreateInput | null
+  connect?: AccessorySizeWhereUniqueInput | null
+}
+
+export interface AccessorySizeSubscriptionWhereInput {
+  AND?: AccessorySizeSubscriptionWhereInput[] | AccessorySizeSubscriptionWhereInput | null
+  OR?: AccessorySizeSubscriptionWhereInput[] | AccessorySizeSubscriptionWhereInput | null
+  NOT?: AccessorySizeSubscriptionWhereInput[] | AccessorySizeSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: AccessorySizeWhereInput | null
+}
+
+export interface AccessorySizeUpdateDataInput {
+  bridge?: Float | null
+  length?: Float | null
+  width?: Float | null
+}
+
+export interface AccessorySizeUpdateInput {
+  bridge?: Float | null
+  length?: Float | null
+  width?: Float | null
+}
+
+export interface AccessorySizeUpdateManyMutationInput {
+  bridge?: Float | null
+  length?: Float | null
+  width?: Float | null
+}
+
+export interface AccessorySizeUpdateOneInput {
+  create?: AccessorySizeCreateInput | null
+  connect?: AccessorySizeWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: AccessorySizeUpdateDataInput | null
+  upsert?: AccessorySizeUpsertNestedInput | null
+}
+
+export interface AccessorySizeUpsertNestedInput {
+  update: AccessorySizeUpdateDataInput
+  create: AccessorySizeCreateInput
+}
+
+export interface AccessorySizeWhereInput {
+  AND?: AccessorySizeWhereInput[] | AccessorySizeWhereInput | null
+  OR?: AccessorySizeWhereInput[] | AccessorySizeWhereInput | null
+  NOT?: AccessorySizeWhereInput[] | AccessorySizeWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  bridge?: Float | null
+  bridge_not?: Float | null
+  bridge_in?: Float[] | Float | null
+  bridge_not_in?: Float[] | Float | null
+  bridge_lt?: Float | null
+  bridge_lte?: Float | null
+  bridge_gt?: Float | null
+  bridge_gte?: Float | null
+  length?: Float | null
+  length_not?: Float | null
+  length_in?: Float[] | Float | null
+  length_not_in?: Float[] | Float | null
+  length_lt?: Float | null
+  length_lte?: Float | null
+  length_gt?: Float | null
+  length_gte?: Float | null
+  width?: Float | null
+  width_not?: Float | null
+  width_in?: Float[] | Float | null
+  width_not_in?: Float[] | Float | null
+  width_lt?: Float | null
+  width_lte?: Float | null
+  width_gt?: Float | null
+  width_gte?: Float | null
+}
+
+export interface AccessorySizeWhereUniqueInput {
+  id?: ID_Input | null
+}
 
 export interface ActiveAdminUserCreateInput {
   id?: ID_Input | null
@@ -41165,6 +41588,7 @@ export interface CategoryCreateInput {
   image?: Json | null
   description?: String | null
   visible?: Boolean | null
+  productType?: ProductType | null
   products?: ProductCreateManyWithoutCategoryInput | null
   children?: CategoryCreateManyInput | null
 }
@@ -41191,6 +41615,7 @@ export interface CategoryCreateWithoutProductsInput {
   image?: Json | null
   description?: String | null
   visible?: Boolean | null
+  productType?: ProductType | null
   children?: CategoryCreateManyInput | null
 }
 
@@ -41264,6 +41689,10 @@ export interface CategoryScalarWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
+  productType?: ProductType | null
+  productType_not?: ProductType | null
+  productType_in?: ProductType[] | ProductType | null
+  productType_not_in?: ProductType[] | ProductType | null
 }
 
 export interface CategorySubscriptionWhereInput {
@@ -41283,6 +41712,7 @@ export interface CategoryUpdateDataInput {
   image?: Json | null
   description?: String | null
   visible?: Boolean | null
+  productType?: ProductType | null
   products?: ProductUpdateManyWithoutCategoryInput | null
   children?: CategoryUpdateManyInput | null
 }
@@ -41293,6 +41723,7 @@ export interface CategoryUpdateInput {
   image?: Json | null
   description?: String | null
   visible?: Boolean | null
+  productType?: ProductType | null
   products?: ProductUpdateManyWithoutCategoryInput | null
   children?: CategoryUpdateManyInput | null
 }
@@ -41303,6 +41734,7 @@ export interface CategoryUpdateManyDataInput {
   image?: Json | null
   description?: String | null
   visible?: Boolean | null
+  productType?: ProductType | null
 }
 
 export interface CategoryUpdateManyInput {
@@ -41323,6 +41755,7 @@ export interface CategoryUpdateManyMutationInput {
   image?: Json | null
   description?: String | null
   visible?: Boolean | null
+  productType?: ProductType | null
 }
 
 export interface CategoryUpdateManyWithWhereNestedInput {
@@ -41350,6 +41783,7 @@ export interface CategoryUpdateWithoutProductsDataInput {
   image?: Json | null
   description?: String | null
   visible?: Boolean | null
+  productType?: ProductType | null
   children?: CategoryUpdateManyInput | null
 }
 
@@ -41444,6 +41878,10 @@ export interface CategoryWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
+  productType?: ProductType | null
+  productType_not?: ProductType | null
+  productType_in?: ProductType[] | ProductType | null
+  productType_not_in?: ProductType[] | ProductType | null
   products_every?: ProductWhereInput | null
   products_some?: ProductWhereInput | null
   products_none?: ProductWhereInput | null
@@ -53396,6 +53834,7 @@ export interface SizeCreateInput {
   type?: SizeType | null
   top?: TopSizeCreateOneInput | null
   bottom?: BottomSizeCreateOneInput | null
+  accessory?: AccessorySizeCreateOneInput | null
 }
 
 export interface SizeCreateManyInput {
@@ -53482,6 +53921,7 @@ export interface SizeUpdateDataInput {
   type?: SizeType | null
   top?: TopSizeUpdateOneInput | null
   bottom?: BottomSizeUpdateOneInput | null
+  accessory?: AccessorySizeUpdateOneInput | null
 }
 
 export interface SizeUpdateInput {
@@ -53491,6 +53931,7 @@ export interface SizeUpdateInput {
   type?: SizeType | null
   top?: TopSizeUpdateOneInput | null
   bottom?: BottomSizeUpdateOneInput | null
+  accessory?: AccessorySizeUpdateOneInput | null
 }
 
 export interface SizeUpdateManyDataInput {
@@ -53605,6 +54046,7 @@ export interface SizeWhereInput {
   type_not_in?: SizeType[] | SizeType | null
   top?: TopSizeWhereInput | null
   bottom?: BottomSizeWhereInput | null
+  accessory?: AccessorySizeWhereInput | null
 }
 
 export interface SizeWhereUniqueInput {
@@ -56090,6 +56532,46 @@ export interface Node {
   id: ID_Output
 }
 
+export interface AccessorySize extends Node {
+  id: ID_Output
+  bridge?: Float | null
+  length?: Float | null
+  width?: Float | null
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface AccessorySizeConnection {
+  pageInfo: PageInfo
+  edges: Array<AccessorySizeEdge | null>
+  aggregate: AggregateAccessorySize
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface AccessorySizeEdge {
+  node: AccessorySize
+  cursor: String
+}
+
+export interface AccessorySizePreviousValues {
+  id: ID_Output
+  bridge?: Float | null
+  length?: Float | null
+  width?: Float | null
+}
+
+export interface AccessorySizeSubscriptionPayload {
+  mutation: MutationType
+  node?: AccessorySize | null
+  updatedFields?: Array<String> | null
+  previousValues?: AccessorySizePreviousValues | null
+}
+
 export interface ActiveAdminUser extends Node {
   id: ID_Output
   admin: User
@@ -56218,6 +56700,10 @@ export interface AdminActionLogSubscriptionPayload {
   node?: AdminActionLog | null
   updatedFields?: Array<String> | null
   previousValues?: AdminActionLogPreviousValues | null
+}
+
+export interface AggregateAccessorySize {
+  count: Int
 }
 
 export interface AggregateActiveAdminUser {
@@ -56817,6 +57303,7 @@ export interface Category extends Node {
   products?: Array<Product> | null
   children?: Array<Category> | null
   updatedAt?: DateTime | null
+  productType?: ProductType | null
 }
 
 /*
@@ -56846,6 +57333,7 @@ export interface CategoryPreviousValues {
   description?: String | null
   visible: Boolean
   updatedAt?: DateTime | null
+  productType?: ProductType | null
 }
 
 export interface CategorySubscriptionPayload {
@@ -59318,6 +59806,7 @@ export interface Size extends Node {
   productType?: ProductType | null
   top?: TopSize | null
   bottom?: BottomSize | null
+  accessory?: AccessorySize | null
   display: String
   type?: SizeType | null
 }

@@ -878,6 +878,9 @@ export class ProductService {
         value: variant.internalSizeName || "",
         ...pick(variant, ["waist", "rise", "hem", "inseam"]),
       },
+      accessorySizeData: type === "Accessory" && {
+        ...pick(variant, ["bridge", "length", "width"]),
+      },
       sizeType: variant.internalSizeType,
     })
 
