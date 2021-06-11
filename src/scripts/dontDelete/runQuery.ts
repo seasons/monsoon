@@ -3,9 +3,9 @@ import "module-alias/register"
 import * as util from "util"
 
 import { PrismaSelect } from "@paljs/plugins"
-import { Prisma } from "@prisma/client"
+import { Prisma, prisma } from "@prisma/client"
+import cuid from "cuid"
 import { head } from "lodash"
-import cuid from 'cuid'
 import zipcodes from "zipcodes"
 
 import { DripService } from "../../modules/Drip/services/drip.service"
@@ -24,42 +24,11 @@ const context = {
 
 const run = async () => {
   const ps = new PrismaService()
-<<<<<<< Updated upstream
-  const status = "Completed"
-  const _latestReservation = await ps.client2.reservation.findFirst({
-    where: {
-      customer: {
-        id: "ck2gf2ri406e507578uvm2nk5",
-      },
-      status,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    select: Prisma.validator<Prisma.ReservationSelect>()({
-      id: true,
-      products: {
-        select: {
-          id: true,
-          seasonsUID: true,
-          inventoryStatus: true,
-          productStatus: true,
-          productVariant: { select: { id: true } },
-        },
-      },
-      receivedAt: true,
-      status: true,
-      reservationNumber: true,
-      createdAt: true,
-    }),
-  })
-  console.dir(_latestReservation)
-=======
   const txn1 = ps.client2.product.upsert({
-    where: { slug: "test-slug" },
+    where: { slug: "test-slug3" },
     create: {
       buyNewEnabled: true,
-      slug: "test-slug",
+      slug: "test-slug3",
       name: "test-prod",
       functions: {
         connectOrCreate: {
@@ -67,6 +36,9 @@ const run = async () => {
           create: { name: "yo-func" },
         },
       },
+      brand: { connect: { id: "ck2ze90tf0pj50734abl5rs4y" } },
+      color: { connect: { id: "ck2f763vs00w70757akr02h8b" } },
+      category: { connect: { id: "ck2ze98ur0pqq0734jofkk8xv" } },
     },
     update: {
       buyNewEnabled: false,
@@ -75,18 +47,29 @@ const run = async () => {
   const prodVarId = cuid()
   const txn2 = ps.client2.productVariant.create({
     data: {
-      id: prodVarId
-      sku: "test-sku-1",
-      productID: "test-slug",
-      product: { connect: { slug: "test-slug" } },
+      id: prodVarId,
+      sku: "test-sku-3",
+      productID: "test-slug3",
+      product: { connect: { slug: "test-slug3" } },
       total: 1,
       reservable: 0,
       reserved: 0,
       nonReservable: 1,
       stored: 0,
-      offloaded: 0
+      offloaded: 0,
+      displayShort: "yo-momma",
     },
   })
->>>>>>> Stashed changes
+  const txn3 = ps.client2.physicalProduct.create({
+    data: {
+      productVariant: { connect: { id: prodVarId } },
+      seasonsUID: "test-sku-3-yo",
+      inventoryStatus: "NonReservable",
+      productStatus: "New",
+      sequenceNumber: 9000,
+    },
+  })
+
+  await ps.client2.$transaction([txn1, txn2, txn3])
 }
 run()

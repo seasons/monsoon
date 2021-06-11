@@ -123,20 +123,19 @@ export class ProductVariantMutationsResolver {
       inputs
     )
 
-    const variants = await Promise.all(
-      inputs.map(async (input, index) => {
-        return this.productService.deepUpsertProductVariant({
-          sequenceNumbers: sequenceNumbers[index],
-          variant: input,
-          colorCode: product.color.colorCode,
-          productSlug: productID,
-          retailPrice: product.retailPrice,
-          status: product.status,
-          type: product.type,
-        })
+    const variantPromises = inputs.map(async (input, index) => {
+      return this.productService.getDeepUpsertProductVariantPromises({
+        sequenceNumbers: sequenceNumbers[index],
+        variant: input,
+        colorCode: product.color.colorCode,
+        productSlug: productID,
+        retailPrice: product.retailPrice,
+        status: product.status,
+        type: product.type,
       })
-    )
-    return variants
+    })
+    // TODO: Fix so it only returns physical products
+    return await this.prisma.client2.$transaction(variantPromises)
   }
 
   @Mutation()

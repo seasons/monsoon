@@ -157,6 +157,7 @@ model Category {
   image                        String?
   visible                      Boolean
   updatedAt                    DateTime?                     @updatedAt
+  productType                  String?
   products                     Product[]
   productMaterialCategories    ProductMaterialCategory[]
   warehouseLocationConstraints WarehouseLocationConstraint[]
@@ -611,7 +612,7 @@ model PhysicalProduct {
   dateOrdered             DateTime?
   dateReceived            DateTime?
   unitCost                Float?
-  barcoded                Boolean                        @default(value: false)
+  barcoded                Boolean?
   priceId                 String?                        @map("price") @db.VarChar(25)
   price                   PhysicalProductPrice?          @relation(fields: [priceId], references: [id])
   reports                 PhysicalProductQualityReport[]
@@ -620,7 +621,7 @@ model PhysicalProduct {
   packages                Package[]
   reservationsAllProducts Reservation[]                  @relation("ReservationToAllProducts")
   reservationsNewProducts Reservation[]                  @relation("ReservationToNewProducts")
-  reservationsReturnedProducts Reservation[]             @relation("ReservationToReturnedProducts")
+  reservationsReturnedProducts Reservation[] @relation("ReservationToReturnedProducts")
 
   // Should be a singleton. Will get fixed with full prisma2 migration
   productVariant ProductVariant[]
@@ -667,14 +668,14 @@ model Product {
   status                      String?
   createdAt                   DateTime                 @default(now())
   updatedAt                   DateTime                 @updatedAt
-  categoryId                  String?                  @map("category") @db.VarChar(25)
-  category                    Category?                @relation(fields: [categoryId], references: [id])
-  colorId                     String?                  @map("color") @db.VarChar(25)
-  color                       Color?                   @relation("ColorToProduct_color", fields: [colorId], references: [id])
+  categoryId                  String                   @map("category") @db.VarChar(25)
+  category                    Category                 @relation(fields: [categoryId], references: [id])
+  colorId                     String                   @map("color") @db.VarChar(25)
+  color                       Color                    @relation("ColorToProduct_color", fields: [colorId], references: [id])
   secondaryColorId            String?                  @map("secondaryColor") @db.VarChar(25)
   secondaryColor              Color?                   @relation("ColorToProduct_secondaryColor", fields: [secondaryColorId], references: [id])
-  brandId                     String?                  @map("brand") @db.VarChar(25)
-  brand                       Brand?                   @relation(fields: [brandId], references: [id])
+  brandId                     String                   @map("brand") @db.VarChar(25)
+  brand                       Brand                    @relation(fields: [brandId], references: [id])
   type                        String?
   modelSizeId                 String?                  @map("modelSize") @db.VarChar(25)
   modelSize                   Size?                    @relation(fields: [modelSizeId], references: [id])
@@ -727,7 +728,6 @@ model Product_styles {
 
   @@id([nodeId, position])
 }
-
 
 model ProductMaterialCategory {
   id             String    @id @default(cuid()) @db.VarChar(25)
@@ -986,7 +986,7 @@ model ReservationFeedback {
   rating        String?
   userId        String?                  @map("user") @db.VarChar(25)
   user          User?                    @relation(fields: [userId], references: [id])
-  createdAt     DateTime                 @default(now())
+  createdAt     DateTime
   updatedAt     DateTime                 @updatedAt
   reservationId String?                  @map("reservation") @db.VarChar(25)
   reservation   Reservation?             @relation(fields: [reservationId], references: [id])
@@ -1072,6 +1072,14 @@ model ShopifyProductVariantSelectedOption {
 
   // Should be singleton. Will be fixed in full prisma2 migration
   shopifyProductVariant ShopifyProductVariant[] @relation("ShopifyProductVariantToVariantSelectedOption")
+}
+
+enum SizeType {
+  WxL
+  US
+  EU
+  JP
+  Letter
 }
 
 model Size {
@@ -1161,7 +1169,7 @@ model StylePreferences_styles {
 
 model SyncTiming {
   id        String   @id @default(cuid()) @db.VarChar(25)
-  createdAt DateTime @default(now())
+  createdAt DateTime
   updatedAt DateTime @updatedAt
   detail    String
   type      String
@@ -1265,7 +1273,7 @@ model UTMData {
   campaign  String?
   term      String?
   content   String?
-  createdAt DateTime  @default(now())
+  createdAt DateTime  @default(now()) 
   updatedAt DateTime  @updatedAt
   customer  Customer?
 }

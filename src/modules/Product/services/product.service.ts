@@ -2,8 +2,19 @@ import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.servic
 import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
-import { BagItem, Brand, Prisma, Season } from "@prisma/client"
-import { Customer, Product, ProductTier, Tag } from "@prisma/client"
+import {
+  BagItem,
+  Brand,
+  Customer,
+  PhysicalProduct,
+  Prisma,
+  PrismaPromise,
+  Product,
+  ProductTier,
+  ProductVariant,
+  Season,
+  Tag,
+} from "@prisma/client"
 import {
   BottomSizeType,
   ID_Input,
@@ -14,12 +25,13 @@ import {
   ProductType,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
+  SizeType,
 } from "@prisma1/index"
 import { Product as PrismaBindingProduct } from "@prisma1/prisma.binding"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
-import { head, pick } from "lodash"
+import { flatten, head, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -190,31 +202,117 @@ export class ProductService {
       input.createNew
     )
 
-    // Get the functionIDs which we will connect to the product
-    const functionIDs = await this.upsertFunctions(input.functions)
-
-    // functions: { connectOrCreate: input.functions.map(functionName => ({create: {name: functionName}, where: {name: functionName}}))
-    const _product = await this.prisma.client2.product.upsert({
-      create: {
-        slug,
-        name: "yo",
-        buyNewEnabled: false,
-        functions: {
-          connectOrCreate: input.functions.map(name => ({
-            create: { name },
-            where: { name },
-          })),
-        },
-      },
-      update: { slug },
+    const prodForSlug = await this.prisma.client2.product.findUnique({
       where: { slug },
+      select: { id: true, season: { select: { id: true } } },
     })
 
-    const { season } = input
-    const productSeason =
-      season && (await this.upsertProductSeason(season, slug))
+    this.validateUpsertSeasonInput(input.season)
 
-    // Store images and get their record ids to connect to the product
+    const {
+      wearableSeasons,
+      internalSeasonSeasonCode,
+      internalSeasonYear,
+      vendorSeasonSeasonCode,
+      vendorSeasonYear,
+    } = input.season
+
+    const existingInternalSeason =
+      !!internalSeasonSeasonCode &&
+      (await this.prisma.client2.season.findFirst({
+        where: {
+          year: internalSeasonYear,
+          seasonCode: internalSeasonSeasonCode,
+        },
+        select: { id: true },
+      }))
+    const existingVendorSeason =
+      !!vendorSeasonSeasonCode &&
+      (await this.prisma.client2.season.findFirst({
+        where: {
+          year: vendorSeasonYear,
+          seasonCode: vendorSeasonSeasonCode,
+        },
+        select: { id: true },
+      }))
+    const _commonData = {
+      slug,
+      ...pick(input, [
+        "name",
+        "type",
+        "description",
+        "retailPrice",
+        "status",
+        "season",
+        "architecture",
+        "photographyStatus",
+        "buyNewEnabled",
+      ]),
+      functions: {
+        connectOrCreate: input.functions.map(name => ({
+          create: { name },
+          where: { name },
+        })),
+      },
+      brand: {
+        connect: { id: input.brandID },
+      },
+      category: {
+        connect: { id: input.categoryID },
+      },
+      materialCategory: input.materialCategorySlug && {
+        connect: { slug: input.materialCategorySlug },
+      },
+      model: model && {
+        connect: { id: model.id },
+      },
+      color: {
+        connect: { colorCode: input.colorCode },
+      },
+      secondaryColor: input.secondaryColorCode && {
+        connect: { colorCode: input.secondaryColorCode },
+      },
+    }
+    const createSeasonInput = {
+      wearableSeasons: this.queryUtils.createScalarListMutateInput(
+        wearableSeasons,
+        "",
+        "create"
+      ),
+      internalSeason: {
+        connectOrCreate: {
+          where: { id: existingInternalSeason?.id },
+          create: {
+            year: internalSeasonYear,
+            seasonCode: internalSeasonSeasonCode,
+          },
+        },
+      },
+      vendorSeason: {
+        connectOrCreate: {
+          where: { id: existingVendorSeason?.id },
+          create: {
+            year: vendorSeasonYear,
+            seasonCode: vendorSeasonSeasonCode,
+          },
+        },
+      },
+    }
+    const updateSeasonInput = {
+      upsert: {
+        create: createSeasonInput,
+        update: {
+          wearableSeasons: this.queryUtils.createScalarListMutateInput(
+            wearableSeasons,
+            prodForSlug?.season?.id || "",
+            "update"
+          ),
+          internalSeason: createSeasonInput.internalSeason,
+          vendorSeason: createSeasonInput.vendorSeason,
+        },
+      },
+    }
+
     const imageDatas: ImageData[] = await Promise.all(
       input.images.map((image, index) => {
         const s3ImageName = this.productUtils.getProductImageName(
@@ -228,127 +326,114 @@ export class ProductService {
         })
       })
     )
-    const imageIDs = await this.productUtils.getImageIDs(imageDatas, slug)
 
-    // Deep upsert the model size
-    let modelSize
-    if (input.modelSizeDisplay && input.modelSizeName) {
-      modelSize = await this.productUtils.upsertModelSize({
-        slug,
-        type: input.type,
-        modelSizeDisplay: input.modelSizeDisplay,
-        sizeType: input.modelSizeType,
-      })
-    }
-
-    // Create all necessary tag records
-    const tagIDs = await this.upsertTags(input.tags)
-
-    const prodForSlug = await this.prisma.client2.product.findUnique({
-      where: { slug },
-      select: { id: true },
-    })
-    const commonData = {
+    const modelSizeMutateData = {
       slug,
-      ...pick(input, [
-        "name",
-        "type",
-        "description",
-        "retailPrice",
-        "status",
-        "season",
-        "architecture",
-        "photographyStatus",
-        "buyNewEnabled",
-      ]),
-      season: productSeason && { connect: { id: productSeason.id } },
-      brand: {
-        connect: { id: input.brandID },
-      },
-      category: {
-        connect: { id: input.categoryID },
-      },
-      images: {
-        connect: imageIDs,
-      },
-      materialCategory: input.materialCategorySlug && {
-        connect: { slug: input.materialCategorySlug },
-      },
-      model: model && {
-        connect: { id: model.id },
-      },
-      modelSize: modelSize && {
-        connect: { id: modelSize.id },
-      },
-      color: {
-        connect: { colorCode: input.colorCode },
-      },
-      secondaryColor: input.secondaryColorCode && {
-        connect: { colorCode: input.secondaryColorCode },
-      },
-      tags: {
-        connect: tagIDs,
-      },
-      functions: {
-        connect: functionIDs,
-      },
+      productType: input.type,
+      display: input.modelSizeDisplay,
+      type: input.modelSizeType,
     }
-    const createData = Prisma.validator<Prisma.ProductCreateInput>()({
-      ...commonData,
-      styles: this.queryUtils.createScalarListMutateInput(
-        input?.styles,
-        prodForSlug?.id,
-        "create"
-      ),
-      innerMaterials: this.queryUtils.createScalarListMutateInput(
-        input.innerMaterials,
-        prodForSlug?.id,
-        "create"
-      ),
-      outerMaterials: this.queryUtils.createScalarListMutateInput(
-        input.outerMaterials,
-        prodForSlug?.id,
-        "create"
-      ),
-    })
-    const updateData = Prisma.validator<Prisma.ProductUpdateInput>()({
-      ...commonData,
-      styles: this.queryUtils.createScalarListMutateInput<any>(
-        input?.styles,
-        prodForSlug?.id,
-        "update"
-      ),
-      innerMaterials: this.queryUtils.createScalarListMutateInput<any>(
-        input.innerMaterials,
-        prodForSlug?.id,
-        "update"
-      ),
-      outerMaterials: this.queryUtils.createScalarListMutateInput<any>(
-        input.outerMaterials,
-        prodForSlug?.id,
-        "update"
-      ),
-    })
-    const product = await this.prisma.client2.product.upsert({
-      create: createData,
-      update: updateData,
+    const productPromise = this.prisma.client2.product.upsert({
+      create: {
+        ..._commonData,
+        slug,
+        name: "yo",
+        buyNewEnabled: false,
+        season: {
+          connectOrCreate: {
+            where: { id: prodForSlug?.season?.id },
+            create: createSeasonInput,
+          },
+        },
+        images: {
+          connectOrCreate: imageDatas.map(a => ({
+            where: { url: a.url },
+            create: { ...a, title: slug },
+          })),
+        },
+        modelSize: {
+          connectOrCreate: {
+            where: { slug },
+            create: modelSizeMutateData,
+          },
+        },
+        tags: {
+          connectOrCreate: input.tags.map(tag => ({
+            where: { name: tag },
+            create: { name: tag },
+          })),
+        },
+        styles: this.queryUtils.createScalarListMutateInput(
+          input?.styles,
+          prodForSlug?.id,
+          "create"
+        ),
+        innerMaterials: this.queryUtils.createScalarListMutateInput(
+          input.innerMaterials,
+          prodForSlug?.id,
+          "create"
+        ),
+        outerMaterials: this.queryUtils.createScalarListMutateInput(
+          input.outerMaterials,
+          prodForSlug?.id,
+          "create"
+        ),
+      },
+      update: {
+        ..._commonData,
+        season: updateSeasonInput,
+        images: {
+          upsert: imageDatas.map(a => ({
+            where: { url: a.url },
+            create: { ...a, title: slug },
+            update: { ...a, title: slug },
+          })),
+        },
+        modelSize: {
+          upsert: {
+            create: modelSizeMutateData,
+            update: modelSizeMutateData,
+          },
+        },
+        tags: {
+          upsert: input.tags.map(tag => ({
+            create: { name: tag },
+            update: { name: tag },
+          })),
+        },
+        styles: this.queryUtils.createScalarListMutateInput<any>(
+          input?.styles,
+          prodForSlug?.id,
+          "update"
+        ),
+        innerMaterials: this.queryUtils.createScalarListMutateInput<any>(
+          input.innerMaterials,
+          prodForSlug?.id,
+          "update"
+        ),
+        outerMaterials: this.queryUtils.createScalarListMutateInput<any>(
+          input.outerMaterials,
+          prodForSlug?.id,
+          "update"
+        ),
+      },
       where: { slug },
     })
 
     // Add the product tier
-    const tier = await this.getProductTier(product)
-    await this.prisma.client2.product.update({
-      where: { id: product.id },
-      data: { tier: { connect: { id: tier.id } } },
-    })
+    // const tier = await this.getProductTier(product)
+    // await this.prisma.client2.product.update({
+    //   where: { id: product.id },
+    //   data: { tier: { connect: { id: tier.id } } },
+    // })
 
     const sequenceNumbers = await this.physicalProductUtils.groupedSequenceNumbers(
       input.variants
     )
 
-    await Promise.all(
+    const variantAndPhysicalProductPromises = flatten(
       input.variants.map((a, i) => {
-        return this.deepUpsertProductVariant({
+        return this.getDeepUpsertProductVariantPromises({
           sequenceNumbers: sequenceNumbers[i],
           variant: a,
           productSlug: slug,
@@ -362,7 +447,12 @@ export class ProductService {
           ]),
         })
       })
-    )
+    ) as PrismaPromise<ProductVariant | PhysicalProduct>[]
+    const [product, ...records] = await this.prisma.client2.$transaction([
+      productPromise,
+      ...variantAndPhysicalProductPromises,
+    ])
+
     return await this.prisma.client2.product.findUnique({
       where: { id: product.id },
       select,
@@ -885,7 +975,7 @@ export class ProductService {
    * @param retailPrice: retailPrice of the product variant
    * @param productSlug: slug of the parent product
    */
-  async deepUpsertProductVariant({
+  getDeepUpsertProductVariantPromises({
     sequenceNumbers,
     variant,
     type,
@@ -905,68 +995,65 @@ export class ProductService {
     status: ProductStatus
     buyUsedEnabled?: boolean
     buyUsedPrice?: number
-  }) {
-    const internalSize = await this.productUtils.deepUpsertSize({
-      slug: `${variant.sku}-internal`,
-      type,
+  }): PrismaPromise<ProductVariant | PhysicalProduct>[] {
+    const shopifyProductVariantCreateData = !!variant.shopifyProductVariant
+      ?.externalId
+      ? {
+          shopifyProductVariant: {
+            connect: variant.shopifyProductVariant,
+          },
+        }
+      : {}
+    const shopifyProductVariantUpdateData = !!variant.shopifyProductVariant
+      ?.externalId
+      ? {
+          shopifyProductVariant: {
+            connect: variant.shopifyProductVariant,
+          },
+        }
+      : !!variant.shopifyProductVariant
+      ? {
+          shopifyProductVariant: {
+            disconnect: true,
+          },
+        }
+      : {}
+
+    const internalSizeSlug = `${variant.sku}-internal`
+    const internalSizeCommonData = {
+      slug: internalSizeSlug,
+      productType: type,
       display: variant.internalSizeName,
-      topSizeData: type === "Top" && {
-        // TODO: letter is deprecated, can eventually remove
-        letter: (variant.internalSizeName as LetterSize) || null,
-        ...pick(variant, ["sleeve", "shoulder", "chest", "neck", "length"]),
-      },
-      bottomSizeData: type === "Bottom" && {
-        // TODO: type and value are deprecated, can eventually remove
-        type: (variant.internalSizeType as BottomSizeType) || null,
-        value: variant.internalSizeName || "",
-        ...pick(variant, ["waist", "rise", "hem", "inseam"]),
-      },
-      sizeType: variant.internalSizeType,
-    })
-
-    const manufacturerSizeIDs = await this.productVariantService.getManufacturerSizeIDs(
-      variant,
-      type
+      type: variant.internalSizeType,
+    }
+    const topSizeData = {
+      letter: (variant.internalSizeName as LetterSize) || null,
+      ...pick(variant, "sleeve", "shoulder", "chest", "neck", "length"),
+    }
+    const bottomSizeData = {
+      type: (variant.internalSizeType as BottomSizeType) || null,
+      value: variant.internalSizeName || "",
+      ...pick(variant, ["waist", "rise", "hem", "inseam"]),
+    }
+    const displayShort = this.calculateVariantDisplayShort(
+      !!variant.manufacturerSizeNames
+        ? {
+            display: head(variant.manufacturerSizeNames),
+            type: variant.manufacturerSizeType,
+            productType: type,
+          }
+        : {},
+      {
+        type: variant.internalSizeType,
+        display: variant.internalSizeName,
+      }
     )
-
-    const displayShort = await this.productUtils.getVariantDisplayShort(
-      manufacturerSizeIDs,
-      internalSize.id
-    )
-
-    const shopifyProductVariant = variant.shopifyProductVariant
-    const shopifyProductVariantCreateData =
-      shopifyProductVariant && shopifyProductVariant.externalId
-        ? {
-            shopifyProductVariant: {
-              connect: variant.shopifyProductVariant,
-            },
-          }
-        : {}
-    const shopifyProductVariantUpdateData =
-      shopifyProductVariant && shopifyProductVariant.externalId
-        ? {
-            shopifyProductVariant: {
-              connect: variant.shopifyProductVariant,
-            },
-          }
-        : shopifyProductVariant
-        ? {
-            shopifyProductVariant: {
-              disconnect: true,
-            },
-          }
-        : {}
-
     const commonData = {
       displayShort,
       productID: productSlug,
       product: { connect: { slug: productSlug } },
       color: {
         connect: { colorCode },
-      },
-      internalSize: {
-        connect: { id: internalSize.id },
       },
       retailPrice,
       reservable: status === "Available" ? variant.total : 0,
@@ -976,62 +1063,130 @@ export class ProductService {
       stored: 0,
       ...pick(variant, ["weight", "total", "sku"]),
     }
-
-    // Prisma validator craps out on these two
-    const createData = {
-      ...commonData,
-      ...shopifyProductVariantCreateData,
-      manufacturerSizes: manufacturerSizeIDs && {
-        connect: manufacturerSizeIDs,
-      },
-    }
-    const updateData = {
-      ...commonData,
-      ...shopifyProductVariantUpdateData,
-      manufacturerSizes: manufacturerSizeIDs && {
-        set: manufacturerSizeIDs,
-      },
-    }
-
-    const prodVar = await this.prisma.client2.productVariant.upsert({
+    const prodVarPromise = this.prisma.client2.productVariant.upsert({
       where: { sku: variant.sku },
-      create: createData,
-      update: updateData,
-    })
-
-    variant.physicalProducts.forEach(async (physProdData, index) => {
-      const sequenceNumber = sequenceNumbers[index]
-      const price =
-        buyUsedPrice == null && buyUsedEnabled == null
-          ? physProdData.price || variant.price
-          : { buyUsedEnabled, buyUsedPrice }
-      await this.prisma.client2.physicalProduct.upsert({
-        where: { seasonsUID: physProdData.seasonsUID },
-        create: {
-          ...physProdData,
-          sequenceNumber,
-          productVariant: { connect: { id: prodVar.id } },
-          ...(price && {
-            price: {
-              create: price,
-            },
-          }),
-        },
-        update: {
-          ...physProdData,
-          ...(price && {
-            price: {
-              upsert: {
-                update: price,
-                create: price,
+      create: {
+        ...commonData,
+        ...shopifyProductVariantCreateData,
+        internalSize: {
+          connectOrCreate: {
+            where: { slug: internalSizeSlug },
+            create: {
+              ...internalSizeCommonData,
+              top: type === "Top" && {
+                create: topSizeData,
+              },
+              bottom: type === "Bottom" && {
+                create: bottomSizeData,
               },
             },
+          },
+        },
+        manufacturerSizes: {
+          connectOrCreate: variant.manufacturerSizeNames?.map(sizeValue => {
+            const slug = `${variant.sku}-manufacturer-${type}-${sizeValue}`
+            const sizeType = variant.manufacturerSizeType
+            return {
+              where: { slug },
+              create: {
+                slug,
+                type: sizeType,
+                display: sizeValue,
+                productType: type,
+              },
+            }
           }),
         },
-      })
+      },
+      update: {
+        ...commonData,
+        ...shopifyProductVariantUpdateData,
+        internalSize: {
+          update: {
+            ...internalSizeCommonData,
+            top: type === "Top" && { update: topSizeData },
+            bottom: type === "Bottom" && { update: bottomSizeData },
+          },
+        },
+        manufacturerSizes: {
+          update: variant.manufacturerSizeNames?.map(sizeValue => {
+            const slug = `${variant.sku}-manufacturer-${type}-${sizeValue}`
+            const sizeType = variant.manufacturerSizeType
+            return {
+              where: { slug },
+              data: {
+                slug,
+                type: sizeType,
+                display: sizeValue,
+                productType: type,
+              },
+            }
+          }),
+        },
+      },
     })
 
-    return prodVar
+    const physicalProductPromises = variant.physicalProducts.map(
+      (physProdData, index) => {
+        const sequenceNumber = sequenceNumbers[index]
+        const price =
+          buyUsedPrice == null && buyUsedEnabled == null
+            ? physProdData.price || variant.price
+            : { buyUsedEnabled, buyUsedPrice }
+        return this.prisma.client2.physicalProduct.upsert({
+          where: { seasonsUID: physProdData.seasonsUID },
+          create: {
+            ...physProdData,
+            sequenceNumber,
+            productVariant: { connect: { sku: variant.sku } },
+            ...(price && {
+              price: {
+                create: price,
+              },
+            }),
+          },
+          update: {
+            ...physProdData,
+            ...(price && {
+              price: {
+                upsert: {
+                  update: price,
+                  create: price,
+                },
+              },
+            }),
+          },
+        })
+      }
+    )
+
+    return [prodVarPromise, ...physicalProductPromises]
+  }
+
+  calculateVariantDisplayShort(manufacturerSizeData, internalSizeData) {
+    const { display, type, productType } = manufacturerSizeData
+
+    let displayShort
+    if (display) {
+      displayShort = this.productUtils.coerceSizeDisplayIfNeeded(
+        display,
+        type as SizeType,
+        productType as ProductType
+      )
+      if (type === "WxL") {
+        displayShort = displayShort.split("x")[0]
+      }
+    } else {
+      const {
+        type: internalSizeType,
+        display: internalSizeDisplay,
+      } = internalSizeData
+      if (internalSizeType === "WxL") {
+        displayShort = internalSizeDisplay.split("x")[0]
+      }
+    }
+
+    return displayShort
   }
 
   async getProductTier(prod: Product): Promise<ProductTier> {
