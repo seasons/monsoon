@@ -85,7 +85,7 @@ export class ReservationUtilsService {
     returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields
   ) {
     const returnedPhysicalProductIDs: {
-      id: ID_Input
+      id: string
     }[] = returnedPhysicalProducts.map(p => {
       return { id: p.id }
     })
@@ -97,7 +97,7 @@ export class ReservationUtilsService {
     )
 
     if (prismaReservation.returnedPackage != null) {
-      await this.prisma.client.updatePackage({
+      await this.prisma.client2.package.update({
         data: {
           items: { connect: returnedPhysicalProductIDs },
           weight,
@@ -105,7 +105,7 @@ export class ReservationUtilsService {
         where: { id: prismaReservation.returnedPackage.id },
       })
     } else {
-      await this.prisma.client.updateReservation({
+      await this.prisma.client2.reservation.update({
         data: {
           returnedPackage: {
             update: {
