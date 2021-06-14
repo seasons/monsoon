@@ -116,6 +116,7 @@ type Size {
   slug: String!
   productType: ProductType
   top: TopSize
+  accessory: AccessorySize
   bottom: BottomSize
   display: String!
   type: SizeType
@@ -205,12 +206,17 @@ input ShopifyProductVariantInput {
 
 input UpsertVariantInput {
   sku: String!
+  # Shared
+  weight: Float
+  length: Float
+  # Accessory Size values
+  bridge: Float
+  width: Float
   # Top Size values
   sleeve: Float
   shoulder: Float
   chest: Float
   neck: Float
-  length: Float
   # Bottom Size values
   internalSizeName: String!
   internalSizeType: SizeType
@@ -220,7 +226,6 @@ input UpsertVariantInput {
   rise: Float
   hem: Float
   inseam: Float
-  weight: Float
   total: Int!
   physicalProducts: [UpsertPhysicalProductInput!]!
   price: ProductVariantPriceInput
@@ -234,6 +239,9 @@ input UpdateVariantInput {
   manufacturerSizeNames: [String!]
   manufacturerSizeType: SizeType
   internalSizeType: SizeType
+  # Accessory Size values
+  bridge: Float
+  width: Float
   # Top Size values
   sleeve: Float
   shoulder: Float

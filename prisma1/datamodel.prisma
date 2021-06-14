@@ -139,6 +139,7 @@ enum SizeType {
   EU
   JP
   Letter
+  Universal
 }
 
 enum QuestionType {
@@ -335,6 +336,7 @@ type Category {
   products: [Product!]!
   children: [Category!]! @relation(name: "CategoryToChildren")
   updatedAt: DateTime @updatedAt
+  productType: ProductType
 }
 
 type Color {
@@ -1334,6 +1336,13 @@ type TopSize {
   length: Float
 }
 
+type AccessorySize {
+  id: ID! @id
+  bridge: Float
+  length: Float
+  width: Float
+}
+
 type BottomSize {
   id: ID! @id
   type: BottomSizeType
@@ -1350,6 +1359,7 @@ type Size {
   productType: ProductType
   top: TopSize
   bottom: BottomSize
+  accessory: AccessorySize
   display: String!
   type: SizeType
 }

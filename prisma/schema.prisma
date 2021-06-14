@@ -7,6 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model AccessorySize {
+  id       String   @id @default(cuid()) @db.VarChar(25)
+  bridge   Float?
+  length   Float?
+  width    Float?
+
+  // Do not use. Artifact of prisma2 migration
+  Sizes Size[]
+}
+
 model ActiveAdminUser {
   id      String  @id @default(cuid()) @db.VarChar(25)
   adminId String? @map("admin") @db.VarChar(25)
@@ -155,6 +165,7 @@ model Category {
   name                         String                        @unique
   description                  String?
   image                        String?
+  productType                  String?
   visible                      Boolean
   updatedAt                    DateTime?                     @updatedAt
   products                     Product[]
@@ -1071,6 +1082,8 @@ model Size {
   top                         TopSize?         @relation(fields: [topId], references: [id])
   bottomId                    String?          @map("bottom") @db.VarChar(25)
   bottom                      BottomSize?      @relation(fields: [bottomId], references: [id])
+  accessoryId                 String?          @map("accessory") @db.VarChar(25)
+  accessory                   AccessorySize?   @relation(fields: [accessoryId], references: [id])
   type                        String?
   product                     Product[]
   productVariantsInternal     ProductVariant[]
