@@ -532,25 +532,6 @@ export class ProductUtilsService {
     return prismaImages.map(image => ({ id: image.id }))
   }
 
-  async upsertModelSize({
-    slug,
-    type,
-    modelSizeDisplay,
-    sizeType,
-  }: {
-    slug: string
-    type: ProductType
-    modelSizeDisplay: string
-    sizeType?: SizeType
-  }) {
-    return await this.deepUpsertSize({
-      slug,
-      type,
-      display: modelSizeDisplay,
-      sizeType,
-    })
-  }
-
   async upsertMaterialCategory(material, category) {
     const data = {
       slug: material.model.name,

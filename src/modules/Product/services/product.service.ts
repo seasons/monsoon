@@ -270,7 +270,6 @@ export class ProductService {
       outerMaterials: createScalarListCreateInput(input.outerMaterials),
     })
 
-    // TODO: Update the size data to also account for accesories
     const productPromise = this.prisma.client2.product.create({
       data: createData,
     })
@@ -872,6 +871,7 @@ export class ProductService {
       value: variant.internalSizeName || "",
       ...pick(variant, ["waist", "rise", "hem", "inseam"]),
     }
+    const accessorySizeData = pick(variant, ["bridge", "length", "width"])
     const displayShort = this.calculateVariantDisplayShort(
       !!variant.manufacturerSizeNames
         ? {
@@ -900,10 +900,6 @@ export class ProductService {
       stored: 0,
       ...pick(variant, ["weight", "total", "sku"]),
     }
-    // TODO: Update to account for accesory size
-    //       accessorySizeData: type === "Accessory" && {
-    // ...pick(variant, ["bridge", "length", "width"]),
-    // },
     const createData = {
       ...commonData,
       ...shopifyProductVariantCreateData,
@@ -924,6 +920,8 @@ export class ProductService {
                     create: bottomSizeData,
                   }
                 : undefined,
+            accessory:
+              type === "Accessory" ? { create: accessorySizeData } : undefined,
           },
         },
       },
@@ -958,6 +956,10 @@ export class ProductService {
                 top: type === "Top" ? { update: topSizeData } : undefined,
                 bottom:
                   type === "Bottom" ? { update: bottomSizeData } : undefined,
+                accessory:
+                  type === "Accessory"
+                    ? { update: accessorySizeData }
+                    : undefined,
               },
             },
             manufacturerSizes: {
