@@ -226,29 +226,26 @@ export class ProductVariantService {
     ]
   }
 
-  async updateCountsForStatusChange({
-    id,
+  updateCountsForStatusChange({
+    productVariant,
     oldInventoryStatus,
     newInventoryStatus,
   }: {
-    id: string
+    productVariant: {
+      reservable: number
+      reserved: number
+      nonReservable: number
+    }
     oldInventoryStatus: InventoryStatus
     newInventoryStatus: InventoryStatus
   }) {
-    const productVariant = await this.prisma.client2.productVariant.findUnique({
-      where: { id },
-    })
-
     const oldInventoryCountKey = lowerFirst(oldInventoryStatus)
     const newInventoryCountKey = lowerFirst(newInventoryStatus)
 
-    return this.prisma.client2.productVariant.update({
-      where: { id },
-      data: {
-        [oldInventoryCountKey]: productVariant[oldInventoryCountKey] - 1,
-        [newInventoryCountKey]: productVariant[newInventoryCountKey] + 1,
-      },
-    })
+    return {
+      [oldInventoryCountKey]: productVariant[oldInventoryCountKey] - 1,
+      [newInventoryCountKey]: productVariant[newInventoryCountKey] + 1,
+    }
   }
 
   async getManufacturerSizeIDs(variant, type) {

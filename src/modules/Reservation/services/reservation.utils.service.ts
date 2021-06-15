@@ -62,24 +62,6 @@ export class ReservationUtilsService {
     return latestReservation
   }
 
-  async updateUsersBagItemsOnCompletedReservation(
-    prismaReservation: any,
-    returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields
-  ) {
-    return await this.prisma.client2.bagItem.deleteMany({
-      where: {
-        customer: prismaReservation.customer.id,
-        saved: false,
-        productVariant: {
-          id: {
-            in: returnedPhysicalProducts.map(p => p.productVariant.id),
-          },
-        },
-        status: "Reserved",
-      },
-    })
-  }
-
   async updateReturnPackageOnCompletedReservation(
     prismaReservation: any,
     returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields
