@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import {
   Order,
@@ -67,13 +68,13 @@ export class ProductVariantMutationsResolver {
   }
 
   @Mutation()
-  async addProductVariantWant(@Args() { variantID }, @User() user) {
+  async addProductVariantWant() {
     throw new Error(`Deprecated. Use product restock notification instead`)
   }
 
   @Mutation()
-  async updateProductVariant(@Args() { input }, @Info() info) {
-    return await this.productVariantService.updateProductVariant(input, info)
+  async updateProductVariant(@Args() { input }, @Select() select) {
+    return await this.productVariantService.updateProductVariant(input, select)
   }
 
   @Mutation()

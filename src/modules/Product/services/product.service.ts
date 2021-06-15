@@ -926,19 +926,12 @@ export class ProductService {
         },
       },
       manufacturerSizes: {
-        connectOrCreate: variant.manufacturerSizeNames?.map(sizeValue => {
-          const slug = `${variant.sku}-manufacturer-${type}-${sizeValue}`
-          const sizeType = variant.manufacturerSizeType
-          return {
-            where: { slug },
-            create: {
-              slug,
-              type: sizeType,
-              display: sizeValue,
-              productType: type,
-            },
-          }
-        }),
+        connectOrCreate: this.productUtils.getManufacturerSizeMutateInputs(
+          variant,
+          variant.manufacturerSizeNames,
+          type,
+          "connectOrCreate"
+        ),
       },
     }
     let prodVarPromise
@@ -963,19 +956,12 @@ export class ProductService {
               },
             },
             manufacturerSizes: {
-              update: variant.manufacturerSizeNames?.map(sizeValue => {
-                const slug = `${variant.sku}-manufacturer-${type}-${sizeValue}`
-                const sizeType = variant.manufacturerSizeType
-                return {
-                  where: { slug },
-                  data: {
-                    slug,
-                    type: sizeType,
-                    display: sizeValue,
-                    productType: type,
-                  },
-                }
-              }),
+              update: this.productUtils.getManufacturerSizeMutateInputs(
+                variant,
+                variant.manufacturerSizeNames,
+                type,
+                "update"
+              ),
             },
           },
         })

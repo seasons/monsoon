@@ -51,28 +51,10 @@ export class ProductUtilsService {
     return !!firstVariant ? this.getStyleCodeFromSKU(firstVariant.sku) : null
   }
 
-  async getVariantDisplayShort(
-    manufacturerSizeIDs = [],
-    internalSizeID
-  ): Promise<string> {
-    const select = Prisma.validator<Prisma.SizeSelect>()({
-      id: true,
-      display: true,
-      productType: true,
-      type: true,
-      bottom: { select: { id: true, value: true, type: true } },
-      top: { select: { id: true, letter: true } },
-    })
-
-    const _manufacturerSize = await this.prisma.client2.size.findFirst({
-      where: { id: { in: manufacturerSizeIDs.map(a => a?.id) } },
-      select,
-    })
-    const manufacturerSize = this.prisma.sanitizePayload(
-      _manufacturerSize,
-      "Size"
-    )
-
+  getVariantDisplayShort(
+    manufacturerSize: Pick<Size, "display" | "type" | "productType">,
+    internalSize: Pick<Size, "display" | "type">
+  ): string {
     // There *should* always be a manufacturer size display,
     // but just to be safe we fallback to internal size display
     let displayShort
@@ -86,10 +68,6 @@ export class ProductUtilsService {
         displayShort = displayShort.split("x")[0]
       }
     } else {
-      const internalSize = await this.prisma.client2.size.findUnique({
-        where: { id: internalSizeID },
-        select,
-      })
       displayShort = internalSize.display
 
       if (internalSize.type === "WxL") {
@@ -439,6 +417,30 @@ export class ProductUtilsService {
     )
   }
 
+  getManufacturerSizeMutateInputs(
+    variant: {
+      sku: string
+      manufacturerSizeType: string
+    },
+    manufacturerSizeNames,
+    type: ProductType,
+    mutateType: "update" | "connectOrCreate"
+  ) {
+    const dataKey = mutateType === "connectOrCreate" ? "create" : "data"
+    return manufacturerSizeNames?.map(sizeValue => {
+      const slug = `${variant.sku}-manufacturer-${type}-${sizeValue}`
+      const sizeType = variant.manufacturerSizeType
+      return {
+        where: { slug },
+        [dataKey]: {
+          slug,
+          type: sizeType,
+          display: sizeValue,
+          productType: type,
+        },
+      }
+    })
+  }
   async deepUpsertSize({
     slug,
     type,

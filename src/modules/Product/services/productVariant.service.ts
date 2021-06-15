@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common"
+import { Prisma, ProductVariant } from "@prisma/client"
 import {
   BottomSizeType,
   ID_Input,
   InventoryStatus,
   LetterSize,
   Product,
-  ProductVariant,
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
@@ -268,7 +268,7 @@ export class ProductVariantService {
     return IDs as { id: string }[]
   }
 
-  async updateProductVariant(input, info): Promise<ProductVariant> {
+  async updateProductVariant(input, select): Promise<ProductVariant> {
     const {
       id,
       productType,
@@ -277,88 +277,70 @@ export class ProductVariantService {
       shopifyProductVariant,
     } = input
 
-    const internalSize = await this.prisma.client
-      .productVariant({ id })
-      .internalSize()
-
-    if (!internalSize) {
-      return null
-    }
-    switch (productType) {
-      case "Accessory":
-        const accessorySizeValues = {
-          ...pick(input, ["bridge", "length", "width"]),
-        }
-        await this.prisma.client.updateSize({
-          data: { accessory: { update: accessorySizeValues } },
-          where: { id: internalSize.id },
-        })
-        break
-      case "Top":
-        const topSizeValues = {
-          ...pick(input, ["sleeve", "shoulder", "chest", "neck", "length"]),
-        }
-        await this.prisma.client.updateSize({
-          data: { top: { update: topSizeValues } },
-          where: { id: internalSize.id },
-        })
-        break
-      case "Bottom":
-        const bottomSizeValues = {
-          ...pick(input, ["waist", "rise", "hem", "inseam"]),
-        }
-        await this.prisma.client.updateSize({
-          data: { bottom: { update: bottomSizeValues } },
-          where: { id: internalSize.id },
-        })
-        break
-    }
-
-    const data = { weight } as any
-
-    const variantWithSku = await this.prisma.binding.query.productVariant(
-      { where: { id } },
-      `
-      {
-        id
-        sku
-      }
-    `
-    )
-
-    if (!!manufacturerSizeNames?.length) {
-      const variant = { ...input, sku: variantWithSku.sku }
-      const manufacturerSizeIDs = await this.getManufacturerSizeIDs(
-        variant,
-        productType
-      )
-      data.manufacturerSizes = {
-        set: manufacturerSizeIDs,
-      }
-      const displayShort = await this.productUtils.getVariantDisplayShort(
-        manufacturerSizeIDs,
-        internalSize.id
-      )
-      data.displayShort = displayShort
-    }
-
-    if (shopifyProductVariant) {
-      data.shopifyProductVariant = shopifyProductVariant.externalId
-        ? {
-            connect: { externalId: shopifyProductVariant.externalId },
-          }
-        : {
-            disconnect: true,
-          }
-    }
-
-    const prodVar = await this.prisma.client.updateProductVariant({
+    const _prodVar = await this.prisma.client2.productVariant.findUnique({
       where: { id },
-      data,
+      select: {
+        internalSize: { select: { id: true, display: true, type: true } },
+        id: true,
+        sku: true,
+      },
     })
-    return await this.prisma.binding.query.productVariant(
-      { where: { id: prodVar.id } },
-      info
-    )
+    const prodVar = this.prisma.sanitizePayload(_prodVar, "ProductVariant")
+
+    const topSizeValues = {
+      ...pick(input, ["sleeve", "shoulder", "chest", "neck", "length"]),
+    }
+    const accessorySizeValues = {
+      ...pick(input, ["bridge", "length", "width"]),
+    }
+    const bottomSizeValues = {
+      ...pick(input, ["waist", "rise", "hem", "inseam"]),
+    }
+    const manufacturerSizes =
+      manufacturerSizeNames?.length > 0
+        ? {
+            update: this.productUtils.getManufacturerSizeMutateInputs(
+              {
+                ...input,
+                sku: prodVar.sku,
+              },
+              manufacturerSizeNames,
+              productType,
+              "update"
+            ),
+          }
+        : undefined
+    const displayShort =
+      manufacturerSizeNames?.length > 0
+        ? this.productUtils.getVariantDisplayShort(
+            manufacturerSizes.update[0].data,
+            prodVar.internalSize
+          )
+        : undefined
+    const updateData = Prisma.validator<Prisma.ProductVariantUpdateInput>()({
+      internalSize: {
+        update: {
+          accessory:
+            productType === "Accessory"
+              ? { update: accessorySizeValues }
+              : undefined,
+          top: productType === "Top" ? { update: topSizeValues } : undefined,
+          bottom:
+            productType === "Bottom" ? { update: bottomSizeValues } : undefined,
+        },
+      },
+      manufacturerSizes,
+      displayShort,
+      shopifyProductVariant: !!shopifyProductVariant
+        ? !!shopifyProductVariant.externalId
+          ? { connect: { externalId: shopifyProductVariant.externalId } }
+          : { disconnect: true }
+        : undefined,
+      weight,
+    })
+    return (await this.prisma.client2.productVariant.update({
+      where: { id },
+      data: updateData,
+    })) as ProductVariant
   }
 }
