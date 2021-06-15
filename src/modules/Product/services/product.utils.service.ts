@@ -100,7 +100,7 @@ export class ProductUtilsService {
     return displayShort
   }
 
-  async getAllCategories(prod: Product): Promise<Category[]> {
+  async getAllCategoriesForProduct(prod: Product): Promise<Category[]> {
     const _prodWithCategory = await this.prisma.client2.product.findUnique({
       where: { id: prod.id },
       include: { category: true },
@@ -110,6 +110,16 @@ export class ProductUtilsService {
       "Product"
     )
     const thisCategory = prodWithCategory.category
+    return [...(await this.getAllParentCategories(thisCategory)), thisCategory]
+  }
+
+  async getAllCategoriesForCategory(category: {
+    id: string
+  }): Promise<Category[]> {
+    const _thisCategory = await this.prisma.client2.category.findUnique({
+      where: { id: category.id },
+    })
+    const thisCategory = this.prisma.sanitizePayload(_thisCategory, "Category")
     return [...(await this.getAllParentCategories(thisCategory)), thisCategory]
   }
 
@@ -594,5 +604,42 @@ export class ProductUtilsService {
 
   getStyleCodeFromSKU(sku) {
     return sku?.split("-")?.pop()
+  }
+
+  async getSKUData({ brandID, colorCode, productID }) {
+    const brand = await this.prisma.client2.brand.findUnique({
+      where: { id: brandID },
+      select: { brandCode: true },
+    })
+    const colorExists =
+      (await this.prisma.client2.color.count({
+        where: { colorCode },
+      })) > 0
+
+    if (!brand || !colorExists) {
+      return null
+    }
+
+    let styleNumber
+    if (!!productID) {
+      // valid style code if variants exist on the product, null otherwise
+      styleNumber = await this.getProductStyleCode(productID)
+      if (!styleNumber) {
+        throw new Error(`No style number found for productID: ${productID}`)
+      }
+    } else {
+      const allStyleCodesForBrand = (
+        await this.getAllStyleCodesForBrand(brandID)
+      ).sort()
+      const highestStyleNumber = Number(allStyleCodesForBrand.pop()) || 0
+      styleNumber = highestStyleNumber + 1
+    }
+
+    const styleCode = styleNumber.toString().padStart(3, "0")
+
+    return {
+      brandCode: brand.brandCode,
+      styleCode,
+    }
   }
 }

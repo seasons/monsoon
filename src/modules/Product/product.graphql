@@ -331,6 +331,7 @@ input ProductCreateInput {
   modelSizeDisplay: String
   modelSizeName: String
   modelSizeType: SizeType
+  externalURL: String
   name: String!
   outerMaterials: [String!]!
   productFit: ProductFit
@@ -369,7 +370,7 @@ input CustomProductUpdateInput {
   variants: ProductVariantUpdateManyWithoutProductInput
   publishedAt: DateTime
   photographyStatus: PhotographyStatus
-  styles: ProductUpdatestylesInput
+  styles: [CustomerStyle!]
   # Custom fields
   bottomSizeType: BottomSizeType
   functions: [String!]

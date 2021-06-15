@@ -168,7 +168,6 @@ model Category {
   productType                  String?
   visible                      Boolean
   updatedAt                    DateTime?                     @updatedAt
-  productType                  String?
   products                     Product[]
   productMaterialCategories    ProductMaterialCategory[]
   warehouseLocationConstraints WarehouseLocationConstraint[]
@@ -623,7 +622,7 @@ model PhysicalProduct {
   dateOrdered             DateTime?
   dateReceived            DateTime?
   unitCost                Float?
-  barcoded                Boolean?
+  barcoded                Boolean                        @default(value: false)
   priceId                 String?                        @map("price") @db.VarChar(25)
   price                   PhysicalProductPrice?          @relation(fields: [priceId], references: [id])
   reports                 PhysicalProductQualityReport[]

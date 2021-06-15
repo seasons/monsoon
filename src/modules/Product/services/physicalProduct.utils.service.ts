@@ -79,7 +79,7 @@ export class PhysicalProductUtilsService {
   }
 
   async getAllCategories(physProd: PhysicalProduct): Promise<Category[]> {
-    return await this.productUtils.getAllCategories(
+    return await this.productUtils.getAllCategoriesForProduct(
       await this.prisma.client2.product.findFirst({
         where: {
           variants: {
