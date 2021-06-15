@@ -1,4 +1,4 @@
-# import ProductVariant, Query, Mutation, UpsertVariantInput from "./productVariant.graphql"
+# import ProductVariant, Query, Mutation, CreateVariantInput from "./productVariant.graphql"
 # import PhysicalProduct, Query, Mutation from "./physicalProduct.graphql"
 
 type Query {
@@ -342,7 +342,7 @@ input ProductCreateInput {
   status: ProductStatus!
   tags: [String!]!
   type: ProductType!
-  variants: [UpsertVariantInput!]!
+  variants: [CreateVariantInput!]!
   styles: [CustomerStyle!]
 }
 

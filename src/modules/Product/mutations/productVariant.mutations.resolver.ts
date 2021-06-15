@@ -1,11 +1,9 @@
 import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
+import { ProductStatus, ProductType } from "@app/prisma"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import {
-  Order,
-  Product as PrismaBindingProduct,
-  ProductNotificationType,
-} from "@prisma1/prisma.binding"
+import { Color, Product } from "@prisma/client"
+import { ProductNotificationType } from "@prisma1/prisma.binding"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head } from "lodash"
 
@@ -78,20 +76,19 @@ export class ProductVariantMutationsResolver {
   }
 
   @Mutation()
-  async upsertProductVariants(@Args() { productID, inputs }, @Info() info) {
-    const product: PrismaBindingProduct = await this.prisma.binding.query.product(
-      { where: { slug: productID } },
-      `{
-          id
-          retailPrice
-          status
-          type
-          color {
-            id
-            colorCode
-          }
-        }`
-    )
+  async createProductVariants(@Args() { productID, inputs }, @Select() select) {
+    const product = (await this.prisma.client2.product.findUnique({
+      where: { slug: productID },
+      select: {
+        id: true,
+        retailPrice: true,
+        status: true,
+        type: true,
+        color: { select: { id: true, colorCode: true } },
+      },
+    })) as Pick<Product, "id" | "retailPrice" | "status" | "type"> & {
+      color: Pick<Color, "id" | "colorCode">
+    }
     if (!product || !product.status || !product.type) {
       return null
     }
@@ -101,18 +98,29 @@ export class ProductVariantMutationsResolver {
     )
 
     const variantPromises = inputs.map(async (input, index) => {
-      return this.productService.getMutateProductVariantPromises({
+      return this.productService.getCreateProductVariantPromises({
         sequenceNumbers: sequenceNumbers[index],
         variant: input,
         colorCode: product.color.colorCode,
         productSlug: productID,
         retailPrice: product.retailPrice,
-        status: product.status,
-        type: product.type,
+        status: product.status as ProductStatus,
+        type: product.type as ProductType,
       })
     })
-    // TODO: Fix so it only returns variants
-    return await this.prisma.client2.$transaction(variantPromises)
+    const results = await this.prisma.client2.$transaction(variantPromises)
+    const createdVariants = results.filter(a => !!a.sku)
+    const _variantsToReturn = await this.prisma.client2.productVariant.findMany(
+      {
+        where: { sku: { in: createdVariants.map(a => a.sku) } },
+        select,
+      }
+    )
+    const variantsToReturn = this.prisma.sanitizePayload(
+      _variantsToReturn,
+      "ProductVariant"
+    )
+    return variantsToReturn
   }
 
   @Mutation()

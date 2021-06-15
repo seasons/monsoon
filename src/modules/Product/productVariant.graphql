@@ -66,9 +66,9 @@ type Mutation {
   ): ProductVariantWant! @hasRole(roles: [Customer])
   updateProductVariant(input: UpdateVariantInput!): ProductVariant
     @hasRole(roles: [Admin])
-  upsertProductVariants(
+  createProductVariants(
     productID: ID!
-    inputs: [UpsertVariantInput!]!
+    inputs: [CreateVariantInput!]!
   ): [ProductVariant!] @hasRole(roles: [Admin])
   addPhysicalProductsToVariant(variantID: ID, count: Int): [ProductVariant!]
     @hasRole(roles: [Admin])
@@ -204,7 +204,7 @@ input ShopifyProductVariantInput {
   externalId: String
 }
 
-input UpsertVariantInput {
+input CreateVariantInput {
   sku: String!
   # Shared
   weight: Float

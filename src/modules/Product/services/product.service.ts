@@ -280,7 +280,7 @@ export class ProductService {
 
     const variantAndPhysicalProductPromises = flatten(
       input.variants.map((a, i) => {
-        return this.getMutateProductVariantPromises({
+        return this.getCreateProductVariantPromises({
           sequenceNumbers: sequenceNumbers[i],
           variant: a,
           productSlug: slug,
@@ -292,7 +292,6 @@ export class ProductService {
             "buyUsedEnabled",
             "buyUsedPrice",
           ]),
-          mutationType: "create",
         })
       })
     ) as PrismaPromise<ProductVariant | PhysicalProduct>[]
@@ -801,15 +800,14 @@ export class ProductService {
 
   // })
   /**
-   * Deep upserts a product variant, including deep upserts for the child size record
-   * and upsert for the child physical product records
-   * @param variant of type UpsertVariantInput from productVariant.graphql
+   * Creates product variants and their downstream physical products
+   * @param variant of type CreateVariantInput from productVariant.graphql
    * @param type type of the parent Product
    * @param colorID: colorID for the color record to attach
    * @param retailPrice: retailPrice of the product variant
    * @param productSlug: slug of the parent product
    */
-  getMutateProductVariantPromises({
+  getCreateProductVariantPromises({
     sequenceNumbers,
     variant,
     type,
@@ -819,7 +817,6 @@ export class ProductService {
     status,
     buyUsedEnabled,
     buyUsedPrice,
-    mutationType = "upsert",
   }: {
     sequenceNumbers
     variant
@@ -830,27 +827,12 @@ export class ProductService {
     status: ProductStatus
     buyUsedEnabled?: boolean
     buyUsedPrice?: number
-    mutationType?: "create" | "upsert"
   }): PrismaPromise<ProductVariant | PhysicalProduct>[] {
     const shopifyProductVariantCreateData = !!variant.shopifyProductVariant
       ?.externalId
       ? {
           shopifyProductVariant: {
             connect: variant.shopifyProductVariant,
-          },
-        }
-      : {}
-    const shopifyProductVariantUpdateData = !!variant.shopifyProductVariant
-      ?.externalId
-      ? {
-          shopifyProductVariant: {
-            connect: variant.shopifyProductVariant,
-          },
-        }
-      : !!variant.shopifyProductVariant
-      ? {
-          shopifyProductVariant: {
-            disconnect: true,
           },
         }
       : {}
@@ -885,7 +867,7 @@ export class ProductService {
         display: variant.internalSizeName,
       }
     )
-    const commonData = {
+    const createData = {
       displayShort,
       productID: productSlug,
       product: { connect: { slug: productSlug } },
@@ -899,9 +881,6 @@ export class ProductService {
       offloaded: 0,
       stored: 0,
       ...pick(variant, ["weight", "total", "sku"]),
-    }
-    const createData = {
-      ...commonData,
       ...shopifyProductVariantCreateData,
       internalSize: {
         connectOrCreate: {
@@ -934,43 +913,9 @@ export class ProductService {
         ),
       },
     }
-    let prodVarPromise
-    switch (mutationType) {
-      case "upsert":
-        prodVarPromise = this.prisma.client2.productVariant.upsert({
-          where: { sku: variant.sku },
-          create: createData,
-          update: {
-            ...commonData,
-            ...shopifyProductVariantUpdateData,
-            internalSize: {
-              update: {
-                ...internalSizeCommonData,
-                top: type === "Top" ? { update: topSizeData } : undefined,
-                bottom:
-                  type === "Bottom" ? { update: bottomSizeData } : undefined,
-                accessory:
-                  type === "Accessory"
-                    ? { update: accessorySizeData }
-                    : undefined,
-              },
-            },
-            manufacturerSizes: {
-              update: this.productUtils.getManufacturerSizeMutateInputs(
-                variant,
-                variant.manufacturerSizeNames,
-                type,
-                "update"
-              ),
-            },
-          },
-        })
-        break
-      case "create":
-        prodVarPromise = this.prisma.client2.productVariant.create({
-          data: createData,
-        })
-    }
+    let prodVarPromise = this.prisma.client2.productVariant.create({
+      data: createData,
+    })
 
     const physicalProductPromises = variant.physicalProducts.map(
       (physProdData, index) => {
@@ -991,30 +936,9 @@ export class ProductService {
             },
           }),
         })
-        let physProdPromise
-        switch (mutationType) {
-          case "upsert":
-            physProdPromise = this.prisma.client2.physicalProduct.upsert({
-              where: { seasonsUID: physProdData.seasonsUID },
-              create: createData,
-              update: {
-                ...physProdData,
-                ...(price && {
-                  price: {
-                    upsert: {
-                      update: price,
-                      create: price,
-                    },
-                  },
-                }),
-              },
-            })
-          case "create":
-            physProdPromise = this.prisma.client2.physicalProduct.create({
-              data: createData,
-            })
-        }
-        return physProdPromise
+        return this.prisma.client2.physicalProduct.create({
+          data: createData,
+        })
       }
     )
 
