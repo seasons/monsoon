@@ -26,30 +26,26 @@ export class ProductVariantService {
   ) {}
 
   async addPhysicalProducts(productVariantID: string, count: number) {
-    const productVariant = await this.prisma.client.productVariant({
-      id: productVariantID,
+    const productVariant = await this.prisma.client2.productVariant.findUnique({
+      where: { id: productVariantID },
+      select: { id: true, sku: true, total: true, nonReservable: true },
     })
-    const physicalProducts = await this.prisma.binding.query.physicalProducts(
+    const physicalProducts = await this.prisma.client2.physicalProduct.findMany(
       {
         where: {
           productVariant: {
-            id: productVariant.id,
+            every: { id: productVariant.id },
           },
         },
-      },
-      `{
-            id
-            seasonsUID
-            inventoryStatus
-            price {
-              id
-              buyUsedPrice
-              buyUsedEnabled
-            }
-            productVariant {
-                id
-            }
-        }`
+        select: {
+          id: true,
+          seasonsUID: true,
+          inventoryStatus: true,
+          price: {
+            select: { id: true, buyUsedEnabled: true, buyUsedPrice: true },
+          },
+        },
+      }
     )
 
     const SUIDs = []
@@ -65,9 +61,9 @@ export class ProductVariantService {
       buyUsedPrice: 0,
     }
 
-    const newPhysicalProducts = await Promise.all(
-      SUIDs.map(async (SUID, i) => {
-        return await this.prisma.client.createPhysicalProduct({
+    const physProdPromises = SUIDs.map((SUID, i) => {
+      return this.prisma.client2.physicalProduct.create({
+        data: {
           seasonsUID: SUID,
           productStatus: "New",
           inventoryStatus: "NonReservable",
@@ -76,29 +72,23 @@ export class ProductVariantService {
           price: {
             create: price,
           },
-        })
-      })
-    )
-
-    try {
-      await this.prisma.client.updateProductVariant({
-        where: {
-          id: productVariant.id,
-        },
-        data: {
-          total: productVariant.total + count,
-          nonReservable: productVariant.nonReservable + count,
         },
       })
-    } catch (err) {
-      // Makeshift rollback
-      for (const physProd of newPhysicalProducts) {
-        await this.prisma.client.deletePhysicalProduct({ id: physProd.id })
-      }
-      throw err
-    }
+    })
+    const prodVarPromise = this.prisma.client2.productVariant.update({
+      where: {
+        id: productVariant.id,
+      },
+      data: {
+        total: productVariant.total + count,
+        nonReservable: productVariant.nonReservable + count,
+      },
+    })
 
-    return newPhysicalProducts
+    await this.prisma.client2.$transaction([
+      ...physProdPromises,
+      prodVarPromise,
+    ])
   }
 
   async updateProductVariantCounts(

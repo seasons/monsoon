@@ -125,11 +125,14 @@ export class ProductVariantMutationsResolver {
 
   @Mutation()
   async addPhysicalProductsToVariant(
-    @Args() { variantID, count }: { variantID: string; count: number }
+    @Args() { variantID, count }: { variantID: string; count: number },
+    @Select() select
   ) {
-    return await this.productVariantService.addPhysicalProducts(
-      variantID,
-      count
-    )
+    await this.productVariantService.addPhysicalProducts(variantID, count)
+    const variant = await this.prisma.client2.productVariant.findUnique({
+      where: { id: variantID },
+      select,
+    })
+    return this.prisma.sanitizePayload(variant, "ProductVariant")
   }
 }
