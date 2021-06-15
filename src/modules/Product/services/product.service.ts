@@ -668,7 +668,7 @@ export class ProductService {
     const updateInput = {
       ...prismaTwoUpdateData,
       tier: { connect: { id: tier.id } },
-      functions: {
+      functions: functions && {
         connectOrCreate: functions.map(name => ({
           create: { name },
           where: { name },
@@ -678,7 +678,7 @@ export class ProductService {
           functions
         ).map(name => ({ name })),
       },
-      tags: {
+      tags: tags && {
         connectOrCreate: tags.map(tag => ({
           where: { name: tag },
           create: { name: tag },
@@ -695,7 +695,7 @@ export class ProductService {
         modelSizeType,
         modelSizeName,
       }),
-      season: {
+      season: season && {
         upsert: {
           ...(await this.getMutateSeasonOnProductInput(season, "create")),
           ...(await this.getMutateSeasonOnProductInput(
@@ -704,7 +704,7 @@ export class ProductService {
           )),
         },
       },
-      images: {
+      images: images && {
         set: imageUrls.map(url => ({
           url,
         })),
@@ -1196,32 +1196,30 @@ export class ProductService {
         })
       )
 
-      // Update statuses on downstream physical products
-      let numUnitsRestored = 0
-      for (const {
-        inventoryStatus,
-        seasonsUID,
-      } of this.productUtils.physicalProductsForProduct(
-        (productBeforeUpdate as unknown) as ProductWithPhysicalProducts
-      )) {
-        if (!["Offloaded", "Reserved"].includes(inventoryStatus)) {
-          numUnitsRestored++
-          promises.push(
-            this.prisma.client2.physicalProduct.update({
-              where: { seasonsUID },
-              data: { inventoryStatus: "NonReservable" },
-            })
-          )
-        }
-      }
-
-      // Update counts on downstream product variants
+      // Update statuses on downstream physical products as well as
+      // counts on product variants
       for (const prodVar of productBeforeUpdate.variants) {
+        const physicalProducts = prodVar.physicalProducts
+        const unitsToRestore = physicalProducts.filter(
+          a => !["Offloaded", "Reserved"].includes(a.inventoryStatus)
+        )
+        if (unitsToRestore.length === 0) {
+          continue
+        }
+
+        promises.push(
+          this.prisma.client2.physicalProduct.updateMany({
+            where: {
+              seasonsUID: { in: unitsToRestore.map(a => a.seasonsUID) },
+            },
+            data: { inventoryStatus: "NonReservable" },
+          })
+        )
         promises.push(
           this.prisma.client2.productVariant.update({
             where: { id: prodVar.id },
             data: {
-              nonReservable: numUnitsRestored,
+              nonReservable: unitsToRestore.length,
               stored: 0,
             },
           })
@@ -1268,39 +1266,36 @@ export class ProductService {
         })
       )
 
-      // Update statuses on downstream physical products
-      let numUnitsStored = 0
-      for (const {
-        inventoryStatus,
-        seasonsUID,
-      } of this.productUtils.physicalProductsForProduct(
-        (productBeforeUpdate as unknown) as ProductWithPhysicalProducts
-      )) {
-        if (!["Offloaded", "Reserved"].includes(inventoryStatus)) {
-          numUnitsStored++
-          promises.push(
-            this.prisma.client2.physicalProduct.update({
-              where: { seasonsUID },
-              data: { inventoryStatus: "Stored" },
-            })
-          )
-        }
-      }
-
-      // Update counts on downstream product variants
+      // Update statuses on downstream physical products as well as
+      // counts on product variants
       for (const prodVar of productBeforeUpdate.variants) {
+        const physicalProducts = prodVar.physicalProducts
+        const unitsToStore = physicalProducts.filter(
+          a => !["Offloaded", "Reserved"].includes(a.inventoryStatus)
+        )
+        if (unitsToStore.length === 0) {
+          continue
+        }
+
+        promises.push(
+          this.prisma.client2.physicalProduct.updateMany({
+            where: { seasonsUID: { in: unitsToStore.map(a => a.seasonsUID) } },
+            data: { inventoryStatus: "Stored" },
+          })
+        )
+        const data = {
+          nonReservable:
+            prodVar.total -
+            prodVar.offloaded -
+            prodVar.reserved -
+            unitsToStore.length,
+          stored: unitsToStore.length,
+          reservable: 0,
+        }
         promises.push(
           this.prisma.client2.productVariant.update({
             where: { id: prodVar.id },
-            data: {
-              nonReservable:
-                prodVar.total -
-                prodVar.offloaded -
-                prodVar.reserved -
-                numUnitsStored,
-              stored: numUnitsStored,
-              reservable: 0,
-            },
+            data,
           })
         )
       }
