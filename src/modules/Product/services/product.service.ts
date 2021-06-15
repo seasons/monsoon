@@ -26,7 +26,7 @@ import {
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { flatten, head, pick } from "lodash"
+import { difference, flatten, head, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -298,21 +298,15 @@ export class ProductService {
       })
     ) as PrismaPromise<ProductVariant | PhysicalProduct>[]
 
-    // TODO: Remove try-catch
-    try {
-      const [product, ...records] = await this.prisma.client2.$transaction([
-        productPromise,
-        ...variantAndPhysicalProductPromises,
-      ])
+    const [product] = await this.prisma.client2.$transaction([
+      productPromise,
+      ...variantAndPhysicalProductPromises,
+    ])
 
-      return await this.prisma.client2.product.findUnique({
-        where: { id: product.id },
-        select,
-      })
-    } catch (err) {
-      console.log(err)
-      return null
-    }
+    return await this.prisma.client2.product.findUnique({
+      where: { id: product.id },
+      select,
+    })
   }
 
   async saveProduct(item, save, select, customer) {
@@ -609,6 +603,8 @@ export class ProductService {
         color: { select: { id: true, name: true } },
         season: { select: { id: true } },
         category: { select: { id: true } },
+        functions: { select: { name: true } },
+        tags: { select: { name: true } },
       },
     })
     const product = this.prisma.sanitizePayload(_product, "Product")
@@ -660,7 +656,7 @@ export class ProductService {
     }
 
     const prismaTwoUpdateData = this.queryUtils.prismaOneToPrismaTwoMutateArgs(
-      updateData,
+      { ...updateData, styles: { set: updateData.styles } },
       product,
       "Product",
       "update"
@@ -669,54 +665,62 @@ export class ProductService {
       product.category,
       updateData.retailPrice
     )
+    const updateInput = {
+      ...prismaTwoUpdateData,
+      tier: { connect: { id: tier.id } },
+      functions: {
+        connectOrCreate: functions.map(name => ({
+          create: { name },
+          where: { name },
+        })),
+        disconnect: difference(
+          product.functions.map(a => a.name),
+          functions
+        ).map(name => ({ name })),
+      },
+      tags: {
+        connectOrCreate: tags.map(tag => ({
+          where: { name: tag },
+          create: { name: tag },
+        })),
+        disconnect: difference(
+          product.tags.map(a => a.name),
+          tags
+        ).map(name => ({ name })),
+      },
+      modelSize: this.createMutateModelSizeOnProductInput({
+        slug: product.slug,
+        type: product.type,
+        modelSizeDisplay,
+        modelSizeType,
+        modelSizeName,
+      }),
+      season: {
+        upsert: {
+          ...(await this.getMutateSeasonOnProductInput(season, "create")),
+          ...(await this.getMutateSeasonOnProductInput(
+            { ...season, seasonId: product.season?.id },
+            "update"
+          )),
+        },
+      },
+      images: {
+        set: imageUrls.map(url => ({
+          url,
+        })),
+      },
+      status,
+      photographyStatus,
+    }
+
     const productUpdatePromise = this.prisma.client2.product.update({
       where,
-      data: {
-        ...prismaTwoUpdateData,
-        tier: { connect: { id: tier.id } },
-        functions: {
-          connectOrCreate: functions.map(name => ({
-            create: { name },
-            where: { name },
-          })),
-          disconnect: functions.map(name => ({ name })),
-        },
-        tags: {
-          connectOrCreate: tags.map(tag => ({
-            where: { name: tag },
-            create: { name: tag },
-          })),
-          disconnect: tags.map(name => ({ name })),
-        },
-        modelSize: this.createMutateModelSizeOnProductInput({
-          slug: product.slug,
-          type: product.type,
-          modelSizeDisplay,
-          modelSizeType,
-          modelSizeName,
-        }),
-        season: {
-          upsert: {
-            create: await this.getMutateSeasonOnProductInput(season, "create"),
-            update: await this.getMutateSeasonOnProductInput(
-              { ...season, seasonId: product.season?.id },
-              "update"
-            ),
-          },
-        },
-        images: {
-          set: imageUrls.map(a => ({
-            url: a.url,
-          })),
-        },
-        status,
-        photographyStatus,
-      },
+      data: updateInput,
     })
 
     let physicalProductUpdatePromises = []
     if (buyUsedEnabled != null || buyUsedPrice != null) {
-      physicalProductUpdatePromises = product?.variants
+      physicalProductUpdatePromises = product.variants
         ?.flatMap(variant => variant.physicalProducts)
         ?.map(physicalProduct =>
           this.prisma.client2.physicalProduct.update({
