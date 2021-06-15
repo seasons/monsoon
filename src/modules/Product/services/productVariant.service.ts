@@ -39,8 +39,6 @@ export class ProductVariantService {
         },
         select: {
           id: true,
-          seasonsUID: true,
-          inventoryStatus: true,
           price: {
             select: { id: true, buyUsedEnabled: true, buyUsedPrice: true },
           },
