@@ -290,7 +290,7 @@ export class ProductVariantService {
           ...pick(input, ["bridge", "length", "width"]),
         }
         await this.prisma.client.updateSize({
-          data: { top: { update: accessorySizeValues } },
+          data: { accessory: { update: accessorySizeValues } },
           where: { id: internalSize.id },
         })
         break

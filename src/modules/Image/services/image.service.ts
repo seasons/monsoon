@@ -80,8 +80,8 @@ export class ImageService {
         {
           retina: true,
           fm: "webp",
-          updatedAt: updatedAtTimestamp,
           ...passedOptions,
+          updatedAt: updatedAtTimestamp,
         },
         identity
       )
