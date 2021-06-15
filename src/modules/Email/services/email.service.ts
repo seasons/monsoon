@@ -321,8 +321,8 @@ export class EmailService {
 
   async sendAdminConfirmationEmail(
     user: EmailUser,
-    returnedPhysicalProducts: PhysicalProduct[],
-    reservation: Reservation
+    returnedPhysicalProducts: { seasonsUID: string }[],
+    reservation: { reservationNumber: number }
   ) {
     const payload = await RenderEmail.adminReservationReturnConfirmation({
       name: user.firstName,
