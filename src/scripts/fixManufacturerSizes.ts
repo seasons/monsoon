@@ -21,6 +21,7 @@ const run = async () => {
         display
         productType
         type
+        slug
         bottom {
           id
           value
@@ -35,35 +36,18 @@ const run = async () => {
   )
 
   let count = 0
+  let total = productVariants.length
   for (const productVariant of productVariants) {
+    console.log(`${count++} of ${total}`)
     const size = head(productVariant.manufacturerSizes)
-    if (!size) {
-      return console.log("???", productVariant.id)
-    }
-    // Fix for JP sizes
-    if (size.type === "EU" && size.productType === "Bottom") {
-      const display = productUtils.coerceSizeDisplayIfNeeded(
-        size.display,
-        size.type,
-        size.productType
-      )
-      if (display !== productVariant.displayShort) {
-        console.log(
-          "Updating: ",
-          productVariant.id,
-          " / Old display ",
-          productVariant.displayShort,
-          " / New display ",
-          display
-        )
-        // await ps.client.updateProductVariant({
-        //   where: { id: productVariant.id },
-        //   data: {
-        //     displayShort: display,
-        //   },
-        // })
-      }
-    }
+    const oldSlug = size.slug
+    console.log(oldSlug)
+    // const oldSlugParts = oldSlug.split("-")
+    // const newSlug = oldSlugParts.splice(0, oldSlugParts.length - 1).join("-")
+    // await ps.client2.size.update({
+    //   where: { slug: oldSlug },
+    //   data: { slug: newSlug },
+    // })
   }
 }
 

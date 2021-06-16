@@ -293,8 +293,7 @@ export class ProductVariantService {
           },
           head(manufacturerSizeNames),
           productType,
-          "update",
-          head(prodVar.manufacturerSizes).slug
+          "update"
         ),
       }
 

@@ -424,24 +424,20 @@ export class ProductUtilsService {
     },
     manufacturerSizeName,
     type: ProductType,
-    mutateType: "update" | "create",
-    existingSlug = ""
+    mutateType: "update" | "create"
   ) {
-    if (mutateType === "update" && existingSlug === "") {
-      throw new Error(`Must pass existing slug if updating size`)
-    }
     const sizeType = variant.manufacturerSizeType
-    const newSlug = `${variant.sku}-manufacturer-${sizeType}-${manufacturerSizeName}`
+    const slug = `${variant.sku}-manufacturer-${sizeType}`
 
     const data = {
-      slug: newSlug,
+      slug,
       type: sizeType,
       display: manufacturerSizeName,
       productType: type,
     }
     return mutateType === "update"
       ? {
-          where: { slug: existingSlug },
+          where: { slug },
           data,
         }
       : data
