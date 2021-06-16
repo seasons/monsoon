@@ -26,6 +26,7 @@ export class BrandService {
     // Store images and get their record ids to connect to the brand
     const { logoID, imageIDs } = await this.utils.createBrandImages(input)
 
+    // TODO: Generate slick rail warehouse locations for this brand when we create it
     return await this.prisma.client.createBrand({
       ...input,
       styles: input?.styles?.length > 0 ? { set: input.styles } : { set: [] },

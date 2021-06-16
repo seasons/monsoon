@@ -1,15 +1,15 @@
 import { Injectable } from "@nestjs/common"
+import { Prisma, ProductVariant } from "@prisma/client"
 import {
   BottomSizeType,
   ID_Input,
   InventoryStatus,
   LetterSize,
   Product,
-  ProductVariant,
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
+import { difference, head, lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
 
 import {
   PhysicalProductUtilsService,
@@ -26,30 +26,24 @@ export class ProductVariantService {
   ) {}
 
   async addPhysicalProducts(productVariantID: string, count: number) {
-    const productVariant = await this.prisma.client.productVariant({
-      id: productVariantID,
+    const productVariant = await this.prisma.client2.productVariant.findUnique({
+      where: { id: productVariantID },
+      select: { id: true, sku: true, total: true, nonReservable: true },
     })
-    const physicalProducts = await this.prisma.binding.query.physicalProducts(
+    const physicalProducts = await this.prisma.client2.physicalProduct.findMany(
       {
         where: {
           productVariant: {
-            id: productVariant.id,
+            every: { id: productVariant.id },
           },
         },
-      },
-      `{
-            id
-            seasonsUID
-            inventoryStatus
-            price {
-              id
-              buyUsedPrice
-              buyUsedEnabled
-            }
-            productVariant {
-                id
-            }
-        }`
+        select: {
+          id: true,
+          price: {
+            select: { id: true, buyUsedEnabled: true, buyUsedPrice: true },
+          },
+        },
+      }
     )
 
     const SUIDs = []
@@ -65,9 +59,9 @@ export class ProductVariantService {
       buyUsedPrice: 0,
     }
 
-    const newPhysicalProducts = await Promise.all(
-      SUIDs.map(async (SUID, i) => {
-        return await this.prisma.client.createPhysicalProduct({
+    const physProdPromises = SUIDs.map((SUID, i) => {
+      return this.prisma.client2.physicalProduct.create({
+        data: {
           seasonsUID: SUID,
           productStatus: "New",
           inventoryStatus: "NonReservable",
@@ -76,29 +70,23 @@ export class ProductVariantService {
           price: {
             create: price,
           },
-        })
-      })
-    )
-
-    try {
-      await this.prisma.client.updateProductVariant({
-        where: {
-          id: productVariant.id,
-        },
-        data: {
-          total: productVariant.total + count,
-          nonReservable: productVariant.nonReservable + count,
         },
       })
-    } catch (err) {
-      // Makeshift rollback
-      for (const physProd of newPhysicalProducts) {
-        await this.prisma.client.deletePhysicalProduct({ id: physProd.id })
-      }
-      throw err
-    }
+    })
+    const prodVarPromise = this.prisma.client2.productVariant.update({
+      where: {
+        id: productVariant.id,
+      },
+      data: {
+        total: productVariant.total + count,
+        nonReservable: productVariant.nonReservable + count,
+      },
+    })
 
-    return newPhysicalProducts
+    await this.prisma.client2.$transaction([
+      ...physProdPromises,
+      prodVarPromise,
+    ])
   }
 
   async updateProductVariantCounts(
@@ -247,7 +235,7 @@ export class ProductVariantService {
     })
   }
 
-  async getManufacturerSizeIDs(variant, type) {
+  async getManufacturerSizeIDs(variant, type): Promise<{ id: string }[]> {
     const IDs =
       variant.manufacturerSizeNames &&
       (await Promise.all(
@@ -266,100 +254,91 @@ export class ProductVariantService {
           return { id: size.id }
         })
       ))
-    return IDs
+    return IDs as { id: string }[]
   }
 
-  async updateProductVariant(input, info): Promise<ProductVariant> {
+  async updateProductVariant(input, select): Promise<ProductVariant> {
     const {
       id,
       productType,
       weight,
+      manufacturerSizeType,
       manufacturerSizeNames,
       shopifyProductVariant,
     } = input
 
-    const internalSize = await this.prisma.client
-      .productVariant({ id })
-      .internalSize()
-
-    if (!internalSize) {
-      return null
-    }
-    switch (productType) {
-      case "Accessory":
-        const accessorySizeValues = {
-          ...pick(input, ["bridge", "length", "width"]),
-        }
-        await this.prisma.client.updateSize({
-          data: { accessory: { update: accessorySizeValues } },
-          where: { id: internalSize.id },
-        })
-        break
-      case "Top":
-        const topSizeValues = {
-          ...pick(input, ["sleeve", "shoulder", "chest", "neck", "length"]),
-        }
-        await this.prisma.client.updateSize({
-          data: { top: { update: topSizeValues } },
-          where: { id: internalSize.id },
-        })
-        break
-      case "Bottom":
-        const bottomSizeValues = {
-          ...pick(input, ["waist", "rise", "hem", "inseam"]),
-        }
-        await this.prisma.client.updateSize({
-          data: { bottom: { update: bottomSizeValues } },
-          where: { id: internalSize.id },
-        })
-        break
+    // Input validation
+    if (manufacturerSizeNames.length > 1) {
+      throw new Error(`Please pass no more than 1 manufacturer size name`)
     }
 
-    const data = { weight } as any
-
-    const variantWithSku = await this.prisma.binding.query.productVariant(
-      { where: { id } },
-      `
-      {
-        id
-        sku
-      }
-    `
-    )
-
-    if (!!manufacturerSizeNames?.length) {
-      const variant = { ...input, sku: variantWithSku.sku }
-      const manufacturerSizeIDs = await this.getManufacturerSizeIDs(
-        variant,
-        productType
-      )
-      data.manufacturerSizes = {
-        set: manufacturerSizeIDs,
-      }
-      const displayShort = await this.productUtils.getVariantDisplayShort(
-        manufacturerSizeIDs,
-        internalSize.id
-      )
-      data.displayShort = displayShort
-    }
-
-    if (shopifyProductVariant) {
-      data.shopifyProductVariant = shopifyProductVariant.externalId
-        ? {
-            connect: { externalId: shopifyProductVariant.externalId },
-          }
-        : {
-            disconnect: true,
-          }
-    }
-
-    const prodVar = await this.prisma.client.updateProductVariant({
+    const _prodVar = await this.prisma.client2.productVariant.findUnique({
       where: { id },
-      data,
+      select: {
+        internalSize: { select: { id: true, display: true, type: true } },
+        manufacturerSizes: { select: { slug: true } },
+        id: true,
+        sku: true,
+      },
     })
-    return await this.prisma.binding.query.productVariant(
-      { where: { id: prodVar.id } },
-      info
-    )
+    const prodVar = this.prisma.sanitizePayload(_prodVar, "ProductVariant")
+
+    let manufacturerSizes
+    let displayShort
+    if (manufacturerSizeNames.length === 1) {
+      manufacturerSizes = {
+        update: this.productUtils.getManufacturerSizeMutateInput(
+          {
+            ...prodVar,
+            manufacturerSizeType,
+          },
+          head(manufacturerSizeNames),
+          productType,
+          "update"
+        ),
+      }
+
+      displayShort = this.productUtils.getVariantDisplayShort(
+        manufacturerSizes.update.data,
+        prodVar.internalSize
+      )
+    }
+
+    const topSizeValues = {
+      ...pick(input, ["sleeve", "shoulder", "chest", "neck", "length"]),
+    }
+    const accessorySizeValues = {
+      ...pick(input, ["bridge", "length", "width"]),
+    }
+    const bottomSizeValues = {
+      ...pick(input, ["waist", "rise", "hem", "inseam"]),
+    }
+    const updateData = Prisma.validator<Prisma.ProductVariantUpdateInput>()({
+      internalSize: {
+        update: {
+          accessory:
+            productType === "Accessory"
+              ? { update: accessorySizeValues }
+              : undefined,
+          top: productType === "Top" ? { update: topSizeValues } : undefined,
+          bottom:
+            productType === "Bottom" ? { update: bottomSizeValues } : undefined,
+        },
+      },
+      manufacturerSizes,
+      displayShort,
+      shopifyProductVariant: !!shopifyProductVariant
+        ? !!shopifyProductVariant.externalId
+          ? { connect: { externalId: shopifyProductVariant.externalId } }
+          : { disconnect: true }
+        : undefined,
+      weight,
+    })
+    const result = (await this.prisma.client2.productVariant.update({
+      where: { id },
+      data: updateData,
+      select,
+    })) as ProductVariant
+    return this.prisma.sanitizePayload(result, "ProductVariant")
   }
 }
