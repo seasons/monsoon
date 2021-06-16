@@ -113,12 +113,10 @@ export class ProductQueriesResolver {
     @Select({ withFragment: `fragment EnsureId on PhysicalProduct { id }` })
     select
   ) {
-    const x = await this.queryUtils.resolveFindUnique(
+    return await this.queryUtils.resolveFindUnique(
       { where, select },
       "PhysicalProduct"
     )
-    console.log(x)
-    return x
   }
 
   @Query()
