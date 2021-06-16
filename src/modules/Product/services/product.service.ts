@@ -828,6 +828,10 @@ export class ProductService {
     buyUsedEnabled?: boolean
     buyUsedPrice?: number
   }): PrismaPromise<ProductVariant | PhysicalProduct>[] {
+    if (variant.manufacturerSizeNames.length > 1) {
+      throw new Error(`Please pass no more than 1 manufacturer size name`)
+    }
+
     const shopifyProductVariantCreateData = !!variant.shopifyProductVariant
       ?.externalId
       ? {
@@ -905,12 +909,14 @@ export class ProductService {
         },
       },
       manufacturerSizes: {
-        connectOrCreate: this.productUtils.getManufacturerSizeMutateInputs(
-          variant,
-          variant.manufacturerSizeNames,
-          type,
-          "connectOrCreate"
-        ),
+        create: [
+          this.productUtils.getManufacturerSizeMutateInput(
+            variant,
+            head(variant.manufacturerSizeNames),
+            type,
+            "create"
+          ) as any,
+        ],
       },
     }
     let prodVarPromise = this.prisma.client2.productVariant.create({
@@ -1037,7 +1043,8 @@ export class ProductService {
         this.validateInternalBottomSizeName(a.internalSizeName)
       )
     }
-    this.validateUpsertSeasonInput(input.season)
+    if (input.manufacturerSizeNames)
+      this.validateUpsertSeasonInput(input.season)
   }
 
   private validateUpsertSeasonInput(input) {

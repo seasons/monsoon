@@ -9,7 +9,7 @@ import {
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
+import { difference, head, lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
 
 import {
   PhysicalProductUtilsService,
@@ -261,19 +261,48 @@ export class ProductVariantService {
       id,
       productType,
       weight,
+      manufacturerSizeType,
       manufacturerSizeNames,
       shopifyProductVariant,
     } = input
+
+    // Input validation
+    if (manufacturerSizeNames.length > 1) {
+      throw new Error(`Please pass no more than 1 manufacturer size name`)
+    }
 
     const _prodVar = await this.prisma.client2.productVariant.findUnique({
       where: { id },
       select: {
         internalSize: { select: { id: true, display: true, type: true } },
+        manufacturerSizes: { select: { slug: true } },
         id: true,
         sku: true,
       },
     })
     const prodVar = this.prisma.sanitizePayload(_prodVar, "ProductVariant")
+
+    let manufacturerSizes
+    let displayShort
+    if (manufacturerSizeNames.length === 1) {
+      manufacturerSizes = {
+        update: this.productUtils.getManufacturerSizeMutateInput(
+          {
+            ...prodVar,
+            manufacturerSizeType,
+          },
+          head(manufacturerSizeNames),
+          productType,
+          "update",
+          head(prodVar.manufacturerSizes).slug
+        ),
+      }
+
+      displayShort = this.productUtils.getVariantDisplayShort(
+        manufacturerSizes.update.data,
+        prodVar.internalSize
+      )
+    }
 
     const topSizeValues = {
       ...pick(input, ["sleeve", "shoulder", "chest", "neck", "length"]),
@@ -284,27 +313,6 @@ export class ProductVariantService {
     const bottomSizeValues = {
       ...pick(input, ["waist", "rise", "hem", "inseam"]),
     }
-    const manufacturerSizes =
-      manufacturerSizeNames?.length > 0
-        ? {
-            update: this.productUtils.getManufacturerSizeMutateInputs(
-              {
-                ...input,
-                sku: prodVar.sku,
-              },
-              manufacturerSizeNames,
-              productType,
-              "update"
-            ),
-          }
-        : undefined
-    const displayShort =
-      manufacturerSizeNames?.length > 0
-        ? this.productUtils.getVariantDisplayShort(
-            manufacturerSizes.update[0].data,
-            prodVar.internalSize
-          )
-        : undefined
     const updateData = Prisma.validator<Prisma.ProductVariantUpdateInput>()({
       internalSize: {
         update: {
@@ -326,9 +334,11 @@ export class ProductVariantService {
         : undefined,
       weight,
     })
-    return (await this.prisma.client2.productVariant.update({
+    const result = (await this.prisma.client2.productVariant.update({
       where: { id },
       data: updateData,
+      select,
     })) as ProductVariant
+    return this.prisma.sanitizePayload(result, "ProductVariant")
   }
 }

@@ -417,30 +417,37 @@ export class ProductUtilsService {
     )
   }
 
-  getManufacturerSizeMutateInputs(
+  getManufacturerSizeMutateInput(
     variant: {
       sku: string
       manufacturerSizeType: string
     },
-    manufacturerSizeNames,
+    manufacturerSizeName,
     type: ProductType,
-    mutateType: "update" | "connectOrCreate"
+    mutateType: "update" | "create",
+    existingSlug = ""
   ) {
-    const dataKey = mutateType === "connectOrCreate" ? "create" : "data"
-    return manufacturerSizeNames?.map(sizeValue => {
-      const slug = `${variant.sku}-manufacturer-${type}-${sizeValue}`
-      const sizeType = variant.manufacturerSizeType
-      return {
-        where: { slug },
-        [dataKey]: {
-          slug,
-          type: sizeType,
-          display: sizeValue,
-          productType: type,
-        },
-      }
-    })
+    if (mutateType === "update" && existingSlug === "") {
+      throw new Error(`Must pass existing slug if updating size`)
+    }
+    const sizeType = variant.manufacturerSizeType
+    const newSlug = `${variant.sku}-manufacturer-${sizeType}-${manufacturerSizeName}`
+
+    const data = {
+      slug: newSlug,
+      type: sizeType,
+      display: manufacturerSizeName,
+      productType: type,
+    }
+    return mutateType === "update"
+      ? {
+          where: { slug: existingSlug },
+          data,
+        }
+      : data
   }
+
+  getManufactu
   async deepUpsertSize({
     slug,
     type,
