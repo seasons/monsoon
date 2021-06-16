@@ -52,7 +52,7 @@ model AdminActionLogInterpretation {
 
 model BagItem {
   id               String          @id @default(cuid()) @db.VarChar(25)
-  createdAt        DateTime
+  createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   position         Int?
   saved            Boolean?
@@ -76,7 +76,7 @@ model BillingInfo {
   state            String?
   country          String?
   postal_code      String?
-  createdAt        DateTime
+  createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   customer         Customer?
 }
@@ -97,7 +97,7 @@ model BlogPost {
   author           String?
   category         String?
   content          String?
-  createdAt        DateTime
+  createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   publishedOn      DateTime
   published        Boolean         @default(true)
@@ -138,7 +138,7 @@ model Brand {
   since                        DateTime?
   tier                         String
   websiteUrl                   String?
-  createdAt                    DateTime
+  createdAt                    DateTime                    @default(now())
   updatedAt                    DateTime                    @updatedAt
   basedIn                      String?
   designer                     String?
@@ -181,7 +181,7 @@ model Collection {
   title              String?
   subTitle           String?
   published          Boolean
-  createdAt          DateTime
+  createdAt          DateTime                  @default(now())
   updatedAt          DateTime?                 @updatedAt
   displayTextOverlay Boolean
   textOverlayColor   String?
@@ -219,11 +219,8 @@ model Color {
   colorCode       String           @unique
   hexCode         String
   productVariants ProductVariant[]
-
-
-  // Do not use. Artifact of prisma2 migration
-  Product_ColorToProduct_color          Product[] @relation("ColorToProduct_color")
-  Product_ColorToProduct_secondaryColor Product[] @relation("ColorToProduct_secondaryColor")
+  primaryColorProducts          Product[] @relation("ColorToProduct_color")
+  secondaryColorProducts Product[] @relation("ColorToProduct_secondaryColor")
 }
 
 model Customer {
@@ -236,7 +233,7 @@ model Customer {
   plan                    String?
   billingInfoId           String?                          @map("billingInfo") @db.VarChar(25)
   billingInfo             BillingInfo?                     @relation(fields: [billingInfoId], references: [id])
-  createdAt               DateTime
+  createdAt               DateTime                         @default(now())
   updatedAt               DateTime                         @updatedAt
   authorizedAt            DateTime?
   admissionsId            String?                          @map("admissions") @db.VarChar(25)
@@ -263,7 +260,7 @@ model CustomerAdmissionsData {
   inServiceableZipcode        Boolean
   admissable                  Boolean
   inAdmissableReason          String?
-  createdAt                   DateTime
+  createdAt                   DateTime  @default(now())
   updatedAt                   DateTime  @updatedAt
   authorizationsCount         Int
   allAccessEnabled            Boolean
@@ -288,7 +285,7 @@ model CustomerDetail {
   averageSpend       String?
   style              String?
   commuteStyle       String?
-  createdAt          DateTime
+  createdAt          DateTime                    @default(now())
   updatedAt          DateTime                    @updatedAt
   shippingAddressId  String?                     @map("shippingAddress") @db.VarChar(25)
   shippingAddress    Location?                   @relation(fields: [shippingAddressId], references: [id])
@@ -364,7 +361,7 @@ model CustomerMembershipSubscriptionData {
   nextBillingAt    DateTime?
   status           String
   planPrice        Int
-  createdAt        DateTime
+  createdAt        DateTime            @default(now())
   updatedAt        DateTime            @updatedAt
   membership       CustomerMembership?
 }
@@ -374,7 +371,7 @@ model CustomerNotificationBarReceipt {
   notificationBarId String
   viewCount         Int
   clickCount        Int
-  createdAt         DateTime
+  createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
   // Should be a singleton. Will be fixed with full prisma2 migration and a db migration
@@ -384,7 +381,7 @@ model CustomerNotificationBarReceipt {
 model EmailReceipt {
   id        String   @id @default(cuid()) @db.VarChar(25)
   emailId   String
-  createdAt DateTime
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User?    @relation(fields: [userId], references: [id])
 
@@ -395,7 +392,7 @@ model EmailReceipt {
 model FitPic {
   id                     String         @id @default(cuid()) @db.VarChar(25)
   status                 String
-  createdAt              DateTime
+  createdAt              DateTime       @default(now())
   updatedAt              DateTime       @updatedAt
   locationId             String?        @map("location") @db.VarChar(25)
   location               Location?      @relation(fields: [locationId], references: [id])
@@ -423,7 +420,7 @@ model Image {
   id        String   @id @default(cuid()) @db.VarChar(25)
   caption   String?
   title     String?
-  createdAt DateTime
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   url       String   @unique
   height    Int?
@@ -444,7 +441,7 @@ model InterestedUser {
   id        String   @id @default(cuid()) @db.VarChar(25)
   email     String
   zipcode   String?
-  createdAt DateTime
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
@@ -461,7 +458,7 @@ model Launch {
   id           String      @id @default(cuid()) @db.VarChar(25)
   published    Boolean
   launchAt     DateTime
-  createdAt    DateTime
+  createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   collectionId String?     @map("collection") @db.VarChar(25)
   collection   Collection? @relation(fields: [collectionId], references: [id])
@@ -483,7 +480,7 @@ model Location {
   locationType     String?
   lat              Float?
   lng              Float?
-  createdAt        DateTime
+  createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   userId           String?           @map("user") @db.VarChar(25)
   user             User?             @relation(fields: [userId], references: [id])
@@ -506,7 +503,7 @@ model Order {
   total         Int?
   couponID      String?
   note          String?
-  createdAt     DateTime
+  createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   type          String
   status        String
@@ -533,7 +530,7 @@ model OrderLineItem {
   taxPrice      Int?
   price         Int
   currencyCode  String
-  createdAt     DateTime
+  createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   // Do not use. Artifact of prisma2 migration
@@ -543,7 +540,7 @@ model OrderLineItem {
 model Package {
   id              String                @id @default(cuid()) @db.VarChar(25)
   weight          Float?
-  createdAt       DateTime
+  createdAt       DateTime              @default(now())
   updatedAt       DateTime              @updatedAt
   fromAddressId   String?               @map("fromAddress") @db.VarChar(25)
   fromAddress     Location?             @relation("LocationToPackage_fromAddress", fields: [fromAddressId], references: [id])
@@ -568,7 +565,7 @@ model PackageTransitEvent {
   id            String       @id @default(cuid()) @db.VarChar(25)
   status        String
   subStatus     String
-  createdAt     DateTime
+  createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
   data          String
   packageId     String?      @map("package") @db.VarChar(25)
@@ -579,7 +576,7 @@ model PackageTransitEvent {
 
 model PauseRequest {
   id           String              @id @default(cuid()) @db.VarChar(25)
-  createdAt    DateTime
+  createdAt    DateTime            @default(now())
   updatedAt    DateTime            @updatedAt
   pausePending Boolean
   pauseDate    DateTime?
@@ -597,7 +594,7 @@ model PaymentPlan {
   status             String?
   name               String?
   price              Int?
-  createdAt          DateTime
+  createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   tagline            String?
   itemCount          Int?
@@ -610,7 +607,7 @@ model PhysicalProduct {
   seasonsUID              String                         @unique
   inventoryStatus         String
   productStatus           String
-  createdAt               DateTime
+  createdAt               DateTime                       @default(now())
   updatedAt               DateTime                       @updatedAt
   locationId              String?                        @map("location") @db.VarChar(25)
   location                Location?                      @relation(fields: [locationId], references: [id])
@@ -622,7 +619,7 @@ model PhysicalProduct {
   dateOrdered             DateTime?
   dateReceived            DateTime?
   unitCost                Float?
-  barcoded                Boolean?
+  barcoded                Boolean                        @default(value: false)
   priceId                 String?                        @map("price") @db.VarChar(25)
   price                   PhysicalProductPrice?          @relation(fields: [priceId], references: [id])
   reports                 PhysicalProductQualityReport[]
@@ -648,7 +645,7 @@ model PhysicalProductQualityReport {
   id                String                                     @id @default(cuid()) @db.VarChar(25)
   damageType        String?
   notes             String?
-  createdAt         DateTime
+  createdAt         DateTime                                   @default(now())
   updatedAt         DateTime                                   @updatedAt
   physicalProductId String?                                    @map("physicalProduct") @db.VarChar(25)
   physicalProduct   PhysicalProduct?                           @relation(fields: [physicalProductId], references: [id])
@@ -676,16 +673,16 @@ model Product {
   externalURL                 String?
   retailPrice                 Int?
   status                      String?
-  createdAt                   DateTime
+  createdAt                   DateTime                 @default(now())
   updatedAt                   DateTime                 @updatedAt
-  categoryId                  String?                  @map("category") @db.VarChar(25)
-  category                    Category?                @relation(fields: [categoryId], references: [id])
-  colorId                     String?                  @map("color") @db.VarChar(25)
-  color                       Color?                   @relation("ColorToProduct_color", fields: [colorId], references: [id])
+  categoryId                  String                   @map("category") @db.VarChar(25)
+  category                    Category                 @relation(fields: [categoryId], references: [id])
+  colorId                     String                   @map("color") @db.VarChar(25)
+  color                       Color                    @relation("ColorToProduct_color", fields: [colorId], references: [id])
   secondaryColorId            String?                  @map("secondaryColor") @db.VarChar(25)
   secondaryColor              Color?                   @relation("ColorToProduct_secondaryColor", fields: [secondaryColorId], references: [id])
-  brandId                     String?                  @map("brand") @db.VarChar(25)
-  brand                       Brand?                   @relation(fields: [brandId], references: [id])
+  brandId                     String                   @map("brand") @db.VarChar(25)
+  brand                       Brand                    @relation(fields: [brandId], references: [id])
   type                        String?
   modelSizeId                 String?                  @map("modelSize") @db.VarChar(25)
   modelSize                   Size?                    @relation(fields: [modelSizeId], references: [id])
@@ -700,6 +697,7 @@ model Product {
   tier                        ProductTier?             @relation(fields: [tierId], references: [id])
   innerMaterials              Product_innerMaterials[]
   outerMaterials              Product_outerMaterials[]
+  styles                      Product_styles[]
   recentlyViewedProducts      RecentlyViewedProduct[]
   collections                 Collection[]
   customersEmailedWithProduct Customer[]               @relation("CustomerToEmailedProducts")
@@ -729,6 +727,15 @@ model Product_innerMaterials {
   @@id([nodeId, position])
 }
 
+model Product_styles {
+  nodeId   String  @db.VarChar(25)
+  position Int
+  value    String
+  Product  Product @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
+}
+
 model ProductMaterialCategory {
   id             String    @id @default(cuid()) @db.VarChar(25)
   slug           String    @unique
@@ -749,7 +756,7 @@ model ProductNotification {
   id                String           @id @default(cuid()) @db.VarChar(25)
   type              String
   shouldNotify      Boolean
-  createdAt         DateTime
+  createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   productVariantId  String?          @map("productVariant") @db.VarChar(25)
   productVariant    ProductVariant?  @relation(fields: [productVariantId], references: [id])
@@ -817,7 +824,7 @@ model ProductTier {
   id        String   @id @default(cuid()) @db.VarChar(25)
   tier      String
   price     Int
-  createdAt DateTime
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   product   Product?
 }
@@ -833,7 +840,7 @@ model ProductVariant {
   reservable              Int
   reserved                Int
   nonReservable           Int
-  createdAt               DateTime
+  createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
   colorId                 String?                  @map("color") @db.VarChar(25)
   color                   Color?                   @relation(fields: [colorId], references: [id])
@@ -920,7 +927,7 @@ model PushNotificationReceipt {
   body            String
   title           String?
   sentAt          DateTime
-  createdAt       DateTime
+  createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   interest        String?
   recordID        String?
@@ -936,7 +943,7 @@ model PushNotificationReceipt {
 model RecentlyViewedProduct {
   id         String    @id @default(cuid()) @db.VarChar(25)
   viewCount  Int
-  createdAt  DateTime
+  createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   productId  String?   @map("product") @db.VarChar(25)
   product    Product?  @relation(fields: [productId], references: [id])
@@ -947,7 +954,7 @@ model RecentlyViewedProduct {
 model Reservation {
   id                String                @id @default(cuid()) @db.VarChar(25)
   shipped           Boolean
-  createdAt         DateTime
+  createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
   userId            String?               @map("user") @db.VarChar(25)
   User              User?                 @relation(fields: [userId], references: [id])
@@ -986,7 +993,7 @@ model ReservationFeedback {
   rating        String?
   userId        String?                  @map("user") @db.VarChar(25)
   user          User?                    @relation(fields: [userId], references: [id])
-  createdAt     DateTime
+  createdAt     DateTime                 @default(now())
   updatedAt     DateTime                 @updatedAt
   reservationId String?                  @map("reservation") @db.VarChar(25)
   reservation   Reservation?             @relation(fields: [reservationId], references: [id])
@@ -996,7 +1003,7 @@ model ReservationFeedback {
 
 model ReservationReceipt {
   id          String                   @id @default(cuid()) @db.VarChar(25)
-  createdAt   DateTime
+  createdAt   DateTime                 @default(now())
   updatedAt   DateTime                 @updatedAt
   reservation Reservation?
   items       ReservationReceiptItem[]
@@ -1026,7 +1033,7 @@ model ShippingMethod {
   id             String          @id @default(cuid()) @db.VarChar(25)
   code           String
   displayText    String
-  createdAt      DateTime
+  createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   shippingOption ShippingOption?
 }
@@ -1035,7 +1042,7 @@ model ShippingOption {
   id               String          @id @default(cuid()) @db.VarChar(25)
   externalCost     Int?
   averageDuration  Int?
-  createdAt        DateTime
+  createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   destinationId    String?         @map("destination") @db.VarChar(25)
   destination      Location?       @relation("LocationToShippingOption_destination", fields: [destinationId], references: [id])
@@ -1072,6 +1079,14 @@ model ShopifyProductVariantSelectedOption {
 
   // Should be singleton. Will be fixed in full prisma2 migration
   shopifyProductVariant ShopifyProductVariant[] @relation("ShopifyProductVariantToVariantSelectedOption")
+}
+
+enum SizeType {
+  WxL
+  US
+  EU
+  JP
+  Letter
 }
 
 model Size {
@@ -1163,7 +1178,7 @@ model StylePreferences_styles {
 
 model SyncTiming {
   id        String   @id @default(cuid()) @db.VarChar(25)
-  createdAt DateTime
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   detail    String
   type      String
@@ -1174,7 +1189,7 @@ model Tag {
   id          String    @id @default(cuid()) @db.VarChar(25)
   name        String    @unique
   description String?
-  createdAt   DateTime
+  createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   products    Product[]
 }
@@ -1197,7 +1212,7 @@ model User {
   firstName                     String
   lastName                      String
   role                          String
-  createdAt                     DateTime
+  createdAt                     DateTime                       @default(now())
   updatedAt                     DateTime                       @updatedAt
   pushNotificationStatus        String
   verificationStatus            String
@@ -1267,7 +1282,7 @@ model UTMData {
   campaign  String?
   term      String?
   content   String?
-  createdAt DateTime
+  createdAt DateTime  @default(now()) 
   updatedAt DateTime  @updatedAt
   customer  Customer?
 }
@@ -1278,7 +1293,7 @@ model WarehouseLocation {
   barcode          String                        @unique
   locationCode     String
   itemCode         String
-  createdAt        DateTime
+  createdAt        DateTime                      @default(now())
   updatedAt        DateTime                      @updatedAt
   physicalProducts PhysicalProduct[]
   constraints      WarehouseLocationConstraint[]
@@ -1287,7 +1302,7 @@ model WarehouseLocation {
 model WarehouseLocationConstraint {
   id         String              @id @default(cuid()) @db.VarChar(25)
   limit      Int
-  createdAt  DateTime
+  createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
   categoryId String?             @map("category") @db.VarChar(25)
   category   Category?           @relation(fields: [categoryId], references: [id])
@@ -1299,7 +1314,7 @@ model ShopifyShop {
   shopName               String                             @unique
   enabled                Boolean
   accessToken            String?
-  createdAt              DateTime
+  createdAt              DateTime                           @default(now())
   updatedAt              DateTime                           @updatedAt
   brand                  Brand?
   scope                  ShopifyShop_scope[]

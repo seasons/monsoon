@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common"
 
 import { Prisma as PrismaClient, prisma } from "./"
 import { Prisma as PrismaBinding } from "./prisma.binding"
-import { PrismaClient as PrismaClient2 } from '@prisma/client'
+import { Prisma, PrismaClient as PrismaClient2 } from '@prisma/client'
 import { PrismaSelect } from "@paljs/plugins"
 import { head, intersection, isArray, uniq } from "lodash"
 
@@ -59,7 +59,7 @@ export class PrismaService implements UpdatableConnection {
   })
   client: PrismaClient = prisma
   client2: PrismaClient2 = new PrismaClient2({ 
-    log: process.env.NODE_ENV === "production" ? ['warn', 'error'] : ['query', 'info', 'warn', 'error']
+    log: process.env.NODE_ENV === "production" ? ['warn', 'error'] : process.env.DB_LOG === 'true' ? ['query', 'info', 'warn', 'error'] : []
   })
 
   private modelFieldsByModelName = new PrismaSelect(null).dataModel.reduce(
@@ -87,7 +87,7 @@ export class PrismaService implements UpdatableConnection {
   This sanitizer extracts out the value from the array so we can still return it
   in the format we had it in prisma1
   */
-  sanitizePayload<T>(payload: T, modelName: string): T {
+  sanitizePayload<T>(payload: T, modelName: Prisma.ModelName): T {
     if (!payload) {
       return
     }

@@ -15,32 +15,51 @@ export class ProductMutationsResolver {
   ) {}
 
   @Mutation()
-  async addProductRequest(@Args() { reason, url }, @User() user) {
-    return await this.productRequestService.addProductRequest(reason, url, user)
+  async addProductRequest(
+    @Args() { reason, url },
+    @User() user,
+    @Select() select
+  ) {
+    if (!user) {
+      throw new Error(`Can not add product request in logged out state`)
+    }
+    return await this.productRequestService.addProductRequest(
+      reason,
+      url,
+      user,
+      select
+    )
   }
 
   @Mutation()
-  async addToBag(@Args() { item }, @Customer() customer) {
-    return await this.bagService.addToBag(item, customer)
+  async addToBag(@Args() { item }, @Customer() customer, @Select() select) {
+    if (!customer) {
+      throw new Error(`Can not add to bag without a logged in customer`)
+    }
+    return await this.bagService.addToBag(item, customer, select)
   }
 
   @Mutation()
-  async addViewedProduct(@Args() { item }, @Customer() customer) {
-    return await this.productService.addViewedProduct(item, customer)
+  async addViewedProduct(
+    @Args() { item },
+    @Customer() customer,
+    @Select() select
+  ) {
+    return await this.productService.addViewedProduct(item, customer, select)
   }
 
   @Mutation()
-  async upsertProduct(@Args() { input }, @User() user, @Select() select) {
-    return await this.productService.deepUpsertProduct(input)
+  async createProduct(@Args() { input }, @Select() select) {
+    return await this.productService.createProduct(input, select)
   }
 
   @Mutation()
   async saveProduct(
     @Args() { item, save = false },
-    @Info() info,
+    @Select() select,
     @Customer() customer
   ) {
-    return await this.productService.saveProduct(item, save, info, customer)
+    return await this.productService.saveProduct(item, save, select, customer)
   }
 
   @Mutation()
@@ -61,8 +80,8 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async updateProduct(@Args() { where, data }, @Info() info, @Select() select) {
-    return await this.productService.updateProduct({ where, data, info })
+  async updateProduct(@Args() { where, data }, @Select() select) {
+    return await this.productService.updateProduct({ where, data, select })
   }
 
   @Mutation()

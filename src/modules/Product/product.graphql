@@ -1,4 +1,4 @@
-# import ProductVariant, Query, Mutation, UpsertVariantInput from "./productVariant.graphql"
+# import ProductVariant, Query, Mutation, CreateVariantInput from "./productVariant.graphql"
 # import PhysicalProduct, Query, Mutation from "./physicalProduct.graphql"
 
 type Query {
@@ -166,7 +166,7 @@ type Mutation {
     data: CustomProductUpdateInput!
   ): Product! @hasRole(roles: [Admin])
   addViewedProduct(item: ID!): RecentlyViewedProduct!
-  upsertProduct(input: UpsertProductInput!): Product @hasRole(roles: [Admin])
+  createProduct(input: ProductCreateInput!): Product @hasRole(roles: [Admin])
   addProductRequest(reason: String!, url: String!): ProductRequest!
   createBrand(input: CustomBrandCreateInput!): Brand @hasRole(roles: [Admin])
   updateBrand(
@@ -313,7 +313,7 @@ type Brand @cacheControl(maxAge: 1000) {
   updatedAt: DateTime!
 }
 
-input UpsertProductInput {
+input ProductCreateInput {
   architecture: String
   internalSizeType: SizeType
   brandID: String!
@@ -331,6 +331,7 @@ input UpsertProductInput {
   modelSizeDisplay: String
   modelSizeName: String
   modelSizeType: SizeType
+  externalURL: String
   name: String!
   outerMaterials: [String!]!
   productFit: ProductFit
@@ -341,10 +342,8 @@ input UpsertProductInput {
   status: ProductStatus!
   tags: [String!]!
   type: ProductType!
-  variants: [UpsertVariantInput!]!
+  variants: [CreateVariantInput!]!
   styles: [CustomerStyle!]
-  # Is this a new one?
-  createNew: Boolean!
 }
 
 input CustomProductUpdateInput {
