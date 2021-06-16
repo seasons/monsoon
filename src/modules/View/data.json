@@ -3,7 +3,7 @@
     "id": "referral",
     "type": "Referral",
     "title": "Invite a friend. Get a free month",
-    "caption": "Refer a friend and you'll both get a free month of Seasons when they successfully sign up!",
+    "caption": "Refer a friend and you'll both get 50% off on your next month of Seasons when they successfully sign up!",
     "properties": {
       "imageURL": "https://seasons-s3.imgix.net/referral-view/referral-view-image.png",
       "shareMessage": "Here’s my referral link for Seasons. Get a free month when you sign-up.",
