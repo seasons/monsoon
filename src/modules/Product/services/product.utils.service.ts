@@ -443,7 +443,6 @@ export class ProductUtilsService {
       : data
   }
 
-  getManufactu
   async deepUpsertSize({
     slug,
     type,
