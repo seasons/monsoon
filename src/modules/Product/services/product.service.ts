@@ -80,6 +80,8 @@ export class ProductService {
       },
       select: {
         id: true,
+        name: true,
+        status: true,
         photographyStatus: true,
         variants: { select: { id: true } },
       },
@@ -90,18 +92,23 @@ export class ProductService {
 
     productIDs.forEach(async id => {
       const product = productsWithData.find(p => p.id === id)
-      if (product.variants?.length && product.photographyStatus === "Done") {
+      if (
+        product.variants?.length > 0 &&
+        product.photographyStatus === "Done" &&
+        product.status === "NotAvailable"
+      ) {
         validatedIDs.push(id)
-        await this.prisma.client2.product.update({
-          where: { id },
-          data: {
-            status: "Available",
-            publishedAt: DateTime.local().toISO(),
-          },
-        })
       } else {
         unvalidatedIDs.push(id)
       }
+    })
+
+    await this.prisma.client2.product.updateMany({
+      where: { id: { in: validatedIDs } },
+      data: {
+        status: "Available",
+        publishedAt: DateTime.local().toISO(),
+      },
     })
 
     let message
@@ -110,7 +117,10 @@ export class ProductService {
       message = "Successfully published all products."
       status = "success"
     } else {
-      message = `Some of the products weren't published, check that these products have variants and their photography status is complete: ${unvalidatedIDs.join(
+      const unvalidatedNames = unvalidatedIDs
+        .map(a => productsWithData.find(p => p.id === a))
+        .map(b => b.name)
+      message = `Some of the products weren't published, check that these products have variants and their photography status is complete and their status is not Stored or Offloaded: ${unvalidatedNames.join(
         ", "
       )}.`
       status = "error"
