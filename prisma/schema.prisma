@@ -219,11 +219,8 @@ model Color {
   colorCode       String           @unique
   hexCode         String
   productVariants ProductVariant[]
-
-
-  // Do not use. Artifact of prisma2 migration
-  Product_ColorToProduct_color          Product[] @relation("ColorToProduct_color")
-  Product_ColorToProduct_secondaryColor Product[] @relation("ColorToProduct_secondaryColor")
+  primaryColorProducts          Product[] @relation("ColorToProduct_color")
+  secondaryColorProducts Product[] @relation("ColorToProduct_secondaryColor")
 }
 
 model Customer {
