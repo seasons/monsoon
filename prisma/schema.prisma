@@ -996,7 +996,7 @@ model ReservationFeedback {
   rating        String?
   userId        String?                  @map("user") @db.VarChar(25)
   user          User?                    @relation(fields: [userId], references: [id])
-  createdAt     DateTime
+  createdAt     DateTime                 @default(now())
   updatedAt     DateTime                 @updatedAt
   reservationId String?                  @map("reservation") @db.VarChar(25)
   reservation   Reservation?             @relation(fields: [reservationId], references: [id])
@@ -1181,7 +1181,7 @@ model StylePreferences_styles {
 
 model SyncTiming {
   id        String   @id @default(cuid()) @db.VarChar(25)
-  createdAt DateTime
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   detail    String
   type      String
