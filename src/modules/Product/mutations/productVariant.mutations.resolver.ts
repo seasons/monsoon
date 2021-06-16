@@ -97,7 +97,7 @@ export class ProductVariantMutationsResolver {
       inputs
     )
 
-    const variantPromises = inputs.map(async (input, index) => {
+    const variantPromises = inputs.map((input, index) => {
       return this.productService.getCreateProductVariantPromises({
         sequenceNumbers: sequenceNumbers[index],
         variant: input,
@@ -108,7 +108,9 @@ export class ProductVariantMutationsResolver {
         type: product.type as ProductType,
       })
     })
-    const results = await this.prisma.client2.$transaction(variantPromises)
+    const results = await this.prisma.client2.$transaction(
+      variantPromises.flat()
+    )
     const createdVariants = results.filter(a => !!a.sku)
     const _variantsToReturn = await this.prisma.client2.productVariant.findMany(
       {
