@@ -187,11 +187,16 @@ export class ReservationService {
       },
     })
 
+    promises.push(reservationPromise)
+
+    // Resolve all prisma operation in one transaction
+    this.prisma.client2.$transaction(promises)
+
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
       user,
       productsBeingReserved,
-      prismaReservation,
+      reservationPromise,
       seasonsToCustomerTransaction.tracking_number,
       seasonsToCustomerTransaction.tracking_url_provider
     )
@@ -824,7 +829,7 @@ export class ReservationService {
     physicalProductsBeingReserved: PhysicalProduct[],
     heldPhysicalProducts: PhysicalProduct[],
     shippingOptionID: string
-  ): Promise<ReservationCreateInput> {
+  ) {
     const allPhysicalProductsInReservation = [
       ...physicalProductsBeingReserved,
       ...heldPhysicalProducts,
