@@ -91,21 +91,15 @@ export class ProductVariantService {
 
   async updateProductVariantCounts(
     /* array of product variant ids */
-    items: string[],
-    customerId: string,
+    items: ID_Input[],
+    customerId: ID_Input,
     { dryRun } = { dryRun: false }
   ): Promise<
     [Product[], PhysicalProductWithReservationSpecificData[], () => void]
   > {
-    const _prismaProductVariants = await this.prisma.client2.productVariant.findMany(
-      {
-        where: { id: { in: items } },
-      }
-    )
-    const prismaProductVariants = this.prisma.sanitizePayload(
-      _prismaProductVariants,
-      "ProductVariant"
-    )
+    const prismaProductVariants = await this.prisma.client.productVariants({
+      where: { id_in: items },
+    })
 
     const physicalProducts = await this.physicalProductUtilsService.getPhysicalProductsWithReservationSpecificData(
       items
@@ -140,12 +134,19 @@ export class ProductVariantService {
 
     if (unavailableVariantsIDS.length > 0) {
       // Move the items from the bag to saved items
-      await this.prisma.client2.bagItem.updateMany({
+      await this.prisma.client.updateManyBagItems({
         where: {
-          customer: { id: customerId },
-          productVariant: { id: { in: unavailableVariantsIDS } },
+          customer: {
+            id: customerId,
+          },
+          productVariant: {
+            id_in: unavailableVariantsIDS,
+          },
         },
-        data: { saved: true, status: "Added" },
+        data: {
+          saved: true,
+          status: "Added",
+        },
       })
 
       throw new ApolloError(

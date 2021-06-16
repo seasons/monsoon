@@ -360,26 +360,32 @@ export class ProductService {
     return bagItem ? bagItem : null
   }
 
-  async checkItemsAvailability(items, customer: Customer) {
-    if (customer.status !== "Active") {
+  async checkItemsAvailability(items, customer) {
+    const status = await this.prisma.client
+      .customer({ id: customer.id })
+      .status()
+
+    if (status !== "Active") {
       throw new Error("Your account must be active to reserve items.")
     }
 
-    const _reservedBagItems = await this.prisma.client2.bagItem.findMany({
-      where: {
-        customer: {
-          id: customer.id,
+    const reservedBagItems = await this.prisma.binding.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          productVariant: {
+            id_in: items,
+          },
+          status_not: "Added",
         },
-        productVariant: {
-          id: { in: items },
-        },
-        status: { not: "Added" },
       },
-      select: { productVariant: { select: { id: true } } },
-    })
-    const reservedBagItems = this.prisma.sanitizePayload(
-      _reservedBagItems,
-      "BagItem"
+      `{
+        productVariant {
+          id
+        }
+      }`
     )
 
     const reservedIds = reservedBagItems.map(a => a.productVariant.id)
