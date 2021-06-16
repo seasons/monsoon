@@ -26,7 +26,7 @@ import {
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { difference, flatten, head, pick } from "lodash"
+import { difference, flatten, head, pick, sum } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -871,6 +871,22 @@ export class ProductService {
         display: variant.internalSizeName,
       }
     )
+
+    const counts = {
+      reservable: variant.physicalProducts.filter(
+        a => a.inventoryStatus === "Reservable"
+      ).length,
+      reserved: 0,
+      nonReservable: variant.physicalProducts.filter(
+        a => a.inventoryStatus === "NonReservable"
+      ).length,
+      offloaded: 0,
+      stored: 0,
+    }
+    if (sum(Object.values(counts)) !== variant.total) {
+      throw new Error(`Invalid counts for new variant: ${variant.sku}`)
+    }
+
     const createData = {
       displayShort,
       productID: productSlug,
@@ -879,11 +895,7 @@ export class ProductService {
         connect: { colorCode },
       },
       retailPrice,
-      reservable: status === "Available" ? variant.total : 0,
-      reserved: 0,
-      nonReservable: status === "NotAvailable" ? variant.total : 0,
-      offloaded: 0,
-      stored: 0,
+      ...counts,
       ...pick(variant, ["weight", "total", "sku"]),
       ...shopifyProductVariantCreateData,
       internalSize: {
