@@ -1,6 +1,8 @@
 import { Customer, User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
+import { Select } from "@app/decorators/select.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { addFragmentToInfo } from "graphql-binding"
 import { pick } from "lodash"
@@ -11,12 +13,16 @@ import { ReservationService } from ".."
 export class ReservationMutationsResolver {
   constructor(
     private readonly reservation: ReservationService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly prisma: PrismaService
   ) {}
 
   @Mutation()
-  async updateReservation(@Args() { data, where }, @Info() info) {
-    return this.reservation.updateReservation(data, where, info)
+  async updateReservation(@Args() { data, where }, @Select() select) {
+    await this.reservation.updateReservation(data, where)
+
+    const _data = this.prisma.client2.reservation.findUnique({ where, select })
+    return this.prisma.sanitizePayload(_data, "Reservation")
   }
 
   @Mutation()
