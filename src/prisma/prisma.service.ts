@@ -29,6 +29,7 @@ export const SINGLETON_RELATIONS_POSING_AS_ARRAYS = {
   "ProductVariantFeedback": ["reservationFeedback"],
   "ProductVariantFeedbackQuestion": ["variantFeedback"],
   "PushNotificationReceipt": ["userPushNotification"],
+  "ReservationReceiptItem": ["receipt"],
   "ShopifyProductVariantSelectedOption": ["shopifyProductVariant"],
   "SmsReceipt": ["user"],
   "StylePreferences": ["customerDetail"],
