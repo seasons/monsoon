@@ -209,7 +209,6 @@ ALTER TABLE monsoon$staging."ReservationReceipt" ALTER COLUMN "id" SET DATA TYPE
 
 ALTER TABLE monsoon$staging."ReservationReceiptItem" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 ALTER TABLE monsoon$staging."ReservationReceiptItem" ALTER COLUMN "product" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ReservationReceiptItem" ALTER COLUMN "reservationReceipt" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Season" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 

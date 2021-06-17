@@ -1013,8 +1013,7 @@ model ReservationReceiptItem {
   notes                String?
   productId            String?            @map("product") @db.VarChar(30)
   product              PhysicalProduct?   @relation(fields: [productId], references: [id])
-  receipt              ReservationReceipt @relation(fields: [reservationReceiptId], references: [id])
-  reservationReceiptId String             @map("reservationReceipt") @db.VarChar(30)
+  receipt              ReservationReceipt[]
 }
 
 model Season {
