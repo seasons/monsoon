@@ -26,7 +26,7 @@ import {
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { difference, flatten, head, pick, sum } from "lodash"
+import { difference, flatten, head, isArray, pick, sum } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -298,7 +298,6 @@ export class ProductService {
             "type",
             "colorCode",
             "retailPrice",
-            "status",
             "buyUsedEnabled",
             "buyUsedPrice",
           ]),
@@ -830,7 +829,6 @@ export class ProductService {
     colorCode,
     retailPrice,
     productSlug,
-    status,
     buyUsedEnabled,
     buyUsedPrice,
   }: {
@@ -840,7 +838,6 @@ export class ProductService {
     colorCode: string
     retailPrice?: number
     productSlug: string
-    status: ProductStatus
     buyUsedEnabled?: boolean
     buyUsedPrice?: number
   }): PrismaPromise<ProductVariant | PhysicalProduct>[] {
@@ -1071,8 +1068,18 @@ export class ProductService {
         this.validateInternalBottomSizeName(a.internalSizeName)
       )
     }
-    if (input.manufacturerSizeNames)
-      this.validateUpsertSeasonInput(input.season)
+
+    this.validateUpsertSeasonInput(input.season)
+
+    if (input.variants.length > 0) {
+      input.variants.forEach(a => {
+        if (!isArray(a.physicalProducts) || a.physicalProducts.length < 1) {
+          throw new Error(
+            `Must pass at least one physical product on each variant in CreateProductInput`
+          )
+        }
+      })
+    }
   }
 
   private validateUpsertSeasonInput(input) {

@@ -82,7 +82,6 @@ export class ProductVariantMutationsResolver {
       select: {
         id: true,
         retailPrice: true,
-        status: true,
         type: true,
         color: { select: { id: true, colorCode: true } },
       },
@@ -104,7 +103,6 @@ export class ProductVariantMutationsResolver {
         colorCode: product.color.colorCode,
         productSlug: productID,
         retailPrice: product.retailPrice,
-        status: product.status as ProductStatus,
         type: product.type as ProductType,
       })
     })

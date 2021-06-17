@@ -349,9 +349,7 @@ input ProductCreateInput {
 input CustomProductUpdateInput {
   # Fields from ProductUpdateInput
   architecture: ProductArchitecture
-  brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
-  color: ColorUpdateOneRequiredInput
   description: String
   externalURL: String
   productFit: ProductFit
