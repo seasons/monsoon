@@ -47,7 +47,7 @@ model AdminActionLogInterpretation {
   interpretation String?
   data           String?
   logId          Int?            @map("log")
-  AdminActionLog AdminActionLog? @relation(fields: [logId], references: [actionId])
+  log            AdminActionLog? @relation(fields: [logId], references: [actionId])
 }
 
 model BagItem {
@@ -239,11 +239,11 @@ model Customer {
   admissionsId            String?                          @map("admissions") @db.VarChar(30)
   admissions              CustomerAdmissionsData?          @relation(fields: [admissionsId], references: [id])
   referralLink            String?                          @unique
-  referrerId              String?                          @db.VarChar(30)
+  referrerId              String?                          @map("referrer") @db.VarChar(30)
   referrer                Customer?                        @relation("CustomerToCustomer_referrer", fields: [referrerId], references: [id])
   referrees               Customer[]                       @relation("CustomerToCustomer_referrer")
   utmId                   String?                          @map("utm") @db.VarChar(30)
-  UTMData                 UTMData?                         @relation(fields: [utmId], references: [id])
+  utm                     UTMData?                         @relation(fields: [utmId], references: [id])
   bagItems                BagItem[]
   membership              CustomerMembership? // should be required, need to look into that
   orders                  Order[]
@@ -383,10 +383,8 @@ model EmailReceipt {
   emailId   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String?  @map("user") @db.VarChar(30)
   user      User?    @relation(fields: [userId], references: [id])
-
-  // Private fields
-  userId String? @map("user") @db.VarChar(30)
 }
 
 model FitPic {
@@ -515,7 +513,7 @@ model Order {
   sentPackage   Package?        @relation(fields: [sentPackageId], references: [id])
   orderNumber   String          @unique
   // The ID of the order in an external system (e.g. Shopify )
-  externalID    String?         @db.VarChar(30)
+  externalID    String?         @db.VarChar(25)
   lineItems     OrderLineItem[]
 }
 
@@ -957,7 +955,7 @@ model Reservation {
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
   userId            String?               @map("user") @db.VarChar(30)
-  User              User?                 @relation(fields: [userId], references: [id])
+  user              User?                 @relation(fields: [userId], references: [id])
   reservationNumber Int                   @unique
   status            String
   shippedAt         DateTime?

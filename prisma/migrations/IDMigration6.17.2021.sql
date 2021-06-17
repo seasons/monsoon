@@ -1,32 +1,30 @@
 ALTER TABLE monsoon$staging."AccessorySize" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ActiveAdminUser" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ActiveAdminUser" ALTER COLUMN "adminId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ActiveAdminUser" ALTER COLUMN "admin" SET DATA TYPE character varying(30);
 
-ALTER TABLE monsoon$staging."AdminActionLog" ALTER COLUMN "actionId" SET DATA TYPE character varying(30);
 ALTER TABLE monsoon$staging."AdminActionLog" ALTER COLUMN "entityId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."AdminActionLog" ALTER COLUMN "activeAdminUserId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."AdminActionLog" ALTER COLUMN "activeAdminUser" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."AdminActionLogInterpretation" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 ALTER TABLE monsoon$staging."AdminActionLogInterpretation" ALTER COLUMN "entityId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."AdminActionLogInterpretation" ALTER COLUMN "logId" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."BagItem" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."BagItem" ALTER COLUMN "customerId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."BagItem" ALTER COLUMN "productVariantId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."BagItem" ALTER COLUMN "customer" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."BagItem" ALTER COLUMN "productVariant" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."BillingInfo" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."BlogPost" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."BlogPost" ALTER COLUMN "imageId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."BlogPost" ALTER COLUMN "image" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."BlogPost_tags" ALTER COLUMN "nodeId" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."BottomSize" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Brand" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Brand" ALTER COLUMN "logoImageId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Brand" ALTER COLUMN "shopifyShopId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Brand" ALTER COLUMN "logoImage" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Brand" ALTER COLUMN "shopifyShop" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Category" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
@@ -39,18 +37,18 @@ ALTER TABLE monsoon$staging."Collection_placements" ALTER COLUMN "nodeId" SET DA
 ALTER TABLE monsoon$staging."Color" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Customer" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Customer" ALTER COLUMN "detailId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Customer" ALTER COLUMN "userId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Customer" ALTER COLUMN "billingInfoId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Customer" ALTER COLUMN "admissionsId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Customer" ALTER COLUMN "referrerId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Customer" ALTER COLUMN "utmId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Customer" ALTER COLUMN "detail" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Customer" ALTER COLUMN "user" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Customer" ALTER COLUMN "billingInfo" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Customer" ALTER COLUMN "admissions" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Customer" ALTER COLUMN "referrer" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Customer" ALTER COLUMN "utm" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."CustomerAdmissionsData" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."CustomerDetail" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."CustomerDetail" ALTER COLUMN "shippingAddressId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."CustomerDetail" ALTER COLUMN "stylePreferencesId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."CustomerDetail" ALTER COLUMN "shippingAddress" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."CustomerDetail" ALTER COLUMN "stylePreferences" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."CustomerDetail_styles" ALTER COLUMN "nodeId" SET DATA TYPE character varying(30);
 
@@ -61,27 +59,25 @@ ALTER TABLE monsoon$staging."CustomerDetail_waistSizes" ALTER COLUMN "nodeId" SE
 ALTER TABLE monsoon$staging."CustomerDetail_weight" ALTER COLUMN "nodeId" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."CustomerMembership" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."CustomerMembership" ALTER COLUMN "customerId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."CustomerMembership" ALTER COLUMN "planId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."CustomerMembership" ALTER COLUMN "giftId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."CustomerMembership" ALTER COLUMN "membershipSubscriptionId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."CustomerMembership" ALTER COLUMN "customer" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."CustomerMembership" ALTER COLUMN "plan" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."CustomerMembership" ALTER COLUMN "subscription" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."CustomerMembershipSubscriptionData" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."CustomerNotificationBarReceipt" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."EmailReceipt" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."EmailReceipt" ALTER COLUMN "emailId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."EmailReceipt" ALTER COLUMN "userId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."EmailReceipt" ALTER COLUMN "user" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."FitPic" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."FitPic" ALTER COLUMN "locationId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."FitPic" ALTER COLUMN "userId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."FitPic" ALTER COLUMN "imageId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."FitPic" ALTER COLUMN "location" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."FitPic" ALTER COLUMN "user" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."FitPic" ALTER COLUMN "image" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."FitPicReport" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."FitPicReport" ALTER COLUMN "reporterId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."FitPicReport" ALTER COLUMN "reportedId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."FitPicReport" ALTER COLUMN "reporter" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."FitPicReport" ALTER COLUMN "reported" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Image" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
@@ -90,53 +86,54 @@ ALTER TABLE monsoon$staging."InterestedUser" ALTER COLUMN "id" SET DATA TYPE cha
 ALTER TABLE monsoon$staging."Label" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Launch" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Launch" ALTER COLUMN "collectionId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Launch" ALTER COLUMN "brandId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Launch" ALTER COLUMN "collection" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Launch" ALTER COLUMN "brand" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Location" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Location" ALTER COLUMN "userId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Location" ALTER COLUMN "user" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Order" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Order" ALTER COLUMN "customerId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Order" ALTER COLUMN "sentPackageId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Order" ALTER COLUMN "customer" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Order" ALTER COLUMN "sentPackage" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."OrderLineItem" ALTER COLUMN "id" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."OrderLineItem" ALTER COLUMN "recordID" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Package" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Package" ALTER COLUMN "fromAddressId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Package" ALTER COLUMN "toAddressId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Package" ALTER COLUMN "shippingLabelId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Package" ALTER COLUMN "fromAddress" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Package" ALTER COLUMN "toAddress" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Package" ALTER COLUMN "shippingLabel" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."PackageTransitEvent" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."PackageTransitEvent" ALTER COLUMN "packageId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."PackageTransitEvent" ALTER COLUMN "reservationId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."PackageTransitEvent" ALTER COLUMN "package" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."PackageTransitEvent" ALTER COLUMN "reservation" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."PauseRequest" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."PauseRequest" ALTER COLUMN "membershipId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."PauseRequest" ALTER COLUMN "membership" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."PaymentPlan" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."PhysicalProduct" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."PhysicalProduct" ALTER COLUMN "locationId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."PhysicalProduct" ALTER COLUMN "warehouseLocationId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."PhysicalProduct" ALTER COLUMN "priceId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."PhysicalProduct" ALTER COLUMN "location" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."PhysicalProduct" ALTER COLUMN "warehouseLocation" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."PhysicalProduct" ALTER COLUMN "price" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."PhysicalProductPrice" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."PhysicalProductQualityReport" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."PhysicalProductQualityReport" ALTER COLUMN "physicalProductId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."PhysicalProductQualityReport" ALTER COLUMN "userId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."PhysicalProductQualityReport" ALTER COLUMN "physicalProduct" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."PhysicalProductQualityReport" ALTER COLUMN "user" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."PhysicalProductQualityReport_damageTypes" ALTER COLUMN "nodeId" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Product" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Product" ALTER COLUMN "categoryId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Product" ALTER COLUMN "colorId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Product" ALTER COLUMN "secondaryColorId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Product" ALTER COLUMN "brandId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Product" ALTER COLUMN "modelSizeId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Product" ALTER COLUMN "seasonId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Product" ALTER COLUMN "tierId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Product" ALTER COLUMN "category" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Product" ALTER COLUMN "color" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Product" ALTER COLUMN "secondaryColor" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Product" ALTER COLUMN "brand" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Product" ALTER COLUMN "modelSize" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Product" ALTER COLUMN "season" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Product" ALTER COLUMN "tier" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ProductFunction" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
@@ -145,37 +142,37 @@ ALTER TABLE monsoon$staging."Product_innerMaterials" ALTER COLUMN "nodeId" SET D
 ALTER TABLE monsoon$staging."Product_styles" ALTER COLUMN "nodeId" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ProductMaterialCategory" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ProductMaterialCategory" ALTER COLUMN "categoryId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ProductMaterialCategory" ALTER COLUMN "category" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ProductModel" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ProductNotification" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ProductNotification" ALTER COLUMN "productVariantId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ProductNotification" ALTER COLUMN "physicalProductId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ProductNotification" ALTER COLUMN "customerId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ProductNotification" ALTER COLUMN "productVariant" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ProductNotification" ALTER COLUMN "physicalProduct" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ProductNotification" ALTER COLUMN "customer" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Product_outerMaterials" ALTER COLUMN "nodeId" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ProductRequest" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ProductRequest" ALTER COLUMN "userId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ProductRequest" ALTER COLUMN "user" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ProductRequest_images" ALTER COLUMN "nodeId" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ProductSeason" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ProductSeason" ALTER COLUMN "vendorSeasonId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ProductSeason" ALTER COLUMN "internalSeasonId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ProductSeason" ALTER COLUMN "vendorSeason" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ProductSeason" ALTER COLUMN "internalSeason" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ProductSeason_wearableSeasons" ALTER COLUMN "nodeId" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ProductTier" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ProductVariant" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ProductVariant" ALTER COLUMN "colorId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ProductVariant" ALTER COLUMN "internalSizeId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ProductVariant" ALTER COLUMN "priceId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ProductVariant" ALTER COLUMN "color" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ProductVariant" ALTER COLUMN "internalSize" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ProductVariant" ALTER COLUMN "price" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ProductVariantFeedback" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ProductVariantFeedback" ALTER COLUMN "variantId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ProductVariantFeedback" ALTER COLUMN "variant" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ProductVariantFeedbackQuestion" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
@@ -186,59 +183,57 @@ ALTER TABLE monsoon$staging."ProductVariantFeedbackQuestion_responses" ALTER COL
 ALTER TABLE monsoon$staging."ProductVariantPrice" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ProductVariantWant" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ProductVariantWant" ALTER COLUMN "productVariantId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ProductVariantWant" ALTER COLUMN "userId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ProductVariantWant" ALTER COLUMN "productVariant" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ProductVariantWant" ALTER COLUMN "user" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."PushNotificationReceipt" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."RecentlyViewedProduct" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."RecentlyViewedProduct" ALTER COLUMN "productId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."RecentlyViewedProduct" ALTER COLUMN "customerId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."RecentlyViewedProduct" ALTER COLUMN "product" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."RecentlyViewedProduct" ALTER COLUMN "customer" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "userId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "lastLocationId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "customerId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "sentPackageId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "returnedPackageId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "receiptId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "shippingOptionId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "user" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "lastLocation" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "customer" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "sentPackage" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "returnedPackage" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "receipt" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Reservation" ALTER COLUMN "shippingOption" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ReservationFeedback" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ReservationFeedback" ALTER COLUMN "userId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ReservationFeedback" ALTER COLUMN "reservationId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ReservationFeedback" ALTER COLUMN "user" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ReservationFeedback" ALTER COLUMN "reservation" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ReservationReceipt" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ReservationReceiptItem" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ReservationReceiptItem" ALTER COLUMN "productId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ReservationReceiptItem" ALTER COLUMN "reservationReceiptId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ReservationReceiptItem" ALTER COLUMN "product" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ReservationReceiptItem" ALTER COLUMN "reservationReceipt" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Season" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ShippingMethod" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ShippingOption" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ShippingOption" ALTER COLUMN "destinationId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ShippingOption" ALTER COLUMN "originId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ShippingOption" ALTER COLUMN "shippingMethodId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ShippingOption" ALTER COLUMN "destination" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ShippingOption" ALTER COLUMN "origin" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ShippingOption" ALTER COLUMN "shippingMethod" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ShopifyProductVariant" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ShopifyProductVariant" ALTER COLUMN "externalId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ShopifyProductVariant" ALTER COLUMN "imageId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ShopifyProductVariant" ALTER COLUMN "brandId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ShopifyProductVariant" ALTER COLUMN "productVariantId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."ShopifyProductVariant" ALTER COLUMN "shopId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ShopifyProductVariant" ALTER COLUMN "image" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ShopifyProductVariant" ALTER COLUMN "brand" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ShopifyProductVariant" ALTER COLUMN "productVariant" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."ShopifyProductVariant" ALTER COLUMN "shop" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ShopifyProductVariantSelectedOption" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."Size" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Size" ALTER COLUMN "topId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Size" ALTER COLUMN "bottomId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."Size" ALTER COLUMN "accessoryId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Size" ALTER COLUMN "top" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Size" ALTER COLUMN "bottom" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."Size" ALTER COLUMN "accessory" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."SmsReceipt" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."SmsReceipt" ALTER COLUMN "externalId" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."SmsReceipt_mediaUrls" ALTER COLUMN "nodeId" SET DATA TYPE character varying(30);
 
@@ -259,15 +254,15 @@ ALTER TABLE monsoon$staging."Tag" ALTER COLUMN "id" SET DATA TYPE character vary
 ALTER TABLE monsoon$staging."TopSize" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."User" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."User" ALTER COLUMN "pushNotificationId" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."User" ALTER COLUMN "deviceDataId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."User" ALTER COLUMN "pushNotification" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."User" ALTER COLUMN "deviceData" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."UserDeviceData" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."UserPushNotification" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."UserPushNotificationInterest" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."UserPushNotificationInterest" ALTER COLUMN "userId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."UserPushNotificationInterest" ALTER COLUMN "user" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."User_roles" ALTER COLUMN "nodeId" SET DATA TYPE character varying(30);
 
@@ -276,7 +271,7 @@ ALTER TABLE monsoon$staging."UTMData" ALTER COLUMN "id" SET DATA TYPE character 
 ALTER TABLE monsoon$staging."WarehouseLocation" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."WarehouseLocationConstraint" ALTER COLUMN "id" SET DATA TYPE character varying(30);
-ALTER TABLE monsoon$staging."WarehouseLocationConstraint" ALTER COLUMN "categoryId" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."WarehouseLocationConstraint" ALTER COLUMN "category" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ShopifyShop" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
