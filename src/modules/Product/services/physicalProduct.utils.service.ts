@@ -1,10 +1,6 @@
 import { Injectable } from "@nestjs/common"
-import {
-  Category,
-  ID_Input,
-  PhysicalProduct,
-  ProductVariant,
-} from "@prisma1/index"
+import { Category } from "@prisma/client"
+import { ID_Input, PhysicalProduct, ProductVariant } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head, uniqBy } from "lodash"
 
@@ -56,36 +52,34 @@ export class PhysicalProductUtilsService {
   }
 
   async getAllCategories(physProd: PhysicalProduct): Promise<Category[]> {
-    return await this.productUtils.getAllCategories(
-      head(
-        await this.prisma.client.products({
-          where: {
-            variants_some: {
-              physicalProducts_some: { seasonsUID: physProd.seasonsUID },
+    return await this.productUtils.getAllCategoriesForProduct(
+      await this.prisma.client2.product.findFirst({
+        where: {
+          variants: {
+            some: {
+              physicalProducts: { some: { seasonsUID: physProd.seasonsUID } },
             },
           },
-        })
-      )
+        },
+      })
     )
   }
 
   async nextSequenceNumber(): Promise<number> {
-    const lastPhysicalProduct = head(
-      await this.prisma.client.physicalProducts({
-        first: 1,
-        orderBy: "sequenceNumber_DESC",
-      })
+    const lastPhysicalProduct = await this.prisma.client2.physicalProduct.findFirst(
+      {
+        orderBy: { sequenceNumber: "desc" },
+      }
     )
 
     return lastPhysicalProduct.sequenceNumber + 1
   }
 
   async groupedSequenceNumbers(inputs): Promise<any> {
-    const lastPhysicalProduct = head(
-      await this.prisma.client.physicalProducts({
-        first: 1,
-        orderBy: "sequenceNumber_DESC",
-      })
+    const lastPhysicalProduct = await this.prisma.client2.physicalProduct.findFirst(
+      {
+        orderBy: { sequenceNumber: "desc" },
+      }
     )
     let startingSequenceNumber = lastPhysicalProduct.sequenceNumber
     const groupedSequenceNumbers = []

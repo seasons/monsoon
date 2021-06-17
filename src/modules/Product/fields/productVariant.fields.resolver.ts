@@ -173,6 +173,10 @@ export class ProductVariantFieldsResolver {
       case "WxL":
         displayLong = manufacturerSize.display // e.g if displayShort is 30, displayLong should be 30x42.
         break
+      default:
+        // Cases such as "Universal", should be the same
+        displayLong = variant.displayShort
+        break
     }
 
     return displayLong
