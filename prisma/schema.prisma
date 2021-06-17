@@ -166,6 +166,7 @@ model Category {
   description                  String?
   image                        String?
   productType                  String?
+  measurementType              String?
   visible                      Boolean
   updatedAt                    DateTime?                     @updatedAt
   products                     Product[]

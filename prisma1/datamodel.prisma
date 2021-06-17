@@ -29,6 +29,11 @@ enum LocationType {
   Customer
 }
 
+enum MeasurementType {
+  Inches
+  Millimeters
+}
+
 enum CustomerStatus {
   Invited
   Created
@@ -337,6 +342,7 @@ type Category {
   children: [Category!]! @relation(name: "CategoryToChildren")
   updatedAt: DateTime @updatedAt
   productType: ProductType
+  measurementType: MeasurementType
 }
 
 type Color {
