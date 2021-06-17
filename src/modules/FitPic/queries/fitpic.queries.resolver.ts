@@ -1,36 +1,32 @@
 import { User } from "@app/decorators"
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UserRole } from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
-import { Args, Info, Query, Resolver } from "@nestjs/graphql"
+import { Args, Query, Resolver } from "@nestjs/graphql"
 
 @Resolver()
 export class FitPicQueriesResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly queryUtils: QueryUtilsService) {}
 
   @Query()
-  async fitPic(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.fitPic(args, info)
+  async fitPic(@Args() { where }, @Select() select) {
+    return await this.queryUtils.resolveFindUnique({ where, select }, "FitPic")
   }
 
   @Query()
-  async fitPics(@Args() args, @Info() info, @User() user, @Select() select) {
-    return await this.prisma.binding.query.fitPics(
+  async fitPics(@FindManyArgs() args, @User() user) {
+    return this.queryUtils.resolveFindMany(
       await this.sanitized({ args, forUser: user }),
-      info
+      "FitPic"
     )
   }
 
   @Query()
-  async fitPicsConnection(
-    @Args() args,
-    @Info() info,
-    @User() user,
-    @Select() select
-  ) {
-    return await this.prisma.binding.query.fitPicsConnection(
+  async fitPicsConnection(@Args() args, @User() user) {
+    return this.queryUtils.resolveConnection(
       await this.sanitized({ args, forUser: user }),
-      info
+      "FitPic"
     )
   }
 
