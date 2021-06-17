@@ -16,7 +16,6 @@ export const SCALAR_LIST_FIELD_NAMES = {
   "ShopifyShop": ["scope"],
   "PhysicalProductQualityReport": ["damageTypes"],
   "SmsReceipt": ["mediaUrls"],
-  "FitPic": ["products"],
   "User": ["roles"],
   "StylePreferences": ["styles", "patterns", "colors", "brands"],
   "CustomerDetail": ["weight", "topSizes", "waistSizes", "styles"],
