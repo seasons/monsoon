@@ -17,7 +17,7 @@ export class FitPicQueriesResolver {
   @Query()
   async fitPics(@FindManyArgs() args, @User() user) {
     return this.queryUtils.resolveFindMany(
-      await this.sanitized({ args, forUser: user }),
+      this.sanitized({ args, forUser: user }),
       "FitPic"
     )
   }
@@ -25,29 +25,18 @@ export class FitPicQueriesResolver {
   @Query()
   async fitPicsConnection(@Args() args, @User() user) {
     return this.queryUtils.resolveConnection(
-      await this.sanitized({ args, forUser: user }),
+      this.sanitized({ args, forUser: user }),
       "FitPic"
     )
   }
 
-  private async sanitized({
+  private sanitized({
     args,
     forUser,
   }: {
     args: any
     forUser?: { roles: UserRole[] }
   }) {
-    const adminOnlyFields = [
-      "status",
-      "status_not",
-      "status_in",
-      "status_not_in",
-      "reports",
-      "reports_every",
-      "reports_some",
-      "reports_none",
-    ]
-
     if (forUser?.roles?.includes("Admin")) {
       return args
     } else {
