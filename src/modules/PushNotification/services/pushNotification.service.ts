@@ -3,7 +3,7 @@ import { UserPushNotificationInterestType } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Token } from "@pusher/push-notifications-server"
-import { upperFirst } from "lodash"
+import { difference, upperFirst } from "lodash"
 
 import {
   PushNotificationID,
@@ -77,6 +77,7 @@ export class PushNotificationService {
         },
       },
     })
+
     if (targetInterest.includes("debug")) {
       usersToUpdate = usersToUpdate.filter(a => a.roles.includes("Admin"))
     }
@@ -124,13 +125,42 @@ export class PushNotificationService {
         } = this.data.getPushNotifData(pushNotifID, vars)
 
         // Filter any emails that have received this push notification before
-
-        await this.pusher.client.publishToUsers(
-          targetEmails,
-          notificationPayload as any
+        const pushNotificationReceipts = await this.prisma.client2.pushNotificationReceipt.findMany(
+          {
+            where: {
+              title: notificationPayload?.apns?.aps?.alert?.title,
+              body: notificationPayload?.apns?.aps?.alert?.body,
+              users: {
+                some: {
+                  email: {
+                    in: targetEmails,
+                  },
+                },
+              },
+            },
+            select: { id: true, users: true },
+          }
         )
 
-        for (const email of targetEmails) {
+        const emailsNotifAlreadySent = pushNotificationReceipts
+          .map(a => a.users.map(b => b.email))
+          .flat()
+
+        const updatedTargetEmails = difference(
+          targetEmails,
+          emailsNotifAlreadySent
+        )
+
+        try {
+          await this.pusher.client.publishToUsers(
+            updatedTargetEmails,
+            notificationPayload as any
+          )
+        } catch (err) {
+          console.error(err)
+        }
+
+        for (const email of updatedTargetEmails) {
           // Create the receipt
           const receipt = await this.prisma.client.createPushNotificationReceipt(
             {
