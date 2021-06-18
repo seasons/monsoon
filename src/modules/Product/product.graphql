@@ -186,6 +186,12 @@ type Mutation {
   createUsedOrder(physicalProductID: ID!): Order!
 }
 
+type AccessorySize {
+  bridge: Float
+  length: Float
+  width: Float
+}
+
 type PublishProductsResponse {
   message: String!
   unvalidatedIDs: [String]!

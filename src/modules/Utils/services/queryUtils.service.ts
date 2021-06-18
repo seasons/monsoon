@@ -268,7 +268,7 @@ export class QueryUtilsService {
 
     const returnObj = { ...obj }
     for (const key of Object.keys(returnObj)) {
-      if (key === "not" && returnObj[key] === null) {
+      if (returnObj[key] === null) {
         returnObj[key] = undefined
       } else if (typeof returnObj[key] === "object") {
         returnObj[key] = QueryUtilsService.notNullToNotUndefined(returnObj[key])

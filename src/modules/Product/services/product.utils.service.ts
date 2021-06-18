@@ -1,22 +1,14 @@
-import { InvoicesForCustomersLoader } from "@app/modules/Payment/loaders/invoicesForCustomers.loaders"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
 import { ProductVariant } from "@prisma/client"
-import { Category, Prisma, Product, Size } from "@prisma/client"
-import {
-  AccessorySizeCreateInput,
-  BottomSizeCreateInput,
-  BrandOrderByInput,
-  ProductMaterialCategoryCreateInput,
-  SizeType,
-  TopSizeCreateInput,
-} from "@prisma1/index"
+import { Category, Product, Size } from "@prisma/client"
+import { ProductMaterialCategoryCreateInput, SizeType } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
-import { head, identity, pickBy, size, union, uniq, uniqBy } from "lodash"
+import { head, identity, pickBy, union, uniq, uniqBy } from "lodash"
 import slugify from "slugify"
 
-import { BottomSizeType, LetterSize, ProductType } from "../../../prisma"
+import { ProductType } from "../../../prisma"
 import { ProductWithPhysicalProducts } from "../product.types"
 
 type JPSize = "0" | "1" | "2" | "3" | "4"
@@ -148,7 +140,6 @@ export class ProductUtilsService {
     let categoryFilter = { where: {} }
     let variantsFilter = { where: {} }
     let colorsFilter = { where: {} }
-    let forSaleFilter = { where: {} }
 
     if (args.brand && args.brand !== "all") {
       brandFilter = {
@@ -410,6 +401,30 @@ export class ProductUtilsService {
     }`
   }
 
+  convertMeasurementSizeToInches(
+    measurement: number,
+    measurementType: string
+  ): number {
+    switch (measurementType) {
+      case "Millimeters":
+        return measurement / 25.4
+      default:
+        return measurement
+    }
+  }
+
+  convertInchesToMeasurementSize(
+    measurement: number,
+    measurementType: string
+  ): number {
+    switch (measurementType) {
+      case "Millimeters":
+        return measurement * 25.4
+      default:
+        return measurement
+    }
+  }
+
   physicalProductsForProduct(product: ProductWithPhysicalProducts) {
     return product.variants.reduce(
       (acc, curVal) => union(acc, curVal.physicalProducts),
@@ -441,75 +456,6 @@ export class ProductUtilsService {
           data,
         }
       : data
-  }
-
-  async deepUpsertSize({
-    slug,
-    type,
-    display,
-    topSizeData,
-    bottomSizeData,
-    accessorySizeData,
-    sizeType,
-  }: {
-    slug: string
-    type: ProductType
-    sizeType: SizeType
-    display: string
-    topSizeData?: TopSizeCreateInput
-    bottomSizeData?: BottomSizeCreateInput
-    accessorySizeData?: AccessorySizeCreateInput
-  }): Promise<Size> {
-    const sizeData = { slug, productType: type, display, type: sizeType }
-    const sizeRecord = await this.prisma.client2.size.upsert({
-      where: { slug },
-      create: { ...sizeData },
-      update: { ...sizeData },
-    })
-    if (!!bottomSizeData || !!topSizeData || !!accessorySizeData) {
-      switch (type) {
-        case "Accessory":
-          const prismaAccessorySize = await this.prisma.client
-            .size({ id: sizeRecord.id })
-            .accessory()
-          const accessorySize = await this.prisma.client.upsertAccessorySize({
-            where: { id: prismaAccessorySize?.id || "" },
-            update: { ...accessorySizeData },
-            create: { ...accessorySizeData },
-          })
-          if (!prismaAccessorySize) {
-            await this.prisma.client.updateSize({
-              where: { slug },
-              data: { accessory: { connect: { id: accessorySize.id } } },
-            })
-          }
-          break
-        case "Top":
-          await this.prisma.client2.size.update({
-            where: { slug },
-            data: {
-              top: {
-                upsert: { create: topSizeData as any, update: topSizeData },
-              },
-            },
-          })
-          break
-        case "Bottom":
-          await this.prisma.client2.size.update({
-            where: { slug },
-            data: {
-              bottom: {
-                upsert: {
-                  create: bottomSizeData as any,
-                  update: bottomSizeData,
-                },
-              },
-            },
-          })
-      }
-    }
-
-    return sizeRecord
   }
 
   getProductImageName(

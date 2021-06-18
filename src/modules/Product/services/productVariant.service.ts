@@ -235,28 +235,6 @@ export class ProductVariantService {
     })
   }
 
-  async getManufacturerSizeIDs(variant, type): Promise<{ id: string }[]> {
-    const IDs =
-      variant.manufacturerSizeNames &&
-      (await Promise.all(
-        variant.manufacturerSizeNames?.map(async sizeValue => {
-          if (!variant.sku) {
-            throw new Error("No variant sku present in getManufacturerSizeIDs")
-          }
-          const sizeType = variant.manufacturerSizeType
-          const slug = `${variant.sku}-manufacturer-${sizeType}-${sizeValue}`
-          const size = await this.productUtils.deepUpsertSize({
-            slug,
-            type,
-            display: sizeValue,
-            sizeType,
-          })
-          return { id: size.id }
-        })
-      ))
-    return IDs as { id: string }[]
-  }
-
   async updateProductVariant(input, select): Promise<ProductVariant> {
     const {
       id,
