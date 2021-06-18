@@ -352,7 +352,7 @@ export class EmailService {
   async sendReservationConfirmationEmail(
     user: EmailUser,
     products: Product[],
-    reservation: PrismaReservation,
+    reservation: { reservationNumber: number },
     trackingNumber?: string,
     trackingUrl?: string
   ) {

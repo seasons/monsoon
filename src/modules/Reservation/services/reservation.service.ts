@@ -128,6 +128,7 @@ export class ReservationService {
     const [
       mutationPromises,
       physicalProductsBeingReserved,
+      productsBeingReserved,
     ] = await this.productVariantService.updateProductVariantCounts(
       newProductVariantsBeingReserved,
       customer.id
@@ -180,7 +181,7 @@ export class ReservationService {
       heldPhysicalProducts,
       shippingOptionID
     )
-    const reservationPromise = await this.prisma.client2.reservation.create({
+    const reservationPromise = this.prisma.client2.reservation.create({
       data: {
         ...reservationData,
         createdAt: new Date(),
@@ -190,13 +191,15 @@ export class ReservationService {
     promises.push(reservationPromise)
 
     // Resolve all prisma operation in one transaction
-    this.prisma.client2.$transaction(promises)
+    await this.prisma.client2.$transaction(promises)
+
+    const reservation = await reservationPromise
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
       user,
       productsBeingReserved,
-      reservationPromise,
+      reservation,
       seasonsToCustomerTransaction.tracking_number,
       seasonsToCustomerTransaction.tracking_url_provider
     )
@@ -211,7 +214,7 @@ export class ReservationService {
 
     // Get return data
     let reservationReturnData = await this.prisma.binding.query.reservation(
-      { where: { id: prismaReservation.id } },
+      { where: { id: reservation.id } },
       addFragmentToInfo(info, `fragment EnsureId on Reservation {id}`)
     )
 

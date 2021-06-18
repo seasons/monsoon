@@ -185,7 +185,11 @@ export class ProductVariantService {
       }
     }
 
-    return [promises, availablePhysicalProducts]
+    return [
+      promises,
+      availablePhysicalProducts,
+      productVariants.map(p => p.product),
+    ]
   }
 
   updateCountsForStatusChange({
