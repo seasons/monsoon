@@ -88,8 +88,10 @@ export class ProductVariantMutationsResolver {
     })) as Pick<Product, "id" | "retailPrice" | "status" | "type"> & {
       color: Pick<Color, "id" | "colorCode">
     }
-    if (!product || !product.status || !product.type) {
-      return null
+    if (!product || !product.type) {
+      throw new Error(
+        `Can not create variant for product. Please check that it exists and has a valid type`
+      )
     }
 
     const sequenceNumbers = await this.physicalProductUtilsService.groupedSequenceNumbers(

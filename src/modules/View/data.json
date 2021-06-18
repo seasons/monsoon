@@ -2,7 +2,7 @@
   "Referral": {
     "id": "referral",
     "type": "Referral",
-    "title": "Invite a friend. Get a free month",
+    "title": "Refer a friend. Get 50% off",
     "caption": "Refer a friend and you'll both get 50% off on your next month of Seasons when they successfully sign up!",
     "properties": {
       "imageURL": "https://seasons-s3.imgix.net/referral-view/referral-view-image.png",
