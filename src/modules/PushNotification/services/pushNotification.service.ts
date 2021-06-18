@@ -6,11 +6,15 @@ import { Token } from "@pusher/push-notifications-server"
 import { upperFirst } from "lodash"
 
 import {
+  PushNotificationID,
   PushNotifyInterestInput,
   PushNotifyUsersInput,
 } from "../pushNotification.types"
 import { PusherService } from "./pusher.service"
-import { PushNotificationDataProvider } from "./pushNotification.data.service"
+import {
+  AllPushNotificationIDs,
+  PushNotificationDataProvider,
+} from "./pushNotification.data.service"
 
 @Injectable()
 export class PushNotificationService {
@@ -19,7 +23,11 @@ export class PushNotificationService {
     private readonly data: PushNotificationDataProvider,
     private readonly prisma: PrismaService,
     private readonly error: ErrorService
-  ) {}
+  ) {
+    for (const id of AllPushNotificationIDs) {
+      this.data.getPushNotifData(id, {}) // run this to enforce lengths on all notifs at boot time
+    }
+  }
 
   generateToken(email: string): Token {
     return (this.pusher.client.generateToken(email) as any).token
