@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { Prisma, ProductVariant } from "@prisma/client"
+import { Category, Prisma, ProductVariant } from "@prisma/client"
 import {
   BottomSizeType,
   ID_Input,
@@ -263,16 +263,15 @@ export class ProductVariantService {
     const prodVar = this.prisma.sanitizePayload(_prodVar, "ProductVariant")
 
     // FIXME: Once product is a singleton on ProductVariant can get _product directly from _prodVar
-    const _product = this.prisma.client2.product.findUnique({
+    const _product = await this.prisma.client2.product.findUnique({
       where: { slug: prodVar.productID },
       select: {
-        id: true,
         category: { select: { measurementType: true } },
       },
     })
     const product = this.prisma.sanitizePayload(_product, "Product")
 
-    const measurementType = product.category.measurementType
+    const measurementType = product?.category?.measurementType
 
     let manufacturerSizes
     let displayShort
