@@ -255,11 +255,24 @@ export class ProductVariantService {
       select: {
         internalSize: { select: { id: true, display: true, type: true } },
         manufacturerSizes: { select: { slug: true } },
+        productID: true,
         id: true,
         sku: true,
       },
     })
     const prodVar = this.prisma.sanitizePayload(_prodVar, "ProductVariant")
+
+    // FIXME: Once product is a singleton on ProductVariant can get _product directly from _prodVar
+    const _product = this.prisma.client2.product.findUnique({
+      where: { slug: prodVar.productID },
+      select: {
+        id: true,
+        category: { select: { measurementType: true } },
+      },
+    })
+    const product = this.prisma.sanitizePayload(_product, "Product")
+
+    const measurementType = product.category.measurementType
 
     let manufacturerSizes
     let displayShort
@@ -282,14 +295,35 @@ export class ProductVariantService {
       )
     }
 
+    const measurements = pick(input, [
+      "sleeve",
+      "shoulder",
+      "chest",
+      "neck",
+      "length",
+      "waist",
+      "rise",
+      "hem",
+      "inseam",
+      "bridge",
+      "width",
+    ])
+
+    Object.keys(measurements).map(key => {
+      measurements[key] = this.productUtils.convertMeasurementSizeToInches(
+        measurements[key],
+        measurementType
+      )
+    })
+
     const topSizeValues = {
-      ...pick(input, ["sleeve", "shoulder", "chest", "neck", "length"]),
+      ...pick(measurements, ["sleeve", "shoulder", "chest", "neck", "length"]),
     }
     const accessorySizeValues = {
-      ...pick(input, ["bridge", "length", "width"]),
+      ...pick(measurements, ["bridge", "length", "width"]),
     }
     const bottomSizeValues = {
-      ...pick(input, ["waist", "rise", "hem", "inseam"]),
+      ...pick(measurements, ["waist", "rise", "hem", "inseam"]),
     }
     const updateData = Prisma.validator<Prisma.ProductVariantUpdateInput>()({
       internalSize: {
