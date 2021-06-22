@@ -506,7 +506,7 @@ model Order {
   type          String
   status        String
   cancelReason  String?
-  paymentStatus String
+  paymentStatus String          @default("NotPaid")
   customerId    String?         @map("customer") @db.VarChar(30)
   customer      Customer?       @relation(fields: [customerId], references: [id])
   sentPackageId String?         @map("sentPackage") @db.VarChar(30)
@@ -520,7 +520,7 @@ model Order {
 model OrderLineItem {
   id            String   @id @default(cuid()) @db.VarChar(30)
   recordID      String   @db.VarChar(30)
-  recordType    String
+  recordType    String  // OrderLineItemRecordType
   needShipping  Boolean?
   taxRate       Float?
   taxName       String?
@@ -1084,6 +1084,13 @@ enum SizeType {
   EU
   JP
   Letter
+}
+
+enum OrderLineItemRecordType {
+  PhysicalProduct
+  ProductVariant
+  ExternalProduct
+  Package
 }
 
 model Size {

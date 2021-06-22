@@ -4,11 +4,8 @@ import { BagService } from "@app/modules/Product/services/bag.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import {
   BagItem,
-  BillingInfo,
   Category,
   Customer,
-  Location,
-  Order,
   OrderLineItem,
   OrderStatus,
   PhysicalProduct,
@@ -18,6 +15,7 @@ import {
 import { OrderLineItemRecordType } from "@app/prisma"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
+import { BillingInfo, Location, Order, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
 import { GraphQLResolveInfo } from "graphql"
@@ -283,77 +281,76 @@ export class OrderService {
     accessToken: string
     shopName: string
   }> {
-    const [productVariant, customer] = await Promise.all([
-      this.prisma.binding.query.productVariant(
-        {
-          where: {
-            id: productVariantID,
-          },
-        },
-        `{
-        product {
-          buyNewEnabled
-          name
-          brand {
-            shopifyShop {
-              enabled
-              shopName
-              accessToken
-            }
-          }
-          category {
-            id
-          }
-        }
-        shopifyProductVariant {
-          id
-          externalId
-        }
-      }`
-      ),
-      this.prisma.binding.query.customer(
-        {
-          where: {
-            id: customerId,
-          },
-        },
-        `
+    const _productVariant = await this.prisma.client2.productVariant.findUnique(
       {
-        user {
-          id
-          email
-          firstName
-          lastName
-        }
-        detail {
-          shippingAddress {
-            name
-            company
-            address1
-            address2
-            city
-            state
-            zipCode
-            country
-          }
-        }
-        billingInfo {
-          name
-          street1
-          street2
-          city
-          state
-          postal_code
-          country
-        }
+        where: { id: productVariantID },
+        select: {
+          product: {
+            select: {
+              buyNewEnabled: true,
+              name: true,
+              brand: {
+                select: {
+                  shopifyShop: {
+                    select: {
+                      enabled: true,
+                      shopName: true,
+                      accessToken: true,
+                    },
+                  },
+                },
+              },
+              category: { select: { id: true } },
+            },
+          },
+          shopifyProductVariant: { select: { id: true, externalId: true } },
+        },
       }
-    `
-      ),
-    ])
+    )
+    const productVariant = this.prisma.sanitizePayload(
+      _productVariant,
+      "ProductVariant"
+    )
+    const _customer = await this.prisma.client2.customer.findUnique({
+      where: { id: customerId },
+      select: {
+        user: {
+          select: { id: true, email: true, firstName: true, lastName: true },
+        },
+        detail: {
+          select: {
+            shippingAddress: {
+              select: {
+                name: true,
+                company: true,
+                address1: true,
+                address2: true,
+                city: true,
+                state: true,
+                zipCode: true,
+                country: true,
+              },
+            },
+          },
+        },
+        billingInfo: {
+          select: {
+            name: true,
+            street1: true,
+            street2: true,
+            city: true,
+            state: true,
+            postal_code: true,
+            country: true,
+          },
+        },
+      },
+    })
+    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
-    const { buyNewEnabled, name: productName } = productVariant?.product
-    const { enabled, shopName, accessToken } =
-      productVariant?.product?.brand?.shopifyShop || {}
+    const product = productVariant?.product as any
+    const { buyNewEnabled, name: productName } = product
+    const { enabled, shopName, accessToken } = product?.brand?.shopifyShop || {}
     const {
       id: shopifyProductVariantInternalId,
       externalId: shopifyProductVariantExternalId,
@@ -364,8 +361,7 @@ export class OrderService {
     const { email: emailAddress, id: userId } = customer?.user
 
     const productTaxCode = (await this.outerwearCategoryIds).some(
-      outerwearCategoryId =>
-        outerwearCategoryId === productVariant?.product?.category?.id
+      outerwearCategoryId => outerwearCategoryId === product?.category?.id
     )
       ? "PC040111"
       : "PC040000"
@@ -556,12 +552,12 @@ export class OrderService {
     productVariantID,
     customer,
     user,
-    info,
+    select,
   }: {
     productVariantID: string
     customer: Customer
     user: User
-    info: GraphQLResolveInfo
+    select: Prisma.OrderSelect
   }): Promise<Order> {
     const {
       shippingAddress,
@@ -635,27 +631,25 @@ export class OrderService {
       estimate: { invoice_estimate },
     } = await chargebee.estimate.create_invoice(chargebeeInvoice).request()
 
-    return await this.prisma.binding.mutation.createOrder(
-      {
-        data: {
-          customer: { connect: { id: customer.id } },
-          orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
-          externalID: draftOrder.id,
-          type: "New",
-          status: "Drafted",
-          subTotal: invoice_estimate.sub_total,
-          total: invoice_estimate.total,
-          lineItems: {
-            create: orderLineItems.map((orderLineItem, idx) => ({
-              ...orderLineItem,
-              taxRate: invoice_estimate.line_items?.[idx]?.tax_rate || 0,
-              taxPrice: invoice_estimate.line_items?.[idx]?.tax_amount || 0,
-            })),
-          },
+    return (await this.prisma.client2.order.create({
+      data: {
+        customer: { connect: { id: customer.id } },
+        orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
+        externalID: draftOrder.id,
+        type: "New",
+        status: "Drafted",
+        subTotal: invoice_estimate.sub_total,
+        total: invoice_estimate.total,
+        lineItems: {
+          create: orderLineItems.map((orderLineItem, idx) => ({
+            ...orderLineItem,
+            taxRate: invoice_estimate.line_items?.[idx]?.tax_rate || 0,
+            taxPrice: invoice_estimate.line_items?.[idx]?.tax_amount || 0,
+          })),
         },
       },
-      info
-    )
+      select,
+    })) as Order
   }
 
   async buyUsedCreateDraftedOrder({
