@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { BadRequestException } from "@nestjs/common"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
@@ -20,7 +21,7 @@ export class OrderMutationsResolver {
     @Args() { input: { orderType, productVariantID } },
     @Customer() customer,
     @User() user,
-    @Info() info
+    @Select() select
   ) {
     try {
       let draftOrder
@@ -29,14 +30,14 @@ export class OrderMutationsResolver {
           productVariantID,
           customer,
           user,
-          info,
+          select,
         })
       } else {
         draftOrder = await this.order.buyUsedCreateDraftedOrder({
           productVariantID,
           customer,
           user,
-          info,
+          select,
         })
       }
 
@@ -62,7 +63,9 @@ export class OrderMutationsResolver {
     @Info() info
   ) {
     try {
-      const order = await this.prisma.client.order({ id: orderID })
+      const order = await this.prisma.client2.order.findUnique({
+        where: { id: orderID },
+      })
       let submittedOrder
       if (order.type === "New") {
         submittedOrder = await this.order.buyNewSubmitOrder({

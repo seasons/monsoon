@@ -1,12 +1,8 @@
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import {
-  Customer,
-  ID_Input,
-  Location,
-  ShippingCode,
-  User,
-} from "@prisma1/index"
+import { Customer, User } from "@prisma/client"
+import { Location } from "@prisma/client"
+import { ID_Input, ShippingCode } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import shippo from "shippo"
 
@@ -70,7 +66,7 @@ export class ShippingService {
   }
 
   async createBuyUsedShippingLabel(
-    productVariantId: ID_Input,
+    productVariantId: string,
     user: User,
     customer: Customer
   ): Promise<ShippoTransaction> {
@@ -88,6 +84,7 @@ export class ShippingService {
       insuranceAmount
     )
 
+    // TODO:
     const seasonsToCustomerTransaction = await this.createShippingLabel({
       shipment: seasonsToShippoShipment,
       carrier_account: process.env.UPS_ACCOUNT_ID,
@@ -143,10 +140,11 @@ export class ShippingService {
     itemIDs: string[]
   ): Promise<number> {
     const shippingBagWeight = 1
-    const productVariants = await this.prisma.client.productVariants({
-      where: { id_in: itemIDs },
+    const productVariants = await this.prisma.client2.productVariant.findMany({
+      where: { id: { in: itemIDs } },
+      select: { weight: true },
     })
-    return productVariants.reduce(function addProductWeight(acc, curProdVar) {
+    return productVariants.reduce((acc, curProdVar) => {
       return acc + curProdVar.weight
     }, shippingBagWeight)
   }
@@ -182,12 +180,15 @@ export class ShippingService {
   private async calcTotalRetailPriceFromProductVariantIDs(
     itemIDs: string[]
   ): Promise<number> {
-    const products = await this.prisma.client.products({
+    const products = await this.prisma.client2.product.findMany({
       where: {
-        variants_some: {
-          id_in: itemIDs,
+        variants: {
+          some: {
+            id: { in: itemIDs },
+          },
         },
       },
+      select: { retailPrice: true },
     })
     return products.reduce((acc, prod) => acc + prod.retailPrice, 0)
   }
