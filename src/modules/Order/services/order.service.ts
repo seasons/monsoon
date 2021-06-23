@@ -734,7 +734,17 @@ export class OrderService {
     const _physicalProductWithVariant = await this.prisma.client2.physicalProduct.findUnique(
       {
         where: { id: physicalProductId },
-        select: { id: true, productVariant: { select: { id: true } } },
+        select: {
+          id: true,
+          productVariant: {
+            select: {
+              id: true,
+              reservable: true,
+              offloaded: true,
+              reserved: true,
+            },
+          },
+        },
       }
     )
     const physicalProductWithVariant = this.prisma.sanitizePayload(
@@ -743,7 +753,7 @@ export class OrderService {
     )
     const productVariant = (physicalProductWithVariant.productVariant as unknown) as Pick<
       ProductVariant,
-      "id"
+      "id" | "reservable" | "offloaded" | "reserved"
     >
 
     const { invoice, shippingAddress } = await this.getBuyUsedMetadata({
@@ -802,7 +812,7 @@ export class OrderService {
             transactionID: shippoTransaction.object_id,
             weight: shipmentWeight,
             items: {
-              connect: orderLineItems
+              connect: orderWithLineItems.lineItems
                 .filter(
                   orderLineItem =>
                     orderLineItem.recordType === "PhysicalProduct"
@@ -847,12 +857,8 @@ export class OrderService {
       }
     }
 
-    const [
-      updatedOrder,
-      _updatedPhysicalProduct,
-      _updatedProductVariant,
-    ] = await Promise.all([
-      this.prisma.client.updateOrder({
+    const [updatedOrder] = await this.prisma.client2.$transaction([
+      this.prisma.client2.order.update({
         where: { id: order.id },
         data: {
           status: orderNeedsShipping ? "Submitted" : "Fulfilled",
@@ -861,7 +867,7 @@ export class OrderService {
           ...orderShippingUpdate,
         },
       }),
-      this.prisma.client.updatePhysicalProduct({
+      this.prisma.client2.physicalProduct.update({
         where: { id: physicalProductId },
         data: {
           inventoryStatus: "Offloaded",
@@ -869,7 +875,7 @@ export class OrderService {
           offloadNotes: `Order ID: ${order.id}`,
         },
       }),
-      this.prisma.client.updateProductVariant({
+      this.prisma.client2.productVariant.update({
         where: { id: productVariant.id },
         data: updateProductVariantData,
       }),
@@ -877,22 +883,22 @@ export class OrderService {
 
     await this.email.sendBuyUsedOrderConfirmationEmail(user, updatedOrder)
 
-    return await this.prisma.binding.query.order(
-      {
-        where: { id: updatedOrder.id },
-      },
-      info
-    )
+    return (await this.prisma.client2.order.findUnique({
+      where: { id: updatedOrder.id },
+      select,
+    })) as Order
   }
 
   async updateOrderStatus({
     orderID,
     status,
     customer,
+    select,
   }: {
     orderID: string
     status: OrderStatus
     customer: Customer
+    select: Prisma.OrderSelect
   }): Promise<Order> {
     const removeFulfilledItemFromBag = async () => {
       const lineItems = await this.prisma.client

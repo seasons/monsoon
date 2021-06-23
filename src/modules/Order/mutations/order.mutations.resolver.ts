@@ -60,7 +60,7 @@ export class OrderMutationsResolver {
     @Args() { input: { orderID } },
     @Customer() customer,
     @User() user,
-    @Info() info
+    @Select() select
   ) {
     try {
       const order = await this.prisma.client2.order.findUnique({
@@ -72,14 +72,14 @@ export class OrderMutationsResolver {
           order,
           customer,
           user,
-          info,
+          select,
         })
       } else {
         submittedOrder = await this.order.buyUsedSubmitOrder({
           order,
           customer,
           user,
-          info,
+          select,
         })
       }
 
@@ -96,7 +96,11 @@ export class OrderMutationsResolver {
   }
 
   @Mutation()
-  updateOrderStatus(@Args() { orderID, status }, @Customer() customer) {
-    return this.order.updateOrderStatus({ orderID, status, customer })
+  updateOrderStatus(
+    @Args() { orderID, status },
+    @Customer() customer,
+    @Select() select
+  ) {
+    return this.order.updateOrderStatus({ orderID, status, customer, select })
   }
 }

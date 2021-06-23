@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common"
+import { Order } from "@prisma/client"
 import RenderEmail from "@seasons/wind"
 import sgMail from "@sendgrid/mail"
 import { head } from "lodash"
@@ -7,7 +8,6 @@ import nodemailer from "nodemailer"
 import {
   EmailId,
   ID_Input,
-  Order,
   Reservation as PrismaReservation,
   Product,
   User,
@@ -122,18 +122,27 @@ export class EmailService {
 
   async sendBuyUsedOrderConfirmationEmail(user: EmailUser, order: Order) {
     // Gather the appropriate product info
-    const orderLineItems = await this.prisma.client
-      .order({ id: order.id })
-      .lineItems()
+    const orderWithLineItems = await this.prisma.client2.order.findUnique({
+      where: { id: order.id },
+      select: {
+        lineItems: {
+          select: { recordID: true, recordType: true, needShipping: true },
+        },
+      },
+    })
+    const orderLineItems = orderWithLineItems.lineItems
     const physicalProductId = orderLineItems.find(
       orderLineItem => orderLineItem.recordType === "PhysicalProduct"
     ).recordID
-    const productId = (
-      await this.prisma.client
-        .physicalProduct({ id: physicalProductId })
-        .productVariant()
-        .product()
-    ).id
+    const productId = (this.prisma.sanitizePayload(
+      await this.prisma.client2.physicalProduct.findUnique({
+        where: { id: physicalProductId },
+        select: {
+          productVariant: { select: { product: { select: { id: true } } } },
+        },
+      }),
+      "PhysicalProduct"
+    ).productVariant as any).product.id
     const products = await this.emailUtils.createGridPayload([
       { id: productId },
     ])
@@ -147,32 +156,30 @@ export class EmailService {
       false
     )
 
-    const custData = (
-      await this.prisma.binding.query.customers(
-        {
-          where: { user: { id: user.id } },
+    const _custData = await this.prisma.client2.customer.findFirst({
+      where: { user: { id: user.id } },
+      select: {
+        id: true,
+        detail: {
+          select: {
+            id: true,
+            shippingAddress: {
+              select: {
+                id: true,
+                name: true,
+                address1: true,
+                address2: true,
+                city: true,
+                state: true,
+                zipCode: true,
+              },
+            },
+          },
         },
-        `{
-        detail {
-          id
-          shippingAddress {
-            id
-            name
-            address1
-            address2
-            city
-            state
-            zipCode
-          }
-        }
-        billingInfo {
-          id
-          brand
-          last_digits
-        }
-      }`
-      )
-    )?.[0] as Customer
+        billingInfo: { select: { id: true, brand: true, last_digits: true } },
+      },
+    })
+    const custData = this.prisma.sanitizePayload(_custData, "Customer")
 
     // Render the email
     const payload = await RenderEmail.buyUsedOrderConfirmation({
@@ -392,10 +399,9 @@ export class EmailService {
     })
   }
 
-  private async storeEmailReceipt(emailId: EmailId, userId: ID_Input) {
-    await this.prisma.client.createEmailReceipt({
-      emailId,
-      user: { connect: { id: userId } },
+  private async storeEmailReceipt(emailId: EmailId, userId: string) {
+    await this.prisma.client2.emailReceipt.create({
+      data: { emailId, user: { connect: { id: userId } } },
     })
   }
 
@@ -528,7 +534,10 @@ export class EmailService {
     if (type === "essential") {
       return true
     }
-    const u = await this.prisma.client.user({ email: to })
+    const u = await this.prisma.client2.user.findUnique({
+      where: { email: to },
+      select: { sendSystemEmails: true },
+    })
     return u.sendSystemEmails
   }
 
