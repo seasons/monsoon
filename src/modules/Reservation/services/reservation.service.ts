@@ -82,8 +82,7 @@ export class ReservationService {
       throw new Error(`Only Active customers can place a reservation`)
     }
 
-    let reservationReturnData
-    const rollbackFuncs = []
+    const promises = []
 
     const customerWithPlanItemCount = await this.prisma.client2.customer.findUnique(
       {
@@ -96,134 +95,128 @@ export class ReservationService {
     const customerPlanItemCount =
       customerWithPlanItemCount?.membership?.plan?.itemCount
 
-    try {
-      // Do a quick validation on the data
-      if (!!customerPlanItemCount && items.length !== customerPlanItemCount) {
-        throw new ApolloError(
-          `Your reservation must contain ${customerPlanItemCount} items`,
-          "515"
-        )
-      }
+    // Do a quick validation on the data
+    if (!!customerPlanItemCount && items.length !== customerPlanItemCount) {
+      throw new ApolloError(
+        `Your reservation must contain ${customerPlanItemCount} items`,
+        "515"
+      )
+    }
 
-      // Figure out which items the user is reserving anew and which they already have
-      const lastReservation = await this.reservationUtils.getLatestReservation(
-        customer
-      )
-      this.checkLastReservation(lastReservation)
-      const lastCompletedReservation = !!lastReservation
-        ? lastReservation.status === "Completed"
-          ? lastReservation
-          : await this.reservationUtils.getLatestReservation(
-              customer,
-              "Completed"
-            )
-        : null
-      const newProductVariantsBeingReserved = await this.getNewProductVariantsBeingReserved(
-        { productVariantIDs: items, customerId: customer.id }
-      )
-      const heldPhysicalProducts = await this.getHeldPhysicalProducts(
-        customer,
-        lastCompletedReservation
-      )
+    // Figure out which items the user is reserving anew and which they already have
+    const lastReservation = await this.reservationUtils.getLatestReservation(
+      customer
+    )
+    this.checkLastReservation(lastReservation)
 
-      // Get product data, update variant counts, update physical product statuses
-      const [
-        productsBeingReserved,
-        physicalProductsBeingReserved,
-        rollbackUpdateProductVariantCounts,
-      ] = await this.productVariantService.updateProductVariantCounts(
-        newProductVariantsBeingReserved,
-        customer.id
-      )
-      rollbackFuncs.push(rollbackUpdateProductVariantCounts)
-      // tslint:disable-next-line:max-line-length
-      const rollbackPrismaPhysicalProductStatuses = await this.physicalProductUtilsService.markPhysicalProductsReservedOnPrisma(
-        physicalProductsBeingReserved
-      )
-      rollbackFuncs.push(rollbackPrismaPhysicalProductStatuses)
+    const lastCompletedReservation = !!lastReservation
+      ? lastReservation.status === "Completed"
+        ? lastReservation
+        : await this.reservationUtils.getLatestReservation(
+            customer,
+            "Completed"
+          )
+      : null
+    const newProductVariantsBeingReserved = await this.getNewProductVariantsBeingReserved(
+      { productVariantIDs: items, customerId: customer.id }
+    )
+    const heldPhysicalProducts = await this.getHeldPhysicalProducts(
+      customer,
+      lastCompletedReservation
+    )
 
-      const [
-        seasonsToCustomerTransaction,
-        customerToSeasonsTransaction,
-      ] = await this.shippingService.createReservationShippingLabels(
-        newProductVariantsBeingReserved,
-        user,
+    const [
+      mutationPromises,
+      physicalProductsBeingReserved,
+      productsBeingReserved,
+    ] = await this.productVariantService.updateProductVariantCounts(
+      newProductVariantsBeingReserved,
+      customer.id
+    )
+
+    // Get product data, update variant counts, update physical product statuses
+    promises.push(mutationPromises)
+
+    promises.push(
+      this.prisma.client2.physicalProduct.updateMany({
+        where: { id: { in: physicalProductsBeingReserved.map(a => a.id) } },
+        data: { inventoryStatus: "Reserved" },
+      })
+    )
+
+    const [
+      seasonsToCustomerTransaction,
+      customerToSeasonsTransaction,
+    ] = await this.shippingService.createReservationShippingLabels(
+      newProductVariantsBeingReserved,
+      user,
+      customer,
+      shippingCode
+    )
+
+    // Update relevant BagItems
+    promises.push(
+      this.markBagItemsReserved(customer.id, newProductVariantsBeingReserved)
+    )
+
+    // Create one time charge for shipping addon
+    let shippingOptionID
+    if (!!shippingCode) {
+      shippingOptionID = await this.payment.addShippingCharge(
         customer,
         shippingCode
       )
-
-      // Update relevant BagItems
-      const rollbackBagItemsUpdate = await this.markBagItemsReserved(
-        customer.id,
-        newProductVariantsBeingReserved
-      )
-      rollbackFuncs.push(rollbackBagItemsUpdate)
-
-      // Create one time charge for shipping addon
-      let shippingOptionID
-      if (!!shippingCode) {
-        shippingOptionID = await this.payment.addShippingCharge(
-          customer,
-          shippingCode
-        )
-      }
-
-      // Create reservation records in prisma
-      const reservationData = await this.createReservationData(
-        seasonsToCustomerTransaction,
-        customerToSeasonsTransaction,
-        user,
-        customer,
-        await this.shippingService.calcShipmentWeightFromProductVariantIDs(
-          newProductVariantsBeingReserved as string[]
-        ),
-        physicalProductsBeingReserved,
-        heldPhysicalProducts,
-        shippingOptionID
-      )
-      const [
-        prismaReservation,
-        rollbackPrismaReservationCreation,
-      ] = await this.createPrismaReservation(reservationData)
-      rollbackFuncs.push(rollbackPrismaReservationCreation)
-
-      // Send confirmation email
-      await this.emails.sendReservationConfirmationEmail(
-        user,
-        productsBeingReserved,
-        prismaReservation,
-        seasonsToCustomerTransaction.tracking_number,
-        seasonsToCustomerTransaction.tracking_url_provider
-      )
-
-      try {
-        await this.removeRestockNotifications(items, customer)
-      } catch (err) {
-        this.error.setUserContext(user)
-        this.error.setExtraContext({ items })
-        this.error.captureError(err)
-      }
-
-      // Get return data
-      reservationReturnData = await this.prisma.binding.query.reservation(
-        { where: { id: prismaReservation.id } },
-        addFragmentToInfo(info, `fragment EnsureId on Reservation {id}`)
-      )
-    } catch (err) {
-      for (const rollbackFunc of rollbackFuncs) {
-        try {
-          await rollbackFunc()
-        } catch (err2) {
-          Sentry.configureScope(scope => {
-            scope.setTag("flag", "data-corruption")
-            scope.setExtra(`item ids`, `${items}`)
-            scope.setExtra(`original error`, err)
-          })
-          Sentry.captureException(new RollbackError(err2))
-        }
-      }
-      throw err
     }
+
+    // Create reservation records in prisma
+    const reservationData = await this.createReservationData(
+      seasonsToCustomerTransaction,
+      customerToSeasonsTransaction,
+      user,
+      customer,
+      await this.shippingService.calcShipmentWeightFromProductVariantIDs(
+        newProductVariantsBeingReserved as string[]
+      ),
+      physicalProductsBeingReserved,
+      heldPhysicalProducts,
+      shippingOptionID
+    )
+    const reservationPromise = this.prisma.client2.reservation.create({
+      data: {
+        ...reservationData,
+        createdAt: new Date(),
+      },
+    })
+
+    promises.push(reservationPromise)
+
+    // Resolve all prisma operation in one transaction
+    await this.prisma.client2.$transaction(promises)
+
+    const reservation = await reservationPromise
+
+    // Send confirmation email
+    await this.emails.sendReservationConfirmationEmail(
+      user,
+      productsBeingReserved,
+      reservation,
+      seasonsToCustomerTransaction.tracking_number,
+      seasonsToCustomerTransaction.tracking_url_provider
+    )
+
+    try {
+      await this.removeRestockNotifications(items, customer)
+    } catch (err) {
+      this.error.setUserContext(user)
+      this.error.setExtraContext({ items })
+      this.error.captureError(err)
+    }
+
+    // Get return data
+    let reservationReturnData = await this.prisma.binding.query.reservation(
+      { where: { id: reservation.id } },
+      addFragmentToInfo(info, `fragment EnsureId on Reservation {id}`)
+    )
 
     return reservationReturnData
   }
@@ -543,45 +536,35 @@ export class ReservationService {
     return this.utils.filterAdminLogs(logs, keysWeDontCareAbout)
   }
 
-  async updateReservation(
-    data: ReservationUpdateInput,
-    where: ReservationWhereUniqueInput,
-    info: any
-  ) {
-    const reservationBeforeUpdate = await this.prisma.binding.query.reservation(
-      { where },
-      `{
-        status
-        products {
-          id
-        }
-      }`
-    )
+  async updateReservation(data, where: { id: string }) {
+    const reservation = await this.prisma.client2.reservation.findUnique({
+      where,
+      select: {
+        id: true,
+        status: true,
+        products: {
+          select: { id: true },
+        },
+      },
+    })
 
     // If we're completing or cancelling the resy, set the timestamp
-    if (
-      reservationBeforeUpdate.status !== "Cancelled" &&
-      data.status === "Cancelled"
-    ) {
+    if (reservation.status !== "Cancelled" && data.status === "Cancelled") {
       data["cancelledAt"] = new Date()
     }
-    if (
-      reservationBeforeUpdate.status !== "Completed" &&
-      data.status === "Completed"
-    ) {
+    if (reservation.status !== "Completed" && data.status === "Completed") {
       data["completedAt"] = new Date()
     }
 
-    await this.prisma.client.updateReservation({ data, where })
+    let promises: any[] = [
+      this.prisma.client.updateReservation({ data, where }),
+    ]
 
     // Reservation was just packed. Null out warehouse locations on attached products
-    if (
-      data.status === "Packed" &&
-      data.status !== reservationBeforeUpdate.status
-    ) {
-      await Promise.all(
-        reservationBeforeUpdate.products.map(a =>
-          this.prisma.client.updatePhysicalProduct({
+    if (data.status === "Packed" && data.status !== reservation.status) {
+      promises.push(
+        reservation.products.map(a =>
+          this.prisma.client2.physicalProduct.update({
             where: { id: a.id },
             data: { warehouseLocation: { disconnect: true } },
           })
@@ -589,7 +572,7 @@ export class ReservationService {
       )
     }
 
-    return this.prisma.binding.query.reservation({ where }, info)
+    return await this.prisma.client2.$transaction(promises)
   }
 
   async createReservationFeedbacksForVariants(
@@ -849,7 +832,7 @@ export class ReservationService {
     physicalProductsBeingReserved: PhysicalProduct[],
     heldPhysicalProducts: PhysicalProduct[],
     shippingOptionID: string
-  ): Promise<ReservationCreateInput> {
+  ) {
     const allPhysicalProductsInReservation = [
       ...physicalProductsBeingReserved,
       ...heldPhysicalProducts,
@@ -872,7 +855,7 @@ export class ReservationService {
     }
     const uniqueReservationNumber = await this.reservationUtils.getUniqueReservationNumber()
 
-    let createData = {
+    let createData = Prisma.validator<Prisma.ReservationCreateInput>()({
       products: {
         connect: physicalProductSUIDs,
       },
@@ -921,6 +904,7 @@ export class ReservationService {
           toAddress: {
             connect: { id: customerShippingAddressRecordID },
           },
+          createdAt: new Date(),
         },
       },
       returnedPackage: {
@@ -946,6 +930,7 @@ export class ReservationService {
               slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
             },
           },
+          createdAt: new Date(),
         },
       },
       reservationNumber: uniqueReservationNumber,
@@ -954,13 +939,19 @@ export class ReservationService {
           slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
         },
       },
+      ...(!!shippingOptionID
+        ? {
+            shippingOption: {
+              connect: {
+                id: shippingOptionID,
+              },
+            },
+          }
+        : {}),
       shipped: false,
       status: "Queued",
-    } as ReservationCreateInput
-
-    if (!!shippingOptionID) {
-      createData.shippingOption = { connect: { id: shippingOptionID } }
-    }
+      createdAt: new Date(),
+    })
 
     return createData
   }

@@ -209,22 +209,30 @@ export class ShippingService {
     }
 
     // Create customer address object
-    const customerShippingAddressPrisma = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .shippingAddress()
-    const customerPhoneNumber = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .phoneNumber()
-    const insureShipmentForCustomer = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .insureShipment()
+
+    const customerData = await this.prisma.client2.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        id: true,
+        detail: {
+          include: {
+            shippingAddress: true,
+          },
+          select: {
+            id: true,
+            phoneNumber: true,
+            insureShipment: true,
+          },
+        },
+      },
+    })
+    const customerShippingAddressPrisma = customerData.detail.shippingAddress
+    const insureShipmentForCustomer = customerData.detail.insureShipment
+
     const customerAddressShippo = {
       ...this.locationDataToShippoAddress(customerShippingAddressPrisma),
       name: `${user.firstName} ${user.lastName}`,
-      phone: customerPhoneNumber,
+      phone: customerData.detail.phoneNumber,
       country: "US",
       email: user.email,
     }
@@ -308,9 +316,7 @@ export class ShippingService {
     })
   }
 
-  private locationDataToShippoAddress(
-    location: Location
-  ): CoreShippoAddressFields {
+  private locationDataToShippoAddress(location): CoreShippoAddressFields {
     if (location == null) {
       throw new Error("can not extract values from null object")
     }

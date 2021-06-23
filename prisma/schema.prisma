@@ -134,6 +134,7 @@ model BottomSize {
 
 model Brand {
 <<<<<<< HEAD
+<<<<<<< HEAD
   id                     String                  @id @default(cuid()) @db.VarChar(25)
   slug                   String                  @unique
   brandCode              String                  @unique
@@ -159,6 +160,9 @@ model Brand {
   shopifyProductVariants ShopifyProductVariant[]
 =======
   id                           String                      @id @default(cuid()) @db.VarChar(30)
+=======
+  id                           String                      @id @default(cuid()) @db.VarChar(25)
+>>>>>>> f1451a8a97f66e3f5d3fe4387819fd8306297fcf
   slug                         String                      @unique
   brandCode                    String                      @unique
   description                  String?
@@ -181,7 +185,10 @@ model Brand {
   images                       Image[]                     @relation("BrandToBrandImages")
   products                     Product[]
   shopifyProductVariants       ShopifyProductVariant[]
+<<<<<<< HEAD
 >>>>>>> prismaTwo/orderMutations
+=======
+>>>>>>> f1451a8a97f66e3f5d3fe4387819fd8306297fcf
 
 
   // Do not use. Artifact of Prisma2 migration
@@ -632,6 +639,7 @@ model PaymentPlan {
 
 model PhysicalProduct {
 <<<<<<< HEAD
+<<<<<<< HEAD
   id                           String                         @id @default(cuid()) @db.VarChar(25)
   seasonsUID                   String                         @unique
   inventoryStatus              String
@@ -660,6 +668,9 @@ model PhysicalProduct {
   reservationsReturnedProducts Reservation[]                  @relation("ReservationToReturnedProducts")
 =======
   id                      String                         @id @default(cuid()) @db.VarChar(30)
+=======
+  id                      String                         @id @default(cuid()) @db.VarChar(25)
+>>>>>>> f1451a8a97f66e3f5d3fe4387819fd8306297fcf
   seasonsUID              String                         @unique
   inventoryStatus         String
   productStatus           String
@@ -685,7 +696,10 @@ model PhysicalProduct {
   reservationsAllProducts Reservation[]                  @relation("ReservationToAllProducts")
   reservationsNewProducts Reservation[]                  @relation("ReservationToNewProducts")
   reservationsReturnedProducts Reservation[] @relation("ReservationToReturnedProducts")
+<<<<<<< HEAD
 >>>>>>> prismaTwo/orderMutations
+=======
+>>>>>>> f1451a8a97f66e3f5d3fe4387819fd8306297fcf
 
   // Should be a singleton. Will get fixed with full prisma2 migration
   productVariant ProductVariant[]
@@ -1400,6 +1414,7 @@ model ShopifyShop {
   shopName               String                  @unique
   enabled                Boolean
   accessToken            String?
+<<<<<<< HEAD
   createdAt              DateTime
   updatedAt              DateTime                @updatedAt
 =======
@@ -1410,6 +1425,10 @@ model ShopifyShop {
   createdAt              DateTime                           @default(now())
   updatedAt              DateTime                           @updatedAt
 >>>>>>> prismaTwo/orderMutations
+=======
+  createdAt              DateTime                           @default(now())
+  updatedAt              DateTime                           @updatedAt
+>>>>>>> f1451a8a97f66e3f5d3fe4387819fd8306297fcf
   brand                  Brand?
   scope                  ShopifyShop_scope[]
   shopifyProductVariants ShopifyProductVariant[]

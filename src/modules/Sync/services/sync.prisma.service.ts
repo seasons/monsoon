@@ -179,7 +179,7 @@ export class PrismaSyncService {
     )
   }
 
-  private async resetAuth0IDsForUsers({
+  async resetAuth0IDsForUsers({
     endpoint,
     secret,
   }: {

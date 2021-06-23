@@ -18,35 +18,28 @@ export class PhysicalProductUtilsService {
     private readonly productUtils: ProductUtilsService
   ) {}
 
-  async getPhysicalProductsWithReservationSpecificData(
-    items: ID_Input[]
-  ): Promise<PhysicalProductWithReservationSpecificData[]> {
-    const _prods = await this.prisma.client2.physicalProduct.findMany({
+  async getPhysicalProductsWithReservationSpecificData(items: string[]) {
+    const _physicalProducts = this.prisma.client2.physicalProduct.findMany({
       where: {
         productVariant: {
-          every: { id: { in: items as string[] } },
+          some: {
+            id: {
+              in: items,
+            },
+          },
         },
       },
       select: {
         id: true,
         seasonsUID: true,
+        sequenceNumber: true,
         inventoryStatus: true,
-        productVariant: { select: { id: true } },
+        productStatus: true,
+        productVariant: true,
       },
     })
-    return (this.prisma.sanitizePayload(
-      _prods,
-      "PhysicalProduct"
-    ) as unknown) as PhysicalProductWithReservationSpecificData[]
-  }
 
-  extractUniqueReservablePhysicalProducts(
-    physicalProducts: PhysicalProductWithReservationSpecificData[]
-  ): PhysicalProductWithReservationSpecificData[] {
-    return uniqBy(
-      physicalProducts.filter(a => a.inventoryStatus === "Reservable"),
-      b => b.productVariant.id
-    )
+    return this.prisma.sanitizePayload(_physicalProducts, "PhysicalProduct")
   }
 
   extractUniqueNonreservablePhysicalProducts(
@@ -56,26 +49,6 @@ export class PhysicalProductUtilsService {
       physicalProducts.filter(a => a.inventoryStatus !== "Reservable"),
       b => b.productVariant.id
     )
-  }
-
-  async markPhysicalProductsReservedOnPrisma(
-    physicalProducts: PhysicalProduct[]
-  ): Promise<() => void> {
-    const physProdIds = physicalProducts.map(a => a.id)
-
-    await this.prisma.client.updateManyPhysicalProducts({
-      where: { id_in: physProdIds },
-      data: { inventoryStatus: "Reserved" },
-    })
-
-    const rollbackMarkPhysicalProductReservedOnPrisma = async () => {
-      await this.prisma.client.updateManyPhysicalProducts({
-        where: { id_in: physProdIds },
-        data: { inventoryStatus: "Reservable" },
-      })
-    }
-
-    return rollbackMarkPhysicalProductReservedOnPrisma
   }
 
   async getAllCategories(physProd: PhysicalProduct): Promise<Category[]> {
