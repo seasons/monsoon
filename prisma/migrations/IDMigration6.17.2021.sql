@@ -1,3 +1,5 @@
+
+-- RECORD TABLES
 ALTER TABLE monsoon$staging."AccessorySize" ALTER COLUMN "id" SET DATA TYPE character varying(30);
 
 ALTER TABLE monsoon$staging."ActiveAdminUser" ALTER COLUMN "id" SET DATA TYPE character varying(30);
@@ -276,3 +278,65 @@ ALTER TABLE monsoon$staging."ShopifyShop" ALTER COLUMN "id" SET DATA TYPE charac
 
 ALTER TABLE monsoon$staging."ShopifyShop_scope" ALTER COLUMN "nodeId" SET DATA TYPE character varying(30);
 
+-- JOIN TABLES
+ALTER TABLE monsoon$staging."_UserToSmsReceipts" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductToProductVariant" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_CategoryToChildren" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ReservationToNewProducts" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_FitPicToProduct" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductVariantFeedbackToReservationFeedback" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_BrandToBrandImages" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_UserPushNotificationToUserPushNotificationInterest" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductToTag" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductVariantManufacturerSize" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_CustomerToEmailedProducts" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ReservationReceiptToReservationReceiptItem" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_CollectionToProduct" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_PackageToPhysicalProduct" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ReservationToAllProducts" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductToProductModel" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ImageToProduct" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductToProductFunction" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_PhysicalProductToProductVariant" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_WarehouseLocationToWarehouseLocationConstraint" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductVariantFeedbackToProductVariantFeedbackQuestion" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductToProductMaterialCategory" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_UserToPushNotificationReceipts" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_PushNotificationReceiptToUserPushNotification" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_OrderToOrderLineItem" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_CustomerToCustomerNotificationBarReceipts" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_CustomerToSyncTiming" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ShopifyProductVariantToVariantSelectedOption" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_CollectionToImage" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ReservationToReturnedProducts" ALTER COLUMN "A" SET DATA TYPE character varying(30);
+
+ALTER TABLE monsoon$staging."_UserToSmsReceipts" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductToProductVariant" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_CategoryToChildren" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ReservationToNewProducts" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_FitPicToProduct" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductVariantFeedbackToReservationFeedback" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_BrandToBrandImages" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_UserPushNotificationToUserPushNotificationInterest" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductToTag" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductVariantManufacturerSize" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_CustomerToEmailedProducts" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ReservationReceiptToReservationReceiptItem" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_CollectionToProduct" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_PackageToPhysicalProduct" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ReservationToAllProducts" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductToProductModel" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ImageToProduct" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductToProductFunction" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_PhysicalProductToProductVariant" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_WarehouseLocationToWarehouseLocationConstraint" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductVariantFeedbackToProductVariantFeedbackQuestion" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ProductToProductMaterialCategory" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_UserToPushNotificationReceipts" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_PushNotificationReceiptToUserPushNotification" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_OrderToOrderLineItem" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_CustomerToCustomerNotificationBarReceipts" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_CustomerToSyncTiming" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ShopifyProductVariantToVariantSelectedOption" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_CollectionToImage" ALTER COLUMN "B" SET DATA TYPE character varying(30);
+ALTER TABLE monsoon$staging."_ReservationToReturnedProducts" ALTER COLUMN "B" SET DATA TYPE character varying(30);
