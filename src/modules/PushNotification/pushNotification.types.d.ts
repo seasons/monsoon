@@ -31,5 +31,5 @@ export interface ApplePushNotification {
 }
 export interface PushNotificationData {
   notificationPayload: ApplePushNotification
-  receiptPayload: Omit<PushNotificationReceiptCreateInput, "users">
+  receiptPayload: Omit<PushNotificationReceiptCreateInput, "users" | "id">
 }

@@ -867,8 +867,8 @@ model ProductVariantFeedback {
   variantId   String?                          @map("variant") @db.VarChar(30)
   variant     ProductVariant?                  @relation(fields: [variantId], references: [id])
   questions   ProductVariantFeedbackQuestion[]
-  rating      Float
-  review      String
+  rating      Float?
+  review      String?
 
   // should be singleton. will be fixed in full prisma2 upgrade
   reservationFeedback ReservationFeedback[]
