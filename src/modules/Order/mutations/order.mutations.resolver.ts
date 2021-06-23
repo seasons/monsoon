@@ -1,6 +1,7 @@
 import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { BadRequestException } from "@nestjs/common"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -13,7 +14,8 @@ export class OrderMutationsResolver {
   constructor(
     private readonly prisma: PrismaService,
     private readonly order: OrderService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly error: ErrorService
   ) {}
 
   @Mutation()
@@ -50,7 +52,9 @@ export class OrderMutationsResolver {
       })
       return draftOrder
     } catch (e) {
-      console.error(e)
+      console.log(e)
+      this.error.setExtraContext({ productVariantID, userEmail: user.email })
+      this.error.captureError(e)
       throw new BadRequestException()
     }
   }
@@ -90,7 +94,9 @@ export class OrderMutationsResolver {
 
       return submittedOrder
     } catch (e) {
-      console.error(e)
+      console.log(e)
+      this.error.setExtraContext({ orderID, userEmail: user.email })
+      this.error.captureError(e)
       throw new BadRequestException()
     }
   }
