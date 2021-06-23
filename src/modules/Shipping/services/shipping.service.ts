@@ -216,6 +216,7 @@ export class ShippingService {
         id: true,
         detail: {
           select: {
+            shippingAddress: true,
             id: true,
             phoneNumber: true,
             insureShipment: true,
