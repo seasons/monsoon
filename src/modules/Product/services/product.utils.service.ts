@@ -619,7 +619,11 @@ export class ProductUtilsService {
       {
         where,
         select: merge(
-          { children: { select: merge({ id: true, slug: true }, select) } },
+          {
+            id: true,
+            slug: true,
+            children: { select: merge({ id: true, slug: true }, select) },
+          },
           select
         ),
       }
@@ -628,8 +632,10 @@ export class ProductUtilsService {
       _categoryWithChildren,
       "Category"
     )
-    const allChildrenWithData = categoryWithChildren.children.map(a =>
-      this.getCategoryAndAllChildren({ id: a.id }, select)
+    const allChildrenWithData = await Promise.all(
+      categoryWithChildren.children.map(
+        async a => await this.getCategoryAndAllChildren({ id: a.id }, select)
+      )
     )
     return [categoryWithChildren, ...flatten(allChildrenWithData)] as any
   }
