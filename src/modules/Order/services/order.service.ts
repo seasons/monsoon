@@ -1,6 +1,9 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { ProductUtilsService } from "@app/modules/Product"
+import {
+  ProductUtilsService,
+  ProductVariantService,
+} from "@app/modules/Product"
 import { BagService } from "@app/modules/Product/services/bag.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import {
@@ -63,7 +66,8 @@ export class OrderService {
     private readonly email: EmailService,
     private readonly error: ErrorService,
     private readonly bag: BagService,
-    private readonly productUtils: ProductUtilsService
+    private readonly productUtils: ProductUtilsService,
+    private readonly productVariant: ProductVariantService
   ) {
     this.outerwearCategories = this.productUtils.getCategoryAndAllChildren(
       { slug: "outerwear" },
@@ -816,16 +820,22 @@ export class OrderService {
     let updateProductVariantData
     if (orderNeedsShipping) {
       // Item is at the warehouse
-      updateProductVariantData = {
-        reservable: productVariant.reservable - 1,
-        offloaded: productVariant.offloaded + 1,
-      }
+      updateProductVariantData = this.productVariant.updateCountsForStatusChange(
+        {
+          productVariant,
+          oldInventoryStatus: "Reservable",
+          newInventoryStatus: "Offloaded",
+        }
+      )
     } else {
       // Item is with the customer
-      updateProductVariantData = {
-        reserved: productVariant.reserved - 1,
-        offloaded: productVariant.offloaded + 1,
-      }
+      updateProductVariantData = this.productVariant.updateCountsForStatusChange(
+        {
+          productVariant,
+          oldInventoryStatus: "Reserved",
+          newInventoryStatus: "Offloaded",
+        }
+      )
     }
 
     const [updatedOrder] = await this.prisma.client2.$transaction([

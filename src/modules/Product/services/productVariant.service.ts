@@ -1,22 +1,12 @@
 import { Injectable } from "@nestjs/common"
 import { Prisma, ProductVariant } from "@prisma/client"
-import {
-  BottomSizeType,
-  ID_Input,
-  InventoryStatus,
-  LetterSize,
-  Product,
-} from "@prisma1/index"
+import { InventoryStatus } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { difference, head, lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
+import { head, lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
 
-import {
-  PhysicalProductUtilsService,
-  PhysicalProductWithReservationSpecificData,
-} from "./physicalProduct.utils.service"
+import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 import { ProductUtilsService } from "./product.utils.service"
-import { PrismaPromise } from ".prisma/client"
 
 @Injectable()
 export class ProductVariantService {
@@ -197,11 +187,12 @@ export class ProductVariantService {
     oldInventoryStatus,
     newInventoryStatus,
   }: {
-    productVariant: {
-      reservable: number
-      reserved: number
-      nonReservable: number
-    }
+    productVariant: Partial<
+      Pick<
+        ProductVariant,
+        "reserved" | "reservable" | "offloaded" | "nonReservable" | "stored"
+      >
+    >
     oldInventoryStatus: InventoryStatus
     newInventoryStatus: InventoryStatus
   }) {
