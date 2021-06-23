@@ -215,13 +215,11 @@ export class ShippingService {
       select: {
         id: true,
         detail: {
-          include: {
-            shippingAddress: true,
-          },
           select: {
             id: true,
             phoneNumber: true,
             insureShipment: true,
+            shippingAddress: true,
           },
         },
       },
