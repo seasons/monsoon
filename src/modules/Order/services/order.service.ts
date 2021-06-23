@@ -900,10 +900,26 @@ export class OrderService {
     customer: Customer
     select: Prisma.OrderSelect
   }): Promise<Order> {
-    const removeFulfilledItemFromBag = async () => {
-      const lineItems = await this.prisma.client
-        .order({ id: orderID })
-        .lineItems()
+    const promises = []
+
+    promises.push(
+      this.prisma.client2.order.update({
+        where: { id: orderID },
+        data: { status },
+        select,
+      })
+    )
+
+    const order = await this.prisma.client2.order.findUnique({
+      where: { id: orderID },
+      select: {
+        type: true,
+        lineItems: { select: { recordID: true, recordType: true } },
+      },
+    })
+    if (status === "Fulfilled" && order.type === "Used") {
+      // Remove item from bag
+      const lineItems = order.lineItems
       const physicalProduct = lineItems.find(
         item => item.recordType === "PhysicalProduct"
       )
@@ -914,26 +930,20 @@ export class OrderService {
         )
         return null
       }
-      const productVariant = await this.prisma.client
-        .physicalProduct({ id: physicalProduct.recordID })
-        .productVariant()
+      const prodVar = await this.prisma.client2.productVariant.findFirst({
+        where: { physicalProducts: { some: { id: physicalProduct.recordID } } },
+      })
+      promises.push(this.bag.removeFromBag(prodVar.id, false, customer))
 
-      await this.bag.removeFromBag(productVariant.id, false, customer)
+      // Remove warehouse location from item
+      promises.push(
+        this.prisma.client2.physicalProduct.update({
+          where: { id: physicalProduct.recordID },
+          data: { warehouseLocation: { disconnect: true } },
+        })
+      )
     }
-
-    const order = await this.prisma.client.order({ id: orderID })
-
-    const [updateOrderResult, _removeFromBagResult] = await Promise.all([
-      this.prisma.client.updateOrder({
-        where: { id: orderID },
-        data: {
-          status,
-        },
-      }) as Promise<Order>,
-      status === "Fulfilled" && order.type === "Used"
-        ? removeFulfilledItemFromBag()
-        : Promise.resolve(),
-    ])
+    const [updateOrderResult] = await this.prisma.client2.$transaction(promises)
 
     return updateOrderResult
   }

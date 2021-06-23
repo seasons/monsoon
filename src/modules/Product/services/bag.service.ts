@@ -65,7 +65,7 @@ export class BagService {
     return result
   }
 
-  async removeFromBag(item, saved, customer) {
+  async removeFromBag(item, saved, customer): Promise<BagItem> {
     const bagItem = await this.prisma.client2.bagItem.findFirst({
       where: {
         customer: {
@@ -83,8 +83,8 @@ export class BagService {
       throw new ApolloError("Item can not be found", "514")
     }
 
-    return await this.prisma.client.deleteBagItem({
-      id: bagItem.id,
-    })
+    // has to return a promise because we roll it up in a transaction in at
+    // least one parent function
+    return this.prisma.client2.bagItem.delete({ where: { id: bagItem.id } })
   }
 }
