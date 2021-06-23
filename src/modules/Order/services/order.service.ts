@@ -1,10 +1,10 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { ProductUtilsService } from "@app/modules/Product"
 import { BagService } from "@app/modules/Product/services/bag.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import {
   BagItem,
-  Category,
   OrderStatus,
   PhysicalProduct,
   PhysicalProductPrice,
@@ -14,6 +14,7 @@ import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
   BillingInfo,
+  Category,
   Customer,
   Location,
   Order,
@@ -24,8 +25,7 @@ import {
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
-import { GraphQLResolveInfo } from "graphql"
-import { flatten, pick } from "lodash"
+import { pick } from "lodash"
 
 type InvoiceCharge = {
   amount: number
@@ -54,7 +54,7 @@ type InvoiceInput = {
 
 @Injectable()
 export class OrderService {
-  readonly outerwearCategoryIds: Promise<Array<string>>
+  readonly outerwearCategories: Promise<Pick<Category, "id">[]>
 
   constructor(
     private readonly prisma: PrismaService,
@@ -62,33 +62,13 @@ export class OrderService {
     private readonly shipping: ShippingService,
     private readonly email: EmailService,
     private readonly error: ErrorService,
-    private readonly bag: BagService
+    private readonly bag: BagService,
+    private readonly productUtils: ProductUtilsService
   ) {
-    const getCategoryAndAllChildren = (categoryId: string): Promise<string[]> =>
-      this.prisma.client
-        .category({ id: categoryId })
-        .children()
-        .then(children =>
-          Promise.all(
-            children && children.length
-              ? children.map((category: Category) =>
-                  getCategoryAndAllChildren(category.id)
-                )
-              : []
-          )
-        )
-        .then(children => {
-          const result = flatten(children)
-          result.push(categoryId)
-          return result
-        })
-
-    this.outerwearCategoryIds = this.prisma.client
-      .category({ slug: "outerwear" })
-      .id()
-      .then(outerwearCategoryId =>
-        getCategoryAndAllChildren(outerwearCategoryId)
-      )
+    this.outerwearCategories = this.productUtils.getCategoryAndAllChildren(
+      { slug: "outerwear" },
+      { id: true }
+    )
   }
 
   async getBuyUsedMetadata({
@@ -130,45 +110,42 @@ export class OrderService {
       _productVariant,
       "ProductVariant"
     )
-    const _customerQuery = await this.prisma.client2.c
-    const [customerQuery] = await Promise.all([
-      this.prisma.binding.query.customer(
-        {
-          where: {
-            id: customer.id,
+    const _customerQuery = await this.prisma.client2.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        id: true,
+        user: { select: { id: true, firstName: true, lastName: true } },
+        detail: {
+          select: {
+            id: true,
+            shippingAddress: {
+              select: {
+                id: true,
+                name: true,
+                company: true,
+                address1: true,
+                address2: true,
+                city: true,
+                state: true,
+                zipCode: true,
+                country: true,
+              },
+            },
           },
         },
-        `{
-          id
-          user {
-            id
-            firstName
-            lastName
-          }
-          detail {
-            id
-            shippingAddress {
-              id
-              name
-              company
-              address1
-              address2
-              city
-              state
-              zipCode
-              country
-            }
-          }
-          bagItems {
-            id
-            status
-            productVariant {
-              id
-            }
-          }
-        }`
-      ),
-    ])
+        bagItems: {
+          select: {
+            id: true,
+            status: true,
+            productVariant: { select: { id: true } },
+          },
+        },
+      },
+    })
+    const customerQuery = this.prisma.sanitizePayload(
+      _customerQuery,
+      "Customer"
+    )
 
     // FIXME: We're assuming that every physical product has the same price for a variant,
     // so take the first valid result.
@@ -196,14 +173,12 @@ export class OrderService {
           physicalProduct.inventoryStatus === "Stored")
     ) as (PhysicalProduct & { price: PhysicalProductPrice }) | null
 
-    const productName = productVariant?.product?.name
+    const productName = (productVariant?.product as any)?.name
 
-    const productTaxCode = (await this.outerwearCategoryIds).some(
-      outerwearCategoryId =>
-        outerwearCategoryId === productVariant?.product?.category?.id
+    // Refactor into a getProductTaxCode function
+    const productTaxCode = await this.getProductTaxCode(
+      (productVariant?.product as any)?.category?.id
     )
-      ? "PC040111"
-      : "PC040000"
 
     const shippingAddress = customerQuery?.detail?.shippingAddress as Location
 
@@ -368,11 +343,7 @@ export class OrderService {
     const billingAddress = customer?.billingInfo
     const { email: emailAddress, id: userId } = customer?.user
 
-    const productTaxCode = (await this.outerwearCategoryIds).some(
-      outerwearCategoryId => outerwearCategoryId === product?.category?.id
-    )
-      ? "PC040111"
-      : "PC040000"
+    const productTaxCode = await this.getProductTaxCode(product?.category?.id)
 
     if (
       !buyNewEnabled ||
@@ -1001,5 +972,14 @@ export class OrderService {
         avalara_tax_code: "FR020000",
       }
     }
+  }
+
+  private async getProductTaxCode(productCategoryId) {
+    const outerwearCategoryIds = (await this.outerwearCategories).map(a => a.id)
+    return outerwearCategoryIds.some(
+      outerwearCategoryId => outerwearCategoryId === productCategoryId
+    )
+      ? "PC040111"
+      : "PC040000"
   }
 }

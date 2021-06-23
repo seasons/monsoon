@@ -1,7 +1,8 @@
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
-import { Customer, ID_Input, InventoryStatus, Reservation } from "@app/prisma"
+import { ID_Input, InventoryStatus, Reservation } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
+import { Customer } from "@prisma/client"
 import { head } from "lodash"
 
 import { ReservationWithProductVariantData } from "./reservation.service"
@@ -33,7 +34,7 @@ export class ReservationUtilsService {
       orderBy: {
         createdAt: "desc",
       },
-      select: Prisma.validator<Prisma.ReservationSelect>()({
+      select: {
         id: true,
         products: {
           select: {
@@ -48,7 +49,7 @@ export class ReservationUtilsService {
         status: true,
         reservationNumber: true,
         createdAt: true,
-      }),
+      },
     })
 
     if (_latestReservation == null) {

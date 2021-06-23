@@ -2,7 +2,7 @@ import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { BadRequestException } from "@nestjs/common"
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 import { pick } from "lodash"
 

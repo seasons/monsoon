@@ -11,10 +11,9 @@ import {
 } from "@modules/Product"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
-import { Prisma, PrismaPromise } from "@prisma/client"
+import { Customer, Prisma, PrismaPromise, User } from "@prisma/client"
 import {
   AdminActionLog,
-  Customer,
   ID_Input,
   InventoryStatus,
   PhysicalProduct,
@@ -27,7 +26,6 @@ import {
   ReservationUpdateInput,
   ReservationWhereUniqueInput,
   ShippingCode,
-  User,
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"

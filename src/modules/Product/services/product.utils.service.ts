@@ -13,7 +13,17 @@ import {
   TopSizeCreateInput,
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
-import { head, identity, pickBy, size, union, uniq, uniqBy } from "lodash"
+import {
+  flatten,
+  head,
+  identity,
+  merge,
+  pickBy,
+  size,
+  union,
+  uniq,
+  uniqBy,
+} from "lodash"
 import slugify from "slugify"
 
 import { BottomSizeType, LetterSize, ProductType } from "../../../prisma"
@@ -243,44 +253,18 @@ export class ProductUtilsService {
     }
 
     if (args.category && args.category !== "all") {
-      const allCategoriesWithChildren = await this.prisma.binding.query.categories(
-        {},
-        `
-        {
-          id
-          slug
-          children {
-            id
-            slug
-          }
-        }
-      `
+      const categoryWithChildren = await this.getCategoryAndAllChildren(
+        { slug: args.category },
+        { slug: true }
       )
 
-      const getChildren = (categorySlug, results = []) => {
-        const category = allCategoriesWithChildren.find(
-          cat => cat.slug === categorySlug
-        )
-        if (category?.children.length > 0) {
-          results.push(categorySlug)
-          category.children.forEach(child => {
-            getChildren(child.slug, results)
-          })
-        } else {
-          results.push(categorySlug)
-        }
-        return results
-      }
-
-      const children = getChildren(args.category)
-
       categoryFilter =
-        children?.length > 0
+        categoryWithChildren?.length > 0
           ? {
               where: {
                 ...args.where,
                 ...brandFilter.where,
-                category: { slug_in: uniq(children) },
+                category: { slug_in: categoryWithChildren.map(a => a.slug) },
               },
             }
           : {
@@ -573,7 +557,6 @@ export class ProductUtilsService {
 
   async getAllStyleCodesForBrand(brandID) {
     const _productVariants = await this.prisma.client2.productVariant.findMany({
-      // TODO: SCHEMABREAK
       where: { product: { every: { brand: { id: brandID } } } },
       select: { id: true, sku: true },
     })
@@ -626,5 +609,28 @@ export class ProductUtilsService {
       brandCode: brand.brandCode,
       styleCode,
     }
+  }
+
+  async getCategoryAndAllChildren(
+    where: Prisma.CategoryWhereUniqueInput,
+    select: Prisma.CategorySelect
+  ): Promise<(Partial<Category> & Pick<Category, "id" | "slug">)[]> {
+    const _categoryWithChildren = await this.prisma.client2.category.findUnique(
+      {
+        where,
+        select: merge(
+          { children: { select: merge({ id: true, slug: true }, select) } },
+          select
+        ),
+      }
+    )
+    const categoryWithChildren = this.prisma.sanitizePayload(
+      _categoryWithChildren,
+      "Category"
+    )
+    const allChildrenWithData = categoryWithChildren.children.map(a =>
+      this.getCategoryAndAllChildren({ id: a.id }, select)
+    )
+    return [categoryWithChildren, ...flatten(allChildrenWithData)] as any
   }
 }
