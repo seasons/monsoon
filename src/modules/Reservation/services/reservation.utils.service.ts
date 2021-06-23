@@ -80,7 +80,7 @@ export class ReservationUtilsService {
     )
 
     if (prismaReservation.returnedPackage != null) {
-      await this.prisma.client2.package.update({
+      return this.prisma.client2.package.update({
         data: {
           items: { connect: returnedPhysicalProductIDs },
           weight,
@@ -88,7 +88,7 @@ export class ReservationUtilsService {
         where: { id: prismaReservation.returnedPackage.id },
       })
     } else {
-      await this.prisma.client2.reservation.update({
+      return this.prisma.client2.reservation.update({
         data: {
           returnedPackage: {
             update: {
@@ -122,9 +122,13 @@ export class ReservationUtilsService {
     let foundUnique = false
     while (!foundUnique) {
       reservationNumber = Math.floor(Math.random() * 900000000) + 100000000
-      const reservationWithThatNumber = await this.prisma.client.reservation({
-        reservationNumber,
-      })
+      const reservationWithThatNumber = await this.prisma.client2.reservation.findUnique(
+        {
+          where: {
+            reservationNumber,
+          },
+        }
+      )
       foundUnique = !reservationWithThatNumber
     }
 

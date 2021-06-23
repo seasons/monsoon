@@ -74,7 +74,7 @@ export class ReservationService {
     shippingCode: ShippingCode,
     user: User,
     customer: Customer,
-    info
+    select
   ) {
     if (customer.status !== "Active") {
       throw new Error(`Only Active customers can place a reservation`)
@@ -133,7 +133,7 @@ export class ReservationService {
     )
 
     // Get product data, update variant counts, update physical product statuses
-    promises.push(mutationPromises)
+    promises.push(mutationPromises.flat())
 
     promises.push(
       this.prisma.client2.physicalProduct.updateMany({
@@ -153,8 +153,31 @@ export class ReservationService {
     )
 
     // Update relevant BagItems
+    // promises.push(
+    //   await this.markBagItemsReserved(customer.id, newProductVariantsBeingReserved)
+    // )
+    const bagItemsToUpdateIds = (
+      await this.prisma.client2.bagItem.findMany({
+        where: {
+          productVariant: {
+            id: {
+              in: newProductVariantsBeingReserved,
+            },
+          },
+          customer: {
+            id: customer.id,
+          },
+        },
+      })
+    ).map(a => a.id)
+
     promises.push(
-      this.markBagItemsReserved(customer.id, newProductVariantsBeingReserved)
+      this.prisma.client2.bagItem.updateMany({
+        where: { id: { in: bagItemsToUpdateIds } },
+        data: {
+          status: "Reserved",
+        },
+      })
     )
 
     // Create one time charge for shipping addon
@@ -189,9 +212,9 @@ export class ReservationService {
     promises.push(reservationPromise)
 
     // Resolve all prisma operation in one transaction
-    await this.prisma.client2.$transaction(promises)
+    const result = await this.prisma.client2.$transaction(promises.flat())
 
-    const reservation = await reservationPromise
+    const reservation = result[result.length - 1]
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
@@ -210,10 +233,14 @@ export class ReservationService {
       this.error.captureError(err)
     }
 
-    // Get return data
-    let reservationReturnData = await this.prisma.binding.query.reservation(
-      { where: { id: reservation.id } },
-      addFragmentToInfo(info, `fragment EnsureId on Reservation {id}`)
+    const reservationReturnData: any = await this.prisma.client2.reservation.findUnique(
+      {
+        where: { id: reservation.id },
+        select: {
+          ...select,
+          id: true,
+        },
+      }
     )
 
     return reservationReturnData
@@ -251,23 +278,27 @@ export class ReservationService {
   }
 
   async removeRestockNotifications(items, customer) {
-    const restockNotifications = await this.prisma.client.productNotifications({
-      where: {
-        customer: {
-          id: customer.id,
-        },
-        AND: {
-          productVariant: {
-            id_in: items,
+    const restockNotifications = await this.prisma.client2.productNotification.findMany(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          AND: {
+            productVariant: {
+              id: { in: items },
+            },
           },
         },
-      },
-      orderBy: "createdAt_DESC",
-    })
+        orderBy: {
+          createdAt: "desc",
+        },
+      }
+    )
 
     if (restockNotifications?.length > 0) {
-      await this.prisma.client.updateManyProductNotifications({
-        where: { id_in: restockNotifications.map(notif => notif.id) },
+      return await this.prisma.client2.productNotification.updateMany({
+        where: { id: { in: restockNotifications.map(notif => notif.id) } },
         data: {
           shouldNotify: false,
         },
@@ -484,20 +515,8 @@ export class ReservationService {
       },
     })
 
-    await this.prisma.client2.$transaction([
-      ...(promises as PrismaPromise<any>[]),
-      receiptPromise,
-      reservationPromise,
-      updateBagPromise,
-    ])
-
-    await this.reservationUtils.updateReturnPackageOnCompletedReservation(
-      reservation,
-      returnedPhysicalProducts
-    )
-
     // Create reservationFeedback datamodels for the returned product variants
-    await this.createReservationFeedbacksForVariants(
+    const reservationFeedbackPromise = this.createReservationFeedbacksForVariants(
       await this.prisma.client2.productVariant.findMany({
         where: {
           id: {
@@ -507,12 +526,27 @@ export class ReservationService {
       }),
       prismaUser,
       reservation
-    )
+    ) as PrismaPromise<any>
+
+    const updateReturnPackagePromise = this.reservationUtils.updateReturnPackageOnCompletedReservation(
+      reservation,
+      returnedPhysicalProducts
+    ) as PrismaPromise<any>
+
+    await this.prisma.client2.$transaction([
+      ...(promises as PrismaPromise<any>[]),
+      receiptPromise,
+      reservationPromise,
+      updateBagPromise,
+      reservationFeedbackPromise,
+      updateReturnPackagePromise,
+    ])
 
     await this.pushNotifs.pushNotifyUsers({
       emails: [prismaUser.email],
       pushNotifID: "ResetBag",
     })
+
     await this.emails.sendYouCanNowReserveAgainEmail(prismaUser)
 
     await this.emails.sendAdminConfirmationEmail(
@@ -581,10 +615,12 @@ export class ReservationService {
     const MULTIPLE_CHOICE = "MultipleChoice"
     const variantInfos = await Promise.all(
       productVariants.map(async variant => {
-        const products: Product[] = await this.prisma.client.products({
+        const products = await this.prisma.client2.product.findMany({
           where: {
-            variants_some: {
-              id: variant.id,
+            variants: {
+              some: {
+                id: variant.id,
+              },
             },
           },
         })
@@ -600,59 +636,91 @@ export class ReservationService {
         }
       })
     )
-    await this.prisma.client.createReservationFeedback({
-      feedbacks: {
-        create: variantInfos.map(
-          (variantInfo: { id: string; retailPrice: number }) => ({
-            isCompleted: false,
-            questions: {
-              create: [
-                {
-                  question: `What did you think about this?`,
-                  options: {
-                    set: ["Disliked", "It was OK", "Loved it"],
-                  },
-                  type: MULTIPLE_CHOICE,
+
+    return this.prisma.client2.reservationFeedback.create({
+      data: {
+        feedbacks: {
+          create: variantInfos.map(
+            (variantInfo: { id: string; retailPrice: number }) =>
+              Prisma.validator<
+                Prisma.ProductVariantFeedbackCreateWithoutReservationFeedbackInput
+              >()({
+                isCompleted: false,
+                rating: 0,
+                review: "",
+                questions: {
+                  create: [
+                    {
+                      question: `What did you think about this?`,
+                      options: {
+                        // create: ["Disliked", "It was OK", "Loved it"],
+                        create: [
+                          { value: "Disliked", position: 1000 },
+                          { value: "It was OK", position: 2000 },
+                          { value: "Loved it", position: 3000 },
+                        ],
+                      },
+                      type: MULTIPLE_CHOICE,
+                    },
+                    {
+                      question: `How many times did you wear this?`,
+                      options: {
+                        // set: [
+                        //   "Never wore it",
+                        //   "1-2 times",
+                        //   "3-5 times",
+                        //   "More than 6 times",
+                        // ],
+                        create: [
+                          { value: "Never wore it", position: 1000 },
+                          { value: "1-2 times", position: 2000 },
+                          { value: "3-5 times", position: 3000 },
+                          { value: "More than 6 times", position: 4000 },
+                        ],
+                      },
+                      type: MULTIPLE_CHOICE,
+                    },
+                    {
+                      question: `Did it fit as expected?`,
+                      options: {
+                        // set: ["Fit small", "Fit true to size", "Fit oversized"],
+                        create: [
+                          { value: "Fit small", position: 1000 },
+                          { value: "Fit true to size", position: 2000 },
+                          { value: "Fit oversized", position: 3000 },
+                        ],
+                      },
+                      type: MULTIPLE_CHOICE,
+                    },
+                    {
+                      question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
+                      options: {
+                        // set: ["No", "Yes", "Buy below retail", "Would only rent"],
+                        create: [
+                          { value: "No", position: 1000 },
+                          { value: "Yes", position: 2000 },
+                          { value: "Buy below retail", position: 3000 },
+                          { value: "Would only rent", position: 4000 },
+                        ],
+                      },
+                      type: MULTIPLE_CHOICE,
+                    },
+                  ],
                 },
-                {
-                  question: `How many times did you wear this?`,
-                  options: {
-                    set: [
-                      "Never wore it",
-                      "1-2 times",
-                      "3-5 times",
-                      "More than 6 times",
-                    ],
-                  },
-                  type: MULTIPLE_CHOICE,
-                },
-                {
-                  question: `Did it fit as expected?`,
-                  options: {
-                    set: ["Fit small", "Fit true to size", "Fit oversized"],
-                  },
-                  type: MULTIPLE_CHOICE,
-                },
-                {
-                  question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
-                  options: {
-                    set: ["No", "Yes", "Buy below retail", "Would only rent"],
-                  },
-                  type: MULTIPLE_CHOICE,
-                },
-              ],
-            },
-            variant: { connect: { id: variantInfo.id } },
-          })
-        ),
-      },
-      user: {
-        connect: {
-          id: user.id,
+                variant: { connect: { id: variantInfo.id } },
+              })
+          ),
         },
-      },
-      reservation: {
-        connect: { id: reservation.id },
+        user: {
+          connect: {
+            id: user.id,
+          },
+        },
+        reservation: {
+          connect: {
+            id: reservation.id,
+          },
+        },
       },
     })
   }
@@ -784,42 +852,32 @@ export class ReservationService {
       )
   }
 
-  private async markBagItemsReserved(
-    customerId: ID_Input,
-    productVariantIds: ID_Input[]
-  ): Promise<() => void> {
-    const bagItemsToUpdateIds = (
-      await this.prisma.client.bagItems({
-        where: {
-          customer: {
-            id: customerId,
-          },
-          productVariant: {
-            id_in: productVariantIds,
-          },
-          status: "Added",
-          saved: false,
-        },
-      })
-    ).map(a => a.id)
+  // private async markBagItemsReserved(
+  //   customerId: string,
+  //   productVariantIds: string[]
+  // ) {
+  //   const bagItemsToUpdateIds = (
+  //     await this.prisma.client2.bagItem.findMany({
+  //       where: {
+  //         productVariant: {
+  //           id: {
+  //             in: productVariantIds
+  //           }
+  //         },
+  //         customer: {
+  //           id: customerId
+  //         }
+  //       }
+  //     })
+  //   ).map(a => a.id)
 
-    await this.prisma.client.updateManyBagItems({
-      where: { id_in: bagItemsToUpdateIds },
-      data: {
-        status: "Reserved",
-      },
-    })
-
-    const rollbackAddedBagItems = async () => {
-      await this.prisma.client.updateManyBagItems({
-        where: { id_in: bagItemsToUpdateIds },
-        data: {
-          status: "Added",
-        },
-      })
-    }
-    return rollbackAddedBagItems
-  }
+  //   return this.prisma.client2.bagItem.updateMany({
+  //     where: { id: {in: bagItemsToUpdateIds }},
+  //     data: {
+  //       status: "Reserved",
+  //     },
+  //   })
+  // }
 
   private async createReservationData(
     seasonsToCustomerTransaction,
@@ -843,11 +901,11 @@ export class ReservationService {
       seasonsUID: p.seasonsUID,
     }))
 
-    const customerShippingAddressRecordID = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .shippingAddress()
-      .id()
+    const customerShippingAddressRecordID = await (
+      await this.prisma.client2.customer
+        .findUnique({ where: { id: customer.id } })
+        .detail()
+    ).shippingAddressId
     interface UniqueIDObject {
       id: string
     }
@@ -952,43 +1010,5 @@ export class ReservationService {
     })
 
     return createData
-  }
-
-  /* Returns [createdReservation, rollbackFunc] */
-  private async createPrismaReservation(
-    reservationData: ReservationCreateInput
-  ): Promise<[Reservation, () => void]> {
-    const reservation = await this.prisma.client.createReservation(
-      reservationData
-    )
-
-    const rollbackPrismaReservation = async () => {
-      await this.prisma.client.deleteReservation({ id: reservation.id })
-    }
-    return [reservation, rollbackPrismaReservation]
-  }
-
-  private async getReturnedPhysicalProductInventoryStatus(
-    seasonsUID: string
-  ): Promise<InventoryStatus> {
-    const parentProduct = await this.prisma.client2.product.findFirst({
-      where: {
-        variants: {
-          some: {
-            physicalProducts: {
-              some: {
-                seasonsUID,
-              },
-            },
-          },
-        },
-      },
-    })
-
-    if (parentProduct.status === "Stored") {
-      return "Stored"
-    }
-
-    return "NonReservable"
   }
 }
