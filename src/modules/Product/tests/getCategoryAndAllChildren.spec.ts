@@ -70,6 +70,7 @@ describe("getCategoryAndAllChildren", () => {
             name: "GrandChild2-1",
             slug: "grandchild2-1",
             parents: { connect: { id: child2.id } },
+            visible: true,
           },
         }),
         prismaService.client2.category.create({
@@ -77,6 +78,7 @@ describe("getCategoryAndAllChildren", () => {
             name: "GrandChild3-1",
             slug: "grandchild3-1",
             parents: { connect: { id: child3.id } },
+            visible: true,
           },
         }),
         prismaService.client2.category.create({
@@ -84,6 +86,7 @@ describe("getCategoryAndAllChildren", () => {
             name: "GrandChild3-2",
             slug: "grandchild3-2",
             parents: { connect: { id: child3.id } },
+            visible: true,
           },
         }),
         prismaService.client2.category.create({
@@ -91,6 +94,7 @@ describe("getCategoryAndAllChildren", () => {
             name: "GrandChild3-3",
             slug: "grandchild3-3",
             parents: { connect: { id: child3.id } },
+            visible: true,
           },
         }),
       ])
@@ -99,6 +103,7 @@ describe("getCategoryAndAllChildren", () => {
           name: "GrandChild3-2-1",
           slug: "grandchild3-2-1",
           parents: { connect: { id: grandchild32.id } },
+          visible: true,
         },
       })
 

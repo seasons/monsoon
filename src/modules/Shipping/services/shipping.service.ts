@@ -220,7 +220,6 @@ export class ShippingService {
             id: true,
             phoneNumber: true,
             insureShipment: true,
-            shippingAddress: true,
           },
         },
       },
