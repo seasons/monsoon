@@ -239,6 +239,7 @@ export class ReservationService {
         select: {
           ...select,
           id: true,
+          products: true,
         },
       }
     )

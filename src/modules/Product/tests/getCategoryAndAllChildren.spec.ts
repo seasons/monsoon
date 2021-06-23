@@ -32,7 +32,7 @@ describe("getCategoryAndAllChildren", () => {
 
     beforeAll(async done => {
       const original = await prismaService.client2.category.create({
-        data: { name: "Original", slug: "original" },
+        data: { name: "Original", slug: "original", visible: true },
       })
       const [child1, child2, child3] = await prismaService.client2.$transaction(
         [
@@ -41,6 +41,7 @@ describe("getCategoryAndAllChildren", () => {
               name: "Child1",
               slug: "child1",
               parents: { connect: { id: original.id } },
+              visible: true,
             },
           }),
           prismaService.client2.category.create({
@@ -48,6 +49,7 @@ describe("getCategoryAndAllChildren", () => {
               name: "Child2",
               slug: "child2",
               parents: { connect: { id: original.id } },
+              visible: true,
             },
           }),
           prismaService.client2.category.create({
@@ -55,6 +57,7 @@ describe("getCategoryAndAllChildren", () => {
               name: "Child3",
               slug: "child3",
               parents: { connect: { id: original.id } },
+              visible: true,
             },
           }),
         ]
