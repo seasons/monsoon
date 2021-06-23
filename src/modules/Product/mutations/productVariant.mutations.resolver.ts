@@ -1,10 +1,9 @@
 import { Customer, User } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
+import { ProductStatus, ProductType } from "@app/prisma"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import {
-  Order,
-  Product as PrismaBindingProduct,
-  ProductNotificationType,
-} from "@prisma1/prisma.binding"
+import { Color, Product } from "@prisma/client"
+import { ProductNotificationType } from "@prisma1/prisma.binding"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head } from "lodash"
 
@@ -67,85 +66,75 @@ export class ProductVariantMutationsResolver {
   }
 
   @Mutation()
-  async addProductVariantWant(@Args() { variantID }, @User() user) {
-    if (!user) throw new Error("Missing user from context")
+  async addProductVariantWant() {
+    throw new Error(`Deprecated. Use product restock notification instead`)
+  }
 
-    const productVariant = await this.prisma.client.productVariant({
-      id: variantID,
-    })
-    if (!productVariant) {
-      throw new Error("Unable to find product variant with matching ID")
+  @Mutation()
+  async updateProductVariant(@Args() { input }, @Select() select) {
+    return await this.productVariantService.updateProductVariant(input, select)
+  }
+
+  @Mutation()
+  async createProductVariants(@Args() { productID, inputs }, @Select() select) {
+    const product = (await this.prisma.client2.product.findUnique({
+      where: { slug: productID },
+      select: {
+        id: true,
+        retailPrice: true,
+        type: true,
+        color: { select: { id: true, colorCode: true } },
+      },
+    })) as Pick<Product, "id" | "retailPrice" | "status" | "type"> & {
+      color: Pick<Color, "id" | "colorCode">
     }
-
-    const productVariantWant = await this.prisma.client.createProductVariantWant(
-      {
-        isFulfilled: false,
-        productVariant: {
-          connect: {
-            id: productVariant.id,
-          },
-        },
-        user: {
-          connect: {
-            id: user.id,
-          },
-        },
-      }
-    )
-    return productVariantWant
-  }
-
-  @Mutation()
-  async updateProductVariant(@Args() { input }, @Info() info) {
-    return await this.productVariantService.updateProductVariant(input, info)
-  }
-
-  @Mutation()
-  async upsertProductVariants(@Args() { productID, inputs }, @Info() info) {
-    const product: PrismaBindingProduct = await this.prisma.binding.query.product(
-      { where: { slug: productID } },
-      `{
-          id
-          retailPrice
-          status
-          type
-          color {
-            id
-            colorCode
-          }
-        }`
-    )
-    if (!product || !product.status || !product.type) {
-      return null
+    if (!product || !product.type) {
+      throw new Error(
+        `Can not create variant for product. Please check that it exists and has a valid type`
+      )
     }
 
     const sequenceNumbers = await this.physicalProductUtilsService.groupedSequenceNumbers(
       inputs
     )
 
-    const variants = await Promise.all(
-      inputs.map(async (input, index) => {
-        return this.productService.deepUpsertProductVariant({
-          sequenceNumbers: sequenceNumbers[index],
-          variant: input,
-          colorCode: product.color.colorCode,
-          productID,
-          retailPrice: product.retailPrice,
-          status: product.status,
-          type: product.type,
-        })
+    const variantPromises = inputs.map((input, index) => {
+      return this.productService.getCreateProductVariantPromises({
+        sequenceNumbers: sequenceNumbers[index],
+        variant: input,
+        colorCode: product.color.colorCode,
+        productSlug: productID,
+        retailPrice: product.retailPrice,
+        type: product.type as ProductType,
       })
+    })
+    const results = await this.prisma.client2.$transaction(
+      variantPromises.flat()
     )
-    return variants
+    const createdVariants = results.filter(a => !!a.sku)
+    const _variantsToReturn = await this.prisma.client2.productVariant.findMany(
+      {
+        where: { sku: { in: createdVariants.map(a => a.sku) } },
+        select,
+      }
+    )
+    const variantsToReturn = this.prisma.sanitizePayload(
+      _variantsToReturn,
+      "ProductVariant"
+    )
+    return variantsToReturn
   }
 
   @Mutation()
   async addPhysicalProductsToVariant(
-    @Args() { variantID, count }: { variantID: string; count: number }
+    @Args() { variantID, count }: { variantID: string; count: number },
+    @Select() select
   ) {
-    return await this.productVariantService.addPhysicalProducts(
-      variantID,
-      count
-    )
+    await this.productVariantService.addPhysicalProducts(variantID, count)
+    const variant = await this.prisma.client2.productVariant.findUnique({
+      where: { id: variantID },
+      select,
+    })
+    return this.prisma.sanitizePayload(variant, "ProductVariant")
   }
 }

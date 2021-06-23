@@ -110,7 +110,7 @@ xdescribe("Store Product", () => {
       await productService.updateProduct({
         where: { id: testProduct.id },
         data: { status: "Stored" },
-        info: null,
+        select: null,
       })
 
       // Retrieve the updated product and physical products

@@ -1,4 +1,6 @@
+import { ProductCommands } from "@app/modules/Scripts/commands/product.command"
 import { Injectable } from "@nestjs/common"
+import { Prisma, User } from "@prisma/client"
 import * as cheerio from "cheerio"
 import request from "request"
 
@@ -12,7 +14,12 @@ export class ProductRequestService {
     private readonly productRequestUtils: ProductRequestUtilsService
   ) {}
 
-  async addProductRequest(reason, url, user) {
+  async addProductRequest(
+    reason: string,
+    url: string,
+    user: Pick<User, "id">,
+    select: Prisma.ProductRequestSelect
+  ) {
     return new Promise((resolve, reject) => {
       request({ jar: true, url }, async (error, response, body) => {
         // Handle a generic error
@@ -31,10 +38,11 @@ export class ProductRequestService {
           $,
           reason,
           url,
-          user
+          user,
+          select
         )
         if (productRequest) {
-          resolve(productRequest)
+          resolve(this.prisma.sanitizePayload(productRequest, "ProductRequest"))
           return
         }
 
@@ -43,25 +51,29 @@ export class ProductRequestService {
           $,
           reason,
           url,
-          user
+          user,
+          select
         )
         if (productRequest) {
-          resolve(productRequest)
+          resolve(this.prisma.sanitizePayload(productRequest, "ProductRequest"))
           return
         }
 
         // Otherwise, means we failed to scrape URL so just store
         // the reason and URL itself
-        productRequest = await this.prisma.client.createProductRequest({
-          reason,
-          url,
-          user: {
-            connect: {
-              id: user.id,
+        productRequest = await this.prisma.client2.productRequest.create({
+          data: {
+            reason,
+            url,
+            user: {
+              connect: {
+                id: user.id,
+              },
             },
           },
+          select,
         })
-        resolve(productRequest)
+        resolve(this.prisma.sanitizePayload(productRequest, "ProductRequest"))
         return
       })
     })

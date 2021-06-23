@@ -3,14 +3,18 @@ import { UserPushNotificationInterestType } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Token } from "@pusher/push-notifications-server"
-import { upperFirst } from "lodash"
+import { difference, upperFirst } from "lodash"
 
 import {
+  PushNotificationID,
   PushNotifyInterestInput,
   PushNotifyUsersInput,
 } from "../pushNotification.types"
 import { PusherService } from "./pusher.service"
-import { PushNotificationDataProvider } from "./pushNotification.data.service"
+import {
+  AllPushNotificationIDs,
+  PushNotificationDataProvider,
+} from "./pushNotification.data.service"
 
 @Injectable()
 export class PushNotificationService {
@@ -19,7 +23,11 @@ export class PushNotificationService {
     private readonly data: PushNotificationDataProvider,
     private readonly prisma: PrismaService,
     private readonly error: ErrorService
-  ) {}
+  ) {
+    for (const id of AllPushNotificationIDs) {
+      this.data.getPushNotifData(id, {}) // run this to enforce lengths on all notifs at boot time
+    }
+  }
 
   generateToken(email: string): Token {
     return (this.pusher.client.generateToken(email) as any).token
@@ -69,6 +77,7 @@ export class PushNotificationService {
         },
       },
     })
+
     if (targetInterest.includes("debug")) {
       usersToUpdate = usersToUpdate.filter(a => a.roles.includes("Admin"))
     }
@@ -116,13 +125,42 @@ export class PushNotificationService {
         } = this.data.getPushNotifData(pushNotifID, vars)
 
         // Filter any emails that have received this push notification before
-
-        await this.pusher.client.publishToUsers(
-          targetEmails,
-          notificationPayload as any
+        const pushNotificationReceipts = await this.prisma.client2.pushNotificationReceipt.findMany(
+          {
+            where: {
+              title: notificationPayload?.apns?.aps?.alert?.title,
+              body: notificationPayload?.apns?.aps?.alert?.body,
+              users: {
+                some: {
+                  email: {
+                    in: targetEmails,
+                  },
+                },
+              },
+            },
+            select: { id: true, users: true },
+          }
         )
 
-        for (const email of targetEmails) {
+        const emailsNotifAlreadySent = pushNotificationReceipts
+          .map(a => a.users.map(b => b.email))
+          .flat()
+
+        const updatedTargetEmails = difference(
+          targetEmails,
+          emailsNotifAlreadySent
+        )
+
+        try {
+          await this.pusher.client.publishToUsers(
+            updatedTargetEmails,
+            notificationPayload as any
+          )
+        } catch (err) {
+          console.error(err)
+        }
+
+        for (const email of updatedTargetEmails) {
           // Create the receipt
           const receipt = await this.prisma.client.createPushNotificationReceipt(
             {

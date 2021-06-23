@@ -2,30 +2,31 @@ import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.servic
 import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
-import { Brand } from "@prisma/client"
-import { Product } from "@prisma/client"
+import {
+  BagItem,
+  Brand,
+  Category,
+  Customer,
+  Image,
+  PhysicalProduct,
+  Prisma,
+  PrismaPromise,
+  Product,
+  ProductTier,
+  ProductVariant,
+} from "@prisma/client"
 import {
   BottomSizeType,
   ID_Input,
   InventoryStatus,
   LetterSize,
-  Product as PrismaOneProduct,
-  ProductFunction,
   ProductStatus,
-  ProductTier,
   ProductType,
-  ProductWhereUniqueInput,
-  RecentlyViewedProduct,
-  Tag,
+  SizeType,
 } from "@prisma1/index"
-import {
-  Customer,
-  Product as PrismaBindingProduct,
-} from "@prisma1/prisma.binding"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { GraphQLResolveInfo } from "graphql"
-import { head, pick } from "lodash"
+import { difference, flatten, head, isArray, pick, sum } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -73,38 +74,41 @@ export class ProductService {
   }
 
   async publishProducts(productIDs) {
-    const productsWithData = await this.prisma.binding.query.products(
-      {
-        where: {
-          id_in: productIDs,
-        },
+    const productsWithData = await this.prisma.client2.product.findMany({
+      where: {
+        id: { in: productIDs },
       },
-      `{
-        id
-        photographyStatus
-        variants {
-          id
-        }
-      }`
-    )
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        photographyStatus: true,
+        variants: { select: { id: true } },
+      },
+    })
 
     const validatedIDs = []
     const unvalidatedIDs = []
 
     productIDs.forEach(async id => {
       const product = productsWithData.find(p => p.id === id)
-      if (product.variants?.length && product.photographyStatus === "Done") {
+      if (
+        product.variants?.length > 0 &&
+        product.photographyStatus === "Done" &&
+        product.status === "NotAvailable"
+      ) {
         validatedIDs.push(id)
-        await this.prisma.client.updateProduct({
-          where: { id },
-          data: {
-            status: "Available",
-            publishedAt: DateTime.local().toISO(),
-          },
-        })
       } else {
         unvalidatedIDs.push(id)
       }
+    })
+
+    await this.prisma.client2.product.updateMany({
+      where: { id: { in: validatedIDs } },
+      data: {
+        status: "Available",
+        publishedAt: DateTime.local().toISO(),
+      },
     })
 
     let message
@@ -113,7 +117,10 @@ export class ProductService {
       message = "Successfully published all products."
       status = "success"
     } else {
-      message = `Some of the products weren't published, check that these products have variants and their photography status is complete: ${unvalidatedIDs.join(
+      const unvalidatedNames = unvalidatedIDs
+        .map(a => productsWithData.find(p => p.id === a))
+        .map(b => b.name)
+      message = `Some of the products weren't published, check that these products have variants and their photography status is complete and their status is not Stored or Offloaded: ${unvalidatedNames.join(
         ", "
       )}.`
       status = "error"
@@ -127,26 +134,23 @@ export class ProductService {
     }
   }
 
-  async addViewedProduct(item, customer) {
-    const viewedProducts = await this.prisma.client.recentlyViewedProducts({
-      where: {
-        customer: { id: customer.id },
-        product: { id: item },
-      },
-    })
-    const viewedProduct: RecentlyViewedProduct = head(viewedProducts)
+  async addViewedProduct(
+    productId: string,
+    customer: Pick<Customer, "id">,
+    select: Prisma.RecentlyViewedProductSelect
+  ) {
+    const viewedProduct = await this.prisma.client2.recentlyViewedProduct.findFirst(
+      {
+        where: { customer: { id: customer.id }, product: { id: productId } },
+        select: { id: true, viewCount: true },
+      }
+    )
 
-    if (viewedProduct) {
-      return await this.prisma.client.updateRecentlyViewedProduct({
-        where: {
-          id: viewedProduct.id,
-        },
-        data: {
-          viewCount: viewedProduct.viewCount++,
-        },
-      })
-    } else {
-      return await this.prisma.client.createRecentlyViewedProduct({
+    const priorViewCount = viewedProduct?.viewCount || 0
+    const result = await this.prisma.client2.recentlyViewedProduct.upsert({
+      where: { id: viewedProduct?.id || "" },
+      update: { viewCount: priorViewCount + 1 },
+      create: {
         customer: {
           connect: {
             id: customer.id,
@@ -154,45 +158,41 @@ export class ProductService {
         },
         product: {
           connect: {
-            id: item,
+            id: productId,
           },
         },
         viewCount: 1,
-      })
-    }
+      },
+      select,
+    })
+
+    return result
   }
 
-  async deepUpsertProduct(input) {
-    // Bottom size name validation
-    if (input.type === "Bottom") {
-      for (const variant of input.variants) {
-        this.validateInternalBottomSizeName(variant.internalSizeName)
-      }
-    }
+  async createProduct(input, select: Prisma.ProductSelect) {
+    this.validateCreateProductInput(input)
 
     // get records whose associated data we need for other parts of the upsert
-    const brand = await this.prisma.client.brand({ id: input.brandID })
-    const color = await this.prisma.client.color({ colorCode: input.colorCode })
+    const brand = await this.prisma.client2.brand.findUnique({
+      where: { id: input.brandID },
+      select: { id: true, brandCode: true },
+    })
+    const color = await this.prisma.client2.color.findUnique({
+      where: { colorCode: input.colorCode },
+      select: { name: true },
+    })
     const model =
       input.modelID &&
-      (await this.prisma.client.productModel({ id: input.modelID }))
+      (await this.prisma.client2.productModel.findUnique({
+        where: { id: input.modelID },
+      }))
 
-    // Get the functionIDs which we will connect to the product
-    const functionIDs = await this.upsertFunctions(input.functions)
-
-    // Generate the product slug
-    const slug = await this.productUtils.getProductSlug(
+    const slug = await this.productUtils.createProductSlug(
       brand.brandCode,
       input.name,
-      color.name,
-      input.createNew
+      color.name
     )
 
-    const { season } = input
-    const productSeason =
-      season && (await this.upsertProductSeason(season, slug))
-
-    // Store images and get their record ids to connect to the product
     const imageDatas: ImageData[] = await Promise.all(
       input.images.map((image, index) => {
         const s3ImageName = this.productUtils.getProductImageName(
@@ -206,23 +206,18 @@ export class ProductService {
         })
       })
     )
-    const imageIDs = await this.productUtils.getImageIDs(imageDatas, slug)
 
-    // Deep upsert the model size
-    let modelSize
-    if (input.modelSizeDisplay && input.modelSizeName) {
-      modelSize = await this.productUtils.upsertModelSize({
-        slug,
-        type: input.type,
-        modelSizeDisplay: input.modelSizeDisplay,
-        sizeType: input.modelSizeType,
-      })
-    }
-
-    // Create all necessary tag records
-    const tagIDs = await this.upsertTags(input.tags)
-
-    const data = {
+    const createScalarListCreateInput = values =>
+      this.queryUtils.createScalarListMutateInput(values, "", "create")
+    const seasonData = await this.getMutateSeasonOnProductInput(
+      input.season,
+      "create"
+    )
+    const tier = await this.getProductTier(
+      { id: input.categoryID },
+      input.retailPrice
+    )
+    const createData = Prisma.validator<Prisma.ProductCreateInput>()({
       slug,
       ...pick(input, [
         "name",
@@ -234,127 +229,131 @@ export class ProductService {
         "architecture",
         "photographyStatus",
         "buyNewEnabled",
+        "productFit",
+        "externalURL",
       ]),
-      styles: input?.styles?.length > 0 ? { set: input.styles } : { set: [] },
-      season: productSeason && { connect: { id: productSeason.id } },
+      functions: {
+        connectOrCreate: input.functions.map(name => ({
+          create: { name },
+          where: { name },
+        })),
+      },
       brand: {
         connect: { id: input.brandID },
       },
       category: {
         connect: { id: input.categoryID },
       },
-      images: {
-        connect: imageIDs,
-      },
       materialCategory: input.materialCategorySlug && {
         connect: { slug: input.materialCategorySlug },
       },
-      model: model && {
-        connect: { id: model.id },
-      },
-      modelSize: modelSize && {
-        connect: { id: modelSize.id },
-      },
+      model: model ? { connect: { id: input.modelID } } : undefined,
       color: {
         connect: { colorCode: input.colorCode },
       },
       secondaryColor: input.secondaryColorCode && {
         connect: { colorCode: input.secondaryColorCode },
       },
+      season: seasonData as any,
+      tier: { connect: { id: tier.id } },
+      images: {
+        connectOrCreate: imageDatas.map(a => ({
+          where: { url: a.url },
+          create: { ...a, title: slug },
+        })),
+      },
+      modelSize: this.createMutateModelSizeOnProductInput({
+        slug,
+        type: input.type,
+        modelSizeDisplay: input.modelSizeDisplay,
+        modelSizeType: input.modelSizeType,
+        modelSizeName: input.modelSizeName,
+      }) as any,
       tags: {
-        connect: tagIDs,
+        connectOrCreate: input.tags.map(tag => ({
+          where: { name: tag },
+          create: { name: tag },
+        })),
       },
-      functions: {
-        connect: functionIDs,
-      },
-      innerMaterials: { set: input.innerMaterials },
-      outerMaterials: { set: input.outerMaterials },
-    }
-    const product = await this.prisma.client.upsertProduct({
-      create: data,
-      update: data,
-      where: { slug },
+      styles: createScalarListCreateInput(input.styles),
+      innerMaterials: createScalarListCreateInput(input.innerMaterials),
+      outerMaterials: createScalarListCreateInput(input.outerMaterials),
     })
 
-    // Add the product tier
-    const tier = await this.getProductTier(product)
-    await this.prisma.client.updateProduct({
-      where: { id: product.id },
-      data: { tier: { connect: { id: tier.id } } },
+    const productPromise = this.prisma.client2.product.create({
+      data: createData,
     })
 
     const sequenceNumbers = await this.physicalProductUtils.groupedSequenceNumbers(
       input.variants
     )
 
-    await Promise.all(
+    const variantAndPhysicalProductPromises = flatten(
       input.variants.map((a, i) => {
-        return this.deepUpsertProductVariant({
+        return this.getCreateProductVariantPromises({
           sequenceNumbers: sequenceNumbers[i],
           variant: a,
-          productID: slug,
+          productSlug: slug,
           ...pick(input, [
             "type",
             "colorCode",
             "retailPrice",
-            "status",
             "buyUsedEnabled",
             "buyUsedPrice",
           ]),
         })
       })
-    )
-    return product
+    ) as PrismaPromise<ProductVariant | PhysicalProduct>[]
+
+    const [product] = await this.prisma.client2.$transaction([
+      productPromise,
+      ...variantAndPhysicalProductPromises,
+    ])
+
+    return await this.prisma.client2.product.findUnique({
+      where: { id: product.id },
+      select,
+    })
   }
 
-  async saveProduct(item, save, info, customer) {
-    const bagItems = await this.prisma.binding.query.bagItems(
-      {
-        where: {
-          customer: {
-            id: customer.id,
-          },
-          productVariant: {
-            id: item,
-          },
-          saved: true,
-        },
-      },
-      info
-    )
-    let bagItem: any = head(bagItems)
-
-    if (bagItem && !save) {
-      await this.prisma.client.deleteBagItem({
-        id: bagItem.id,
-      })
-    } else if (!bagItem && save) {
-      bagItem = await this.prisma.client.createBagItem({
+  async saveProduct(item, save, select, customer) {
+    const _bagItem = await this.prisma.client2.bagItem.findFirst({
+      where: {
         customer: {
-          connect: {
-            id: customer.id,
-          },
+          id: customer.id,
         },
         productVariant: {
-          connect: {
-            id: item,
-          },
+          id: item,
         },
-        position: 0,
-        saved: save,
-        status: "Added",
-      })
-    }
+        saved: true,
+      },
+      select,
+    })
+    let bagItem = !!_bagItem && this.prisma.sanitizePayload(_bagItem, "BagItem")
 
-    if (save) {
-      return this.prisma.binding.query.bagItem(
-        {
-          where: {
-            id: bagItem.id,
+    if (bagItem && !save) {
+      await this.prisma.client2.bagItem.delete({
+        where: { id: (bagItem as BagItem).id },
+      })
+    } else if (!bagItem && save) {
+      bagItem = await this.prisma.client2.bagItem.create({
+        data: {
+          customer: {
+            connect: {
+              id: customer.id,
+            },
           },
+          productVariant: {
+            connect: {
+              id: item,
+            },
+          },
+          position: 0,
+          saved: save,
+          status: "Added",
         },
-        info
-      )
+        select,
+      })
     }
 
     return bagItem ? bagItem : null
@@ -404,7 +403,11 @@ export class ProductService {
 
   async getGeneratedVariantSKUs({ input }) {
     const { brandID, colorCode, sizeNames, productID } = input
-    const skuData = await this.getSKUData({ brandID, colorCode, productID })
+    const skuData = await this.productUtils.getSKUData({
+      brandID,
+      colorCode,
+      productID,
+    })
     if (!skuData) {
       return null
     }
@@ -430,7 +433,11 @@ export class ProductService {
   }
 
   async getGeneratedSeasonsUIDs({ brandID, colorCode, sizes, productID }) {
-    const skuData = await this.getSKUData({ brandID, colorCode, productID })
+    const skuData = await this.productUtils.getSKUData({
+      brandID,
+      colorCode,
+      productID,
+    })
     if (!skuData) {
       return null
     }
@@ -447,31 +454,6 @@ export class ProductService {
         })
       })
       .flat()
-  }
-
-  getSizeKey(productType: "Top" | "Bottom") {
-    let sizesKey
-    let internalSizeWhereInputCreateFunc
-    switch (productType) {
-      case "Top":
-        sizesKey = "topSizes"
-        internalSizeWhereInputCreateFunc = sizes => ({
-          top: {
-            letter_in: sizes,
-          },
-        })
-        break
-      case "Bottom":
-        sizesKey = "waistSizes"
-        internalSizeWhereInputCreateFunc = sizes => ({
-          display_in: sizes.map(a => `${a}`), // typecasting,
-        })
-        break
-      default:
-        throw new Error(`Invalid product type: ${productType}`)
-    }
-
-    return { sizesKey, internalSizeWhereInputCreateFunc }
   }
 
   async availableProductVariantsConnectionForCustomer(
@@ -593,55 +575,14 @@ export class ProductService {
     return this.prisma.sanitizePayload(_data, "ProductVariant")
   }
 
-  async getSKUData({ brandID, colorCode, productID }) {
-    const brand = this.prisma.sanitizePayload(
-      await this.prisma.client2.brand.findUnique({
-        where: { id: brandID },
-      }),
-      "Brand"
-    )
-    const color = this.prisma.sanitizePayload(
-      await this.prisma.client2.color.findUnique({
-        where: { colorCode },
-      }),
-      "Color"
-    )
-
-    if (!brand || !color) {
-      return null
-    }
-
-    let styleNumber
-    if (!!productID) {
-      // valid style code if variants exist on the product, null otherwise
-      styleNumber = await this.productUtils.getProductStyleCode(productID)
-      if (!styleNumber) {
-        throw new Error(`No style number found for productID: ${productID}`)
-      }
-    } else {
-      const allStyleCodesForBrand = (
-        await this.productUtils.getAllStyleCodesForBrand(brandID)
-      ).sort()
-      const highestStyleNumber = Number(allStyleCodesForBrand.pop()) || 0
-      styleNumber = highestStyleNumber + 1
-    }
-
-    const styleCode = styleNumber.toString().padStart(3, "0")
-
-    return {
-      brandCode: brand.brandCode,
-      styleCode,
-    }
-  }
-
   async updateProduct({
     where,
     data,
-    info,
+    select,
   }: {
-    where: ProductWhereUniqueInput
+    where: Prisma.ProductWhereUniqueInput
     data: any // for convenience
-    info: GraphQLResolveInfo
+    select: Prisma.ProductSelect
   }) {
     // Extract custom fields out
     const {
@@ -660,35 +601,26 @@ export class ProductService {
       buyUsedPrice,
       ...updateData
     } = data
-    let functionIDs
-    let imageIDs
-    let modelSizeID
-    let tagIDs
-    let productSeason
-    const product: PrismaBindingProduct = await this.prisma.binding.query.product(
-      { where },
-      `{
-          id
-          name
-          slug
-          type
-          status
-          variants {
-            id
-            physicalProducts {
-              id
-            }
-          }
-          brand {
-            id
-            brandCode
-          }
-          color {
-            id
-            name
-          }
-        }`
-    )
+    const _product = await this.prisma.client2.product.findUnique({
+      where,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        type: true,
+        status: true,
+        variants: {
+          select: { id: true, physicalProducts: { select: { id: true } } },
+        },
+        brand: { select: { id: true, brandCode: true } },
+        color: { select: { id: true, name: true } },
+        season: { select: { id: true } },
+        category: { select: { id: true } },
+        functions: { select: { name: true } },
+        tags: { select: { name: true } },
+      },
+    })
+    const product = this.prisma.sanitizePayload(_product, "Product")
 
     // If they're unstoring, that should be all they're doing
     if (product.status === "Stored" && status !== "Stored") {
@@ -713,28 +645,8 @@ export class ProductService {
       updateData.publishedAt = DateTime.local().toISO()
     }
 
-    if (functions) {
-      functionIDs = await this.upsertFunctions(functions)
-    }
-
-    if (tags) {
-      tagIDs = await this.upsertTags(tags)
-    }
-
-    if (modelSizeName && modelSizeDisplay) {
-      const modelSize = await this.productUtils.upsertModelSize({
-        slug: product.slug,
-        type: product.type,
-        modelSizeDisplay,
-        sizeType: modelSizeType,
-      })
-      modelSizeID = modelSize.id
-    }
-
-    if (season) {
-      productSeason = await this.upsertProductSeason(season, product.slug)
-    }
-
+    let imagePromises = []
+    let imageUrls = []
     if (images) {
       // Form appropriate image names
       const imageNames = images.map((_image, index) => {
@@ -746,59 +658,127 @@ export class ProductService {
         )
       })
 
-      imageIDs = await this.imageService.upsertImages(
+      const imageDatas = (await this.imageService.upsertImages(
         images,
         imageNames,
-        product.slug
-      )
+        product.slug,
+        true
+      )) as { promise: PrismaPromise<Image>; url: string }[]
+      imagePromises = imageDatas.map(a => a.promise)
+      imageUrls = imageDatas.map(a => a.url)
     }
 
+    const prismaTwoUpdateData = this.queryUtils.prismaOneToPrismaTwoMutateArgs(
+      { ...updateData, styles: { set: updateData.styles } },
+      product,
+      "Product",
+      "update"
+    )
+    const tier = await this.getProductTier(
+      product.category,
+      updateData.retailPrice
+    )
+    const updateInput = {
+      ...prismaTwoUpdateData,
+      tier: { connect: { id: tier.id } },
+      functions: functions && {
+        connectOrCreate: functions.map(name => ({
+          create: { name },
+          where: { name },
+        })),
+        disconnect: difference(
+          product.functions.map(a => a.name),
+          functions
+        ).map(name => ({ name })),
+      },
+      tags: tags && {
+        connectOrCreate: tags.map(tag => ({
+          where: { name: tag },
+          create: { name: tag },
+        })),
+        disconnect: difference(
+          product.tags.map(a => a.name),
+          tags
+        ).map(name => ({ name })),
+      },
+      modelSize: this.createMutateModelSizeOnProductInput({
+        slug: product.slug,
+        type: product.type,
+        modelSizeDisplay,
+        modelSizeType,
+        modelSizeName,
+      }),
+      season: season && {
+        upsert: {
+          ...(await this.getMutateSeasonOnProductInput(season, "create")),
+          ...(await this.getMutateSeasonOnProductInput(
+            { ...season, seasonId: product.season?.id },
+            "update"
+          )),
+        },
+      },
+      images: images && {
+        set: imageUrls.map(url => ({
+          url,
+        })),
+      },
+      status,
+      photographyStatus,
+    }
+
+    const productUpdatePromise = this.prisma.client2.product.update({
+      where,
+      data: updateInput,
+    })
+
+    let physicalProductUpdatePromises = []
     if (buyUsedEnabled != null || buyUsedPrice != null) {
-      await Promise.all(
-        product?.variants
-          ?.flatMap(variant => variant.physicalProducts)
-          ?.map(physicalProduct =>
-            this.prisma.client.updatePhysicalProduct({
-              where: {
-                id: physicalProduct.id,
-              },
-              data: {
-                price: {
-                  upsert: {
-                    create: {
-                      buyUsedEnabled,
-                      buyUsedPrice,
-                    },
-                    update: {
-                      buyUsedEnabled,
-                      buyUsedPrice,
-                    },
+      physicalProductUpdatePromises = product.variants
+        ?.flatMap(variant => variant.physicalProducts)
+        ?.map(physicalProduct =>
+          this.prisma.client2.physicalProduct.update({
+            where: {
+              id: physicalProduct.id,
+            },
+            data: {
+              price: {
+                upsert: {
+                  create: {
+                    buyUsedEnabled,
+                    buyUsedPrice,
+                  },
+                  update: {
+                    buyUsedEnabled,
+                    buyUsedPrice,
                   },
                 },
               },
-            })
-          )
-      )
+            },
+          })
+        )
     }
 
-    await this.storeProductIfNeeded(where, status)
-    await this.restoreProductIfNeeded(where, status)
-    await this.prisma.client.updateProduct({
+    const storeProductPromises = await this.getStoreProductPromises(
       where,
-      data: {
-        ...updateData,
-        functions: functionIDs && { set: functionIDs },
-        images: imageIDs && { set: imageIDs },
-        modelSize: modelSizeID && { connect: { id: modelSizeID } },
-        tags: tagIDs && { set: tagIDs },
-        status,
-        styles: data?.styles?.length > 0 ? { set: data.styles } : { set: [] },
-        season: productSeason && { connect: { id: productSeason.id } },
-        photographyStatus,
-      },
-    })
+      status
+    )
+    const restoreProductPromises = await this.getRestoreProductPromises(
+      where,
+      status
+    )
 
-    return await this.prisma.binding.query.product({ where }, info)
+    await this.prisma.client2.$transaction([
+      ...imagePromises,
+      productUpdatePromise,
+      ...physicalProductUpdatePromises,
+      ...storeProductPromises,
+      ...restoreProductPromises,
+    ])
+
+    return await this.prisma.client2.product.findUnique({
+      where,
+      select,
+    })
   }
 
   /**
@@ -833,23 +813,22 @@ export class ProductService {
     }
   }
 
+  // })
   /**
-   * Deep upserts a product variant, including deep upserts for the child size record
-   * and upsert for the child physical product records
-   * @param variant of type UpsertVariantInput from productVariant.graphql
+   * Creates product variants and their downstream physical products
+   * @param variant of type CreateVariantInput from productVariant.graphql
    * @param type type of the parent Product
    * @param colorID: colorID for the color record to attach
    * @param retailPrice: retailPrice of the product variant
-   * @param productID: id of the parent product
+   * @param productSlug: slug of the parent product
    */
-  async deepUpsertProductVariant({
+  getCreateProductVariantPromises({
     sequenceNumbers,
     variant,
     type,
     colorCode,
     retailPrice,
-    productID,
-    status,
+    productSlug,
     buyUsedEnabled,
     buyUsedPrice,
   }: {
@@ -858,150 +837,188 @@ export class ProductService {
     type: ProductType
     colorCode: string
     retailPrice?: number
-    productID: string
-    status: ProductStatus
+    productSlug: string
     buyUsedEnabled?: boolean
     buyUsedPrice?: number
-  }) {
-    const internalSize = await this.productUtils.deepUpsertSize({
-      slug: `${variant.sku}-internal`,
-      type,
+  }): PrismaPromise<ProductVariant | PhysicalProduct>[] {
+    if (variant.manufacturerSizeNames.length > 1) {
+      throw new Error(`Please pass no more than 1 manufacturer size name`)
+    }
+
+    const shopifyProductVariantCreateData = !!variant.shopifyProductVariant
+      ?.externalId
+      ? {
+          shopifyProductVariant: {
+            connect: variant.shopifyProductVariant,
+          },
+        }
+      : {}
+
+    const internalSizeSlug = `${variant.sku}-internal`
+    const internalSizeCommonData = {
+      slug: internalSizeSlug,
+      productType: type,
       display: variant.internalSizeName,
-      topSizeData: type === "Top" && {
-        // TODO: letter is deprecated, can eventually remove
-        letter: (variant.internalSizeName as LetterSize) || null,
-        ...pick(variant, ["sleeve", "shoulder", "chest", "neck", "length"]),
-      },
-      bottomSizeData: type === "Bottom" && {
-        // TODO: type and value are deprecated, can eventually remove
-        type: (variant.internalSizeType as BottomSizeType) || null,
-        value: variant.internalSizeName || "",
-        ...pick(variant, ["waist", "rise", "hem", "inseam"]),
-      },
-      accessorySizeData: type === "Accessory" && {
-        ...pick(variant, ["bridge", "length", "width"]),
-      },
-      sizeType: variant.internalSizeType,
-    })
-
-    const manufacturerSizeIDs = await this.productVariantService.getManufacturerSizeIDs(
-      variant,
-      type
+      type: variant.internalSizeType,
+    }
+    const topSizeData = {
+      letter: (variant.internalSizeName as LetterSize) || null,
+      ...pick(variant, "sleeve", "shoulder", "chest", "neck", "length"),
+    }
+    const bottomSizeData = {
+      type: (variant.internalSizeType as BottomSizeType) || null,
+      value: variant.internalSizeName || "",
+      ...pick(variant, ["waist", "rise", "hem", "inseam"]),
+    }
+    const accessorySizeData = pick(variant, ["bridge", "length", "width"])
+    const displayShort = this.calculateVariantDisplayShort(
+      !!variant.manufacturerSizeNames
+        ? {
+            display: head(variant.manufacturerSizeNames),
+            type: variant.manufacturerSizeType,
+            productType: type,
+          }
+        : {},
+      {
+        type: variant.internalSizeType,
+        display: variant.internalSizeName,
+      }
     )
 
-    const displayShort = await this.productUtils.getVariantDisplayShort(
-      manufacturerSizeIDs,
-      internalSize.id
-    )
+    const counts = {
+      reservable: variant.physicalProducts.filter(
+        a => a.inventoryStatus === "Reservable"
+      ).length,
+      reserved: 0,
+      nonReservable: variant.physicalProducts.filter(
+        a => a.inventoryStatus === "NonReservable"
+      ).length,
+      offloaded: 0,
+      stored: 0,
+    }
+    if (sum(Object.values(counts)) !== variant.total) {
+      throw new Error(`Invalid counts for new variant: ${variant.sku}`)
+    }
 
-    const shopifyProductVariant = variant.shopifyProductVariant
-    const shopifyProductVariantCreateData =
-      shopifyProductVariant && shopifyProductVariant.externalId
-        ? {
-            shopifyProductVariant: {
-              connect: variant.shopifyProductVariant,
-            },
-          }
-        : {}
-    const shopifyProductVariantUpdateData =
-      shopifyProductVariant && shopifyProductVariant.externalId
-        ? {
-            shopifyProductVariant: {
-              connect: variant.shopifyProductVariant,
-            },
-          }
-        : shopifyProductVariant
-        ? {
-            shopifyProductVariant: {
-              disconnect: true,
-            },
-          }
-        : {}
-
-    const data = {
+    const createData = {
       displayShort,
-      productID,
-      product: { connect: { slug: productID } },
+      productID: productSlug,
+      product: { connect: { slug: productSlug } },
       color: {
         connect: { colorCode },
       },
-      internalSize: {
-        connect: { id: internalSize.id },
-      },
       retailPrice,
-      reservable: status === "Available" ? variant.total : 0,
-      reserved: 0,
-      nonReservable: status === "NotAvailable" ? variant.total : 0,
-      offloaded: 0,
-      stored: 0,
+      ...counts,
       ...pick(variant, ["weight", "total", "sku"]),
+      ...shopifyProductVariantCreateData,
+      internalSize: {
+        connectOrCreate: {
+          where: { slug: internalSizeSlug },
+          create: {
+            ...internalSizeCommonData,
+            top:
+              type === "Top"
+                ? {
+                    create: topSizeData,
+                  }
+                : undefined,
+            bottom:
+              type === "Bottom"
+                ? {
+                    create: bottomSizeData,
+                  }
+                : undefined,
+            accessory:
+              type === "Accessory" ? { create: accessorySizeData } : undefined,
+          },
+        },
+      },
+      manufacturerSizes: {
+        create: [
+          this.productUtils.getManufacturerSizeMutateInput(
+            variant,
+            head(variant.manufacturerSizeNames),
+            type,
+            "create"
+          ) as any,
+        ],
+      },
     }
-
-    const prodVar = await this.prisma.client.upsertProductVariant({
-      where: { sku: variant.sku },
-      create: {
-        ...data,
-        ...shopifyProductVariantCreateData,
-        manufacturerSizes: manufacturerSizeIDs && {
-          connect: manufacturerSizeIDs,
-        },
-      },
-      update: {
-        ...data,
-        ...shopifyProductVariantUpdateData,
-        manufacturerSizes: manufacturerSizeIDs && {
-          set: manufacturerSizeIDs,
-        },
-      },
+    let prodVarPromise = this.prisma.client2.productVariant.create({
+      data: createData,
     })
 
-    variant.physicalProducts.forEach(async (physProdData, index) => {
-      const sequenceNumber = sequenceNumbers[index]
-      const price =
-        buyUsedPrice == null && buyUsedEnabled == null
-          ? physProdData.price || variant.price
-          : { buyUsedEnabled, buyUsedPrice }
-      await this.prisma.client.upsertPhysicalProduct({
-        where: { seasonsUID: physProdData.seasonsUID },
-        create: {
+    const physicalProductPromises = variant.physicalProducts.map(
+      (physProdData, index) => {
+        const sequenceNumber = sequenceNumbers[index]
+        const price =
+          buyUsedPrice == null && buyUsedEnabled == null
+            ? physProdData.price || variant.price
+            : { buyUsedEnabled, buyUsedPrice }
+        const createData = Prisma.validator<
+          Prisma.PhysicalProductCreateInput
+        >()({
           ...physProdData,
           sequenceNumber,
-          productVariant: { connect: { id: prodVar.id } },
+          productVariant: { connect: { sku: variant.sku } },
           ...(price && {
             price: {
               create: price,
             },
           }),
-        },
-        update: {
-          ...physProdData,
-          ...(price && {
-            price: {
-              upsert: {
-                update: price,
-                create: price,
-              },
-            },
-          }),
-        },
-      })
-    })
+        })
+        return this.prisma.client2.physicalProduct.create({
+          data: createData,
+        })
+      }
+    )
 
-    return prodVar
+    return [prodVarPromise, ...physicalProductPromises]
   }
 
-  async getProductTier(prod: PrismaOneProduct): Promise<ProductTier> {
-    const allProductCategories = await this.productUtils.getAllCategories(prod)
+  calculateVariantDisplayShort(manufacturerSizeData, internalSizeData) {
+    const { display, type, productType } = manufacturerSizeData
+
+    let displayShort
+    if (display) {
+      displayShort = this.productUtils.coerceSizeDisplayIfNeeded(
+        display,
+        type as SizeType,
+        productType as ProductType
+      )
+      if (type === "WxL") {
+        displayShort = displayShort.split("x")[0]
+      }
+    } else {
+      const {
+        type: internalSizeType,
+        display: internalSizeDisplay,
+      } = internalSizeData
+      if (internalSizeType === "WxL") {
+        displayShort = internalSizeDisplay.split("x")[0]
+      }
+    }
+
+    return displayShort
+  }
+
+  async getProductTier(
+    category: Pick<Category, "id">,
+    retailPrice
+  ): Promise<ProductTier> {
+    const allProductCategories = await this.productUtils.getAllCategoriesForCategory(
+      category
+    )
     const luxThreshold = allProductCategories
       .map(a => a.name)
       .includes("Outerwear")
       ? 400
       : 300
-    const tierName = prod.retailPrice > luxThreshold ? "Luxury" : "Standard"
-    const tiers = await this.prisma.client.productTiers({
+    const tierName = retailPrice > luxThreshold ? "Luxury" : "Standard"
+    const tier = await this.prisma.client2.productTier.findFirst({
       where: { tier: tierName },
     })
-    return head(tiers)
+    return this.prisma.sanitizePayload(tier, "ProductTier")
   }
 
   async newestBrandProducts(args, select): Promise<[Product]> {
@@ -1044,161 +1061,80 @@ export class ProductService {
     return this.prisma.sanitizePayload(_data, "Product")
   }
 
-  private async upsertFunctions(
-    functions: string[]
-  ): Promise<{ id: ID_Input }[]> {
-    const productFunctions = await Promise.all(
-      functions.map(
-        async functionName =>
-          await this.prisma.client.upsertProductFunction({
-            create: { name: functionName },
-            update: { name: functionName },
-            where: { name: functionName },
-          })
+  private validateCreateProductInput(input) {
+    // Bottom size name validation
+    if (input.type === "Bottom") {
+      input.variants?.forEach(a =>
+        this.validateInternalBottomSizeName(a.internalSizeName)
       )
-    )
-    return productFunctions
-      .filter(Boolean)
-      .map((func: ProductFunction) => ({ id: func.id }))
+    }
+
+    this.validateUpsertSeasonInput(input.season)
+
+    if (input.variants.length > 0) {
+      input.variants.forEach(a => {
+        if (!isArray(a.physicalProducts) || a.physicalProducts.length < 1) {
+          throw new Error(
+            `Must pass at least one physical product on each variant in CreateProductInput`
+          )
+        }
+      })
+    }
   }
 
-  private async upsertProductSeason(season, productSlug) {
-    let internalSeason
-    let vendorSeason
+  private validateUpsertSeasonInput(input) {
+    if (!input) {
+      return
+    }
     const {
-      wearableSeasons,
       internalSeasonSeasonCode,
       internalSeasonYear,
       vendorSeasonSeasonCode,
       vendorSeasonYear,
-    } = season
+    } = input
+
     if (internalSeasonSeasonCode || internalSeasonYear) {
-      let where
-      if (internalSeasonSeasonCode && internalSeasonYear) {
-        where = {
-          AND: [
-            { year: internalSeasonYear },
-            { seasonCode: internalSeasonSeasonCode },
-          ],
-        }
-      } else {
-        throw new Error("You must provide both a season and a year")
-      }
-      const existingSeason = head(
-        await this.prisma.binding.query.seasons(
-          {
-            where,
-          },
-          `{
-            id
-        }`
+      const bothDefined = !!internalSeasonYear && internalSeasonSeasonCode
+      if (!bothDefined) {
+        throw new Error(
+          "If setting a season, you must provide both a season and a year"
         )
-      ) as any
-      if (existingSeason?.id) {
-        internalSeason = existingSeason
-      } else {
-        internalSeason = await this.prisma.client.createSeason({
-          year: internalSeasonYear,
-          seasonCode: internalSeasonSeasonCode,
-        })
       }
     }
 
     if (vendorSeasonSeasonCode || vendorSeasonYear) {
-      let where
-      if (vendorSeasonSeasonCode && vendorSeasonYear) {
-        where = {
-          AND: [
-            { year: vendorSeasonYear },
-            { seasonCode: vendorSeasonSeasonCode },
-          ],
-        }
-      } else {
-        throw new Error("You must provide both a season and a year")
-      }
-      const existingSeason = head(
-        await this.prisma.binding.query.seasons(
-          {
-            where,
-          },
-          `{
-            id
-        }`
+      const bothDefined = !!vendorSeasonSeasonCode && !!vendorSeasonYear
+      if (!bothDefined) {
+        throw new Error(
+          "If setting a season, you must provide both a season and a year"
         )
-      ) as any
-
-      if (existingSeason?.id) {
-        vendorSeason = existingSeason
-      } else {
-        vendorSeason = await this.prisma.client.createSeason({
-          year: vendorSeasonYear,
-          seasonCode: vendorSeasonSeasonCode,
-        })
       }
     }
-
-    const product = await this.prisma.binding.query.product(
-      {
-        where: { slug: productSlug },
-      },
-      `{
-        id
-        season {
-          id
-        }
-      }`
-    )
-
-    const upsertData = {
-      internalSeason: {
-        connect: internalSeason && { id: internalSeason?.id },
-      },
-      vendorSeason: vendorSeason && {
-        connect: { id: vendorSeason?.id },
-      },
-      wearableSeasons: wearableSeasons && { set: wearableSeasons },
-    }
-
-    return await this.prisma.client.upsertProductSeason({
-      where: { id: product?.season?.id || "" },
-      create: upsertData,
-      update: upsertData,
-    })
   }
 
-  private async upsertTags(tags: string[]): Promise<{ id: ID_Input }[]> {
-    const prismaTags = await Promise.all(
-      tags.map(
-        async tag =>
-          await this.prisma.client.upsertTag({
-            create: { name: tag },
-            update: { name: tag },
-            where: { name: tag },
-          })
-      )
-    )
-    return prismaTags.filter(Boolean).map((tag: Tag) => ({ id: tag.id }))
-  }
-
-  private async restoreProductIfNeeded(
-    where: ProductWhereUniqueInput,
+  private async getRestoreProductPromises(
+    where: Prisma.ProductWhereUniqueInput,
     status: ProductStatus
-  ) {
-    const productBeforeUpdate = await this.prisma.binding.query.product(
-      {
-        where,
+  ): Promise<PrismaPromise<Product | ProductVariant | PhysicalProduct>[]> {
+    const promises = []
+    const _productBeforeUpdate = await this.prisma.client2.product.findUnique({
+      where,
+      select: {
+        id: true,
+        status: true,
+        variants: {
+          select: {
+            id: true,
+            physicalProducts: {
+              select: { inventoryStatus: true, seasonsUID: true },
+            },
+          },
+        },
       },
-      `{
-          id
-          status
-          variants {
-            id
-            physicalProducts {
-              inventoryStatus
-              seasonsUID
-            }
-          }
-        }`
+    })
+    const productBeforeUpdate = this.prisma.sanitizePayload(
+      _productBeforeUpdate,
+      "Product"
     )
     if (status !== "Stored" && productBeforeUpdate.status === "Stored") {
       // Update product status
@@ -1207,120 +1143,190 @@ export class ProductService {
           "When restoring a product, must mark it as NotAvailable"
         )
       }
-      await this.prisma.client.updateProduct({
-        where: { id: productBeforeUpdate.id },
-        data: { status },
-      })
+      promises.push(
+        this.prisma.client2.product.update({
+          where: { id: productBeforeUpdate.id },
+          data: { status },
+        })
+      )
 
-      // Update statuses on downstream physical products
-      for (const {
-        inventoryStatus,
-        seasonsUID,
-      } of this.productUtils.physicalProductsForProduct(
-        productBeforeUpdate as ProductWithPhysicalProducts
-      )) {
-        if (!["Offloaded", "Reserved"].includes(inventoryStatus)) {
-          await this.prisma.client.updatePhysicalProduct({
-            where: { seasonsUID },
+      // Update statuses on downstream physical products as well as
+      // counts on product variants
+      for (const prodVar of productBeforeUpdate.variants) {
+        const physicalProducts = prodVar.physicalProducts
+        const unitsToRestore = physicalProducts.filter(
+          a => !["Offloaded", "Reserved"].includes(a.inventoryStatus)
+        )
+        if (unitsToRestore.length === 0) {
+          continue
+        }
+
+        promises.push(
+          this.prisma.client2.physicalProduct.updateMany({
+            where: {
+              seasonsUID: { in: unitsToRestore.map(a => a.seasonsUID) },
+            },
             data: { inventoryStatus: "NonReservable" },
           })
-        }
-      }
-
-      // Update counts on downstream product variants
-      for (const prodVar of productBeforeUpdate.variants) {
-        const numUnitsRestored = (
-          await this.prisma.client.physicalProducts({
-            where: {
-              AND: [
-                { productVariant: { id: prodVar.id } },
-                { inventoryStatus: "NonReservable" },
-              ],
+        )
+        promises.push(
+          this.prisma.client2.productVariant.update({
+            where: { id: prodVar.id },
+            data: {
+              nonReservable: unitsToRestore.length,
+              stored: 0,
             },
           })
-        ).length
-        await this.prisma.client.updateProductVariant({
-          where: { id: prodVar.id },
-          data: {
-            nonReservable: numUnitsRestored,
-            stored: 0,
-          },
-        })
+        )
       }
     }
+    return promises
   }
 
-  private async storeProductIfNeeded(
-    where: ProductWhereUniqueInput,
+  private async getStoreProductPromises(
+    where: Prisma.ProductWhereUniqueInput,
     status: ProductStatus
-  ) {
-    const productBeforeUpdate = await this.prisma.binding.query.product(
-      {
-        where,
+  ): Promise<PrismaPromise<Product | ProductVariant | PhysicalProduct>[]> {
+    const promises = []
+    const _productBeforeUpdate = await this.prisma.client2.product.findUnique({
+      where,
+      select: {
+        id: true,
+        status: true,
+        variants: {
+          select: {
+            id: true,
+            total: true,
+            offloaded: true,
+            reserved: true,
+            physicalProducts: {
+              select: { inventoryStatus: true, seasonsUID: true },
+            },
+          },
+        },
       },
-      `{
-          id
-          status
-          variants {
-            id
-            total
-            offloaded
-            reserved
-            physicalProducts {
-              inventoryStatus
-              seasonsUID
-            }
-          }
-        }`
+    })
+    const productBeforeUpdate = this.prisma.sanitizePayload(
+      _productBeforeUpdate,
+      "Product"
     )
 
     if (status === "Stored" && productBeforeUpdate.status !== "Stored") {
       // Update product status
-      await this.prisma.client.updateProduct({
-        where: { id: productBeforeUpdate.id },
-        data: { status: "Stored" },
-      })
+      promises.push(
+        this.prisma.client2.product.update({
+          where: { id: productBeforeUpdate.id },
+          data: { status: "Stored" },
+        })
+      )
 
-      // Update statuses on downstream physical products
-      for (const {
-        inventoryStatus,
-        seasonsUID,
-      } of this.productUtils.physicalProductsForProduct(
-        productBeforeUpdate as ProductWithPhysicalProducts
-      )) {
-        if (!["Offloaded", "Reserved"].includes(inventoryStatus)) {
-          await this.prisma.client.updatePhysicalProduct({
-            where: { seasonsUID },
+      // Update statuses on downstream physical products as well as
+      // counts on product variants
+      for (const prodVar of productBeforeUpdate.variants) {
+        const physicalProducts = prodVar.physicalProducts
+        const unitsToStore = physicalProducts.filter(
+          a => !["Offloaded", "Reserved"].includes(a.inventoryStatus)
+        )
+        if (unitsToStore.length === 0) {
+          continue
+        }
+
+        promises.push(
+          this.prisma.client2.physicalProduct.updateMany({
+            where: { seasonsUID: { in: unitsToStore.map(a => a.seasonsUID) } },
             data: { inventoryStatus: "Stored" },
           })
+        )
+        const data = {
+          nonReservable:
+            prodVar.total -
+            prodVar.offloaded -
+            prodVar.reserved -
+            unitsToStore.length,
+          stored: unitsToStore.length,
+          reservable: 0,
         }
-      }
-
-      // Update counts on downstream product variants
-      for (const prodVar of productBeforeUpdate.variants) {
-        const numUnitsStored = (
-          await this.prisma.client.physicalProducts({
-            where: {
-              AND: [
-                { productVariant: { id: prodVar.id } },
-                { inventoryStatus: "Stored" },
-              ],
-            },
+        promises.push(
+          this.prisma.client2.productVariant.update({
+            where: { id: prodVar.id },
+            data,
           })
-        ).length
-        await this.prisma.client.updateProductVariant({
-          where: { id: prodVar.id },
-          data: {
-            nonReservable:
-              prodVar.total -
-              prodVar.offloaded -
-              prodVar.reserved -
-              numUnitsStored,
-            stored: numUnitsStored,
-            reservable: 0,
-          },
-        })
+        )
       }
+    }
+
+    return promises
+  }
+
+  private async getMutateSeasonOnProductInput(
+    seasonInput,
+    mutationType: "create" | "update" = "create"
+  ) {
+    if (!seasonInput) {
+      return undefined
+    }
+    const {
+      wearableSeasons,
+      internalSeasonSeasonCode,
+      internalSeasonYear,
+      vendorSeasonSeasonCode,
+      vendorSeasonYear,
+      seasonId,
+    } = seasonInput
+
+    const existingInternalSeason =
+      !!internalSeasonSeasonCode &&
+      (await this.prisma.client2.season.findFirst({
+        where: {
+          year: internalSeasonYear,
+          seasonCode: internalSeasonSeasonCode,
+        },
+        select: { id: true },
+      }))
+    const existingVendorSeason =
+      !!vendorSeasonSeasonCode &&
+      (await this.prisma.client2.season.findFirst({
+        where: {
+          year: vendorSeasonYear,
+          seasonCode: vendorSeasonSeasonCode,
+        },
+        select: { id: true },
+      }))
+
+    return {
+      [mutationType]: {
+        wearableSeasons: this.queryUtils.createScalarListMutateInput(
+          wearableSeasons,
+          seasonId || "",
+          mutationType
+        ),
+        ...(internalSeasonYear && internalSeasonSeasonCode
+          ? {
+              internalSeason: {
+                connectOrCreate: {
+                  where: { id: existingInternalSeason?.id || "" },
+                  create: {
+                    year: internalSeasonYear,
+                    seasonCode: internalSeasonSeasonCode,
+                  },
+                },
+              },
+            }
+          : {}),
+        ...(vendorSeasonYear && vendorSeasonSeasonCode
+          ? {
+              vendorSeason: {
+                connectOrCreate: {
+                  where: { id: existingVendorSeason?.id || "" },
+                  create: {
+                    year: vendorSeasonYear,
+                    seasonCode: vendorSeasonSeasonCode,
+                  },
+                },
+              },
+            }
+          : {}),
+      },
     }
   }
 
@@ -1328,5 +1334,31 @@ export class ProductService {
     if (!sizeName.match(bottomSizeRegex)) {
       throw new Error(`Invalid bottom size name: ${sizeName}`)
     }
+  }
+
+  private createMutateModelSizeOnProductInput({
+    slug,
+    type,
+    modelSizeDisplay,
+    modelSizeType,
+    modelSizeName,
+  }):
+    | Prisma.SizeCreateNestedOneWithoutProductInput
+    | Prisma.SizeUpdateOneWithoutProductInput {
+    if (modelSizeName && modelSizeDisplay) {
+      return {
+        connectOrCreate: {
+          where: { slug },
+          create: {
+            slug,
+            productType: type,
+            display: modelSizeDisplay,
+            type: modelSizeType,
+          },
+        },
+      }
+    }
+
+    return undefined
   }
 }
