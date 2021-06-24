@@ -392,7 +392,7 @@ export class EmailService {
 
   async sendYouCanNowReserveAgainEmail(user: EmailUser) {
     const payload = await RenderEmail.freeToReserve()
-    await this.sendPreRenderedTransactionalEmail({
+    return await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
       emailId: "FreeToReserve",
@@ -400,8 +400,11 @@ export class EmailService {
   }
 
   private async storeEmailReceipt(emailId: EmailId, userId: string) {
-    await this.prisma.client2.emailReceipt.create({
-      data: { emailId, user: { connect: { id: userId } } },
+    return this.prisma.client2.emailReceipt.create({
+      data: {
+        emailId,
+        user: { connect: { id: userId } },
+      },
     })
   }
 
@@ -490,6 +493,8 @@ export class EmailService {
     if (storeReceipt) {
       await this.storeEmailReceipt(emailId, user.id)
     }
+
+    return storeReceipt
   }
 
   // returns true if it sent the email, false otherwise

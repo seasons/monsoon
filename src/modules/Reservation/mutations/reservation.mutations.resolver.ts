@@ -31,6 +31,7 @@ export class ReservationMutationsResolver {
     @User() user,
     @Customer() customer,
     @Info() info,
+    @Select() select,
     @Application() application
   ) {
     const returnData = await this.reservation.reserveItems(
@@ -38,7 +39,7 @@ export class ReservationMutationsResolver {
       shippingCode,
       user,
       customer,
-      addFragmentToInfo(info, `{products {seasonsUID}}`)
+      select
     )
 
     // Track the selection

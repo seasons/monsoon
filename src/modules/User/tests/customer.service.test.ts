@@ -96,7 +96,7 @@ describe.only("Customer Service", () => {
           .mockResolvedValue()
         const pushNotifyUsers = jest
           .spyOn(pushNotificationsService, "pushNotifyUsers")
-          .mockResolvedValue({})
+          .mockResolvedValue({} as any)
 
         const { customer, cleanupFunc } = await testUtils.createTestCustomer(
           {

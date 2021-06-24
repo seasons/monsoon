@@ -178,7 +178,7 @@ export class ProductVariantService {
     return [
       promises,
       availablePhysicalProducts,
-      productVariants.map(p => p.product),
+      productVariants.map(p => p.product).flat(),
     ]
   }
 

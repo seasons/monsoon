@@ -633,6 +633,7 @@ export class OrderService {
             taxPrice: invoice_estimate.line_items?.[idx]?.tax_amount || 0,
           })),
         },
+        paymentStatus: "complete",
       },
       select,
     })) as Order
@@ -679,6 +680,7 @@ export class OrderService {
             taxPrice: invoice_estimate?.line_items?.[idx]?.tax_amount || 0,
           })),
         },
+        paymentStatus: "complete",
       },
       select,
     })) as Order

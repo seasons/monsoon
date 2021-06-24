@@ -89,9 +89,13 @@ export class PushNotificationService {
 
     // Update user histories
     const updates = usersToUpdate.map(a =>
-      this.prisma.client.updateUser({
+      this.prisma.client2.user.update({
         where: { id: a.id },
-        data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
+        data: {
+          pushNotification: {
+            update: { history: { connect: [{ id: receipt.id }] } },
+          },
+        },
       })
     )
     // await each one separately. Sending them simultaneously fails on the DB
@@ -114,8 +118,6 @@ export class PushNotificationService {
       if (!debug && process.env.NODE_ENV === "production") {
         targetEmails = emails
       }
-
-      const receipts = {}
 
       if (targetEmails?.length) {
         // Send the notification
@@ -151,35 +153,32 @@ export class PushNotificationService {
           emailsNotifAlreadySent
         )
 
-        try {
-          await this.pusher.client.publishToUsers(
-            updatedTargetEmails,
-            notificationPayload as any
-          )
-        } catch (err) {
-          console.error(err)
-        }
-
-        for (const email of updatedTargetEmails) {
-          // Create the receipt
-          const receipt = await this.prisma.client.createPushNotificationReceipt(
-            {
+        const receipt = await this.prisma.client2.pushNotificationReceipt.create(
+          {
+            data: {
               ...receiptPayload,
-              users: { connect: [{ email }] },
-            }
-          )
+              users: { connect: targetEmails.map(email => ({ email })) },
+            },
+          }
+        )
 
+        const promises = []
+
+        for (const email of targetEmails) {
           // Update the user's history
-          await this.prisma.client.updateUser({
-            where: { email },
-            data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
-          })
-
-          receipts[email] = receipt
+          promises.push(
+            this.prisma.client2.user.update({
+              where: { email },
+              data: {
+                pushNotification: {
+                  update: { history: { connect: [{ id: receipt.id }] } },
+                },
+              },
+            })
+          )
         }
+        return receipt
       }
-
-      return receipts
     } catch (e) {
       console.log("e", e)
       this.error.setExtraContext({ emails, pushNotifID })
@@ -187,12 +186,6 @@ export class PushNotificationService {
       this.error.captureError(e)
     }
   }
-
-  private getUpdateUserPushNotificationHistoryData = receiptID => ({
-    pushNotification: {
-      update: { history: { connect: [{ id: receiptID }] } },
-    },
-  })
 
   // assumes pusher interests are of the form seasons-{interestType}-notifications or
   // debug-seasons-{interestType}-notifications e.g seasons-general-notifications
