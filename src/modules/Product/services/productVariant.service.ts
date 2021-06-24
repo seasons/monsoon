@@ -182,7 +182,28 @@ export class ProductVariantService {
     ]
   }
 
-  updateCountsForStatusChange({
+  async updateCountsForStatusChange({
+    productVariant,
+    oldInventoryStatus,
+    newInventoryStatus,
+  }: {
+    productVariant
+    oldInventoryStatus: InventoryStatus
+    newInventoryStatus: InventoryStatus
+  }) {
+    const data = this.getCountsForStatusChange({
+      productVariant,
+      oldInventoryStatus,
+      newInventoryStatus,
+    })
+
+    return await this.prisma.client2.productVariant.update({
+      where: { id: productVariant.id },
+      data,
+    })
+  }
+
+  getCountsForStatusChange({
     productVariant,
     oldInventoryStatus,
     newInventoryStatus,

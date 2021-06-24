@@ -152,10 +152,6 @@ export class ReservationService {
       shippingCode
     )
 
-    // Update relevant BagItems
-    // promises.push(
-    //   await this.markBagItemsReserved(customer.id, newProductVariantsBeingReserved)
-    // )
     const bagItemsToUpdateIds = (
       await this.prisma.client2.bagItem.findMany({
         where: {
@@ -203,10 +199,7 @@ export class ReservationService {
       shippingOptionID
     )
     const reservationPromise = this.prisma.client2.reservation.create({
-      data: {
-        ...reservationData,
-        createdAt: new Date(),
-      },
+      data: reservationData,
     })
 
     promises.push(reservationPromise)
@@ -406,7 +399,7 @@ export class ReservationService {
           inventoryStatus,
         }
 
-        const productVariantData = this.productVariantService.updateCountsForStatusChange(
+        const productVariantData = this.productVariantService.getCountsForStatusChange(
           {
             productVariant,
             oldInventoryStatus: physicalProduct.inventoryStatus as InventoryStatus,
@@ -466,7 +459,6 @@ export class ReservationService {
               }
             }),
         },
-        createdAt: new Date(),
       },
     })
 
@@ -505,7 +497,7 @@ export class ReservationService {
 
     const updateBagPromise = this.prisma.client2.bagItem.deleteMany({
       where: {
-        customer: reservation.customer,
+        customer: { id: reservation.customer.id },
         saved: false,
         productVariant: {
           id: {
@@ -853,33 +845,6 @@ export class ReservationService {
       )
   }
 
-  // private async markBagItemsReserved(
-  //   customerId: string,
-  //   productVariantIds: string[]
-  // ) {
-  //   const bagItemsToUpdateIds = (
-  //     await this.prisma.client2.bagItem.findMany({
-  //       where: {
-  //         productVariant: {
-  //           id: {
-  //             in: productVariantIds
-  //           }
-  //         },
-  //         customer: {
-  //           id: customerId
-  //         }
-  //       }
-  //     })
-  //   ).map(a => a.id)
-
-  //   return this.prisma.client2.bagItem.updateMany({
-  //     where: { id: {in: bagItemsToUpdateIds }},
-  //     data: {
-  //       status: "Reserved",
-  //     },
-  //   })
-  // }
-
   private async createReservationData(
     seasonsToCustomerTransaction,
     customerToSeasonsTransaction,
@@ -961,7 +926,6 @@ export class ReservationService {
           toAddress: {
             connect: { id: customerShippingAddressRecordID },
           },
-          createdAt: new Date(),
         },
       },
       returnedPackage: {
@@ -987,7 +951,6 @@ export class ReservationService {
               slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
             },
           },
-          createdAt: new Date(),
         },
       },
       reservationNumber: uniqueReservationNumber,
@@ -1007,7 +970,6 @@ export class ReservationService {
         : {}),
       shipped: false,
       status: "Queued",
-      createdAt: new Date(),
     })
 
     return createData
