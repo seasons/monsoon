@@ -28,6 +28,6 @@ export class OrderQueriesResolver {
 
   @Query()
   async ordersConnection(@Args() args) {
-    return this.queryUtils.resolveConnection(args, "FitPic")
+    return this.queryUtils.resolveConnection(args, "Order")
   }
 }
