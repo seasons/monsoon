@@ -85,7 +85,7 @@ export class ProductVariantService {
     customerId: string,
     { dryRun } = { dryRun: false }
   ) {
-    const productVariants = await this.prisma.client2.productVariant.findMany({
+    const _productVariants = await this.prisma.client2.productVariant.findMany({
       where: {
         id: {
           in: items,
@@ -98,6 +98,10 @@ export class ProductVariantService {
         product: true,
       },
     })
+    const productVariants = this.prisma.sanitizePayload(
+      _productVariants,
+      "ProductVariant"
+    )
 
     const physicalProducts = await this.physicalProductUtilsService.getPhysicalProductsWithReservationSpecificData(
       items
@@ -148,7 +152,7 @@ export class ProductVariantService {
       })
 
       throw new ApolloError(
-        "The following item is not reservable",
+        "The following items are not reservable",
         "511",
         unavailableVariantsIDS
       )
@@ -178,7 +182,7 @@ export class ProductVariantService {
     return [
       promises,
       availablePhysicalProducts,
-      productVariants.map(p => p.product).flat(),
+      productVariants.map(p => p.product),
     ]
   }
 

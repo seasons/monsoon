@@ -30,8 +30,10 @@ export class ReservationMutationsResolver {
     @Args() { items, shippingCode },
     @User() user,
     @Customer() customer,
-    @Info() info,
-    @Select() select,
+    @Select({
+      withFragment: `fragment EnsureTrackData on Reservation {id products {seasonsUID}}`,
+    })
+    select,
     @Application() application
   ) {
     const returnData = await this.reservation.reserveItems(

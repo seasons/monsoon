@@ -18,20 +18,12 @@ import {
   InventoryStatus,
   PhysicalProduct,
   PhysicalProductStatus,
-  Product,
-  ProductVariant,
-  Reservation,
-  ReservationCreateInput,
   ReservationStatus,
-  ReservationUpdateInput,
-  ReservationWhereUniqueInput,
   ShippingCode,
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
-import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
-import { addFragmentToInfo } from "graphql-binding"
-import { head, intersection } from "lodash"
+import { intersection } from "lodash"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
 
@@ -124,7 +116,7 @@ export class ReservationService {
     )
 
     const [
-      mutationPromises,
+      productVariantsCountsUpdatePromises,
       physicalProductsBeingReserved,
       productsBeingReserved,
     ] = await this.productVariantService.updateProductVariantCounts(
@@ -133,7 +125,7 @@ export class ReservationService {
     )
 
     // Get product data, update variant counts, update physical product statuses
-    promises.push(mutationPromises.flat())
+    promises.push(productVariantsCountsUpdatePromises)
 
     promises.push(
       this.prisma.client2.physicalProduct.updateMany({
@@ -200,6 +192,7 @@ export class ReservationService {
     )
     const reservationPromise = this.prisma.client2.reservation.create({
       data: reservationData,
+      select,
     })
 
     promises.push(reservationPromise)
@@ -207,7 +200,7 @@ export class ReservationService {
     // Resolve all prisma operation in one transaction
     const result = await this.prisma.client2.$transaction(promises.flat())
 
-    const reservation = result[result.length - 1]
+    const reservation = result.pop()
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
@@ -226,18 +219,7 @@ export class ReservationService {
       this.error.captureError(err)
     }
 
-    const reservationReturnData: any = await this.prisma.client2.reservation.findUnique(
-      {
-        where: { id: reservation.id },
-        select: {
-          ...select,
-          id: true,
-          products: true,
-        },
-      }
-    )
-
-    return reservationReturnData
+    return reservation
   }
 
   async returnItems(items: string[], customer: Customer) {
