@@ -134,18 +134,22 @@ export class EmailService {
     const physicalProductId = orderLineItems.find(
       orderLineItem => orderLineItem.recordType === "PhysicalProduct"
     ).recordID
-    const productId = (this.prisma.sanitizePayload(
+    const physicalProduct = this.prisma.sanitizePayload(
       await this.prisma.client2.physicalProduct.findUnique({
         where: { id: physicalProductId },
         select: {
           productVariant: { select: { product: { select: { id: true } } } },
+          price: { select: { buyUsedPrice: true } },
         },
       }),
       "PhysicalProduct"
-    ).productVariant as any).product.id
+    )
+    const productPrice = physicalProduct.price?.buyUsedPrice
+    const productId = (physicalProduct.productVariant as any).product.id
     const products = await this.emailUtils.createGridPayload([
       { id: productId },
     ])
+    products[0]["buyUsedPrice"] = productPrice
 
     // Grab the appropriate order info
     const formattedOrderLineItems = await this.emailUtils.formatOrderLineItems(

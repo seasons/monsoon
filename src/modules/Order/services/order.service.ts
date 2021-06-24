@@ -680,7 +680,6 @@ export class OrderService {
             taxPrice: invoice_estimate?.line_items?.[idx]?.tax_amount || 0,
           })),
         },
-        paymentStatus: "complete",
       },
       select,
     })) as Order
@@ -697,15 +696,16 @@ export class OrderService {
     user: User
     select: Prisma.OrderSelect
   }): Promise<Order> {
-    const orderWithLineItems = await this.prisma.client2.order.findUnique({
+    const orderWithData = await this.prisma.client2.order.findUnique({
       where: { id: order.id },
       select: {
+        orderNumber: true,
         lineItems: {
           select: { recordType: true, recordID: true, needShipping: true },
         },
       },
     })
-    const physicalProductId = orderWithLineItems.lineItems.find(
+    const physicalProductId = orderWithData.lineItems.find(
       orderLineItem => orderLineItem.recordType === "PhysicalProduct"
     ).recordID
     const _physicalProductWithVariant = await this.prisma.client2.physicalProduct.findUnique(
@@ -759,7 +759,7 @@ export class OrderService {
       throw new Error("Failed to collect payment for invoice.")
     }
 
-    const orderLineItemsWithShipping = orderWithLineItems.lineItems.filter(
+    const orderLineItemsWithShipping = orderWithData.lineItems.filter(
       orderLineItem =>
         orderLineItem.recordType === "PhysicalProduct" &&
         orderLineItem.needShipping
@@ -789,7 +789,7 @@ export class OrderService {
             transactionID: shippoTransaction.object_id,
             weight: shipmentWeight,
             items: {
-              connect: orderWithLineItems.lineItems
+              connect: orderWithData.lineItems
                 .filter(
                   orderLineItem =>
                     orderLineItem.recordType === "PhysicalProduct"
@@ -855,7 +855,7 @@ export class OrderService {
         data: {
           inventoryStatus: "Offloaded",
           offloadMethod: "SoldToUser",
-          offloadNotes: `Order ID: ${order.id}`,
+          offloadNotes: `Order Number: ${orderWithData.orderNumber}`,
         },
       }),
       this.prisma.client2.productVariant.update({

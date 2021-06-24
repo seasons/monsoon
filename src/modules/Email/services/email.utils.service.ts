@@ -45,7 +45,11 @@ export class EmailUtilsService {
     name: true,
     brand: { select: { name: true } },
     retailPrice: true,
-    variants: { select: { displayShort: true } },
+    variants: {
+      select: {
+        displayShort: true,
+      },
+    },
     images: { select: { url: true } },
     category: { select: { slug: true } },
     slug: true,
@@ -244,6 +248,7 @@ export class EmailUtilsService {
       "Small",
       { fm: "jpg" }
     )
+
     const payload = {
       ...pick(product, ["id", "name", "retailPrice", "slug"]),
       sizes: `${sizes}`.replace(/,/g, " "),
@@ -251,6 +256,7 @@ export class EmailUtilsService {
       smallImageSrc,
       bigImageSrc,
       brand: product.brand?.name || "",
+      // buyUsedPrice:
     }
     return payload
   }
