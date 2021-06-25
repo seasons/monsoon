@@ -1,20 +1,11 @@
 import { Injectable } from "@nestjs/common"
 import { Prisma, ProductVariant } from "@prisma/client"
-import {
-  BottomSizeType,
-  ID_Input,
-  InventoryStatus,
-  LetterSize,
-  Product,
-} from "@prisma1/index"
+import { InventoryStatus } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { difference, head, lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
+import { head, lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
 
-import {
-  PhysicalProductUtilsService,
-  PhysicalProductWithReservationSpecificData,
-} from "./physicalProduct.utils.service"
+import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 import { ProductUtilsService } from "./product.utils.service"
 
 @Injectable()
@@ -90,57 +81,68 @@ export class ProductVariantService {
   }
 
   async updateProductVariantCounts(
-    /* array of product variant ids */
-    items: ID_Input[],
-    customerId: ID_Input,
+    items: string[],
+    customerId: string,
     { dryRun } = { dryRun: false }
-  ): Promise<
-    [Product[], PhysicalProductWithReservationSpecificData[], () => void]
-  > {
-    const prismaProductVariants = await this.prisma.client.productVariants({
-      where: { id_in: items },
+  ) {
+    const _productVariants = await this.prisma.client2.productVariant.findMany({
+      where: {
+        id: {
+          in: items,
+        },
+      },
+      select: {
+        id: true,
+        reservable: true,
+        reserved: true,
+        product: true,
+      },
     })
+    const productVariants = this.prisma.sanitizePayload(
+      _productVariants,
+      "ProductVariant"
+    )
 
     const physicalProducts = await this.physicalProductUtilsService.getPhysicalProductsWithReservationSpecificData(
       items
     )
 
     // Are there any unavailable variants? If so, throw an error
-    const unavailableVariants = prismaProductVariants.filter(
-      v => v.reservable <= 0
-    )
+    const unavailableVariants = productVariants.filter(v => v.reservable <= 0)
     let unavailableVariantsIDS = unavailableVariants.map(a => a.id)
 
     // Double check that the product variants have a sufficient number of available
     // physical products
-    const availablePhysicalProducts = this.physicalProductUtilsService.extractUniqueReservablePhysicalProducts(
-      physicalProducts
+    const availablePhysicalProducts = uniqBy(
+      physicalProducts.filter(a => a.inventoryStatus === "Reservable"),
+      b => (b.productVariant as any).id
     )
 
     if (items.length > availablePhysicalProducts?.length) {
       const availableVariantIDs = uniq(
-        availablePhysicalProducts.map(physProd => physProd.productVariant.id)
+        availablePhysicalProducts.map(p => (p.productVariant as any).id)
       )
 
       unavailableVariantsIDS = uniq(
         physicalProducts
           .filter(
-            physProd =>
-              !availableVariantIDs.includes(physProd.productVariant.id)
+            p => !availableVariantIDs.includes((p.productVariant as any).id)
           )
-          .map(physProd => physProd.productVariant.id)
+          .map(p => (p.productVariant as any).id)
       )
     }
 
     if (unavailableVariantsIDS.length > 0) {
       // Move the items from the bag to saved items
-      await this.prisma.client.updateManyBagItems({
+      await this.prisma.client2.bagItem.updateMany({
         where: {
           customer: {
             id: customerId,
           },
           productVariant: {
-            id_in: unavailableVariantsIDS,
+            id: {
+              in: unavailableVariantsIDS,
+            },
           },
         },
         data: {
@@ -150,89 +152,82 @@ export class ProductVariantService {
       })
 
       throw new ApolloError(
-        "The following item is not reservable",
+        "The following items are not reservable",
         "511",
         unavailableVariantsIDS
       )
     }
 
-    const productsBeingReserved = [] as Product[]
-    const rollbackFuncs = []
-    try {
-      for (const prismaProductVariant of prismaProductVariants) {
-        const iProduct = await this.prisma.client
-          .productVariant({ id: prismaProductVariant.id })
-          .product()
-        productsBeingReserved.push(iProduct)
+    const promises = []
 
-        // Update product variant counts in prisma
-        if (!dryRun) {
-          const data = {
-            reservable: prismaProductVariant.reservable - 1,
-            reserved: prismaProductVariant.reserved + 1,
-          }
-          const rollbackData = {
-            reservable: prismaProductVariant.reservable,
-            reserved: prismaProductVariant.reserved,
-          }
+    for (const productVariant of productVariants) {
+      // Update product variant counts in prisma
+      if (!dryRun) {
+        const data = {
+          reservable: productVariant.reservable - 1,
+          reserved: productVariant.reserved + 1,
+        }
 
-          await this.prisma.client.updateProductVariant({
+        promises.push(
+          this.prisma.client2.productVariant.update({
             where: {
-              id: prismaProductVariant.id,
+              id: productVariant.id,
             },
             data,
           })
-          const rollbackPrismaProductVariantUpdate = async () => {
-            await this.prisma.client.updateProductVariant({
-              where: {
-                id: prismaProductVariant.id,
-              },
-              data: rollbackData,
-            })
-          }
-          rollbackFuncs.push(rollbackPrismaProductVariantUpdate)
-        }
-      }
-    } catch (err) {
-      for (const rollbackFunc of rollbackFuncs) {
-        await rollbackFunc()
-      }
-      throw err
-    }
-
-    const rollbackProductVariantCounts = async () => {
-      for (const rollbackFunc of rollbackFuncs) {
-        await rollbackFunc()
+        )
       }
     }
 
     return [
-      productsBeingReserved,
+      promises,
       availablePhysicalProducts,
-      rollbackProductVariantCounts,
+      productVariants.map(p => p.product),
     ]
   }
 
   async updateCountsForStatusChange({
-    id,
+    productVariant,
     oldInventoryStatus,
     newInventoryStatus,
   }: {
-    id: ID_Input
+    productVariant
     oldInventoryStatus: InventoryStatus
     newInventoryStatus: InventoryStatus
   }) {
-    const prodVar = await this.prisma.client.productVariant({ id })
-    const data = {}
-    const oldInventoryCountKey = lowerFirst(oldInventoryStatus)
-    const newInventoryCountKey = lowerFirst(newInventoryStatus)
-    data[oldInventoryCountKey] = prodVar[oldInventoryCountKey] - 1
-    data[newInventoryCountKey] = prodVar[newInventoryCountKey] + 1
+    const data = this.getCountsForStatusChange({
+      productVariant,
+      oldInventoryStatus,
+      newInventoryStatus,
+    })
 
-    await this.prisma.client.updateProductVariant({
-      where: { id },
+    return await this.prisma.client2.productVariant.update({
+      where: { id: productVariant.id },
       data,
     })
+  }
+
+  getCountsForStatusChange({
+    productVariant,
+    oldInventoryStatus,
+    newInventoryStatus,
+  }: {
+    productVariant: Partial<
+      Pick<
+        ProductVariant,
+        "reserved" | "reservable" | "offloaded" | "nonReservable" | "stored"
+      >
+    >
+    oldInventoryStatus: InventoryStatus
+    newInventoryStatus: InventoryStatus
+  }) {
+    const oldInventoryCountKey = lowerFirst(oldInventoryStatus)
+    const newInventoryCountKey = lowerFirst(newInventoryStatus)
+
+    return {
+      [oldInventoryCountKey]: productVariant[oldInventoryCountKey] - 1,
+      [newInventoryCountKey]: productVariant[newInventoryCountKey] + 1,
+    }
   }
 
   async getManufacturerSizeIDs(variant, type): Promise<{ id: string }[]> {

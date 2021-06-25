@@ -1,3 +1,6 @@
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
+import { Select } from "@app/decorators/select.decorator"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
 import { addFragmentToInfo } from "graphql-binding"
@@ -6,37 +9,25 @@ import { OrderService } from "../services/order.service"
 
 @Resolver()
 export class OrderQueriesResolver {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly orderService: OrderService
-  ) {}
+  constructor(private readonly queryUtils: QueryUtilsService) {}
 
   @Query()
-  async order(@Args() args, @Info() info, @Context() ctx) {
-    return await this.prisma.binding.query.order(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on Order { id }`
-      )
-    )
+  async order(
+    @Args() { where },
+    @Select({ withFragment: `fragment EnsureId on Order { id }` }) select
+  ) {
+    return await this.queryUtils.resolveFindUnique({ where, select }, "Order")
   }
 
   @Query()
-  async orders(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.orders(
-      args,
-      addFragmentToInfo(
-        info,
-        // for computed fields
-        `fragment EnsureId on Order { id }`
-      )
-    )
+  async orders(
+    @FindManyArgs({ withFragment: `fragment EnsureId on Order { id }` }) args
+  ) {
+    return this.queryUtils.resolveFindMany(args, "Order")
   }
 
   @Query()
-  async ordersConnection(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.ordersConnection(args, info)
+  async ordersConnection(@Args() args) {
+    return this.queryUtils.resolveConnection(args, "Order")
   }
 }

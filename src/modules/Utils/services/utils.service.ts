@@ -4,8 +4,8 @@ import * as fs from "fs"
 import { UTMData as BindingUTMData, DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import { AdminActionLog } from "@prisma/client"
+import { Location } from "@prisma/client"
 import {
-  Location,
   PauseRequest,
   AdminActionLog as PrismaOneAdminActionLog,
   Reservation,
@@ -136,8 +136,8 @@ export class UtilsService {
   }
 
   async getPrismaLocationFromSlug(slug: string): Promise<Location> {
-    const prismaLocation = await this.prisma.client.location({
-      slug,
+    const prismaLocation = await this.prisma.client2.location.findUnique({
+      where: { slug },
     })
     if (!prismaLocation) {
       throw Error(`no location with slug ${slug} found in DB`)
