@@ -1,25 +1,27 @@
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
+import { Select } from "@app/decorators/select.decorator"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
 
 @Resolver()
 export class PushNotificationsQueriesResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly queryUtils: QueryUtilsService) {}
 
   @Query()
-  async pushNotificationReceipt(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.pushNotificationReceipt(args, info)
-  }
-
-  @Query()
-  async pushNotificationReceipts(@Args() args, @Info() info) {
-    return this.prisma.binding.query.pushNotificationReceipts(args, info)
-  }
-
-  @Query()
-  async pushNotificationReceiptsConnection(@Args() args, @Info() info) {
-    return this.prisma.binding.query.pushNotificationReceiptsConnection(
-      args,
-      info
+  async pushNotificationReceipt(@Args() { where }, @Select() select) {
+    return await this.queryUtils.resolveFindUnique(
+      { where, select },
+      "PushNotificationReceipt"
     )
+  }
+
+  @Query()
+  async pushNotificationReceipts(@FindManyArgs() args) {
+    return this.queryUtils.resolveFindMany(args, "PushNotificationReceipt")
+  }
+
+  @Query()
+  async pushNotificationReceiptsConnection(@Args() args) {
+    return this.queryUtils.resolveConnection(args, "PushNotificationReceipt")
   }
 }
