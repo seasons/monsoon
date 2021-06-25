@@ -1,4 +1,3 @@
-import { RollbackError } from "@app/errors"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
