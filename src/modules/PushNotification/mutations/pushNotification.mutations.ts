@@ -1,6 +1,7 @@
 import { Select } from "@app/decorators/select.decorator"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { ApolloError } from "apollo-server"
 import { kebabCase, pick } from "lodash"
 import * as validUrl from "valid-url"
@@ -27,10 +28,13 @@ export class PushNotificationMutationsResolver {
     @Select() select
   ) {
     await this.validatePushNotifDataInputs(route, record, uri)
+    const {
+      where: prismaTwoWhere,
+    } = QueryUtilsService.prismaOneToPrismaTwoArgs({ where }, "Customer")
 
     // Validate the user
     const _customers = await this.prisma.client2.customer.findMany({
-      where,
+      where: prismaTwoWhere,
       select: { id: true, user: { select: { id: true, email: true } } },
     })
     const customers = this.prisma.sanitizePayload(_customers, "Customer")
