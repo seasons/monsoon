@@ -21,7 +21,10 @@ export class PushNotificationsQueriesResolver {
   }
 
   @Query()
-  async pushNotificationReceiptsConnection(@Args() args) {
-    return this.queryUtils.resolveConnection(args, "PushNotificationReceipt")
+  async pushNotificationReceiptsConnection(@Args() args, @Select() select) {
+    return this.queryUtils.resolveConnection(
+      { ...args, select },
+      "PushNotificationReceipt"
+    )
   }
 }
