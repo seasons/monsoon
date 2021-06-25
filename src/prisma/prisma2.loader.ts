@@ -92,20 +92,28 @@ import {
           if (keys?.length !== 1) {
             throw new Error(`OneToOne loader should return a length 1 array from getKeys. Object: ${JSON.stringify(item)}`)
           }
-          newMap[keys[0]] = formatData(item)
+          newMap[keys[0]] = formatData(cloneDeep(item)) // clone item to prevent side effects
           break
         case "OneToMany":
           if (keys?.length !== 1) {
             throw new Error(`OneToMany loader should return a length 1 array from getKeys. Objec: ${JSON.stringify(item)}`)
           }
-          (newMap[keys[0]] = newMap[keys[0]] || []).push(formatData(item))
+          (newMap[keys[0]] = newMap[keys[0]] || []).push(formatData(cloneDeep(item)))
           break
         case "ManyToMany":
           if (!keys || keys.length === 0) {
             throw new Error(`No keys found: ${JSON.stringify(item)}`)
           }
           for (const key of keys) {
-            (newMap[key] = newMap[key] || []).push(formatData(cloneDeep(item))) // clone item to prevent side effects
+            (newMap[key] = newMap[key] || []).push(formatData(cloneDeep(item))) 
+          }
+          break
+        case "ManyToOne":
+          if (!keys || keys.length === 0) {
+            throw new Error(`No keys found: ${JSON.stringify(item)}`)
+          }
+          for (const key of keys) {
+            newMap[key] = formatData(cloneDeep(item)) 
           }
           break
         default:

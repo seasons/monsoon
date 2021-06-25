@@ -102,11 +102,7 @@ export class OrderMutationsResolver {
   }
 
   @Mutation()
-  updateOrderStatus(
-    @Args() { orderID, status },
-    @Customer() customer,
-    @Select() select
-  ) {
-    return this.order.updateOrderStatus({ orderID, status, customer, select })
+  updateOrderStatus(@Args() { orderID, status }, @Select() select) {
+    return this.order.updateOrderStatus({ orderID, status, select })
   }
 }

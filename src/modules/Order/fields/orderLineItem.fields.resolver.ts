@@ -18,6 +18,9 @@ export class OrderLineItemFieldsResolver {
           Prisma.validator<Prisma.ProductVariantWhereInput>()({
             physicalProducts: { some: { id: { in: keys } } },
           }),
+        infoFragment: `fragment EnsurePhysicalProduct on ProductVariant {physicalProducts {id}}`,
+        getKeys: a => a.physicalProducts.map(a => a.id),
+        keyToDataRelationship: "ManyToOne",
       },
       includeInfo: true,
     })
@@ -33,17 +36,18 @@ export class OrderLineItemFieldsResolver {
   ) {
     const recordType = orderItem.recordType
 
+    let result = null
     if (recordType === "PhysicalProduct") {
-      return await productVariantFromPhysicalProductLoader.load(
+      result = await productVariantFromPhysicalProductLoader.load(
         orderItem.recordID
       )
     } else if (
       recordType === "ProductVariant" ||
       recordType === "ExternalProduct"
     ) {
-      return await productVariantFromIdLoader.load(orderItem.recordID)
-    } else {
-      return null
+      result = await productVariantFromIdLoader.load(orderItem.recordID)
     }
+
+    return result
   }
 }

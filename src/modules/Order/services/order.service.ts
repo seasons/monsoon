@@ -823,22 +823,18 @@ export class OrderService {
     let updateProductVariantData
     if (orderNeedsShipping) {
       // Item is at the warehouse
-      updateProductVariantData = this.productVariant.updateCountsForStatusChange(
-        {
-          productVariant,
-          oldInventoryStatus: "Reservable",
-          newInventoryStatus: "Offloaded",
-        }
-      )
+      updateProductVariantData = this.productVariant.getCountsForStatusChange({
+        productVariant,
+        oldInventoryStatus: "Reservable",
+        newInventoryStatus: "Offloaded",
+      })
     } else {
       // Item is with the customer
-      updateProductVariantData = this.productVariant.updateCountsForStatusChange(
-        {
-          productVariant,
-          oldInventoryStatus: "Reserved",
-          newInventoryStatus: "Offloaded",
-        }
-      )
+      updateProductVariantData = this.productVariant.getCountsForStatusChange({
+        productVariant,
+        oldInventoryStatus: "Reserved",
+        newInventoryStatus: "Offloaded",
+      })
     }
 
     const [updatedOrder] = await this.prisma.client2.$transaction([
@@ -876,12 +872,11 @@ export class OrderService {
   async updateOrderStatus({
     orderID,
     status,
-    customer,
+
     select,
   }: {
     orderID: string
     status: OrderStatus
-    customer: Customer
     select: Prisma.OrderSelect
   }): Promise<Order> {
     const promises = []
@@ -899,6 +894,7 @@ export class OrderService {
       select: {
         type: true,
         lineItems: { select: { recordID: true, recordType: true } },
+        customer: { select: { id: true } },
       },
     })
     if (status === "Fulfilled" && order.type === "Used") {
@@ -910,14 +906,37 @@ export class OrderService {
       if (!physicalProduct) {
         this.error.setExtraContext({ orderID }, "orderID")
         this.error.captureError(
-          new Error("Unable to remove fulfilled order item from customer bag.")
+          new Error("Unable to find physical product on order")
         )
         return null
       }
       const prodVar = await this.prisma.client2.productVariant.findFirst({
         where: { physicalProducts: { some: { id: physicalProduct.recordID } } },
       })
-      promises.push(this.bag.removeFromBag(prodVar.id, false, customer))
+      const reservedBagItem = await this.bag.getBagItem(
+        prodVar.id,
+        false,
+        order.customer,
+        { id: true }
+      )
+      const savedBagItem = await this.bag.getBagItem(
+        prodVar.id,
+        true,
+        order.customer,
+        { id: true }
+      )
+      if (!!reservedBagItem) {
+        promises.push(
+          this.prisma.client2.bagItem.delete({
+            where: { id: reservedBagItem.id },
+          })
+        )
+      }
+      if (!!savedBagItem) {
+        promises.push(
+          this.prisma.client2.bagItem.delete({ where: { id: savedBagItem.id } })
+        )
+      }
 
       // Remove warehouse location from item
       promises.push(
@@ -927,7 +946,11 @@ export class OrderService {
         })
       )
     }
-    const [updateOrderResult] = await this.prisma.client2.$transaction(promises)
+
+    const finalPromises = promises.filter(a => !!a)
+    const [updateOrderResult] = await this.prisma.client2.$transaction(
+      finalPromises
+    )
 
     return updateOrderResult
   }

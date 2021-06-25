@@ -66,6 +66,23 @@ export class BagService {
   }
 
   async removeFromBag(item, saved, customer): Promise<BagItem> {
+    const bagItem = await this.getBagItem(item, saved, customer, { id: true })
+
+    if (!bagItem) {
+      throw new ApolloError("Item can not be found", "514")
+    }
+
+    // has to return a promise because we roll it up in a transaction in at
+    // least one parent function
+    return this.prisma.client2.bagItem.delete({ where: { id: bagItem.id } })
+  }
+
+  async getBagItem(
+    item,
+    saved,
+    customer,
+    select: Prisma.BagItemSelect = undefined // selects all scalars
+  ): Promise<Partial<BagItem>> {
     const bagItem = await this.prisma.client2.bagItem.findFirst({
       where: {
         customer: {
@@ -76,15 +93,9 @@ export class BagService {
         },
         saved,
       },
-      select: { id: true },
+      select,
     })
 
-    if (!bagItem) {
-      throw new ApolloError("Item can not be found", "514")
-    }
-
-    // has to return a promise because we roll it up in a transaction in at
-    // least one parent function
-    return this.prisma.client2.bagItem.delete({ where: { id: bagItem.id } })
+    return bagItem
   }
 }
