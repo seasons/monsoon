@@ -23,9 +23,9 @@ export class FitPicQueriesResolver {
   }
 
   @Query()
-  async fitPicsConnection(@Args() args, @User() user) {
+  async fitPicsConnection(@Args() args, @User() user, @Select() select) {
     return this.queryUtils.resolveConnection(
-      this.sanitized({ args, forUser: user }),
+      { ...this.sanitized({ args, forUser: user }), select },
       "FitPic"
     )
   }

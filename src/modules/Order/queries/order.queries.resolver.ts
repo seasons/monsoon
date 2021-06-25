@@ -27,7 +27,7 @@ export class OrderQueriesResolver {
   }
 
   @Query()
-  async ordersConnection(@Args() args) {
-    return this.queryUtils.resolveConnection(args, "Order")
+  async ordersConnection(@Args() args, @Select() select) {
+    return this.queryUtils.resolveConnection({ ...args, select }, "Order")
   }
 }

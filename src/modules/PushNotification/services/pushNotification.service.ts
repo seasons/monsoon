@@ -3,7 +3,7 @@ import { UserPushNotificationInterestType } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Token } from "@pusher/push-notifications-server"
-import { difference, upperFirst } from "lodash"
+import { difference, merge, upperFirst } from "lodash"
 
 import {
   PushNotificationID,
@@ -37,6 +37,7 @@ export class PushNotificationService {
     interest,
     pushNotifID,
     vars = {},
+    select,
     debug = false,
   }: PushNotifyInterestInput) {
     // Decipher the interest
@@ -95,6 +96,7 @@ export class PushNotificationService {
         interest: targetInterest,
         users: { connect: usersToUpdate.map(a => ({ id: a.id })) },
       },
+      select: merge({ id: true }, select),
     })
 
     // Update user histories
@@ -118,6 +120,7 @@ export class PushNotificationService {
     emails,
     pushNotifID,
     vars = {},
+    select,
     debug = false,
   }: PushNotifyUsersInput) {
     try {
@@ -172,6 +175,7 @@ export class PushNotificationService {
               ...receiptPayload,
               users: { connect: updatedTargetEmails.map(email => ({ email })) },
             },
+            select: merge({ id: true }, select),
           }
         )
 
