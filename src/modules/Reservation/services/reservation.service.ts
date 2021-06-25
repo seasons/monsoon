@@ -191,7 +191,10 @@ export class ReservationService {
     )
     const reservationPromise = this.prisma.client2.reservation.create({
       data: reservationData,
-      select,
+      select: {
+        ...select,
+        reservationNumber: true,
+      },
     })
 
     promises.push(reservationPromise)
