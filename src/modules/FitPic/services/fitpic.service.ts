@@ -53,6 +53,7 @@ export class FitPicService {
         // override the imageData url with the imgixUrl
         create: { ...imageData, url: imgixUrl },
       },
+      products: { create: [] },
       includeInstagramHandle,
     })
 

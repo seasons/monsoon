@@ -1,27 +1,34 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import {
+  ProductUtilsService,
+  ProductVariantService,
+} from "@app/modules/Product"
 import { BagService } from "@app/modules/Product/services/bag.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import {
   BagItem,
+  OrderStatus,
+  PhysicalProduct,
+  PhysicalProductPrice,
+} from "@app/prisma"
+import { OrderLineItemRecordType } from "@app/prisma"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
+import { Injectable } from "@nestjs/common"
+import {
   BillingInfo,
   Category,
   Customer,
   Location,
   Order,
   OrderLineItem,
-  OrderStatus,
-  PhysicalProduct,
-  PhysicalProductPrice,
+  Prisma,
+  ProductVariant,
   User,
-} from "@app/prisma"
-import { OrderLineItemRecordType } from "@app/prisma"
-import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { Injectable } from "@nestjs/common"
+} from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
-import { GraphQLResolveInfo } from "graphql"
-import { flatten, pick } from "lodash"
+import { pick } from "lodash"
 
 type InvoiceCharge = {
   amount: number
@@ -50,7 +57,7 @@ type InvoiceInput = {
 
 @Injectable()
 export class OrderService {
-  readonly outerwearCategoryIds: Promise<Array<string>>
+  readonly outerwearCategories: Promise<Pick<Category, "id">[]>
 
   constructor(
     private readonly prisma: PrismaService,
@@ -58,33 +65,14 @@ export class OrderService {
     private readonly shipping: ShippingService,
     private readonly email: EmailService,
     private readonly error: ErrorService,
-    private readonly bag: BagService
+    private readonly bag: BagService,
+    private readonly productUtils: ProductUtilsService,
+    private readonly productVariant: ProductVariantService
   ) {
-    const getCategoryAndAllChildren = (categoryId: string): Promise<string[]> =>
-      this.prisma.client
-        .category({ id: categoryId })
-        .children()
-        .then(children =>
-          Promise.all(
-            children && children.length
-              ? children.map((category: Category) =>
-                  getCategoryAndAllChildren(category.id)
-                )
-              : []
-          )
-        )
-        .then(children => {
-          const result = flatten(children)
-          result.push(categoryId)
-          return result
-        })
-
-    this.outerwearCategoryIds = this.prisma.client
-      .category({ slug: "outerwear" })
-      .id()
-      .then(outerwearCategoryId =>
-        getCategoryAndAllChildren(outerwearCategoryId)
-      )
+    this.outerwearCategories = this.productUtils.getCategoryAndAllChildren(
+      { slug: "outerwear" },
+      { id: true }
+    )
   }
 
   async getBuyUsedMetadata({
@@ -100,69 +88,68 @@ export class OrderService {
     shippingAddress: Location
     orderLineItems: OrderLineItem[]
   }> {
-    const [productVariant, customerQuery] = await Promise.all([
-      this.prisma.binding.query.productVariant(
-        {
-          where: {
-            id: productVariantID,
+    const _productVariant = await this.prisma.client2.productVariant.findUnique(
+      {
+        where: { id: productVariantID },
+        select: {
+          id: true,
+          physicalProducts: {
+            select: {
+              id: true,
+              price: { select: { buyUsedEnabled: true, buyUsedPrice: true } },
+              inventoryStatus: true,
+            },
+          },
+          product: {
+            select: {
+              id: true,
+              name: true,
+              category: { select: { id: true } },
+            },
           },
         },
-        `{
-            id
-            physicalProducts {
-              id
-              price {
-                buyUsedEnabled
-                buyUsedPrice
-              }
-              inventoryStatus
-            }
-            product {
-              id
-              name
-              category {
-                id
-              }
-            }
-          }`
-      ),
-      this.prisma.binding.query.customer(
-        {
-          where: {
-            id: customer.id,
+      }
+    )
+    const productVariant = this.prisma.sanitizePayload(
+      _productVariant,
+      "ProductVariant"
+    )
+    const _customerQuery = await this.prisma.client2.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        id: true,
+        user: { select: { id: true, firstName: true, lastName: true } },
+        detail: {
+          select: {
+            id: true,
+            shippingAddress: {
+              select: {
+                id: true,
+                name: true,
+                company: true,
+                address1: true,
+                address2: true,
+                city: true,
+                state: true,
+                zipCode: true,
+                country: true,
+              },
+            },
           },
         },
-        `{
-          id
-          user {
-            id
-            firstName
-            lastName
-          }
-          detail {
-            id
-            shippingAddress {
-              id
-              name
-              company
-              address1
-              address2
-              city
-              state
-              zipCode
-              country
-            }
-          }
-          bagItems {
-            id
-            status
-            productVariant {
-              id
-            }
-          }
-        }`
-      ),
-    ])
+        bagItems: {
+          select: {
+            id: true,
+            status: true,
+            productVariant: { select: { id: true } },
+          },
+        },
+      },
+    })
+    const customerQuery = this.prisma.sanitizePayload(
+      _customerQuery,
+      "Customer"
+    )
 
     // FIXME: We're assuming that every physical product has the same price for a variant,
     // so take the first valid result.
@@ -190,14 +177,12 @@ export class OrderService {
           physicalProduct.inventoryStatus === "Stored")
     ) as (PhysicalProduct & { price: PhysicalProductPrice }) | null
 
-    const productName = productVariant?.product?.name
+    const productName = (productVariant?.product as any)?.name
 
-    const productTaxCode = (await this.outerwearCategoryIds).some(
-      outerwearCategoryId =>
-        outerwearCategoryId === productVariant?.product?.category?.id
+    // Refactor into a getProductTaxCode function
+    const productTaxCode = await this.getProductTaxCode(
+      (productVariant?.product as any)?.category?.id
     )
-      ? "PC040111"
-      : "PC040000"
 
     const shippingAddress = customerQuery?.detail?.shippingAddress as Location
 
@@ -283,77 +268,76 @@ export class OrderService {
     accessToken: string
     shopName: string
   }> {
-    const [productVariant, customer] = await Promise.all([
-      this.prisma.binding.query.productVariant(
-        {
-          where: {
-            id: productVariantID,
-          },
-        },
-        `{
-        product {
-          buyNewEnabled
-          name
-          brand {
-            shopifyShop {
-              enabled
-              shopName
-              accessToken
-            }
-          }
-          category {
-            id
-          }
-        }
-        shopifyProductVariant {
-          id
-          externalId
-        }
-      }`
-      ),
-      this.prisma.binding.query.customer(
-        {
-          where: {
-            id: customerId,
-          },
-        },
-        `
+    const _productVariant = await this.prisma.client2.productVariant.findUnique(
       {
-        user {
-          id
-          email
-          firstName
-          lastName
-        }
-        detail {
-          shippingAddress {
-            name
-            company
-            address1
-            address2
-            city
-            state
-            zipCode
-            country
-          }
-        }
-        billingInfo {
-          name
-          street1
-          street2
-          city
-          state
-          postal_code
-          country
-        }
+        where: { id: productVariantID },
+        select: {
+          product: {
+            select: {
+              buyNewEnabled: true,
+              name: true,
+              brand: {
+                select: {
+                  shopifyShop: {
+                    select: {
+                      enabled: true,
+                      shopName: true,
+                      accessToken: true,
+                    },
+                  },
+                },
+              },
+              category: { select: { id: true } },
+            },
+          },
+          shopifyProductVariant: { select: { id: true, externalId: true } },
+        },
       }
-    `
-      ),
-    ])
+    )
+    const productVariant = this.prisma.sanitizePayload(
+      _productVariant,
+      "ProductVariant"
+    )
+    const _customer = await this.prisma.client2.customer.findUnique({
+      where: { id: customerId },
+      select: {
+        user: {
+          select: { id: true, email: true, firstName: true, lastName: true },
+        },
+        detail: {
+          select: {
+            shippingAddress: {
+              select: {
+                name: true,
+                company: true,
+                address1: true,
+                address2: true,
+                city: true,
+                state: true,
+                zipCode: true,
+                country: true,
+              },
+            },
+          },
+        },
+        billingInfo: {
+          select: {
+            name: true,
+            street1: true,
+            street2: true,
+            city: true,
+            state: true,
+            postal_code: true,
+            country: true,
+          },
+        },
+      },
+    })
+    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
-    const { buyNewEnabled, name: productName } = productVariant?.product
-    const { enabled, shopName, accessToken } =
-      productVariant?.product?.brand?.shopifyShop || {}
+    const product = productVariant?.product as any
+    const { buyNewEnabled, name: productName } = product
+    const { enabled, shopName, accessToken } = product?.brand?.shopifyShop || {}
     const {
       id: shopifyProductVariantInternalId,
       externalId: shopifyProductVariantExternalId,
@@ -363,12 +347,7 @@ export class OrderService {
     const billingAddress = customer?.billingInfo
     const { email: emailAddress, id: userId } = customer?.user
 
-    const productTaxCode = (await this.outerwearCategoryIds).some(
-      outerwearCategoryId =>
-        outerwearCategoryId === productVariant?.product?.category?.id
-    )
-      ? "PC040111"
-      : "PC040000"
+    const productTaxCode = await this.getProductTaxCode(product?.category?.id)
 
     if (
       !buyNewEnabled ||
@@ -404,17 +383,22 @@ export class OrderService {
     order,
     customer,
     user,
-    info,
+    select,
   }: {
     order: Order
     customer: Customer
     user: User
-    info: GraphQLResolveInfo
-  }): Promise<void> {
-    const orderLineItems = await this.prisma.client
-      .order({ id: order.id })
-      .lineItems()
-    const productVariantID = orderLineItems.find(
+    select: Prisma.OrderSelect
+  }): Promise<Order | void> {
+    const orderWithLineItems = await this.prisma.client2.order.findUnique({
+      where: { id: order.id },
+      select: {
+        lineItems: {
+          select: { recordID: true, recordType: true, price: true },
+        },
+      },
+    })
+    const productVariantID = orderWithLineItems.lineItems.find(
       orderLineItem => orderLineItem.recordType === "ExternalProduct"
     ).recordID
 
@@ -473,7 +457,7 @@ export class OrderService {
               user,
               location: shippingAddress,
             }),
-            charges: orderLineItems
+            charges: orderWithLineItems.lineItems
               .map(orderLineItem =>
                 this.getChargebeeChargeForOrderLineItem({
                   orderLineItem,
@@ -518,7 +502,7 @@ export class OrderService {
 
     try {
       const [updatedOrder, _completedShopifyOrder] = await Promise.all([
-        this.prisma.client.updateOrder({
+        this.prisma.client2.order.update({
           where: { id: order.id },
           data: {
             status: "Submitted",
@@ -533,15 +517,13 @@ export class OrderService {
         }),
       ])
 
-      // TODO: send buy new email?
-      // await this.email.sendBuyUsedOrderConfirmationEmail(user, updatedOrder)
+      // TODO: send buy new confirmation email? We currently dont send one from our system,
+      // we let shopify handle it
 
-      return await this.prisma.binding.query.order(
-        {
-          where: { id: updatedOrder.id },
-        },
-        info
-      )
+      return (await this.prisma.client2.order.findUnique({
+        where: { id: updatedOrder.id },
+        select,
+      })) as Order
     } catch (error) {
       console.log(
         "Warning: Payment collected but failed to update internal or external order model. Manual intervention required.",
@@ -556,12 +538,12 @@ export class OrderService {
     productVariantID,
     customer,
     user,
-    info,
+    select,
   }: {
     productVariantID: string
     customer: Customer
     user: User
-    info: GraphQLResolveInfo
+    select: Prisma.OrderSelect
   }): Promise<Order> {
     const {
       shippingAddress,
@@ -635,39 +617,38 @@ export class OrderService {
       estimate: { invoice_estimate },
     } = await chargebee.estimate.create_invoice(chargebeeInvoice).request()
 
-    return await this.prisma.binding.mutation.createOrder(
-      {
-        data: {
-          customer: { connect: { id: customer.id } },
-          orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
-          externalID: draftOrder.id,
-          type: "New",
-          status: "Drafted",
-          subTotal: invoice_estimate.sub_total,
-          total: invoice_estimate.total,
-          lineItems: {
-            create: orderLineItems.map((orderLineItem, idx) => ({
-              ...orderLineItem,
-              taxRate: invoice_estimate.line_items?.[idx]?.tax_rate || 0,
-              taxPrice: invoice_estimate.line_items?.[idx]?.tax_amount || 0,
-            })),
-          },
+    return (await this.prisma.client2.order.create({
+      data: {
+        customer: { connect: { id: customer.id } },
+        orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
+        externalID: draftOrder.id,
+        type: "New",
+        status: "Drafted",
+        subTotal: invoice_estimate.sub_total,
+        total: invoice_estimate.total,
+        lineItems: {
+          create: orderLineItems.map((orderLineItem, idx) => ({
+            ...orderLineItem,
+            taxRate: invoice_estimate.line_items?.[idx]?.tax_rate || 0,
+            taxPrice: invoice_estimate.line_items?.[idx]?.tax_amount || 0,
+          })),
         },
+        paymentStatus: "complete",
       },
-      info
-    )
+      select,
+    })) as Order
   }
 
   async buyUsedCreateDraftedOrder({
     productVariantID,
     customer,
     user,
-    info,
+    select,
   }: {
     productVariantID: string
     customer: Customer
     user: User
-    info: GraphQLResolveInfo
+    select: Prisma.OrderSelect
   }): Promise<Order> {
     const { invoice, orderLineItems } = await this.getBuyUsedMetadata({
       productVariantID,
@@ -684,48 +665,74 @@ export class OrderService {
       })
       .request()
 
-    return await this.prisma.binding.mutation.createOrder(
-      {
-        data: {
-          customer: { connect: { id: customer.id } },
-          orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
-          type: "Used",
-          status: "Drafted",
-          subTotal: invoice_estimate.sub_total,
-          total: invoice_estimate.total,
-          lineItems: {
-            create: orderLineItems.map((orderLineItem, idx) => ({
-              ...orderLineItem,
-              taxRate: invoice_estimate?.line_items?.[idx]?.tax_rate || 0,
-              taxPrice: invoice_estimate?.line_items?.[idx]?.tax_amount || 0,
-            })),
-          },
+    return (await this.prisma.client2.order.create({
+      data: {
+        customer: { connect: { id: customer.id } },
+        orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
+        type: "Used",
+        status: "Drafted",
+        subTotal: invoice_estimate.sub_total,
+        total: invoice_estimate.total,
+        lineItems: {
+          create: orderLineItems.map((orderLineItem, idx) => ({
+            ...orderLineItem,
+            taxRate: invoice_estimate?.line_items?.[idx]?.tax_rate || 0,
+            taxPrice: invoice_estimate?.line_items?.[idx]?.tax_amount || 0,
+          })),
         },
+        paymentStatus: "complete",
       },
-      info
-    )
+      select,
+    })) as Order
   }
 
   async buyUsedSubmitOrder({
     order,
     customer,
     user,
-    info,
+    select,
   }: {
     order: Order
     customer: Customer
     user: User
-    info: GraphQLResolveInfo
+    select: Prisma.OrderSelect
   }): Promise<Order> {
-    const orderLineItems = await this.prisma.client
-      .order({ id: order.id })
-      .lineItems()
-    const physicalProductId = orderLineItems.find(
+    const orderWithData = await this.prisma.client2.order.findUnique({
+      where: { id: order.id },
+      select: {
+        orderNumber: true,
+        lineItems: {
+          select: { recordType: true, recordID: true, needShipping: true },
+        },
+      },
+    })
+    const physicalProductId = orderWithData.lineItems.find(
       orderLineItem => orderLineItem.recordType === "PhysicalProduct"
     ).recordID
-    const productVariant = await this.prisma.client
-      .physicalProduct({ id: physicalProductId })
-      .productVariant()
+    const _physicalProductWithVariant = await this.prisma.client2.physicalProduct.findUnique(
+      {
+        where: { id: physicalProductId },
+        select: {
+          id: true,
+          productVariant: {
+            select: {
+              id: true,
+              reservable: true,
+              offloaded: true,
+              reserved: true,
+            },
+          },
+        },
+      }
+    )
+    const physicalProductWithVariant = this.prisma.sanitizePayload(
+      _physicalProductWithVariant,
+      "PhysicalProduct"
+    )
+    const productVariant = (physicalProductWithVariant.productVariant as unknown) as Pick<
+      ProductVariant,
+      "id" | "reservable" | "offloaded" | "reserved"
+    >
 
     const { invoice, shippingAddress } = await this.getBuyUsedMetadata({
       productVariantID: productVariant.id,
@@ -753,7 +760,7 @@ export class OrderService {
       throw new Error("Failed to collect payment for invoice.")
     }
 
-    const orderLineItemsWithShipping = orderLineItems.filter(
+    const orderLineItemsWithShipping = orderWithData.lineItems.filter(
       orderLineItem =>
         orderLineItem.recordType === "PhysicalProduct" &&
         orderLineItem.needShipping
@@ -783,7 +790,7 @@ export class OrderService {
             transactionID: shippoTransaction.object_id,
             weight: shipmentWeight,
             items: {
-              connect: orderLineItems
+              connect: orderWithData.lineItems
                 .filter(
                   orderLineItem =>
                     orderLineItem.recordType === "PhysicalProduct"
@@ -816,24 +823,22 @@ export class OrderService {
     let updateProductVariantData
     if (orderNeedsShipping) {
       // Item is at the warehouse
-      updateProductVariantData = {
-        reservable: productVariant.reservable - 1,
-        offloaded: productVariant.offloaded + 1,
-      }
+      updateProductVariantData = this.productVariant.getCountsForStatusChange({
+        productVariant,
+        oldInventoryStatus: "Reservable",
+        newInventoryStatus: "Offloaded",
+      })
     } else {
       // Item is with the customer
-      updateProductVariantData = {
-        reserved: productVariant.reserved - 1,
-        offloaded: productVariant.offloaded + 1,
-      }
+      updateProductVariantData = this.productVariant.getCountsForStatusChange({
+        productVariant,
+        oldInventoryStatus: "Reserved",
+        newInventoryStatus: "Offloaded",
+      })
     }
 
-    const [
-      updatedOrder,
-      _updatedPhysicalProduct,
-      _updatedProductVariant,
-    ] = await Promise.all([
-      this.prisma.client.updateOrder({
+    const [updatedOrder] = await this.prisma.client2.$transaction([
+      this.prisma.client2.order.update({
         where: { id: order.id },
         data: {
           status: orderNeedsShipping ? "Submitted" : "Fulfilled",
@@ -842,15 +847,15 @@ export class OrderService {
           ...orderShippingUpdate,
         },
       }),
-      this.prisma.client.updatePhysicalProduct({
+      this.prisma.client2.physicalProduct.update({
         where: { id: physicalProductId },
         data: {
           inventoryStatus: "Offloaded",
           offloadMethod: "SoldToUser",
-          offloadNotes: `Order ID: ${order.id}`,
+          offloadNotes: `Order Number: ${orderWithData.orderNumber}`,
         },
       }),
-      this.prisma.client.updateProductVariant({
+      this.prisma.client2.productVariant.update({
         where: { id: productVariant.id },
         data: updateProductVariantData,
       }),
@@ -858,57 +863,94 @@ export class OrderService {
 
     await this.email.sendBuyUsedOrderConfirmationEmail(user, updatedOrder)
 
-    return await this.prisma.binding.query.order(
-      {
-        where: { id: updatedOrder.id },
-      },
-      info
-    )
+    return (await this.prisma.client2.order.findUnique({
+      where: { id: updatedOrder.id },
+      select,
+    })) as Order
   }
 
   async updateOrderStatus({
     orderID,
     status,
-    customer,
+
+    select,
   }: {
     orderID: string
     status: OrderStatus
-    customer: Customer
+    select: Prisma.OrderSelect
   }): Promise<Order> {
-    const removeFulfilledItemFromBag = async () => {
-      const lineItems = await this.prisma.client
-        .order({ id: orderID })
-        .lineItems()
+    const promises = []
+
+    promises.push(
+      this.prisma.client2.order.update({
+        where: { id: orderID },
+        data: { status },
+        select,
+      })
+    )
+
+    const order = await this.prisma.client2.order.findUnique({
+      where: { id: orderID },
+      select: {
+        type: true,
+        lineItems: { select: { recordID: true, recordType: true } },
+        customer: { select: { id: true } },
+      },
+    })
+    if (status === "Fulfilled" && order.type === "Used") {
+      // Remove item from bag
+      const lineItems = order.lineItems
       const physicalProduct = lineItems.find(
         item => item.recordType === "PhysicalProduct"
       )
       if (!physicalProduct) {
         this.error.setExtraContext({ orderID }, "orderID")
         this.error.captureError(
-          new Error("Unable to remove fulfilled order item from customer bag.")
+          new Error("Unable to find physical product on order")
         )
         return null
       }
-      const productVariant = await this.prisma.client
-        .physicalProduct({ id: physicalProduct.recordID })
-        .productVariant()
+      const prodVar = await this.prisma.client2.productVariant.findFirst({
+        where: { physicalProducts: { some: { id: physicalProduct.recordID } } },
+      })
+      const reservedBagItem = await this.bag.getBagItem(
+        prodVar.id,
+        false,
+        order.customer,
+        { id: true }
+      )
+      const savedBagItem = await this.bag.getBagItem(
+        prodVar.id,
+        true,
+        order.customer,
+        { id: true }
+      )
+      if (!!reservedBagItem) {
+        promises.push(
+          this.prisma.client2.bagItem.delete({
+            where: { id: reservedBagItem.id },
+          })
+        )
+      }
+      if (!!savedBagItem) {
+        promises.push(
+          this.prisma.client2.bagItem.delete({ where: { id: savedBagItem.id } })
+        )
+      }
 
-      await this.bag.removeFromBag(productVariant.id, false, customer)
+      // Remove warehouse location from item
+      promises.push(
+        this.prisma.client2.physicalProduct.update({
+          where: { id: physicalProduct.recordID },
+          data: { warehouseLocation: { disconnect: true } },
+        })
+      )
     }
 
-    const order = await this.prisma.client.order({ id: orderID })
-
-    const [updateOrderResult, _removeFromBagResult] = await Promise.all([
-      this.prisma.client.updateOrder({
-        where: { id: orderID },
-        data: {
-          status,
-        },
-      }) as Promise<Order>,
-      status === "Fulfilled" && order.type === "Used"
-        ? removeFulfilledItemFromBag()
-        : Promise.resolve(),
-    ])
+    const finalPromises = promises.filter(a => !!a)
+    const [updateOrderResult] = await this.prisma.client2.$transaction(
+      finalPromises
+    )
 
     return updateOrderResult
   }
@@ -966,5 +1008,14 @@ export class OrderService {
         avalara_tax_code: "FR020000",
       }
     }
+  }
+
+  private async getProductTaxCode(productCategoryId) {
+    const outerwearCategoryIds = (await this.outerwearCategories).map(a => a.id)
+    return outerwearCategoryIds.some(
+      outerwearCategoryId => outerwearCategoryId === productCategoryId
+    )
+      ? "PC040111"
+      : "PC040000"
   }
 }

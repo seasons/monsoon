@@ -5,13 +5,13 @@ import {
   Category,
   ID_Input,
   Image,
-  Order,
   Product,
   ProductVariant,
   User,
 } from "@app/prisma"
 import { Product as ProductBinding } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
+import { Order, Prisma } from "@prisma/client"
 import { ProductGridItem } from "@seasons/wind"
 import { head, pick, sampleSize, uniq } from "lodash"
 
@@ -39,6 +39,22 @@ export class EmailUtilsService {
     private readonly image: ImageService
   ) {}
 
+  productSelectForGridData = Prisma.validator<Prisma.ProductSelect>()({
+    id: true,
+    type: true,
+    name: true,
+    brand: { select: { name: true } },
+    retailPrice: true,
+    variants: {
+      select: {
+        displayShort: true,
+      },
+    },
+    images: { select: { url: true } },
+    category: { select: { slug: true } },
+    slug: true,
+  })
+
   productInfoForGridData = `
     id
     type
@@ -60,13 +76,13 @@ export class EmailUtilsService {
     `
 
   async createGridPayload(products: { id: string }[]) {
-    const productsWithData = await this.prisma.binding.query.products(
-      {
-        where: {
-          AND: [{ id_in: products.map(a => a.id) }],
-        },
-      },
-      `{${this.productInfoForGridData}}`
+    const _productsWithData = await this.prisma.client2.product.findMany({
+      where: { id: { in: products.map(a => a.id) } },
+      select: this.productSelectForGridData,
+    })
+    const productsWithData = this.prisma.sanitizePayload(
+      _productsWithData,
+      "Product"
     )
     return Promise.all(productsWithData.map(this.productToGridPayload))
   }
@@ -149,32 +165,46 @@ export class EmailUtilsService {
       lineItemValue: number // total in cents
     }[]
   > {
-    const orderWithLineItems = await this.prisma.binding.query.order(
-      {
-        where: { id: order.id },
+    const orderWithLineItems = await this.prisma.client2.order.findUnique({
+      where: { id: order.id },
+      select: {
+        id: true,
+        lineItems: {
+          select: {
+            recordType: true,
+            recordID: true,
+            taxPrice: true,
+            price: true,
+          },
+        },
       },
-      `{
-        id
-        lineItems {
-          recordID
-          recordType
-          taxPrice
-          price
-        }
-    }`
-    )
+    })
 
+    const _physicalProductsInOrder = await this.prisma.client2.physicalProduct.findMany(
+      {
+        where: {
+          id: {
+            in: orderWithLineItems.lineItems
+              .filter(a => a.recordType === "PhysicalProduct")
+              .map(b => b.recordID),
+          },
+        },
+        select: {
+          id: true,
+          productVariant: { select: { product: { select: { name: true } } } },
+        },
+      }
+    )
+    const physicalProductsInOrder = this.prisma.sanitizePayload(
+      _physicalProductsInOrder,
+      "PhysicalProduct"
+    )
     const formattedLineItems = []
     for (const li of orderWithLineItems.lineItems) {
       if (li.recordType === "PhysicalProduct") {
         formattedLineItems.push({
-          lineItemName: await this.prisma.client
-            .physicalProduct({
-              id: li.recordID,
-            })
-            .productVariant()
-            .product()
-            .name(),
+          lineItemName: (physicalProductsInOrder.find(a => a.id === li.recordID)
+            .productVariant as any).product.name,
           lineItemValue: li.price,
         })
       } else if (li.recordType === "Package") {
@@ -218,6 +248,7 @@ export class EmailUtilsService {
       "Small",
       { fm: "jpg" }
     )
+
     const payload = {
       ...pick(product, ["id", "name", "retailPrice", "slug"]),
       sizes: `${sizes}`.replace(/,/g, " "),

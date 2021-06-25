@@ -58,31 +58,31 @@ export class PaymentService {
 
   async addShippingCharge(customer, shippingCode) {
     try {
-      const customerWithShippingData = await this.prisma.binding.query.customer(
-        { where: { id: customer.id } },
-        `
+      const customerWithShippingData = await this.prisma.client2.customer.findUnique(
         {
-          id
-          membership {
-            id
-            subscriptionId
-          }
-          detail {
-            id
-            shippingAddress {
-              id
-              shippingOptions {
-                id
-                externalCost
-                shippingMethod {
-                  id
-                  code
-                }
-              }
-            }
-          }
+          where: {
+            id: customer.id,
+          },
+          select: {
+            membership: true,
+            detail: {
+              select: {
+                id: true,
+                shippingAddress: {
+                  select: {
+                    shippingOptions: {
+                      select: {
+                        id: true,
+                        shippingMethod: true,
+                        externalCost: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         }
-      `
       )
 
       const { membership, detail } = customerWithShippingData

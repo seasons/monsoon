@@ -73,7 +73,12 @@ export class ImageService {
     try {
       const updatedAt =
         passedOptions.updatedAt ??
-        (await this.prisma.client.image({ url }).updatedAt())
+        (
+          await this.prisma.client2.image.findUnique({
+            where: { url },
+            select: { updatedAt: true },
+          })
+        )?.updatedAt
       const updatedAtTimestamp =
         updatedAt && Math.floor(new Date(updatedAt).getTime() / 1000)
       const options: ImageResizerOptions = pickBy(

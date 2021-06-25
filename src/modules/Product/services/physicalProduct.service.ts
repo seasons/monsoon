@@ -623,7 +623,7 @@ export class PhysicalProductService {
 
     if (inventoryStatus !== physicalProductBeforeUpdate.inventoryStatus) {
       await this.productVariantService.updateCountsForStatusChange({
-        id: physicalProductBeforeUpdate.productVariant.id,
+        productVariant: physicalProductBeforeUpdate.productVariant,
         oldInventoryStatus: physicalProductBeforeUpdate.inventoryStatus,
         newInventoryStatus: inventoryStatus,
       })

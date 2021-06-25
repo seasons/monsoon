@@ -86,7 +86,7 @@ describe("Shippo Controller", () => {
   it("processes PackageDeparted event", done => {
     jest
       .spyOn(pushNotificationsService, "pushNotifyUsers")
-      .mockResolvedValue({})
+      .mockResolvedValue(Promise.resolve({}) as any)
     return request(app.getHttpServer())
       .post("/shippo_events")
       .send(PackageDeparted)
