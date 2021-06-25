@@ -256,7 +256,6 @@ export class EmailUtilsService {
       smallImageSrc,
       bigImageSrc,
       brand: product.brand?.name || "",
-      // buyUsedPrice:
     }
     return payload
   }
