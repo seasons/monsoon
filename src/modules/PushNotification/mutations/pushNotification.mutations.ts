@@ -1,3 +1,4 @@
+import { Select } from "@app/decorators/select.decorator"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { ApolloError } from "apollo-server"
@@ -15,89 +16,56 @@ export class PushNotificationMutationsResolver {
   ) {}
 
   @Mutation()
-  async pushNotifyUser(
-    @Args()
-    { where, data: { title, body, route, uri, record } },
-    @Info() info
-  ) {
-    await this.validatePushNotifDataInputs(route, record, uri)
-
-    // Validate the user
-    const { email } = await this.prisma.client.user(where)
-    if (!email) {
-      throw new ApolloError(`No user found with data: ${where}`)
-    }
-
-    // Send the notif
-    const receipts = await this.pushNotifications.pushNotifyUsers({
-      emails: [email],
-      pushNotifID: "Custom",
-      vars: { title, body, route, uri, ...pick(record, ["id", "slug"]) },
-    })
-
-    const { id } = receipts[email]
-
-    return await this.prisma.binding.query.pushNotificationReceipt(
-      {
-        where: { id },
-      },
-      info
-    )
+  async pushNotifyUser() {
+    throw new Error(`Deprecated. Use pushNotifyUsers (plural)`)
   }
 
   @Mutation()
   async pushNotifyUsers(
     @Args()
     { where, data: { title, body, route, uri, record } },
-    @Info() info
+    @Select() select
   ) {
     await this.validatePushNotifDataInputs(route, record, uri)
 
     // Validate the user
-    const customers = await this.prisma.binding.query.customers(
-      { where },
-      `{id user {id email}}`
-    )
+    const _customers = await this.prisma.client2.customer.findMany({
+      where,
+      select: { id: true, user: { select: { id: true, email: true } } },
+    })
+    const customers = this.prisma.sanitizePayload(_customers, "Customer")
     if (customers.length === 0) {
       throw new ApolloError(`No users found on that criteria`)
     }
 
     // Send the notif
-    const receipts = await this.pushNotifications.pushNotifyUsers({
+    const receipt = await this.pushNotifications.pushNotifyUsers({
       emails: customers.map(a => a.user.email),
       pushNotifID: "Custom",
       vars: { title, body, route, uri, ...pick(record, ["id", "slug"]) },
+      select,
     })
 
-    return await this.prisma.binding.query.pushNotificationReceipts(
-      {
-        where: { id_in: Object.values(receipts).map((a: any) => a.id) },
-      },
-      info
-    )
+    return receipt
   }
 
   @Mutation()
   async pushNotifyInterest(
     @Args()
     { interest, data: { title, body, route, uri, record }, debug = false },
-    @Info() info
+    @Select() select
   ) {
     await this.validatePushNotifDataInputs(route, record, uri)
 
     // Send the notif
-    const { id } = await this.pushNotifications.pushNotifyInterest({
+    const receipt = await this.pushNotifications.pushNotifyInterest({
       interest: kebabCase(interest) as PushNotificationInterest,
       pushNotifID: "Custom",
       vars: { title, body, route, uri, ...pick(record, ["id", "slug"]) },
+      select,
       debug,
     })
-    return await this.prisma.binding.query.pushNotificationReceipt(
-      {
-        where: { id },
-      },
-      info
-    )
+    return receipt
   }
 
   private async validatePushNotifDataInputs(route, record, uri) {
@@ -147,9 +115,15 @@ export class PushNotificationMutationsResolver {
     id,
     slug
   ) {
-    const recordById = await this.prisma.client[recordName]({ id })
-    const recordBySlug = await this.prisma.client[recordName]({
-      slug,
+    const recordById = ((await this.prisma.client2[
+      recordName
+    ]) as any).findUnique({
+      where: { id },
+    })
+    const recordBySlug = ((await this.prisma.client2[
+      recordName
+    ]) as any).findUnique({
+      where: { slug },
     })
     if (!recordById) {
       throw new ApolloError(`no ${recordName} with id ${id} found`)
