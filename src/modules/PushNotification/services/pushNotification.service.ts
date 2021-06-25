@@ -56,35 +56,45 @@ export class PushNotificationService {
     )
 
     // // Create the receipt
-    let usersToUpdate = await this.prisma.client.users({
+    let _usersToUpdate = await this.prisma.client2.user.findMany({
       where: {
         pushNotification: {
           AND: [
             { status: true },
             {
-              interests_some: {
-                AND: [
-                  {
-                    type: this.pusherInterestToPrismaInterestType(
-                      targetInterest
-                    ),
-                  },
-                  { status: true },
-                ],
+              interests: {
+                some: {
+                  AND: [
+                    {
+                      type: this.pusherInterestToPrismaInterestType(
+                        targetInterest
+                      ),
+                    },
+                    { status: true },
+                  ],
+                },
               },
             },
           ],
         },
       },
+      select: { id: true, roles: true },
     })
 
+    let usersToUpdate = this.prisma.sanitizePayload(_usersToUpdate, "User")
+
     if (targetInterest.includes("debug")) {
-      usersToUpdate = usersToUpdate.filter(a => a.roles.includes("Admin"))
+      usersToUpdate = usersToUpdate.filter(a =>
+        a.roles.includes("Admin" as any)
+      )
     }
-    const receipt = await this.prisma.client.createPushNotificationReceipt({
-      ...receiptPayload,
-      interest: targetInterest,
-      users: { connect: usersToUpdate.map(a => ({ id: a.id })) },
+
+    const receipt = await this.prisma.client2.pushNotificationReceipt.create({
+      data: {
+        ...receiptPayload,
+        interest: targetInterest,
+        users: { connect: usersToUpdate.map(a => ({ id: a.id })) },
+      },
     })
 
     // Update user histories
@@ -98,10 +108,8 @@ export class PushNotificationService {
         },
       })
     )
-    // await each one separately. Sending them simultaneously fails on the DB
-    for (const update of updates) {
-      await update
-    }
+
+    await this.prisma.client2.$transaction(updates)
 
     return receipt
   }
@@ -153,11 +161,16 @@ export class PushNotificationService {
           emailsNotifAlreadySent
         )
 
+        await this.pusher.client.publishToUsers(
+          updatedTargetEmails,
+          notificationPayload as any
+        )
+
         const receipt = await this.prisma.client2.pushNotificationReceipt.create(
           {
             data: {
               ...receiptPayload,
-              users: { connect: targetEmails.map(email => ({ email })) },
+              users: { connect: updatedTargetEmails.map(email => ({ email })) },
             },
           }
         )
@@ -177,6 +190,9 @@ export class PushNotificationService {
             })
           )
         }
+
+        await this.prisma.client2.$transaction(promises)
+
         return receipt
       }
     } catch (e) {
