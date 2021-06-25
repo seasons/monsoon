@@ -601,11 +601,7 @@ model PaymentPlan {
 }
 
 model PhysicalProduct {
-<<<<<<< HEAD
-  id                      String                         @id @default(cuid()) @db.VarChar(25)
-=======
   id                      String                         @id @default(cuid()) @db.VarChar(30)
->>>>>>> 0ada817950665d947786c42bf97cbb0af4521c07
   seasonsUID              String                         @unique
   inventoryStatus         String
   productStatus           String
