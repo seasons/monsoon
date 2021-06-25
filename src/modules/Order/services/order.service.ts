@@ -823,22 +823,18 @@ export class OrderService {
     let updateProductVariantData
     if (orderNeedsShipping) {
       // Item is at the warehouse
-      updateProductVariantData = this.productVariant.updateCountsForStatusChange(
-        {
-          productVariant,
-          oldInventoryStatus: "Reservable",
-          newInventoryStatus: "Offloaded",
-        }
-      )
+      updateProductVariantData = this.productVariant.getCountsForStatusChange({
+        productVariant,
+        oldInventoryStatus: "Reservable",
+        newInventoryStatus: "Offloaded",
+      })
     } else {
       // Item is with the customer
-      updateProductVariantData = this.productVariant.updateCountsForStatusChange(
-        {
-          productVariant,
-          oldInventoryStatus: "Reserved",
-          newInventoryStatus: "Offloaded",
-        }
-      )
+      updateProductVariantData = this.productVariant.getCountsForStatusChange({
+        productVariant,
+        oldInventoryStatus: "Reserved",
+        newInventoryStatus: "Offloaded",
+      })
     }
 
     const [updatedOrder] = await this.prisma.client2.$transaction([
