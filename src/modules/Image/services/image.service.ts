@@ -78,7 +78,7 @@ export class ImageService {
             where: { url },
             select: { updatedAt: true },
           })
-        ).updatedAt
+        )?.updatedAt
       const updatedAtTimestamp =
         updatedAt && Math.floor(new Date(updatedAt).getTime() / 1000)
       const options: ImageResizerOptions = pickBy(
