@@ -563,7 +563,7 @@ export class ReservationService {
     }
 
     let promises: any[] = [
-      this.prisma.client.updateReservation({ data, where }),
+      this.prisma.client2.reservation.update({ data, where }),
     ]
 
     // Reservation was just packed. Null out warehouse locations on attached products
