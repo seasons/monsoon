@@ -1215,15 +1215,15 @@ model User {
   email                         String                         @unique
   firstName                     String
   lastName                      String
-  role                          String
+  role                          String                         @default("Customer")
   createdAt                     DateTime                       @default(now())
   updatedAt                     DateTime                       @updatedAt
-  pushNotificationStatus        String
-  verificationStatus            String
-  verificationMethod            String
+  pushNotificationStatus        String                         @default("Denied")
+  verificationStatus            String                         @default("Pending")
+  verificationMethod            String                         @default("None")
   pushNotificationId            String?                        @map("pushNotification") @db.VarChar(30)
   pushNotification              UserPushNotification?          @relation(fields: [pushNotificationId], references: [id])
-  sendSystemEmails              Boolean
+  sendSystemEmails              Boolean                        @default(true)
   deviceDataId                  String?                        @map("deviceData") @db.VarChar(30)
   deviceData                    UserDeviceData?                @relation(fields: [deviceDataId], references: [id])
   activeAdminUser               ActiveAdminUser?
