@@ -33,7 +33,7 @@ export class CustomerMutationsResolver {
       { details, status },
       customer,
       user,
-      info
+      select
     )
 
     // Track the event, if its been passed

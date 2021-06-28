@@ -6,8 +6,9 @@ import {
 } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerCreateInput, CustomerDetail } from "@app/prisma/prisma.binding"
+import { CustomerDetail } from "@app/prisma/prisma.binding"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
+import { Prisma } from "@prisma/client"
 import {
   CustomerDetailCreateInput,
   CustomerMembershipSubscriptionData,
@@ -110,8 +111,8 @@ export class AuthService {
     )
 
     // 4. Create the customer in our database
-    // There will be a race condition in the case where two members with the same first name sign up at the same time
-    const usersWithSameFirstName = await this.prisma.client.users({
+    // There will be a collision in the case where two members with the same first name sign up at the same time
+    const usersWithSameFirstName = await this.prisma.client2.user.findMany({
       where: { firstName: firstName.trim() },
     })
     const { customer } = await this.createPrismaCustomerForExistingUser(
@@ -121,7 +122,7 @@ export class AuthService {
       // replace all non-aphabetical characters with an empty space so e.g "R.J." doesn't throw an error on rebrandly
       // We had to increment here by 4 after an early issue with collisions due to whitespace
       firstName.replace(/[^a-z]/gi, "") +
-        (usersWithSameFirstName.length + 4).toString(),
+        (usersWithSameFirstName.length + 4).toString().toLowerCase(),
       referrerId,
       utm
     )
@@ -178,7 +179,7 @@ export class AuthService {
     return { user: returnUser, tokenData, customer: returnCust }
   }
 
-  async loginUser({ email, password, requestUser, info }) {
+  async loginUser({ email, password, requestUser, info, select }) {
     if (!!requestUser) {
       throw new Error(`user is already logged in`)
     }
@@ -194,38 +195,32 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
-    let returnUser
-    const userInfo = this.utils.getInfoStringAt(info, "user") || `{id}`
-    if (!!userInfo) {
-      returnUser = await this.prisma.binding.query.user(
-        { where: { email } },
-        userInfo
-      )
-    }
+    const returnUser = this.prisma.client2.user.findUnique({
+      where: { email },
+      select: {
+        ...select.user,
+      },
+    })
 
     if (!returnUser) {
       throw new Error(`user with email ${email} not found`)
     }
 
-    let returnCust
-    const custInfo = this.utils.getInfoStringAt(info, "customer")
-    if (!!custInfo) {
-      returnCust = head(
-        await this.prisma.binding.query.customers(
-          {
-            where: { user: { email } },
-          },
-          custInfo
-        )
-      )
-    }
+    const customer = this.prisma.client2.customer.findFirst({
+      where: {
+        user: { email },
+      },
+      select: {
+        ...select.customer,
+      },
+    })
 
     return {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
       user: returnUser,
-      customer: returnCust,
+      customer: customer,
       beamsToken: this.pushNotification.generateToken(email),
     }
   }
@@ -263,11 +258,13 @@ export class AuthService {
   }
 
   async getCustomerFromUserID(userID: string) {
-    return head(
-      await this.prisma.client.customers({
-        where: { user: { id: userID } },
-      })
-    )
+    return await this.prisma.client2.customer.findFirst({
+      where: {
+        user: {
+          id: userID,
+        },
+      },
+    })
   }
 
   async resetPassword(email) {
@@ -409,22 +406,25 @@ export class AuthService {
   }
 
   private async createPrismaUser(auth0Id, email, firstName, lastName) {
-    let user = await this.prisma.client.createUser({
-      auth0Id,
-      email,
-      firstName,
-      lastName,
-      roles: { set: ["Customer"] }, // defaults to customer
-    })
     const defaultPushNotificationInterests = [
       "General",
       "Blog",
       "Bag",
       "NewProduct",
     ] as UserPushNotificationInterestType[]
-    user = await this.prisma.client.updateUser({
-      where: { id: user.id },
+
+    const user = await this.prisma.client2.user.create({
       data: {
+        auth0Id,
+        email,
+        firstName,
+        lastName,
+        roles: {
+          create: {
+            position: 1000,
+            value: "Customer",
+          },
+        },
         pushNotification: {
           create: {
             interests: {
@@ -440,6 +440,7 @@ export class AuthService {
         },
       },
     })
+
     return user
   }
 
@@ -477,7 +478,7 @@ export class AuthService {
       }
     }`
 
-    let createData = {} as CustomerCreateInput
+    let createData = {} as Prisma.CustomerCreateInput
     if (
       !!utm?.source ||
       !!utm?.medium ||
@@ -487,19 +488,17 @@ export class AuthService {
     ) {
       createData.utm = { create: utm }
     }
-    let newCustomer = await this.prisma.binding.mutation.createCustomer(
-      {
-        data: {
-          ...createData,
-          user: {
-            connect: { id: userID },
-          },
-          detail: { create: details },
-          status: status || "Waitlisted",
+
+    let newCustomer: any = await this.prisma.client2.customer.create({
+      data: {
+        ...createData,
+        user: {
+          connect: { id: userID },
         },
+        detail: { create: details },
+        status: status || "Waitlisted",
       },
-      customerQueryInfo
-    )
+    })
 
     try {
       const referralLink = await this.createReferralLink(
@@ -513,18 +512,25 @@ export class AuthService {
         })
       }
 
-      newCustomer = await this.prisma.binding.mutation.updateCustomer(
-        {
-          data: {
-            referralLink: referralLink.shortUrl,
-            referrer: {
-              connect: referrerIsValidCustomer ? { id: referrerId } : null,
+      newCustomer = await this.prisma.client2.customer.update({
+        data: {
+          referralLink: referralLink.shortUrl,
+          referrer: {
+            connect: referrerIsValidCustomer ? { id: referrerId } : null,
+          },
+        },
+        where: { id: newCustomer.id },
+        select: {
+          id: true,
+          status: true,
+          detail: {
+            select: {
+              id: true,
+              shippingAddress: true,
             },
           },
-          where: { id: newCustomer.id },
         },
-        customerQueryInfo
-      )
+      })
     } catch (err) {
       this.error.setExtraContext(
         { id: userID, status, referrerId, referralSlashTag },
@@ -568,7 +574,6 @@ export class AuthService {
           headers: requestHeaders,
         },
         (err, response, body) => {
-          console.log("body", body)
           if (err) {
             this.error.setExtraContext({ id: customerId }, "customer")
             this.error.captureError(

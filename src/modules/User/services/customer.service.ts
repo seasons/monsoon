@@ -12,6 +12,7 @@ import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import {
   BillingInfoUpdateDataInput,
   CustomerAdmissionsDataCreateWithoutCustomerInput,
+  CustomerAdmissionsDataUpdateInput,
   CustomerStatus,
   CustomerUpdateInput,
   CustomerWhereUniqueInput,
@@ -94,7 +95,8 @@ export class CustomerService {
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
     const customer = await this.auth.getCustomerFromUserID(user.id)
-    await this.prisma.client.updateCustomer({
+
+    return await this.prisma.client2.customer.update({
       data: { status },
       where: { id: customer.id },
     })
@@ -104,12 +106,15 @@ export class CustomerService {
     destinationState,
     shippingAddressID
   ) {
-    const shippingMethods = await this.prisma.client.shippingMethods()
-    const warehouseLocation = await this.prisma.client.location({
-      slug:
-        process.env.SEASONS_CLEANER_LOCATION_SLUG ||
-        "seasons-cleaners-official",
+    const shippingMethods = await this.prisma.client2.shippingMethod.findMany()
+    const warehouseLocation = await this.prisma.client2.location.findUnique({
+      where: {
+        slug:
+          process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+          "seasons-cleaners-official",
+      },
     })
+
     const shippingOptionsData = JSON.parse(
       fs.readFileSync(
         process.cwd() + "/src/modules/Shipping/shippingOptionsData.json",
@@ -117,24 +122,26 @@ export class CustomerService {
       )
     )
     const originState = warehouseLocation.state
-    const shippingOptions = [] as ShippingOption[]
+    const shippingOptions = []
 
     for (const method of shippingMethods) {
       const stateData =
         shippingOptionsData[method.code].from[originState].to[destinationState]
 
-      const shippingOption = await this.prisma.client.createShippingOption({
-        origin: { connect: { id: warehouseLocation.id } },
-        destination: { connect: { id: shippingAddressID } },
-        shippingMethod: { connect: { id: method.id } },
-        externalCost: stateData.price,
-        averageDuration: stateData.averageDuration,
+      const shippingOption = await this.prisma.client2.shippingOption.create({
+        data: {
+          origin: { connect: { id: warehouseLocation.id } },
+          destination: { connect: { id: shippingAddressID } },
+          shippingMethod: { connect: { id: method.id } },
+          externalCost: stateData.price,
+          averageDuration: stateData.averageDuration,
+        },
       })
 
       shippingOptions.push(shippingOption)
     }
 
-    await this.prisma.client.updateLocation({
+    return await this.prisma.client2.location.update({
       where: { id: shippingAddressID },
       data: {
         shippingOptions: {
@@ -144,7 +151,7 @@ export class CustomerService {
     })
   }
 
-  async addCustomerDetails({ details, status }, customer, user, info) {
+  async addCustomerDetails({ details, status }, customer, user, select) {
     const groupedKeys = ["name", "address1", "address2", "city", "state"]
     const isUpdatingShippingAddress =
       details.shippingAddress?.create &&
@@ -187,7 +194,7 @@ export class CustomerService {
       }
     }
 
-    await this.prisma.client.updateCustomer({
+    const updatedCustomer = await this.prisma.client2.customer.update({
       data: {
         detail: {
           upsert: {
@@ -197,6 +204,7 @@ export class CustomerService {
         },
       },
       where: { id: customer.id },
+      select,
     })
 
     if (isUpdatingShippingAddress) {
@@ -220,10 +228,7 @@ export class CustomerService {
     }
 
     // Return the updated customer object
-    return await this.prisma.binding.query.customer(
-      { where: { id: customer.id } },
-      info
-    )
+    return updatedCustomer
   }
 
   async updateCustomerDetail(user, customer, shippingAddress, phoneNumber) {
@@ -629,13 +634,18 @@ export class CustomerService {
     const palette = this.utils.parseJSONFile(
       "src/modules/User/notificationBarColorSchemas"
     )[data.paletteID]
-    const receiptData = head(
-      await this.prisma.client.customerNotificationBarReceipts({
+
+    const receiptData = await this.prisma.client2.customerNotificationBarReceipt.findFirst(
+      {
         where: {
-          AND: [{ notificationBarId }, { customer: { id: customerId } }],
+          AND: [
+            { notificationBarId },
+            { customer: { every: { id: customerId } } },
+          ],
         },
-      })
+      }
     )
+
     return {
       ...data,
       palette,
@@ -653,7 +663,7 @@ export class CustomerService {
     dryRun,
   }: UpdateCustomerAdmissionsDataInput) {
     let data: CustomerUpdateInput = {}
-    let admissionsUpsertData = {} as CustomerAdmissionsDataCreateWithoutCustomerInput
+    let admissionsUpsertData = {} as CustomerAdmissionsDataUpdateInput
 
     if (!dryRun) {
       data = { status }
@@ -710,7 +720,7 @@ export class CustomerService {
       (dryRun &&
         this.shouldUpdateCustomerAdmissionsData(customer, admissionsUpsertData))
     ) {
-      await this.prisma.client.updateCustomer({
+      await this.prisma.client2.customer.update({
         where: { id: customer.id },
         data: {
           ...data,
