@@ -10,7 +10,11 @@ export interface NestDataLoader {
   generateDataLoader(generateParams: any): DataLoader<any, any>
 }
 
-type KeyToDataRelationship = "OneToOne" | "OneToMany" | "ManyToMany"
+type KeyToDataRelationship =
+  | "OneToOne"
+  | "OneToMany"
+  | "ManyToMany"
+  | "ManyToOne"
 
 export type PrismaOneGenerateParams = CommonPrismaGenerateParams & {
   // basic parameters to construct the prisma call

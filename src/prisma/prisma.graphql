@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Jun 17 2021 16:34:32 GMT-0400 (Eastern Daylight Time)
+# timestamp: Tue Jun 22 2021 15:55:28 GMT-0400 (Eastern Daylight Time)
 
 type AccessorySize implements Node {
   id: ID!
@@ -6334,7 +6334,6 @@ input CategoryCreateInput {
   description: String
   visible: Boolean
   productType: ProductType
-  measurementType: MeasurementType
   products: ProductCreateManyWithoutCategoryInput
   children: CategoryCreateManyInput
 }
@@ -6362,7 +6361,6 @@ input CategoryCreateWithoutProductsInput {
   description: String
   visible: Boolean
   productType: ProductType
-  measurementType: MeasurementType
   children: CategoryCreateManyInput
 }
 
@@ -6751,22 +6749,6 @@ input CategoryScalarWhereInput {
   All values that are not contained in given list.
   """
   productType_not_in: [ProductType!]
-  measurementType: MeasurementType
-
-  """
-  All values that are not equal to given value.
-  """
-  measurementType_not: MeasurementType
-
-  """
-  All values that are contained in given list.
-  """
-  measurementType_in: [MeasurementType!]
-
-  """
-  All values that are not contained in given list.
-  """
-  measurementType_not_in: [MeasurementType!]
 }
 
 type CategorySubscriptionPayload {
@@ -6821,7 +6803,6 @@ input CategoryUpdateDataInput {
   description: String
   visible: Boolean
   productType: ProductType
-  measurementType: MeasurementType
   products: ProductUpdateManyWithoutCategoryInput
   children: CategoryUpdateManyInput
 }
@@ -6833,7 +6814,6 @@ input CategoryUpdateInput {
   description: String
   visible: Boolean
   productType: ProductType
-  measurementType: MeasurementType
   products: ProductUpdateManyWithoutCategoryInput
   children: CategoryUpdateManyInput
 }
@@ -6860,6 +6840,18 @@ input CategoryUpdateManyInput {
   upsert: [CategoryUpsertWithWhereUniqueNestedInput!]
 }
 
+input CategoryUpdateManyInput {
+  create: [CategoryCreateInput!]
+  connect: [CategoryWhereUniqueInput!]
+  set: [CategoryWhereUniqueInput!]
+  disconnect: [CategoryWhereUniqueInput!]
+  delete: [CategoryWhereUniqueInput!]
+  update: [CategoryUpdateWithWhereUniqueNestedInput!]
+  updateMany: [CategoryUpdateManyWithWhereNestedInput!]
+  deleteMany: [CategoryScalarWhereInput!]
+  upsert: [CategoryUpsertWithWhereUniqueNestedInput!]
+}
+
 input CategoryUpdateManyMutationInput {
   slug: String
   name: String
@@ -6867,7 +6859,6 @@ input CategoryUpdateManyMutationInput {
   description: String
   visible: Boolean
   productType: ProductType
-  measurementType: MeasurementType
 }
 
 input CategoryUpdateManyWithWhereNestedInput {
@@ -6896,7 +6887,6 @@ input CategoryUpdateWithoutProductsDataInput {
   description: String
   visible: Boolean
   productType: ProductType
-  measurementType: MeasurementType
   children: CategoryUpdateManyInput
 }
 
@@ -7258,22 +7248,6 @@ input CategoryWhereInput {
   All values that are not contained in given list.
   """
   productType_not_in: [ProductType!]
-  measurementType: MeasurementType
-
-  """
-  All values that are not equal to given value.
-  """
-  measurementType_not: MeasurementType
-
-  """
-  All values that are contained in given list.
-  """
-  measurementType_in: [MeasurementType!]
-
-  """
-  All values that are not contained in given list.
-  """
-  measurementType_not_in: [MeasurementType!]
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput

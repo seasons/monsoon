@@ -30,11 +30,13 @@ type Mutation {
   pushNotifyUser(
     where: UserWhereUniqueInput
     data: PushNotifDataInput
-  ): PushNotificationReceipt @hasRole(roles: [Marketer])
+  ): PushNotificationReceipt
+    @hasRole(roles: [Marketer])
+    @deprecated(reason: "Use pushNotifyUsers plural")
   pushNotifyUsers(
     where: CustomerWhereInput
     data: PushNotifDataInput
-  ): [PushNotificationReceipt]! @hasRole(roles: [Marketer])
+  ): PushNotificationReceipt @hasRole(roles: [Marketer])
   pushNotifyInterest(
     interest: PushNotificationInterest
     data: PushNotifDataInput
