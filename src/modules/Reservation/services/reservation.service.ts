@@ -545,7 +545,11 @@ export class ReservationService {
     return this.utils.filterAdminLogs(logs, keysWeDontCareAbout)
   }
 
-  async updateReservation(data, where: { id: string }) {
+  async updateReservation(
+    data,
+    where: { id: string },
+    select: Prisma.ReservationSelect
+  ) {
     const reservation = await this.prisma.client2.reservation.findUnique({
       where,
       select: {
@@ -566,13 +570,16 @@ export class ReservationService {
     }
 
     let promises: any[] = [
-      this.prisma.client2.reservation.update({ data, where }),
+      this.prisma.client2.reservation.update({ data, where, select }),
     ]
 
     // Reservation was just packed. Null out warehouse locations on attached products
-    if (data.status === "Packed" && data.status !== reservation.status) {
+    if (
+      ["Packed", "Picked"].includes(data.status) &&
+      data.status !== reservation.status
+    ) {
       promises.push(
-        reservation.products.map(a =>
+        ...reservation.products.map(a =>
           this.prisma.client2.physicalProduct.update({
             where: { id: a.id },
             data: { warehouseLocation: { disconnect: true } },
@@ -581,7 +588,10 @@ export class ReservationService {
       )
     }
 
-    return await this.prisma.client2.$transaction(promises)
+    const [updatedReservation] = await this.prisma.client2.$transaction(
+      promises
+    )
+    return this.prisma.sanitizePayload(updatedReservation, "Reservation")
   }
 
   async createReservationFeedbacksForVariants(
