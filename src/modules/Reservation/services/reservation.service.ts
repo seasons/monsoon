@@ -10,7 +10,13 @@ import {
 } from "@modules/Product"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
-import { Customer, Prisma, PrismaPromise, User } from "@prisma/client"
+import {
+  Customer,
+  Prisma,
+  PrismaPromise,
+  ReservationFeedback,
+  User,
+} from "@prisma/client"
 import {
   AdminActionLog,
   ID_Input,
@@ -493,7 +499,9 @@ export class ReservationService {
     })
 
     // Create reservationFeedback datamodels for the returned product variants
-    const reservationFeedbackPromise = this.createReservationFeedbacksForVariants(
+    const [
+      reservationFeedbackPromise,
+    ] = await this.createReservationFeedbacksForVariants(
       await this.prisma.client2.productVariant.findMany({
         where: {
           id: {
@@ -503,12 +511,14 @@ export class ReservationService {
       }),
       prismaUser,
       reservation
-    ) as PrismaPromise<any>
+    )
 
-    const updateReturnPackagePromise = this.reservationUtils.updateReturnPackageOnCompletedReservation(
+    const [
+      updateReturnPackagePromise,
+    ] = await this.reservationUtils.updateReturnPackageOnCompletedReservation(
       reservation,
       returnedPhysicalProducts
-    ) as PrismaPromise<any>
+    )
 
     await this.prisma.client2.$transaction([
       ...(promises as PrismaPromise<any>[]),
@@ -598,7 +608,7 @@ export class ReservationService {
     productVariants,
     user,
     reservation
-  ) {
+  ): Promise<[PrismaPromise<ReservationFeedback>]> {
     const MULTIPLE_CHOICE = "MultipleChoice"
     const variantInfos = await Promise.all(
       productVariants.map(async variant => {
@@ -624,92 +634,94 @@ export class ReservationService {
       })
     )
 
-    return this.prisma.client2.reservationFeedback.create({
-      data: {
-        feedbacks: {
-          create: variantInfos.map(
-            (variantInfo: { id: string; retailPrice: number }) =>
-              Prisma.validator<
-                Prisma.ProductVariantFeedbackCreateWithoutReservationFeedbackInput
-              >()({
-                isCompleted: false,
-                rating: 0,
-                review: "",
-                questions: {
-                  create: [
-                    {
-                      question: `What did you think about this?`,
-                      options: {
-                        // create: ["Disliked", "It was OK", "Loved it"],
-                        create: [
-                          { value: "Disliked", position: 1000 },
-                          { value: "It was OK", position: 2000 },
-                          { value: "Loved it", position: 3000 },
-                        ],
+    return [
+      this.prisma.client2.reservationFeedback.create({
+        data: {
+          feedbacks: {
+            create: variantInfos.map(
+              (variantInfo: { id: string; retailPrice: number }) =>
+                Prisma.validator<
+                  Prisma.ProductVariantFeedbackCreateWithoutReservationFeedbackInput
+                >()({
+                  isCompleted: false,
+                  rating: 0,
+                  review: "",
+                  questions: {
+                    create: [
+                      {
+                        question: `What did you think about this?`,
+                        options: {
+                          // create: ["Disliked", "It was OK", "Loved it"],
+                          create: [
+                            { value: "Disliked", position: 1000 },
+                            { value: "It was OK", position: 2000 },
+                            { value: "Loved it", position: 3000 },
+                          ],
+                        },
+                        type: MULTIPLE_CHOICE,
                       },
-                      type: MULTIPLE_CHOICE,
-                    },
-                    {
-                      question: `How many times did you wear this?`,
-                      options: {
-                        // set: [
-                        //   "Never wore it",
-                        //   "1-2 times",
-                        //   "3-5 times",
-                        //   "More than 6 times",
-                        // ],
-                        create: [
-                          { value: "Never wore it", position: 1000 },
-                          { value: "1-2 times", position: 2000 },
-                          { value: "3-5 times", position: 3000 },
-                          { value: "More than 6 times", position: 4000 },
-                        ],
+                      {
+                        question: `How many times did you wear this?`,
+                        options: {
+                          // set: [
+                          //   "Never wore it",
+                          //   "1-2 times",
+                          //   "3-5 times",
+                          //   "More than 6 times",
+                          // ],
+                          create: [
+                            { value: "Never wore it", position: 1000 },
+                            { value: "1-2 times", position: 2000 },
+                            { value: "3-5 times", position: 3000 },
+                            { value: "More than 6 times", position: 4000 },
+                          ],
+                        },
+                        type: MULTIPLE_CHOICE,
                       },
-                      type: MULTIPLE_CHOICE,
-                    },
-                    {
-                      question: `Did it fit as expected?`,
-                      options: {
-                        // set: ["Fit small", "Fit true to size", "Fit oversized"],
-                        create: [
-                          { value: "Fit small", position: 1000 },
-                          { value: "Fit true to size", position: 2000 },
-                          { value: "Fit oversized", position: 3000 },
-                        ],
+                      {
+                        question: `Did it fit as expected?`,
+                        options: {
+                          // set: ["Fit small", "Fit true to size", "Fit oversized"],
+                          create: [
+                            { value: "Fit small", position: 1000 },
+                            { value: "Fit true to size", position: 2000 },
+                            { value: "Fit oversized", position: 3000 },
+                          ],
+                        },
+                        type: MULTIPLE_CHOICE,
                       },
-                      type: MULTIPLE_CHOICE,
-                    },
-                    {
-                      question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
-                      options: {
-                        // set: ["No", "Yes", "Buy below retail", "Would only rent"],
-                        create: [
-                          { value: "No", position: 1000 },
-                          { value: "Yes", position: 2000 },
-                          { value: "Buy below retail", position: 3000 },
-                          { value: "Would only rent", position: 4000 },
-                        ],
+                      {
+                        question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
+                        options: {
+                          // set: ["No", "Yes", "Buy below retail", "Would only rent"],
+                          create: [
+                            { value: "No", position: 1000 },
+                            { value: "Yes", position: 2000 },
+                            { value: "Buy below retail", position: 3000 },
+                            { value: "Would only rent", position: 4000 },
+                          ],
+                        },
+                        type: MULTIPLE_CHOICE,
                       },
-                      type: MULTIPLE_CHOICE,
-                    },
-                  ],
-                },
-                variant: { connect: { id: variantInfo.id } },
-              })
-          ),
-        },
-        user: {
-          connect: {
-            id: user.id,
+                    ],
+                  },
+                  variant: { connect: { id: variantInfo.id } },
+                })
+            ),
+          },
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          reservation: {
+            connect: {
+              id: reservation.id,
+            },
           },
         },
-        reservation: {
-          connect: {
-            id: reservation.id,
-          },
-        },
-      },
-    })
+      }),
+    ]
   }
 
   private checkLastReservation(lastReservation) {
