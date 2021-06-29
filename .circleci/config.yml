@@ -3,8 +3,11 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 version: 2.1
+
 orbs:
   node: circleci/node@4.5.1
+  docker: circleci/docker@1.6.0
+
 jobs:
   test-unit:
     executor:
@@ -23,6 +26,7 @@ jobs:
       - run:
           command: yarn jest --verbose -i
           name: Run unit tests
+
 workflows:
   run_unit_tests:
     jobs:
