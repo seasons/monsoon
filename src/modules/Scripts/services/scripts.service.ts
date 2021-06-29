@@ -116,9 +116,10 @@ export class ScriptsService {
       const env = this.readJSONObjectFromFile(envFilePath)
 
       // prisma
-      const { endpoint, secret } = env.prisma[prismaEnv]
+      const { endpoint, secret, url } = env.prisma[prismaEnv]
       process.env.PRISMA_ENDPOINT = endpoint
       process.env.PRISMA_SECRET = secret
+      process.env.DATABASE_URL = url
 
       // drip
       const { account, apiKey } = env.drip[dripEnv]
