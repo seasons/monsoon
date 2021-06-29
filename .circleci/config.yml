@@ -1,52 +1,29 @@
-# Javascript Node CircleCI 2.0 configuration file
+# Javascript Node CircleCI 2.1 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
+orbs:
+  node: circleci/node@4.5.1
 jobs:
-  build:
-    machine: true
-    working_directory: ~/monsoon
-    shell: /bin/bash --login -o pipefail
+  test-unit:
+    executor:
+      name: node/default
+      tag: "16.4.0"
     steps:
       - checkout
-
+      - node/install-packages:
+          pkg-manager: yarn
       - run:
-          name: Install Yarn
-          command: curl -o- -L https://yarnpkg.com/install.sh | bash
-
+          command: docker-compose up -d
+          name: Start up docker containers
       - run:
-          name: Install Node Version Manager
-          command: |
-            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-            export NVM_DIR="/opt/circleci/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm install v12.18.1
-            nvm alias default v12.18.1
-            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
-            echo "[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"" >> $BASH_ENV
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
+          command: yarn prisma1 deploy
+          name: Deploy Prisma1 service
       - run:
-          name: Install Dependencies
-          command: yarn install
-
-      - run:
-          name: Create Testing File
-          command: bash src/tests/create_testing_env_file.sh
-
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-
-      # run tests!
-      - run:
-          name: Run tests
-          command: yarn test
+          command: yarn jest --verbose -i
+          name: Run unit tests
+workflows:
+  run_unit_tests:
+    jobs:
+      - test-unit
