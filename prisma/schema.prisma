@@ -824,7 +824,7 @@ model ProductTier {
   price     Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  product   Product?
+  product   Product[]
 }
 
 model ProductVariant {
