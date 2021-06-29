@@ -1,6 +1,6 @@
 {
   "name": "monsoon",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": "Luc Succes <l2succes@gmail.com>",
   "license": "MIT",
   "bin": "bin/cli.js",
@@ -128,7 +128,7 @@
     "path": "0.12.7",
     "prisma": "2.24.1",
     "prisma-binding": "2.3.16",
-    "prisma-client-lib": "1.34.9",
+    "prisma-client-lib": "1.34.12",
     "prisma1": "1.34.12",
     "readline-sync": "1.4.10",
     "reflect-metadata": "0.1.13",
