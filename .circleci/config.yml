@@ -9,7 +9,7 @@ jobs:
   test-unit:
     executor:
       name: node/default
-      tag: "12.18.1"
+      tag: "16.4.0"
     steps:
       - checkout
       - node/install-packages:

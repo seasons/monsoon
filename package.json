@@ -6,7 +6,7 @@
   "bin": "bin/cli.js",
   "main": "dist/index.js",
   "engines": {
-    "node": "12.x"
+    "node": "16.4.0"
   },
   "resolutions": {
     "graphql": "14.5.7"
@@ -83,7 +83,7 @@
     "cache-manager": "3.4.0",
     "cache-manager-redis-store": "2.0.0",
     "camelcase-keys": "6.2.2",
-    "canvas": "2.5.0",
+    "canvas": "2.8.0",
     "chargebee": ">=2 <3",
     "chargebee-typescript": "2.0.8",
     "cheerio": "1.0.0-rc.3",
