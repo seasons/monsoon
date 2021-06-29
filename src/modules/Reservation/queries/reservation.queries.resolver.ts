@@ -1,49 +1,54 @@
-import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
-import { addFragmentToInfo } from "graphql-binding"
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
+import { Select } from "@app/decorators/select.decorator"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { Args, Query, Resolver } from "@nestjs/graphql"
 
 @Resolver()
 export class ReservationQueriesResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly queryUtils: QueryUtilsService) {}
 
   @Query()
-  async package(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.package(args, info)
+  async package(@Args() { where }, @Select() select) {
+    return await this.queryUtils.resolveFindUnique({ where, select }, "Package")
   }
 
   @Query()
-  async packages(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.packages(args, info)
+  async packages(@FindManyArgs() args) {
+    return await this.queryUtils.resolveFindMany(args, "Package")
   }
 
   @Query()
-  async packagesConnection(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.packagesConnection(args, info)
-  }
-
-  @Query()
-  async reservation(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.reservation(
-      args,
-      addFragmentToInfo(info, `fragment EnsureId on Reservation {id}`)
+  async packagesConnection(@Args() args, @Select() select) {
+    return await this.queryUtils.resolveConnection(
+      { ...args, select },
+      "Package"
     )
   }
 
   @Query()
-  async reservations(@Args() args, @Info() info) {
-    const data = await this.prisma.binding.query.reservations(
-      args,
-      addFragmentToInfo(info, `fragment EnsureId on Reservation {id}`)
+  async reservation(
+    @Args() { where },
+    @Select({ withFragment: `fragment EnsureId on Reservation {id}` }) select
+  ) {
+    return await this.queryUtils.resolveFindUnique(
+      { where, select },
+      "Reservation"
     )
-    return data
   }
 
   @Query()
-  async reservationsConnection(@Args() args, @Info() info) {
-    const data = await this.prisma.binding.query.reservationsConnection(
-      args,
-      info
+  async reservations(
+    @FindManyArgs({ withFragment: `fragment EnsureId on Reservation {id}` })
+    args
+  ) {
+    return await this.queryUtils.resolveFindMany(args, "Reservation")
+  }
+
+  @Query()
+  async reservationsConnection(@Args() args, @Select() select) {
+    return await this.queryUtils.resolveConnection(
+      { ...args, select },
+      "Reservation"
     )
-    return data
   }
 }

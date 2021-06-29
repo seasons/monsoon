@@ -179,5 +179,6 @@ export class PrismaService implements UpdatableConnection {
       endpoint,
       debug: false,
     })
+    this.client2 = new PrismaClient2()
   }
 }

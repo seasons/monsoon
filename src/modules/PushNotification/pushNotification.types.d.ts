@@ -1,4 +1,5 @@
 import { PushNotificationReceiptCreateInput } from "@app/prisma/prisma.binding"
+import { Prisma } from "@prisma/client"
 
 import { AllPushNotificationIDs } from "./services/pushNotification.data.service"
 
@@ -24,6 +25,7 @@ interface PushNotifyFuncInput {
   pushNotifID: PushNotificationID
   vars?: any
   debug?: boolean
+  select?: Prisma.PushNotificationReceiptSelect
 }
 
 export interface ApplePushNotification {
@@ -31,5 +33,5 @@ export interface ApplePushNotification {
 }
 export interface PushNotificationData {
   notificationPayload: ApplePushNotification
-  receiptPayload: Omit<PushNotificationReceiptCreateInput, "users">
+  receiptPayload: Omit<PushNotificationReceiptCreateInput, "users" | "id">
 }

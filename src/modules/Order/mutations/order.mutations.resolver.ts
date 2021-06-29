@@ -1,7 +1,9 @@
 import { Customer, User } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import { BadRequestException } from "@nestjs/common"
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 import { pick } from "lodash"
 
@@ -12,7 +14,8 @@ export class OrderMutationsResolver {
   constructor(
     private readonly prisma: PrismaService,
     private readonly order: OrderService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly error: ErrorService
   ) {}
 
   @Mutation()
@@ -20,7 +23,7 @@ export class OrderMutationsResolver {
     @Args() { input: { orderType, productVariantID } },
     @Customer() customer,
     @User() user,
-    @Info() info
+    @Select() select
   ) {
     try {
       let draftOrder
@@ -29,14 +32,14 @@ export class OrderMutationsResolver {
           productVariantID,
           customer,
           user,
-          info,
+          select,
         })
       } else {
         draftOrder = await this.order.buyUsedCreateDraftedOrder({
           productVariantID,
           customer,
           user,
-          info,
+          select,
         })
       }
 
@@ -49,7 +52,9 @@ export class OrderMutationsResolver {
       })
       return draftOrder
     } catch (e) {
-      console.error(e)
+      console.log(e)
+      this.error.setExtraContext({ productVariantID, userEmail: user.email })
+      this.error.captureError(e)
       throw new BadRequestException()
     }
   }
@@ -59,24 +64,26 @@ export class OrderMutationsResolver {
     @Args() { input: { orderID } },
     @Customer() customer,
     @User() user,
-    @Info() info
+    @Select() select
   ) {
     try {
-      const order = await this.prisma.client.order({ id: orderID })
+      const order = await this.prisma.client2.order.findUnique({
+        where: { id: orderID },
+      })
       let submittedOrder
       if (order.type === "New") {
         submittedOrder = await this.order.buyNewSubmitOrder({
           order,
           customer,
           user,
-          info,
+          select,
         })
       } else {
         submittedOrder = await this.order.buyUsedSubmitOrder({
           order,
           customer,
           user,
-          info,
+          select,
         })
       }
 
@@ -87,13 +94,15 @@ export class OrderMutationsResolver {
 
       return submittedOrder
     } catch (e) {
-      console.error(e)
+      console.log(e)
+      this.error.setExtraContext({ orderID, userEmail: user.email })
+      this.error.captureError(e)
       throw new BadRequestException()
     }
   }
 
   @Mutation()
-  updateOrderStatus(@Args() { orderID, status }, @Customer() customer) {
-    return this.order.updateOrderStatus({ orderID, status, customer })
+  updateOrderStatus(@Args() { orderID, status }, @Select() select) {
+    return this.order.updateOrderStatus({ orderID, status, select })
   }
 }
