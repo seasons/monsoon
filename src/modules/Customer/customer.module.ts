@@ -1,3 +1,4 @@
+import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma1/prisma.module"
 
@@ -8,7 +9,12 @@ import { CustomerQueriesResolver } from "./queries/customer.queries.resolver"
 import { PaymentModule, ReservationModule } from ".."
 
 export const CustomerModuleDef = {
-  imports: [PrismaModule, forwardRef(() => PaymentModule), ReservationModule],
+  imports: [
+    PrismaModule,
+    forwardRef(() => PaymentModule),
+    ReservationModule,
+    UtilsModule,
+  ],
   providers: [
     CustomerQueriesResolver,
     CustomerFieldsResolver,

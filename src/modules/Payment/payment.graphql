@@ -56,8 +56,11 @@ type Mutation {
   updateResumeDate(date: DateTime): Boolean @hasRole(roles: [Customer])
   removeScheduledPause(subscriptionID: String!): Boolean
     @hasRole(roles: [Customer])
-  pauseSubscription(subscriptionID: String!, pauseType: PauseType): Boolean
-    @hasRole(roles: [Customer])
+  pauseSubscription(
+    subscriptionID: String!
+    pauseType: PauseType
+    reasonID: ID
+  ): Boolean @hasRole(roles: [Customer])
   resumeSubscription(subscriptionID: String!, date: DateTime): Boolean
     @hasRole(roles: [Customer])
   refundInvoice(input: RefundInvoiceInput): Boolean! @hasRole(roles: [Admin])

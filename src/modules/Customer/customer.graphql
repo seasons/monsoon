@@ -22,6 +22,17 @@ type Query {
     first: Int
     last: Int
   ): CustomerConnection! @hasRole(roles: [Admin]) @cacheControl(maxAge: 0)
+  pauseReason(where: PauseReasonWhereUniqueInput!): PauseReason
+    @cacheControl(maxAge: 0)
+  pauseReasons(
+    where: PauseReasonWhereInput
+    orderBy: PauseReasonOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PauseReason] @cacheControl(maxAge: 0)
 }
 
 type Mutation {

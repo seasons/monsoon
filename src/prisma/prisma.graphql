@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Jun 22 2021 15:55:28 GMT-0400 (Eastern Daylight Time)
+# timestamp: Wed Jun 30 2021 12:57:37 GMT-0400 (Eastern Daylight Time)
 
 type AccessorySize implements Node {
   id: ID!
@@ -1588,6 +1588,10 @@ type AggregatePackage {
 }
 
 type AggregatePackageTransitEvent {
+  count: Int!
+}
+
+type AggregatePauseReason {
   count: Int!
 }
 
@@ -19551,6 +19555,7 @@ type Mutation {
   createPushNotificationReceipt(
     data: PushNotificationReceiptCreateInput!
   ): PushNotificationReceipt!
+  createPauseReason(data: PauseReasonCreateInput!): PauseReason!
   createUserPushNotificationInterest(
     data: UserPushNotificationInterestCreateInput!
   ): UserPushNotificationInterest!
@@ -19734,6 +19739,10 @@ type Mutation {
     data: PushNotificationReceiptUpdateInput!
     where: PushNotificationReceiptWhereUniqueInput!
   ): PushNotificationReceipt
+  updatePauseReason(
+    data: PauseReasonUpdateInput!
+    where: PauseReasonWhereUniqueInput!
+  ): PauseReason
   updateUserPushNotificationInterest(
     data: UserPushNotificationInterestUpdateInput!
     where: UserPushNotificationInterestWhereUniqueInput!
@@ -19935,6 +19944,7 @@ type Mutation {
   deletePushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
   ): PushNotificationReceipt
+  deletePauseReason(where: PauseReasonWhereUniqueInput!): PauseReason
   deleteUserPushNotificationInterest(
     where: UserPushNotificationInterestWhereUniqueInput!
   ): UserPushNotificationInterest
@@ -20172,6 +20182,11 @@ type Mutation {
     create: PushNotificationReceiptCreateInput!
     update: PushNotificationReceiptUpdateInput!
   ): PushNotificationReceipt!
+  upsertPauseReason(
+    where: PauseReasonWhereUniqueInput!
+    create: PauseReasonCreateInput!
+    update: PauseReasonUpdateInput!
+  ): PauseReason!
   upsertUserPushNotificationInterest(
     where: UserPushNotificationInterestWhereUniqueInput!
     create: UserPushNotificationInterestCreateInput!
@@ -20493,6 +20508,10 @@ type Mutation {
     data: PushNotificationReceiptUpdateManyMutationInput!
     where: PushNotificationReceiptWhereInput
   ): BatchPayload!
+  updateManyPauseReasons(
+    data: PauseReasonUpdateManyMutationInput!
+    where: PauseReasonWhereInput
+  ): BatchPayload!
   updateManyUserPushNotificationInterests(
     data: UserPushNotificationInterestUpdateManyMutationInput!
     where: UserPushNotificationInterestWhereInput
@@ -20713,6 +20732,7 @@ type Mutation {
   deleteManyPushNotificationReceipts(
     where: PushNotificationReceiptWhereInput
   ): BatchPayload!
+  deleteManyPauseReasons(where: PauseReasonWhereInput): BatchPayload!
   deleteManyUserPushNotificationInterests(
     where: UserPushNotificationInterestWhereInput
   ): BatchPayload!
@@ -24094,8 +24114,371 @@ type PageInfo {
   endCursor: String
 }
 
+type PauseReason implements Node {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  reason: String!
+}
+
+"""
+A connection to a list of items.
+"""
+type PauseReasonConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [PauseReasonEdge]!
+  aggregate: AggregatePauseReason!
+}
+
+input PauseReasonCreateInput {
+  id: ID
+  reason: String!
+}
+
+input PauseReasonCreateOneInput {
+  create: PauseReasonCreateInput
+  connect: PauseReasonWhereUniqueInput
+}
+
+"""
+An edge in a connection.
+"""
+type PauseReasonEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: PauseReason!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum PauseReasonOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  reason_ASC
+  reason_DESC
+}
+
+type PauseReasonPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  reason: String!
+}
+
+type PauseReasonSubscriptionPayload {
+  mutation: MutationType!
+  node: PauseReason
+  updatedFields: [String!]
+  previousValues: PauseReasonPreviousValues
+}
+
+input PauseReasonSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PauseReasonSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PauseReasonSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [PauseReasonSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PauseReasonWhereInput
+}
+
+input PauseReasonUpdateDataInput {
+  reason: String
+}
+
+input PauseReasonUpdateInput {
+  reason: String
+}
+
+input PauseReasonUpdateManyMutationInput {
+  reason: String
+}
+
+input PauseReasonUpdateOneInput {
+  create: PauseReasonCreateInput
+  connect: PauseReasonWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: PauseReasonUpdateDataInput
+  upsert: PauseReasonUpsertNestedInput
+}
+
+input PauseReasonUpsertNestedInput {
+  update: PauseReasonUpdateDataInput!
+  create: PauseReasonCreateInput!
+}
+
+input PauseReasonWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PauseReasonWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PauseReasonWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [PauseReasonWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+  reason: String
+
+  """
+  All values that are not equal to given value.
+  """
+  reason_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  reason_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  reason_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  reason_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  reason_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  reason_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  reason_gte: String
+
+  """
+  All values containing the given string.
+  """
+  reason_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  reason_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  reason_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  reason_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  reason_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  reason_not_ends_with: String
+}
+
+input PauseReasonWhereUniqueInput {
+  id: ID
+}
+
 type PauseRequest implements Node {
   id: ID!
+  reason: PauseReason
   createdAt: DateTime!
   updatedAt: DateTime!
   pausePending: Boolean!
@@ -24129,6 +24512,7 @@ input PauseRequestCreateInput {
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
+  reason: PauseReasonCreateOneInput
   membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
 }
 
@@ -24144,6 +24528,7 @@ input PauseRequestCreateWithoutMembershipInput {
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
+  reason: PauseReasonCreateOneInput
 }
 
 """
@@ -24497,6 +24882,7 @@ input PauseRequestUpdateInput {
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
+  reason: PauseReasonUpdateOneInput
   membership: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
 }
 
@@ -24539,6 +24925,7 @@ input PauseRequestUpdateWithoutMembershipDataInput {
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
+  reason: PauseReasonUpdateOneInput
 }
 
 input PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
@@ -24805,6 +25192,7 @@ input PauseRequestWhereInput {
   All values that are not equal to given value.
   """
   notified_not: Boolean
+  reason: PauseReasonWhereInput
   membership: CustomerMembershipWhereInput
 }
 
@@ -38963,6 +39351,15 @@ type Query {
     first: Int
     last: Int
   ): [PushNotificationReceipt]!
+  pauseReasons(
+    where: PauseReasonWhereInput
+    orderBy: PauseReasonOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PauseReason]!
   userPushNotificationInterests(
     where: UserPushNotificationInterestWhereInput
     orderBy: UserPushNotificationInterestOrderByInput
@@ -39368,6 +39765,7 @@ type Query {
   pushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
   ): PushNotificationReceipt
+  pauseReason(where: PauseReasonWhereUniqueInput!): PauseReason
   userPushNotificationInterest(
     where: UserPushNotificationInterestWhereUniqueInput!
   ): UserPushNotificationInterest
@@ -39743,6 +40141,15 @@ type Query {
     first: Int
     last: Int
   ): PushNotificationReceiptConnection!
+  pauseReasonsConnection(
+    where: PauseReasonWhereInput
+    orderBy: PauseReasonOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PauseReasonConnection!
   userPushNotificationInterestsConnection(
     where: UserPushNotificationInterestWhereInput
     orderBy: UserPushNotificationInterestOrderByInput
@@ -48226,6 +48633,9 @@ type Subscription {
   pushNotificationReceipt(
     where: PushNotificationReceiptSubscriptionWhereInput
   ): PushNotificationReceiptSubscriptionPayload
+  pauseReason(
+    where: PauseReasonSubscriptionWhereInput
+  ): PauseReasonSubscriptionPayload
   userPushNotificationInterest(
     where: UserPushNotificationInterestSubscriptionWhereInput
   ): UserPushNotificationInterestSubscriptionPayload
