@@ -265,6 +265,7 @@ model CustomerAdmissionsData {
   authorizationsCount         Int
   allAccessEnabled            Boolean
   authorizationWindowClosesAt DateTime?
+  subscribedAt                DateTime?
   customer                    Customer?
 }
 
@@ -290,7 +291,7 @@ model CustomerDetail {
   shippingAddressId  String?                     @map("shippingAddress") @db.VarChar(30)
   shippingAddress    Location?                   @relation(fields: [shippingAddressId], references: [id])
   phoneOS            String?
-  insureShipment     Boolean
+  insureShipment     Boolean                     @default(false)
   stylePreferencesId String?                     @map("stylePreferences") @db.VarChar(30)
   stylePreferences   StylePreferences?           @relation(fields: [stylePreferencesId], references: [id])
   instagramHandle    String?

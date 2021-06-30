@@ -11,8 +11,7 @@ type Query {
     @hasRole(roles: [Customer])
     @cacheControl(maxAge: 0)
   hostedChargebeeCheckout(planID: String!): ChargebeeHostedPagePayload
-    @hasRole(roles: [Customer])
-    @cacheControl(maxAge: 0)
+    @deprecated(reason: "replaced with processPayment")
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
     @cacheControl(maxAge: 0)
   paymentPlans(
