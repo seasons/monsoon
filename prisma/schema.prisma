@@ -572,17 +572,27 @@ model PackageTransitEvent {
   reservation   Reservation? @relation(fields: [reservationId], references: [id])
 }
 
+model PauseReason {
+  id            String              @id @default(cuid()) @db.VarChar(30)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  reason        String
+  pauseRequests PauseRequest[]
+}
+
 model PauseRequest {
-  id           String              @id @default(cuid()) @db.VarChar(30)
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
-  pausePending Boolean
-  pauseDate    DateTime?
-  resumeDate   DateTime?
-  membershipId String?             @map("membership") @db.VarChar(30)
-  membership   CustomerMembership? @relation(fields: [membershipId], references: [id])
-  notified     Boolean
-  pauseType    String
+  id              String              @id @default(cuid()) @db.VarChar(30)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  pausePending    Boolean
+  pauseDate       DateTime?
+  resumeDate      DateTime?
+  membershipId    String?             @map("membership") @db.VarChar(30)
+  membership      CustomerMembership? @relation(fields: [membershipId], references: [id])
+  notified        Boolean
+  pauseType       String
+  pauseReasonId   String?             @map("pauseReason") @db.VarChar(30)
+  reason          PauseReason?        @relation(fields: [pauseReasonId], references: [id])
 }
 
 model PaymentPlan {

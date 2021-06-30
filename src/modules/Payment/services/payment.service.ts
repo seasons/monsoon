@@ -495,7 +495,8 @@ export class PaymentService {
   async pauseSubscription(
     subscriptionId,
     customer,
-    pauseType: PauseType = "WithoutItems"
+    pauseType: PauseType = "WithoutItems",
+    reasonID
   ) {
     let customerWithMembership = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
@@ -544,6 +545,7 @@ export class PaymentService {
           pauseDate: new Date(termEnd),
           resumeDate: new Date(resumeDateISO),
           pauseType,
+          reason: reasonID && { connect: { id: reasonID } },
         })
       } else {
         const result = await chargebee.subscription
@@ -581,6 +583,7 @@ export class PaymentService {
           pauseDate: new Date(pauseDateISO),
           resumeDate: new Date(resumeDateISO),
           pauseType,
+          reason: reasonID && { connect: { id: reasonID } },
         })
       }
     } catch (e) {
