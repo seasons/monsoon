@@ -3,6 +3,7 @@ import { ProductWithEmailData } from "@app/modules/Email/services/email.utils.se
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerStatus, CustomerWhereUniqueInput, Product } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head, intersection, uniqBy } from "lodash"
 import moment from "moment"
@@ -169,7 +170,7 @@ export class AdmissionsService {
   }
 
   async getAvailableStyles(
-    where: CustomerWhereUniqueInput
+    where: Prisma.CustomerWhereUniqueInput
   ): Promise<ProductWithEmailData[]> {
     const {
       detail: { availableTopStyles, availableBottomStyles },
@@ -178,7 +179,7 @@ export class AdmissionsService {
   }
 
   async haveSufficientInventoryToServiceCustomer(
-    where: CustomerWhereUniqueInput
+    where: Prisma.CustomerWhereUniqueInput
   ): Promise<HaveSufficientInventoryToServiceCustomerResult> {
     const inventoryThreshold =
       parseInt(process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER, 10) || 15
@@ -195,7 +196,7 @@ export class AdmissionsService {
   }
 
   async reservableInventoryForCustomer(
-    where: CustomerWhereUniqueInput
+    where: Prisma.CustomerWhereUniqueInput
   ): Promise<{
     reservableStyles: number
     detail: ReservableInventoryForCustomerResultDetail
@@ -222,24 +223,24 @@ export class AdmissionsService {
   }
 
   private async availableStylesForCustomer(
-    where: CustomerWhereUniqueInput,
+    where: Prisma.CustomerWhereUniqueInput,
     productType: "Top" | "Bottom"
   ): Promise<{
     reservableStyles: ProductWithEmailData[]
     adjustedReservableStyles: number
   }> {
-    const customer = await this.prisma.binding.query.customer(
-      {
-        where,
+    const customer = await this.prisma.client2.customer.findFirst({
+      where,
+      select: {
+        id: true,
+        detail: {
+          select: {
+            topSizes: true,
+            waistSizes: true,
+          },
+        },
       },
-      `{
-        id
-        detail {
-          topSizes
-          waistSizes
-        }
-      }`
-    )
+    })
 
     let sizesKey
     switch (productType) {
