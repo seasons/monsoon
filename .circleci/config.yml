@@ -15,7 +15,7 @@ jobs:
     steps:
       - checkout
 
-      - node/install-yran
+      - node/install-yarn
 
       - node/install-packages:
           pkg-manager: yarn
