@@ -5,12 +5,12 @@ import { UTMData as BindingUTMData, DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import { AdminActionLog } from "@prisma/client"
 import { Location } from "@prisma/client"
+import { UTMData } from "@prisma/client"
 import {
   PauseRequest,
   AdminActionLog as PrismaOneAdminActionLog,
   Reservation,
   SyncTimingType,
-  UTMData,
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import cliProgress from "cli-progress"
@@ -49,7 +49,7 @@ type InfoStringPath = "user" | "customer"
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  formatUTMForSegment = (utm: UTMData | BindingUTMData) => ({
+  formatUTMForSegment = (utm: UTMData) => ({
     utm_source: utm?.source,
     utm_content: utm?.content,
     utm_medium: utm?.medium,
