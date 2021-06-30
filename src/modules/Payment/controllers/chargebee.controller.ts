@@ -169,47 +169,28 @@ export class ChargebeeController {
 
     const { customer_id, plan_id } = subscription
 
-    const customerWithBillingAndUserData: any = head(
-      await this.prisma.binding.query.customers(
-        { where: { user: { id: customer_id } } },
-        `
-        {
-          id
-          billingInfo {
-            id
-          }
-          detail {
-            id
-            impactId
-            discoveryReference
-          }
-          utm {
-            source
-            medium
-            campaign
-            term
-            content
-          }
-          user {
-            id
-            firstName
-            lastName
-            email
-          }
-          referrer {
-            id
-            user {
-              id
-              email
-              firstName
-            }
-            membership {
-              subscriptionId
-            }
-          }
-        }
-      `
-      )
+    const customerWithBillingAndUserData = await this.prisma.client2.customer.findUnique(
+      {
+        where: { id: customer.id },
+        select: {
+          id: true,
+          billingInfo: { select: { id: true } },
+          detail: {
+            select: { id: true, impactId: true, discoveryReference: true },
+          },
+          utm: true,
+          user: {
+            select: { id: true, firstName: true, lastName: true, email: true },
+          },
+          referrer: {
+            select: {
+              id: true,
+              user: { select: { id: true, email: true, firstName: true } },
+              membership: { select: { subscriptionId: true } },
+            },
+          },
+        },
+      }
     )
 
     try {
