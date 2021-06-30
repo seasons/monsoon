@@ -1,3 +1,4 @@
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -41,7 +42,7 @@ export class CustomerQueriesResolver {
   }
 
   @Query()
-  async pauseReasons(@Args() args) {
+  async pauseReasons(@FindManyArgs() args) {
     return await this.queryUtils.resolveFindMany(args, "PauseReason")
   }
 }
