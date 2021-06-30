@@ -15,6 +15,8 @@ jobs:
     steps:
       - checkout
 
+      - run: nvm install v16.4.0 && nvm alias default v16.4.0
+
       - node/install-yarn
 
       - node/install-packages:
