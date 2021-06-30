@@ -10,9 +10,7 @@ orbs:
 
 jobs:
   test-unit:
-    executor:
-      name: node/default
-      tag: "16.4.0"
+    machine: true
     steps:
       - checkout
       - node/install-packages:
