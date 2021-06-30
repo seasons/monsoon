@@ -448,19 +448,17 @@ export class UtilsService {
   }
 
   async getSyncTimingsRecord(type: SyncTimingType) {
-    const syncTimings = await this.prisma.client.syncTimings({
-      where: {
-        type,
-      },
-      orderBy: "createdAt_DESC",
+    const syncTiming = await this.prisma.client2.syncTiming.findFirst({
+      where: { type },
+      orderBy: { createdAt: "desc" },
     })
 
-    if (syncTimings.length === 0) {
+    if (!syncTiming) {
       throw new Error(
         `No sync timing records found for type: ${type}. Please seed initial record`
       )
     }
 
-    return head(syncTimings)
+    return this.prisma.sanitizePayload(syncTiming, "SyncTiming")
   }
 }

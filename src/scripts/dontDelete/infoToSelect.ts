@@ -39,7 +39,37 @@ const infoToSelect = infoString => {
 }
 
 const run = () => {
-  let info = `{}` // Insert your info string
+  let info = `{
+    id
+    user {
+      id
+      firstName
+      lastName
+      email
+      verificationStatus
+    }
+    status
+    reservations {
+      status
+    }
+    detail {
+      phoneNumber
+      birthday
+      topSizes
+      waistSizes
+      preferredPronouns
+      style
+      phoneOS
+      shippingAddress {
+        address1
+        address2
+        city
+        state
+        zipCode
+        locationType
+      }
+    }
+  }` // Insert your info string
   infoToSelect(info)
 }
 

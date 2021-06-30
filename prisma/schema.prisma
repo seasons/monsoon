@@ -1093,6 +1093,18 @@ enum OrderLineItemRecordType {
   Package
 }
 
+enum CustomerStatus {
+  Invited
+  Created
+  Waitlisted
+  Authorized
+  Active
+  Suspended
+  PaymentFailed
+  Paused
+  Deactivated
+}
+
 model Size {
   id                          String           @id @default(cuid()) @db.VarChar(30)
   slug                        String           @unique
@@ -1184,7 +1196,7 @@ model SyncTiming {
   id        String   @id @default(cuid()) @db.VarChar(30)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  detail    String
+  detail    String?
   type      String
   syncedAt  DateTime
 }
