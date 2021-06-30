@@ -68,16 +68,19 @@ export class SMSService {
         id: user.id,
       },
     })
-    const customerDetailID = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .id()
-    await this.prisma.client.updateCustomerDetail({
+
+    const customerDetail = await this.prisma.client2.customerDetail.findFirst({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+      },
+    })
+
+    await this.prisma.client2.customerDetail.update({
+      where: { id: customerDetail.id },
       data: {
         phoneNumber: e164PhoneNumber,
-      },
-      where: {
-        id: customerDetailID,
       },
     })
 

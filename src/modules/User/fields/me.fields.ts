@@ -30,10 +30,11 @@ export class MeFieldsResolver {
     if (!customer) {
       return null
     }
-    const data = await this.prisma.client2.customer.findUnique({
+    const _data = await this.prisma.client2.customer.findUnique({
       where: { id: customer.id },
       select,
     })
+    return this.prisma.sanitizePayload(_data, "Customer")
   }
 
   @ResolveField()
