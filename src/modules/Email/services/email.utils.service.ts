@@ -55,26 +55,6 @@ export class EmailUtilsService {
     slug: true,
   })
 
-  productInfoForGridData = `
-    id
-    type
-    name
-    brand {
-      name
-    }
-    retailPrice
-    variants {
-      displayShort
-    }
-    images {
-      url
-    }
-    category {
-      slug
-    }
-    slug
-    `
-
   async createGridPayload(products: { id: string }[]) {
     const _productsWithData = await this.prisma.client2.product.findMany({
       where: { id: { in: products.map(a => a.id) } },
@@ -90,16 +70,14 @@ export class EmailUtilsService {
   async getXLatestProducts(
     numProducts: number
   ): Promise<MonsoonProductGridItem[]> {
-    const xLatestProducts = await this.prisma.binding.query.products(
-      {
-        where: {
-          AND: [{ status: "Available" }, { category: { slug_not: "tees" } }],
-        },
-        orderBy: "publishedAt_DESC",
-        first: numProducts,
+    const xLatestProducts = await this.prisma.client2.product.findMany({
+      where: {
+        AND: [{ status: "Available" }, { category: { slug: { not: "tees" } } }],
       },
-      `{${this.productInfoForGridData}}`
-    )
+      orderBy: { publishedAt: "desc" },
+      take: numProducts,
+      select: this.productSelectForGridData,
+    })
     return Promise.all(xLatestProducts.map(this.productToGridPayload))
   }
 
@@ -114,19 +92,12 @@ export class EmailUtilsService {
     const productsWithoutTees = products.filter(a => a.category.slug !== "tees")
 
     // Filter out from products we've already emailed to the user
-    const customer = head(
-      await this.prisma.binding.query.customers(
-        {
-          where: { user: { id: user.id } },
-        },
-        `{
-          emailedProducts {
-            ${this.productInfoForGridData}
-          }
-        }
-        `
-      )
-    ) as any
+    const _customer = await this.prisma.client2.customer.findFirst({
+      where: { user: { id: user.id } },
+      select: { emailedProducts: { select: this.productSelectForGridData } },
+    })
+    const customer = this.prisma.sanitizePayload(_customer, "Customer")
+
     const emailedProductsIDs = customer.emailedProducts.map(a => a.id)
     const reservableProductsWeHaventAlreadySent = productsWithoutTees.filter(
       a => !emailedProductsIDs.includes(a.id)

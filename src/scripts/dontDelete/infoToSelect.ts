@@ -41,33 +41,22 @@ const infoToSelect = infoString => {
 const run = () => {
   let info = `{
     id
+    createdAt
+    authorizedAt
+    admissions {
+      id
+      subscribedAt
+    }
     user {
       id
-      firstName
-      lastName
-      email
-      verificationStatus
     }
-    status
-    reservations {
-      status
+    impactSyncTimings {
+      type
+      detail
     }
     detail {
-      phoneNumber
-      birthday
-      topSizes
-      waistSizes
-      preferredPronouns
-      style
-      phoneOS
-      shippingAddress {
-        address1
-        address2
-        city
-        state
-        zipCode
-        locationType
-      }
+      id
+      discoveryReference
     }
   }` // Insert your info string
   infoToSelect(info)

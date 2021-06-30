@@ -399,7 +399,7 @@ export class UtilsService {
     return latestResy
   }
 
-  getPauseWIthItemsPlanId = membership => {
+  getPauseWithItemsPlanId = membership => {
     const itemCount = membership?.plan?.itemCount
     let planID
     if (itemCount === 1) {
