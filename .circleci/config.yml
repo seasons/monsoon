@@ -40,11 +40,15 @@ jobs:
           name: Start up docker containers
 
       - run:
+          command: sleep 20
+          name: Wait for containers to fully spin up
+
+      - run:
           command: yarn prisma1 deploy
           name: Deploy Prisma1 service
 
       - run:
-          command: yarn jest --verbose -i
+          command: yarn test
           name: Run unit tests
 
 workflows:
