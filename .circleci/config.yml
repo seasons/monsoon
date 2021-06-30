@@ -11,16 +11,29 @@ orbs:
 jobs:
   test-unit:
     machine: true
+    working_directory: ~/monsoon
     steps:
       - checkout
+
+      - node/install:
+          install-yarn: true
+          node-version: "16.4.0"
+
       - node/install-packages:
           pkg-manager: yarn
+
+      - docker/install-docker
+
+      - docker/install-docker-compose
+
       - run:
           command: docker-compose up -d
           name: Start up docker containers
+
       - run:
           command: yarn prisma1 deploy
           name: Deploy Prisma1 service
+
       - run:
           command: yarn jest --verbose -i
           name: Run unit tests
