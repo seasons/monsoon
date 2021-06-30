@@ -78,7 +78,7 @@ describe.only("Customer Service", () => {
     )
   })
 
-  describe("Update Customer Details", () => {
+  xdescribe("Update Customer Details", () => {
     test.each([
       ["Invited", true],
       ["Invited", false],

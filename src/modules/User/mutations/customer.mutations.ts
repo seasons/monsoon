@@ -66,6 +66,7 @@ export class CustomerMutationsResolver {
       application,
       false
     )
+
     return status
   }
 

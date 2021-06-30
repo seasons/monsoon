@@ -28,7 +28,7 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
-import { pick } from "lodash"
+import { defaultsDeep, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
@@ -50,7 +50,7 @@ type CustomerWithUser = Customer & {
 }
 
 type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
-  customer: CustomerWithUser
+  customer: any
   dryRun: boolean
   inServiceableZipcode?: boolean
   allAccessEnabled?: boolean
@@ -351,30 +351,38 @@ export class CustomerService {
   async updateCustomer(args, select, application: ApplicationType) {
     let { where, data, withContact = true } = args
 
+    const defaultSelect = Prisma.validator<Prisma.CustomerSelect>()({
+      id: true,
+      user: {
+        select: {
+          id: true,
+          email: true,
+          emails: { select: { emailId: true } },
+          firstName: true,
+          lastName: true,
+        },
+      },
+      utm: true,
+      detail: {
+        select: {
+          shippingAddress: { select: { zipCode: true } },
+          impactId: true,
+          discoveryReference: true,
+        },
+      },
+      plan: true,
+      status: true,
+      admissions: { select: { authorizationsCount: true } },
+    })
+
+    const mergedSelect: typeof defaultSelect = defaultsDeep(
+      defaultSelect,
+      select
+    )
+
     const customer = await this.prisma.client2.customer.findFirst({
       where,
-      select: {
-        id: true,
-        user: {
-          select: {
-            id: true,
-            email: true,
-            emails: { select: { emailId: true } },
-            firstName: true,
-            lastName: true,
-          },
-        },
-        utm: true,
-        detail: {
-          select: {
-            shippingAddress: { select: { zipCode: true } },
-            impactId: true,
-            discoveryReference: true,
-          },
-        },
-        status: true,
-        admissions: { select: { authorizationsCount: true } },
-      },
+      select: mergedSelect,
     })
 
     if (
@@ -475,18 +483,17 @@ export class CustomerService {
     return this.prisma.client2.customer.update({
       where,
       data,
-      select,
+      select: mergedSelect,
     })
   }
 
   async triageCustomer(
     where: Prisma.CustomerWhereUniqueInput,
     application: ApplicationType,
-    dryRun: boolean,
-    aCustomer: CustomerWithUser
+    dryRun: boolean
   ): Promise<TriageCustomerResult> {
     const customer = await this.prisma.client2.customer.findUnique({
-      where: { id: aCustomer.id },
+      where,
       select: this.triageCustomerInfo,
     })
 

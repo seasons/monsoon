@@ -20,14 +20,12 @@ export class AdmissionsScheduledJobs {
   async updateAdmissionsFields() {
     this.logger.log(`Start update admissions field job`)
 
-    const customers = await this.prisma.binding.query.customers(
-      {
-        where: {
-          status_in: ["Invited", "Created", "Waitlisted", "Authorized"],
-        },
+    const customers = await this.prisma.client2.customer.findMany({
+      where: {
+        status: { in: ["Invited", "Created", "Waitlisted", "Authorized"] },
       },
-      this.customer.triageCustomerInfo
-    )
+      select: this.customer.triageCustomerInfo,
+    })
 
     let i = 0
     for (const cust of customers) {
@@ -42,8 +40,7 @@ export class AdmissionsScheduledJobs {
               id: cust.id,
             },
             "monsoon",
-            true,
-            cust
+            true
           )
         }
       } catch (err) {

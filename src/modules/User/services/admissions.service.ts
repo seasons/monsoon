@@ -218,7 +218,7 @@ export class AdmissionsService {
   }
 
   // is a customer with the given status able to be triaged?
-  isTriageable(status: CustomerStatus) {
+  isTriageable(status: CustomerStatus | string) {
     return ["Created", "Invited", "Waitlisted"].includes(status)
   }
 

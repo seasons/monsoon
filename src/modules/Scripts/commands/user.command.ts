@@ -205,9 +205,32 @@ export class UserCommands {
         details: {
           phoneNumber: `+${phoneNumber}`,
           height: 40 + faker.random.number(32),
-          weight: { set: [150, 160] },
-          waistSizes: { set: [28, 29, 20] },
-          topSizes: { set: ["XS", "S"] },
+
+          weight: {
+            createMany: {
+              data: [
+                { value: 150, position: 1000 },
+                { value: 160, position: 2000 },
+              ],
+            },
+          },
+          waistSizes: {
+            createMany: {
+              data: [
+                { value: 28, position: 1000 },
+                { value: 29, position: 2000 },
+              ],
+            },
+          },
+          topSizes: {
+            createMany: {
+              data: [
+                { value: "XS", position: 1000 },
+                { value: "S", position: 2000 },
+              ],
+            },
+          },
+
           bodyType: "Athletic",
           shippingAddress: {
             create: {
