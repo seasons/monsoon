@@ -15,9 +15,7 @@ jobs:
     steps:
       - checkout
 
-      - node/install:
-          install-yarn: true
-          node-version: "16.4.0"
+      - node/install-yran
 
       - node/install-packages:
           pkg-manager: yarn
