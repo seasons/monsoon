@@ -6,26 +6,29 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { Customer } from "@app/prisma/prisma.binding"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import {
+  Customer,
+  CustomerAdmissionsData,
+  CustomerDetail,
+  Location,
+  Prisma,
+  UTMData,
+  User,
+} from "@prisma/client"
+import {
   BillingInfoUpdateDataInput,
-  CustomerAdmissionsDataCreateWithoutCustomerInput,
   CustomerAdmissionsDataUpdateInput,
   CustomerStatus,
   CustomerUpdateInput,
-  CustomerWhereUniqueInput,
-  ID_Input,
   InAdmissableReason,
   NotificationBarID,
-  ShippingOption,
-  User,
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
-import { head, pick } from "lodash"
+import { pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
@@ -38,8 +41,16 @@ type TriageCustomerResult = {
   waitlistReason?: InAdmissableReason
 }
 
+type CustomerWithUser = Customer & {
+  detail: CustomerDetail & {
+    shippingAddress: Location
+  }
+  user: User
+  admissions: CustomerAdmissionsData
+}
+
 type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
-  customer: Customer
+  customer: CustomerWithUser
   dryRun: boolean
   inServiceableZipcode?: boolean
   allAccessEnabled?: boolean
@@ -47,38 +58,30 @@ type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
 
 @Injectable()
 export class CustomerService {
-  triageCustomerInfo = `{
-    id
-    status
-    detail {
-      shippingAddress {
-        zipCode
-      }
-      topSizes
-      waistSizes
-      impactId
-      discoveryReference
-    }
-    utm {
-      source
-      medium
-      campaign
-      term
-      content
-    }
-    user {
-      id
-      firstName
-      lastName
-      email
-      emails {
-        emailId
-      }
-    }
-    admissions {
-      authorizationsCount
-    }
-  }`
+  triageCustomerInfo = {
+    id: true,
+    status: true,
+    detail: {
+      select: {
+        shippingAddress: { select: { zipCode: true } },
+        topSizes: true,
+        waistSizes: true,
+        impactId: true,
+        discoveryReference: true,
+      },
+    },
+    utm: true,
+    user: {
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        emails: { select: { emailId: true } },
+      },
+    },
+    admissions: { select: { authorizationsCount: true } },
+  }
 
   constructor(
     @Inject(forwardRef(() => AuthService))
@@ -212,14 +215,18 @@ export class CustomerService {
       if (!state) {
         throw new Error("State missing in shipping address update")
       }
-      const shippingAddressID = await this.prisma.client
-        .customer({
-          id: customer.id,
-        })
-        .detail()
-        .shippingAddress()
-        .id()
-      this.addCustomerLocationShippingOptions(state, shippingAddressID)
+      const detail = await this.prisma.client2.customerDetail.findFirst({
+        where: {
+          customer: {
+            id: customer.id,
+          },
+        },
+        select: {
+          id: true,
+          shippingAddress: true,
+        },
+      })
+      this.addCustomerLocationShippingOptions(state, detail.shippingAddress.id)
     }
 
     // If a status was passed, update the customer status in prisma
@@ -270,17 +277,18 @@ export class CustomerService {
       address1: shippingStreet1,
       address2: shippingStreet2,
     }
-
-    const custWithData = await this.prisma.binding.query.customer(
-      {
-        where: { id: customer.id },
+    const custWithData = await this.prisma.client2.customer.findFirst({
+      where: { id: customer.id },
+      select: {
+        id: true,
+        admissions: {
+          select: {
+            id: true,
+          },
+        },
       },
-      `{
-        admissions {
-          id
-        }
-      }`
-    )
+    })
+
     const sanitizedPhoneNumber = phoneNumber.replace(/-/g, "")
     const data = {
       detail: {
@@ -300,7 +308,7 @@ export class CustomerService {
           },
         },
       },
-    } as CustomerUpdateInput
+    } as Prisma.CustomerUpdateInput
 
     // If they already have an admissions record, update allAccessEnabled
     if (!!custWithData?.admissions?.id) {
@@ -311,7 +319,7 @@ export class CustomerService {
         update: { allAccessEnabled },
       }
     }
-    return await this.prisma.client.updateCustomer({
+    return await this.prisma.client2.customer.update({
       where: { id: customer.id },
       data,
     })
@@ -322,57 +330,52 @@ export class CustomerService {
     customerId,
   }: {
     billingInfo: BillingInfoUpdateDataInput
-    customerId: ID_Input
+    customerId: string
   }) {
-    const billingInfoId = await this.prisma.client
-      .customer({ id: customerId })
-      .billingInfo()
-      .id()
-    if (billingInfoId) {
-      await this.prisma.client.updateBillingInfo({
+    const customer = await this.prisma.client2.customer.findFirst({
+      where: { id: customerId },
+      select: {
+        id: true,
+        billingInfoId: true,
+      },
+    })
+
+    if (customer.billingInfoId) {
+      return await this.prisma.client2.billingInfo.update({
         data: billingInfo,
-        where: { id: billingInfoId },
+        where: { id: customer.billingInfoId },
       })
     }
   }
 
-  async updateCustomer(args, info, application: ApplicationType) {
+  async updateCustomer(args, select, application: ApplicationType) {
     let { where, data, withContact = true } = args
-    const customer = await this.prisma.binding.query.customer(
-      {
-        where,
+
+    const customer = await this.prisma.client2.customer.findFirst({
+      where,
+      select: {
+        id: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            emails: { select: { emailId: true } },
+            firstName: true,
+            lastName: true,
+          },
+        },
+        utm: true,
+        detail: {
+          select: {
+            shippingAddress: { select: { zipCode: true } },
+            impactId: true,
+            discoveryReference: true,
+          },
+        },
+        status: true,
+        admissions: { select: { authorizationsCount: true } },
       },
-      `{
-        id
-        user {
-          id
-          email
-          emails {
-            emailId
-          }
-          firstName
-          lastName
-        }
-        utm {
-          source
-          medium
-          campaign
-          term
-          content
-        }
-        detail {
-          shippingAddress {
-            zipCode
-          }
-          impactId
-          discoveryReference
-        }
-        status
-        admissions {
-          authorizationsCount
-        }
-      }`
-    )
+    })
 
     if (
       ["Waitlisted", "Invited"].includes(customer.status) &&
@@ -434,15 +437,14 @@ export class CustomerService {
       if (withContact) {
         // Normal users
         if (customer.status === "Waitlisted") {
-          await this.email.sendAuthorizedEmail(
-            customer.user as User,
-            "manual",
-            [...availableBottomStyles, ...availableTopStyles]
-          )
+          await this.email.sendAuthorizedEmail(customer.user, "manual", [
+            ...availableBottomStyles,
+            ...availableTopStyles,
+          ])
         }
         // Users we invited off the admin
         if (customer.status === "Invited") {
-          await this.email.sendPriorityAccessEmail(customer.user as User)
+          await this.email.sendPriorityAccessEmail(customer.user)
         }
 
         // either kind of user
@@ -458,7 +460,7 @@ export class CustomerService {
       }
 
       this.segment.trackBecameAuthorized(customer.user.id, {
-        previousStatus: customer.status,
+        previousStatus: customer.status as CustomerStatus,
         firstName: customer.user.firstName,
         lastName: customer.user.lastName,
         email: customer.user.email,
@@ -469,23 +471,29 @@ export class CustomerService {
         ...this.utils.formatUTMForSegment(customer.utm),
       })
     }
-    return this.prisma.binding.mutation.updateCustomer({ where, data }, info)
+
+    return this.prisma.client2.customer.update({
+      where,
+      data,
+      select,
+    })
   }
 
   async triageCustomer(
-    where: CustomerWhereUniqueInput,
+    where: Prisma.CustomerWhereUniqueInput,
     application: ApplicationType,
     dryRun: boolean,
-    customer: Customer = {} as Customer
+    aCustomer: CustomerWithUser
   ): Promise<TriageCustomerResult> {
-    if (Object.keys(customer).length === 0) {
-      customer = await this.prisma.binding.query.customer(
-        { where },
-        this.triageCustomerInfo
-      )
-    }
+    const customer = await this.prisma.client2.customer.findUnique({
+      where: { id: aCustomer.id },
+      select: this.triageCustomerInfo,
+    })
 
-    if (!this.admissions.isTriageable(customer.status) && !dryRun) {
+    if (
+      !this.admissions.isTriageable(customer.status as CustomerStatus) &&
+      !dryRun
+    ) {
       throw new ApolloError(
         `Invalid customer status: ${customer.status}. Can not triage a ${customer.status} customer`
       )
@@ -577,7 +585,7 @@ export class CustomerService {
     if (!dryRun) {
       if (admit) {
         this.segment.trackBecameAuthorized(customer.user.id, {
-          previousStatus: customer.status,
+          previousStatus: customer.status as CustomerStatus,
           firstName: customer.user.firstName,
           lastName: customer.user.lastName,
           email: customer.user.email,
@@ -585,16 +593,16 @@ export class CustomerService {
           application,
           impactId: customer.detail?.impactId,
           discoveryReference: customer.detail?.discoveryReference,
-          ...this.utils.formatUTMForSegment(customer.utm),
+          ...this.utils.formatUTMForSegment(customer.utm as UTMData),
         })
 
         await this.email.sendAuthorizedEmail(
-          customer.user as User,
+          customer.user,
           "automatic",
           availableStyles
         )
       } else {
-        await this.email.sendWaitlistedEmail(customer.user as User)
+        await this.email.sendWaitlistedEmail(customer.user)
       }
 
       if (Object.keys(triageDetail).includes("availableBottomStyles")) {
@@ -662,8 +670,8 @@ export class CustomerService {
     allAccessEnabled,
     dryRun,
   }: UpdateCustomerAdmissionsDataInput) {
-    let data: CustomerUpdateInput = {}
-    let admissionsUpsertData = {} as CustomerAdmissionsDataUpdateInput
+    let data = {} as any
+    let admissionsUpsertData = {} as any
 
     if (!dryRun) {
       data = { status }
@@ -726,7 +734,7 @@ export class CustomerService {
           ...data,
           admissions: {
             upsert: {
-              update: admissionsUpsertData,
+              update: admissionsUpsertData as CustomerAdmissionsDataUpdateInput,
               create: admissionsUpsertData,
             },
           },
@@ -737,8 +745,8 @@ export class CustomerService {
   }
 
   private shouldUpdateCustomerAdmissionsData(
-    customer: Customer,
-    upsertData: CustomerAdmissionsDataCreateWithoutCustomerInput
+    customer: Customer & { admissions: CustomerAdmissionsData },
+    upsertData: CustomerAdmissionsDataUpdateInput
   ) {
     return (
       customer?.admissions?.admissable !== upsertData.admissable ||
@@ -752,9 +760,8 @@ export class CustomerService {
     )
   }
 
-  /* Start here */
   private calculateNumAuthorizations(
-    customer: Customer,
+    customer,
     status: CustomerStatus,
     dryRun: boolean
   ) {
