@@ -9,6 +9,7 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Customer } from "@app/prisma/prisma.binding"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
+import { Prisma } from "@prisma/client"
 import {
   BillingInfoUpdateDataInput,
   CustomerAdmissionsDataCreateWithoutCustomerInput,
@@ -46,6 +47,38 @@ type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
 
 @Injectable()
 export class CustomerService {
+  triageCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
+    id: true,
+    status: true,
+    detail: {
+      select: {
+        shippingAddress: { select: { zipCode: true } },
+        topSizes: true,
+        waistSizes: true,
+        impactId: true,
+        discoveryReference: true,
+      },
+    },
+    utm: {
+      select: {
+        source: true,
+        medium: true,
+        campaign: true,
+        term: true,
+        content: true,
+      },
+    },
+    user: {
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        emails: { select: { emailId: true } },
+      },
+    },
+    admissions: { select: { authorizationsCount: true } },
+  })
   triageCustomerInfo = `{
     id
     status

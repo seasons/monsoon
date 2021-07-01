@@ -280,6 +280,7 @@ export class AdmissionsService {
         type
         name
         retailPrice
+        slug
         images {
           url
         }

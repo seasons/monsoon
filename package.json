@@ -56,7 +56,7 @@
     "@prisma/binding-argument-transform": "^0.3.1",
     "@prisma/client": "^2.25.0",
     "@pusher/push-notifications-server": "^1.2.0",
-    "@seasons/wind": "^2.6.3",
+    "@seasons/wind": "^2.6.5",
     "@sendgrid/mail": "^6.4.0",
     "@sentry/node": "^5.10.2",
     "@sentry/types": "^5.10.0",

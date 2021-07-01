@@ -5,19 +5,8 @@ import sgMail from "@sendgrid/mail"
 import { head } from "lodash"
 import nodemailer from "nodemailer"
 
-import {
-  EmailId,
-  ID_Input,
-  Reservation as PrismaReservation,
-  Product,
-  User,
-} from "../../../prisma"
-import {
-  Customer,
-  DateTime,
-  PhysicalProduct,
-  Reservation,
-} from "../../../prisma/prisma.binding"
+import { EmailId, Product, User } from "../../../prisma"
+import { Customer, DateTime } from "../../../prisma/prisma.binding"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import {
@@ -287,7 +276,7 @@ export class EmailService {
     const withItems = latestPauseRequest.pauseType === "WithItems"
     let pausedWithItemsPrice
     if (withItems) {
-      const planID = this.utils.getPauseWIthItemsPlanId(customer.membership)
+      const planID = this.utils.getPauseWithItemsPlanId(customer.membership)
       pausedWithItemsPrice = await this.prisma.client
         .paymentPlan({ planID })
         .price()
@@ -554,9 +543,10 @@ export class EmailService {
     user: EmailUser,
     products: MonsoonProductGridItem[]
   ) {
-    const customer = head(
-      await this.prisma.client.customers({ where: { user: { id: user.id } } })
-    )
+    const customer = await this.prisma.client2.customer.findFirst({
+      where: { user: { id: user.id } },
+      select: { id: true },
+    })
     await this.prisma.client.updateCustomer({
       where: { id: customer.id },
       data: {
