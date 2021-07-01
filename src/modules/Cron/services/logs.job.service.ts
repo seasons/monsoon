@@ -54,6 +54,7 @@ export class LogsScheduledJobs {
           cancelledAt: true,
           completedAt: true,
           reservationNumber: true,
+          status: true,
           products: { select: { id: true } },
         },
       }

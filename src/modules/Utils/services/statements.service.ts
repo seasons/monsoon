@@ -1,12 +1,15 @@
-import { Customer, Reservation } from "@app/prisma"
+import { Customer, Reservation as PrismaOneReservation } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import { Reservation } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 
 @Injectable()
 export class StatementsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  reservationIsActive(reservation: Pick<Reservation, "status">) {
+  reservationIsActive(
+    reservation: Pick<Reservation | PrismaOneReservation, "status">
+  ) {
     return (
       !!reservation && !["Completed", "Cancelled"].includes(reservation.status)
     )

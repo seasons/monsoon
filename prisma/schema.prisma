@@ -618,6 +618,7 @@ model PhysicalProduct {
   unitCost                     Float?
   barcoded                     Boolean                        @default(value: false)
   priceId                      String?                        @map("price") @db.VarChar(30)
+  packedAt                     DateTime?
   price                        PhysicalProductPrice?          @relation(fields: [priceId], references: [id])
   reports                      PhysicalProductQualityReport[]
   productNotifications         ProductNotification[]

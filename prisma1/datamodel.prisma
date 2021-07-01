@@ -599,6 +599,7 @@ type PhysicalProduct {
   reports: [PhysicalProductQualityReport!]! @relation(onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  packedAt: DateTime
 }
 
 type ProductNotification {

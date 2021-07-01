@@ -18448,6 +18448,7 @@ type PhysicalProduct implements Node {
   reports(where: PhysicalProductQualityReportWhereInput, orderBy: PhysicalProductQualityReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductQualityReport!]
   createdAt: DateTime!
   updatedAt: DateTime!
+  packedAt: DateTime
 }
 
 """A connection to a list of items."""
@@ -18472,6 +18473,7 @@ input PhysicalProductCreateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
@@ -18521,6 +18523,7 @@ input PhysicalProductCreateWithoutLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceCreateOneInput
@@ -18539,6 +18542,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
   location: LocationCreateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceCreateOneInput
@@ -18557,6 +18561,7 @@ input PhysicalProductCreateWithoutReportsInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
@@ -18575,6 +18580,7 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   price: PhysicalProductPriceCreateOneInput
@@ -18634,6 +18640,8 @@ enum PhysicalProductOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  packedAt_ASC
+  packedAt_DESC
 }
 
 type PhysicalProductPreviousValues {
@@ -18650,6 +18658,7 @@ type PhysicalProductPreviousValues {
   unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
+  packedAt: DateTime
 }
 
 type PhysicalProductPrice implements Node {
@@ -19687,6 +19696,28 @@ input PhysicalProductScalarWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  packedAt: DateTime
+
+  """All values that are not equal to given value."""
+  packedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  packedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  packedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  packedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  packedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  packedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  packedAt_gte: DateTime
 }
 
 enum PhysicalProductStatus {
@@ -19748,6 +19779,7 @@ input PhysicalProductUpdateDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -19766,6 +19798,7 @@ input PhysicalProductUpdateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -19784,6 +19817,7 @@ input PhysicalProductUpdateManyDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateManyInput {
@@ -19809,6 +19843,7 @@ input PhysicalProductUpdateManyMutationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -19886,6 +19921,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
@@ -19903,6 +19939,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
   location: LocationUpdateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
@@ -19920,6 +19957,7 @@ input PhysicalProductUpdateWithoutReportsDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -19937,6 +19975,7 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
@@ -20292,6 +20331,28 @@ input PhysicalProductWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  packedAt: DateTime
+
+  """All values that are not equal to given value."""
+  packedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  packedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  packedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  packedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  packedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  packedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  packedAt_gte: DateTime
   location: LocationWhereInput
   productVariant: ProductVariantWhereInput
   warehouseLocation: WarehouseLocationWhereInput
@@ -39263,7 +39324,9 @@ export type PhysicalProductOrderByInput =   'id_ASC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
-  'updatedAt_DESC'
+  'updatedAt_DESC' |
+  'packedAt_ASC' |
+  'packedAt_DESC'
 
 export type PhysicalProductPriceOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -47271,6 +47334,7 @@ export interface PhysicalProductCreateInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
+  packedAt?: DateTime | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
@@ -47320,6 +47384,7 @@ export interface PhysicalProductCreateWithoutLocationInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
+  packedAt?: DateTime | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
   price?: PhysicalProductPriceCreateOneInput | null
@@ -47338,6 +47403,7 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
+  packedAt?: DateTime | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
   price?: PhysicalProductPriceCreateOneInput | null
@@ -47356,6 +47422,7 @@ export interface PhysicalProductCreateWithoutReportsInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
+  packedAt?: DateTime | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
@@ -47374,6 +47441,7 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
+  packedAt?: DateTime | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
   price?: PhysicalProductPriceCreateOneInput | null
@@ -47815,6 +47883,14 @@ export interface PhysicalProductScalarWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
+  packedAt?: DateTime | null
+  packedAt_not?: DateTime | null
+  packedAt_in?: DateTime[] | DateTime | null
+  packedAt_not_in?: DateTime[] | DateTime | null
+  packedAt_lt?: DateTime | null
+  packedAt_lte?: DateTime | null
+  packedAt_gt?: DateTime | null
+  packedAt_gte?: DateTime | null
 }
 
 export interface PhysicalProductSubscriptionWhereInput {
@@ -47839,6 +47915,7 @@ export interface PhysicalProductUpdateDataInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
+  packedAt?: DateTime | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
@@ -47857,6 +47934,7 @@ export interface PhysicalProductUpdateInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
+  packedAt?: DateTime | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
@@ -47875,6 +47953,7 @@ export interface PhysicalProductUpdateManyDataInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
+  packedAt?: DateTime | null
 }
 
 export interface PhysicalProductUpdateManyInput {
@@ -47900,6 +47979,7 @@ export interface PhysicalProductUpdateManyMutationInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
+  packedAt?: DateTime | null
 }
 
 export interface PhysicalProductUpdateManyWithoutLocationInput {
@@ -47977,6 +48057,7 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
+  packedAt?: DateTime | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
   price?: PhysicalProductPriceUpdateOneInput | null
@@ -47994,6 +48075,7 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
+  packedAt?: DateTime | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
   price?: PhysicalProductPriceUpdateOneInput | null
@@ -48011,6 +48093,7 @@ export interface PhysicalProductUpdateWithoutReportsDataInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
+  packedAt?: DateTime | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
@@ -48028,6 +48111,7 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
+  packedAt?: DateTime | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   price?: PhysicalProductPriceUpdateOneInput | null
@@ -48196,6 +48280,14 @@ export interface PhysicalProductWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
+  packedAt?: DateTime | null
+  packedAt_not?: DateTime | null
+  packedAt_in?: DateTime[] | DateTime | null
+  packedAt_not_in?: DateTime[] | DateTime | null
+  packedAt_lt?: DateTime | null
+  packedAt_lte?: DateTime | null
+  packedAt_gt?: DateTime | null
+  packedAt_gte?: DateTime | null
   location?: LocationWhereInput | null
   productVariant?: ProductVariantWhereInput | null
   warehouseLocation?: WarehouseLocationWhereInput | null
@@ -58505,6 +58597,7 @@ export interface PhysicalProduct extends Node {
   reports?: Array<PhysicalProductQualityReport> | null
   createdAt: DateTime
   updatedAt: DateTime
+  packedAt?: DateTime | null
 }
 
 /*
@@ -58540,6 +58633,7 @@ export interface PhysicalProductPreviousValues {
   unitCost?: Float | null
   createdAt: DateTime
   updatedAt: DateTime
+  packedAt?: DateTime | null
 }
 
 export interface PhysicalProductPrice extends Node {
