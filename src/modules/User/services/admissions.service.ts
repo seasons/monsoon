@@ -255,46 +255,59 @@ export class AdmissionsService {
     }
 
     const preferredSizes = customer.detail[sizesKey]
-    const availableStyles = (await this.prisma.binding.query.products(
-      {
-        where: {
-          AND: [
-            { type: productType },
-            {
-              variants_some: {
+
+    const availableStyles = await this.prisma.client2.product.findMany({
+      where: {
+        AND: [
+          { type: productType },
+          {
+            variants: {
+              some: {
                 AND: [
                   {
-                    displayShort_in: preferredSizes.map(size =>
-                      size.toString()
-                    ),
+                    displayShort: {
+                      in: preferredSizes.map(size => size.toString()),
+                    },
                   },
-                  { reservable_gte: 1 },
+                  {
+                    reservable: {
+                      gte: 1,
+                    },
+                  },
                 ],
               },
             },
-          ],
+          },
+        ],
+      },
+      select: {
+        id: true,
+        type: true,
+        name: true,
+        retailPrice: true,
+        slug: true,
+        images: {
+          select: {
+            url: true,
+          },
+        },
+        variants: {
+          select: {
+            displayShort: true,
+          },
+        },
+        brand: {
+          select: {
+            name: true,
+          },
+        },
+        category: {
+          select: {
+            slug: true,
+          },
         },
       },
-      // Need to query certain fields for the emails sent based on this data
-      `{
-        id
-        type
-        name
-        retailPrice
-        images {
-          url
-        }
-        variants {
-          displayShort
-        }
-        brand {
-          name
-        }
-        category {
-          slug
-        }
-    }`
-    )) as ProductWithEmailData[]
+    })
 
     // Find the competing users. Note that we assume all active customers without an active
     // reservation may be a competing user, regardless of how long it's been since their last reservation
@@ -320,7 +333,7 @@ export class AdmissionsService {
       availableStyles.length - numStylesForCompetingUsers
 
     return {
-      reservableStyles: availableStyles,
+      reservableStyles: (availableStyles as unknown) as ProductWithEmailData[],
       adjustedReservableStyles: Math.max(0, numTrueAvailableStyles),
     }
   }
