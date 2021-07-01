@@ -94,7 +94,7 @@ jobs:
           name: Compile so we can run the next cmd
 
       - run:
-          command: node bin/cli.js spp local
+          command: node bin/cli.js spp local -f
           name: Clone production data into local Postgres DB
 
       - run:
