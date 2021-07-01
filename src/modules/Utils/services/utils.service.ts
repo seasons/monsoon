@@ -28,6 +28,7 @@ import moment from "moment"
 import states from "us-state-converter"
 
 import { bottomSizeRegex } from "../../Product/constants"
+import { QueryUtilsService } from "./queryUtils.service"
 
 enum ProductSize {
   XXS = "XXS",
@@ -47,7 +48,10 @@ type InfoStringPath = "user" | "customer"
 
 @Injectable()
 export class UtilsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly queryUtils: QueryUtilsService
+  ) {}
 
   formatUTMForSegment = (utm: UTMData) => ({
     utm_source: utm?.source,
@@ -302,8 +306,8 @@ export class UtilsService {
     return JSON.parse(fs.readFileSync(process.cwd() + `/${path}.json`, "utf-8"))
   }
 
-  // Get an info string for a field nested somewhere inside the info object
-  getInfoStringAt = (info, path: InfoStringPath) => {
+  // Get a select object for a field nested somewhere inside the info object
+  getSelectFromInfoAt = (info, path: InfoStringPath) => {
     if (typeof info === "string") {
       throw new Error(`Unable to parse string info. Need to implement.`)
     }
@@ -318,7 +322,12 @@ export class UtilsService {
     if (subField === undefined) {
       return null
     }
-    return this.fieldsToInfoString(subField, fieldsToIgnore)
+    const modelName = path === "user" ? "User" : "Customer"
+    return QueryUtilsService.fieldsToSelect(
+      fields,
+      PrismaService.modelFieldsByModelName,
+      modelName
+    )
   }
 
   private getFieldsToIgnore = (field: InfoStringPath | string) => {

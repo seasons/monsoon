@@ -22,7 +22,8 @@ describe("Validate Warehouse Location", () => {
   beforeAll(async done => {
     // Instantiate test service
     prismaService = new PrismaService()
-    utilsService = new UtilsService(prismaService)
+    const qus = new QueryUtilsService(prismaService)
+    utilsService = new UtilsService(prismaService, qus)
     let productUtilsService = new ProductUtilsService(
       prismaService,
       utilsService
