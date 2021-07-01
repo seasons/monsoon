@@ -42,7 +42,7 @@ export class MembershipScheduledJobs {
       let latestReservation = null
       try {
         if (
-          DateTime.fromISO((pauseRequest.pauseDate as unknown) as string) <=
+          DateTime.fromISO(pauseRequest.pauseDate.toISOString()) <=
           DateTime.local()
         ) {
           pauseRequestWithCustomer = await this.prisma.client2.pauseRequest.findUnique(
@@ -153,7 +153,6 @@ export class MembershipScheduledJobs {
     }
   }
 
-  // TODO: Convert to prismaTwo
   @Cron(CronExpression.EVERY_6_HOURS)
   async manageMembershipResumes() {
     const _pausedCustomers = await this.prisma.client2.customer.findMany({

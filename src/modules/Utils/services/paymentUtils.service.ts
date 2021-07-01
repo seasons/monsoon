@@ -185,7 +185,7 @@ export class PaymentUtilsService {
     )
 
     const pauseRequest = head(
-      orderBy(customerWithData.membership.pauseRequests, "created", "desc")
+      orderBy(customerWithData.membership.pauseRequests, "createdAt", "desc")
     )
 
     try {
