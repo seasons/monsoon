@@ -8,7 +8,7 @@ import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import sgMail from "@sendgrid/mail"
 import chargebee from "chargebee"
-import Parser from "json2csv"
+import { Parser } from "json2csv"
 import { head, isEmpty } from "lodash"
 import moment from "moment"
 
