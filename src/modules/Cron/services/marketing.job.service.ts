@@ -37,7 +37,7 @@ export class MarketingScheduledJobs {
   async syncUnsubscribesFromDrip() {
     this.logger.log(`Run drip unsubscribe sync`)
     const count = await this.dripSync.syncUnsubscribesFromDrip()
-    this.logger.log(`Drip Unsubscribe job unsucrbied ${count} users`)
+    this.logger.log(`Drip Unsubscribe job unsubscribed ${count} users`)
   }
 
   @Cron(CronExpression.EVERY_6_HOURS)
@@ -280,7 +280,7 @@ export class MarketingScheduledJobs {
           // They came through a rev share partner but not through an impact link
           {
             detail: {
-              discoveryReference_in: ["onedapperstreet", "threadability"],
+              discoveryReference: { in: ["onedapperstreet", "threadability"] },
               impactId: null,
             },
           },
@@ -288,17 +288,21 @@ export class MarketingScheduledJobs {
             OR: [
               // We need to upload their Account Creation action
               {
-                impactSyncTimings_none: {
-                  AND: [{ type: "Impact" }, { detail: "AccountCreation" }],
+                impactSyncTimings: {
+                  none: {
+                    AND: [{ type: "Impact" }, { detail: "AccountCreation" }],
+                  },
                 },
               },
               // We need to upload their Authorized User action
               {
                 AND: [
-                  { authorizedAt_not: null },
+                  { authorizedAt: { not: undefined } },
                   {
-                    impactSyncTimings_none: {
-                      AND: [{ type: "Impact" }, { detail: "AuthorizedUser" }],
+                    impactSyncTimings: {
+                      none: {
+                        AND: [{ type: "Impact" }, { detail: "AuthorizedUser" }],
+                      },
                     },
                   },
                 ],
@@ -306,13 +310,15 @@ export class MarketingScheduledJobs {
               // We need to upload their Initial Subscription action
               {
                 AND: [
-                  { admissions: { subscribedAt_not: null } },
+                  { admissions: { subscribedAt: { not: undefined } } },
                   {
-                    impactSyncTimings_none: {
-                      AND: [
-                        { type: "Impact" },
-                        { detail: "InitialSubscription" },
-                      ],
+                    impactSyncTimings: {
+                      none: {
+                        AND: [
+                          { type: "Impact" },
+                          { detail: "InitialSubscription" },
+                        ],
+                      },
                     },
                   },
                 ],

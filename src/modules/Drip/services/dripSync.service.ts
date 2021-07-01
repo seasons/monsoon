@@ -28,18 +28,19 @@ export class DripSyncService {
       status: "unsubscribed",
     })
     const emails = allUnsubscribedCustomers.body.subscribers.map(a => a.email)
-    return await this.prisma.client2.user.updateMany({
+    const { count } = await this.prisma.client2.user.updateMany({
       where: { AND: [{ email: { in: emails } }, { sendSystemEmails: true }] },
       data: { sendSystemEmails: false },
     })
+    return count
   }
 
   async syncCustomersDifferential() {
-    const syncTimings = await this.utils.getSyncTimingsRecord("Drip")
+    const syncTiming = await this.utils.getSyncTimingsRecord("Drip")
 
     // Interested Users to Update
     const interestedUsers = await this.prisma.client2.interestedUser.findMany({
-      where: { createdAt: { gte: syncTimings.syncedAt } },
+      where: { createdAt: { gte: syncTiming.syncedAt } },
       select: { email: true, zipcode: true },
     })
     const interestedUsersTurnedCustomers = (
@@ -71,12 +72,12 @@ export class DripSyncService {
         { user: { email: { not: { contains: "seasons.nyc" } } } },
         {
           OR: [
-            { updatedAt: { gte: syncTimings.syncedAt } },
-            { user: { updatedAt: { gte: syncTimings.syncedAt } } },
-            { detail: { updatedAt: { gte: syncTimings.syncedAt } } },
+            { updatedAt: { gte: syncTiming.syncedAt } },
+            { user: { updatedAt: { gte: syncTiming.syncedAt } } },
+            { detail: { updatedAt: { gte: syncTiming.syncedAt } } },
             {
               detail: {
-                shippingAddress: { updatedAt: { gte: syncTimings.syncedAt } },
+                shippingAddress: { updatedAt: { gte: syncTiming.syncedAt } },
               },
             },
           ],

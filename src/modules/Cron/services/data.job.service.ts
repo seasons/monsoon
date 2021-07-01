@@ -61,7 +61,7 @@ export class DataScheduledJobs {
             ],
           },
           ...this.createReportSection({
-            title: "Product Variant + Physical Product Health?",
+            title: "Product Variant + Physical Product Health",
             datapoints: [
               {
                 name: "Mismatched SUID/SKU combos",
@@ -130,7 +130,8 @@ export class DataScheduledJobs {
   @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async updateLatitudesAndLongitudes() {
     const locationsToUpdate = await this.prisma.client2.location.findMany({
-      where: { OR: [{ lat: undefined }, { lng: undefined }] },
+      where: { OR: [{ lat: null }, { lng: null }] },
+      select: { zipCode: true, id: true },
     })
     for (const l of locationsToUpdate) {
       const { latitude, longitude } = zipcodes.lookup(l.zipCode) || {}
@@ -474,7 +475,7 @@ export class DataScheduledJobs {
       )
     }
 
-    const _parentProductVariant = await this.prisma.client2.productVariant.findMany(
+    const _parentProductVariant = await this.prisma.client2.productVariant.findFirst(
       {
         where: {
           physicalProducts: { some: { seasonsUID: physProd.seasonsUID } },
@@ -490,9 +491,12 @@ export class DataScheduledJobs {
       _parentProductVariant,
       "ProductVariant"
     )
-    const siblingPhysicalProducts = (parentProductVariant as any).physicalProducts.filter(
+    const siblingPhysicalProducts = (parentProductVariant as any)?.physicalProducts?.filter(
       a => a.seasonsUID !== physProd.seasonsUID
     )
+    if ((parentProductVariant as any)?.physicalProducts === undefined) {
+      console.log("yo")
+    }
     for (const siblingPhysProd of siblingPhysicalProducts) {
       if (!["Stored", "Reserved"].includes(siblingPhysProd.inventoryStatus)) {
         thisCaseClone.siblingsWithIssues.push({
