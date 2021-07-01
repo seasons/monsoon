@@ -51,7 +51,62 @@ jobs:
           command: yarn test
           name: Run unit tests
 
+  test-integration:
+    machine: true
+    working_directory: ~/monsoon
+    steps:
+      - checkout
+
+      - run:
+          name: Install Node Version Manager
+          command: |
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm install v16.4.0
+            nvm alias default v16.4.0
+            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
+            echo "[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"" >> $BASH_ENV
+
+      - node/install-yarn
+
+      - node/install-packages:
+          pkg-manager: yarn
+
+      - docker/install-docker
+
+      - docker/install-docker-compose
+
+      - run:
+          command: docker-compose up -d
+          name: Start up docker containers
+
+      - run:
+          command: sleep 20
+          name: Wait for containers to fully spin up
+
+      - run:
+          command: yarn prisma1 deploy
+          name: Deploy Prisma1 service
+
+      - run:
+          command: yarn global add ts-node && yarn link
+          name: Install monsoon-cli
+
+      - run:
+          command: monsoon spp local
+          name: Clone production data into local Postgres DB
+
+      - run:
+          command: yarn start
+          name: Start server locally to run integration tests against
+
+      - run:
+          command: yarn jest -i src/modules/User/tests/integration.test.ts
+          name: Run integration test suite
+
 workflows:
-  run_unit_tests:
+  run_all_tests:
     jobs:
       - test-unit
+      - test-integration
