@@ -1,4 +1,5 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
   Brand,
@@ -14,9 +15,8 @@ import {
   WarehouseLocationType,
   WarehouseLocationWhereUniqueInput,
 } from "@app/prisma"
-import { Reservation } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
-import { AdminActionLog } from "@prisma/client"
+import { AdminActionLog, Reservation } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
@@ -51,7 +51,8 @@ export class PhysicalProductService {
     private readonly productVariantService: ProductVariantService,
     private readonly productService: ProductService,
     private readonly physicalProductUtils: PhysicalProductUtilsService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly statements: StatementsService
   ) {}
 
   async updatePhysicalProduct({
@@ -212,7 +213,12 @@ export class PhysicalProductService {
     warehouseLocations: Pick<WarehouseLocation, "id" | "barcode">[],
     reservations: (Pick<
       Reservation,
-      "id" | "createdAt" | "cancelledAt" | "completedAt" | "reservationNumber"
+      | "id"
+      | "createdAt"
+      | "cancelledAt"
+      | "completedAt"
+      | "reservationNumber"
+      | "status"
     > & { products: Pick<PhysicalProduct, "id">[] })[]
   ): (AdminActionLog & { interpretation: string })[] {
     const keysWeDontCareAbout = [
@@ -234,27 +240,32 @@ export class PhysicalProductService {
       const keys = Object.keys(changedFields)
       let interpretation
 
+      const getActiveReservation = () =>
+        reservations.find(r => {
+          const physProdInReservation = r.products.find(
+            p => p.id === a.entityId
+          )
+          if (!physProdInReservation) {
+            return false
+          }
+
+          const createdAt = new Date(r.createdAt)
+          const cancelledAt = new Date(r.cancelledAt)
+          const completedAt = new Date(r.completedAt)
+          const logTimestamp = new Date(a.triggeredAt)
+
+          const loggedAfterReservationCreated = createdAt < logTimestamp
+          const loggedBeforeReservationEnded =
+            this.statements.reservationIsActive(r) ||
+            cancelledAt > logTimestamp ||
+            completedAt > logTimestamp
+
+          return loggedAfterReservationCreated && loggedBeforeReservationEnded
+        })
+
       if (keys.includes("warehouseLocation")) {
         if (changedFields["warehouseLocation"] === null) {
-          const activeReservation = reservations.find(r => {
-            const physProdInReservation = r.products.find(
-              p => p.id === a.entityId
-            )
-            if (!physProdInReservation) {
-              return false
-            }
-
-            const createdAt = new Date(r.createdAt)
-            const cancelledAt = new Date(r.cancelledAt)
-            const completedAt = new Date(r.completedAt)
-            const logTimestamp = new Date(a.triggeredAt)
-
-            const loggedAfterReservationCreated = createdAt < logTimestamp
-            const loggedBeforeReservationEnded =
-              cancelledAt > logTimestamp || completedAt > logTimestamp
-
-            return loggedAfterReservationCreated && loggedBeforeReservationEnded
-          })
+          const activeReservation = getActiveReservation()
           if (!!activeReservation) {
             interpretation = `Picked for reservation ${activeReservation.reservationNumber}`
           } else {
@@ -279,6 +290,9 @@ export class PhysicalProductService {
         ) {
           interpretation = "Processed return from Reservation"
         }
+      } else if (keys.includes("packedAt")) {
+        const activeReservation = getActiveReservation()
+        interpretation = `Packed for reservation ${activeReservation?.reservationNumber}`
       }
       return { ...a, interpretation }
     })

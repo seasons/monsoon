@@ -6,6 +6,7 @@ import { User } from "@app/prisma"
 import { CustomerWhereInput } from "@app/prisma/prisma.binding"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
+import { Prisma } from "@prisma/client"
 import * as Sentry from "@sentry/node"
 import { head } from "lodash"
 
@@ -27,22 +28,25 @@ export class DripSyncService {
       status: "unsubscribed",
     })
     const emails = allUnsubscribedCustomers.body.subscribers.map(a => a.email)
-    return await this.prisma.client.updateManyUsers({
-      where: { AND: [{ email_in: emails }, { sendSystemEmails: true }] },
+    const { count } = await this.prisma.client2.user.updateMany({
+      where: { AND: [{ email: { in: emails } }, { sendSystemEmails: true }] },
       data: { sendSystemEmails: false },
     })
+    return count
   }
 
   async syncCustomersDifferential() {
-    const syncTimings = await this.utils.getSyncTimingsRecord("Drip")
+    const syncTiming = await this.utils.getSyncTimingsRecord("Drip")
 
     // Interested Users to Update
-    const interestedUsers = await this.prisma.client.interestedUsers({
-      where: { createdAt_gte: syncTimings.syncedAt },
+    const interestedUsers = await this.prisma.client2.interestedUser.findMany({
+      where: { createdAt: { gte: syncTiming.syncedAt } },
+      select: { email: true, zipcode: true },
     })
     const interestedUsersTurnedCustomers = (
-      await this.prisma.client.users({
-        where: { email_in: interestedUsers.map(a => a.email) },
+      await this.prisma.client2.user.findMany({
+        where: { email: { in: interestedUsers.map(a => a.email) } },
+        select: { email: true },
       })
     ).map(b => b.email)
     const interestedUsersToUpdate = interestedUsers.filter(
@@ -65,15 +69,15 @@ export class DripSyncService {
 
     const customers = await this.getCustomersWithDripData({
       AND: [
-        { user: { email_not_contains: "seasons.nyc" } },
+        { user: { email: { not: { contains: "seasons.nyc" } } } },
         {
           OR: [
-            { updatedAt_gte: syncTimings.syncedAt },
-            { user: { updatedAt_gte: syncTimings.syncedAt } },
-            { detail: { updatedAt_gte: syncTimings.syncedAt } },
+            { updatedAt: { gte: syncTiming.syncedAt } },
+            { user: { updatedAt: { gte: syncTiming.syncedAt } } },
+            { detail: { updatedAt: { gte: syncTiming.syncedAt } } },
             {
               detail: {
-                shippingAddress: { updatedAt_gte: syncTimings.syncedAt },
+                shippingAddress: { updatedAt: { gte: syncTiming.syncedAt } },
               },
             },
           ],
@@ -168,41 +172,48 @@ export class DripSyncService {
     )
   }
 
-  private async getCustomersWithDripData(where: CustomerWhereInput = {}) {
-    return await this.prisma.binding.query.customers(
-      { where },
-      `{
-        id
-        user {
-          id
-          firstName
-          lastName
-          email
-          verificationStatus
-        }
-        status
-        reservations {
-          status
-        }
-        detail {
-          phoneNumber
-          birthday
-          topSizes
-          waistSizes
-          preferredPronouns
-          style
-          phoneOS
-          shippingAddress {
-            address1
-            address2
-            city
-            state
-            zipCode
-            locationType
-          }
-        }
-      }`
-    )
+  private async getCustomersWithDripData(
+    where: Prisma.CustomerWhereInput = {}
+  ) {
+    const _customers = await this.prisma.client2.customer.findMany({
+      where,
+      select: {
+        id: true,
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            verificationStatus: true,
+          },
+        },
+        status: true,
+        reservations: { select: { status: true } },
+        detail: {
+          select: {
+            phoneNumber: true,
+            birthday: true,
+            topSizes: true,
+            waistSizes: true,
+            preferredPronouns: true,
+            style: true,
+            phoneOS: true,
+            shippingAddress: {
+              select: {
+                address1: true,
+                address2: true,
+                city: true,
+                state: true,
+                zipCode: true,
+                locationType: true,
+              },
+            },
+          },
+        },
+      },
+    })
+    return this.prisma.sanitizePayload(_customers, "Customer")
   }
 
   private customerToDripRecord(customer: any) {
@@ -256,9 +267,8 @@ export class DripSyncService {
   }
 
   private async updateDripSyncedAt() {
-    await this.prisma.client.createSyncTiming({
-      syncedAt: new Date(),
-      type: "Drip",
+    await this.prisma.client2.syncTiming.create({
+      data: { syncedAt: new Date(), type: "Drip" },
     })
   }
 }

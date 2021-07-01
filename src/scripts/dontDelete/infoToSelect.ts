@@ -39,7 +39,26 @@ const infoToSelect = infoString => {
 }
 
 const run = () => {
-  let info = `{}` // Insert your info string
+  let info = `{
+    id
+    createdAt
+    authorizedAt
+    admissions {
+      id
+      subscribedAt
+    }
+    user {
+      id
+    }
+    impactSyncTimings {
+      type
+      detail
+    }
+    detail {
+      id
+      discoveryReference
+    }
+  }` // Insert your info string
   infoToSelect(info)
 }
 
