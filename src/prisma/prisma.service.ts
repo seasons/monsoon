@@ -34,7 +34,6 @@ export const SINGLETON_RELATIONS_POSING_AS_ARRAYS = {
   "SmsReceipt": ["user"],
   "StylePreferences": ["customerDetail"],
   "UserPushNotificationInterest": ["UserPushNotification"],
-  "AdminActionLog": ["interpretation"],
   "CustomerNotificationBarReceipt": ["customer"],
   "PhysicalProduct": ["productVariant"],
   "SyncTiming": ["customer"]

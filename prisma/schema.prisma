@@ -35,9 +35,7 @@ model AdminActionLog {
   activeAdminUserId String?   @map("activeAdminUser") @db.VarChar(30)
   activeAdminUser   User?     @relation(fields: [activeAdminUserId], references: [id])
   interpretedAt     DateTime?
-
-  // should be a single record. will be fixed by full prisma2 migration
-  interpretation AdminActionLogInterpretation[]
+  interpretation    AdminActionLogInterpretation?
 }
 
 model AdminActionLogInterpretation {
