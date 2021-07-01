@@ -90,15 +90,19 @@ jobs:
           name: Deploy Prisma1 service
 
       - run:
-          command: yarn global add ts-node && yarn link && yarn link "monsoon" && sleep 5
-          name: Install monsoon-cli
+          command: yarn build
+          name: Compile so we can run the next cmd
 
       - run:
-          command: monsoon spp local
+          command: node bin/cli.js spp local
           name: Clone production data into local Postgres DB
 
       - run:
-          command: yarn start
+          command: node bin/cli.js ctu --email test_ci_6@seasons.nyc --password Seasons2020 --prisma local --roles Customer Admin
+          name: Generate user for integration test
+
+      - run:
+          command: yarn start && sleep 20
           name: Start server locally to run integration tests against
 
       - run:
