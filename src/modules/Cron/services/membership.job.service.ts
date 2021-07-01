@@ -6,6 +6,7 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
+import { PauseRequest } from "@prisma/client"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
 import { DateTime } from "luxon"
@@ -188,8 +189,12 @@ export class MembershipScheduledJobs {
     )
     for (const customer of pausedCustomers) {
       try {
-        const pauseRequest = this.utils.getLatestPauseRequest(customer)
-        const resumeDate = DateTime.fromISO(pauseRequest?.resumeDate)
+        const pauseRequest = (this.utils.getLatestPauseRequest(
+          customer
+        ) as unknown) as PauseRequest
+        const resumeDate = DateTime.fromISO(
+          pauseRequest.resumeDate.toISOString()
+        )
 
         // If it's time to auto-resume, do so.
         if (!!pauseRequest && resumeDate <= DateTime.local()) {
