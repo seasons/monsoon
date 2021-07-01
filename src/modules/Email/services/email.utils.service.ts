@@ -5,12 +5,11 @@ import {
   Category,
   ID_Input,
   Image,
-  Product,
   ProductVariant,
   User,
 } from "@app/prisma"
-import { Product as ProductBinding } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
+import { Product } from "@prisma/client"
 import { Order, Prisma } from "@prisma/client"
 import { ProductGridItem } from "@seasons/wind"
 import { head, pick, sampleSize, uniq } from "lodash"
@@ -22,8 +21,8 @@ export type MonsoonProductGridItem = ProductGridItem & {
 }
 
 export type ProductWithEmailData = Pick<
-  ProductBinding,
-  "id" | "type" | "name" | "retailPrice"
+  Product,
+  "id" | "type" | "name" | "retailPrice" | "slug"
 > & {
   images: Pick<Image, "url">
   variants: Pick<ProductVariant, "displayShort">
