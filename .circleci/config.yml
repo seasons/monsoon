@@ -90,7 +90,7 @@ jobs:
           name: Deploy Prisma1 service
 
       - run:
-          command: yarn global add ts-node && yarn link
+          command: yarn global add ts-node && yarn link && yarn link "monsoon" && sleep 5
           name: Install monsoon-cli
 
       - run:
