@@ -86,7 +86,7 @@ jobs:
           name: Wait for containers to fully spin up
 
       - run:
-          command: yarn prisma1 deploy
+          command: yarn prisma:deploy
           name: Deploy Prisma1 service
 
       - run:
