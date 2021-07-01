@@ -24,10 +24,11 @@ export class UserQueriesResolver {
     })
     select
   ) {
-    return await this.prisma.client2.user.findUnique({
+    const _data = await this.prisma.client2.user.findUnique({
       select,
       where: { ...args.where },
     })
+    return this.prisma.sanitizePayload(_data, "User")
   }
 
   @Query()

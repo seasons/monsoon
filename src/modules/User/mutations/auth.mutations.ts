@@ -18,11 +18,12 @@ export class AuthMutationsResolver {
   ) {}
 
   @Mutation()
-  async login(
-    @Args() { email, password },
-    @User() requestUser,
-    @Select() select
-  ) {
+  async login(@Args() { email, password }, @User() requestUser, @Info() info) {
+    const select = {
+      ...this.utils.getSelectFromInfoAt(info, "customer"),
+      ...this.utils.getSelectFromInfoAt(info, "user"),
+    }
+
     const data = await this.auth.loginUser({
       email: email.toLowerCase(),
       password,
@@ -40,8 +41,8 @@ export class AuthMutationsResolver {
     @Info() info
   ) {
     const select = {
-      user: QueryUtilsService.infoToSelect({ info, modelName: "User" }),
-      customer: QueryUtilsService.infoToSelect({ info, modelName: "Customer" }),
+      ...this.utils.getSelectFromInfoAt(info, "customer"),
+      ...this.utils.getSelectFromInfoAt(info, "user"),
     }
 
     const { user, tokenData, customer } = await this.auth.signupUser({

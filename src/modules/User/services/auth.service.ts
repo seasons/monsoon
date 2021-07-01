@@ -152,25 +152,23 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
-    const returnUser = this.prisma.client2.user.findUnique({
+    const _returnUser = await this.prisma.client2.user.findUnique({
       where: { email },
-      select: {
-        ...select.user,
-      },
+      ...select.user,
     })
+    const returnUser = this.prisma.sanitizePayload(_returnUser, "User")
 
     if (!returnUser) {
       throw new Error(`user with email ${email} not found`)
     }
 
-    const customer = this.prisma.client2.customer.findFirst({
+    const _customer = await this.prisma.client2.customer.findFirst({
       where: {
         user: { email },
       },
-      select: {
-        ...select.customer,
-      },
+      ...select.customer,
     })
+    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
     return {
       token: tokenData.access_token,
@@ -383,7 +381,33 @@ export class AuthService {
   }) {
     this.formatDetailsForCreateInput(details)
 
-    const user: any = await this.prisma.client2.user.create({
+    const defaultSelect = {
+      id: true,
+      email: true,
+      auth0Id: true,
+      firstName: true,
+      lastName: true,
+      customer: {
+        select: {
+          id: true,
+          status: true,
+          plan: true,
+          detail: {
+            select: {
+              id: true,
+              shippingAddress: true,
+            },
+          },
+        },
+      },
+    }
+
+    const updatedSelect: typeof defaultSelect = defaultsDeep(
+      defaultSelect,
+      select
+    )
+
+    const user = await this.prisma.client2.user.create({
       data: {
         auth0Id,
         email,
@@ -430,7 +454,7 @@ export class AuthService {
                 authorizationsCount: 0,
               },
             },
-            status: status || "Waitlisted",
+            status: "Waitlisted",
           },
         },
         pushNotificationStatus: "Denied",
@@ -439,29 +463,7 @@ export class AuthService {
         verificationMethod: "None",
         verificationStatus: "Pending",
       },
-      select: {
-        ...select,
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        customer: defaultsDeep(
-          {
-            select: {
-              id: true,
-              status: true,
-              plan: true,
-              detail: {
-                select: {
-                  id: true,
-                  shippingAddress: true,
-                },
-              },
-            },
-          },
-          select
-        ),
-      },
+      select: updatedSelect,
     })
 
     await this.updateCustomerWithReferrerData(user.customer, referrerId)
