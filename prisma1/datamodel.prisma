@@ -1031,8 +1031,16 @@ enum PauseType {
   WithoutItems
 }
 
+type PauseReason {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  reason: String!
+}
+
 type PauseRequest {
   id: ID! @id
+  reason: PauseReason
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   pausePending: Boolean!

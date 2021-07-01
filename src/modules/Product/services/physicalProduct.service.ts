@@ -8,7 +8,6 @@ import {
   PhysicalProduct,
   PhysicalProductOffloadMethod,
   PhysicalProductUpdateInput,
-  PhysicalProductWhereUniqueInput,
   Product,
   ProductVariant,
   WarehouseLocation,
@@ -16,7 +15,7 @@ import {
   WarehouseLocationWhereUniqueInput,
 } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
-import { AdminActionLog, Reservation } from "@prisma/client"
+import { AdminActionLog, Prisma, Reservation } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
@@ -27,7 +26,7 @@ import { ProductService } from "./product.service"
 import { ProductVariantService } from "./productVariant.service"
 
 interface OffloadPhysicalProductIfNeededInput {
-  where: PhysicalProductWhereUniqueInput
+  where: Prisma.PhysicalProductWhereUniqueInput
   inventoryStatus: InventoryStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: string
@@ -60,7 +59,7 @@ export class PhysicalProductService {
     data,
     info,
   }: {
-    where: PhysicalProductWhereUniqueInput
+    where: Prisma.PhysicalProductWhereUniqueInput
     data: PhysicalProductUpdateInput
     info: GraphQLResolveInfo
   }) {
@@ -621,24 +620,37 @@ export class PhysicalProductService {
     where,
     inventoryStatus,
   }: {
-    where: PhysicalProductWhereUniqueInput
+    where: Prisma.PhysicalProductWhereUniqueInput
     inventoryStatus: InventoryStatus
   }) {
-    const physicalProductBeforeUpdate = await this.prisma.binding.query.physicalProduct(
-      { where },
-      `{
-          id
-          inventoryStatus
-          productVariant {
-              id
-          }
-      }`
+    const _physicalProductBeforeUpdate = await this.prisma.client2.physicalProduct.findUnique(
+      {
+        where,
+        select: {
+          id: true,
+          inventoryStatus: true,
+          productVariant: {
+            select: {
+              id: true,
+              offloaded: true,
+              reservable: true,
+              reserved: true,
+              nonReservable: true,
+              stored: true,
+            },
+          },
+        },
+      }
+    )
+    const physicalProductBeforeUpdate = this.prisma.sanitizePayload(
+      _physicalProductBeforeUpdate,
+      "PhysicalProduct"
     )
 
     if (inventoryStatus !== physicalProductBeforeUpdate.inventoryStatus) {
       await this.productVariantService.updateCountsForStatusChange({
         productVariant: physicalProductBeforeUpdate.productVariant,
-        oldInventoryStatus: physicalProductBeforeUpdate.inventoryStatus,
+        oldInventoryStatus: physicalProductBeforeUpdate.inventoryStatus as InventoryStatus,
         newInventoryStatus: inventoryStatus,
       })
     }

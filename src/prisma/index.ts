@@ -58,6 +58,7 @@ export interface Exists {
   packageTransitEvent: (
     where?: PackageTransitEventWhereInput
   ) => Promise<boolean>;
+  pauseReason: (where?: PauseReasonWhereInput) => Promise<boolean>;
   pauseRequest: (where?: PauseRequestWhereInput) => Promise<boolean>;
   paymentPlan: (where?: PaymentPlanWhereInput) => Promise<boolean>;
   physicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>;
@@ -758,6 +759,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => PackageTransitEventConnectionPromise;
+  pauseReason: (
+    where: PauseReasonWhereUniqueInput
+  ) => PauseReasonNullablePromise;
+  pauseReasons: (args?: {
+    where?: PauseReasonWhereInput;
+    orderBy?: PauseReasonOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<PauseReason>;
+  pauseReasonsConnection: (args?: {
+    where?: PauseReasonWhereInput;
+    orderBy?: PauseReasonOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => PauseReasonConnectionPromise;
   pauseRequest: (
     where: PauseRequestWhereUniqueInput
   ) => PauseRequestNullablePromise;
@@ -2203,6 +2225,24 @@ export interface Prisma {
   deleteManyPackageTransitEvents: (
     where?: PackageTransitEventWhereInput
   ) => BatchPayloadPromise;
+  createPauseReason: (data: PauseReasonCreateInput) => PauseReasonPromise;
+  updatePauseReason: (args: {
+    data: PauseReasonUpdateInput;
+    where: PauseReasonWhereUniqueInput;
+  }) => PauseReasonPromise;
+  updateManyPauseReasons: (args: {
+    data: PauseReasonUpdateManyMutationInput;
+    where?: PauseReasonWhereInput;
+  }) => BatchPayloadPromise;
+  upsertPauseReason: (args: {
+    where: PauseReasonWhereUniqueInput;
+    create: PauseReasonCreateInput;
+    update: PauseReasonUpdateInput;
+  }) => PauseReasonPromise;
+  deletePauseReason: (where: PauseReasonWhereUniqueInput) => PauseReasonPromise;
+  deleteManyPauseReasons: (
+    where?: PauseReasonWhereInput
+  ) => BatchPayloadPromise;
   createPauseRequest: (data: PauseRequestCreateInput) => PauseRequestPromise;
   updatePauseRequest: (args: {
     data: PauseRequestUpdateInput;
@@ -3168,6 +3208,9 @@ export interface Subscription {
   packageTransitEvent: (
     where?: PackageTransitEventSubscriptionWhereInput
   ) => PackageTransitEventSubscriptionPayloadSubscription;
+  pauseReason: (
+    where?: PauseReasonSubscriptionWhereInput
+  ) => PauseReasonSubscriptionPayloadSubscription;
   pauseRequest: (
     where?: PauseRequestSubscriptionWhereInput
   ) => PauseRequestSubscriptionPayloadSubscription;
@@ -4482,6 +4525,16 @@ export type PackageOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type PauseReasonOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "reason_ASC"
+  | "reason_DESC";
 
 export type PaymentPlanOrderByInput =
   | "id_ASC"
@@ -7813,6 +7866,7 @@ export interface PauseRequestWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  reason?: Maybe<PauseReasonWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -7857,6 +7911,56 @@ export interface PauseRequestWhereInput {
   AND?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
   OR?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
   NOT?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
+}
+
+export interface PauseReasonWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  reason?: Maybe<String>;
+  reason_not?: Maybe<String>;
+  reason_in?: Maybe<String[] | String>;
+  reason_not_in?: Maybe<String[] | String>;
+  reason_lt?: Maybe<String>;
+  reason_lte?: Maybe<String>;
+  reason_gt?: Maybe<String>;
+  reason_gte?: Maybe<String>;
+  reason_contains?: Maybe<String>;
+  reason_not_contains?: Maybe<String>;
+  reason_starts_with?: Maybe<String>;
+  reason_not_starts_with?: Maybe<String>;
+  reason_ends_with?: Maybe<String>;
+  reason_not_ends_with?: Maybe<String>;
+  AND?: Maybe<PauseReasonWhereInput[] | PauseReasonWhereInput>;
+  OR?: Maybe<PauseReasonWhereInput[] | PauseReasonWhereInput>;
+  NOT?: Maybe<PauseReasonWhereInput[] | PauseReasonWhereInput>;
 }
 
 export interface CustomerMembershipWhereInput {
@@ -10347,6 +10451,10 @@ export type PackageWhereUniqueInput = AtLeastOne<{
 }>;
 
 export type PackageTransitEventWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type PauseReasonWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
@@ -16237,11 +16345,22 @@ export interface PauseRequestCreateManyWithoutMembershipInput {
 
 export interface PauseRequestCreateWithoutMembershipInput {
   id?: Maybe<ID_Input>;
+  reason?: Maybe<PauseReasonCreateOneInput>;
   pausePending: Boolean;
   pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
   notified?: Maybe<Boolean>;
+}
+
+export interface PauseReasonCreateOneInput {
+  create?: Maybe<PauseReasonCreateInput>;
+  connect?: Maybe<PauseReasonWhereUniqueInput>;
+}
+
+export interface PauseReasonCreateInput {
+  id?: Maybe<ID_Input>;
+  reason: String;
 }
 
 export interface ReservationCreateManyWithoutCustomerInput {
@@ -16946,11 +17065,30 @@ export interface PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
 }
 
 export interface PauseRequestUpdateWithoutMembershipDataInput {
+  reason?: Maybe<PauseReasonUpdateOneInput>;
   pausePending?: Maybe<Boolean>;
   pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
   notified?: Maybe<Boolean>;
+}
+
+export interface PauseReasonUpdateOneInput {
+  create?: Maybe<PauseReasonCreateInput>;
+  update?: Maybe<PauseReasonUpdateDataInput>;
+  upsert?: Maybe<PauseReasonUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<PauseReasonWhereUniqueInput>;
+}
+
+export interface PauseReasonUpdateDataInput {
+  reason?: Maybe<String>;
+}
+
+export interface PauseReasonUpsertNestedInput {
+  update: PauseReasonUpdateDataInput;
+  create: PauseReasonCreateInput;
 }
 
 export interface PauseRequestUpsertWithWhereUniqueWithoutMembershipInput {
@@ -19766,8 +19904,17 @@ export interface PackageTransitEventUpdateManyMutationInput {
   data?: Maybe<Json>;
 }
 
+export interface PauseReasonUpdateInput {
+  reason?: Maybe<String>;
+}
+
+export interface PauseReasonUpdateManyMutationInput {
+  reason?: Maybe<String>;
+}
+
 export interface PauseRequestCreateInput {
   id?: Maybe<ID_Input>;
+  reason?: Maybe<PauseReasonCreateOneInput>;
   pausePending: Boolean;
   pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
@@ -19791,6 +19938,7 @@ export interface CustomerMembershipCreateWithoutPauseRequestsInput {
 }
 
 export interface PauseRequestUpdateInput {
+  reason?: Maybe<PauseReasonUpdateOneInput>;
   pausePending?: Maybe<Boolean>;
   pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
@@ -22493,6 +22641,23 @@ export interface PackageTransitEventSubscriptionWhereInput {
   NOT?: Maybe<
     | PackageTransitEventSubscriptionWhereInput[]
     | PackageTransitEventSubscriptionWhereInput
+  >;
+}
+
+export interface PauseReasonSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<PauseReasonWhereInput>;
+  AND?: Maybe<
+    PauseReasonSubscriptionWhereInput[] | PauseReasonSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    PauseReasonSubscriptionWhereInput[] | PauseReasonSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    PauseReasonSubscriptionWhereInput[] | PauseReasonSubscriptionWhereInput
   >;
 }
 
@@ -27013,6 +27178,7 @@ export interface PauseRequestPromise
   extends Promise<PauseRequest>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  reason: <T = PauseReasonPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   pausePending: () => Promise<Boolean>;
@@ -27027,6 +27193,7 @@ export interface PauseRequestSubscription
   extends Promise<AsyncIterator<PauseRequest>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  reason: <T = PauseReasonSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   pausePending: () => Promise<AsyncIterator<Boolean>>;
@@ -27041,6 +27208,7 @@ export interface PauseRequestNullablePromise
   extends Promise<PauseRequest | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  reason: <T = PauseReasonPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   pausePending: () => Promise<Boolean>;
@@ -27049,6 +27217,38 @@ export interface PauseRequestNullablePromise
   resumeDate: () => Promise<DateTimeOutput>;
   notified: () => Promise<Boolean>;
   membership: <T = CustomerMembershipPromise>() => T;
+}
+
+export interface PauseReason {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  reason: String;
+}
+
+export interface PauseReasonPromise extends Promise<PauseReason>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  reason: () => Promise<String>;
+}
+
+export interface PauseReasonSubscription
+  extends Promise<AsyncIterator<PauseReason>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  reason: () => Promise<AsyncIterator<String>>;
+}
+
+export interface PauseReasonNullablePromise
+  extends Promise<PauseReason | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  reason: () => Promise<String>;
 }
 
 export interface Reservation {
@@ -29649,6 +29849,62 @@ export interface AggregatePackageTransitEventPromise
 
 export interface AggregatePackageTransitEventSubscription
   extends Promise<AsyncIterator<AggregatePackageTransitEvent>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface PauseReasonConnection {
+  pageInfo: PageInfo;
+  edges: PauseReasonEdge[];
+}
+
+export interface PauseReasonConnectionPromise
+  extends Promise<PauseReasonConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PauseReasonEdge>>() => T;
+  aggregate: <T = AggregatePauseReasonPromise>() => T;
+}
+
+export interface PauseReasonConnectionSubscription
+  extends Promise<AsyncIterator<PauseReasonConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<PauseReasonEdgeSubscription>>>() => T;
+  aggregate: <T = AggregatePauseReasonSubscription>() => T;
+}
+
+export interface PauseReasonEdge {
+  node: PauseReason;
+  cursor: String;
+}
+
+export interface PauseReasonEdgePromise
+  extends Promise<PauseReasonEdge>,
+    Fragmentable {
+  node: <T = PauseReasonPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface PauseReasonEdgeSubscription
+  extends Promise<AsyncIterator<PauseReasonEdge>>,
+    Fragmentable {
+  node: <T = PauseReasonSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregatePauseReason {
+  count: Int;
+}
+
+export interface AggregatePauseReasonPromise
+  extends Promise<AggregatePauseReason>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePauseReasonSubscription
+  extends Promise<AsyncIterator<AggregatePauseReason>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -34422,6 +34678,56 @@ export interface PackageTransitEventPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface PauseReasonSubscriptionPayload {
+  mutation: MutationType;
+  node: PauseReason;
+  updatedFields: String[];
+  previousValues: PauseReasonPreviousValues;
+}
+
+export interface PauseReasonSubscriptionPayloadPromise
+  extends Promise<PauseReasonSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = PauseReasonPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = PauseReasonPreviousValuesPromise>() => T;
+}
+
+export interface PauseReasonSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PauseReasonSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = PauseReasonSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = PauseReasonPreviousValuesSubscription>() => T;
+}
+
+export interface PauseReasonPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  reason: String;
+}
+
+export interface PauseReasonPreviousValuesPromise
+  extends Promise<PauseReasonPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  reason: () => Promise<String>;
+}
+
+export interface PauseReasonPreviousValuesSubscription
+  extends Promise<AsyncIterator<PauseReasonPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  reason: () => Promise<AsyncIterator<String>>;
+}
+
 export interface PauseRequestSubscriptionPayload {
   mutation: MutationType;
   node: PauseRequest;
@@ -37303,6 +37609,10 @@ export const models: Model[] = [
   },
   {
     name: "PauseType",
+    embedded: false
+  },
+  {
+    name: "PauseReason",
     embedded: false
   },
   {
