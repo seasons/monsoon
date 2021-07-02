@@ -57,7 +57,8 @@ export class SMSService {
     const verification = await this.twilio.client.verify
       .services(process.env.TWILIO_SERVICE_SID)
       .verifications.create({ to: e164PhoneNumber, channel: "sms" })
-    await this.prisma.client.updateUser({
+
+    await this.prisma.client2.user.update({
       data: {
         verificationStatus: this.twilioUtils.twilioToPrismaVerificationStatus(
           verification.status

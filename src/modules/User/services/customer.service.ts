@@ -197,17 +197,37 @@ export class CustomerService {
       }
     }
 
-    const updatedCustomer = await this.prisma.client2.customer.update({
-      data: {
-        detail: {
-          upsert: {
-            update: details,
-            create: details,
-          },
+    const detail = await this.prisma.client2.customerDetail.findFirst({
+      where: {
+        customer: {
+          id: customer.id,
         },
       },
-      where: { id: customer.id },
-      select,
+      select: {
+        id: true,
+        shippingAddress: true,
+      },
+    })
+    Object.keys(details).map(detailKey => {
+      if (["topSizes", "waistSizes", "weight"].includes(detailKey)) {
+        const values = details[detailKey].set
+
+        details[detailKey] = {
+          createMany: {
+            data: values.map((value, i) => ({
+              value,
+              position: (i + 1) * 1000,
+            })),
+          },
+        }
+      }
+    })
+
+    await this.prisma.client2.customerDetail.update({
+      data: details,
+      where: {
+        id: detail.id,
+      },
     })
 
     if (isUpdatingShippingAddress) {
@@ -215,17 +235,7 @@ export class CustomerService {
       if (!state) {
         throw new Error("State missing in shipping address update")
       }
-      const detail = await this.prisma.client2.customerDetail.findFirst({
-        where: {
-          customer: {
-            id: customer.id,
-          },
-        },
-        select: {
-          id: true,
-          shippingAddress: true,
-        },
-      })
+
       this.addCustomerLocationShippingOptions(state, detail.shippingAddress.id)
     }
 
@@ -234,8 +244,13 @@ export class CustomerService {
       await this.setCustomerPrismaStatus(user, status)
     }
 
+    const updatedCustomer = await this.prisma.client2.customer.findUnique({
+      where: { id: customer.id },
+      select,
+    })
+
     // Return the updated customer object
-    return updatedCustomer
+    return this.prisma.sanitizePayload(updatedCustomer, "Customer")
   }
 
   async updateCustomerDetail(user, customer, shippingAddress, phoneNumber) {
