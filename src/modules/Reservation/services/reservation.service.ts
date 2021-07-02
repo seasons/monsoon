@@ -1,6 +1,7 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
+import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
@@ -29,6 +30,7 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { intersection } from "lodash"
+import { DateTime } from "luxon"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
 
@@ -63,7 +65,8 @@ export class ReservationService {
     private readonly pushNotifs: PushNotificationService,
     private readonly reservationUtils: ReservationUtilsService,
     private readonly error: ErrorService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly customerUtils: CustomerUtilsService
   ) {}
 
   async reserveItems(
@@ -78,6 +81,13 @@ export class ReservationService {
     }
 
     const promises = []
+
+    const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
+      customer.id
+    )
+    const doesNotHaveFreeSwap =
+      nextFreeSwapDate &&
+      nextFreeSwapDate > DateTime.local().setZone("America/New_York").toISO()
 
     const customerWithPlanItemCount = await this.prisma.client2.customer.findUnique(
       {
@@ -193,7 +203,8 @@ export class ReservationService {
       ),
       physicalProductsBeingReserved,
       heldPhysicalProducts,
-      shippingOptionID
+      shippingOptionID,
+      doesNotHaveFreeSwap
     )
     const reservationPromise = this.prisma.client2.reservation.create({
       data: reservationData,
@@ -209,6 +220,25 @@ export class ReservationService {
     const result = await this.prisma.client2.$transaction(promises.flat())
 
     const reservation = result.pop()
+
+    if (doesNotHaveFreeSwap && reservation?.id) {
+      await this.payment.addEarlySwapCharge(customer.id)
+      await this.prisma.client2.reservation.update({
+        where: { id: reservation.id },
+        data: {
+          lineItems: {
+            create: [
+              {
+                recordID: reservation.id,
+                price: 3500,
+                currencyCode: "USD",
+                recordType: "EarlySwap",
+              },
+            ],
+          },
+        },
+      })
+    }
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
@@ -859,7 +889,8 @@ export class ReservationService {
     shipmentWeight: number,
     physicalProductsBeingReserved: PhysicalProduct[],
     heldPhysicalProducts: PhysicalProduct[],
-    shippingOptionID: string
+    shippingOptionID: string,
+    doesNotHaveFreeSwap: boolean
   ) {
     const allPhysicalProductsInReservation = [
       ...physicalProductsBeingReserved,

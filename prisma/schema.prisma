@@ -533,6 +533,7 @@ model OrderLineItem {
 
   // Do not use. Artifact of prisma2 migration
   Order Order[]
+  Reservation Reservation[]
 }
 
 model Package {
@@ -993,6 +994,7 @@ model Reservation {
   products          PhysicalProduct[]     @relation("ReservationToAllProducts")
   newProducts       PhysicalProduct[]     @relation("ReservationToNewProducts")
   returnedProducts  PhysicalProduct[]     @relation("ReservationToReturnedProducts")
+  lineItems         OrderLineItem[]
 }
 
 model ReservationFeedback {
@@ -1101,6 +1103,7 @@ enum OrderLineItemRecordType {
   ProductVariant
   ExternalProduct
   Package
+  EarlySwap
 }
 
 model Size {

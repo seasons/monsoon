@@ -84,7 +84,6 @@ export class ShippingService {
       insuranceAmount
     )
 
-    // TODO:
     const seasonsToCustomerTransaction = await this.createShippingLabel({
       shipment: seasonsToShippoShipment,
       carrier_account: process.env.UPS_ACCOUNT_ID,

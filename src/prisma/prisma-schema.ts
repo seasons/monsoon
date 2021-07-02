@@ -8618,7 +8618,7 @@ type OrderEdge {
 
 type OrderLineItem {
   id: ID!
-  recordID: ID!
+  recordID: ID
   recordType: OrderLineItemRecordType!
   needShipping: Boolean
   taxRate: Float
@@ -8639,7 +8639,7 @@ type OrderLineItemConnection {
 
 input OrderLineItemCreateInput {
   id: ID
-  recordID: ID!
+  recordID: ID
   recordType: OrderLineItemRecordType!
   needShipping: Boolean
   taxRate: Float
@@ -8689,7 +8689,7 @@ enum OrderLineItemOrderByInput {
 
 type OrderLineItemPreviousValues {
   id: ID!
-  recordID: ID!
+  recordID: ID
   recordType: OrderLineItemRecordType!
   needShipping: Boolean
   taxRate: Float
@@ -8707,6 +8707,7 @@ enum OrderLineItemRecordType {
   ProductVariant
   ExternalProduct
   Package
+  EarlySwap
 }
 
 input OrderLineItemScalarWhereInput {
@@ -16585,6 +16586,7 @@ type Reservation {
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
+  lineItems(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem!]
   status: ReservationStatus!
   returnedAt: DateTime
   shippedAt: DateTime
@@ -16619,6 +16621,7 @@ input ReservationCreateInput {
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
+  lineItems: OrderLineItemCreateManyInput
   status: ReservationStatus!
   returnedAt: DateTime
   shippedAt: DateTime
@@ -16664,6 +16667,7 @@ input ReservationCreateWithoutCustomerInput {
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
+  lineItems: OrderLineItemCreateManyInput
   status: ReservationStatus!
   returnedAt: DateTime
   shippedAt: DateTime
@@ -16689,6 +16693,7 @@ input ReservationCreateWithoutPackageEventsInput {
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
+  lineItems: OrderLineItemCreateManyInput
   status: ReservationStatus!
   returnedAt: DateTime
   shippedAt: DateTime
@@ -16715,6 +16720,7 @@ input ReservationCreateWithoutReceiptInput {
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
+  lineItems: OrderLineItemCreateManyInput
   status: ReservationStatus!
   returnedAt: DateTime
   shippedAt: DateTime
@@ -17463,6 +17469,7 @@ input ReservationUpdateDataInput {
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
+  lineItems: OrderLineItemUpdateManyInput
   status: ReservationStatus
   returnedAt: DateTime
   shippedAt: DateTime
@@ -17488,6 +17495,7 @@ input ReservationUpdateInput {
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
+  lineItems: OrderLineItemUpdateManyInput
   status: ReservationStatus
   returnedAt: DateTime
   shippedAt: DateTime
@@ -17580,6 +17588,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
+  lineItems: OrderLineItemUpdateManyInput
   status: ReservationStatus
   returnedAt: DateTime
   shippedAt: DateTime
@@ -17604,6 +17613,7 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
+  lineItems: OrderLineItemUpdateManyInput
   status: ReservationStatus
   returnedAt: DateTime
   shippedAt: DateTime
@@ -17629,6 +17639,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
+  lineItems: OrderLineItemUpdateManyInput
   status: ReservationStatus
   returnedAt: DateTime
   shippedAt: DateTime
@@ -17712,6 +17723,9 @@ input ReservationWhereInput {
   phase_not_in: [ReservationPhase!]
   shipped: Boolean
   shipped_not: Boolean
+  lineItems_every: OrderLineItemWhereInput
+  lineItems_some: OrderLineItemWhereInput
+  lineItems_none: OrderLineItemWhereInput
   status: ReservationStatus
   status_not: ReservationStatus
   status_in: [ReservationStatus!]

@@ -11,7 +11,15 @@ import { AuthService } from "@modules/User/services/auth.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
-import { camelCase, get, head, identity, snakeCase, upperFirst } from "lodash"
+import {
+  camelCase,
+  get,
+  head,
+  identity,
+  snakeCase,
+  stubTrue,
+  upperFirst,
+} from "lodash"
 import { DateTime } from "luxon"
 import Stripe from "stripe"
 
@@ -55,6 +63,34 @@ export class PaymentService {
     @Inject(forwardRef(() => AuthService))
     private readonly auth: AuthService
   ) {}
+
+  async addEarlySwapCharge(customerID: string) {
+    const customer = await this.prisma.client2.customer.findUnique({
+      where: {
+        id: customerID,
+      },
+      select: {
+        id: true,
+        membership: true,
+      },
+    })
+
+    const subscriptionID = customer.membership.subscriptionId
+
+    try {
+      await chargebee.invoice
+        .charge_addon({
+          subscription_id: subscriptionID,
+          addon_id: "early-swap",
+          addon_quantity: 1,
+        })
+        .request()
+    } catch (e) {
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
+      throw new Error(JSON.stringify(e))
+    }
+  }
 
   async addShippingCharge(customer, shippingCode) {
     try {

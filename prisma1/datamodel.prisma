@@ -1070,6 +1070,8 @@ enum OrderLineItemRecordType {
   ProductVariant
   ExternalProduct
   Package
+  EarlySwap
+  Reservation
 }
 
 enum OrderStatus {
@@ -1153,6 +1155,7 @@ type Reservation {
   reservationNumber: Int! @unique
   phase: ReservationPhase!
   shipped: Boolean!
+  lineItems: [OrderLineItem!]
   status: ReservationStatus!
   returnedAt: DateTime
   shippedAt: DateTime
