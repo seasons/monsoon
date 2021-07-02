@@ -98,11 +98,11 @@ jobs:
           name: Clone production data into local Postgres DB
 
       - run:
-          command: node bin/cli.js ctu --email test_ci_6@seasons.nyc --password Seasons2020 --prisma local --roles Customer Admin
+          command: node bin/cli.js ctu --email test_ci_7@seasons.nyc --password Seasons2020 --prisma local --roles Customer Admin
           name: Generate user for integration test
 
       - run:
-          command: yarn start:ci && sleep 20
+          command: yarn start:ci && sleep 40
           name: Start server locally to run integration tests against
 
       - run:
