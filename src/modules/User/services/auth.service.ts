@@ -402,10 +402,10 @@ export class AuthService {
       },
     }
 
-    const updatedSelect: typeof defaultSelect = defaultsDeep(
-      defaultSelect,
-      select
-    )
+    const updatedSelect: typeof defaultSelect = defaultsDeep(defaultSelect, {
+      customer: select.customer,
+      ...select?.user?.select,
+    })
 
     const user = await this.prisma.client2.user.create({
       data: {
@@ -468,7 +468,7 @@ export class AuthService {
 
     await this.updateCustomerWithReferrerData(user.customer, referrerId)
 
-    return user
+    return this.prisma.sanitizePayload(user, "User")
   }
 
   private async updateCustomerWithReferrerData(customer, referrerId) {
