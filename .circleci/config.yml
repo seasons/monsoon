@@ -102,7 +102,7 @@ jobs:
           name: Generate user for integration test
 
       - run:
-          command: yarn start:ci && sleep 30
+          command: yarn start:ci && sleep 40
           name: Start server locally to run integration tests against
 
       - run:
