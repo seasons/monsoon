@@ -1,3 +1,4 @@
+import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma1/prisma.module"
 

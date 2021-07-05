@@ -599,6 +599,7 @@ type PhysicalProduct {
   reports: [PhysicalProductQualityReport!]! @relation(onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  packedAt: DateTime
 }
 
 type ProductNotification {
@@ -1030,8 +1031,16 @@ enum PauseType {
   WithoutItems
 }
 
+type PauseReason {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  reason: String!
+}
+
 type PauseRequest {
   id: ID! @id
+  reason: PauseReason
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   pausePending: Boolean!

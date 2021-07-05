@@ -454,7 +454,8 @@ export class PaymentService {
   async pauseSubscription(
     subscriptionId,
     customer,
-    pauseType: PauseType = "WithoutItems"
+    pauseType: PauseType = "WithoutItems",
+    reasonID
   ) {
     const customerWithMembership = await this.prisma.client2.customer.findUnique(
       {
@@ -509,6 +510,7 @@ export class PaymentService {
           pauseDate: new Date(termEnd),
           resumeDate: new Date(resumeDateISO),
           pauseType,
+          reason: reasonID && { connect: { id: reasonID } },
           notified: false,
         },
       })

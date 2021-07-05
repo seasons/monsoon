@@ -115,14 +115,15 @@ export class PaymentMutationsResolver {
 
   @Mutation()
   async pauseSubscription(
-    @Args() { subscriptionID, pauseType },
+    @Args() { subscriptionID, pauseType, reasonID },
     @Customer() customer,
     @User() user
   ) {
     await this.paymentService.pauseSubscription(
       subscriptionID,
       customer,
-      pauseType
+      pauseType,
+      reasonID
     )
     const customerWithData = (await this.prisma.binding.query.customer(
       {

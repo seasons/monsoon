@@ -1,4 +1,5 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
   Brand,
@@ -7,16 +8,14 @@ import {
   PhysicalProduct,
   PhysicalProductOffloadMethod,
   PhysicalProductUpdateInput,
-  PhysicalProductWhereUniqueInput,
   Product,
   ProductVariant,
   WarehouseLocation,
   WarehouseLocationType,
   WarehouseLocationWhereUniqueInput,
 } from "@app/prisma"
-import { Reservation } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
-import { AdminActionLog } from "@prisma/client"
+import { AdminActionLog, Prisma, Reservation } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
@@ -27,7 +26,7 @@ import { ProductService } from "./product.service"
 import { ProductVariantService } from "./productVariant.service"
 
 interface OffloadPhysicalProductIfNeededInput {
-  where: PhysicalProductWhereUniqueInput
+  where: Prisma.PhysicalProductWhereUniqueInput
   inventoryStatus: InventoryStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: string
@@ -51,7 +50,8 @@ export class PhysicalProductService {
     private readonly productVariantService: ProductVariantService,
     private readonly productService: ProductService,
     private readonly physicalProductUtils: PhysicalProductUtilsService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly statements: StatementsService
   ) {}
 
   async updatePhysicalProduct({
@@ -59,7 +59,7 @@ export class PhysicalProductService {
     data,
     info,
   }: {
-    where: PhysicalProductWhereUniqueInput
+    where: Prisma.PhysicalProductWhereUniqueInput
     data: PhysicalProductUpdateInput
     info: GraphQLResolveInfo
   }) {
@@ -212,7 +212,12 @@ export class PhysicalProductService {
     warehouseLocations: Pick<WarehouseLocation, "id" | "barcode">[],
     reservations: (Pick<
       Reservation,
-      "id" | "createdAt" | "cancelledAt" | "completedAt" | "reservationNumber"
+      | "id"
+      | "createdAt"
+      | "cancelledAt"
+      | "completedAt"
+      | "reservationNumber"
+      | "status"
     > & { products: Pick<PhysicalProduct, "id">[] })[]
   ): (AdminActionLog & { interpretation: string })[] {
     const keysWeDontCareAbout = [
@@ -234,27 +239,32 @@ export class PhysicalProductService {
       const keys = Object.keys(changedFields)
       let interpretation
 
+      const getActiveReservation = () =>
+        reservations.find(r => {
+          const physProdInReservation = r.products.find(
+            p => p.id === a.entityId
+          )
+          if (!physProdInReservation) {
+            return false
+          }
+
+          const createdAt = new Date(r.createdAt)
+          const cancelledAt = new Date(r.cancelledAt)
+          const completedAt = new Date(r.completedAt)
+          const logTimestamp = new Date(a.triggeredAt)
+
+          const loggedAfterReservationCreated = createdAt < logTimestamp
+          const loggedBeforeReservationEnded =
+            this.statements.reservationIsActive(r) ||
+            cancelledAt > logTimestamp ||
+            completedAt > logTimestamp
+
+          return loggedAfterReservationCreated && loggedBeforeReservationEnded
+        })
+
       if (keys.includes("warehouseLocation")) {
         if (changedFields["warehouseLocation"] === null) {
-          const activeReservation = reservations.find(r => {
-            const physProdInReservation = r.products.find(
-              p => p.id === a.entityId
-            )
-            if (!physProdInReservation) {
-              return false
-            }
-
-            const createdAt = new Date(r.createdAt)
-            const cancelledAt = new Date(r.cancelledAt)
-            const completedAt = new Date(r.completedAt)
-            const logTimestamp = new Date(a.triggeredAt)
-
-            const loggedAfterReservationCreated = createdAt < logTimestamp
-            const loggedBeforeReservationEnded =
-              cancelledAt > logTimestamp || completedAt > logTimestamp
-
-            return loggedAfterReservationCreated && loggedBeforeReservationEnded
-          })
+          const activeReservation = getActiveReservation()
           if (!!activeReservation) {
             interpretation = `Picked for reservation ${activeReservation.reservationNumber}`
           } else {
@@ -279,6 +289,9 @@ export class PhysicalProductService {
         ) {
           interpretation = "Processed return from Reservation"
         }
+      } else if (keys.includes("packedAt")) {
+        const activeReservation = getActiveReservation()
+        interpretation = `Packed for reservation ${activeReservation?.reservationNumber}`
       }
       return { ...a, interpretation }
     })
@@ -607,24 +620,37 @@ export class PhysicalProductService {
     where,
     inventoryStatus,
   }: {
-    where: PhysicalProductWhereUniqueInput
+    where: Prisma.PhysicalProductWhereUniqueInput
     inventoryStatus: InventoryStatus
   }) {
-    const physicalProductBeforeUpdate = await this.prisma.binding.query.physicalProduct(
-      { where },
-      `{
-          id
-          inventoryStatus
-          productVariant {
-              id
-          }
-      }`
+    const _physicalProductBeforeUpdate = await this.prisma.client2.physicalProduct.findUnique(
+      {
+        where,
+        select: {
+          id: true,
+          inventoryStatus: true,
+          productVariant: {
+            select: {
+              id: true,
+              offloaded: true,
+              reservable: true,
+              reserved: true,
+              nonReservable: true,
+              stored: true,
+            },
+          },
+        },
+      }
+    )
+    const physicalProductBeforeUpdate = this.prisma.sanitizePayload(
+      _physicalProductBeforeUpdate,
+      "PhysicalProduct"
     )
 
     if (inventoryStatus !== physicalProductBeforeUpdate.inventoryStatus) {
       await this.productVariantService.updateCountsForStatusChange({
         productVariant: physicalProductBeforeUpdate.productVariant,
-        oldInventoryStatus: physicalProductBeforeUpdate.inventoryStatus,
+        oldInventoryStatus: physicalProductBeforeUpdate.inventoryStatus as InventoryStatus,
         newInventoryStatus: inventoryStatus,
       })
     }

@@ -1,6 +1,7 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { AdmissionsService } from "@app/modules/User/services/admissions.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
+import { CustomerStatus } from "@app/prisma"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
@@ -32,7 +33,7 @@ export class AdmissionsScheduledJobs {
       console.log(`${i++} of ${customers.length}`)
       try {
         if (
-          this.admissions.isTriageable(cust.status) ||
+          this.admissions.isTriageable(cust.status as CustomerStatus) ||
           cust.status === "Authorized"
         ) {
           await this.customer.triageCustomer(

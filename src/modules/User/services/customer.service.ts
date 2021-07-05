@@ -58,7 +58,7 @@ type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
 
 @Injectable()
 export class CustomerService {
-  triageCustomerInfo = {
+  triageCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
     id: true,
     status: true,
     detail: {
@@ -81,7 +81,7 @@ export class CustomerService {
       },
     },
     admissions: { select: { authorizationsCount: true } },
-  }
+  })
 
   constructor(
     @Inject(forwardRef(() => AuthService))
@@ -509,7 +509,7 @@ export class CustomerService {
   ): Promise<TriageCustomerResult> {
     const customer = await this.prisma.client2.customer.findUnique({
       where,
-      select: this.triageCustomerInfo,
+      select: this.triageCustomerSelect,
     })
 
     if (
