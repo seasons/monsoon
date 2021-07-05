@@ -264,7 +264,6 @@ model CustomerAdmissionsData {
   authorizationsCount         Int
   allAccessEnabled            Boolean
   authorizationWindowClosesAt DateTime?
-  subscribedAt                DateTime?
   customer                    Customer?
 }
 

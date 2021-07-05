@@ -54,7 +54,8 @@ describe("Validate Warehouse Location", () => {
         new QueryUtilsService(prismaService)
       ),
       physicalProductUtilsService,
-      utilsService
+      utilsService,
+      null
     )
 
     done()

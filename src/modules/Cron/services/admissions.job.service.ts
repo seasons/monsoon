@@ -25,7 +25,7 @@ export class AdmissionsScheduledJobs {
       where: {
         status: { in: ["Invited", "Created", "Waitlisted", "Authorized"] },
       },
-      select: this.customer.triageCustomerInfo,
+      select: this.customer.triageCustomerSelect,
     })
 
     let i = 0
