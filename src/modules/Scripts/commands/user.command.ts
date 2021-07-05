@@ -179,13 +179,15 @@ export class UserCommands {
     } = this.createTestUserBasics(_email, _password)
 
     // Fail gracefully if the user is already in the DB
-    if (!!(await this.prisma.client.user({ email }))) {
+    if (!!(await this.prisma.client2.user.findUnique({ where: { email } }))) {
       this.logger.error("User already in DB")
       return
     }
 
     let user
     let tokenData
+    let customer
+
     const address: BillingAddress = {
       firstName,
       lastName,
@@ -197,7 +199,7 @@ export class UserCommands {
     }
 
     try {
-      ;({ user, tokenData } = await this.auth.signupUser({
+      ;({ user, customer, tokenData } = await this.auth.signupUser({
         email,
         password,
         firstName,
@@ -243,6 +245,133 @@ export class UserCommands {
           },
         },
       }))
+
+      // Give them valid billing data if appropriate
+      if (["Active", "Suspended", "Paused"].includes(status)) {
+        chargebee.configure({
+          site: "seasons-test",
+          api_key: "test_fmWkxemy4L3CP1ku1XwPlTYQyJVKajXx",
+        })
+        const card: Card = {
+          number: "4242424242424242",
+          expiryMonth: "04",
+          expiryYear: "2022",
+          cvv: "222",
+        }
+        this.logger.log("Updating customer")
+        const { subscription } = await this.paymentService.createSubscription(
+          planID,
+          this.utils.snakeCaseify(address),
+          user,
+          this.utils.snakeCaseify(card)
+        )
+
+        await this.prisma.client2.customer.update({
+          data: {
+            membership: {
+              create: {
+                plan: {
+                  connect: {
+                    planID,
+                  },
+                },
+                subscriptionId: subscription.id,
+                ...(status === "Paused"
+                  ? {
+                      pauseRequests: {
+                        create: {
+                          pausePending: false,
+                          pauseDate: DateTime.local().toISO(),
+                          resumeDate: DateTime.local()
+                            .plus({ months: 1 })
+                            .toISO(),
+                        },
+                      },
+                    }
+                  : {}),
+                subscription: {
+                  create: this.paymentUtils.getCustomerMembershipSubscriptionData(
+                    subscription
+                  ),
+                },
+              },
+            } as any,
+            status,
+            user: {
+              update: {
+                roles: {
+                  set: roles.map((role, i) => ({
+                    value: role,
+                    position: (i + 1) * 1000,
+                  })),
+                },
+              },
+            },
+          },
+
+          where: { id: customer.id },
+        })
+
+        await this.prisma.client2.billingInfo.create({
+          data: {
+            brand: "Visa",
+            name: fullName,
+            last_digits: card.number.substr(12),
+            expiration_month: parseInt(card.expiryMonth, 10),
+            expiration_year: parseInt(card.expiryYear, 10),
+            customer: {
+              connect: {
+                id: customer.id,
+              },
+            },
+          },
+        })
+      }
+
+      // Give them a valid admissions record if appropriate
+      if (["Active", "Waitlisted", "Paused", "Authorized"].includes(status)) {
+        const authorizationsCount = ["Active", "Authorized", "Paused"].includes(
+          status
+        )
+          ? 1
+          : 0
+        const authorizationWindowClosesAt = DateTime.local()
+          .plus({ days: 7 })
+          .toISO()
+        await this.prisma.client2.customer.update({
+          data: {
+            admissions: {
+              create: {
+                allAccessEnabled,
+                admissable: true,
+                authorizationsCount,
+                inServiceableZipcode: true,
+                authorizationWindowClosesAt,
+              },
+            },
+            authorizedAt:
+              status !== "Waitlisted" ? DateTime.local().toISO() : null,
+          },
+          where: { id: customer.id },
+        })
+      }
+
+      // Make sure we always update these
+      await this.prisma.client2.customer.update({
+        where: { id: customer.id },
+        data: { status },
+      })
+      await this.prisma.client2.user.update({
+        where: { id: user.id },
+        data: { roles: { set: roles } },
+      })
+
+      this.logger.log(`Success!`)
+      this.logger.log(`Access token: ${tokenData.access_token}`)
+      this.logger.log(`Email: ${email}`)
+      this.logger.log(`Password: ${password}`)
+      this.logger.log(`Roles: ${roles}. Status: ${status}.`)
+      this.logger.log(`Env: ${prismaEnv}`)
     } catch (err) {
       console.log(err)
       if (err.message.includes("400")) {
@@ -252,121 +381,6 @@ export class UserCommands {
       }
       return
     }
-
-    // Give them valid billing data if appropriate
-    const customer = head(
-      await this.prisma.client.customers({
-        where: { user: { id: user.id } },
-      })
-    )
-    if (["Active", "Suspended", "Paused"].includes(status)) {
-      chargebee.configure({
-        site: "seasons-test",
-        api_key: "test_fmWkxemy4L3CP1ku1XwPlTYQyJVKajXx",
-      })
-      const card: Card = {
-        number: "4242424242424242",
-        expiryMonth: "04",
-        expiryYear: "2022",
-        cvv: "222",
-      }
-      this.logger.log("Updating customer")
-      const { subscription } = await this.paymentService.createSubscription(
-        planID,
-        this.utils.snakeCaseify(address),
-        user,
-        this.utils.snakeCaseify(card)
-      )
-      await this.prisma.client.updateCustomer({
-        data: {
-          membership: {
-            create: {
-              plan: {
-                connect: {
-                  planID,
-                },
-              },
-              subscriptionId: subscription.id,
-              ...(status === "Paused"
-                ? {
-                    pauseRequests: {
-                      create: {
-                        pausePending: false,
-                        pauseDate: DateTime.local().toISO(),
-                        resumeDate: DateTime.local()
-                          .plus({ months: 1 })
-                          .toISO(),
-                      },
-                    },
-                  }
-                : {}),
-              subscription: {
-                create: this.paymentUtils.getCustomerMembershipSubscriptionData(
-                  subscription
-                ),
-              },
-            },
-          },
-          billingInfo: {
-            create: {
-              brand: "Visa",
-              name: fullName,
-              last_digits: card.number.substr(12),
-              expiration_month: parseInt(card.expiryMonth, 10),
-              expiration_year: parseInt(card.expiryYear, 10),
-            },
-          },
-          status,
-          user: { update: { roles: { set: roles } } },
-        },
-        where: { id: customer.id },
-      })
-    }
-
-    // Give them a valid admissions record if appropriate
-    if (["Active", "Waitlisted", "Paused", "Authorized"].includes(status)) {
-      const authorizationsCount = ["Active", "Authorized", "Paused"].includes(
-        status
-      )
-        ? 1
-        : 0
-      const authorizationWindowClosesAt = DateTime.local()
-        .plus({ days: 7 })
-        .toISO()
-      await this.prisma.client.updateCustomer({
-        data: {
-          admissions: {
-            create: {
-              allAccessEnabled,
-              admissable: true,
-              authorizationsCount,
-              inServiceableZipcode: true,
-              authorizationWindowClosesAt,
-            },
-          },
-          authorizedAt:
-            status !== "Waitlisted" ? DateTime.local().toISO() : null,
-        },
-        where: { id: customer.id },
-      })
-    }
-
-    // Make sure we always update these
-    await this.prisma.client.updateCustomer({
-      where: { id: customer.id },
-      data: { status },
-    })
-    await this.prisma.client.updateUser({
-      where: { id: user.id },
-      data: { roles: { set: roles } },
-    })
-
-    this.logger.log(`Success!`)
-    this.logger.log(`Access token: ${tokenData.access_token}`)
-    this.logger.log(`Email: ${email}`)
-    this.logger.log(`Password: ${password}`)
-    this.logger.log(`Roles: ${roles}. Status: ${status}.`)
-    this.logger.log(`Env: ${prismaEnv}`)
   }
 
   private createTestUserBasics(email, password) {
