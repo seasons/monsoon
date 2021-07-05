@@ -403,7 +403,7 @@ export class AuthService {
     }
 
     const updatedSelect: typeof defaultSelect = defaultsDeep(defaultSelect, {
-      customer: select.customer,
+      customer: select?.customer,
       ...select?.user?.select,
     })
 
@@ -466,15 +466,15 @@ export class AuthService {
       select: updatedSelect,
     })
 
-    await this.updateCustomerWithReferrerData(user.customer, referrerId)
+    await this.updateCustomerWithReferrerData(user, user.customer, referrerId)
 
     return this.prisma.sanitizePayload(user, "User")
   }
 
-  private async updateCustomerWithReferrerData(customer, referrerId) {
+  private async updateCustomerWithReferrerData(user, customer, referrerId) {
     const referralLink = await this.createReferralLink(
       customer.id,
-      this.rebrandlyUsernameFromFirstname(customer.firstName)
+      this.rebrandlyUsernameFromFirstname(user.firstName)
     )
     let referrerIsValidCustomer = false
     if (referrerId) {
