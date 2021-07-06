@@ -588,8 +588,8 @@ model PauseRequest {
   resumeDate      DateTime?
   membershipId    String?             @map("membership") @db.VarChar(30)
   membership      CustomerMembership? @relation(fields: [membershipId], references: [id])
-  notified        Boolean
-  pauseType       String
+  notified        Boolean             @default(false)
+  pauseType       String              @default("WithoutItems")
   pauseReasonId   String?             @map("pauseReason") @db.VarChar(30)
   reason          PauseReason?        @relation(fields: [pauseReasonId], references: [id])
 }
