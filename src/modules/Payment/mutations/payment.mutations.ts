@@ -125,39 +125,36 @@ export class PaymentMutationsResolver {
       pauseType,
       reasonID
     )
-    const customerWithData = (await this.prisma.binding.query.customer(
-      {
-        where: { id: customer.id },
+    const _customerWithData = (await this.prisma.client2.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        user: { select: { firstName: true, email: true, id: true } },
+        membership: {
+          select: {
+            id: true,
+            plan: {
+              select: { id: true, tier: true, planID: true, itemCount: true },
+            },
+            pauseRequests: {
+              select: {
+                createdAt: true,
+                resumeDate: true,
+                pauseDate: true,
+                pauseType: true,
+              },
+            },
+          },
+        },
+        reservations: { select: { id: true, status: true, createdAt: true } },
       },
-      `{
-      id
-      user {
-        firstName
-        email
-        id
-      }
-      membership {
-        id
-        plan {
-          id
-          tier
-          planID
-          itemCount
-        }
-        pauseRequests {
-          createdAt
-          resumeDate
-          pauseDate
-          pauseType
-        }
-      }
-      reservations {
-        id
-        status
-        createdAt
-      }
-    }`
-    )) as any
+    })) as any
+    const customerWithData = this.prisma.sanitizePayload(
+      _customerWithData,
+      "Customer"
+    )
     await this.email.sendPausedEmail(customerWithData, false)
 
     const tier = customerWithData?.membership?.plan?.tier
