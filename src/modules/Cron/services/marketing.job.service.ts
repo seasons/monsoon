@@ -40,6 +40,14 @@ export class MarketingScheduledJobs {
     this.logger.log(`Drip Unsubscribe job unsubscribed ${count} users`)
   }
 
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
+  async unsubscribeSeasonsEmails() {
+    await this.prisma.client2.user.updateMany({
+      where: { email: { contains: "seasons.nyc" }, sendSystemEmails: true },
+      data: { sendSystemEmails: false },
+    })
+  }
+
   @Cron(CronExpression.EVERY_6_HOURS)
   async authWindowFollowups() {
     this.logger.log("Run auth window followups job")
