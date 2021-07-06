@@ -5,27 +5,31 @@ import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { Customer } from "@app/prisma/prisma.binding"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
-import { Prisma } from "@prisma/client"
+import {
+  Customer,
+  CustomerAdmissionsData,
+  CustomerDetail,
+  Location,
+  Prisma,
+  UTMData,
+  User,
+} from "@prisma/client"
 import {
   BillingInfoUpdateDataInput,
-  CustomerAdmissionsDataCreateWithoutCustomerInput,
+  CustomerAdmissionsDataUpdateInput,
   CustomerStatus,
   CustomerUpdateInput,
-  CustomerWhereUniqueInput,
-  ID_Input,
   InAdmissableReason,
   NotificationBarID,
-  ShippingOption,
-  User,
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
-import { head, pick } from "lodash"
+import { defaultsDeep, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
@@ -38,8 +42,16 @@ type TriageCustomerResult = {
   waitlistReason?: InAdmissableReason
 }
 
+type CustomerWithUser = Customer & {
+  detail: CustomerDetail & {
+    shippingAddress: Location
+  }
+  user: User
+  admissions: CustomerAdmissionsData
+}
+
 type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
-  customer: Customer
+  customer: any
   dryRun: boolean
   inServiceableZipcode?: boolean
   allAccessEnabled?: boolean
@@ -59,15 +71,7 @@ export class CustomerService {
         discoveryReference: true,
       },
     },
-    utm: {
-      select: {
-        source: true,
-        medium: true,
-        campaign: true,
-        term: true,
-        content: true,
-      },
-    },
+    utm: true,
     user: {
       select: {
         id: true,
@@ -79,38 +83,6 @@ export class CustomerService {
     },
     admissions: { select: { authorizationsCount: true } },
   })
-  triageCustomerInfo = `{
-    id
-    status
-    detail {
-      shippingAddress {
-        zipCode
-      }
-      topSizes
-      waistSizes
-      impactId
-      discoveryReference
-    }
-    utm {
-      source
-      medium
-      campaign
-      term
-      content
-    }
-    user {
-      id
-      firstName
-      lastName
-      email
-      emails {
-        emailId
-      }
-    }
-    admissions {
-      authorizationsCount
-    }
-  }`
 
   constructor(
     @Inject(forwardRef(() => AuthService))
@@ -122,12 +94,14 @@ export class CustomerService {
     private readonly email: EmailService,
     private readonly pushNotification: PushNotificationService,
     private readonly sms: SMSService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
     const customer = await this.auth.getCustomerFromUserID(user.id)
-    await this.prisma.client.updateCustomer({
+
+    return await this.prisma.client2.customer.update({
       data: { status },
       where: { id: customer.id },
     })
@@ -137,12 +111,15 @@ export class CustomerService {
     destinationState,
     shippingAddressID
   ) {
-    const shippingMethods = await this.prisma.client.shippingMethods()
-    const warehouseLocation = await this.prisma.client.location({
-      slug:
-        process.env.SEASONS_CLEANER_LOCATION_SLUG ||
-        "seasons-cleaners-official",
+    const shippingMethods = await this.prisma.client2.shippingMethod.findMany()
+    const warehouseLocation = await this.prisma.client2.location.findUnique({
+      where: {
+        slug:
+          process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+          "seasons-cleaners-official",
+      },
     })
+
     const shippingOptionsData = JSON.parse(
       fs.readFileSync(
         process.cwd() + "/src/modules/Shipping/shippingOptionsData.json",
@@ -150,24 +127,26 @@ export class CustomerService {
       )
     )
     const originState = warehouseLocation.state
-    const shippingOptions = [] as ShippingOption[]
+    const shippingOptions = []
 
     for (const method of shippingMethods) {
       const stateData =
         shippingOptionsData[method.code].from[originState].to[destinationState]
 
-      const shippingOption = await this.prisma.client.createShippingOption({
-        origin: { connect: { id: warehouseLocation.id } },
-        destination: { connect: { id: shippingAddressID } },
-        shippingMethod: { connect: { id: method.id } },
-        externalCost: stateData.price,
-        averageDuration: stateData.averageDuration,
+      const shippingOption = await this.prisma.client2.shippingOption.create({
+        data: {
+          origin: { connect: { id: warehouseLocation.id } },
+          destination: { connect: { id: shippingAddressID } },
+          shippingMethod: { connect: { id: method.id } },
+          externalCost: stateData.price,
+          averageDuration: stateData.averageDuration,
+        },
       })
 
       shippingOptions.push(shippingOption)
     }
 
-    await this.prisma.client.updateLocation({
+    return await this.prisma.client2.location.update({
       where: { id: shippingAddressID },
       data: {
         shippingOptions: {
@@ -177,7 +156,7 @@ export class CustomerService {
     })
   }
 
-  async addCustomerDetails({ details, status }, customer, user, info) {
+  async addCustomerDetails({ details, status }, customer, user, select) {
     const groupedKeys = ["name", "address1", "address2", "city", "state"]
     const isUpdatingShippingAddress =
       details.shippingAddress?.create &&
@@ -220,16 +199,33 @@ export class CustomerService {
       }
     }
 
-    await this.prisma.client.updateCustomer({
-      data: {
-        detail: {
-          upsert: {
-            update: details,
-            create: details,
-          },
+    const detail = await this.prisma.client2.customerDetail.findFirst({
+      where: {
+        customer: {
+          id: customer.id,
         },
       },
-      where: { id: customer.id },
+      select: {
+        id: true,
+        shippingAddress: true,
+      },
+    })
+    Object.keys(details).map(detailKey => {
+      if (["topSizes", "waistSizes", "weight"].includes(detailKey)) {
+        const values = details[detailKey].set
+        details[detailKey] = this.queryUtils.createScalarListMutateInput(
+          values,
+          customer.id,
+          "update"
+        )
+      }
+    })
+
+    await this.prisma.client2.customerDetail.update({
+      data: details,
+      where: {
+        id: detail.id,
+      },
     })
 
     if (isUpdatingShippingAddress) {
@@ -237,14 +233,8 @@ export class CustomerService {
       if (!state) {
         throw new Error("State missing in shipping address update")
       }
-      const shippingAddressID = await this.prisma.client
-        .customer({
-          id: customer.id,
-        })
-        .detail()
-        .shippingAddress()
-        .id()
-      this.addCustomerLocationShippingOptions(state, shippingAddressID)
+
+      this.addCustomerLocationShippingOptions(state, detail.shippingAddress.id)
     }
 
     // If a status was passed, update the customer status in prisma
@@ -252,11 +242,13 @@ export class CustomerService {
       await this.setCustomerPrismaStatus(user, status)
     }
 
+    const updatedCustomer = await this.prisma.client2.customer.findUnique({
+      where: { id: customer.id },
+      select,
+    })
+
     // Return the updated customer object
-    return await this.prisma.binding.query.customer(
-      { where: { id: customer.id } },
-      info
-    )
+    return this.prisma.sanitizePayload(updatedCustomer, "Customer")
   }
 
   async updateCustomerDetail(user, customer, shippingAddress, phoneNumber) {
@@ -298,17 +290,18 @@ export class CustomerService {
       address1: shippingStreet1,
       address2: shippingStreet2,
     }
-
-    const custWithData = await this.prisma.binding.query.customer(
-      {
-        where: { id: customer.id },
+    const custWithData = await this.prisma.client2.customer.findFirst({
+      where: { id: customer.id },
+      select: {
+        id: true,
+        admissions: {
+          select: {
+            id: true,
+          },
+        },
       },
-      `{
-        admissions {
-          id
-        }
-      }`
-    )
+    })
+
     const sanitizedPhoneNumber = phoneNumber.replace(/-/g, "")
     const data = {
       detail: {
@@ -328,7 +321,7 @@ export class CustomerService {
           },
         },
       },
-    } as CustomerUpdateInput
+    } as Prisma.CustomerUpdateInput
 
     // If they already have an admissions record, update allAccessEnabled
     if (!!custWithData?.admissions?.id) {
@@ -339,7 +332,7 @@ export class CustomerService {
         update: { allAccessEnabled },
       }
     }
-    return await this.prisma.client.updateCustomer({
+    return await this.prisma.client2.customer.update({
       where: { id: customer.id },
       data,
     })
@@ -350,57 +343,60 @@ export class CustomerService {
     customerId,
   }: {
     billingInfo: BillingInfoUpdateDataInput
-    customerId: ID_Input
+    customerId: string
   }) {
-    const billingInfoId = await this.prisma.client
-      .customer({ id: customerId })
-      .billingInfo()
-      .id()
-    if (billingInfoId) {
-      await this.prisma.client.updateBillingInfo({
+    const customer = await this.prisma.client2.customer.findFirst({
+      where: { id: customerId },
+      select: {
+        id: true,
+        billingInfoId: true,
+      },
+    })
+
+    if (customer.billingInfoId) {
+      return await this.prisma.client2.billingInfo.update({
         data: billingInfo,
-        where: { id: billingInfoId },
+        where: { id: customer.billingInfoId },
       })
     }
   }
 
-  async updateCustomer(args, info, application: ApplicationType) {
+  async updateCustomer(args, select, application: ApplicationType) {
     let { where, data, withContact = true } = args
-    const customer = await this.prisma.binding.query.customer(
-      {
-        where,
+
+    const defaultSelect = Prisma.validator<Prisma.CustomerSelect>()({
+      id: true,
+      user: {
+        select: {
+          id: true,
+          email: true,
+          emails: { select: { emailId: true } },
+          firstName: true,
+          lastName: true,
+        },
       },
-      `{
-        id
-        user {
-          id
-          email
-          emails {
-            emailId
-          }
-          firstName
-          lastName
-        }
-        utm {
-          source
-          medium
-          campaign
-          term
-          content
-        }
-        detail {
-          shippingAddress {
-            zipCode
-          }
-          impactId
-          discoveryReference
-        }
-        status
-        admissions {
-          authorizationsCount
-        }
-      }`
+      utm: true,
+      detail: {
+        select: {
+          shippingAddress: { select: { zipCode: true } },
+          impactId: true,
+          discoveryReference: true,
+        },
+      },
+      plan: true,
+      status: true,
+      admissions: { select: { authorizationsCount: true } },
+    })
+
+    const mergedSelect: typeof defaultSelect = defaultsDeep(
+      defaultSelect,
+      select
     )
+
+    const customer = await this.prisma.client2.customer.findFirst({
+      where,
+      select: mergedSelect,
+    })
 
     if (
       ["Waitlisted", "Invited"].includes(customer.status) &&
@@ -462,15 +458,14 @@ export class CustomerService {
       if (withContact) {
         // Normal users
         if (customer.status === "Waitlisted") {
-          await this.email.sendAuthorizedEmail(
-            customer.user as User,
-            "manual",
-            [...availableBottomStyles, ...availableTopStyles]
-          )
+          await this.email.sendAuthorizedEmail(customer.user, "manual", [
+            ...availableBottomStyles,
+            ...availableTopStyles,
+          ])
         }
         // Users we invited off the admin
         if (customer.status === "Invited") {
-          await this.email.sendPriorityAccessEmail(customer.user as User)
+          await this.email.sendPriorityAccessEmail(customer.user)
         }
 
         // either kind of user
@@ -486,7 +481,7 @@ export class CustomerService {
       }
 
       this.segment.trackBecameAuthorized(customer.user.id, {
-        previousStatus: customer.status,
+        previousStatus: customer.status as CustomerStatus,
         firstName: customer.user.firstName,
         lastName: customer.user.lastName,
         email: customer.user.email,
@@ -497,23 +492,29 @@ export class CustomerService {
         ...this.utils.formatUTMForSegment(customer.utm),
       })
     }
-    return this.prisma.binding.mutation.updateCustomer({ where, data }, info)
+
+    return this.prisma.client2.customer.update({
+      where,
+      data,
+      select: mergedSelect,
+    })
   }
 
   async triageCustomer(
-    where: CustomerWhereUniqueInput,
+    where: Prisma.CustomerWhereUniqueInput,
     application: ApplicationType,
-    dryRun: boolean,
-    customer: Customer = {} as Customer
+    dryRun: boolean
   ): Promise<TriageCustomerResult> {
-    if (Object.keys(customer).length === 0) {
-      customer = await this.prisma.binding.query.customer(
-        { where },
-        this.triageCustomerInfo
-      )
-    }
+    const _customer = await this.prisma.client2.customer.findUnique({
+      where,
+      select: this.triageCustomerSelect,
+    })
+    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
-    if (!this.admissions.isTriageable(customer.status) && !dryRun) {
+    if (
+      !this.admissions.isTriageable(customer.status as CustomerStatus) &&
+      !dryRun
+    ) {
       throw new ApolloError(
         `Invalid customer status: ${customer.status}. Can not triage a ${customer.status} customer`
       )
@@ -605,7 +606,7 @@ export class CustomerService {
     if (!dryRun) {
       if (admit) {
         this.segment.trackBecameAuthorized(customer.user.id, {
-          previousStatus: customer.status,
+          previousStatus: customer.status as CustomerStatus,
           firstName: customer.user.firstName,
           lastName: customer.user.lastName,
           email: customer.user.email,
@@ -613,16 +614,16 @@ export class CustomerService {
           application,
           impactId: customer.detail?.impactId,
           discoveryReference: customer.detail?.discoveryReference,
-          ...this.utils.formatUTMForSegment(customer.utm),
+          ...this.utils.formatUTMForSegment(customer.utm as UTMData),
         })
 
         await this.email.sendAuthorizedEmail(
-          customer.user as User,
+          customer.user,
           "automatic",
           availableStyles
         )
       } else {
-        await this.email.sendWaitlistedEmail(customer.user as User)
+        await this.email.sendWaitlistedEmail(customer.user)
       }
 
       if (Object.keys(triageDetail).includes("availableBottomStyles")) {
@@ -662,13 +663,18 @@ export class CustomerService {
     const palette = this.utils.parseJSONFile(
       "src/modules/User/notificationBarColorSchemas"
     )[data.paletteID]
-    const receiptData = head(
-      await this.prisma.client.customerNotificationBarReceipts({
+
+    const receiptData = await this.prisma.client2.customerNotificationBarReceipt.findFirst(
+      {
         where: {
-          AND: [{ notificationBarId }, { customer: { id: customerId } }],
+          AND: [
+            { notificationBarId },
+            { customer: { every: { id: customerId } } },
+          ],
         },
-      })
+      }
     )
+
     return {
       ...data,
       palette,
@@ -685,8 +691,8 @@ export class CustomerService {
     allAccessEnabled,
     dryRun,
   }: UpdateCustomerAdmissionsDataInput) {
-    let data: CustomerUpdateInput = {}
-    let admissionsUpsertData = {} as CustomerAdmissionsDataCreateWithoutCustomerInput
+    let data = {} as any
+    let admissionsUpsertData = {} as any
 
     if (!dryRun) {
       data = { status }
@@ -743,13 +749,13 @@ export class CustomerService {
       (dryRun &&
         this.shouldUpdateCustomerAdmissionsData(customer, admissionsUpsertData))
     ) {
-      await this.prisma.client.updateCustomer({
+      await this.prisma.client2.customer.update({
         where: { id: customer.id },
         data: {
           ...data,
           admissions: {
             upsert: {
-              update: admissionsUpsertData,
+              update: admissionsUpsertData as CustomerAdmissionsDataUpdateInput,
               create: admissionsUpsertData,
             },
           },
@@ -760,8 +766,8 @@ export class CustomerService {
   }
 
   private shouldUpdateCustomerAdmissionsData(
-    customer: Customer,
-    upsertData: CustomerAdmissionsDataCreateWithoutCustomerInput
+    customer: Customer & { admissions: CustomerAdmissionsData },
+    upsertData: CustomerAdmissionsDataUpdateInput
   ) {
     return (
       customer?.admissions?.admissable !== upsertData.admissable ||
@@ -775,9 +781,8 @@ export class CustomerService {
     )
   }
 
-  /* Start here */
   private calculateNumAuthorizations(
-    customer: Customer,
+    customer,
     status: CustomerStatus,
     dryRun: boolean
   ) {

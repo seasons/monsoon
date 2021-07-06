@@ -2,8 +2,7 @@ import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import { addFragmentToInfo } from "graphql-binding"
+import { Args, Query, Resolver } from "@nestjs/graphql"
 
 @Resolver()
 export class CustomerQueriesResolver {
@@ -13,24 +12,39 @@ export class CustomerQueriesResolver {
   ) {}
 
   @Query()
-  async customer(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.customer(
-      args,
-      addFragmentToInfo(info, `fragment EnsureId on Customer {id}`)
-    )
+  async customer(
+    @Args() args,
+    @Select({
+      withFragment: `fragment EnsureId on Customer {id}`,
+    })
+    select
+  ) {
+    const _data = await this.prisma.client2.customer.findUnique({
+      where: { ...args.where },
+      select,
+    })
+    return this.prisma.sanitizePayload(_data, "Customer")
   }
 
   @Query()
-  async customers(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.customers(
-      args,
-      addFragmentToInfo(info, `fragment EnsureId on Customer {id}`)
-    )
+  async customers(
+    @FindManyArgs({
+      withFragment: `fragment EnsureId on Customer {id}`,
+    })
+    findManyArgs
+  ) {
+    const _data = await this.prisma.client2.customer.findMany({
+      ...findManyArgs,
+    })
+    return this.prisma.sanitizePayload(_data, "Customer")
   }
 
   @Query()
-  async customersConnection(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.customersConnection(args, info)
+  async customersConnection(@Args() args, @Select() select) {
+    return await this.queryUtils.resolveConnection(
+      { ...args, select },
+      "Customer"
+    )
   }
 
   @Query()

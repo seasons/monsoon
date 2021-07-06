@@ -41,22 +41,16 @@ const infoToSelect = infoString => {
 const run = () => {
   let info = `{
     id
-    createdAt
-    authorizedAt
-    admissions {
+    membership {
       id
-      subscribedAt
+      subscription {
+        id
+        currentTermEnd
+      }
     }
-    user {
+    bagItems {
       id
-    }
-    impactSyncTimings {
-      type
-      detail
-    }
-    detail {
-      id
-      discoveryReference
+      status
     }
   }` // Insert your info string
   infoToSelect(info)

@@ -42,8 +42,7 @@ export class AdmissionsScheduledJobs {
               id: cust.id,
             },
             "monsoon",
-            true,
-            cust as any
+            true
           )
         }
       } catch (err) {

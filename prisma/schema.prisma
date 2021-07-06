@@ -255,14 +255,14 @@ model Customer {
 
 model CustomerAdmissionsData {
   id                          String    @id @default(cuid()) @db.VarChar(30)
-  inServiceableZipcode        Boolean
-  admissable                  Boolean
+  inServiceableZipcode        Boolean   @default(false)
+  admissable                  Boolean   
   inAdmissableReason          String?
   createdAt                   DateTime  @default(now())
   updatedAt                   DateTime  @updatedAt
   subscribedAt                DateTime?
-  authorizationsCount         Int
-  allAccessEnabled            Boolean
+  authorizationsCount         Int       @default(0)
+  allAccessEnabled            Boolean   @default(false)
   authorizationWindowClosesAt DateTime?
   customer                    Customer?
 }
@@ -289,7 +289,7 @@ model CustomerDetail {
   shippingAddressId  String?                     @map("shippingAddress") @db.VarChar(30)
   shippingAddress    Location?                   @relation(fields: [shippingAddressId], references: [id])
   phoneOS            String?
-  insureShipment     Boolean
+  insureShipment     Boolean                     @default(false)
   stylePreferencesId String?                     @map("stylePreferences") @db.VarChar(30)
   stylePreferences   StylePreferences?           @relation(fields: [stylePreferencesId], references: [id])
   instagramHandle    String?
@@ -1239,15 +1239,15 @@ model User {
   email                         String                         @unique
   firstName                     String
   lastName                      String
-  role                          String
+  role                          String                         @default("Customer")
   createdAt                     DateTime                       @default(now())
   updatedAt                     DateTime                       @updatedAt
-  pushNotificationStatus        String
-  verificationStatus            String
-  verificationMethod            String
+  pushNotificationStatus        String                         @default("Denied")
+  verificationStatus            String                         @default("Pending")
+  verificationMethod            String                         @default("None")
   pushNotificationId            String?                        @map("pushNotification") @db.VarChar(30)
   pushNotification              UserPushNotification?          @relation(fields: [pushNotificationId], references: [id])
-  sendSystemEmails              Boolean
+  sendSystemEmails              Boolean                        @default(true)
   deviceDataId                  String?                        @map("deviceData") @db.VarChar(30)
   deviceData                    UserDeviceData?                @relation(fields: [deviceDataId], references: [id])
   activeAdminUser               ActiveAdminUser?

@@ -563,8 +563,8 @@ export class ProductVariantFieldsResolver {
         } else {
           result = shopifyProductVariant
         }
-        buyNewPrice["buyNewAvailableForSale"] = result.cachedAvailableForSale
-        buyNewPrice["buyNewPrice"] = result.cachedPrice
+        buyNewPrice["buyNewAvailableForSale"] = result?.cachedAvailableForSale
+        buyNewPrice["buyNewPrice"] = result?.cachedPrice
       }
     } catch (e) {
       this.error.captureError(e)

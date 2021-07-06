@@ -33,7 +33,7 @@ export class CollectionService {
       placements: data.productIDs && { set: data.placements },
     }
 
-    return this.prisma.client.upsertCollection({
+    return this.prisma.client2.collection.upsert({
       where: { id: data.id || "" },
       create: {
         slug,

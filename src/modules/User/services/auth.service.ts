@@ -1,21 +1,14 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import {
-  PaymentService,
-  SubscriptionData,
-} from "@app/modules/Payment/services/payment.service"
+import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerCreateInput, CustomerDetail } from "@app/prisma/prisma.binding"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
-import {
-  CustomerDetailCreateInput,
-  CustomerMembershipSubscriptionData,
-  UserPushNotificationInterestType,
-} from "@prisma1/index"
+import { CustomerDetail, Location, Prisma, UTMData, User } from "@prisma/client"
+import { UserPushNotificationInterestType } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
-import { head } from "lodash"
+import { defaultsDeep } from "lodash"
 import { DateTime } from "luxon"
 import request from "request"
 import zipcodes from "zipcodes"
@@ -26,14 +19,6 @@ const PW_STRENGTH_RULES_URL =
 interface SegmentReservedTraitsInCustomerDetail {
   phone?: string
   address?: any
-}
-
-interface UTMInput {
-  source: String
-  medium: String
-  term: String
-  content: String
-  campaign: String
 }
 
 interface Auth0User {
@@ -50,10 +35,16 @@ export class AuthService {
     private readonly pushNotification: PushNotificationService,
     private readonly email: EmailService,
     private readonly error: ErrorService,
-    private readonly utils: UtilsService,
     @Inject(forwardRef(() => PaymentService))
     private readonly payment: PaymentService
   ) {}
+
+  defaultPushNotificationInterests = [
+    "General",
+    "Blog",
+    "Bag",
+    "NewProduct",
+  ] as UserPushNotificationInterestType[]
 
   async signupUser({
     email,
@@ -63,17 +54,17 @@ export class AuthService {
     details,
     referrerId,
     utm,
-    info,
+    select,
     giftId,
   }: {
     email: string
     password: string
     firstName: string
     lastName: string
-    details: CustomerDetailCreateInput
+    details: Prisma.CustomerDetailCreateInput
     referrerId?: string
-    utm?: UTMInput
-    info?: any
+    utm?: UTMData
+    select?: any
     giftId?: string
   }) {
     // 1. Register the user on Auth0
@@ -102,31 +93,18 @@ export class AuthService {
     }
 
     // 3. Create the user in our database
-    const user = await this.createPrismaUser(
-      userAuth0ID,
-      email.trim(),
-      firstName.trim(),
-      lastName.trim()
-    )
-
-    // 4. Create the customer in our database
-    // There will be a race condition in the case where two members with the same first name sign up at the same time
-    const usersWithSameFirstName = await this.prisma.client.users({
-      where: { firstName: firstName.trim() },
-    })
-    const { customer } = await this.createPrismaCustomerForExistingUser(
-      user.id,
+    const user = await this.createPrismaUser({
+      auth0Id: userAuth0ID,
+      email: email.trim(),
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
       details,
-      "Created",
-      // replace all non-aphabetical characters with an empty space so e.g "R.J." doesn't throw an error on rebrandly
-      // We had to increment here by 4 after an early issue with collisions due to whitespace
-      firstName.replace(/[^a-z]/gi, "") +
-        (usersWithSameFirstName.length + 4).toString(),
+      utm,
       referrerId,
-      utm
-    )
+      select,
+    })
 
-    // 5. In the case of a gift subscription
+    // 4. In the case of a gift subscription
     // We will already have a subscription for that user based on email so assign it to that new customer
     if (!!giftId) {
       const giftData = await this.payment.getGift(giftId)
@@ -151,34 +129,14 @@ export class AuthService {
 
     await this.email.sendSubmittedEmailEmail(user)
 
-    let returnUser = user
-    let returnCust = customer
-    if (!!info) {
-      let userInfo = this.utils.getInfoStringAt(info, "user")
-      if (!!userInfo) {
-        returnUser = await this.prisma.binding.query.user(
-          {
-            where: { id: user.id },
-          },
-          userInfo
-        )
-      }
-
-      let custInfo = this.utils.getInfoStringAt(info, "customer")
-      if (!!custInfo) {
-        returnCust = await this.prisma.binding.query.customer(
-          {
-            where: { id: customer.id },
-          },
-          custInfo
-        )
-      }
+    return {
+      user,
+      tokenData,
+      customer: user.customer,
     }
-
-    return { user: returnUser, tokenData, customer: returnCust }
   }
 
-  async loginUser({ email, password, requestUser, info }) {
+  async loginUser({ email, password, requestUser, select }) {
     if (!!requestUser) {
       throw new Error(`user is already logged in`)
     }
@@ -194,38 +152,30 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
-    let returnUser
-    const userInfo = this.utils.getInfoStringAt(info, "user") || `{id}`
-    if (!!userInfo) {
-      returnUser = await this.prisma.binding.query.user(
-        { where: { email } },
-        userInfo
-      )
-    }
+    const _returnUser = await this.prisma.client2.user.findUnique({
+      where: { email },
+      ...select.user,
+    })
+    const returnUser = this.prisma.sanitizePayload(_returnUser, "User")
 
     if (!returnUser) {
       throw new Error(`user with email ${email} not found`)
     }
 
-    let returnCust
-    const custInfo = this.utils.getInfoStringAt(info, "customer")
-    if (!!custInfo) {
-      returnCust = head(
-        await this.prisma.binding.query.customers(
-          {
-            where: { user: { email } },
-          },
-          custInfo
-        )
-      )
-    }
+    const _customer = await this.prisma.client2.customer.findFirst({
+      where: {
+        user: { email },
+      },
+      ...select.customer,
+    })
+    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
     return {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
       user: returnUser,
-      customer: returnCust,
+      customer: customer,
       beamsToken: this.pushNotification.generateToken(email),
     }
   }
@@ -263,11 +213,13 @@ export class AuthService {
   }
 
   async getCustomerFromUserID(userID: string) {
-    return head(
-      await this.prisma.client.customers({
-        where: { user: { id: userID } },
-      })
-    )
+    return await this.prisma.client2.customer.findFirst({
+      where: {
+        user: {
+          id: userID,
+        },
+      },
+    })
   }
 
   async resetPassword(email) {
@@ -295,7 +247,7 @@ export class AuthService {
   }
 
   extractSegmentReservedTraitsFromCustomerDetail(
-    detail: CustomerDetail
+    detail: CustomerDetail & { shippingAddress: Location }
   ): SegmentReservedTraitsInCustomerDetail {
     const traits = {} as any
     if (!!detail?.phoneNumber) {
@@ -325,7 +277,7 @@ export class AuthService {
     return new Promise(function CreateUserAndReturnId(resolve, reject) {
       request(
         {
-          method: "Post",
+          method: "POST",
           url: `https://${process.env.AUTH0_DOMAIN}/dbconnections/signup`,
           headers: { "content-type": "application/json" },
           body: {
@@ -408,49 +360,142 @@ export class AuthService {
     })
   }
 
-  private async createPrismaUser(auth0Id, email, firstName, lastName) {
-    let user = await this.prisma.client.createUser({
-      auth0Id,
-      email,
-      firstName,
-      lastName,
-      roles: { set: ["Customer"] }, // defaults to customer
+  private async createPrismaUser({
+    auth0Id,
+    email,
+    firstName,
+    lastName,
+    details,
+    referrerId,
+    utm,
+    select,
+  }: {
+    auth0Id: string
+    email: string
+    firstName: string
+    lastName: string
+    details: Prisma.CustomerDetailCreateInput
+    referrerId?: string
+    utm?: UTMData
+    select: any
+  }) {
+    this.formatDetailsForCreateInput(details)
+
+    const defaultSelect = {
+      id: true,
+      email: true,
+      auth0Id: true,
+      firstName: true,
+      lastName: true,
+      customer: {
+        select: {
+          id: true,
+          status: true,
+          plan: true,
+          detail: {
+            select: {
+              id: true,
+              shippingAddress: true,
+            },
+          },
+        },
+      },
+    }
+
+    const updatedSelect: typeof defaultSelect = defaultsDeep(defaultSelect, {
+      customer: select?.customer,
+      ...select?.user?.select,
     })
-    const defaultPushNotificationInterests = [
-      "General",
-      "Blog",
-      "Bag",
-      "NewProduct",
-    ] as UserPushNotificationInterestType[]
-    user = await this.prisma.client.updateUser({
-      where: { id: user.id },
+
+    const user = await this.prisma.client2.user.create({
       data: {
+        auth0Id,
+        email,
+        firstName,
+        lastName,
+        roles: {
+          create: {
+            position: 1000,
+            value: "Customer",
+          },
+        },
         pushNotification: {
           create: {
             interests: {
-              create: defaultPushNotificationInterests.map(type => ({
+              create: this.defaultPushNotificationInterests.map(type => ({
                 type,
                 value: "",
-                user: { connect: { id: user.id } },
                 status: true,
               })),
             },
             status: true,
           },
         },
+        customer: {
+          create: {
+            ...(!!utm?.source ||
+            !!utm?.medium ||
+            !!utm?.term ||
+            !!utm?.content ||
+            !!utm?.campaign
+              ? { utm: { create: utm } }
+              : {}),
+            detail: {
+              create: {
+                ...details,
+                insureShipment: false,
+              },
+            },
+            admissions: {
+              create: {
+                allAccessEnabled: false,
+                admissable: false,
+                inServiceableZipcode: false,
+                authorizationsCount: 0,
+              },
+            },
+            status: "Waitlisted",
+          },
+        },
       },
+      select: updatedSelect,
     })
-    return user
+
+    await this.updateCustomerWithReferrerData(user, user.customer, referrerId)
+
+    return this.prisma.sanitizePayload(user, "User")
   }
 
-  private async createPrismaCustomerForExistingUser(
-    userID,
-    details,
-    status,
-    referralSlashTag,
-    referrerId,
-    utm
-  ) {
+  private async updateCustomerWithReferrerData(user, customer, referrerId) {
+    const referralLink = await this.createReferralLink(
+      customer.id,
+      this.rebrandlyUsernameFromFirstname(user.firstName)
+    )
+    let referrerIsValidCustomer = false
+    if (referrerId) {
+      referrerIsValidCustomer = !!(await this.prisma.client2.customer.findFirst(
+        {
+          where: { id: referrerId },
+        }
+      ))
+    }
+
+    return await this.prisma.client2.customer.update({
+      where: { id: customer.id },
+      data: {
+        referralLink: referralLink.shortUrl,
+        ...(referrerIsValidCustomer
+          ? {
+              referrer: {
+                connect: { id: referrerId },
+              },
+            }
+          : {}),
+      },
+    })
+  }
+
+  private formatDetailsForCreateInput(details) {
     if (details?.shippingAddress?.create?.zipCode) {
       const zipCode = details?.shippingAddress?.create?.zipCode.trim()
       const state = zipcodes.lookup(zipCode)?.state
@@ -462,80 +507,19 @@ export class AuthService {
     if (details?.phoneNumber) {
       details.phoneNumber = details.phoneNumber.replace(/-/g, "")
     }
+  }
 
-    const customerQueryInfo = `{
-      id
-      status
-      detail {
-        id
-        shippingAddress {
-          id
-          zipCode
-          state
-          city
-        }
-      }
-    }`
+  private async rebrandlyUsernameFromFirstname(firstName: string) {
+    const usersWithSameFirstName = await this.prisma.client2.user.findMany({
+      where: { firstName: firstName.trim() },
+    })
 
-    let createData = {} as CustomerCreateInput
-    if (
-      !!utm?.source ||
-      !!utm?.medium ||
-      !!utm?.term ||
-      !!utm?.content ||
-      !!utm?.campaign
-    ) {
-      createData.utm = { create: utm }
-    }
-    let newCustomer = await this.prisma.binding.mutation.createCustomer(
-      {
-        data: {
-          ...createData,
-          user: {
-            connect: { id: userID },
-          },
-          detail: { create: details },
-          status: status || "Waitlisted",
-        },
-      },
-      customerQueryInfo
+    // replace all non-aphabetical characters with an empty space so e.g "R.J." doesn't throw an error on rebrandly
+    // We had to increment here by 4 after an early issue with collisions due to whitespace
+    return (
+      firstName.replace(/[^a-z]/gi, "") +
+      (usersWithSameFirstName.length + 4).toString().toLowerCase()
     )
-
-    try {
-      const referralLink = await this.createReferralLink(
-        newCustomer.id,
-        referralSlashTag
-      )
-      let referrerIsValidCustomer = false
-      if (referrerId) {
-        referrerIsValidCustomer = await this.prisma.binding.query.customer({
-          where: { id: referrerId },
-        })
-      }
-
-      newCustomer = await this.prisma.binding.mutation.updateCustomer(
-        {
-          data: {
-            referralLink: referralLink.shortUrl,
-            referrer: {
-              connect: referrerIsValidCustomer ? { id: referrerId } : null,
-            },
-          },
-          where: { id: newCustomer.id },
-        },
-        customerQueryInfo
-      )
-    } catch (err) {
-      this.error.setExtraContext(
-        { id: userID, status, referrerId, referralSlashTag },
-        "user"
-      )
-      this.error.captureError(err)
-    }
-
-    return {
-      customer: newCustomer,
-    }
   }
 
   async createReferralLink(
@@ -568,7 +552,6 @@ export class AuthService {
           headers: requestHeaders,
         },
         (err, response, body) => {
-          console.log("body", body)
           if (err) {
             this.error.setExtraContext({ id: customerId }, "customer")
             this.error.captureError(
