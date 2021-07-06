@@ -344,23 +344,21 @@ export class AdmissionsService {
   }
 
   private async pausedCustomersResumingThisWeek() {
-    const pausedCustomers = await this.prisma.binding.query.customers(
-      {
-        where: { status: "Paused" },
+    const _pausedCustomers = await this.prisma.client2.customer.findMany({
+      where: { status: "Paused" },
+      select: {
+        id: true,
+        detail: { select: { topSizes: true, waistSizes: true } },
+        membership: {
+          select: {
+            pauseRequests: { select: { createdAt: true, resumeDate: true } },
+          },
+        },
       },
-      `{
-        id
-        detail {
-          topSizes
-          waistSizes
-        }
-        membership {
-          pauseRequests {
-            createdAt
-            resumeDate
-          }
-        }
-    }`
+    })
+    const pausedCustomers = this.prisma.sanitizePayload(
+      _pausedCustomers,
+      "Customer"
     )
     const pausedCustomersResumingThisWeek = pausedCustomers.filter(a => {
       const pauseRequests = a.membership?.pauseRequests || []
@@ -374,7 +372,7 @@ export class AdmissionsService {
         )
       )
       return this.utils.isLessThanXDaysFromNow(
-        latestPauseRequest?.resumeDate as string,
+        latestPauseRequest?.resumeDate.toISOString(),
         7
       )
     })
@@ -383,25 +381,22 @@ export class AdmissionsService {
   }
 
   private async activeCustomersWithoutActiveReservation() {
-    return await this.prisma.binding.query.customers(
-      {
-        where: {
-          AND: [
-            { status: "Active" },
-            { reservations_every: { status_in: ["Completed", "Cancelled"] } },
-          ],
-        },
+    return await this.prisma.client2.customer.findMany({
+      where: {
+        AND: [
+          { status: "Active" },
+          {
+            reservations: {
+              every: { status: { in: ["Completed", "Cancelled"] } },
+            },
+          },
+        ],
       },
-      `{
-      id
-      detail {
-        topSizes
-        waistSizes
-      }
-      reservations {
-        createdAt
-      }
-    }`
-    )
+      select: {
+        id: true,
+        detail: { select: { topSizes: true, waistSizes: true } },
+        reservations: { select: { createdAt: true } },
+      },
+    })
   }
 }
