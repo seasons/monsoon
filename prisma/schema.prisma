@@ -590,8 +590,8 @@ model PauseRequest {
   membership      CustomerMembership? @relation(fields: [membershipId], references: [id])
   notified        Boolean             @default(false)
   pauseType       String              @default("WithoutItems")
-  pauseReasonId   String?             @map("pauseReason") @db.VarChar(30)
-  reason          PauseReason?        @relation(fields: [pauseReasonId], references: [id])
+  reasonId        String?             @map("reason") @db.VarChar(30)
+  reason          PauseReason?        @relation(fields: [reasonId], references: [id])
 }
 
 model PaymentPlan {
