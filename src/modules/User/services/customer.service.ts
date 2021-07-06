@@ -211,15 +211,11 @@ export class CustomerService {
     Object.keys(details).map(detailKey => {
       if (["topSizes", "waistSizes", "weight"].includes(detailKey)) {
         const values = details[detailKey].set
-
-        details[detailKey] = {
-          createMany: {
-            data: values.map((value, i) => ({
-              value,
-              position: (i + 1) * 1000,
-            })),
-          },
-        }
+        details[detailKey] = this.queryUtils.createScalarListMutateInput(
+          values,
+          customer.id,
+          "update"
+        )
       }
     })
 
