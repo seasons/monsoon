@@ -5,6 +5,7 @@ import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
@@ -93,7 +94,8 @@ export class CustomerService {
     private readonly email: EmailService,
     private readonly pushNotification: PushNotificationService,
     private readonly sms: SMSService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
