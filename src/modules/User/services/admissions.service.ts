@@ -229,7 +229,7 @@ export class AdmissionsService {
     reservableStyles: ProductWithEmailData[]
     adjustedReservableStyles: number
   }> {
-    const customer = await this.prisma.client2.customer.findFirst({
+    const _customer = await this.prisma.client2.customer.findFirst({
       where,
       select: {
         id: true,
@@ -241,6 +241,7 @@ export class AdmissionsService {
         },
       },
     })
+    const customer = await this.prisma.sanitizePayload(_customer, "Customer")
 
     let sizesKey
     switch (productType) {
