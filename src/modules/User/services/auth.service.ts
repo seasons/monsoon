@@ -408,7 +408,7 @@ export class AuthService {
     })
   }
 
-  private async createPrismaUser(auth0Id, email, firstName, lastName) {
+  async createPrismaUser(auth0Id, email, firstName, lastName) {
     let user = await this.prisma.client.createUser({
       auth0Id,
       email,
@@ -443,7 +443,7 @@ export class AuthService {
     return user
   }
 
-  private async createPrismaCustomerForExistingUser(
+  async createPrismaCustomerForExistingUser(
     userID,
     details,
     status,

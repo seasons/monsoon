@@ -162,7 +162,24 @@ export class UserCommands {
       alias: "pn",
       default: "16463502715",
     })
-    phoneNumber
+    phoneNumber,
+    @Option({
+      name: "auth0 id",
+      describe: `Auth0ID`,
+      type: "string",
+      alias: "aid",
+      default: "",
+    })
+    auth0ID,
+    @Option({
+      name: "database user only",
+      describe: "Create user in DB only, not Auth0",
+      type: "boolean",
+      alias: "dbo",
+      default: false,
+      required: false,
+    })
+    dbo: boolean
   ) {
     await this.scripts.updateConnections({
       prismaEnv,
@@ -195,39 +212,67 @@ export class UserCommands {
       zip: "10013",
       country: "USA",
     }
-
-    try {
-      ;({ user, tokenData } = await this.auth.signupUser({
-        email,
-        password,
-        firstName,
-        lastName,
-        details: {
-          phoneNumber: `+${phoneNumber}`,
-          height: 40 + faker.random.number(32),
-          weight: { set: [150, 160] },
-          waistSizes: { set: [28, 29, 20] },
-          topSizes: { set: ["XS", "S"] },
-          bodyType: "Athletic",
-          shippingAddress: {
-            create: {
-              name: `${firstName} ${lastName}`,
-              address1: address.line1,
-              city: address.city,
-              state: address.state,
-              zipCode: address.zip,
-            },
-          },
+    const details = {
+      phoneNumber: `+${phoneNumber}`,
+      height: 40 + faker.random.number(32),
+      weight: { set: [150, 160] },
+      waistSizes: { set: [28, 29, 20] },
+      topSizes: { set: ["XS", "S"] },
+      bodyType: "Athletic",
+      shippingAddress: {
+        create: {
+          name: `${firstName} ${lastName}`,
+          address1: address.line1,
+          city: address.city,
+          state: address.state,
+          zipCode: address.zip,
         },
-      }))
-    } catch (err) {
-      console.log(err)
-      if (err.message.includes("400")) {
-        this.logger.error("User already in staging auth0 environment")
-      } else {
+      },
+    }
+
+    if (dbo) {
+      try {
+        user = await this.auth.createPrismaUser(
+          auth0ID,
+          email,
+          firstName,
+          lastName
+        )
+
+        tokenData = { access_token: "***" }
+
+        await this.auth.createPrismaCustomerForExistingUser(
+          user.id,
+          details,
+          "Created",
+          firstName.replace(/[^a-z]/gi, ""),
+          "",
+          ""
+        )
+      } catch (err) {
+        console.log(err)
         throw err
       }
-      return
+    }
+
+    if (!dbo) {
+      try {
+        ;({ user, tokenData } = await this.auth.signupUser({
+          email,
+          password,
+          firstName,
+          lastName,
+          details: details,
+        }))
+      } catch (err) {
+        console.log(err)
+        if (err.message.includes("400")) {
+          this.logger.error("User already in staging auth0 environment")
+        } else {
+          throw err
+        }
+        return
+      }
     }
 
     // Give them valid billing data if appropriate
