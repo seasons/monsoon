@@ -457,11 +457,6 @@ export class AuthService {
             status: "Waitlisted",
           },
         },
-        pushNotificationStatus: "Denied",
-        role: "Customer",
-        sendSystemEmails: true,
-        verificationMethod: "None",
-        verificationStatus: "Pending",
       },
       select: updatedSelect,
     })

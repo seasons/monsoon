@@ -777,13 +777,14 @@ export class PaymentService {
     giftID?: string,
     shippingAddress?: any
   ) {
-    const customer = await this.prisma.client2.customer.findFirst({
+    const _customer = await this.prisma.client2.customer.findFirst({
       where: { user: { id: userID } },
       select: {
         id: true,
         user: true,
       },
     })
+    const customer = await this.prisma.sanitizePayload(_customer, "Customer")
 
     if (!customer) {
       throw new Error(`Could not find customer with user id: ${userID}`)

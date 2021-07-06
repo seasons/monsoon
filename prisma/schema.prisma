@@ -255,14 +255,14 @@ model Customer {
 
 model CustomerAdmissionsData {
   id                          String    @id @default(cuid()) @db.VarChar(30)
-  inServiceableZipcode        Boolean
-  admissable                  Boolean
+  inServiceableZipcode        Boolean   @default(false)
+  admissable                  Boolean   
   inAdmissableReason          String?
   createdAt                   DateTime  @default(now())
   updatedAt                   DateTime  @updatedAt
   subscribedAt                DateTime?
-  authorizationsCount         Int
-  allAccessEnabled            Boolean
+  authorizationsCount         Int       @default(0)
+  allAccessEnabled            Boolean   @default(false)
   authorizationWindowClosesAt DateTime?
   customer                    Customer?
 }
