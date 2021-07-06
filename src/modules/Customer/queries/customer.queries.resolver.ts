@@ -28,15 +28,13 @@ export class CustomerQueriesResolver {
 
   @Query()
   async customers(
-    @FindManyArgs() findManyArgs,
-    @Select({
+    @FindManyArgs({
       withFragment: `fragment EnsureId on Customer {id}`,
     })
-    select
+    findManyArgs
   ) {
     const _data = await this.prisma.client2.customer.findMany({
       ...findManyArgs,
-      select,
     })
     return this.prisma.sanitizePayload(_data, "Customer")
   }
