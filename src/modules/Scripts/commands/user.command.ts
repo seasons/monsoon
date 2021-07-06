@@ -1,6 +1,7 @@
 import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable, Logger } from "@nestjs/common"
@@ -33,7 +34,8 @@ export class UserCommands {
     private readonly paymentService: PaymentService,
     private readonly utils: UtilsService,
     private readonly paymentUtils: PaymentUtilsService,
-    private moduleRef: ModuleRef
+    private moduleRef: ModuleRef,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   @Command({
@@ -297,16 +299,6 @@ export class UserCommands {
               },
             } as any,
             status,
-            user: {
-              update: {
-                roles: {
-                  set: roles.map((role, i) => ({
-                    value: role,
-                    position: (i + 1) * 1000,
-                  })),
-                },
-              },
-            },
           },
 
           where: { id: customer.id },
@@ -361,9 +353,16 @@ export class UserCommands {
         where: { id: customer.id },
         data: { status },
       })
+
       await this.prisma.client2.user.update({
+        data: {
+          roles: this.queryUtils.createScalarListMutateInput(
+            roles,
+            user.id,
+            "update"
+          ),
+        },
         where: { id: user.id },
-        data: { roles: { set: roles } },
       })
 
       this.logger.log(`Success!`)
