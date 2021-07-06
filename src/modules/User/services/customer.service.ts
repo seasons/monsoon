@@ -507,10 +507,11 @@ export class CustomerService {
     application: ApplicationType,
     dryRun: boolean
   ): Promise<TriageCustomerResult> {
-    const customer = await this.prisma.client2.customer.findUnique({
+    const _customer = await this.prisma.client2.customer.findUnique({
       where,
       select: this.triageCustomerSelect,
     })
+    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
     if (
       !this.admissions.isTriageable(customer.status as CustomerStatus) &&
