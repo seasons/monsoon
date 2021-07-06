@@ -393,14 +393,15 @@ export class UpdatePaymentService {
       street1: billingStreet1,
       street2: billingStreet2,
     }
-    const billingInfoId = await this.prisma.client
-      .customer({ id: customerID })
-      .billingInfo()
-      .id()
-    if (billingInfoId) {
-      await this.prisma.client.updateBillingInfo({
+
+    const billingInfo = await this.prisma.client2.billingInfo.findFirst({
+      where: { customer: { id: customerID } },
+    })
+
+    if (billingInfo.id) {
+      await this.prisma.client2.billingInfo.update({
+        where: { id: billingInfo.id },
         data: billingAddressData,
-        where: { id: billingInfoId },
       })
     } else {
       // Get user's card information from chargebee
@@ -414,21 +415,23 @@ export class UpdatePaymentService {
         last_name,
       } = cardInfo
 
-      // Create new billing info object
-      const billingInfo = await this.prisma.client.createBillingInfo({
-        ...billingAddressData,
-        brand,
-        expiration_month: expiry_month,
-        expiration_year: expiry_year,
-        last_digits: last4,
-        name: `${first_name} ${last_name}`,
+      const billingInfo = await this.prisma.client2.billingInfo.create({
+        data: {
+          customer: {
+            connect: {
+              id: customerID,
+            },
+          },
+          ...billingAddressData,
+          brand,
+          expiration_month: expiry_month,
+          expiration_year: expiry_year,
+          last_digits: last4,
+          name: `${first_name} ${last_name}`,
+        },
       })
 
-      // Connect new billing info to customer object
-      await this.prisma.client.updateCustomer({
-        data: { billingInfo: { connect: { id: billingInfo.id } } },
-        where: { id: customerID },
-      })
+      return billingInfo
     }
   }
 }

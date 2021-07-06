@@ -270,16 +270,23 @@ export class EmailService {
     })
   }
 
-  async sendPausedEmail(customer: Customer, isExtension: boolean) {
+  async sendPausedEmail(customer, isExtension: boolean) {
     const latestPauseRequest = this.utils.getLatestPauseRequest(customer)
     const latestReservation = this.utils.getLatestReservation(customer)
     const withItems = latestPauseRequest.pauseType === "WithItems"
     let pausedWithItemsPrice
+
     if (withItems) {
       const planID = this.utils.getPauseWithItemsPlanId(customer.membership)
-      pausedWithItemsPrice = await this.prisma.client
-        .paymentPlan({ planID })
-        .price()
+      pausedWithItemsPrice = (
+        await this.prisma.client2.paymentPlan.findFirst({
+          where: { planID },
+          select: {
+            id: true,
+            price: true,
+          },
+        })
+      ).price
     }
 
     const data = {

@@ -124,33 +124,43 @@ export class PaymentService {
     let billingAddress = null
 
     if (customer) {
-      const customerWithBillingInfo = await this.prisma.binding.query.customer(
-        { where: { id: customer.id } },
-        `
-      {
-        id
-        billingInfo {
-          street1
-          street2
-          city
-          state
-          postal_code
-          country
+      const _customerWithBillingInfo = await this.prisma.client2.customer.findFirst(
+        {
+          where: { id: customer.id },
+          select: {
+            id: true,
+            billingInfo: {
+              select: {
+                street1: true,
+                street2: true,
+                city: true,
+                state: true,
+                postal_code: true,
+                country: true,
+              },
+            },
+            detail: {
+              select: {
+                id: true,
+                shippingAddress: {
+                  select: {
+                    id: true,
+                    address1: true,
+                    address2: true,
+                    city: true,
+                    country: true,
+                    state: true,
+                    zipCode: true,
+                  },
+                },
+              },
+            },
+          },
         }
-        detail {
-          id
-          shippingAddress {
-            id
-            address1
-            address2
-            city
-            country
-            state
-            zipCode
-          }
-        }
-      }
-    `
+      )
+      const customerWithBillingInfo = this.prisma.sanitizePayload(
+        _customerWithBillingInfo,
+        "Customer"
       )
 
       const { billingInfo } = customerWithBillingInfo
