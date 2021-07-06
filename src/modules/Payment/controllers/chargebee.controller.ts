@@ -169,7 +169,7 @@ export class ChargebeeController {
 
     const { customer_id, plan_id } = subscription
 
-    const customerWithBillingAndUserData = await this.prisma.client2.customer.findUnique(
+    const _customerWithBillingAndUserData = await this.prisma.client2.customer.findUnique(
       {
         where: { id: customer.id },
         select: {
@@ -191,6 +191,10 @@ export class ChargebeeController {
           },
         },
       }
+    )
+    const customerWithBillingAndUserData = this.prisma.sanitizePayload(
+      _customerWithBillingAndUserData,
+      "Customer"
     )
 
     try {

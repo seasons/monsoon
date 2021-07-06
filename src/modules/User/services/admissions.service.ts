@@ -256,7 +256,7 @@ export class AdmissionsService {
 
     const preferredSizes = customer.detail[sizesKey]
 
-    const availableStyles = await this.prisma.client2.product.findMany({
+    const _availableStyles = await this.prisma.client2.product.findMany({
       where: {
         AND: [
           { type: productType },
@@ -308,6 +308,10 @@ export class AdmissionsService {
         },
       },
     })
+    const availableStyles = this.prisma.sanitizePayload(
+      _availableStyles,
+      "Product"
+    )
 
     // Find the competing users. Note that we assume all active customers without an active
     // reservation may be a competing user, regardless of how long it's been since their last reservation
