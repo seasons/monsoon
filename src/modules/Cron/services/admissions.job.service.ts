@@ -1,6 +1,7 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { AdmissionsService } from "@app/modules/User/services/admissions.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
+import { CustomerStatus } from "@app/prisma"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
@@ -20,21 +21,20 @@ export class AdmissionsScheduledJobs {
   async updateAdmissionsFields() {
     this.logger.log(`Start update admissions field job`)
 
-    const customers = await this.prisma.binding.query.customers(
-      {
-        where: {
-          status_in: ["Invited", "Created", "Waitlisted", "Authorized"],
-        },
+    const _customers = await this.prisma.client2.customer.findMany({
+      where: {
+        status: { in: ["Invited", "Created", "Waitlisted", "Authorized"] },
       },
-      this.customer.triageCustomerInfo
-    )
+      select: this.customer.triageCustomerSelect,
+    })
+    const customers = this.prisma.sanitizePayload(_customers, "Customer")
 
     let i = 0
     for (const cust of customers) {
       console.log(`${i++} of ${customers.length}`)
       try {
         if (
-          this.admissions.isTriageable(cust.status) ||
+          this.admissions.isTriageable(cust.status as CustomerStatus) ||
           cust.status === "Authorized"
         ) {
           await this.customer.triageCustomer(
@@ -42,8 +42,7 @@ export class AdmissionsScheduledJobs {
               id: cust.id,
             },
             "monsoon",
-            true,
-            cust
+            true
           )
         }
       } catch (err) {

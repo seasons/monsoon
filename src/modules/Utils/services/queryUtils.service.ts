@@ -25,7 +25,7 @@ import {
 interface InfoToSelectParams {
   info: GraphQLResolveInfo | any
   modelName: Prisma.ModelName | "Me"
-  modelFieldsByModelName: any
+  modelFieldsByModelName?: any
 }
 
 @Injectable()
@@ -48,7 +48,11 @@ export class QueryUtilsService {
   }
 
   static infoToSelect(params: InfoToSelectParams): any {
-    const { info, modelName, modelFieldsByModelName } = params
+    const {
+      info,
+      modelName,
+      modelFieldsByModelName = PrismaService.modelFieldsByModelName,
+    } = params
 
     // Parse the fields object
     let fields = graphqlFields(info)

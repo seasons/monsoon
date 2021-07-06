@@ -46,9 +46,14 @@ export class PhysicalProductFieldsResolver {
       type: PrismaTwoLoader.name,
       params: {
         model: `AdminActionLog`,
-        formatWhere: keys => ({
-          AND: [{ entityId: { in: keys } }, { tableName: "PhysicalProduct" }],
-        }),
+        formatWhere: keys =>
+          Prisma.validator<Prisma.AdminActionLogWhereInput>()({
+            AND: [
+              { entityId: { in: keys } },
+              { tableName: "PhysicalProduct" },
+              { interpretation: { id: { not: undefined } } },
+            ],
+          }),
         keyToDataRelationship: "OneToMany",
         getKeys: a => [a.entityId],
       },

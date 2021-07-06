@@ -762,6 +762,10 @@ type AggregatePackageTransitEvent {
   count: Int!
 }
 
+type AggregatePauseReason {
+  count: Int!
+}
+
 type AggregatePauseRequest {
   count: Int!
 }
@@ -8276,6 +8280,12 @@ type Mutation {
   upsertPackageTransitEvent(where: PackageTransitEventWhereUniqueInput!, create: PackageTransitEventCreateInput!, update: PackageTransitEventUpdateInput!): PackageTransitEvent!
   deletePackageTransitEvent(where: PackageTransitEventWhereUniqueInput!): PackageTransitEvent
   deleteManyPackageTransitEvents(where: PackageTransitEventWhereInput): BatchPayload!
+  createPauseReason(data: PauseReasonCreateInput!): PauseReason!
+  updatePauseReason(data: PauseReasonUpdateInput!, where: PauseReasonWhereUniqueInput!): PauseReason
+  updateManyPauseReasons(data: PauseReasonUpdateManyMutationInput!, where: PauseReasonWhereInput): BatchPayload!
+  upsertPauseReason(where: PauseReasonWhereUniqueInput!, create: PauseReasonCreateInput!, update: PauseReasonUpdateInput!): PauseReason!
+  deletePauseReason(where: PauseReasonWhereUniqueInput!): PauseReason
+  deleteManyPauseReasons(where: PauseReasonWhereInput): BatchPayload!
   createPauseRequest(data: PauseRequestCreateInput!): PauseRequest!
   updatePauseRequest(data: PauseRequestUpdateInput!, where: PauseRequestWhereUniqueInput!): PauseRequest
   updateManyPauseRequests(data: PauseRequestUpdateManyMutationInput!, where: PauseRequestWhereInput): BatchPayload!
@@ -9865,8 +9875,153 @@ type PageInfo {
   endCursor: String
 }
 
+type PauseReason {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  reason: String!
+}
+
+type PauseReasonConnection {
+  pageInfo: PageInfo!
+  edges: [PauseReasonEdge]!
+  aggregate: AggregatePauseReason!
+}
+
+input PauseReasonCreateInput {
+  id: ID
+  reason: String!
+}
+
+input PauseReasonCreateOneInput {
+  create: PauseReasonCreateInput
+  connect: PauseReasonWhereUniqueInput
+}
+
+type PauseReasonEdge {
+  node: PauseReason!
+  cursor: String!
+}
+
+enum PauseReasonOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  reason_ASC
+  reason_DESC
+}
+
+type PauseReasonPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  reason: String!
+}
+
+type PauseReasonSubscriptionPayload {
+  mutation: MutationType!
+  node: PauseReason
+  updatedFields: [String!]
+  previousValues: PauseReasonPreviousValues
+}
+
+input PauseReasonSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: PauseReasonWhereInput
+  AND: [PauseReasonSubscriptionWhereInput!]
+  OR: [PauseReasonSubscriptionWhereInput!]
+  NOT: [PauseReasonSubscriptionWhereInput!]
+}
+
+input PauseReasonUpdateDataInput {
+  reason: String
+}
+
+input PauseReasonUpdateInput {
+  reason: String
+}
+
+input PauseReasonUpdateManyMutationInput {
+  reason: String
+}
+
+input PauseReasonUpdateOneInput {
+  create: PauseReasonCreateInput
+  update: PauseReasonUpdateDataInput
+  upsert: PauseReasonUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: PauseReasonWhereUniqueInput
+}
+
+input PauseReasonUpsertNestedInput {
+  update: PauseReasonUpdateDataInput!
+  create: PauseReasonCreateInput!
+}
+
+input PauseReasonWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  reason: String
+  reason_not: String
+  reason_in: [String!]
+  reason_not_in: [String!]
+  reason_lt: String
+  reason_lte: String
+  reason_gt: String
+  reason_gte: String
+  reason_contains: String
+  reason_not_contains: String
+  reason_starts_with: String
+  reason_not_starts_with: String
+  reason_ends_with: String
+  reason_not_ends_with: String
+  AND: [PauseReasonWhereInput!]
+  OR: [PauseReasonWhereInput!]
+  NOT: [PauseReasonWhereInput!]
+}
+
+input PauseReasonWhereUniqueInput {
+  id: ID
+}
+
 type PauseRequest {
   id: ID!
+  reason: PauseReason
   createdAt: DateTime!
   updatedAt: DateTime!
   pausePending: Boolean!
@@ -9885,6 +10040,7 @@ type PauseRequestConnection {
 
 input PauseRequestCreateInput {
   id: ID
+  reason: PauseReasonCreateOneInput
   pausePending: Boolean!
   pauseType: PauseType
   pauseDate: DateTime
@@ -9900,6 +10056,7 @@ input PauseRequestCreateManyWithoutMembershipInput {
 
 input PauseRequestCreateWithoutMembershipInput {
   id: ID
+  reason: PauseReasonCreateOneInput
   pausePending: Boolean!
   pauseType: PauseType
   pauseDate: DateTime
@@ -10021,6 +10178,7 @@ input PauseRequestSubscriptionWhereInput {
 }
 
 input PauseRequestUpdateInput {
+  reason: PauseReasonUpdateOneInput
   pausePending: Boolean
   pauseType: PauseType
   pauseDate: DateTime
@@ -10063,6 +10221,7 @@ input PauseRequestUpdateManyWithWhereNestedInput {
 }
 
 input PauseRequestUpdateWithoutMembershipDataInput {
+  reason: PauseReasonUpdateOneInput
   pausePending: Boolean
   pauseType: PauseType
   pauseDate: DateTime
@@ -10096,6 +10255,7 @@ input PauseRequestWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  reason: PauseReasonWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -10461,6 +10621,7 @@ type PhysicalProduct {
   reports(where: PhysicalProductQualityReportWhereInput, orderBy: PhysicalProductQualityReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductQualityReport!]
   createdAt: DateTime!
   updatedAt: DateTime!
+  packedAt: DateTime
 }
 
 type PhysicalProductConnection {
@@ -10486,6 +10647,7 @@ input PhysicalProductCreateInput {
   unitCost: Float
   price: PhysicalProductPriceCreateOneInput
   reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductCreateManyInput {
@@ -10534,6 +10696,7 @@ input PhysicalProductCreateWithoutLocationInput {
   unitCost: Float
   price: PhysicalProductPriceCreateOneInput
   reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -10552,6 +10715,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   unitCost: Float
   price: PhysicalProductPriceCreateOneInput
   reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductCreateWithoutReportsInput {
@@ -10570,6 +10734,7 @@ input PhysicalProductCreateWithoutReportsInput {
   dateReceived: DateTime
   unitCost: Float
   price: PhysicalProductPriceCreateOneInput
+  packedAt: DateTime
 }
 
 input PhysicalProductCreateWithoutWarehouseLocationInput {
@@ -10588,6 +10753,7 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   unitCost: Float
   price: PhysicalProductPriceCreateOneInput
   reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 enum PhysicalProductDamageType {
@@ -10639,6 +10805,8 @@ enum PhysicalProductOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  packedAt_ASC
+  packedAt_DESC
 }
 
 type PhysicalProductPreviousValues {
@@ -10655,6 +10823,7 @@ type PhysicalProductPreviousValues {
   unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
+  packedAt: DateTime
 }
 
 type PhysicalProductPrice {
@@ -11187,6 +11356,14 @@ input PhysicalProductScalarWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  packedAt: DateTime
+  packedAt_not: DateTime
+  packedAt_in: [DateTime!]
+  packedAt_not_in: [DateTime!]
+  packedAt_lt: DateTime
+  packedAt_lte: DateTime
+  packedAt_gt: DateTime
+  packedAt_gte: DateTime
   AND: [PhysicalProductScalarWhereInput!]
   OR: [PhysicalProductScalarWhereInput!]
   NOT: [PhysicalProductScalarWhereInput!]
@@ -11237,6 +11414,7 @@ input PhysicalProductUpdateDataInput {
   unitCost: Float
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateInput {
@@ -11255,6 +11433,7 @@ input PhysicalProductUpdateInput {
   unitCost: Float
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -11268,6 +11447,7 @@ input PhysicalProductUpdateManyDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateManyInput {
@@ -11293,6 +11473,7 @@ input PhysicalProductUpdateManyMutationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -11374,6 +11555,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   unitCost: Float
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -11391,6 +11573,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   unitCost: Float
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateWithoutReportsDataInput {
@@ -11408,6 +11591,7 @@ input PhysicalProductUpdateWithoutReportsDataInput {
   dateReceived: DateTime
   unitCost: Float
   price: PhysicalProductPriceUpdateOneInput
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
@@ -11425,6 +11609,7 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   unitCost: Float
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -11593,6 +11778,14 @@ input PhysicalProductWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  packedAt: DateTime
+  packedAt_not: DateTime
+  packedAt_in: [DateTime!]
+  packedAt_not_in: [DateTime!]
+  packedAt_lt: DateTime
+  packedAt_lte: DateTime
+  packedAt_gt: DateTime
+  packedAt_gte: DateTime
   AND: [PhysicalProductWhereInput!]
   OR: [PhysicalProductWhereInput!]
   NOT: [PhysicalProductWhereInput!]
@@ -16143,6 +16336,9 @@ type Query {
   packageTransitEvent(where: PackageTransitEventWhereUniqueInput!): PackageTransitEvent
   packageTransitEvents(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PackageTransitEvent]!
   packageTransitEventsConnection(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageTransitEventConnection!
+  pauseReason(where: PauseReasonWhereUniqueInput!): PauseReason
+  pauseReasons(where: PauseReasonWhereInput, orderBy: PauseReasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseReason]!
+  pauseReasonsConnection(where: PauseReasonWhereInput, orderBy: PauseReasonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PauseReasonConnection!
   pauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest]!
   pauseRequestsConnection(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PauseRequestConnection!
@@ -19667,6 +19863,7 @@ type Subscription {
   orderLineItem(where: OrderLineItemSubscriptionWhereInput): OrderLineItemSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   packageTransitEvent(where: PackageTransitEventSubscriptionWhereInput): PackageTransitEventSubscriptionPayload
+  pauseReason(where: PauseReasonSubscriptionWhereInput): PauseReasonSubscriptionPayload
   pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
   paymentPlan(where: PaymentPlanSubscriptionWhereInput): PaymentPlanSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
