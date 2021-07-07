@@ -629,7 +629,8 @@ export class ReservationService {
           },
         ]
       } catch (e) {
-        console.log("errror,", e)
+        this.error.setExtraContext(user, "user")
+        this.error.captureError(e)
         return []
       }
     }
