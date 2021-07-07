@@ -19,31 +19,31 @@ export class ProductScheduledJobs {
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
   async updateProductFields() {
     const syncTiming = await this.utils.getSyncTimingsRecord("Next")
-    const allPhysicalProducts = await this.prisma.binding.query.physicalProducts(
+    const _allPhysicalProducts = (await this.prisma.client2.physicalProduct.findMany(
       {
         where: {
-          createdAt_gte: syncTiming.syncedAt,
+          createdAt: { gte: syncTiming.syncedAt },
         },
-      },
-      `
-      {
-          id
-          sequenceNumber
-          productVariant {
-              internalSize {
-                  display
-              }
-              product { 
-                  color {
-                      name
-                  }
-                  brand { 
-                      name
-                  }
-              }
-          }
+        select: {
+          id: true,
+          sequenceNumber: true,
+          productVariant: {
+            select: {
+              internalSize: { select: { display: true } },
+              product: {
+                select: {
+                  color: { select: { name: true } },
+                  brand: { select: { name: true } },
+                },
+              },
+            },
+          },
+        },
       }
-    `
+    )) as any[]
+    const allPhysicalProducts = this.prisma.sanitizePayload(
+      _allPhysicalProducts,
+      "PhysicalProduct"
     )
 
     this.logger.log(`[ByNext] Starting physical product sync with ByNext`)
@@ -79,9 +79,8 @@ export class ProductScheduledJobs {
       }
     }
 
-    await this.prisma.client.createSyncTiming({
-      syncedAt: new Date(),
-      type: "Next",
+    await this.prisma.client2.syncTiming.create({
+      data: { syncedAt: new Date(), type: "Next" },
     })
 
     this.logger.log(`[ByNext] Successfully synced ${total} physical products`)
