@@ -56,26 +56,22 @@ export class SearchService {
     let recentlyViewedProducts = []
     let lastPageRecentlyViewedProducts
     do {
-      lastPageRecentlyViewedProducts = await this.prisma.binding.query.recentlyViewedProducts(
+      lastPageRecentlyViewedProducts = await this.prisma.client2.recentlyViewedProduct.findMany(
         {
           skip: recentlyViewedProducts.length,
-          first: PAGE_SIZE,
-          orderBy: "id_DESC",
-        },
-        `
-          {
-            id
-            product {
-              id
-              brand {
-                id
-                name
-                brandCode
-              }
-            }
-            viewCount
-          }
-        `
+          take: PAGE_SIZE,
+          orderBy: { id: "desc" },
+          select: {
+            id: true,
+            product: {
+              select: {
+                id: true,
+                brand: { select: { id: true, name: true, brandCode: true } },
+              },
+            },
+            viewCount: true,
+          },
+        }
       )
 
       recentlyViewedProducts = recentlyViewedProducts.concat(
@@ -83,52 +79,35 @@ export class SearchService {
       )
     } while (lastPageRecentlyViewedProducts.length === PAGE_SIZE)
 
-    return recentlyViewedProducts
+    return this.prisma.sanitizePayload(
+      recentlyViewedProducts,
+      "RecentlyViewedProduct"
+    )
   }
 
   async indexProducts(indices = [IndexKey.Default]) {
-    const products = await this.prisma.binding.query.products(
-      {},
-      `
-       {
-        id
-        slug
-        name
-        description
-        type
-        images {
-          url
-          __typename
-          updatedAt
-        }
-        retailPrice
-        brand {
-          id
-          name
-          __typename
-        }
-        category {
-          id
-          name
-          __typename
-        }
-        variants {
-          id
-          physicalProducts {
-            id
-          }
-        }
-        tags {
-          name
-        }
-        status
-        createdAt
-        publishedAt
-        updatedAt
-        __typename
-      }
-    `
-    )
+    const _products = await this.prisma.client2.product.findMany({
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        description: true,
+        type: true,
+        images: { select: { url: true, updatedAt: true } },
+        retailPrice: true,
+        brand: { select: { id: true, name: true } },
+        category: { select: { id: true, name: true } },
+        variants: {
+          select: { id: true, physicalProducts: { select: { id: true } } },
+        },
+        tags: { select: { name: true } },
+        status: true,
+        createdAt: true,
+        publishedAt: true,
+        updatedAt: true,
+      },
+    })
+    const products = this.prisma.sanitizePayload(_products, "Product")
 
     const viewCounts = await this.getRecentlyViewedProducts()
 
@@ -161,7 +140,7 @@ export class SearchService {
 
           const image = images?.[0]
           const imageURL = image?.url
-          const updatedAt = image?.updatedAt as string
+          const updatedAt = image?.updatedAt?.toISOString()
 
           let url = "" //
 
@@ -186,8 +165,8 @@ export class SearchService {
             categoryName: category.name,
             tags: tags.map(a => a.name),
             popularity: productViews.length,
-            createdAt: new Date(createdAt).getMilliseconds() / 1000,
-            publishedAt: new Date(publishedAt).getMilliseconds() / 1000,
+            createdAt: createdAt.getMilliseconds() / 1000,
+            publishedAt: publishedAt.getMilliseconds() / 1000,
           }
         }
       )
@@ -201,27 +180,23 @@ export class SearchService {
   }
 
   async indexBrands(indices = [IndexKey.Default]) {
-    const brands = await this.prisma.binding.query.brands(
-      {},
-      `
-    {
-      id
-      brandCode
-      name
-      description
-      designer
-      isPrimaryBrand
-      tier
-      published
-      websiteUrl
-      products {
-        id
-      }
-      createdAt
-      updatedAt
-    }
-    `
-    )
+    const _brands = await this.prisma.client2.brand.findMany({
+      select: {
+        id: true,
+        brandCode: true,
+        name: true,
+        description: true,
+        designer: true,
+        isPrimaryBrand: true,
+        tier: true,
+        published: true,
+        websiteUrl: true,
+        products: { select: { id: true } },
+        createdAt: true,
+        updatedAt: true,
+      },
+    })
+    const brands = this.prisma.sanitizePayload(_brands, "Brand")
 
     const viewCounts = await this.getRecentlyViewedProducts()
 
@@ -275,27 +250,20 @@ export class SearchService {
   }
 
   async indexCustomers(indices = [IndexKey.Default]) {
-    const customers = await this.prisma.binding.query.customers(
-      {},
-      `
-      {
-        id
-        plan
-        status
-        user {
-          id
-          email
-          firstName
-          lastName
-        }
-        bagItems {
-          id
-        }
-        createdAt
-        updatedAt
-      }
-    `
-    )
+    const _customers = await this.prisma.client2.customer.findMany({
+      select: {
+        id: true,
+        plan: true,
+        status: true,
+        user: {
+          select: { id: true, email: true, firstName: true, lastName: true },
+        },
+        bagItems: { select: { id: true } },
+        createdAt: true,
+        updatedAt: true,
+      },
+    })
+    const customers = this.prisma.sanitizePayload(_customers, "Customer")
 
     this.logger.log(`Re-indexing ${customers.length} customers...`)
 
@@ -310,6 +278,7 @@ export class SearchService {
           user,
           bagItemsCount: bagItems.length,
           popularity: status === "Active" ? 100 : 0 + bagItems.length * 2,
+          // TODO: does this work? do i need to toISOString this?
           createdAt,
           updatedAt,
         }
@@ -324,21 +293,22 @@ export class SearchService {
   }
 
   async indexPhysicalProducts(indices = [IndexKey.Default]) {
-    const physicalProducts = await this.prisma.binding.query.physicalProducts(
-      {},
-      `{
-        id
-        seasonsUID
-        inventoryStatus
-        sequenceNumber
-        productVariant {
-          product {
-            name
-          }
-        }
-        __typename
+    const _physicalProducts = await this.prisma.client2.physicalProduct.findMany(
+      {
+        select: {
+          id: true,
+          seasonsUID: true,
+          inventoryStatus: true,
+          sequenceNumber: true,
+          productVariant: {
+            select: { product: { select: { name: true } } },
+          },
+        },
       }
-    `
+    )
+    const physicalProducts = this.prisma.sanitizePayload(
+      _physicalProducts,
+      "PhysicalProduct"
     )
 
     this.logger.log(
@@ -350,7 +320,7 @@ export class SearchService {
         return {
           kindOf: "PhysicalProduct",
           objectID: id,
-          productName: data.productVariant.product.name,
+          productName: (data.productVariant as any).product.name,
           barcode: `SZNS` + `${data.sequenceNumber}`.padStart(5, "0"),
           ...pick(data, ["seasonsUID", "inventoryStatus"]),
         }
@@ -371,29 +341,25 @@ export class SearchService {
     indices = [IndexKey.Default],
     brandID?: string
   ) {
-    const shopifyProductVariants = await this.prisma.binding.query.shopifyProductVariants(
+    const _shopifyProductVariants = await this.prisma.client2.shopifyProductVariant.findMany(
       {
         where: {
-          brand: brandID ? { id: brandID } : { id_not: null },
+          brand: brandID ? { id: brandID } : { id: { not: undefined } },
         },
-      },
-      `{
-        id
-        externalId
-        displayName
-        selectedOptions {
-          name
-          value
-        }
-        brand {
-          id
-          name
-        }
-        title
-        image {
-          url
-        }
-      }`
+        select: {
+          id: true,
+          externalId: true,
+          displayName: true,
+          selectedOptions: { select: { name: true, value: true } },
+          brand: { select: { id: true, name: true } },
+          title: true,
+          image: { select: { url: true } },
+        },
+      }
+    )
+    const shopifyProductVariants = this.prisma.sanitizePayload(
+      _shopifyProductVariants,
+      "ShopifyProductVariant"
     )
 
     this.logger.log(
