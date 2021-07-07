@@ -78,7 +78,7 @@ export class PaymentService {
     const subscriptionID = customer.membership.subscriptionId
 
     try {
-      await chargebee.invoice
+      return await chargebee.invoice
         .charge_addon({
           subscription_id: subscriptionID,
           addon_id: "early-swap",

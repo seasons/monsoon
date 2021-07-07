@@ -523,6 +523,7 @@ model OrderLineItem {
   recordType    String  // OrderLineItemRecordType
   needShipping  Boolean?
   taxRate       Float?
+  name          String? // E.g. "Early swap", or name of product
   taxName       String?
   taxPercentage Float?
   taxPrice      Int?
@@ -530,10 +531,11 @@ model OrderLineItem {
   currencyCode  String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  reservationId String? @map("reservation") @db.VarChar(30)
+  reservation   Reservation? @relation(fields: [reservationId], references: [id])
 
   // Do not use. Artifact of prisma2 migration
-  Order Order[]
-  Reservation Reservation[]
+  Order         Order[]
 }
 
 model Package {
@@ -994,7 +996,7 @@ model Reservation {
   products          PhysicalProduct[]     @relation("ReservationToAllProducts")
   newProducts       PhysicalProduct[]     @relation("ReservationToNewProducts")
   returnedProducts  PhysicalProduct[]     @relation("ReservationToReturnedProducts")
-  lineItems         OrderLineItem[]
+  lineItems         OrderLineItem[]       
 }
 
 model ReservationFeedback {

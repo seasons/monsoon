@@ -29,6 +29,8 @@ import {
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
+import chargebee from "chargebee"
+import cuid from "cuid"
 import { intersection } from "lodash"
 import { DateTime } from "luxon"
 
@@ -222,7 +224,7 @@ export class ReservationService {
     const reservation = result.pop()
 
     if (doesNotHaveFreeSwap && reservation?.id) {
-      await this.payment.addEarlySwapCharge(customer.id)
+      const swapCharge = await this.payment.addEarlySwapCharge(customer.id)
       await this.prisma.client2.reservation.update({
         where: { id: reservation.id },
         data: {
@@ -230,9 +232,11 @@ export class ReservationService {
             create: [
               {
                 recordID: reservation.id,
-                price: 3500,
+                price: swapCharge.invoice.sub_total,
                 currencyCode: "USD",
                 recordType: "EarlySwap",
+                name: "Eary swap",
+                taxPrice: swapCharge?.invoice?.tax || 0,
               },
             ],
           },
@@ -583,6 +587,52 @@ export class ReservationService {
     ]
 
     return this.utils.filterAdminLogs(logs, keysWeDontCareAbout)
+  }
+
+  async draftReservationLineItems(user: User, hasFreeSwap: boolean) {
+    if (hasFreeSwap) {
+      return []
+    } else {
+      try {
+        const {
+          estimate: { invoice_estimate },
+        } = await chargebee.estimate
+          .create_invoice({
+            invoice: {
+              customer_id: user.id,
+            },
+            charges: [
+              {
+                amount: 3000,
+                taxable: true,
+                description: "Early Swap",
+                avalara_tax_code: "FR020000",
+              },
+            ],
+          })
+          .request()
+
+        return [
+          {
+            id: cuid(),
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            recordType: "EarlySwap",
+            name: "Early swap",
+            recordID: cuid(),
+            currencyCode: "USD",
+            price: invoice_estimate.sub_total,
+            taxPrice: invoice_estimate?.taxes?.reduce(
+              (acc, tax) => acc + tax.amount,
+              0
+            ),
+          },
+        ]
+      } catch (e) {
+        console.log("errror,", e)
+        return []
+      }
+    }
   }
 
   async updateReservation(

@@ -6760,7 +6760,7 @@ cucumber-html-reporter@^3.0.4:
     lodash "^4.17.2"
     open "0.0.5"
 
-cuid@^2.1.6:
+cuid@^2.1.6, cuid@^2.1.8:
   version "2.1.8"
   resolved "https://registry.yarnpkg.com/cuid/-/cuid-2.1.8.tgz#cbb88f954171e0d5747606c0139fb65c5101eac0"
   integrity sha512-xiEMER6E7TlTPnDxrM4eRiC6TRgjNX9xzEZ5U/Se2YJKr7Mq4pJn/2XEHjl3STcSh96GmkHPcBXLES8M29wyyg==
