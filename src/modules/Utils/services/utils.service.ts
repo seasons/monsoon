@@ -6,10 +6,10 @@ import { Injectable } from "@nestjs/common"
 import { AdminActionLog } from "@prisma/client"
 import { Location } from "@prisma/client"
 import { UTMData } from "@prisma/client"
+import { Reservation } from "@prisma/client"
 import {
   PauseRequest,
   AdminActionLog as PrismaOneAdminActionLog,
-  Reservation,
   SyncTimingType,
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -150,11 +150,13 @@ export class UtilsService {
     return prismaLocation
   }
 
-  getReservationReturnDate(reservation: Reservation) {
+  getReservationReturnDate(
+    reservation: Pick<Reservation, "receivedAt" | "createdAt">
+  ) {
     let returnDate
     let returnOffset
     if (reservation.receivedAt !== null) {
-      returnDate = new Date(reservation.receivedAt)
+      returnDate = reservation.receivedAt
       returnOffset = 30
     } else {
       const daysSinceReservationCreated = moment().diff(
@@ -166,7 +168,7 @@ export class UtilsService {
       } else {
         // If for some reason we have not been able to set receivedAt 15 days in,
         // default to 35 days after createdAt. This assumes a 5 day shipping time.
-        returnDate = new Date(reservation.createdAt)
+        returnDate = reservation.createdAt
         returnOffset = 35
       }
     }

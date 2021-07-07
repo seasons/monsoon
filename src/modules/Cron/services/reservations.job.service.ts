@@ -1,13 +1,11 @@
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { Reservation as ClientReservation } from "@app/prisma/index"
-import { Reservation } from "@app/prisma/prisma.binding"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ErrorService } from "@modules/Error/services/error.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
+import { PaymentPlan, Reservation } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
-import moment from "moment"
 
 @Injectable()
 export class ReservationScheduledJobs {
@@ -24,31 +22,26 @@ export class ReservationScheduledJobs {
   @Cron(CronExpression.EVERY_6_HOURS)
   async sendReturnNotifications() {
     this.logger.log("Reservation Return Notifications Job ran")
-    const reservations = await this.prisma.binding.query.reservations(
-      {
-        orderBy: "createdAt_DESC",
+    const reservations = await this.prisma.client2.reservation.findMany({
+      where: { status: { notIn: ["Completed", "Cancelled"] } },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        createdAt: true,
+        receivedAt: true,
+        status: true,
+        reminderSentAt: true,
+        reservationNumber: true,
+        customer: {
+          select: {
+            user: { select: { id: true, email: true, firstName: true } },
+            membership: {
+              select: { plan: { select: { tier: true } } },
+            },
+          },
+        },
       },
-      `{
-      id
-      createdAt
-      receivedAt
-      status
-      reminderSentAt
-      reservationNumber
-      customer {
-        user {
-          id
-          email
-          firstName
-        }
-        membership {
-          plan {
-            tier
-          }
-        }
-      }
-    }`
-    )
+    })
     const report = {
       reservationsForWhichRemindersWereSent: [],
       errors: [],
@@ -57,19 +50,18 @@ export class ReservationScheduledJobs {
       try {
         this.errorService.setExtraContext(reservation, "reservation")
 
-        if (await this.returnNoticeNeeded(reservation)) {
+        if (await this.returnNoticeNeeded(reservation as any)) {
           await this.emailService.sendReturnReminderEmail(
             reservation.customer.user
           )
 
-          const now = new Date()
           await this.pushNotifs.pushNotifyUsers({
             emails: [reservation.customer.user.email],
             pushNotifID: "ReturnDue",
           })
-          await this.prisma.client.updateReservation({
+          await this.prisma.client2.reservation.update({
             where: { id: reservation.id },
-            data: { reminderSentAt: now.toISOString() },
+            data: { reminderSentAt: new Date() },
           })
 
           report.reservationsForWhichRemindersWereSent.push(
@@ -86,12 +78,14 @@ export class ReservationScheduledJobs {
     this.logger.log(report)
   }
 
-  private async returnNoticeNeeded(reservation: Reservation) {
+  private async returnNoticeNeeded(
+    reservation: Reservation & {
+      customer: { membership: { plan: Pick<PaymentPlan, "tier"> } }
+    }
+  ) {
     const dueBackIn3Days = this.utils.isXDaysBefore({
       beforeDate: new Date(), // now
-      afterDate: this.utils.getReservationReturnDate(
-        reservation as ClientReservation
-      ),
+      afterDate: this.utils.getReservationReturnDate(reservation),
       numDays: 3,
     })
     return (

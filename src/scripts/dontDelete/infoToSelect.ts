@@ -39,25 +39,26 @@ const infoToSelect = infoString => {
 }
 
 const run = () => {
-  let info = `
-  {
-      id
-      sequenceNumber
-      productVariant {
-          internalSize {
-              display
-          }
-          product { 
-              color {
-                  name
-              }
-              brand { 
-                  name
-              }
-          }
+  let info = `{
+    id
+    createdAt
+    receivedAt
+    status
+    reminderSentAt
+    reservationNumber
+    customer {
+      user {
+        id
+        email
+        firstName
       }
-  }
-` // Insert your info string
+      membership {
+        plan {
+          tier
+        }
+      }
+    }
+  }` // Insert your info string
   infoToSelect(info)
 }
 
