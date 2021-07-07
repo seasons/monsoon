@@ -150,7 +150,7 @@ export class SearchService {
             })
           } catch (err) {}
 
-          return {
+          const payload = {
             objectID: id,
             kindOf: "Product",
             name,
@@ -165,9 +165,11 @@ export class SearchService {
             categoryName: category.name,
             tags: tags.map(a => a.name),
             popularity: productViews.length,
-            createdAt: createdAt.getMilliseconds() / 1000,
-            publishedAt: publishedAt.getMilliseconds() / 1000,
+            createdAt: createdAt?.getTime() / 1000,
+            publishedAt: publishedAt?.getTime() / 1000,
           }
+
+          return payload
         }
       )
     )
@@ -236,8 +238,8 @@ export class SearchService {
           tier,
           published,
           websiteUrl,
-          createdAt,
-          updatedAt,
+          createdAt: createdAt.getTime() / 1000,
+          updatedAt: updatedAt.getTime() / 1000,
         }
       }
     )
@@ -278,9 +280,8 @@ export class SearchService {
           user,
           bagItemsCount: bagItems.length,
           popularity: status === "Active" ? 100 : 0 + bagItems.length * 2,
-          // TODO: does this work? do i need to toISOString this?
-          createdAt,
-          updatedAt,
+          createdAt: createdAt.getTime() / 1000,
+          updatedAt: updatedAt.getTime() / 1000,
         }
       }
     )
