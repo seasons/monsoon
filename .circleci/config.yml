@@ -95,7 +95,7 @@ jobs:
 
       - run:
           command: node bin/cli.js spp local staging -f
-          name: Clone production data into local Postgres DB
+          name: Clone staging data into local Postgres DB
 
       - run:
           command: node bin/cli.js ctu --email integration_test_ci@seasons.nyc --password Seasons2020 --prisma local --roles Customer Admin --aid 60e4ac2aaf20ac0069155156 --dbo
