@@ -18,7 +18,7 @@ export class SubscriptionsScheduledJobs {
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
-  async updateAdmissionsFields() {
+  async updateSubscriptionData() {
     this.logger.log(`Start update subscriptions field job`)
 
     let subscription
