@@ -1,6 +1,5 @@
-import { LookerNodeSDK } from "@looker/sdk/lib/node"
+import { LookerNodeSDK } from "@looker/sdk-node"
 import { Injectable } from "@nestjs/common"
-import { values } from "lodash"
 import slugify from "slugify"
 
 type GlobalDashboardQuerySlug =

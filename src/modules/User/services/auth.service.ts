@@ -360,7 +360,7 @@ export class AuthService {
     })
   }
 
-  private async createPrismaUser({
+  async createPrismaUser({
     auth0Id,
     email,
     firstName,
@@ -466,7 +466,7 @@ export class AuthService {
     return this.prisma.sanitizePayload(user, "User")
   }
 
-  private async updateCustomerWithReferrerData(user, customer, referrerId) {
+  async updateCustomerWithReferrerData(user, customer, referrerId) {
     const referralLink = await this.createReferralLink(
       customer.id,
       this.rebrandlyUsernameFromFirstname(user.firstName)
