@@ -1,19 +1,19 @@
-# Javascript Node CircleCI 2.0 configuration file
+# Javascript Node CircleCI 2.1 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
+
+orbs:
+  node: circleci/node@4.5.1
+  docker: circleci/docker@1.6.0
+
 jobs:
-  build:
+  test-unit:
     machine: true
     working_directory: ~/monsoon
-    shell: /bin/bash --login -o pipefail
     steps:
       - checkout
-
-      - run:
-          name: Install Yarn
-          command: curl -o- -L https://yarnpkg.com/install.sh | bash
 
       - run:
           name: Install Node Version Manager
@@ -21,32 +21,96 @@ jobs:
             curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
             export NVM_DIR="/opt/circleci/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm install v12.18.1
-            nvm alias default v12.18.1
+            nvm install v16.4.0
+            nvm alias default v16.4.0
             echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
             echo "[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"" >> $BASH_ENV
 
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+      - node/install-yarn
+
+      - node/install-packages:
+          pkg-manager: yarn
+
+      - docker/install-docker
+
+      - docker/install-docker-compose
 
       - run:
-          name: Install Dependencies
-          command: yarn install
+          command: docker-compose up -d
+          name: Start up docker containers
 
       - run:
-          name: Create Testing File
-          command: bash src/tests/create_testing_env_file.sh
+          command: sleep 20
+          name: Wait for containers to fully spin up
 
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-
-      # run tests!
       - run:
-          name: Run tests
+          command: yarn prisma1 deploy
+          name: Deploy Prisma1 service
+
+      - run:
           command: yarn test
+          name: Run unit tests
+
+  test-integration:
+    machine: true
+    working_directory: ~/monsoon
+    steps:
+      - checkout
+
+      - run:
+          name: Install Node Version Manager
+          command: |
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm install v16.4.0
+            nvm alias default v16.4.0
+            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
+            echo "[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"" >> $BASH_ENV
+
+      - node/install-yarn
+
+      - node/install-packages:
+          pkg-manager: yarn
+
+      - docker/install-docker
+
+      - docker/install-docker-compose
+
+      - run:
+          command: docker-compose up -d
+          name: Start up docker containers
+
+      - run:
+          command: sleep 20
+          name: Wait for containers to fully spin up
+
+      - run:
+          command: yarn prisma:deploy
+          name: Deploy Prisma1 service
+
+      - run:
+          command: yarn build
+          name: Compile so we can run the next cmd
+
+      - run:
+          command: node bin/cli.js spp local staging -f
+          name: Clone production data into local Postgres DB
+
+      - run:
+          command: node bin/cli.js ctu --email integration_test_ci@seasons.nyc --password Seasons2020 --prisma local --roles Customer Admin --aid 60e4ac2aaf20ac0069155156 --dbo
+          name: Generate user for integration test
+
+      - run:
+          command: yarn start:ci && sleep 30
+          name: Start server locally to run integration tests against
+
+      - run:
+          command: yarn jest -i src/modules/User/tests/integration.test.ts
+          name: Run integration test suite
+
+workflows:
+  run_all_tests:
+    jobs:
+      - test-unit
+      - test-integration
