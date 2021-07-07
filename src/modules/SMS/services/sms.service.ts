@@ -5,9 +5,11 @@ import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
 import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
 import { TwilioEvent } from "@app/modules/Twilio/twilio.types"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
+import { Prisma } from "@prisma/client"
 import {
   CustomerStatus,
   SmsStatus,
@@ -36,7 +38,8 @@ export class SMSService {
     private readonly paymentUtils: PaymentUtilsService,
     private readonly error: ErrorService,
     private readonly email: EmailService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   async startSMSVerification(
@@ -57,7 +60,8 @@ export class SMSService {
     const verification = await this.twilio.client.verify
       .services(process.env.TWILIO_SERVICE_SID)
       .verifications.create({ to: e164PhoneNumber, channel: "sms" })
-    await this.prisma.client.updateUser({
+
+    await this.prisma.client2.user.update({
       data: {
         verificationStatus: this.twilioUtils.twilioToPrismaVerificationStatus(
           verification.status
@@ -68,16 +72,19 @@ export class SMSService {
         id: user.id,
       },
     })
-    const customerDetailID = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .id()
-    await this.prisma.client.updateCustomerDetail({
+
+    const customerDetail = await this.prisma.client2.customerDetail.findFirst({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+      },
+    })
+
+    await this.prisma.client2.customerDetail.update({
+      where: { id: customerDetail.id },
       data: {
         phoneNumber: e164PhoneNumber,
-      },
-      where: {
-        id: customerDetailID,
       },
     })
 
@@ -136,7 +143,7 @@ export class SMSService {
     smsId,
     renderData,
   }: {
-    to: UserWhereUniqueInput
+    to: Prisma.UserWhereUniqueInput
     smsId: SMSID
     renderData: any
   }) {
@@ -159,7 +166,7 @@ export class SMSService {
     }: {
       body: string
       mediaUrls?: string[]
-      to: UserWhereUniqueInput
+      to: Prisma.UserWhereUniqueInput
       smsId?: SMSID
     }
   ): Promise<SmsStatus> {
@@ -170,12 +177,14 @@ export class SMSService {
       )
     }
 
-    const cust = head(
-      await this.prisma.binding.query.customers(
-        { where: { user: to } },
-        `{ user { roles email sendSystemEmails } detail { phoneNumber } }`
-      )
-    ) as any
+    const _cust = await this.prisma.client2.customer.findFirst({
+      where: { user: to },
+      select: {
+        detail: { select: { phoneNumber: true } },
+        user: { select: { roles: true, email: true, sendSystemEmails: true } },
+      },
+    })
+    const cust = this.prisma.sanitizePayload(_cust, "Customer")
 
     const phoneNumber = cust?.detail?.phoneNumber
     if (!phoneNumber) {
@@ -210,18 +219,23 @@ export class SMSService {
         this.error.captureError(new Error(errorMessage))
       }
       // Create receipt and add it to the user
-      const receipt = await this.prisma.client.createSmsReceipt({
-        body,
-        externalId: sid,
-        mediaUrls: { set: mediaUrls },
-        status: this.twilioUtils.twilioToPrismaSmsStatus(status),
-        smsId,
-      })
-      await this.prisma.client.updateUser({
-        data: {
-          smsReceipts: { connect: [{ id: receipt.id }] },
-        },
+      await this.prisma.client2.user.update({
         where: to,
+        data: {
+          smsReceipts: {
+            create: {
+              body,
+              externalId: sid,
+              mediaUrls: this.queryUtils.createScalarListMutateInput(
+                mediaUrls,
+                null,
+                "create"
+              ),
+              status: this.twilioUtils.twilioToPrismaSmsStatus(status),
+              smsId,
+            },
+          },
+        },
       })
       // Return status
       const smsStatus = this.twilioUtils.twilioToPrismaSmsStatus(status)

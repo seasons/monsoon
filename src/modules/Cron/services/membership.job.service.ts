@@ -2,14 +2,13 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
-import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
+import { PauseRequest } from "@prisma/client"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
-import { head } from "lodash"
 import { DateTime } from "luxon"
 import moment from "moment"
 
@@ -23,19 +22,18 @@ export class MembershipScheduledJobs {
     private readonly email: EmailService,
     private readonly sms: SMSService,
     private readonly utils: UtilsService,
-    private readonly statements: StatementsService,
     private readonly error: ErrorService
   ) {}
 
   @Cron(CronExpression.EVERY_6_HOURS)
   async updatePausePendingToPaused() {
-    const pauseRequests = await this.prisma.client.pauseRequests({
+    const pauseRequests = await this.prisma.client2.pauseRequest.findMany({
       where: {
         AND: [
           {
             pausePending: true,
           },
-          { membership: { id_not: null } },
+          { membership: { id: { not: undefined } } },
         ],
       },
     })
@@ -44,31 +42,35 @@ export class MembershipScheduledJobs {
       let pauseRequestWithCustomer = null
       let latestReservation = null
       try {
-        if (DateTime.fromISO(pauseRequest.pauseDate) <= DateTime.local()) {
-          pauseRequestWithCustomer = (await this.prisma.binding.query.pauseRequest(
-            { where: { id: pauseRequest.id } },
-            `
-              {
-                id
-                membership {
-                  id
-                  subscriptionId
-                  customer {
-                    id
-                  }
-                  plan {
-                    id
-                    itemCount
-                  }
-                }
-              }
-            `
-          )) as any
+        if (
+          DateTime.fromISO(pauseRequest.pauseDate.toISOString()) <=
+          DateTime.local()
+        ) {
+          pauseRequestWithCustomer = await this.prisma.client2.pauseRequest.findUnique(
+            {
+              where: { id: pauseRequest.id },
+              select: {
+                id: true,
+                membership: {
+                  select: {
+                    id: true,
+                    subscriptionId: true,
+                    customer: { select: { id: true } },
+                    plan: { select: { id: true, itemCount: true } },
+                  },
+                },
+              },
+            }
+          )
+          pauseRequestWithCustomer = this.prisma.sanitizePayload(
+            pauseRequestWithCustomer,
+            "PauseRequest"
+          )
 
           const customerId = pauseRequestWithCustomer?.membership?.customer?.id
 
           if (pauseRequest.pauseType === "WithItems") {
-            const planID = this.utils.getPauseWIthItemsPlanId(
+            const planID = this.utils.getPauseWithItemsPlanId(
               pauseRequestWithCustomer?.membership
             )
 
@@ -78,40 +80,35 @@ export class MembershipScheduledJobs {
               })
               .request()
 
-            await this.prisma.client.updatePauseRequest({
-              where: { id: pauseRequest.id },
-              data: { pausePending: false },
-            })
-
-            await this.prisma.client.updateCustomerMembership({
-              where: { id: pauseRequestWithCustomer.membership.id },
-              data: {
-                plan: { connect: { planID } },
-              },
-            })
-
-            await this.prisma.client.updateCustomer({
+            await this.prisma.client2.customer.update({
+              where: { id: customerId },
               data: {
                 status: "Paused",
+                membership: {
+                  update: {
+                    plan: { connect: { planID } },
+                    pauseRequests: {
+                      update: {
+                        where: { id: pauseRequest.id },
+                        data: { pausePending: false },
+                      },
+                    },
+                  },
+                },
               },
-              where: { id: customerId },
             })
 
             this.logger.log(
               `Paused customer subscription with items: ${customerId}`
             )
           } else {
-            const reservedBagItems = await this.prisma.client
-              .customer({ id: customerId })
-              .bagItems({ where: { status: "Reserved" } })
+            const reservedBagItemsCount = await this.prisma.client2.bagItem.count(
+              {
+                where: { customer: { id: customerId }, status: "Reserved" },
+              }
+            )
 
-            if (reservedBagItems.length > 0) {
-              const customer = await this.prisma.client.pauseRequests({
-                where: {
-                  id: customerId,
-                },
-              })
-
+            if (reservedBagItemsCount > 0) {
               const subscriptionId =
                 pauseRequestWithCustomer?.membership?.subscriptionId
 
@@ -120,25 +117,29 @@ export class MembershipScheduledJobs {
               }
 
               // Customer has reserved pieces so we restart membership
-              await this.paymentUtils.resumeSubscription(
-                subscriptionId,
-                null,
-                customer
-              )
+              await this.paymentUtils.resumeSubscription(subscriptionId, null, {
+                id: customerId,
+              })
               this.logger.log(`Resumed customer subscription: ${customerId}`)
             } else {
               // Otherwise we can pause the membership if no reserved pieces
-              await this.prisma.client.updatePauseRequest({
-                where: { id: pauseRequest.id },
-                data: { pausePending: false },
-              })
-
-              await this.prisma.client.updateCustomer({
+              await this.prisma.client2.customer.update({
                 data: {
                   status: "Paused",
+                  membership: {
+                    update: {
+                      pauseRequests: {
+                        update: {
+                          where: { id: pauseRequest.id },
+                          data: { pausePending: false },
+                        },
+                      },
+                    },
+                  },
                 },
                 where: { id: customerId },
               })
+
               this.logger.log(
                 `Paused customer subscription without items: ${customerId}`
               )
@@ -155,38 +156,45 @@ export class MembershipScheduledJobs {
 
   @Cron(CronExpression.EVERY_6_HOURS)
   async manageMembershipResumes() {
-    const pausedCustomers = await this.prisma.binding.query.customers(
-      {
-        where: {
-          status: "Paused",
+    const _pausedCustomers = await this.prisma.client2.customer.findMany({
+      where: {
+        status: "Paused",
+      },
+      select: {
+        id: true,
+        status: true,
+        user: {
+          select: { id: true, email: true, firstName: true, lastName: true },
+        },
+        membership: {
+          select: {
+            id: true,
+            subscriptionId: true,
+            pauseRequests: {
+              select: {
+                id: true,
+                createdAt: true,
+                resumeDate: true,
+                pausePending: true,
+                notified: true,
+              },
+            },
+          },
         },
       },
-      `{
-      id
-      status
-      user {
-        id
-        email
-        firstName
-        lastName
-      }
-      membership {
-        id
-        subscriptionId
-        pauseRequests {
-          id
-          createdAt
-          resumeDate
-          pausePending
-          notified
-        }
-      }
-    }`
+    })
+    const pausedCustomers = this.prisma.sanitizePayload(
+      _pausedCustomers,
+      "Customer"
     )
     for (const customer of pausedCustomers) {
       try {
-        const pauseRequest = this.utils.getLatestPauseRequest(customer)
-        const resumeDate = DateTime.fromISO(pauseRequest?.resumeDate)
+        const pauseRequest = (this.utils.getLatestPauseRequest(
+          customer
+        ) as unknown) as PauseRequest
+        const resumeDate = DateTime.fromISO(
+          pauseRequest.resumeDate.toISOString()
+        )
 
         // If it's time to auto-resume, do so.
         if (!!pauseRequest && resumeDate <= DateTime.local()) {
@@ -235,7 +243,7 @@ export class MembershipScheduledJobs {
         customer.user,
         pauseRequest.resumeDate
       )
-      await this.prisma.client.updatePauseRequest({
+      await this.prisma.client2.pauseRequest.update({
         where: { id: pauseRequest.id },
         data: { notified: true },
       })

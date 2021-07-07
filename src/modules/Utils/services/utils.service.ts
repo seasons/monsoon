@@ -5,12 +5,12 @@ import { UTMData as BindingUTMData, DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import { AdminActionLog } from "@prisma/client"
 import { Location } from "@prisma/client"
+import { UTMData } from "@prisma/client"
 import {
   PauseRequest,
   AdminActionLog as PrismaOneAdminActionLog,
   Reservation,
   SyncTimingType,
-  UTMData,
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import cliProgress from "cli-progress"
@@ -28,6 +28,7 @@ import moment from "moment"
 import states from "us-state-converter"
 
 import { bottomSizeRegex } from "../../Product/constants"
+import { QueryUtilsService } from "./queryUtils.service"
 
 enum ProductSize {
   XXS = "XXS",
@@ -47,9 +48,12 @@ type InfoStringPath = "user" | "customer"
 
 @Injectable()
 export class UtilsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly queryUtils: QueryUtilsService
+  ) {}
 
-  formatUTMForSegment = (utm: UTMData | BindingUTMData) => ({
+  formatUTMForSegment = (utm: UTMData) => ({
     utm_source: utm?.source,
     utm_content: utm?.content,
     utm_medium: utm?.medium,
@@ -302,8 +306,8 @@ export class UtilsService {
     return JSON.parse(fs.readFileSync(process.cwd() + `/${path}.json`, "utf-8"))
   }
 
-  // Get an info string for a field nested somewhere inside the info object
-  getInfoStringAt = (info, path: InfoStringPath) => {
+  // Get a select object for a field nested somewhere inside the info object
+  getSelectFromInfoAt = (info, path: InfoStringPath) => {
     if (typeof info === "string") {
       throw new Error(`Unable to parse string info. Need to implement.`)
     }
@@ -318,7 +322,12 @@ export class UtilsService {
     if (subField === undefined) {
       return null
     }
-    return this.fieldsToInfoString(subField, fieldsToIgnore)
+    const modelName = path === "user" ? "User" : "Customer"
+    return QueryUtilsService.fieldsToSelect(
+      fields,
+      PrismaService.modelFieldsByModelName,
+      modelName
+    )
   }
 
   private getFieldsToIgnore = (field: InfoStringPath | string) => {
@@ -399,7 +408,7 @@ export class UtilsService {
     return latestResy
   }
 
-  getPauseWIthItemsPlanId = membership => {
+  getPauseWithItemsPlanId = membership => {
     const itemCount = membership?.plan?.itemCount
     let planID
     if (itemCount === 1) {
@@ -448,19 +457,17 @@ export class UtilsService {
   }
 
   async getSyncTimingsRecord(type: SyncTimingType) {
-    const syncTimings = await this.prisma.client.syncTimings({
-      where: {
-        type,
-      },
-      orderBy: "createdAt_DESC",
+    const syncTiming = await this.prisma.client2.syncTiming.findFirst({
+      where: { type },
+      orderBy: { createdAt: "desc" },
     })
 
-    if (syncTimings.length === 0) {
+    if (!syncTiming) {
       throw new Error(
         `No sync timing records found for type: ${type}. Please seed initial record`
       )
     }
 
-    return head(syncTimings)
+    return this.prisma.sanitizePayload(syncTiming, "SyncTiming")
   }
 }

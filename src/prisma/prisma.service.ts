@@ -34,9 +34,9 @@ export const SINGLETON_RELATIONS_POSING_AS_ARRAYS = {
   "SmsReceipt": ["user"],
   "StylePreferences": ["customerDetail"],
   "UserPushNotificationInterest": ["UserPushNotification"],
-  "AdminActionLog": ["interpretation"],
   "CustomerNotificationBarReceipt": ["customer"],
-  "PhysicalProduct": ["productVariant"]
+  "PhysicalProduct": ["productVariant"],
+  "SyncTiming": ["customer"]
 }
 
 // What was stored and interpreted as JSON in prisma1 will look like
@@ -62,7 +62,7 @@ export class PrismaService implements UpdatableConnection {
     log: process.env.NODE_ENV === "production" ? ['warn', 'error'] : process.env.DB_LOG === 'true' ? ['query', 'info', 'warn', 'error'] : []
   })
 
-  private modelFieldsByModelName = new PrismaSelect(null).dataModel.reduce(
+  static modelFieldsByModelName = new PrismaSelect(null).dataModel.reduce(
     (accumulator, currentModel) => {
       accumulator[currentModel.name] = currentModel.fields
       return accumulator
@@ -119,7 +119,7 @@ export class PrismaService implements UpdatableConnection {
     singleRelationFieldNames.forEach((fieldName) => {
       const fieldInPayload = !!payload[fieldName]
       if (!!fieldInPayload) {
-        const valueType = this.modelFieldsByModelName[modelName].find(a => a.name === fieldName).type
+        const valueType = PrismaService.modelFieldsByModelName[modelName].find(a => a.name === fieldName).type
         returnPayload[fieldName] = this.sanitizePayload(head(payload?.[fieldName]), valueType)
       }
     })
@@ -131,7 +131,7 @@ export class PrismaService implements UpdatableConnection {
     })
 
     // Sanitize nested objects
-    const modelFields = this.modelFieldsByModelName[modelName]
+    const modelFields = PrismaService.modelFieldsByModelName[modelName]
     modelFields.forEach((field) => {
       const fieldInPayload = !!payload[field.name]
       if (fieldInPayload && field.kind === "object" && !singleRelationFieldNames.includes(field.name) && !scalarListFieldNames.includes(field.name)) {
@@ -155,7 +155,7 @@ export class PrismaService implements UpdatableConnection {
     }
 
     for (const k of Object.keys(payload)) {
-      const typeOfK = this.modelFieldsByModelName[payloadType].find(a => a.name === k).type
+      const typeOfK = PrismaService.modelFieldsByModelName[payloadType].find(a => a.name === k).type
       const isScalarList = SCALAR_LIST_FIELD_NAMES[payloadType]?.includes(k)
       const isJSON = JSON_FIELD_NAMES[payloadType]?.includes(k)
       if (typeof payload[k] === "object" && !isScalarList && !isJSON) {

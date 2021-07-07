@@ -8,7 +8,7 @@ import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import sgMail from "@sendgrid/mail"
 import chargebee from "chargebee"
-import Parser from "json2csv"
+import { Parser } from "json2csv"
 import { head, isEmpty } from "lodash"
 import moment from "moment"
 
@@ -37,7 +37,7 @@ export class MarketingScheduledJobs {
   async syncUnsubscribesFromDrip() {
     this.logger.log(`Run drip unsubscribe sync`)
     const count = await this.dripSync.syncUnsubscribesFromDrip()
-    this.logger.log(`Drip Unsubscribe job unsucrbied ${count} users`)
+    this.logger.log(`Drip Unsubscribe job unsubscribed ${count} users`)
   }
 
   @Cron(CronExpression.EVERY_6_HOURS)
@@ -48,40 +48,34 @@ export class MarketingScheduledJobs {
     const dayThreeFollowupsSent = []
     const dayTwoFollowupsSent = []
     const windowsClosed = []
-    const customers = await this.prisma.binding.query.customers(
-      {
-        where: {
-          AND: [
-            // Prior to Jan 26 2021 we had some cases we need to handle manually
-            {
-              admissions: {
-                authorizationWindowClosesAt_gte: new Date(2021, 0, 26),
-              },
+    const _customers = await this.prisma.client2.customer.findMany({
+      where: {
+        AND: [
+          // Prior to Jan 26 2021 we had some cases we need to handle manually
+          {
+            admissions: {
+              authorizationWindowClosesAt: { gte: new Date(2021, 0, 26) },
             },
-            { status: "Authorized" },
-          ],
+          },
+          { status: "Authorized" },
+        ],
+      },
+      select: {
+        id: true,
+        authorizedAt: true,
+        admissions: { select: { authorizationWindowClosesAt: true } },
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            emails: { select: { emailId: true } },
+            smsReceipts: { select: { id: true, smsId: true } },
+          },
         },
       },
-      `{
-        id
-        authorizedAt
-        admissions {
-          authorizationWindowClosesAt
-        }
-        user {
-          id
-          email
-          firstName
-          emails {
-            emailId
-          }
-          smsReceipts {
-            id
-            smsId
-          }
-        }
-      }`
-    )
+    })
+    const customers = this.prisma.sanitizePayload(_customers, "Customer")
     for (const cust of customers) {
       const now = moment()
       const dayTwoStarted = moment(cust.authorizedAt)
@@ -142,7 +136,7 @@ export class MarketingScheduledJobs {
             renderData: { name: cust.user.firstName },
             smsId: "Rewaitlisted",
           })
-          await this.prisma.client.updateCustomer({
+          await this.prisma.client2.customer.update({
             where: { id: cust.id },
             data: { status: "Waitlisted" },
           })
@@ -238,20 +232,20 @@ export class MarketingScheduledJobs {
       )
       return
     }
-    const waitlistedAdmissableCustomers = await this.prisma.binding.query.customers(
+    const _waitlistedAdmissableCustomers = await this.prisma.client2.customer.findMany(
       {
         where: {
           AND: [{ admissions: { admissable: true } }, { status: "Waitlisted" }],
         },
-      },
-      `{
-      id
-      user {
-        id
-        email
-        firstName
+        select: {
+          id: true,
+          user: { select: { id: true, email: true, firstName: true } },
+        },
       }
-    }`
+    )
+    const waitlistedAdmissableCustomers = this.prisma.sanitizePayload(
+      _waitlistedAdmissableCustomers,
+      "Customer"
     )
     for (const cust of waitlistedAdmissableCustomers) {
       const availableStyles = await this.admissions.getAvailableStyles({
@@ -280,79 +274,76 @@ export class MarketingScheduledJobs {
     const oneDapperStreetMediaPartnerId = 183668
     const threadabilityMediaPartnerId = 2253589
     const faiyamRahmanMediaPartnerId = 2729780
-    const customersToUpdate = await this.prisma.binding.query.customers(
-      {
-        where: {
-          AND: [
-            // They came through a rev share partner but not through an impact link
-            {
-              detail: {
-                discoveryReference_in: ["onedapperstreet", "threadability"],
-                impactId: null,
-              },
+    const _customersToUpdate = await this.prisma.client2.customer.findMany({
+      where: {
+        AND: [
+          // They came through a rev share partner but not through an impact link
+          {
+            detail: {
+              discoveryReference: { in: ["onedapperstreet", "threadability"] },
+              impactId: null,
             },
-            {
-              OR: [
-                // We need to upload their Account Creation action
-                {
-                  impactSyncTimings_none: {
+          },
+          {
+            OR: [
+              // We need to upload their Account Creation action
+              {
+                impactSyncTimings: {
+                  none: {
                     AND: [{ type: "Impact" }, { detail: "AccountCreation" }],
                   },
                 },
-                // We need to upload their Authorized User action
-                {
-                  AND: [
-                    { authorizedAt_not: null },
-                    {
-                      impactSyncTimings_none: {
+              },
+              // We need to upload their Authorized User action
+              {
+                AND: [
+                  { authorizedAt: { not: undefined } },
+                  {
+                    impactSyncTimings: {
+                      none: {
                         AND: [{ type: "Impact" }, { detail: "AuthorizedUser" }],
                       },
                     },
-                  ],
-                },
-                // We need to upload their Initial Subscription action
-                {
-                  AND: [
-                    { admissions: { subscribedAt_not: null } },
-                    {
-                      impactSyncTimings_none: {
+                  },
+                ],
+              },
+              // We need to upload their Initial Subscription action
+              {
+                AND: [
+                  { admissions: { subscribedAt: { not: undefined } } },
+                  {
+                    impactSyncTimings: {
+                      none: {
                         AND: [
                           { type: "Impact" },
                           { detail: "InitialSubscription" },
                         ],
                       },
                     },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
-      `{
-        id
-        createdAt
-        authorizedAt
-        admissions {
-          id
-          subscribedAt
-        }
-        user {
-          id
-        }
-        impactSyncTimings {
-          type
-          detail
-        }
-        detail {
-          id
-          discoveryReference
-        }
-      }`
+      select: {
+        id: true,
+        createdAt: true,
+        authorizedAt: true,
+        admissions: { select: { id: true, subscribedAt: true } },
+        user: { select: { id: true } },
+        impactSyncTimings: { select: { type: true, detail: true } },
+        detail: { select: { id: true, discoveryReference: true } },
+      },
+    })
+    const customersToUpdate = this.prisma.sanitizePayload(
+      _customersToUpdate,
+      "Customer"
     )
     const syncTimingUpdates = []
     const createSyncTimingUpdateFunc = (cust, detail) => async () =>
-      this.prisma.client.updateCustomer({
+      this.prisma.client2.customer.update({
         where: { id: cust.id },
         data: {
           impactSyncTimings: {
@@ -386,7 +377,7 @@ export class MarketingScheduledJobs {
     })
     const csvData = []
     for (const cust of customersToUpdate) {
-      const impactSyncTimings = cust.impactSyncTimings.filter(
+      const impactSyncTimings = (cust as any).impactSyncTimings.filter(
         a => a.type === "Impact"
       )
       const shouldUploadAccountCreation = isEmpty(
@@ -398,7 +389,7 @@ export class MarketingScheduledJobs {
       const shouldUploadInitialSubscription =
         isEmpty(
           impactSyncTimings.filter(a => a.detail === "InitialSubscription")
-        ) && !!cust.admissions?.subscribedAt
+        ) && !!(cust as any).admissions?.subscribedAt
       if (shouldUploadAccountCreation) {
         csvData.push({
           ...createCommonFields(cust),
@@ -420,11 +411,13 @@ export class MarketingScheduledJobs {
         )
       }
       if (shouldUploadInitialSubscription) {
-        const Amount = await this.getInitialSubscriptionAmount(cust.user.id)
+        const Amount = await this.getInitialSubscriptionAmount(
+          (cust as any).user.id
+        )
         csvData.push({
           ...createCommonFields(cust),
           ActionTrackerId: InitialSubscriptionActionTrackerId,
-          EventDate: cust.admissions.subscribedAt,
+          EventDate: (cust as any).admissions.subscribedAt,
           Amount,
         })
         syncTimingUpdates.push(

@@ -615,7 +615,7 @@ export class ProductUtilsService {
     where: Prisma.CategoryWhereUniqueInput,
     select: Prisma.CategorySelect
   ): Promise<(Partial<Category> & Pick<Category, "id" | "slug">)[]> {
-    const _categoryWithChildren = await this.prisma.client2.category.findUnique(
+    const _categoryWithChildren = (await this.prisma.client2.category.findUnique(
       {
         where,
         select: merge(
@@ -627,7 +627,7 @@ export class ProductUtilsService {
           select
         ),
       }
-    )
+    )) as any
     const categoryWithChildren = this.prisma.sanitizePayload(
       _categoryWithChildren,
       "Category"

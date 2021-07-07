@@ -33,7 +33,8 @@ export class PrismaSyncService {
 
   async syncPrisma(
     destination: PrismaSyncDestination,
-    origin: PrismaSyncOrigin
+    origin: PrismaSyncOrigin,
+    force: boolean
   ) {
     let toHost
     let toDBName
@@ -83,6 +84,26 @@ export class PrismaSyncService {
         fromDBName = process.env.DB_PRODUCTION_DBNAME
         fromSchema = "monsoon$production"
         break
+    }
+
+    if (force) {
+      this.runSync(
+        { fromHost, fromPort, fromUsername, fromDBName, fromSchema },
+        {
+          toHost,
+          toPort,
+          toUsername,
+          toDBName,
+          toSchema,
+        }
+      )
+      this.resetAuth0IDsForUsers({
+        endpoint: toEndpoint,
+        secret: toSecret,
+      })
+
+      // execute and return, do not trigger prompt
+      return
     }
 
     if (readlineSync.keyInYN(this.getWarning(destination, origin))) {

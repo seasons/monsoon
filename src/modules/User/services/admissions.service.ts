@@ -3,6 +3,7 @@ import { ProductWithEmailData } from "@app/modules/Email/services/email.utils.se
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerStatus, CustomerWhereUniqueInput, Product } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head, intersection, uniqBy } from "lodash"
 import moment from "moment"
@@ -169,7 +170,7 @@ export class AdmissionsService {
   }
 
   async getAvailableStyles(
-    where: CustomerWhereUniqueInput
+    where: Prisma.CustomerWhereUniqueInput
   ): Promise<ProductWithEmailData[]> {
     const {
       detail: { availableTopStyles, availableBottomStyles },
@@ -178,7 +179,7 @@ export class AdmissionsService {
   }
 
   async haveSufficientInventoryToServiceCustomer(
-    where: CustomerWhereUniqueInput
+    where: Prisma.CustomerWhereUniqueInput
   ): Promise<HaveSufficientInventoryToServiceCustomerResult> {
     const inventoryThreshold =
       parseInt(process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER, 10) || 15
@@ -195,7 +196,7 @@ export class AdmissionsService {
   }
 
   async reservableInventoryForCustomer(
-    where: CustomerWhereUniqueInput
+    where: Prisma.CustomerWhereUniqueInput
   ): Promise<{
     reservableStyles: number
     detail: ReservableInventoryForCustomerResultDetail
@@ -217,29 +218,30 @@ export class AdmissionsService {
   }
 
   // is a customer with the given status able to be triaged?
-  isTriageable(status: CustomerStatus) {
+  isTriageable(status: CustomerStatus | string) {
     return ["Created", "Invited", "Waitlisted"].includes(status)
   }
 
   private async availableStylesForCustomer(
-    where: CustomerWhereUniqueInput,
+    where: Prisma.CustomerWhereUniqueInput,
     productType: "Top" | "Bottom"
   ): Promise<{
     reservableStyles: ProductWithEmailData[]
     adjustedReservableStyles: number
   }> {
-    const customer = await this.prisma.binding.query.customer(
-      {
-        where,
+    const _customer = await this.prisma.client2.customer.findFirst({
+      where,
+      select: {
+        id: true,
+        detail: {
+          select: {
+            topSizes: true,
+            waistSizes: true,
+          },
+        },
       },
-      `{
-        id
-        detail {
-          topSizes
-          waistSizes
-        }
-      }`
-    )
+    })
+    const customer = await this.prisma.sanitizePayload(_customer, "Customer")
 
     let sizesKey
     switch (productType) {
@@ -254,46 +256,63 @@ export class AdmissionsService {
     }
 
     const preferredSizes = customer.detail[sizesKey]
-    const availableStyles = (await this.prisma.binding.query.products(
-      {
-        where: {
-          AND: [
-            { type: productType },
-            {
-              variants_some: {
+
+    const _availableStyles = await this.prisma.client2.product.findMany({
+      where: {
+        AND: [
+          { type: productType },
+          {
+            variants: {
+              some: {
                 AND: [
                   {
-                    displayShort_in: preferredSizes.map(size =>
-                      size.toString()
-                    ),
+                    displayShort: {
+                      in: preferredSizes.map(size => size.toString()),
+                    },
                   },
-                  { reservable_gte: 1 },
+                  {
+                    reservable: {
+                      gte: 1,
+                    },
+                  },
                 ],
               },
             },
-          ],
+          },
+        ],
+      },
+      select: {
+        id: true,
+        type: true,
+        name: true,
+        retailPrice: true,
+        slug: true,
+        images: {
+          select: {
+            url: true,
+          },
+        },
+        variants: {
+          select: {
+            displayShort: true,
+          },
+        },
+        brand: {
+          select: {
+            name: true,
+          },
+        },
+        category: {
+          select: {
+            slug: true,
+          },
         },
       },
-      // Need to query certain fields for the emails sent based on this data
-      `{
-        id
-        type
-        name
-        retailPrice
-        images {
-          url
-        }
-        variants {
-          displayShort
-        }
-        brand {
-          name
-        }
-        category {
-          slug
-        }
-    }`
-    )) as ProductWithEmailData[]
+    })
+    const availableStyles = this.prisma.sanitizePayload(
+      _availableStyles,
+      "Product"
+    )
 
     // Find the competing users. Note that we assume all active customers without an active
     // reservation may be a competing user, regardless of how long it's been since their last reservation
@@ -319,29 +338,27 @@ export class AdmissionsService {
       availableStyles.length - numStylesForCompetingUsers
 
     return {
-      reservableStyles: availableStyles,
+      reservableStyles: (availableStyles as unknown) as ProductWithEmailData[],
       adjustedReservableStyles: Math.max(0, numTrueAvailableStyles),
     }
   }
 
   private async pausedCustomersResumingThisWeek() {
-    const pausedCustomers = await this.prisma.binding.query.customers(
-      {
-        where: { status: "Paused" },
+    const _pausedCustomers = await this.prisma.client2.customer.findMany({
+      where: { status: "Paused" },
+      select: {
+        id: true,
+        detail: { select: { topSizes: true, waistSizes: true } },
+        membership: {
+          select: {
+            pauseRequests: { select: { createdAt: true, resumeDate: true } },
+          },
+        },
       },
-      `{
-        id
-        detail {
-          topSizes
-          waistSizes
-        }
-        membership {
-          pauseRequests {
-            createdAt
-            resumeDate
-          }
-        }
-    }`
+    })
+    const pausedCustomers = this.prisma.sanitizePayload(
+      _pausedCustomers,
+      "Customer"
     )
     const pausedCustomersResumingThisWeek = pausedCustomers.filter(a => {
       const pauseRequests = a.membership?.pauseRequests || []
@@ -355,7 +372,7 @@ export class AdmissionsService {
         )
       )
       return this.utils.isLessThanXDaysFromNow(
-        latestPauseRequest?.resumeDate as string,
+        latestPauseRequest?.resumeDate.toISOString(),
         7
       )
     })
@@ -364,25 +381,22 @@ export class AdmissionsService {
   }
 
   private async activeCustomersWithoutActiveReservation() {
-    return await this.prisma.binding.query.customers(
-      {
-        where: {
-          AND: [
-            { status: "Active" },
-            { reservations_every: { status_in: ["Completed", "Cancelled"] } },
-          ],
-        },
+    return await this.prisma.client2.customer.findMany({
+      where: {
+        AND: [
+          { status: "Active" },
+          {
+            reservations: {
+              every: { status: { in: ["Completed", "Cancelled"] } },
+            },
+          },
+        ],
       },
-      `{
-      id
-      detail {
-        topSizes
-        waistSizes
-      }
-      reservations {
-        createdAt
-      }
-    }`
-    )
+      select: {
+        id: true,
+        detail: { select: { topSizes: true, waistSizes: true } },
+        reservations: { select: { createdAt: true } },
+      },
+    })
   }
 }

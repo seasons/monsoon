@@ -1,6 +1,5 @@
 import * as util from "util"
 
-import { PhysicalProductUtilsService } from "@app/modules/Product"
 import { SlackService } from "@modules/Slack/services/slack.service"
 import { Injectable } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
@@ -62,7 +61,7 @@ export class DataScheduledJobs {
             ],
           },
           ...this.createReportSection({
-            title: "Product Variant + Physical Product Health?",
+            title: "Product Variant + Physical Product Health",
             datapoints: [
               {
                 name: "Mismatched SUID/SKU combos",
@@ -130,13 +129,14 @@ export class DataScheduledJobs {
 
   @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async updateLatitudesAndLongitudes() {
-    const locationsToUpdate = await this.prisma.client.locations({
+    const locationsToUpdate = await this.prisma.client2.location.findMany({
       where: { OR: [{ lat: null }, { lng: null }] },
+      select: { zipCode: true, id: true },
     })
     for (const l of locationsToUpdate) {
       const { latitude, longitude } = zipcodes.lookup(l.zipCode) || {}
       if (!!latitude && !!longitude) {
-        await this.prisma.client.updateLocation({
+        await this.prisma.client2.location.update({
           where: { id: l.id },
           data: { lat: latitude, lng: longitude },
         })
@@ -145,34 +145,38 @@ export class DataScheduledJobs {
   }
 
   async checkAll(withDetails = false) {
-    const allProdVars = await this.prisma.binding.query.productVariants(
-      { where: {} },
-      `{
-        id
-        sku
-        physicalProducts {
-          seasonsUID
-          inventoryStatus
-        }
-        total
-        reservable
-        reserved
-        nonReservable
-        offloaded
-        stored
-      }`
+    const _allProdVars = await this.prisma.client2.productVariant.findMany({
+      select: {
+        id: true,
+        sku: true,
+        physicalProducts: {
+          select: { seasonsUID: true, inventoryStatus: true },
+        },
+        total: true,
+        reservable: true,
+        reserved: true,
+        nonReservable: true,
+        offloaded: true,
+        stored: true,
+      },
+    })
+    const allProdVars = this.prisma.sanitizePayload(
+      _allProdVars,
+      "ProductVariant"
     )
-    const allPhysicalProducts = await this.prisma.binding.query.physicalProducts(
-      { where: {} },
-      `{
-        id
-        seasonsUID
-        inventoryStatus
-        warehouseLocation {
-          id
-          barcode
-        }
-      }`
+    const _allPhysicalProducts = await this.prisma.client2.physicalProduct.findMany(
+      {
+        select: {
+          id: true,
+          seasonsUID: true,
+          inventoryStatus: true,
+          warehouseLocation: { select: { id: true, barcode: true } },
+        },
+      }
+    )
+    const allPhysicalProducts = this.prisma.sanitizePayload(
+      _allPhysicalProducts,
+      "PhysicalProduct"
     )
     const SUIDToSKUMismatches = await this.getSUIDtoSKUMismatches(allProdVars)
     const prodVarsWithIncorrectNumberOfPhysProdsAttached = await this.getProductVariantsWithIncorrectNumberOfPhysicalProductsAttached(
@@ -347,15 +351,15 @@ export class DataScheduledJobs {
         issues: [],
         siblingsWithIssues: [],
       } as any
-      const activeReservationWithPhysProd = head(
-        await this.prisma.client.reservations({
+      const activeReservationWithPhysProd = await this.prisma.client2.reservation.findFirst(
+        {
           where: {
             AND: [
-              { products_some: { seasonsUID: physProd.seasonsUID } },
-              { status_not_in: ["Completed", "Cancelled"] },
+              { products: { some: { seasonsUID: physProd.seasonsUID } } },
+              { status: { not: { in: ["Completed", "Cancelled"] } } },
             ],
           },
-        })
+        }
       )
 
       // Check specific inventory statuses
@@ -366,28 +370,28 @@ export class DataScheduledJobs {
         case "Reserved":
           if (!activeReservationWithPhysProd) {
             // check if the customer held onto it from their last completed reservation
-            const lastCompletedReservation = head(
-              await this.prisma.binding.query.reservations(
-                {
-                  where: {
-                    AND: [
-                      { products_some: { seasonsUID: physProd.seasonsUID } },
-                      { status: "Completed" },
-                    ],
-                  },
-                  orderBy: "createdAt_DESC",
+            const _lastCompletedReservation = await this.prisma.client2.reservation.findFirst(
+              {
+                where: {
+                  AND: [
+                    { products: { some: { seasonsUID: physProd.seasonsUID } } },
+                    { status: "Completed" },
+                  ],
                 },
-                `{
-                reservationNumber
-                status
-                returnedPackage {
-                 items {
-                   seasonsUID
-                 } 
-                }
-              }`
-              )
-            ) as any
+                orderBy: { createdAt: "desc" },
+                select: {
+                  reservationNumber: true,
+                  status: true,
+                  returnedPackage: {
+                    select: { items: { select: { seasonsUID: true } } },
+                  },
+                },
+              }
+            )
+            const lastCompletedReservation = this.prisma.sanitizePayload(
+              _lastCompletedReservation,
+              "Reservation"
+            )
             const returnedItems =
               lastCompletedReservation?.returnedPackage?.items?.map(
                 a => a.seasonsUID
@@ -451,15 +455,16 @@ export class DataScheduledJobs {
   private async checkStoredPhysicalProduct(physProd, thisCase) {
     let thisCaseClone = Object.assign({}, thisCase)
 
-    const parentProduct = head(
-      await this.prisma.client.products({
-        where: {
-          variants_some: {
-            physicalProducts_some: { seasonsUID: physProd.seasonsUID },
+    const parentProduct = await this.prisma.client2.product.findFirst({
+      where: {
+        variants: {
+          some: {
+            physicalProducts: { some: { seasonsUID: physProd.seasonsUID } },
           },
         },
-      })
-    )
+      },
+    })
+
     if (parentProduct.status !== "Stored") {
       thisCaseClone = {
         ...thisCaseClone,
@@ -470,24 +475,28 @@ export class DataScheduledJobs {
       )
     }
 
-    const parentProductVariant = head(
-      await this.prisma.binding.query.productVariants(
-        {
-          where: {
-            physicalProducts_some: { seasonsUID: physProd.seasonsUID },
+    const _parentProductVariant = await this.prisma.client2.productVariant.findFirst(
+      {
+        where: {
+          physicalProducts: { some: { seasonsUID: physProd.seasonsUID } },
+        },
+        select: {
+          physicalProducts: {
+            select: { seasonsUID: true, inventoryStatus: true },
           },
         },
-        `{
-        physicalProducts {
-          seasonsUID
-          inventoryStatus
-        }
-      }`
-      )
-    ) as any
-    const siblingPhysicalProducts = parentProductVariant.physicalProducts.filter(
+      }
+    )
+    const parentProductVariant = this.prisma.sanitizePayload(
+      _parentProductVariant,
+      "ProductVariant"
+    )
+    const siblingPhysicalProducts = (parentProductVariant as any)?.physicalProducts?.filter(
       a => a.seasonsUID !== physProd.seasonsUID
     )
+    if ((parentProductVariant as any)?.physicalProducts === undefined) {
+      console.log("yo")
+    }
     for (const siblingPhysProd of siblingPhysicalProducts) {
       if (!["Stored", "Reserved"].includes(siblingPhysProd.inventoryStatus)) {
         thisCaseClone.siblingsWithIssues.push({

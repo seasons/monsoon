@@ -21,6 +21,7 @@ export class LogsScheduledJobs {
       where: {
         AND: [{ tableName: "PhysicalProduct" }, { interpretedAt: null }],
       },
+      take: 10000,
     })
     logsToInterpret = this.prisma.sanitizePayload(
       logsToInterpret,
@@ -54,6 +55,7 @@ export class LogsScheduledJobs {
           cancelledAt: true,
           completedAt: true,
           reservationNumber: true,
+          status: true,
           products: { select: { id: true } },
         },
       }

@@ -18,56 +18,8 @@ export class ChargebeeQueriesResolver {
   ) {}
 
   @Query()
-  async hostedChargebeeCheckout(
-    @Args() { planID },
-    @Customer() customer,
-    @User() user,
-    @Application() application
-  ) {
-    const { email, firstName, lastName } = user
-    const { phoneNumber } = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-    const hostedPage = await this.payment.getHostedCheckoutPage(
-      planID,
-      user.id,
-      email,
-      firstName,
-      lastName,
-      phoneNumber,
-      null // TODO: Add coupon to this query
-    )
-
-    const customerWithData = (await this.prisma.binding.query.customer(
-      {
-        where: { id: customer.id },
-      },
-      `{
-      id
-      membership {
-        id
-        plan {
-          id
-          tier
-        }
-      }
-    }`
-    )) as any
-
-    const tier = customerWithData?.membership?.plan?.tier
-
-    // Track the selection
-    this.segment.track(user.id, "Opened Hosted Checkout", {
-      email,
-      firstName,
-      lastName,
-      application,
-      customerID: customer.id,
-      planID,
-      tier,
-    })
-
-    return hostedPage
+  async hostedChargebeeCheckout() {
+    throw "Chargebee checkout page is deprecated, please use processPayment"
   }
 
   @Query()

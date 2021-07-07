@@ -669,11 +669,15 @@ export class ReservationService {
       ["Packed", "Picked"].includes(data.status) &&
       data.status !== reservation.status
     ) {
+      const updateData = { warehouseLocation: { disconnect: true } }
+      if (data.status === "Packed") {
+        updateData["packedAt"] = new Date()
+      }
       promises.push(
         ...reservation.products.map(a =>
           this.prisma.client2.physicalProduct.update({
             where: { id: a.id },
-            data: { warehouseLocation: { disconnect: true } },
+            data: updateData,
           })
         )
       )

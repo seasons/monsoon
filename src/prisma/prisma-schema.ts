@@ -10720,6 +10720,7 @@ type PhysicalProduct {
   reports(where: PhysicalProductQualityReportWhereInput, orderBy: PhysicalProductQualityReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductQualityReport!]
   createdAt: DateTime!
   updatedAt: DateTime!
+  packedAt: DateTime
 }
 
 type PhysicalProductConnection {
@@ -10745,6 +10746,7 @@ input PhysicalProductCreateInput {
   unitCost: Float
   price: PhysicalProductPriceCreateOneInput
   reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductCreateManyInput {
@@ -10793,6 +10795,7 @@ input PhysicalProductCreateWithoutLocationInput {
   unitCost: Float
   price: PhysicalProductPriceCreateOneInput
   reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -10811,6 +10814,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   unitCost: Float
   price: PhysicalProductPriceCreateOneInput
   reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductCreateWithoutReportsInput {
@@ -10829,6 +10833,7 @@ input PhysicalProductCreateWithoutReportsInput {
   dateReceived: DateTime
   unitCost: Float
   price: PhysicalProductPriceCreateOneInput
+  packedAt: DateTime
 }
 
 input PhysicalProductCreateWithoutWarehouseLocationInput {
@@ -10847,6 +10852,7 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   unitCost: Float
   price: PhysicalProductPriceCreateOneInput
   reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 enum PhysicalProductDamageType {
@@ -10898,6 +10904,8 @@ enum PhysicalProductOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  packedAt_ASC
+  packedAt_DESC
 }
 
 type PhysicalProductPreviousValues {
@@ -10914,6 +10922,7 @@ type PhysicalProductPreviousValues {
   unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
+  packedAt: DateTime
 }
 
 type PhysicalProductPrice {
@@ -11446,6 +11455,14 @@ input PhysicalProductScalarWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  packedAt: DateTime
+  packedAt_not: DateTime
+  packedAt_in: [DateTime!]
+  packedAt_not_in: [DateTime!]
+  packedAt_lt: DateTime
+  packedAt_lte: DateTime
+  packedAt_gt: DateTime
+  packedAt_gte: DateTime
   AND: [PhysicalProductScalarWhereInput!]
   OR: [PhysicalProductScalarWhereInput!]
   NOT: [PhysicalProductScalarWhereInput!]
@@ -11496,6 +11513,7 @@ input PhysicalProductUpdateDataInput {
   unitCost: Float
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateInput {
@@ -11514,6 +11532,7 @@ input PhysicalProductUpdateInput {
   unitCost: Float
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -11527,6 +11546,7 @@ input PhysicalProductUpdateManyDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateManyInput {
@@ -11552,6 +11572,7 @@ input PhysicalProductUpdateManyMutationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -11633,6 +11654,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   unitCost: Float
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -11650,6 +11672,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   unitCost: Float
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateWithoutReportsDataInput {
@@ -11667,6 +11690,7 @@ input PhysicalProductUpdateWithoutReportsDataInput {
   dateReceived: DateTime
   unitCost: Float
   price: PhysicalProductPriceUpdateOneInput
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
@@ -11684,6 +11708,7 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   unitCost: Float
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -11852,6 +11877,14 @@ input PhysicalProductWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  packedAt: DateTime
+  packedAt_not: DateTime
+  packedAt_in: [DateTime!]
+  packedAt_not_in: [DateTime!]
+  packedAt_lt: DateTime
+  packedAt_lte: DateTime
+  packedAt_gt: DateTime
+  packedAt_gte: DateTime
   AND: [PhysicalProductWhereInput!]
   OR: [PhysicalProductWhereInput!]
   NOT: [PhysicalProductWhereInput!]

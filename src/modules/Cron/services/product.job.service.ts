@@ -1,6 +1,4 @@
-import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PhysicalProductUtilsService } from "@app/modules/Product/services/physicalProduct.utils.service"
-import { CustomerService } from "@app/modules/User/services/customer.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"

@@ -3626,7 +3626,9 @@ export type PhysicalProductOrderByInput =
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
-  | "updatedAt_DESC";
+  | "updatedAt_DESC"
+  | "packedAt_ASC"
+  | "packedAt_DESC";
 
 export type ProductVariantOrderByInput =
   | "id_ASC"
@@ -5856,6 +5858,14 @@ export interface PhysicalProductWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  packedAt?: Maybe<DateTimeInput>;
+  packedAt_not?: Maybe<DateTimeInput>;
+  packedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  packedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  packedAt_lt?: Maybe<DateTimeInput>;
+  packedAt_lte?: Maybe<DateTimeInput>;
+  packedAt_gt?: Maybe<DateTimeInput>;
+  packedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<PhysicalProductWhereInput[] | PhysicalProductWhereInput>;
   OR?: Maybe<PhysicalProductWhereInput[] | PhysicalProductWhereInput>;
   NOT?: Maybe<PhysicalProductWhereInput[] | PhysicalProductWhereInput>;
@@ -11367,6 +11377,7 @@ export interface PhysicalProductCreateWithoutLocationInput {
   reports?: Maybe<
     PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
@@ -11967,6 +11978,7 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   reports?: Maybe<
     PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface LocationCreateOneWithoutPhysicalProductsInput {
@@ -13083,6 +13095,7 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   reports?: Maybe<
     PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
@@ -14502,6 +14515,7 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   reports?: Maybe<
     PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface LocationUpdateOneWithoutPhysicalProductsInput {
@@ -15101,6 +15115,14 @@ export interface PhysicalProductScalarWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  packedAt?: Maybe<DateTimeInput>;
+  packedAt_not?: Maybe<DateTimeInput>;
+  packedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  packedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  packedAt_lt?: Maybe<DateTimeInput>;
+  packedAt_lte?: Maybe<DateTimeInput>;
+  packedAt_gt?: Maybe<DateTimeInput>;
+  packedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<
     PhysicalProductScalarWhereInput[] | PhysicalProductScalarWhereInput
   >;
@@ -15128,6 +15150,7 @@ export interface PhysicalProductUpdateManyDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductVariantUpsertWithWhereUniqueWithoutProductInput {
@@ -16442,6 +16465,7 @@ export interface PhysicalProductCreateInput {
   reports?: Maybe<
     PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface LabelCreateOneInput {
@@ -17336,6 +17360,7 @@ export interface PhysicalProductUpdateDataInput {
   reports?: Maybe<
     PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -20194,6 +20219,7 @@ export interface PhysicalProductUpdateInput {
   reports?: Maybe<
     PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductUpdateManyMutationInput {
@@ -20207,6 +20233,7 @@ export interface PhysicalProductUpdateManyMutationInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductPriceUpdateInput {
@@ -20253,6 +20280,7 @@ export interface PhysicalProductCreateWithoutReportsInput {
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceCreateOneInput>;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductQualityReportUpdateInput {
@@ -20291,6 +20319,7 @@ export interface PhysicalProductUpdateWithoutReportsDataInput {
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceUpdateOneInput>;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductUpsertWithoutReportsInput {
@@ -22057,6 +22086,7 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   reports?: Maybe<
     PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface WarehouseLocationUpdateInput {
@@ -22130,6 +22160,7 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   reports?: Maybe<
     PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput {
@@ -24538,6 +24569,7 @@ export interface PhysicalProduct {
   unitCost?: Float;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  packedAt?: DateTimeOutput;
 }
 
 export interface PhysicalProductPromise
@@ -24569,6 +24601,7 @@ export interface PhysicalProductPromise
   }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  packedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface PhysicalProductSubscription
@@ -24602,6 +24635,7 @@ export interface PhysicalProductSubscription
   }) => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  packedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface PhysicalProductNullablePromise
@@ -24633,6 +24667,7 @@ export interface PhysicalProductNullablePromise
   }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  packedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ProductVariant {
@@ -35105,6 +35140,7 @@ export interface PhysicalProductPreviousValues {
   unitCost?: Float;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  packedAt?: DateTimeOutput;
 }
 
 export interface PhysicalProductPreviousValuesPromise
@@ -35123,6 +35159,7 @@ export interface PhysicalProductPreviousValuesPromise
   unitCost: () => Promise<Float>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  packedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface PhysicalProductPreviousValuesSubscription
@@ -35141,6 +35178,7 @@ export interface PhysicalProductPreviousValuesSubscription
   unitCost: () => Promise<AsyncIterator<Float>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  packedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface PhysicalProductPriceSubscriptionPayload {
