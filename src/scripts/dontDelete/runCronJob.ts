@@ -8,6 +8,7 @@ import { AdmissionsScheduledJobs } from "../../modules/Cron/services/admissions.
 import { LogsScheduledJobs } from "../../modules/Cron/services/logs.job.service"
 import { MarketingScheduledJobs } from "../../modules/Cron/services/marketing.job.service"
 import { MembershipScheduledJobs } from "../../modules/Cron/services/membership.job.service"
+import { ProductScheduledJobs } from "../../modules/Cron/services/product.job.service"
 import { ReservationScheduledJobs } from "../../modules/Cron/services/reservations.job.service"
 import { ShopifyScheduledJobs } from "../../modules/Cron/services/shopify.job.service"
 import { SubscriptionsScheduledJobs } from "../../modules/Cron/services/subscriptions.job.service"
@@ -35,6 +36,7 @@ import { AdmissionsService } from "../../modules/User/services/admissions.servic
 import { AuthService } from "../../modules/User/services/auth.service"
 import { CustomerService } from "../../modules/User/services/customer.service"
 import { PaymentUtilsService } from "../../modules/Utils/services/paymentUtils.service"
+import { QueryUtilsService } from "../../modules/Utils/services/queryUtils.service"
 import { StatementsService } from "../../modules/Utils/services/statements.service"
 import { UtilsService } from "../../modules/Utils/services/utils.service"
 import { PrismaService } from "../../prisma/prisma.service"
@@ -49,7 +51,8 @@ const run = async () => {
 
   const error = new ErrorService()
   const ps = new PrismaService()
-  const utils = new UtilsService(ps)
+  const queryUtils = new QueryUtilsService(ps)
+  const utils = new UtilsService(ps, queryUtils)
   const as = new AdmissionsService(ps, utils)
   const pusher = new PusherService()
   const pndp = new PushNotificationDataProvider()
@@ -59,7 +62,7 @@ const run = async () => {
   const image = new ImageService(ps)
   const emailutils = new EmailUtilsService(ps, error, image)
   const email = new EmailService(ps, utils, emailutils)
-  let auth = new AuthService(ps, pn, email, error, utils, payment)
+  let auth = new AuthService(ps, pn, email, error, payment)
   const segment = new SegmentService()
   const twilio = new TwilioService()
   const twilioUtils = new TwilioUtils()
@@ -71,7 +74,8 @@ const run = async () => {
     paymentUtils,
     error,
     email,
-    utils
+    utils,
+    queryUtils
   )
   const shipping = new ShippingService(ps, utils)
   const cs = new CustomerService(
@@ -83,7 +87,8 @@ const run = async () => {
     email,
     pn,
     sms,
-    utils
+    utils,
+    queryUtils
   )
   payment = new PaymentService(
     cs,
@@ -121,7 +126,6 @@ const run = async () => {
     email,
     sms,
     utils,
-    statements,
     error
   )
   const productUtilsService = new ProductUtilsService(ps, utils)
@@ -140,7 +144,8 @@ const run = async () => {
     productUtilsService,
     productVariantService,
     physicalProductUtilsService,
-    utils
+    utils,
+    queryUtils
   )
   const physicalProductService = new PhysicalProductService(
     ps,
@@ -148,7 +153,8 @@ const run = async () => {
     productVariantService,
     productService,
     physicalProductUtilsService,
-    utils
+    utils,
+    statements
   )
   const shopifyJobService = new ShopifyScheduledJobs(shopify, ps)
   const logsJobService = new LogsScheduledJobs(
@@ -156,12 +162,18 @@ const run = async () => {
     physicalProductService,
     error
   )
+  const productsJobService = new ProductScheduledJobs(
+    ps,
+    utils,
+    physicalProductUtilsService
+  )
   // await reservationsJobService.sendReturnNotifications()
   // await marketingJobService.syncEventsToImpact()
   // await marketingJobService.syncCustomersToDrip()
   // await membershipService.updatePausePendingToPaused()
   // await shopifyJobService.importProductVariantsForShopifyShops()
-  await logsJobService.interpretPhysicalProductLogs()
+  // await logsJobService.interpretPhysicalProductLogs()
+  await productsJobService.updateProductFields()
 }
 
 run()
