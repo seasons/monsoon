@@ -483,8 +483,6 @@ export class PaymentService {
       }
     )
 
-    const membership = customer.membership
-
     const numReservedItemsInBag = customerWithMembership.bagItems?.filter(
       a => a.status === "Reserved"
     )?.length
@@ -515,7 +513,9 @@ export class PaymentService {
 
       return await this.prisma.client2.pauseRequest.create({
         data: {
-          membership: { connect: { id: membership.id } },
+          membership: {
+            connect: { id: customerWithMembership?.membership?.id },
+          },
           pausePending: true,
           pauseDate: new Date(termEnd),
           resumeDate: new Date(resumeDateISO),

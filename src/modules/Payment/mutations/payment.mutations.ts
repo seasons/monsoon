@@ -125,10 +125,12 @@ export class PaymentMutationsResolver {
       pauseType,
       reasonID
     )
-    const _customerWithData = await this.prisma.client2.customer.findUnique({
+    const _customerWithData = (await this.prisma.client2.customer.findUnique({
       where: { id: customer.id },
       select: {
         id: true,
+        createdAt: true,
+        updatedAt: true,
         user: { select: { firstName: true, email: true, id: true } },
         membership: {
           select: {
@@ -148,7 +150,7 @@ export class PaymentMutationsResolver {
         },
         reservations: { select: { id: true, status: true, createdAt: true } },
       },
-    })
+    })) as any
     const customerWithData = this.prisma.sanitizePayload(
       _customerWithData,
       "Customer"
