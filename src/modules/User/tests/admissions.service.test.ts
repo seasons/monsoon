@@ -295,6 +295,7 @@ describe("Admissions Service", () => {
   describe("Inventory Threshold", () => {
     let testUtils: TestUtilsService
     let utils: UtilsService
+    let prismaService: PrismaService
     let cleanupFuncs = []
     let allTestProductsToCreate: CreateTestProductInput[]
     let topXSReservable
@@ -309,7 +310,7 @@ describe("Admissions Service", () => {
     let testCustomer
 
     beforeAll(() => {
-      const ps = new PrismaService()
+      let ps = (prismaService = new PrismaService())
       const qus = new QueryUtilsService(ps)
       testUtils = new TestUtilsService(ps, new UtilsService(ps, qus))
       utils = new UtilsService(ps, qus)
@@ -420,6 +421,7 @@ describe("Admissions Service", () => {
                 pausePending: false,
                 pauseDate: utils.xDaysAgoISOString(22),
                 resumeDate: utils.xDaysFromNowISOString(8),
+                pauseType: "WithItems",
               },
             ],
           },
