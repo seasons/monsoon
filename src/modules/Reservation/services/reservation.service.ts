@@ -256,7 +256,7 @@ export class ReservationService {
                 price: swapCharge.invoice.sub_total,
                 currencyCode: "USD",
                 recordType: "EarlySwap",
-                name: "Eary swap",
+                name: "Early swap",
                 taxPrice: swapCharge?.invoice?.tax || 0,
               },
             ],
