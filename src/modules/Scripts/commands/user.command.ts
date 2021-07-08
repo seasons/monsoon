@@ -164,7 +164,24 @@ export class UserCommands {
       alias: "pn",
       default: "16463502715",
     })
-    phoneNumber
+    phoneNumber,
+    @Option({
+      name: "auth0 id",
+      describe: `Auth0ID`,
+      type: "string",
+      alias: "aid",
+      default: "",
+    })
+    auth0Id,
+    @Option({
+      name: "database user only",
+      describe: "Create user in DB only, not Auth0",
+      type: "boolean",
+      alias: "dbo",
+      default: false,
+      required: false,
+    })
+    dbo: boolean
   ) {
     await this.scripts.updateConnections({
       prismaEnv,
@@ -199,54 +216,79 @@ export class UserCommands {
       zip: "10013",
       country: "USA",
     }
+    const details = {
+      phoneNumber: `+${phoneNumber}`,
+      height: 40 + faker.random.number(32),
+      insureShipment: false,
+
+      weight: {
+        createMany: {
+          data: [
+            { value: 150, position: 1000 },
+            { value: 160, position: 2000 },
+          ],
+        },
+      },
+      waistSizes: {
+        createMany: {
+          data: [
+            { value: 28, position: 1000 },
+            { value: 29, position: 2000 },
+          ],
+        },
+      },
+      topSizes: {
+        createMany: {
+          data: [
+            { value: "XS", position: 1000 },
+            { value: "S", position: 2000 },
+          ],
+        },
+      },
+
+      bodyType: "Athletic",
+      shippingAddress: {
+        create: {
+          name: `${firstName} ${lastName}`,
+          address1: address.line1,
+          city: address.city,
+          state: address.state,
+          zipCode: address.zip,
+        },
+      },
+    }
+
+    if (dbo) {
+      try {
+        user = await this.auth.createPrismaUser({
+          auth0Id,
+          email,
+          firstName,
+          lastName,
+          select: "",
+          details: details,
+        })
+
+        tokenData = { access_token: "***" }
+        customer = { id: user.customer.id }
+
+        await this.auth.updateCustomerWithReferrerData(user, user.customer, "")
+      } catch (err) {
+        console.log(err)
+        throw err
+      }
+    }
 
     try {
-      ;({ user, customer, tokenData } = await this.auth.signupUser({
-        email,
-        password,
-        firstName,
-        lastName,
-        details: {
-          phoneNumber: `+${phoneNumber}`,
-          height: 40 + faker.random.number(32),
-
-          weight: {
-            createMany: {
-              data: [
-                { value: 150, position: 1000 },
-                { value: 160, position: 2000 },
-              ],
-            },
-          },
-          waistSizes: {
-            createMany: {
-              data: [
-                { value: 28, position: 1000 },
-                { value: 29, position: 2000 },
-              ],
-            },
-          },
-          topSizes: {
-            createMany: {
-              data: [
-                { value: "XS", position: 1000 },
-                { value: "S", position: 2000 },
-              ],
-            },
-          },
-
-          bodyType: "Athletic",
-          shippingAddress: {
-            create: {
-              name: `${firstName} ${lastName}`,
-              address1: address.line1,
-              city: address.city,
-              state: address.state,
-              zipCode: address.zip,
-            },
-          },
-        },
-      }))
+      if (!dbo) {
+        ;({ user, customer, tokenData } = await this.auth.signupUser({
+          email,
+          password,
+          firstName,
+          lastName,
+          details: details,
+        }))
+      }
 
       // Give them valid billing data if appropriate
       if (["Active", "Suspended", "Paused"].includes(status)) {

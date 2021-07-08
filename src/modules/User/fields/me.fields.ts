@@ -1,18 +1,19 @@
 import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
+import { CustomerService } from "@app/modules/User/services/customer.service"
+import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { Info, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head } from "lodash"
-
-import { CustomerService } from "../services/customer.service"
 
 @Resolver("Me")
 export class MeFieldsResolver {
   constructor(
     private readonly prisma: PrismaService,
     private readonly customerService: CustomerService,
-    private readonly statements: StatementsService
+    private readonly statements: StatementsService,
+    private readonly customerUtils: CustomerUtilsService
   ) {}
 
   @ResolveField()
@@ -35,6 +36,11 @@ export class MeFieldsResolver {
       select,
     })
     return this.prisma.sanitizePayload(_data, "Customer")
+  }
+
+  @ResolveField()
+  async nextFreeSwapDate(@Customer() customer) {
+    return await this.customerUtils.nextFreeSwapDate(customer.id)
   }
 
   @ResolveField()

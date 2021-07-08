@@ -215,7 +215,7 @@ export class CustomerService {
         const values = details[detailKey].set
         details[detailKey] = this.queryUtils.createScalarListMutateInput(
           values,
-          customer.id,
+          detail.id,
           "update"
         )
       }

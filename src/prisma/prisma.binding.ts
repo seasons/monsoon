@@ -15164,6 +15164,8 @@ type OrderLineItem implements Node {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
+  reservation: Reservation
   taxPercentage: Float
   taxPrice: Int
   price: Int!
@@ -15189,15 +15191,36 @@ input OrderLineItemCreateInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int!
   currencyCode: String!
+  reservation: ReservationCreateOneWithoutLineItemsInput
 }
 
 input OrderLineItemCreateManyInput {
   create: [OrderLineItemCreateInput!]
   connect: [OrderLineItemWhereUniqueInput!]
+}
+
+input OrderLineItemCreateManyWithoutReservationInput {
+  create: [OrderLineItemCreateWithoutReservationInput!]
+  connect: [OrderLineItemWhereUniqueInput!]
+}
+
+input OrderLineItemCreateWithoutReservationInput {
+  id: ID
+  recordID: ID!
+  recordType: OrderLineItemRecordType!
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  name: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int!
+  currencyCode: String!
 }
 
 """An edge in a connection."""
@@ -15222,6 +15245,8 @@ enum OrderLineItemOrderByInput {
   taxRate_DESC
   taxName_ASC
   taxName_DESC
+  name_ASC
+  name_DESC
   taxPercentage_ASC
   taxPercentage_DESC
   taxPrice_ASC
@@ -15243,6 +15268,7 @@ type OrderLineItemPreviousValues {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int!
@@ -15256,6 +15282,8 @@ enum OrderLineItemRecordType {
   ProductVariant
   ExternalProduct
   Package
+  EarlySwap
+  Reservation
 }
 
 input OrderLineItemScalarWhereInput {
@@ -15423,6 +15451,46 @@ input OrderLineItemScalarWhereInput {
 
   """All values not ending with the given string."""
   taxName_not_ends_with: String
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
   taxPercentage: Float
 
   """All values that are not equal to given value."""
@@ -15618,10 +15686,12 @@ input OrderLineItemUpdateDataInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int
   currencyCode: String
+  reservation: ReservationUpdateOneWithoutLineItemsInput
 }
 
 input OrderLineItemUpdateInput {
@@ -15630,10 +15700,12 @@ input OrderLineItemUpdateInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int
   currencyCode: String
+  reservation: ReservationUpdateOneWithoutLineItemsInput
 }
 
 input OrderLineItemUpdateManyDataInput {
@@ -15642,6 +15714,7 @@ input OrderLineItemUpdateManyDataInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int
@@ -15666,10 +15739,23 @@ input OrderLineItemUpdateManyMutationInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int
   currencyCode: String
+}
+
+input OrderLineItemUpdateManyWithoutReservationInput {
+  create: [OrderLineItemCreateWithoutReservationInput!]
+  connect: [OrderLineItemWhereUniqueInput!]
+  set: [OrderLineItemWhereUniqueInput!]
+  disconnect: [OrderLineItemWhereUniqueInput!]
+  delete: [OrderLineItemWhereUniqueInput!]
+  update: [OrderLineItemUpdateWithWhereUniqueWithoutReservationInput!]
+  updateMany: [OrderLineItemUpdateManyWithWhereNestedInput!]
+  deleteMany: [OrderLineItemScalarWhereInput!]
+  upsert: [OrderLineItemUpsertWithWhereUniqueWithoutReservationInput!]
 }
 
 input OrderLineItemUpdateManyWithWhereNestedInput {
@@ -15677,15 +15763,39 @@ input OrderLineItemUpdateManyWithWhereNestedInput {
   data: OrderLineItemUpdateManyDataInput!
 }
 
+input OrderLineItemUpdateWithoutReservationDataInput {
+  recordID: ID
+  recordType: OrderLineItemRecordType
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  name: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int
+  currencyCode: String
+}
+
 input OrderLineItemUpdateWithWhereUniqueNestedInput {
   where: OrderLineItemWhereUniqueInput!
   data: OrderLineItemUpdateDataInput!
+}
+
+input OrderLineItemUpdateWithWhereUniqueWithoutReservationInput {
+  where: OrderLineItemWhereUniqueInput!
+  data: OrderLineItemUpdateWithoutReservationDataInput!
 }
 
 input OrderLineItemUpsertWithWhereUniqueNestedInput {
   where: OrderLineItemWhereUniqueInput!
   update: OrderLineItemUpdateDataInput!
   create: OrderLineItemCreateInput!
+}
+
+input OrderLineItemUpsertWithWhereUniqueWithoutReservationInput {
+  where: OrderLineItemWhereUniqueInput!
+  update: OrderLineItemUpdateWithoutReservationDataInput!
+  create: OrderLineItemCreateWithoutReservationInput!
 }
 
 input OrderLineItemWhereInput {
@@ -15853,6 +15963,46 @@ input OrderLineItemWhereInput {
 
   """All values not ending with the given string."""
   taxName_not_ends_with: String
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
   taxPercentage: Float
 
   """All values that are not equal to given value."""
@@ -16003,6 +16153,7 @@ input OrderLineItemWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  reservation: ReservationWhereInput
 }
 
 input OrderLineItemWhereUniqueInput {
@@ -28577,6 +28728,7 @@ type Reservation implements Node {
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
+  lineItems(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem!]
   status: ReservationStatus!
   returnedAt: DateTime
   shippedAt: DateTime
@@ -28623,6 +28775,7 @@ input ReservationCreateInput {
   newProducts: PhysicalProductCreateManyInput
   returnedProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
+  lineItems: OrderLineItemCreateManyWithoutReservationInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -28635,6 +28788,11 @@ input ReservationCreateManyWithoutCustomerInput {
 
 input ReservationCreateOneInput {
   create: ReservationCreateInput
+  connect: ReservationWhereUniqueInput
+}
+
+input ReservationCreateOneWithoutLineItemsInput {
+  create: ReservationCreateWithoutLineItemsInput
   connect: ReservationWhereUniqueInput
 }
 
@@ -28668,6 +28826,33 @@ input ReservationCreateWithoutCustomerInput {
   newProducts: PhysicalProductCreateManyInput
   returnedProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
+  lineItems: OrderLineItemCreateManyWithoutReservationInput
+  receipt: ReservationReceiptCreateOneWithoutReservationInput
+  lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
+}
+
+input ReservationCreateWithoutLineItemsInput {
+  id: ID
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  status: ReservationStatus!
+  returnedAt: DateTime
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
+  packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -28693,6 +28878,7 @@ input ReservationCreateWithoutPackageEventsInput {
   products: PhysicalProductCreateManyInput
   newProducts: PhysicalProductCreateManyInput
   returnedProducts: PhysicalProductCreateManyInput
+  lineItems: OrderLineItemCreateManyWithoutReservationInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -28719,6 +28905,7 @@ input ReservationCreateWithoutReceiptInput {
   newProducts: PhysicalProductCreateManyInput
   returnedProducts: PhysicalProductCreateManyInput
   packageEvents: PackageTransitEventCreateManyWithoutReservationInput
+  lineItems: OrderLineItemCreateManyWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
 }
@@ -30046,6 +30233,7 @@ input ReservationUpdateDataInput {
   newProducts: PhysicalProductUpdateManyInput
   returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -30071,6 +30259,7 @@ input ReservationUpdateInput {
   newProducts: PhysicalProductUpdateManyInput
   returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -30135,6 +30324,15 @@ input ReservationUpdateOneRequiredWithoutReceiptInput {
   upsert: ReservationUpsertWithoutReceiptInput
 }
 
+input ReservationUpdateOneWithoutLineItemsInput {
+  create: ReservationCreateWithoutLineItemsInput
+  connect: ReservationWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ReservationUpdateWithoutLineItemsDataInput
+  upsert: ReservationUpsertWithoutLineItemsInput
+}
+
 input ReservationUpdateOneWithoutPackageEventsInput {
   create: ReservationCreateWithoutPackageEventsInput
   connect: ReservationWhereUniqueInput
@@ -30157,6 +30355,32 @@ input ReservationUpdateWithoutCustomerDataInput {
   completedAt: DateTime
   cancelledAt: DateTime
   user: UserUpdateOneRequiredInput
+  sentPackage: PackageUpdateOneInput
+  returnedPackage: PackageUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
+  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
+  lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
+}
+
+input ReservationUpdateWithoutLineItemsDataInput {
+  reservationNumber: Int
+  phase: ReservationPhase
+  shipped: Boolean
+  status: ReservationStatus
+  returnedAt: DateTime
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
+  user: UserUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
@@ -30187,6 +30411,7 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
   returnedProducts: PhysicalProductUpdateManyInput
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -30212,6 +30437,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   newProducts: PhysicalProductUpdateManyInput
   returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
 }
@@ -30224,6 +30450,11 @@ input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
 input ReservationUpsertNestedInput {
   update: ReservationUpdateDataInput!
   create: ReservationCreateInput!
+}
+
+input ReservationUpsertWithoutLineItemsInput {
+  update: ReservationUpdateWithoutLineItemsDataInput!
+  create: ReservationCreateWithoutLineItemsInput!
 }
 
 input ReservationUpsertWithoutPackageEventsInput {
@@ -30551,6 +30782,9 @@ input ReservationWhereInput {
   packageEvents_every: PackageTransitEventWhereInput
   packageEvents_some: PackageTransitEventWhereInput
   packageEvents_none: PackageTransitEventWhereInput
+  lineItems_every: OrderLineItemWhereInput
+  lineItems_some: OrderLineItemWhereInput
+  lineItems_none: OrderLineItemWhereInput
   receipt: ReservationReceiptWhereInput
   lastLocation: LocationWhereInput
   shippingOption: ShippingOptionWhereInput
@@ -39391,6 +39625,8 @@ export type OrderLineItemOrderByInput =   'id_ASC' |
   'taxRate_DESC' |
   'taxName_ASC' |
   'taxName_DESC' |
+  'name_ASC' |
+  'name_DESC' |
   'taxPercentage_ASC' |
   'taxPercentage_DESC' |
   'taxPrice_ASC' |
@@ -39407,7 +39643,9 @@ export type OrderLineItemOrderByInput =   'id_ASC' |
 export type OrderLineItemRecordType =   'PhysicalProduct' |
   'ProductVariant' |
   'ExternalProduct' |
-  'Package'
+  'Package' |
+  'EarlySwap' |
+  'Reservation'
 
 export type OrderOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -46261,15 +46499,36 @@ export interface OrderLineItemCreateInput {
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
+  name?: String | null
   taxPercentage?: Float | null
   taxPrice?: Int | null
   price: Int
   currencyCode: String
+  reservation?: ReservationCreateOneWithoutLineItemsInput | null
 }
 
 export interface OrderLineItemCreateManyInput {
   create?: OrderLineItemCreateInput[] | OrderLineItemCreateInput | null
   connect?: OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput | null
+}
+
+export interface OrderLineItemCreateManyWithoutReservationInput {
+  create?: OrderLineItemCreateWithoutReservationInput[] | OrderLineItemCreateWithoutReservationInput | null
+  connect?: OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput | null
+}
+
+export interface OrderLineItemCreateWithoutReservationInput {
+  id?: ID_Input | null
+  recordID: ID_Output
+  recordType: OrderLineItemRecordType
+  needShipping?: Boolean | null
+  taxRate?: Float | null
+  taxName?: String | null
+  name?: String | null
+  taxPercentage?: Float | null
+  taxPrice?: Int | null
+  price: Int
+  currencyCode: String
 }
 
 export interface OrderLineItemScalarWhereInput {
@@ -46332,6 +46591,20 @@ export interface OrderLineItemScalarWhereInput {
   taxName_not_starts_with?: String | null
   taxName_ends_with?: String | null
   taxName_not_ends_with?: String | null
+  name?: String | null
+  name_not?: String | null
+  name_in?: String[] | String | null
+  name_not_in?: String[] | String | null
+  name_lt?: String | null
+  name_lte?: String | null
+  name_gt?: String | null
+  name_gte?: String | null
+  name_contains?: String | null
+  name_not_contains?: String | null
+  name_starts_with?: String | null
+  name_not_starts_with?: String | null
+  name_ends_with?: String | null
+  name_not_ends_with?: String | null
   taxPercentage?: Float | null
   taxPercentage_not?: Float | null
   taxPercentage_in?: Float[] | Float | null
@@ -46405,10 +46678,12 @@ export interface OrderLineItemUpdateDataInput {
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
+  name?: String | null
   taxPercentage?: Float | null
   taxPrice?: Int | null
   price?: Int | null
   currencyCode?: String | null
+  reservation?: ReservationUpdateOneWithoutLineItemsInput | null
 }
 
 export interface OrderLineItemUpdateInput {
@@ -46417,10 +46692,12 @@ export interface OrderLineItemUpdateInput {
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
+  name?: String | null
   taxPercentage?: Float | null
   taxPrice?: Int | null
   price?: Int | null
   currencyCode?: String | null
+  reservation?: ReservationUpdateOneWithoutLineItemsInput | null
 }
 
 export interface OrderLineItemUpdateManyDataInput {
@@ -46429,6 +46706,7 @@ export interface OrderLineItemUpdateManyDataInput {
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
+  name?: String | null
   taxPercentage?: Float | null
   taxPrice?: Int | null
   price?: Int | null
@@ -46453,10 +46731,23 @@ export interface OrderLineItemUpdateManyMutationInput {
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
+  name?: String | null
   taxPercentage?: Float | null
   taxPrice?: Int | null
   price?: Int | null
   currencyCode?: String | null
+}
+
+export interface OrderLineItemUpdateManyWithoutReservationInput {
+  create?: OrderLineItemCreateWithoutReservationInput[] | OrderLineItemCreateWithoutReservationInput | null
+  connect?: OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput | null
+  set?: OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput | null
+  disconnect?: OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput | null
+  delete?: OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput | null
+  update?: OrderLineItemUpdateWithWhereUniqueWithoutReservationInput[] | OrderLineItemUpdateWithWhereUniqueWithoutReservationInput | null
+  updateMany?: OrderLineItemUpdateManyWithWhereNestedInput[] | OrderLineItemUpdateManyWithWhereNestedInput | null
+  deleteMany?: OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput | null
+  upsert?: OrderLineItemUpsertWithWhereUniqueWithoutReservationInput[] | OrderLineItemUpsertWithWhereUniqueWithoutReservationInput | null
 }
 
 export interface OrderLineItemUpdateManyWithWhereNestedInput {
@@ -46464,15 +46755,39 @@ export interface OrderLineItemUpdateManyWithWhereNestedInput {
   data: OrderLineItemUpdateManyDataInput
 }
 
+export interface OrderLineItemUpdateWithoutReservationDataInput {
+  recordID?: ID_Input | null
+  recordType?: OrderLineItemRecordType | null
+  needShipping?: Boolean | null
+  taxRate?: Float | null
+  taxName?: String | null
+  name?: String | null
+  taxPercentage?: Float | null
+  taxPrice?: Int | null
+  price?: Int | null
+  currencyCode?: String | null
+}
+
 export interface OrderLineItemUpdateWithWhereUniqueNestedInput {
   where: OrderLineItemWhereUniqueInput
   data: OrderLineItemUpdateDataInput
+}
+
+export interface OrderLineItemUpdateWithWhereUniqueWithoutReservationInput {
+  where: OrderLineItemWhereUniqueInput
+  data: OrderLineItemUpdateWithoutReservationDataInput
 }
 
 export interface OrderLineItemUpsertWithWhereUniqueNestedInput {
   where: OrderLineItemWhereUniqueInput
   update: OrderLineItemUpdateDataInput
   create: OrderLineItemCreateInput
+}
+
+export interface OrderLineItemUpsertWithWhereUniqueWithoutReservationInput {
+  where: OrderLineItemWhereUniqueInput
+  update: OrderLineItemUpdateWithoutReservationDataInput
+  create: OrderLineItemCreateWithoutReservationInput
 }
 
 export interface OrderLineItemWhereInput {
@@ -46535,6 +46850,20 @@ export interface OrderLineItemWhereInput {
   taxName_not_starts_with?: String | null
   taxName_ends_with?: String | null
   taxName_not_ends_with?: String | null
+  name?: String | null
+  name_not?: String | null
+  name_in?: String[] | String | null
+  name_not_in?: String[] | String | null
+  name_lt?: String | null
+  name_lte?: String | null
+  name_gt?: String | null
+  name_gte?: String | null
+  name_contains?: String | null
+  name_not_contains?: String | null
+  name_starts_with?: String | null
+  name_not_starts_with?: String | null
+  name_ends_with?: String | null
+  name_not_ends_with?: String | null
   taxPercentage?: Float | null
   taxPercentage_not?: Float | null
   taxPercentage_in?: Float[] | Float | null
@@ -46589,6 +46918,7 @@ export interface OrderLineItemWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
+  reservation?: ReservationWhereInput | null
 }
 
 export interface OrderLineItemWhereUniqueInput {
@@ -52445,6 +52775,7 @@ export interface ReservationCreateInput {
   newProducts?: PhysicalProductCreateManyInput | null
   returnedProducts?: PhysicalProductCreateManyInput | null
   packageEvents?: PackageTransitEventCreateManyWithoutReservationInput | null
+  lineItems?: OrderLineItemCreateManyWithoutReservationInput | null
   receipt?: ReservationReceiptCreateOneWithoutReservationInput | null
   lastLocation?: LocationCreateOneInput | null
   shippingOption?: ShippingOptionCreateOneInput | null
@@ -52457,6 +52788,11 @@ export interface ReservationCreateManyWithoutCustomerInput {
 
 export interface ReservationCreateOneInput {
   create?: ReservationCreateInput | null
+  connect?: ReservationWhereUniqueInput | null
+}
+
+export interface ReservationCreateOneWithoutLineItemsInput {
+  create?: ReservationCreateWithoutLineItemsInput | null
   connect?: ReservationWhereUniqueInput | null
 }
 
@@ -52490,6 +52826,33 @@ export interface ReservationCreateWithoutCustomerInput {
   newProducts?: PhysicalProductCreateManyInput | null
   returnedProducts?: PhysicalProductCreateManyInput | null
   packageEvents?: PackageTransitEventCreateManyWithoutReservationInput | null
+  lineItems?: OrderLineItemCreateManyWithoutReservationInput | null
+  receipt?: ReservationReceiptCreateOneWithoutReservationInput | null
+  lastLocation?: LocationCreateOneInput | null
+  shippingOption?: ShippingOptionCreateOneInput | null
+}
+
+export interface ReservationCreateWithoutLineItemsInput {
+  id?: ID_Input | null
+  reservationNumber: Int
+  phase: ReservationPhase
+  shipped: Boolean
+  status: ReservationStatus
+  returnedAt?: DateTime | null
+  shippedAt?: DateTime | null
+  receivedAt?: DateTime | null
+  reminderSentAt?: DateTime | null
+  statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
+  user: UserCreateOneInput
+  customer: CustomerCreateOneWithoutReservationsInput
+  sentPackage?: PackageCreateOneInput | null
+  returnedPackage?: PackageCreateOneInput | null
+  products?: PhysicalProductCreateManyInput | null
+  newProducts?: PhysicalProductCreateManyInput | null
+  returnedProducts?: PhysicalProductCreateManyInput | null
+  packageEvents?: PackageTransitEventCreateManyWithoutReservationInput | null
   receipt?: ReservationReceiptCreateOneWithoutReservationInput | null
   lastLocation?: LocationCreateOneInput | null
   shippingOption?: ShippingOptionCreateOneInput | null
@@ -52515,6 +52878,7 @@ export interface ReservationCreateWithoutPackageEventsInput {
   products?: PhysicalProductCreateManyInput | null
   newProducts?: PhysicalProductCreateManyInput | null
   returnedProducts?: PhysicalProductCreateManyInput | null
+  lineItems?: OrderLineItemCreateManyWithoutReservationInput | null
   receipt?: ReservationReceiptCreateOneWithoutReservationInput | null
   lastLocation?: LocationCreateOneInput | null
   shippingOption?: ShippingOptionCreateOneInput | null
@@ -52541,6 +52905,7 @@ export interface ReservationCreateWithoutReceiptInput {
   newProducts?: PhysicalProductCreateManyInput | null
   returnedProducts?: PhysicalProductCreateManyInput | null
   packageEvents?: PackageTransitEventCreateManyWithoutReservationInput | null
+  lineItems?: OrderLineItemCreateManyWithoutReservationInput | null
   lastLocation?: LocationCreateOneInput | null
   shippingOption?: ShippingOptionCreateOneInput | null
 }
@@ -53075,6 +53440,7 @@ export interface ReservationUpdateDataInput {
   newProducts?: PhysicalProductUpdateManyInput | null
   returnedProducts?: PhysicalProductUpdateManyInput | null
   packageEvents?: PackageTransitEventUpdateManyWithoutReservationInput | null
+  lineItems?: OrderLineItemUpdateManyWithoutReservationInput | null
   receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
   lastLocation?: LocationUpdateOneInput | null
   shippingOption?: ShippingOptionUpdateOneInput | null
@@ -53100,6 +53466,7 @@ export interface ReservationUpdateInput {
   newProducts?: PhysicalProductUpdateManyInput | null
   returnedProducts?: PhysicalProductUpdateManyInput | null
   packageEvents?: PackageTransitEventUpdateManyWithoutReservationInput | null
+  lineItems?: OrderLineItemUpdateManyWithoutReservationInput | null
   receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
   lastLocation?: LocationUpdateOneInput | null
   shippingOption?: ShippingOptionUpdateOneInput | null
@@ -53164,6 +53531,15 @@ export interface ReservationUpdateOneRequiredWithoutReceiptInput {
   upsert?: ReservationUpsertWithoutReceiptInput | null
 }
 
+export interface ReservationUpdateOneWithoutLineItemsInput {
+  create?: ReservationCreateWithoutLineItemsInput | null
+  connect?: ReservationWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: ReservationUpdateWithoutLineItemsDataInput | null
+  upsert?: ReservationUpsertWithoutLineItemsInput | null
+}
+
 export interface ReservationUpdateOneWithoutPackageEventsInput {
   create?: ReservationCreateWithoutPackageEventsInput | null
   connect?: ReservationWhereUniqueInput | null
@@ -53186,6 +53562,32 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   completedAt?: DateTime | null
   cancelledAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
+  sentPackage?: PackageUpdateOneInput | null
+  returnedPackage?: PackageUpdateOneInput | null
+  products?: PhysicalProductUpdateManyInput | null
+  newProducts?: PhysicalProductUpdateManyInput | null
+  returnedProducts?: PhysicalProductUpdateManyInput | null
+  packageEvents?: PackageTransitEventUpdateManyWithoutReservationInput | null
+  lineItems?: OrderLineItemUpdateManyWithoutReservationInput | null
+  receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
+  lastLocation?: LocationUpdateOneInput | null
+  shippingOption?: ShippingOptionUpdateOneInput | null
+}
+
+export interface ReservationUpdateWithoutLineItemsDataInput {
+  reservationNumber?: Int | null
+  phase?: ReservationPhase | null
+  shipped?: Boolean | null
+  status?: ReservationStatus | null
+  returnedAt?: DateTime | null
+  shippedAt?: DateTime | null
+  receivedAt?: DateTime | null
+  reminderSentAt?: DateTime | null
+  statusUpdatedAt?: DateTime | null
+  completedAt?: DateTime | null
+  cancelledAt?: DateTime | null
+  user?: UserUpdateOneRequiredInput | null
+  customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
   sentPackage?: PackageUpdateOneInput | null
   returnedPackage?: PackageUpdateOneInput | null
   products?: PhysicalProductUpdateManyInput | null
@@ -53216,6 +53618,7 @@ export interface ReservationUpdateWithoutPackageEventsDataInput {
   products?: PhysicalProductUpdateManyInput | null
   newProducts?: PhysicalProductUpdateManyInput | null
   returnedProducts?: PhysicalProductUpdateManyInput | null
+  lineItems?: OrderLineItemUpdateManyWithoutReservationInput | null
   receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
   lastLocation?: LocationUpdateOneInput | null
   shippingOption?: ShippingOptionUpdateOneInput | null
@@ -53241,6 +53644,7 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   newProducts?: PhysicalProductUpdateManyInput | null
   returnedProducts?: PhysicalProductUpdateManyInput | null
   packageEvents?: PackageTransitEventUpdateManyWithoutReservationInput | null
+  lineItems?: OrderLineItemUpdateManyWithoutReservationInput | null
   lastLocation?: LocationUpdateOneInput | null
   shippingOption?: ShippingOptionUpdateOneInput | null
 }
@@ -53253,6 +53657,11 @@ export interface ReservationUpdateWithWhereUniqueWithoutCustomerInput {
 export interface ReservationUpsertNestedInput {
   update: ReservationUpdateDataInput
   create: ReservationCreateInput
+}
+
+export interface ReservationUpsertWithoutLineItemsInput {
+  update: ReservationUpdateWithoutLineItemsDataInput
+  create: ReservationCreateWithoutLineItemsInput
 }
 
 export interface ReservationUpsertWithoutPackageEventsInput {
@@ -53395,6 +53804,9 @@ export interface ReservationWhereInput {
   packageEvents_every?: PackageTransitEventWhereInput | null
   packageEvents_some?: PackageTransitEventWhereInput | null
   packageEvents_none?: PackageTransitEventWhereInput | null
+  lineItems_every?: OrderLineItemWhereInput | null
+  lineItems_some?: OrderLineItemWhereInput | null
+  lineItems_none?: OrderLineItemWhereInput | null
   receipt?: ReservationReceiptWhereInput | null
   lastLocation?: LocationWhereInput | null
   shippingOption?: ShippingOptionWhereInput | null
@@ -58701,6 +59113,8 @@ export interface OrderLineItem extends Node {
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
+  name?: String | null
+  reservation?: Reservation | null
   taxPercentage?: Float | null
   taxPrice?: Int | null
   price: Int
@@ -58735,6 +59149,7 @@ export interface OrderLineItemPreviousValues {
   needShipping?: Boolean | null
   taxRate?: Float | null
   taxName?: String | null
+  name?: String | null
   taxPercentage?: Float | null
   taxPrice?: Int | null
   price: Int
@@ -59897,6 +60312,7 @@ export interface Reservation extends Node {
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
+  lineItems?: Array<OrderLineItem> | null
   status: ReservationStatus
   returnedAt?: DateTime | null
   shippedAt?: DateTime | null

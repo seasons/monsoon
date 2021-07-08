@@ -88,6 +88,7 @@ type Me @cacheControl(maxAge: 0, scope: PRIVATE) {
   bag: [BagItem!]
   savedItems: [BagItem!]
   notificationBar: NotificationBar
+  nextFreeSwapDate: DateTime
 }
 
 type NotificationBar {
