@@ -655,7 +655,6 @@ export class ReservationService {
                       {
                         question: `What did you think about this?`,
                         options: {
-                          // create: ["Disliked", "It was OK", "Loved it"],
                           create: [
                             { value: "Disliked", position: 1000 },
                             { value: "It was OK", position: 2000 },
@@ -667,12 +666,6 @@ export class ReservationService {
                       {
                         question: `How many times did you wear this?`,
                         options: {
-                          // set: [
-                          //   "Never wore it",
-                          //   "1-2 times",
-                          //   "3-5 times",
-                          //   "More than 6 times",
-                          // ],
                           create: [
                             { value: "Never wore it", position: 1000 },
                             { value: "1-2 times", position: 2000 },
@@ -685,7 +678,6 @@ export class ReservationService {
                       {
                         question: `Did it fit as expected?`,
                         options: {
-                          // set: ["Fit small", "Fit true to size", "Fit oversized"],
                           create: [
                             { value: "Fit small", position: 1000 },
                             { value: "Fit true to size", position: 2000 },
@@ -697,7 +689,6 @@ export class ReservationService {
                       {
                         question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
                         options: {
-                          // set: ["No", "Yes", "Buy below retail", "Would only rent"],
                           create: [
                             { value: "No", position: 1000 },
                             { value: "Yes", position: 2000 },

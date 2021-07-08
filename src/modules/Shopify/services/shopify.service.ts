@@ -3,6 +3,7 @@ import querystring from "querystring"
 
 import { ShopifyProductVariantUpdateInput } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import { Prisma } from "@prisma/client"
 import { BillingInfo, Location } from "@prisma/client"
 import { ShopifyProductVariant } from "@prisma/client"
 import { minBy, pick } from "lodash"
@@ -712,7 +713,7 @@ export class ShopifyService {
             productVariant?.product?.images.edges?.[0]?.node?.transformedSrc
 
           const image = !!imageSrc
-            ? await this.prisma.client.upsertImage({
+            ? await this.prisma.client2.image.upsert({
                 where: {
                   url: imageSrc,
                 },

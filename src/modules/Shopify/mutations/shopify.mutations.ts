@@ -1,5 +1,5 @@
-import { ShopifyShopCreateInput, ShopifyShopUpdateInput } from "@app/prisma"
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 
 import { ShopifyService } from "../services/shopify.service"
@@ -23,27 +23,28 @@ export class ShopifyMutationsResolver {
         scope: {
           set: data.scope.split(","),
         },
-      } as ShopifyShopUpdateInput
+      } as Prisma.ShopifyShopUpdateInput
 
-      await this.prisma.client.upsertShopifyShop({
+      await this.prisma.client2.shopifyShop.upsert({
         where: {
           shopName: data.shop,
         },
         create: {
           ...mutationData,
-        } as ShopifyShopCreateInput,
+        } as Prisma.ShopifyShopCreateInput,
         update: {
           ...mutationData,
         },
       })
     }
-    console.log(data)
   }
 
   @Mutation()
   async importShopifyData(@Args() { shopName, ids }) {
-    const shopifyShop = await this.prisma.client.shopifyShop({
-      shopName,
+    const shopifyShop = await this.prisma.client2.shopifyShop.findFirst({
+      where: {
+        shopName,
+      },
     })
 
     await this.shopify.importProductVariants({
