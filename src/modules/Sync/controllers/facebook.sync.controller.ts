@@ -42,29 +42,21 @@ export class FacebookSyncController {
 
     this.logger.log("Refreshing cache")
 
-    const allProducts = await this.prisma.binding.query.products(
-      {},
-      `
-            {
-                id
-                slug
-                type
-                name
-                description
-                brand {
-                    name
-                }
-                retailPrice
-                images {
-                    url
-                }
-                color {
-                    name
-                }
-                status
-            }
-          `
-    )
+    const _allProducts = await this.prisma.client2.product.findMany({
+      select: {
+        id: true,
+        slug: true,
+        type: true,
+        name: true,
+        description: true,
+        brand: { select: { name: true } },
+        retailPrice: true,
+        images: { select: { url: true } },
+        color: { select: { name: true } },
+        status: true,
+      },
+    })
+    const allProducts = this.prisma.sanitizePayload(_allProducts, "Product")
 
     const data = allProducts.map(product => {
       const {
