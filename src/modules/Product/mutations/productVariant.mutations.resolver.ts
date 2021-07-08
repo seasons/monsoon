@@ -27,21 +27,23 @@ export class ProductVariantMutationsResolver {
   ) {
     if (!customer) throw new Error("Missing customer from context")
 
-    const restockNotifications = await this.prisma.client.productNotifications({
-      where: {
-        customer: {
-          id: customer.id,
-        },
-        AND: {
-          productVariant: {
-            id: variantID,
+    const existingNotification = await this.prisma.client2.productNotification.findFirst(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          AND: {
+            productVariant: {
+              id: variantID,
+            },
           },
         },
-      },
-      orderBy: "createdAt_DESC",
-    })
-
-    const existingNotification = head(restockNotifications)
+        orderBy: {
+          createdAt: "desc",
+        },
+      }
+    )
 
     const data = {
       shouldNotify: shouldNotify ? shouldNotify : false,
@@ -58,7 +60,7 @@ export class ProductVariantMutationsResolver {
       },
     }
 
-    return await this.prisma.client.upsertProductNotification({
+    return await this.prisma.client2.productNotification.upsert({
       where: { id: existingNotification?.id || "" },
       create: data,
       update: data,
