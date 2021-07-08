@@ -242,8 +242,7 @@ export class ReservationService {
     )
 
     const doesNotHaveFreeSwap =
-      nextFreeSwapDate &&
-      nextFreeSwapDate > DateTime.local().setZone("America/New_York").toISO()
+      nextFreeSwapDate && nextFreeSwapDate > DateTime.local().toISO()
     const swapCharge = await this.payment.addEarlySwapCharge(customerID)
 
     if (doesNotHaveFreeSwap && reservationID) {
@@ -615,6 +614,8 @@ export class ReservationService {
         })
         .request()
 
+      // Below we are creating a draft OrderLineItem with dummy data to show to the client
+      // it's using a random ID and a recordID because it's not being saved to the database
       return [
         {
           id: cuid(),

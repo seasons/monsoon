@@ -32,9 +32,13 @@ export class CustomerUtilsService {
     })
     const customer = this.prisma.sanitizePayload(_customer, "Customer")
     const latestReservation = head(customer.reservations)
+
     const latestReservationCreatedAt = latestReservation?.createdAt?.toISOString()
     const currentTermEnd = customer?.membership?.subscription?.currentTermEnd?.toISOString()
     const currentTermStart = customer?.membership?.subscription?.currentTermStart?.toISOString()
+    if (!currentTermEnd || !currentTermStart) {
+      return null
+    }
 
     const reservationCreatedBeforeTermStart =
       latestReservationCreatedAt &&
