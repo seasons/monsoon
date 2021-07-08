@@ -97,10 +97,15 @@ export class SMSService {
     @Customer() customer,
     @User() user
   ): Promise<UserVerificationStatus> {
-    const phoneNumber = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .phoneNumber()
+    const detail = await this.prisma.client2.customerDetail.findFirst({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+      },
+    })
+    const phoneNumber = detail.phoneNumber
+
     if (!phoneNumber) {
       throw new Error("Cannot find a phone number for this user.")
     }
@@ -126,7 +131,8 @@ export class SMSService {
     const newStatus = this.twilioUtils.twilioToPrismaVerificationStatus(
       check.status
     )
-    await this.prisma.client.updateUser({
+
+    await this.prisma.client2.user.update({
       data: {
         verificationStatus: newStatus,
       },

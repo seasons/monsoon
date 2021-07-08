@@ -3,6 +3,7 @@ import {
   Int,
   InventoryStatus,
   LetterSize,
+  PauseType,
   ProductType,
 } from "@app/prisma"
 import { DateTime } from "@app/prisma/prisma.binding"
@@ -48,7 +49,8 @@ export interface CreateTestPauseRequestInput {
   pausePending: boolean
   pauseDate?: DateTime
   resumeDate?: DateTime
-  notified?: boolean
+  notified: boolean
+  pauseType: PauseType
 }
 
 export interface CreateTestCustomerMembershipInput {
