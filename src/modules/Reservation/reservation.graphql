@@ -52,6 +52,7 @@ type Mutation {
     where: ReservationWhereUniqueInput!
   ): Reservation @hasRole(roles: [Admin])
   returnItems(items: [ID!]!): Reservation @hasRole(roles: [Customer])
+  cancelReturn: Reservation @hasRole(roles: [Customer])
 }
 
 type ReservationFeedback {
