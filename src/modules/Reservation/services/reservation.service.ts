@@ -1,6 +1,7 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
+import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
@@ -28,7 +29,10 @@ import {
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
+import chargebee from "chargebee"
+import cuid from "cuid"
 import { intersection } from "lodash"
+import { DateTime } from "luxon"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
 
@@ -63,7 +67,8 @@ export class ReservationService {
     private readonly pushNotifs: PushNotificationService,
     private readonly reservationUtils: ReservationUtilsService,
     private readonly error: ErrorService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly customerUtils: CustomerUtilsService
   ) {}
 
   async reserveItems(
@@ -209,6 +214,7 @@ export class ReservationService {
     const result = await this.prisma.client2.$transaction(promises.flat())
 
     const reservation = result.pop()
+    await this.addEarlySwapIfNeeded(reservation.id, customer.id)
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
@@ -228,6 +234,36 @@ export class ReservationService {
     }
 
     return reservation
+  }
+
+  async addEarlySwapIfNeeded(reservationID, customerID) {
+    const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
+      customerID
+    )
+
+    const doesNotHaveFreeSwap =
+      nextFreeSwapDate && nextFreeSwapDate > DateTime.local().toISO()
+    const swapCharge = await this.payment.addEarlySwapCharge(customerID)
+
+    if (doesNotHaveFreeSwap && reservationID) {
+      await this.prisma.client2.reservation.update({
+        where: { id: reservationID },
+        data: {
+          lineItems: {
+            create: [
+              {
+                recordID: reservationID,
+                price: swapCharge.invoice.sub_total,
+                currencyCode: "USD",
+                recordType: "EarlySwap",
+                name: "Eary swap",
+                taxPrice: swapCharge?.invoice?.tax || 0,
+              },
+            ],
+          },
+        },
+      })
+    }
   }
 
   async returnItems(items: string[], customer: Customer) {
@@ -553,6 +589,54 @@ export class ReservationService {
     ]
 
     return this.utils.filterAdminLogs(logs, keysWeDontCareAbout)
+  }
+
+  async draftReservationLineItems(user: User, hasFreeSwap: boolean) {
+    if (hasFreeSwap) {
+      return []
+    }
+    try {
+      const {
+        estimate: { invoice_estimate },
+      } = await chargebee.estimate
+        .create_invoice({
+          invoice: {
+            customer_id: user.id,
+          },
+          charges: [
+            {
+              amount: 3000,
+              taxable: true,
+              description: "Early Swap",
+              avalara_tax_code: "FR020000",
+            },
+          ],
+        })
+        .request()
+
+      // Below we are creating a draft OrderLineItem with dummy data to show to the client
+      // it's using a random ID and a recordID because it's not being saved to the database
+      return [
+        {
+          id: cuid(),
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          recordType: "EarlySwap",
+          name: "Early swap",
+          recordID: cuid(),
+          currencyCode: "USD",
+          price: invoice_estimate.sub_total,
+          taxPrice: invoice_estimate?.taxes?.reduce(
+            (acc, tax) => acc + tax.amount,
+            0
+          ),
+        },
+      ]
+    } catch (e) {
+      this.error.setExtraContext(user, "user")
+      this.error.captureError(e)
+      return []
+    }
   }
 
   async updateReservation(

@@ -22,6 +22,16 @@ export class ReservationMutationsResolver {
   }
 
   @Mutation()
+  async draftReservationLineItems(@Args() { hasFreeSwap }, @User() user) {
+    const result = await this.reservation.draftReservationLineItems(
+      user,
+      hasFreeSwap
+    )
+
+    return result
+  }
+
+  @Mutation()
   async reserveItems(
     @Args() { items, shippingCode },
     @User() user,

@@ -66,6 +66,7 @@ type OrderLineItem {
   taxPercentage: Float
   taxPrice: Int
   price: Int!
+  name: String
   currencyCode: String!
   createdAt: DateTime!
   updatedAt: DateTime!
