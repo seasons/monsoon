@@ -123,8 +123,10 @@ export class ShopifyService {
       params: { code: authorizationCode, shop, state: nonce, timestamp },
     })
 
-    const shopifyShop = await this.prisma.client.shopifyShop({
-      shopName: this.getShopName(shop),
+    const shopifyShop = await this.prisma.client2.shopifyShop.findFirst({
+      where: {
+        shopName: this.getShopName(shop),
+      },
     })
 
     return shopifyShop && isValidHMAC

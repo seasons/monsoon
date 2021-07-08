@@ -14,11 +14,9 @@ import {
   CustomerStatus,
   SmsStatus,
   UserVerificationStatus,
-  UserWhereUniqueInput,
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { LinksAndEmails } from "@seasons/wind"
-import { head } from "lodash"
 import moment from "moment"
 import mustache from "mustache"
 import Twilio from "twilio"
@@ -254,7 +252,7 @@ export class SMSService {
   }
 
   async handleSMSStatusUpdate(externalId: string, status: SmsStatus) {
-    await this.prisma.client.updateManySmsReceipts({
+    await this.prisma.client2.smsReceipt.updateMany({
       data: { status },
       where: { externalId },
     })
@@ -273,28 +271,23 @@ export class SMSService {
         case "1":
         case "2":
         case "3":
-          smsCust = await this.getSMSUser(
-            body.From,
-            "ResumeReminder",
-            `{
-              id
-              status
-              user {
-                firstName
-                email
-                id
-              }
-              membership {
-                id
-                subscriptionId
-                pauseRequests(orderBy: createdAt_DESC) {
-                  id
-                  resumeDate
-                }
-              }
-            }
-          `
-          )
+          smsCust = await this.getSMSUser(body.From, "ResumeReminder", {
+            id: true,
+            status: true,
+            user: { select: { firstName: true, email: true, id: true } },
+            membership: {
+              select: {
+                id: true,
+                subscriptionId: true,
+                pauseRequests: {
+                  select: { id: true, resumeDate: true },
+                  orderBy: {
+                    createdAt: "desc",
+                  },
+                },
+              },
+            },
+          })
           if (!smsCust) {
             twiml.message(genericError)
             break
@@ -340,38 +333,46 @@ export class SMSService {
                   )}.`
                 )
                 sendCorrespondingEmailFunc = async () => {
-                  const custWithUpdatedResumeDate = await this.prisma.binding.query.customer(
-                    { where: { id: smsCust.id } },
-                    `{
-                      id
-                      user {
-                        id
-                        email
-                        firstName
-                        lastName
-                      }
-                      membership {
-                        id
-                        plan {
-                          id
-                          tier
-                          planID
-                          itemCount
-                        }
-                        pauseRequests {
-                          id
-                          createdAt
-                          resumeDate
-                          pauseDate
-                          pauseType
-                        }
-                      }
-                      reservations {
-                        id
-                        status
-                        createdAt
-                      }
-                    }`
+                  const custWithUpdatedResumeDate = await this.prisma.client2.customer.findUnique(
+                    {
+                      where: { id: smsCust.id },
+                      select: {
+                        id: true,
+                        user: {
+                          select: {
+                            id: true,
+                            email: true,
+                            firstName: true,
+                            lastName: true,
+                          },
+                        },
+                        membership: {
+                          select: {
+                            id: true,
+                            plan: {
+                              select: {
+                                id: true,
+                                tier: true,
+                                planID: true,
+                                itemCount: true,
+                              },
+                            },
+                            pauseRequests: {
+                              select: {
+                                id: true,
+                                createdAt: true,
+                                resumeDate: true,
+                                pauseDate: true,
+                                pauseType: true,
+                              },
+                            },
+                          },
+                        },
+                        reservations: {
+                          select: { id: true, status: true, createdAt: true },
+                        },
+                      },
+                    }
                   )
                   return await this.email.sendPausedEmail(
                     custWithUpdatedResumeDate,
@@ -391,25 +392,19 @@ export class SMSService {
           }
           break
         case "resume":
-          smsCust = await this.getSMSUser(
-            body.From,
-            "ResumeReminder",
-            `{
-              id
-              status
-              user {
-                id
-                email
-                firstName
-                lastName
-              }
-              membership {
-                id
-                subscriptionId
-              }
-            }
-          `
-          )
+          smsCust = await this.getSMSUser(body.From, "ResumeReminder", {
+            id: true,
+            status: true,
+            user: {
+              select: {
+                id: true,
+                email: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
+            membership: { select: { id: true, subscriptionId: true } },
+          })
 
           if (!smsCust) {
             twiml.message(genericError)
@@ -465,26 +460,27 @@ export class SMSService {
 
   private formatResumeDate = date => date.format("dddd, MMMM Do")
 
-  private async getSMSUser(from: string, smsId: SMSID, info: string) {
-    const possibleCustomers = await this.prisma.binding.query.customers(
-      {
-        where: {
-          AND: [
-            {
-              user: {
-                smsReceipts_some: { smsId },
-              },
+  private async getSMSUser(
+    from: string,
+    smsId: SMSID,
+    select: Prisma.CustomerSelect
+  ) {
+    const customer = await this.prisma.client2.customer.findFirst({
+      where: {
+        AND: [
+          {
+            user: {
+              smsReceipts: { some: { smsId } },
             },
-            { detail: { phoneNumber_contains: from.slice(2) } },
-          ],
-        },
-        orderBy: "createdAt_DESC",
+          },
+          { detail: { phoneNumber: { contains: from.slice(2) } } },
+        ],
       },
-      info
-    )
-    const cust = head(possibleCustomers) as any
+      orderBy: { createdAt: "desc" },
+      select,
+    })
 
-    return cust
+    return customer
   }
 
   private getSMSData(smsID: SMSID, vars: any): SMSPayload {
