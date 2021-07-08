@@ -134,7 +134,7 @@ export class ShippoController {
             data: {
               status,
               subStatus,
-              data: result,
+              data: JSON.stringify(result),
               package: { connect: { id: updatedPackage.id } },
             },
           }
