@@ -388,7 +388,7 @@ model EmailReceipt {
 
 model FitPic {
   id                     String         @id @default(cuid()) @db.VarChar(30)
-  status                 String
+  status                 String         @default("Submitted")
   createdAt              DateTime       @default(now())
   updatedAt              DateTime       @updatedAt
   locationId             String?        @map("location") @db.VarChar(30)
@@ -404,8 +404,8 @@ model FitPic {
 
 model FitPicReport {
   id         String   @id @default(cuid()) @db.VarChar(30)
-  status     String
-  reportedAt DateTime
+  status     String   @default("Pending")
+  reportedAt DateTime @default(now())
   updatedAt  DateTime @updatedAt
   reporterId String?  @map("reporter") @db.VarChar(30)
   reportedId String?  @map("reported") @db.VarChar(30)
