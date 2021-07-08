@@ -41,9 +41,13 @@ export class ChargebeeQueriesResolver {
 
     if (userIDHash) {
       const userID = this.utils.decryptUserIDHash(userIDHash)
-      user = await this.prisma.client.user({ id: userID })
+      user = await this.prisma.client2.user.findUnique({
+        where: { id: userID },
+      })
     } else if (passedEmail) {
-      user = await this.prisma.client.user({ email: passedEmail })
+      user = await this.prisma.client2.user.findUnique({
+        where: { email: passedEmail },
+      })
     } else {
       throw new Error("Need to pass in either email or userIDHash")
     }
@@ -64,21 +68,15 @@ export class ChargebeeQueriesResolver {
       couponID
     )
 
-    const customerWithData = (await this.prisma.binding.query.customer(
-      {
-        where: { id: customer.id },
+    const customerWithData = await this.prisma.client2.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        id: true,
+        membership: {
+          select: { id: true, plan: true },
+        },
       },
-      `{
-      id
-      membership {
-        id
-        plan {
-          id
-          tier
-        }
-      }
-    }`
-    )) as any
+    })
 
     const tier = customerWithData?.membership?.plan?.tier
 
