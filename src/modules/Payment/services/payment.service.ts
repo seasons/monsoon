@@ -90,7 +90,7 @@ export class PaymentService {
     } catch (e) {
       this.error.setExtraContext(customer, "customer")
       this.error.captureError(e)
-      throw new Error(JSON.stringify(e))
+      throw e
     }
   }
 
@@ -148,7 +148,7 @@ export class PaymentService {
       this.error.setExtraContext({ shippingCode })
       this.error.setExtraContext(customer, "customer")
       this.error.captureError(e)
-      throw new Error(JSON.stringify(e))
+      throw e
     }
   }
 
@@ -640,7 +640,7 @@ export class PaymentService {
           }
         })
     }).catch(error => {
-      throw new Error(JSON.stringify(error))
+      throw error
     })
   }
 
@@ -678,7 +678,7 @@ export class PaymentService {
           }
         })
     }).catch(error => {
-      throw new Error(JSON.stringify(error))
+      throw error
     })
   }
 
@@ -698,7 +698,7 @@ export class PaymentService {
           }
         })
     }).catch(error => {
-      throw new Error(JSON.stringify(error))
+      throw error
     })
   }
 

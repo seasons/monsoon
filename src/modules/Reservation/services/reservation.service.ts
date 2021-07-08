@@ -84,13 +84,6 @@ export class ReservationService {
 
     const promises = []
 
-    const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
-      customer.id
-    )
-    const doesNotHaveFreeSwap =
-      nextFreeSwapDate &&
-      nextFreeSwapDate > DateTime.local().setZone("America/New_York").toISO()
-
     const customerWithPlanItemCount = await this.prisma.client2.customer.findUnique(
       {
         where: { id: customer.id },
@@ -205,8 +198,7 @@ export class ReservationService {
       ),
       physicalProductsBeingReserved,
       heldPhysicalProducts,
-      shippingOptionID,
-      doesNotHaveFreeSwap
+      shippingOptionID
     )
     const reservationPromise = this.prisma.client2.reservation.create({
       data: reservationData,
@@ -222,27 +214,7 @@ export class ReservationService {
     const result = await this.prisma.client2.$transaction(promises.flat())
 
     const reservation = result.pop()
-
-    if (doesNotHaveFreeSwap && reservation?.id) {
-      const swapCharge = await this.payment.addEarlySwapCharge(customer.id)
-      await this.prisma.client2.reservation.update({
-        where: { id: reservation.id },
-        data: {
-          lineItems: {
-            create: [
-              {
-                recordID: reservation.id,
-                price: swapCharge.invoice.sub_total,
-                currencyCode: "USD",
-                recordType: "EarlySwap",
-                name: "Eary swap",
-                taxPrice: swapCharge?.invoice?.tax || 0,
-              },
-            ],
-          },
-        },
-      })
-    }
+    await this.addEarlySwapIfNeeded(reservation.id, customer.id)
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
@@ -262,6 +234,37 @@ export class ReservationService {
     }
 
     return reservation
+  }
+
+  async addEarlySwapIfNeeded(reservationID, customerID) {
+    const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
+      customerID
+    )
+
+    const doesNotHaveFreeSwap =
+      nextFreeSwapDate &&
+      nextFreeSwapDate > DateTime.local().setZone("America/New_York").toISO()
+    const swapCharge = await this.payment.addEarlySwapCharge(customerID)
+
+    if (doesNotHaveFreeSwap && reservationID) {
+      await this.prisma.client2.reservation.update({
+        where: { id: reservationID },
+        data: {
+          lineItems: {
+            create: [
+              {
+                recordID: reservationID,
+                price: swapCharge.invoice.sub_total,
+                currencyCode: "USD",
+                recordType: "EarlySwap",
+                name: "Eary swap",
+                taxPrice: swapCharge?.invoice?.tax || 0,
+              },
+            ],
+          },
+        },
+      })
+    }
   }
 
   async returnItems(items: string[], customer: Customer) {
@@ -592,47 +595,46 @@ export class ReservationService {
   async draftReservationLineItems(user: User, hasFreeSwap: boolean) {
     if (hasFreeSwap) {
       return []
-    } else {
-      try {
-        const {
-          estimate: { invoice_estimate },
-        } = await chargebee.estimate
-          .create_invoice({
-            invoice: {
-              customer_id: user.id,
-            },
-            charges: [
-              {
-                amount: 3000,
-                taxable: true,
-                description: "Early Swap",
-                avalara_tax_code: "FR020000",
-              },
-            ],
-          })
-          .request()
-
-        return [
-          {
-            id: cuid(),
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-            recordType: "EarlySwap",
-            name: "Early swap",
-            recordID: cuid(),
-            currencyCode: "USD",
-            price: invoice_estimate.sub_total,
-            taxPrice: invoice_estimate?.taxes?.reduce(
-              (acc, tax) => acc + tax.amount,
-              0
-            ),
+    }
+    try {
+      const {
+        estimate: { invoice_estimate },
+      } = await chargebee.estimate
+        .create_invoice({
+          invoice: {
+            customer_id: user.id,
           },
-        ]
-      } catch (e) {
-        this.error.setExtraContext(user, "user")
-        this.error.captureError(e)
-        return []
-      }
+          charges: [
+            {
+              amount: 3000,
+              taxable: true,
+              description: "Early Swap",
+              avalara_tax_code: "FR020000",
+            },
+          ],
+        })
+        .request()
+
+      return [
+        {
+          id: cuid(),
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          recordType: "EarlySwap",
+          name: "Early swap",
+          recordID: cuid(),
+          currencyCode: "USD",
+          price: invoice_estimate.sub_total,
+          taxPrice: invoice_estimate?.taxes?.reduce(
+            (acc, tax) => acc + tax.amount,
+            0
+          ),
+        },
+      ]
+    } catch (e) {
+      this.error.setExtraContext(user, "user")
+      this.error.captureError(e)
+      return []
     }
   }
 
@@ -944,8 +946,7 @@ export class ReservationService {
     shipmentWeight: number,
     physicalProductsBeingReserved: PhysicalProduct[],
     heldPhysicalProducts: PhysicalProduct[],
-    shippingOptionID: string,
-    doesNotHaveFreeSwap: boolean
+    shippingOptionID: string
   ) {
     const allPhysicalProductsInReservation = [
       ...physicalProductsBeingReserved,
