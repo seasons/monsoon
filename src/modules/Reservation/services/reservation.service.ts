@@ -219,11 +219,11 @@ export class ReservationService {
     const result = await this.prisma.client2.$transaction(promises.flat())
 
     const reservation = result.pop()
-    await this.addEarlySwapIfNeeded(
-      reservation.id,
-      customer.id,
-      nextFreeSwapDate
-    )
+    // await this.addEarlySwapIfNeeded(
+    //   reservation.id,
+    //   customer.id,
+    //   nextFreeSwapDate
+    // )
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
