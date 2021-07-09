@@ -248,9 +248,9 @@ export class ReservationService {
   async addEarlySwapIfNeeded(reservationID, customerID, nextFreeSwapDate) {
     const doesNotHaveFreeSwap =
       nextFreeSwapDate && nextFreeSwapDate > DateTime.local().toISO()
-    const swapCharge = await this.payment.addEarlySwapCharge(customerID)
 
     if (doesNotHaveFreeSwap && reservationID) {
+      const swapCharge = await this.payment.addEarlySwapCharge(customerID)
       await this.prisma.client2.reservation.update({
         where: { id: reservationID },
         data: {
