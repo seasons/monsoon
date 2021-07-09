@@ -322,7 +322,7 @@ export class AdmissionsService {
       ...(await this.activeCustomersWithoutActiveReservation()),
     ]
     const competingUsers = potentiallyCompetingUsers.filter(a => {
-      if (a.id === customer.id) {
+      if (a.id === customer.id || !a.detail) {
         return false
       }
       return intersection(a.detail[sizesKey], preferredSizes).length > 0
