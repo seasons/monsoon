@@ -36,7 +36,7 @@ export class CustomerUtilsService {
     const latestReservationCreatedAt = latestReservation?.createdAt?.toISOString()
     const currentTermEnd = customer?.membership?.subscription?.currentTermEnd?.toISOString()
     const currentTermStart = customer?.membership?.subscription?.currentTermStart?.toISOString()
-    if (!currentTermEnd || !currentTermStart) {
+    if (!currentTermEnd || !currentTermStart || !latestReservationCreatedAt) {
       return null
     }
 

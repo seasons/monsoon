@@ -40,6 +40,9 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async nextFreeSwapDate(@Customer() customer) {
+    if (!customer) {
+      return null
+    }
     return await this.customerUtils.nextFreeSwapDate(customer.id)
   }
 

@@ -187,6 +187,11 @@ export class ReservationService {
       )
     }
 
+    // Fetch the nextFreeSwapDate BEFORE creating the reservation or we'll get an incorrect value
+    const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
+      customer.id
+    )
+
     // Create reservation records in prisma
     const reservationData = await this.createReservationData(
       seasonsToCustomerTransaction,
@@ -214,7 +219,11 @@ export class ReservationService {
     const result = await this.prisma.client2.$transaction(promises.flat())
 
     const reservation = result.pop()
-    await this.addEarlySwapIfNeeded(reservation.id, customer.id)
+    await this.addEarlySwapIfNeeded(
+      reservation.id,
+      customer.id,
+      nextFreeSwapDate
+    )
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
@@ -236,11 +245,7 @@ export class ReservationService {
     return reservation
   }
 
-  async addEarlySwapIfNeeded(reservationID, customerID) {
-    const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
-      customerID
-    )
-
+  async addEarlySwapIfNeeded(reservationID, customerID, nextFreeSwapDate) {
     const doesNotHaveFreeSwap =
       nextFreeSwapDate && nextFreeSwapDate > DateTime.local().toISO()
     const swapCharge = await this.payment.addEarlySwapCharge(customerID)
@@ -264,6 +269,24 @@ export class ReservationService {
         },
       })
     }
+  }
+
+  async cancelReturn(customer: Customer) {
+    const lastReservation = await this.reservationUtils.getLatestReservation(
+      customer
+    )
+
+    await this.prisma.client2.reservation.update({
+      data: {
+        returnedProducts: {
+          set: [],
+        },
+        returnedAt: null,
+      },
+      where: { id: String(lastReservation.id) },
+    })
+
+    return lastReservation
   }
 
   async returnItems(items: string[], customer: Customer) {
