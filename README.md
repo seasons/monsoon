@@ -82,8 +82,8 @@ ALTER TABLE "monsoon$dev"."ProductVariant"
 
 All deployments follow the following pattern.
 
-1. Create a Pull Request for your branch code onto master.
-2. Once that PR is reviewed and merged, create another PR to merge master to staging. Merge it. Your code will automatically deploy to the staging server.
+1. Create a Pull Request for your branch code onto `master`.
+2. Once that PR is reviewed and merged to `master`, our code will automatically deploy to the staging server.
 3. Once your code passes QA on staging, use Heroku's "Promotion" feature on [this page](https://dashboard.heroku.com/pipelines/07c04186-4604-4488-b9bf-4811420933bf) to deploy to production.
 
 Before deploying to production your first time, please check with a senior member of the engineering team.
