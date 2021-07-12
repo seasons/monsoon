@@ -37,7 +37,7 @@ export class ShopifyScheduledJobs {
       })
 
       if (!brand) {
-        this.logger.log(`Unable to find brand for ShopifyShop: ${id}`)
+        this.logger.log(`Unable to find brand for ShopifyShop: ${shopName}`)
         continue
       }
 
@@ -48,7 +48,9 @@ export class ShopifyScheduledJobs {
           brandId: brand.id,
         })
       } catch (error) {
-        this.logger.log(`failed to import product variants: ${error}`)
+        this.logger.log(
+          `failed to import product variants: ${JSON.stringify(error)}`
+        )
       }
 
       this.logger.log(`imported product variants for ${shopName}`)
