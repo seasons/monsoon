@@ -50,8 +50,12 @@ export class CustomerMutationsResolver {
   }
 
   @Mutation()
-  async updateCustomer(@Args() args, @Info() info, @Application() application) {
-    return await this.customerService.updateCustomer(args, info, application)
+  async updateCustomer(
+    @Args() args,
+    @Select() select,
+    @Application() application
+  ) {
+    return await this.customerService.updateCustomer(args, select, application)
   }
 
   @Mutation()
