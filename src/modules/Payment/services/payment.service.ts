@@ -534,6 +534,11 @@ export class PaymentService {
           .request()
 
         termEnd = result?.subscription?.current_term_end
+        if (!termEnd) {
+          throw new Error(
+            "Unable to query term end for subscription. Please try again"
+          )
+        }
         resumeDateISO = DateTime.fromISO(termEnd).plus({ months: 1 }).toISO()
       }
 
