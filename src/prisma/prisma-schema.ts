@@ -8623,6 +8623,8 @@ type OrderLineItem {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
+  reservation: Reservation
   taxPercentage: Float
   taxPrice: Int
   price: Int!
@@ -8644,6 +8646,8 @@ input OrderLineItemCreateInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
+  reservation: ReservationCreateOneWithoutLineItemsInput
   taxPercentage: Float
   taxPrice: Int
   price: Int!
@@ -8653,6 +8657,25 @@ input OrderLineItemCreateInput {
 input OrderLineItemCreateManyInput {
   create: [OrderLineItemCreateInput!]
   connect: [OrderLineItemWhereUniqueInput!]
+}
+
+input OrderLineItemCreateManyWithoutReservationInput {
+  create: [OrderLineItemCreateWithoutReservationInput!]
+  connect: [OrderLineItemWhereUniqueInput!]
+}
+
+input OrderLineItemCreateWithoutReservationInput {
+  id: ID
+  recordID: ID!
+  recordType: OrderLineItemRecordType!
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  name: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int!
+  currencyCode: String!
 }
 
 type OrderLineItemEdge {
@@ -8673,6 +8696,8 @@ enum OrderLineItemOrderByInput {
   taxRate_DESC
   taxName_ASC
   taxName_DESC
+  name_ASC
+  name_DESC
   taxPercentage_ASC
   taxPercentage_DESC
   taxPrice_ASC
@@ -8694,6 +8719,7 @@ type OrderLineItemPreviousValues {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int!
@@ -8707,6 +8733,8 @@ enum OrderLineItemRecordType {
   ProductVariant
   ExternalProduct
   Package
+  EarlySwap
+  Reservation
 }
 
 input OrderLineItemScalarWhereInput {
@@ -8766,6 +8794,20 @@ input OrderLineItemScalarWhereInput {
   taxName_not_starts_with: String
   taxName_ends_with: String
   taxName_not_ends_with: String
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
   taxPercentage: Float
   taxPercentage_not: Float
   taxPercentage_in: [Float!]
@@ -8849,6 +8891,8 @@ input OrderLineItemUpdateDataInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
+  reservation: ReservationUpdateOneWithoutLineItemsInput
   taxPercentage: Float
   taxPrice: Int
   price: Int
@@ -8861,6 +8905,8 @@ input OrderLineItemUpdateInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
+  reservation: ReservationUpdateOneWithoutLineItemsInput
   taxPercentage: Float
   taxPrice: Int
   price: Int
@@ -8873,6 +8919,7 @@ input OrderLineItemUpdateManyDataInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int
@@ -8897,10 +8944,23 @@ input OrderLineItemUpdateManyMutationInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int
   currencyCode: String
+}
+
+input OrderLineItemUpdateManyWithoutReservationInput {
+  create: [OrderLineItemCreateWithoutReservationInput!]
+  delete: [OrderLineItemWhereUniqueInput!]
+  connect: [OrderLineItemWhereUniqueInput!]
+  set: [OrderLineItemWhereUniqueInput!]
+  disconnect: [OrderLineItemWhereUniqueInput!]
+  update: [OrderLineItemUpdateWithWhereUniqueWithoutReservationInput!]
+  upsert: [OrderLineItemUpsertWithWhereUniqueWithoutReservationInput!]
+  deleteMany: [OrderLineItemScalarWhereInput!]
+  updateMany: [OrderLineItemUpdateManyWithWhereNestedInput!]
 }
 
 input OrderLineItemUpdateManyWithWhereNestedInput {
@@ -8908,15 +8968,39 @@ input OrderLineItemUpdateManyWithWhereNestedInput {
   data: OrderLineItemUpdateManyDataInput!
 }
 
+input OrderLineItemUpdateWithoutReservationDataInput {
+  recordID: ID
+  recordType: OrderLineItemRecordType
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  name: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int
+  currencyCode: String
+}
+
 input OrderLineItemUpdateWithWhereUniqueNestedInput {
   where: OrderLineItemWhereUniqueInput!
   data: OrderLineItemUpdateDataInput!
+}
+
+input OrderLineItemUpdateWithWhereUniqueWithoutReservationInput {
+  where: OrderLineItemWhereUniqueInput!
+  data: OrderLineItemUpdateWithoutReservationDataInput!
 }
 
 input OrderLineItemUpsertWithWhereUniqueNestedInput {
   where: OrderLineItemWhereUniqueInput!
   update: OrderLineItemUpdateDataInput!
   create: OrderLineItemCreateInput!
+}
+
+input OrderLineItemUpsertWithWhereUniqueWithoutReservationInput {
+  where: OrderLineItemWhereUniqueInput!
+  update: OrderLineItemUpdateWithoutReservationDataInput!
+  create: OrderLineItemCreateWithoutReservationInput!
 }
 
 input OrderLineItemWhereInput {
@@ -8976,6 +9060,21 @@ input OrderLineItemWhereInput {
   taxName_not_starts_with: String
   taxName_ends_with: String
   taxName_not_ends_with: String
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  reservation: ReservationWhereInput
   taxPercentage: Float
   taxPercentage_not: Float
   taxPercentage_in: [Float!]
@@ -16618,6 +16717,7 @@ type Reservation {
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
+  lineItems(where: OrderLineItemWhereInput, orderBy: OrderLineItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderLineItem!]
   status: ReservationStatus!
   returnedAt: DateTime
   shippedAt: DateTime
@@ -16652,6 +16752,7 @@ input ReservationCreateInput {
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
+  lineItems: OrderLineItemCreateManyWithoutReservationInput
   status: ReservationStatus!
   returnedAt: DateTime
   shippedAt: DateTime
@@ -16675,6 +16776,11 @@ input ReservationCreateOneInput {
   connect: ReservationWhereUniqueInput
 }
 
+input ReservationCreateOneWithoutLineItemsInput {
+  create: ReservationCreateWithoutLineItemsInput
+  connect: ReservationWhereUniqueInput
+}
+
 input ReservationCreateOneWithoutPackageEventsInput {
   create: ReservationCreateWithoutPackageEventsInput
   connect: ReservationWhereUniqueInput
@@ -16688,6 +16794,33 @@ input ReservationCreateOneWithoutReceiptInput {
 input ReservationCreateWithoutCustomerInput {
   id: ID
   user: UserCreateOneInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
+  packageEvents: PackageTransitEventCreateManyWithoutReservationInput
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  lineItems: OrderLineItemCreateManyWithoutReservationInput
+  status: ReservationStatus!
+  returnedAt: DateTime
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
+  receipt: ReservationReceiptCreateOneWithoutReservationInput
+  lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
+}
+
+input ReservationCreateWithoutLineItemsInput {
+  id: ID
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
@@ -16722,6 +16855,7 @@ input ReservationCreateWithoutPackageEventsInput {
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
+  lineItems: OrderLineItemCreateManyWithoutReservationInput
   status: ReservationStatus!
   returnedAt: DateTime
   shippedAt: DateTime
@@ -16748,6 +16882,7 @@ input ReservationCreateWithoutReceiptInput {
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
+  lineItems: OrderLineItemCreateManyWithoutReservationInput
   status: ReservationStatus!
   returnedAt: DateTime
   shippedAt: DateTime
@@ -17496,6 +17631,7 @@ input ReservationUpdateDataInput {
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
   status: ReservationStatus
   returnedAt: DateTime
   shippedAt: DateTime
@@ -17521,6 +17657,7 @@ input ReservationUpdateInput {
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
   status: ReservationStatus
   returnedAt: DateTime
   shippedAt: DateTime
@@ -17593,6 +17730,15 @@ input ReservationUpdateOneRequiredWithoutReceiptInput {
   connect: ReservationWhereUniqueInput
 }
 
+input ReservationUpdateOneWithoutLineItemsInput {
+  create: ReservationCreateWithoutLineItemsInput
+  update: ReservationUpdateWithoutLineItemsDataInput
+  upsert: ReservationUpsertWithoutLineItemsInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ReservationWhereUniqueInput
+}
+
 input ReservationUpdateOneWithoutPackageEventsInput {
   create: ReservationCreateWithoutPackageEventsInput
   update: ReservationUpdateWithoutPackageEventsDataInput
@@ -17604,6 +17750,32 @@ input ReservationUpdateOneWithoutPackageEventsInput {
 
 input ReservationUpdateWithoutCustomerDataInput {
   user: UserUpdateOneRequiredInput
+  sentPackage: PackageUpdateOneInput
+  returnedPackage: PackageUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
+  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
+  reservationNumber: Int
+  phase: ReservationPhase
+  shipped: Boolean
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
+  status: ReservationStatus
+  returnedAt: DateTime
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
+  lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
+}
+
+input ReservationUpdateWithoutLineItemsDataInput {
+  user: UserUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
@@ -17637,6 +17809,7 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
   status: ReservationStatus
   returnedAt: DateTime
   shippedAt: DateTime
@@ -17662,6 +17835,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
   status: ReservationStatus
   returnedAt: DateTime
   shippedAt: DateTime
@@ -17682,6 +17856,11 @@ input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
 input ReservationUpsertNestedInput {
   update: ReservationUpdateDataInput!
   create: ReservationCreateInput!
+}
+
+input ReservationUpsertWithoutLineItemsInput {
+  update: ReservationUpdateWithoutLineItemsDataInput!
+  create: ReservationCreateWithoutLineItemsInput!
 }
 
 input ReservationUpsertWithoutPackageEventsInput {
@@ -17745,6 +17924,9 @@ input ReservationWhereInput {
   phase_not_in: [ReservationPhase!]
   shipped: Boolean
   shipped_not: Boolean
+  lineItems_every: OrderLineItemWhereInput
+  lineItems_some: OrderLineItemWhereInput
+  lineItems_none: OrderLineItemWhereInput
   status: ReservationStatus
   status_not: ReservationStatus
   status_in: [ReservationStatus!]

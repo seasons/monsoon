@@ -1,3 +1,5 @@
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
+import { Select } from "@app/decorators/select.decorator"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 
@@ -6,12 +8,14 @@ export class ShopifyQueriesResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @Query()
-  async shopifyProductVariants(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.shopifyProductVariants(args, info)
+  async shopifyProductVariants(@FindManyArgs() args) {
+    const _data = this.prisma.client2.shopifyProductVariant.findMany(args)
+    return this.prisma.sanitizePayload(_data, "ShopifyProductVariant")
   }
 
   @Query()
-  async shopifyShops(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.shopifyShops(args, info)
+  async shopifyShops(@FindManyArgs() args) {
+    const _data = this.prisma.client2.shopifyShop.findMany(args)
+    return this.prisma.sanitizePayload(_data, "ShopifyShop")
   }
 }

@@ -22,6 +22,16 @@ export class ReservationMutationsResolver {
   }
 
   @Mutation()
+  async draftReservationLineItems(@Args() { hasFreeSwap }, @User() user) {
+    const result = await this.reservation.draftReservationLineItems(
+      user,
+      hasFreeSwap
+    )
+
+    return result
+  }
+
+  @Mutation()
   async reserveItems(
     @Args() { items, shippingCode },
     @User() user,
@@ -67,5 +77,10 @@ export class ReservationMutationsResolver {
   @Mutation()
   async returnItems(@Args() { items }, @Customer() customer) {
     return this.reservation.returnItems(items, customer)
+  }
+
+  @Mutation()
+  async cancelReturn(@Customer() customer) {
+    return this.reservation.cancelReturn(customer)
   }
 }

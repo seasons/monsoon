@@ -1,3 +1,4 @@
+import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma1/prisma.module"
 
@@ -46,7 +47,13 @@ import { CustomerService } from "./services/customer.service"
     UserQueriesResolver,
     UserFieldsResolver,
     AdmissionsService,
+    CustomerUtilsService,
   ],
-  exports: [AuthService, CustomerService, AdmissionsService],
+  exports: [
+    AuthService,
+    CustomerService,
+    AdmissionsService,
+    CustomerUtilsService,
+  ],
 })
 export class UserModule {}

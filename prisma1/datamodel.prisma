@@ -1071,6 +1071,8 @@ enum OrderLineItemRecordType {
   ProductVariant
   ExternalProduct
   Package
+  EarlySwap
+  Reservation
 }
 
 enum OrderStatus {
@@ -1103,6 +1105,8 @@ type OrderLineItem {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
+  reservation: Reservation @relation(link: INLINE, name: "ReservationToOrderLineItem")
   taxPercentage: Float
   taxPrice: Int
   price: Int!
@@ -1154,6 +1158,7 @@ type Reservation {
   reservationNumber: Int! @unique
   phase: ReservationPhase!
   shipped: Boolean!
+  lineItems: [OrderLineItem!] @relation(name: "ReservationToOrderLineItem")
   status: ReservationStatus!
   returnedAt: DateTime
   shippedAt: DateTime

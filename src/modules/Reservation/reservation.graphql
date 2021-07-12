@@ -33,6 +33,7 @@ type Mutation {
     options: ReserveItemsOptions
     shippingCode: ShippingCode
   ): Reservation @hasRole(roles: [Customer])
+  draftReservationLineItems(hasFreeSwap: Boolean): [OrderLineItem!]
   checkItemsAvailability(items: [ID!]!): Boolean! @hasRole(roles: [Customer])
   updateReservationFeedback(
     feedbackID: ID!
@@ -51,6 +52,7 @@ type Mutation {
     where: ReservationWhereUniqueInput!
   ): Reservation @hasRole(roles: [Admin])
   returnItems(items: [ID!]!): Reservation @hasRole(roles: [Customer])
+  cancelReturn: Reservation @hasRole(roles: [Customer])
 }
 
 type ReservationFeedback {
@@ -199,6 +201,7 @@ type Reservation @cacheControl(maxAge: 0) {
   returnedPackage: Package
   feedback: ReservationFeedback
   lastLocation: Location
+  lineItems: [OrderLineItem]
   products: [PhysicalProduct!]!
   newProducts: [PhysicalProduct!]!
   returnedProducts: [PhysicalProduct!]!

@@ -6,7 +6,7 @@
   "bin": "bin/cli.js",
   "main": "dist/index.js",
   "engines": {
-    "node": "16.4.0"
+    "node": "12.x"
   },
   "resolutions": {
     "graphql": "14.5.7"
@@ -83,6 +83,7 @@
     "compression": "1.7.4",
     "cors": "2.8.5",
     "csv-parser": "2.3.3",
+    "cuid": "^2.1.8",
     "dataloader": "2.0.0",
     "dotenv": "8.2.0",
     "drip-nodejs": "3.1.1",

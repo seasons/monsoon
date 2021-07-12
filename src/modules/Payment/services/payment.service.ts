@@ -13,7 +13,15 @@ import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
-import { camelCase, get, head, identity, snakeCase, upperFirst } from "lodash"
+import {
+  camelCase,
+  get,
+  head,
+  identity,
+  snakeCase,
+  stubTrue,
+  upperFirst,
+} from "lodash"
 import { DateTime } from "luxon"
 import Stripe from "stripe"
 
@@ -57,6 +65,34 @@ export class PaymentService {
     @Inject(forwardRef(() => AuthService))
     private readonly auth: AuthService
   ) {}
+
+  async addEarlySwapCharge(customerID: string) {
+    const customer = await this.prisma.client2.customer.findUnique({
+      where: {
+        id: customerID,
+      },
+      select: {
+        id: true,
+        membership: true,
+      },
+    })
+
+    const subscriptionID = customer.membership.subscriptionId
+
+    try {
+      return await chargebee.invoice
+        .charge_addon({
+          subscription_id: subscriptionID,
+          addon_id: "early-swap",
+          addon_quantity: 1,
+        })
+        .request()
+    } catch (e) {
+      this.error.setExtraContext(customer, "customer")
+      this.error.captureError(e)
+      throw e
+    }
+  }
 
   async addShippingCharge(customer, shippingCode) {
     try {
@@ -112,7 +148,7 @@ export class PaymentService {
       this.error.setExtraContext({ shippingCode })
       this.error.setExtraContext(customer, "customer")
       this.error.captureError(e)
-      throw new Error(JSON.stringify(e))
+      throw e
     }
   }
 
@@ -604,7 +640,7 @@ export class PaymentService {
           }
         })
     }).catch(error => {
-      throw new Error(JSON.stringify(error))
+      throw error
     })
   }
 
@@ -642,7 +678,7 @@ export class PaymentService {
           }
         })
     }).catch(error => {
-      throw new Error(JSON.stringify(error))
+      throw error
     })
   }
 
@@ -662,7 +698,7 @@ export class PaymentService {
           }
         })
     }).catch(error => {
-      throw new Error(JSON.stringify(error))
+      throw error
     })
   }
 
