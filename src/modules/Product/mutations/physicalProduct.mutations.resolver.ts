@@ -1,3 +1,4 @@
+import { Select } from "@app/decorators/select.decorator"
 import { PhysicalProduct } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
@@ -13,7 +14,7 @@ export class PhysicalProductMutationsResolver {
   ) {}
 
   @Mutation()
-  async updatePhysicalProduct(@Args() { where, data }, @Info() info) {
+  async updatePhysicalProduct(@Args() { where, data }, @Select() select) {
     if (data.price) {
       data.price = {
         upsert: { update: data.price, create: data.price },
@@ -23,7 +24,7 @@ export class PhysicalProductMutationsResolver {
     return await this.physicalProductService.updatePhysicalProduct({
       where,
       data,
-      info,
+      select,
     })
   }
 
