@@ -1,8 +1,8 @@
-import { Customer, User } from "@app/decorators"
+import { Customer } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
-import { ProductStatus, ProductType } from "@app/prisma"
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import { Color, Product } from "@prisma/client"
+import { ProductType } from "@app/prisma"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { Category, Color, Product } from "@prisma/client"
 import { ProductNotificationType } from "@prisma1/prisma.binding"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head } from "lodash"
@@ -83,16 +83,21 @@ export class ProductVariantMutationsResolver {
         id: true,
         retailPrice: true,
         type: true,
+        category: { select: { measurementType: true } },
         color: { select: { id: true, colorCode: true } },
       },
     })) as Pick<Product, "id" | "retailPrice" | "status" | "type"> & {
       color: Pick<Color, "id" | "colorCode">
+    } & {
+      category: Pick<Category, "measurementType">
     }
     if (!product || !product.type) {
       throw new Error(
         `Can not create variant for product. Please check that it exists and has a valid type`
       )
     }
+
+    const measurementType = product.category.measurementType
 
     const sequenceNumbers = await this.physicalProductUtilsService.groupedSequenceNumbers(
       inputs
@@ -106,6 +111,7 @@ export class ProductVariantMutationsResolver {
         productSlug: productID,
         retailPrice: product.retailPrice,
         type: product.type as ProductType,
+        measurementType,
       })
     })
     const results = await this.prisma.client2.$transaction(

@@ -2638,6 +2638,7 @@ type Category {
   children(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category!]
   updatedAt: DateTime
   productType: ProductType
+  measurementType: MeasurementType
 }
 
 type CategoryConnection {
@@ -2656,6 +2657,7 @@ input CategoryCreateInput {
   products: ProductCreateManyWithoutCategoryInput
   children: CategoryCreateManyWithoutChildrenInput
   productType: ProductType
+  measurementType: MeasurementType
 }
 
 input CategoryCreateManyWithoutChildrenInput {
@@ -2682,6 +2684,7 @@ input CategoryCreateWithoutChildrenInput {
   visible: Boolean
   products: ProductCreateManyWithoutCategoryInput
   productType: ProductType
+  measurementType: MeasurementType
 }
 
 input CategoryCreateWithoutProductsInput {
@@ -2693,6 +2696,7 @@ input CategoryCreateWithoutProductsInput {
   visible: Boolean
   children: CategoryCreateManyWithoutChildrenInput
   productType: ProductType
+  measurementType: MeasurementType
 }
 
 type CategoryEdge {
@@ -2717,6 +2721,8 @@ enum CategoryOrderByInput {
   updatedAt_DESC
   productType_ASC
   productType_DESC
+  measurementType_ASC
+  measurementType_DESC
 }
 
 type CategoryPreviousValues {
@@ -2728,6 +2734,7 @@ type CategoryPreviousValues {
   visible: Boolean!
   updatedAt: DateTime
   productType: ProductType
+  measurementType: MeasurementType
 }
 
 input CategoryScalarWhereInput {
@@ -2801,6 +2808,10 @@ input CategoryScalarWhereInput {
   productType_not: ProductType
   productType_in: [ProductType!]
   productType_not_in: [ProductType!]
+  measurementType: MeasurementType
+  measurementType_not: MeasurementType
+  measurementType_in: [MeasurementType!]
+  measurementType_not_in: [MeasurementType!]
   AND: [CategoryScalarWhereInput!]
   OR: [CategoryScalarWhereInput!]
   NOT: [CategoryScalarWhereInput!]
@@ -2833,6 +2844,7 @@ input CategoryUpdateDataInput {
   products: ProductUpdateManyWithoutCategoryInput
   children: CategoryUpdateManyWithoutChildrenInput
   productType: ProductType
+  measurementType: MeasurementType
 }
 
 input CategoryUpdateInput {
@@ -2844,6 +2856,7 @@ input CategoryUpdateInput {
   products: ProductUpdateManyWithoutCategoryInput
   children: CategoryUpdateManyWithoutChildrenInput
   productType: ProductType
+  measurementType: MeasurementType
 }
 
 input CategoryUpdateManyDataInput {
@@ -2853,6 +2866,7 @@ input CategoryUpdateManyDataInput {
   description: String
   visible: Boolean
   productType: ProductType
+  measurementType: MeasurementType
 }
 
 input CategoryUpdateManyMutationInput {
@@ -2862,6 +2876,7 @@ input CategoryUpdateManyMutationInput {
   description: String
   visible: Boolean
   productType: ProductType
+  measurementType: MeasurementType
 }
 
 input CategoryUpdateManyWithoutChildrenInput {
@@ -2903,6 +2918,7 @@ input CategoryUpdateWithoutChildrenDataInput {
   visible: Boolean
   products: ProductUpdateManyWithoutCategoryInput
   productType: ProductType
+  measurementType: MeasurementType
 }
 
 input CategoryUpdateWithoutProductsDataInput {
@@ -2913,6 +2929,7 @@ input CategoryUpdateWithoutProductsDataInput {
   visible: Boolean
   children: CategoryUpdateManyWithoutChildrenInput
   productType: ProductType
+  measurementType: MeasurementType
 }
 
 input CategoryUpdateWithWhereUniqueWithoutChildrenInput {
@@ -3013,6 +3030,10 @@ input CategoryWhereInput {
   productType_not: ProductType
   productType_in: [ProductType!]
   productType_not_in: [ProductType!]
+  measurementType: MeasurementType
+  measurementType_not: MeasurementType
+  measurementType_in: [MeasurementType!]
+  measurementType_not_in: [MeasurementType!]
   AND: [CategoryWhereInput!]
   OR: [CategoryWhereInput!]
   NOT: [CategoryWhereInput!]
@@ -8099,6 +8120,11 @@ input LocationWhereUniqueInput {
 }
 
 scalar Long
+
+enum MeasurementType {
+  Inches
+  Millimeters
+}
 
 type Mutation {
   createAccessorySize(data: AccessorySizeCreateInput!): AccessorySize!

@@ -121,9 +121,7 @@ model BottomSize {
   rise   Float?
   hem    Float?
   inseam Float?
-
-  // Do not use. Artifact of prisma2 migration
-  Sizes Size[]
+  size   Size?
 }
 
 model Brand {
@@ -164,6 +162,7 @@ model Category {
   description                  String?
   image                        String?
   productType                  String?
+  measurementType              String?
   visible                      Boolean                       @default(value: false)
   updatedAt                    DateTime?                     @updatedAt
   products                     Product[]
@@ -1132,8 +1131,8 @@ model Size {
   accessoryId                 String?          @map("accessory") @db.VarChar(30)
   accessory                   AccessorySize?   @relation(fields: [accessoryId], references: [id])
   type                        String?
-  product                     Product[]
-  productVariantsInternal     ProductVariant[]
+  modelSizeProduct            Product?
+  productVariantsInternal     ProductVariant?
   productVariantsManufacturer ProductVariant[] @relation("ProductVariantManufacturerSize")
 }
 
