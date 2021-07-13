@@ -12,9 +12,7 @@ model AccessorySize {
   bridge Float?
   length Float?
   width  Float?
-
-  // Do not use. Artifact of prisma2 migration
-  Sizes Size[]
+  size   Size[]
 }
 
 model ActiveAdminUser {
@@ -1132,7 +1130,7 @@ model Size {
   accessory                   AccessorySize?   @relation(fields: [accessoryId], references: [id])
   type                        String?
   modelSizeProduct            Product?
-  productVariantsInternal     ProductVariant?
+  productVariantInternal      ProductVariant?
   productVariantsManufacturer ProductVariant[] @relation("ProductVariantManufacturerSize")
 }
 
