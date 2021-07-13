@@ -35,11 +35,18 @@ export class BrandUtilsService {
       throw new ApolloError("To upload brand images please include a brandCode")
     }
 
-    if (data.logoImage && data.brandCode) {
+    if (
+      data.logoImage &&
+      typeof (await data.logoImage) !== "string" &&
+      data.brandCode
+    ) {
       const imageName = `${data.brandCode}-logo.png`.toLowerCase()
-      const imageData = await this.imageService.uploadImage(data.logoImage, {
-        imageName,
-      })
+      const imageData = await this.imageService.uploadImage(
+        Promise.resolve(data.logoImage),
+        {
+          imageName,
+        }
+      )
 
       const title = `${data.brandCode} Logo`
 

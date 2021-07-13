@@ -100,7 +100,10 @@ export class BrandService {
     try {
       const result = await this.utils.getCreateBrandImagesPromises(data)
       ;({ imageDatas, logoData } = result)
+      promises.push(logoData?.promise)
+      promises.push(...imageDatas?.map(a => a.promise))
     } catch (ex) {
+      console.log(ex)
       /** noop **/
     }
 
@@ -108,10 +111,15 @@ export class BrandService {
       const shopName = data.shopifyShop.shopName
 
       data.shopifyShop = {
-        connect: {
-          shopName,
+        upsert: {
+          update: {
+            ...data.shopifyShop,
+          },
+          create: {
+            ...data.shopifyShop,
+          },
         },
-      } as Prisma.ShopifyShopUpdateInput
+      } as Prisma.ShopifyShopUpdateOneWithoutBrandInput
       const shopifyProductVariants = await this.prisma.client2.shopifyProductVariant.findMany(
         {
           where: {
@@ -119,53 +127,46 @@ export class BrandService {
               shopName,
             },
           },
+          select: { id: true },
         }
       )
 
-      for (let shopifyPV of shopifyProductVariants) {
-        promises.push(
-          this.prisma.client2.shopifyProductVariant.update({
-            where: {
-              id: shopifyPV.id,
-            },
-            data: {
-              brand: {
-                connect: {
-                  id: brand.id,
-                },
-              },
-            },
-          })
-        )
-      }
+      promises.push(
+        this.prisma.client2.shopifyProductVariant.updateMany({
+          where: { id: { in: shopifyProductVariants.map(a => a.id) } },
+          data: { brandId: brand.id },
+        })
+      )
     } else if (brand?.shopifyShop?.id) {
       data.shopifyShop = { delete: true }
+    } else {
+      data.shopifyShop = undefined
     }
 
+    const updateBrandData = Prisma.validator<Prisma.BrandUpdateInput>()({
+      ...data,
+      styles: this.queryUtils.createScalarListMutateInput(
+        data.styles,
+        brand.id,
+        "update"
+      ),
+      logoImage: !!logoData ? { connect: { url: logoData.url } } : undefined,
+      images: !!imageDatas
+        ? {
+            connect: imageDatas.map(a => ({ url: a.url })),
+          }
+        : undefined,
+    })
     promises.push(
       this.prisma.client2.brand.update({
         where,
-        data: {
-          ...data,
-          styles: this.queryUtils.createScalarListMutateInput(
-            data.styles,
-            brand.id,
-            "update"
-          ),
-          logoImage: !!logoData
-            ? { connect: { url: logoData.url } }
-            : undefined,
-          images: !!imageDatas
-            ? {
-                connect: imageDatas.map(a => ({ url: a.url })),
-              }
-            : undefined,
-        },
+        data: updateBrandData,
         select,
       })
     )
 
-    const result = await this.prisma.client2.$transaction(promises)
+    const cleanPromises = promises.filter(Boolean)
+    const result = await this.prisma.client2.$transaction(cleanPromises)
     const updatedBrand = this.prisma.sanitizePayload(result.pop(), "Brand")
 
     if (data.shopifyShop) {
