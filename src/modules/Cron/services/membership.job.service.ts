@@ -156,6 +156,9 @@ export class MembershipScheduledJobs {
 
   @Cron(CronExpression.EVERY_6_HOURS)
   async manageMembershipResumes() {
+    this.logger.log("Begin Membership Resumes Job")
+    const report = { errors: [], resumed: [], reminded: [] }
+
     const _pausedCustomers = await this.prisma.client2.customer.findMany({
       where: {
         status: "Paused",
@@ -209,6 +212,8 @@ export class MembershipScheduledJobs {
           )
 
           await this.email.sendResumeConfirmationEmail(customer.user)
+          report.resumed.push(customer.user.email)
+
           continue
         }
 
@@ -218,14 +223,21 @@ export class MembershipScheduledJobs {
           resumeDate.minus({ days: 2 }) <= DateTime.local()
         ) {
           await this.sendReminderComms(customer, pauseRequest)
+          report.reminded.push(customer.user.email)
 
           continue
         }
       } catch (e) {
-        this.logger.log(e)
+        this.logger.log(
+          `Error for customer: ${customer.user.email}, ${JSON.stringify(e)}`
+        )
+        report.errors.push(customer.user.email)
         Sentry.captureException(JSON.stringify(e))
       }
     }
+
+    this.logger.log("Membership Resumes Job ended. Results: ")
+    this.logger.log(report)
   }
 
   async sendReminderComms(customer, pauseRequest) {

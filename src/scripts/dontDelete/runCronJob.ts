@@ -1,5 +1,6 @@
 import "module-alias/register"
 
+import { Subscription } from "@nestjs/graphql"
 import sgMail from "@sendgrid/mail"
 import chargebee from "chargebee"
 
@@ -26,6 +27,8 @@ import { ProductVariantService } from "../../modules/Product/services/productVar
 import { PusherService } from "../../modules/PushNotification/services/pusher.service"
 import { PushNotificationDataProvider } from "../../modules/PushNotification/services/pushNotification.data.service"
 import { PushNotificationService } from "../../modules/PushNotification/services/pushNotification.service"
+import { AlgoliaService } from "../../modules/Search/services/algolia.service"
+import { SearchService } from "../../modules/Search/services/search.service"
 import { ShippingService } from "../../modules/Shipping/services/shipping.service"
 import { ShopifyService } from "../../modules/Shopify/services/shopify.service"
 import { SMSService } from "../../modules/SMS/services/sms.service"
@@ -35,6 +38,7 @@ import { AdmissionsService } from "../../modules/User/services/admissions.servic
 import { AuthService } from "../../modules/User/services/auth.service"
 import { CustomerService } from "../../modules/User/services/customer.service"
 import { PaymentUtilsService } from "../../modules/Utils/services/paymentUtils.service"
+import { QueryUtilsService } from "../../modules/Utils/services/queryUtils.service"
 import { StatementsService } from "../../modules/Utils/services/statements.service"
 import { UtilsService } from "../../modules/Utils/services/utils.service"
 import { PrismaService } from "../../prisma/prisma.service"
@@ -49,7 +53,8 @@ const run = async () => {
 
   const error = new ErrorService()
   const ps = new PrismaService()
-  const utils = new UtilsService(ps)
+  const queryUtils = new QueryUtilsService(ps)
+  const utils = new UtilsService(ps, queryUtils)
   const as = new AdmissionsService(ps, utils)
   const pusher = new PusherService()
   const pndp = new PushNotificationDataProvider()
@@ -59,7 +64,7 @@ const run = async () => {
   const image = new ImageService(ps)
   const emailutils = new EmailUtilsService(ps, error, image)
   const email = new EmailService(ps, utils, emailutils)
-  let auth = new AuthService(ps, pn, email, error, utils, payment)
+  let auth = new AuthService(ps, pn, email, error, payment)
   const segment = new SegmentService()
   const twilio = new TwilioService()
   const twilioUtils = new TwilioUtils()
@@ -71,7 +76,8 @@ const run = async () => {
     paymentUtils,
     error,
     email,
-    utils
+    utils,
+    queryUtils
   )
   const shipping = new ShippingService(ps, utils)
   const cs = new CustomerService(
@@ -83,7 +89,8 @@ const run = async () => {
     email,
     pn,
     sms,
-    utils
+    utils,
+    queryUtils
   )
   payment = new PaymentService(
     cs,
@@ -121,7 +128,6 @@ const run = async () => {
     email,
     sms,
     utils,
-    statements,
     error
   )
   const productUtilsService = new ProductUtilsService(ps, utils)
@@ -140,7 +146,8 @@ const run = async () => {
     productUtilsService,
     productVariantService,
     physicalProductUtilsService,
-    utils
+    utils,
+    queryUtils
   )
   const physicalProductService = new PhysicalProductService(
     ps,
@@ -148,7 +155,8 @@ const run = async () => {
     productVariantService,
     productService,
     physicalProductUtilsService,
-    utils
+    utils,
+    statements
   )
   const shopifyJobService = new ShopifyScheduledJobs(shopify, ps)
   const logsJobService = new LogsScheduledJobs(
@@ -156,12 +164,20 @@ const run = async () => {
     physicalProductService,
     error
   )
+  const searchService = new SearchService(ps, new AlgoliaService(), image)
+  const subscriptionJobs = new SubscriptionsScheduledJobs(
+    ps,
+    error,
+    paymentUtils
+  )
+  // await searchService.indexData()
   // await reservationsJobService.sendReturnNotifications()
   // await marketingJobService.syncEventsToImpact()
   // await marketingJobService.syncCustomersToDrip()
-  // await membershipService.updatePausePendingToPaused()
+  await membershipService.manageMembershipResumes()
   // await shopifyJobService.importProductVariantsForShopifyShops()
-  await logsJobService.interpretPhysicalProductLogs()
+  // await logsJobService.interpretPhysicalProductLogs()
+  // await productsJobService.updateProductFields()
 }
 
 run()
