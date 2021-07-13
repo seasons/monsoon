@@ -282,16 +282,16 @@ export class QueryUtilsService {
     return returnObj
   }
 
-  prismaOneToPrismaTwoMutateArgs(
-    prismaOneArgs,
-    record: { id: string },
+  prismaOneToPrismaTwoMutateData(
+    prismaOneData,
+    record: { id: string } | null,
     modelName: Prisma.ModelName,
     type: "create" | "update"
   ) {
     const scalarListFieldNames = SCALAR_LIST_FIELD_NAMES[modelName]
 
-    let args = cloneDeep(prismaOneArgs)
-    const mutateKeys = Object.keys(prismaOneArgs)
+    let args = cloneDeep(prismaOneData)
+    const mutateKeys = Object.keys(prismaOneData)
 
     // Translate scalar list fields
     scalarListFieldNames.forEach(field => {
@@ -300,7 +300,7 @@ export class QueryUtilsService {
       }
       args[field] = this.createScalarListMutateInput(
         args[field]["set"],
-        record.id,
+        type === "update" ? record.id : "",
         type
       )
     })

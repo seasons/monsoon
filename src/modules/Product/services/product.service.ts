@@ -671,7 +671,7 @@ export class ProductService {
       imageUrls = imageDatas.map(a => a.url)
     }
 
-    const prismaTwoUpdateData = this.queryUtils.prismaOneToPrismaTwoMutateArgs(
+    const prismaTwoUpdateData = this.queryUtils.prismaOneToPrismaTwoMutateData(
       { ...updateData, styles: { set: updateData.styles } },
       product,
       "Product",

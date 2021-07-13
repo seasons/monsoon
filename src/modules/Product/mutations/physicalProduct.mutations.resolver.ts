@@ -1,7 +1,9 @@
 import { Select } from "@app/decorators/select.decorator"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { PhysicalProduct } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { makeWherePrisma2Compatible } from "@prisma/binding-argument-transform"
 import { head } from "lodash"
 
 import { PhysicalProductService } from "../services/physicalProduct.service"
@@ -10,7 +12,8 @@ import { PhysicalProductService } from "../services/physicalProduct.service"
 export class PhysicalProductMutationsResolver {
   constructor(
     private readonly physicalProductService: PhysicalProductService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   @Mutation()
@@ -29,19 +32,26 @@ export class PhysicalProductMutationsResolver {
   }
 
   @Mutation()
-  async updateManyPhysicalProducts(@Args() args, @Info() info) {
-    return await this.prisma.binding.mutation.updateManyPhysicalProducts(
-      args,
-      info
-    )
+  async updateManyPhysicalProducts(@Args() args) {
+    const prisma2Where = makeWherePrisma2Compatible(args.where)
+    return this.prisma.client2.physicalProduct.updateMany({
+      ...args,
+      where: prisma2Where,
+    })
   }
 
   @Mutation()
-  async createPhysicalProductQualityReport(@Args() args, @Info() info) {
-    return await this.prisma.binding.mutation.createPhysicalProductQualityReport(
-      args,
-      info
+  async createPhysicalProductQualityReport(@Args() { data }, @Select() select) {
+    const prisma2Data = this.queryUtils.prismaOneToPrismaTwoMutateData(
+      data,
+      null,
+      "PhysicalProductQualityReport",
+      "create"
     )
+    return await this.prisma.client2.physicalProductQualityReport.create({
+      data: prisma2Data,
+      select,
+    })
   }
 
   @Mutation()
