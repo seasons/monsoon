@@ -8,6 +8,7 @@ import compression from "compression"
 import express from "express"
 
 import { AppModule } from "./app.module"
+import logger from "./logger"
 import { createCorsMiddleware } from "./middleware/cors"
 import { checkJwt } from "./middleware/jwt"
 import { createGetUserMiddleware } from "./middleware/user"
@@ -38,7 +39,11 @@ async function bootstrap() {
     handleErrors
   )
 
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(server))
+  const app = await NestFactory.create(
+    AppModule,
+    new ExpressAdapter(server),
+    logger
+  )
 
   await app.listen(process.env.PORT ? process.env.PORT : 4000, () =>
     console.log(`🚀 Server ready at ${process.env.PORT || 4000}`)
