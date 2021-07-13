@@ -55,38 +55,37 @@ export class PhysicalProductMutationsResolver {
   }
 
   @Mutation()
-  async updatePhysicalProductByBarcode(@Args() args, @Info() info) {
+  async updatePhysicalProductByBarcode(@Args() args, @Select() select) {
     const { barcode, status } = args
     const sequenceNumber = parseInt(barcode.replace("SZNS", ""), 10)
 
-    const physicalProduct: PhysicalProduct = head(
-      await this.prisma.binding.query.physicalProducts(
-        {
-          where: {
-            sequenceNumber,
-          },
-        },
-        `
+    const physicalProduct = await this.prisma.client2.physicalProduct.findFirst(
       {
-        id
-        seasonsUID
-        productStatus
+        where: {
+          sequenceNumber,
+        },
+        select: { id: true, seasonsUID: true, productStatus: true },
       }
-    `
-      )
     )
 
     let updatedPhysicalProduct
 
     if (physicalProduct) {
-      updatedPhysicalProduct = await this.prisma.client.updatePhysicalProduct({
-        where: {
-          seasonsUID: physicalProduct.seasonsUID,
-        },
-        data: {
-          productStatus: status,
-        },
-      })
+      const _updatedPhysicalProduct = await this.prisma.client2.physicalProduct.update(
+        {
+          where: {
+            seasonsUID: physicalProduct.seasonsUID,
+          },
+          data: {
+            productStatus: status,
+          },
+          select,
+        }
+      )
+      updatedPhysicalProduct = this.prisma.sanitizePayload(
+        _updatedPhysicalProduct,
+        "PhysicalProduct"
+      )
     }
 
     return updatedPhysicalProduct
