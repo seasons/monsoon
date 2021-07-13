@@ -1,3 +1,4 @@
+import { LoaderParams } from "@app/modules/DataLoader/dataloader.types"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { PrismaTwoLoader } from "@app/prisma/prisma2.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
@@ -8,7 +9,7 @@ import { ProductUtilsService } from "../services/product.utils.service"
 const measurementLoader = {
   type: PrismaTwoLoader.name,
   params: {
-    model: "AccessorySize",
+    model: "AccessorySize" as Prisma.ModelName,
     select: Prisma.validator<Prisma.AccessorySizeSelect>()({
       id: true,
       size: {
@@ -19,7 +20,6 @@ const measurementLoader = {
                 select: {
                   category: {
                     select: {
-                      // @ts-ignore
                       measurementType: true,
                     },
                   },
@@ -31,7 +31,7 @@ const measurementLoader = {
       },
     }),
   },
-}
+} as LoaderParams
 
 @Resolver("AccessorySize")
 export class AccessorySizeFieldsResolver {
@@ -40,7 +40,6 @@ export class AccessorySizeFieldsResolver {
   @ResolveField()
   async bridge(
     @Parent() parent,
-    // @ts-ignore
     @Loader(measurementLoader)
     accessorySizeLoader
   ) {
@@ -63,7 +62,6 @@ export class AccessorySizeFieldsResolver {
   @ResolveField()
   async length(
     @Parent() parent,
-    // @ts-ignore
     @Loader(measurementLoader)
     accessorySizeLoader
   ) {
@@ -86,7 +84,6 @@ export class AccessorySizeFieldsResolver {
   @ResolveField()
   async width(
     @Parent() parent,
-    // @ts-ignore
     @Loader(measurementLoader)
     accessorySizeLoader
   ) {
