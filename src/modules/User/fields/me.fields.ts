@@ -1,17 +1,19 @@
 import { Customer, User } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
+import { CustomerService } from "@app/modules/User/services/customer.service"
+import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { Info, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head } from "lodash"
-
-import { CustomerService } from "../services/customer.service"
 
 @Resolver("Me")
 export class MeFieldsResolver {
   constructor(
     private readonly prisma: PrismaService,
     private readonly customerService: CustomerService,
-    private readonly statements: StatementsService
+    private readonly statements: StatementsService,
+    private readonly customerUtils: CustomerUtilsService
   ) {}
 
   @ResolveField()
@@ -25,78 +27,91 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
-  async customer(@Customer() customer, @Info() info) {
+  async customer(@Customer() customer, @Select() select) {
     if (!customer) {
       return null
     }
-    return this.prisma.binding.query.customer(
-      {
-        where: { id: customer.id },
-      },
-      info
-    )
+    const _data = await this.prisma.client2.customer.findUnique({
+      where: { id: customer.id },
+      select,
+    })
+    return this.prisma.sanitizePayload(_data, "Customer")
   }
 
   @ResolveField()
-  async activeReservation(@Customer() customer, @Info() info) {
+  async nextFreeSwapDate(@Customer() customer) {
     if (!customer) {
       return null
     }
-    const reservations = await this.prisma.client
-      .customer({ id: customer.id })
-      .reservations({ orderBy: "createdAt_DESC" })
-    const latestReservation = head(reservations)
+    return await this.customerUtils.nextFreeSwapDate(customer.id)
+  }
+
+  @ResolveField()
+  async activeReservation(@Customer() customer, @Select() select) {
+    if (!customer) {
+      return null
+    }
+    const _latestReservation = await this.prisma.client2.reservation.findFirst({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      select,
+    })
+    const latestReservation: any = this.prisma.sanitizePayload(
+      _latestReservation,
+      "Reservation"
+    )
+
     if (
       latestReservation &&
       !["Completed", "Cancelled"].includes(latestReservation.status)
     ) {
-      return await this.prisma.binding.query.reservation(
-        {
-          where: { id: latestReservation.id },
-        },
-        info
-      )
+      return latestReservation
     }
 
     return null
   }
 
   @ResolveField()
-  async bag(@Info() info, @Customer() customer) {
+  async bag(@Customer() customer, @Select() select) {
     if (!customer) {
       return null
     }
-    const bagItems = await this.prisma.binding.query.bagItems(
-      {
-        where: {
-          customer: {
-            id: customer.id,
-          },
-          saved: false,
+    const _bagItems = await this.prisma.client2.bagItem.findMany({
+      where: {
+        customer: {
+          id: customer.id,
         },
+        saved: false,
       },
-      info
-    )
+      select,
+    })
+    const bagItems = this.prisma.sanitizePayload(_bagItems, "BagItem")
     return bagItems
   }
 
   @ResolveField()
-  async savedItems(@Info() info, @Customer() customer) {
+  async savedItems(@Customer() customer, @Select() select) {
     if (!customer) {
       return null
     }
-    return await this.prisma.binding.query.bagItems(
-      {
-        where: {
-          customer: {
-            id: customer.id,
-          },
-          saved: true,
+    const _savedItems = await this.prisma.client2.bagItem.findMany({
+      where: {
+        customer: {
+          id: customer.id,
         },
-        orderBy: "updatedAt_DESC",
+        saved: true,
       },
-      info
-    )
+      orderBy: {
+        updatedAt: "desc",
+      },
+      select,
+    })
+    const savedItems = await this.prisma.sanitizePayload(_savedItems, "BagItem")
+    return savedItems
   }
 
   @ResolveField()

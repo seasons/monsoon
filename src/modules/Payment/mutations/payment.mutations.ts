@@ -20,6 +20,12 @@ export class PaymentMutationsResolver {
     private readonly paymentUtils: PaymentUtilsService
   ) {}
 
+  /**
+   * This method is utilized by the signup flow
+   * the customer's credit card info
+   *
+   * Platform: Web (flare)
+   */
   @Mutation()
   async processPayment(
     @Args() { planID, paymentMethodID, couponID, billing, shipping },
@@ -38,10 +44,9 @@ export class PaymentMutationsResolver {
   }
 
   /**
-   * This method is used for both credit card and apple pay checkouts.
-   * Currently only used in harvest
-   * @param param0
-   * @param customer
+   * This method is used for both credit card and apple pay checkouts
+   *
+   * Platform: Native mobile (harvest)
    */
   @Mutation()
   async applePayCheckout(
@@ -110,48 +115,46 @@ export class PaymentMutationsResolver {
 
   @Mutation()
   async pauseSubscription(
-    @Args() { subscriptionID, pauseType },
+    @Args() { subscriptionID, pauseType, reasonID },
     @Customer() customer,
     @User() user
   ) {
     await this.paymentService.pauseSubscription(
       subscriptionID,
       customer,
-      pauseType
+      pauseType,
+      reasonID
     )
-    const customerWithData = (await this.prisma.binding.query.customer(
-      {
-        where: { id: customer.id },
+    const _customerWithData = (await this.prisma.client2.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        user: { select: { firstName: true, email: true, id: true } },
+        membership: {
+          select: {
+            id: true,
+            plan: {
+              select: { id: true, tier: true, planID: true, itemCount: true },
+            },
+            pauseRequests: {
+              select: {
+                createdAt: true,
+                resumeDate: true,
+                pauseDate: true,
+                pauseType: true,
+              },
+            },
+          },
+        },
+        reservations: { select: { id: true, status: true, createdAt: true } },
       },
-      `{
-      id
-      user {
-        firstName
-        email
-        id
-      }
-      membership {
-        id
-        plan {
-          id
-          tier
-          planID
-          itemCount
-        }
-        pauseRequests {
-          createdAt
-          resumeDate
-          pauseDate
-          pauseType
-        }
-      }
-      reservations {
-        id
-        status
-        createdAt
-      }
-    }`
-    )) as any
+    })) as any
+    const customerWithData = this.prisma.sanitizePayload(
+      _customerWithData,
+      "Customer"
+    )
     await this.email.sendPausedEmail(customerWithData, false)
 
     const tier = customerWithData?.membership?.plan?.tier

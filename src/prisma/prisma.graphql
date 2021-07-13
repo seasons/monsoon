@@ -1,4 +1,7 @@
-type AccessorySize {
+# source: http://localhost:4466/monsoon/dev
+# timestamp: Wed Jul 07 2021 13:55:29 GMT-0400 (Eastern Daylight Time)
+
+type AccessorySize implements Node {
   id: ID!
   bridge: Float
   length: Float
@@ -755,6 +758,10 @@ type AggregatePackage {
 }
 
 type AggregatePackageTransitEvent {
+  count: Int!
+}
+
+type AggregatePauseReason {
   count: Int!
 }
 
@@ -8257,33 +8264,666 @@ input LocationWhereUniqueInput {
 
 scalar Long
 
-enum MeasurementType {
-  Inches
-  Millimeters
-}
-
 type Mutation {
-  createAccessorySize(data: AccessorySizeCreateInput!): AccessorySize!
-  updateAccessorySize(
-    data: AccessorySizeUpdateInput!
-    where: AccessorySizeWhereUniqueInput!
-  ): AccessorySize
-  updateManyAccessorySizes(
-    data: AccessorySizeUpdateManyMutationInput!
-    where: AccessorySizeWhereInput
-  ): BatchPayload!
-  upsertAccessorySize(
-    where: AccessorySizeWhereUniqueInput!
-    create: AccessorySizeCreateInput!
-    update: AccessorySizeUpdateInput!
-  ): AccessorySize!
-  deleteAccessorySize(where: AccessorySizeWhereUniqueInput!): AccessorySize
-  deleteManyAccessorySizes(where: AccessorySizeWhereInput): BatchPayload!
+  createBlogPost(data: BlogPostCreateInput!): BlogPost!
+  createTag(data: TagCreateInput!): Tag!
+  createProductMaterialCategory(
+    data: ProductMaterialCategoryCreateInput!
+  ): ProductMaterialCategory!
+  createProductModel(data: ProductModelCreateInput!): ProductModel!
+  createShopifyProductVariant(
+    data: ShopifyProductVariantCreateInput!
+  ): ShopifyProductVariant!
+  createPhysicalProductQualityReport(
+    data: PhysicalProductQualityReportCreateInput!
+  ): PhysicalProductQualityReport!
+  createProductNotification(
+    data: ProductNotificationCreateInput!
+  ): ProductNotification!
+  createWarehouseLocationConstraint(
+    data: WarehouseLocationConstraintCreateInput!
+  ): WarehouseLocationConstraint!
+  createWarehouseLocation(
+    data: WarehouseLocationCreateInput!
+  ): WarehouseLocation!
+  createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
+  createFitPic(data: FitPicCreateInput!): FitPic!
+  createFitPicReport(data: FitPicReportCreateInput!): FitPicReport!
+  createInterestedUser(data: InterestedUserCreateInput!): InterestedUser!
+  createBagItem(data: BagItemCreateInput!): BagItem!
+  createCustomerAdmissionsData(
+    data: CustomerAdmissionsDataCreateInput!
+  ): CustomerAdmissionsData!
+  createUTMData(data: UTMDataCreateInput!): UTMData!
+  createCustomerNotificationBarReceipt(
+    data: CustomerNotificationBarReceiptCreateInput!
+  ): CustomerNotificationBarReceipt!
+  createCustomerMembership(
+    data: CustomerMembershipCreateInput!
+  ): CustomerMembership!
+  createPauseRequest(data: PauseRequestCreateInput!): PauseRequest!
+  createRecentlyViewedProduct(
+    data: RecentlyViewedProductCreateInput!
+  ): RecentlyViewedProduct!
+  createOrder(data: OrderCreateInput!): Order!
+  createReservationFeedback(
+    data: ReservationFeedbackCreateInput!
+  ): ReservationFeedback!
+  createProductVariantFeedback(
+    data: ProductVariantFeedbackCreateInput!
+  ): ProductVariantFeedback!
+  createProductVariantFeedbackQuestion(
+    data: ProductVariantFeedbackQuestionCreateInput!
+  ): ProductVariantFeedbackQuestion!
+  createReservationReceipt(
+    data: ReservationReceiptCreateInput!
+  ): ReservationReceipt!
+  createPackageTransitEvent(
+    data: PackageTransitEventCreateInput!
+  ): PackageTransitEvent!
+  createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
+  createProductVariantWant(
+    data: ProductVariantWantCreateInput!
+  ): ProductVariantWant!
   createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
+  createAdminActionLog(data: AdminActionLogCreateInput!): AdminActionLog!
+  createAdminActionLogInterpretation(
+    data: AdminActionLogInterpretationCreateInput!
+  ): AdminActionLogInterpretation!
+  createLaunch(data: LaunchCreateInput!): Launch!
+  createProductSeason(data: ProductSeasonCreateInput!): ProductSeason!
+  createProductTier(data: ProductTierCreateInput!): ProductTier!
+  createCollection(data: CollectionCreateInput!): Collection!
+  createPushNotificationReceipt(
+    data: PushNotificationReceiptCreateInput!
+  ): PushNotificationReceipt!
+  createPauseReason(data: PauseReasonCreateInput!): PauseReason!
+  createUserPushNotificationInterest(
+    data: UserPushNotificationInterestCreateInput!
+  ): UserPushNotificationInterest!
+  createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
+  createOrderLineItem(data: OrderLineItemCreateInput!): OrderLineItem!
+  createCustomerMembershipSubscriptionData(
+    data: CustomerMembershipSubscriptionDataCreateInput!
+  ): CustomerMembershipSubscriptionData!
+  createReservationReceiptItem(
+    data: ReservationReceiptItemCreateInput!
+  ): ReservationReceiptItem!
+  createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
+  createSize(data: SizeCreateInput!): Size!
+  createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
+  createUserDeviceData(data: UserDeviceDataCreateInput!): UserDeviceData!
+  createColor(data: ColorCreateInput!): Color!
+  createPhysicalProductPrice(
+    data: PhysicalProductPriceCreateInput!
+  ): PhysicalProductPrice!
+  createShopifyProductVariantSelectedOption(
+    data: ShopifyProductVariantSelectedOptionCreateInput!
+  ): ShopifyProductVariantSelectedOption!
+  createPackage(data: PackageCreateInput!): Package!
+  createTopSize(data: TopSizeCreateInput!): TopSize!
+  createShippingMethod(data: ShippingMethodCreateInput!): ShippingMethod!
+  createBrand(data: BrandCreateInput!): Brand!
+  createSyncTiming(data: SyncTimingCreateInput!): SyncTiming!
+  createUserPushNotification(
+    data: UserPushNotificationCreateInput!
+  ): UserPushNotification!
+  createShopifyShop(data: ShopifyShopCreateInput!): ShopifyShop!
+  createCategory(data: CategoryCreateInput!): Category!
+  createBottomSize(data: BottomSizeCreateInput!): BottomSize!
+  createSeason(data: SeasonCreateInput!): Season!
+  createCustomer(data: CustomerCreateInput!): Customer!
+  createLabel(data: LabelCreateInput!): Label!
+  createProductVariantPrice(
+    data: ProductVariantPriceCreateInput!
+  ): ProductVariantPrice!
+  createLocation(data: LocationCreateInput!): Location!
+  createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
+  createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
+  createUser(data: UserCreateInput!): User!
+  createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
+  createAccessorySize(data: AccessorySizeCreateInput!): AccessorySize!
+  createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
+  createImage(data: ImageCreateInput!): Image!
+  createProduct(data: ProductCreateInput!): Product!
+  createShippingOption(data: ShippingOptionCreateInput!): ShippingOption!
+  createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
+  createReservation(data: ReservationCreateInput!): Reservation!
+  updateBlogPost(
+    data: BlogPostUpdateInput!
+    where: BlogPostWhereUniqueInput!
+  ): BlogPost
+  updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
+  updateProductMaterialCategory(
+    data: ProductMaterialCategoryUpdateInput!
+    where: ProductMaterialCategoryWhereUniqueInput!
+  ): ProductMaterialCategory
+  updateProductModel(
+    data: ProductModelUpdateInput!
+    where: ProductModelWhereUniqueInput!
+  ): ProductModel
+  updateShopifyProductVariant(
+    data: ShopifyProductVariantUpdateInput!
+    where: ShopifyProductVariantWhereUniqueInput!
+  ): ShopifyProductVariant
+  updatePhysicalProductQualityReport(
+    data: PhysicalProductQualityReportUpdateInput!
+    where: PhysicalProductQualityReportWhereUniqueInput!
+  ): PhysicalProductQualityReport
+  updateProductNotification(
+    data: ProductNotificationUpdateInput!
+    where: ProductNotificationWhereUniqueInput!
+  ): ProductNotification
+  updateWarehouseLocationConstraint(
+    data: WarehouseLocationConstraintUpdateInput!
+    where: WarehouseLocationConstraintWhereUniqueInput!
+  ): WarehouseLocationConstraint
+  updateWarehouseLocation(
+    data: WarehouseLocationUpdateInput!
+    where: WarehouseLocationWhereUniqueInput!
+  ): WarehouseLocation
+  updateEmailReceipt(
+    data: EmailReceiptUpdateInput!
+    where: EmailReceiptWhereUniqueInput!
+  ): EmailReceipt
+  updateFitPic(data: FitPicUpdateInput!, where: FitPicWhereUniqueInput!): FitPic
+  updateFitPicReport(
+    data: FitPicReportUpdateInput!
+    where: FitPicReportWhereUniqueInput!
+  ): FitPicReport
+  updateInterestedUser(
+    data: InterestedUserUpdateInput!
+    where: InterestedUserWhereUniqueInput!
+  ): InterestedUser
+  updateBagItem(
+    data: BagItemUpdateInput!
+    where: BagItemWhereUniqueInput!
+  ): BagItem
+  updateCustomerAdmissionsData(
+    data: CustomerAdmissionsDataUpdateInput!
+    where: CustomerAdmissionsDataWhereUniqueInput!
+  ): CustomerAdmissionsData
+  updateUTMData(
+    data: UTMDataUpdateInput!
+    where: UTMDataWhereUniqueInput!
+  ): UTMData
+  updateCustomerNotificationBarReceipt(
+    data: CustomerNotificationBarReceiptUpdateInput!
+    where: CustomerNotificationBarReceiptWhereUniqueInput!
+  ): CustomerNotificationBarReceipt
+  updateCustomerMembership(
+    data: CustomerMembershipUpdateInput!
+    where: CustomerMembershipWhereUniqueInput!
+  ): CustomerMembership
+  updatePauseRequest(
+    data: PauseRequestUpdateInput!
+    where: PauseRequestWhereUniqueInput!
+  ): PauseRequest
+  updateRecentlyViewedProduct(
+    data: RecentlyViewedProductUpdateInput!
+    where: RecentlyViewedProductWhereUniqueInput!
+  ): RecentlyViewedProduct
+  updateOrder(data: OrderUpdateInput!, where: OrderWhereUniqueInput!): Order
+  updateReservationFeedback(
+    data: ReservationFeedbackUpdateInput!
+    where: ReservationFeedbackWhereUniqueInput!
+  ): ReservationFeedback
+  updateProductVariantFeedback(
+    data: ProductVariantFeedbackUpdateInput!
+    where: ProductVariantFeedbackWhereUniqueInput!
+  ): ProductVariantFeedback
+  updateProductVariantFeedbackQuestion(
+    data: ProductVariantFeedbackQuestionUpdateInput!
+    where: ProductVariantFeedbackQuestionWhereUniqueInput!
+  ): ProductVariantFeedbackQuestion
+  updateReservationReceipt(
+    data: ReservationReceiptUpdateInput!
+    where: ReservationReceiptWhereUniqueInput!
+  ): ReservationReceipt
+  updatePackageTransitEvent(
+    data: PackageTransitEventUpdateInput!
+    where: PackageTransitEventWhereUniqueInput!
+  ): PackageTransitEvent
+  updateProductRequest(
+    data: ProductRequestUpdateInput!
+    where: ProductRequestWhereUniqueInput!
+  ): ProductRequest
+  updateProductVariantWant(
+    data: ProductVariantWantUpdateInput!
+    where: ProductVariantWantWhereUniqueInput!
+  ): ProductVariantWant
   updateActiveAdminUser(
     data: ActiveAdminUserUpdateInput!
     where: ActiveAdminUserWhereUniqueInput!
   ): ActiveAdminUser
+  updateAdminActionLog(
+    data: AdminActionLogUpdateInput!
+    where: AdminActionLogWhereUniqueInput!
+  ): AdminActionLog
+  updateAdminActionLogInterpretation(
+    data: AdminActionLogInterpretationUpdateInput!
+    where: AdminActionLogInterpretationWhereUniqueInput!
+  ): AdminActionLogInterpretation
+  updateLaunch(data: LaunchUpdateInput!, where: LaunchWhereUniqueInput!): Launch
+  updateProductSeason(
+    data: ProductSeasonUpdateInput!
+    where: ProductSeasonWhereUniqueInput!
+  ): ProductSeason
+  updateProductTier(
+    data: ProductTierUpdateInput!
+    where: ProductTierWhereUniqueInput!
+  ): ProductTier
+  updateCollection(
+    data: CollectionUpdateInput!
+    where: CollectionWhereUniqueInput!
+  ): Collection
+  updatePushNotificationReceipt(
+    data: PushNotificationReceiptUpdateInput!
+    where: PushNotificationReceiptWhereUniqueInput!
+  ): PushNotificationReceipt
+  updatePauseReason(
+    data: PauseReasonUpdateInput!
+    where: PauseReasonWhereUniqueInput!
+  ): PauseReason
+  updateUserPushNotificationInterest(
+    data: UserPushNotificationInterestUpdateInput!
+    where: UserPushNotificationInterestWhereUniqueInput!
+  ): UserPushNotificationInterest
+  updateBillingInfo(
+    data: BillingInfoUpdateInput!
+    where: BillingInfoWhereUniqueInput!
+  ): BillingInfo
+  updateOrderLineItem(
+    data: OrderLineItemUpdateInput!
+    where: OrderLineItemWhereUniqueInput!
+  ): OrderLineItem
+  updateCustomerMembershipSubscriptionData(
+    data: CustomerMembershipSubscriptionDataUpdateInput!
+    where: CustomerMembershipSubscriptionDataWhereUniqueInput!
+  ): CustomerMembershipSubscriptionData
+  updateReservationReceiptItem(
+    data: ReservationReceiptItemUpdateInput!
+    where: ReservationReceiptItemWhereUniqueInput!
+  ): ReservationReceiptItem
+  updateStylePreferences(
+    data: StylePreferencesUpdateInput!
+    where: StylePreferencesWhereUniqueInput!
+  ): StylePreferences
+  updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
+  updateProductFunction(
+    data: ProductFunctionUpdateInput!
+    where: ProductFunctionWhereUniqueInput!
+  ): ProductFunction
+  updateUserDeviceData(
+    data: UserDeviceDataUpdateInput!
+    where: UserDeviceDataWhereUniqueInput!
+  ): UserDeviceData
+  updateColor(data: ColorUpdateInput!, where: ColorWhereUniqueInput!): Color
+  updatePhysicalProductPrice(
+    data: PhysicalProductPriceUpdateInput!
+    where: PhysicalProductPriceWhereUniqueInput!
+  ): PhysicalProductPrice
+  updateShopifyProductVariantSelectedOption(
+    data: ShopifyProductVariantSelectedOptionUpdateInput!
+    where: ShopifyProductVariantSelectedOptionWhereUniqueInput!
+  ): ShopifyProductVariantSelectedOption
+  updatePackage(
+    data: PackageUpdateInput!
+    where: PackageWhereUniqueInput!
+  ): Package
+  updateTopSize(
+    data: TopSizeUpdateInput!
+    where: TopSizeWhereUniqueInput!
+  ): TopSize
+  updateShippingMethod(
+    data: ShippingMethodUpdateInput!
+    where: ShippingMethodWhereUniqueInput!
+  ): ShippingMethod
+  updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
+  updateSyncTiming(
+    data: SyncTimingUpdateInput!
+    where: SyncTimingWhereUniqueInput!
+  ): SyncTiming
+  updateUserPushNotification(
+    data: UserPushNotificationUpdateInput!
+    where: UserPushNotificationWhereUniqueInput!
+  ): UserPushNotification
+  updateShopifyShop(
+    data: ShopifyShopUpdateInput!
+    where: ShopifyShopWhereUniqueInput!
+  ): ShopifyShop
+  updateCategory(
+    data: CategoryUpdateInput!
+    where: CategoryWhereUniqueInput!
+  ): Category
+  updateBottomSize(
+    data: BottomSizeUpdateInput!
+    where: BottomSizeWhereUniqueInput!
+  ): BottomSize
+  updateSeason(data: SeasonUpdateInput!, where: SeasonWhereUniqueInput!): Season
+  updateCustomer(
+    data: CustomerUpdateInput!
+    where: CustomerWhereUniqueInput!
+  ): Customer
+  updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
+  updateProductVariantPrice(
+    data: ProductVariantPriceUpdateInput!
+    where: ProductVariantPriceWhereUniqueInput!
+  ): ProductVariantPrice
+  updateLocation(
+    data: LocationUpdateInput!
+    where: LocationWhereUniqueInput!
+  ): Location
+  updateSmsReceipt(
+    data: SmsReceiptUpdateInput!
+    where: SmsReceiptWhereUniqueInput!
+  ): SmsReceipt
+  updatePhysicalProduct(
+    data: PhysicalProductUpdateInput!
+    where: PhysicalProductWhereUniqueInput!
+  ): PhysicalProduct
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateProductVariant(
+    data: ProductVariantUpdateInput!
+    where: ProductVariantWhereUniqueInput!
+  ): ProductVariant
+  updateAccessorySize(
+    data: AccessorySizeUpdateInput!
+    where: AccessorySizeWhereUniqueInput!
+  ): AccessorySize
+  updatePaymentPlan(
+    data: PaymentPlanUpdateInput!
+    where: PaymentPlanWhereUniqueInput!
+  ): PaymentPlan
+  updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
+  updateProduct(
+    data: ProductUpdateInput!
+    where: ProductWhereUniqueInput!
+  ): Product
+  updateShippingOption(
+    data: ShippingOptionUpdateInput!
+    where: ShippingOptionWhereUniqueInput!
+  ): ShippingOption
+  updateCustomerDetail(
+    data: CustomerDetailUpdateInput!
+    where: CustomerDetailWhereUniqueInput!
+  ): CustomerDetail
+  updateReservation(
+    data: ReservationUpdateInput!
+    where: ReservationWhereUniqueInput!
+  ): Reservation
+  deleteBlogPost(where: BlogPostWhereUniqueInput!): BlogPost
+  deleteTag(where: TagWhereUniqueInput!): Tag
+  deleteProductMaterialCategory(
+    where: ProductMaterialCategoryWhereUniqueInput!
+  ): ProductMaterialCategory
+  deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
+  deleteShopifyProductVariant(
+    where: ShopifyProductVariantWhereUniqueInput!
+  ): ShopifyProductVariant
+  deletePhysicalProductQualityReport(
+    where: PhysicalProductQualityReportWhereUniqueInput!
+  ): PhysicalProductQualityReport
+  deleteProductNotification(
+    where: ProductNotificationWhereUniqueInput!
+  ): ProductNotification
+  deleteWarehouseLocationConstraint(
+    where: WarehouseLocationConstraintWhereUniqueInput!
+  ): WarehouseLocationConstraint
+  deleteWarehouseLocation(
+    where: WarehouseLocationWhereUniqueInput!
+  ): WarehouseLocation
+  deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  deleteFitPic(where: FitPicWhereUniqueInput!): FitPic
+  deleteFitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
+  deleteInterestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
+  deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
+  deleteCustomerAdmissionsData(
+    where: CustomerAdmissionsDataWhereUniqueInput!
+  ): CustomerAdmissionsData
+  deleteUTMData(where: UTMDataWhereUniqueInput!): UTMData
+  deleteCustomerNotificationBarReceipt(
+    where: CustomerNotificationBarReceiptWhereUniqueInput!
+  ): CustomerNotificationBarReceipt
+  deleteCustomerMembership(
+    where: CustomerMembershipWhereUniqueInput!
+  ): CustomerMembership
+  deletePauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
+  deleteRecentlyViewedProduct(
+    where: RecentlyViewedProductWhereUniqueInput!
+  ): RecentlyViewedProduct
+  deleteOrder(where: OrderWhereUniqueInput!): Order
+  deleteReservationFeedback(
+    where: ReservationFeedbackWhereUniqueInput!
+  ): ReservationFeedback
+  deleteProductVariantFeedback(
+    where: ProductVariantFeedbackWhereUniqueInput!
+  ): ProductVariantFeedback
+  deleteProductVariantFeedbackQuestion(
+    where: ProductVariantFeedbackQuestionWhereUniqueInput!
+  ): ProductVariantFeedbackQuestion
+  deleteReservationReceipt(
+    where: ReservationReceiptWhereUniqueInput!
+  ): ReservationReceipt
+  deletePackageTransitEvent(
+    where: PackageTransitEventWhereUniqueInput!
+  ): PackageTransitEvent
+  deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
+  deleteProductVariantWant(
+    where: ProductVariantWantWhereUniqueInput!
+  ): ProductVariantWant
+  deleteActiveAdminUser(
+    where: ActiveAdminUserWhereUniqueInput!
+  ): ActiveAdminUser
+  deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
+  deleteAdminActionLogInterpretation(
+    where: AdminActionLogInterpretationWhereUniqueInput!
+  ): AdminActionLogInterpretation
+  deleteLaunch(where: LaunchWhereUniqueInput!): Launch
+  deleteProductSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
+  deleteProductTier(where: ProductTierWhereUniqueInput!): ProductTier
+  deleteCollection(where: CollectionWhereUniqueInput!): Collection
+  deletePushNotificationReceipt(
+    where: PushNotificationReceiptWhereUniqueInput!
+  ): PushNotificationReceipt
+  deletePauseReason(where: PauseReasonWhereUniqueInput!): PauseReason
+  deleteUserPushNotificationInterest(
+    where: UserPushNotificationInterestWhereUniqueInput!
+  ): UserPushNotificationInterest
+  deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
+  deleteOrderLineItem(where: OrderLineItemWhereUniqueInput!): OrderLineItem
+  deleteCustomerMembershipSubscriptionData(
+    where: CustomerMembershipSubscriptionDataWhereUniqueInput!
+  ): CustomerMembershipSubscriptionData
+  deleteReservationReceiptItem(
+    where: ReservationReceiptItemWhereUniqueInput!
+  ): ReservationReceiptItem
+  deleteStylePreferences(
+    where: StylePreferencesWhereUniqueInput!
+  ): StylePreferences
+  deleteSize(where: SizeWhereUniqueInput!): Size
+  deleteProductFunction(
+    where: ProductFunctionWhereUniqueInput!
+  ): ProductFunction
+  deleteUserDeviceData(where: UserDeviceDataWhereUniqueInput!): UserDeviceData
+  deleteColor(where: ColorWhereUniqueInput!): Color
+  deletePhysicalProductPrice(
+    where: PhysicalProductPriceWhereUniqueInput!
+  ): PhysicalProductPrice
+  deleteShopifyProductVariantSelectedOption(
+    where: ShopifyProductVariantSelectedOptionWhereUniqueInput!
+  ): ShopifyProductVariantSelectedOption
+  deletePackage(where: PackageWhereUniqueInput!): Package
+  deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
+  deleteShippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
+  deleteBrand(where: BrandWhereUniqueInput!): Brand
+  deleteSyncTiming(where: SyncTimingWhereUniqueInput!): SyncTiming
+  deleteUserPushNotification(
+    where: UserPushNotificationWhereUniqueInput!
+  ): UserPushNotification
+  deleteShopifyShop(where: ShopifyShopWhereUniqueInput!): ShopifyShop
+  deleteCategory(where: CategoryWhereUniqueInput!): Category
+  deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
+  deleteSeason(where: SeasonWhereUniqueInput!): Season
+  deleteCustomer(where: CustomerWhereUniqueInput!): Customer
+  deleteLabel(where: LabelWhereUniqueInput!): Label
+  deleteProductVariantPrice(
+    where: ProductVariantPriceWhereUniqueInput!
+  ): ProductVariantPrice
+  deleteLocation(where: LocationWhereUniqueInput!): Location
+  deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  deletePhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+  ): PhysicalProduct
+  deleteUser(where: UserWhereUniqueInput!): User
+  deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
+  deleteAccessorySize(where: AccessorySizeWhereUniqueInput!): AccessorySize
+  deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  deleteImage(where: ImageWhereUniqueInput!): Image
+  deleteProduct(where: ProductWhereUniqueInput!): Product
+  deleteShippingOption(where: ShippingOptionWhereUniqueInput!): ShippingOption
+  deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
+  deleteReservation(where: ReservationWhereUniqueInput!): Reservation
+  upsertBlogPost(
+    where: BlogPostWhereUniqueInput!
+    create: BlogPostCreateInput!
+    update: BlogPostUpdateInput!
+  ): BlogPost!
+  upsertTag(
+    where: TagWhereUniqueInput!
+    create: TagCreateInput!
+    update: TagUpdateInput!
+  ): Tag!
+  upsertProductMaterialCategory(
+    where: ProductMaterialCategoryWhereUniqueInput!
+    create: ProductMaterialCategoryCreateInput!
+    update: ProductMaterialCategoryUpdateInput!
+  ): ProductMaterialCategory!
+  upsertProductModel(
+    where: ProductModelWhereUniqueInput!
+    create: ProductModelCreateInput!
+    update: ProductModelUpdateInput!
+  ): ProductModel!
+  upsertShopifyProductVariant(
+    where: ShopifyProductVariantWhereUniqueInput!
+    create: ShopifyProductVariantCreateInput!
+    update: ShopifyProductVariantUpdateInput!
+  ): ShopifyProductVariant!
+  upsertPhysicalProductQualityReport(
+    where: PhysicalProductQualityReportWhereUniqueInput!
+    create: PhysicalProductQualityReportCreateInput!
+    update: PhysicalProductQualityReportUpdateInput!
+  ): PhysicalProductQualityReport!
+  upsertProductNotification(
+    where: ProductNotificationWhereUniqueInput!
+    create: ProductNotificationCreateInput!
+    update: ProductNotificationUpdateInput!
+  ): ProductNotification!
+  upsertWarehouseLocationConstraint(
+    where: WarehouseLocationConstraintWhereUniqueInput!
+    create: WarehouseLocationConstraintCreateInput!
+    update: WarehouseLocationConstraintUpdateInput!
+  ): WarehouseLocationConstraint!
+  upsertWarehouseLocation(
+    where: WarehouseLocationWhereUniqueInput!
+    create: WarehouseLocationCreateInput!
+    update: WarehouseLocationUpdateInput!
+  ): WarehouseLocation!
+  upsertEmailReceipt(
+    where: EmailReceiptWhereUniqueInput!
+    create: EmailReceiptCreateInput!
+    update: EmailReceiptUpdateInput!
+  ): EmailReceipt!
+  upsertFitPic(
+    where: FitPicWhereUniqueInput!
+    create: FitPicCreateInput!
+    update: FitPicUpdateInput!
+  ): FitPic!
+  upsertFitPicReport(
+    where: FitPicReportWhereUniqueInput!
+    create: FitPicReportCreateInput!
+    update: FitPicReportUpdateInput!
+  ): FitPicReport!
+  upsertInterestedUser(
+    where: InterestedUserWhereUniqueInput!
+    create: InterestedUserCreateInput!
+    update: InterestedUserUpdateInput!
+  ): InterestedUser!
+  upsertBagItem(
+    where: BagItemWhereUniqueInput!
+    create: BagItemCreateInput!
+    update: BagItemUpdateInput!
+  ): BagItem!
+  upsertCustomerAdmissionsData(
+    where: CustomerAdmissionsDataWhereUniqueInput!
+    create: CustomerAdmissionsDataCreateInput!
+    update: CustomerAdmissionsDataUpdateInput!
+  ): CustomerAdmissionsData!
+  upsertUTMData(
+    where: UTMDataWhereUniqueInput!
+    create: UTMDataCreateInput!
+    update: UTMDataUpdateInput!
+  ): UTMData!
+  upsertCustomerNotificationBarReceipt(
+    where: CustomerNotificationBarReceiptWhereUniqueInput!
+    create: CustomerNotificationBarReceiptCreateInput!
+    update: CustomerNotificationBarReceiptUpdateInput!
+  ): CustomerNotificationBarReceipt!
+  upsertCustomerMembership(
+    where: CustomerMembershipWhereUniqueInput!
+    create: CustomerMembershipCreateInput!
+    update: CustomerMembershipUpdateInput!
+  ): CustomerMembership!
+  upsertPauseRequest(
+    where: PauseRequestWhereUniqueInput!
+    create: PauseRequestCreateInput!
+    update: PauseRequestUpdateInput!
+  ): PauseRequest!
+  upsertRecentlyViewedProduct(
+    where: RecentlyViewedProductWhereUniqueInput!
+    create: RecentlyViewedProductCreateInput!
+    update: RecentlyViewedProductUpdateInput!
+  ): RecentlyViewedProduct!
+  upsertOrder(
+    where: OrderWhereUniqueInput!
+    create: OrderCreateInput!
+    update: OrderUpdateInput!
+  ): Order!
+  upsertReservationFeedback(
+    where: ReservationFeedbackWhereUniqueInput!
+    create: ReservationFeedbackCreateInput!
+    update: ReservationFeedbackUpdateInput!
+  ): ReservationFeedback!
+  upsertProductVariantFeedback(
+    where: ProductVariantFeedbackWhereUniqueInput!
+    create: ProductVariantFeedbackCreateInput!
+    update: ProductVariantFeedbackUpdateInput!
+  ): ProductVariantFeedback!
+  upsertProductVariantFeedbackQuestion(
+    where: ProductVariantFeedbackQuestionWhereUniqueInput!
+    create: ProductVariantFeedbackQuestionCreateInput!
+    update: ProductVariantFeedbackQuestionUpdateInput!
+  ): ProductVariantFeedbackQuestion!
+  upsertReservationReceipt(
+    where: ReservationReceiptWhereUniqueInput!
+    create: ReservationReceiptCreateInput!
+    update: ReservationReceiptUpdateInput!
+  ): ReservationReceipt!
+  upsertPackageTransitEvent(
+    where: PackageTransitEventWhereUniqueInput!
+    create: PackageTransitEventCreateInput!
+    update: PackageTransitEventUpdateInput!
+  ): PackageTransitEvent!
+  upsertProductRequest(
+    where: ProductRequestWhereUniqueInput!
+    create: ProductRequestCreateInput!
+    update: ProductRequestUpdateInput!
+  ): ProductRequest!
+  upsertProductVariantWant(
+    where: ProductVariantWantWhereUniqueInput!
+    create: ProductVariantWantCreateInput!
+    update: ProductVariantWantUpdateInput!
+  ): ProductVariantWant!
   upsertActiveAdminUser(
     where: ActiveAdminUserWhereUniqueInput!
     create: ActiveAdminUserCreateInput!
@@ -8325,82 +8965,111 @@ type Mutation {
     create: AdminActionLogInterpretationCreateInput!
     update: AdminActionLogInterpretationUpdateInput!
   ): AdminActionLogInterpretation!
-  deleteAdminActionLogInterpretation(
-    where: AdminActionLogInterpretationWhereUniqueInput!
-  ): AdminActionLogInterpretation
-  deleteManyAdminActionLogInterpretations(
-    where: AdminActionLogInterpretationWhereInput
-  ): BatchPayload!
-  createBagItem(data: BagItemCreateInput!): BagItem!
-  updateBagItem(
-    data: BagItemUpdateInput!
-    where: BagItemWhereUniqueInput!
-  ): BagItem
-  updateManyBagItems(
-    data: BagItemUpdateManyMutationInput!
-    where: BagItemWhereInput
-  ): BatchPayload!
-  upsertBagItem(
-    where: BagItemWhereUniqueInput!
-    create: BagItemCreateInput!
-    update: BagItemUpdateInput!
-  ): BagItem!
-  deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
-  deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
-  createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
-  updateBillingInfo(
-    data: BillingInfoUpdateInput!
-    where: BillingInfoWhereUniqueInput!
-  ): BillingInfo
-  updateManyBillingInfoes(
-    data: BillingInfoUpdateManyMutationInput!
-    where: BillingInfoWhereInput
-  ): BatchPayload!
+  upsertLaunch(
+    where: LaunchWhereUniqueInput!
+    create: LaunchCreateInput!
+    update: LaunchUpdateInput!
+  ): Launch!
+  upsertProductSeason(
+    where: ProductSeasonWhereUniqueInput!
+    create: ProductSeasonCreateInput!
+    update: ProductSeasonUpdateInput!
+  ): ProductSeason!
+  upsertProductTier(
+    where: ProductTierWhereUniqueInput!
+    create: ProductTierCreateInput!
+    update: ProductTierUpdateInput!
+  ): ProductTier!
+  upsertCollection(
+    where: CollectionWhereUniqueInput!
+    create: CollectionCreateInput!
+    update: CollectionUpdateInput!
+  ): Collection!
+  upsertPushNotificationReceipt(
+    where: PushNotificationReceiptWhereUniqueInput!
+    create: PushNotificationReceiptCreateInput!
+    update: PushNotificationReceiptUpdateInput!
+  ): PushNotificationReceipt!
+  upsertPauseReason(
+    where: PauseReasonWhereUniqueInput!
+    create: PauseReasonCreateInput!
+    update: PauseReasonUpdateInput!
+  ): PauseReason!
+  upsertUserPushNotificationInterest(
+    where: UserPushNotificationInterestWhereUniqueInput!
+    create: UserPushNotificationInterestCreateInput!
+    update: UserPushNotificationInterestUpdateInput!
+  ): UserPushNotificationInterest!
   upsertBillingInfo(
     where: BillingInfoWhereUniqueInput!
     create: BillingInfoCreateInput!
     update: BillingInfoUpdateInput!
   ): BillingInfo!
-  deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
-  deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
-  createBlogPost(data: BlogPostCreateInput!): BlogPost!
-  updateBlogPost(
-    data: BlogPostUpdateInput!
-    where: BlogPostWhereUniqueInput!
-  ): BlogPost
-  updateManyBlogPosts(
-    data: BlogPostUpdateManyMutationInput!
-    where: BlogPostWhereInput
-  ): BatchPayload!
-  upsertBlogPost(
-    where: BlogPostWhereUniqueInput!
-    create: BlogPostCreateInput!
-    update: BlogPostUpdateInput!
-  ): BlogPost!
-  deleteBlogPost(where: BlogPostWhereUniqueInput!): BlogPost
-  deleteManyBlogPosts(where: BlogPostWhereInput): BatchPayload!
-  createBottomSize(data: BottomSizeCreateInput!): BottomSize!
-  updateBottomSize(
-    data: BottomSizeUpdateInput!
-    where: BottomSizeWhereUniqueInput!
-  ): BottomSize
-  updateManyBottomSizes(
-    data: BottomSizeUpdateManyMutationInput!
-    where: BottomSizeWhereInput
-  ): BatchPayload!
-  upsertBottomSize(
-    where: BottomSizeWhereUniqueInput!
-    create: BottomSizeCreateInput!
-    update: BottomSizeUpdateInput!
-  ): BottomSize!
-  deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
-  deleteManyBottomSizes(where: BottomSizeWhereInput): BatchPayload!
-  createBrand(data: BrandCreateInput!): Brand!
-  updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
-  updateManyBrands(
-    data: BrandUpdateManyMutationInput!
-    where: BrandWhereInput
-  ): BatchPayload!
+  upsertOrderLineItem(
+    where: OrderLineItemWhereUniqueInput!
+    create: OrderLineItemCreateInput!
+    update: OrderLineItemUpdateInput!
+  ): OrderLineItem!
+  upsertCustomerMembershipSubscriptionData(
+    where: CustomerMembershipSubscriptionDataWhereUniqueInput!
+    create: CustomerMembershipSubscriptionDataCreateInput!
+    update: CustomerMembershipSubscriptionDataUpdateInput!
+  ): CustomerMembershipSubscriptionData!
+  upsertReservationReceiptItem(
+    where: ReservationReceiptItemWhereUniqueInput!
+    create: ReservationReceiptItemCreateInput!
+    update: ReservationReceiptItemUpdateInput!
+  ): ReservationReceiptItem!
+  upsertStylePreferences(
+    where: StylePreferencesWhereUniqueInput!
+    create: StylePreferencesCreateInput!
+    update: StylePreferencesUpdateInput!
+  ): StylePreferences!
+  upsertSize(
+    where: SizeWhereUniqueInput!
+    create: SizeCreateInput!
+    update: SizeUpdateInput!
+  ): Size!
+  upsertProductFunction(
+    where: ProductFunctionWhereUniqueInput!
+    create: ProductFunctionCreateInput!
+    update: ProductFunctionUpdateInput!
+  ): ProductFunction!
+  upsertUserDeviceData(
+    where: UserDeviceDataWhereUniqueInput!
+    create: UserDeviceDataCreateInput!
+    update: UserDeviceDataUpdateInput!
+  ): UserDeviceData!
+  upsertColor(
+    where: ColorWhereUniqueInput!
+    create: ColorCreateInput!
+    update: ColorUpdateInput!
+  ): Color!
+  upsertPhysicalProductPrice(
+    where: PhysicalProductPriceWhereUniqueInput!
+    create: PhysicalProductPriceCreateInput!
+    update: PhysicalProductPriceUpdateInput!
+  ): PhysicalProductPrice!
+  upsertShopifyProductVariantSelectedOption(
+    where: ShopifyProductVariantSelectedOptionWhereUniqueInput!
+    create: ShopifyProductVariantSelectedOptionCreateInput!
+    update: ShopifyProductVariantSelectedOptionUpdateInput!
+  ): ShopifyProductVariantSelectedOption!
+  upsertPackage(
+    where: PackageWhereUniqueInput!
+    create: PackageCreateInput!
+    update: PackageUpdateInput!
+  ): Package!
+  upsertTopSize(
+    where: TopSizeWhereUniqueInput!
+    create: TopSizeCreateInput!
+    update: TopSizeUpdateInput!
+  ): TopSize!
+  upsertShippingMethod(
+    where: ShippingMethodWhereUniqueInput!
+    create: ShippingMethodCreateInput!
+    update: ShippingMethodUpdateInput!
+  ): ShippingMethod!
   upsertBrand(
     where: BrandWhereUniqueInput!
     create: BrandCreateInput!
@@ -9107,16 +9776,61 @@ type Mutation {
     data: PushNotificationReceiptUpdateManyMutationInput!
     where: PushNotificationReceiptWhereInput
   ): BatchPayload!
-  upsertPushNotificationReceipt(
-    where: PushNotificationReceiptWhereUniqueInput!
-    create: PushNotificationReceiptCreateInput!
-    update: PushNotificationReceiptUpdateInput!
-  ): PushNotificationReceipt!
-  deletePushNotificationReceipt(
-    where: PushNotificationReceiptWhereUniqueInput!
-  ): PushNotificationReceipt
-  deleteManyPushNotificationReceipts(
-    where: PushNotificationReceiptWhereInput
+  updateManyPauseReasons(
+    data: PauseReasonUpdateManyMutationInput!
+    where: PauseReasonWhereInput
+  ): BatchPayload!
+  updateManyUserPushNotificationInterests(
+    data: UserPushNotificationInterestUpdateManyMutationInput!
+    where: UserPushNotificationInterestWhereInput
+  ): BatchPayload!
+  updateManyBillingInfoes(
+    data: BillingInfoUpdateManyMutationInput!
+    where: BillingInfoWhereInput
+  ): BatchPayload!
+  updateManyOrderLineItems(
+    data: OrderLineItemUpdateManyMutationInput!
+    where: OrderLineItemWhereInput
+  ): BatchPayload!
+  updateManyCustomerMembershipSubscriptionDatas(
+    data: CustomerMembershipSubscriptionDataUpdateManyMutationInput!
+    where: CustomerMembershipSubscriptionDataWhereInput
+  ): BatchPayload!
+  updateManyReservationReceiptItems(
+    data: ReservationReceiptItemUpdateManyMutationInput!
+    where: ReservationReceiptItemWhereInput
+  ): BatchPayload!
+  updateManyStylePreferenceses(
+    data: StylePreferencesUpdateManyMutationInput!
+    where: StylePreferencesWhereInput
+  ): BatchPayload!
+  updateManySizes(
+    data: SizeUpdateManyMutationInput!
+    where: SizeWhereInput
+  ): BatchPayload!
+  updateManyProductFunctions(
+    data: ProductFunctionUpdateManyMutationInput!
+    where: ProductFunctionWhereInput
+  ): BatchPayload!
+  updateManyUserDeviceDatas(
+    data: UserDeviceDataUpdateManyMutationInput!
+    where: UserDeviceDataWhereInput
+  ): BatchPayload!
+  updateManyColors(
+    data: ColorUpdateManyMutationInput!
+    where: ColorWhereInput
+  ): BatchPayload!
+  updateManyPhysicalProductPrices(
+    data: PhysicalProductPriceUpdateManyMutationInput!
+    where: PhysicalProductPriceWhereInput
+  ): BatchPayload!
+  updateManyShopifyProductVariantSelectedOptions(
+    data: ShopifyProductVariantSelectedOptionUpdateManyMutationInput!
+    where: ShopifyProductVariantSelectedOptionWhereInput
+  ): BatchPayload!
+  updateManyPackages(
+    data: PackageUpdateManyMutationInput!
+    where: PackageWhereInput
   ): BatchPayload!
   createRecentlyViewedProduct(
     data: RecentlyViewedProductCreateInput!
@@ -9493,14 +10207,7 @@ type Mutation {
     data: UserPushNotificationInterestUpdateManyMutationInput!
     where: UserPushNotificationInterestWhereInput
   ): BatchPayload!
-  upsertUserPushNotificationInterest(
-    where: UserPushNotificationInterestWhereUniqueInput!
-    create: UserPushNotificationInterestCreateInput!
-    update: UserPushNotificationInterestUpdateInput!
-  ): UserPushNotificationInterest!
-  deleteUserPushNotificationInterest(
-    where: UserPushNotificationInterestWhereUniqueInput!
-  ): UserPushNotificationInterest
+  deleteManyPauseReasons(where: PauseReasonWhereInput): BatchPayload!
   deleteManyUserPushNotificationInterests(
     where: UserPushNotificationInterestWhereInput
   ): BatchPayload!
@@ -9636,6 +10343,8 @@ type OrderLineItem {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
+  reservation: Reservation
   taxPercentage: Float
   taxPrice: Int
   price: Int!
@@ -9657,10 +10366,12 @@ input OrderLineItemCreateInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int!
   currencyCode: String!
+  reservation: ReservationCreateOneWithoutLineItemsInput
 }
 
 input OrderLineItemCreateManyInput {
@@ -9668,6 +10379,28 @@ input OrderLineItemCreateManyInput {
   connect: [OrderLineItemWhereUniqueInput!]
 }
 
+input OrderLineItemCreateManyWithoutReservationInput {
+  create: [OrderLineItemCreateWithoutReservationInput!]
+  connect: [OrderLineItemWhereUniqueInput!]
+}
+
+input OrderLineItemCreateWithoutReservationInput {
+  id: ID
+  recordID: ID!
+  recordType: OrderLineItemRecordType!
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  name: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int!
+  currencyCode: String!
+}
+
+"""
+An edge in a connection.
+"""
 type OrderLineItemEdge {
   node: OrderLineItem!
   cursor: String!
@@ -9686,6 +10419,8 @@ enum OrderLineItemOrderByInput {
   taxRate_DESC
   taxName_ASC
   taxName_DESC
+  name_ASC
+  name_DESC
   taxPercentage_ASC
   taxPercentage_DESC
   taxPrice_ASC
@@ -9707,6 +10442,7 @@ type OrderLineItemPreviousValues {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int!
@@ -9720,6 +10456,8 @@ enum OrderLineItemRecordType {
   ProductVariant
   ExternalProduct
   Package
+  EarlySwap
+  Reservation
 }
 
 input OrderLineItemScalarWhereInput {
@@ -9779,6 +10517,72 @@ input OrderLineItemScalarWhereInput {
   taxName_not_starts_with: String
   taxName_ends_with: String
   taxName_not_ends_with: String
+  name: String
+
+  """
+  All values that are not equal to given value.
+  """
+  name_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  name_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  name_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  name_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  name_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  name_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  name_gte: String
+
+  """
+  All values containing the given string.
+  """
+  name_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  name_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  name_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  name_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  name_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  name_not_ends_with: String
   taxPercentage: Float
   taxPercentage_not: Float
   taxPercentage_in: [Float!]
@@ -9862,10 +10666,12 @@ input OrderLineItemUpdateDataInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int
   currencyCode: String
+  reservation: ReservationUpdateOneWithoutLineItemsInput
 }
 
 input OrderLineItemUpdateInput {
@@ -9874,10 +10680,12 @@ input OrderLineItemUpdateInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int
   currencyCode: String
+  reservation: ReservationUpdateOneWithoutLineItemsInput
 }
 
 input OrderLineItemUpdateManyDataInput {
@@ -9886,6 +10694,7 @@ input OrderLineItemUpdateManyDataInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int
@@ -9910,10 +10719,23 @@ input OrderLineItemUpdateManyMutationInput {
   needShipping: Boolean
   taxRate: Float
   taxName: String
+  name: String
   taxPercentage: Float
   taxPrice: Int
   price: Int
   currencyCode: String
+}
+
+input OrderLineItemUpdateManyWithoutReservationInput {
+  create: [OrderLineItemCreateWithoutReservationInput!]
+  connect: [OrderLineItemWhereUniqueInput!]
+  set: [OrderLineItemWhereUniqueInput!]
+  disconnect: [OrderLineItemWhereUniqueInput!]
+  delete: [OrderLineItemWhereUniqueInput!]
+  update: [OrderLineItemUpdateWithWhereUniqueWithoutReservationInput!]
+  updateMany: [OrderLineItemUpdateManyWithWhereNestedInput!]
+  deleteMany: [OrderLineItemScalarWhereInput!]
+  upsert: [OrderLineItemUpsertWithWhereUniqueWithoutReservationInput!]
 }
 
 input OrderLineItemUpdateManyWithWhereNestedInput {
@@ -9921,15 +10743,39 @@ input OrderLineItemUpdateManyWithWhereNestedInput {
   data: OrderLineItemUpdateManyDataInput!
 }
 
+input OrderLineItemUpdateWithoutReservationDataInput {
+  recordID: ID
+  recordType: OrderLineItemRecordType
+  needShipping: Boolean
+  taxRate: Float
+  taxName: String
+  name: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int
+  currencyCode: String
+}
+
 input OrderLineItemUpdateWithWhereUniqueNestedInput {
   where: OrderLineItemWhereUniqueInput!
   data: OrderLineItemUpdateDataInput!
+}
+
+input OrderLineItemUpdateWithWhereUniqueWithoutReservationInput {
+  where: OrderLineItemWhereUniqueInput!
+  data: OrderLineItemUpdateWithoutReservationDataInput!
 }
 
 input OrderLineItemUpsertWithWhereUniqueNestedInput {
   where: OrderLineItemWhereUniqueInput!
   update: OrderLineItemUpdateDataInput!
   create: OrderLineItemCreateInput!
+}
+
+input OrderLineItemUpsertWithWhereUniqueWithoutReservationInput {
+  where: OrderLineItemWhereUniqueInput!
+  update: OrderLineItemUpdateWithoutReservationDataInput!
+  create: OrderLineItemCreateWithoutReservationInput!
 }
 
 input OrderLineItemWhereInput {
@@ -9989,6 +10835,72 @@ input OrderLineItemWhereInput {
   taxName_not_starts_with: String
   taxName_ends_with: String
   taxName_not_ends_with: String
+  name: String
+
+  """
+  All values that are not equal to given value.
+  """
+  name_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  name_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  name_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  name_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  name_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  name_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  name_gte: String
+
+  """
+  All values containing the given string.
+  """
+  name_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  name_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  name_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  name_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  name_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  name_not_ends_with: String
   taxPercentage: Float
   taxPercentage_not: Float
   taxPercentage_in: [Float!]
@@ -10043,9 +10955,7 @@ input OrderLineItemWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  AND: [OrderLineItemWhereInput!]
-  OR: [OrderLineItemWhereInput!]
-  NOT: [OrderLineItemWhereInput!]
+  reservation: ReservationWhereInput
 }
 
 input OrderLineItemWhereUniqueInput {
@@ -10904,8 +11814,371 @@ type PageInfo {
   endCursor: String
 }
 
-type PauseRequest {
+type PauseReason implements Node {
   id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  reason: String!
+}
+
+"""
+A connection to a list of items.
+"""
+type PauseReasonConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [PauseReasonEdge]!
+  aggregate: AggregatePauseReason!
+}
+
+input PauseReasonCreateInput {
+  id: ID
+  reason: String!
+}
+
+input PauseReasonCreateOneInput {
+  create: PauseReasonCreateInput
+  connect: PauseReasonWhereUniqueInput
+}
+
+"""
+An edge in a connection.
+"""
+type PauseReasonEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: PauseReason!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum PauseReasonOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  reason_ASC
+  reason_DESC
+}
+
+type PauseReasonPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  reason: String!
+}
+
+type PauseReasonSubscriptionPayload {
+  mutation: MutationType!
+  node: PauseReason
+  updatedFields: [String!]
+  previousValues: PauseReasonPreviousValues
+}
+
+input PauseReasonSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PauseReasonSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PauseReasonSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [PauseReasonSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PauseReasonWhereInput
+}
+
+input PauseReasonUpdateDataInput {
+  reason: String
+}
+
+input PauseReasonUpdateInput {
+  reason: String
+}
+
+input PauseReasonUpdateManyMutationInput {
+  reason: String
+}
+
+input PauseReasonUpdateOneInput {
+  create: PauseReasonCreateInput
+  connect: PauseReasonWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: PauseReasonUpdateDataInput
+  upsert: PauseReasonUpsertNestedInput
+}
+
+input PauseReasonUpsertNestedInput {
+  update: PauseReasonUpdateDataInput!
+  create: PauseReasonCreateInput!
+}
+
+input PauseReasonWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PauseReasonWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PauseReasonWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [PauseReasonWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+  reason: String
+
+  """
+  All values that are not equal to given value.
+  """
+  reason_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  reason_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  reason_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  reason_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  reason_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  reason_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  reason_gte: String
+
+  """
+  All values containing the given string.
+  """
+  reason_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  reason_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  reason_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  reason_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  reason_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  reason_not_ends_with: String
+}
+
+input PauseReasonWhereUniqueInput {
+  id: ID
+}
+
+type PauseRequest implements Node {
+  id: ID!
+  reason: PauseReason
   createdAt: DateTime!
   updatedAt: DateTime!
   pausePending: Boolean!
@@ -10916,8 +12189,18 @@ type PauseRequest {
   membership: CustomerMembership!
 }
 
+"""
+A connection to a list of items.
+"""
 type PauseRequestConnection {
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
   edges: [PauseRequestEdge]!
   aggregate: AggregatePauseRequest!
 }
@@ -10929,6 +12212,7 @@ input PauseRequestCreateInput {
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
+  reason: PauseReasonCreateOneInput
   membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
 }
 
@@ -10944,10 +12228,21 @@ input PauseRequestCreateWithoutMembershipInput {
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
+  reason: PauseReasonCreateOneInput
 }
 
+"""
+An edge in a connection.
+"""
 type PauseRequestEdge {
+  """
+  The item at the end of the edge.
+  """
   node: PauseRequest!
+
+  """
+  A cursor for use in pagination.
+  """
   cursor: String!
 }
 
@@ -10982,6 +12277,20 @@ type PauseRequestPreviousValues {
 }
 
 input PauseRequestScalarWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PauseRequestScalarWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PauseRequestScalarWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [PauseRequestScalarWhereInput!]
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -11065,6 +12374,7 @@ input PauseRequestUpdateInput {
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
+  reason: PauseReasonUpdateOneInput
   membership: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
 }
 
@@ -11107,6 +12417,7 @@ input PauseRequestUpdateWithoutMembershipDataInput {
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
+  reason: PauseReasonUpdateOneInput
 }
 
 input PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
@@ -11175,6 +12486,7 @@ input PauseRequestWhereInput {
   resumeDate_gte: DateTime
   notified: Boolean
   notified_not: Boolean
+  reason: PauseReasonWhereInput
   membership: CustomerMembershipWhereInput
   AND: [PauseRequestWhereInput!]
   OR: [PauseRequestWhereInput!]
@@ -11508,6 +12820,7 @@ type PhysicalProduct {
   ): [PhysicalProductQualityReport!]
   createdAt: DateTime!
   updatedAt: DateTime!
+  packedAt: DateTime
 }
 
 type PhysicalProductConnection {
@@ -11531,6 +12844,10 @@ input PhysicalProductCreateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
+  location: LocationCreateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceCreateOneInput
   reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
 }
@@ -11579,6 +12896,9 @@ input PhysicalProductCreateWithoutLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceCreateOneInput
   reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
 }
@@ -11597,6 +12917,9 @@ input PhysicalProductCreateWithoutProductVariantInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
+  location: LocationCreateOneWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceCreateOneInput
   reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
 }
@@ -11616,6 +12939,10 @@ input PhysicalProductCreateWithoutReportsInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
+  location: LocationCreateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceCreateOneInput
 }
 
@@ -11633,6 +12960,9 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
+  location: LocationCreateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   price: PhysicalProductPriceCreateOneInput
   reports: PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
 }
@@ -11686,6 +13016,8 @@ enum PhysicalProductOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  packedAt_ASC
+  packedAt_DESC
 }
 
 type PhysicalProductPreviousValues {
@@ -11702,6 +13034,7 @@ type PhysicalProductPreviousValues {
   unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
+  packedAt: DateTime
 }
 
 type PhysicalProductPrice {
@@ -12234,9 +13567,42 @@ input PhysicalProductScalarWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  AND: [PhysicalProductScalarWhereInput!]
-  OR: [PhysicalProductScalarWhereInput!]
-  NOT: [PhysicalProductScalarWhereInput!]
+  packedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  packedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  packedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  packedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  packedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  packedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  packedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  packedAt_gte: DateTime
 }
 
 enum PhysicalProductStatus {
@@ -12282,6 +13648,10 @@ input PhysicalProductUpdateDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
 }
@@ -12300,6 +13670,10 @@ input PhysicalProductUpdateInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
 }
@@ -12315,6 +13689,7 @@ input PhysicalProductUpdateManyDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateManyInput {
@@ -12340,6 +13715,7 @@ input PhysicalProductUpdateManyMutationInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -12419,6 +13795,9 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
 }
@@ -12436,6 +13815,9 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
 }
@@ -12454,6 +13836,10 @@ input PhysicalProductUpdateWithoutReportsDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
 }
 
@@ -12470,6 +13856,9 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  packedAt: DateTime
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
 }
@@ -12640,9 +14029,49 @@ input PhysicalProductWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  AND: [PhysicalProductWhereInput!]
-  OR: [PhysicalProductWhereInput!]
-  NOT: [PhysicalProductWhereInput!]
+  packedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  packedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  packedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  packedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  packedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  packedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  packedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  packedAt_gte: DateTime
+  location: LocationWhereInput
+  productVariant: ProductVariantWhereInput
+  warehouseLocation: WarehouseLocationWhereInput
+  price: PhysicalProductPriceWhereInput
+  reports_every: PhysicalProductQualityReportWhereInput
+  reports_some: PhysicalProductQualityReportWhereInput
+  reports_none: PhysicalProductQualityReportWhereInput
 }
 
 input PhysicalProductWhereUniqueInput {
@@ -17459,10 +18888,19 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [CustomerDetail]!
-  customerDetailsConnection(
-    where: CustomerDetailWhereInput
-    orderBy: CustomerDetailOrderByInput
+  ): [PushNotificationReceipt]!
+  pauseReasons(
+    where: PauseReasonWhereInput
+    orderBy: PauseReasonOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PauseReason]!
+  userPushNotificationInterests(
+    where: UserPushNotificationInterestWhereInput
+    orderBy: UserPushNotificationInterestOrderByInput
     skip: Int
     after: String
     before: String
@@ -17809,16 +19247,96 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [PhysicalProduct]!
-  physicalProductsConnection(
-    where: PhysicalProductWhereInput
-    orderBy: PhysicalProductOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): PhysicalProductConnection!
+  ): [Reservation]!
+  blogPost(where: BlogPostWhereUniqueInput!): BlogPost
+  tag(where: TagWhereUniqueInput!): Tag
+  productMaterialCategory(
+    where: ProductMaterialCategoryWhereUniqueInput!
+  ): ProductMaterialCategory
+  productModel(where: ProductModelWhereUniqueInput!): ProductModel
+  shopifyProductVariant(
+    where: ShopifyProductVariantWhereUniqueInput!
+  ): ShopifyProductVariant
+  physicalProductQualityReport(
+    where: PhysicalProductQualityReportWhereUniqueInput!
+  ): PhysicalProductQualityReport
+  productNotification(
+    where: ProductNotificationWhereUniqueInput!
+  ): ProductNotification
+  warehouseLocationConstraint(
+    where: WarehouseLocationConstraintWhereUniqueInput!
+  ): WarehouseLocationConstraint
+  warehouseLocation(
+    where: WarehouseLocationWhereUniqueInput!
+  ): WarehouseLocation
+  emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  fitPic(where: FitPicWhereUniqueInput!): FitPic
+  fitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
+  interestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
+  bagItem(where: BagItemWhereUniqueInput!): BagItem
+  customerAdmissionsData(
+    where: CustomerAdmissionsDataWhereUniqueInput!
+  ): CustomerAdmissionsData
+  uTMData(where: UTMDataWhereUniqueInput!): UTMData
+  customerNotificationBarReceipt(
+    where: CustomerNotificationBarReceiptWhereUniqueInput!
+  ): CustomerNotificationBarReceipt
+  customerMembership(
+    where: CustomerMembershipWhereUniqueInput!
+  ): CustomerMembership
+  pauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
+  recentlyViewedProduct(
+    where: RecentlyViewedProductWhereUniqueInput!
+  ): RecentlyViewedProduct
+  order(where: OrderWhereUniqueInput!): Order
+  reservationFeedback(
+    where: ReservationFeedbackWhereUniqueInput!
+  ): ReservationFeedback
+  productVariantFeedback(
+    where: ProductVariantFeedbackWhereUniqueInput!
+  ): ProductVariantFeedback
+  productVariantFeedbackQuestion(
+    where: ProductVariantFeedbackQuestionWhereUniqueInput!
+  ): ProductVariantFeedbackQuestion
+  reservationReceipt(
+    where: ReservationReceiptWhereUniqueInput!
+  ): ReservationReceipt
+  packageTransitEvent(
+    where: PackageTransitEventWhereUniqueInput!
+  ): PackageTransitEvent
+  productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
+  productVariantWant(
+    where: ProductVariantWantWhereUniqueInput!
+  ): ProductVariantWant
+  activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
+  adminActionLogInterpretation(
+    where: AdminActionLogInterpretationWhereUniqueInput!
+  ): AdminActionLogInterpretation
+  launch(where: LaunchWhereUniqueInput!): Launch
+  productSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
+  productTier(where: ProductTierWhereUniqueInput!): ProductTier
+  collection(where: CollectionWhereUniqueInput!): Collection
+  pushNotificationReceipt(
+    where: PushNotificationReceiptWhereUniqueInput!
+  ): PushNotificationReceipt
+  pauseReason(where: PauseReasonWhereUniqueInput!): PauseReason
+  userPushNotificationInterest(
+    where: UserPushNotificationInterestWhereUniqueInput!
+  ): UserPushNotificationInterest
+  billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
+  orderLineItem(where: OrderLineItemWhereUniqueInput!): OrderLineItem
+  customerMembershipSubscriptionData(
+    where: CustomerMembershipSubscriptionDataWhereUniqueInput!
+  ): CustomerMembershipSubscriptionData
+  reservationReceiptItem(
+    where: ReservationReceiptItemWhereUniqueInput!
+  ): ReservationReceiptItem
+  stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
+  size(where: SizeWhereUniqueInput!): Size
+  productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
+  userDeviceData(where: UserDeviceDataWhereUniqueInput!): UserDeviceData
+  color(where: ColorWhereUniqueInput!): Color
   physicalProductPrice(
     where: PhysicalProductPriceWhereUniqueInput!
   ): PhysicalProductPrice
@@ -18262,11 +19780,19 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): SeasonConnection!
-  shippingMethod(where: ShippingMethodWhereUniqueInput!): ShippingMethod
-  shippingMethods(
-    where: ShippingMethodWhereInput
-    orderBy: ShippingMethodOrderByInput
+  ): PushNotificationReceiptConnection!
+  pauseReasonsConnection(
+    where: PauseReasonWhereInput
+    orderBy: PauseReasonOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PauseReasonConnection!
+  userPushNotificationInterestsConnection(
+    where: UserPushNotificationInterestWhereInput
+    orderBy: UserPushNotificationInterestOrderByInput
     skip: Int
     after: String
     before: String
@@ -18799,6 +20325,15 @@ type Reservation {
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
+  lineItems(
+    where: OrderLineItemWhereInput
+    orderBy: OrderLineItemOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [OrderLineItem!]
   status: ReservationStatus!
   returnedAt: DateTime
   shippedAt: DateTime
@@ -18841,6 +20376,15 @@ input ReservationCreateInput {
   statusUpdatedAt: DateTime
   completedAt: DateTime
   cancelledAt: DateTime
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
+  packageEvents: PackageTransitEventCreateManyWithoutReservationInput
+  lineItems: OrderLineItemCreateManyWithoutReservationInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -18853,6 +20397,11 @@ input ReservationCreateManyWithoutCustomerInput {
 
 input ReservationCreateOneInput {
   create: ReservationCreateInput
+  connect: ReservationWhereUniqueInput
+}
+
+input ReservationCreateOneWithoutLineItemsInput {
+  create: ReservationCreateWithoutLineItemsInput
   connect: ReservationWhereUniqueInput
 }
 
@@ -18886,6 +20435,40 @@ input ReservationCreateWithoutCustomerInput {
   statusUpdatedAt: DateTime
   completedAt: DateTime
   cancelledAt: DateTime
+  user: UserCreateOneInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
+  packageEvents: PackageTransitEventCreateManyWithoutReservationInput
+  lineItems: OrderLineItemCreateManyWithoutReservationInput
+  receipt: ReservationReceiptCreateOneWithoutReservationInput
+  lastLocation: LocationCreateOneInput
+  shippingOption: ShippingOptionCreateOneInput
+}
+
+input ReservationCreateWithoutLineItemsInput {
+  id: ID
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  status: ReservationStatus!
+  returnedAt: DateTime
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
+  packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -18911,6 +20494,14 @@ input ReservationCreateWithoutPackageEventsInput {
   statusUpdatedAt: DateTime
   completedAt: DateTime
   cancelledAt: DateTime
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
+  lineItems: OrderLineItemCreateManyWithoutReservationInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
@@ -18937,6 +20528,15 @@ input ReservationCreateWithoutReceiptInput {
   statusUpdatedAt: DateTime
   completedAt: DateTime
   cancelledAt: DateTime
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  newProducts: PhysicalProductCreateManyInput
+  returnedProducts: PhysicalProductCreateManyInput
+  packageEvents: PackageTransitEventCreateManyWithoutReservationInput
+  lineItems: OrderLineItemCreateManyWithoutReservationInput
   lastLocation: LocationCreateOneInput
   shippingOption: ShippingOptionCreateOneInput
 }
@@ -19690,6 +21290,13 @@ input ReservationUpdateDataInput {
   newProducts: PhysicalProductUpdateManyInput
   returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
+  lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
+}
+
+input ReservationUpdateInput {
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
@@ -19715,17 +21322,7 @@ input ReservationUpdateInput {
   newProducts: PhysicalProductUpdateManyInput
   returnedProducts: PhysicalProductUpdateManyInput
   packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
-  reservationNumber: Int
-  phase: ReservationPhase
-  shipped: Boolean
-  status: ReservationStatus
-  returnedAt: DateTime
-  shippedAt: DateTime
-  receivedAt: DateTime
-  reminderSentAt: DateTime
-  statusUpdatedAt: DateTime
-  completedAt: DateTime
-  cancelledAt: DateTime
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -19790,6 +21387,15 @@ input ReservationUpdateOneRequiredWithoutReceiptInput {
   connect: ReservationWhereUniqueInput
 }
 
+input ReservationUpdateOneWithoutLineItemsInput {
+  create: ReservationCreateWithoutLineItemsInput
+  connect: ReservationWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ReservationUpdateWithoutLineItemsDataInput
+  upsert: ReservationUpsertWithoutLineItemsInput
+}
+
 input ReservationUpdateOneWithoutPackageEventsInput {
   create: ReservationCreateWithoutPackageEventsInput
   update: ReservationUpdateWithoutPackageEventsDataInput
@@ -19818,6 +21424,39 @@ input ReservationUpdateWithoutCustomerDataInput {
   statusUpdatedAt: DateTime
   completedAt: DateTime
   cancelledAt: DateTime
+  user: UserUpdateOneRequiredInput
+  sentPackage: PackageUpdateOneInput
+  returnedPackage: PackageUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
+  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
+  lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
+}
+
+input ReservationUpdateWithoutLineItemsDataInput {
+  reservationNumber: Int
+  phase: ReservationPhase
+  shipped: Boolean
+  status: ReservationStatus
+  returnedAt: DateTime
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
+  completedAt: DateTime
+  cancelledAt: DateTime
+  user: UserUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutReservationsInput
+  sentPackage: PackageUpdateOneInput
+  returnedPackage: PackageUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
+  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
@@ -19855,7 +21494,13 @@ input ReservationUpdateWithoutReceiptDataInput {
   products: PhysicalProductUpdateManyInput
   newProducts: PhysicalProductUpdateManyInput
   returnedProducts: PhysicalProductUpdateManyInput
-  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
+  lastLocation: LocationUpdateOneInput
+  shippingOption: ShippingOptionUpdateOneInput
+}
+
+input ReservationUpdateWithoutReceiptDataInput {
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
@@ -19867,6 +21512,15 @@ input ReservationUpdateWithoutReceiptDataInput {
   statusUpdatedAt: DateTime
   completedAt: DateTime
   cancelledAt: DateTime
+  user: UserUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutReservationsInput
+  sentPackage: PackageUpdateOneInput
+  returnedPackage: PackageUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  newProducts: PhysicalProductUpdateManyInput
+  returnedProducts: PhysicalProductUpdateManyInput
+  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
+  lineItems: OrderLineItemUpdateManyWithoutReservationInput
   lastLocation: LocationUpdateOneInput
   shippingOption: ShippingOptionUpdateOneInput
 }
@@ -19879,6 +21533,11 @@ input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
 input ReservationUpsertNestedInput {
   update: ReservationUpdateDataInput!
   create: ReservationCreateInput!
+}
+
+input ReservationUpsertWithoutLineItemsInput {
+  update: ReservationUpdateWithoutLineItemsDataInput!
+  create: ReservationCreateWithoutLineItemsInput!
 }
 
 input ReservationUpsertWithoutPackageEventsInput {
@@ -20020,6 +21679,27 @@ input ReservationWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  user: UserWhereInput
+  customer: CustomerWhereInput
+  sentPackage: PackageWhereInput
+  returnedPackage: PackageWhereInput
+  products_every: PhysicalProductWhereInput
+  products_some: PhysicalProductWhereInput
+  products_none: PhysicalProductWhereInput
+  newProducts_every: PhysicalProductWhereInput
+  newProducts_some: PhysicalProductWhereInput
+  newProducts_none: PhysicalProductWhereInput
+  returnedProducts_every: PhysicalProductWhereInput
+  returnedProducts_some: PhysicalProductWhereInput
+  returnedProducts_none: PhysicalProductWhereInput
+  packageEvents_every: PackageTransitEventWhereInput
+  packageEvents_some: PackageTransitEventWhereInput
+  packageEvents_none: PackageTransitEventWhereInput
+  lineItems_every: OrderLineItemWhereInput
+  lineItems_some: OrderLineItemWhereInput
+  lineItems_none: OrderLineItemWhereInput
+  receipt: ReservationReceiptWhereInput
+  lastLocation: LocationWhereInput
   shippingOption: ShippingOptionWhereInput
   AND: [ReservationWhereInput!]
   OR: [ReservationWhereInput!]
@@ -22157,18 +23837,21 @@ type Subscription {
   pushNotificationReceipt(
     where: PushNotificationReceiptSubscriptionWhereInput
   ): PushNotificationReceiptSubscriptionPayload
-  recentlyViewedProduct(
-    where: RecentlyViewedProductSubscriptionWhereInput
-  ): RecentlyViewedProductSubscriptionPayload
-  reservation(
-    where: ReservationSubscriptionWhereInput
-  ): ReservationSubscriptionPayload
-  reservationFeedback(
-    where: ReservationFeedbackSubscriptionWhereInput
-  ): ReservationFeedbackSubscriptionPayload
-  reservationReceipt(
-    where: ReservationReceiptSubscriptionWhereInput
-  ): ReservationReceiptSubscriptionPayload
+  pauseReason(
+    where: PauseReasonSubscriptionWhereInput
+  ): PauseReasonSubscriptionPayload
+  userPushNotificationInterest(
+    where: UserPushNotificationInterestSubscriptionWhereInput
+  ): UserPushNotificationInterestSubscriptionPayload
+  billingInfo(
+    where: BillingInfoSubscriptionWhereInput
+  ): BillingInfoSubscriptionPayload
+  orderLineItem(
+    where: OrderLineItemSubscriptionWhereInput
+  ): OrderLineItemSubscriptionPayload
+  customerMembershipSubscriptionData(
+    where: CustomerMembershipSubscriptionDataSubscriptionWhereInput
+  ): CustomerMembershipSubscriptionDataSubscriptionPayload
   reservationReceiptItem(
     where: ReservationReceiptItemSubscriptionWhereInput
   ): ReservationReceiptItemSubscriptionPayload

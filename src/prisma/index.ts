@@ -58,6 +58,7 @@ export interface Exists {
   packageTransitEvent: (
     where?: PackageTransitEventWhereInput
   ) => Promise<boolean>;
+  pauseReason: (where?: PauseReasonWhereInput) => Promise<boolean>;
   pauseRequest: (where?: PauseRequestWhereInput) => Promise<boolean>;
   paymentPlan: (where?: PaymentPlanWhereInput) => Promise<boolean>;
   physicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>;
@@ -758,6 +759,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => PackageTransitEventConnectionPromise;
+  pauseReason: (
+    where: PauseReasonWhereUniqueInput
+  ) => PauseReasonNullablePromise;
+  pauseReasons: (args?: {
+    where?: PauseReasonWhereInput;
+    orderBy?: PauseReasonOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<PauseReason>;
+  pauseReasonsConnection: (args?: {
+    where?: PauseReasonWhereInput;
+    orderBy?: PauseReasonOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => PauseReasonConnectionPromise;
   pauseRequest: (
     where: PauseRequestWhereUniqueInput
   ) => PauseRequestNullablePromise;
@@ -2203,6 +2225,24 @@ export interface Prisma {
   deleteManyPackageTransitEvents: (
     where?: PackageTransitEventWhereInput
   ) => BatchPayloadPromise;
+  createPauseReason: (data: PauseReasonCreateInput) => PauseReasonPromise;
+  updatePauseReason: (args: {
+    data: PauseReasonUpdateInput;
+    where: PauseReasonWhereUniqueInput;
+  }) => PauseReasonPromise;
+  updateManyPauseReasons: (args: {
+    data: PauseReasonUpdateManyMutationInput;
+    where?: PauseReasonWhereInput;
+  }) => BatchPayloadPromise;
+  upsertPauseReason: (args: {
+    where: PauseReasonWhereUniqueInput;
+    create: PauseReasonCreateInput;
+    update: PauseReasonUpdateInput;
+  }) => PauseReasonPromise;
+  deletePauseReason: (where: PauseReasonWhereUniqueInput) => PauseReasonPromise;
+  deleteManyPauseReasons: (
+    where?: PauseReasonWhereInput
+  ) => BatchPayloadPromise;
   createPauseRequest: (data: PauseRequestCreateInput) => PauseRequestPromise;
   updatePauseRequest: (args: {
     data: PauseRequestUpdateInput;
@@ -3168,6 +3208,9 @@ export interface Subscription {
   packageTransitEvent: (
     where?: PackageTransitEventSubscriptionWhereInput
   ) => PackageTransitEventSubscriptionPayloadSubscription;
+  pauseReason: (
+    where?: PauseReasonSubscriptionWhereInput
+  ) => PauseReasonSubscriptionPayloadSubscription;
   pauseRequest: (
     where?: PauseRequestSubscriptionWhereInput
   ) => PauseRequestSubscriptionPayloadSubscription;
@@ -3585,7 +3628,9 @@ export type PhysicalProductOrderByInput =
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
-  | "updatedAt_DESC";
+  | "updatedAt_DESC"
+  | "packedAt_ASC"
+  | "packedAt_DESC";
 
 export type ProductVariantOrderByInput =
   | "id_ASC"
@@ -3905,6 +3950,14 @@ export type PackageStatus =
 
 export type ReservationPhase = "BusinessToCustomer" | "CustomerToBusiness";
 
+export type OrderLineItemRecordType =
+  | "PhysicalProduct"
+  | "ProductVariant"
+  | "ExternalProduct"
+  | "Package"
+  | "EarlySwap"
+  | "Reservation";
+
 export type ReservationStatus =
   | "Queued"
   | "Picked"
@@ -4004,6 +4057,34 @@ export type PackageTransitEventOrderByInput =
   | "subStatus_DESC"
   | "data_ASC"
   | "data_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type OrderLineItemOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "recordID_ASC"
+  | "recordID_DESC"
+  | "recordType_ASC"
+  | "recordType_DESC"
+  | "needShipping_ASC"
+  | "needShipping_DESC"
+  | "taxRate_ASC"
+  | "taxRate_DESC"
+  | "taxName_ASC"
+  | "taxName_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "taxPercentage_ASC"
+  | "taxPercentage_DESC"
+  | "taxPrice_ASC"
+  | "taxPrice_DESC"
+  | "price_ASC"
+  | "price_DESC"
+  | "currencyCode_ASC"
+  | "currencyCode_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -4387,38 +4468,6 @@ export type LocationOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type OrderLineItemRecordType =
-  | "PhysicalProduct"
-  | "ProductVariant"
-  | "ExternalProduct"
-  | "Package";
-
-export type OrderLineItemOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "recordID_ASC"
-  | "recordID_DESC"
-  | "recordType_ASC"
-  | "recordType_DESC"
-  | "needShipping_ASC"
-  | "needShipping_DESC"
-  | "taxRate_ASC"
-  | "taxRate_DESC"
-  | "taxName_ASC"
-  | "taxName_DESC"
-  | "taxPercentage_ASC"
-  | "taxPercentage_DESC"
-  | "taxPrice_ASC"
-  | "taxPrice_DESC"
-  | "price_ASC"
-  | "price_DESC"
-  | "currencyCode_ASC"
-  | "currencyCode_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
 export type OrderType = "Used" | "New";
 
 export type OrderStatus =
@@ -4484,6 +4533,16 @@ export type PackageOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type PauseReasonOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "reason_ASC"
+  | "reason_DESC";
 
 export type PaymentPlanOrderByInput =
   | "id_ASC"
@@ -5803,6 +5862,14 @@ export interface PhysicalProductWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  packedAt?: Maybe<DateTimeInput>;
+  packedAt_not?: Maybe<DateTimeInput>;
+  packedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  packedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  packedAt_lt?: Maybe<DateTimeInput>;
+  packedAt_lte?: Maybe<DateTimeInput>;
+  packedAt_gt?: Maybe<DateTimeInput>;
+  packedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<PhysicalProductWhereInput[] | PhysicalProductWhereInput>;
   OR?: Maybe<PhysicalProductWhereInput[] | PhysicalProductWhereInput>;
   NOT?: Maybe<PhysicalProductWhereInput[] | PhysicalProductWhereInput>;
@@ -7811,6 +7878,7 @@ export interface PauseRequestWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  reason?: Maybe<PauseReasonWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -7855,6 +7923,56 @@ export interface PauseRequestWhereInput {
   AND?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
   OR?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
   NOT?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
+}
+
+export interface PauseReasonWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  reason?: Maybe<String>;
+  reason_not?: Maybe<String>;
+  reason_in?: Maybe<String[] | String>;
+  reason_not_in?: Maybe<String[] | String>;
+  reason_lt?: Maybe<String>;
+  reason_lte?: Maybe<String>;
+  reason_gt?: Maybe<String>;
+  reason_gte?: Maybe<String>;
+  reason_contains?: Maybe<String>;
+  reason_not_contains?: Maybe<String>;
+  reason_starts_with?: Maybe<String>;
+  reason_not_starts_with?: Maybe<String>;
+  reason_ends_with?: Maybe<String>;
+  reason_not_ends_with?: Maybe<String>;
+  AND?: Maybe<PauseReasonWhereInput[] | PauseReasonWhereInput>;
+  OR?: Maybe<PauseReasonWhereInput[] | PauseReasonWhereInput>;
+  NOT?: Maybe<PauseReasonWhereInput[] | PauseReasonWhereInput>;
 }
 
 export interface CustomerMembershipWhereInput {
@@ -8856,6 +8974,9 @@ export interface ReservationWhereInput {
   phase_not_in?: Maybe<ReservationPhase[] | ReservationPhase>;
   shipped?: Maybe<Boolean>;
   shipped_not?: Maybe<Boolean>;
+  lineItems_every?: Maybe<OrderLineItemWhereInput>;
+  lineItems_some?: Maybe<OrderLineItemWhereInput>;
+  lineItems_none?: Maybe<OrderLineItemWhereInput>;
   status?: Maybe<ReservationStatus>;
   status_not?: Maybe<ReservationStatus>;
   status_in?: Maybe<ReservationStatus[] | ReservationStatus>;
@@ -9145,6 +9266,139 @@ export interface PackageTransitEventWhereInput {
   AND?: Maybe<PackageTransitEventWhereInput[] | PackageTransitEventWhereInput>;
   OR?: Maybe<PackageTransitEventWhereInput[] | PackageTransitEventWhereInput>;
   NOT?: Maybe<PackageTransitEventWhereInput[] | PackageTransitEventWhereInput>;
+}
+
+export interface OrderLineItemWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  recordID?: Maybe<ID_Input>;
+  recordID_not?: Maybe<ID_Input>;
+  recordID_in?: Maybe<ID_Input[] | ID_Input>;
+  recordID_not_in?: Maybe<ID_Input[] | ID_Input>;
+  recordID_lt?: Maybe<ID_Input>;
+  recordID_lte?: Maybe<ID_Input>;
+  recordID_gt?: Maybe<ID_Input>;
+  recordID_gte?: Maybe<ID_Input>;
+  recordID_contains?: Maybe<ID_Input>;
+  recordID_not_contains?: Maybe<ID_Input>;
+  recordID_starts_with?: Maybe<ID_Input>;
+  recordID_not_starts_with?: Maybe<ID_Input>;
+  recordID_ends_with?: Maybe<ID_Input>;
+  recordID_not_ends_with?: Maybe<ID_Input>;
+  recordType?: Maybe<OrderLineItemRecordType>;
+  recordType_not?: Maybe<OrderLineItemRecordType>;
+  recordType_in?: Maybe<OrderLineItemRecordType[] | OrderLineItemRecordType>;
+  recordType_not_in?: Maybe<
+    OrderLineItemRecordType[] | OrderLineItemRecordType
+  >;
+  needShipping?: Maybe<Boolean>;
+  needShipping_not?: Maybe<Boolean>;
+  taxRate?: Maybe<Float>;
+  taxRate_not?: Maybe<Float>;
+  taxRate_in?: Maybe<Float[] | Float>;
+  taxRate_not_in?: Maybe<Float[] | Float>;
+  taxRate_lt?: Maybe<Float>;
+  taxRate_lte?: Maybe<Float>;
+  taxRate_gt?: Maybe<Float>;
+  taxRate_gte?: Maybe<Float>;
+  taxName?: Maybe<String>;
+  taxName_not?: Maybe<String>;
+  taxName_in?: Maybe<String[] | String>;
+  taxName_not_in?: Maybe<String[] | String>;
+  taxName_lt?: Maybe<String>;
+  taxName_lte?: Maybe<String>;
+  taxName_gt?: Maybe<String>;
+  taxName_gte?: Maybe<String>;
+  taxName_contains?: Maybe<String>;
+  taxName_not_contains?: Maybe<String>;
+  taxName_starts_with?: Maybe<String>;
+  taxName_not_starts_with?: Maybe<String>;
+  taxName_ends_with?: Maybe<String>;
+  taxName_not_ends_with?: Maybe<String>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  reservation?: Maybe<ReservationWhereInput>;
+  taxPercentage?: Maybe<Float>;
+  taxPercentage_not?: Maybe<Float>;
+  taxPercentage_in?: Maybe<Float[] | Float>;
+  taxPercentage_not_in?: Maybe<Float[] | Float>;
+  taxPercentage_lt?: Maybe<Float>;
+  taxPercentage_lte?: Maybe<Float>;
+  taxPercentage_gt?: Maybe<Float>;
+  taxPercentage_gte?: Maybe<Float>;
+  taxPrice?: Maybe<Int>;
+  taxPrice_not?: Maybe<Int>;
+  taxPrice_in?: Maybe<Int[] | Int>;
+  taxPrice_not_in?: Maybe<Int[] | Int>;
+  taxPrice_lt?: Maybe<Int>;
+  taxPrice_lte?: Maybe<Int>;
+  taxPrice_gt?: Maybe<Int>;
+  taxPrice_gte?: Maybe<Int>;
+  price?: Maybe<Int>;
+  price_not?: Maybe<Int>;
+  price_in?: Maybe<Int[] | Int>;
+  price_not_in?: Maybe<Int[] | Int>;
+  price_lt?: Maybe<Int>;
+  price_lte?: Maybe<Int>;
+  price_gt?: Maybe<Int>;
+  price_gte?: Maybe<Int>;
+  currencyCode?: Maybe<String>;
+  currencyCode_not?: Maybe<String>;
+  currencyCode_in?: Maybe<String[] | String>;
+  currencyCode_not_in?: Maybe<String[] | String>;
+  currencyCode_lt?: Maybe<String>;
+  currencyCode_lte?: Maybe<String>;
+  currencyCode_gt?: Maybe<String>;
+  currencyCode_gte?: Maybe<String>;
+  currencyCode_contains?: Maybe<String>;
+  currencyCode_not_contains?: Maybe<String>;
+  currencyCode_starts_with?: Maybe<String>;
+  currencyCode_not_starts_with?: Maybe<String>;
+  currencyCode_ends_with?: Maybe<String>;
+  currencyCode_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<OrderLineItemWhereInput[] | OrderLineItemWhereInput>;
+  OR?: Maybe<OrderLineItemWhereInput[] | OrderLineItemWhereInput>;
+  NOT?: Maybe<OrderLineItemWhereInput[] | OrderLineItemWhereInput>;
 }
 
 export interface ReservationReceiptWhereInput {
@@ -10089,124 +10343,6 @@ export type OrderWhereUniqueInput = AtLeastOne<{
   orderNumber?: Maybe<String>;
 }>;
 
-export interface OrderLineItemWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  recordID?: Maybe<ID_Input>;
-  recordID_not?: Maybe<ID_Input>;
-  recordID_in?: Maybe<ID_Input[] | ID_Input>;
-  recordID_not_in?: Maybe<ID_Input[] | ID_Input>;
-  recordID_lt?: Maybe<ID_Input>;
-  recordID_lte?: Maybe<ID_Input>;
-  recordID_gt?: Maybe<ID_Input>;
-  recordID_gte?: Maybe<ID_Input>;
-  recordID_contains?: Maybe<ID_Input>;
-  recordID_not_contains?: Maybe<ID_Input>;
-  recordID_starts_with?: Maybe<ID_Input>;
-  recordID_not_starts_with?: Maybe<ID_Input>;
-  recordID_ends_with?: Maybe<ID_Input>;
-  recordID_not_ends_with?: Maybe<ID_Input>;
-  recordType?: Maybe<OrderLineItemRecordType>;
-  recordType_not?: Maybe<OrderLineItemRecordType>;
-  recordType_in?: Maybe<OrderLineItemRecordType[] | OrderLineItemRecordType>;
-  recordType_not_in?: Maybe<
-    OrderLineItemRecordType[] | OrderLineItemRecordType
-  >;
-  needShipping?: Maybe<Boolean>;
-  needShipping_not?: Maybe<Boolean>;
-  taxRate?: Maybe<Float>;
-  taxRate_not?: Maybe<Float>;
-  taxRate_in?: Maybe<Float[] | Float>;
-  taxRate_not_in?: Maybe<Float[] | Float>;
-  taxRate_lt?: Maybe<Float>;
-  taxRate_lte?: Maybe<Float>;
-  taxRate_gt?: Maybe<Float>;
-  taxRate_gte?: Maybe<Float>;
-  taxName?: Maybe<String>;
-  taxName_not?: Maybe<String>;
-  taxName_in?: Maybe<String[] | String>;
-  taxName_not_in?: Maybe<String[] | String>;
-  taxName_lt?: Maybe<String>;
-  taxName_lte?: Maybe<String>;
-  taxName_gt?: Maybe<String>;
-  taxName_gte?: Maybe<String>;
-  taxName_contains?: Maybe<String>;
-  taxName_not_contains?: Maybe<String>;
-  taxName_starts_with?: Maybe<String>;
-  taxName_not_starts_with?: Maybe<String>;
-  taxName_ends_with?: Maybe<String>;
-  taxName_not_ends_with?: Maybe<String>;
-  taxPercentage?: Maybe<Float>;
-  taxPercentage_not?: Maybe<Float>;
-  taxPercentage_in?: Maybe<Float[] | Float>;
-  taxPercentage_not_in?: Maybe<Float[] | Float>;
-  taxPercentage_lt?: Maybe<Float>;
-  taxPercentage_lte?: Maybe<Float>;
-  taxPercentage_gt?: Maybe<Float>;
-  taxPercentage_gte?: Maybe<Float>;
-  taxPrice?: Maybe<Int>;
-  taxPrice_not?: Maybe<Int>;
-  taxPrice_in?: Maybe<Int[] | Int>;
-  taxPrice_not_in?: Maybe<Int[] | Int>;
-  taxPrice_lt?: Maybe<Int>;
-  taxPrice_lte?: Maybe<Int>;
-  taxPrice_gt?: Maybe<Int>;
-  taxPrice_gte?: Maybe<Int>;
-  price?: Maybe<Int>;
-  price_not?: Maybe<Int>;
-  price_in?: Maybe<Int[] | Int>;
-  price_not_in?: Maybe<Int[] | Int>;
-  price_lt?: Maybe<Int>;
-  price_lte?: Maybe<Int>;
-  price_gt?: Maybe<Int>;
-  price_gte?: Maybe<Int>;
-  currencyCode?: Maybe<String>;
-  currencyCode_not?: Maybe<String>;
-  currencyCode_in?: Maybe<String[] | String>;
-  currencyCode_not_in?: Maybe<String[] | String>;
-  currencyCode_lt?: Maybe<String>;
-  currencyCode_lte?: Maybe<String>;
-  currencyCode_gt?: Maybe<String>;
-  currencyCode_gte?: Maybe<String>;
-  currencyCode_contains?: Maybe<String>;
-  currencyCode_not_contains?: Maybe<String>;
-  currencyCode_starts_with?: Maybe<String>;
-  currencyCode_not_starts_with?: Maybe<String>;
-  currencyCode_ends_with?: Maybe<String>;
-  currencyCode_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<OrderLineItemWhereInput[] | OrderLineItemWhereInput>;
-  OR?: Maybe<OrderLineItemWhereInput[] | OrderLineItemWhereInput>;
-  NOT?: Maybe<OrderLineItemWhereInput[] | OrderLineItemWhereInput>;
-}
-
 export interface OrderWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
@@ -10345,6 +10481,10 @@ export type PackageWhereUniqueInput = AtLeastOne<{
 }>;
 
 export type PackageTransitEventWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type PauseReasonWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
@@ -11245,6 +11385,7 @@ export interface PhysicalProductCreateWithoutLocationInput {
   reports?: Maybe<
     PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
@@ -11848,6 +11989,7 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   reports?: Maybe<
     PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface LocationCreateOneWithoutPhysicalProductsInput {
@@ -12964,6 +13106,7 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   reports?: Maybe<
     PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
@@ -14386,6 +14529,7 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   reports?: Maybe<
     PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface LocationUpdateOneWithoutPhysicalProductsInput {
@@ -14985,6 +15129,14 @@ export interface PhysicalProductScalarWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  packedAt?: Maybe<DateTimeInput>;
+  packedAt_not?: Maybe<DateTimeInput>;
+  packedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  packedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  packedAt_lt?: Maybe<DateTimeInput>;
+  packedAt_lte?: Maybe<DateTimeInput>;
+  packedAt_gt?: Maybe<DateTimeInput>;
+  packedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<
     PhysicalProductScalarWhereInput[] | PhysicalProductScalarWhereInput
   >;
@@ -15012,6 +15164,7 @@ export interface PhysicalProductUpdateManyDataInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductVariantUpsertWithWhereUniqueWithoutProductInput {
@@ -16233,11 +16386,22 @@ export interface PauseRequestCreateManyWithoutMembershipInput {
 
 export interface PauseRequestCreateWithoutMembershipInput {
   id?: Maybe<ID_Input>;
+  reason?: Maybe<PauseReasonCreateOneInput>;
   pausePending: Boolean;
   pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
   notified?: Maybe<Boolean>;
+}
+
+export interface PauseReasonCreateOneInput {
+  create?: Maybe<PauseReasonCreateInput>;
+  connect?: Maybe<PauseReasonWhereUniqueInput>;
+}
+
+export interface PauseReasonCreateInput {
+  id?: Maybe<ID_Input>;
+  reason: String;
 }
 
 export interface ReservationCreateManyWithoutCustomerInput {
@@ -16260,6 +16424,7 @@ export interface ReservationCreateWithoutCustomerInput {
   reservationNumber: Int;
   phase: ReservationPhase;
   shipped: Boolean;
+  lineItems?: Maybe<OrderLineItemCreateManyWithoutReservationInput>;
   status: ReservationStatus;
   returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -16319,6 +16484,7 @@ export interface PhysicalProductCreateInput {
   reports?: Maybe<
     PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface LabelCreateOneInput {
@@ -16369,6 +16535,7 @@ export interface ReservationCreateWithoutPackageEventsInput {
   reservationNumber: Int;
   phase: ReservationPhase;
   shipped: Boolean;
+  lineItems?: Maybe<OrderLineItemCreateManyWithoutReservationInput>;
   status: ReservationStatus;
   returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -16571,6 +16738,30 @@ export interface CustomerCreateWithoutReferrerInput {
     CustomerNotificationBarReceiptCreateManyWithoutCustomerInput
   >;
   impactSyncTimings?: Maybe<SyncTimingCreateManyInput>;
+}
+
+export interface OrderLineItemCreateManyWithoutReservationInput {
+  create?: Maybe<
+    | OrderLineItemCreateWithoutReservationInput[]
+    | OrderLineItemCreateWithoutReservationInput
+  >;
+  connect?: Maybe<
+    OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput
+  >;
+}
+
+export interface OrderLineItemCreateWithoutReservationInput {
+  id?: Maybe<ID_Input>;
+  recordID: ID_Input;
+  recordType: OrderLineItemRecordType;
+  needShipping?: Maybe<Boolean>;
+  taxRate?: Maybe<Float>;
+  taxName?: Maybe<String>;
+  name?: Maybe<String>;
+  taxPercentage?: Maybe<Float>;
+  taxPrice?: Maybe<Int>;
+  price: Int;
+  currencyCode: String;
 }
 
 export interface ReservationReceiptCreateOneWithoutReservationInput {
@@ -16941,11 +17132,30 @@ export interface PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
 }
 
 export interface PauseRequestUpdateWithoutMembershipDataInput {
+  reason?: Maybe<PauseReasonUpdateOneInput>;
   pausePending?: Maybe<Boolean>;
   pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
   notified?: Maybe<Boolean>;
+}
+
+export interface PauseReasonUpdateOneInput {
+  create?: Maybe<PauseReasonCreateInput>;
+  update?: Maybe<PauseReasonUpdateDataInput>;
+  upsert?: Maybe<PauseReasonUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<PauseReasonWhereUniqueInput>;
+}
+
+export interface PauseReasonUpdateDataInput {
+  reason?: Maybe<String>;
+}
+
+export interface PauseReasonUpsertNestedInput {
+  update: PauseReasonUpdateDataInput;
+  create: PauseReasonCreateInput;
 }
 
 export interface PauseRequestUpsertWithWhereUniqueWithoutMembershipInput {
@@ -17076,6 +17286,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
+  lineItems?: Maybe<OrderLineItemUpdateManyWithoutReservationInput>;
   status?: Maybe<ReservationStatus>;
   returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -17168,6 +17379,7 @@ export interface PhysicalProductUpdateDataInput {
   reports?: Maybe<
     PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -17268,6 +17480,7 @@ export interface ReservationUpdateWithoutPackageEventsDataInput {
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
+  lineItems?: Maybe<OrderLineItemUpdateManyWithoutReservationInput>;
   status?: Maybe<ReservationStatus>;
   returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -17925,6 +18138,212 @@ export interface CustomerUpdateManyDataInput {
 export interface CustomerUpsertWithoutReservationsInput {
   update: CustomerUpdateWithoutReservationsDataInput;
   create: CustomerCreateWithoutReservationsInput;
+}
+
+export interface OrderLineItemUpdateManyWithoutReservationInput {
+  create?: Maybe<
+    | OrderLineItemCreateWithoutReservationInput[]
+    | OrderLineItemCreateWithoutReservationInput
+  >;
+  delete?: Maybe<
+    OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput
+  >;
+  connect?: Maybe<
+    OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput
+  >;
+  set?: Maybe<OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput>;
+  disconnect?: Maybe<
+    OrderLineItemWhereUniqueInput[] | OrderLineItemWhereUniqueInput
+  >;
+  update?: Maybe<
+    | OrderLineItemUpdateWithWhereUniqueWithoutReservationInput[]
+    | OrderLineItemUpdateWithWhereUniqueWithoutReservationInput
+  >;
+  upsert?: Maybe<
+    | OrderLineItemUpsertWithWhereUniqueWithoutReservationInput[]
+    | OrderLineItemUpsertWithWhereUniqueWithoutReservationInput
+  >;
+  deleteMany?: Maybe<
+    OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | OrderLineItemUpdateManyWithWhereNestedInput[]
+    | OrderLineItemUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface OrderLineItemUpdateWithWhereUniqueWithoutReservationInput {
+  where: OrderLineItemWhereUniqueInput;
+  data: OrderLineItemUpdateWithoutReservationDataInput;
+}
+
+export interface OrderLineItemUpdateWithoutReservationDataInput {
+  recordID?: Maybe<ID_Input>;
+  recordType?: Maybe<OrderLineItemRecordType>;
+  needShipping?: Maybe<Boolean>;
+  taxRate?: Maybe<Float>;
+  taxName?: Maybe<String>;
+  name?: Maybe<String>;
+  taxPercentage?: Maybe<Float>;
+  taxPrice?: Maybe<Int>;
+  price?: Maybe<Int>;
+  currencyCode?: Maybe<String>;
+}
+
+export interface OrderLineItemUpsertWithWhereUniqueWithoutReservationInput {
+  where: OrderLineItemWhereUniqueInput;
+  update: OrderLineItemUpdateWithoutReservationDataInput;
+  create: OrderLineItemCreateWithoutReservationInput;
+}
+
+export interface OrderLineItemScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  recordID?: Maybe<ID_Input>;
+  recordID_not?: Maybe<ID_Input>;
+  recordID_in?: Maybe<ID_Input[] | ID_Input>;
+  recordID_not_in?: Maybe<ID_Input[] | ID_Input>;
+  recordID_lt?: Maybe<ID_Input>;
+  recordID_lte?: Maybe<ID_Input>;
+  recordID_gt?: Maybe<ID_Input>;
+  recordID_gte?: Maybe<ID_Input>;
+  recordID_contains?: Maybe<ID_Input>;
+  recordID_not_contains?: Maybe<ID_Input>;
+  recordID_starts_with?: Maybe<ID_Input>;
+  recordID_not_starts_with?: Maybe<ID_Input>;
+  recordID_ends_with?: Maybe<ID_Input>;
+  recordID_not_ends_with?: Maybe<ID_Input>;
+  recordType?: Maybe<OrderLineItemRecordType>;
+  recordType_not?: Maybe<OrderLineItemRecordType>;
+  recordType_in?: Maybe<OrderLineItemRecordType[] | OrderLineItemRecordType>;
+  recordType_not_in?: Maybe<
+    OrderLineItemRecordType[] | OrderLineItemRecordType
+  >;
+  needShipping?: Maybe<Boolean>;
+  needShipping_not?: Maybe<Boolean>;
+  taxRate?: Maybe<Float>;
+  taxRate_not?: Maybe<Float>;
+  taxRate_in?: Maybe<Float[] | Float>;
+  taxRate_not_in?: Maybe<Float[] | Float>;
+  taxRate_lt?: Maybe<Float>;
+  taxRate_lte?: Maybe<Float>;
+  taxRate_gt?: Maybe<Float>;
+  taxRate_gte?: Maybe<Float>;
+  taxName?: Maybe<String>;
+  taxName_not?: Maybe<String>;
+  taxName_in?: Maybe<String[] | String>;
+  taxName_not_in?: Maybe<String[] | String>;
+  taxName_lt?: Maybe<String>;
+  taxName_lte?: Maybe<String>;
+  taxName_gt?: Maybe<String>;
+  taxName_gte?: Maybe<String>;
+  taxName_contains?: Maybe<String>;
+  taxName_not_contains?: Maybe<String>;
+  taxName_starts_with?: Maybe<String>;
+  taxName_not_starts_with?: Maybe<String>;
+  taxName_ends_with?: Maybe<String>;
+  taxName_not_ends_with?: Maybe<String>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  taxPercentage?: Maybe<Float>;
+  taxPercentage_not?: Maybe<Float>;
+  taxPercentage_in?: Maybe<Float[] | Float>;
+  taxPercentage_not_in?: Maybe<Float[] | Float>;
+  taxPercentage_lt?: Maybe<Float>;
+  taxPercentage_lte?: Maybe<Float>;
+  taxPercentage_gt?: Maybe<Float>;
+  taxPercentage_gte?: Maybe<Float>;
+  taxPrice?: Maybe<Int>;
+  taxPrice_not?: Maybe<Int>;
+  taxPrice_in?: Maybe<Int[] | Int>;
+  taxPrice_not_in?: Maybe<Int[] | Int>;
+  taxPrice_lt?: Maybe<Int>;
+  taxPrice_lte?: Maybe<Int>;
+  taxPrice_gt?: Maybe<Int>;
+  taxPrice_gte?: Maybe<Int>;
+  price?: Maybe<Int>;
+  price_not?: Maybe<Int>;
+  price_in?: Maybe<Int[] | Int>;
+  price_not_in?: Maybe<Int[] | Int>;
+  price_lt?: Maybe<Int>;
+  price_lte?: Maybe<Int>;
+  price_gt?: Maybe<Int>;
+  price_gte?: Maybe<Int>;
+  currencyCode?: Maybe<String>;
+  currencyCode_not?: Maybe<String>;
+  currencyCode_in?: Maybe<String[] | String>;
+  currencyCode_not_in?: Maybe<String[] | String>;
+  currencyCode_lt?: Maybe<String>;
+  currencyCode_lte?: Maybe<String>;
+  currencyCode_gt?: Maybe<String>;
+  currencyCode_gte?: Maybe<String>;
+  currencyCode_contains?: Maybe<String>;
+  currencyCode_not_contains?: Maybe<String>;
+  currencyCode_starts_with?: Maybe<String>;
+  currencyCode_not_starts_with?: Maybe<String>;
+  currencyCode_ends_with?: Maybe<String>;
+  currencyCode_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput>;
+  OR?: Maybe<OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput>;
+  NOT?: Maybe<OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput>;
+}
+
+export interface OrderLineItemUpdateManyWithWhereNestedInput {
+  where: OrderLineItemScalarWhereInput;
+  data: OrderLineItemUpdateManyDataInput;
+}
+
+export interface OrderLineItemUpdateManyDataInput {
+  recordID?: Maybe<ID_Input>;
+  recordType?: Maybe<OrderLineItemRecordType>;
+  needShipping?: Maybe<Boolean>;
+  taxRate?: Maybe<Float>;
+  taxName?: Maybe<String>;
+  name?: Maybe<String>;
+  taxPercentage?: Maybe<Float>;
+  taxPrice?: Maybe<Int>;
+  price?: Maybe<Int>;
+  currencyCode?: Maybe<String>;
 }
 
 export interface ReservationReceiptUpdateOneWithoutReservationInput {
@@ -19439,10 +19858,43 @@ export interface OrderLineItemCreateInput {
   needShipping?: Maybe<Boolean>;
   taxRate?: Maybe<Float>;
   taxName?: Maybe<String>;
+  name?: Maybe<String>;
+  reservation?: Maybe<ReservationCreateOneWithoutLineItemsInput>;
   taxPercentage?: Maybe<Float>;
   taxPrice?: Maybe<Int>;
   price: Int;
   currencyCode: String;
+}
+
+export interface ReservationCreateOneWithoutLineItemsInput {
+  create?: Maybe<ReservationCreateWithoutLineItemsInput>;
+  connect?: Maybe<ReservationWhereUniqueInput>;
+}
+
+export interface ReservationCreateWithoutLineItemsInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneInput;
+  customer: CustomerCreateOneWithoutReservationsInput;
+  sentPackage?: Maybe<PackageCreateOneInput>;
+  returnedPackage?: Maybe<PackageCreateOneInput>;
+  products?: Maybe<PhysicalProductCreateManyInput>;
+  newProducts?: Maybe<PhysicalProductCreateManyInput>;
+  returnedProducts?: Maybe<PhysicalProductCreateManyInput>;
+  packageEvents?: Maybe<PackageTransitEventCreateManyWithoutReservationInput>;
+  reservationNumber: Int;
+  phase: ReservationPhase;
+  shipped: Boolean;
+  status: ReservationStatus;
+  returnedAt?: Maybe<DateTimeInput>;
+  shippedAt?: Maybe<DateTimeInput>;
+  receivedAt?: Maybe<DateTimeInput>;
+  reminderSentAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
+  receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationCreateOneInput>;
+  shippingOption?: Maybe<ShippingOptionCreateOneInput>;
 }
 
 export interface OrderUpdateInput {
@@ -19536,151 +19988,57 @@ export interface OrderLineItemUpdateDataInput {
   needShipping?: Maybe<Boolean>;
   taxRate?: Maybe<Float>;
   taxName?: Maybe<String>;
+  name?: Maybe<String>;
+  reservation?: Maybe<ReservationUpdateOneWithoutLineItemsInput>;
   taxPercentage?: Maybe<Float>;
   taxPrice?: Maybe<Int>;
   price?: Maybe<Int>;
   currencyCode?: Maybe<String>;
+}
+
+export interface ReservationUpdateOneWithoutLineItemsInput {
+  create?: Maybe<ReservationCreateWithoutLineItemsInput>;
+  update?: Maybe<ReservationUpdateWithoutLineItemsDataInput>;
+  upsert?: Maybe<ReservationUpsertWithoutLineItemsInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ReservationWhereUniqueInput>;
+}
+
+export interface ReservationUpdateWithoutLineItemsDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  customer?: Maybe<CustomerUpdateOneRequiredWithoutReservationsInput>;
+  sentPackage?: Maybe<PackageUpdateOneInput>;
+  returnedPackage?: Maybe<PackageUpdateOneInput>;
+  products?: Maybe<PhysicalProductUpdateManyInput>;
+  newProducts?: Maybe<PhysicalProductUpdateManyInput>;
+  returnedProducts?: Maybe<PhysicalProductUpdateManyInput>;
+  packageEvents?: Maybe<PackageTransitEventUpdateManyWithoutReservationInput>;
+  reservationNumber?: Maybe<Int>;
+  phase?: Maybe<ReservationPhase>;
+  shipped?: Maybe<Boolean>;
+  status?: Maybe<ReservationStatus>;
+  returnedAt?: Maybe<DateTimeInput>;
+  shippedAt?: Maybe<DateTimeInput>;
+  receivedAt?: Maybe<DateTimeInput>;
+  reminderSentAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
+  completedAt?: Maybe<DateTimeInput>;
+  cancelledAt?: Maybe<DateTimeInput>;
+  receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationUpdateOneInput>;
+  shippingOption?: Maybe<ShippingOptionUpdateOneInput>;
+}
+
+export interface ReservationUpsertWithoutLineItemsInput {
+  update: ReservationUpdateWithoutLineItemsDataInput;
+  create: ReservationCreateWithoutLineItemsInput;
 }
 
 export interface OrderLineItemUpsertWithWhereUniqueNestedInput {
   where: OrderLineItemWhereUniqueInput;
   update: OrderLineItemUpdateDataInput;
   create: OrderLineItemCreateInput;
-}
-
-export interface OrderLineItemScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  recordID?: Maybe<ID_Input>;
-  recordID_not?: Maybe<ID_Input>;
-  recordID_in?: Maybe<ID_Input[] | ID_Input>;
-  recordID_not_in?: Maybe<ID_Input[] | ID_Input>;
-  recordID_lt?: Maybe<ID_Input>;
-  recordID_lte?: Maybe<ID_Input>;
-  recordID_gt?: Maybe<ID_Input>;
-  recordID_gte?: Maybe<ID_Input>;
-  recordID_contains?: Maybe<ID_Input>;
-  recordID_not_contains?: Maybe<ID_Input>;
-  recordID_starts_with?: Maybe<ID_Input>;
-  recordID_not_starts_with?: Maybe<ID_Input>;
-  recordID_ends_with?: Maybe<ID_Input>;
-  recordID_not_ends_with?: Maybe<ID_Input>;
-  recordType?: Maybe<OrderLineItemRecordType>;
-  recordType_not?: Maybe<OrderLineItemRecordType>;
-  recordType_in?: Maybe<OrderLineItemRecordType[] | OrderLineItemRecordType>;
-  recordType_not_in?: Maybe<
-    OrderLineItemRecordType[] | OrderLineItemRecordType
-  >;
-  needShipping?: Maybe<Boolean>;
-  needShipping_not?: Maybe<Boolean>;
-  taxRate?: Maybe<Float>;
-  taxRate_not?: Maybe<Float>;
-  taxRate_in?: Maybe<Float[] | Float>;
-  taxRate_not_in?: Maybe<Float[] | Float>;
-  taxRate_lt?: Maybe<Float>;
-  taxRate_lte?: Maybe<Float>;
-  taxRate_gt?: Maybe<Float>;
-  taxRate_gte?: Maybe<Float>;
-  taxName?: Maybe<String>;
-  taxName_not?: Maybe<String>;
-  taxName_in?: Maybe<String[] | String>;
-  taxName_not_in?: Maybe<String[] | String>;
-  taxName_lt?: Maybe<String>;
-  taxName_lte?: Maybe<String>;
-  taxName_gt?: Maybe<String>;
-  taxName_gte?: Maybe<String>;
-  taxName_contains?: Maybe<String>;
-  taxName_not_contains?: Maybe<String>;
-  taxName_starts_with?: Maybe<String>;
-  taxName_not_starts_with?: Maybe<String>;
-  taxName_ends_with?: Maybe<String>;
-  taxName_not_ends_with?: Maybe<String>;
-  taxPercentage?: Maybe<Float>;
-  taxPercentage_not?: Maybe<Float>;
-  taxPercentage_in?: Maybe<Float[] | Float>;
-  taxPercentage_not_in?: Maybe<Float[] | Float>;
-  taxPercentage_lt?: Maybe<Float>;
-  taxPercentage_lte?: Maybe<Float>;
-  taxPercentage_gt?: Maybe<Float>;
-  taxPercentage_gte?: Maybe<Float>;
-  taxPrice?: Maybe<Int>;
-  taxPrice_not?: Maybe<Int>;
-  taxPrice_in?: Maybe<Int[] | Int>;
-  taxPrice_not_in?: Maybe<Int[] | Int>;
-  taxPrice_lt?: Maybe<Int>;
-  taxPrice_lte?: Maybe<Int>;
-  taxPrice_gt?: Maybe<Int>;
-  taxPrice_gte?: Maybe<Int>;
-  price?: Maybe<Int>;
-  price_not?: Maybe<Int>;
-  price_in?: Maybe<Int[] | Int>;
-  price_not_in?: Maybe<Int[] | Int>;
-  price_lt?: Maybe<Int>;
-  price_lte?: Maybe<Int>;
-  price_gt?: Maybe<Int>;
-  price_gte?: Maybe<Int>;
-  currencyCode?: Maybe<String>;
-  currencyCode_not?: Maybe<String>;
-  currencyCode_in?: Maybe<String[] | String>;
-  currencyCode_not_in?: Maybe<String[] | String>;
-  currencyCode_lt?: Maybe<String>;
-  currencyCode_lte?: Maybe<String>;
-  currencyCode_gt?: Maybe<String>;
-  currencyCode_gte?: Maybe<String>;
-  currencyCode_contains?: Maybe<String>;
-  currencyCode_not_contains?: Maybe<String>;
-  currencyCode_starts_with?: Maybe<String>;
-  currencyCode_not_starts_with?: Maybe<String>;
-  currencyCode_ends_with?: Maybe<String>;
-  currencyCode_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput>;
-  OR?: Maybe<OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput>;
-  NOT?: Maybe<OrderLineItemScalarWhereInput[] | OrderLineItemScalarWhereInput>;
-}
-
-export interface OrderLineItemUpdateManyWithWhereNestedInput {
-  where: OrderLineItemScalarWhereInput;
-  data: OrderLineItemUpdateManyDataInput;
-}
-
-export interface OrderLineItemUpdateManyDataInput {
-  recordID?: Maybe<ID_Input>;
-  recordType?: Maybe<OrderLineItemRecordType>;
-  needShipping?: Maybe<Boolean>;
-  taxRate?: Maybe<Float>;
-  taxName?: Maybe<String>;
-  taxPercentage?: Maybe<Float>;
-  taxPrice?: Maybe<Int>;
-  price?: Maybe<Int>;
-  currencyCode?: Maybe<String>;
 }
 
 export interface OrderUpdateManyMutationInput {
@@ -19702,6 +20060,8 @@ export interface OrderLineItemUpdateInput {
   needShipping?: Maybe<Boolean>;
   taxRate?: Maybe<Float>;
   taxName?: Maybe<String>;
+  name?: Maybe<String>;
+  reservation?: Maybe<ReservationUpdateOneWithoutLineItemsInput>;
   taxPercentage?: Maybe<Float>;
   taxPrice?: Maybe<Int>;
   price?: Maybe<Int>;
@@ -19714,6 +20074,7 @@ export interface OrderLineItemUpdateManyMutationInput {
   needShipping?: Maybe<Boolean>;
   taxRate?: Maybe<Float>;
   taxName?: Maybe<String>;
+  name?: Maybe<String>;
   taxPercentage?: Maybe<Float>;
   taxPrice?: Maybe<Int>;
   price?: Maybe<Int>;
@@ -19762,8 +20123,17 @@ export interface PackageTransitEventUpdateManyMutationInput {
   data?: Maybe<Json>;
 }
 
+export interface PauseReasonUpdateInput {
+  reason?: Maybe<String>;
+}
+
+export interface PauseReasonUpdateManyMutationInput {
+  reason?: Maybe<String>;
+}
+
 export interface PauseRequestCreateInput {
   id?: Maybe<ID_Input>;
+  reason?: Maybe<PauseReasonCreateOneInput>;
   pausePending: Boolean;
   pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
@@ -19787,6 +20157,7 @@ export interface CustomerMembershipCreateWithoutPauseRequestsInput {
 }
 
 export interface PauseRequestUpdateInput {
+  reason?: Maybe<PauseReasonUpdateOneInput>;
   pausePending?: Maybe<Boolean>;
   pauseType?: Maybe<PauseType>;
   pauseDate?: Maybe<DateTimeInput>;
@@ -19869,6 +20240,7 @@ export interface PhysicalProductUpdateInput {
   reports?: Maybe<
     PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductUpdateManyMutationInput {
@@ -19882,6 +20254,7 @@ export interface PhysicalProductUpdateManyMutationInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductPriceUpdateInput {
@@ -19928,6 +20301,7 @@ export interface PhysicalProductCreateWithoutReportsInput {
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceCreateOneInput>;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductQualityReportUpdateInput {
@@ -19966,6 +20340,7 @@ export interface PhysicalProductUpdateWithoutReportsDataInput {
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
   price?: Maybe<PhysicalProductPriceUpdateOneInput>;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductUpsertWithoutReportsInput {
@@ -20508,6 +20883,7 @@ export interface ReservationCreateInput {
   reservationNumber: Int;
   phase: ReservationPhase;
   shipped: Boolean;
+  lineItems?: Maybe<OrderLineItemCreateManyWithoutReservationInput>;
   status: ReservationStatus;
   returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -20692,6 +21068,7 @@ export interface ReservationUpdateDataInput {
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
+  lineItems?: Maybe<OrderLineItemUpdateManyWithoutReservationInput>;
   status?: Maybe<ReservationStatus>;
   returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -20881,6 +21258,7 @@ export interface ReservationUpdateInput {
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
+  lineItems?: Maybe<OrderLineItemUpdateManyWithoutReservationInput>;
   status?: Maybe<ReservationStatus>;
   returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -21107,6 +21485,7 @@ export interface ReservationCreateWithoutReceiptInput {
   reservationNumber: Int;
   phase: ReservationPhase;
   shipped: Boolean;
+  lineItems?: Maybe<OrderLineItemCreateManyWithoutReservationInput>;
   status: ReservationStatus;
   returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -21143,6 +21522,7 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   reservationNumber?: Maybe<Int>;
   phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
+  lineItems?: Maybe<OrderLineItemUpdateManyWithoutReservationInput>;
   status?: Maybe<ReservationStatus>;
   returnedAt?: Maybe<DateTimeInput>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -21727,6 +22107,7 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   reports?: Maybe<
     PhysicalProductQualityReportCreateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface WarehouseLocationUpdateInput {
@@ -21800,6 +22181,7 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   reports?: Maybe<
     PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
   >;
+  packedAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput {
@@ -22483,6 +22865,23 @@ export interface PackageTransitEventSubscriptionWhereInput {
   NOT?: Maybe<
     | PackageTransitEventSubscriptionWhereInput[]
     | PackageTransitEventSubscriptionWhereInput
+  >;
+}
+
+export interface PauseReasonSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<PauseReasonWhereInput>;
+  AND?: Maybe<
+    PauseReasonSubscriptionWhereInput[] | PauseReasonSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    PauseReasonSubscriptionWhereInput[] | PauseReasonSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    PauseReasonSubscriptionWhereInput[] | PauseReasonSubscriptionWhereInput
   >;
 }
 
@@ -24191,6 +24590,7 @@ export interface PhysicalProduct {
   unitCost?: Float;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  packedAt?: DateTimeOutput;
 }
 
 export interface PhysicalProductPromise
@@ -24222,6 +24622,7 @@ export interface PhysicalProductPromise
   }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  packedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface PhysicalProductSubscription
@@ -24255,6 +24656,7 @@ export interface PhysicalProductSubscription
   }) => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  packedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface PhysicalProductNullablePromise
@@ -24286,6 +24688,7 @@ export interface PhysicalProductNullablePromise
   }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  packedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ProductVariant {
@@ -27003,6 +27406,7 @@ export interface PauseRequestPromise
   extends Promise<PauseRequest>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  reason: <T = PauseReasonPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   pausePending: () => Promise<Boolean>;
@@ -27017,6 +27421,7 @@ export interface PauseRequestSubscription
   extends Promise<AsyncIterator<PauseRequest>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  reason: <T = PauseReasonSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   pausePending: () => Promise<AsyncIterator<Boolean>>;
@@ -27031,6 +27436,7 @@ export interface PauseRequestNullablePromise
   extends Promise<PauseRequest | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  reason: <T = PauseReasonPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   pausePending: () => Promise<Boolean>;
@@ -27039,6 +27445,38 @@ export interface PauseRequestNullablePromise
   resumeDate: () => Promise<DateTimeOutput>;
   notified: () => Promise<Boolean>;
   membership: <T = CustomerMembershipPromise>() => T;
+}
+
+export interface PauseReason {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  reason: String;
+}
+
+export interface PauseReasonPromise extends Promise<PauseReason>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  reason: () => Promise<String>;
+}
+
+export interface PauseReasonSubscription
+  extends Promise<AsyncIterator<PauseReason>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  reason: () => Promise<AsyncIterator<String>>;
+}
+
+export interface PauseReasonNullablePromise
+  extends Promise<PauseReason | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  reason: () => Promise<String>;
 }
 
 export interface Reservation {
@@ -27103,6 +27541,15 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
   reservationNumber: () => Promise<Int>;
   phase: () => Promise<ReservationPhase>;
   shipped: () => Promise<Boolean>;
+  lineItems: <T = FragmentableArray<OrderLineItem>>(args?: {
+    where?: OrderLineItemWhereInput;
+    orderBy?: OrderLineItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   status: () => Promise<ReservationStatus>;
   returnedAt: () => Promise<DateTimeOutput>;
   shippedAt: () => Promise<DateTimeOutput>;
@@ -27171,6 +27618,15 @@ export interface ReservationSubscription
   reservationNumber: () => Promise<AsyncIterator<Int>>;
   phase: () => Promise<AsyncIterator<ReservationPhase>>;
   shipped: () => Promise<AsyncIterator<Boolean>>;
+  lineItems: <T = Promise<AsyncIterator<OrderLineItemSubscription>>>(args?: {
+    where?: OrderLineItemWhereInput;
+    orderBy?: OrderLineItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   status: () => Promise<AsyncIterator<ReservationStatus>>;
   returnedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   shippedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -27233,6 +27689,15 @@ export interface ReservationNullablePromise
   reservationNumber: () => Promise<Int>;
   phase: () => Promise<ReservationPhase>;
   shipped: () => Promise<Boolean>;
+  lineItems: <T = FragmentableArray<OrderLineItem>>(args?: {
+    where?: OrderLineItemWhereInput;
+    orderBy?: OrderLineItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   status: () => Promise<ReservationStatus>;
   returnedAt: () => Promise<DateTimeOutput>;
   shippedAt: () => Promise<DateTimeOutput>;
@@ -27435,6 +27900,79 @@ export interface PackageTransitEventNullablePromise
   package: <T = PackagePromise>() => T;
   reservation: <T = ReservationPromise>() => T;
   data: () => Promise<Json>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface OrderLineItem {
+  id: ID_Output;
+  recordID: ID_Output;
+  recordType: OrderLineItemRecordType;
+  needShipping?: Boolean;
+  taxRate?: Float;
+  taxName?: String;
+  name?: String;
+  taxPercentage?: Float;
+  taxPrice?: Int;
+  price: Int;
+  currencyCode: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface OrderLineItemPromise
+  extends Promise<OrderLineItem>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  recordID: () => Promise<ID_Output>;
+  recordType: () => Promise<OrderLineItemRecordType>;
+  needShipping: () => Promise<Boolean>;
+  taxRate: () => Promise<Float>;
+  taxName: () => Promise<String>;
+  name: () => Promise<String>;
+  reservation: <T = ReservationPromise>() => T;
+  taxPercentage: () => Promise<Float>;
+  taxPrice: () => Promise<Int>;
+  price: () => Promise<Int>;
+  currencyCode: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface OrderLineItemSubscription
+  extends Promise<AsyncIterator<OrderLineItem>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  recordID: () => Promise<AsyncIterator<ID_Output>>;
+  recordType: () => Promise<AsyncIterator<OrderLineItemRecordType>>;
+  needShipping: () => Promise<AsyncIterator<Boolean>>;
+  taxRate: () => Promise<AsyncIterator<Float>>;
+  taxName: () => Promise<AsyncIterator<String>>;
+  name: () => Promise<AsyncIterator<String>>;
+  reservation: <T = ReservationSubscription>() => T;
+  taxPercentage: () => Promise<AsyncIterator<Float>>;
+  taxPrice: () => Promise<AsyncIterator<Int>>;
+  price: () => Promise<AsyncIterator<Int>>;
+  currencyCode: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface OrderLineItemNullablePromise
+  extends Promise<OrderLineItem | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  recordID: () => Promise<ID_Output>;
+  recordType: () => Promise<OrderLineItemRecordType>;
+  needShipping: () => Promise<Boolean>;
+  taxRate: () => Promise<Float>;
+  taxName: () => Promise<String>;
+  name: () => Promise<String>;
+  reservation: <T = ReservationPromise>() => T;
+  taxPercentage: () => Promise<Float>;
+  taxPrice: () => Promise<Int>;
+  price: () => Promise<Int>;
+  currencyCode: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -29355,72 +29893,6 @@ export interface OrderNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface OrderLineItem {
-  id: ID_Output;
-  recordID: ID_Output;
-  recordType: OrderLineItemRecordType;
-  needShipping?: Boolean;
-  taxRate?: Float;
-  taxName?: String;
-  taxPercentage?: Float;
-  taxPrice?: Int;
-  price: Int;
-  currencyCode: String;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface OrderLineItemPromise
-  extends Promise<OrderLineItem>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  recordID: () => Promise<ID_Output>;
-  recordType: () => Promise<OrderLineItemRecordType>;
-  needShipping: () => Promise<Boolean>;
-  taxRate: () => Promise<Float>;
-  taxName: () => Promise<String>;
-  taxPercentage: () => Promise<Float>;
-  taxPrice: () => Promise<Int>;
-  price: () => Promise<Int>;
-  currencyCode: () => Promise<String>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface OrderLineItemSubscription
-  extends Promise<AsyncIterator<OrderLineItem>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  recordID: () => Promise<AsyncIterator<ID_Output>>;
-  recordType: () => Promise<AsyncIterator<OrderLineItemRecordType>>;
-  needShipping: () => Promise<AsyncIterator<Boolean>>;
-  taxRate: () => Promise<AsyncIterator<Float>>;
-  taxName: () => Promise<AsyncIterator<String>>;
-  taxPercentage: () => Promise<AsyncIterator<Float>>;
-  taxPrice: () => Promise<AsyncIterator<Int>>;
-  price: () => Promise<AsyncIterator<Int>>;
-  currencyCode: () => Promise<AsyncIterator<String>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface OrderLineItemNullablePromise
-  extends Promise<OrderLineItem | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  recordID: () => Promise<ID_Output>;
-  recordType: () => Promise<OrderLineItemRecordType>;
-  needShipping: () => Promise<Boolean>;
-  taxRate: () => Promise<Float>;
-  taxName: () => Promise<String>;
-  taxPercentage: () => Promise<Float>;
-  taxPrice: () => Promise<Int>;
-  price: () => Promise<Int>;
-  currencyCode: () => Promise<String>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
 export interface OrderConnection {
   pageInfo: PageInfo;
   edges: OrderEdge[];
@@ -29639,6 +30111,62 @@ export interface AggregatePackageTransitEventPromise
 
 export interface AggregatePackageTransitEventSubscription
   extends Promise<AsyncIterator<AggregatePackageTransitEvent>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface PauseReasonConnection {
+  pageInfo: PageInfo;
+  edges: PauseReasonEdge[];
+}
+
+export interface PauseReasonConnectionPromise
+  extends Promise<PauseReasonConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PauseReasonEdge>>() => T;
+  aggregate: <T = AggregatePauseReasonPromise>() => T;
+}
+
+export interface PauseReasonConnectionSubscription
+  extends Promise<AsyncIterator<PauseReasonConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<PauseReasonEdgeSubscription>>>() => T;
+  aggregate: <T = AggregatePauseReasonSubscription>() => T;
+}
+
+export interface PauseReasonEdge {
+  node: PauseReason;
+  cursor: String;
+}
+
+export interface PauseReasonEdgePromise
+  extends Promise<PauseReasonEdge>,
+    Fragmentable {
+  node: <T = PauseReasonPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface PauseReasonEdgeSubscription
+  extends Promise<AsyncIterator<PauseReasonEdge>>,
+    Fragmentable {
+  node: <T = PauseReasonSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregatePauseReason {
+  count: Int;
+}
+
+export interface AggregatePauseReasonPromise
+  extends Promise<AggregatePauseReason>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePauseReasonSubscription
+  extends Promise<AsyncIterator<AggregatePauseReason>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -34258,6 +34786,7 @@ export interface OrderLineItemPreviousValues {
   needShipping?: Boolean;
   taxRate?: Float;
   taxName?: String;
+  name?: String;
   taxPercentage?: Float;
   taxPrice?: Int;
   price: Int;
@@ -34275,6 +34804,7 @@ export interface OrderLineItemPreviousValuesPromise
   needShipping: () => Promise<Boolean>;
   taxRate: () => Promise<Float>;
   taxName: () => Promise<String>;
+  name: () => Promise<String>;
   taxPercentage: () => Promise<Float>;
   taxPrice: () => Promise<Int>;
   price: () => Promise<Int>;
@@ -34292,6 +34822,7 @@ export interface OrderLineItemPreviousValuesSubscription
   needShipping: () => Promise<AsyncIterator<Boolean>>;
   taxRate: () => Promise<AsyncIterator<Float>>;
   taxName: () => Promise<AsyncIterator<String>>;
+  name: () => Promise<AsyncIterator<String>>;
   taxPercentage: () => Promise<AsyncIterator<Float>>;
   taxPrice: () => Promise<AsyncIterator<Int>>;
   price: () => Promise<AsyncIterator<Int>>;
@@ -34413,6 +34944,56 @@ export interface PackageTransitEventPreviousValuesSubscription
   data: () => Promise<AsyncIterator<Json>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface PauseReasonSubscriptionPayload {
+  mutation: MutationType;
+  node: PauseReason;
+  updatedFields: String[];
+  previousValues: PauseReasonPreviousValues;
+}
+
+export interface PauseReasonSubscriptionPayloadPromise
+  extends Promise<PauseReasonSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = PauseReasonPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = PauseReasonPreviousValuesPromise>() => T;
+}
+
+export interface PauseReasonSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PauseReasonSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = PauseReasonSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = PauseReasonPreviousValuesSubscription>() => T;
+}
+
+export interface PauseReasonPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  reason: String;
+}
+
+export interface PauseReasonPreviousValuesPromise
+  extends Promise<PauseReasonPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  reason: () => Promise<String>;
+}
+
+export interface PauseReasonPreviousValuesSubscription
+  extends Promise<AsyncIterator<PauseReasonPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  reason: () => Promise<AsyncIterator<String>>;
 }
 
 export interface PauseRequestSubscriptionPayload {
@@ -34587,6 +35168,7 @@ export interface PhysicalProductPreviousValues {
   unitCost?: Float;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  packedAt?: DateTimeOutput;
 }
 
 export interface PhysicalProductPreviousValuesPromise
@@ -34605,6 +35187,7 @@ export interface PhysicalProductPreviousValuesPromise
   unitCost: () => Promise<Float>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  packedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface PhysicalProductPreviousValuesSubscription
@@ -34623,6 +35206,7 @@ export interface PhysicalProductPreviousValuesSubscription
   unitCost: () => Promise<AsyncIterator<Float>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  packedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface PhysicalProductPriceSubscriptionPayload {
@@ -37297,6 +37881,10 @@ export const models: Model[] = [
   },
   {
     name: "PauseType",
+    embedded: false
+  },
+  {
+    name: "PauseReason",
     embedded: false
   },
   {

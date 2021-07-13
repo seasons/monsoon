@@ -1,5 +1,6 @@
 import { Customer, User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
+import { Select } from "@app/decorators/select.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
@@ -19,7 +20,7 @@ export class CustomerMutationsResolver {
   @Mutation()
   async addCustomerDetails(
     @Args() { details, event, status },
-    @Info() info,
+    @Select() select,
     @Customer() customer,
     @User() user,
     @Application() application
@@ -33,7 +34,7 @@ export class CustomerMutationsResolver {
       { details, status },
       customer,
       user,
-      info
+      select
     )
 
     // Track the event, if its been passed
@@ -49,8 +50,12 @@ export class CustomerMutationsResolver {
   }
 
   @Mutation()
-  async updateCustomer(@Args() args, @Info() info, @Application() application) {
-    return await this.customerService.updateCustomer(args, info, application)
+  async updateCustomer(
+    @Args() args,
+    @Select() select,
+    @Application() application
+  ) {
+    return await this.customerService.updateCustomer(args, select, application)
   }
 
   @Mutation()
@@ -65,6 +70,7 @@ export class CustomerMutationsResolver {
       application,
       false
     )
+
     return status
   }
 

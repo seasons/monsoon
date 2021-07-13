@@ -1,4 +1,5 @@
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { UtilsModule } from "@app/modules/Utils/utils.module"
@@ -309,8 +310,9 @@ describe("Admissions Service", () => {
 
     beforeAll(() => {
       const ps = new PrismaService()
-      testUtils = new TestUtilsService(ps, new UtilsService(ps))
-      utils = new UtilsService(ps)
+      const qus = new QueryUtilsService(ps)
+      testUtils = new TestUtilsService(ps, new UtilsService(ps, qus))
+      utils = new UtilsService(ps, qus)
 
       // reservable products
       topXSReservable = createTestProductCreateInput("Top", "XS", "Reservable")
@@ -576,7 +578,7 @@ const createEmailReceipts = (
   emailsSentXDaysAgoObject,
   emailId: EmailId
 ): Array<any> => {
-  const utils = new UtilsService(null)
+  const utils = new UtilsService(null, null)
 
   return Object.keys(emailsSentXDaysAgoObject).reduce(
     (emailReceipts, currentKey) => {

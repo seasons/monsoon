@@ -428,7 +428,7 @@ export class OrderService {
       }
     )
 
-    if (!shopifyProductVariant.cachedAvailableForSale) {
+    if (!shopifyProductVariant?.cachedAvailableForSale) {
       throw new Error("Product variant is unavailable for sale.")
     }
 

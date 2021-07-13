@@ -1,6 +1,7 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
+import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
@@ -10,7 +11,13 @@ import {
 } from "@modules/Product"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
-import { Customer, Prisma, PrismaPromise, User } from "@prisma/client"
+import {
+  Customer,
+  Prisma,
+  PrismaPromise,
+  ReservationFeedback,
+  User,
+} from "@prisma/client"
 import {
   AdminActionLog,
   ID_Input,
@@ -22,7 +29,10 @@ import {
 } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
+import chargebee from "chargebee"
+import cuid from "cuid"
 import { intersection } from "lodash"
+import { DateTime } from "luxon"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
 
@@ -57,7 +67,8 @@ export class ReservationService {
     private readonly pushNotifs: PushNotificationService,
     private readonly reservationUtils: ReservationUtilsService,
     private readonly error: ErrorService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly customerUtils: CustomerUtilsService
   ) {}
 
   async reserveItems(
@@ -176,6 +187,11 @@ export class ReservationService {
       )
     }
 
+    // Fetch the nextFreeSwapDate BEFORE creating the reservation or we'll get an incorrect value
+    const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
+      customer.id
+    )
+
     // Create reservation records in prisma
     const reservationData = await this.createReservationData(
       seasonsToCustomerTransaction,
@@ -203,6 +219,11 @@ export class ReservationService {
     const result = await this.prisma.client2.$transaction(promises.flat())
 
     const reservation = result.pop()
+    await this.addEarlySwapIfNeeded(
+      reservation.id,
+      customer.id,
+      nextFreeSwapDate
+    )
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
@@ -222,6 +243,54 @@ export class ReservationService {
     }
 
     return reservation
+  }
+
+  async addEarlySwapIfNeeded(reservationID, customerID, nextFreeSwapDate) {
+    const doesNotHaveFreeSwap =
+      nextFreeSwapDate && DateTime.fromISO(nextFreeSwapDate) > DateTime.local()
+
+    if (doesNotHaveFreeSwap && reservationID) {
+      const swapCharge = await this.payment.addEarlySwapCharge(customerID)
+      try {
+        await this.prisma.client2.reservation.update({
+          where: { id: reservationID },
+          data: {
+            lineItems: {
+              create: [
+                {
+                  recordID: reservationID,
+                  price: swapCharge.invoice.sub_total,
+                  currencyCode: "USD",
+                  recordType: "EarlySwap",
+                  name: "Early swap",
+                  taxPrice: swapCharge?.invoice?.tax || 0,
+                },
+              ],
+            },
+          },
+        })
+      } catch (e) {
+        this.error.captureError(e)
+      }
+    }
+  }
+
+  async cancelReturn(customer: Customer) {
+    const lastReservation = await this.reservationUtils.getLatestReservation(
+      customer
+    )
+
+    await this.prisma.client2.reservation.update({
+      data: {
+        returnedProducts: {
+          set: [],
+        },
+        returnedAt: null,
+      },
+      where: { id: String(lastReservation.id) },
+    })
+
+    return lastReservation
   }
 
   async returnItems(items: string[], customer: Customer) {
@@ -493,7 +562,9 @@ export class ReservationService {
     })
 
     // Create reservationFeedback datamodels for the returned product variants
-    const reservationFeedbackPromise = this.createReservationFeedbacksForVariants(
+    const [
+      reservationFeedbackPromise,
+    ] = await this.createReservationFeedbacksForVariants(
       await this.prisma.client2.productVariant.findMany({
         where: {
           id: {
@@ -503,12 +574,14 @@ export class ReservationService {
       }),
       prismaUser,
       reservation
-    ) as PrismaPromise<any>
+    )
 
-    const updateReturnPackagePromise = this.reservationUtils.updateReturnPackageOnCompletedReservation(
+    const [
+      updateReturnPackagePromise,
+    ] = await this.reservationUtils.updateReturnPackageOnCompletedReservation(
       reservation,
       returnedPhysicalProducts
-    ) as PrismaPromise<any>
+    )
 
     await this.prisma.client2.$transaction([
       ...(promises as PrismaPromise<any>[]),
@@ -545,7 +618,59 @@ export class ReservationService {
     return this.utils.filterAdminLogs(logs, keysWeDontCareAbout)
   }
 
-  async updateReservation(data, where: { id: string }) {
+  async draftReservationLineItems(user: User, hasFreeSwap: boolean) {
+    if (hasFreeSwap) {
+      return []
+    }
+    try {
+      const {
+        estimate: { invoice_estimate },
+      } = await chargebee.estimate
+        .create_invoice({
+          invoice: {
+            customer_id: user.id,
+          },
+          charges: [
+            {
+              amount: 3000,
+              taxable: true,
+              description: "Early Swap",
+              avalara_tax_code: "FR020000",
+            },
+          ],
+        })
+        .request()
+
+      // Below we are creating a draft OrderLineItem with dummy data to show to the client
+      // it's using a random ID and a recordID because it's not being saved to the database
+      return [
+        {
+          id: cuid(),
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          recordType: "EarlySwap",
+          name: "Early swap",
+          recordID: cuid(),
+          currencyCode: "USD",
+          price: invoice_estimate.sub_total,
+          taxPrice: invoice_estimate?.taxes?.reduce(
+            (acc, tax) => acc + tax.amount,
+            0
+          ),
+        },
+      ]
+    } catch (e) {
+      this.error.setExtraContext(user, "user")
+      this.error.captureError(e)
+      return []
+    }
+  }
+
+  async updateReservation(
+    data,
+    where: { id: string },
+    select: Prisma.ReservationSelect
+  ) {
     const reservation = await this.prisma.client2.reservation.findUnique({
       where,
       select: {
@@ -566,29 +691,39 @@ export class ReservationService {
     }
 
     let promises: any[] = [
-      this.prisma.client2.reservation.update({ data, where }),
+      this.prisma.client2.reservation.update({ data, where, select }),
     ]
 
     // Reservation was just packed. Null out warehouse locations on attached products
-    if (data.status === "Packed" && data.status !== reservation.status) {
+    if (
+      ["Packed", "Picked"].includes(data.status) &&
+      data.status !== reservation.status
+    ) {
+      const updateData = { warehouseLocation: { disconnect: true } }
+      if (data.status === "Packed") {
+        updateData["packedAt"] = new Date()
+      }
       promises.push(
-        reservation.products.map(a =>
+        ...reservation.products.map(a =>
           this.prisma.client2.physicalProduct.update({
             where: { id: a.id },
-            data: { warehouseLocation: { disconnect: true } },
+            data: updateData,
           })
         )
       )
     }
 
-    return await this.prisma.client2.$transaction(promises)
+    const [updatedReservation] = await this.prisma.client2.$transaction(
+      promises
+    )
+    return this.prisma.sanitizePayload(updatedReservation, "Reservation")
   }
 
   async createReservationFeedbacksForVariants(
     productVariants,
     user,
     reservation
-  ) {
+  ): Promise<[PrismaPromise<ReservationFeedback>]> {
     const MULTIPLE_CHOICE = "MultipleChoice"
     const variantInfos = await Promise.all(
       productVariants.map(async variant => {
@@ -614,92 +749,94 @@ export class ReservationService {
       })
     )
 
-    return this.prisma.client2.reservationFeedback.create({
-      data: {
-        feedbacks: {
-          create: variantInfos.map(
-            (variantInfo: { id: string; retailPrice: number }) =>
-              Prisma.validator<
-                Prisma.ProductVariantFeedbackCreateWithoutReservationFeedbackInput
-              >()({
-                isCompleted: false,
-                rating: 0,
-                review: "",
-                questions: {
-                  create: [
-                    {
-                      question: `What did you think about this?`,
-                      options: {
-                        // create: ["Disliked", "It was OK", "Loved it"],
-                        create: [
-                          { value: "Disliked", position: 1000 },
-                          { value: "It was OK", position: 2000 },
-                          { value: "Loved it", position: 3000 },
-                        ],
+    return [
+      this.prisma.client2.reservationFeedback.create({
+        data: {
+          feedbacks: {
+            create: variantInfos.map(
+              (variantInfo: { id: string; retailPrice: number }) =>
+                Prisma.validator<
+                  Prisma.ProductVariantFeedbackCreateWithoutReservationFeedbackInput
+                >()({
+                  isCompleted: false,
+                  rating: 0,
+                  review: "",
+                  questions: {
+                    create: [
+                      {
+                        question: `What did you think about this?`,
+                        options: {
+                          // create: ["Disliked", "It was OK", "Loved it"],
+                          create: [
+                            { value: "Disliked", position: 1000 },
+                            { value: "It was OK", position: 2000 },
+                            { value: "Loved it", position: 3000 },
+                          ],
+                        },
+                        type: MULTIPLE_CHOICE,
                       },
-                      type: MULTIPLE_CHOICE,
-                    },
-                    {
-                      question: `How many times did you wear this?`,
-                      options: {
-                        // set: [
-                        //   "Never wore it",
-                        //   "1-2 times",
-                        //   "3-5 times",
-                        //   "More than 6 times",
-                        // ],
-                        create: [
-                          { value: "Never wore it", position: 1000 },
-                          { value: "1-2 times", position: 2000 },
-                          { value: "3-5 times", position: 3000 },
-                          { value: "More than 6 times", position: 4000 },
-                        ],
+                      {
+                        question: `How many times did you wear this?`,
+                        options: {
+                          // set: [
+                          //   "Never wore it",
+                          //   "1-2 times",
+                          //   "3-5 times",
+                          //   "More than 6 times",
+                          // ],
+                          create: [
+                            { value: "Never wore it", position: 1000 },
+                            { value: "1-2 times", position: 2000 },
+                            { value: "3-5 times", position: 3000 },
+                            { value: "More than 6 times", position: 4000 },
+                          ],
+                        },
+                        type: MULTIPLE_CHOICE,
                       },
-                      type: MULTIPLE_CHOICE,
-                    },
-                    {
-                      question: `Did it fit as expected?`,
-                      options: {
-                        // set: ["Fit small", "Fit true to size", "Fit oversized"],
-                        create: [
-                          { value: "Fit small", position: 1000 },
-                          { value: "Fit true to size", position: 2000 },
-                          { value: "Fit oversized", position: 3000 },
-                        ],
+                      {
+                        question: `Did it fit as expected?`,
+                        options: {
+                          // set: ["Fit small", "Fit true to size", "Fit oversized"],
+                          create: [
+                            { value: "Fit small", position: 1000 },
+                            { value: "Fit true to size", position: 2000 },
+                            { value: "Fit oversized", position: 3000 },
+                          ],
+                        },
+                        type: MULTIPLE_CHOICE,
                       },
-                      type: MULTIPLE_CHOICE,
-                    },
-                    {
-                      question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
-                      options: {
-                        // set: ["No", "Yes", "Buy below retail", "Would only rent"],
-                        create: [
-                          { value: "No", position: 1000 },
-                          { value: "Yes", position: 2000 },
-                          { value: "Buy below retail", position: 3000 },
-                          { value: "Would only rent", position: 4000 },
-                        ],
+                      {
+                        question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
+                        options: {
+                          // set: ["No", "Yes", "Buy below retail", "Would only rent"],
+                          create: [
+                            { value: "No", position: 1000 },
+                            { value: "Yes", position: 2000 },
+                            { value: "Buy below retail", position: 3000 },
+                            { value: "Would only rent", position: 4000 },
+                          ],
+                        },
+                        type: MULTIPLE_CHOICE,
                       },
-                      type: MULTIPLE_CHOICE,
-                    },
-                  ],
-                },
-                variant: { connect: { id: variantInfo.id } },
-              })
-          ),
-        },
-        user: {
-          connect: {
-            id: user.id,
+                    ],
+                  },
+                  variant: { connect: { id: variantInfo.id } },
+                })
+            ),
+          },
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+          reservation: {
+            connect: {
+              id: reservation.id,
+            },
           },
         },
-        reservation: {
-          connect: {
-            id: reservation.id,
-          },
-        },
-      },
-    })
+      }),
+    ]
   }
 
   private checkLastReservation(lastReservation) {
