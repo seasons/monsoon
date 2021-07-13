@@ -22,7 +22,7 @@ export class CustomerUtilsService {
           select: {
             plan: {
               select: {
-                planID: true,
+                tier: true,
               },
             },
             subscription: {
@@ -35,19 +35,13 @@ export class CustomerUtilsService {
         },
       },
     })
-    const essentialPlanIDs = [
-      "essential-6",
-      "essential",
-      "essential-2",
-      "essential-1",
-    ]
     const customer = this.prisma.sanitizePayload(_customer, "Customer")
     const latestReservation = head(customer.reservations)
-    const customerPlanID = customer?.membership?.plan?.planID
+    const customerPlanTier = customer?.membership?.plan?.tier
     const latestReservationCreatedAt = latestReservation?.createdAt?.toISOString()
     const currentTermEnd = customer?.membership?.subscription?.currentTermEnd?.toISOString()
     const currentTermStart = customer?.membership?.subscription?.currentTermStart?.toISOString()
-    const customerOnEssentialPlan = essentialPlanIDs.includes(customerPlanID)
+    const customerOnEssentialPlan = customerPlanTier === "Essential"
 
     if (
       !currentTermEnd ||
