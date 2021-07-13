@@ -871,7 +871,7 @@ export class ProductService {
       "width",
     ])
 
-    Object.keys(measurements).map(key => {
+    Object.keys(measurements).forEach(key => {
       measurements[key] = this.productUtils.convertMeasurementSizeToInches(
         measurements[key],
         measurementType

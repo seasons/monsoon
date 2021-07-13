@@ -253,20 +253,18 @@ export class ProductVariantService {
         productID: true,
         id: true,
         sku: true,
+        product: {
+          select: {
+            category: { select: { measurementType: true } },
+          },
+        },
       },
     })
     const prodVar = this.prisma.sanitizePayload(_prodVar, "ProductVariant")
 
-    // FIXME: Once product is a singleton on ProductVariant can get _product directly from _prodVar
-    const _product = await this.prisma.client2.product.findUnique({
-      where: { slug: prodVar.productID },
-      select: {
-        category: { select: { measurementType: true } },
-      },
-    })
-    const product = this.prisma.sanitizePayload(_product, "Product")
-
-    const measurementType = product?.category?.measurementType
+    // FIXME: Can remove the ts-ignore below once we convert full to prisma2
+    // @ts-ignore
+    const measurementType = prodVar.product?.category?.measurementType
 
     let manufacturerSizes
     let displayShort
@@ -303,7 +301,7 @@ export class ProductVariantService {
       "width",
     ])
 
-    Object.keys(measurements).map(key => {
+    Object.keys(measurements).forEach(key => {
       measurements[key] = this.productUtils.convertMeasurementSizeToInches(
         measurements[key],
         measurementType
