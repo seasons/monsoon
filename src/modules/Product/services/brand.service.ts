@@ -77,19 +77,19 @@ export class BrandService {
   async updateBrand({
     where,
     data,
+    select,
   }: {
-    where: BrandWhereUniqueInput
+    where: Prisma.BrandWhereUniqueInput
     data: any
+    select: Prisma.BrandSelect
   }) {
-    const brand: PrismaBindingBrand = await this.prisma.binding.query.brand(
-      { where },
-      `{
-          id
-          shopifyShop {
-            id
-          }
-      }`
-    )
+    const promises = []
+
+    const _brand = await this.prisma.client2.brand.findUnique({
+      where,
+      select: { id: true, shopifyShop: { select: { id: true } } },
+    })
+    const brand = this.prisma.sanitizePayload(_brand, "Brand")
 
     let brandImages
     try {
@@ -105,8 +105,8 @@ export class BrandService {
         connect: {
           shopName,
         },
-      } as ShopifyShopUpdateOneInput
-      const shopifyProductVariants = await this.prisma.client.shopifyProductVariants(
+      } as Prisma.ShopifyShopUpdateInput
+      const shopifyProductVariants = await this.prisma.client2.shopifyProductVariant.findMany(
         {
           where: {
             shop: {
@@ -117,18 +117,20 @@ export class BrandService {
       )
 
       for (let shopifyPV of shopifyProductVariants) {
-        await this.prisma.client.updateShopifyProductVariant({
-          where: {
-            id: shopifyPV.id,
-          },
-          data: {
-            brand: {
-              connect: {
-                id: brand.id,
+        promises.push(
+          this.prisma.client2.shopifyProductVariant.update({
+            where: {
+              id: shopifyPV.id,
+            },
+            data: {
+              brand: {
+                connect: {
+                  id: brand.id,
+                },
               },
             },
-          },
-        })
+          })
+        )
       }
 
       // Index shopify product variants into algolia
@@ -136,17 +138,29 @@ export class BrandService {
       data.shopifyShop = { delete: true }
     }
 
-    const updatedBrand = await this.prisma.client.updateBrand({
-      where,
-      data: {
-        ...data,
-        styles: data?.styles?.length > 0 ? { set: data.styles } : { set: [] },
-        logoImage: brandImages &&
-          brandImages.logoID && { connect: { id: brandImages.logoID } },
-        images: brandImages &&
-          brandImages.imageIDs && { set: brandImages.imageIDs },
-      },
-    })
+    promises.push(
+      this.prisma.client2.brand.update({
+        where,
+        data: {
+          ...data,
+          styles:
+            data?.styles?.length > 0 &&
+            this.queryUtils.createScalarListMutateInput(
+              data.styles,
+              brand.id,
+              "update"
+            ),
+          logoImage: brandImages &&
+            brandImages.logoID && { connect: { id: brandImages.logoID } },
+          images: brandImages &&
+            brandImages.imageIDs && { set: brandImages.imageIDs },
+        },
+        select,
+      })
+    )
+
+    const result = await this.prisma.client2.$transaction(promises)
+    const updatedBrand = this.prisma.sanitizePayload(result.pop(), "Brand")
 
     if (data.shopifyShop) {
       await this.search.indexShopifyProductVariants(

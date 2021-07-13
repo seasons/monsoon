@@ -19,7 +19,10 @@ export class BrandMutationsResolver {
   }
 
   @Mutation()
-  async updateBrand(@Args() { where, data }) {
-    return await this.brand.updateBrand({ where, data })
+  async updateBrand(
+    @Args() { where, data },
+    @Select({ withFragment: "fragment EnsureId On Brand {id{ " }) select
+  ) {
+    return await this.brand.updateBrand({ where, data, select })
   }
 }
