@@ -123,12 +123,8 @@ export class PhysicalProductService {
 
       const reservable = productVariant?.reservable
 
-      // If the physical product is being stowed and is currently nonReservable send a notification to users
-      if (
-        newData.warehouseLocation.connect &&
-        physProdBeforeUpdate.inventoryStatus === "NonReservable" &&
-        reservable === 0
-      ) {
+      // If the physical product is being stowed and there are currently no reservable units, notify users
+      if (newData.warehouseLocation.connect && reservable === 0) {
         const product = productVariant?.product
 
         const notifications = await this.prisma.client2.productNotification.findMany(
@@ -189,16 +185,18 @@ export class PhysicalProductService {
         (
           await this.getUpdateVariantCountsPromiseIfNeeded({
             where,
-            inventoryStatus: physProdBeforeUpdate.inventoryStatus as InventoryStatus,
+            inventoryStatus: newData.inventoryStatus,
           })
         ).promise
       )
     }
 
-    const offloadPromises = this.getOffloadPhysicalProductPromisesIfNeeded({
-      where,
-      ...pick(newData, ["inventoryStatus", "offloadMethod", "offloadNotes"]),
-    } as OffloadPhysicalProductIfNeededInput)
+    const offloadPromises = await this.getOffloadPhysicalProductPromisesIfNeeded(
+      {
+        where,
+        ...pick(newData, ["inventoryStatus", "offloadMethod", "offloadNotes"]),
+      } as OffloadPhysicalProductIfNeededInput
+    )
     promises.push(offloadPromises)
 
     promises.push(
@@ -209,9 +207,10 @@ export class PhysicalProductService {
       })
     )
 
-    const results = await this.prisma.client2.$transaction(promises.flat())
+    const cleanPromises = promises.flat().filter(Boolean)
+    const results = await this.prisma.client2.$transaction(cleanPromises)
     await notifyUsersIfNeeded() // only run this if the transaction succeeded
-    return results.pop()
+    return this.prisma.sanitizePayload(results.pop(), "PhysicalProduct")
   }
 
   async activeReservationWithPhysicalProduct(id: string) {
@@ -634,7 +633,7 @@ export class PhysicalProductService {
 
       // Core logic
       return [
-        this.prisma.client.updatePhysicalProduct({
+        this.prisma.client2.physicalProduct.update({
           where,
           data: { inventoryStatus, offloadMethod, offloadNotes },
         }),
@@ -646,6 +645,8 @@ export class PhysicalProductService {
         ).promise,
       ]
     }
+
+    return []
   }
 
   private async getUpdateVariantCountsPromiseIfNeeded({
@@ -690,6 +691,8 @@ export class PhysicalProductService {
         ),
       }
     }
+
+    return { promise: null }
   }
 
   private changingInventoryStatus(

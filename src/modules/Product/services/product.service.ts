@@ -792,7 +792,7 @@ export class ProductService {
     productId: string,
     physProdCurrentlyOffloadingId: string
   ) {
-    const _prodWithPhysicalProducts = await this.prisma.client2.product.findMany(
+    const _prodWithPhysicalProducts = await this.prisma.client2.product.findUnique(
       {
         where: { id: productId },
         select: {

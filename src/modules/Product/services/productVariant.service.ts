@@ -186,7 +186,7 @@ export class ProductVariantService {
     ]
   }
 
-  async getUpdateCountsForStatusChangePromise({
+  getUpdateCountsForStatusChangePromise({
     productVariant,
     oldInventoryStatus,
     newInventoryStatus,
