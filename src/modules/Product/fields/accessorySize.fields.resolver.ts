@@ -19,6 +19,7 @@ const measurementLoader = {
                 select: {
                   category: {
                     select: {
+                      // @ts-ignore
                       measurementType: true,
                     },
                   },
@@ -39,6 +40,7 @@ export class AccessorySizeFieldsResolver {
   @ResolveField()
   async bridge(
     @Parent() parent,
+    // @ts-ignore
     @Loader(measurementLoader)
     accessorySizeLoader
   ) {
@@ -61,6 +63,7 @@ export class AccessorySizeFieldsResolver {
   @ResolveField()
   async length(
     @Parent() parent,
+    // @ts-ignore
     @Loader(measurementLoader)
     accessorySizeLoader
   ) {
@@ -83,6 +86,7 @@ export class AccessorySizeFieldsResolver {
   @ResolveField()
   async width(
     @Parent() parent,
+    // @ts-ignore
     @Loader(measurementLoader)
     accessorySizeLoader
   ) {
