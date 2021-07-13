@@ -187,6 +187,7 @@ type Mutation {
 }
 
 type AccessorySize {
+  id: ID!
   bridge: Float
   length: Float
   width: Float
