@@ -5332,7 +5332,6 @@ type Category implements Node {
   children(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category!]
   updatedAt: DateTime
   productType: ProductType
-  measurementType: MeasurementType
 }
 
 """A connection to a list of items."""
@@ -5353,7 +5352,6 @@ input CategoryCreateInput {
   description: String
   visible: Boolean
   productType: ProductType
-  measurementType: MeasurementType
   products: ProductCreateManyWithoutCategoryInput
   children: CategoryCreateManyInput
 }
@@ -5381,7 +5379,6 @@ input CategoryCreateWithoutProductsInput {
   description: String
   visible: Boolean
   productType: ProductType
-  measurementType: MeasurementType
   children: CategoryCreateManyInput
 }
 
@@ -5411,8 +5408,6 @@ enum CategoryOrderByInput {
   updatedAt_DESC
   productType_ASC
   productType_DESC
-  measurementType_ASC
-  measurementType_DESC
 }
 
 type CategoryPreviousValues {
@@ -5424,7 +5419,6 @@ type CategoryPreviousValues {
   visible: Boolean!
   updatedAt: DateTime
   productType: ProductType
-  measurementType: MeasurementType
 }
 
 input CategoryScalarWhereInput {
@@ -5632,16 +5626,6 @@ input CategoryScalarWhereInput {
 
   """All values that are not contained in given list."""
   productType_not_in: [ProductType!]
-  measurementType: MeasurementType
-
-  """All values that are not equal to given value."""
-  measurementType_not: MeasurementType
-
-  """All values that are contained in given list."""
-  measurementType_in: [MeasurementType!]
-
-  """All values that are not contained in given list."""
-  measurementType_not_in: [MeasurementType!]
 }
 
 type CategorySubscriptionPayload {
@@ -5688,7 +5672,6 @@ input CategoryUpdateDataInput {
   description: String
   visible: Boolean
   productType: ProductType
-  measurementType: MeasurementType
   products: ProductUpdateManyWithoutCategoryInput
   children: CategoryUpdateManyInput
 }
@@ -5700,7 +5683,6 @@ input CategoryUpdateInput {
   description: String
   visible: Boolean
   productType: ProductType
-  measurementType: MeasurementType
   products: ProductUpdateManyWithoutCategoryInput
   children: CategoryUpdateManyInput
 }
@@ -5712,7 +5694,6 @@ input CategoryUpdateManyDataInput {
   description: String
   visible: Boolean
   productType: ProductType
-  measurementType: MeasurementType
 }
 
 input CategoryUpdateManyInput {
@@ -5734,7 +5715,6 @@ input CategoryUpdateManyMutationInput {
   description: String
   visible: Boolean
   productType: ProductType
-  measurementType: MeasurementType
 }
 
 input CategoryUpdateManyWithWhereNestedInput {
@@ -5763,7 +5743,6 @@ input CategoryUpdateWithoutProductsDataInput {
   description: String
   visible: Boolean
   productType: ProductType
-  measurementType: MeasurementType
   children: CategoryUpdateManyInput
 }
 
@@ -5993,16 +5972,6 @@ input CategoryWhereInput {
 
   """All values that are not contained in given list."""
   productType_not_in: [ProductType!]
-  measurementType: MeasurementType
-
-  """All values that are not equal to given value."""
-  measurementType_not: MeasurementType
-
-  """All values that are contained in given list."""
-  measurementType_in: [MeasurementType!]
-
-  """All values that are not contained in given list."""
-  measurementType_not_in: [MeasurementType!]
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
@@ -14661,11 +14630,6 @@ The \`Long\` scalar type represents non-fractional signed whole numeric values.
 Long can represent values between -(2^63) and 2^63 - 1.
 """
 scalar Long
-
-enum MeasurementType {
-  Inches
-  Millimeters
-}
 
 type Mutation {
   createBlogPost(data: BlogPostCreateInput!): BlogPost!
@@ -39284,9 +39248,7 @@ export type CategoryOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC' |
   'productType_ASC' |
-  'productType_DESC' |
-  'measurementType_ASC' |
-  'measurementType_DESC'
+  'productType_DESC'
 
 export type CollectionOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -39636,9 +39598,6 @@ export type LocationType =   'Office' |
   'Warehouse' |
   'Cleaner' |
   'Customer'
-
-export type MeasurementType =   'Inches' |
-  'Millimeters'
 
 export type MutationType =   'CREATED' |
   'UPDATED' |
@@ -42227,7 +42186,6 @@ export interface CategoryCreateInput {
   description?: String | null
   visible?: Boolean | null
   productType?: ProductType | null
-  measurementType?: MeasurementType | null
   products?: ProductCreateManyWithoutCategoryInput | null
   children?: CategoryCreateManyInput | null
 }
@@ -42255,7 +42213,6 @@ export interface CategoryCreateWithoutProductsInput {
   description?: String | null
   visible?: Boolean | null
   productType?: ProductType | null
-  measurementType?: MeasurementType | null
   children?: CategoryCreateManyInput | null
 }
 
@@ -42333,10 +42290,6 @@ export interface CategoryScalarWhereInput {
   productType_not?: ProductType | null
   productType_in?: ProductType[] | ProductType | null
   productType_not_in?: ProductType[] | ProductType | null
-  measurementType?: MeasurementType | null
-  measurementType_not?: MeasurementType | null
-  measurementType_in?: MeasurementType[] | MeasurementType | null
-  measurementType_not_in?: MeasurementType[] | MeasurementType | null
 }
 
 export interface CategorySubscriptionWhereInput {
@@ -42357,7 +42310,6 @@ export interface CategoryUpdateDataInput {
   description?: String | null
   visible?: Boolean | null
   productType?: ProductType | null
-  measurementType?: MeasurementType | null
   products?: ProductUpdateManyWithoutCategoryInput | null
   children?: CategoryUpdateManyInput | null
 }
@@ -42369,7 +42321,6 @@ export interface CategoryUpdateInput {
   description?: String | null
   visible?: Boolean | null
   productType?: ProductType | null
-  measurementType?: MeasurementType | null
   products?: ProductUpdateManyWithoutCategoryInput | null
   children?: CategoryUpdateManyInput | null
 }
@@ -42381,7 +42332,6 @@ export interface CategoryUpdateManyDataInput {
   description?: String | null
   visible?: Boolean | null
   productType?: ProductType | null
-  measurementType?: MeasurementType | null
 }
 
 export interface CategoryUpdateManyInput {
@@ -42403,7 +42353,6 @@ export interface CategoryUpdateManyMutationInput {
   description?: String | null
   visible?: Boolean | null
   productType?: ProductType | null
-  measurementType?: MeasurementType | null
 }
 
 export interface CategoryUpdateManyWithWhereNestedInput {
@@ -42432,7 +42381,6 @@ export interface CategoryUpdateWithoutProductsDataInput {
   description?: String | null
   visible?: Boolean | null
   productType?: ProductType | null
-  measurementType?: MeasurementType | null
   children?: CategoryUpdateManyInput | null
 }
 
@@ -42531,10 +42479,6 @@ export interface CategoryWhereInput {
   productType_not?: ProductType | null
   productType_in?: ProductType[] | ProductType | null
   productType_not_in?: ProductType[] | ProductType | null
-  measurementType?: MeasurementType | null
-  measurementType_not?: MeasurementType | null
-  measurementType_in?: MeasurementType[] | MeasurementType | null
-  measurementType_not_in?: MeasurementType[] | MeasurementType | null
   products_every?: ProductWhereInput | null
   products_some?: ProductWhereInput | null
   products_none?: ProductWhereInput | null
@@ -58270,7 +58214,6 @@ export interface Category extends Node {
   children?: Array<Category> | null
   updatedAt?: DateTime | null
   productType?: ProductType | null
-  measurementType?: MeasurementType | null
 }
 
 /*
@@ -58301,7 +58244,6 @@ export interface CategoryPreviousValues {
   visible: Boolean
   updatedAt?: DateTime | null
   productType?: ProductType | null
-  measurementType?: MeasurementType | null
 }
 
 export interface CategorySubscriptionPayload {
