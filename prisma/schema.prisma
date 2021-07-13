@@ -127,7 +127,7 @@ model Brand {
   slug                   String                  @unique
   brandCode              String                  @unique
   description            String?
-  isPrimaryBrand         Boolean
+  isPrimaryBrand         Boolean                 @default(value: false)
   name                   String
   since                  DateTime?
   tier                   String
@@ -136,8 +136,8 @@ model Brand {
   updatedAt              DateTime                @updatedAt
   basedIn                String?
   designer               String?
-  published              Boolean
-  featured               Boolean
+  published              Boolean                 @default(value: true)
+  featured               Boolean                 @default(value: false)
   logo                   String?
   logoImageId            String?                 @map("logoImage") @db.VarChar(30)
   logoImage              Image?                  @relation(fields: [logoImageId], references: [id])
@@ -146,11 +146,21 @@ model Brand {
   images                 Image[]                 @relation("BrandToBrandImages")
   products               Product[]
   shopifyProductVariants ShopifyProductVariant[]
+  styles                 Brand_styles[]
 
 
   // Do not use. Artifact of Prisma2 migration
   Launch Launch[]
 
+}
+
+model Brand_styles {
+  nodeId   String  @db.VarChar(30)
+  position Int
+  value    String
+  brand    Brand @relation(fields: [nodeId], references: [id])
+
+  @@id([nodeId, position])
 }
 
 model Category {
@@ -739,7 +749,7 @@ model Product_styles {
   nodeId   String  @db.VarChar(30)
   position Int
   value    String
-  Product  Product @relation(fields: [nodeId], references: [id])
+  product  Product @relation(fields: [nodeId], references: [id])
 
   @@id([nodeId, position])
 }
@@ -1340,7 +1350,7 @@ model WarehouseLocationConstraint {
 }
 
 model ShopifyShop {
-  id                     String                  @id @db.VarChar(30)
+  id                     String                  @id @default(cuid()) @db.VarChar(30)
   shopName               String                  @unique
   enabled                Boolean
   accessToken            String?

@@ -6,14 +6,6 @@ import { IndexKey } from "@modules/Search/services/algolia.service"
 import { SearchService } from "@modules/Search/services/search.service"
 import { Injectable } from "@nestjs/common"
 import { Prisma } from "@prisma/client"
-import {
-  BrandWhereUniqueInput,
-  ShopifyShopUpdateOneInput,
-} from "@prisma1/index"
-import {
-  BrandUpdateOneInput,
-  Brand as PrismaBindingBrand,
-} from "@prisma1/prisma.binding"
 import { PrismaService } from "@prisma1/prisma.service"
 
 @Injectable()
@@ -33,24 +25,15 @@ export class BrandService {
     select: Prisma.BrandSelect
   }) {
     // Store images and get their record ids to connect to the brand
-    const { logoID, imageIDs } = await this.utils.createBrandImages(input)
+    const {
+      imageDatas,
+      logoData,
+    } = await this.utils.getCreateBrandImagesPromises(input)
 
-    const result = await this.prisma.client2.$transaction([
-      this.prisma.client2.brand.create({
-        data: {
-          ...input,
-          styles:
-            input?.styles?.length > 0 &&
-            this.queryUtils.createScalarListMutateInput(
-              input.styles,
-              "",
-              "create"
-            ),
-          logoImage: logoID && { connect: { id: logoID } },
-          images: imageIDs && { connect: imageIDs },
-        },
-        select,
-      }),
+    const imagePromises = imageDatas.map(a => a?.promise)
+    const promises = [
+      ...imagePromises,
+      logoData?.promise,
       this.prisma.client2.warehouseLocation.create({
         data: {
           type: "Rail",
@@ -67,9 +50,30 @@ export class BrandService {
           itemCode: input.brandCode,
         },
       }),
-    ])
+      this.prisma.client2.brand.create({
+        data: {
+          ...input,
+          styles: this.queryUtils.createScalarListMutateInput(
+            input.styles,
+            "",
+            "create"
+          ),
+          logoImage: !!logoData
+            ? { connect: { url: logoData.url } }
+            : undefined,
+          images: !!imageDatas
+            ? {
+                connect: imageDatas.map(a => ({ url: a.url })),
+              }
+            : undefined,
+        },
+        select,
+      }),
+    ].filter(Boolean)
 
-    const brand = this.prisma.sanitizePayload(result.shift(), "Brand")
+    const result = await this.prisma.client2.$transaction(promises)
+
+    const brand = this.prisma.sanitizePayload(result.pop(), "Brand")
 
     return brand
   }
@@ -91,9 +95,11 @@ export class BrandService {
     })
     const brand = this.prisma.sanitizePayload(_brand, "Brand")
 
-    let brandImages
+    let imageDatas
+    let logoData
     try {
-      brandImages = await this.utils.createBrandImages(data)
+      const result = await this.utils.getCreateBrandImagesPromises(data)
+      ;({ imageDatas, logoData } = result)
     } catch (ex) {
       /** noop **/
     }
@@ -132,8 +138,6 @@ export class BrandService {
           })
         )
       }
-
-      // Index shopify product variants into algolia
     } else if (brand?.shopifyShop?.id) {
       data.shopifyShop = { delete: true }
     }
@@ -143,17 +147,19 @@ export class BrandService {
         where,
         data: {
           ...data,
-          styles:
-            data?.styles?.length > 0 &&
-            this.queryUtils.createScalarListMutateInput(
-              data.styles,
-              brand.id,
-              "update"
-            ),
-          logoImage: brandImages &&
-            brandImages.logoID && { connect: { id: brandImages.logoID } },
-          images: brandImages &&
-            brandImages.imageIDs && { set: brandImages.imageIDs },
+          styles: this.queryUtils.createScalarListMutateInput(
+            data.styles,
+            brand.id,
+            "update"
+          ),
+          logoImage: !!logoData
+            ? { connect: { url: logoData.url } }
+            : undefined,
+          images: !!imageDatas
+            ? {
+                connect: imageDatas.map(a => ({ url: a.url })),
+              }
+            : undefined,
         },
         select,
       })
