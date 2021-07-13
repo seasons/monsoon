@@ -1,3 +1,4 @@
+import { Select } from "@app/decorators/select.decorator"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 
 import { BrandService } from "../services/brand.service"
@@ -7,14 +8,14 @@ export class BrandMutationsResolver {
   constructor(private readonly brand: BrandService) {}
 
   @Mutation()
-  async createBrand(@Args() { input }) {
+  async createBrand(@Args() { input }, @Select() select) {
     if (input.shopifyShop) {
       input.shopifyShop = {
         create: input.shopifyShop,
       }
     }
 
-    return await this.brand.createBrand({ input })
+    return await this.brand.createBrand({ input, select })
   }
 
   @Mutation()

@@ -1,9 +1,11 @@
 import * as url from "url"
 
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { BrandUtilsService } from "@modules/Product/services/brand.utils.service"
 import { IndexKey } from "@modules/Search/services/algolia.service"
 import { SearchService } from "@modules/Search/services/search.service"
 import { Injectable } from "@nestjs/common"
+import { Prisma } from "@prisma/client"
 import {
   BrandWhereUniqueInput,
   ShopifyShopUpdateOneInput,
@@ -19,20 +21,57 @@ export class BrandService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: BrandUtilsService,
-    private readonly search: SearchService
+    private readonly search: SearchService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
-  async createBrand({ input }: { input: any }) {
+  async createBrand({
+    input,
+    select,
+  }: {
+    input: any
+    select: Prisma.BrandSelect
+  }) {
     // Store images and get their record ids to connect to the brand
     const { logoID, imageIDs } = await this.utils.createBrandImages(input)
 
-    // TODO: Generate slick rail warehouse locations for this brand when we create it
-    return await this.prisma.client.createBrand({
-      ...input,
-      styles: input?.styles?.length > 0 ? { set: input.styles } : { set: [] },
-      logoImage: logoID && { connect: { id: logoID } },
-      images: imageIDs && { connect: imageIDs },
-    })
+    const result = await this.prisma.client2.$transaction([
+      this.prisma.client2.brand.create({
+        data: {
+          ...input,
+          styles:
+            input?.styles?.length > 0 &&
+            this.queryUtils.createScalarListMutateInput(
+              input.styles,
+              "",
+              "create"
+            ),
+          logoImage: logoID && { connect: { id: logoID } },
+          images: imageIDs && { connect: imageIDs },
+        },
+        select,
+      }),
+      this.prisma.client2.warehouseLocation.create({
+        data: {
+          type: "Rail",
+          barcode: `SR-A100-${input.brandCode}`,
+          locationCode: "A100",
+          itemCode: input.brandCode,
+        },
+      }),
+      this.prisma.client2.warehouseLocation.create({
+        data: {
+          type: "Rail",
+          barcode: `SR-A200-${input.brandCode}`,
+          locationCode: "A200",
+          itemCode: input.brandCode,
+        },
+      }),
+    ])
+
+    const brand = this.prisma.sanitizePayload(result.shift(), "Brand")
+
+    return brand
   }
 
   async updateBrand({
