@@ -371,10 +371,10 @@ export class SearchService {
     indices = [IndexKey.Default],
     brandID?: string
   ) {
-    const shopifyProductVariants = await this.prisma.client2.shopifyProductVariant.findMany(
+    const _shopifyProductVariants = await this.prisma.client2.shopifyProductVariant.findMany(
       {
         where: {
-          brand: brandID ? { id: brandID } : { id: { not: null } },
+          brand: brandID ? { id: brandID } : { id: { not: undefined } },
         },
         select: {
           id: true,
@@ -386,6 +386,10 @@ export class SearchService {
           image: { select: { url: true } },
         },
       }
+    )
+    const shopifyProductVariants = this.prisma.sanitizePayload(
+      _shopifyProductVariants,
+      "ShopifyProductVariant"
     )
 
     this.logger.log(

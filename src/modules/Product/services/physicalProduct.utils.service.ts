@@ -53,7 +53,9 @@ export class PhysicalProductUtilsService {
     )
   }
 
-  async getAllCategories(physProd: PhysicalProduct): Promise<Category[]> {
+  async getAllCategories(
+    physProd: Pick<PhysicalProduct, "seasonsUID">
+  ): Promise<Category[]> {
     return await this.productUtils.getAllCategoriesForProduct(
       await this.prisma.client2.product.findFirst({
         where: {

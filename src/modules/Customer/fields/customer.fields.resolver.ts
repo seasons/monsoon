@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 import { ReservationUtilsService } from "@app/modules/Reservation/services/reservation.utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
@@ -6,7 +7,6 @@ import { PrismaTwoLoader } from "@app/prisma/prisma2.loader"
 import { Loader } from "@modules/DataLoader/decorators/dataloader.decorator"
 import { InvoicesForCustomersLoader } from "@modules/Payment/loaders/invoicesForCustomers.loaders"
 import {
-  CouponType,
   InvoicesDataLoader,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
@@ -281,5 +281,14 @@ export class CustomerFieldsResolver {
     }
 
     return steps
+  }
+
+  @ResolveField()
+  async reservations(@Parent() customer, @FindManyArgs() { where, ...args }) {
+    const _reservations = await this.prisma.client2.reservation.findMany({
+      where: { ...where, customer: { id: customer.id } },
+      ...args,
+    })
+    return this.prisma.sanitizePayload(_reservations, "Reservation")
   }
 }

@@ -36,7 +36,8 @@ export const SINGLETON_RELATIONS_POSING_AS_ARRAYS = {
   "UserPushNotificationInterest": ["UserPushNotification"],
   "CustomerNotificationBarReceipt": ["customer"],
   "PhysicalProduct": ["productVariant"],
-  "SyncTiming": ["customer"]
+  "SyncTiming": ["customer"],
+  "AccessorySize": ['size']
 }
 
 // What was stored and interpreted as JSON in prisma1 will look like

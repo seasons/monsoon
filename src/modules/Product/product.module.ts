@@ -13,6 +13,7 @@ import { AlgoliaService } from "../Search/services/algolia.service"
 import { SearchService } from "../Search/services/search.service"
 import { ShopifyService } from "../Shopify/services/shopify.service"
 import { UserModule } from "../User/user.module"
+import { AccessorySizeFieldsResolver } from "./fields/accessorySize.fields.resolver"
 import { BrandFieldsResolver } from "./fields/brand.fields.resolver"
 import { PhysicalProductFieldsResolver } from "./fields/physicalProduct.fields.resolver"
 import { ProductFieldsResolver } from "./fields/product.fields.resolver"
@@ -73,6 +74,7 @@ export const ProductModuleDef = {
     ProductVariantFieldsResolver,
     ProductVariantMutationsResolver,
     PhysicalProductFieldsResolver,
+    AccessorySizeFieldsResolver,
     BrandFieldsResolver,
     PhysicalProductMutationsResolver,
     SizeQueriesResolver,
