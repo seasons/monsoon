@@ -6,9 +6,9 @@ import * as Sentry from "@sentry/node"
 import bodyParser from "body-parser"
 import compression from "compression"
 import express from "express"
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston"
 
 import { AppModule } from "./app.module"
-import logger from "./logger"
 import { createCorsMiddleware } from "./middleware/cors"
 import { checkJwt } from "./middleware/jwt"
 import { createGetUserMiddleware } from "./middleware/user"
@@ -41,9 +41,11 @@ async function bootstrap() {
 
   const app = await NestFactory.create(
     AppModule,
-    new ExpressAdapter(server),
-    logger
+    new ExpressAdapter(server)
+    // logger
   )
+
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER))
 
   await app.listen(process.env.PORT ? process.env.PORT : 4000, () =>
     console.log(`🚀 Server ready at ${process.env.PORT || 4000}`)
