@@ -6,7 +6,7 @@
   "bin": "bin/cli.js",
   "main": "dist/index.js",
   "engines": {
-    "node": "12.x || 16.x"
+    "node": "12.x"
   },
   "resolutions": {
     "graphql": "14.5.7"
@@ -83,7 +83,7 @@
     "compression": "1.7.4",
     "cors": "2.8.5",
     "csv-parser": "2.3.3",
-    "cuid": "^2.1.8",
+    "cuid": "2.1.8",
     "dataloader": "2.0.0",
     "dotenv": "8.2.0",
     "drip-nodejs": "3.1.1",
@@ -106,7 +106,7 @@
     "module-alias": "2.2.2",
     "moment": "2.26.0",
     "mustache": "4.0.1",
-    "nest-winston": "^1.5.0",
+    "nest-winston": "1.5.0",
     "nestjs-command": "1.3.0",
     "nodemailer": "6.4.2",
     "prisma": "2.26.0",
@@ -129,7 +129,7 @@
     "us-state-converter": "1.0.5",
     "valid-url": "1.0.9",
     "webflow-api": "0.5.0",
-    "winston": "^3.3.3",
+    "winston": "3.3.3",
     "zipcodes": "8.0.0"
   },
   "devDependencies": {
@@ -147,7 +147,7 @@
     "apollo-server-testing": "2.9.16",
     "babel-jest": "27.0.6",
     "concurrently": "5.1.0",
-    "dd-trace": "^1.0.0",
+    "dd-trace": "1.0.0",
     "dotenv-cli": "1.4.0",
     "express-graphql": "0.12.0",
     "graceful-fs": "4.2.2",
