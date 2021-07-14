@@ -69,9 +69,11 @@ export class UserMutationsResolver {
 
   @Mutation()
   async createInterestedUser(@Args() { email, zipcode }, @Info() info) {
-    const interestUser = await this.prisma.client.createInterestedUser({
-      email,
-      zipcode,
+    const interestUser = await this.prisma.client2.interestedUser.create({
+      data: {
+        email,
+        zipcode,
+      },
     })
 
     // TODO: Subscribe user to newsletter and send welcome email

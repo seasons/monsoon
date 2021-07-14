@@ -39,17 +39,17 @@ const infoToSelect = infoString => {
 }
 
 const run = () => {
-  let info = `{
-    status
-    reservationNumber
-    createdAt
-    updatedAt
-    customer {
-      user {
-        email
+  let info = `
+  {
+    id
+    membership {
+      id
+      pauseRequests(orderBy: createdAt_DESC) {
+        id
       }
     }
-  }` // Insert your info string
+  }
+` // Insert your info string
   infoToSelect(info)
 }
 

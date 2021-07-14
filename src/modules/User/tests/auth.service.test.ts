@@ -120,7 +120,9 @@ describe("Auth Service", () => {
       expect(customerDetails.phoneNumber).toEqual(phoneNumber)
 
       // Shipping Address Fields
-      const customerShippingAddress = await prisma.client.location({ id: "2" })
+      const customerShippingAddress = await prisma.client2.location.findUnique({
+        where: { id: "2" },
+      })
       expect(customerShippingAddress.zipCode).toEqual(zipCode)
 
       cleanupFunc = async () => {

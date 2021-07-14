@@ -231,7 +231,7 @@ export class TestUtilsService {
             },
           },
         })
-        await this.prisma.client.updateCustomer({
+        await this.prisma.client2.customer.update({
           where: { id: createdCustomer.id },
           data: {
             membership: {
