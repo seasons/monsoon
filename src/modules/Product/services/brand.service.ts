@@ -4,12 +4,14 @@ import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.servic
 import { BrandUtilsService } from "@modules/Product/services/brand.utils.service"
 import { IndexKey } from "@modules/Search/services/algolia.service"
 import { SearchService } from "@modules/Search/services/search.service"
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 
 @Injectable()
 export class BrandService {
+  private readonly logger = new Logger(BrandService.name)
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: BrandUtilsService,
@@ -103,7 +105,7 @@ export class BrandService {
       promises.push(logoData?.promise)
       promises.push(...imageDatas?.map(a => a.promise))
     } catch (ex) {
-      console.log(ex)
+      this.logger.log(ex)
       /** noop **/
     }
 
