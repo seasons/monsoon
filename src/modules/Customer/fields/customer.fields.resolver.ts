@@ -3,7 +3,10 @@ import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 import { ReservationUtilsService } from "@app/modules/Reservation/services/reservation.utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
-import { PrismaTwoLoader } from "@app/prisma/prisma2.loader"
+import {
+  PrismaTwoDataLoader,
+  PrismaTwoLoader,
+} from "@app/prisma/prisma2.loader"
 import { Loader } from "@modules/DataLoader/decorators/dataloader.decorator"
 import { InvoicesForCustomersLoader } from "@modules/Payment/loaders/invoicesForCustomers.loaders"
 import {
@@ -74,7 +77,7 @@ export class CustomerFieldsResolver {
         }),
       },
     })
-    prismaLoader: PrismaDataLoader<string>
+    prismaLoader: PrismaTwoDataLoader<string>
   ) {
     let coupon
     const custWithData = (await prismaLoader.load(customer.id)) as any

@@ -33,65 +33,10 @@ export class ChargebeeQueriesResolver {
   }
 
   @Query()
-  async chargebeeCheckout(
-    @Args() { planID, email: passedEmail, userIDHash, couponID },
-    @Application() application
-  ) {
-    let user
-
-    if (userIDHash) {
-      const userID = this.utils.decryptUserIDHash(userIDHash)
-      user = await this.prisma.client2.user.findUnique({
-        where: { id: userID },
-      })
-    } else if (passedEmail) {
-      user = await this.prisma.client2.user.findUnique({
-        where: { email: passedEmail },
-      })
-    } else {
-      throw new Error("Need to pass in either email or userIDHash")
-    }
-
-    const { email, firstName, lastName } = user
-    const customer = await this.auth.getCustomerFromUserID(user.id)
-    const { phoneNumber } = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-
-    const hostedPage = await this.payment.getHostedCheckoutPage(
-      planID,
-      user.id,
-      email,
-      firstName,
-      lastName,
-      phoneNumber,
-      couponID
+  async chargebeeCheckout() {
+    throw new Error(
+      "Chargebee checkout is deprecated, please use processPayment"
     )
-
-    const customerWithData = await this.prisma.client2.customer.findUnique({
-      where: { id: customer.id },
-      select: {
-        id: true,
-        membership: {
-          select: { id: true, plan: true },
-        },
-      },
-    })
-
-    const tier = customerWithData?.membership?.plan?.tier
-
-    // Track the selection
-    this.segment.track(user.id, "Opened Checkout", {
-      email,
-      firstName,
-      lastName,
-      application,
-      customerID: customer.id,
-      planID,
-      tier,
-    })
-
-    return hostedPage
   }
 
   /**
