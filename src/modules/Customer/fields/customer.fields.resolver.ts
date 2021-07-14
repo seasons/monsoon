@@ -123,34 +123,51 @@ export class CustomerFieldsResolver {
   }
 
   @ResolveField()
-  async shouldRequestFeedback(@User() user) {
-    if (!user) return null
-
-    const feedbacks = await this.prisma.client2.reservationFeedback.findMany({
-      where: {
-        user: { id: user.id },
-      },
-      orderBy: {
-        respondedAt: "desc",
-      },
-      select: {
-        id: true,
-        respondedAt: true,
+  async shouldRequestFeedback(
+    @Loader({
+      type: PrismaTwoLoader.name,
+      params: {
+        model: "ReservationFeedback",
+        select: Prisma.validator<Prisma.ReservationFeedbackSelect>()({
+          id: true,
+          respondedAt: true,
+        }),
+        orderBy: {
+          respondedAt: "desc",
+        },
+        formatWhere: keys => {
+          return Prisma.validator<Prisma.CustomerWhereInput>()({
+            id: {
+              in: keys,
+            },
+          })
+        },
       },
     })
-    const yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
-    if (!feedbacks?.length) {
-      return false
-    } else {
-      const feedback = head(feedbacks)
-      const respondedAtDate =
-        feedback?.respondedAt && new Date(feedback.respondedAt)
-      if (!respondedAtDate || yesterday > respondedAtDate) {
-        return true
-      } else {
-        return false
-      }
+    prismaLoader: PrismaTwoDataLoader<{
+      id: string
+      respondedAt: Date
+    }>,
+    @User() user
+  ) {
+    if (!user) {
+      return null
     }
+
+    const feedback = await prismaLoader.load(user.id)
+    if (!feedback) {
+      return null
+    }
+
+    const yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
+
+    const respondedAtDate =
+      feedback?.respondedAt && new Date(feedback.respondedAt)
+    if (!respondedAtDate || yesterday > respondedAtDate) {
+      return true
+    }
+
+    return false
   }
 
   @ResolveField()

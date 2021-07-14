@@ -1,3 +1,4 @@
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Controller, Post } from "@nestjs/common"
@@ -11,7 +12,8 @@ export class WebflowController {
   constructor(
     private readonly prisma: PrismaService,
     private readonly blog: BlogService,
-    private readonly image: ImageService
+    private readonly image: ImageService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   @Post()
@@ -67,7 +69,12 @@ export class WebflowController {
     if (lastPostPublished.id !== lastPostStored.webflowId) {
       await this.prisma.client2.blogPost.create({
         data: {
-          ...blogData,
+          ...this.queryUtils.prismaOneToPrismaTwoMutateData(
+            blogData,
+            null,
+            "BlogPost",
+            "create"
+          ),
           image: {
             connect: { id: blogImage.id },
           },
