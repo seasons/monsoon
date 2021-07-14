@@ -3,7 +3,7 @@ import * as util from "util"
 
 import { CustomerModule } from "@modules/Customer/customer.module"
 import { DataLoaderInterceptor } from "@modules/DataLoader/interceptors/dataloader.interceptor"
-import { Module, forwardRef } from "@nestjs/common"
+import { Logger, Module, forwardRef } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
 import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
 import { ScheduleModule } from "@nestjs/schedule"
@@ -171,6 +171,7 @@ const cache = (() => {
       provide: APP_INTERCEPTOR,
       useClass: DataLoaderInterceptor,
     },
+    Logger,
   ],
 })
 export class AppModule {}
