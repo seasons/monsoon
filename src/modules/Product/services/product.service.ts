@@ -20,6 +20,7 @@ import {
   ID_Input,
   InventoryStatus,
   LetterSize,
+  MeasurementType,
   ProductStatus,
   ProductType,
   SizeType,
@@ -187,6 +188,11 @@ export class ProductService {
         where: { id: input.modelID },
       }))
 
+    const category = await this.prisma.client2.category.findUnique({
+      where: { id: input.categoryID },
+      select: { measurementType: true },
+    })
+
     const slug = await this.productUtils.createProductSlug(
       brand.brandCode,
       input.name,
@@ -301,6 +307,7 @@ export class ProductService {
             "buyUsedEnabled",
             "buyUsedPrice",
           ]),
+          measurementType: category.measurementType,
         })
       })
     ) as PrismaPromise<ProductVariant | PhysicalProduct>[]
@@ -671,7 +678,7 @@ export class ProductService {
       imageUrls = imageDatas.map(a => a.url)
     }
 
-    const prismaTwoUpdateData = this.queryUtils.prismaOneToPrismaTwoMutateArgs(
+    const prismaTwoUpdateData = this.queryUtils.prismaOneToPrismaTwoMutateData(
       { ...updateData, styles: { set: updateData.styles } },
       product,
       "Product",
@@ -788,32 +795,47 @@ export class ProductService {
    * Checks if all downstream physical products have been offloaded.
    * If so, marks the product as offloaded.
    */
-  async offloadProductIfAppropriate(id: ID_Input) {
-    const prodWithPhysicalProducts = await this.prisma.binding.query.product(
-      { where: { id } },
-      `{
-        status
-        variants {
-          physicalProducts {
-            inventoryStatus
-          }
-        }
-       }`
+  async getOffloadProductPromiseIfNeeded(
+    productId: string,
+    physProdCurrentlyOffloadingId: string
+  ) {
+    const _prodWithPhysicalProducts = await this.prisma.client2.product.findUnique(
+      {
+        where: { id: productId },
+        select: {
+          status: true,
+          variants: {
+            select: {
+              physicalProducts: { select: { id: true, inventoryStatus: true } },
+            },
+          },
+        },
+      }
+    )
+    const prodWithPhysicalProducts = this.prisma.sanitizePayload(
+      _prodWithPhysicalProducts,
+      "Product"
     )
     const downstreamPhysProds = this.productUtils.physicalProductsForProduct(
-      prodWithPhysicalProducts as ProductWithPhysicalProducts
+      (prodWithPhysicalProducts as unknown) as ProductWithPhysicalProducts
     )
     const allPhysProdsOffloaded = downstreamPhysProds.reduce(
-      (acc, curPhysProd: { inventoryStatus: InventoryStatus }) =>
-        acc && curPhysProd.inventoryStatus === "Offloaded",
+      (acc, curPhysProd: { id: string; inventoryStatus: InventoryStatus }) =>
+        acc &&
+        (curPhysProd.inventoryStatus === "Offloaded" ||
+          curPhysProd.id === physProdCurrentlyOffloadingId),
       true
     )
     if (allPhysProdsOffloaded) {
-      await this.prisma.client.updateProduct({
-        where: { id },
-        data: { status: "Offloaded" },
-      })
+      return {
+        promise: this.prisma.client2.product.update({
+          where: { id: productId },
+          data: { status: "Offloaded" },
+        }),
+      }
     }
+
+    return { promise: null }
   }
 
   // })
@@ -834,6 +856,7 @@ export class ProductService {
     productSlug,
     buyUsedEnabled,
     buyUsedPrice,
+    measurementType,
   }: {
     sequenceNumbers
     variant
@@ -843,10 +866,32 @@ export class ProductService {
     productSlug: string
     buyUsedEnabled?: boolean
     buyUsedPrice?: number
+    measurementType: string
   }): PrismaPromise<ProductVariant | PhysicalProduct>[] {
     if (variant.manufacturerSizeNames.length > 1) {
       throw new Error(`Please pass no more than 1 manufacturer size name`)
     }
+
+    const measurements = pick(variant, [
+      "sleeve",
+      "shoulder",
+      "chest",
+      "neck",
+      "length",
+      "waist",
+      "rise",
+      "hem",
+      "inseam",
+      "bridge",
+      "width",
+    ])
+
+    Object.keys(measurements).forEach(key => {
+      measurements[key] = this.productUtils.convertMeasurementSizeToInches(
+        measurements[key],
+        measurementType
+      )
+    })
 
     const shopifyProductVariantCreateData = !!variant.shopifyProductVariant
       ?.externalId
@@ -866,14 +911,15 @@ export class ProductService {
     }
     const topSizeData = {
       letter: (variant.internalSizeName as LetterSize) || null,
-      ...pick(variant, "sleeve", "shoulder", "chest", "neck", "length"),
+      ...pick(measurements, "sleeve", "shoulder", "chest", "neck", "length"),
     }
     const bottomSizeData = {
       type: (variant.internalSizeType as BottomSizeType) || null,
       value: variant.internalSizeName || "",
-      ...pick(variant, ["waist", "rise", "hem", "inseam"]),
+      ...pick(measurements, ["waist", "rise", "hem", "inseam"]),
     }
-    const accessorySizeData = pick(variant, ["bridge", "length", "width"])
+    const accessorySizeData = pick(measurements, ["bridge", "length", "width"])
+
     const displayShort = this.calculateVariantDisplayShort(
       !!variant.manufacturerSizeNames
         ? {
@@ -1345,9 +1391,7 @@ export class ProductService {
     modelSizeDisplay,
     modelSizeType,
     modelSizeName,
-  }):
-    | Prisma.SizeCreateNestedOneWithoutProductInput
-    | Prisma.SizeUpdateOneWithoutProductInput {
+  }) {
     if (modelSizeName && modelSizeDisplay) {
       return {
         connectOrCreate: {

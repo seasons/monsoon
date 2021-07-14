@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { LaunchWhereUniqueInput } from "@prisma1/index"
+import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { omit } from "lodash"
 
@@ -10,9 +10,11 @@ export class LaunchService {
   async upsertLaunch({
     where,
     data,
+    select,
   }: {
-    where: LaunchWhereUniqueInput
+    where: Prisma.LaunchWhereUniqueInput
     data: any
+    select: Prisma.LaunchSelect
   }) {
     let upsertdata
     const cleanedData = omit(data, ["brandID", "collectionID"])
@@ -36,10 +38,13 @@ export class LaunchService {
         },
       }
     }
-    return await this.prisma.client.upsertLaunch({
+    const _launch = await this.prisma.client2.launch.upsert({
       where,
       create: upsertdata,
       update: upsertdata,
+      select,
     })
+
+    return this.prisma.sanitizePayload(_launch, "Launch")
   }
 }

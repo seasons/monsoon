@@ -219,11 +219,11 @@ export class ReservationService {
     const result = await this.prisma.client2.$transaction(promises.flat())
 
     const reservation = result.pop()
-    // await this.addEarlySwapIfNeeded(
-    //   reservation.id,
-    //   customer.id,
-    //   nextFreeSwapDate
-    // )
+    await this.addEarlySwapIfNeeded(
+      reservation.id,
+      customer.id,
+      nextFreeSwapDate
+    )
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
@@ -247,27 +247,31 @@ export class ReservationService {
 
   async addEarlySwapIfNeeded(reservationID, customerID, nextFreeSwapDate) {
     const doesNotHaveFreeSwap =
-      nextFreeSwapDate && nextFreeSwapDate > DateTime.local().toISO()
+      nextFreeSwapDate && DateTime.fromISO(nextFreeSwapDate) > DateTime.local()
 
     if (doesNotHaveFreeSwap && reservationID) {
       const swapCharge = await this.payment.addEarlySwapCharge(customerID)
-      await this.prisma.client2.reservation.update({
-        where: { id: reservationID },
-        data: {
-          lineItems: {
-            create: [
-              {
-                recordID: reservationID,
-                price: swapCharge.invoice.sub_total,
-                currencyCode: "USD",
-                recordType: "EarlySwap",
-                name: "Early swap",
-                taxPrice: swapCharge?.invoice?.tax || 0,
-              },
-            ],
+      try {
+        await this.prisma.client2.reservation.update({
+          where: { id: reservationID },
+          data: {
+            lineItems: {
+              create: [
+                {
+                  recordID: reservationID,
+                  price: swapCharge.invoice.sub_total,
+                  currencyCode: "USD",
+                  recordType: "EarlySwap",
+                  name: "Early swap",
+                  taxPrice: swapCharge?.invoice?.tax || 0,
+                },
+              ],
+            },
           },
-        },
-      })
+        })
+      } catch (e) {
+        this.error.captureError(e)
+      }
     }
   }
 

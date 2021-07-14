@@ -3439,6 +3439,8 @@ export type BrandTier =
   | "Local"
   | "Discovery";
 
+export type MeasurementType = "Inches" | "Millimeters";
+
 export type PhotographyStatus =
   | "Done"
   | "InProgress"
@@ -3750,7 +3752,9 @@ export type CategoryOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC"
   | "productType_ASC"
-  | "productType_DESC";
+  | "productType_DESC"
+  | "measurementType_ASC"
+  | "measurementType_DESC";
 
 export type ProductFunctionOrderByInput =
   | "id_ASC"
@@ -6758,6 +6762,10 @@ export interface CategoryWhereInput {
   productType_not?: Maybe<ProductType>;
   productType_in?: Maybe<ProductType[] | ProductType>;
   productType_not_in?: Maybe<ProductType[] | ProductType>;
+  measurementType?: Maybe<MeasurementType>;
+  measurementType_not?: Maybe<MeasurementType>;
+  measurementType_in?: Maybe<MeasurementType[] | MeasurementType>;
+  measurementType_not_in?: Maybe<MeasurementType[] | MeasurementType>;
   AND?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
   OR?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
   NOT?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
@@ -11582,6 +11590,7 @@ export interface CategoryCreateWithoutProductsInput {
   visible?: Maybe<Boolean>;
   children?: Maybe<CategoryCreateManyWithoutChildrenInput>;
   productType?: Maybe<ProductType>;
+  measurementType?: Maybe<MeasurementType>;
 }
 
 export interface CategoryCreateManyWithoutChildrenInput {
@@ -11600,6 +11609,7 @@ export interface CategoryCreateWithoutChildrenInput {
   visible?: Maybe<Boolean>;
   products?: Maybe<ProductCreateManyWithoutCategoryInput>;
   productType?: Maybe<ProductType>;
+  measurementType?: Maybe<MeasurementType>;
 }
 
 export interface ProductCreateManyWithoutCategoryInput {
@@ -11846,6 +11856,7 @@ export interface CategoryCreateInput {
   products?: Maybe<ProductCreateManyWithoutCategoryInput>;
   children?: Maybe<CategoryCreateManyWithoutChildrenInput>;
   productType?: Maybe<ProductType>;
+  measurementType?: Maybe<MeasurementType>;
 }
 
 export interface ProductModelCreateOneWithoutProductsInput {
@@ -13613,6 +13624,7 @@ export interface CategoryUpdateWithoutProductsDataInput {
   visible?: Maybe<Boolean>;
   children?: Maybe<CategoryUpdateManyWithoutChildrenInput>;
   productType?: Maybe<ProductType>;
+  measurementType?: Maybe<MeasurementType>;
 }
 
 export interface CategoryUpdateManyWithoutChildrenInput {
@@ -13651,6 +13663,7 @@ export interface CategoryUpdateWithoutChildrenDataInput {
   visible?: Maybe<Boolean>;
   products?: Maybe<ProductUpdateManyWithoutCategoryInput>;
   productType?: Maybe<ProductType>;
+  measurementType?: Maybe<MeasurementType>;
 }
 
 export interface ProductUpdateManyWithoutCategoryInput {
@@ -14172,6 +14185,7 @@ export interface CategoryUpdateDataInput {
   products?: Maybe<ProductUpdateManyWithoutCategoryInput>;
   children?: Maybe<CategoryUpdateManyWithoutChildrenInput>;
   productType?: Maybe<ProductType>;
+  measurementType?: Maybe<MeasurementType>;
 }
 
 export interface CategoryUpsertNestedInput {
@@ -15595,6 +15609,10 @@ export interface CategoryScalarWhereInput {
   productType_not?: Maybe<ProductType>;
   productType_in?: Maybe<ProductType[] | ProductType>;
   productType_not_in?: Maybe<ProductType[] | ProductType>;
+  measurementType?: Maybe<MeasurementType>;
+  measurementType_not?: Maybe<MeasurementType>;
+  measurementType_in?: Maybe<MeasurementType[] | MeasurementType>;
+  measurementType_not_in?: Maybe<MeasurementType[] | MeasurementType>;
   AND?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
   OR?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
   NOT?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
@@ -15612,6 +15630,7 @@ export interface CategoryUpdateManyDataInput {
   description?: Maybe<String>;
   visible?: Maybe<Boolean>;
   productType?: Maybe<ProductType>;
+  measurementType?: Maybe<MeasurementType>;
 }
 
 export interface CategoryUpsertWithoutProductsInput {
@@ -18991,6 +19010,7 @@ export interface CategoryUpdateInput {
   products?: Maybe<ProductUpdateManyWithoutCategoryInput>;
   children?: Maybe<CategoryUpdateManyWithoutChildrenInput>;
   productType?: Maybe<ProductType>;
+  measurementType?: Maybe<MeasurementType>;
 }
 
 export interface CategoryUpdateManyMutationInput {
@@ -19000,6 +19020,7 @@ export interface CategoryUpdateManyMutationInput {
   description?: Maybe<String>;
   visible?: Maybe<Boolean>;
   productType?: Maybe<ProductType>;
+  measurementType?: Maybe<MeasurementType>;
 }
 
 export interface CollectionCreateInput {
@@ -25437,6 +25458,7 @@ export interface Category {
   visible: Boolean;
   updatedAt?: DateTimeOutput;
   productType?: ProductType;
+  measurementType?: MeasurementType;
 }
 
 export interface CategoryPromise extends Promise<Category>, Fragmentable {
@@ -25466,6 +25488,7 @@ export interface CategoryPromise extends Promise<Category>, Fragmentable {
   }) => T;
   updatedAt: () => Promise<DateTimeOutput>;
   productType: () => Promise<ProductType>;
+  measurementType: () => Promise<MeasurementType>;
 }
 
 export interface CategorySubscription
@@ -25497,6 +25520,7 @@ export interface CategorySubscription
   }) => T;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   productType: () => Promise<AsyncIterator<ProductType>>;
+  measurementType: () => Promise<AsyncIterator<MeasurementType>>;
 }
 
 export interface CategoryNullablePromise
@@ -25528,6 +25552,7 @@ export interface CategoryNullablePromise
   }) => T;
   updatedAt: () => Promise<DateTimeOutput>;
   productType: () => Promise<ProductType>;
+  measurementType: () => Promise<MeasurementType>;
 }
 
 export interface ProductFunction {
@@ -33600,6 +33625,7 @@ export interface CategoryPreviousValues {
   visible: Boolean;
   updatedAt?: DateTimeOutput;
   productType?: ProductType;
+  measurementType?: MeasurementType;
 }
 
 export interface CategoryPreviousValuesPromise
@@ -33613,6 +33639,7 @@ export interface CategoryPreviousValuesPromise
   visible: () => Promise<Boolean>;
   updatedAt: () => Promise<DateTimeOutput>;
   productType: () => Promise<ProductType>;
+  measurementType: () => Promise<MeasurementType>;
 }
 
 export interface CategoryPreviousValuesSubscription
@@ -33626,6 +33653,7 @@ export interface CategoryPreviousValuesSubscription
   visible: () => Promise<AsyncIterator<Boolean>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   productType: () => Promise<AsyncIterator<ProductType>>;
+  measurementType: () => Promise<AsyncIterator<MeasurementType>>;
 }
 
 export interface CollectionSubscriptionPayload {
@@ -37505,6 +37533,10 @@ export const models: Model[] = [
   },
   {
     name: "LocationType",
+    embedded: false
+  },
+  {
+    name: "MeasurementType",
     embedded: false
   },
   {
