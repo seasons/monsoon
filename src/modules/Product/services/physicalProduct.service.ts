@@ -383,8 +383,10 @@ export class PhysicalProductService {
           )
         }
         if (
-          !(await this.prisma.client.brand({
-            brandCode: itemCode,
+          !(await this.prisma.client2.brand.findUnique({
+            where: {
+              brandCode: itemCode,
+            },
           }))
         ) {
           throw new Error(

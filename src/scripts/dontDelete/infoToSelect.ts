@@ -40,20 +40,14 @@ const infoToSelect = infoString => {
 
 const run = () => {
   let info = `{
-    id
-    externalId
-    displayName
-    selectedOptions {
-      name
-      value
-    }
-    brand {
-      id
-      name
-    }
-    title
-    image {
-      url
+    status
+    reservationNumber
+    createdAt
+    updatedAt
+    customer {
+      user {
+        email
+      }
     }
   }` // Insert your info string
   infoToSelect(info)

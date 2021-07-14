@@ -554,7 +554,7 @@ export class EmailService {
       where: { user: { id: user.id } },
       select: { id: true },
     })
-    await this.prisma.client.updateCustomer({
+    await this.prisma.client2.customer.update({
       where: { id: customer.id },
       data: {
         emailedProducts: {

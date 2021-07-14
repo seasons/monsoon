@@ -134,7 +134,7 @@ export class UpdatePaymentService {
         )
       }
 
-      await this.prisma.client.updateBillingInfo({
+      await this.prisma.client2.billingInfo.update({
         where: { id: billingInfo.id },
         data: { ...prismaBillingAddress, brand: _brand, last_digits: _last4 },
       })

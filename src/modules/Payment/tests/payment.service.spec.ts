@@ -184,7 +184,7 @@ describe("Payment Service", () => {
       expect(newCustomer.membership.plan.planID).toEqual("essential")
 
       // Email was sent
-      const emailReceipts = await prisma.client.emailReceipts({
+      const emailReceipts = await prisma.client2.emailReceipt.findMany({
         where: {
           user: { id: newCustomer.user.id },
         },
@@ -192,11 +192,13 @@ describe("Payment Service", () => {
       expect(emailReceipts.length).toEqual(1)
       expect(emailReceipts[0].emailId).toEqual("WelcomeToSeasons")
 
-      await prisma.client.deleteBillingInfo({ id: newCustomer.billingInfo.id })
-      await prisma.client.deleteManyEmailReceipts({
-        user: { id: newCustomer.user.id },
+      await prisma.client2.billingInfo.delete({
+        where: { id: newCustomer.billingInfo.id },
       })
-      await prisma.client.deleteManyPaymentPlans({})
+      await prisma.client2.emailReceipt.deleteMany({
+        where: { user: { id: newCustomer.user.id } },
+      })
+      await prisma.client2.paymentPlan.deleteMany({})
       cleanupFunc()
     })
   })
