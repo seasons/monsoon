@@ -17,8 +17,18 @@ export class CustomerQueriesResolver {
     @Select({
       withFragment: `fragment EnsureId on Customer {id}`,
     })
-    select
+    _select
   ) {
+    let select = _select
+    if (select?.reservations) {
+      select = {
+        ...select,
+        reservations: {
+          ...select.reservations,
+          orderBy: { createdAt: "desc" },
+        },
+      }
+    }
     const _data = await this.prisma.client2.customer.findUnique({
       where: { ...args.where },
       select,
