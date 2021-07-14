@@ -1,9 +1,11 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { FitPic } from "@app/prisma"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import { PrismaTwoLoader } from "@app/prisma/prisma2.loader"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Prisma } from "@prisma/client"
 
 @Resolver("FitPic")
 export class FitPicFieldsResolver {
@@ -13,9 +15,18 @@ export class FitPicFieldsResolver {
   async author(
     @Parent() fitPic: FitPic,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: "fitPics",
-        info: "{ id user { firstName lastName } }",
+        model: "FitPic",
+        select: Prisma.validator<Prisma.FitPicSelect>()({
+          id: true,
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        }),
         formatData: rec => `${rec.user.firstName} ${rec.user.lastName}`,
       },
     })

@@ -4,12 +4,7 @@ import {
   S3_BASE,
 } from "@app/modules/Image/services/image.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
-import {
-  Customer,
-  FitPicUpdateInput,
-  LocationCreateOneInput,
-  User,
-} from "@app/prisma"
+import { Customer, User } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"

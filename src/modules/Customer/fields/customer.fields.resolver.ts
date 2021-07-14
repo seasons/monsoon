@@ -2,6 +2,7 @@ import { Customer, User } from "@app/decorators"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 import { ReservationUtilsService } from "@app/modules/Reservation/services/reservation.utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import { PrismaTwoLoader } from "@app/prisma/prisma2.loader"
 import { Loader } from "@modules/DataLoader/decorators/dataloader.decorator"
 import { InvoicesForCustomersLoader } from "@modules/Payment/loaders/invoicesForCustomers.loaders"
 import {
@@ -11,6 +12,7 @@ import {
 } from "@modules/Payment/payment.types"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head, isObject } from "lodash"
 import { DateTime } from "luxon"
@@ -45,25 +47,31 @@ export class CustomerFieldsResolver {
   async coupon(
     @Parent() customer,
     @Loader({
+      type: PrismaTwoLoader.name,
       params: {
-        query: `customers`,
-        info: `{
-              id
-              membership {
-                id
-              }
-              referrer {
-                id
-              }
-              utm {
-                source
-                medium
-                campaign
-                term
-                content
-              }
-            }
-            `,
+        model: "Customer",
+        select: Prisma.validator<Prisma.CustomerSelect>()({
+          id: true,
+          membership: {
+            select: {
+              id: true,
+            },
+          },
+          referrer: {
+            select: {
+              id: true,
+            },
+          },
+          utm: {
+            select: {
+              source: true,
+              medium: true,
+              campaign: true,
+              term: true,
+              content: true,
+            },
+          },
+        }),
       },
     })
     prismaLoader: PrismaDataLoader<string>
@@ -114,20 +122,19 @@ export class CustomerFieldsResolver {
   @ResolveField()
   async shouldRequestFeedback(@User() user) {
     if (!user) return null
-    const feedbacks = await this.prisma.binding.query.reservationFeedbacks(
-      {
-        where: {
-          user: { id: user.id },
-        },
-        orderBy: "respondedAt_DESC",
+
+    const feedbacks = await this.prisma.client2.reservationFeedback.findMany({
+      where: {
+        user: { id: user.id },
       },
-      `
-        {
-          id
-          respondedAt
-        }
-      `
-    )
+      orderBy: {
+        respondedAt: "desc",
+      },
+      select: {
+        id: true,
+        respondedAt: true,
+      },
+    })
     const yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
     if (!feedbacks?.length) {
       return false
@@ -219,7 +226,8 @@ export class CustomerFieldsResolver {
     })
     userIdLoader: PrismaDataLoader<string>,
     @Loader({
-      params: { query: "users" },
+      type: PrismaTwoLoader.name,
+      params: { model: "User" },
       includeInfo: true,
     })
     userLoader: PrismaDataLoader<any>
