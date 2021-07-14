@@ -15,11 +15,6 @@ import responseCachePlugin from "apollo-server-plugin-response-cache"
 import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
 import GraphQLJSON from "graphql-type-json"
-import {
-  WinstonModule,
-  utilities as nestWinstonModuleUtilities,
-} from "nest-winston"
-import { format, transports } from "winston"
 
 import {
   BlogModule,
@@ -50,12 +45,6 @@ import { AnalyticsModule } from "./modules/Analytics/analytics.module"
 import { EmailModule } from "./modules/Email/email.module"
 import { TwilioModule } from "./modules/Twilio/twilio.module"
 import { UtilsModule } from "./modules/Utils/utils.module"
-
-const httpTransportOptions = {
-  host: "http-intake.logs.datadoghq.com",
-  path: `/v1/input/${process.env.DATADOG_KEY}?ddsource=nodejs&service=monsoon-${process.env.NODE_ENV}`,
-  ssl: true,
-}
 
 // make the call to chargebee
 chargebee.configure({
@@ -176,21 +165,6 @@ const cache = (() => {
     TwilioModule,
     UserModule,
     UtilsModule,
-    WinstonModule.forRoot({
-      level: "info",
-      exitOnError: false,
-      format: format.json(),
-      transports: [
-        new transports.Console({
-          format: format.combine(
-            format.timestamp(),
-            format.ms(),
-            nestWinstonModuleUtilities.format.nestLike()
-          ),
-        }),
-        new transports.Http(httpTransportOptions),
-      ],
-    }),
   ],
   providers: [
     {
