@@ -15,7 +15,6 @@ import responseCachePlugin from "apollo-server-plugin-response-cache"
 import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
 import GraphQLJSON from "graphql-type-json"
-import { WinstonModule } from "nest-winston"
 
 import {
   BlogModule,
