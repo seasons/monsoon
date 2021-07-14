@@ -12,9 +12,12 @@ export class BrandUtilsService {
     private readonly imageService: ImageService
   ) {}
 
-  async createBrandImages(data: CustomBrandCreateOrUpdateData) {
-    let imageIDs
-    let logoID
+  async getCreateBrandImagesPromises(data: CustomBrandCreateOrUpdateData) {
+    let imageDatas
+    let logoData
+
+    const promises = []
+
     if (data.images && data.brandCode) {
       const images = data.images
 
@@ -22,34 +25,43 @@ export class BrandUtilsService {
         return `${data.brandCode}-${index + 1}.png`.toLowerCase()
       })
 
-      imageIDs = await this.imageService.upsertImages(
+      imageDatas = await this.imageService.upsertImages(
         images,
         imageNames,
-        data.slug
+        data.slug,
+        true
       )
     } else if (data.images && !data.brandCode) {
       throw new ApolloError("To upload brand images please include a brandCode")
     }
 
-    if (data.logoImage && data.brandCode) {
+    if (
+      data.logoImage &&
+      typeof (await data.logoImage) !== "string" &&
+      data.brandCode
+    ) {
       const imageName = `${data.brandCode}-logo.png`.toLowerCase()
-      const imageData = await this.imageService.uploadImage(data.logoImage, {
-        imageName,
-      })
+      const imageData = await this.imageService.uploadImage(
+        Promise.resolve(data.logoImage),
+        {
+          imageName,
+        }
+      )
 
       const title = `${data.brandCode} Logo`
 
-      const logoImage = await this.prisma.client.upsertImage({
-        where: { url: imageData.url },
-        create: { ...imageData, title },
-        update: { ...imageData, title },
-      })
-
-      logoID = logoImage.id
+      logoData = {
+        promise: this.prisma.client2.image.upsert({
+          where: { url: imageData.url },
+          create: { ...imageData, title },
+          update: { ...imageData, title },
+        }),
+        url: imageData.url,
+      }
     } else if (data.logoImage && !data.brandCode) {
       throw new ApolloError("To upload brand logo please include a brandCode")
     }
 
-    return { logoID, imageIDs }
+    return { logoData, imageDatas }
   }
 }
