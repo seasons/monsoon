@@ -50,7 +50,7 @@ export class ReservationQueriesResolver {
   @Query()
   async reservationsConnection(@Args() args, @Select() select) {
     return await this.queryUtils.resolveConnection(
-      { orderBy: { createdAt: "desc" }, ...args, select },
+      { orderBy: "createdAt_DESC", ...args, select },
       "Reservation"
     )
   }
