@@ -61,32 +61,34 @@ export class ReservationFieldsResolver {
     @Args("height") height: number,
     @Args("size") size: ImageSize
   ) {
-    const reservation = await this.prisma.binding.query.reservation(
-      {
-        where: {
-          id: parent.id,
+    // TODO: Use a dataloader
+    const _reservation = await this.prisma.client2.reservation.findUnique({
+      where: {
+        id: parent.id,
+      },
+      select: {
+        products: {
+          select: {
+            id: true,
+            productVariant: {
+              select: {
+                product: {
+                  select: {
+                    images: {
+                      select: { id: true, url: true, updatedAt: true },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       },
-      `
-      {
-        products {
-          id
-          productVariant {
-            product {
-              images {
-                id
-                url
-                updatedAt
-              }
-            }
-          }
-        }
-      }
-      `
-    )
+    })
+    const reservation = this.prisma.sanitizePayload(_reservation, "Reservation")
 
     return reservation.products.map(async product => {
-      const image = product.productVariant.product.images?.[0]
+      const image = (product.productVariant as any).product.images?.[0]
 
       return {
         url: await this.imageService.resizeImage(image?.url, size, {

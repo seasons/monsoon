@@ -45,33 +45,36 @@ export class UpdatePaymentService {
     billing
   ) {
     try {
-      const customerWithUserData = await this.prisma.binding.query.customer(
-        { where: { id: customer.id } },
-        `
+      const _customerWithUserData = await this.prisma.client2.customer.findUnique(
         {
-          id
-          detail {
-            id
-            impactId
-          }
-          billingInfo {
-            id
-          }
-          user {
-            id
-            firstName
-            lastName
-            email
-          }
-          utm {
-            source
-            medium
-            campaign
-            term
-            content
-          }
+          where: { id: customer.id },
+          select: {
+            id: true,
+            detail: { select: { id: true, impactId: true } },
+            billingInfo: { select: { id: true } },
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+            utm: {
+              select: {
+                source: true,
+                medium: true,
+                campaign: true,
+                term: true,
+                content: true,
+              },
+            },
+          },
         }
-      `
+      )
+      const customerWithUserData = this.prisma.sanitizePayload(
+        _customerWithUserData,
+        "Customer"
       )
 
       const { user, billingInfo } = customerWithUserData

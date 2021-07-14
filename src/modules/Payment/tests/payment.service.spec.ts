@@ -129,40 +129,38 @@ describe("Payment Service", () => {
         shippingAddress
       )
 
-      const newCustomer = await prisma.binding.query.customer(
-        { where: { id: customer.id } },
-        `{
-          id
-          billingInfo {
-            id
-            brand
-            name
-            last_digits
-            expiration_month
-            expiration_year
-            street1
-            city
-            state
-            country
-            postal_code
-          }
-          status
-          user {
-            id
-          }
-          membership {
-            id
-            subscriptionId
-            subscription {
-              id
-            }
-            plan {
-              id
-              planID
-            }
-          }
-        }`
-      )
+      const _newCustomer = await prisma.client2.customer.findUnique({
+        where: { id: customer.id },
+        select: {
+          id: true,
+          billingInfo: {
+            select: {
+              id: true,
+              brand: true,
+              name: true,
+              last_digits: true,
+              expiration_month: true,
+              expiration_year: true,
+              street1: true,
+              city: true,
+              state: true,
+              country: true,
+              postal_code: true,
+            },
+          },
+          status: true,
+          user: { select: { id: true } },
+          membership: {
+            select: {
+              id: true,
+              subscriptionId: true,
+              subscription: { select: { id: true } },
+              plan: { select: { id: true, planID: true } },
+            },
+          },
+        },
+      })
+      const newCustomer = prisma.sanitizePayload(_newCustomer, "Customer")
 
       // Confirm Billing Info fields
       expect(newCustomer.billingInfo.brand).toEqual("american_express")

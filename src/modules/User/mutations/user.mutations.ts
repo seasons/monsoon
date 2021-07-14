@@ -1,4 +1,5 @@
 import { User } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
 import { DripService } from "@app/modules/Drip/services/drip.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -26,45 +27,37 @@ export class UserMutationsResolver {
   async updateUserPushNotificationStatus(
     @Args() { newStatus },
     @User() user,
-    @Info() info
+    @Select() select
   ) {
     if (!user) {
       throw new Error("Missing user from context")
     }
 
-    const memberWithPushNotification = await this.prisma.binding.query.user(
+    const memberWithPushNotification = await this.prisma.client2.user.findUnique(
       {
         where: { id: user.id },
-      },
-      `
-    {
-      id
-      pushNotification {
-        id
+        select: { id: true, pushNotification: { select: { id: true } } },
       }
-    }
-    `
     )
 
-    const returnVal = await this.prisma.binding.mutation.updateUserPushNotification(
-      {
-        where: {
-          id: memberWithPushNotification.pushNotification.id,
-        },
-        data: { status: newStatus },
+    const _returnVal = await this.prisma.client2.userPushNotification.update({
+      where: {
+        id: memberWithPushNotification.pushNotification.id,
       },
-      info
-    )
-    return returnVal
+      data: { status: newStatus },
+      select,
+    })
+    return this.prisma.sanitizePayload(_returnVal, "UserPushNotification")
   }
 
   @Mutation()
-  async updateUser(@Args() { data, where }, @Info() info) {
-    const result = await this.prisma.binding.mutation.updateUser({
+  async updateUser(@Args() { data, where }, @Select() select) {
+    const result = await this.prisma.client2.user.update({
       where,
       data,
+      select,
     })
-    return result
+    return this.prisma.sanitizePayload(result, "User")
   }
 
   @Mutation()

@@ -41,15 +41,20 @@ const infoToSelect = infoString => {
 const run = () => {
   let info = `
   {
-    id
-    membership {
+    products {
       id
-      pauseRequests(orderBy: createdAt_DESC) {
-        id
+      productVariant {
+        product {
+          images {
+            id
+            url
+            updatedAt
+          }
+        }
       }
     }
   }
-` // Insert your info string
+  ` // Insert your info string
   infoToSelect(info)
 }
 

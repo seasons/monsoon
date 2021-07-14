@@ -241,23 +241,15 @@ export class EmailService {
   }
 
   async sendSubscribedEmail(user: EmailUser) {
-    const cust = head(
-      await this.prisma.binding.query.customers(
-        {
-          where: { user: { id: user.id } },
+    const _cust = await this.prisma.client2.customer.findFirst({
+      where: { user: { id: user.id } },
+      select: {
+        membership: {
+          select: { plan: { select: { planID: true, itemCount: true } } },
         },
-        `
-      {
-        membership {
-          plan {
-            planID
-            itemCount
-          }
-        }
-      }
-      `
-      )
-    ) as any
+      },
+    })
+    const cust = this.prisma.sanitizePayload(_cust, "Customer")
     const payload = await RenderEmail.subscribed({
       name: user.firstName,
       planId: cust.membership?.plan?.planID,

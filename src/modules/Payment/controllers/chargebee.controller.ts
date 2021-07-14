@@ -108,7 +108,7 @@ export class ChargebeeController {
       impactId: custWithData.detail?.impactId,
       impactCustomerStatus: isRecurringSubscription ? "Existing" : null,
       text1: isRecurringSubscription ? "isRecurringSubscription" : "null",
-      ...this.utils.formatUTMForSegment(custWithData.utm),
+      ...this.utils.formatUTMForSegment(custWithData.utm as any),
     })
   }
 
