@@ -219,11 +219,11 @@ export class ReservationService {
     const result = await this.prisma.client2.$transaction(promises.flat())
 
     const reservation = result.pop()
-    // await this.addEarlySwapIfNeeded(
-    //   reservation.id,
-    //   customer.id,
-    //   nextFreeSwapDate
-    // )
+    await this.addEarlySwapIfNeeded(
+      reservation.id,
+      customer.id,
+      nextFreeSwapDate
+    )
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
@@ -247,27 +247,31 @@ export class ReservationService {
 
   async addEarlySwapIfNeeded(reservationID, customerID, nextFreeSwapDate) {
     const doesNotHaveFreeSwap =
-      nextFreeSwapDate && nextFreeSwapDate > DateTime.local().toISO()
+      nextFreeSwapDate && DateTime.fromISO(nextFreeSwapDate) > DateTime.local()
 
     if (doesNotHaveFreeSwap && reservationID) {
       const swapCharge = await this.payment.addEarlySwapCharge(customerID)
-      await this.prisma.client2.reservation.update({
-        where: { id: reservationID },
-        data: {
-          lineItems: {
-            create: [
-              {
-                recordID: reservationID,
-                price: swapCharge.invoice.sub_total,
-                currencyCode: "USD",
-                recordType: "EarlySwap",
-                name: "Early swap",
-                taxPrice: swapCharge?.invoice?.tax || 0,
-              },
-            ],
+      try {
+        await this.prisma.client2.reservation.update({
+          where: { id: reservationID },
+          data: {
+            lineItems: {
+              create: [
+                {
+                  recordID: reservationID,
+                  price: swapCharge.invoice.sub_total,
+                  currencyCode: "USD",
+                  recordType: "EarlySwap",
+                  name: "Early swap",
+                  taxPrice: swapCharge?.invoice?.tax || 0,
+                },
+              ],
+            },
           },
-        },
-      })
+        })
+      } catch (e) {
+        this.error.captureError(e)
+      }
     }
   }
 
@@ -856,85 +860,20 @@ export class ReservationService {
     productVariantIDs: string[]
     customerId: string
   }): Promise<string[]> {
-    const _customerReservations = await this.prisma.client2.reservation.findMany(
-      {
-        where: { customer: { id: customerId } },
-        orderBy: { createdAt: "desc" }, // reverse chronological order
-        select: {
-          id: true,
-          createdAt: true,
-          status: true,
-          products: {
-            select: {
-              id: true,
-              seasonsUID: true,
-              productVariant: { select: { id: true } },
-              inventoryStatus: true,
-            },
-          },
-        },
-      }
-    )
-    const customerReservations = this.prisma.sanitizePayload(
-      _customerReservations,
-      "Reservation"
-    )
-
-    const lastCompletedReservation = customerReservations.find(
-      a => a.status === "Completed"
-    )
-    const indexOfLastCompletedReservation = customerReservations.findIndex(
-      a => a.status === "Completed"
-    )
-    const cancelledReservationssSinceLastCompletedReservation = [
-      ...customerReservations,
-    ].splice(0, indexOfLastCompletedReservation)
-
-    // If they don't have any reservation history, all items are new.
-    if (!lastCompletedReservation) {
-      return productVariantIDs
-    }
-
-    const newVariantsBeingReserved = []
-    const productVariantsInLastCompletedReservation = lastCompletedReservation.products.map(
-      prod => (prod.productVariant as any).id
-    )
-    productVariantIDs.forEach(id => {
-      // If it's not in the last completed reservation, its new
-      const inLastCompletedReservation = productVariantsInLastCompletedReservation.includes(
-        id
-      )
-      if (!inLastCompletedReservation) {
-        newVariantsBeingReserved.push(id)
-        return
-      }
-
-      // If it's in the last completed reservation, and they've cancelled 1 or more reservations since then,
-      // and it's not in each of those cancelled orders, its new
-      const hasCancelledOrdersSinceLastCompletedReservation =
-        cancelledReservationssSinceLastCompletedReservation.length > 0
-      if (hasCancelledOrdersSinceLastCompletedReservation) {
-        const carriedOverItemOnAllCancelledOrders = cancelledReservationssSinceLastCompletedReservation.every(
-          a =>
-            a.products.flatMap(b => (b.productVariant as any).id).includes(id)
-        )
-        if (!carriedOverItemOnAllCancelledOrders) {
-          newVariantsBeingReserved.push(id)
-        }
-      }
-
-      // If it's in the last completed reservation, and there are no cancelled reservations since then,
-      // and the inventory status of the item is Reservable, it's new (they returned it and are re-reserving right away)
-      const isReordering =
-        cancelledReservationssSinceLastCompletedReservation.length === 0 &&
-        this.reservationUtils.inventoryStatusOf(
-          lastCompletedReservation as any,
-          id
-        ) === "Reservable"
-      if (isReordering) {
-        newVariantsBeingReserved.push(id)
-      }
+    const _customerBagItems = await this.prisma.client2.bagItem.findMany({
+      where: { customer: { id: customerId }, saved: false },
+      select: { status: true, productVariant: { select: { id: true } } },
     })
+    const customerBagItems = this.prisma.sanitizePayload(
+      _customerBagItems,
+      "BagItem"
+    )
+    const reservedProductVariantIds = customerBagItems
+      .filter(a => a.status === "Reserved")
+      .map(b => b.productVariant.id)
+    const newVariantsBeingReserved = productVariantIDs.filter(
+      a => !reservedProductVariantIds.includes(a)
+    )
 
     if (newVariantsBeingReserved.length === 0) {
       throw new Error(`Must reserve at least 1 new item`)

@@ -27,9 +27,19 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
-  async customer(@Customer() customer, @Select() select) {
+  async customer(@Customer() customer, @Select() _select) {
     if (!customer) {
       return null
+    }
+    let select = _select
+    if (select?.reservations) {
+      select = {
+        ...select,
+        reservations: {
+          ...select.reservations,
+          orderBy: { createdAt: "desc" },
+        },
+      }
     }
     const _data = await this.prisma.client2.customer.findUnique({
       where: { id: customer.id },

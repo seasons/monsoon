@@ -29,6 +29,11 @@ enum LocationType {
   Customer
 }
 
+enum MeasurementType {
+  Inches
+  Millimeters
+}
+
 enum CustomerStatus {
   Invited
   Created
@@ -102,7 +107,7 @@ enum ReservationStatus {
   Hold # For internal use, when ops needs to delay processing
   Blocked # Used when shippo indicates the delivery is blocked
   Unknown
-
+  Lost
   Received
 }
 
@@ -337,6 +342,7 @@ type Category {
   children: [Category!]! @relation(name: "CategoryToChildren")
   updatedAt: DateTime @updatedAt
   productType: ProductType
+  measurementType: MeasurementType
 }
 
 type Color {

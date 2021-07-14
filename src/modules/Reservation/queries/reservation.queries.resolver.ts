@@ -41,13 +41,16 @@ export class ReservationQueriesResolver {
     @FindManyArgs({ withFragment: `fragment EnsureId on Reservation {id}` })
     args
   ) {
-    return await this.queryUtils.resolveFindMany(args, "Reservation")
+    return await this.queryUtils.resolveFindMany(
+      { orderBy: { createdAt: "desc" }, ...args },
+      "Reservation"
+    )
   }
 
   @Query()
   async reservationsConnection(@Args() args, @Select() select) {
     return await this.queryUtils.resolveConnection(
-      { ...args, select },
+      { orderBy: "createdAt_DESC", ...args, select },
       "Reservation"
     )
   }

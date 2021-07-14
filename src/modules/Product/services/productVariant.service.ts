@@ -186,7 +186,7 @@ export class ProductVariantService {
     ]
   }
 
-  async updateCountsForStatusChange({
+  getUpdateCountsForStatusChangePromise({
     productVariant,
     oldInventoryStatus,
     newInventoryStatus,
@@ -201,7 +201,7 @@ export class ProductVariantService {
       newInventoryStatus,
     })
 
-    return await this.prisma.client2.productVariant.update({
+    return this.prisma.client2.productVariant.update({
       where: { id: productVariant.id },
       data,
     })
@@ -230,28 +230,6 @@ export class ProductVariantService {
     }
   }
 
-  async getManufacturerSizeIDs(variant, type): Promise<{ id: string }[]> {
-    const IDs =
-      variant.manufacturerSizeNames &&
-      (await Promise.all(
-        variant.manufacturerSizeNames?.map(async sizeValue => {
-          if (!variant.sku) {
-            throw new Error("No variant sku present in getManufacturerSizeIDs")
-          }
-          const sizeType = variant.manufacturerSizeType
-          const slug = `${variant.sku}-manufacturer-${sizeType}-${sizeValue}`
-          const size = await this.productUtils.deepUpsertSize({
-            slug,
-            type,
-            display: sizeValue,
-            sizeType,
-          })
-          return { id: size.id }
-        })
-      ))
-    return IDs as { id: string }[]
-  }
-
   async updateProductVariant(input, select): Promise<ProductVariant> {
     const {
       id,
@@ -272,11 +250,21 @@ export class ProductVariantService {
       select: {
         internalSize: { select: { id: true, display: true, type: true } },
         manufacturerSizes: { select: { slug: true } },
+        productID: true,
         id: true,
         sku: true,
+        product: {
+          select: {
+            category: { select: { measurementType: true } },
+          },
+        },
       },
     })
     const prodVar = this.prisma.sanitizePayload(_prodVar, "ProductVariant")
+
+    // FIXME: Can remove the ts-ignore below once we convert full to prisma2
+    // @ts-ignore
+    const measurementType = prodVar.product?.category?.measurementType
 
     let manufacturerSizes
     let displayShort
@@ -299,14 +287,35 @@ export class ProductVariantService {
       )
     }
 
+    const measurements = pick(input, [
+      "sleeve",
+      "shoulder",
+      "chest",
+      "neck",
+      "length",
+      "waist",
+      "rise",
+      "hem",
+      "inseam",
+      "bridge",
+      "width",
+    ])
+
+    Object.keys(measurements).forEach(key => {
+      measurements[key] = this.productUtils.convertMeasurementSizeToInches(
+        measurements[key],
+        measurementType
+      )
+    })
+
     const topSizeValues = {
-      ...pick(input, ["sleeve", "shoulder", "chest", "neck", "length"]),
+      ...pick(measurements, ["sleeve", "shoulder", "chest", "neck", "length"]),
     }
     const accessorySizeValues = {
-      ...pick(input, ["bridge", "length", "width"]),
+      ...pick(measurements, ["bridge", "length", "width"]),
     }
     const bottomSizeValues = {
-      ...pick(input, ["waist", "rise", "hem", "inseam"]),
+      ...pick(measurements, ["waist", "rise", "hem", "inseam"]),
     }
     const updateData = Prisma.validator<Prisma.ProductVariantUpdateInput>()({
       internalSize: {

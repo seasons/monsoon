@@ -1,32 +1,19 @@
 import "module-alias/register"
 
-import * as util from "util"
-
-import { PrismaSelect } from "@paljs/plugins"
-import { Prisma, prisma } from "@prisma/client"
-import cuid from "cuid"
-import { head } from "lodash"
-import zipcodes from "zipcodes"
-
-import { DripService } from "../../modules/Drip/services/drip.service"
-import { QueryUtilsService } from "../../modules/Utils/services/queryUtils.service"
 import { PrismaService } from "../../prisma/prisma.service"
-
-const context = {
-  modelFieldsByModelName: new PrismaSelect(null).dataModel.reduce(
-    (accumulator, currentModel) => {
-      accumulator[currentModel.name] = currentModel.fields
-      return accumulator
-    },
-    {}
-  ),
-}
 
 const run = async () => {
   const ps = new PrismaService()
-  const bagItems = await ps.client2.bagItem.findMany({
-    where: { productVariantId: undefined },
+  const customerID = "ckixg05o306ze0750gl0pi46k"
+  const x = await ps.client2.customer.findUnique({
+    where: { id: "ck2pbxqti003x0703lqn4vo30" },
+    select: {
+      reservations: {
+        select: { id: true },
+        where: { id: "ckl8b3m5x2s330709513rberu" },
+      },
+    },
   })
-  console.log(bagItems)
+  console.log(x)
 }
 run()

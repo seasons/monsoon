@@ -1,5 +1,6 @@
 import "module-alias/register"
 
+import { Subscription } from "@nestjs/graphql"
 import sgMail from "@sendgrid/mail"
 import chargebee from "chargebee"
 
@@ -27,6 +28,8 @@ import { ProductVariantService } from "../../modules/Product/services/productVar
 import { PusherService } from "../../modules/PushNotification/services/pusher.service"
 import { PushNotificationDataProvider } from "../../modules/PushNotification/services/pushNotification.data.service"
 import { PushNotificationService } from "../../modules/PushNotification/services/pushNotification.service"
+import { AlgoliaService } from "../../modules/Search/services/algolia.service"
+import { SearchService } from "../../modules/Search/services/search.service"
 import { ShippingService } from "../../modules/Shipping/services/shipping.service"
 import { ShopifyService } from "../../modules/Shopify/services/shopify.service"
 import { SMSService } from "../../modules/SMS/services/sms.service"
@@ -162,18 +165,20 @@ const run = async () => {
     physicalProductService,
     error
   )
-  const productsJobService = new ProductScheduledJobs(
+  const searchService = new SearchService(ps, new AlgoliaService(), image)
+  const subscriptionJobs = new SubscriptionsScheduledJobs(
     ps,
-    utils,
-    physicalProductUtilsService
+    error,
+    paymentUtils
   )
+  // await searchService.indexData()
   // await reservationsJobService.sendReturnNotifications()
   // await marketingJobService.syncEventsToImpact()
   // await marketingJobService.syncCustomersToDrip()
-  // await membershipService.updatePausePendingToPaused()
+  await membershipService.manageMembershipResumes()
   // await shopifyJobService.importProductVariantsForShopifyShops()
   // await logsJobService.interpretPhysicalProductLogs()
-  await productsJobService.updateProductFields()
+  // await productsJobService.updateProductFields()
 }
 
 run()
