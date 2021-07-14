@@ -107,7 +107,7 @@ enum ReservationStatus {
   Hold # For internal use, when ops needs to delay processing
   Blocked # Used when shippo indicates the delivery is blocked
   Unknown
-
+  Lost
   Received
 }
 
