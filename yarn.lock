@@ -5444,7 +5444,7 @@ cucumber-html-reporter@^3.0.4:
     lodash "^4.17.2"
     open "0.0.5"
 
-cuid@^2.1.8:
+cuid@2.1.8:
   version "2.1.8"
   resolved "https://registry.yarnpkg.com/cuid/-/cuid-2.1.8.tgz#cbb88f954171e0d5747606c0139fb65c5101eac0"
   integrity sha512-xiEMER6E7TlTPnDxrM4eRiC6TRgjNX9xzEZ5U/Se2YJKr7Mq4pJn/2XEHjl3STcSh96GmkHPcBXLES8M29wyyg==
@@ -5498,7 +5498,7 @@ dayjs@^1.8.21:
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.5.tgz#5600df4548fc2453b3f163ebb2abbe965ccfb986"
   integrity sha512-BUFis41ikLz+65iH6LHQCDm4YPMj5r1YFLdupPIyM4SGcXMmtiLQ7U37i+hGS8urIuqe7I/ou3IS1jVc4nbN4g==
 
-dd-trace@^1.0.0:
+dd-trace@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/dd-trace/-/dd-trace-1.0.0.tgz#33bb92aaa491b1eabfd20ab0f8504507266c4f96"
   integrity sha512-cbilNBik/wqRq6gsphLqux9WMOnkqBV+OJozCpecJNsfCZ0NITbqAEfGODtXtef0s2j/sIQx9cF5J+Ipbf+uJw==
@@ -10956,7 +10956,7 @@ neo-async@^2.6.0, neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-nest-winston@^1.5.0:
+nest-winston@1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/nest-winston/-/nest-winston-1.5.0.tgz#2a1d8c5e7f7abc933f10cd80e05548d03b63684b"
   integrity sha512-hjJOZrzLbHe5BsN00OIi9Y7lT3ZMT4HX/1SbA5oKS0SkbjvvwxavpUz3N9itL6Oznh0B7JVjUXZLLK8aGULL0w==
@@ -15134,7 +15134,7 @@ winston-transport@^4.4.0:
     readable-stream "^2.3.7"
     triple-beam "^1.2.0"
 
-winston@^3.3.3:
+winston@3.3.3:
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/winston/-/winston-3.3.3.tgz#ae6172042cafb29786afa3d09c8ff833ab7c9170"
   integrity sha512-oEXTISQnC8VlSAKf1KYSSd7J6IWuRPQqDdo8eoRNaYKLvwSb5+79Z3Yi1lrl6KDpU6/VWaxpakDAtb1oQ4n9aw==
