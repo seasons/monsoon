@@ -186,7 +186,7 @@ export class ProductVariantService {
     ]
   }
 
-  async updateCountsForStatusChange({
+  getUpdateCountsForStatusChangePromise({
     productVariant,
     oldInventoryStatus,
     newInventoryStatus,
@@ -201,7 +201,7 @@ export class ProductVariantService {
       newInventoryStatus,
     })
 
-    return await this.prisma.client2.productVariant.update({
+    return this.prisma.client2.productVariant.update({
       where: { id: productVariant.id },
       data,
     })

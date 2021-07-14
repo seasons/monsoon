@@ -678,7 +678,7 @@ export class ProductService {
       imageUrls = imageDatas.map(a => a.url)
     }
 
-    const prismaTwoUpdateData = this.queryUtils.prismaOneToPrismaTwoMutateArgs(
+    const prismaTwoUpdateData = this.queryUtils.prismaOneToPrismaTwoMutateData(
       { ...updateData, styles: { set: updateData.styles } },
       product,
       "Product",
@@ -795,32 +795,47 @@ export class ProductService {
    * Checks if all downstream physical products have been offloaded.
    * If so, marks the product as offloaded.
    */
-  async offloadProductIfAppropriate(id: ID_Input) {
-    const prodWithPhysicalProducts = await this.prisma.binding.query.product(
-      { where: { id } },
-      `{
-        status
-        variants {
-          physicalProducts {
-            inventoryStatus
-          }
-        }
-       }`
+  async getOffloadProductPromiseIfNeeded(
+    productId: string,
+    physProdCurrentlyOffloadingId: string
+  ) {
+    const _prodWithPhysicalProducts = await this.prisma.client2.product.findUnique(
+      {
+        where: { id: productId },
+        select: {
+          status: true,
+          variants: {
+            select: {
+              physicalProducts: { select: { id: true, inventoryStatus: true } },
+            },
+          },
+        },
+      }
+    )
+    const prodWithPhysicalProducts = this.prisma.sanitizePayload(
+      _prodWithPhysicalProducts,
+      "Product"
     )
     const downstreamPhysProds = this.productUtils.physicalProductsForProduct(
-      prodWithPhysicalProducts as ProductWithPhysicalProducts
+      (prodWithPhysicalProducts as unknown) as ProductWithPhysicalProducts
     )
     const allPhysProdsOffloaded = downstreamPhysProds.reduce(
-      (acc, curPhysProd: { inventoryStatus: InventoryStatus }) =>
-        acc && curPhysProd.inventoryStatus === "Offloaded",
+      (acc, curPhysProd: { id: string; inventoryStatus: InventoryStatus }) =>
+        acc &&
+        (curPhysProd.inventoryStatus === "Offloaded" ||
+          curPhysProd.id === physProdCurrentlyOffloadingId),
       true
     )
     if (allPhysProdsOffloaded) {
-      await this.prisma.client.updateProduct({
-        where: { id },
-        data: { status: "Offloaded" },
-      })
+      return {
+        promise: this.prisma.client2.product.update({
+          where: { id: productId },
+          data: { status: "Offloaded" },
+        }),
+      }
     }
+
+    return { promise: null }
   }
 
   // })
