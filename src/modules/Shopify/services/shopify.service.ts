@@ -712,7 +712,7 @@ export class ShopifyService {
             productVariant?.product?.images.edges?.[0]?.node?.transformedSrc
 
           const image = !!imageSrc
-            ? await this.prisma.client.upsertImage({
+            ? await this.prisma.client2.image.upsert({
                 where: {
                   url: imageSrc,
                 },
@@ -758,15 +758,17 @@ export class ShopifyService {
                 seconds: PRODUCT_VARIANT_CACHE_SECONDS,
               })
               .toISO(),
-          } as ShopifyProductVariantUpdateInput
+          }
 
-          const result = await this.prisma.client.upsertShopifyProductVariant({
-            where: {
-              externalId: productVariant.id,
-            },
-            create: data,
-            update: data,
-          })
+          const result = await this.prisma.client2.shopifyProductVariant.upsert(
+            {
+              where: {
+                externalId: productVariant.id,
+              },
+              create: data,
+              update: data,
+            }
+          )
           shopifyProductVariantResults.push(result)
         } catch (e) {
           console.error(

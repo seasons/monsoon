@@ -42,8 +42,8 @@ export class ShopifyMutationsResolver {
 
   @Mutation()
   async importShopifyData(@Args() { shopName, ids }) {
-    const shopifyShop = await this.prisma.client.shopifyShop({
-      shopName,
+    const shopifyShop = await this.prisma.client2.shopifyShop.findUnique({
+      where: { shopName },
     })
 
     await this.shopify.importProductVariants({

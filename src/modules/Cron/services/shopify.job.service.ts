@@ -17,24 +17,27 @@ export class ShopifyScheduledJobs {
     this.logger.log(
       "Run import product variants for external shopify integrations"
     )
-    const shopifyShops = await this.prisma.client.shopifyShops({
+    const _shopifyShops = await this.prisma.client2.shopifyShop.findMany({
       where: {
-        accessToken_not: null,
-        AND: {
-          shopName_not: null,
-        },
+        accessToken: { not: undefined },
+        shopName: { not: undefined },
       },
     })
+    const shopifyShops = this.prisma.sanitizePayload(
+      _shopifyShops,
+      "ShopifyShop"
+    )
 
     for (const { shopName, accessToken, id } of shopifyShops) {
-      const brands = await this.prisma.client.brands({
+      const brand = await this.prisma.client2.brand.findFirst({
         where: {
           shopifyShop: { id },
         },
+        select: { id: true },
       })
 
-      if (!brands || brands.length === 0) {
-        this.logger.log(`Unable to find brand for ShopifyShop: ${id}`)
+      if (!brand) {
+        this.logger.log(`Unable to find brand for ShopifyShop: ${shopName}`)
         continue
       }
 
@@ -42,10 +45,12 @@ export class ShopifyScheduledJobs {
         await this.shopify.importProductVariants({
           shopName,
           accessToken,
-          brandId: brands[0].id,
+          brandId: brand.id,
         })
       } catch (error) {
-        this.logger.log(`failed to import product variants: ${error}`)
+        this.logger.log(
+          `failed to import product variants: ${JSON.stringify(error)}`
+        )
       }
 
       this.logger.log(`imported product variants for ${shopName}`)
