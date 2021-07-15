@@ -56,31 +56,6 @@ export class AdmissionsService {
     ))
   }
 
-  async hasSupportedPlatform(
-    where: CustomerWhereUniqueInput,
-    application: ApplicationType
-  ): Promise<TriageFuncResult> {
-    const customer = await this.prisma.binding.query.customer(
-      {
-        where,
-      },
-      `{
-        id
-        detail {
-          phoneOS
-        }
-      }`
-    )
-
-    const phoneOS =
-      application === "harvest" ? "iOS" : customer?.detail?.phoneOS
-
-    return {
-      pass: phoneOS === "iOS",
-      detail: customer.detail,
-    }
-  }
-
   zipcodeAllowed(zipcode: string): ZipcodeAllowedResult {
     const state = zipcodes.lookup(zipcode.trim())?.state
     const allServiceableStates = [
@@ -103,21 +78,19 @@ export class AdmissionsService {
     let pass = true
     let detail = {}
 
-    const emailsSent = await this.prisma.binding.query.emailReceipts(
-      {
-        where: {
-          emailId_in: ["WelcomeToSeasons", "CompleteAccount", "PriorityAccess"],
+    const emailsSent = await this.prisma.client2.emailReceipt.findMany({
+      where: {
+        emailId: {
+          in: ["WelcomeToSeasons", "CompleteAccount", "PriorityAccess"],
         },
-        orderBy: "createdAt_DESC",
       },
-      `{
-        emailId
-        createdAt
-        user {
-          id
-        }
-      }`
-    )
+      orderBy: { createdAt: "desc" },
+      select: {
+        emailId: true,
+        createdAt: true,
+        user: { select: { id: true } },
+      },
+    })
     const now = moment()
     const emailsSentPastWeek = emailsSent.filter(a => {
       const numDaysSinceEmailSent = now.diff(moment(a.createdAt), "days")

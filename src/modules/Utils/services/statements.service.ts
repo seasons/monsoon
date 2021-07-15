@@ -1,6 +1,6 @@
-import { Customer, Reservation as PrismaOneReservation } from "@app/prisma"
+import { Reservation as PrismaOneReservation } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
-import { Reservation } from "@prisma/client"
+import { Customer, Reservation } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 
 @Injectable()

@@ -241,23 +241,15 @@ export class EmailService {
   }
 
   async sendSubscribedEmail(user: EmailUser) {
-    const cust = head(
-      await this.prisma.binding.query.customers(
-        {
-          where: { user: { id: user.id } },
+    const _cust = await this.prisma.client2.customer.findFirst({
+      where: { user: { id: user.id } },
+      select: {
+        membership: {
+          select: { plan: { select: { planID: true, itemCount: true } } },
         },
-        `
-      {
-        membership {
-          plan {
-            planID
-            itemCount
-          }
-        }
-      }
-      `
-      )
-    ) as any
+      },
+    })
+    const cust = this.prisma.sanitizePayload(_cust, "Customer")
     const payload = await RenderEmail.subscribed({
       name: user.firstName,
       planId: cust.membership?.plan?.planID,
@@ -270,16 +262,23 @@ export class EmailService {
     })
   }
 
-  async sendPausedEmail(customer: Customer, isExtension: boolean) {
+  async sendPausedEmail(customer, isExtension: boolean) {
     const latestPauseRequest = this.utils.getLatestPauseRequest(customer)
     const latestReservation = this.utils.getLatestReservation(customer)
     const withItems = latestPauseRequest.pauseType === "WithItems"
     let pausedWithItemsPrice
+
     if (withItems) {
       const planID = this.utils.getPauseWithItemsPlanId(customer.membership)
-      pausedWithItemsPrice = await this.prisma.client
-        .paymentPlan({ planID })
-        .price()
+      pausedWithItemsPrice = (
+        await this.prisma.client2.paymentPlan.findFirst({
+          where: { planID },
+          select: {
+            id: true,
+            price: true,
+          },
+        })
+      ).price
     }
 
     const data = {
@@ -547,7 +546,7 @@ export class EmailService {
       where: { user: { id: user.id } },
       select: { id: true },
     })
-    await this.prisma.client.updateCustomer({
+    await this.prisma.client2.customer.update({
       where: { id: customer.id },
       data: {
         emailedProducts: {

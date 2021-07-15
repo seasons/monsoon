@@ -1,10 +1,8 @@
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { PhysicalProduct } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { makeWherePrisma2Compatible } from "@prisma/binding-argument-transform"
-import { head } from "lodash"
 
 import { PhysicalProductService } from "../services/physicalProduct.service"
 

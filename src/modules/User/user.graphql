@@ -163,7 +163,7 @@ type User {
   customer: Customer
   createdAt: DateTime!
   updatedAt: DateTime!
-  completeAccountURL: String!
+  completeAccountURL: String! @deprecated(reason: "No longer in use")
   pushNotifications: [PushNotificationReceipt!]
   pushNotificationStatus: PushNotificationStatus!
   pushNotification: UserPushNotification

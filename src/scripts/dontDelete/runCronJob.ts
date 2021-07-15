@@ -9,6 +9,7 @@ import { AdmissionsScheduledJobs } from "../../modules/Cron/services/admissions.
 import { LogsScheduledJobs } from "../../modules/Cron/services/logs.job.service"
 import { MarketingScheduledJobs } from "../../modules/Cron/services/marketing.job.service"
 import { MembershipScheduledJobs } from "../../modules/Cron/services/membership.job.service"
+import { ProductScheduledJobs } from "../../modules/Cron/services/product.job.service"
 import { ReservationScheduledJobs } from "../../modules/Cron/services/reservations.job.service"
 import { ShopifyScheduledJobs } from "../../modules/Cron/services/shopify.job.service"
 import { SubscriptionsScheduledJobs } from "../../modules/Cron/services/subscriptions.job.service"
