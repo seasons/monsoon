@@ -55,7 +55,7 @@ export class ChargebeeController {
 
   private async chargebeePaymentSucceeded(content: any) {
     const { subscription, customer, transaction } = content
-    const custWithData = await this.prisma.client2.customer.findFirst({
+    const _custWithData = await this.prisma.client2.customer.findFirst({
       where: { user: { id: customer.id } },
       select: {
         id: true,
@@ -75,6 +75,7 @@ export class ChargebeeController {
         },
       },
     })
+    const custWithData = this.prisma.sanitizePayload(_custWithData, "Customer")
 
     if (custWithData?.status === "PaymentFailed") {
       let newStatus: CustomerStatus = subscription.plan_id.includes("pause")
