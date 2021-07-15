@@ -143,7 +143,10 @@ export class PaymentService {
           .request()
       }
 
-      return shippingOption.id
+      return {
+        _shippingOptionID: shippingOption.id,
+        price: shippingOption.externalCost,
+      }
     } catch (e) {
       this.error.setExtraContext({ shippingCode })
       this.error.setExtraContext(customer, "customer")

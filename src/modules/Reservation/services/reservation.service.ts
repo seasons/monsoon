@@ -22,6 +22,7 @@ import {
   AdminActionLog,
   ID_Input,
   InventoryStatus,
+  OrderLineItemCreateInput,
   PhysicalProduct,
   PhysicalProductStatus,
   ReservationStatus,
@@ -180,11 +181,25 @@ export class ReservationService {
 
     // Create one time charge for shipping addon
     let shippingOptionID
+    let shippingLineItems = []
     if (!!shippingCode) {
-      shippingOptionID = await this.payment.addShippingCharge(
+      const { _shippingOptionID, price } = await this.payment.addShippingCharge(
         customer,
         shippingCode
       )
+      shippingOptionID = _shippingOptionID
+      if (shippingCode === "UPSSelect" && shippingOptionID) {
+        shippingLineItems = [
+          {
+            recordID: shippingOptionID,
+            price,
+            currencyCode: "USD",
+            recordType: "Package",
+            name: "UPS Select shipping",
+            taxPrice: 0,
+          },
+        ]
+      }
     }
 
     // Fetch the nextFreeSwapDate BEFORE creating the reservation or we'll get an incorrect value
@@ -219,10 +234,15 @@ export class ReservationService {
     const result = await this.prisma.client2.$transaction(promises.flat())
 
     const reservation = result.pop()
-    await this.addEarlySwapIfNeeded(
+    const earlySwapLineItems = await this.addEarlySwapLineItemsIfNeeded(
       reservation.id,
       customer.id,
       nextFreeSwapDate
+    )
+
+    await this.addLineItemsToReservation(
+      [...earlySwapLineItems, ...shippingLineItems],
+      reservation.id
     )
 
     // Send confirmation email
@@ -245,33 +265,45 @@ export class ReservationService {
     return reservation
   }
 
-  async addEarlySwapIfNeeded(reservationID, customerID, nextFreeSwapDate) {
+  async addLineItemsToReservation(lineItems, reservationID: string) {
+    if (lineItems?.length > 0 && reservationID) {
+      await this.prisma.client2.reservation.update({
+        where: { id: reservationID },
+        data: {
+          lineItems: {
+            create: lineItems,
+          },
+        },
+      })
+    }
+  }
+
+  async addEarlySwapLineItemsIfNeeded(
+    reservationID,
+    customerID,
+    nextFreeSwapDate
+  ): Promise<OrderLineItemCreateInput[]> {
     const doesNotHaveFreeSwap =
       nextFreeSwapDate && DateTime.fromISO(nextFreeSwapDate) > DateTime.local()
 
     if (doesNotHaveFreeSwap && reservationID) {
       const swapCharge = await this.payment.addEarlySwapCharge(customerID)
-      try {
-        await this.prisma.client2.reservation.update({
-          where: { id: reservationID },
-          data: {
-            lineItems: {
-              create: [
-                {
-                  recordID: reservationID,
-                  price: swapCharge.invoice.sub_total,
-                  currencyCode: "USD",
-                  recordType: "EarlySwap",
-                  name: "Early swap",
-                  taxPrice: swapCharge?.invoice?.tax || 0,
-                },
-              ],
-            },
+      if (swapCharge?.invoice) {
+        return [
+          {
+            recordID: reservationID,
+            price: swapCharge.invoice.sub_total,
+            currencyCode: "USD",
+            recordType: "EarlySwap",
+            name: "Early swap",
+            taxPrice: swapCharge?.invoice?.tax || 0,
           },
-        })
-      } catch (e) {
-        this.error.captureError(e)
+        ]
+      } else {
+        return []
       }
+    } else {
+      return []
     }
   }
 
