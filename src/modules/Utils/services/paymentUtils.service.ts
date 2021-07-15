@@ -72,24 +72,31 @@ export class PaymentUtilsService {
   }
 
   async updateResumeDate(date, customer) {
-    const customerWithMembership = await this.prisma.binding.query.customer(
-      { where: { id: customer.id } },
-      `
-        {
-          id
-          membership {
-            id
-            pauseRequests(orderBy: createdAt_DESC) {
-              id
-            }
-          }
-        }
-      `
+    const _customerWithMembership = await this.prisma.client2.customer.findUnique(
+      {
+        where: { id: customer.id },
+        select: {
+          id: true,
+          membership: {
+            select: {
+              id: true,
+              pauseRequests: {
+                select: { id: true },
+                orderBy: { createdAt: "desc" },
+              },
+            },
+          },
+        },
+      }
+    )
+    const customerWithMembership = this.prisma.sanitizePayload(
+      _customerWithMembership,
+      "Customer"
     )
 
     const pauseRequest = customerWithMembership.membership?.pauseRequests?.[0]
 
-    await this.prisma.client.updatePauseRequest({
+    await this.prisma.client2.pauseRequest.update({
       where: { id: pauseRequest?.id || "" },
       data: { resumeDate: date },
     })

@@ -1,12 +1,8 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { PhysicalProduct } from "@app/prisma"
-import {
-  PrismaTwoDataLoader,
-  PrismaTwoLoader,
-} from "@app/prisma/prisma2.loader"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"
-import { PrismaDataLoader } from "@prisma1/prisma.loader"
 
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
 
@@ -20,7 +16,6 @@ export class PhysicalProductFieldsResolver {
   async barcode(
     @Parent() physicalProduct,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "PhysicalProduct",
         select: Prisma.validator<Prisma.PhysicalProductSelect>()({
@@ -43,7 +38,6 @@ export class PhysicalProductFieldsResolver {
   async adminLogs(
     @Parent() physicalProduct,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: `AdminActionLog`,
         formatWhere: keys =>
@@ -59,7 +53,7 @@ export class PhysicalProductFieldsResolver {
       },
       includeInfo: true,
     })
-    logsLoader: PrismaTwoDataLoader
+    logsLoader: PrismaDataLoader
   ) {
     const logs = await logsLoader.load(physicalProduct.id)
     return logs
@@ -69,7 +63,6 @@ export class PhysicalProductFieldsResolver {
   async reservations(
     @Parent() physicalProduct,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "Reservation",
         formatWhere: ids => ({

@@ -67,29 +67,31 @@ export class DataCommands {
       prismaEnv,
       moduleRef: this.moduleRef,
     })
-    const physProd = await this.prisma.client.physicalProduct({ seasonsUID })
+    const physProd = await this.prisma.client2.physicalProduct.findUnique({
+      where: { seasonsUID },
+    })
     if (!physProd) {
       this.logger.error(
         `No Physical Product found with seasonsUID: ${seasonsUID}`
       )
       return
     }
-    const reservations = await this.prisma.binding.query.reservations(
-      {
-        where: { products_some: { seasonsUID } },
-        orderBy: "createdAt_ASC",
+    const _reservations = await this.prisma.client2.reservation.findMany({
+      where: { products: { some: { seasonsUID } } },
+      orderBy: { createdAt: "asc" },
+      select: {
+        status: true,
+        reservationNumber: true,
+        createdAt: true,
+        updatedAt: true,
+        customer: {
+          select: { user: { select: { email: true } } },
+        },
       },
-      `{
-        status
-        reservationNumber
-        createdAt
-        updatedAt
-        customer {
-          user {
-            email
-          }
-        }
-      }`
+    })
+    const reservations = this.prisma.sanitizePayload(
+      _reservations,
+      "Reservation"
     )
     const formattedReservations = reservations.map(a => ({
       ...pick(a, [

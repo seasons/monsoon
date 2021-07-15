@@ -143,7 +143,7 @@ describe.only("Customer Service", () => {
             // Had some issues hooking up the RenderEmail stuff from wind
             expect(sendAuthorizedEmail).toBeCalledTimes(1)
           } else if (oldStatus == "Invited") {
-            const emailReceipts = await prisma.client.emailReceipts({
+            const emailReceipts = await prisma.client2.emailReceipt.findMany({
               where: {
                 user: { id: newCustomer.user.id },
               },
@@ -160,11 +160,11 @@ describe.only("Customer Service", () => {
 
         expect(newCustomer.plan).toEqual(newPlan)
 
-        await prisma.client.deleteManyPushNotificationReceipts({
-          users_some: { id: newCustomer.user.id },
+        await prisma.client2.pushNotificationReceipt.deleteMany({
+          where: { users: { some: { id: newCustomer.user.id } } },
         })
-        await prisma.client.deleteManyEmailReceipts({
-          user: { id: newCustomer.user.id },
+        await prisma.client2.emailReceipt.deleteMany({
+          where: { user: { id: newCustomer.user.id } },
         })
         await cleanupFunc()
       }
@@ -184,7 +184,9 @@ describe.only("Customer Service", () => {
           status: "Created",
         })
 
-        const user = await prisma.client.user({ id: customer.user.id })
+        const user = await prisma.client2.user.findUnique({
+          where: { id: customer.user.id },
+        })
         const newCustomer: any = await customerService.addCustomerDetails(
           {
             details: {

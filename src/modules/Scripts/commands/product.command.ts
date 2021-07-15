@@ -31,12 +31,15 @@ export class ProductCommands {
       moduleRef: this.moduleRef,
     })
 
-    const reservableProductVariants = await this.prisma.client.productVariants({
-      where: {
-        reservable_gt: 0,
-        physicalProducts_some: { inventoryStatus: "Reservable" },
-      },
-    })
+    const reservableProductVariants = await this.prisma.client2.productVariant.findMany(
+      {
+        where: {
+          reservable: { gt: 0 },
+          physicalProducts: { some: { inventoryStatus: "Reservable" } },
+        },
+        select: { id: true },
+      }
+    )
 
     if (reservableProductVariants.length < 3) {
       this.logger.error(

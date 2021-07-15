@@ -17,7 +17,7 @@ import { head, pick, sampleSize, uniq } from "lodash"
 import { PrismaService } from "../../../prisma/prisma.service"
 
 export type MonsoonProductGridItem = ProductGridItem & {
-  id: ID_Input
+  id: string
 }
 
 export type ProductWithEmailData = Pick<

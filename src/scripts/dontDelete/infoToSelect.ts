@@ -55,7 +55,7 @@ const run = () => {
     image {
       url
     }
-  }` // Insert your info string
+  }`
   infoToSelect(info)
 }
 

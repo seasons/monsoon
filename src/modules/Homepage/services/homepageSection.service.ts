@@ -7,42 +7,29 @@ import { PrismaService } from "@prisma1/prisma.service"
 
 import { SectionTitle } from "./homepage.service"
 
-// FIXME: This is being used because currently info is lacking the __typename, add __typename to info
-const ProductFragment = `
-{
-  __typename
-  id
-  slug
-  name
-  retailPrice
-  images {
-    id
-    url
-  }
-  brand {
-    id
-    name
-  }
-  variants {
-    id
-    reservable
-    internalSize {
-      top {
-        letter
-      }
-      bottom {
-        type
-        value
-      }
-      productType
-      display
-    }
-  }
-  color {
-    name
-  }
+const ProductSelect = {
+  id: true,
+  slug: true,
+  name: true,
+  retailPrice: true,
+  images: { select: { id: true, url: true } },
+  brand: { select: { id: true, name: true } },
+  variants: {
+    select: {
+      id: true,
+      reservable: true,
+      internalSize: {
+        select: {
+          top: { select: { letter: true } },
+          bottom: { select: { type: true, value: true } },
+          productType: true,
+          display: true,
+        },
+      },
+    },
+  },
+  color: { select: { name: true } },
 }
-`
 
 @Injectable()
 export class HomepageSectionService {
@@ -58,19 +45,18 @@ export class HomepageSectionService {
     customerId?
   ) {
     if (!!tagData?.tagName) {
-      return await this.prisma.binding.query.products(
-        {
-          where: {
-            AND: [
-              { tags_some: { name: tagData.tagName } },
-              { status: "Available" },
-            ],
-          },
-          orderBy: "updatedAt_DESC",
-          first: 10,
+      const _products = await this.prisma.client2.product.findMany({
+        where: {
+          AND: [
+            { tags: { some: { name: tagData.tagName } } },
+            { status: "Available" },
+          ],
         },
-        ProductFragment
-      )
+        orderBy: { updatedAt: "desc" },
+        take: 10,
+        select: ProductSelect,
+      })
+      return this.prisma.sanitizePayload(_products, "Product")
     }
 
     switch (sectionTitle) {
@@ -78,26 +64,27 @@ export class HomepageSectionService {
         if (!customerId) {
           return []
         }
-        const viewedProducts = await this.prisma.binding.query.recentlyViewedProducts(
+        const _viewedProducts = await this.prisma.client2.recentlyViewedProduct.findMany(
           {
             where: { customer: { id: customerId } },
-            orderBy: "updatedAt_DESC",
-            first: 10,
-          },
-          `{
-            updatedAt
-            product ${ProductFragment}
-          }`
+            orderBy: { updatedAt: "desc" },
+            take: 10,
+            select: { updatedAt: true, product: { select: ProductSelect } },
+          }
+        )
+        const viewedProducts = this.prisma.sanitizePayload(
+          _viewedProducts,
+          "RecentlyViewedProduct"
         )
         return viewedProducts.map(viewedProduct => viewedProduct.product)
 
       case SectionTitle.Designers:
-        const brands = await this.prisma.binding.query.brands(
-          {
-            ...args,
-            orderBy: "name_ASC",
-            where: {
-              slug_in: [
+        const brands = await this.prisma.client2.brand.findMany({
+          ...args,
+          orderBy: { name: "asc" },
+          where: {
+            slug: {
+              in: [
                 "acne-studios",
                 "amiri",
                 "auralee",
@@ -131,13 +118,8 @@ export class HomepageSectionService {
               ],
             },
           },
-          `{
-            __typename
-            id
-            name
-            since
-          }`
-        )
+          select: { id: true, name: true, since: true },
+        })
         return brands
 
       case SectionTitle.Categories:
@@ -161,9 +143,9 @@ export class HomepageSectionService {
           sweatshirts: "homepage-categories/Sweatshirts.jpg",
           shorts: "homepage-categories/Shorts.jpg",
         }
-        const categories = await this.prisma.binding.query.categories({
+        const categories = await this.prisma.client2.category.findMany({
           where: {
-            slug_in: categorySlugs,
+            slug: { in: categorySlugs },
           },
         })
         const categoriesWithImages = await Promise.all(

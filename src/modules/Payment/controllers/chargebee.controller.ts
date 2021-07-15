@@ -55,40 +55,33 @@ export class ChargebeeController {
 
   private async chargebeePaymentSucceeded(content: any) {
     const { subscription, customer, transaction } = content
-    const custWithData: any = head(
-      await this.prisma.binding.query.customers(
-        { where: { user: { id: customer.id } } },
-        `
-        {
-          id
-          status
-          detail {
-            id
-            impactId
-          }
-          user {
-            id
-            firstName
-            lastName
-            email
-          }
-          utm {
-            source
-            medium
-            campaign
-            term
-            content
-          }
-        }
-      `
-      )
-    )
+    const _custWithData = await this.prisma.client2.customer.findFirst({
+      where: { user: { id: customer.id } },
+      select: {
+        id: true,
+        status: true,
+        detail: { select: { id: true, impactId: true } },
+        user: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        utm: {
+          select: {
+            source: true,
+            medium: true,
+            campaign: true,
+            term: true,
+            content: true,
+          },
+        },
+      },
+    })
+    const custWithData = this.prisma.sanitizePayload(_custWithData, "Customer")
 
     if (custWithData?.status === "PaymentFailed") {
       let newStatus: CustomerStatus = subscription.plan_id.includes("pause")
         ? "Paused"
         : "Active"
-      await this.prisma.client.updateCustomer({
+      await this.prisma.client2.customer.update({
         where: { id: custWithData.id },
         data: { status: newStatus },
       })
@@ -116,7 +109,7 @@ export class ChargebeeController {
       impactId: custWithData.detail?.impactId,
       impactCustomerStatus: isRecurringSubscription ? "Existing" : null,
       text1: isRecurringSubscription ? "isRecurringSubscription" : "null",
-      ...this.utils.formatUTMForSegment(custWithData.utm),
+      ...this.utils.formatUTMForSegment(custWithData.utm as any),
     })
   }
 
@@ -129,25 +122,18 @@ export class ChargebeeController {
     }
 
     const userId = customer?.id
-    const cust = head(
-      await this.prisma.binding.query.customers(
-        {
-          where: { user: { id: userId } },
-        },
-        `{
-        id
-        status
-        user {
-          id
-          email
-          firstName
-        }
-      }`
-      )
-    ) as any
+    const _cust = await this.prisma.client2.customer.findFirst({
+      where: { user: { id: userId } },
+      select: {
+        id: true,
+        status: true,
+        user: { select: { id: true, email: true, firstName: true } },
+      },
+    })
+    const cust = this.prisma.sanitizePayload(_cust, "Customer")
     if (!!cust) {
       if (this.statements.isPayingCustomer(cust)) {
-        await this.prisma.client.updateCustomer({
+        await this.prisma.client2.customer.update({
           where: { id: cust.id },
           data: { status: "PaymentFailed" },
         })

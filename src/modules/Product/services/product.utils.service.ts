@@ -474,8 +474,8 @@ export class ProductUtilsService {
           slug: category.model.slug,
         },
       },
-    } as ProductMaterialCategoryCreateInput
-    return await this.prisma.client.upsertProductMaterialCategory({
+    } as Prisma.ProductMaterialCategoryCreateInput
+    return await this.prisma.client2.productMaterialCategory.upsert({
       where: { slug: material.model.name },
       create: data,
       update: data,

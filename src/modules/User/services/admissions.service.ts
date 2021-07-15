@@ -57,20 +57,13 @@ export class AdmissionsService {
   }
 
   async hasSupportedPlatform(
-    where: CustomerWhereUniqueInput,
+    where: Prisma.CustomerWhereUniqueInput,
     application: ApplicationType
   ): Promise<TriageFuncResult> {
-    const customer = await this.prisma.binding.query.customer(
-      {
-        where,
-      },
-      `{
-        id
-        detail {
-          phoneOS
-        }
-      }`
-    )
+    const customer = await this.prisma.client2.customer.findUnique({
+      where,
+      select: { id: true, detail: { select: { phoneOS: true } } },
+    })
 
     const phoneOS =
       application === "harvest" ? "iOS" : customer?.detail?.phoneOS
@@ -103,21 +96,19 @@ export class AdmissionsService {
     let pass = true
     let detail = {}
 
-    const emailsSent = await this.prisma.binding.query.emailReceipts(
-      {
-        where: {
-          emailId_in: ["WelcomeToSeasons", "CompleteAccount", "PriorityAccess"],
+    const emailsSent = await this.prisma.client2.emailReceipt.findMany({
+      where: {
+        emailId: {
+          in: ["WelcomeToSeasons", "CompleteAccount", "PriorityAccess"],
         },
-        orderBy: "createdAt_DESC",
       },
-      `{
-        emailId
-        createdAt
-        user {
-          id
-        }
-      }`
-    )
+      orderBy: { createdAt: "desc" },
+      select: {
+        emailId: true,
+        createdAt: true,
+        user: { select: { id: true } },
+      },
+    })
     const now = moment()
     const emailsSentPastWeek = emailsSent.filter(a => {
       const numDaysSinceEmailSent = now.diff(moment(a.createdAt), "days")
