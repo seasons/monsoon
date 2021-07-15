@@ -333,7 +333,7 @@ export class SMSService {
                   )}.`
                 )
                 sendCorrespondingEmailFunc = async () => {
-                  const custWithUpdatedResumeDate = await this.prisma.client2.customer.findUnique(
+                  const _custWithUpdatedResumeDate = await this.prisma.client2.customer.findUnique(
                     {
                       where: { id: smsCust.id },
                       select: {
@@ -373,6 +373,10 @@ export class SMSService {
                         },
                       },
                     }
+                  )
+                  const custWithUpdatedResumeDate = this.prisma.sanitizePayload(
+                    _custWithUpdatedResumeDate,
+                    "Customer"
                   )
                   return await this.email.sendPausedEmail(
                     custWithUpdatedResumeDate,
@@ -480,7 +484,7 @@ export class SMSService {
       select,
     })
 
-    return customer
+    return this.prisma.sanitizePayload(customer, "Customer")
   }
 
   private getSMSData(smsID: SMSID, vars: any): SMSPayload {

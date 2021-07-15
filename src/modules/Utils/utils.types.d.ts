@@ -40,7 +40,7 @@ export interface CreateTestProductOutput {
 }
 
 export interface CreateTestCustomerDetailInput {
-  topSizes?: String[]
+  topSizes?: string[]
   waistSizes?: Int[]
   phoneOS?: string
 }

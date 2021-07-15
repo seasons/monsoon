@@ -1,3 +1,4 @@
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ID_Input, InventoryStatus } from "@app/prisma"
@@ -32,6 +33,7 @@ xdescribe("Store Product", () => {
   let productUtilsService: ProductUtilsService
   let utilsService: UtilsService
   let testUtilsService: TestUtilsService
+  let queryUtilsService: QueryUtilsService
 
   beforeAll(async done => {
     const moduleRef = await Test.createTestingModule(ProductModuleDef).compile()
@@ -41,7 +43,12 @@ xdescribe("Store Product", () => {
       ProductUtilsService
     )
     utilsService = moduleRef.get<UtilsService>(UtilsService)
-    testUtilsService = new TestUtilsService(prismaService, utilsService)
+    queryUtilsService = moduleRef.get<QueryUtilsService>(QueryUtilsService)
+    testUtilsService = new TestUtilsService(
+      prismaService,
+      utilsService,
+      queryUtilsService
+    )
     done()
   })
 

@@ -329,7 +329,7 @@ export class QueryUtilsService {
   }
 
   createScalarListMutateInput<T>(
-    values: string[],
+    values: any[],
     nodeId: string,
     type: "create" | "update"
   ): T {

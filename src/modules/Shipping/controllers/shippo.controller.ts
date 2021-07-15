@@ -121,13 +121,11 @@ export class ShippoController {
           this.logger.error(e)
         }
 
-        const updatedPackage = head(
-          await this.prisma.client.packages({
-            where: {
-              transactionID,
-            },
-          })
-        )
+        const updatedPackage = await this.prisma.client2.package.findFirst({
+          where: {
+            transactionID,
+          },
+        })
 
         packageTransitEvent = await this.prisma.client2.packageTransitEvent.create(
           {
@@ -233,10 +231,12 @@ export class ShippoController {
 
         location = customerWithShippingAddress.detail.shippingAddress
       } else if (phase === "CustomerToBusiness") {
-        location = await this.prisma.client.location({
-          slug:
-            process.env.SEASONS_CLEANER_LOCATION_SLUG ||
-            "seasons-cleaners-official",
+        location = await this.prisma.client2.location.findFirst({
+          where: {
+            slug:
+              process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+              "seasons-cleaners-official",
+          },
         })
       }
 
