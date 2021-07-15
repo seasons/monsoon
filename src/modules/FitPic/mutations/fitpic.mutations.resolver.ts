@@ -2,6 +2,7 @@ import { Customer, User } from "@app/decorators"
 import { FitPicReportUpdateInput } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { Prisma } from "@prisma/client"
 
 import { FitPicService } from "../services/fitpic.service"
 
@@ -29,16 +30,16 @@ export class FitPicMutationsResolver {
 
   @Mutation()
   async deleteFitPic(@Args() { id }: { id: string }) {
-    await this.prisma.client.deleteFitPic({ id })
+    await this.prisma.client2.fitPic.delete({ where: { id } })
     // delete image from s3?
     return true
   }
 
   @Mutation()
   async updateFitPicReport(
-    @Args() { id, data }: { id: string; data: FitPicReportUpdateInput }
+    @Args() { id, data }: { id: string; data: Prisma.FitPicReportUpdateInput }
   ) {
-    await this.prisma.client.updateFitPicReport({
+    await this.prisma.client2.fitPicReport.update({
       data,
       where: { id },
     })

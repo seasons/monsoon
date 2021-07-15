@@ -2,6 +2,7 @@ import { CustomerModuleDef } from "@app/modules/Customer/customer.module"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerStatus } from "@app/prisma"
@@ -70,7 +71,10 @@ describe.only("Customer Service", () => {
     prisma = moduleRef.get<PrismaService>(PrismaService)
     admissionsService = moduleRef.get<AdmissionsService>(AdmissionsService)
     const utilsService = moduleRef.get<UtilsService>(UtilsService)
-    testUtils = new TestUtilsService(prisma, utilsService)
+    const queryUtilsService = moduleRef.get<QueryUtilsService>(
+      QueryUtilsService
+    )
+    testUtils = new TestUtilsService(prisma, utilsService, queryUtilsService)
     smsService = moduleRef.get<SMSService>(SMSService)
     emailService = moduleRef.get<EmailService>(EmailService)
     pushNotificationsService = moduleRef.get<PushNotificationService>(
@@ -176,15 +180,9 @@ describe.only("Customer Service", () => {
         const topSizes = ["L", "XL"]
         const waistSizes = [32, 34]
 
-        const { customer, cleanupFunc } = await testUtils.createTestCustomer(
-          { status: "Created" },
-          `{
-          id
-          user {
-            id
-          }
-        }`
-        )
+        const { customer, cleanupFunc } = await testUtils.createTestCustomer({
+          status: "Created",
+        })
 
         const user = await prisma.client.user({ id: customer.user.id })
         const newCustomer: any = await customerService.addCustomerDetails(
@@ -222,22 +220,17 @@ describe.only("Customer Service", () => {
     let cleanupFunc
 
     afterEach(async () => {
-      await cleanupFunc()
+      await cleanupFunc?.()
     })
 
     it("Throws on status not triageable", async () => {
       const {
         customer,
         cleanupFunc: customerCleanupFunc,
-      } = await testUtils.createTestCustomer(
-        { detail: {}, status: "Authorized" },
-        `{
-        id
-        user {
-          id
-        }
-      }`
-      )
+      } = await testUtils.createTestCustomer({
+        detail: {},
+        status: "Authorized",
+      })
       expect(
         customerService.triageCustomer({ id: customer.id }, null, false)
       ).rejects.toThrowError(ApolloError)
@@ -255,13 +248,15 @@ describe.only("Customer Service", () => {
         cleanupFunc: customerCleanupFunc,
       } = await testUtils.createTestCustomer(
         { detail: {}, status: "Created" },
-        `{
-        id
-        status
-        user {
-          id
+        {
+          id: true,
+          status: true,
+          user: {
+            select: {
+              id: true,
+            },
+          },
         }
-      }`
       )
 
       const result = await customerService.triageCustomer(

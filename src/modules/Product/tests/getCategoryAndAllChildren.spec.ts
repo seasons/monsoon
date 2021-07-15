@@ -13,24 +13,22 @@ describe("getCategoryAndAllChildren", () => {
   let result
   let originalSlugs
 
-  beforeAll(async done => {
+  beforeAll(async () => {
     const moduleRef = await Test.createTestingModule(ProductModuleDef).compile()
     prismaService = moduleRef.get<PrismaService>(PrismaService)
     productUtilsService = moduleRef.get<ProductUtilsService>(
       ProductUtilsService
     )
-    done()
   })
 
   describe("Functions as Expected", () => {
-    afterAll(async done => {
+    afterAll(async () => {
       await prismaService.client2.category.deleteMany({
         where: { slug: { in: originalSlugs } },
       })
-      done()
     })
 
-    beforeAll(async done => {
+    beforeAll(async () => {
       const original = await prismaService.client2.category.create({
         data: { name: "Original", slug: "original", visible: true },
       })
@@ -129,8 +127,6 @@ describe("getCategoryAndAllChildren", () => {
         },
         { name: true }
       )
-
-      done()
     }, ONE_MIN)
 
     it("correctly retrieves all children", done => {

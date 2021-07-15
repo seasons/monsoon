@@ -19,7 +19,7 @@ describe("Validate Warehouse Location", () => {
   let prismaService: PrismaService
   let utilsService: UtilsService
 
-  beforeAll(async done => {
+  beforeAll(async () => {
     // Instantiate test service
     prismaService = new PrismaService()
     const qus = new QueryUtilsService(prismaService)
@@ -57,21 +57,18 @@ describe("Validate Warehouse Location", () => {
       utilsService,
       null
     )
-
-    done()
   })
 
   describe("Works as expected", () => {
     let testBrand: Brand
 
-    beforeAll(async done => {
+    beforeAll(async () => {
       testBrand = await prismaService.client.createBrand({
         slug: utilsService.randomString(),
         brandCode: "000t",
         name: "testBrand",
         tier: "Tier0",
       })
-      done()
     })
 
     afterAll(

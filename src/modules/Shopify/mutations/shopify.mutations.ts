@@ -1,5 +1,6 @@
-import { ShopifyShopCreateInput, ShopifyShopUpdateInput } from "@app/prisma"
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 
 import { ShopifyService } from "../services/shopify.service"
@@ -8,7 +9,8 @@ import { ShopifyService } from "../services/shopify.service"
 export class ShopifyMutationsResolver {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly shopify: ShopifyService
+    private readonly shopify: ShopifyService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   @Mutation()
@@ -20,24 +22,35 @@ export class ShopifyMutationsResolver {
         shopName: data.shop,
         accessToken: data.accessToken,
         enabled: true,
-        scope: {
-          set: data.scope.split(","),
-        },
-      } as ShopifyShopUpdateInput
+      } as Prisma.ShopifyShopUpdateInput
 
-      await this.prisma.client.upsertShopifyShop({
+      const shop = await this.prisma.client2.shopifyShop.findUnique({
+        where: { shopName: data.shop },
+        select: { id: true },
+      })
+
+      await this.prisma.client2.shopifyShop.upsert({
         where: {
           shopName: data.shop,
         },
         create: {
           ...mutationData,
-        } as ShopifyShopCreateInput,
+          scope: this.queryUtils.createScalarListMutateInput(
+            data.scope.split(","),
+            null,
+            "create"
+          ),
+        } as Prisma.ShopifyShopCreateInput,
         update: {
           ...mutationData,
+          scope: this.queryUtils.createScalarListMutateInput(
+            data.scope.split(","),
+            shop?.id || "",
+            "update"
+          ),
         },
       })
     }
-    console.log(data)
   }
 
   @Mutation()
