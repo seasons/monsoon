@@ -64,13 +64,17 @@ export class HomepageSectionService {
         if (!customerId) {
           return []
         }
-        const viewedProducts = await this.prisma.client2.recentlyViewedProduct.findMany(
+        const _viewedProducts = await this.prisma.client2.recentlyViewedProduct.findMany(
           {
             where: { customer: { id: customerId } },
             orderBy: { updatedAt: "desc" },
             take: 10,
             select: { updatedAt: true, product: { select: ProductSelect } },
           }
+        )
+        const viewedProducts = this.prisma.sanitizePayload(
+          _viewedProducts,
+          "RecentlyViewedProduct"
         )
         return viewedProducts.map(viewedProduct => viewedProduct.product)
 
