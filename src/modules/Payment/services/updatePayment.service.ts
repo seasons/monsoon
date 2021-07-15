@@ -78,11 +78,6 @@ export class UpdatePaymentService {
       )
 
       const { user, billingInfo } = customerWithUserData
-      console.log(
-        "this.paymentUtils.createBillingAddresses",
-        this.paymentUtils.createBillingAddresses
-      )
-      console.log("this.paymentUtils", this.paymentUtils)
       const {
         prismaBillingAddress,
         chargebeeBillingAddress,
