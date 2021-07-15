@@ -14,12 +14,14 @@ import {
   CreateTestProductOutput,
   CreateTestProductVariantInput,
 } from "../utils.types"
+import { QueryUtilsService } from "./queryUtils.service"
 import { UtilsService } from "./utils.service"
 
 export class TestUtilsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   /* 
@@ -132,8 +134,16 @@ export class TestUtilsService {
     const detail = !!input.detail
       ? {
           create: {
-            topSizes: { set: input.detail.topSizes || [] },
-            waistSizes: { set: input.detail.waistSizes || [] },
+            topSizes: this.queryUtils.createScalarListMutateInput(
+              input.detail.topSizes,
+              null,
+              "create"
+            ),
+            waistSizes: this.queryUtils.createScalarListMutateInput(
+              input.detail.waistSizes,
+              null,
+              "create"
+            ),
             shippingAddress: {
               create: {
                 zipCode: "10013",
