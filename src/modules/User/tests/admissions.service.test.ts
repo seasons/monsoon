@@ -515,46 +515,6 @@ describe("Admissions Service", () => {
       })
       expect(pass).toBe(true)
     })
-
-    it("does not admit a user with an unsupported platform", async () => {
-      const {
-        customer,
-        cleanupFunc: customerCleanupFunc,
-      } = await testUtils.createTestCustomer({
-        detail: {
-          topSizes: ["XS", "S"],
-          waistSizes: [30, 31],
-          phoneOS: "Android",
-        },
-      })
-      cleanupFuncs.push(customerCleanupFunc)
-
-      const { pass } = await admissions.hasSupportedPlatform(
-        {
-          id: customer.id,
-        },
-        "flare"
-      )
-      expect(pass).toBe(false)
-    })
-
-    it("admits a user with a supported platform", async () => {
-      const {
-        customer,
-        cleanupFunc: customerCleanupFunc,
-      } = await testUtils.createTestCustomer({
-        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
-      })
-      cleanupFuncs.push(customerCleanupFunc)
-
-      const { pass } = await admissions.hasSupportedPlatform(
-        {
-          id: customer.id,
-        },
-        "flare"
-      )
-      expect(pass).toBe(true)
-    })
   })
 })
 

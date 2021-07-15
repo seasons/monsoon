@@ -56,24 +56,6 @@ export class AdmissionsService {
     ))
   }
 
-  async hasSupportedPlatform(
-    where: Prisma.CustomerWhereUniqueInput,
-    application: ApplicationType
-  ): Promise<TriageFuncResult> {
-    const customer = await this.prisma.client2.customer.findUnique({
-      where,
-      select: { id: true, detail: { select: { phoneOS: true } } },
-    })
-
-    const phoneOS =
-      application === "harvest" ? "iOS" : customer?.detail?.phoneOS
-
-    return {
-      pass: phoneOS === "iOS",
-      detail: customer.detail,
-    }
-  }
-
   zipcodeAllowed(zipcode: string): ZipcodeAllowedResult {
     const state = zipcodes.lookup(zipcode.trim())?.state
     const allServiceableStates = [
