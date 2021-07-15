@@ -91,17 +91,19 @@ export class CustomerMutationsResolver {
       }
     )
 
-    const _data = this.prisma.client2.customerNotificationBarReceipt.upsert({
-      where: { id: r?.id || "" },
-      create: {
-        notificationBarId,
-        viewCount,
-        clickCount,
-        customer: { connect: { id: customer.id } },
-      },
-      update: { viewCount, clickCount },
-      select,
-    })
+    const _data = await this.prisma.client2.customerNotificationBarReceipt.upsert(
+      {
+        where: { id: r?.id || "" },
+        create: {
+          notificationBarId,
+          viewCount,
+          clickCount,
+          customer: { connect: { id: customer.id } },
+        },
+        update: { viewCount, clickCount },
+        select,
+      }
+    )
     return this.prisma.sanitizePayload(_data, "CustomerNotificationBarReceipt")
   }
 }

@@ -148,7 +148,15 @@ export class PrismaService implements UpdatableConnection {
     }
 
     for (const k of Object.keys(payload)) {
-      const typeOfK = PrismaService.modelFieldsByModelName[payloadType].find(a => a.name === k).type
+      let typeOfK
+      try {
+        typeOfK = PrismaService.modelFieldsByModelName[payloadType].find(a => a.name === k).type
+      } catch (e) {
+        console.log(`payloadType, k`, payloadType, k)
+        console.log(e)
+        throw e
+      }
+      
       const isScalarList = SCALAR_LIST_FIELD_NAMES[payloadType]?.includes(k)
       const isJSON = JSON_FIELD_NAMES[payloadType]?.includes(k)
       if (typeof payload[k] === "object" && !isScalarList && !isJSON) {
