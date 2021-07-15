@@ -375,8 +375,8 @@ model CustomerMembershipSubscriptionData {
 model CustomerNotificationBarReceipt {
   id                String   @id @default(cuid()) @db.VarChar(30)
   notificationBarId String
-  viewCount         Int
-  clickCount        Int
+  viewCount         Int      @default(value: 0)
+  clickCount        Int      @default(value: 0)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 

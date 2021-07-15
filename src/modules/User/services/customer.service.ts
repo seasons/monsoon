@@ -211,7 +211,7 @@ export class CustomerService {
       },
     })
     Object.keys(details).map(detailKey => {
-      if (["topSizes", "waistSizes", "weight"].includes(detailKey)) {
+      if (["topSizes", "waistSizes", "weight", "styles"].includes(detailKey)) {
         const values = details[detailKey].set
         details[detailKey] = this.queryUtils.createScalarListMutateInput(
           values,

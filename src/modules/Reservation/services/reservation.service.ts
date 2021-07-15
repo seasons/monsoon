@@ -2,6 +2,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
@@ -68,7 +69,8 @@ export class ReservationService {
     private readonly reservationUtils: ReservationUtilsService,
     private readonly error: ErrorService,
     private readonly utils: UtilsService,
-    private readonly customerUtils: CustomerUtilsService
+    private readonly customerUtils: CustomerUtilsService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   async reserveItems(
@@ -282,9 +284,11 @@ export class ReservationService {
 
     await this.prisma.client2.reservation.update({
       data: {
-        returnedProducts: {
-          set: [],
-        },
+        returnedProducts: this.queryUtils.createScalarListMutateInput(
+          [],
+          lastReservation.id,
+          "update"
+        ),
         returnedAt: null,
       },
       where: { id: String(lastReservation.id) },
