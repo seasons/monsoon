@@ -312,7 +312,7 @@ describe("Admissions Service", () => {
     beforeAll(() => {
       let ps = (prismaService = new PrismaService())
       const qus = new QueryUtilsService(ps)
-      testUtils = new TestUtilsService(ps, new UtilsService(ps, qus))
+      testUtils = new TestUtilsService(ps, new UtilsService(ps, qus), qus)
       utils = new UtilsService(ps, qus)
 
       // reservable products

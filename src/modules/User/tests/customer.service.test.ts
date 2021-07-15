@@ -2,6 +2,7 @@ import { CustomerModuleDef } from "@app/modules/Customer/customer.module"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerStatus } from "@app/prisma"
@@ -70,7 +71,10 @@ describe.only("Customer Service", () => {
     prisma = moduleRef.get<PrismaService>(PrismaService)
     admissionsService = moduleRef.get<AdmissionsService>(AdmissionsService)
     const utilsService = moduleRef.get<UtilsService>(UtilsService)
-    testUtils = new TestUtilsService(prisma, utilsService)
+    const queryUtilsService = moduleRef.get<QueryUtilsService>(
+      QueryUtilsService
+    )
+    testUtils = new TestUtilsService(prisma, utilsService, queryUtilsService)
     smsService = moduleRef.get<SMSService>(SMSService)
     emailService = moduleRef.get<EmailService>(EmailService)
     pushNotificationsService = moduleRef.get<PushNotificationService>(
