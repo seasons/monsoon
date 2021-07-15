@@ -32,11 +32,21 @@ export class CustomerFieldsResolver {
   ) {}
 
   @ResolveField()
-  async paymentPlan(@Parent() customer) {
-    return await this.prisma.client
-      .customer({ id: customer.id })
-      .membership()
-      .plan()
+  async paymentPlan(
+    @Parent() customer,
+    @Loader({
+      params: {
+        model: "PaymentPlan",
+        formatWhere: ids =>
+          Prisma.validator<Prisma.PaymentPlanWhereInput>()({
+            customerMembership: { customer: { id: { in: ids } } },
+          }),
+      },
+      includeInfo: true,
+    })
+    planLoader
+  ) {
+    return await planLoader.load(customer.id)
   }
 
   @ResolveField()
@@ -252,29 +262,26 @@ export class CustomerFieldsResolver {
   async onboardingSteps(@Parent() customer) {
     const steps: string[] = []
 
-    const verificationStatus = await this.prisma.client
-      .customer({ id: customer.id })
-      .user()
-      .verificationStatus()
-    const height = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .height()
-    const style = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .stylePreferences()
-    const shippingAddress = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .shippingAddress()
-      .address1()
+    const _custWithData = await this.prisma.client2.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        user: { select: { verificationStatus: true } },
+        detail: {
+          select: {
+            height: true,
+            stylePreferences: true,
+            shippingAddress: { select: { address1: true } },
+          },
+        },
+      },
+    })
+    const custWithData = this.prisma.sanitizePayload(_custWithData, "Customer")
 
     const values = [
-      verificationStatus === "Approved",
-      height !== null,
-      style !== null,
-      shippingAddress !== null,
+      custWithData?.user?.verificationStatus === "Approved",
+      custWithData?.detail?.height !== null,
+      custWithData?.detail?.stylePreferences !== null,
+      custWithData?.detail?.shippingAddress?.address1 !== null,
     ]
     const keys = [
       "VerifiedPhone",

@@ -224,7 +224,7 @@ const setupPaymentPlans = async () => {
         status: item.plan.status,
       }
 
-      await ps.client.upsertPaymentPlan({
+      await ps.client2.paymentPlan.upsert({
         where: { planID: item.plan.id },
         create: data,
         update: data,

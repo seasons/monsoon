@@ -6,9 +6,9 @@ import {
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { Brand } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageService } from "@modules/Image/services/image.service"
+import { Brand } from "@prisma/client"
 
 import { PhysicalProductService } from "../services/physicalProduct.service"
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
@@ -63,16 +63,21 @@ describe("Validate Warehouse Location", () => {
     let testBrand: Brand
 
     beforeAll(async () => {
-      testBrand = await prismaService.client.createBrand({
-        slug: utilsService.randomString(),
-        brandCode: "000t",
-        name: "testBrand",
-        tier: "Tier0",
+      testBrand = await prismaService.client2.brand.create({
+        data: {
+          slug: utilsService.randomString(),
+          brandCode: "000t",
+          name: "testBrand",
+          tier: "Tier0",
+        },
       })
     })
 
     afterAll(
-      async () => await prismaService.client.deleteBrand({ id: testBrand.id })
+      async () =>
+        await prismaService.client2.brand.delete({
+          where: { id: testBrand.id },
+        })
     )
 
     it("throws error if invalid barcode given", async () =>

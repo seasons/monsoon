@@ -1,8 +1,6 @@
 import { UpdatableConnection } from "@app/modules/index.types"
 import { Injectable } from "@nestjs/common"
 
-import { Prisma as PrismaClient, prisma } from "./"
-import { Prisma as PrismaBinding } from "./prisma.binding"
 import { Prisma, PrismaClient as PrismaClient2 } from '@prisma/client'
 import { PrismaSelect } from "@paljs/plugins"
 import { head, intersection, isArray, uniq } from "lodash"
@@ -53,12 +51,6 @@ const JSON_FIELD_NAMES = {
 const MODELS_TO_SANITIZE = uniq([...Object.keys(JSON_FIELD_NAMES), ...Object.keys(SINGLETON_RELATIONS_POSING_AS_ARRAYS), ...Object.keys(SCALAR_LIST_FIELD_NAMES)])
 @Injectable()
 export class PrismaService implements UpdatableConnection {
-  binding: PrismaBinding = new PrismaBinding({
-    secret: process.env.PRISMA_SECRET,
-    endpoint: process.env.PRISMA_ENDPOINT,
-    debug: false, 
-  })
-  client: PrismaClient = prisma
   client2: PrismaClient2 = new PrismaClient2({ 
     log: process.env.NODE_ENV === "production" ? ['warn', 'error'] : process.env.DB_LOG === 'true' ? ['query', 'info', 'warn', 'error'] : []
   })
@@ -170,16 +162,6 @@ export class PrismaService implements UpdatableConnection {
   
 
   updateConnection({ secret, endpoint }: { secret: string; endpoint: string }) {
-    this.binding = new PrismaBinding({
-      secret,
-      endpoint,
-      debug: false,
-    })
-    this.client = new PrismaClient({
-      secret,
-      endpoint,
-      debug: false,
-    })
     this.client2 = new PrismaClient2()
   }
 }

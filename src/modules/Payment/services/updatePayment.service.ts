@@ -358,18 +358,25 @@ export class UpdatePaymentService {
     )
 
     // Adds the customer's shipping options to their location record
-    const customerLocationID = await this.prisma.client
-      .customer({
-        id: customer.id,
-      })
-      .detail()
-      .shippingAddress()
-      .id()
-
-    await this.customerService.addCustomerLocationShippingOptions(
-      shippingState,
-      customerLocationID
+    const _customerWithLocationId = await this.prisma.client2.customer.findUnique(
+      {
+        where: { id: customer.id },
+        select: {
+          detail: { select: { shippingAddress: { select: { id: true } } } },
+        },
+      }
     )
+
+    const customerWithLocationId = this.prisma.sanitizePayload(
+      _customerWithLocationId,
+      "Customer"
+    )
+    if (!!customerWithLocationId?.detail?.shippingAddress?.id) {
+      await this.customerService.addCustomerLocationShippingOptions(
+        shippingState,
+        customerWithLocationId.detail.shippingAddress.id
+      )
+    }
 
     return null
   }
