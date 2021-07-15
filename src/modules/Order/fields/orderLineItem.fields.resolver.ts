@@ -1,5 +1,4 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import { PrismaTwoLoader } from "@app/prisma/prisma2.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"
 
@@ -11,7 +10,6 @@ export class OrderLineItemFieldsResolver {
   async productVariant(
     @Parent() orderItem,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "ProductVariant",
         formatWhere: keys =>
@@ -26,7 +24,6 @@ export class OrderLineItemFieldsResolver {
     })
     productVariantFromPhysicalProductLoader,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "ProductVariant",
       },

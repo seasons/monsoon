@@ -3,7 +3,6 @@ import { StatementsService } from "@app/modules/Utils/services/statements.servic
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
   Brand,
-  ID_Input,
   InventoryStatus,
   PhysicalProductOffloadMethod,
   Product,
@@ -20,8 +19,7 @@ import {
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { GraphQLResolveInfo } from "graphql"
-import { cloneDeep, head, identity, omit, pick } from "lodash"
+import { cloneDeep, identity, pick } from "lodash"
 
 import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 import { ProductService } from "./product.service"

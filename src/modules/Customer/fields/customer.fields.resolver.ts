@@ -1,12 +1,9 @@
 import { Customer, User } from "@app/decorators"
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
+import { PrismaGenerateParams } from "@app/modules/DataLoader/dataloader.types"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 import { ReservationUtilsService } from "@app/modules/Reservation/services/reservation.utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
-import {
-  PrismaTwoDataLoader,
-  PrismaTwoLoader,
-} from "@app/prisma/prisma2.loader"
 import { Loader } from "@modules/DataLoader/decorators/dataloader.decorator"
 import { InvoicesForCustomersLoader } from "@modules/Payment/loaders/invoicesForCustomers.loaders"
 import {
@@ -17,19 +14,15 @@ import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
-import { head, isObject } from "lodash"
+import { isObject } from "lodash"
 import { DateTime } from "luxon"
 
 const getUserIDGenerateParams = {
-  query: `customers`,
-  info: `{
-    id
-    user {
-      id
-    }
-  }`,
+  model: "Customer",
+  select: { id: true, user: { select: { id: true } } },
   formatData: a => a.user.id,
-}
+} as PrismaGenerateParams
+
 @Resolver("Customer")
 export class CustomerFieldsResolver {
   constructor(
@@ -50,7 +43,6 @@ export class CustomerFieldsResolver {
   async coupon(
     @Parent() customer,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "Customer",
         select: Prisma.validator<Prisma.CustomerSelect>()({
@@ -77,7 +69,7 @@ export class CustomerFieldsResolver {
         }),
       },
     })
-    prismaLoader: PrismaTwoDataLoader<string>
+    prismaLoader: PrismaDataLoader<string>
   ) {
     let coupon
     const custWithData = (await prismaLoader.load(customer.id)) as any
@@ -125,7 +117,6 @@ export class CustomerFieldsResolver {
   @ResolveField()
   async shouldRequestFeedback(
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "ReservationFeedback",
         select: Prisma.validator<Prisma.ReservationFeedbackSelect>()({
@@ -142,7 +133,7 @@ export class CustomerFieldsResolver {
         },
       },
     })
-    prismaLoader: PrismaTwoDataLoader<{
+    prismaLoader: PrismaDataLoader<{
       id: string
       respondedAt: Date
     }>,
@@ -240,16 +231,10 @@ export class CustomerFieldsResolver {
   async user(
     @Parent() customer,
     @Loader({
-      type: PrismaTwoLoader.name,
-      params: {
-        model: "Customer",
-        select: { id: true, user: { select: { id: true } } },
-        formatData: a => a.user.id,
-      },
+      params: getUserIDGenerateParams,
     })
     userIdLoader: PrismaDataLoader<string>,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: { model: "User" },
       includeInfo: true,
     })

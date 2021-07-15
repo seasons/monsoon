@@ -2,16 +2,12 @@ import { Customer } from "@app/decorators"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { Image, Product, ProductModel } from "@app/prisma"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
-import {
-  PrismaTwoDataLoader,
-  PrismaTwoLoader,
-} from "@app/prisma/prisma2.loader"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"
-import { sortBy, sortedUniqBy } from "lodash"
+import { sortBy } from "lodash"
 
 @Resolver("Product")
 export class ProductFieldsResolver {
@@ -25,7 +21,6 @@ export class ProductFieldsResolver {
     @Parent() product,
     @Customer() customer,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "BagItem",
         select: Prisma.validator<Prisma.BagItemSelect>()({
@@ -55,7 +50,6 @@ export class ProductFieldsResolver {
   async modelHeight(
     @Parent() parent,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "Product",
         select: Prisma.validator<Prisma.ProductSelect>()({
@@ -64,7 +58,7 @@ export class ProductFieldsResolver {
         }),
       },
     })
-    productLoader: PrismaTwoDataLoader<{
+    productLoader: PrismaDataLoader<{
       id: string
       model: Pick<ProductModel, "id" | "height">
     }>
@@ -81,7 +75,6 @@ export class ProductFieldsResolver {
   async variants(
     @Parent() parent,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "ProductVariant",
         formatWhere: ids => ({
@@ -114,7 +107,6 @@ export class ProductFieldsResolver {
   async buyUsedEnabled(
     @Parent() product: Pick<Product, "id">,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "Product",
         select: Prisma.validator<Prisma.ProductSelect>()({
@@ -155,7 +147,6 @@ export class ProductFieldsResolver {
   async buyUsedPrice(
     @Parent() product: Pick<Product, "id">,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "Product",
         select: Prisma.validator<Prisma.ProductSelect>()({
@@ -170,7 +161,7 @@ export class ProductFieldsResolver {
         }),
       },
     })
-    productLoader: PrismaTwoDataLoader<{
+    productLoader: PrismaDataLoader<{
       variants?: Array<{
         physicalProducts?: Array<{
           price?: {
@@ -200,7 +191,6 @@ export class ProductFieldsResolver {
     @Args("size") size: ImageSize = "Medium",
     @Args("options") options: ImageOptions,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "Product",
         select: Prisma.validator<Prisma.ProductSelect>()({

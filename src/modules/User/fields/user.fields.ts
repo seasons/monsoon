@@ -46,8 +46,8 @@ export class UserFieldsResolver {
     @Parent() user,
     @Loader({
       params: {
-        query: "users",
-        info: `{id firstName lastName}`,
+        model: "User",
+        select: { id: true, firstName: true, lastName: true },
         formatData: rec => `${rec.firstName} ${rec.lastName}`,
       },
     })
@@ -64,9 +64,9 @@ export class UserFieldsResolver {
     @Parent() user,
     @Loader({
       params: {
-        query: "customers",
+        model: "Customer",
         infoFragment: `fragment EnsureUserWithId on Customer {user {id}}`,
-        formatWhere: ids => ({ user: { id_in: ids } }),
+        formatWhere: ids => ({ user: { id: { in: ids } } }),
         getKeys: a => [a.user.id],
         fallbackValue: null,
       },
@@ -82,8 +82,7 @@ export class UserFieldsResolver {
   }
 
   @ResolveField()
-  async completeAccountURL(@Parent() user) {
-    const idHash = this.utils.encryptUserIDHash(user.id)
-    return `${process.env.SEEDLING_URL}/complete?idHash=${idHash}`
+  async completeAccountURL() {
+    throw new Error(`Deprecated`)
   }
 }

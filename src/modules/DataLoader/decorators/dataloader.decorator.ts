@@ -3,7 +3,6 @@ import qs from "querystring"
 import { getReturnTypeFromInfo } from "@app/decorators/utils"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { PrismaLoader } from "@app/prisma/prisma.loader"
-import { PrismaTwoLoader } from "@app/prisma/prisma2.loader"
 import {
   ExecutionContext,
   InternalServerErrorException,
@@ -18,8 +17,7 @@ import sha1 from "sha1"
 import {
   DataloaderContext,
   LoaderParams,
-  PrismaOneGenerateParams,
-  PrismaTwoGenerateParams,
+  PrismaGenerateParams,
 } from "../dataloader.types"
 import { DataLoaderInterceptor } from "../interceptors/dataloader.interceptor"
 
@@ -71,37 +69,28 @@ export const Loader: (
 
     // If needed, get the info from the context
     if (data.includeInfo === true) {
-      if (type === PrismaTwoLoader.name) {
-        let adjustedInfo = info as any
-        if (!!adjustedOptions.params.infoFragment) {
-          adjustedInfo = addFragmentToInfo(
-            info,
-            adjustedOptions.params.infoFragment
-          )
-        }
-        const modelName = getReturnTypeFromInfo(info)
-        ;(adjustedOptions.params as PrismaTwoGenerateParams).select = QueryUtilsService.infoToSelect(
-          {
-            info: adjustedInfo,
-            modelName,
-            modelFieldsByModelName: ctx.modelFieldsByModelName,
-          }
+      let adjustedInfo = info as any
+      if (!!adjustedOptions.params.infoFragment) {
+        adjustedInfo = addFragmentToInfo(
+          info,
+          adjustedOptions.params.infoFragment
         )
-      } else if (type === PrismaLoader.name) {
-        ;(adjustedOptions.params as PrismaOneGenerateParams).info = info
       }
+      const modelName = getReturnTypeFromInfo(info)
+      ;(adjustedOptions.params as PrismaGenerateParams).select = QueryUtilsService.infoToSelect(
+        {
+          info: adjustedInfo,
+          modelName,
+          modelFieldsByModelName: ctx.modelFieldsByModelName,
+        }
+      )
     }
 
     // If needed, get the orderBy from the context
     if (data.includeOrderBy === true) {
-      if (type === PrismaLoader.name) {
-        ;(adjustedOptions.params as PrismaTwoGenerateParams).orderBy =
-          args.orderBy
-      } else if (type === PrismaTwoLoader.name) {
-        ;(adjustedOptions.params as PrismaOneGenerateParams).orderBy = makeOrderByPrisma2Compatible(
-          args.orderBy
-        )
-      }
+      ;(adjustedOptions.params as PrismaGenerateParams).orderBy = makeOrderByPrisma2Compatible(
+        args.orderBy
+      )
     }
 
     if (!!adjustedOptions.params) {
