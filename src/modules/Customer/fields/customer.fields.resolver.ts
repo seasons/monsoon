@@ -136,10 +136,8 @@ export class CustomerFieldsResolver {
           respondedAt: "desc",
         },
         formatWhere: keys => {
-          return Prisma.validator<Prisma.CustomerWhereInput>()({
-            id: {
-              in: keys,
-            },
+          return Prisma.validator<Prisma.ReservationFeedbackWhereInput>()({
+            user: { id: { in: keys } },
           })
         },
       },
