@@ -84,7 +84,12 @@ export class WebflowController {
       await this.prisma.client2.blogPost.update({
         where: { id: lastPostStored.id },
         data: {
-          ...blogData,
+          ...this.queryUtils.prismaOneToPrismaTwoMutateData(
+            blogData,
+            null,
+            "BlogPost",
+            "update"
+          ),
           image: {
             connect: { id: blogImage.id },
           },
