@@ -240,7 +240,12 @@ export class CustomerFieldsResolver {
   async user(
     @Parent() customer,
     @Loader({
-      params: getUserIDGenerateParams,
+      type: PrismaTwoLoader.name,
+      params: {
+        model: "Customer",
+        select: { id: true, user: { select: { id: true } } },
+        formatData: a => a.user.id,
+      },
     })
     userIdLoader: PrismaDataLoader<string>,
     @Loader({
