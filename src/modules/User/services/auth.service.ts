@@ -456,7 +456,7 @@ export class AuthService {
                 authorizationsCount: 0,
               },
             },
-            status: "Waitlisted",
+            status: "Created",
           },
         },
       },
