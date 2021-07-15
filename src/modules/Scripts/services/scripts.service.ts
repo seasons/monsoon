@@ -3,8 +3,8 @@ import fs from "fs"
 import { DripService } from "@app/modules/Drip/services/drip.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
+import { S3 } from "@aws-sdk/client-s3"
 import { Injectable } from "@nestjs/common"
-import AWS from "aws-sdk"
 import chargebee from "chargebee"
 
 import {
@@ -14,7 +14,7 @@ import {
 
 @Injectable()
 export class ScriptsService {
-  private s3 = new AWS.S3()
+  private s3 = new S3({ region: "us-east-1" })
 
   constructor(private readonly utilsService: UtilsService) {}
 

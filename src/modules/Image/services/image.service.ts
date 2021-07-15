@@ -1,11 +1,10 @@
 import qs from "querystring"
 import * as url from "url"
 
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
 import { Injectable, Logger } from "@nestjs/common"
 import { Image, PrismaPromise } from "@prisma/client"
-import { ID_Input } from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
-import AWS from "aws-sdk"
 import { imageSize } from "image-size"
 import { identity, pickBy } from "lodash"
 import request from "request"
@@ -61,7 +60,7 @@ const sizes: ImageSizeMap = {
 @Injectable()
 export class ImageService {
   private readonly logger = new Logger(ImageService.name)
-  private s3 = new AWS.S3()
+  private s3 = new S3Client({ region: "us-east-1" })
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -147,8 +146,19 @@ export class ImageService {
       Key: name,
       Body: fileStream,
     }
-    const result = await this.s3.upload(uploadParams).promise()
-    const url = result.Location
+
+    const uploadCmd = new PutObjectCommand(uploadParams)
+
+    try {
+      await this.s3.send(uploadCmd)
+    } catch (err) {
+      this.logger.error(`Error while uploading image ${uploadParams.Key}`)
+      this.logger.error(err)
+      return
+    }
+
+    const url = S3_BASE + uploadParams.Key
+
     // Get image size
     const { width, height } = await new Promise((resolve, reject) => {
       request({ url, encoding: null }, async (err, res, body) => {
@@ -169,7 +179,7 @@ export class ImageService {
 
     return {
       height,
-      url: result.Location,
+      url: S3_BASE + uploadParams.Key,
       width,
     }
   }
@@ -198,13 +208,16 @@ export class ImageService {
               Key: imageName,
               Body: body,
             }
+
+            const uploadCmd = new PutObjectCommand(uploadParams)
+
             try {
-              const result = await this.s3.upload(uploadParams).promise()
+              await this.s3.send(uploadCmd)
               const { width, height } = imageSize(body)
 
               resolve({
                 height,
-                url: result.Location,
+                url: S3_BASE + uploadParams.Key,
                 width,
                 title,
               })

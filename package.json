@@ -70,7 +70,7 @@
     "apollo-server-cache-redis": "1.2.3",
     "apollo-server-express": "2.15.0",
     "apollo-server-plugin-response-cache": "0.6.0",
-    "aws-sdk": "2.619.0",
+    "@aws-sdk/client-s3": "3.21.0",
     "axios": "0.19.2",
     "babel-plugin-parameter-decorator": "1.0.15",
     "babel-polyfill": "6.26.0",
