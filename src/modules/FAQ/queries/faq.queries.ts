@@ -1,6 +1,5 @@
+import { FAQService } from "@modules/FAQ/services/faq.service"
 import { Args, Query, Resolver } from "@nestjs/graphql"
-
-import { FAQService } from "../services/faq.service"
 
 @Resolver()
 export class FAQQueriesResolver {

@@ -1,7 +1,7 @@
-import { PrismaModule } from "@app/prisma/prisma.module"
+import { PrismaModule } from "@modules/Prisma/prisma.module"
+import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
 
-import { UtilsModule } from "../Utils/utils.module"
 import { ShopifyMutationsResolver } from "./mutations/shopify.mutations"
 import { ShopifyQueriesResolver } from "./queries/shopify.queries.resolver"
 import { ShopifyService } from "./services/shopify.service"

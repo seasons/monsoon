@@ -7,6 +7,7 @@ import { PushNotificationService } from "@app/modules/PushNotification/services/
 import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import {
@@ -26,7 +27,6 @@ import {
   InAdmissableReason,
   NotificationBarID,
 } from "@prisma1/index"
-import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { defaultsDeep, pick } from "lodash"

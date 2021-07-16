@@ -1,5 +1,5 @@
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 

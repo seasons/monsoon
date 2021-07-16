@@ -2,10 +2,10 @@ import { PushNotificationService } from "@app/modules/PushNotification"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ErrorService } from "@modules/Error/services/error.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import { PaymentPlan, Reservation } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
 
 @Injectable()
 export class ReservationScheduledJobs {

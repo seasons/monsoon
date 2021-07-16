@@ -1,10 +1,10 @@
 import { ProductCommands } from "@app/modules/Scripts/commands/product.command"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Prisma, User } from "@prisma/client"
 import * as cheerio from "cheerio"
 import request from "request"
 
-import { PrismaService } from "../../../prisma/prisma.service"
 import { ProductRequestUtilsService } from "./productRequest.utils.service"
 
 @Injectable()

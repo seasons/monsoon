@@ -1,5 +1,5 @@
+import { PrismaModule } from "@modules/Prisma/prisma.module"
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "@prisma1/prisma.module"
 
 import { ViewQueriesResolver } from "./queries/view.queries.resolver"
 

@@ -8,6 +8,7 @@ import {
   Product,
   WarehouseLocationType,
 } from "@app/prisma"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import {
   AdminActionLog,
@@ -17,7 +18,6 @@ import {
   Reservation,
   WarehouseLocation,
 } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { cloneDeep, identity, pick } from "lodash"
 

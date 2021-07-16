@@ -9,7 +9,7 @@ import {
   ShopifyShop,
 } from "@app/prisma"
 import { Order, ProductVariant } from "@app/prisma/prisma.binding"
-import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import { PrismaDataLoader } from "@modules/Prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import {
   BagItem,

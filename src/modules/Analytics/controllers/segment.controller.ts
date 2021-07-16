@@ -1,4 +1,4 @@
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
 
 interface SegmentEventContextApp {

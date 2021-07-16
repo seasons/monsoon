@@ -1,12 +1,11 @@
-import { ErrorService } from "@app/modules/Error/services/error.service"
 import { UserPushNotificationInterestType } from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { ErrorService } from "@modules/Error/services/error.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Token } from "@pusher/push-notifications-server"
 import { difference, merge, upperFirst } from "lodash"
 
 import {
-  PushNotificationID,
   PushNotifyInterestInput,
   PushNotifyUsersInput,
 } from "../pushNotification.types"

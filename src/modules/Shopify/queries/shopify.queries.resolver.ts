@@ -1,6 +1,6 @@
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
 
 @Resolver()
 export class ShopifyQueriesResolver {

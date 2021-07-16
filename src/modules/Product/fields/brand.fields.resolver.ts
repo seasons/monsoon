@@ -1,9 +1,7 @@
 import { Select } from "@app/decorators/select.decorator"
-import { PrismaService } from "@app/prisma/prisma.service"
-import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { addFragmentToInfo } from "graphql-binding"
-
-import { ProductService } from "../services/product.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
+import { ProductService } from "@modules/Product/services/product.service"
+import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("Brand")
 export class BrandFieldsResolver {

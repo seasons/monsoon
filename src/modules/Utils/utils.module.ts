@@ -1,7 +1,7 @@
+import { AnalyticsModule } from "@modules/Analytics/analytics.module"
+import { PrismaModule } from "@modules/Prisma/prisma.module"
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "@prisma1/prisma.module"
 
-import { AnalyticsModule } from "../Analytics/analytics.module"
 import { PaymentUtilsService } from "./services/paymentUtils.service"
 import { QueryUtilsService } from "./services/queryUtils.service"
 import { StatementsService } from "./services/statements.service"

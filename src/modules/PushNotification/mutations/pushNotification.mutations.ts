@@ -1,6 +1,6 @@
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { ApolloError } from "apollo-server"
 import { kebabCase, pick } from "lodash"

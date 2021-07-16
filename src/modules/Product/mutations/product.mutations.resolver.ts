@@ -1,10 +1,9 @@
 import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-
-import { BagService } from "../services/bag.service"
-import { ProductService } from "../services/product.service"
-import { ProductRequestService } from "../services/productRequest.service"
+import { BagService } from "@modules/Product/services/bag.service"
+import { ProductService } from "@modules/Product/services/product.service"
+import { ProductRequestService } from "@modules/Product/services/productRequest.service"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
 
 @Resolver()
 export class ProductMutationsResolver {

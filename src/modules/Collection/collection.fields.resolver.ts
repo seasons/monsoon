@@ -1,5 +1,5 @@
 import { Select } from "@app/decorators/select.decorator"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { addFragmentToInfo } from "graphql-binding"
 

@@ -1,6 +1,6 @@
 import { User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
-import { Info, Query, Resolver } from "@nestjs/graphql"
+import { Query, Resolver } from "@nestjs/graphql"
 
 import { ReservationFeedbackService } from "../services/reservationFeedback.service"
 

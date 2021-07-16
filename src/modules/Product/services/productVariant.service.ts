@@ -1,7 +1,7 @@
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Prisma, ProductVariant } from "@prisma/client"
 import { InventoryStatus } from "@prisma1/index"
-import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { head, lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
 

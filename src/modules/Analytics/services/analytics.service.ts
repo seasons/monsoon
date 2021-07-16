@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
 
-import { LookerService } from "./looker.service"
+import { LookerService } from "../services/looker.service"
 
 @Injectable()
 export class AnalyticsService {

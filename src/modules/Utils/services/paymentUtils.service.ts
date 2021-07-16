@@ -1,7 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Customer } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
 import { get, head, orderBy, pick } from "lodash"

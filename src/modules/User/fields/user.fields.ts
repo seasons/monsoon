@@ -1,7 +1,7 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import { PrismaDataLoader } from "@modules/Prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import moment from "moment"
 import urlencode from "urlencode"

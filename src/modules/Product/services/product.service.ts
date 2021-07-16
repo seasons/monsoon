@@ -1,6 +1,7 @@
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
@@ -25,7 +26,6 @@ import {
   ProductType,
   SizeType,
 } from "@prisma1/index"
-import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { difference, flatten, head, isArray, pick, sum } from "lodash"
 import { DateTime } from "luxon"

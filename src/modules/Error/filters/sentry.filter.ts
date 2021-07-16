@@ -1,8 +1,7 @@
+import { ErrorService } from "@modules/Error/services/error.service"
 import { ArgumentsHost, Catch } from "@nestjs/common"
 import { BaseExceptionFilter } from "@nestjs/core"
 import { GqlArgumentsHost, GqlContextType } from "@nestjs/graphql"
-
-import { ErrorService } from "../services/error.service"
 
 @Catch()
 export class SentryFilter extends BaseExceptionFilter {

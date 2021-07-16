@@ -1,6 +1,5 @@
+import { CollectionService } from "@modules/Collection/services/collection.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
-
-import { CollectionService } from "../services/collection.service"
 
 @Resolver()
 export class CollectionMutationsResolver {

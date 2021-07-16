@@ -5,6 +5,7 @@ import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import {
   PhysicalProductUtilsService,
   ProductUtilsService,
@@ -28,7 +29,6 @@ import {
   ReservationStatus,
   ShippingCode,
 } from "@prisma1/index"
-import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import chargebee from "chargebee"
 import cuid from "cuid"

@@ -1,11 +1,8 @@
 import { NestDataLoader } from "@modules/DataLoader/dataloader.types"
-import {
-  Transaction,
-  TransactionsDataLoader,
-} from "@modules/Payment/payment.types"
 import { Injectable } from "@nestjs/common"
 import DataLoader from "dataloader"
 
+import { Transaction, TransactionsDataLoader } from "../payment.types"
 import { LoaderUtilsService } from "../services/loader.utils.service"
 
 @Injectable()

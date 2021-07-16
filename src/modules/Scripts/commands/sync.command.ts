@@ -3,6 +3,7 @@ import fs from "fs"
 import { DripSyncService } from "@app/modules/Drip/services/dripSync.service"
 import { IndexKey } from "@app/modules/Search/services/algolia.service"
 import { SearchService } from "@app/modules/Search/services/search.service"
+import { ScriptsService } from "@modules/Scripts/services/scripts.service"
 import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
@@ -10,7 +11,6 @@ import { Command, Option, Positional } from "nestjs-command"
 import readlineSync from "readline-sync"
 
 import { PrismaEnvOption } from "../scripts.decorators"
-import { ScriptsService } from "../services/scripts.service"
 
 @Injectable()
 export class SyncCommands {

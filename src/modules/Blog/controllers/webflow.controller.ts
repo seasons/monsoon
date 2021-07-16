@@ -1,11 +1,10 @@
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { BlogService } from "@modules/Blog/services/blog.service"
 import { ImageService } from "@modules/Image/services/image.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Controller, Post } from "@nestjs/common"
 import { Prisma } from "@prisma/client"
 import { pick } from "lodash"
-
-import { BlogService } from "../services/blog.service"
 
 @Controller("webflow_events")
 export class WebflowController {

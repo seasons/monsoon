@@ -1,4 +1,3 @@
-import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 import { ImageService } from "../services/image.service"

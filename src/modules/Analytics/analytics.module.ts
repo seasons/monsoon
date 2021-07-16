@@ -1,4 +1,4 @@
-import { PrismaModule } from "@app/prisma/prisma.module"
+import { PrismaModule } from "@modules/Prisma/prisma.module"
 import { Module } from "@nestjs/common"
 
 import { SegmentController } from "./controllers/segment.controller"

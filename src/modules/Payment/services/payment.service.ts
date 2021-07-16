@@ -1,5 +1,4 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { CustomerFieldsResolver } from "@app/modules/Customer/fields/customer.fields.resolver"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
@@ -7,21 +6,12 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Customer, PaymentPlan, PaymentPlanTier, User } from "@app/prisma"
 import { PauseType } from "@app/prisma/prisma.binding"
 import { EmailService } from "@modules/Email/services/email.service"
-import { EmailUser } from "@modules/Email/services/email.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import { Prisma } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
-import {
-  camelCase,
-  get,
-  head,
-  identity,
-  snakeCase,
-  stubTrue,
-  upperFirst,
-} from "lodash"
+import { camelCase, head, identity, snakeCase, upperFirst } from "lodash"
 import { DateTime } from "luxon"
 import Stripe from "stripe"
 

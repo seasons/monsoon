@@ -3969,6 +3969,7 @@ export type ReservationStatus =
   | "Hold"
   | "Blocked"
   | "Unknown"
+  | "Lost"
   | "Received";
 
 export type InAdmissableReason =

@@ -6,8 +6,8 @@ import {
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageService } from "@modules/Image/services/image.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Brand } from "@prisma/client"
 
 import { PhysicalProductService } from "../services/physicalProduct.service"

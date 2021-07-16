@@ -1,11 +1,11 @@
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { PushNotificationModule } from "@app/modules/PushNotification/pushNotification.module"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { INestApplication } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
 import request from "supertest"
 
-import { PrismaService } from "../../../prisma/prisma.service"
 import { ShippoController } from "../controllers/shippo.controller"
 import { PackageDeparted } from "./shippoEvents.stub"
 

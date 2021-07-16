@@ -1,6 +1,6 @@
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Prisma } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
 import { omit } from "lodash"
 
 @Injectable()

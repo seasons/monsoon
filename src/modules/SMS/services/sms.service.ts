@@ -7,6 +7,7 @@ import { TwilioEvent } from "@app/modules/Twilio/twilio.types"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"
@@ -15,7 +16,6 @@ import {
   SmsStatus,
   UserVerificationStatus,
 } from "@prisma1/index"
-import { PrismaService } from "@prisma1/prisma.service"
 import { LinksAndEmails } from "@seasons/wind"
 import moment from "moment"
 import mustache from "mustache"

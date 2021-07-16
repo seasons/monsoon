@@ -1,6 +1,6 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
-import { PrismaService } from "@modules/../prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import chargebee from "chargebee"

@@ -1,9 +1,9 @@
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Logger } from "@nestjs/common"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
 
 import { AdmissionsService } from "../services/admissions.service"
 

@@ -1,8 +1,6 @@
 import { User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
-import { Select } from "@app/decorators/select.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"

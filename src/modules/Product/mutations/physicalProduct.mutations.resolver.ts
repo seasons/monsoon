@@ -1,10 +1,9 @@
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { PrismaService } from "@app/prisma/prisma.service"
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { PrismaService } from "@modules/Prisma/prisma.service"
+import { PhysicalProductService } from "@modules/Product/services/physicalProduct.service"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { makeWherePrisma2Compatible } from "@prisma/binding-argument-transform"
-
-import { PhysicalProductService } from "../services/physicalProduct.service"
 
 @Resolver()
 export class PhysicalProductMutationsResolver {

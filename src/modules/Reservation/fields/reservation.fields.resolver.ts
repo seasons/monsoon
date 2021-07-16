@@ -1,11 +1,10 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
+import { PrismaDataLoader } from "@modules/Prisma/prisma.loader"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
 
 import { ReservationService } from "../services/reservation.service"
 

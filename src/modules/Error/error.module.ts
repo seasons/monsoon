@@ -1,8 +1,8 @@
+import { ErrorService } from "@modules/Error/services/error.service"
 import { Module } from "@nestjs/common"
 import { APP_FILTER } from "@nestjs/core"
 
 import { SentryFilter } from "./filters/sentry.filter"
-import { ErrorService } from "./services/error.service"
 
 @Module({
   providers: [

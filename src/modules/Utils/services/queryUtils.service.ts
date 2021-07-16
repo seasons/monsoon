@@ -1,15 +1,15 @@
 import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
+import {
+  PrismaService,
+  SCALAR_LIST_FIELD_NAMES,
+  SINGLETON_RELATIONS_POSING_AS_ARRAYS,
+} from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import {
   makeOrderByPrisma2Compatible,
   makeWherePrisma2Compatible,
 } from "@prisma/binding-argument-transform"
 import { Prisma } from "@prisma/client"
-import {
-  PrismaService,
-  SCALAR_LIST_FIELD_NAMES,
-  SINGLETON_RELATIONS_POSING_AS_ARRAYS,
-} from "@prisma1/prisma.service"
 import { GraphQLResolveInfo } from "graphql"
 import graphqlFields from "graphql-fields"
 import {

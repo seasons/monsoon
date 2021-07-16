@@ -1,6 +1,6 @@
 import { PhysicalProductUtilsService } from "@app/modules/Product/services/physicalProduct.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PrismaService } from "@modules/../prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import axios from "axios"

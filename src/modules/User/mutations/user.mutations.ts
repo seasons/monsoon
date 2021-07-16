@@ -1,8 +1,8 @@
 import { User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
 import { DripService } from "@app/modules/Drip/services/drip.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
 
 @Resolver()
 export class UserMutationsResolver {

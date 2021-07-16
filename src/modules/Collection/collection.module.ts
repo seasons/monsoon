@@ -1,8 +1,8 @@
 import { ImageModule } from "@modules/Image/image.module"
+import { PrismaModule } from "@modules/Prisma/prisma.module"
 import { ProductModule } from "@modules/Product/product.module"
 import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "@prisma1/prisma.module"
 
 import { ProductService } from "../Product/services/product.service"
 import { CollectionQueriesResolver } from "./"

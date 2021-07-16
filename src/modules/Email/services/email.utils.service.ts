@@ -8,13 +8,12 @@ import {
   ProductVariant,
   User,
 } from "@app/prisma"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Product } from "@prisma/client"
 import { Order, Prisma } from "@prisma/client"
 import { ProductGridItem } from "@seasons/wind"
 import { head, pick, sampleSize, uniq } from "lodash"
-
-import { PrismaService } from "../../../prisma/prisma.service"
 
 export type MonsoonProductGridItem = ProductGridItem & {
   id: string

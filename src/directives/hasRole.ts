@@ -1,5 +1,5 @@
 import { UserRole } from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { intersection } from "lodash"
 
 import { getEnforcedUser } from "./utils"

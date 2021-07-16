@@ -1,7 +1,6 @@
 import { Select } from "@app/decorators/select.decorator"
+import { BrandService } from "@modules/Product/services/brand.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
-
-import { BrandService } from "../services/brand.service"
 
 @Resolver("Brand")
 export class BrandMutationsResolver {

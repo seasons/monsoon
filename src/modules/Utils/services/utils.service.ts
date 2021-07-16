@@ -2,6 +2,7 @@ import crypto from "crypto"
 import * as fs from "fs"
 
 import { UTMData as BindingUTMData, DateTime } from "@app/prisma/prisma.binding"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { AdminActionLog } from "@prisma/client"
 import { Location } from "@prisma/client"
@@ -12,7 +13,6 @@ import {
   AdminActionLog as PrismaOneAdminActionLog,
   SyncTimingType,
 } from "@prisma1/index"
-import { PrismaService } from "@prisma1/prisma.service"
 import cliProgress from "cli-progress"
 import graphqlFields from "graphql-fields"
 import {

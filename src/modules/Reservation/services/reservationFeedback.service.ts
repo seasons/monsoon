@@ -1,7 +1,7 @@
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Prisma } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
 
 const RESERVATION_FEEDBACK_SELECT = {
   id: true,

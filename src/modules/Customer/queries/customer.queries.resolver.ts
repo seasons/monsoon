@@ -1,7 +1,7 @@
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Args, Query, Resolver } from "@nestjs/graphql"
 
 @Resolver()

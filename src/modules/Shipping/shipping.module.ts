@@ -1,8 +1,8 @@
+import { PrismaModule } from "@modules/Prisma/prisma.module"
+import { PushNotificationModule } from "@modules/PushNotification/pushNotification.module"
+import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "@prisma1/prisma.module"
 
-import { PushNotificationModule } from "../PushNotification/pushNotification.module"
-import { UtilsModule } from "../Utils/utils.module"
 import { ShippoController } from "./controllers/shippo.controller"
 import { ShippingMutationsResolver } from "./mutations/shipping.mutations"
 import { ShippingService } from "./services/shipping.service"

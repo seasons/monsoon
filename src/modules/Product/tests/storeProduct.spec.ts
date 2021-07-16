@@ -2,7 +2,7 @@ import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.servic
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ID_Input, InventoryStatus } from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 
 import { ProductModuleDef } from "../product.module"

@@ -1,9 +1,9 @@
+import { ErrorModule } from "@modules/Error/error.module"
+import { ImageModule } from "@modules/Image/image.module"
+import { PrismaModule } from "@modules/Prisma/prisma.module"
+import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
 
-import { PrismaModule } from "../../prisma/prisma.module"
-import { ErrorModule } from "../Error/error.module"
-import { ImageModule } from "../Image/image.module"
-import { UtilsModule } from "../Utils/utils.module"
 import { EmailService } from "./services/email.service"
 import { EmailUtilsService } from "./services/email.utils.service"
 

@@ -1,11 +1,11 @@
 import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
-import { CustomerService } from "@app/modules/User/services/customer.service"
-import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
-import { Info, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
-import { head } from "lodash"
+import { PrismaService } from "@modules/Prisma/prisma.service"
+import { ResolveField, Resolver } from "@nestjs/graphql"
+
+import { CustomerService } from "../services/customer.service"
+import { CustomerUtilsService } from "../services/customer.utils.service"
 
 @Resolver("Me")
 export class MeFieldsResolver {

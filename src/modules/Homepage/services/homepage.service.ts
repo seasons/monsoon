@@ -1,5 +1,5 @@
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "@prisma1/prisma.service"
 
 export enum SectionTitle {
   FeaturedCollection = "Featured collection",

@@ -1,10 +1,10 @@
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ImageData } from "@modules/Image/image.types"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Prisma, ProductVariant } from "@prisma/client"
 import { Category, Product, Size } from "@prisma/client"
 import { ProductMaterialCategoryCreateInput, SizeType } from "@prisma1/index"
-import { PrismaService } from "@prisma1/prisma.service"
 import {
   flatten,
   head,

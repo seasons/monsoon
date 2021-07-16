@@ -3,14 +3,14 @@ import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
+import { ScriptsService } from "@modules/Scripts/services/scripts.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
-import { PrismaService } from "@prisma1/prisma.service"
 import sgMail from "@sendgrid/mail"
 import chargebee from "chargebee"
 import faker from "faker"
-import { head } from "lodash"
 import { DateTime } from "luxon"
 import { Command, Option, Positional } from "nestjs-command"
 
@@ -19,7 +19,6 @@ import {
   PasswordOption,
   PrismaEnvOption,
 } from "../scripts.decorators"
-import { ScriptsService } from "../services/scripts.service"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 

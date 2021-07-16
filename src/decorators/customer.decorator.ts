@@ -1,7 +1,6 @@
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { ExecutionContext, createParamDecorator } from "@nestjs/common"
 import { Customer as PrismaCustomer } from "@prisma/client"
-
-import { PrismaService } from "../prisma/prisma.service"
 
 const prisma = new PrismaService()
 

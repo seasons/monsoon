@@ -1,12 +1,10 @@
-import * as url from "url"
-
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { BrandUtilsService } from "@modules/Product/services/brand.utils.service"
 import { IndexKey } from "@modules/Search/services/algolia.service"
 import { SearchService } from "@modules/Search/services/search.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Prisma } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
 
 @Injectable()
 export class BrandService {

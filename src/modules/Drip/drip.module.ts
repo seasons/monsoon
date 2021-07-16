@@ -1,8 +1,8 @@
-import { PrismaModule } from "@app/prisma/prisma.module"
+import { ErrorModule } from "@modules/Error/error.module"
+import { PrismaModule } from "@modules/Prisma/prisma.module"
+import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
 
-import { ErrorModule } from "../Error/error.module"
-import { UtilsModule } from "../Utils/utils.module"
 import { DripService } from "./services/drip.service"
 import { DripSyncService } from "./services/dripSync.service"
 

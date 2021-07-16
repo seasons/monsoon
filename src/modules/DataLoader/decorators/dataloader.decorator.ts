@@ -2,7 +2,7 @@ import qs from "querystring"
 
 import { getReturnTypeFromInfo } from "@app/decorators/utils"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { PrismaLoader } from "@app/prisma/prisma.loader"
+import { PrismaLoader } from "@modules/Prisma/prisma.loader"
 import {
   ExecutionContext,
   InternalServerErrorException,

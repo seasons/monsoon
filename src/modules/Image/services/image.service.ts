@@ -2,9 +2,9 @@ import qs from "querystring"
 import * as url from "url"
 
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Image, PrismaPromise } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
 import { imageSize } from "image-size"
 import { identity, pickBy } from "lodash"
 import request from "request"
@@ -179,7 +179,7 @@ export class ImageService {
 
     return {
       height,
-      url: S3_BASE + uploadParams.Key,
+      url,
       width,
     }
   }

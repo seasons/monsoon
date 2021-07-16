@@ -1,5 +1,5 @@
 import { ImageService } from "@app/modules/Image/services/image.service"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { pick } from "lodash"
 

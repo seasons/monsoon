@@ -2,8 +2,8 @@ import fs from "fs"
 
 import { DripService } from "@app/modules/Drip/services/drip.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PrismaService } from "@app/prisma/prisma.service"
 import { S3 } from "@aws-sdk/client-s3"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import chargebee from "chargebee"
 

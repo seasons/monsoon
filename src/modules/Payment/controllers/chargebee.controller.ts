@@ -4,13 +4,12 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerStatus } from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PaymentService } from "@modules/Payment/services/payment.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
-import { head, pick } from "lodash"
-
-import { PaymentService } from "../services/payment.service"
+import { pick } from "lodash"
 
 export type ChargebeeEvent = {
   content: any

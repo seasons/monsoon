@@ -1,15 +1,13 @@
 import { Customer } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
 import { ProductType } from "@app/prisma"
+import { PrismaService } from "@modules/Prisma/prisma.service"
+import { PhysicalProductUtilsService } from "@modules/Product/services/physicalProduct.utils.service"
+import { ProductService } from "@modules/Product/services/product.service"
+import { ProductVariantService } from "@modules/Product/services/productVariant.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { Category, Color, Product } from "@prisma/client"
 import { ProductNotificationType } from "@prisma1/prisma.binding"
-import { PrismaService } from "@prisma1/prisma.service"
-import { head } from "lodash"
-
-import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
-import { ProductService } from "../services/product.service"
-import { ProductVariantService } from "../services/productVariant.service"
 
 @Resolver("ProductVariant")
 export class ProductVariantMutationsResolver {

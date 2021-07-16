@@ -1,9 +1,9 @@
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { Customer, User } from "@prisma/client"
 import { Location } from "@prisma/client"
 import { ID_Input, ShippingCode } from "@prisma1/index"
-import { PrismaService } from "@prisma1/prisma.service"
 import shippo from "shippo"
 
 import {

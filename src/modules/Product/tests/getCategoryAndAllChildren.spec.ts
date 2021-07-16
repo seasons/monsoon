@@ -1,4 +1,4 @@
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import { intersection } from "lodash"
 

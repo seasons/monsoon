@@ -1,6 +1,6 @@
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { ID_Input, InventoryStatus, Reservation } from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Customer, Package, PrismaPromise } from "@prisma/client"
 import { head } from "lodash"

@@ -1,4 +1,4 @@
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Controller, Get, Logger, Query } from "@nestjs/common"
 import jsonexport from "jsonexport"
 import { isEmpty } from "lodash"

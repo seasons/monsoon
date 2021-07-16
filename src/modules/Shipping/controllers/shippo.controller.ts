@@ -8,7 +8,7 @@ import {
   ReservationStatus,
 } from "@app/prisma"
 import { PackageTransitEventSubStatus } from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Body, Controller, Logger, Post } from "@nestjs/common"
 import casify from "camelcase-keys"
 import { camelCase, head, isObject, upperFirst } from "lodash"

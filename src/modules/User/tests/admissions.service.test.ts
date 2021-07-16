@@ -8,11 +8,11 @@ import {
   CreateTestProductInput,
 } from "@app/modules/Utils/utils.types"
 import { EmailId, InventoryStatus, ProductType } from "@app/prisma"
-import { PrismaModule } from "@app/prisma/prisma.module"
+import { PrismaModule } from "@modules/Prisma/prisma.module"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import { fill } from "lodash"
 
-import { PrismaService } from "../../../prisma/prisma.service"
 import { AdmissionsService } from "../services/admissions.service"
 
 describe("Admissions Service", () => {

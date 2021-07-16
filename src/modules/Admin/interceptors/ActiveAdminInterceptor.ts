@@ -1,6 +1,6 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { User } from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import {
   CallHandler,
   ExecutionContext,

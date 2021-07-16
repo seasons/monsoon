@@ -1,5 +1,5 @@
-import { PrismaModule } from "@app/prisma/prisma.module"
 import { ImageService } from "@modules/Image/services/image.service"
+import { PrismaModule } from "@modules/Prisma/prisma.module"
 import { Module } from "@nestjs/common"
 
 import { SearchResultDataFieldsResolver } from "./fields/searchResultData.fields.resolver"

@@ -8,11 +8,12 @@ import { BagService } from "@app/modules/Product/services/bag.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import {
   BagItem,
+  OrderLineItemRecordType,
   OrderStatus,
   PhysicalProduct,
   PhysicalProductPrice,
 } from "@app/prisma"
-import { OrderLineItemRecordType } from "@app/prisma"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -26,7 +27,6 @@ import {
   ProductVariant,
   User,
 } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
 import { pick } from "lodash"
 

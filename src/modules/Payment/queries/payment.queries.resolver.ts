@@ -1,7 +1,7 @@
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Args, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma1/prisma.service"
 @Resolver()
 export class PaymentQueriesResolver {
   constructor(private readonly prisma: PrismaService) {}

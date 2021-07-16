@@ -1,8 +1,8 @@
-import { PrismaModule } from "@app/prisma/prisma.module"
+import { AnalyticsModule } from "@modules/Analytics/analytics.module"
+import { PrismaModule } from "@modules/Prisma/prisma.module"
 import { Module } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
 
-import { AnalyticsModule } from "../Analytics/analytics.module"
 import { ActiveAdminInterceptor } from "./interceptors/ActiveAdminInterceptor"
 
 @Module({

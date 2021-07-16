@@ -1,12 +1,12 @@
 import { DataScheduledJobs } from "@app/modules/Cron/services/data.job.service"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { PrismaService } from "@modules/Prisma/prisma.service"
+import { ScriptsService } from "@modules/Scripts/services/scripts.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
 import { pick } from "lodash"
 import { Command, Option, Positional } from "nestjs-command"
 
 import { PrismaEnvOption } from "../scripts.decorators"
-import { ScriptsService } from "../services/scripts.service"
 
 @Injectable()
 export class DataCommands {

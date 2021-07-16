@@ -3,7 +3,6 @@ import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { PrismaGenerateParams } from "@app/modules/DataLoader/dataloader.types"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 import { ReservationUtilsService } from "@app/modules/Reservation/services/reservation.utils.service"
-import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Loader } from "@modules/DataLoader/decorators/dataloader.decorator"
 import { InvoicesForCustomersLoader } from "@modules/Payment/loaders/invoicesForCustomers.loaders"
 import {
@@ -11,9 +10,10 @@ import {
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
 import { PaymentService } from "@modules/Payment/services/payment.service"
+import { PrismaDataLoader } from "@modules/Prisma/prisma.loader"
+import { PrismaService } from "@modules/Prisma/prisma.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
 import { isObject } from "lodash"
 import { DateTime } from "luxon"
 
