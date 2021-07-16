@@ -39,8 +39,11 @@ export class CustomerFieldsResolver {
         model: "PaymentPlan",
         formatWhere: ids =>
           Prisma.validator<Prisma.PaymentPlanWhereInput>()({
-            customerMembership: { customer: { id: { in: ids } } },
+            customerMemberships: { some: { customer: { id: { in: ids } } } },
           }),
+        infoFragment: `fragment EnsureCustomerId on PaymentPlan {customerMemberships {customer {id}}}`,
+        keyToDataRelationship: "ManyToOne",
+        getKeys: a => a.customerMemberships.map(a => a.customer.id),
       },
       includeInfo: true,
     })
