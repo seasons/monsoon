@@ -605,18 +605,18 @@ model PauseRequest {
 }
 
 model PaymentPlan {
-  id                 String              @id @default(cuid()) @db.VarChar(30)
-  description        String?
-  planID             String              @unique
-  status             String?
-  name               String?
-  price              Int?
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  tagline            String?
-  itemCount          Int?
-  tier               String?
-  customerMembership CustomerMembership?
+  id                  String              @id @default(cuid()) @db.VarChar(30)
+  description         String?
+  planID              String              @unique
+  status              String?
+  name                String?
+  price               Int?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  tagline             String?
+  itemCount           Int?
+  tier                String?
+  customerMemberships CustomerMembership[]
 }
 
 model PhysicalProduct {
