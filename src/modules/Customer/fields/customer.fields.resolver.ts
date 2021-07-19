@@ -135,10 +135,16 @@ export class CustomerFieldsResolver {
         select: Prisma.validator<Prisma.ReservationFeedbackSelect>()({
           id: true,
           respondedAt: true,
+          user: {
+            select: {
+              id: true,
+            },
+          },
         }),
         orderBy: {
           respondedAt: "desc",
         },
+        getKeys: a => [a.user.id],
         formatWhere: keys => {
           return Prisma.validator<Prisma.ReservationFeedbackWhereInput>()({
             user: { id: { in: keys } },
