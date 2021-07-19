@@ -534,7 +534,7 @@ export class PaymentService {
       let resumeDateISO
 
       if (pauseType === "WithItems") {
-        termEnd = customerWithMembership?.membership?.subscription.currentTermEnd.toString()
+        termEnd = customerWithMembership?.membership?.subscription.currentTermEnd.toISOString()
         resumeDateISO = DateTime.fromISO(termEnd).plus({ months: 1 }).toISO()
       } else {
         const result = await chargebee.subscription
@@ -543,7 +543,9 @@ export class PaymentService {
           })
           .request()
 
-        termEnd = result?.subscription?.current_term_end
+        termEnd = DateTime.fromSeconds(
+          result?.subscription?.current_term_end
+        ).toISO()
         if (!termEnd) {
           throw new Error(
             "Unable to query term end for subscription. Please try again"
@@ -558,8 +560,8 @@ export class PaymentService {
             connect: { id: customerWithMembership?.membership?.id },
           },
           pausePending: true,
-          pauseDate: new Date(termEnd),
-          resumeDate: new Date(resumeDateISO),
+          pauseDate: termEnd,
+          resumeDate: resumeDateISO,
           pauseType,
           reason: reasonID && { connect: { id: reasonID } },
           notified: false,
