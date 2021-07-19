@@ -28,7 +28,7 @@ interface InfoToSelectParams {
   modelFieldsByModelName?: any
 }
 
-const QUERY_KEYS_TO_IGNORE = ["signup"]
+const QUERY_KEYS_TO_IGNORE = ["signup", "login"]
 
 @Injectable()
 export class QueryUtilsService {
