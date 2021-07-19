@@ -159,7 +159,6 @@ export class MeFieldsResolver {
         "PastDueInvoice",
         customer.id
       )
-      console.log(data)
     } else if (customer?.status === "Authorized") {
       data = await this.customerService.getNotificationBarData(
         "AuthorizedReminder",
@@ -174,7 +173,6 @@ export class MeFieldsResolver {
         customer.id
       )
     }
-    console.log(data)
     return data
   }
 }
