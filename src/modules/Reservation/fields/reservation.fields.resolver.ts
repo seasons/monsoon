@@ -67,6 +67,7 @@ export class ReservationFieldsResolver {
       params: {
         model: "Reservation",
         select: Prisma.validator<Prisma.ReservationSelect>()({
+          id: true,
           products: {
             select: {
               id: true,
