@@ -7,6 +7,14 @@ import { Info, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head } from "lodash"
 
+// estimate on customer --> membership --> plan requires planID to be on the plan
+const EnsureFieldsForDownstreamFieldResolvers = `fragment EnsureFieldsForDownstreamFieldResolvers on Customer {
+  membership {
+    plan {
+      planID
+    }
+  }
+}`
 @Resolver("Me")
 export class MeFieldsResolver {
   constructor(
@@ -27,7 +35,22 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
-  async customer(@Customer() customer, @Select() _select) {
+  async customer(
+    @Customer() customer,
+    @Select({
+      /*
+      Ideally, we should add these fragments for downstream fields conditionally. 
+      We want to add fragments upstream rather than add more DB queries downstream so that
+      we can minimize the number of DB queries. But we also don't want to add unnecessary data
+      to the customer query if the downstream fields for which we query these fields are not on the 
+      selection set for a given query. 
+
+      For now we just add the fragment for all queries. Let's optimize it later.
+      */
+      withFragment: EnsureFieldsForDownstreamFieldResolvers,
+    })
+    _select
+  ) {
     if (!customer) {
       return null
     }
@@ -136,6 +159,7 @@ export class MeFieldsResolver {
         "PastDueInvoice",
         customer.id
       )
+      console.log(data)
     } else if (customer?.status === "Authorized") {
       data = await this.customerService.getNotificationBarData(
         "AuthorizedReminder",
@@ -150,6 +174,7 @@ export class MeFieldsResolver {
         customer.id
       )
     }
+    console.log(data)
     return data
   }
 }
