@@ -168,30 +168,33 @@ async function retrieveTestProductWithNecessaryFields(
   testProduct,
   prismaService
 ) {
-  return await prismaService.binding.query.product(
-    {
-      where: { id: testProduct.id },
+  return await prismaService.client2.product.findMany({
+    where: { id: testProduct.id },
+    select: {
+      id: true,
+      status: true,
+      variants: {
+        select: {
+          id: true,
+          physicalProducts: {
+            select: {
+              id: true,
+              inventoryStatus: true,
+              productVariant: {
+                select: {
+                  id: true,
+                  total: true,
+                  reservable: true,
+                  reserved: true,
+                  nonReservable: true,
+                  offloaded: true,
+                  stored: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
-    // retrieve fields to facilitate expects
-    `{
-        id
-        status
-        variants {
-            id
-            physicalProducts {
-                id
-                inventoryStatus
-                productVariant {
-                    id
-                    total
-                    reservable
-                    reserved
-                    nonReservable
-                    offloaded
-                    stored
-                }
-            }
-        }
-    }`
-  )
+  })
 }
