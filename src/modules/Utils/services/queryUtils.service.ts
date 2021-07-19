@@ -341,6 +341,11 @@ export class QueryUtilsService {
     if (!values) {
       return undefined
     }
+    if (!Array.isArray(values)) {
+      throw new Error(
+        "Values needs to be an array in createScalarListMutateInput"
+      )
+    }
     if (type === "create") {
       return {
         createMany: {

@@ -60,7 +60,7 @@ export class ReservationFeedbackService {
           },
           data: {
             responses: this.queryUtils.createScalarListMutateInput(
-              responses[key],
+              [responses[key]],
               key,
               "update"
             ),
