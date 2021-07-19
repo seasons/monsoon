@@ -1,7 +1,8 @@
-import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
 import { TwilioEvent } from "@app/modules/Twilio/twilio.types"
 import { Body, Controller, Post } from "@nestjs/common"
+
+import { SMSService } from "../services/sms.service"
 
 @Controller("sms_events")
 export class SMSController {
