@@ -37,7 +37,7 @@ export class UpdatePaymentService {
   ) {}
 
   async updatePaymentMethod(
-    planID,
+    _planID,
     customer,
     token,
     tokenType,
@@ -60,6 +60,7 @@ export class UpdatePaymentService {
                 email: true,
               },
             },
+            membership: { select: { plan: { select: { planID: true } } } },
             utm: {
               select: {
                 source: true,
@@ -83,6 +84,7 @@ export class UpdatePaymentService {
         chargebeeBillingAddress,
       } = this.paymentUtils.createBillingAddresses(user, token, billing)
 
+      const planID = _planID ?? customerWithUserData?.membership?.plan?.planID
       const subscriptions = await chargebee.subscription
         .list({
           plan_id: { in: [planID] },
@@ -137,7 +139,7 @@ export class UpdatePaymentService {
         data: { ...prismaBillingAddress, brand: _brand, last_digits: _last4 },
       })
     } catch (e) {
-      this.error.setExtraContext({ planID, token, tokenType })
+      this.error.setExtraContext({ token, tokenType })
       this.error.setExtraContext(customer, "customer")
       this.error.captureError(e)
       throw new Error(`Error updating your payment method ${e}`)
