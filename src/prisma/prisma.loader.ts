@@ -80,6 +80,11 @@ import {
       let map = {}
       for (const item of data) {
         const keys = getKeys(item)
+
+        if (keys.every(a => a === undefined)) {
+          throw new Error(`Keys are undefined. include 'id' in your select object or the correct property if using a custom getKeys function`)
+        }
+
         map = this.updateMapForItem({ map, formatData, keys, item, keyToDataRelationship })
       }
       return map
