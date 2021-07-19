@@ -221,8 +221,9 @@ export class ReservationService {
     const result = await this.prisma.client2.$transaction(promises.flat())
 
     const reservation = result.pop()
+
     await this.addEarlySwapIfNeeded(
-      reservation.id,
+      reservation?.id,
       customer.id,
       nextFreeSwapDate
     )
