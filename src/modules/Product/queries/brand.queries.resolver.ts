@@ -1,39 +1,64 @@
-import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
+import { Select } from "@app/decorators/select.decorator"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { Args, Query, Resolver } from "@nestjs/graphql"
+import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { addFragmentToInfo } from "graphql-binding"
 
 @Resolver()
 export class BrandQueriesResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly queryUtils: QueryUtilsService
+  ) {}
 
   @Query()
-  async brand(@Args() args, @Info() info) {
+  async brand(
+    @Args() args,
+    @Select({
+      withFragment: `fragment EnsureSlug on Brand { slug }`,
+    })
+    select
+  ) {
+    let data
     if (typeof args?.published === "boolean") {
-      const brand = await this.prisma.binding.query.brand(
-        args,
-        addFragmentToInfo(
-          info,
-          `fragment EnsurePublished on Brand { published }`
-        )
-      )
+      const brand: any = await this.prisma.client2.brand.findUnique({
+        select: {
+          ...select,
+          published: true,
+        },
+        where: { ...args.where },
+      })
+
       if (args?.published === brand?.published) {
-        return brand
+        data = brand
       } else {
         throw new ApolloError("Brand not found", "404")
       }
-    } else {
-      return await this.prisma.binding.query.brand(args, info)
     }
+
+    if (!data) {
+      data = await this.prisma.client2.brand.findUnique({
+        ...args,
+        select,
+      })
+    }
+
+    const sanitizedData = this.prisma.sanitizePayload(data, "Brand")
+
+    return sanitizedData
   }
 
   @Query()
-  async brands(@Args() args, @Info() info) {
-    return this.prisma.binding.query.brands(args, info)
+  async brands(
+    @FindManyArgs({ withFragment: `fragment EnsureSlug on Brand { slug }` })
+    args
+  ) {
+    return this.queryUtils.resolveFindMany(args, "Brand")
   }
 
   @Query()
-  async brandsConnection(@Args() args, @Info() info) {
-    return this.prisma.binding.query.brandsConnection(args, info)
+  async brandsConnection(@Args() args, @Select() select) {
+    return this.queryUtils.resolveConnection({ ...args, select }, "Brand")
   }
 }

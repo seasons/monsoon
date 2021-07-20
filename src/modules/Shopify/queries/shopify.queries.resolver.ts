@@ -1,20 +1,20 @@
-import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
+import { Query, Resolver } from "@nestjs/graphql"
+import { PrismaService } from "@prisma1/prisma.service"
 
 @Resolver()
 export class ShopifyQueriesResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @Query()
-  async shopifyProductVariants(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.shopifyProductVariants(args, info)
+  async shopifyProductVariants(@FindManyArgs() args) {
+    const _data = this.prisma.client2.shopifyProductVariant.findMany(args)
+    return this.prisma.sanitizePayload(_data, "ShopifyProductVariant")
   }
 
   @Query()
-  async externalShopifyIntegrations(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.externalShopifyIntegrations(
-      args,
-      info
-    )
+  async shopifyShops(@FindManyArgs() args) {
+    const _data = this.prisma.client2.shopifyShop.findMany(args)
+    return this.prisma.sanitizePayload(_data, "ShopifyShop")
   }
 }

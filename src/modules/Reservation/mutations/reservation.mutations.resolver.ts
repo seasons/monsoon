@@ -1,8 +1,8 @@
 import { Customer, User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
+import { Select } from "@app/decorators/select.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import { addFragmentToInfo } from "graphql-binding"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
 
 import { ReservationService } from ".."
@@ -15,8 +15,20 @@ export class ReservationMutationsResolver {
   ) {}
 
   @Mutation()
-  async updateReservation(@Args() { data, where }, @Info() info) {
-    return this.reservation.updateReservation(data, where, info)
+  async updateReservation(@Args() { data, where }, @Select() select) {
+    const result = await this.reservation.updateReservation(data, where, select)
+
+    return result
+  }
+
+  @Mutation()
+  async draftReservationLineItems(@Args() { hasFreeSwap }, @User() user) {
+    const result = await this.reservation.draftReservationLineItems(
+      user,
+      hasFreeSwap
+    )
+
+    return result
   }
 
   @Mutation()
@@ -24,7 +36,10 @@ export class ReservationMutationsResolver {
     @Args() { items, shippingCode },
     @User() user,
     @Customer() customer,
-    @Info() info,
+    @Select({
+      withFragment: `fragment EnsureTrackData on Reservation {id products {seasonsUID}}`,
+    })
+    select,
     @Application() application
   ) {
     const returnData = await this.reservation.reserveItems(
@@ -32,7 +47,7 @@ export class ReservationMutationsResolver {
       shippingCode,
       user,
       customer,
-      addFragmentToInfo(info, `{products {seasonsUID}}`)
+      select
     )
 
     // Track the selection
@@ -57,5 +72,15 @@ export class ReservationMutationsResolver {
     )
 
     return result
+  }
+
+  @Mutation()
+  async returnItems(@Args() { items }, @Customer() customer) {
+    return this.reservation.returnItems(items, customer)
+  }
+
+  @Mutation()
+  async cancelReturn(@Customer() customer) {
+    return this.reservation.cancelReturn(customer)
   }
 }

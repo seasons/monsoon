@@ -13,7 +13,7 @@ type Mutation {
 }
 
 type Query {
-  fitPic(where: FitPicWhereUniqueInput!): FitPic
+  fitPic(where: FitPicWhereUniqueInput!): FitPic @cacheControl(maxAge: 0)
   fitPics(
     where: FitPicWhereInput
     orderBy: FitPicOrderByInput
@@ -22,7 +22,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [FitPic!]!
+  ): [FitPic!]! @cacheControl(maxAge: 0)
   fitPicsConnection(
     where: FitPicWhereInput
     orderBy: FitPicOrderByInput
@@ -31,7 +31,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): FitPicConnection!
+  ): FitPicConnection! @cacheControl(maxAge: 0)
 }
 
 input FitPicSubmissionOptionsInput {

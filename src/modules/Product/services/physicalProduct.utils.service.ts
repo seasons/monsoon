@@ -1,11 +1,7 @@
 import { Injectable } from "@nestjs/common"
-import {
-  Category,
-  ID_Input,
-  PhysicalProduct,
-  ProductVariant,
-} from "@prisma/index"
-import { PrismaService } from "@prisma/prisma.service"
+import { Category } from "@prisma/client"
+import { ID_Input, PhysicalProduct, ProductVariant } from "@prisma1/index"
+import { PrismaService } from "@prisma1/prisma.service"
 import { head, uniqBy } from "lodash"
 
 import { ProductUtilsService } from "./product.utils.service"
@@ -22,35 +18,30 @@ export class PhysicalProductUtilsService {
     private readonly productUtils: ProductUtilsService
   ) {}
 
-  async getPhysicalProductsWithReservationSpecificData(
-    items: ID_Input[]
-  ): Promise<PhysicalProductWithReservationSpecificData[]> {
-    return await this.prisma.binding.query.physicalProducts(
+  async getPhysicalProductsWithReservationSpecificData(items: string[]) {
+    const _physicalProducts = await this.prisma.client2.physicalProduct.findMany(
       {
         where: {
           productVariant: {
-            id_in: items as string[],
+            some: {
+              id: {
+                in: items,
+              },
+            },
           },
         },
-      },
-      `{
-            id
-            seasonsUID
-            inventoryStatus
-            productVariant {
-                id
-            }
-        }`
+        select: {
+          id: true,
+          seasonsUID: true,
+          sequenceNumber: true,
+          inventoryStatus: true,
+          productStatus: true,
+          productVariant: true,
+        },
+      }
     )
-  }
 
-  extractUniqueReservablePhysicalProducts(
-    physicalProducts: PhysicalProductWithReservationSpecificData[]
-  ): PhysicalProductWithReservationSpecificData[] {
-    return uniqBy(
-      physicalProducts.filter(a => a.inventoryStatus === "Reservable"),
-      b => b.productVariant.id
-    )
+    return this.prisma.sanitizePayload(_physicalProducts, "PhysicalProduct")
   }
 
   extractUniqueNonreservablePhysicalProducts(
@@ -62,57 +53,37 @@ export class PhysicalProductUtilsService {
     )
   }
 
-  async markPhysicalProductsReservedOnPrisma(
-    physicalProducts: PhysicalProduct[]
-  ): Promise<() => void> {
-    const physProdIds = physicalProducts.map(a => a.id)
-
-    await this.prisma.client.updateManyPhysicalProducts({
-      where: { id_in: physProdIds },
-      data: { inventoryStatus: "Reserved" },
-    })
-
-    const rollbackMarkPhysicalProductReservedOnPrisma = async () => {
-      await this.prisma.client.updateManyPhysicalProducts({
-        where: { id_in: physProdIds },
-        data: { inventoryStatus: "Reservable" },
-      })
-    }
-
-    return rollbackMarkPhysicalProductReservedOnPrisma
-  }
-
-  async getAllCategories(physProd: PhysicalProduct): Promise<Category[]> {
-    return await this.productUtils.getAllCategories(
-      head(
-        await this.prisma.client.products({
-          where: {
-            variants_some: {
-              physicalProducts_some: { seasonsUID: physProd.seasonsUID },
+  async getAllCategories(
+    physProd: Pick<PhysicalProduct, "seasonsUID">
+  ): Promise<Category[]> {
+    return await this.productUtils.getAllCategoriesForProduct(
+      await this.prisma.client2.product.findFirst({
+        where: {
+          variants: {
+            some: {
+              physicalProducts: { some: { seasonsUID: physProd.seasonsUID } },
             },
           },
-        })
-      )
+        },
+      })
     )
   }
 
   async nextSequenceNumber(): Promise<number> {
-    const lastPhysicalProduct = head(
-      await this.prisma.client.physicalProducts({
-        first: 1,
-        orderBy: "sequenceNumber_DESC",
-      })
+    const lastPhysicalProduct = await this.prisma.client2.physicalProduct.findFirst(
+      {
+        orderBy: { sequenceNumber: "desc" },
+      }
     )
 
     return lastPhysicalProduct.sequenceNumber + 1
   }
 
   async groupedSequenceNumbers(inputs): Promise<any> {
-    const lastPhysicalProduct = head(
-      await this.prisma.client.physicalProducts({
-        first: 1,
-        orderBy: "sequenceNumber_DESC",
-      })
+    const lastPhysicalProduct = await this.prisma.client2.physicalProduct.findFirst(
+      {
+        orderBy: { sequenceNumber: "desc" },
+      }
     )
     let startingSequenceNumber = lastPhysicalProduct.sequenceNumber
     const groupedSequenceNumbers = []

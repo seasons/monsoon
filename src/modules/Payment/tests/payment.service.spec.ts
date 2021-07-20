@@ -1,4 +1,5 @@
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -70,7 +71,10 @@ describe("Payment Service", () => {
 
     prisma = moduleRef.get<PrismaService>(PrismaService)
     const utilsService = moduleRef.get<UtilsService>(UtilsService)
-    testUtils = new TestUtilsService(prisma, utilsService)
+    const queryUtilsService = moduleRef.get<QueryUtilsService>(
+      QueryUtilsService
+    )
+    testUtils = new TestUtilsService(prisma, utilsService, queryUtilsService)
     paymentService = moduleRef.get<PaymentService>(PaymentService)
   })
 
@@ -88,6 +92,13 @@ describe("Payment Service", () => {
           addressZip: "10013",
           addressCountry: "USA",
         },
+      }
+      const shippingAddress = {
+        address1: "1600 Pennsylvania Ave",
+        address2: "",
+        city: "Washington",
+        state: "DC",
+        zipCode: "20500",
       }
       const { customer, cleanupFunc } = await testUtils.createTestCustomer({
         email: "test@seasons.nyc",
@@ -111,49 +122,49 @@ describe("Payment Service", () => {
             ChargebeeMockFunction.SubscriptionCreateForCustomer
           )
         )
+
       await paymentService.stripeTokenCheckout(
         planID,
         token,
         customer,
         "apple_pay",
         process.env.REFERRAL_COUPON_ID,
-        "flare"
+        "flare",
+        shippingAddress
       )
 
-      const newCustomer = await prisma.binding.query.customer(
-        { where: { id: customer.id } },
-        `{
-          id
-          billingInfo {
-            id
-            brand
-            name
-            last_digits
-            expiration_month
-            expiration_year
-            street1
-            city
-            state
-            country
-            postal_code
-          }
-          status
-          user {
-            id
-          }
-          membership {
-            id
-            subscriptionId
-            subscription {
-              id
-            }
-            plan {
-              id
-              planID
-            }
-          }
-        }`
-      )
+      const _newCustomer = await prisma.client2.customer.findUnique({
+        where: { id: customer.id },
+        select: {
+          id: true,
+          billingInfo: {
+            select: {
+              id: true,
+              brand: true,
+              name: true,
+              last_digits: true,
+              expiration_month: true,
+              expiration_year: true,
+              street1: true,
+              city: true,
+              state: true,
+              country: true,
+              postal_code: true,
+            },
+          },
+          status: true,
+          user: { select: { id: true } },
+          membership: {
+            select: {
+              id: true,
+              subscriptionId: true,
+              subscription: { select: { id: true } },
+              plan: { select: { id: true, planID: true } },
+            },
+          },
+        },
+      })
+      const newCustomer = prisma.sanitizePayload(_newCustomer, "Customer")
 
       // Confirm Billing Info fields
       expect(newCustomer.billingInfo.brand).toEqual("american_express")
@@ -175,7 +186,7 @@ describe("Payment Service", () => {
       expect(newCustomer.membership.plan.planID).toEqual("essential")
 
       // Email was sent
-      const emailReceipts = await prisma.client.emailReceipts({
+      const emailReceipts = await prisma.client2.emailReceipt.findMany({
         where: {
           user: { id: newCustomer.user.id },
         },
@@ -183,11 +194,13 @@ describe("Payment Service", () => {
       expect(emailReceipts.length).toEqual(1)
       expect(emailReceipts[0].emailId).toEqual("WelcomeToSeasons")
 
-      await prisma.client.deleteBillingInfo({ id: newCustomer.billingInfo.id })
-      await prisma.client.deleteManyEmailReceipts({
-        user: { id: newCustomer.user.id },
+      await prisma.client2.billingInfo.delete({
+        where: { id: newCustomer.billingInfo.id },
       })
-      await prisma.client.deleteManyPaymentPlans({})
+      await prisma.client2.emailReceipt.deleteMany({
+        where: { user: { id: newCustomer.user.id } },
+      })
+      await prisma.client2.paymentPlan.deleteMany({})
       cleanupFunc()
     })
   })
@@ -211,7 +224,7 @@ const setupPaymentPlans = async () => {
         status: item.plan.status,
       }
 
-      await ps.client.upsertPaymentPlan({
+      await ps.client2.paymentPlan.upsert({
         where: { planID: item.plan.id },
         create: data,
         update: data,

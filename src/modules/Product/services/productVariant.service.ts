@@ -1,20 +1,11 @@
 import { Injectable } from "@nestjs/common"
-import {
-  BottomSizeType,
-  ID_Input,
-  InventoryStatus,
-  LetterSize,
-  Product,
-  ProductVariant,
-} from "@prisma/index"
-import { PrismaService } from "@prisma/prisma.service"
+import { Prisma, ProductVariant } from "@prisma/client"
+import { InventoryStatus } from "@prisma1/index"
+import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
+import { head, lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
 
-import {
-  PhysicalProductUtilsService,
-  PhysicalProductWithReservationSpecificData,
-} from "./physicalProduct.utils.service"
+import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 import { ProductUtilsService } from "./product.utils.service"
 
 @Injectable()
@@ -26,30 +17,24 @@ export class ProductVariantService {
   ) {}
 
   async addPhysicalProducts(productVariantID: string, count: number) {
-    const productVariant = await this.prisma.client.productVariant({
-      id: productVariantID,
+    const productVariant = await this.prisma.client2.productVariant.findUnique({
+      where: { id: productVariantID },
+      select: { id: true, sku: true, total: true, nonReservable: true },
     })
-    const physicalProducts = await this.prisma.binding.query.physicalProducts(
+    const physicalProducts = await this.prisma.client2.physicalProduct.findMany(
       {
         where: {
           productVariant: {
-            id: productVariant.id,
+            every: { id: productVariant.id },
           },
         },
-      },
-      `{
-            id
-            seasonsUID
-            inventoryStatus
-            price {
-              id
-              buyUsedPrice
-              buyUsedEnabled
-            }
-            productVariant {
-                id
-            }
-        }`
+        select: {
+          id: true,
+          price: {
+            select: { id: true, buyUsedEnabled: true, buyUsedPrice: true },
+          },
+        },
+      }
     )
 
     const SUIDs = []
@@ -65,9 +50,9 @@ export class ProductVariantService {
       buyUsedPrice: 0,
     }
 
-    const newPhysicalProducts = await Promise.all(
-      SUIDs.map(async (SUID, i) => {
-        return await this.prisma.client.createPhysicalProduct({
+    const physProdPromises = SUIDs.map((SUID, i) => {
+      return this.prisma.client2.physicalProduct.create({
+        data: {
           seasonsUID: SUID,
           productStatus: "New",
           inventoryStatus: "NonReservable",
@@ -76,71 +61,88 @@ export class ProductVariantService {
           price: {
             create: price,
           },
-        })
+        },
       })
-    )
-
-    await this.prisma.client.updateProductVariant({
+    })
+    const prodVarPromise = this.prisma.client2.productVariant.update({
       where: {
         id: productVariant.id,
       },
       data: {
         total: productVariant.total + count,
-        nonReservable: productVariant.nonReservable + 1,
+        nonReservable: productVariant.nonReservable + count,
       },
     })
 
-    return newPhysicalProducts
+    await this.prisma.client2.$transaction([
+      ...physProdPromises,
+      prodVarPromise,
+    ])
   }
 
   async updateProductVariantCounts(
-    /* array of product variant ids */
-    items: ID_Input[],
+    items: string[],
+    customerId: string,
     { dryRun } = { dryRun: false }
-  ): Promise<
-    [Product[], PhysicalProductWithReservationSpecificData[], () => void]
-  > {
-    const prismaProductVariants = await this.prisma.client.productVariants({
-      where: { id_in: items },
+  ) {
+    const _productVariants = await this.prisma.client2.productVariant.findMany({
+      where: {
+        id: {
+          in: items,
+        },
+      },
+      select: {
+        id: true,
+        reservable: true,
+        reserved: true,
+        product: true,
+      },
     })
+    const productVariants = this.prisma.sanitizePayload(
+      _productVariants,
+      "ProductVariant"
+    )
 
     const physicalProducts = await this.physicalProductUtilsService.getPhysicalProductsWithReservationSpecificData(
       items
     )
 
     // Are there any unavailable variants? If so, throw an error
-    const unavailableVariants = prismaProductVariants.filter(
-      v => v.reservable <= 0
-    )
+    const unavailableVariants = productVariants.filter(v => v.reservable <= 0)
     let unavailableVariantsIDS = unavailableVariants.map(a => a.id)
 
     // Double check that the product variants have a sufficient number of available
     // physical products
-    const availablePhysicalProducts = this.physicalProductUtilsService.extractUniqueReservablePhysicalProducts(
-      physicalProducts
+    const availablePhysicalProducts = uniqBy(
+      physicalProducts.filter(a => a.inventoryStatus === "Reservable"),
+      b => (b.productVariant as any).id
     )
 
     if (items.length > availablePhysicalProducts?.length) {
       const availableVariantIDs = uniq(
-        availablePhysicalProducts.map(physProd => physProd.productVariant.id)
+        availablePhysicalProducts.map(p => (p.productVariant as any).id)
       )
 
       unavailableVariantsIDS = uniq(
         physicalProducts
           .filter(
-            physProd =>
-              !availableVariantIDs.includes(physProd.productVariant.id)
+            p => !availableVariantIDs.includes((p.productVariant as any).id)
           )
-          .map(physProd => physProd.productVariant.id)
+          .map(p => (p.productVariant as any).id)
       )
     }
 
     if (unavailableVariantsIDS.length > 0) {
       // Move the items from the bag to saved items
-      await this.prisma.client.updateManyBagItems({
+      await this.prisma.client2.bagItem.updateMany({
         where: {
+          customer: {
+            id: customerId,
+          },
           productVariant: {
-            id_in: unavailableVariantsIDS,
+            id: {
+              in: unavailableVariantsIDS,
+            },
           },
         },
         data: {
@@ -150,197 +152,197 @@ export class ProductVariantService {
       })
 
       throw new ApolloError(
-        "The following item is not reservable",
+        "The following items are not reservable",
         "511",
         unavailableVariantsIDS
       )
     }
 
-    const productsBeingReserved = [] as Product[]
-    const rollbackFuncs = []
-    try {
-      for (const prismaProductVariant of prismaProductVariants) {
-        const iProduct = await this.prisma.client
-          .productVariant({ id: prismaProductVariant.id })
-          .product()
-        productsBeingReserved.push(iProduct)
+    const promises = []
 
-        // Update product variant counts in prisma
-        if (!dryRun) {
-          const data = {
-            reservable: prismaProductVariant.reservable - 1,
-            reserved: prismaProductVariant.reserved + 1,
-          }
-          const rollbackData = {
-            reservable: prismaProductVariant.reservable,
-            reserved: prismaProductVariant.reserved,
-          }
+    for (const productVariant of productVariants) {
+      // Update product variant counts in prisma
+      if (!dryRun) {
+        const data = {
+          reservable: productVariant.reservable - 1,
+          reserved: productVariant.reserved + 1,
+        }
 
-          await this.prisma.client.updateProductVariant({
+        promises.push(
+          this.prisma.client2.productVariant.update({
             where: {
-              id: prismaProductVariant.id,
+              id: productVariant.id,
             },
             data,
           })
-          const rollbackPrismaProductVariantUpdate = async () => {
-            await this.prisma.client.updateProductVariant({
-              where: {
-                id: prismaProductVariant.id,
-              },
-              data: rollbackData,
-            })
-          }
-          rollbackFuncs.push(rollbackPrismaProductVariantUpdate)
-        }
-      }
-    } catch (err) {
-      for (const rollbackFunc of rollbackFuncs) {
-        await rollbackFunc()
-      }
-      throw err
-    }
-
-    const rollbackProductVariantCounts = async () => {
-      for (const rollbackFunc of rollbackFuncs) {
-        await rollbackFunc()
+        )
       }
     }
 
     return [
-      productsBeingReserved,
+      promises,
       availablePhysicalProducts,
-      rollbackProductVariantCounts,
+      productVariants.map(p => p.product),
     ]
   }
 
-  async updateCountsForStatusChange({
-    id,
+  getUpdateCountsForStatusChangePromise({
+    productVariant,
     oldInventoryStatus,
     newInventoryStatus,
   }: {
-    id: ID_Input
+    productVariant
     oldInventoryStatus: InventoryStatus
     newInventoryStatus: InventoryStatus
   }) {
-    const prodVar = await this.prisma.client.productVariant({ id })
-    const data = {}
-    const oldInventoryCountKey = lowerFirst(oldInventoryStatus)
-    const newInventoryCountKey = lowerFirst(newInventoryStatus)
-    data[oldInventoryCountKey] = prodVar[oldInventoryCountKey] - 1
-    data[newInventoryCountKey] = prodVar[newInventoryCountKey] + 1
+    const data = this.getCountsForStatusChange({
+      productVariant,
+      oldInventoryStatus,
+      newInventoryStatus,
+    })
 
-    await this.prisma.client.updateProductVariant({
-      where: { id },
+    return this.prisma.client2.productVariant.update({
+      where: { id: productVariant.id },
       data,
     })
   }
 
-  async getManufacturerSizeIDs(variant, type) {
-    const IDs =
-      variant.manufacturerSizeNames &&
-      (await Promise.all(
-        variant.manufacturerSizeNames?.map(async sizeValue => {
-          if (!variant.sku) {
-            throw new Error("No variant sku present in getManufacturerSizeIDs")
-          }
-          const sizeType =
-            type === "Bottom" ? variant.manufacturerBottomSizeType : "Letter"
-          const slug = `${variant.sku}-manufacturer-${sizeType}-${sizeValue}`
-          const size = await this.productUtils.deepUpsertSize({
-            slug,
-            type,
-            display: sizeValue,
-            topSizeData: type === "Top" && {
-              letter: (sizeValue as LetterSize) || null,
-            },
-            bottomSizeData: type === "Bottom" && {
-              type: (sizeType as BottomSizeType) || null,
-              value: sizeValue || "",
-            },
-          })
-          return { id: size.id }
-        })
-      ))
-    return IDs
+  getCountsForStatusChange({
+    productVariant,
+    oldInventoryStatus,
+    newInventoryStatus,
+  }: {
+    productVariant: Partial<
+      Pick<
+        ProductVariant,
+        "reserved" | "reservable" | "offloaded" | "nonReservable" | "stored"
+      >
+    >
+    oldInventoryStatus: InventoryStatus
+    newInventoryStatus: InventoryStatus
+  }) {
+    const oldInventoryCountKey = lowerFirst(oldInventoryStatus)
+    const newInventoryCountKey = lowerFirst(newInventoryStatus)
+
+    return {
+      [oldInventoryCountKey]: productVariant[oldInventoryCountKey] - 1,
+      [newInventoryCountKey]: productVariant[newInventoryCountKey] + 1,
+    }
   }
 
-  async updateProductVariant(input, info): Promise<ProductVariant> {
+  async updateProductVariant(input, select): Promise<ProductVariant> {
     const {
       id,
       productType,
       weight,
+      manufacturerSizeType,
       manufacturerSizeNames,
       shopifyProductVariant,
     } = input
 
-    const prodVarSize = await this.prisma.client
-      .productVariant({ id })
-      .internalSize()
-
-    if (!prodVarSize) {
-      return null
-    }
-    switch (productType) {
-      case "Top":
-        const topSizeValues = {
-          ...pick(input, ["sleeve", "shoulder", "chest", "neck", "length"]),
-        }
-        await this.prisma.client.updateSize({
-          data: { top: { update: topSizeValues } },
-          where: { id: prodVarSize.id },
-        })
-        break
-      case "Bottom":
-        const bottomSizeValues = {
-          ...pick(input, ["waist", "rise", "hem", "inseam"]),
-        }
-        await this.prisma.client.updateSize({
-          data: { bottom: { update: bottomSizeValues } },
-          where: { id: prodVarSize.id },
-        })
-        break
+    // Input validation
+    if (manufacturerSizeNames.length > 1) {
+      throw new Error(`Please pass no more than 1 manufacturer size name`)
     }
 
-    const data = { weight } as any
-
-    const variantWithSku = await this.prisma.binding.query.productVariant(
-      { where: { id } },
-      `
-      {
-        id
-        sku
-      }
-    `
-    )
-
-    if (!!manufacturerSizeNames?.length) {
-      const variant = { ...input, sku: variantWithSku.sku }
-      const manufacturerSizeIDs = await this.getManufacturerSizeIDs(
-        variant,
-        productType
-      )
-      data.manufacturerSizes = {
-        set: manufacturerSizeIDs,
-      }
-    }
-
-    if (shopifyProductVariant) {
-      data.shopifyProductVariant = shopifyProductVariant.externalId
-        ? {
-            connect: { externalId: shopifyProductVariant.externalId },
-          }
-        : {
-            disconnect: true,
-          }
-    }
-
-    const prodVar = await this.prisma.client.updateProductVariant({
+    const _prodVar = await this.prisma.client2.productVariant.findUnique({
       where: { id },
-      data,
+      select: {
+        internalSize: { select: { id: true, display: true, type: true } },
+        manufacturerSizes: { select: { slug: true } },
+        productID: true,
+        id: true,
+        sku: true,
+        product: {
+          select: {
+            category: { select: { measurementType: true } },
+          },
+        },
+      },
     })
-    return await this.prisma.binding.query.productVariant(
-      { where: { id: prodVar.id } },
-      info
-    )
+    const prodVar = this.prisma.sanitizePayload(_prodVar, "ProductVariant")
+
+    // FIXME: Can remove the ts-ignore below once we convert full to prisma2
+    // @ts-ignore
+    const measurementType = prodVar.product?.category?.measurementType
+
+    let manufacturerSizes
+    let displayShort
+    if (manufacturerSizeNames.length === 1) {
+      manufacturerSizes = {
+        update: this.productUtils.getManufacturerSizeMutateInput(
+          {
+            ...prodVar,
+            manufacturerSizeType,
+          },
+          head(manufacturerSizeNames),
+          productType,
+          "update"
+        ),
+      }
+
+      displayShort = this.productUtils.getVariantDisplayShort(
+        manufacturerSizes.update.data,
+        prodVar.internalSize
+      )
+    }
+
+    const measurements = pick(input, [
+      "sleeve",
+      "shoulder",
+      "chest",
+      "neck",
+      "length",
+      "waist",
+      "rise",
+      "hem",
+      "inseam",
+      "bridge",
+      "width",
+    ])
+
+    Object.keys(measurements).forEach(key => {
+      measurements[key] = this.productUtils.convertMeasurementSizeToInches(
+        measurements[key],
+        measurementType
+      )
+    })
+
+    const topSizeValues = {
+      ...pick(measurements, ["sleeve", "shoulder", "chest", "neck", "length"]),
+    }
+    const accessorySizeValues = {
+      ...pick(measurements, ["bridge", "length", "width"]),
+    }
+    const bottomSizeValues = {
+      ...pick(measurements, ["waist", "rise", "hem", "inseam"]),
+    }
+    const updateData = Prisma.validator<Prisma.ProductVariantUpdateInput>()({
+      internalSize: {
+        update: {
+          accessory:
+            productType === "Accessory"
+              ? { update: accessorySizeValues }
+              : undefined,
+          top: productType === "Top" ? { update: topSizeValues } : undefined,
+          bottom:
+            productType === "Bottom" ? { update: bottomSizeValues } : undefined,
+        },
+      },
+      manufacturerSizes,
+      displayShort,
+      shopifyProductVariant: !!shopifyProductVariant
+        ? !!shopifyProductVariant.externalId
+          ? { connect: { externalId: shopifyProductVariant.externalId } }
+          : { disconnect: true }
+        : undefined,
+      weight,
+    })
+    const result = (await this.prisma.client2.productVariant.update({
+      where: { id },
+      data: updateData,
+      select,
+    })) as ProductVariant
+    return this.prisma.sanitizePayload(result, "ProductVariant")
   }
 }

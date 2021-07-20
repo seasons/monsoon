@@ -4,10 +4,11 @@ import {
   PusherService,
 } from "@app/modules/PushNotification"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { Brand } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageService } from "@modules/Image/services/image.service"
+import { Brand } from "@prisma/client"
 
 import { PhysicalProductService } from "../services/physicalProduct.service"
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
@@ -18,10 +19,11 @@ describe("Validate Warehouse Location", () => {
   let prismaService: PrismaService
   let utilsService: UtilsService
 
-  beforeAll(async done => {
+  beforeAll(async () => {
     // Instantiate test service
     prismaService = new PrismaService()
-    utilsService = new UtilsService(prismaService)
+    const qus = new QueryUtilsService(prismaService)
+    utilsService = new UtilsService(prismaService, qus)
     let productUtilsService = new ProductUtilsService(
       prismaService,
       utilsService
@@ -48,30 +50,34 @@ describe("Validate Warehouse Location", () => {
         productUtilsService,
         productVariantService,
         new PhysicalProductUtilsService(prismaService, productUtilsService),
-        utilsService
+        utilsService,
+        new QueryUtilsService(prismaService)
       ),
       physicalProductUtilsService,
-      utilsService
+      utilsService,
+      null
     )
-
-    done()
   })
 
   describe("Works as expected", () => {
     let testBrand: Brand
 
-    beforeAll(async done => {
-      testBrand = await prismaService.client.createBrand({
-        slug: utilsService.randomString(),
-        brandCode: "000t",
-        name: "testBrand",
-        tier: "Tier0",
+    beforeAll(async () => {
+      testBrand = await prismaService.client2.brand.create({
+        data: {
+          slug: utilsService.randomString(),
+          brandCode: "000t",
+          name: "testBrand",
+          tier: "Tier0",
+        },
       })
-      done()
     })
 
     afterAll(
-      async () => await prismaService.client.deleteBrand({ id: testBrand.id })
+      async () =>
+        await prismaService.client2.brand.delete({
+          where: { id: testBrand.id },
+        })
     )
 
     it("throws error if invalid barcode given", async () =>

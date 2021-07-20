@@ -3,7 +3,7 @@ import fs from "fs"
 
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
-import { Prisma } from "@prisma/prisma.binding"
+import { Prisma } from "@prisma1/prisma.binding"
 import readlineSync from "readline-sync"
 
 type dbEnv = "staging" | "local" | "production"
@@ -33,7 +33,8 @@ export class PrismaSyncService {
 
   async syncPrisma(
     destination: PrismaSyncDestination,
-    origin: PrismaSyncOrigin
+    origin: PrismaSyncOrigin,
+    force: boolean
   ) {
     let toHost
     let toDBName
@@ -83,6 +84,26 @@ export class PrismaSyncService {
         fromDBName = process.env.DB_PRODUCTION_DBNAME
         fromSchema = "monsoon$production"
         break
+    }
+
+    if (force) {
+      this.runSync(
+        { fromHost, fromPort, fromUsername, fromDBName, fromSchema },
+        {
+          toHost,
+          toPort,
+          toUsername,
+          toDBName,
+          toSchema,
+        }
+      )
+      this.resetAuth0IDsForUsers({
+        endpoint: toEndpoint,
+        secret: toSecret,
+      })
+
+      // execute and return, do not trigger prompt
+      return
     }
 
     if (readlineSync.keyInYN(this.getWarning(destination, origin))) {
@@ -179,7 +200,7 @@ export class PrismaSyncService {
     )
   }
 
-  private async resetAuth0IDsForUsers({
+  async resetAuth0IDsForUsers({
     endpoint,
     secret,
   }: {

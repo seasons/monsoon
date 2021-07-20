@@ -3,15 +3,16 @@ import * as fs from "fs"
 
 import { UTMData as BindingUTMData, DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
+import { AdminActionLog } from "@prisma/client"
+import { Location } from "@prisma/client"
+import { UTMData } from "@prisma/client"
+import { Reservation } from "@prisma/client"
 import {
-  AdminActionLog,
-  Location,
   PauseRequest,
-  Reservation,
+  AdminActionLog as PrismaOneAdminActionLog,
   SyncTimingType,
-  UTMData,
-} from "@prisma/index"
-import { PrismaService } from "@prisma/prisma.service"
+} from "@prisma1/index"
+import { PrismaService } from "@prisma1/prisma.service"
 import cliProgress from "cli-progress"
 import graphqlFields from "graphql-fields"
 import {
@@ -27,6 +28,7 @@ import moment from "moment"
 import states from "us-state-converter"
 
 import { bottomSizeRegex } from "../../Product/constants"
+import { QueryUtilsService } from "./queryUtils.service"
 
 enum ProductSize {
   XXS = "XXS",
@@ -37,6 +39,7 @@ enum ProductSize {
   XL = "XL",
   XXL = "XXL",
   XXXL = "XXXL",
+  Universal = "Universal",
 }
 
 // TODO: As needed, support other types. We just need to update the code
@@ -45,9 +48,12 @@ type InfoStringPath = "user" | "customer"
 
 @Injectable()
 export class UtilsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly queryUtils: QueryUtilsService
+  ) {}
 
-  formatUTMForSegment = (utm: UTMData | BindingUTMData) => ({
+  formatUTMForSegment = (utm: UTMData) => ({
     utm_source: utm?.source,
     utm_content: utm?.content,
     utm_medium: utm?.medium,
@@ -96,7 +102,8 @@ export class UtilsService {
     afterDate: Date
     numDays: number
   }): boolean {
-    if (beforeDate === null || afterDate === null) {
+    // Use double equals so we catch undefined also
+    if (beforeDate == null || afterDate == null) {
       return false
     }
     const before = moment(
@@ -134,8 +141,8 @@ export class UtilsService {
   }
 
   async getPrismaLocationFromSlug(slug: string): Promise<Location> {
-    const prismaLocation = await this.prisma.client.location({
-      slug,
+    const prismaLocation = await this.prisma.client2.location.findUnique({
+      where: { slug },
     })
     if (!prismaLocation) {
       throw Error(`no location with slug ${slug} found in DB`)
@@ -144,11 +151,13 @@ export class UtilsService {
     return prismaLocation
   }
 
-  getReservationReturnDate(reservation: Reservation) {
+  getReservationReturnDate(
+    reservation: Pick<Reservation, "receivedAt" | "createdAt">
+  ) {
     let returnDate
     let returnOffset
     if (reservation.receivedAt !== null) {
-      returnDate = new Date(reservation.receivedAt)
+      returnDate = reservation.receivedAt
       returnOffset = 30
     } else {
       const daysSinceReservationCreated = moment().diff(
@@ -160,7 +169,7 @@ export class UtilsService {
       } else {
         // If for some reason we have not been able to set receivedAt 15 days in,
         // default to 35 days after createdAt. This assumes a 5 day shipping time.
-        returnDate = new Date(reservation.createdAt)
+        returnDate = reservation.createdAt
         returnOffset = 35
       }
     }
@@ -264,7 +273,7 @@ export class UtilsService {
   sizeNameToSizeCode(sizeName: ProductSize | string) {
     switch (sizeName) {
       case ProductSize.XXS:
-        return "XS"
+        return "XXS"
       case ProductSize.XS:
         return "XS"
       case ProductSize.S:
@@ -279,6 +288,8 @@ export class UtilsService {
         return "XXL"
       case ProductSize.XXXL:
         return "XXXL"
+      case ProductSize.Universal:
+        return "UNI"
     }
 
     // If we get here, we're expecting a bottom with size WxL e.g 32x28 or 27x8
@@ -298,8 +309,8 @@ export class UtilsService {
     return JSON.parse(fs.readFileSync(process.cwd() + `/${path}.json`, "utf-8"))
   }
 
-  // Get an info string for a field nested somewhere inside the info object
-  getInfoStringAt = (info, path: InfoStringPath) => {
+  // Get a select object for a field nested somewhere inside the info object
+  getSelectFromInfoAt = (info, path: InfoStringPath) => {
     if (typeof info === "string") {
       throw new Error(`Unable to parse string info. Need to implement.`)
     }
@@ -314,7 +325,12 @@ export class UtilsService {
     if (subField === undefined) {
       return null
     }
-    return this.fieldsToInfoString(subField, fieldsToIgnore)
+    const modelName = path === "user" ? "User" : "Customer"
+    return QueryUtilsService.fieldsToSelect(
+      fields,
+      PrismaService.modelFieldsByModelName,
+      modelName
+    )
   }
 
   private getFieldsToIgnore = (field: InfoStringPath | string) => {
@@ -395,7 +411,7 @@ export class UtilsService {
     return latestResy
   }
 
-  getPauseWIthItemsPlanId = membership => {
+  getPauseWithItemsPlanId = membership => {
     const itemCount = membership?.plan?.itemCount
     let planID
     if (itemCount === 1) {
@@ -408,13 +424,19 @@ export class UtilsService {
     return planID
   }
 
-  filterAdminLogs(logs: AdminActionLog[], ignoreKeys = []) {
+  filterAdminLogs(
+    logs: AdminActionLog[] | PrismaOneAdminActionLog[],
+    ignoreKeys = []
+  ) {
     const isEmptyUpdate = b =>
       b.action === "Update" && Object.keys(b.changedFields).length === 0
 
-    return logs
-      .map(a => ({ ...a, changedFields: omit(a.changedFields, ignoreKeys) }))
-      .filter(b => !isEmptyUpdate(b))
+    return (
+      logs
+        //@ts-ignore
+        .map(a => ({ ...a, changedFields: omit(a.changedFields, ignoreKeys) }))
+        .filter(b => !isEmptyUpdate(b))
+    )
   }
 
   private caseify = (obj: any, caseFunc: (str: string) => string): any => {
@@ -438,19 +460,17 @@ export class UtilsService {
   }
 
   async getSyncTimingsRecord(type: SyncTimingType) {
-    const syncTimings = await this.prisma.client.syncTimings({
-      where: {
-        type,
-      },
-      orderBy: "createdAt_DESC",
+    const syncTiming = await this.prisma.client2.syncTiming.findFirst({
+      where: { type },
+      orderBy: { createdAt: "desc" },
     })
 
-    if (syncTimings.length === 0) {
+    if (!syncTiming) {
       throw new Error(
         `No sync timing records found for type: ${type}. Please seed initial record`
       )
     }
 
-    return head(syncTimings)
+    return this.prisma.sanitizePayload(syncTiming, "SyncTiming")
   }
 }

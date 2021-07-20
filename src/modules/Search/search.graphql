@@ -1,6 +1,7 @@
 type Query {
   search(query: String!, options: SearchOptions): [SearchResult]!
     @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 0)
 }
 
 input SearchOptions {

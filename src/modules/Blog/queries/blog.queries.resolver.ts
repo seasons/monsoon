@@ -1,20 +1,30 @@
-import { PrismaService } from "@app/prisma/prisma.service"
-import { Args, Info, Query, Resolver } from "@nestjs/graphql"
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
+import { Select } from "@app/decorators/select.decorator"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { Args, Query, Resolver } from "@nestjs/graphql"
 
 @Resolver()
 export class BlogQueriesResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly queryUtils: QueryUtilsService) {}
 
   @Query()
-  async blogPosts(@Args() { skip, count, ...args }, @Info() info) {
-    return this.prisma.binding.query.blogPosts(
+  async blogPost(@Args() { where }, @Select() select) {
+    return this.queryUtils.resolveFindUnique({ where, select }, "BlogPost")
+  }
+
+  @Query()
+  async blogPosts(@FindManyArgs() { orderBy, ...args }) {
+    return this.queryUtils.resolveFindMany(
       {
-        orderBy: "webflowCreatedAt_DESC",
-        skip,
-        first: count,
         ...args,
+        orderBy: orderBy || { webflowCreatedAt: "desc" },
       },
-      info
+      "BlogPost"
     )
+  }
+
+  @Query()
+  async blogPostsConnection(@Args() args, @Select() select) {
+    return this.queryUtils.resolveConnection({ ...args, select }, "BlogPost")
   }
 }

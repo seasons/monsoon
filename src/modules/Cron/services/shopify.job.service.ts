@@ -13,32 +13,31 @@ export class ShopifyScheduledJobs {
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
-  async importProductVariantsForExternalShopifyIntegrations() {
+  async importProductVariantsForShopifyShops() {
     this.logger.log(
       "Run import product variants for external shopify integrations"
     )
-    const externalShopifyIntegrations = await this.prisma.client.externalShopifyIntegrations(
-      {
-        where: {
-          accessToken_not: null,
-          AND: {
-            shopName_not: null,
-          },
-        },
-      }
+    const _shopifyShops = await this.prisma.client2.shopifyShop.findMany({
+      where: {
+        accessToken: { not: undefined },
+        shopName: { not: undefined },
+      },
+    })
+    const shopifyShops = this.prisma.sanitizePayload(
+      _shopifyShops,
+      "ShopifyShop"
     )
 
-    for (const { shopName, accessToken, id } of externalShopifyIntegrations) {
-      const brands = await this.prisma.client.brands({
+    for (const { shopName, accessToken, id } of shopifyShops) {
+      const brand = await this.prisma.client2.brand.findFirst({
         where: {
-          externalShopifyIntegration: { id },
+          shopifyShop: { id },
         },
+        select: { id: true },
       })
 
-      if (!brands || brands.length === 0) {
-        this.logger.log(
-          `Unable to find brand for ExternalShopifyIntegration: ${id}`
-        )
+      if (!brand) {
+        this.logger.log(`Unable to find brand for ShopifyShop: ${shopName}`)
         continue
       }
 
@@ -46,10 +45,12 @@ export class ShopifyScheduledJobs {
         await this.shopify.importProductVariants({
           shopName,
           accessToken,
-          brandId: brands[0].id,
+          brandId: brand.id,
         })
       } catch (error) {
-        this.logger.log(`failed to import product variants: ${error}`)
+        this.logger.log(
+          `failed to import product variants: ${JSON.stringify(error)}`
+        )
       }
 
       this.logger.log(`imported product variants for ${shopName}`)

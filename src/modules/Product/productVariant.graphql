@@ -8,10 +8,12 @@ type Query {
     first: Int
     last: Int
     personalizedForCurrentUser: Boolean
-  ): ProductVariantConnection!
+  ): ProductVariantConnection! @cacheControl(maxAge: 0)
   generatedVariantSKUs(input: ProductVariantSKUsInput!): [String!]
+    @cacheControl(maxAge: 0)
 
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
+    @cacheControl(maxAge: 0)
   bottomSizes(
     where: BottomSizeWhereInput
     orderBy: BottomSizeOrderByInput
@@ -20,9 +22,10 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [BottomSize]!
+  ): [BottomSize]! @cacheControl(maxAge: 0)
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
-  size(where: SizeWhereUniqueInput!): Size
+    @cacheControl(maxAge: 0)
+  size(where: SizeWhereUniqueInput!): Size @cacheControl(maxAge: 0)
   sizes(
     where: SizeWhereInput
     orderBy: SizeOrderByInput
@@ -31,7 +34,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Size]!
+  ): [Size]! @cacheControl(maxAge: 0)
   sizesConnection(
     where: SizeWhereInput
     orderBy: SizeOrderByInput
@@ -40,8 +43,8 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): SizeConnection!
-  topSize(where: TopSizeWhereUniqueInput!): TopSize
+  ): SizeConnection! @cacheControl(maxAge: 0)
+  topSize(where: TopSizeWhereUniqueInput!): TopSize @cacheControl(maxAge: 0)
   topSizes(
     where: TopSizeWhereInput
     orderBy: TopSizeOrderByInput
@@ -50,7 +53,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [TopSize]!
+  ): [TopSize]! @cacheControl(maxAge: 0)
 }
 
 type Mutation {
@@ -63,11 +66,11 @@ type Mutation {
   ): ProductVariantWant! @hasRole(roles: [Customer])
   updateProductVariant(input: UpdateVariantInput!): ProductVariant
     @hasRole(roles: [Admin])
-  upsertProductVariants(
+  createProductVariants(
     productID: ID!
-    inputs: [UpsertVariantInput!]!
+    inputs: [CreateVariantInput!]!
   ): [ProductVariant!] @hasRole(roles: [Admin])
-  addPhysicalProductsToVariant(variantID: ID, count: Int): [ProductVariant!]
+  addPhysicalProductsToVariant(variantID: ID, count: Int): ProductVariant!
     @hasRole(roles: [Admin])
 }
 
@@ -88,13 +91,35 @@ type ProductVariantPrice {
   buyUsedAvailableForSale: Boolean
 }
 
+type TopSize {
+  id: ID!
+  letter: LetterSize @deprecated(reason: "replaced with size.display")
+  sleeve: Float
+  shoulder: Float
+  chest: Float
+  neck: Float
+  length: Float
+}
+
+type BottomSize {
+  id: ID!
+  type: BottomSizeType @deprecated(reason: "replaced with size.type")
+  value: String @deprecated(reason: "replaced with size.display")
+  waist: Float
+  rise: Float
+  hem: Float
+  inseam: Float
+}
+
 type Size {
   id: ID!
   slug: String!
   productType: ProductType
   top: TopSize
+  accessory: AccessorySize
   bottom: BottomSize
   display: String!
+  type: SizeType
 }
 
 type ShopifyProductVariant {
@@ -111,7 +136,7 @@ type ShopifyProductVariant {
     last: Int
   ): [ShopifyProductVariantSelectedOption!]
   productVariant: ProductVariant
-  shop: ExternalShopifyIntegration
+  shop: ShopifyShop
   brand: Brand
   title: String
   image: Image
@@ -150,6 +175,7 @@ type ProductVariant {
     first: Int
     last: Int
   ): [PhysicalProduct!]
+  nextReservablePhysicalProduct: PhysicalProduct
   total: Int!
   reservable: Int!
   reserved: Int!
@@ -178,24 +204,28 @@ input ShopifyProductVariantInput {
   externalId: String
 }
 
-input UpsertVariantInput {
+input CreateVariantInput {
   sku: String!
+  # Shared
+  weight: Float
+  length: Float
+  # Accessory Size values
+  bridge: Float
+  width: Float
   # Top Size values
   sleeve: Float
   shoulder: Float
   chest: Float
   neck: Float
-  length: Float
   # Bottom Size values
   internalSizeName: String!
-  internalBottomSizeType: BottomSizeType
+  internalSizeType: SizeType
   manufacturerSizeNames: [String!]
-  manufacturerBottomSizeType: BottomSizeType
+  manufacturerSizeType: SizeType
   waist: Float
   rise: Float
   hem: Float
   inseam: Float
-  weight: Float
   total: Int!
   physicalProducts: [UpsertPhysicalProductInput!]!
   price: ProductVariantPriceInput
@@ -206,6 +236,12 @@ input UpdateVariantInput {
   id: ID!
   productType: ProductType!
   weight: Float
+  manufacturerSizeNames: [String!]
+  manufacturerSizeType: SizeType
+  internalSizeType: SizeType
+  # Accessory Size values
+  bridge: Float
+  width: Float
   # Top Size values
   sleeve: Float
   shoulder: Float
@@ -213,8 +249,6 @@ input UpdateVariantInput {
   neck: Float
   length: Float
   # Bottom Size values
-  manufacturerSizeNames: [String!]
-  manufacturerBottomSizeType: BottomSizeType
   waist: Float
   rise: Float
   hem: Float

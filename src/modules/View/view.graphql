@@ -1,6 +1,7 @@
 enum ViewType {
   Referral
   Banner
+  Select
 }
 
 type View {
@@ -12,5 +13,5 @@ type View {
 }
 
 type Query {
-  view(viewID: String): View
+  view(viewID: String): View @cacheControl(maxAge: 0)
 }

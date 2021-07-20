@@ -42,6 +42,13 @@ export class BlogService {
     return head(publishedPosts)
   }
 
+  async getItem(itemId, query = {}): Promise<BlogPost> {
+    return this.webflow.client.item(
+      { collectionId: BlogPostsCollectionId, itemId },
+      query
+    )
+  }
+
   async getAllItems(): Promise<BlogPost[]> {
     const allPosts = []
     let offset = 0

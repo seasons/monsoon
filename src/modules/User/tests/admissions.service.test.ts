@@ -1,4 +1,5 @@
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { UtilsModule } from "@app/modules/Utils/utils.module"
@@ -294,6 +295,7 @@ describe("Admissions Service", () => {
   describe("Inventory Threshold", () => {
     let testUtils: TestUtilsService
     let utils: UtilsService
+    let prismaService: PrismaService
     let cleanupFuncs = []
     let allTestProductsToCreate: CreateTestProductInput[]
     let topXSReservable
@@ -308,9 +310,10 @@ describe("Admissions Service", () => {
     let testCustomer
 
     beforeAll(() => {
-      const ps = new PrismaService()
-      testUtils = new TestUtilsService(ps, new UtilsService(ps))
-      utils = new UtilsService(ps)
+      let ps = (prismaService = new PrismaService())
+      const qus = new QueryUtilsService(ps)
+      testUtils = new TestUtilsService(ps, new UtilsService(ps, qus), qus)
+      utils = new UtilsService(ps, qus)
 
       // reservable products
       topXSReservable = createTestProductCreateInput("Top", "XS", "Reservable")
@@ -418,6 +421,7 @@ describe("Admissions Service", () => {
                 pausePending: false,
                 pauseDate: utils.xDaysAgoISOString(22),
                 resumeDate: utils.xDaysFromNowISOString(8),
+                pauseType: "WithItems",
               },
             ],
           },
@@ -511,46 +515,6 @@ describe("Admissions Service", () => {
       })
       expect(pass).toBe(true)
     })
-
-    it("does not admit a user with an unsupported platform", async () => {
-      const {
-        customer,
-        cleanupFunc: customerCleanupFunc,
-      } = await testUtils.createTestCustomer({
-        detail: {
-          topSizes: ["XS", "S"],
-          waistSizes: [30, 31],
-          phoneOS: "Android",
-        },
-      })
-      cleanupFuncs.push(customerCleanupFunc)
-
-      const { pass } = await admissions.hasSupportedPlatform(
-        {
-          id: customer.id,
-        },
-        "flare"
-      )
-      expect(pass).toBe(false)
-    })
-
-    it("admits a user with a supported platform", async () => {
-      const {
-        customer,
-        cleanupFunc: customerCleanupFunc,
-      } = await testUtils.createTestCustomer({
-        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
-      })
-      cleanupFuncs.push(customerCleanupFunc)
-
-      const { pass } = await admissions.hasSupportedPlatform(
-        {
-          id: customer.id,
-        },
-        "flare"
-      )
-      expect(pass).toBe(true)
-    })
   })
 })
 
@@ -576,7 +540,7 @@ const createEmailReceipts = (
   emailsSentXDaysAgoObject,
   emailId: EmailId
 ): Array<any> => {
-  const utils = new UtilsService(null)
+  const utils = new UtilsService(null, null)
 
   return Object.keys(emailsSentXDaysAgoObject).reduce(
     (emailReceipts, currentKey) => {

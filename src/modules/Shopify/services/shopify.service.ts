@@ -1,13 +1,11 @@
 import crypto from "crypto"
 import querystring from "querystring"
 
-import {
-  BillingInfo,
-  Location,
-  ShopifyProductVariant,
-  ShopifyProductVariantUpdateInput,
-} from "@app/prisma"
+import { ShopifyProductVariantUpdateInput } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import { Prisma } from "@prisma/client"
+import { BillingInfo, Location } from "@prisma/client"
+import { ShopifyProductVariant } from "@prisma/client"
 import { minBy, pick } from "lodash"
 import { DateTime } from "luxon"
 import request from "request"
@@ -34,6 +32,27 @@ const OAUTH_SCOPES = [
   "read_customers",
   "write_customers",
 ]
+
+const ProductVariantFragment = `
+  id
+  displayName
+  title
+  availableForSale
+  price
+  selectedOptions {
+    name
+    value
+  }
+  product {
+    images(first: 1) {
+      edges {
+        node {
+          transformedSrc
+        }
+      }
+    }
+  }
+`
 
 @Injectable()
 export class ShopifyService {
@@ -104,13 +123,13 @@ export class ShopifyService {
       params: { code: authorizationCode, shop, state: nonce, timestamp },
     })
 
-    const externalShopifyIntegration = await this.prisma.client.externalShopifyIntegration(
-      {
+    const shopifyShop = await this.prisma.client2.shopifyShop.findFirst({
+      where: {
         shopName: this.getShopName(shop),
-      }
-    )
+      },
+    })
 
-    return externalShopifyIntegration && isValidHMAC
+    return shopifyShop && isValidHMAC
   }
 
   async getAccessToken({
@@ -219,6 +238,30 @@ export class ShopifyService {
     }
   }
 
+  async getShopifyProductVariantsByIds(
+    ids: string[],
+    shopName: string,
+    accessToken: string
+  ) {
+    const query = `
+      {
+        productVariants: nodes(ids: ${JSON.stringify(ids)}) {
+          ... on ProductVariant {
+            ${ProductVariantFragment}
+          }
+        }
+      }
+    `
+
+    const data: any = await this.shopifyGraphQLRequest({
+      query,
+      shopName,
+      accessToken,
+    })
+
+    return data.productVariants
+  }
+
   async getShopifyProductVariants({
     after,
     first,
@@ -244,24 +287,7 @@ export class ShopifyService {
       productVariants(${!!after ? `after: "${after}", ` : ""}first: ${first}) {
         edges {
           node {
-            id
-            displayName
-            title
-            availableForSale
-            price
-            selectedOptions {
-              name
-              value
-            }
-            product {
-              images(first: 1) {
-                edges {
-                  node {
-                    transformedSrc
-                  }
-                }
-              }
-            }
+            ${ProductVariantFragment}
           }
           cursor
         }
@@ -669,10 +695,12 @@ export class ShopifyService {
     brandId,
     shopName,
     accessToken,
+    ids,
   }: {
     brandId?: string
     shopName: string
     accessToken: string
+    ids?: string[]
   }): Promise<Array<ShopifyProductVariant>> {
     function timeout(ms) {
       return new Promise(resolve => setTimeout(resolve, ms))
@@ -682,62 +710,75 @@ export class ShopifyService {
 
     const processVariants = async productVariants => {
       for (const productVariant of productVariants) {
-        const imageSrc =
-          productVariant?.product?.images.edges?.[0]?.node?.transformedSrc
+        try {
+          const imageSrc =
+            productVariant?.product?.images.edges?.[0]?.node?.transformedSrc
 
-        const image = await this.prisma.client.upsertImage({
-          where: {
-            url: imageSrc,
-          },
-          create: {
-            url: imageSrc,
-          },
-          update: {
-            url: imageSrc,
-          },
-        })
+          const image = !!imageSrc
+            ? await this.prisma.client2.image.upsert({
+                where: {
+                  url: imageSrc,
+                },
+                create: {
+                  url: imageSrc,
+                },
+                update: {
+                  url: imageSrc,
+                },
+              })
+            : null
 
-        const data = {
-          externalId: productVariant.id,
-          displayName: productVariant.displayName,
-          title: productVariant.title,
-          selectedOptions: {
-            create: productVariant.selectedOptions,
-          },
-          ...(brandId && {
-            brand: {
+          const data = {
+            externalId: productVariant.id,
+            displayName: productVariant.displayName,
+            title: productVariant.title,
+            selectedOptions: {
+              create: productVariant.selectedOptions,
+            },
+            ...(brandId && {
+              brand: {
+                connect: {
+                  id: brandId,
+                },
+              },
+            }),
+            shop: {
               connect: {
-                id: brandId,
+                shopName,
               },
             },
-          }),
-          shop: {
-            connect: {
-              shopName,
-            },
-          },
-          image: {
-            connect: {
-              url: imageSrc,
-            },
-          },
-          cachedPrice: this.parseShopifyPriceToCents(productVariant.price),
-          cachedAvailableForSale: productVariant.availableForSale,
-          cacheExpiresAt: DateTime.local()
-            .plus({
-              seconds: PRODUCT_VARIANT_CACHE_SECONDS,
-            })
-            .toISO(),
-        } as ShopifyProductVariantUpdateInput
+            ...(imageSrc && {
+              image: {
+                connect: {
+                  url: image.url,
+                },
+              },
+            }),
+            cachedPrice: this.parseShopifyPriceToCents(productVariant.price),
+            cachedAvailableForSale: productVariant.availableForSale,
+            cacheExpiresAt: DateTime.local()
+              .plus({
+                seconds: PRODUCT_VARIANT_CACHE_SECONDS,
+              })
+              .toISO(),
+          }
 
-        const result = await this.prisma.client.upsertShopifyProductVariant({
-          where: {
-            externalId: productVariant.id,
-          },
-          create: data,
-          update: data,
-        })
-        shopifyProductVariantResults.push(result)
+          const result = await this.prisma.client2.shopifyProductVariant.upsert(
+            {
+              where: {
+                externalId: productVariant.id,
+              },
+              create: data,
+              update: data,
+            }
+          )
+          shopifyProductVariantResults.push(result)
+        } catch (e) {
+          console.error(
+            "Error processing shopify product variant: ",
+            productVariant.displayName
+          )
+        }
       }
     }
 
@@ -750,7 +791,7 @@ export class ShopifyService {
         pageInfo: { hasNextPage },
       } = await this.getShopifyProductVariants({
         after: !!after ? after : null,
-        first: 25,
+        first: 100,
         shopName,
         accessToken,
       })
@@ -769,8 +810,17 @@ export class ShopifyService {
 
       return updatedProductVariants
     }
+    if (!!ids) {
+      const productVariants = await this.getShopifyProductVariantsByIds(
+        ids,
+        shopName,
+        accessToken
+      )
 
-    await loop({ after: "", productVariants: [] })
+      await processVariants(productVariants)
+    } else {
+      await loop({ after: "", productVariants: [] })
+    }
 
     return shopifyProductVariantResults
   }
@@ -797,18 +847,18 @@ export class ShopifyService {
       }
     )
 
-    return this.prisma.client.updateShopifyProductVariant({
+    const cacheExpiresAt = DateTime.local()
+      .plus({
+        seconds: PRODUCT_VARIANT_CACHE_SECONDS,
+      })
+      .toISO()
+    return this.prisma.client2.shopifyProductVariant.update({
       where: { id: shopifyProductVariantInternalId },
       data: {
         externalId: externalShopifyProductVariant.externalId,
-
         cachedPrice: externalShopifyProductVariant.price,
         cachedAvailableForSale: externalShopifyProductVariant.availableForSale,
-        cacheExpiresAt: DateTime.local()
-          .plus({
-            seconds: PRODUCT_VARIANT_CACHE_SECONDS,
-          })
-          .toISO(),
+        cacheExpiresAt,
       },
     })
   }

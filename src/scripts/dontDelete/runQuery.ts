@@ -1,25 +1,19 @@
 import "module-alias/register"
 
-import zipcodes from "zipcodes"
-
-import { DripService } from "../../modules/Drip/services/drip.service"
-import { UtilsService } from "../../modules/Utils/services/utils.service"
 import { PrismaService } from "../../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
-  const locationsToUpdate = await ps.client.locations({
-    // where: { OR: [{ lat: null }, { lng: null }] },
+  const customerID = "ckixg05o306ze0750gl0pi46k"
+  const x = await ps.client2.customer.findUnique({
+    where: { id: "ck2pbxqti003x0703lqn4vo30" },
+    select: {
+      reservations: {
+        select: { id: true },
+        where: { id: "ckl8b3m5x2s330709513rberu" },
+      },
+    },
   })
-  for (const l of locationsToUpdate) {
-    const { latitude, longitude } = zipcodes.lookup(l.zipCode) || {}
-    if (!!latitude && !!longitude) {
-      await ps.client.updateLocation({
-        where: { id: l.id },
-        data: { lat: latitude, lng: longitude },
-      })
-    }
-  }
+  console.log(x)
 }
-
 run()

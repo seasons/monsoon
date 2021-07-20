@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "@prisma/prisma.service"
+import { BagItem, Prisma } from "@prisma/client"
+import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { head } from "lodash"
 
@@ -7,61 +8,43 @@ import { head } from "lodash"
 export class BagService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async addToBag(item, customer) {
-    const bag = await this.prisma.binding.query.bagItems(
-      {
-        where: {
-          customer: {
-            id: customer.id,
+  async addToBag(
+    itemId,
+    customer,
+    select: Prisma.BagItemSelect
+  ): Promise<Partial<BagItem>> {
+    const custWithData = await this.prisma.client2.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        membership: { select: { plan: { select: { itemCount: true } } } },
+        bagItems: {
+          select: {
+            id: true,
+            productVariant: { select: { id: true } },
+            saved: true,
           },
-          saved: false,
         },
       },
-      `
-      {
-        id
-        productVariant {
-          id
-        }
-      }
-    `
-    )
+    })
 
-    const customerPlanItemCount =
-      (await this.prisma.client
-        .customer({ id: customer.id })
-        .membership()
-        .plan()
-        .itemCount()) ?? 3
+    const bag = custWithData.bagItems?.filter(a => a.saved === false)
+    const savedItems = custWithData.bagItems?.filter(a => a.saved === true)
+    const customerPlanItemCount = custWithData.membership?.plan?.itemCount || 3
 
-    if (bag.some(i => i.productVariant?.id === item)) {
+    if (bag.some(i => i.productVariant?.id === itemId)) {
       throw new ApolloError("Item already in bag", "515")
     }
 
-    if (!!customerPlanItemCount && bag.length >= customerPlanItemCount) {
+    if (bag.length >= customerPlanItemCount) {
       throw new ApolloError("Bag is full", "514")
     }
 
-    // If bag item is in saved list delete it
-    const savedBagItems = await this.prisma.client.bagItems({
-      where: {
-        customer: {
-          id: customer.id,
-        },
-        productVariant: {
-          id: item,
-        },
-        saved: true,
-      },
-    })
-    const savedBagItem = head(savedBagItems)
-    if (savedBagItem) {
-      return await this.prisma.client.updateBagItem({
-        where: { id: savedBagItem.id },
-        data: { saved: false },
-      })
-    } else {
-      return await this.prisma.client.createBagItem({
+    const existingSavedItemForVariant = savedItems.find(
+      a => a.productVariant.id === itemId
+    )
+    const result = await this.prisma.client2.bagItem.upsert({
+      where: { id: existingSavedItemForVariant?.id || "" },
+      create: {
         customer: {
           connect: {
             id: customer.id,
@@ -69,18 +52,38 @@ export class BagService {
         },
         productVariant: {
           connect: {
-            id: item,
+            id: itemId,
           },
         },
         position: 0,
         saved: false,
         status: "Added",
-      })
-    }
+      },
+      update: { saved: false },
+      select,
+    })
+    return result
   }
 
-  async removeFromBag(item, saved, customer) {
-    const bagItems = await this.prisma.client.bagItems({
+  async removeFromBag(item, saved, customer): Promise<BagItem> {
+    const bagItem = await this.getBagItem(item, saved, customer, { id: true })
+
+    if (!bagItem) {
+      throw new ApolloError("Item can not be found", "514")
+    }
+
+    // has to return a promise because we roll it up in a transaction in at
+    // least one parent function
+    return this.prisma.client2.bagItem.delete({ where: { id: bagItem.id } })
+  }
+
+  async getBagItem(
+    item,
+    saved,
+    customer,
+    select: Prisma.BagItemSelect = undefined // selects all scalars
+  ): Promise<Partial<BagItem>> {
+    const bagItem = await this.prisma.client2.bagItem.findFirst({
       where: {
         customer: {
           id: customer.id,
@@ -90,15 +93,9 @@ export class BagService {
         },
         saved,
       },
+      select,
     })
-    const bagItem = head(bagItems)
 
-    if (!bagItem) {
-      throw new ApolloError("Item can not be found", "514")
-    }
-
-    return await this.prisma.client.deleteBagItem({
-      id: bagItem.id,
-    })
+    return bagItem
   }
 }

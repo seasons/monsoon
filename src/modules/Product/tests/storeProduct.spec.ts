@@ -1,3 +1,4 @@
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ID_Input, InventoryStatus } from "@app/prisma"
@@ -32,6 +33,7 @@ xdescribe("Store Product", () => {
   let productUtilsService: ProductUtilsService
   let utilsService: UtilsService
   let testUtilsService: TestUtilsService
+  let queryUtilsService: QueryUtilsService
 
   beforeAll(async done => {
     const moduleRef = await Test.createTestingModule(ProductModuleDef).compile()
@@ -41,7 +43,12 @@ xdescribe("Store Product", () => {
       ProductUtilsService
     )
     utilsService = moduleRef.get<UtilsService>(UtilsService)
-    testUtilsService = new TestUtilsService(prismaService, utilsService)
+    queryUtilsService = moduleRef.get<QueryUtilsService>(QueryUtilsService)
+    testUtilsService = new TestUtilsService(
+      prismaService,
+      utilsService,
+      queryUtilsService
+    )
     done()
   })
 
@@ -110,7 +117,7 @@ xdescribe("Store Product", () => {
       await productService.updateProduct({
         where: { id: testProduct.id },
         data: { status: "Stored" },
-        info: null,
+        select: null,
       })
 
       // Retrieve the updated product and physical products
@@ -161,30 +168,35 @@ async function retrieveTestProductWithNecessaryFields(
   testProduct,
   prismaService
 ) {
-  return await prismaService.binding.query.product(
-    {
-      where: { id: testProduct.id },
+  const _prod = await prismaService.client2.product.findMany({
+    where: { id: testProduct.id },
+    select: {
+      id: true,
+      status: true,
+      variants: {
+        select: {
+          id: true,
+          physicalProducts: {
+            select: {
+              id: true,
+              inventoryStatus: true,
+              productVariant: {
+                select: {
+                  id: true,
+                  total: true,
+                  reservable: true,
+                  reserved: true,
+                  nonReservable: true,
+                  offloaded: true,
+                  stored: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
-    // retrieve fields to facilitate expects
-    `{
-        id
-        status
-        variants {
-            id
-            physicalProducts {
-                id
-                inventoryStatus
-                productVariant {
-                    id
-                    total
-                    reservable
-                    reserved
-                    nonReservable
-                    offloaded
-                    stored
-                }
-            }
-        }
-    }`
-  )
+  })
+
+  return prismaService.sanitizePayload(_prod, "Product")
 }

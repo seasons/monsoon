@@ -7,6 +7,7 @@ import { EmailService } from "../../modules/Email/services/email.service"
 import { EmailUtilsService } from "../../modules/Email/services/email.utils.service"
 import { ErrorService } from "../../modules/Error/services/error.service"
 import { ImageService } from "../../modules/Image/services/image.service"
+import { QueryUtilsService } from "../../modules/Utils/services/queryUtils.service"
 import { UtilsService } from "../../modules/Utils/services/utils.service"
 import { PrismaService } from "../../prisma/prisma.service"
 
@@ -14,47 +15,18 @@ const run = async () => {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
   const ps = new PrismaService()
-  const utilsService = new UtilsService(ps)
+  const utilsService = new UtilsService(ps, new QueryUtilsService(ps))
   const emails = new EmailService(
     ps,
     utilsService,
     new EmailUtilsService(ps, new ErrorService(), new ImageService(ps))
   )
 
+  const u = await ps.client2.user.findUnique({
+    where: { email: "okey-ondricka@seasons.nyc" },
+  })
   try {
-    const customerWithBillingAndUserData: any = head(
-      await ps.binding.query.customers(
-        { where: { user: { email: "faiyam+unsubscribe@seasons.nyc" } } },
-        `
-        {
-          id
-          billingInfo {
-            id
-          }
-          user {
-            id
-            firstName
-            lastName
-            email
-          }
-          referrer {
-            id
-            user {
-              id
-              email
-              firstName
-            }
-            membership {
-              subscriptionId
-            }
-          }
-        }
-      `
-      )
-    )
-    await emails.sendAuthorizedDayTwoFollowup(
-      customerWithBillingAndUserData.user
-    )
+    await emails.sendResumeConfirmationEmail(u)
   } catch (err) {
     console.log(err)
   }

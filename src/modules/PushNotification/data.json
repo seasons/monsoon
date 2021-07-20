@@ -9,7 +9,7 @@
   "ReturnDue": {
     "alert": {
       "title": "Want to swap your items?",
-      "body": "Pack up any items you wish to swap, attach the pre-paid shipping label, and drop off at your nearest UPS pick-up location"
+      "body": "Pack up any items you wish to swap, attach the pre-paid label, and drop off at a nearby UPS pick-up location"
     },
     "data": { "route": "Faq" }
   },

@@ -117,7 +117,7 @@ const importProductsToShopify = async () => {
     )
 
     const shopName = "seasons-staging.myshopify.com"
-    const shop = await ps.client.externalShopifyIntegration({
+    const shop = await ps.client.shopifyShop({
       shopName,
     })
 

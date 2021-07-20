@@ -1,12 +1,15 @@
 import "module-alias/register"
 
+import { Subscription } from "@nestjs/graphql"
 import sgMail from "@sendgrid/mail"
 import chargebee from "chargebee"
 
 import { SegmentService } from "../../modules/Analytics/services/segment.service"
 import { AdmissionsScheduledJobs } from "../../modules/Cron/services/admissions.job.service"
+import { LogsScheduledJobs } from "../../modules/Cron/services/logs.job.service"
 import { MarketingScheduledJobs } from "../../modules/Cron/services/marketing.job.service"
 import { MembershipScheduledJobs } from "../../modules/Cron/services/membership.job.service"
+import { ProductScheduledJobs } from "../../modules/Cron/services/product.job.service"
 import { ReservationScheduledJobs } from "../../modules/Cron/services/reservations.job.service"
 import { ShopifyScheduledJobs } from "../../modules/Cron/services/shopify.job.service"
 import { SubscriptionsScheduledJobs } from "../../modules/Cron/services/subscriptions.job.service"
@@ -17,9 +20,16 @@ import { EmailUtilsService } from "../../modules/Email/services/email.utils.serv
 import { ErrorService } from "../../modules/Error/services/error.service"
 import { ImageService } from "../../modules/Image/services/image.service"
 import { PaymentService } from "../../modules/Payment/services/payment.service"
+import { PhysicalProductService } from "../../modules/Product/services/physicalProduct.service"
+import { PhysicalProductUtilsService } from "../../modules/Product/services/physicalProduct.utils.service"
+import { ProductService } from "../../modules/Product/services/product.service"
+import { ProductUtilsService } from "../../modules/Product/services/product.utils.service"
+import { ProductVariantService } from "../../modules/Product/services/productVariant.service"
 import { PusherService } from "../../modules/PushNotification/services/pusher.service"
 import { PushNotificationDataProvider } from "../../modules/PushNotification/services/pushNotification.data.service"
 import { PushNotificationService } from "../../modules/PushNotification/services/pushNotification.service"
+import { AlgoliaService } from "../../modules/Search/services/algolia.service"
+import { SearchService } from "../../modules/Search/services/search.service"
 import { ShippingService } from "../../modules/Shipping/services/shipping.service"
 import { ShopifyService } from "../../modules/Shopify/services/shopify.service"
 import { SMSService } from "../../modules/SMS/services/sms.service"
@@ -29,6 +39,7 @@ import { AdmissionsService } from "../../modules/User/services/admissions.servic
 import { AuthService } from "../../modules/User/services/auth.service"
 import { CustomerService } from "../../modules/User/services/customer.service"
 import { PaymentUtilsService } from "../../modules/Utils/services/paymentUtils.service"
+import { QueryUtilsService } from "../../modules/Utils/services/queryUtils.service"
 import { StatementsService } from "../../modules/Utils/services/statements.service"
 import { UtilsService } from "../../modules/Utils/services/utils.service"
 import { PrismaService } from "../../prisma/prisma.service"
@@ -43,7 +54,8 @@ const run = async () => {
 
   const error = new ErrorService()
   const ps = new PrismaService()
-  const utils = new UtilsService(ps)
+  const queryUtils = new QueryUtilsService(ps)
+  const utils = new UtilsService(ps, queryUtils)
   const as = new AdmissionsService(ps, utils)
   const pusher = new PusherService()
   const pndp = new PushNotificationDataProvider()
@@ -53,7 +65,7 @@ const run = async () => {
   const image = new ImageService(ps)
   const emailutils = new EmailUtilsService(ps, error, image)
   const email = new EmailService(ps, utils, emailutils)
-  let auth = new AuthService(ps, pn, email, error, utils, payment)
+  let auth = new AuthService(ps, pn, email, error, payment)
   const segment = new SegmentService()
   const twilio = new TwilioService()
   const twilioUtils = new TwilioUtils()
@@ -65,7 +77,8 @@ const run = async () => {
     paymentUtils,
     error,
     email,
-    utils
+    utils,
+    queryUtils
   )
   const shipping = new ShippingService(ps, utils)
   const cs = new CustomerService(
@@ -77,17 +90,18 @@ const run = async () => {
     email,
     pn,
     sms,
-    utils
+    utils,
+    queryUtils
   )
   payment = new PaymentService(
-    auth,
     cs,
     email,
     paymentUtils,
     ps,
     utils,
     segment,
-    error
+    error,
+    auth
   )
   const shopify = new ShopifyService(ps)
   const admissionsJobService = new AdmissionsScheduledJobs(ps, as, cs, error)
@@ -106,7 +120,8 @@ const run = async () => {
     ps,
     email,
     as,
-    sms
+    sms,
+    error
   )
   const membershipService = new MembershipScheduledJobs(
     ps,
@@ -114,15 +129,56 @@ const run = async () => {
     email,
     sms,
     utils,
-    statements,
     error
   )
+  const productUtilsService = new ProductUtilsService(ps, utils)
+  const physicalProductUtilsService = new PhysicalProductUtilsService(
+    ps,
+    productUtilsService
+  )
+  const productVariantService = new ProductVariantService(
+    ps,
+    productUtilsService,
+    physicalProductUtilsService
+  )
+  const productService = new ProductService(
+    ps,
+    null,
+    productUtilsService,
+    productVariantService,
+    physicalProductUtilsService,
+    utils,
+    queryUtils
+  )
+  const physicalProductService = new PhysicalProductService(
+    ps,
+    pn,
+    productVariantService,
+    productService,
+    physicalProductUtilsService,
+    utils,
+    statements
+  )
   const shopifyJobService = new ShopifyScheduledJobs(shopify, ps)
+  const logsJobService = new LogsScheduledJobs(
+    ps,
+    physicalProductService,
+    error
+  )
+  const searchService = new SearchService(ps, new AlgoliaService(), image)
+  const subscriptionJobs = new SubscriptionsScheduledJobs(
+    ps,
+    error,
+    paymentUtils
+  )
+  // await searchService.indexData()
   // await reservationsJobService.sendReturnNotifications()
-  // await marketingJobService.syncUnsubscribesFromDrip()
+  // await marketingJobService.syncEventsToImpact()
   // await marketingJobService.syncCustomersToDrip()
-  // await membershipService.updatePausePendingToPaused()
-  await shopifyJobService.importProductVariantsForExternalShopifyIntegrations()
+  await membershipService.manageMembershipResumes()
+  // await shopifyJobService.importProductVariantsForShopifyShops()
+  // await logsJobService.interpretPhysicalProductLogs()
+  // await productsJobService.updateProductFields()
 }
 
 run()

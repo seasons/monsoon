@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "module": "commonjs",
     "sourceMap": true,
     "rootDir": "src",
@@ -15,7 +16,7 @@
     "paths": {
       "@app/*": ["./*"],
       "@modules/*": ["modules/*"],
-      "@prisma/*": ["prisma/*"]
+      "@prisma1/*": ["prisma/*"]
     }
   },
   "exclude": ["src/scripts", "./bin"]

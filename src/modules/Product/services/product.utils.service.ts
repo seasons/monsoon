@@ -1,24 +1,23 @@
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
+import { Prisma, ProductVariant } from "@prisma/client"
+import { Category, Product, Size } from "@prisma/client"
+import { ProductMaterialCategoryCreateInput, SizeType } from "@prisma1/index"
+import { PrismaService } from "@prisma1/prisma.service"
 import {
-  BrandOrderByInput,
-  Category,
-  Product,
-  ProductMaterialCategoryCreateInput,
-} from "@prisma/index"
-import { PrismaService } from "@prisma/prisma.service"
-import { head, identity, pickBy, union, uniq, uniqBy } from "lodash"
+  flatten,
+  head,
+  identity,
+  merge,
+  pickBy,
+  union,
+  uniq,
+  uniqBy,
+} from "lodash"
 import slugify from "slugify"
 
-import {
-  BottomSizeCreateInput,
-  BottomSizeType,
-  LetterSize,
-  ProductType,
-  Size,
-  TopSizeCreateInput,
-} from "../../../prisma"
+import { ProductType } from "../../../prisma"
 import { ProductWithPhysicalProducts } from "../product.types"
 
 type JPSize = "0" | "1" | "2" | "3" | "4"
@@ -41,72 +40,78 @@ export class ProductUtilsService {
     )
   }
 
-  async getVariantDisplayShort(
-    manufacturerSizeIDs = [],
-    internalSizeID
-  ): Promise<string> {
-    const query = `{
-      id
-      display
-      bottom {
-        id
-        value
-        type
-      }
-      top {
-        id
-        letter
-      }
-    }`
-    const internalSize = await this.prisma.binding.query.size(
-      {
-        where: { id: internalSizeID },
-      },
-      query
-    )
-
-    // If top exit early because we are only using internalSizes for tops
-    if (!!internalSize.top) return internalSize.top.letter
-
-    const manufacturerSizes = await this.prisma.binding.query.sizes(
-      {
-        where: { id_in: manufacturerSizeIDs.map(a => a?.id) },
-      },
-      query
-    )
-    const manufacturerSize = head(manufacturerSizes)
-
-    if (manufacturerSize) {
-      const manufacturerSizeBottomType = manufacturerSize.bottom.type
-      if (
-        manufacturerSizeBottomType === "EU" ||
-        manufacturerSizeBottomType === "JP"
-      ) {
-        return this.sizeConversion.bottoms?.[manufacturerSizeBottomType][
-          manufacturerSize?.bottom.value
-        ]
-      } else {
-        return manufacturerSize.display
-      }
-    } else {
-      return internalSize.display
-    }
+  async getProductStyleCode(productID) {
+    const prod = this.prisma.sanitizePayload(
+      await this.prisma.client2.product.findUnique({
+        where: { id: productID },
+        select: { id: true, variants: { select: { id: true, sku: true } } },
+      }),
+      "Product"
+    ) as Product & { variants: [ProductVariant] }
+    const firstVariant = head(prod?.variants)
+    return !!firstVariant ? this.getStyleCodeFromSKU(firstVariant.sku) : null
   }
 
-  async getAllCategories(prod: Product): Promise<Category[]> {
-    const thisCategory = await this.prisma.client
-      .product({ id: prod.id })
-      .category()
+  getVariantDisplayShort(
+    manufacturerSize: Pick<Size, "display" | "type" | "productType">,
+    internalSize: Pick<Size, "display" | "type">
+  ): string {
+    // There *should* always be a manufacturer size display,
+    // but just to be safe we fallback to internal size display
+    let displayShort
+    if (manufacturerSize?.display) {
+      displayShort = this.coerceSizeDisplayIfNeeded(
+        manufacturerSize.display,
+        manufacturerSize.type as SizeType,
+        manufacturerSize.productType as ProductType
+      )
+      if (manufacturerSize.type === "WxL") {
+        displayShort = displayShort.split("x")[0]
+      }
+    } else {
+      displayShort = internalSize.display
+
+      if (internalSize.type === "WxL") {
+        displayShort = displayShort.split("x")[0]
+      }
+    }
+
+    return displayShort
+  }
+
+  async getAllCategoriesForProduct(prod: Product): Promise<Category[]> {
+    const _prodWithCategory = await this.prisma.client2.product.findUnique({
+      where: { id: prod.id },
+      include: { category: true },
+    })
+    const prodWithCategory = this.prisma.sanitizePayload(
+      _prodWithCategory,
+      "Product"
+    )
+    const thisCategory = prodWithCategory.category
+    return [...(await this.getAllParentCategories(thisCategory)), thisCategory]
+  }
+
+  async getAllCategoriesForCategory(category: {
+    id: string
+  }): Promise<Category[]> {
+    const _thisCategory = await this.prisma.client2.category.findUnique({
+      where: { id: category.id },
+    })
+    const thisCategory = this.prisma.sanitizePayload(_thisCategory, "Category")
     return [...(await this.getAllParentCategories(thisCategory)), thisCategory]
   }
 
   private async getAllParentCategories(
     category: Category
   ): Promise<Category[]> {
-    const parent = head(
-      await this.prisma.client.categories({
-        where: { children_some: { id: category.id } },
-      })
+    const parent = this.prisma.sanitizePayload(
+      head(
+        await this.prisma.client2.category.findMany({
+          where: { children: { some: { id: category.id } } },
+        })
+      ),
+      "Category"
     )
     if (!parent) {
       return []
@@ -116,21 +121,13 @@ export class ProductUtilsService {
   }
 
   async queryOptionsForProducts(args) {
-    const category = args.category || "all"
-    const brand = args.brand || "all"
-    const brands = args.brands || [brand]
+    const where = args.where || {}
     const orderBy = args.orderBy || "createdAt_DESC"
     const sizes = args.sizes || []
 
     // Add filtering by sizes in query
-    const where = args.where || {}
     if (sizes && sizes.length > 0) {
-      where.variants_some = { internalSize: { display_in: sizes } }
-    }
-    // If client wants to sort by name, we will assume that they
-    // want to sort by brand name as well
-    if (orderBy.includes("name_")) {
-      return await this.productsAlphabetically(category, orderBy, sizes, brands)
+      where.variants_some = { displayShort: { display_in: sizes } }
     }
 
     const filters = await this.filters(args)
@@ -151,8 +148,7 @@ export class ProductUtilsService {
     let brandFilter = { where: {} }
     let categoryFilter = { where: {} }
     let variantsFilter = { where: {} }
-
-    let paramFilters = {}
+    let colorsFilter = { where: {} }
 
     if (args.brand && args.brand !== "all") {
       brandFilter = {
@@ -170,14 +166,18 @@ export class ProductUtilsService {
       }
     }
 
-    const andArray = []
+    if (args.colors?.length > 0) {
+      colorsFilter = { where: { color: { slug_in: args.colors } } }
+    }
+
+    const productVariantWhereArray = []
 
     if (args.availableOnly) {
-      andArray.push({ reservable_not: 0 })
+      productVariantWhereArray.push({ reservable_not: 0 })
     }
 
     if (args.bottoms?.length > 0 && args.tops?.length > 0) {
-      andArray.push(
+      productVariantWhereArray.push(
         { displayShort_in: [...args.bottoms, ...args.tops] },
         {
           OR: [
@@ -194,13 +194,8 @@ export class ProductUtilsService {
           ],
         }
       )
-      paramFilters = {
-        variants_some: {
-          AND: andArray,
-        },
-      }
     } else if (args.bottoms?.length > 0) {
-      andArray.push(
+      productVariantWhereArray.push(
         { displayShort_in: args.bottoms },
         {
           OR: [
@@ -217,13 +212,8 @@ export class ProductUtilsService {
           ],
         }
       )
-      paramFilters = {
-        variants_some: {
-          AND: andArray,
-        },
-      }
     } else if (args.tops?.length > 0) {
-      andArray.push(
+      productVariantWhereArray.push(
         { displayShort_in: args.tops },
         {
           OR: [
@@ -240,62 +230,31 @@ export class ProductUtilsService {
           ],
         }
       )
-      paramFilters = {
-        variants_some: {
-          AND: andArray,
-        },
-      }
-    } else if (args.availableOnly) {
-      paramFilters = {
-        variants_some: { reservable_not: 0 },
-      }
     }
 
-    variantsFilter = {
-      where: {
-        ...paramFilters,
-      },
+    if (productVariantWhereArray.length > 0) {
+      variantsFilter = {
+        where: {
+          variants_some: {
+            AND: productVariantWhereArray,
+          },
+        },
+      }
     }
 
     if (args.category && args.category !== "all") {
-      const allCategoriesWithChildren = await this.prisma.binding.query.categories(
-        {},
-        `
-        {
-          id
-          slug
-          children {
-            id
-            slug
-          }
-        }
-      `
+      const categoryWithChildren = await this.getCategoryAndAllChildren(
+        { slug: args.category },
+        { slug: true }
       )
 
-      const getChildren = (categorySlug, results = []) => {
-        const category = allCategoriesWithChildren.find(
-          cat => cat.slug === categorySlug
-        )
-        if (category?.children.length > 0) {
-          results.push(categorySlug)
-          category.children.forEach(child => {
-            getChildren(child.slug, results)
-          })
-        } else {
-          results.push(categorySlug)
-        }
-        return results
-      }
-
-      const children = getChildren(args.category)
-
       categoryFilter =
-        children?.length > 0
+        categoryWithChildren?.length > 0
           ? {
               where: {
                 ...args.where,
                 ...brandFilter.where,
-                category: { slug_in: uniq(children) },
+                category: { slug_in: categoryWithChildren.map(a => a.slug) },
               },
             }
           : {
@@ -307,33 +266,58 @@ export class ProductUtilsService {
             }
     }
 
-    return {
-      where: {
-        ...brandFilter.where,
-        ...categoryFilter.where,
-        ...variantsFilter.where,
-      },
+    if (args.forSaleOnly) {
+      return {
+        where: {
+          OR: [
+            {
+              buyNewEnabled: true,
+              ...brandFilter.where,
+              ...categoryFilter.where,
+              ...colorsFilter.where,
+              ...variantsFilter.where,
+            },
+            {
+              ...brandFilter.where,
+              ...categoryFilter.where,
+              ...colorsFilter.where,
+              variants_some: {
+                AND: [
+                  ...productVariantWhereArray,
+                  {
+                    physicalProducts_some: { price: { buyUsedEnabled: true } },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      }
+    } else {
+      return {
+        where: {
+          ...brandFilter.where,
+          ...categoryFilter.where,
+          ...colorsFilter.where,
+          ...variantsFilter.where,
+        },
+      }
     }
   }
   async getReservedBagItems(customer) {
-    const reservedBagItems = await this.prisma.binding.query.bagItems(
-      {
-        where: {
-          customer: {
-            id: customer.id,
-          },
-          status: "Reserved",
-        },
+    const _reservedBagItems = await this.prisma.client2.bagItem.findMany({
+      where: { customer: { id: customer.id }, status: "Reserved" },
+      select: {
+        id: true,
+        status: true,
+        position: true,
+        saved: true,
+        productVariant: { select: { id: true } },
       },
-      `{
-          id
-          status
-          position
-          saved
-          productVariant {
-            id
-          }
-      }`
+    })
+    const reservedBagItems = this.prisma.sanitizePayload(
+      _reservedBagItems,
+      "BagItem"
     )
     return reservedBagItems
   }
@@ -360,39 +344,68 @@ export class ProductUtilsService {
       },
     }
 
-    const uniqueArray = uniqBy(variants, "internalSize.display")
+    const getSortWeight = displayShort => {
+      switch (displayShort.toLowerCase()) {
+        case "xxs":
+          return 0
+        case "xs":
+          return 1
+        case "s":
+          return 2
+        case "m":
+          return 3
+        case "l":
+          return 4
+        case "xl":
+          return 5
+        case "xxl":
+          return 6
+        default:
+          return displayShort
+      }
+    }
+
+    const uniqueArray = uniqBy(variants, "displayShort")
     return uniqueArray.sort((variantA: any, variantB: any) => {
-      const sortWeightA =
-        (variantA.internalSize?.display &&
-          sizes[variantA.internalSize?.display.toLowerCase()] &&
-          sizes[variantA.internalSize?.display.toLowerCase()].sortWeight) ||
-        0
-      const sortWeightB =
-        (variantB.internalSize?.display &&
-          sizes[variantB.internalSize?.display.toLowerCase()] &&
-          sizes[variantB.internalSize?.display.toLowerCase()].sortWeight) ||
-        0
-      return sortWeightA - sortWeightB
+      const a = getSortWeight(variantA.displayShort) || 0
+      const b = getSortWeight(variantB.displayShort) || 0
+
+      return a - b
     })
   }
 
-  async getProductSlug(
-    brandCode: string,
-    name: string,
-    color: string,
-    createNew: boolean
-  ) {
+  async createProductSlug(brandCode: string, name: string, color: string) {
     const pureSlug = slugify(brandCode + " " + name + " " + color).toLowerCase()
-    if (createNew) {
-      const productsWithSlug = await this.prisma.client.products({
-        where: { slug_starts_with: pureSlug },
-      })
-      return `${pureSlug}${
-        productsWithSlug.length > 0 ? "-" + productsWithSlug.length : ""
-      }`
-    }
+    const numProductsWithSlug = await this.prisma.client2.product.count({
+      where: { slug: { startsWith: pureSlug } },
+    })
+    return `${pureSlug}${
+      numProductsWithSlug > 0 ? "-" + numProductsWithSlug : ""
+    }`
+  }
 
-    return pureSlug
+  convertMeasurementSizeToInches(
+    measurement: number,
+    measurementType: string
+  ): number {
+    switch (measurementType) {
+      case "Millimeters":
+        return measurement / 25.4
+      default:
+        return measurement
+    }
+  }
+
+  convertInchesToMeasurementSize(
+    measurement: number,
+    measurementType: string
+  ): number {
+    switch (measurementType) {
+      case "Millimeters":
+        return measurement * 25.4
+      default:
+        return measurement
+    }
   }
 
   physicalProductsForProduct(product: ProductWithPhysicalProducts) {
@@ -402,127 +415,30 @@ export class ProductUtilsService {
     )
   }
 
-  private async productsAlphabetically(
-    category: string,
-    orderBy: BrandOrderByInput,
-    sizes: [string],
-    brands: [string]
+  getManufacturerSizeMutateInput(
+    variant: {
+      sku: string
+      manufacturerSizeType: string
+    },
+    manufacturerSizeName,
+    type: ProductType,
+    mutateType: "update" | "create"
   ) {
-    const brandsQuery =
-      brands.length > 0 && brands?.[0] !== "all"
-        ? `brand: { slug_in: ${brands} },`
-        : ""
+    const sizeType = variant.manufacturerSizeType
+    const slug = `${variant.sku}-manufacturer-${sizeType}`
 
-    const _brands = await this.prisma.binding.query.brands(
-      { orderBy },
-      `
-      {
-        name
-        products(
-          orderBy: name_ASC,
-          where: {
-            ${category !== "all" ? `category: { slug: "${category}" },` : ""}
-            ${brandsQuery}
-            status: Available,
-            variants_some: { size_in: [${sizes}] }
-          }
-        ) {
-          id
-          name
-          description
-          images {
-            id
-            url
-          }
-          modelSize
-          modelHeight
-          externalURL
-          tags
-          retailPrice
-          status
-          createdAt
-          updatedAt
-          brand {
-            id
-            name
-          }
-          variants {
-            id
-            size
-            total
-            reservable
-            nonReservable
-            reserved
-          }
-        }
-      }
-      `
-    )
-    const products = _brands.map(b => b.products).flat()
-    return products
-  }
-
-  async deepUpsertSize({
-    slug,
-    type,
-    display,
-    topSizeData,
-    bottomSizeData,
-  }: {
-    slug: string
-    type: ProductType
-    display: string
-    topSizeData?: TopSizeCreateInput
-    bottomSizeData?: BottomSizeCreateInput
-  }): Promise<Size> {
-    const sizeData = { slug, productType: type, display }
-    // Update if needed
-    const sizeRecord = await this.prisma.client.upsertSize({
-      where: { slug },
-      create: { ...sizeData },
-      update: { ...sizeData },
-    })
-    switch (type) {
-      case "Top":
-        if (!topSizeData) {
-          throw new Error("topSizeData must be non null if type is Top")
-        }
-        const prismaTopSize = await this.prisma.client
-          .size({ id: sizeRecord.id })
-          .top()
-        const topSize = await this.prisma.client.upsertTopSize({
-          where: { id: prismaTopSize?.id || "" },
-          update: { ...topSizeData },
-          create: { ...topSizeData },
-        })
-        if (!prismaTopSize) {
-          await this.prisma.client.updateSize({
-            where: { slug },
-            data: { top: { connect: { id: topSize.id } } },
-          })
-        }
-        break
-      case "Bottom":
-        if (!bottomSizeData) {
-          throw new Error("bottomSizeData must be non null if type is Bottom")
-        }
-        const prismaBottomSize = await this.prisma.client
-          .size({ id: sizeRecord?.id })
-          .bottom()
-        const bottomSize = await this.prisma.client.upsertBottomSize({
-          where: { id: prismaBottomSize?.id || "" },
-          create: { ...bottomSizeData },
-          update: { ...bottomSizeData },
-        })
-        if (!prismaBottomSize) {
-          await this.prisma.client.updateSize({
-            where: { slug },
-            data: { bottom: { connect: { id: bottomSize.id } } },
-          })
-        }
+    const data = {
+      slug,
+      type: sizeType,
+      display: manufacturerSizeName,
+      productType: type,
     }
-
-    return sizeRecord
+    return mutateType === "update"
+      ? {
+          where: { slug },
+          data,
+        }
+      : data
   }
 
   getProductImageName(
@@ -538,41 +454,15 @@ export class ProductUtilsService {
   async getImageIDs(imageDatas: ImageData[], slug: string) {
     const prismaImages = await Promise.all(
       imageDatas.map(async imageData => {
-        return await this.prisma.client.upsertImage({
+        return await this.prisma.client2.image.upsert({
           where: { url: imageData.url },
           create: { ...imageData, title: slug },
           update: { ...imageData, title: slug },
+          select: { id: true },
         })
       })
     )
     return prismaImages.map(image => ({ id: image.id }))
-  }
-
-  async upsertModelSize({
-    slug,
-    type,
-    modelSizeName,
-    modelSizeDisplay,
-    bottomSizeType,
-  }: {
-    slug: string
-    type: ProductType
-    modelSizeName: string
-    modelSizeDisplay: string
-    bottomSizeType?: BottomSizeType
-  }) {
-    return await this.deepUpsertSize({
-      slug,
-      type,
-      display: modelSizeDisplay,
-      topSizeData: type === "Top" && {
-        letter: modelSizeName as LetterSize,
-      },
-      bottomSizeData: type === "Bottom" && {
-        type: bottomSizeType as BottomSizeType,
-        value: modelSizeName,
-      },
-    })
   }
 
   async upsertMaterialCategory(material, category) {
@@ -584,11 +474,114 @@ export class ProductUtilsService {
           slug: category.model.slug,
         },
       },
-    } as ProductMaterialCategoryCreateInput
-    return await this.prisma.client.upsertProductMaterialCategory({
+    } as Prisma.ProductMaterialCategoryCreateInput
+    return await this.prisma.client2.productMaterialCategory.upsert({
       where: { slug: material.model.name },
       create: data,
       update: data,
     })
+  }
+
+  coerceSizeDisplayIfNeeded(
+    display: string,
+    sizeType: SizeType,
+    productType: ProductType
+  ) {
+    let conversion = display
+
+    if (sizeType === "JP" || sizeType === "EU") {
+      const sizeConversion = this.utils.parseJSONFile(
+        "src/modules/Product/sizeConversion"
+      )
+      conversion =
+        sizeConversion?.[productType.toLowerCase()]?.[sizeType]?.[display]
+    }
+
+    return conversion
+  }
+
+  async getAllStyleCodesForBrand(brandID) {
+    const _productVariants = await this.prisma.client2.productVariant.findMany({
+      where: { product: { every: { brand: { id: brandID } } } },
+      select: { id: true, sku: true },
+    })
+    const productVariants = this.prisma.sanitizePayload(
+      _productVariants,
+      "ProductVariant"
+    )
+    const allStyleCodes = uniq(
+      productVariants.map(a => this.getStyleCodeFromSKU(a.sku))
+    )
+    return allStyleCodes
+  }
+
+  getStyleCodeFromSKU(sku) {
+    return sku?.split("-")?.pop()
+  }
+
+  async getSKUData({ brandID, colorCode, productID }) {
+    const brand = await this.prisma.client2.brand.findUnique({
+      where: { id: brandID },
+      select: { brandCode: true },
+    })
+    const colorExists =
+      (await this.prisma.client2.color.count({
+        where: { colorCode },
+      })) > 0
+
+    if (!brand || !colorExists) {
+      return null
+    }
+
+    let styleNumber
+    if (!!productID) {
+      // valid style code if variants exist on the product, null otherwise
+      styleNumber = await this.getProductStyleCode(productID)
+      if (!styleNumber) {
+        throw new Error(`No style number found for productID: ${productID}`)
+      }
+    } else {
+      const allStyleCodesForBrand = (
+        await this.getAllStyleCodesForBrand(brandID)
+      ).sort()
+      const highestStyleNumber = Number(allStyleCodesForBrand.pop()) || 0
+      styleNumber = highestStyleNumber + 1
+    }
+
+    const styleCode = styleNumber.toString().padStart(3, "0")
+
+    return {
+      brandCode: brand.brandCode,
+      styleCode,
+    }
+  }
+
+  async getCategoryAndAllChildren(
+    where: Prisma.CategoryWhereUniqueInput,
+    select: Prisma.CategorySelect
+  ): Promise<(Partial<Category> & Pick<Category, "id" | "slug">)[]> {
+    const _categoryWithChildren = (await this.prisma.client2.category.findUnique(
+      {
+        where,
+        select: merge(
+          {
+            id: true,
+            slug: true,
+            children: { select: merge({ id: true, slug: true }, select) },
+          },
+          select
+        ),
+      }
+    )) as any
+    const categoryWithChildren = this.prisma.sanitizePayload(
+      _categoryWithChildren,
+      "Category"
+    )
+    const allChildrenWithData = await Promise.all(
+      categoryWithChildren.children.map(
+        async a => await this.getCategoryAndAllChildren({ id: a.id }, select)
+      )
+    )
+    return [categoryWithChildren, ...flatten(allChildrenWithData)] as any
   }
 }

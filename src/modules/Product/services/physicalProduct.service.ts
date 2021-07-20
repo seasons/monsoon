@@ -1,32 +1,32 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
-  AdminActionLog,
   Brand,
-  ID_Input,
   InventoryStatus,
-  PhysicalProduct,
   PhysicalProductOffloadMethod,
-  PhysicalProductUpdateInput,
-  PhysicalProductWhereUniqueInput,
   Product,
-  ProductVariant,
-  WarehouseLocation,
   WarehouseLocationType,
-  WarehouseLocationWhereUniqueInput,
 } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "@prisma/prisma.service"
+import {
+  AdminActionLog,
+  PhysicalProduct,
+  Prisma,
+  ProductVariant,
+  Reservation,
+  WarehouseLocation,
+} from "@prisma/client"
+import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { GraphQLResolveInfo } from "graphql"
-import { cloneDeep, head, identity, omit, pick } from "lodash"
+import { cloneDeep, identity, pick } from "lodash"
 
 import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 import { ProductService } from "./product.service"
 import { ProductVariantService } from "./productVariant.service"
 
 interface OffloadPhysicalProductIfNeededInput {
-  where: PhysicalProductWhereUniqueInput
+  where: Prisma.PhysicalProductWhereUniqueInput
   inventoryStatus: InventoryStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: string
@@ -50,101 +50,110 @@ export class PhysicalProductService {
     private readonly productVariantService: ProductVariantService,
     private readonly productService: ProductService,
     private readonly physicalProductUtils: PhysicalProductUtilsService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly statements: StatementsService
   ) {}
 
   async updatePhysicalProduct({
     where,
     data,
-    info,
+    select,
   }: {
-    where: PhysicalProductWhereUniqueInput
-    data: PhysicalProductUpdateInput
-    info: GraphQLResolveInfo
+    where: Prisma.PhysicalProductWhereUniqueInput
+    data: Prisma.PhysicalProductUpdateInput
+    select: Prisma.PhysicalProductSelect
   }) {
-    const physProdBeforeUpdate = (await this.prisma.binding.query.physicalProduct(
-      { where },
-      `{
-      id
-      seasonsUID
-      inventoryStatus
-      productStatus
-      warehouseLocation {
-        barcode
+    const promises = []
+
+    const _physProdBeforeUpdate = await this.prisma.client2.physicalProduct.findUnique(
+      {
+        where,
+        select: {
+          id: true,
+          seasonsUID: true,
+          inventoryStatus: true,
+          productStatus: true,
+          warehouseLocation: { select: { barcode: true } },
+          productVariant: {
+            select: {
+              id: true,
+              reservable: true,
+              reserved: true,
+              offloaded: true,
+              nonReservable: true,
+              stored: true,
+              product: {
+                select: {
+                  id: true,
+                  slug: true,
+                  name: true,
+                  brand: { select: { id: true, name: true } },
+                },
+              },
+            },
+          },
+        },
       }
-      productVariant {
-        id
-        reservable
-        product {
-          id
-          slug
-          name
-          brand {
-            id
-            name
-          }
-        }
+    )
+    const physProdBeforeUpdate = this.prisma.sanitizePayload(
+      _physProdBeforeUpdate,
+      "PhysicalProduct"
+    )
+    const productVariant = (physProdBeforeUpdate?.productVariant as unknown) as Pick<
+      ProductVariant,
+      "reservable" | "id"
+    > & {
+      product: Pick<Product, "id" | "slug" | "name"> & {
+        brand: Pick<Brand, "name">
       }
-    }`
-    )) as PhysicalProduct & {
-      warehouseLocation: WarehouseLocation
-      productVariant: ProductVariant
     }
 
     let newData = cloneDeep(data)
 
     // Need to do this before we check for a changing inventory status because this
     // may update the inventoryStatus on data
+    let notifyUsersIfNeeded = async () => null
     if (!!data.warehouseLocation) {
       newData = await this.preprocessUpdateWithWarehouseLocation({
         physProdBeforeUpdate,
         data,
       })
 
-      const productVariant = physProdBeforeUpdate?.productVariant as ProductVariant & {
-        product: Product
-      }
       const reservable = productVariant?.reservable
 
-      // If the physical product is being stowed and is currently nonReservable send a notification to users
-      if (
-        newData.warehouseLocation.connect &&
-        physProdBeforeUpdate.inventoryStatus === "NonReservable" &&
-        reservable === 0
-      ) {
-        const product = productVariant?.product as Product & {
-          brand: Brand
-        }
+      // If the physical product is being stowed and there are currently no reservable units, notify users
+      if (newData.warehouseLocation.connect && reservable === 0) {
+        const product = productVariant?.product
 
-        const notifications = await this.prisma.binding.query.productNotifications(
+        const notifications = await this.prisma.client2.productNotification.findMany(
           {
             where: { productVariant: { id: productVariant.id } },
-          },
-          `{
-            id
-            customer {
-              id
-              user {
-                id
-                email
-              }
-            }
-          }`
+            select: {
+              id: true,
+              customer: {
+                select: {
+                  id: true,
+                  user: { select: { id: true, email: true } },
+                },
+              },
+            },
+          }
         )
 
         const emails = notifications.map(notif => notif.customer?.user?.email)
 
         // Send the notification
-        await this.pushNotification.pushNotifyUsers({
-          emails,
-          pushNotifID: "ProductRestock",
-          vars: {
-            id: product?.id,
-            slug: product?.slug,
-            productName: product?.name,
-            brandName: product?.brand?.name,
-          },
-        })
+        notifyUsersIfNeeded = async () =>
+          await this.pushNotification.pushNotifyUsers({
+            emails,
+            pushNotifID: "ProductRestock",
+            vars: {
+              id: product?.id,
+              slug: product?.slug,
+              productName: product?.name,
+              brandName: product?.brand?.name,
+            },
+          })
       }
     } else if (
       !!physProdBeforeUpdate.warehouseLocation?.barcode &&
@@ -170,46 +179,63 @@ export class PhysicalProductService {
         )
       }
 
-      // Unless we're changing status to Offloaded, update product variant counts.
-      // We don't do it if we're switching to offloaded because that could cause errors.
-      // e.g If the product is reserved, this would update the counts, but the `offloadPhysicalProductIfNeeded`
-      // code would error out because you can't offload a reseved product.
-      // The ideal solution here would be transactions, but we don't have those yet :()
-      if (newData.inventoryStatus !== "Offloaded") {
-        await this.updateVariantCountsIfNeeded({
-          where,
-          inventoryStatus: newData.inventoryStatus,
-        })
-      }
+      promises.push(
+        (
+          await this.getUpdateVariantCountsPromiseIfNeeded({
+            where,
+            inventoryStatus: newData.inventoryStatus,
+          })
+        ).promise
+      )
     }
 
-    await this.offloadPhysicalProductIfNeeded({
-      where,
-      ...pick(newData, ["inventoryStatus", "offloadMethod", "offloadNotes"]),
-    } as OffloadPhysicalProductIfNeededInput)
+    const offloadPromises = await this.getOffloadPhysicalProductPromisesIfNeeded(
+      {
+        where,
+        ...pick(newData, ["inventoryStatus", "offloadMethod", "offloadNotes"]),
+      } as OffloadPhysicalProductIfNeededInput
+    )
+    promises.push(offloadPromises)
 
-    await this.prisma.client.updatePhysicalProduct({ where, data: newData })
-
-    return await this.prisma.binding.query.physicalProduct({ where }, info)
-  }
-
-  async activeReservationWithPhysicalProduct(id: ID_Input) {
-    return head(
-      await this.prisma.client.reservations({
-        where: {
-          AND: [
-            { products_some: { id } },
-            { status_not_in: ["Cancelled", "Completed"] },
-          ],
-        },
+    promises.push(
+      this.prisma.client2.physicalProduct.update({
+        where,
+        data: newData,
+        select,
       })
     )
+
+    const cleanPromises = promises.flat().filter(Boolean)
+    const results = await this.prisma.client2.$transaction(cleanPromises)
+    await notifyUsersIfNeeded() // only run this if the transaction succeeded
+    return this.prisma.sanitizePayload(results.pop(), "PhysicalProduct")
+  }
+
+  async activeReservationWithPhysicalProduct(id: string) {
+    return await this.prisma.client2.reservation.findFirst({
+      where: {
+        products: { some: { id } },
+        status: {
+          notIn: ["Cancelled", "Completed"],
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    })
   }
 
   interpretPhysicalProductLogs(
     logs: AdminActionLog[],
-    warehouseLocations: Pick<WarehouseLocation, "id" | "barcode">[]
-  ) {
+    warehouseLocations: Pick<WarehouseLocation, "id" | "barcode">[],
+    reservations: (Pick<
+      Reservation,
+      | "id"
+      | "createdAt"
+      | "cancelledAt"
+      | "completedAt"
+      | "reservationNumber"
+      | "status"
+    > & { products: Pick<PhysicalProduct, "id">[] })[]
+  ): (AdminActionLog & { interpretation: string })[] {
     const keysWeDontCareAbout = [
       "id",
       "price",
@@ -229,9 +255,37 @@ export class PhysicalProductService {
       const keys = Object.keys(changedFields)
       let interpretation
 
+      const getActiveReservation = () =>
+        reservations.find(r => {
+          const physProdInReservation = r.products.find(
+            p => p.id === a.entityId
+          )
+          if (!physProdInReservation) {
+            return false
+          }
+
+          const createdAt = new Date(r.createdAt)
+          const cancelledAt = new Date(r.cancelledAt)
+          const completedAt = new Date(r.completedAt)
+          const logTimestamp = new Date(a.triggeredAt)
+
+          const loggedAfterReservationCreated = createdAt < logTimestamp
+          const loggedBeforeReservationEnded =
+            this.statements.reservationIsActive(r) ||
+            cancelledAt > logTimestamp ||
+            completedAt > logTimestamp
+
+          return loggedAfterReservationCreated && loggedBeforeReservationEnded
+        })
+
       if (keys.includes("warehouseLocation")) {
         if (changedFields["warehouseLocation"] === null) {
-          interpretation = "Picked"
+          const activeReservation = getActiveReservation()
+          if (!!activeReservation) {
+            interpretation = `Picked for reservation ${activeReservation.reservationNumber}`
+          } else {
+            interpretation = "Picked (no reservation)"
+          }
         } else {
           interpretation = `Stowed at ${
             locationsMap[changedFields["warehouseLocation"]]
@@ -251,6 +305,9 @@ export class PhysicalProductService {
         ) {
           interpretation = "Processed return from Reservation"
         }
+      } else if (keys.includes("packedAt")) {
+        const activeReservation = getActiveReservation()
+        interpretation = `Packed for reservation ${activeReservation?.reservationNumber}`
       }
       return { ...a, interpretation }
     })
@@ -324,8 +381,10 @@ export class PhysicalProductService {
           )
         }
         if (
-          !(await this.prisma.client.brand({
-            brandCode: itemCode,
+          !(await this.prisma.client2.brand.findUnique({
+            where: {
+              brandCode: itemCode,
+            },
           }))
         ) {
           throw new Error(
@@ -358,11 +417,14 @@ export class PhysicalProductService {
     physProdBeforeUpdate,
     data,
   }: {
-    physProdBeforeUpdate: PhysicalProduct
-    data: PhysicalProductUpdateInput
+    physProdBeforeUpdate: Pick<
+      PhysicalProduct,
+      "seasonsUID" | "inventoryStatus" | "productStatus"
+    >
+    data: Prisma.PhysicalProductUpdateInput
   }) {
     // Copy the data object to keep the function pure
-    const newData = cloneDeep(data) as PhysicalProductUpdateInput
+    const newData = cloneDeep(data) as Prisma.PhysicalProductUpdateInput
 
     // If we're just disconnecting a warehouse location, then let it be
     if (newData.warehouseLocation.disconnect) {
@@ -446,21 +508,24 @@ export class PhysicalProductService {
    * Assumes constraints can apply to leaf, parent, or ancestral categories.
    */
   private async validateWarehouseLocationConstraints(
-    physProd: PhysicalProduct,
-    where: WarehouseLocationWhereUniqueInput
+    physProd: Pick<PhysicalProduct, "seasonsUID">,
+    where: Prisma.WarehouseLocationWhereUniqueInput
   ) {
-    const warehouseLocation = await this.prisma.binding.query.warehouseLocation(
-      { where },
-      `{
-        id
-        barcode
-        constraints {
-          category {
-            name
-          }
-          limit
-        }
-      }`
+    const _warehouseLocation = await this.prisma.client2.warehouseLocation.findUnique(
+      {
+        where,
+        select: {
+          id: true,
+          barcode: true,
+          constraints: {
+            select: { category: { select: { name: true } }, limit: true },
+          },
+        },
+      }
+    )
+    const warehouseLocation = this.prisma.sanitizePayload(
+      _warehouseLocation,
+      "WarehouseLocation"
     )
     if (warehouseLocation.constraints.length === 0) {
       return true
@@ -477,19 +542,18 @@ export class PhysicalProductService {
 
     for (const { name, limit } of applicableConstraints) {
       const otherUnitsAtLocation = (
-        await this.prisma.client.physicalProducts({
+        await this.prisma.client2.physicalProduct.findMany({
           where: { warehouseLocation: { barcode: warehouseLocation.barcode } },
+          select: { seasonsUID: true },
         })
       ).filter(a => a.seasonsUID !== physProd.seasonsUID) // other products at the location
 
       const otherUnitsAlreadyConstrained = (
         await Promise.all(
-          otherUnitsAtLocation.map(async a =>
-            identity({
-              seasonsUID: a.seasonsUID,
-              categories: await this.physicalProductUtils.getAllCategories(a),
-            })
-          )
+          otherUnitsAtLocation.map(async a => ({
+            seasonsUID: a.seasonsUID,
+            categories: await this.physicalProductUtils.getAllCategories(a),
+          }))
         )
       ).filter(b => b.categories.map(c => c.name).includes(name)) // with the same cateogry
 
@@ -512,24 +576,31 @@ export class PhysicalProductService {
     return /^[A-Z][1-9]\d0$/.test(code)
   }
 
-  private async offloadPhysicalProductIfNeeded({
+  /* 
+  Note that this does not update product variant counts. It assumes the parent function
+  is doing so.
+  */
+  private async getOffloadPhysicalProductPromisesIfNeeded({
     where,
     inventoryStatus,
     offloadMethod,
     offloadNotes,
   }: OffloadPhysicalProductIfNeededInput) {
-    const physicalProductBeforeUpdate = await this.prisma.binding.query.physicalProduct(
-      { where },
-      `{
-          id
-          inventoryStatus
-          productVariant {
-              id
-              product {
-                  id
-              }
-          }
-      }`
+    const _physicalProductBeforeUpdate = await this.prisma.client2.physicalProduct.findUnique(
+      {
+        where,
+        select: {
+          id: true,
+          inventoryStatus: true,
+          productVariant: {
+            select: { id: true, product: { select: { id: true } } },
+          },
+        },
+      }
+    )
+    const physicalProductBeforeUpdate = this.prisma.sanitizePayload(
+      _physicalProductBeforeUpdate,
+      "PhysicalProduct"
     )
 
     if (
@@ -561,50 +632,72 @@ export class PhysicalProductService {
       }
 
       // Core logic
-      await this.updateVariantCountsIfNeeded({
-        where,
-        inventoryStatus: "Offloaded",
-      })
-      await this.prisma.client.updatePhysicalProduct({
-        where,
-        data: { inventoryStatus, offloadMethod, offloadNotes },
-      })
-      await this.productService.offloadProductIfAppropriate(
-        physicalProductBeforeUpdate.productVariant.product.id
-      )
+      return [
+        this.prisma.client2.physicalProduct.update({
+          where,
+          data: { inventoryStatus, offloadMethod, offloadNotes },
+        }),
+        (
+          await this.productService.getOffloadProductPromiseIfNeeded(
+            (physicalProductBeforeUpdate.productVariant as any).product.id,
+            physicalProductBeforeUpdate.id
+          )
+        ).promise,
+      ]
     }
+
+    return []
   }
 
-  private async updateVariantCountsIfNeeded({
+  private async getUpdateVariantCountsPromiseIfNeeded({
     where,
     inventoryStatus,
   }: {
-    where: PhysicalProductWhereUniqueInput
+    where: Prisma.PhysicalProductWhereUniqueInput
     inventoryStatus: InventoryStatus
   }) {
-    const physicalProductBeforeUpdate = await this.prisma.binding.query.physicalProduct(
-      { where },
-      `{
-          id
-          inventoryStatus
-          productVariant {
-              id
-          }
-      }`
+    const _physicalProductBeforeUpdate = await this.prisma.client2.physicalProduct.findUnique(
+      {
+        where,
+        select: {
+          id: true,
+          inventoryStatus: true,
+          productVariant: {
+            select: {
+              id: true,
+              offloaded: true,
+              reservable: true,
+              reserved: true,
+              nonReservable: true,
+              stored: true,
+            },
+          },
+        },
+      }
+    )
+    const physicalProductBeforeUpdate = this.prisma.sanitizePayload(
+      _physicalProductBeforeUpdate,
+      "PhysicalProduct"
     )
 
     if (inventoryStatus !== physicalProductBeforeUpdate.inventoryStatus) {
-      await this.productVariantService.updateCountsForStatusChange({
-        id: physicalProductBeforeUpdate.productVariant.id,
-        oldInventoryStatus: physicalProductBeforeUpdate.inventoryStatus,
-        newInventoryStatus: inventoryStatus,
-      })
+      return {
+        promise: this.productVariantService.getUpdateCountsForStatusChangePromise(
+          {
+            productVariant: physicalProductBeforeUpdate.productVariant as any,
+            oldInventoryStatus: physicalProductBeforeUpdate.inventoryStatus as InventoryStatus,
+            newInventoryStatus: inventoryStatus,
+          }
+        ),
+      }
     }
+
+    return { promise: null }
   }
 
   private changingInventoryStatus(
-    data: PhysicalProductUpdateInput,
-    physProdBeforeUpdate: PhysicalProduct
+    data: Prisma.PhysicalProductUpdateInput,
+    physProdBeforeUpdate: Pick<PhysicalProduct, "inventoryStatus">
   ) {
     return (
       !!data.inventoryStatus &&

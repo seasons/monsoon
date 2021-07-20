@@ -7,7 +7,7 @@ type Mutation {
 }
 
 type Query {
-  order(where: OrderWhereUniqueInput!): Order
+  order(where: OrderWhereUniqueInput!): Order @cacheControl(maxAge: 0)
   orders(
     where: OrderWhereInput
     orderBy: OrderOrderByInput
@@ -16,7 +16,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Order]!
+  ): [Order]! @cacheControl(maxAge: 0)
   ordersConnection(
     where: OrderWhereInput
     orderBy: OrderOrderByInput
@@ -25,7 +25,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): OrderConnection!
+  ): OrderConnection! @cacheControl(maxAge: 0)
 }
 
 type Order {
@@ -66,6 +66,7 @@ type OrderLineItem {
   taxPercentage: Float
   taxPrice: Int
   price: Int!
+  name: String
   currencyCode: String!
   createdAt: DateTime!
   updatedAt: DateTime!

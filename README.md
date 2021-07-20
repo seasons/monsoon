@@ -16,25 +16,37 @@ You can explore the Monsoon API using the staging [GraphQL Playground](https://e
 ## Getting started
 
 ```sh
-# 1. Installs all required dependencies
-yarn install
+# 1 Ensure you are using correct Node version
+nvm install v16.4.0
 
-# 2. Setup an environment variable file
+# 2. Installs all required dependencies
+yarn
+
+# 3. Setup an environment variable file
 cp .env.example .env
 
-# 3. Create your local Prisma Server and Postgres instances
+# 4. Get env vars from Heroku (assuming you have installed the Heroku cli and run heroku login)
+heroku config -s -a monsoon-staging
+
+# This will set you up to connect to the staging server. If you wish to use the local Docker container, modify
+# the following env vars:
+PRISMA_ENDPOINT=http://localhost:4466/monsoon/dev
+DATABASE_URL='postgres://prisma:prisma@localhost:9876/prisma?schema=monsoon$dev'
+REDIS_URL=redis://localhost:6379
+
+# 5. Create your local Prisma Server and Postgres instances
 docker-compose up -d
 
-# 4. Deploy prisma
+# 6. Deploy prisma
 yarn prisma:deploy
 
-# 4. Install monsoon-cli (command line interface)
+# 7. Install monsoon-cli (command line interface)
 yarn global add ts-node && yarn link
 
-# 6. Seed the database
-monsoon airtable:prisma all --prisma local
+# 8. # If using the Docker container, run the following command to copy production data into it:
+monsoon spp local
 
-# 7. Start server (runs on http://localhost:4000/playground) and open GraphQL Playground
+# 9. Start server (runs on http://localhost:4000/playground) and open GraphQL Playground
 yarn start
 ```
 
@@ -42,11 +54,11 @@ To verify the server is setup properly. go open the [playground](http://localhos
 
 ```graphql
 {
-  products(first: 10) {
+  productsConnection(first: 10) {
     edges {
       node {
         id
-        title
+        name
       }
     }
   }
@@ -70,8 +82,8 @@ ALTER TABLE "monsoon$dev"."ProductVariant"
 
 All deployments follow the following pattern.
 
-1. Create a Pull Request for your branch code onto master.
-2. Once that PR is reviewed and merged, create another PR to merge master to staging. Merge it. Your code will automatically deploy to the staging server.
+1. Create a Pull Request for your branch code onto `master`.
+2. Once that PR is reviewed and merged to `master`, our code will automatically deploy to the staging server.
 3. Once your code passes QA on staging, use Heroku's "Promotion" feature on [this page](https://dashboard.heroku.com/pipelines/07c04186-4604-4488-b9bf-4811420933bf) to deploy to production.
 
 Before deploying to production your first time, please check with a senior member of the engineering team.
@@ -99,7 +111,11 @@ Note that you may need to run `yarn tsc` to generate the files used by the monso
 
 You can generate a random test user using the following command
 
-`monsoon create:test-user --email test@seasons.nyc --password Pass123`
+`monsoon ctu --password Seasons2020 --prisma local --roles Customer Admin`
+
+If you're working against the staging server, run the staging version:
+
+`monsoon ctu --password Seasons2020 --prisma staging --roles Customer Admin`
 
 If `--email` and/or `--password` are not specified, those values are also generated. All random values are generated using a library called [faker.js](https://github.com/marak/Faker.js/)
 

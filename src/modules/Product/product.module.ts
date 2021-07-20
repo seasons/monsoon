@@ -4,7 +4,7 @@ import { ImageModule } from "@modules/Image/image.module"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "@prisma/prisma.module"
+import { PrismaModule } from "@prisma1/prisma.module"
 
 import { PusherService } from "../PushNotification/services/pusher.service"
 import { PushNotificationDataProvider } from "../PushNotification/services/pushNotification.data.service"
@@ -13,6 +13,7 @@ import { AlgoliaService } from "../Search/services/algolia.service"
 import { SearchService } from "../Search/services/search.service"
 import { ShopifyService } from "../Shopify/services/shopify.service"
 import { UserModule } from "../User/user.module"
+import { AccessorySizeFieldsResolver } from "./fields/accessorySize.fields.resolver"
 import { BrandFieldsResolver } from "./fields/brand.fields.resolver"
 import { PhysicalProductFieldsResolver } from "./fields/physicalProduct.fields.resolver"
 import { ProductFieldsResolver } from "./fields/product.fields.resolver"
@@ -73,6 +74,7 @@ export const ProductModuleDef = {
     ProductVariantFieldsResolver,
     ProductVariantMutationsResolver,
     PhysicalProductFieldsResolver,
+    AccessorySizeFieldsResolver,
     BrandFieldsResolver,
     PhysicalProductMutationsResolver,
     SizeQueriesResolver,

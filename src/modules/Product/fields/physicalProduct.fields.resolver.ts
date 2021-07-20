@@ -1,25 +1,15 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import {
-  AdminActionLog,
-  AdminActionLogWhereInput,
-  PhysicalProduct,
-  WarehouseLocation,
-} from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaDataLoader } from "@prisma/prisma.loader"
+import { PhysicalProduct } from "@app/prisma"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Prisma } from "@prisma/client"
 
-import { PhysicalProductService } from "../services/physicalProduct.service"
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
 
 @Resolver("PhysicalProduct")
 export class PhysicalProductFieldsResolver {
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly physicalProductService: PhysicalProductService,
-    private readonly physicalProductUtils: PhysicalProductUtilsService,
-    private readonly utils: UtilsService
+    private readonly physicalProductUtils: PhysicalProductUtilsService
   ) {}
 
   @ResolveField()
@@ -27,8 +17,11 @@ export class PhysicalProductFieldsResolver {
     @Parent() physicalProduct,
     @Loader({
       params: {
-        query: "physicalProducts",
-        info: `{ id sequenceNumber }`,
+        model: "PhysicalProduct",
+        select: Prisma.validator<Prisma.PhysicalProductSelect>()({
+          id: true,
+          sequenceNumber: true,
+        }),
       },
     })
     physicalProductsLoader: PrismaDataLoader<PhysicalProduct>
@@ -46,42 +39,24 @@ export class PhysicalProductFieldsResolver {
     @Parent() physicalProduct,
     @Loader({
       params: {
-        query: `adminActionLogs`,
-        formatWhere: keys => ({
-          AND: [
-            { entityId_in: keys },
-            { tableName: "PhysicalProduct" },
-          ] as AdminActionLogWhereInput,
-        }),
+        model: `AdminActionLog`,
+        formatWhere: keys =>
+          Prisma.validator<Prisma.AdminActionLogWhereInput>()({
+            AND: [
+              { entityId: { in: keys } },
+              { tableName: "PhysicalProduct" },
+              { interpretation: { id: { not: undefined } } },
+            ],
+          }),
         keyToDataRelationship: "OneToMany",
         getKeys: a => [a.entityId],
       },
       includeInfo: true,
     })
-    logsLoader: PrismaDataLoader<AdminActionLog[]>,
-    @Loader({
-      params: {
-        query: `warehouseLocations`,
-        formatWhere: keys => ({ id_in: keys }),
-        keyToDataRelationship: "OneToOne",
-        info: `{id barcode}`,
-      },
-    })
-    locationsLoader: PrismaDataLoader<WarehouseLocation[]>
+    logsLoader: PrismaDataLoader
   ) {
     const logs = await logsLoader.load(physicalProduct.id)
-    const allReferencedWarehouseLocations = logs
-      .filter(a => !!a.changedFields)
-      .map(a => a.changedFields)
-      .filter(b => b["warehouseLocation"] != null)
-      .map(c => c["warehouseLocation"])
-    const warehouseLocations = await locationsLoader.loadMany(
-      allReferencedWarehouseLocations
-    )
-    return this.physicalProductService.interpretPhysicalProductLogs(
-      logs,
-      warehouseLocations as any
-    )
+    return logs
   }
 
   @ResolveField()
@@ -89,10 +64,12 @@ export class PhysicalProductFieldsResolver {
     @Parent() physicalProduct,
     @Loader({
       params: {
-        query: "reservations",
+        model: "Reservation",
         formatWhere: ids => ({
-          products_some: {
-            id_in: ids,
+          products: {
+            some: {
+              id: { in: ids },
+            },
           },
         }),
         infoFragment: `fragment EnsureProductIDs on Reservation {products {id}}`,

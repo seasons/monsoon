@@ -4,13 +4,16 @@ type Query {
     userIDHash: String
     email: String
     couponID: String
-  ): ChargebeeHostedPagePayload
+  ): ChargebeeHostedPagePayload @cacheControl(maxAge: 0)
   chargebeeGiftCheckout(planID: String!): ChargebeeHostedPagePayload
+    @cacheControl(maxAge: 0)
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
+    @cacheControl(maxAge: 0)
   hostedChargebeeCheckout(planID: String!): ChargebeeHostedPagePayload
-    @hasRole(roles: [Customer])
+    @deprecated(reason: "replaced with processPayment")
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+    @cacheControl(maxAge: 0)
   paymentPlans(
     where: PaymentPlanWhereInput
     orderBy: PaymentPlanOrderByInput
@@ -19,8 +22,8 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [PaymentPlan]
-  gift(id: String!): ChargebeeGift
+  ): [PaymentPlan] @cacheControl(maxAge: 0)
+  gift(id: String!): ChargebeeGift @cacheControl(maxAge: 0)
 }
 
 type Mutation {
@@ -29,10 +32,11 @@ type Mutation {
     planID: String!
     couponID: String
     billing: JSON
+    shipping: JSON
   ): JSON
   updatePaymentMethod(
     paymentMethodID: String!
-    planID: String!
+    planID: String
     billing: JSON
   ): Boolean @hasRole(roles: [Customer])
   applePayCheckout(
@@ -40,6 +44,7 @@ type Mutation {
     token: StripeToken!
     tokenType: String
     couponID: String
+    shipping: JSON
   ): Boolean @hasRole(roles: [Customer])
   applePayUpdatePaymentMethod(
     planID: String!
@@ -50,8 +55,11 @@ type Mutation {
   updateResumeDate(date: DateTime): Boolean @hasRole(roles: [Customer])
   removeScheduledPause(subscriptionID: String!): Boolean
     @hasRole(roles: [Customer])
-  pauseSubscription(subscriptionID: String!, pauseType: PauseType): Boolean
-    @hasRole(roles: [Customer])
+  pauseSubscription(
+    subscriptionID: String!
+    pauseType: PauseType
+    reasonID: ID
+  ): Boolean @hasRole(roles: [Customer])
   resumeSubscription(subscriptionID: String!, date: DateTime): Boolean
     @hasRole(roles: [Customer])
   refundInvoice(input: RefundInvoiceInput): Boolean! @hasRole(roles: [Admin])

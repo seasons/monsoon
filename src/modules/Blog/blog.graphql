@@ -49,4 +49,6 @@ type BlogPost @cacheControl(maxAge: 1000) {
   author: String
   category: String
   image: Image
+  content: String
+  published: Boolean
 }

@@ -3,14 +3,18 @@ import { UserPushNotificationInterestType } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Token } from "@pusher/push-notifications-server"
-import { upperFirst } from "lodash"
+import { difference, merge, upperFirst } from "lodash"
 
 import {
+  PushNotificationID,
   PushNotifyInterestInput,
   PushNotifyUsersInput,
 } from "../pushNotification.types"
 import { PusherService } from "./pusher.service"
-import { PushNotificationDataProvider } from "./pushNotification.data.service"
+import {
+  AllPushNotificationIDs,
+  PushNotificationDataProvider,
+} from "./pushNotification.data.service"
 
 @Injectable()
 export class PushNotificationService {
@@ -19,7 +23,11 @@ export class PushNotificationService {
     private readonly data: PushNotificationDataProvider,
     private readonly prisma: PrismaService,
     private readonly error: ErrorService
-  ) {}
+  ) {
+    for (const id of AllPushNotificationIDs) {
+      this.data.getPushNotifData(id, {}) // run this to enforce lengths on all notifs at boot time
+    }
+  }
 
   generateToken(email: string): Token {
     return (this.pusher.client.generateToken(email) as any).token
@@ -29,6 +37,7 @@ export class PushNotificationService {
     interest,
     pushNotifID,
     vars = {},
+    select,
     debug = false,
   }: PushNotifyInterestInput) {
     // Decipher the interest
@@ -48,47 +57,61 @@ export class PushNotificationService {
     )
 
     // // Create the receipt
-    let usersToUpdate = await this.prisma.client.users({
+    let _usersToUpdate = await this.prisma.client2.user.findMany({
       where: {
         pushNotification: {
           AND: [
             { status: true },
             {
-              interests_some: {
-                AND: [
-                  {
-                    type: this.pusherInterestToPrismaInterestType(
-                      targetInterest
-                    ),
-                  },
-                  { status: true },
-                ],
+              interests: {
+                some: {
+                  AND: [
+                    {
+                      type: this.pusherInterestToPrismaInterestType(
+                        targetInterest
+                      ),
+                    },
+                    { status: true },
+                  ],
+                },
               },
             },
           ],
         },
       },
+      select: { id: true, roles: true },
     })
+
+    let usersToUpdate = this.prisma.sanitizePayload(_usersToUpdate, "User")
+
     if (targetInterest.includes("debug")) {
-      usersToUpdate = usersToUpdate.filter(a => a.roles.includes("Admin"))
+      usersToUpdate = usersToUpdate.filter(a =>
+        a.roles.includes("Admin" as any)
+      )
     }
-    const receipt = await this.prisma.client.createPushNotificationReceipt({
-      ...receiptPayload,
-      interest: targetInterest,
-      users: { connect: usersToUpdate.map(a => ({ id: a.id })) },
+
+    const receipt = await this.prisma.client2.pushNotificationReceipt.create({
+      data: {
+        ...receiptPayload,
+        interest: targetInterest,
+        users: { connect: usersToUpdate.map(a => ({ id: a.id })) },
+      },
+      select: merge({ id: true }, select),
     })
 
     // Update user histories
     const updates = usersToUpdate.map(a =>
-      this.prisma.client.updateUser({
+      this.prisma.client2.user.update({
         where: { id: a.id },
-        data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
+        data: {
+          pushNotification: {
+            update: { history: { connect: [{ id: receipt.id }] } },
+          },
+        },
       })
     )
-    // await each one separately. Sending them simultaneously fails on the DB
-    for (const update of updates) {
-      await update
-    }
+
+    await this.prisma.client2.$transaction(updates)
 
     return receipt
   }
@@ -97,6 +120,7 @@ export class PushNotificationService {
     emails,
     pushNotifID,
     vars = {},
+    select,
     debug = false,
   }: PushNotifyUsersInput) {
     try {
@@ -106,8 +130,6 @@ export class PushNotificationService {
         targetEmails = emails
       }
 
-      const receipts = {}
-
       if (targetEmails?.length) {
         // Send the notification
         const {
@@ -115,31 +137,68 @@ export class PushNotificationService {
           notificationPayload,
         } = this.data.getPushNotifData(pushNotifID, vars)
 
-        await this.pusher.client.publishToUsers(
+        // Filter any emails that have received this push notification before
+        const pushNotificationReceipts = await this.prisma.client2.pushNotificationReceipt.findMany(
+          {
+            where: {
+              title: notificationPayload?.apns?.aps?.alert?.title,
+              body: notificationPayload?.apns?.aps?.alert?.body,
+              users: {
+                some: {
+                  email: {
+                    in: targetEmails,
+                  },
+                },
+              },
+            },
+            select: { id: true, users: true },
+          }
+        )
+
+        const emailsNotifAlreadySent = pushNotificationReceipts
+          .map(a => a.users.map(b => b.email))
+          .flat()
+
+        const updatedTargetEmails = difference(
           targetEmails,
+          emailsNotifAlreadySent
+        )
+
+        await this.pusher.client.publishToUsers(
+          updatedTargetEmails,
           notificationPayload as any
         )
 
-        for (const email of targetEmails) {
-          // Create the receipt
-          const receipt = await this.prisma.client.createPushNotificationReceipt(
-            {
+        const receipt = await this.prisma.client2.pushNotificationReceipt.create(
+          {
+            data: {
               ...receiptPayload,
-              users: { connect: [{ email }] },
-            }
-          )
+              users: { connect: updatedTargetEmails.map(email => ({ email })) },
+            },
+            select: merge({ id: true }, select),
+          }
+        )
 
+        const promises = []
+
+        for (const email of targetEmails) {
           // Update the user's history
-          await this.prisma.client.updateUser({
-            where: { email },
-            data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
-          })
-
-          receipts[email] = receipt
+          promises.push(
+            this.prisma.client2.user.update({
+              where: { email },
+              data: {
+                pushNotification: {
+                  update: { history: { connect: [{ id: receipt.id }] } },
+                },
+              },
+            })
+          )
         }
-      }
 
-      return receipts
+        await this.prisma.client2.$transaction(promises)
+
+        return receipt
+      }
     } catch (e) {
       console.log("e", e)
       this.error.setExtraContext({ emails, pushNotifID })
@@ -147,12 +206,6 @@ export class PushNotificationService {
       this.error.captureError(e)
     }
   }
-
-  private getUpdateUserPushNotificationHistoryData = receiptID => ({
-    pushNotification: {
-      update: { history: { connect: [{ id: receiptID }] } },
-    },
-  })
 
   // assumes pusher interests are of the form seasons-{interestType}-notifications or
   // debug-seasons-{interestType}-notifications e.g seasons-general-notifications

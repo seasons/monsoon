@@ -1,5 +1,7 @@
 type Query {
-  package(where: PackageWhereUniqueInput!): Package @hasRole(roles: [Admin])
+  package(where: PackageWhereUniqueInput!): Package
+    @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 0)
   packages(
     where: PackageWhereInput
     orderBy: PackageOrderByInput
@@ -8,7 +10,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Package]! @hasRole(roles: [Admin])
+  ): [Package]! @hasRole(roles: [Admin]) @cacheControl(maxAge: 0)
   packagesConnection(
     where: PackageWhereInput
     orderBy: PackageOrderByInput
@@ -17,7 +19,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): PackageConnection! @hasRole(roles: [Admin])
+  ): PackageConnection! @hasRole(roles: [Admin]) @cacheControl(maxAge: 0)
 }
 
 type Mutation {
