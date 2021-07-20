@@ -14,7 +14,7 @@
   "scripts": {
     "apollo": "apollo service:push",
     "build": "yarn prisma generate && rimraf dist && tsc",
-    "build:docker": "docker build .",
+    "build:docker": "docker build . -t seasons/monsoon-web",
     "check:parity": "node -r dotenv/config -r ts-node/register src/scripts/queryParity.ts dotenv_config_path=.env",
     "debug": "concurrently --kill-others 'yarn tsc -w' 'yarn debug:server'",
     "debug:server": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
