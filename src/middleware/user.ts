@@ -3,7 +3,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
 
-export function createGetUserMiddleware(prisma) {
+export function createGetUserMiddleware(prisma, logger) {
   return (req, res, next) => {
     // Get auth0 user from request
     const auth0User = req.user
@@ -32,9 +32,15 @@ export function createGetUserMiddleware(prisma) {
           Sentry.configureScope(scope => {
             scope.setUser({ id: prismaUser.id, email: prismaUser.email })
           })
+
+          logger.log("", {
+            id: prismaUser.id,
+            email: prismaUser.email,
+          })
         }
       } catch (e) {
         console.error(e)
+        logger.error(e)
       }
       return next()
     })
