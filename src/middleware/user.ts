@@ -3,7 +3,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
 
-export function createGetUserMiddleware(prisma, logger) {
+export function createGetUserMiddleware(prisma, logger, tracer) {
   return (req, res, next) => {
     // Get auth0 user from request
     const auth0User = req.user
@@ -33,10 +33,10 @@ export function createGetUserMiddleware(prisma, logger) {
             scope.setUser({ id: prismaUser.id, email: prismaUser.email })
           })
 
-          logger.log("", {
-            id: prismaUser.id,
-            email: prismaUser.email,
-          })
+          logger.setContext({ id: prismaUser.id, email: prismaUser.email })
+
+          const middlewareSpan = tracer.scope().active()
+          middlewareSpan.setBaggageItem("user-email", prismaUser.email)
         }
       } catch (e) {
         console.error(e)

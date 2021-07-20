@@ -5,7 +5,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
 
-export const apolloServerSentryPlugin = {
+export const apolloServerSentryPlugin = ({
   // For plugin definition see the docs: https://www.apollographql.com/docs/apollo-server/integrations/plugins/
   // This code was adapted from: https://gist.github.com/nodkz/d14b236d67251d2df5674cb446843732
   requestDidStart() {
@@ -31,4 +31,4 @@ export const apolloServerSentryPlugin = {
       },
     }
   },
-} as ApolloServerPlugin
+} as unknown) as ApolloServerPlugin
