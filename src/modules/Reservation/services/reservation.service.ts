@@ -285,11 +285,7 @@ export class ReservationService {
 
     await this.prisma.client2.reservation.update({
       data: {
-        returnedProducts: this.queryUtils.createScalarListMutateInput(
-          [],
-          lastReservation.id,
-          "update"
-        ),
+        returnedProducts: { set: [] },
         returnedAt: null,
       },
       where: { id: String(lastReservation.id) },
