@@ -451,6 +451,12 @@ export class EmailService {
       user as User,
       availableStyles
     )
+    if (
+      products.length === 0 &&
+      renderEmailFunc === "recommendedItemsNurture"
+    ) {
+      return
+    }
     const payload = await RenderEmail[renderEmailFunc]({
       name: `${user.firstName}`,
       products,
@@ -512,7 +518,10 @@ export class EmailService {
       subject: subject,
       html,
     }
-    if (process.env.NODE_ENV === "production" || to.includes("seasons.nyc")) {
+
+    const nonMembershipSeasonsEmail =
+      to.includes("seasons.nyc") && to !== process.env.OPERATIONS_ADMIN_EMAIL
+    if (process.env.NODE_ENV === "production" || nonMembershipSeasonsEmail) {
       sgMail.send(msg)
     } else {
       await nodemailerTransport.sendMail({
