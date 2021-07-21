@@ -36,7 +36,7 @@ export function createGetUserMiddleware(prisma, logger, tracer) {
           logger.setContext({ id: prismaUser.id, email: prismaUser.email })
 
           const middlewareSpan = tracer.scope().active()
-          middlewareSpan.setBaggageItem("user-email", prismaUser.email)
+          middlewareSpan?.setBaggageItem("user-email", prismaUser.email)
         }
       } catch (e) {
         console.error(e)
