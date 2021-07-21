@@ -124,7 +124,7 @@ export class UpdatePaymentService {
           planID,
           chargebeeBillingAddress,
           paymentMethodID,
-          subscription
+          user.id
         )
         _last4 = last4
         _brand = brand
@@ -146,7 +146,12 @@ export class UpdatePaymentService {
     }
   }
 
-  async updatePaymentWithTmpToken(token, subscription, planID, tokenType) {
+  private async updatePaymentWithTmpToken(
+    token,
+    subscription,
+    planID,
+    tokenType
+  ) {
     await chargebee.subscription
       .update(subscription.id, {
         plan_id: planID,
@@ -161,11 +166,11 @@ export class UpdatePaymentService {
     return { brand: token?.card?.brand, last4: token?.card?.last4 }
   }
 
-  async updatePaymentWithGWToken(
+  private async updatePaymentWithGWToken(
     planID,
     chargebeeBillingAddress,
     paymentMethodID,
-    subscription
+    userId
   ) {
     const subscriptionEstimate = await chargebee.estimate
       .create_subscription({
@@ -189,24 +194,28 @@ export class UpdatePaymentService {
       capture_method: "manual",
     })
 
-    const subscriptionOptions = {
-      plan_id: planID,
-      invoice_immediately: false,
-      billing_address: chargebeeBillingAddress,
-      payment_intent: {
-        gw_token: intent.id,
-        gateway_account_id: process.env.CHARGEBEE_GATEWAY_ACCOUNT_ID,
-      },
-    }
-
-    const payload = await chargebee.subscription
-      .update(subscription.id, {
-        subscriptionOptions,
+    // Update card
+    const payload = await chargebee.payment_source
+      .create_using_payment_intent({
+        customer_id: userId,
+        replace_primary_payment_source: true,
+        payment_intent: {
+          gw_token: intent.id,
+          gateway_account_id: process.env.CHARGEBEE_GATEWAY_ACCOUNT_ID,
+        },
       })
       .request()
 
-    const brand = payload.card.card_type
-    const last4 = payload.card.last4
+    // Update billing address
+    await chargebee.customer
+      .update_billing_info(userId, { billing_address: chargebeeBillingAddress })
+      .request()
+
+    const {
+      payment_source: { card },
+    } = payload
+    const brand = card.card_type
+    const last4 = card.last4
 
     return { brand, last4 }
   }
