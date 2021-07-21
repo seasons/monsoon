@@ -1,12 +1,13 @@
 import { Request } from "express"
 import * as expressWinston from "express-winston"
-import { TransformableInfo } from "logform"
 import { utilities as nestWinstonModuleUtilities } from "nest-winston"
 import { Logger, createLogger, format, transports } from "winston"
 import * as Transport from "winston-transport"
 
 import { getRequestIdContext } from "../middleware/http-context.middleware"
 import { WinstonLogger } from "./winston.logger"
+
+const logLevel = process.env.NODE_ENV === "development" ? "info" : "error"
 
 /**
  * The custom formatter that manages winston meta.
@@ -50,32 +51,9 @@ const errorsFormat = format(info => {
 })
 
 /**
- * Retrieve a custom log formatted entry. Useful for print only!
- *
- * @param info The information about the log entry.
- * @returns The pretty formatted log information.
- */
-function formatLog(info: TransformableInfo) {
-  // Collect all fields independently, ignore meta and stringify the rest
-  const {
-    environment,
-    level,
-    label,
-    timestamp,
-    message,
-    meta,
-    splat,
-    ...rest
-  } = info
-  return `[${environment}] ${level}: [${label}] ${message} ${JSON.stringify(
-    rest
-  )}`
-}
-
-/**
  * Create a labelled `winston` logger instance.
  *
- * @param label The label of the logger instance.
+
  * @returns The Logger instance with transports attached by environment.
  */
 export function createNestWinstonLogger() {
@@ -84,6 +62,7 @@ export function createNestWinstonLogger() {
     path: `/v1/input/${process.env.DATADOG_KEY}?ddsource=nodejs&service=monsoon-${process.env.NODE_ENV}`,
     ssl: true,
   }
+
   const finalTransports: Transport[] = [
     new transports.Console({
       format: format.combine(
@@ -91,16 +70,12 @@ export function createNestWinstonLogger() {
         nestWinstonModuleUtilities.format.nestLike()
       ),
     }),
+    new transports.Http(httpTransportOptions),
   ]
-
-  if (process.env.NODE_ENV !== "development") {
-    const httpTransport = new transports.Http(httpTransportOptions)
-    finalTransports.push(httpTransport)
-  }
 
   return new WinstonLogger(
     createLogger({
-      level: "info",
+      level: logLevel,
       exitOnError: false,
       format: format.json(),
       transports: finalTransports,
@@ -152,7 +127,7 @@ export function createExpressWinstonHandler(logger: Logger) {
   return expressWinston.logger({
     winstonInstance: logger,
     meta: true,
-    // baseMeta: logger.defaultMeta,
+    level: logLevel,
     metaField: "express",
     msg: "{{req.method}} {{req.url}}",
     expressFormat: false,
