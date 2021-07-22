@@ -163,33 +163,43 @@ export class PaymentService {
     let billingAddress = null
 
     if (customer) {
-      const customerWithBillingInfo = await this.prisma.binding.query.customer(
-        { where: { id: customer.id } },
-        `
-      {
-        id
-        billingInfo {
-          street1
-          street2
-          city
-          state
-          postal_code
-          country
+      const _customerWithBillingInfo = await this.prisma.client2.customer.findFirst(
+        {
+          where: { id: customer.id },
+          select: {
+            id: true,
+            billingInfo: {
+              select: {
+                street1: true,
+                street2: true,
+                city: true,
+                state: true,
+                postal_code: true,
+                country: true,
+              },
+            },
+            detail: {
+              select: {
+                id: true,
+                shippingAddress: {
+                  select: {
+                    id: true,
+                    address1: true,
+                    address2: true,
+                    city: true,
+                    country: true,
+                    state: true,
+                    zipCode: true,
+                  },
+                },
+              },
+            },
+          },
         }
-        detail {
-          id
-          shippingAddress {
-            id
-            address1
-            address2
-            city
-            country
-            state
-            zipCode
-          }
-        }
-      }
-    `
+      )
+      const customerWithBillingInfo = this.prisma.sanitizePayload(
+        _customerWithBillingInfo,
+        "Customer"
       )
 
       const { billingInfo } = customerWithBillingInfo
@@ -527,7 +537,7 @@ export class PaymentService {
       let resumeDateISO
 
       if (pauseType === "WithItems") {
-        termEnd = customerWithMembership?.membership?.subscription.currentTermEnd.toString()
+        termEnd = customerWithMembership?.membership?.subscription.currentTermEnd.toISOString()
         resumeDateISO = DateTime.fromISO(termEnd).plus({ months: 1 }).toISO()
       } else {
         const result = await chargebee.subscription
@@ -536,7 +546,9 @@ export class PaymentService {
           })
           .request()
 
-        termEnd = result?.subscription?.current_term_end
+        termEnd = DateTime.fromSeconds(
+          result?.subscription?.current_term_end
+        ).toISO()
         if (!termEnd) {
           throw new Error(
             "Unable to query term end for subscription. Please try again"
@@ -551,8 +563,8 @@ export class PaymentService {
             connect: { id: customerWithMembership?.membership?.id },
           },
           pausePending: true,
-          pauseDate: new Date(termEnd),
-          resumeDate: new Date(resumeDateISO),
+          pauseDate: termEnd,
+          resumeDate: resumeDateISO,
           pauseType,
           reason: reasonID && { connect: { id: reasonID } },
           notified: false,

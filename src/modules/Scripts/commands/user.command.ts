@@ -78,7 +78,7 @@ export class UserCommands {
       lastName,
     })
 
-    await this.prisma.client.updateUser({
+    await this.prisma.client2.user.update({
       where: { email: targetEmail },
       data: { auth0Id, email: newEmail },
     })

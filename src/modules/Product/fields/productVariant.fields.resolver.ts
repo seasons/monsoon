@@ -9,10 +9,7 @@ import {
   ShopifyShop,
 } from "@app/prisma"
 import { Order, ProductVariant } from "@app/prisma/prisma.binding"
-import {
-  PrismaTwoDataLoader,
-  PrismaTwoLoader,
-} from "@app/prisma/prisma2.loader"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import {
   BagItem,
@@ -50,7 +47,6 @@ export class ProductVariantFieldsResolver {
     @Parent() productVariant: ProductVariant,
     @Customer() customer,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "Order",
         select: Prisma.validator<Prisma.OrderSelect>()({
@@ -71,9 +67,8 @@ export class ProductVariantFieldsResolver {
         keyToDataRelationship: "OneToMany",
       },
     })
-    ordersLoader: PrismaTwoDataLoader<Order[]>,
+    ordersLoader: PrismaDataLoader<Order[]>,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "PhysicalProduct",
         select: Prisma.validator<Prisma.PhysicalProductSelect>()({
@@ -82,7 +77,7 @@ export class ProductVariantFieldsResolver {
         }),
       },
     })
-    physicalProductsLoader: PrismaTwoDataLoader
+    physicalProductsLoader: PrismaDataLoader
   ) {
     if (!customer?.id) {
       return false
@@ -123,7 +118,6 @@ export class ProductVariantFieldsResolver {
   async displayLong(
     @Parent() parent,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "ProductVariant",
         select: Prisma.validator<Prisma.ProductVariantSelect>()({
@@ -136,7 +130,7 @@ export class ProductVariantFieldsResolver {
         }),
       },
     })
-    productVariantLoader: PrismaTwoDataLoader<ProductVariant>
+    productVariantLoader: PrismaDataLoader<ProductVariant>
   ) {
     const variant = await productVariantLoader.load(parent.id)
 
@@ -187,7 +181,6 @@ export class ProductVariantFieldsResolver {
     @Parent() parent,
     @Customer() customer,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "BagItem",
         select: Prisma.validator<Prisma.BagItemSelect>()({
@@ -208,7 +201,7 @@ export class ProductVariantFieldsResolver {
         fallbackValue: null,
       },
     })
-    bagItemloader: PrismaTwoDataLoader
+    bagItemloader: PrismaDataLoader
   ) {
     if (!customer) return false
 
@@ -222,7 +215,6 @@ export class ProductVariantFieldsResolver {
     @Parent() parent,
     @Customer() customer,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "BagItem",
         select: Prisma.validator<Prisma.BagItemSelect>()({
@@ -243,7 +235,7 @@ export class ProductVariantFieldsResolver {
         getKeys: bagItem => [bagItem.productVariant.id],
       },
     })
-    bagItemloader: PrismaTwoDataLoader
+    bagItemloader: PrismaDataLoader
   ) {
     if (!customer) return false
 
@@ -257,7 +249,6 @@ export class ProductVariantFieldsResolver {
     @Parent() parent,
     @Customer() customer,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "ProductNotification",
         select: Prisma.validator<Prisma.ProductNotificationSelect>()({
@@ -281,7 +272,7 @@ export class ProductVariantFieldsResolver {
         keyToDataRelationship: "OneToMany",
       },
     })
-    productNotificationsLoader: PrismaTwoDataLoader<ProductNotification[]>
+    productNotificationsLoader: PrismaDataLoader<ProductNotification[]>
   ) {
     if (!customer) return false
 
@@ -298,7 +289,6 @@ export class ProductVariantFieldsResolver {
     @Parent() parent,
     @User() user,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "ProductVariantWant",
         select: Prisma.validator<Prisma.ProductVariantWantSelect>()({
@@ -331,7 +321,6 @@ export class ProductVariantFieldsResolver {
   async size(
     @Parent() parent,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "ProductVariant",
         select: Prisma.validator<Prisma.ProductVariantSelect>()({
@@ -340,7 +329,7 @@ export class ProductVariantFieldsResolver {
         }),
       },
     })
-    productVariantLoader: PrismaTwoDataLoader<ProductVariant>
+    productVariantLoader: PrismaDataLoader<ProductVariant>
   ) {
     const productVariant = await productVariantLoader.load(parent.id)
     return productVariant?.internalSize?.display
@@ -350,7 +339,6 @@ export class ProductVariantFieldsResolver {
   async nextReservablePhysicalProduct(
     @Parent() parent,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "PhysicalProduct",
         formatWhere: keys => ({
@@ -368,7 +356,7 @@ export class ProductVariantFieldsResolver {
         getKeys: a => [a.productVariant.id],
       },
     })
-    physicalProductsLoader: PrismaTwoDataLoader<
+    physicalProductsLoader: PrismaDataLoader<
       Array<{
         id: string
         productVariant: { id: string }
@@ -376,7 +364,6 @@ export class ProductVariantFieldsResolver {
       }>
     >,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "PhysicalProduct",
         infoFragment: `fragment EnsureID on PhysicalProduct {
@@ -385,7 +372,7 @@ export class ProductVariantFieldsResolver {
       },
       includeInfo: true,
     })
-    physicalProductInfoLoader: PrismaTwoDataLoader<PhysicalProduct>
+    physicalProductInfoLoader: PrismaDataLoader<PhysicalProduct>
   ) {
     const reservablePhysicalProducts = await physicalProductsLoader.load(
       parent.id
@@ -438,7 +425,6 @@ export class ProductVariantFieldsResolver {
     @Parent() productVariant: Pick<ProductVariant, "id">,
     @Customer() customer,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "BagItem",
         select: Prisma.validator<Prisma.BagItemSelect>()({
@@ -455,11 +441,10 @@ export class ProductVariantFieldsResolver {
         fallbackValue: null,
       },
     })
-    reservedBagItemLoader: PrismaTwoDataLoader<
+    reservedBagItemLoader: PrismaDataLoader<
       Pick<BagItem, "id"> & { productVariant: Pick<ProductVariant, "id"> }[]
     >,
     @Loader({
-      type: PrismaTwoLoader.name,
       params: {
         model: "ProductVariant",
         select: Prisma.validator<Prisma.ProductVariantSelect>()({
@@ -503,7 +488,7 @@ export class ProductVariantFieldsResolver {
         }),
       },
     })
-    productVariantLoader: PrismaTwoDataLoader<{
+    productVariantLoader: PrismaDataLoader<{
       physicalProducts: Array<{
         price: Pick<PhysicalProductPrice, "buyUsedPrice" | "buyUsedEnabled">
         inventoryStatus: InventoryStatus

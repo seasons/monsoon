@@ -28,6 +28,8 @@ interface InfoToSelectParams {
   modelFieldsByModelName?: any
 }
 
+const QUERY_KEYS_TO_IGNORE = ["signup", "login"]
+
 @Injectable()
 export class QueryUtilsService {
   constructor(private readonly prisma: PrismaService) {
@@ -145,6 +147,9 @@ export class QueryUtilsService {
   }
 
   static deepMergeWithFieldsFromQueryKey(fields, info, opName, queryKey) {
+    if (QUERY_KEYS_TO_IGNORE.includes(queryKey)) {
+      return fields
+    }
     let newFields = cloneDeep(fields)
 
     const cachedFieldsForQueryKey = this.fieldCache.get(opName)?.get(queryKey)
@@ -329,12 +334,17 @@ export class QueryUtilsService {
   }
 
   createScalarListMutateInput<T>(
-    values: string[],
+    values: any[],
     nodeId: string,
     type: "create" | "update"
   ): T {
     if (!values) {
       return undefined
+    }
+    if (!Array.isArray(values)) {
+      throw new Error(
+        "Values needs to be an array in createScalarListMutateInput"
+      )
     }
     if (type === "create") {
       return {

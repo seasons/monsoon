@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client"
 import DataLoader from "dataloader"
 import { Request } from "express"
-import { GraphQLResolveInfo } from "graphql"
 
 export interface NestDataLoader {
   /**
@@ -16,19 +15,10 @@ type KeyToDataRelationship =
   | "ManyToMany"
   | "ManyToOne"
 
-export type PrismaOneGenerateParams = CommonPrismaGenerateParams & {
-  // basic parameters to construct the prisma call
-  query: string
-  info?: string | any
-}
-
-export type PrismaTwoGenerateParams = CommonPrismaGenerateParams & {
-  // basic parameters to construct the prisma call
+interface PrismaGenerateParams {
   model: Prisma.ModelName
   select?: any
-}
 
-interface CommonPrismaGenerateParams {
   ctx?: any
   orderBy?: any
 
@@ -63,7 +53,7 @@ export interface LoaderParams {
   type?: string
 
   // Defines the prisma query and data mapping process
-  params?: PrismaOneGenerateParams | PrismaTwoGenerateParams
+  params?: PrismaGenerateParams
 
   // pass true to forward the info input passed by the client
   includeInfo?: boolean

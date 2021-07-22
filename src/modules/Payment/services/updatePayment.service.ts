@@ -37,7 +37,7 @@ export class UpdatePaymentService {
   ) {}
 
   async updatePaymentMethod(
-    planID,
+    _planID,
     customer,
     token,
     tokenType,
@@ -45,46 +45,46 @@ export class UpdatePaymentService {
     billing
   ) {
     try {
-      const customerWithUserData = await this.prisma.binding.query.customer(
-        { where: { id: customer.id } },
-        `
+      const _customerWithUserData = await this.prisma.client2.customer.findUnique(
         {
-          id
-          detail {
-            id
-            impactId
-          }
-          billingInfo {
-            id
-          }
-          user {
-            id
-            firstName
-            lastName
-            email
-          }
-          utm {
-            source
-            medium
-            campaign
-            term
-            content
-          }
+          where: { id: customer.id },
+          select: {
+            id: true,
+            detail: { select: { id: true, impactId: true } },
+            billingInfo: { select: { id: true } },
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+            membership: { select: { plan: { select: { planID: true } } } },
+            utm: {
+              select: {
+                source: true,
+                medium: true,
+                campaign: true,
+                term: true,
+                content: true,
+              },
+            },
+          },
         }
-      `
+      )
+      const customerWithUserData = this.prisma.sanitizePayload(
+        _customerWithUserData,
+        "Customer"
       )
 
       const { user, billingInfo } = customerWithUserData
-      console.log(
-        "this.paymentUtils.createBillingAddresses",
-        this.paymentUtils.createBillingAddresses
-      )
-      console.log("this.paymentUtils", this.paymentUtils)
       const {
         prismaBillingAddress,
         chargebeeBillingAddress,
       } = this.paymentUtils.createBillingAddresses(user, token, billing)
 
+      const planID = _planID ?? customerWithUserData?.membership?.plan?.planID
       const subscriptions = await chargebee.subscription
         .list({
           plan_id: { in: [planID] },
@@ -113,9 +113,9 @@ export class UpdatePaymentService {
         // TmpToken is deprecated but still used in harvest, should remove
         const { last4, brand } = await this.updatePaymentWithTmpToken(
           token,
-          subscription,
-          planID,
-          tokenType
+          tokenType,
+          user.id,
+          chargebeeBillingAddress
         )
         _last4 = last4
         _brand = brand
@@ -124,7 +124,7 @@ export class UpdatePaymentService {
           planID,
           chargebeeBillingAddress,
           paymentMethodID,
-          subscription
+          user.id
         )
         _last4 = last4
         _brand = brand
@@ -134,38 +134,47 @@ export class UpdatePaymentService {
         )
       }
 
-      await this.prisma.client.updateBillingInfo({
+      await this.prisma.client2.billingInfo.update({
         where: { id: billingInfo.id },
         data: { ...prismaBillingAddress, brand: _brand, last_digits: _last4 },
       })
     } catch (e) {
-      this.error.setExtraContext({ planID, token, tokenType })
+      this.error.setExtraContext({ token, tokenType })
       this.error.setExtraContext(customer, "customer")
       this.error.captureError(e)
-      throw new Error(`Error updating your payment method ${e}`)
+      throw e
     }
   }
 
-  async updatePaymentWithTmpToken(token, subscription, planID, tokenType) {
-    await chargebee.subscription
-      .update(subscription.id, {
-        plan_id: planID,
-        invoice_immediately: false,
-        payment_method: {
-          tmp_token: token.tokenId,
-          type: tokenType ? tokenType : "apple_pay",
-        },
-      })
+  private async updatePaymentWithTmpToken(
+    token,
+    tokenType,
+    userId,
+    chargebeeBillingAddress
+  ) {
+    // Update card
+    const params = {
+      customer_id: userId,
+      gateway_account_id: process.env.CHARGEBEE_GATEWAY_ACCOUNT_ID,
+      type: tokenType ?? "apple_pay",
+      tmp_token: token.tokenId,
+      replace_primary_payment_source: true,
+    }
+    const payload = await chargebee.payment_source
+      .create_using_temp_token(params)
+      .request()
+    await chargebee.customer
+      .update_billing_info(userId, { billing_address: chargebeeBillingAddress })
       .request()
 
     return { brand: token?.card?.brand, last4: token?.card?.last4 }
   }
 
-  async updatePaymentWithGWToken(
+  private async updatePaymentWithGWToken(
     planID,
     chargebeeBillingAddress,
     paymentMethodID,
-    subscription
+    userId
   ) {
     const subscriptionEstimate = await chargebee.estimate
       .create_subscription({
@@ -189,24 +198,28 @@ export class UpdatePaymentService {
       capture_method: "manual",
     })
 
-    const subscriptionOptions = {
-      plan_id: planID,
-      invoice_immediately: false,
-      billing_address: chargebeeBillingAddress,
-      payment_intent: {
-        gw_token: intent.id,
-        gateway_account_id: process.env.CHARGEBEE_GATEWAY_ACCOUNT_ID,
-      },
-    }
-
-    const payload = await chargebee.subscription
-      .update(subscription.id, {
-        subscriptionOptions,
+    // Update card
+    const payload = await chargebee.payment_source
+      .create_using_payment_intent({
+        customer_id: userId,
+        replace_primary_payment_source: true,
+        payment_intent: {
+          gw_token: intent.id,
+          gateway_account_id: process.env.CHARGEBEE_GATEWAY_ACCOUNT_ID,
+        },
       })
       .request()
 
-    const brand = payload.card.card_type
-    const last4 = payload.card.last4
+    // Update billing address
+    await chargebee.customer
+      .update_billing_info(userId, { billing_address: chargebeeBillingAddress })
+      .request()
+
+    const {
+      payment_source: { card },
+    } = payload
+    const brand = card.card_type
+    const last4 = card.last4
 
     return { brand, last4 }
   }
@@ -360,18 +373,25 @@ export class UpdatePaymentService {
     )
 
     // Adds the customer's shipping options to their location record
-    const customerLocationID = await this.prisma.client
-      .customer({
-        id: customer.id,
-      })
-      .detail()
-      .shippingAddress()
-      .id()
-
-    await this.customerService.addCustomerLocationShippingOptions(
-      shippingState,
-      customerLocationID
+    const _customerWithLocationId = await this.prisma.client2.customer.findUnique(
+      {
+        where: { id: customer.id },
+        select: {
+          detail: { select: { shippingAddress: { select: { id: true } } } },
+        },
+      }
     )
+
+    const customerWithLocationId = this.prisma.sanitizePayload(
+      _customerWithLocationId,
+      "Customer"
+    )
+    if (!!customerWithLocationId?.detail?.shippingAddress?.id) {
+      await this.customerService.addCustomerLocationShippingOptions(
+        shippingState,
+        customerWithLocationId.detail.shippingAddress.id
+      )
+    }
 
     return null
   }
@@ -393,14 +413,15 @@ export class UpdatePaymentService {
       street1: billingStreet1,
       street2: billingStreet2,
     }
-    const billingInfoId = await this.prisma.client
-      .customer({ id: customerID })
-      .billingInfo()
-      .id()
-    if (billingInfoId) {
-      await this.prisma.client.updateBillingInfo({
+
+    const billingInfo = await this.prisma.client2.billingInfo.findFirst({
+      where: { customer: { id: customerID } },
+    })
+
+    if (billingInfo.id) {
+      await this.prisma.client2.billingInfo.update({
+        where: { id: billingInfo.id },
         data: billingAddressData,
-        where: { id: billingInfoId },
       })
     } else {
       // Get user's card information from chargebee
@@ -414,21 +435,23 @@ export class UpdatePaymentService {
         last_name,
       } = cardInfo
 
-      // Create new billing info object
-      const billingInfo = await this.prisma.client.createBillingInfo({
-        ...billingAddressData,
-        brand,
-        expiration_month: expiry_month,
-        expiration_year: expiry_year,
-        last_digits: last4,
-        name: `${first_name} ${last_name}`,
+      const billingInfo = await this.prisma.client2.billingInfo.create({
+        data: {
+          customer: {
+            connect: {
+              id: customerID,
+            },
+          },
+          ...billingAddressData,
+          brand,
+          expiration_month: expiry_month,
+          expiration_year: expiry_year,
+          last_digits: last4,
+          name: `${first_name} ${last_name}`,
+        },
       })
 
-      // Connect new billing info to customer object
-      await this.prisma.client.updateCustomer({
-        data: { billingInfo: { connect: { id: billingInfo.id } } },
-        where: { id: customerID },
-      })
+      return billingInfo
     }
   }
 }

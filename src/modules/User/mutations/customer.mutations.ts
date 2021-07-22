@@ -5,7 +5,7 @@ import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { UserInputError } from "apollo-server"
-import { head, pick } from "lodash"
+import { pick } from "lodash"
 
 import { CustomerService } from "../services/customer.service"
 
@@ -78,16 +78,20 @@ export class CustomerMutationsResolver {
   async updateNotificationBarReceipt(
     @Customer() customer,
     @Args() { notification: { notificationBarId, viewCount, clickCount } },
-    @Info() info
+    @Select() select
   ) {
-    const r = head(
-      await this.prisma.client.customerNotificationBarReceipts({
+    const r = await this.prisma.client2.customerNotificationBarReceipt.findFirst(
+      {
         where: {
-          AND: [{ customer: { id: customer.id } }, { notificationBarId }],
+          AND: [
+            { customer: { every: { id: customer.id } } },
+            { notificationBarId },
+          ],
         },
-      })
+      }
     )
-    return this.prisma.binding.mutation.upsertCustomerNotificationBarReceipt(
+
+    const _data = await this.prisma.client2.customerNotificationBarReceipt.upsert(
       {
         where: { id: r?.id || "" },
         create: {
@@ -97,8 +101,9 @@ export class CustomerMutationsResolver {
           customer: { connect: { id: customer.id } },
         },
         update: { viewCount, clickCount },
-      },
-      info
+        select,
+      }
     )
+    return this.prisma.sanitizePayload(_data, "CustomerNotificationBarReceipt")
   }
 }

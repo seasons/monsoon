@@ -18,7 +18,7 @@ export class SegmentController {
   @Post()
   async handlePost(@Body() body: SegmentEvent) {
     if (body.type === "identify" && body.userId !== null) {
-      await this.prisma.client.updateUser({
+      await this.prisma.client2.user.update({
         where: { id: body.userId },
         data: {
           deviceData: {

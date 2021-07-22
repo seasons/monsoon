@@ -375,8 +375,8 @@ model CustomerMembershipSubscriptionData {
 model CustomerNotificationBarReceipt {
   id                String   @id @default(cuid()) @db.VarChar(30)
   notificationBarId String
-  viewCount         Int
-  clickCount        Int
+  viewCount         Int      @default(value: 0)
+  clickCount        Int      @default(value: 0)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -395,7 +395,7 @@ model EmailReceipt {
 
 model FitPic {
   id                     String         @id @default(cuid()) @db.VarChar(30)
-  status                 String
+  status                 String         @default("Submitted")
   createdAt              DateTime       @default(now())
   updatedAt              DateTime       @updatedAt
   locationId             String?        @map("location") @db.VarChar(30)
@@ -411,8 +411,8 @@ model FitPic {
 
 model FitPicReport {
   id         String   @id @default(cuid()) @db.VarChar(30)
-  status     String
-  reportedAt DateTime
+  status     String   @default("Pending")
+  reportedAt DateTime @default(now())
   updatedAt  DateTime @updatedAt
   reporterId String?  @map("reporter") @db.VarChar(30)
   reportedId String?  @map("reported") @db.VarChar(30)
@@ -605,18 +605,18 @@ model PauseRequest {
 }
 
 model PaymentPlan {
-  id                 String              @id @default(cuid()) @db.VarChar(30)
-  description        String?
-  planID             String              @unique
-  status             String?
-  name               String?
-  price              Int?
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  tagline            String?
-  itemCount          Int?
-  tier               String?
-  customerMembership CustomerMembership?
+  id                  String              @id @default(cuid()) @db.VarChar(30)
+  description         String?
+  planID              String              @unique
+  status              String?
+  name                String?
+  price               Int?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  tagline             String?
+  itemCount           Int?
+  tier                String?
+  customerMemberships CustomerMembership[]
 }
 
 model PhysicalProduct {

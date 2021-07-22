@@ -113,25 +113,33 @@ describe("Auth Service", () => {
       expect(customer.plan).toBeUndefined()
 
       // Customer Details Fields
-      const customerDetails = await prisma.client.customerDetail({ id: "1" })
+      const customerDetails = await prisma.client2.customerDetail.findUnique({
+        where: { id: "1" },
+      })
       expect(customerDetails.discoveryReference).toEqual(discoveryReference)
       expect(customerDetails.phoneNumber).toEqual(phoneNumber)
 
       // Shipping Address Fields
-      const customerShippingAddress = await prisma.client.location({ id: "2" })
+      const customerShippingAddress = await prisma.client2.location.findUnique({
+        where: { id: "2" },
+      })
       expect(customerShippingAddress.zipCode).toEqual(zipCode)
 
       cleanupFunc = async () => {
-        const userNotifInterests = await prisma.client.userPushNotificationInterests()
-        const userNotifs = await prisma.client.userPushNotifications()
+        const userNotifInterests = await prisma.client2.userPushNotificationInterest.findMany()
+        const userNotifs = await prisma.client2.userPushNotification.findMany()
 
-        await prisma.client.deleteManyUserPushNotificationInterests({
-          id_in: userNotifInterests.map(interest => interest.id),
+        await prisma.client2.userPushNotificationInterest.deleteMany({
+          where: {
+            id: { in: userNotifInterests.map(interest => interest.id) },
+          },
         })
-        await prisma.client.deleteUserPushNotification({ id: userNotifs[0].id })
-        await prisma.client.deleteLocation({ id: "2" })
-        await prisma.client.deleteCustomerDetail({ id: "1" })
-        await prisma.client.deleteCustomer({ id: customer.id })
+        await prisma.client2.userPushNotification.delete({
+          where: { id: userNotifs[0].id },
+        })
+        await prisma.client2.location.delete({ where: { id: "2" } })
+        await prisma.client2.customerDetail.delete({ where: { id: "1" } })
+        await prisma.client2.customer.delete({ where: { id: customer.id } })
       }
     })
   })

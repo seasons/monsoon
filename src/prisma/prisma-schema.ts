@@ -17624,6 +17624,7 @@ enum ReservationStatus {
   Hold
   Blocked
   Unknown
+  Lost
   Received
 }
 

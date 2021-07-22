@@ -2,6 +2,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
@@ -69,7 +70,8 @@ export class ReservationService {
     private readonly reservationUtils: ReservationUtilsService,
     private readonly error: ErrorService,
     private readonly utils: UtilsService,
-    private readonly customerUtils: CustomerUtilsService
+    private readonly customerUtils: CustomerUtilsService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   async reserveItems(
@@ -234,9 +236,10 @@ export class ReservationService {
     const result = await this.prisma.client2.$transaction(promises.flat())
 
     const reservation = result.pop()
+
     const earlySwapLineItems = await this.addEarlySwapLineItemsIfNeeded(
-      reservation.id,
-      customer.id,
+      reservation?.id,
+      customer?.id,
       nextFreeSwapDate
     )
 
@@ -314,9 +317,11 @@ export class ReservationService {
 
     await this.prisma.client2.reservation.update({
       data: {
-        returnedProducts: {
-          set: [],
-        },
+        returnedProducts: this.queryUtils.createScalarListMutateInput(
+          [],
+          lastReservation.id,
+          "update"
+        ),
         returnedAt: null,
       },
       where: { id: String(lastReservation.id) },
@@ -798,7 +803,6 @@ export class ReservationService {
                       {
                         question: `What did you think about this?`,
                         options: {
-                          // create: ["Disliked", "It was OK", "Loved it"],
                           create: [
                             { value: "Disliked", position: 1000 },
                             { value: "It was OK", position: 2000 },
@@ -810,12 +814,6 @@ export class ReservationService {
                       {
                         question: `How many times did you wear this?`,
                         options: {
-                          // set: [
-                          //   "Never wore it",
-                          //   "1-2 times",
-                          //   "3-5 times",
-                          //   "More than 6 times",
-                          // ],
                           create: [
                             { value: "Never wore it", position: 1000 },
                             { value: "1-2 times", position: 2000 },
@@ -828,7 +826,6 @@ export class ReservationService {
                       {
                         question: `Did it fit as expected?`,
                         options: {
-                          // set: ["Fit small", "Fit true to size", "Fit oversized"],
                           create: [
                             { value: "Fit small", position: 1000 },
                             { value: "Fit true to size", position: 2000 },
@@ -840,7 +837,6 @@ export class ReservationService {
                       {
                         question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
                         options: {
-                          // set: ["No", "Yes", "Buy below retail", "Would only rent"],
                           create: [
                             { value: "No", position: 1000 },
                             { value: "Yes", position: 2000 },

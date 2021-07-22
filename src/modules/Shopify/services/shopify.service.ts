@@ -3,6 +3,7 @@ import querystring from "querystring"
 
 import { ShopifyProductVariantUpdateInput } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import { Prisma } from "@prisma/client"
 import { BillingInfo, Location } from "@prisma/client"
 import { ShopifyProductVariant } from "@prisma/client"
 import { minBy, pick } from "lodash"
@@ -122,8 +123,10 @@ export class ShopifyService {
       params: { code: authorizationCode, shop, state: nonce, timestamp },
     })
 
-    const shopifyShop = await this.prisma.client.shopifyShop({
-      shopName: this.getShopName(shop),
+    const shopifyShop = await this.prisma.client2.shopifyShop.findFirst({
+      where: {
+        shopName: this.getShopName(shop),
+      },
     })
 
     return shopifyShop && isValidHMAC
@@ -712,7 +715,7 @@ export class ShopifyService {
             productVariant?.product?.images.edges?.[0]?.node?.transformedSrc
 
           const image = !!imageSrc
-            ? await this.prisma.client.upsertImage({
+            ? await this.prisma.client2.image.upsert({
                 where: {
                   url: imageSrc,
                 },
@@ -758,15 +761,17 @@ export class ShopifyService {
                 seconds: PRODUCT_VARIANT_CACHE_SECONDS,
               })
               .toISO(),
-          } as ShopifyProductVariantUpdateInput
+          }
 
-          const result = await this.prisma.client.upsertShopifyProductVariant({
-            where: {
-              externalId: productVariant.id,
-            },
-            create: data,
-            update: data,
-          })
+          const result = await this.prisma.client2.shopifyProductVariant.upsert(
+            {
+              where: {
+                externalId: productVariant.id,
+              },
+              create: data,
+              update: data,
+            }
+          )
           shopifyProductVariantResults.push(result)
         } catch (e) {
           console.error(

@@ -1,9 +1,9 @@
 import { Customer, User } from "@app/decorators"
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
+import { PrismaGenerateParams } from "@app/modules/DataLoader/dataloader.types"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 import { ReservationUtilsService } from "@app/modules/Reservation/services/reservation.utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
-import { PrismaTwoDataLoader } from "@app/prisma/prisma2.loader"
 import { Loader } from "@modules/DataLoader/decorators/dataloader.decorator"
 import { InvoicesForCustomersLoader } from "@modules/Payment/loaders/invoicesForCustomers.loaders"
 import {
@@ -12,20 +12,17 @@ import {
 } from "@modules/Payment/payment.types"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
-import { head, isObject } from "lodash"
+import { isObject } from "lodash"
 import { DateTime } from "luxon"
 
 const getUserIDGenerateParams = {
-  query: `customers`,
-  info: `{
-    id
-    user {
-      id
-    }
-  }`,
+  model: "Customer",
+  select: { id: true, user: { select: { id: true } } },
   formatData: a => a.user.id,
-}
+} as PrismaGenerateParams
+
 @Resolver("Customer")
 export class CustomerFieldsResolver {
   constructor(
@@ -35,11 +32,24 @@ export class CustomerFieldsResolver {
   ) {}
 
   @ResolveField()
-  async paymentPlan(@Parent() customer) {
-    return await this.prisma.client
-      .customer({ id: customer.id })
-      .membership()
-      .plan()
+  async paymentPlan(
+    @Parent() customer,
+    @Loader({
+      params: {
+        model: "PaymentPlan",
+        formatWhere: ids =>
+          Prisma.validator<Prisma.PaymentPlanWhereInput>()({
+            customerMemberships: { some: { customer: { id: { in: ids } } } },
+          }),
+        infoFragment: `fragment EnsureCustomerId on PaymentPlan {customerMemberships {customer {id}}}`,
+        keyToDataRelationship: "ManyToOne",
+        getKeys: a => a.customerMemberships.map(a => a.customer.id),
+      },
+      includeInfo: true,
+    })
+    planLoader
+  ) {
+    return await planLoader.load(customer.id)
   }
 
   @ResolveField()
@@ -47,24 +57,29 @@ export class CustomerFieldsResolver {
     @Parent() customer,
     @Loader({
       params: {
-        query: `customers`,
-        info: `{
-              id
-              membership {
-                id
-              }
-              referrer {
-                id
-              }
-              utm {
-                source
-                medium
-                campaign
-                term
-                content
-              }
-            }
-            `,
+        model: "Customer",
+        select: Prisma.validator<Prisma.CustomerSelect>()({
+          id: true,
+          membership: {
+            select: {
+              id: true,
+            },
+          },
+          referrer: {
+            select: {
+              id: true,
+            },
+          },
+          utm: {
+            select: {
+              source: true,
+              medium: true,
+              campaign: true,
+              term: true,
+              content: true,
+            },
+          },
+        }),
       },
     })
     prismaLoader: PrismaDataLoader<string>
@@ -113,35 +128,54 @@ export class CustomerFieldsResolver {
   }
 
   @ResolveField()
-  async shouldRequestFeedback(@User() user) {
-    if (!user) return null
-    const feedbacks = await this.prisma.binding.query.reservationFeedbacks(
-      {
-        where: {
-          user: { id: user.id },
+  async shouldRequestFeedback(
+    @Loader({
+      params: {
+        model: "ReservationFeedback",
+        select: Prisma.validator<Prisma.ReservationFeedbackSelect>()({
+          id: true,
+          respondedAt: true,
+          user: {
+            select: {
+              id: true,
+            },
+          },
+        }),
+        orderBy: {
+          respondedAt: "desc",
         },
-        orderBy: "respondedAt_DESC",
+        getKeys: a => [a.user.id],
+        formatWhere: keys => {
+          return Prisma.validator<Prisma.ReservationFeedbackWhereInput>()({
+            user: { id: { in: keys } },
+          })
+        },
       },
-      `
-        {
-          id
-          respondedAt
-        }
-      `
-    )
-    const yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
-    if (!feedbacks?.length) {
-      return false
-    } else {
-      const feedback = head(feedbacks)
-      const respondedAtDate =
-        feedback?.respondedAt && new Date(feedback.respondedAt)
-      if (!respondedAtDate || yesterday > respondedAtDate) {
-        return true
-      } else {
-        return false
-      }
+    })
+    prismaLoader: PrismaDataLoader<{
+      id: string
+      respondedAt: Date
+    }>,
+    @User() user
+  ) {
+    if (!user) {
+      return null
     }
+
+    const feedback = await prismaLoader.load(user.id)
+    if (!feedback) {
+      return null
+    }
+
+    const yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
+
+    const respondedAtDate =
+      feedback?.respondedAt && new Date(feedback.respondedAt)
+    if (!respondedAtDate || yesterday > respondedAtDate) {
+      return true
+    }
+
+    return false
   }
 
   @ResolveField()
@@ -220,7 +254,7 @@ export class CustomerFieldsResolver {
     })
     userIdLoader: PrismaDataLoader<string>,
     @Loader({
-      params: { query: "users" },
+      params: { model: "User" },
       includeInfo: true,
     })
     userLoader: PrismaDataLoader<any>
@@ -237,29 +271,26 @@ export class CustomerFieldsResolver {
   async onboardingSteps(@Parent() customer) {
     const steps: string[] = []
 
-    const verificationStatus = await this.prisma.client
-      .customer({ id: customer.id })
-      .user()
-      .verificationStatus()
-    const height = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .height()
-    const style = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .stylePreferences()
-    const shippingAddress = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .shippingAddress()
-      .address1()
+    const _custWithData = await this.prisma.client2.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        user: { select: { verificationStatus: true } },
+        detail: {
+          select: {
+            height: true,
+            stylePreferences: true,
+            shippingAddress: { select: { address1: true } },
+          },
+        },
+      },
+    })
+    const custWithData = this.prisma.sanitizePayload(_custWithData, "Customer")
 
     const values = [
-      verificationStatus === "Approved",
-      height !== null,
-      style !== null,
-      shippingAddress !== null,
+      custWithData?.user?.verificationStatus === "Approved",
+      custWithData?.detail?.height !== null,
+      custWithData?.detail?.stylePreferences !== null,
+      custWithData?.detail?.shippingAddress?.address1 !== null,
     ]
     const keys = [
       "VerifiedPhone",
