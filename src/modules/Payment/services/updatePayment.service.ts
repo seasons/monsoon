@@ -113,9 +113,9 @@ export class UpdatePaymentService {
         // TmpToken is deprecated but still used in harvest, should remove
         const { last4, brand } = await this.updatePaymentWithTmpToken(
           token,
-          subscription,
-          planID,
-          tokenType
+          tokenType,
+          user.id,
+          chargebeeBillingAddress
         )
         _last4 = last4
         _brand = brand
@@ -142,25 +142,29 @@ export class UpdatePaymentService {
       this.error.setExtraContext({ token, tokenType })
       this.error.setExtraContext(customer, "customer")
       this.error.captureError(e)
-      throw new Error(`Error updating your payment method ${e}`)
+      throw e
     }
   }
 
   private async updatePaymentWithTmpToken(
     token,
-    subscription,
-    planID,
-    tokenType
+    tokenType,
+    userId,
+    chargebeeBillingAddress
   ) {
-    await chargebee.subscription
-      .update(subscription.id, {
-        plan_id: planID,
-        invoice_immediately: false,
-        payment_method: {
-          tmp_token: token.tokenId,
-          type: tokenType ? tokenType : "apple_pay",
-        },
-      })
+    // Update card
+    const params = {
+      customer_id: userId,
+      gateway_account_id: process.env.CHARGEBEE_GATEWAY_ACCOUNT_ID,
+      type: tokenType ?? "apple_pay",
+      tmp_token: token.tokenId,
+      replace_primary_payment_source: true,
+    }
+    const payload = await chargebee.payment_source
+      .create_using_temp_token(params)
+      .request()
+    await chargebee.customer
+      .update_billing_info(userId, { billing_address: chargebeeBillingAddress })
       .request()
 
     return { brand: token?.card?.brand, last4: token?.card?.last4 }
