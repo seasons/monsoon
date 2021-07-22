@@ -40,12 +40,7 @@ export class PhysicalProductMutationsResolver {
 
   @Mutation()
   async createPhysicalProductQualityReport(@Args() { data }, @Select() select) {
-    const prisma2Data = this.queryUtils.prismaOneToPrismaTwoMutateData(
-      data,
-      null,
-      "PhysicalProductQualityReport",
-      "create"
-    )
+    const prisma2Data = this.queryUtils.prismaOneToPrismaTwoMutateData(data)
     return await this.prisma.client2.physicalProductQualityReport.create({
       data: prisma2Data,
       select,

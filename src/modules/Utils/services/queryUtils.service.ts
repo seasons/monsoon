@@ -287,14 +287,7 @@ export class QueryUtilsService {
     return returnObj
   }
 
-  prismaOneToPrismaTwoMutateData(
-    prismaOneData,
-    record: { id: string } | null,
-    modelName: Prisma.ModelName,
-    type: "create" | "update"
-  ) {
-    const scalarListFieldNames = SCALAR_LIST_FIELD_NAMES[modelName]
-
+  prismaOneToPrismaTwoMutateData(prismaOneData) {
     let args = cloneDeep(prismaOneData)
     const mutateKeys = Object.keys(prismaOneData)
 

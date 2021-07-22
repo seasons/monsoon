@@ -676,12 +676,10 @@ export class ProductService {
       imageUrls = imageDatas.map(a => a.url)
     }
 
-    const prismaTwoUpdateData = this.queryUtils.prismaOneToPrismaTwoMutateData(
-      { ...updateData, styles: { set: updateData.styles } },
-      product,
-      "Product",
-      "update"
-    )
+    const prismaTwoUpdateData = this.queryUtils.prismaOneToPrismaTwoMutateData({
+      ...updateData,
+      styles: { set: updateData.styles },
+    })
     const tier = await this.getProductTier(
       product.category,
       updateData.retailPrice
