@@ -18,6 +18,7 @@ import { createCorsMiddleware } from "./middleware/cors"
 import { checkJwt } from "./middleware/jwt"
 import { createGetUserMiddleware } from "./middleware/user"
 import { prisma } from "./prisma"
+import { client2 } from "./prisma/prisma.service"
 import tracer from "./tracer"
 
 // Set up the server
@@ -37,7 +38,7 @@ function handleErrors(logger) {
 }
 
 async function bootstrap() {
-  const cors = await createCorsMiddleware(prisma)
+  const cors = await createCorsMiddleware(client2)
   const nestWinstonLogger = createNestWinstonLogger()
   const expressWinstonHandler = createExpressWinstonHandler(
     nestWinstonLogger.logger
@@ -50,7 +51,7 @@ async function bootstrap() {
     compression(),
     cors,
     checkJwt,
-    createGetUserMiddleware(prisma, nestWinstonLogger, tracer),
+    createGetUserMiddleware(client2, nestWinstonLogger, tracer),
     bodyParser.json(),
     handleErrors(nestWinstonLogger)
   )

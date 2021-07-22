@@ -134,16 +134,8 @@ export class TestUtilsService {
     const detail = !!input.detail
       ? {
           create: {
-            topSizes: this.queryUtils.createScalarListMutateInput(
-              input.detail.topSizes,
-              null,
-              "create"
-            ),
-            waistSizes: this.queryUtils.createScalarListMutateInput(
-              input.detail.waistSizes,
-              null,
-              "create"
-            ),
+            topSizes: input.detail.topSizes,
+            waistSizes: input.detail.waistSizes,
             shippingAddress: {
               create: {
                 zipCode: "10013",

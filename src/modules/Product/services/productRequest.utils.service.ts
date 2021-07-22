@@ -129,12 +129,7 @@ export class ProductRequestUtilsService {
       data: {
         brand,
         description,
-        images: {
-          create: images.map((val, idx) => ({
-            position: (idx + 1) * 1000,
-            value: val,
-          })),
-        },
+        images,
         name,
         price,
         priceCurrency,

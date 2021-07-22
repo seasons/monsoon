@@ -285,11 +285,7 @@ export class ReservationService {
 
     await this.prisma.client2.reservation.update({
       data: {
-        returnedProducts: this.queryUtils.createScalarListMutateInput(
-          [],
-          lastReservation.id,
-          "update"
-        ),
+        returnedProducts: { set: [] },
         returnedAt: null,
       },
       where: { id: String(lastReservation.id) },
@@ -771,22 +767,18 @@ export class ReservationService {
                       {
                         question: `What did you think about this?`,
                         options: {
-                          create: [
-                            { value: "Disliked", position: 1000 },
-                            { value: "It was OK", position: 2000 },
-                            { value: "Loved it", position: 3000 },
-                          ],
+                          set: ["Disliked", "It was OK", "Loved it"],
                         },
                         type: MULTIPLE_CHOICE,
                       },
                       {
                         question: `How many times did you wear this?`,
                         options: {
-                          create: [
-                            { value: "Never wore it", position: 1000 },
-                            { value: "1-2 times", position: 2000 },
-                            { value: "3-5 times", position: 3000 },
-                            { value: "More than 6 times", position: 4000 },
+                          set: [
+                            "Never wore it",
+                            "1-2 times",
+                            "3-5 times",
+                            "More than 6 times",
                           ],
                         },
                         type: MULTIPLE_CHOICE,
@@ -794,10 +786,10 @@ export class ReservationService {
                       {
                         question: `Did it fit as expected?`,
                         options: {
-                          create: [
-                            { value: "Fit small", position: 1000 },
-                            { value: "Fit true to size", position: 2000 },
-                            { value: "Fit oversized", position: 3000 },
+                          set: [
+                            "Fit small",
+                            "Fit true to size",
+                            "Fit oversized",
                           ],
                         },
                         type: MULTIPLE_CHOICE,
@@ -805,11 +797,11 @@ export class ReservationService {
                       {
                         question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
                         options: {
-                          create: [
-                            { value: "No", position: 1000 },
-                            { value: "Yes", position: 2000 },
-                            { value: "Buy below retail", position: 3000 },
-                            { value: "Would only rent", position: 4000 },
+                          set: [
+                            "No",
+                            "Yes",
+                            "Buy below retail",
+                            "Would only rent",
                           ],
                         },
                         type: MULTIPLE_CHOICE,

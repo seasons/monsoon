@@ -415,12 +415,7 @@ export class AuthService {
         email,
         firstName,
         lastName,
-        roles: {
-          create: {
-            position: 1000,
-            value: "Customer",
-          },
-        },
+        roles: ["Customer"],
         pushNotification: {
           create: {
             interests: {

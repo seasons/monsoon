@@ -55,11 +55,7 @@ export class BrandService {
       this.prisma.client2.brand.create({
         data: {
           ...input,
-          styles: this.queryUtils.createScalarListMutateInput(
-            input.styles,
-            "",
-            "create"
-          ),
+          styles: input.styles,
           logoImage: !!logoData
             ? { connect: { url: logoData.url } }
             : undefined,
@@ -147,11 +143,7 @@ export class BrandService {
 
     const updateBrandData = Prisma.validator<Prisma.BrandUpdateInput>()({
       ...data,
-      styles: this.queryUtils.createScalarListMutateInput(
-        data.styles,
-        brand.id,
-        "update"
-      ),
+      styles: data.styles,
       logoImage: !!logoData ? { connect: { url: logoData.url } } : undefined,
       images: !!imageDatas
         ? {

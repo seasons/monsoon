@@ -221,30 +221,9 @@ export class UserCommands {
       height: 40 + faker.random.number(32),
       insureShipment: false,
 
-      weight: {
-        createMany: {
-          data: [
-            { value: 150, position: 1000 },
-            { value: 160, position: 2000 },
-          ],
-        },
-      },
-      waistSizes: {
-        createMany: {
-          data: [
-            { value: 28, position: 1000 },
-            { value: 29, position: 2000 },
-          ],
-        },
-      },
-      topSizes: {
-        createMany: {
-          data: [
-            { value: "XS", position: 1000 },
-            { value: "S", position: 2000 },
-          ],
-        },
-      },
+      weight: [150, 160],
+      waistSizes: [28, 29],
+      topSizes: ["XS", "S"],
 
       bodyType: "Athletic",
       shippingAddress: {
@@ -398,11 +377,7 @@ export class UserCommands {
 
       await this.prisma.client2.user.update({
         data: {
-          roles: this.queryUtils.createScalarListMutateInput(
-            roles,
-            user.id,
-            "update"
-          ),
+          roles,
         },
         where: { id: user.id },
       })

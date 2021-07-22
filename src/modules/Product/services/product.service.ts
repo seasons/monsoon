@@ -213,8 +213,6 @@ export class ProductService {
       })
     )
 
-    const createScalarListCreateInput = values =>
-      this.queryUtils.createScalarListMutateInput(values, "", "create")
     const seasonData = await this.getMutateSeasonOnProductInput(
       input.season,
       "create"
@@ -281,9 +279,9 @@ export class ProductService {
           create: { name: tag },
         })),
       },
-      styles: createScalarListCreateInput(input.styles),
-      innerMaterials: createScalarListCreateInput(input.innerMaterials),
-      outerMaterials: createScalarListCreateInput(input.outerMaterials),
+      styles: input.styles,
+      innerMaterials: input.innerMaterials,
+      outerMaterials: input.outerMaterials,
     })
 
     const productPromise = this.prisma.client2.product.create({
@@ -1344,11 +1342,7 @@ export class ProductService {
 
     return {
       [mutationType]: {
-        wearableSeasons: this.queryUtils.createScalarListMutateInput(
-          wearableSeasons,
-          seasonId || "",
-          mutationType
-        ),
+        wearableSeasons,
         ...(internalSeasonYear && internalSeasonSeasonCode
           ? {
               internalSeason: {

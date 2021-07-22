@@ -7,11 +7,11 @@ import { Prisma, PrismaClient as PrismaClient2 } from '@prisma/client'
 import { PrismaSelect } from "@paljs/plugins"
 import { head, intersection, isArray, uniq } from "lodash"
 
-const c2 = new PrismaClient2({ 
+export const client2 = new PrismaClient2({ 
   log: process.env.NODE_ENV === "production" ? ['warn', 'error'] : process.env.DB_LOG === 'true' ? ['query', 'info', 'warn', 'error'] : []
 })
 
-c2.$use(async (params, next) => {
+client2.$use(async (params, next) => {
   const tags = {
     'span.kind': 'client',
     'span.type': 'sql',
@@ -22,26 +22,26 @@ c2.$use(async (params, next) => {
   return tracer.trace('prisma.query', { tags }, () => next(params))
 })
 
-c2.$on('query' as any, async (e: any) => {
+client2.$on('query' as any, async (e: any) => {
   const span = tracer.scope().active() // the span from above
 
   span?.setTag('resource.name', e.query)
 });
 
 export const SCALAR_LIST_FIELD_NAMES = {
-  "BlogPost": ["tags"],
-  "Brand": ["styles"],
-  "Collection": ["descriptions", "placements"],
-  "Product": ["outerMaterials", "innerMaterials", "styles"],
-  "ProductSeason": ["wearableSeasons"],
-  "ShopifyShop": ["scope"],
-  "PhysicalProductQualityReport": ["damageTypes"],
-  "SmsReceipt": ["mediaUrls"],
-  "User": ["roles"],
-  "StylePreferences": ["styles", "patterns", "colors", "brands"],
-  "CustomerDetail": ["weight", "topSizes", "waistSizes", "styles"],
-  "ProductVariantFeedbackQuestion": ["options", "responses"],
-  "ProductRequest": ["images"]
+  // "BlogPost": ["tags"],
+  // "Brand": ["styles"],
+  // "Collection": ["descriptions", "placements"],
+  // "Product": ["outerMaterials", "innerMaterials", "styles"],
+  // "ProductSeason": ["wearableSeasons"],
+  // "ShopifyShop": ["scope"],
+  // "PhysicalProductQualityReport": ["damageTypes"],
+  // "SmsReceipt": ["mediaUrls"],
+  // "User": ["roles"],
+  // "StylePreferences": ["styles", "patterns", "colors", "brands"],
+  // "CustomerDetail": ["weight", "topSizes", "waistSizes", "styles"],
+  // "ProductVariantFeedbackQuestion": ["options", "responses"],
+  // "ProductRequest": ["images"]
 }
 
 export const SINGLETON_RELATIONS_POSING_AS_ARRAYS = {
@@ -74,7 +74,7 @@ const JSON_FIELD_NAMES = {
 const MODELS_TO_SANITIZE = uniq([...Object.keys(JSON_FIELD_NAMES), ...Object.keys(SINGLETON_RELATIONS_POSING_AS_ARRAYS), ...Object.keys(SCALAR_LIST_FIELD_NAMES)])
 @Injectable()
 export class PrismaService implements UpdatableConnection {
-  client2: PrismaClient2 = c2
+  client2: PrismaClient2 = client2
 
   static modelFieldsByModelName = new PrismaSelect(null).dataModel.reduce(
     (accumulator, currentModel) => {

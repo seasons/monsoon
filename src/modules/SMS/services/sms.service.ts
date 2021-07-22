@@ -230,11 +230,7 @@ export class SMSService {
             create: {
               body,
               externalId: sid,
-              mediaUrls: this.queryUtils.createScalarListMutateInput(
-                mediaUrls,
-                null,
-                "create"
-              ),
+              mediaUrls,
               status: this.twilioUtils.twilioToPrismaSmsStatus(status),
               smsId,
             },

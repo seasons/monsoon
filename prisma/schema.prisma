@@ -99,16 +99,7 @@ model BlogPost {
   published        Boolean         @default(true)
   imageId          String?         @map("image") @db.VarChar(30)
   image            Image?          @relation(fields: [imageId], references: [id])
-  tags             BlogPost_tags[]
-}
-
-model BlogPost_tags {
-  nodeId   String   @db.VarChar(30)
-  position Int
-  value    String
-  BlogPost BlogPost @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
+  tags             String[]
 }
 
 model BottomSize {
@@ -146,21 +137,11 @@ model Brand {
   images                 Image[]                 @relation("BrandToBrandImages")
   products               Product[]
   shopifyProductVariants ShopifyProductVariant[]
-  styles                 Brand_styles[]
-
+  styles                 String[]
 
   // Do not use. Artifact of Prisma2 migration
   Launch Launch[]
 
-}
-
-model Brand_styles {
-  nodeId   String  @db.VarChar(30)
-  position Int
-  value    String
-  brand    Brand @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
 }
 
 model Category {
@@ -190,31 +171,13 @@ model Collection {
   updatedAt          DateTime?                 @updatedAt
   displayTextOverlay Boolean
   textOverlayColor   String?
-  descriptions       Collection_descriptions[]
-  placements         Collection_placements[]
+  descriptions       String[]
+  placements         String[]
   images             Image[]
   products           Product[]
 
   // Do not use. Artifact of prisma2 migration
   Launch Launch[]
-}
-
-model Collection_descriptions {
-  nodeId     String     @db.VarChar(30)
-  position   Int
-  value      String
-  Collection Collection @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
-}
-
-model Collection_placements {
-  nodeId     String     @db.VarChar(30)
-  position   Int
-  value      String
-  Collection Collection @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
 }
 
 model Color {
@@ -303,46 +266,10 @@ model CustomerDetail {
   impactId           String?
   discoveryReference String?
   customer           Customer?
-  styles             CustomerDetail_styles[]
-  topSizes           CustomerDetail_topSizes[]
-  waistSizes         CustomerDetail_waistSizes[]
-  weight             CustomerDetail_weight[]
-}
-
-model CustomerDetail_styles {
-  nodeId         String         @db.VarChar(30)
-  position       Int
-  value          String
-  CustomerDetail CustomerDetail @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
-}
-
-model CustomerDetail_topSizes {
-  nodeId         String         @db.VarChar(30)
-  position       Int
-  value          String
-  CustomerDetail CustomerDetail @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
-}
-
-model CustomerDetail_waistSizes {
-  nodeId         String         @db.VarChar(30)
-  position       Int
-  value          Int
-  CustomerDetail CustomerDetail @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
-}
-
-model CustomerDetail_weight {
-  nodeId         String         @db.VarChar(30)
-  position       Int
-  value          Int
-  CustomerDetail CustomerDetail @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
+  styles             String[]
+  topSizes           String[]
+  waistSizes         Int[]
+  weight             Int[]
 }
 
 model CustomerMembership {
@@ -669,18 +596,9 @@ model PhysicalProductQualityReport {
   physicalProduct   PhysicalProduct?                           @relation(fields: [physicalProductId], references: [id])
   userId            String?                                    @map("user") @db.VarChar(30)
   user              User?                                      @relation(fields: [userId], references: [id])
-  damageTypes       PhysicalProductQualityReport_damageTypes[]
+  damageTypes       String[]
   published         Boolean                                    @default(value: false)
   score             Int?
-}
-
-model PhysicalProductQualityReport_damageTypes {
-  nodeId                       String                       @db.VarChar(30)
-  position                     Int
-  value                        String
-  PhysicalProductQualityReport PhysicalProductQualityReport @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
 }
 
 model Product {
@@ -713,9 +631,9 @@ model Product {
   buyNewEnabled               Boolean
   tierId                      String?                  @map("tier") @db.VarChar(30)
   tier                        ProductTier?             @relation(fields: [tierId], references: [id])
-  innerMaterials              Product_innerMaterials[]
-  outerMaterials              Product_outerMaterials[]
-  styles                      Product_styles[]
+  innerMaterials              String[]
+  outerMaterials              String[]
+  styles                      String[]
   recentlyViewedProducts      RecentlyViewedProduct[]
   collections                 Collection[]
   customersEmailedWithProduct Customer[]               @relation("CustomerToEmailedProducts")
@@ -734,24 +652,6 @@ model ProductFunction {
   id       String    @id @default(cuid()) @db.VarChar(30)
   name     String?   @unique
   products Product[]
-}
-
-model Product_innerMaterials {
-  nodeId   String  @db.VarChar(30)
-  position Int
-  value    String
-  Product  Product @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
-}
-
-model Product_styles {
-  nodeId   String  @db.VarChar(30)
-  position Int
-  value    String
-  product  Product @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
 }
 
 model ProductMaterialCategory {
@@ -784,15 +684,6 @@ model ProductNotification {
   customer          Customer?        @relation(fields: [customerId], references: [id])
 }
 
-model Product_outerMaterials {
-  nodeId   String  @db.VarChar(30)
-  position Int
-  value    String
-  product  Product @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
-}
-
 model ProductRequest {
   id            String                  @id @default(cuid()) @db.VarChar(30)
   sku           String?
@@ -806,16 +697,7 @@ model ProductRequest {
   reason        String
   userId        String?                 @map("user") @db.VarChar(30)
   user          User?                   @relation(fields: [userId], references: [id])
-  images        ProductRequest_images[]
-}
-
-model ProductRequest_images {
-  nodeId         String         @db.VarChar(30)
-  position       Int
-  value          String
-  ProductRequest ProductRequest @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
+  images        String[]
 }
 
 model ProductSeason {
@@ -824,18 +706,9 @@ model ProductSeason {
   vendorSeason     Season?                         @relation("ProductSeason_vendorSeasonToSeason", fields: [vendorSeasonId], references: [id])
   internalSeasonId String?                         @map("internalSeason") @db.VarChar(30)
   internalSeason   Season?                         @relation("ProductSeason_internalSeasonToSeason", fields: [internalSeasonId], references: [id])
-  wearableSeasons  ProductSeason_wearableSeasons[]
+  wearableSeasons  String[]
   product          Product?
 
-}
-
-model ProductSeason_wearableSeasons {
-  nodeId        String        @db.VarChar(30)
-  position      Int
-  value         String
-  ProductSeason ProductSeason @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
 }
 
 model ProductTier {
@@ -898,28 +771,10 @@ model ProductVariantFeedbackQuestion {
   id              String                                     @id @default(cuid()) @db.VarChar(30)
   question        String
   type            String
-  options         ProductVariantFeedbackQuestion_options[]
-  responses       ProductVariantFeedbackQuestion_responses[]
+  options         String[]
+  responses       String[]
   // should be singleton. will be fixed in full prisma2 upgrade
   variantFeedback ProductVariantFeedback[]
-}
-
-model ProductVariantFeedbackQuestion_options {
-  nodeId                         String                         @db.VarChar(30)
-  position                       Int
-  value                          String
-  ProductVariantFeedbackQuestion ProductVariantFeedbackQuestion @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
-}
-
-model ProductVariantFeedbackQuestion_responses {
-  nodeId                         String                         @db.VarChar(30)
-  position                       Int
-  value                          String
-  ProductVariantFeedbackQuestion ProductVariantFeedbackQuestion @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
 }
 
 model ProductVariantPrice {
@@ -1152,66 +1007,21 @@ model SmsReceipt {
   sentAt     DateTime               @default(now())
   updatedAt  DateTime               @updatedAt
   smsId      String?
-  mediaUrls  SmsReceipt_mediaUrls[]
+  mediaUrls  String[]
 
   // Should be singleton. Will be fixed on full prisma2 upgrade
   user User[] @relation("UserToSmsReceipts")
 }
 
-model SmsReceipt_mediaUrls {
-  nodeId     String     @db.VarChar(30)
-  position   Int
-  value      String
-  SmsReceipt SmsReceipt @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
-}
-
 model StylePreferences {
   id       String                      @id @default(cuid()) @db.VarChar(30)
-  brands   StylePreferences_brands[]
-  colors   StylePreferences_colors[]
-  patterns StylePreferences_patterns[]
-  styles   StylePreferences_styles[]
+  brands   String[]
+  colors   String[]
+  patterns String[]
+  styles   String[]
 
   // Should be singleton. Will get fixed with full prisma2 migration
   customerDetail CustomerDetail[]
-}
-
-model StylePreferences_brands {
-  nodeId           String           @db.VarChar(30)
-  position         Int
-  value            String
-  StylePreferences StylePreferences @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
-}
-
-model StylePreferences_colors {
-  nodeId           String           @db.VarChar(30)
-  position         Int
-  value            String
-  StylePreferences StylePreferences @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
-}
-
-model StylePreferences_patterns {
-  nodeId           String           @db.VarChar(30)
-  position         Int
-  value            String
-  StylePreferences StylePreferences @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
-}
-
-model StylePreferences_styles {
-  nodeId           String           @db.VarChar(30)
-  position         Int
-  value            String
-  StylePreferences StylePreferences @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
 }
 
 model SyncTiming {
@@ -1275,7 +1085,7 @@ model User {
   reservations                  Reservation[]
   reservationFeedbacks          ReservationFeedback[]
   userPushNotificationInterests UserPushNotificationInterest[]
-  roles                         User_roles[]
+  roles                         String[]
   pushNotifications             PushNotificationReceipt[]      @relation("UserToPushNotificationReceipts")
   smsReceipts                   SmsReceipt[]                   @relation("UserToSmsReceipts")
 }
@@ -1304,15 +1114,6 @@ model UserPushNotificationInterest {
 
   // Do not use. Artifact of prisma 2 migration
   UserPushNotification UserPushNotification[]
-}
-
-model User_roles {
-  nodeId   String @db.VarChar(30)
-  position Int
-  value    String
-  User     User   @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
 }
 
 model UTMData {
@@ -1357,15 +1158,7 @@ model ShopifyShop {
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
   brand                  Brand?
-  scope                  ShopifyShop_scope[]
+  scope                  String[]
   shopifyProductVariants ShopifyProductVariant[]
 }
 
-model ShopifyShop_scope {
-  nodeId      String      @db.VarChar(30)
-  position    Int
-  value       String
-  ShopifyShop ShopifyShop @relation(fields: [nodeId], references: [id])
-
-  @@id([nodeId, position])
-}

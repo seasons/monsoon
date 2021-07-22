@@ -1,7 +1,6 @@
+import { PrismaClient } from "@prisma/client"
 import cors from "cors"
 import { uniq } from "lodash"
-
-import { Prisma } from "../prisma"
 
 const commonStaticOrigins = [
   /staging\.wearseasons\.com$/,
@@ -23,9 +22,10 @@ const STATIC_ORIGINS =
         /null/, // requests from file:// URIs
       ]
 
-export const createCorsMiddleware = async (prisma: Prisma) => {
-  const productsWithExternalURLs = await prisma.products({
-    where: { externalURL_not: "" },
+export const createCorsMiddleware = async (prismaClient: PrismaClient) => {
+  const productsWithExternalURLs = await prismaClient.product.findMany({
+    where: { externalURL: { not: "" } },
+    select: { externalURL: true },
   })
   const uniqueExternalOrigins = uniq(
     productsWithExternalURLs
