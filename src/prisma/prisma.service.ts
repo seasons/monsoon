@@ -1,5 +1,3 @@
-import tracer from "../tracer"
-
 import { UpdatableConnection } from "@app/modules/index.types"
 import { Injectable } from "@nestjs/common"
 
