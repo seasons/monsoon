@@ -185,16 +185,16 @@ export class ReservationService {
     let shippingOptionID
     let shippingLineItems = []
     if (!!shippingCode) {
-      const { _shippingOptionID, price } = await this.payment.addShippingCharge(
+      const { shippingOption } = await this.payment.addShippingCharge(
         customer,
         shippingCode
       )
-      shippingOptionID = _shippingOptionID
+      shippingOptionID = shippingOption.id
       if (shippingCode === "UPSSelect" && shippingOptionID) {
         shippingLineItems = [
           {
             recordID: shippingOptionID,
-            price,
+            price: shippingOption.externalCost,
             currencyCode: "USD",
             recordType: "Package",
             name: "UPS Select shipping",
