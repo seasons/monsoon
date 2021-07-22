@@ -28,7 +28,7 @@ const run = async () => {
         ? "integer"
         : "text"
       console.log(
-        `ALTER TABLE monsoon$dev."${table}" ADD COLUMN ${val} ${listType}[];\n`
+        `ALTER TABLE monsoon$dev."${table}" ADD COLUMN "${val}" ${listType}[];\n`
       )
 
       console.log(`UPDATE monsoon$dev."${table}"
