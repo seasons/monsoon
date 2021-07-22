@@ -87,7 +87,8 @@ export class QueryUtilsService {
     const select = this.fieldsToSelect(
       fields,
       modelFieldsByModelName,
-      modelName as Prisma.ModelName
+      modelName as Prisma.ModelName,
+      null
     )
 
     return select
@@ -97,6 +98,7 @@ export class QueryUtilsService {
     fields,
     modelFieldsByModelName,
     modelName: Prisma.ModelName,
+    orderBy,
     { callType } = { callType: "initial" }
   ) {
     let fieldsToParse = fields
@@ -116,11 +118,16 @@ export class QueryUtilsService {
       throw new Error(`Invalid record type: ${modelName}`)
     }
 
-    let select = { select: {} }
+    let select: { [k: string]: any } = { select: {} }
+
     const requestedFields = new Set(Object.keys(fieldsToParse))
     modelFields.forEach(field => {
       if (!requestedFields.has(field.name)) {
         return
+      }
+
+      if (orderBy) {
+        select.orderBy = { createdAt: "desc" }
       }
 
       switch (field.kind) {
@@ -133,16 +140,22 @@ export class QueryUtilsService {
             select.select[field.name] = true
           } else {
             // Otherwise recurse down
+
+            const includeDefaultSortToChild =
+              modelFieldsByModelName?.[field.type]?.some(
+                f => f.name === "createdAt"
+              ) && field.isList
+
             select.select[field.name] = this.fieldsToSelect(
               fieldsToParse[field.name],
               modelFieldsByModelName,
               field.type,
+              includeDefaultSortToChild ? { createdAt: "desc" } : null,
               { callType: "recursive" }
             )
           }
       }
     })
-
     return callType === "initial" ? select.select : select
   }
 
