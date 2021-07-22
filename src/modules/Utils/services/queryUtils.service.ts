@@ -127,7 +127,7 @@ export class QueryUtilsService {
       }
 
       if (orderBy) {
-        select.orderBy = { createdAt: "desc" }
+        select.orderBy = orderBy
       }
 
       switch (field.kind) {
