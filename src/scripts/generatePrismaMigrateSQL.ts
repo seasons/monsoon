@@ -32,7 +32,7 @@ const run = async () => {
       )
 
       console.log(`UPDATE monsoon$dev."${table}"
-    SET ${val} = t.values
+    SET "${val}" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."${table}_${val}"
