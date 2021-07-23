@@ -83,10 +83,7 @@ export class CustomerMutationsResolver {
     const r = await this.prisma.client2.customerNotificationBarReceipt.findFirst(
       {
         where: {
-          AND: [
-            { customer: { every: { id: customer.id } } },
-            { notificationBarId },
-          ],
+          AND: [{ customer: { id: customer.id } }, { notificationBarId }],
         },
       }
     )

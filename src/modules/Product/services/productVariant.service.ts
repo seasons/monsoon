@@ -25,7 +25,7 @@ export class ProductVariantService {
       {
         where: {
           productVariant: {
-            every: { id: productVariant.id },
+            id: productVariant.id,
           },
         },
         select: {

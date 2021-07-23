@@ -28,38 +28,9 @@ client2.$on('query' as any, async (e: any) => {
   span?.setTag('resource.name', e.query)
 });
 
-export const SCALAR_LIST_FIELD_NAMES = {
-  // "BlogPost": ["tags"],
-  // "Brand": ["styles"],
-  // "Collection": ["descriptions", "placements"],
-  // "Product": ["outerMaterials", "innerMaterials", "styles"],
-  // "ProductSeason": ["wearableSeasons"],
-  // "ShopifyShop": ["scope"],
-  // "PhysicalProductQualityReport": ["damageTypes"],
-  // "SmsReceipt": ["mediaUrls"],
-  // "User": ["roles"],
-  // "StylePreferences": ["styles", "patterns", "colors", "brands"],
-  // "CustomerDetail": ["weight", "topSizes", "waistSizes", "styles"],
-  // "ProductVariantFeedbackQuestion": ["options", "responses"],
-  // "ProductRequest": ["images"]
-}
+export const SCALAR_LIST_FIELD_NAMES = {}
 
-export const SINGLETON_RELATIONS_POSING_AS_ARRAYS = {
-  "Product": ["materialCategory", "model"],
-  // "ProductVariant": ["product"],
-  "ProductVariantFeedback": ["reservationFeedback"],
-  "ProductVariantFeedbackQuestion": ["variantFeedback"],
-  "PushNotificationReceipt": ["userPushNotification"],
-  "ReservationReceiptItem": ["receipt"],
-  "ShopifyProductVariantSelectedOption": ["shopifyProductVariant"],
-  "SmsReceipt": ["user"],
-  "StylePreferences": ["customerDetail"],
-  "UserPushNotificationInterest": ["UserPushNotification"],
-  "CustomerNotificationBarReceipt": ["customer"],
-  "PhysicalProduct": ["productVariant"],
-  "SyncTiming": ["customer"],
-  "AccessorySize": ['size']
-}
+export const SINGLETON_RELATIONS_POSING_AS_ARRAYS = {}
 
 // What was stored and interpreted as JSON in prisma1 will look like
 // a string to prisma2 until we complete the migration

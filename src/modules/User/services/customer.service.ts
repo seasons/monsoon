@@ -663,10 +663,7 @@ export class CustomerService {
     const receiptData = await this.prisma.client2.customerNotificationBarReceipt.findFirst(
       {
         where: {
-          AND: [
-            { notificationBarId },
-            { customer: { every: { id: customerId } } },
-          ],
+          AND: [{ notificationBarId }, { customer: { id: customerId } }],
         },
       }
     )

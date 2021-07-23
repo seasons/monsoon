@@ -23,10 +23,8 @@ export class PhysicalProductUtilsService {
       {
         where: {
           productVariant: {
-            some: {
-              id: {
-                in: items,
-              },
+            id: {
+              in: items,
             },
           },
         },
