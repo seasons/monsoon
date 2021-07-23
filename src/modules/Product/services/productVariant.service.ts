@@ -250,7 +250,6 @@ export class ProductVariantService {
       select: {
         internalSize: { select: { id: true, display: true, type: true } },
         manufacturerSizes: { select: { slug: true } },
-        productID: true,
         id: true,
         sku: true,
         product: {

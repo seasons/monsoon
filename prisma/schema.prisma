@@ -723,7 +723,6 @@ model ProductVariant {
   sku                     String?                  @unique
   weight                  Float?
   height                  Float?
-  productID               String
   retailPrice             Float?
   total                   Int
   reservable              Int

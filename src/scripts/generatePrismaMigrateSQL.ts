@@ -168,5 +168,5 @@ WHERE  monsoon$dev."${relation.joinTable}"."${
   }
 }
 
-// generateScalarListMigration()
-generateRelationsMigration()
+generateScalarListMigration()
+// generateRelationsMigration()

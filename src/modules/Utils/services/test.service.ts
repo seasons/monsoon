@@ -78,7 +78,6 @@ export class TestUtilsService {
                 id: color.id,
               },
             },
-            productID: this.utils.randomString(),
             total: v.physicalProducts.length,
             reservable: this.getInventoryStatusCount(v, "Reservable"),
             reserved: this.getInventoryStatusCount(v, "Reserved"),

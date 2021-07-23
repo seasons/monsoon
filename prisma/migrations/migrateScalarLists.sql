@@ -1,7 +1,7 @@
-ALTER TABLE monsoon$dev."BlogPost" ADD COLUMN tags text[];
+ALTER TABLE monsoon$dev."BlogPost" ADD COLUMN "tags" text[];
 
 UPDATE monsoon$dev."BlogPost"
-    SET tags = t.values
+    SET "tags" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."BlogPost_tags"
@@ -12,10 +12,10 @@ WHERE t."nodeId" = monsoon$dev."BlogPost"."id";
 DROP TABLE monsoon$dev."BlogPost_tags";
 
 
-ALTER TABLE monsoon$dev."Brand" ADD COLUMN styles text[];
+ALTER TABLE monsoon$dev."Brand" ADD COLUMN "styles" text[];
 
 UPDATE monsoon$dev."Brand"
-    SET styles = t.values
+    SET "styles" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."Brand_styles"
@@ -26,10 +26,10 @@ WHERE t."nodeId" = monsoon$dev."Brand"."id";
 DROP TABLE monsoon$dev."Brand_styles";
 
 
-ALTER TABLE monsoon$dev."Collection" ADD COLUMN descriptions text[];
+ALTER TABLE monsoon$dev."Collection" ADD COLUMN "descriptions" text[];
 
 UPDATE monsoon$dev."Collection"
-    SET descriptions = t.values
+    SET "descriptions" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."Collection_descriptions"
@@ -40,10 +40,10 @@ WHERE t."nodeId" = monsoon$dev."Collection"."id";
 DROP TABLE monsoon$dev."Collection_descriptions";
 
 
-ALTER TABLE monsoon$dev."Collection" ADD COLUMN placements text[];
+ALTER TABLE monsoon$dev."Collection" ADD COLUMN "placements" text[];
 
 UPDATE monsoon$dev."Collection"
-    SET placements = t.values
+    SET "placements" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."Collection_placements"
@@ -54,10 +54,10 @@ WHERE t."nodeId" = monsoon$dev."Collection"."id";
 DROP TABLE monsoon$dev."Collection_placements";
 
 
-ALTER TABLE monsoon$dev."Product" ADD COLUMN outerMaterials text[];
+ALTER TABLE monsoon$dev."Product" ADD COLUMN "outerMaterials" text[];
 
 UPDATE monsoon$dev."Product"
-    SET outerMaterials = t.values
+    SET "outerMaterials" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."Product_outerMaterials"
@@ -68,10 +68,10 @@ WHERE t."nodeId" = monsoon$dev."Product"."id";
 DROP TABLE monsoon$dev."Product_outerMaterials";
 
 
-ALTER TABLE monsoon$dev."Product" ADD COLUMN innerMaterials text[];
+ALTER TABLE monsoon$dev."Product" ADD COLUMN "innerMaterials" text[];
 
 UPDATE monsoon$dev."Product"
-    SET innerMaterials = t.values
+    SET "innerMaterials" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."Product_innerMaterials"
@@ -82,10 +82,10 @@ WHERE t."nodeId" = monsoon$dev."Product"."id";
 DROP TABLE monsoon$dev."Product_innerMaterials";
 
 
-ALTER TABLE monsoon$dev."Product" ADD COLUMN styles text[];
+ALTER TABLE monsoon$dev."Product" ADD COLUMN "styles" text[];
 
 UPDATE monsoon$dev."Product"
-    SET styles = t.values
+    SET "styles" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."Product_styles"
@@ -96,10 +96,10 @@ WHERE t."nodeId" = monsoon$dev."Product"."id";
 DROP TABLE monsoon$dev."Product_styles";
 
 
-ALTER TABLE monsoon$dev."ProductSeason" ADD COLUMN wearableSeasons text[];
+ALTER TABLE monsoon$dev."ProductSeason" ADD COLUMN "wearableSeasons" text[];
 
 UPDATE monsoon$dev."ProductSeason"
-    SET wearableSeasons = t.values
+    SET "wearableSeasons" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."ProductSeason_wearableSeasons"
@@ -110,10 +110,10 @@ WHERE t."nodeId" = monsoon$dev."ProductSeason"."id";
 DROP TABLE monsoon$dev."ProductSeason_wearableSeasons";
 
 
-ALTER TABLE monsoon$dev."ShopifyShop" ADD COLUMN scope text[];
+ALTER TABLE monsoon$dev."ShopifyShop" ADD COLUMN "scope" text[];
 
 UPDATE monsoon$dev."ShopifyShop"
-    SET scope = t.values
+    SET "scope" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."ShopifyShop_scope"
@@ -124,10 +124,10 @@ WHERE t."nodeId" = monsoon$dev."ShopifyShop"."id";
 DROP TABLE monsoon$dev."ShopifyShop_scope";
 
 
-ALTER TABLE monsoon$dev."PhysicalProductQualityReport" ADD COLUMN damageTypes text[];
+ALTER TABLE monsoon$dev."PhysicalProductQualityReport" ADD COLUMN "damageTypes" text[];
 
 UPDATE monsoon$dev."PhysicalProductQualityReport"
-    SET damageTypes = t.values
+    SET "damageTypes" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."PhysicalProductQualityReport_damageTypes"
@@ -138,10 +138,10 @@ WHERE t."nodeId" = monsoon$dev."PhysicalProductQualityReport"."id";
 DROP TABLE monsoon$dev."PhysicalProductQualityReport_damageTypes";
 
 
-ALTER TABLE monsoon$dev."SmsReceipt" ADD COLUMN mediaUrls text[];
+ALTER TABLE monsoon$dev."SmsReceipt" ADD COLUMN "mediaUrls" text[];
 
 UPDATE monsoon$dev."SmsReceipt"
-    SET mediaUrls = t.values
+    SET "mediaUrls" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."SmsReceipt_mediaUrls"
@@ -152,10 +152,10 @@ WHERE t."nodeId" = monsoon$dev."SmsReceipt"."id";
 DROP TABLE monsoon$dev."SmsReceipt_mediaUrls";
 
 
-ALTER TABLE monsoon$dev."User" ADD COLUMN roles text[];
+ALTER TABLE monsoon$dev."User" ADD COLUMN "roles" text[];
 
 UPDATE monsoon$dev."User"
-    SET roles = t.values
+    SET "roles" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."User_roles"
@@ -166,10 +166,10 @@ WHERE t."nodeId" = monsoon$dev."User"."id";
 DROP TABLE monsoon$dev."User_roles";
 
 
-ALTER TABLE monsoon$dev."StylePreferences" ADD COLUMN styles text[];
+ALTER TABLE monsoon$dev."StylePreferences" ADD COLUMN "styles" text[];
 
 UPDATE monsoon$dev."StylePreferences"
-    SET styles = t.values
+    SET "styles" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."StylePreferences_styles"
@@ -180,10 +180,10 @@ WHERE t."nodeId" = monsoon$dev."StylePreferences"."id";
 DROP TABLE monsoon$dev."StylePreferences_styles";
 
 
-ALTER TABLE monsoon$dev."StylePreferences" ADD COLUMN patterns text[];
+ALTER TABLE monsoon$dev."StylePreferences" ADD COLUMN "patterns" text[];
 
 UPDATE monsoon$dev."StylePreferences"
-    SET patterns = t.values
+    SET "patterns" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."StylePreferences_patterns"
@@ -194,10 +194,10 @@ WHERE t."nodeId" = monsoon$dev."StylePreferences"."id";
 DROP TABLE monsoon$dev."StylePreferences_patterns";
 
 
-ALTER TABLE monsoon$dev."StylePreferences" ADD COLUMN colors text[];
+ALTER TABLE monsoon$dev."StylePreferences" ADD COLUMN "colors" text[];
 
 UPDATE monsoon$dev."StylePreferences"
-    SET colors = t.values
+    SET "colors" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."StylePreferences_colors"
@@ -208,10 +208,10 @@ WHERE t."nodeId" = monsoon$dev."StylePreferences"."id";
 DROP TABLE monsoon$dev."StylePreferences_colors";
 
 
-ALTER TABLE monsoon$dev."StylePreferences" ADD COLUMN brands text[];
+ALTER TABLE monsoon$dev."StylePreferences" ADD COLUMN "brands" text[];
 
 UPDATE monsoon$dev."StylePreferences"
-    SET brands = t.values
+    SET "brands" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."StylePreferences_brands"
@@ -222,10 +222,10 @@ WHERE t."nodeId" = monsoon$dev."StylePreferences"."id";
 DROP TABLE monsoon$dev."StylePreferences_brands";
 
 
-ALTER TABLE monsoon$dev."CustomerDetail" ADD COLUMN weight integer[];
+ALTER TABLE monsoon$dev."CustomerDetail" ADD COLUMN "weight" integer[];
 
 UPDATE monsoon$dev."CustomerDetail"
-    SET weight = t.values
+    SET "weight" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."CustomerDetail_weight"
@@ -236,10 +236,10 @@ WHERE t."nodeId" = monsoon$dev."CustomerDetail"."id";
 DROP TABLE monsoon$dev."CustomerDetail_weight";
 
 
-ALTER TABLE monsoon$dev."CustomerDetail" ADD COLUMN topSizes text[];
+ALTER TABLE monsoon$dev."CustomerDetail" ADD COLUMN "topSizes" text[];
 
 UPDATE monsoon$dev."CustomerDetail"
-    SET topSizes = t.values
+    SET "topSizes" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."CustomerDetail_topSizes"
@@ -250,10 +250,10 @@ WHERE t."nodeId" = monsoon$dev."CustomerDetail"."id";
 DROP TABLE monsoon$dev."CustomerDetail_topSizes";
 
 
-ALTER TABLE monsoon$dev."CustomerDetail" ADD COLUMN waistSizes integer[];
+ALTER TABLE monsoon$dev."CustomerDetail" ADD COLUMN "waistSizes" integer[];
 
 UPDATE monsoon$dev."CustomerDetail"
-    SET waistSizes = t.values
+    SET "waistSizes" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."CustomerDetail_waistSizes"
@@ -264,10 +264,10 @@ WHERE t."nodeId" = monsoon$dev."CustomerDetail"."id";
 DROP TABLE monsoon$dev."CustomerDetail_waistSizes";
 
 
-ALTER TABLE monsoon$dev."CustomerDetail" ADD COLUMN styles text[];
+ALTER TABLE monsoon$dev."CustomerDetail" ADD COLUMN "styles" text[];
 
 UPDATE monsoon$dev."CustomerDetail"
-    SET styles = t.values
+    SET "styles" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."CustomerDetail_styles"
@@ -278,10 +278,10 @@ WHERE t."nodeId" = monsoon$dev."CustomerDetail"."id";
 DROP TABLE monsoon$dev."CustomerDetail_styles";
 
 
-ALTER TABLE monsoon$dev."ProductVariantFeedbackQuestion" ADD COLUMN options text[];
+ALTER TABLE monsoon$dev."ProductVariantFeedbackQuestion" ADD COLUMN "options" text[];
 
 UPDATE monsoon$dev."ProductVariantFeedbackQuestion"
-    SET options = t.values
+    SET "options" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."ProductVariantFeedbackQuestion_options"
@@ -292,10 +292,10 @@ WHERE t."nodeId" = monsoon$dev."ProductVariantFeedbackQuestion"."id";
 DROP TABLE monsoon$dev."ProductVariantFeedbackQuestion_options";
 
 
-ALTER TABLE monsoon$dev."ProductVariantFeedbackQuestion" ADD COLUMN responses text[];
+ALTER TABLE monsoon$dev."ProductVariantFeedbackQuestion" ADD COLUMN "responses" text[];
 
 UPDATE monsoon$dev."ProductVariantFeedbackQuestion"
-    SET responses = t.values
+    SET "responses" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."ProductVariantFeedbackQuestion_responses"
@@ -306,10 +306,10 @@ WHERE t."nodeId" = monsoon$dev."ProductVariantFeedbackQuestion"."id";
 DROP TABLE monsoon$dev."ProductVariantFeedbackQuestion_responses";
 
 
-ALTER TABLE monsoon$dev."ProductRequest" ADD COLUMN images text[];
+ALTER TABLE monsoon$dev."ProductRequest" ADD COLUMN "images" text[];
 
 UPDATE monsoon$dev."ProductRequest"
-    SET images = t.values
+    SET "images" = t.values
 FROM (
     SELECT "nodeId", array_agg(VALUE ORDER BY position) AS values
     FROM monsoon$dev."ProductRequest_images"

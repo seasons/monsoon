@@ -69,7 +69,10 @@ export class WebflowController {
     if (lastPostPublished.id !== lastPostStored.webflowId) {
       await this.prisma.client2.blogPost.create({
         data: {
-          ...this.queryUtils.prismaOneToPrismaTwoMutateData(blogData),
+          ...this.queryUtils.prismaOneToPrismaTwoMutateData(
+            blogData,
+            "BlogPost"
+          ),
           image: {
             connect: { id: blogImage.id },
           },
@@ -79,7 +82,10 @@ export class WebflowController {
       await this.prisma.client2.blogPost.update({
         where: { id: lastPostStored.id },
         data: {
-          ...this.queryUtils.prismaOneToPrismaTwoMutateData(blogData),
+          ...this.queryUtils.prismaOneToPrismaTwoMutateData(
+            blogData,
+            "BlogPost"
+          ),
           image: {
             connect: { id: blogImage.id },
           },

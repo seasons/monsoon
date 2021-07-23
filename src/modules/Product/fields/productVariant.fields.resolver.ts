@@ -344,7 +344,7 @@ export class ProductVariantFieldsResolver {
         formatWhere: keys => ({
           AND: [
             { inventoryStatus: "Reservable" },
-            { productVariant: { every: { id: { in: keys } } } },
+            { productVariant: { id: { in: keys } } },
           ],
         }),
         select: Prisma.validator<Prisma.PhysicalProductSelect>()({

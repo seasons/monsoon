@@ -2,6 +2,7 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Inject, Injectable, Logger, forwardRef } from "@nestjs/common"
 import { CustomerDetail, Location, Prisma, UTMData, User } from "@prisma/client"
@@ -38,7 +39,8 @@ export class AuthService {
     private readonly email: EmailService,
     private readonly error: ErrorService,
     @Inject(forwardRef(() => PaymentService))
-    private readonly payment: PaymentService
+    private readonly payment: PaymentService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   defaultPushNotificationInterests = [
@@ -100,8 +102,11 @@ export class AuthService {
       email: email.trim(),
       firstName: firstName.trim(),
       lastName: lastName.trim(),
-      details,
       utm,
+      details: this.queryUtils.prismaOneToPrismaTwoMutateData(
+        details,
+        "CustomerDetail"
+      ),
       referrerId,
       select,
     })

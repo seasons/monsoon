@@ -287,18 +287,34 @@ export class QueryUtilsService {
     return returnObj
   }
 
-  prismaOneToPrismaTwoMutateData(prismaOneData) {
-    let args = cloneDeep(prismaOneData)
+  prismaOneToPrismaTwoMutateData(prismaOneData, model: Prisma.ModelName) {
+    let prismaTwoData = cloneDeep(prismaOneData)
     const mutateKeys = Object.keys(prismaOneData)
 
+    const modelFieldsByModelName = PrismaService.modelFieldsByModelName
+    mutateKeys.forEach(k => {
+      const fieldData = modelFieldsByModelName[model].find(a => a.name === k)
+      if (!fieldData) {
+        return
+      }
+      // If it's an empty scalar list input, e.g {styles: {}}, we need to change it
+      // to a list, e.g {styles: []}
+      if (
+        fieldData.isList &&
+        fieldData.kind === "scalar" &&
+        isEmpty(prismaOneData[k])
+      ) {
+        prismaTwoData[k] = []
+      }
+    })
     // Change nulls to undefined
     mutateKeys.forEach(k => {
-      if (args[k] === null) {
-        args[k] = undefined
+      if (prismaTwoData[k] === null) {
+        prismaTwoData[k] = undefined
       }
     })
 
-    return args
+    return prismaTwoData
   }
 
   async resolveFindMany<T>(
