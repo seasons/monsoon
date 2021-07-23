@@ -3,9 +3,9 @@ import { Select } from "@app/decorators/select.decorator"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
-import { Info, ResolveField, Resolver } from "@nestjs/graphql"
+import { ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
-import { head } from "lodash"
+import { DateTime } from "luxon"
 
 // estimate on customer --> membership --> plan requires planID to be on the plan
 const EnsureFieldsForDownstreamFieldResolvers = `fragment EnsureFieldsForDownstreamFieldResolvers on Customer {
@@ -149,18 +149,31 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async notificationBar(@Customer() customer) {
-    if (!customer) {
+    if (
+      process.env.MAINTENANCE_DATE &&
+      DateTime.fromISO(process.env.MAINTENANCE_DATE) > DateTime.local()
+    ) {
+      return await this.customerService.getNotificationBarData(
+        "UpcomingMaintenance",
+        null
+      )
+    } else if (
+      process.env.MAINTENANCE_DATE &&
+      DateTime.fromISO(process.env.MAINTENANCE_DATE) < DateTime.local()
+    ) {
+      return await this.customerService.getNotificationBarData(
+        "CurrentMaintenance",
+        null
+      )
+    } else if (!customer) {
       return null
-    }
-
-    let data = null
-    if (customer?.status === "PaymentFailed") {
-      data = await this.customerService.getNotificationBarData(
+    } else if (customer?.status === "PaymentFailed") {
+      return await this.customerService.getNotificationBarData(
         "PastDueInvoice",
         customer.id
       )
     } else if (customer?.status === "Authorized") {
-      data = await this.customerService.getNotificationBarData(
+      return await this.customerService.getNotificationBarData(
         "AuthorizedReminder",
         customer.id
       )
@@ -168,11 +181,12 @@ export class MeFieldsResolver {
       !this.statements.onProductionEnvironment() &&
       process.env.SHOW_TEST_DISMISSABLE_NOTIF === "true"
     ) {
-      data = await this.customerService.getNotificationBarData(
+      return await this.customerService.getNotificationBarData(
         "TestDismissable",
         customer.id
       )
+    } else {
+      return null
     }
-    return data
   }
 }

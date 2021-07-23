@@ -8585,6 +8585,8 @@ enum NotificationBarID {
   PastDueInvoice
   TestDismissable
   AuthorizedReminder
+  UpcomingMaintenance
+  CurrentMaintenance
 }
 
 type Order {

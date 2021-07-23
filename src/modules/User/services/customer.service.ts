@@ -32,6 +32,7 @@ import { ApolloError } from "apollo-server"
 import { defaultsDeep, pick } from "lodash"
 import { DateTime } from "luxon"
 
+import { NOTIFICATION_BAR_DATA } from "../notificationBar"
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
 import { AuthService } from "./auth.service"
 
@@ -657,28 +658,31 @@ export class CustomerService {
     notificationBarId: NotificationBarID,
     customerId
   ) {
-    const data = this.utils.parseJSONFile("src/modules/User/notificationBar")[
-      notificationBarId
-    ]
+    const data = NOTIFICATION_BAR_DATA[notificationBarId]
+
     const palette = this.utils.parseJSONFile(
       "src/modules/User/notificationBarColorSchemas"
     )[data.paletteID]
 
-    const receiptData = await this.prisma.client2.customerNotificationBarReceipt.findFirst(
-      {
-        where: {
-          AND: [
-            { notificationBarId },
-            { customer: { every: { id: customerId } } },
-          ],
-        },
-      }
-    )
+    let receiptData
+    if (customerId) {
+      receiptData = await this.prisma.client2.customerNotificationBarReceipt.findFirst(
+        {
+          where: {
+            AND: [
+              { notificationBarId },
+              { customer: { every: { id: customerId } } },
+            ],
+          },
+        }
+      )
+    }
 
     return {
       ...data,
       palette,
-      ...pick(receiptData, ["viewCount", "clickCount"]),
+      viewCount: receiptData?.viewCount ? receiptData?.viewCount : null,
+      clickCount: receiptData?.clickCount ? receiptData?.clickCount : null,
       id: notificationBarId,
     }
   }

@@ -3983,7 +3983,9 @@ export type InAdmissableReason =
 export type NotificationBarID =
   | "PastDueInvoice"
   | "TestDismissable"
-  | "AuthorizedReminder";
+  | "AuthorizedReminder"
+  | "UpcomingMaintenance"
+  | "CurrentMaintenance";
 
 export type SyncTimingType = "Drip" | "Next" | "Impact";
 
