@@ -318,7 +318,7 @@ export class QueryUtilsService {
       }
       args[field] = this.createScalarListMutateInput(
         args[field]["set"],
-        type === "update" ? record.id : "",
+        type === "update" ? record?.id : "",
         type
       )
     })
