@@ -46,7 +46,7 @@ export const SCALAR_LIST_FIELD_NAMES = {
 
 export const SINGLETON_RELATIONS_POSING_AS_ARRAYS = {
   "Product": ["materialCategory", "model"],
-  "ProductVariant": ["product"],
+  // "ProductVariant": ["product"],
   "ProductVariantFeedback": ["reservationFeedback"],
   "ProductVariantFeedbackQuestion": ["variantFeedback"],
   "PushNotificationReceipt": ["userPushNotification"],

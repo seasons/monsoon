@@ -556,7 +556,7 @@ export class ProductService {
               { reservable: { gte: 1 } },
               {
                 product: {
-                  every: { AND: [{ status: "Available" }, { type: "Top" }] },
+                  AND: [{ status: "Available" }, { type: "Top" }],
                 },
               },
             ],
@@ -571,7 +571,7 @@ export class ProductService {
               { reservable: { gte: 1 } },
               {
                 product: {
-                  every: { AND: [{ status: "Available" }, { type: "Bottom" }] },
+                  AND: [{ status: "Available" }, { type: "Bottom" }],
                 },
               },
             ],

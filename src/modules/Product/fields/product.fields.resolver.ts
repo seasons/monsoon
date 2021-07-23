@@ -30,7 +30,7 @@ export class ProductFieldsResolver {
         formatWhere: (keys, ctx) =>
           Prisma.validator<Prisma.BagItemWhereInput>()({
             customer: { id: ctx.customer.id },
-            productVariant: { product: { every: { id: { in: keys } } } },
+            productVariant: { product: { id: { in: keys } } },
             saved: true,
           }),
         getKeys: bagItem => [bagItem.productVariant.product.id],
@@ -78,7 +78,7 @@ export class ProductFieldsResolver {
       params: {
         model: "ProductVariant",
         formatWhere: ids => ({
-          product: { every: { id: { in: ids } } },
+          product: { id: { in: ids } },
         }),
         infoFragment: `
           fragment EnsureDisplayAndProductId on ProductVariant {

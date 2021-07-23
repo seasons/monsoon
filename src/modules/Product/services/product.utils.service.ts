@@ -502,7 +502,7 @@ export class ProductUtilsService {
 
   async getAllStyleCodesForBrand(brandID) {
     const _productVariants = await this.prisma.client2.productVariant.findMany({
-      where: { product: { every: { brand: { id: brandID } } } },
+      where: { product: { brand: { id: brandID } } },
       select: { id: true, sku: true },
     })
     const productVariants = this.prisma.sanitizePayload(
