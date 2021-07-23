@@ -71,7 +71,7 @@ export class BrandService {
 
     const result = await this.prisma.client2.$transaction(promises)
 
-    const brand = this.prisma.sanitizePayload(result.pop(), "Brand")
+    const brand = result.pop()
 
     return brand
   }
@@ -87,11 +87,10 @@ export class BrandService {
   }) {
     const promises = []
 
-    const _brand = await this.prisma.client2.brand.findUnique({
+    const brand = await this.prisma.client2.brand.findUnique({
       where,
       select: { id: true, shopifyShop: { select: { id: true } } },
     })
-    const brand = this.prisma.sanitizePayload(_brand, "Brand")
 
     let imageDatas
     let logoData
@@ -161,7 +160,7 @@ export class BrandService {
 
     const cleanPromises = promises.filter(Boolean)
     const result = await this.prisma.client2.$transaction(cleanPromises)
-    const updatedBrand = this.prisma.sanitizePayload(result.pop(), "Brand")
+    const updatedBrand = result.pop()
 
     if (data.shopifyShop) {
       await this.search.indexShopifyProductVariants(

@@ -22,7 +22,7 @@ export class ReservationScheduledJobs {
   @Cron(CronExpression.EVERY_6_HOURS)
   async sendReturnNotifications() {
     this.logger.log("Reservation Return Notifications Job ran")
-    const _reservations = await this.prisma.client2.reservation.findMany({
+    const reservations = await this.prisma.client2.reservation.findMany({
       where: {
         status: {
           notIn: ["Completed", "Cancelled", "Queued", "Picked", "Packed"],
@@ -46,10 +46,6 @@ export class ReservationScheduledJobs {
         },
       },
     })
-    const reservations = this.prisma.sanitizePayload(
-      _reservations,
-      "Reservation"
-    )
     const report = {
       reservationsForWhichRemindersWereSent: [],
       errors: [],

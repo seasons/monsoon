@@ -33,11 +33,10 @@ export class PushNotificationMutationsResolver {
     } = QueryUtilsService.prismaOneToPrismaTwoArgs({ where }, "Customer")
 
     // Validate the user
-    const _customers = await this.prisma.client2.customer.findMany({
+    const customers = await this.prisma.client2.customer.findMany({
       where: prismaTwoWhere,
       select: { id: true, user: { select: { id: true, email: true } } },
     })
-    const customers = this.prisma.sanitizePayload(_customers, "Customer")
     if (customers.length === 0) {
       throw new ApolloError(`No users found on that criteria`)
     }

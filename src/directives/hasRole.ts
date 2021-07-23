@@ -16,11 +16,10 @@ export async function hasRole(
   ctx
 ) {
   const userID = getEnforcedUser(ctx).id
-  const _user = await prisma.client2.user.findUnique({
+  const user = await prisma.client2.user.findUnique({
     where: { id: userID },
     select: { id: true, roles: true },
   })
-  const user = prisma.sanitizePayload(_user, "User")
   const roles = (user.roles as unknown) as string[]
 
   // Set flags so admin-related contextual work can happen. e.g Admin Audit logging

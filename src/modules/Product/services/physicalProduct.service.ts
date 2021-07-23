@@ -65,7 +65,7 @@ export class PhysicalProductService {
   }) {
     const promises = []
 
-    const _physProdBeforeUpdate = await this.prisma.client2.physicalProduct.findUnique(
+    const physProdBeforeUpdate = await this.prisma.client2.physicalProduct.findUnique(
       {
         where,
         select: {
@@ -94,10 +94,6 @@ export class PhysicalProductService {
           },
         },
       }
-    )
-    const physProdBeforeUpdate = this.prisma.sanitizePayload(
-      _physProdBeforeUpdate,
-      "PhysicalProduct"
     )
     const productVariant = (physProdBeforeUpdate?.productVariant as unknown) as Pick<
       ProductVariant,
@@ -208,7 +204,7 @@ export class PhysicalProductService {
     const cleanPromises = promises.flat().filter(Boolean)
     const results = await this.prisma.client2.$transaction(cleanPromises)
     await notifyUsersIfNeeded() // only run this if the transaction succeeded
-    return this.prisma.sanitizePayload(results.pop(), "PhysicalProduct")
+    return results.pop()
   }
 
   async activeReservationWithPhysicalProduct(id: string) {
@@ -511,7 +507,7 @@ export class PhysicalProductService {
     physProd: Pick<PhysicalProduct, "seasonsUID">,
     where: Prisma.WarehouseLocationWhereUniqueInput
   ) {
-    const _warehouseLocation = await this.prisma.client2.warehouseLocation.findUnique(
+    const warehouseLocation = await this.prisma.client2.warehouseLocation.findUnique(
       {
         where,
         select: {
@@ -522,10 +518,6 @@ export class PhysicalProductService {
           },
         },
       }
-    )
-    const warehouseLocation = this.prisma.sanitizePayload(
-      _warehouseLocation,
-      "WarehouseLocation"
     )
     if (warehouseLocation.constraints.length === 0) {
       return true
@@ -586,7 +578,7 @@ export class PhysicalProductService {
     offloadMethod,
     offloadNotes,
   }: OffloadPhysicalProductIfNeededInput) {
-    const _physicalProductBeforeUpdate = await this.prisma.client2.physicalProduct.findUnique(
+    const physicalProductBeforeUpdate = await this.prisma.client2.physicalProduct.findUnique(
       {
         where,
         select: {
@@ -597,10 +589,6 @@ export class PhysicalProductService {
           },
         },
       }
-    )
-    const physicalProductBeforeUpdate = this.prisma.sanitizePayload(
-      _physicalProductBeforeUpdate,
-      "PhysicalProduct"
     )
 
     if (
@@ -656,7 +644,7 @@ export class PhysicalProductService {
     where: Prisma.PhysicalProductWhereUniqueInput
     inventoryStatus: InventoryStatus
   }) {
-    const _physicalProductBeforeUpdate = await this.prisma.client2.physicalProduct.findUnique(
+    const physicalProductBeforeUpdate = await this.prisma.client2.physicalProduct.findUnique(
       {
         where,
         select: {
@@ -674,10 +662,6 @@ export class PhysicalProductService {
           },
         },
       }
-    )
-    const physicalProductBeforeUpdate = this.prisma.sanitizePayload(
-      _physicalProductBeforeUpdate,
-      "PhysicalProduct"
     )
 
     if (inventoryStatus !== physicalProductBeforeUpdate.inventoryStatus) {

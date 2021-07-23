@@ -23,10 +23,6 @@ export class LogsScheduledJobs {
       },
       take: 10000,
     })
-    logsToInterpret = this.prisma.sanitizePayload(
-      logsToInterpret,
-      "AdminActionLog"
-    )
 
     const allReferencedWarehouseLocationIDs = logsToInterpret
       .filter(a => !!a.changedFields)
@@ -38,10 +34,6 @@ export class LogsScheduledJobs {
         where: { id: { in: allReferencedWarehouseLocationIDs } },
         select: { id: true, barcode: true },
       }
-    )
-    allReferencedWarehouseLocations = this.prisma.sanitizePayload(
-      allReferencedWarehouseLocations,
-      "WarehouseLocation"
     )
 
     const allPhysProdIDs = logsToInterpret.map(a => a.entityId)

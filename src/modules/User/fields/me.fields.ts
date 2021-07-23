@@ -64,11 +64,11 @@ export class MeFieldsResolver {
         },
       }
     }
-    const _data = await this.prisma.client2.customer.findUnique({
+    const data = await this.prisma.client2.customer.findUnique({
       where: { id: customer.id },
       select,
     })
-    return this.prisma.sanitizePayload(_data, "Customer")
+    return data
   }
 
   @ResolveField()
@@ -80,11 +80,15 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
-  async activeReservation(@Customer() customer, @Select() select) {
+  async activeReservation(
+    @Customer() customer,
+    @Select({ withFragment: `fragment EnsureStatusOnReservation {status}` })
+    select
+  ) {
     if (!customer) {
       return null
     }
-    const _latestReservation = await this.prisma.client2.reservation.findFirst({
+    const latestReservation = (await this.prisma.client2.reservation.findFirst({
       where: {
         customer: {
           id: customer.id,
@@ -92,11 +96,7 @@ export class MeFieldsResolver {
       },
       orderBy: { createdAt: "desc" },
       select,
-    })
-    const latestReservation: any = this.prisma.sanitizePayload(
-      _latestReservation,
-      "Reservation"
-    )
+    })) as any
 
     if (
       latestReservation &&
@@ -113,7 +113,7 @@ export class MeFieldsResolver {
     if (!customer) {
       return null
     }
-    const _bagItems = await this.prisma.client2.bagItem.findMany({
+    const bagItems = await this.prisma.client2.bagItem.findMany({
       where: {
         customer: {
           id: customer.id,
@@ -122,7 +122,6 @@ export class MeFieldsResolver {
       },
       select,
     })
-    const bagItems = this.prisma.sanitizePayload(_bagItems, "BagItem")
     return bagItems
   }
 
@@ -131,7 +130,7 @@ export class MeFieldsResolver {
     if (!customer) {
       return null
     }
-    const _savedItems = await this.prisma.client2.bagItem.findMany({
+    const savedItems = await this.prisma.client2.bagItem.findMany({
       where: {
         customer: {
           id: customer.id,
@@ -143,7 +142,6 @@ export class MeFieldsResolver {
       },
       select,
     })
-    const savedItems = await this.prisma.sanitizePayload(_savedItems, "BagItem")
     return savedItems
   }
 

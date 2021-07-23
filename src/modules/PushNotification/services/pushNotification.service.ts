@@ -57,7 +57,7 @@ export class PushNotificationService {
     )
 
     // // Create the receipt
-    let _usersToUpdate = await this.prisma.client2.user.findMany({
+    let usersToUpdate = await this.prisma.client2.user.findMany({
       where: {
         pushNotification: {
           AND: [
@@ -81,8 +81,6 @@ export class PushNotificationService {
       },
       select: { id: true, roles: true },
     })
-
-    let usersToUpdate = this.prisma.sanitizePayload(_usersToUpdate, "User")
 
     if (targetInterest.includes("debug")) {
       usersToUpdate = usersToUpdate.filter(a =>

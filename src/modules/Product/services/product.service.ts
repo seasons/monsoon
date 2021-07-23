@@ -322,7 +322,7 @@ export class ProductService {
   }
 
   async saveProduct(item, save, select, customer) {
-    const _bagItem = await this.prisma.client2.bagItem.findFirst({
+    let bagItem = await this.prisma.client2.bagItem.findFirst({
       where: {
         customer: {
           id: customer.id,
@@ -334,7 +334,6 @@ export class ProductService {
       },
       select,
     })
-    let bagItem = !!_bagItem && this.prisma.sanitizePayload(_bagItem, "BagItem")
 
     if (bagItem && !save) {
       await this.prisma.client2.bagItem.delete({
@@ -378,7 +377,7 @@ export class ProductService {
       throw new Error("Your account must be active to reserve items.")
     }
 
-    const _reservedBagItems = await this.prisma.client2.bagItem.findMany({
+    const reservedBagItems = await this.prisma.client2.bagItem.findMany({
       where: {
         customer: {
           id: customer.id,
@@ -390,10 +389,6 @@ export class ProductService {
       },
       select: { productVariant: { select: { id: true } } },
     })
-    const reservedBagItems = this.prisma.sanitizePayload(
-      _reservedBagItems,
-      "BagItem"
-    )
 
     const reservedIds = reservedBagItems.map(a => a.productVariant.id)
     const newItems = items.filter(a => !reservedIds.includes(a))
@@ -469,16 +464,13 @@ export class ProductService {
     args: any,
     select: any
   ) {
-    const customer = this.prisma.sanitizePayload(
-      await this.prisma.client2.customer.findUnique({
-        where: { id: customerID },
-        select: {
-          id: true,
-          detail: { select: { topSizes: true, waistSizes: true } },
-        },
-      }),
-      "Product"
-    )
+    const customer = await this.prisma.client2.customer.findUnique({
+      where: { id: customerID },
+      select: {
+        id: true,
+        detail: { select: { topSizes: true, waistSizes: true } },
+      },
+    })
 
     const argsWithCustomerWhere = {
       ...args,
@@ -530,16 +522,15 @@ export class ProductService {
     where: { id: string },
     select: any
   ) {
-    const _customer = await this.prisma.client2.customer.findUnique({
+    const customer = await this.prisma.client2.customer.findUnique({
       where,
       select: {
         id: true,
         detail: { select: { topSizes: true, waistSizes: true } },
       },
     })
-    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
-    const _data = await this.prisma.client2.productVariant.findMany({
+    const data = await this.prisma.client2.productVariant.findMany({
       where: {
         OR: [
           {
@@ -580,7 +571,7 @@ export class ProductService {
       },
       select,
     })
-    return this.prisma.sanitizePayload(_data, "ProductVariant")
+    return data
   }
 
   async updateProduct({
@@ -609,7 +600,7 @@ export class ProductService {
       buyUsedPrice,
       ...updateData
     } = data
-    const _product = await this.prisma.client2.product.findUnique({
+    const product = await this.prisma.client2.product.findUnique({
       where,
       select: {
         id: true,
@@ -628,7 +619,6 @@ export class ProductService {
         tags: { select: { name: true } },
       },
     })
-    const product = this.prisma.sanitizePayload(_product, "Product")
 
     // If they're unstoring, that should be all they're doing
     if (product.status === "Stored" && status !== "Stored") {
@@ -798,7 +788,7 @@ export class ProductService {
     productId: string,
     physProdCurrentlyOffloadingId: string
   ) {
-    const _prodWithPhysicalProducts = await this.prisma.client2.product.findUnique(
+    const prodWithPhysicalProducts = await this.prisma.client2.product.findUnique(
       {
         where: { id: productId },
         select: {
@@ -810,10 +800,6 @@ export class ProductService {
           },
         },
       }
-    )
-    const prodWithPhysicalProducts = this.prisma.sanitizePayload(
-      _prodWithPhysicalProducts,
-      "Product"
     )
     const downstreamPhysProds = this.productUtils.physicalProductsForProduct(
       (prodWithPhysicalProducts as unknown) as ProductWithPhysicalProducts
@@ -1065,11 +1051,11 @@ export class ProductService {
     const tier = await this.prisma.client2.productTier.findFirst({
       where: { tier: tierName },
     })
-    return this.prisma.sanitizePayload(tier, "ProductTier")
+    return tier
   }
 
   async newestBrandProducts(args, select): Promise<[Product]> {
-    const _newestProducts = (await this.prisma.client2.product.findMany({
+    const newestProducts = (await this.prisma.client2.product.findMany({
       where: {
         AND: [{ tags: { none: { name: "Vintage" } } }, { status: "Available" }],
       },
@@ -1077,10 +1063,6 @@ export class ProductService {
       take: 1,
       select: { id: true, brand: { select: { id: true } } },
     })) as [Product & { brand: Pick<Brand, "id"> }]
-    const newestProducts = this.prisma.sanitizePayload(
-      _newestProducts,
-      "Product"
-    )
 
     const newestProduct = head(newestProducts)
 
@@ -1092,7 +1074,7 @@ export class ProductService {
       args,
       "Product"
     )
-    const _data = (await this.prisma.client2.product.findMany({
+    const data = (await this.prisma.client2.product.findMany({
       where: {
         AND: [
           { brand: { id: newestProduct.brand.id } },
@@ -1105,7 +1087,7 @@ export class ProductService {
       cursor,
       take,
     })) as [Product]
-    return this.prisma.sanitizePayload(_data, "Product")
+    return data
   }
 
   private validateCreateProductInput(input) {
@@ -1164,7 +1146,7 @@ export class ProductService {
     status: ProductStatus
   ): Promise<PrismaPromise<Product | ProductVariant | PhysicalProduct>[]> {
     const promises = []
-    const _productBeforeUpdate = await this.prisma.client2.product.findUnique({
+    const productBeforeUpdate = await this.prisma.client2.product.findUnique({
       where,
       select: {
         id: true,
@@ -1179,10 +1161,6 @@ export class ProductService {
         },
       },
     })
-    const productBeforeUpdate = this.prisma.sanitizePayload(
-      _productBeforeUpdate,
-      "Product"
-    )
     if (status !== "Stored" && productBeforeUpdate.status === "Stored") {
       // Update product status
       if (status !== "NotAvailable") {
@@ -1235,7 +1213,7 @@ export class ProductService {
     status: ProductStatus
   ): Promise<PrismaPromise<Product | ProductVariant | PhysicalProduct>[]> {
     const promises = []
-    const _productBeforeUpdate = await this.prisma.client2.product.findUnique({
+    const productBeforeUpdate = await this.prisma.client2.product.findUnique({
       where,
       select: {
         id: true,
@@ -1253,10 +1231,6 @@ export class ProductService {
         },
       },
     })
-    const productBeforeUpdate = this.prisma.sanitizePayload(
-      _productBeforeUpdate,
-      "Product"
-    )
 
     if (status === "Stored" && productBeforeUpdate.status !== "Stored") {
       // Update product status

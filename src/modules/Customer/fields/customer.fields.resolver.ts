@@ -271,7 +271,7 @@ export class CustomerFieldsResolver {
   async onboardingSteps(@Parent() customer) {
     const steps: string[] = []
 
-    const _custWithData = await this.prisma.client2.customer.findUnique({
+    const custWithData = await this.prisma.client2.customer.findUnique({
       where: { id: customer.id },
       select: {
         user: { select: { verificationStatus: true } },
@@ -284,7 +284,6 @@ export class CustomerFieldsResolver {
         },
       },
     })
-    const custWithData = this.prisma.sanitizePayload(_custWithData, "Customer")
 
     const values = [
       custWithData?.user?.verificationStatus === "Approved",
@@ -309,10 +308,9 @@ export class CustomerFieldsResolver {
 
   @ResolveField()
   async reservations(@Parent() customer, @FindManyArgs() { where, ...args }) {
-    const _reservations = await this.prisma.client2.reservation.findMany({
+    const reservations = await this.prisma.client2.reservation.findMany({
       where: { ...where, customer: { id: customer.id } },
       ...args,
     })
-    return this.prisma.sanitizePayload(_reservations, "Reservation")
   }
 }

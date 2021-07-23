@@ -355,7 +355,7 @@ export class ReservationService {
   }
 
   async getReservation(reservationNumber: number) {
-    const data = await this.prisma.client2.reservation.findUnique({
+    return await this.prisma.client2.reservation.findUnique({
       where: {
         reservationNumber,
       },
@@ -399,14 +399,13 @@ export class ReservationService {
         },
       },
     })
-    return this.prisma.sanitizePayload(data, "Reservation")
   }
 
   async processReservation(reservationNumber, productStates: ProductState[]) {
     // Update status on physical products depending on whether
     // the item was returned, and update associated product variant counts
 
-    const _physicalProducts = await this.prisma.client2.physicalProduct.findMany(
+    const physicalProducts = await this.prisma.client2.physicalProduct.findMany(
       {
         where: {
           seasonsUID: {
@@ -429,10 +428,6 @@ export class ReservationService {
           },
         },
       }
-    )
-    const physicalProducts = this.prisma.sanitizePayload(
-      _physicalProducts,
-      "PhysicalProduct"
     )
 
     let promises = []
@@ -717,7 +712,7 @@ export class ReservationService {
     const [updatedReservation] = await this.prisma.client2.$transaction(
       promises
     )
-    return this.prisma.sanitizePayload(updatedReservation, "Reservation")
+    return updatedReservation
   }
 
   async createReservationFeedbacksForVariants(
@@ -848,14 +843,10 @@ export class ReservationService {
     productVariantIDs: string[]
     customerId: string
   }): Promise<string[]> {
-    const _customerBagItems = await this.prisma.client2.bagItem.findMany({
+    const customerBagItems = await this.prisma.client2.bagItem.findMany({
       where: { customer: { id: customerId }, saved: false },
       select: { status: true, productVariant: { select: { id: true } } },
     })
-    const customerBagItems = this.prisma.sanitizePayload(
-      _customerBagItems,
-      "BagItem"
-    )
     const reservedProductVariantIds = customerBagItems
       .filter(a => a.status === "Reserved")
       .map(b => b.productVariant.id)

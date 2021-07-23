@@ -123,16 +123,10 @@ export class ProductVariantMutationsResolver {
       variantPromises.flat()
     )
     const createdVariants = results.filter(a => !!a.sku)
-    const _variantsToReturn = await this.prisma.client2.productVariant.findMany(
-      {
-        where: { sku: { in: createdVariants.map(a => a.sku) } },
-        select,
-      }
-    )
-    const variantsToReturn = this.prisma.sanitizePayload(
-      _variantsToReturn,
-      "ProductVariant"
-    )
+    const variantsToReturn = await this.prisma.client2.productVariant.findMany({
+      where: { sku: { in: createdVariants.map(a => a.sku) } },
+      select,
+    })
     return variantsToReturn
   }
 
@@ -142,10 +136,9 @@ export class ProductVariantMutationsResolver {
     @Select() select
   ) {
     await this.productVariantService.addPhysicalProducts(variantID, count)
-    const variant = await this.prisma.client2.productVariant.findUnique({
+    return await this.prisma.client2.productVariant.findUnique({
       where: { id: variantID },
       select,
     })
-    return this.prisma.sanitizePayload(variant, "ProductVariant")
   }
 }

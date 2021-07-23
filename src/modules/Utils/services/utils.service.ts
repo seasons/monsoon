@@ -471,6 +471,6 @@ export class UtilsService {
       )
     }
 
-    return this.prisma.sanitizePayload(syncTiming, "SyncTiming")
+    return syncTiming
   }
 }

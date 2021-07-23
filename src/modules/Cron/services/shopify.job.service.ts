@@ -17,16 +17,12 @@ export class ShopifyScheduledJobs {
     this.logger.log(
       "Run import product variants for external shopify integrations"
     )
-    const _shopifyShops = await this.prisma.client2.shopifyShop.findMany({
+    const shopifyShops = await this.prisma.client2.shopifyShop.findMany({
       where: {
         accessToken: { not: undefined },
         shopName: { not: undefined },
       },
     })
-    const shopifyShops = this.prisma.sanitizePayload(
-      _shopifyShops,
-      "ShopifyShop"
-    )
 
     for (const { shopName, accessToken, id } of shopifyShops) {
       const brand = await this.prisma.client2.brand.findFirst({

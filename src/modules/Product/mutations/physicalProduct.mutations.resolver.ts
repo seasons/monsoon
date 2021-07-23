@@ -67,7 +67,7 @@ export class PhysicalProductMutationsResolver {
     let updatedPhysicalProduct
 
     if (physicalProduct) {
-      const _updatedPhysicalProduct = await this.prisma.client2.physicalProduct.update(
+      updatedPhysicalProduct = await this.prisma.client2.physicalProduct.update(
         {
           where: {
             seasonsUID: physicalProduct.seasonsUID,
@@ -77,10 +77,6 @@ export class PhysicalProductMutationsResolver {
           },
           select,
         }
-      )
-      updatedPhysicalProduct = this.prisma.sanitizePayload(
-        _updatedPhysicalProduct,
-        "PhysicalProduct"
       )
     }
 

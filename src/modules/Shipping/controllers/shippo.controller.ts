@@ -193,7 +193,7 @@ export class ShippoController {
     phase: ReservationPhase
   ) {
     if (reservationStatus === "Delivered") {
-      const _reservationWithData = await this.prisma.client2.reservation.findFirst(
+      const reservationWithData = await this.prisma.client2.reservation.findFirst(
         {
           where: { id: reservation.id },
           select: {
@@ -202,10 +202,6 @@ export class ShippoController {
             products: true,
           },
         }
-      )
-      const reservationWithData = this.prisma.sanitizePayload(
-        _reservationWithData,
-        "Reservation"
       )
 
       let location

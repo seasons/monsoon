@@ -159,7 +159,7 @@ export class TestUtilsService {
       }
     }
 
-    const _createdCustomer = await this.prisma.client2.customer.create({
+    const createdCustomer = await this.prisma.client2.customer.create({
       data: {
         status: input.status || "Active",
         user: {
@@ -183,10 +183,6 @@ export class TestUtilsService {
         },
       },
     })
-    const createdCustomer = this.prisma.sanitizePayload(
-      _createdCustomer,
-      "Customer"
-    )
 
     const defaultPushNotificationInterests = [
       "General",

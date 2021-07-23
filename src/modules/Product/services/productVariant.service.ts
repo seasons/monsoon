@@ -85,7 +85,7 @@ export class ProductVariantService {
     customerId: string,
     { dryRun } = { dryRun: false }
   ) {
-    const _productVariants = await this.prisma.client2.productVariant.findMany({
+    const productVariants = await this.prisma.client2.productVariant.findMany({
       where: {
         id: {
           in: items,
@@ -98,10 +98,6 @@ export class ProductVariantService {
         product: true,
       },
     })
-    const productVariants = this.prisma.sanitizePayload(
-      _productVariants,
-      "ProductVariant"
-    )
 
     const physicalProducts = await this.physicalProductUtilsService.getPhysicalProductsWithReservationSpecificData(
       items
@@ -245,7 +241,7 @@ export class ProductVariantService {
       throw new Error(`Please pass no more than 1 manufacturer size name`)
     }
 
-    const _prodVar = await this.prisma.client2.productVariant.findUnique({
+    const prodVar = await this.prisma.client2.productVariant.findUnique({
       where: { id },
       select: {
         internalSize: { select: { id: true, display: true, type: true } },
@@ -259,7 +255,6 @@ export class ProductVariantService {
         },
       },
     })
-    const prodVar = this.prisma.sanitizePayload(_prodVar, "ProductVariant")
 
     // FIXME: Can remove the ts-ignore below once we convert full to prisma2
     // @ts-ignore
@@ -342,6 +337,6 @@ export class ProductVariantService {
       data: updateData,
       select,
     })) as ProductVariant
-    return this.prisma.sanitizePayload(result, "ProductVariant")
+    return result
   }
 }

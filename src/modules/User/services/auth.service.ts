@@ -159,23 +159,21 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
-    const _returnUser = await this.prisma.client2.user.findUnique({
+    const returnUser = await this.prisma.client2.user.findUnique({
       where: { email },
       ...select.user,
     })
-    const returnUser = this.prisma.sanitizePayload(_returnUser, "User")
 
     if (!returnUser) {
       throw new Error(`user with email ${email} not found`)
     }
 
-    const _customer = await this.prisma.client2.customer.findFirst({
+    const customer = await this.prisma.client2.customer.findFirst({
       where: {
         user: { email },
       },
       ...select.customer,
     })
-    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
     return {
       token: tokenData.access_token,
@@ -465,7 +463,7 @@ export class AuthService {
 
     await this.updateCustomerWithReferrerData(user, user.customer, referrerId)
 
-    return this.prisma.sanitizePayload(user, "User")
+    return user
   }
 
   async updateCustomerWithReferrerData(user, customer, referrerId) {

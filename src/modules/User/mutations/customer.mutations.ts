@@ -88,7 +88,7 @@ export class CustomerMutationsResolver {
       }
     )
 
-    const _data = await this.prisma.client2.customerNotificationBarReceipt.upsert(
+    const data = await this.prisma.client2.customerNotificationBarReceipt.upsert(
       {
         where: { id: r?.id || "" },
         create: {
@@ -101,6 +101,6 @@ export class CustomerMutationsResolver {
         select,
       }
     )
-    return this.prisma.sanitizePayload(_data, "CustomerNotificationBarReceipt")
+    return data
   }
 }

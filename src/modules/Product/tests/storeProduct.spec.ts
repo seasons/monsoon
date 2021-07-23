@@ -168,7 +168,7 @@ async function retrieveTestProductWithNecessaryFields(
   testProduct,
   prismaService
 ) {
-  const _prod = await prismaService.client2.product.findMany({
+  return await prismaService.client2.product.findMany({
     where: { id: testProduct.id },
     select: {
       id: true,
@@ -197,6 +197,4 @@ async function retrieveTestProductWithNecessaryFields(
       },
     },
   })
-
-  return prismaService.sanitizePayload(_prod, "Product")
 }

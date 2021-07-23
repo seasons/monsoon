@@ -87,17 +87,14 @@ export class ReservationFeedbackService {
 
     const result = await this.prisma.client2.$transaction(promises)
 
-    const feedback = this.prisma.sanitizePayload(
-      result.pop(),
-      "ProductVariantFeedback"
-    )
+    const feedback = result.pop()
 
     return feedback
   }
 
   async getReservationFeedback(user, select) {
     if (!user) return null
-    const _feedback = await this.prisma.client2.reservationFeedback.findFirst({
+    const feedback = await this.prisma.client2.reservationFeedback.findFirst({
       where: {
         user: { id: user.id },
         AND: {
@@ -111,10 +108,6 @@ export class ReservationFeedbackService {
       orderBy: { createdAt: "desc" },
       select: select ?? RESERVATION_FEEDBACK_SELECT,
     })
-    const feedback = this.prisma.sanitizePayload(
-      _feedback,
-      "ReservationFeedback"
-    )
     return feedback
   }
 
@@ -124,6 +117,6 @@ export class ReservationFeedbackService {
       data: input,
       select: RESERVATION_FEEDBACK_SELECT,
     })
-    return this.prisma.sanitizePayload(feedback, "ReservationFeedback")
+    return feedback
   }
 }

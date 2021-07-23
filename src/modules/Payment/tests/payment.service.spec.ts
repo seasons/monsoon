@@ -133,7 +133,7 @@ describe("Payment Service", () => {
         shippingAddress
       )
 
-      const _newCustomer = await prisma.client2.customer.findUnique({
+      const newCustomer = await prisma.client2.customer.findUnique({
         where: { id: customer.id },
         select: {
           id: true,
@@ -164,7 +164,6 @@ describe("Payment Service", () => {
           },
         },
       })
-      const newCustomer = prisma.sanitizePayload(_newCustomer, "Customer")
 
       // Confirm Billing Info fields
       expect(newCustomer.billingInfo.brand).toEqual("american_express")

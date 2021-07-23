@@ -48,7 +48,7 @@ export class MarketingScheduledJobs {
     const dayThreeFollowupsSent = []
     const dayTwoFollowupsSent = []
     const windowsClosed = []
-    const _customers = await this.prisma.client2.customer.findMany({
+    const customers = await this.prisma.client2.customer.findMany({
       where: {
         AND: [
           // Prior to Jan 26 2021 we had some cases we need to handle manually
@@ -75,7 +75,6 @@ export class MarketingScheduledJobs {
         },
       },
     })
-    const customers = this.prisma.sanitizePayload(_customers, "Customer")
     for (const cust of customers) {
       const now = moment()
       const dayTwoStarted = moment(cust.authorizedAt)
@@ -232,7 +231,7 @@ export class MarketingScheduledJobs {
       )
       return
     }
-    const _waitlistedAdmissableCustomers = await this.prisma.client2.customer.findMany(
+    const waitlistedAdmissableCustomers = await this.prisma.client2.customer.findMany(
       {
         where: {
           AND: [{ admissions: { admissable: true } }, { status: "Waitlisted" }],
@@ -242,10 +241,6 @@ export class MarketingScheduledJobs {
           user: { select: { id: true, email: true, firstName: true } },
         },
       }
-    )
-    const waitlistedAdmissableCustomers = this.prisma.sanitizePayload(
-      _waitlistedAdmissableCustomers,
-      "Customer"
     )
     for (const cust of waitlistedAdmissableCustomers) {
       const availableStyles = await this.admissions.getAvailableStyles({
@@ -274,7 +269,7 @@ export class MarketingScheduledJobs {
     const oneDapperStreetMediaPartnerId = 183668
     const threadabilityMediaPartnerId = 2253589
     const faiyamRahmanMediaPartnerId = 2729780
-    const _customersToUpdate = await this.prisma.client2.customer.findMany({
+    const customersToUpdate = await this.prisma.client2.customer.findMany({
       where: {
         AND: [
           // They came through a rev share partner but not through an impact link
@@ -337,10 +332,6 @@ export class MarketingScheduledJobs {
         detail: { select: { id: true, discoveryReference: true } },
       },
     })
-    const customersToUpdate = this.prisma.sanitizePayload(
-      _customersToUpdate,
-      "Customer"
-    )
     const syncTimingUpdates = []
     const createSyncTimingUpdateFunc = (cust, detail) => async () =>
       this.prisma.client2.customer.update({

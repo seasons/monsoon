@@ -55,10 +55,9 @@ import {
       }: PrismaGenerateParams
     ) {
       const where = formatWhere(keys, ctx)
-      const _data = await this.prisma.client2[lowerFirst(model)].findMany(
+      const data = await this.prisma.client2[lowerFirst(model)].findMany(
           { where, select, orderBy },
         )
-      const data = this.prisma.sanitizePayload(_data, model)
   
       let map = this.createMap({formatData, data, getKeys, keyToDataRelationship})
   

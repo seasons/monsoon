@@ -123,15 +123,14 @@ export class EmailService {
     const physicalProductId = orderLineItems.find(
       orderLineItem => orderLineItem.recordType === "PhysicalProduct"
     ).recordID
-    const physicalProduct = this.prisma.sanitizePayload(
-      await this.prisma.client2.physicalProduct.findUnique({
+    const physicalProduct = await this.prisma.client2.physicalProduct.findUnique(
+      {
         where: { id: physicalProductId },
         select: {
           productVariant: { select: { product: { select: { id: true } } } },
           price: { select: { buyUsedPrice: true } },
         },
-      }),
-      "PhysicalProduct"
+      }
     )
     const productPrice = physicalProduct.price?.buyUsedPrice
     const productId = (physicalProduct.productVariant as any).product.id
@@ -149,7 +148,7 @@ export class EmailService {
       false
     )
 
-    const _custData = await this.prisma.client2.customer.findFirst({
+    const custData = await this.prisma.client2.customer.findFirst({
       where: { user: { id: user.id } },
       select: {
         id: true,
@@ -172,7 +171,6 @@ export class EmailService {
         billingInfo: { select: { id: true, brand: true, last_digits: true } },
       },
     })
-    const custData = this.prisma.sanitizePayload(_custData, "Customer")
 
     // Render the email
     const payload = await RenderEmail.buyUsedOrderConfirmation({
@@ -241,7 +239,7 @@ export class EmailService {
   }
 
   async sendSubscribedEmail(user: EmailUser) {
-    const _cust = await this.prisma.client2.customer.findFirst({
+    const cust = await this.prisma.client2.customer.findFirst({
       where: { user: { id: user.id } },
       select: {
         membership: {
@@ -249,7 +247,6 @@ export class EmailService {
         },
       },
     })
-    const cust = this.prisma.sanitizePayload(_cust, "Customer")
     const payload = await RenderEmail.subscribed({
       name: user.firstName,
       planId: cust.membership?.plan?.planID,

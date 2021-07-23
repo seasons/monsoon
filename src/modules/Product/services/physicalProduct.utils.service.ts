@@ -19,27 +19,23 @@ export class PhysicalProductUtilsService {
   ) {}
 
   async getPhysicalProductsWithReservationSpecificData(items: string[]) {
-    const _physicalProducts = await this.prisma.client2.physicalProduct.findMany(
-      {
-        where: {
-          productVariant: {
-            id: {
-              in: items,
-            },
+    return await this.prisma.client2.physicalProduct.findMany({
+      where: {
+        productVariant: {
+          id: {
+            in: items,
           },
         },
-        select: {
-          id: true,
-          seasonsUID: true,
-          sequenceNumber: true,
-          inventoryStatus: true,
-          productStatus: true,
-          productVariant: true,
-        },
-      }
-    )
-
-    return this.prisma.sanitizePayload(_physicalProducts, "PhysicalProduct")
+      },
+      select: {
+        id: true,
+        seasonsUID: true,
+        sequenceNumber: true,
+        inventoryStatus: true,
+        productStatus: true,
+        productVariant: true,
+      },
+    })
   }
 
   extractUniqueNonreservablePhysicalProducts(

@@ -244,7 +244,7 @@ export class CustomerService {
     })
 
     // Return the updated customer object
-    return this.prisma.sanitizePayload(updatedCustomer, "Customer")
+    return updatedCustomer
   }
 
   async updateCustomerDetail(user, customer, shippingAddress, phoneNumber) {
@@ -501,11 +501,10 @@ export class CustomerService {
     application: ApplicationType,
     dryRun: boolean
   ): Promise<TriageCustomerResult> {
-    const _customer = await this.prisma.client2.customer.findUnique({
+    const customer = await this.prisma.client2.customer.findUnique({
       where,
       select: this.triageCustomerSelect,
     })
-    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
     if (
       !this.admissions.isTriageable(customer.status as CustomerStatus) &&

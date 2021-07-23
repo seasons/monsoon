@@ -45,7 +45,7 @@ export class UpdatePaymentService {
     billing
   ) {
     try {
-      const _customerWithUserData = await this.prisma.client2.customer.findUnique(
+      const customerWithUserData = await this.prisma.client2.customer.findUnique(
         {
           where: { id: customer.id },
           select: {
@@ -72,10 +72,6 @@ export class UpdatePaymentService {
             },
           },
         }
-      )
-      const customerWithUserData = this.prisma.sanitizePayload(
-        _customerWithUserData,
-        "Customer"
       )
 
       const { user, billingInfo } = customerWithUserData
@@ -373,7 +369,7 @@ export class UpdatePaymentService {
     )
 
     // Adds the customer's shipping options to their location record
-    const _customerWithLocationId = await this.prisma.client2.customer.findUnique(
+    const customerWithLocationId = await this.prisma.client2.customer.findUnique(
       {
         where: { id: customer.id },
         select: {
@@ -382,10 +378,6 @@ export class UpdatePaymentService {
       }
     )
 
-    const customerWithLocationId = this.prisma.sanitizePayload(
-      _customerWithLocationId,
-      "Customer"
-    )
     if (!!customerWithLocationId?.detail?.shippingAddress?.id) {
       await this.customerService.addCustomerLocationShippingOptions(
         shippingState,

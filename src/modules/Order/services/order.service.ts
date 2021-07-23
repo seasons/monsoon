@@ -88,33 +88,27 @@ export class OrderService {
     shippingAddress: Location
     orderLineItems: OrderLineItem[]
   }> {
-    const _productVariant = await this.prisma.client2.productVariant.findUnique(
-      {
-        where: { id: productVariantID },
-        select: {
-          id: true,
-          physicalProducts: {
-            select: {
-              id: true,
-              price: { select: { buyUsedEnabled: true, buyUsedPrice: true } },
-              inventoryStatus: true,
-            },
-          },
-          product: {
-            select: {
-              id: true,
-              name: true,
-              category: { select: { id: true } },
-            },
+    const productVariant = await this.prisma.client2.productVariant.findUnique({
+      where: { id: productVariantID },
+      select: {
+        id: true,
+        physicalProducts: {
+          select: {
+            id: true,
+            price: { select: { buyUsedEnabled: true, buyUsedPrice: true } },
+            inventoryStatus: true,
           },
         },
-      }
-    )
-    const productVariant = this.prisma.sanitizePayload(
-      _productVariant,
-      "ProductVariant"
-    )
-    const _customerQuery = await this.prisma.client2.customer.findUnique({
+        product: {
+          select: {
+            id: true,
+            name: true,
+            category: { select: { id: true } },
+          },
+        },
+      },
+    })
+    const customerQuery = await this.prisma.client2.customer.findUnique({
       where: { id: customer.id },
       select: {
         id: true,
@@ -146,10 +140,6 @@ export class OrderService {
         },
       },
     })
-    const customerQuery = this.prisma.sanitizePayload(
-      _customerQuery,
-      "Customer"
-    )
 
     // FIXME: We're assuming that every physical product has the same price for a variant,
     // so take the first valid result.
@@ -268,37 +258,31 @@ export class OrderService {
     accessToken: string
     shopName: string
   }> {
-    const _productVariant = await this.prisma.client2.productVariant.findUnique(
-      {
-        where: { id: productVariantID },
-        select: {
-          product: {
-            select: {
-              buyNewEnabled: true,
-              name: true,
-              brand: {
-                select: {
-                  shopifyShop: {
-                    select: {
-                      enabled: true,
-                      shopName: true,
-                      accessToken: true,
-                    },
+    const productVariant = await this.prisma.client2.productVariant.findUnique({
+      where: { id: productVariantID },
+      select: {
+        product: {
+          select: {
+            buyNewEnabled: true,
+            name: true,
+            brand: {
+              select: {
+                shopifyShop: {
+                  select: {
+                    enabled: true,
+                    shopName: true,
+                    accessToken: true,
                   },
                 },
               },
-              category: { select: { id: true } },
             },
+            category: { select: { id: true } },
           },
-          shopifyProductVariant: { select: { id: true, externalId: true } },
         },
-      }
-    )
-    const productVariant = this.prisma.sanitizePayload(
-      _productVariant,
-      "ProductVariant"
-    )
-    const _customer = await this.prisma.client2.customer.findUnique({
+        shopifyProductVariant: { select: { id: true, externalId: true } },
+      },
+    })
+    const customer = await this.prisma.client2.customer.findUnique({
       where: { id: customerId },
       select: {
         user: {
@@ -333,7 +317,6 @@ export class OrderService {
         },
       },
     })
-    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
     const product = productVariant?.product as any
     const { buyNewEnabled, name: productName } = product
@@ -709,7 +692,7 @@ export class OrderService {
     const physicalProductId = orderWithData.lineItems.find(
       orderLineItem => orderLineItem.recordType === "PhysicalProduct"
     ).recordID
-    const _physicalProductWithVariant = await this.prisma.client2.physicalProduct.findUnique(
+    const physicalProductWithVariant = await this.prisma.client2.physicalProduct.findUnique(
       {
         where: { id: physicalProductId },
         select: {
@@ -724,10 +707,6 @@ export class OrderService {
           },
         },
       }
-    )
-    const physicalProductWithVariant = this.prisma.sanitizePayload(
-      _physicalProductWithVariant,
-      "PhysicalProduct"
     )
     const productVariant = (physicalProductWithVariant.productVariant as unknown) as Pick<
       ProductVariant,

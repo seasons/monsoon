@@ -325,9 +325,8 @@ export class QueryUtilsService {
     const data = await modelClient.findMany({
       ...findManyArgs,
     })
-    const sanitizedData = this.prisma.sanitizePayload(data, modelName)
 
-    return sanitizedData
+    return data
   }
 
   async resolveFindUnique<T>(
@@ -336,9 +335,8 @@ export class QueryUtilsService {
   ): Promise<T> {
     const modelClient = this.prisma.client2[lowerFirst(modelName)]
     const data = await modelClient.findUnique(findUniqueArgs)
-    const sanitizedData = this.prisma.sanitizePayload(data, modelName)
 
-    return sanitizedData
+    return data
   }
 
   async resolveConnection(
@@ -370,7 +368,7 @@ export class QueryUtilsService {
           ...args,
           ...findManyArgs,
         })
-        return this.prisma.sanitizePayload(data, modelName)
+        return data
       },
       () => modelClient.count({ where }),
       pick(queryArgs, ["first", "last", "after", "before"])

@@ -175,7 +175,7 @@ export class DripSyncService {
   private async getCustomersWithDripData(
     where: Prisma.CustomerWhereInput = {}
   ) {
-    const _customers = await this.prisma.client2.customer.findMany({
+    return await this.prisma.client2.customer.findMany({
       where,
       select: {
         id: true,
@@ -213,7 +213,6 @@ export class DripSyncService {
         },
       },
     })
-    return this.prisma.sanitizePayload(_customers, "Customer")
   }
 
   private customerToDripRecord(customer: any) {
