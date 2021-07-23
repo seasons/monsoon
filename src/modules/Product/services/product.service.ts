@@ -950,7 +950,6 @@ export class ProductService {
 
     const createData = {
       displayShort,
-      productID: productSlug,
       product: { connect: { slug: productSlug } },
       color: {
         connect: { colorCode },

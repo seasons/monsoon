@@ -78,9 +78,12 @@ export class ProductVariantMutationsResolver {
   }
 
   @Mutation()
-  async createProductVariants(@Args() { productID, inputs }, @Select() select) {
+  async createProductVariants(
+    @Args() { productID: productSlug, inputs },
+    @Select() select
+  ) {
     const product = (await this.prisma.client2.product.findUnique({
-      where: { slug: productID },
+      where: { slug: productSlug },
       select: {
         id: true,
         retailPrice: true,
@@ -110,7 +113,7 @@ export class ProductVariantMutationsResolver {
         sequenceNumbers: sequenceNumbers[index],
         variant: input,
         colorCode: product.color.colorCode,
-        productSlug: productID,
+        productSlug: productSlug,
         retailPrice: product.retailPrice,
         type: product.type as ProductType,
         measurementType,
