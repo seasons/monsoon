@@ -27,8 +27,8 @@ model AdminActionLog {
   tableName         String
   triggeredAt       DateTime
   action            String
-  rowData           String
-  changedFields     String?
+  rowData           Json
+  changedFields     Json?
   statementOnly     Boolean
   activeAdminUserId String?                       @map("activeAdminUser") @db.VarChar(30)
   activeAdminUser   User?                         @relation(fields: [activeAdminUserId], references: [id])
@@ -41,7 +41,7 @@ model AdminActionLogInterpretation {
   entityId       String          @db.VarChar(30)
   tableName      String
   interpretation String?
-  data           String?
+  data           Json?
   logId          Int?            @map("log")
   log            AdminActionLog? @relation(fields: [logId], references: [actionId])
 }
@@ -129,7 +129,7 @@ model Brand {
   designer               String?
   published              Boolean                 @default(value: true)
   featured               Boolean                 @default(value: false)
-  logo                   String?
+  logo                   Json?
   logoImageId            String?                 @map("logoImage") @db.VarChar(30)
   logoImage              Image?                  @relation(fields: [logoImageId], references: [id])
   shopifyShopId          String?                 @map("shopifyShop") @db.VarChar(30)
@@ -149,7 +149,7 @@ model Category {
   slug                         String                        @unique
   name                         String                        @unique
   description                  String?
-  image                        String?
+  image                        Json?
   productType                  String?
   measurementType              String?
   visible                      Boolean                       @default(value: false)
@@ -500,7 +500,7 @@ model PackageTransitEvent {
   subStatus     String
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
-  data          String
+  data          Json
   packageId     String?      @map("package") @db.VarChar(30)
   reservationId String?      @map("reservation") @db.VarChar(30)
   package       Package?     @relation(fields: [packageId], references: [id])

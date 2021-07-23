@@ -376,7 +376,10 @@ export class QueryUtilsService {
       pick(queryArgs, ["first", "last", "after", "before"])
     )
 
-    const sanitizedResult = this.prisma.sanitizeConnection(result)
+    const sanitizedResult = {
+      ...result,
+      aggregate: { count: result.totalCount },
+    }
     return sanitizedResult
   }
 }

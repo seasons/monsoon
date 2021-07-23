@@ -34,13 +34,7 @@ export const SINGLETON_RELATIONS_POSING_AS_ARRAYS = {}
 
 // What was stored and interpreted as JSON in prisma1 will look like
 // a string to prisma2 until we complete the migration
-const JSON_FIELD_NAMES = {
-  "AdminActionLog": ["changedFields", "rowData"],
-  "AdminActionLogInterpretation": ["data"],
-  "PackageTransitEvent": ["data"],
-  "Brand": ["logo"],
-  "Category": ["image"]
-}
+const JSON_FIELD_NAMES = {}
 
 const MODELS_TO_SANITIZE = uniq([...Object.keys(JSON_FIELD_NAMES), ...Object.keys(SINGLETON_RELATIONS_POSING_AS_ARRAYS), ...Object.keys(SCALAR_LIST_FIELD_NAMES)])
 @Injectable()
@@ -54,11 +48,6 @@ export class PrismaService implements UpdatableConnection {
     },
     {}
   )
-
-  sanitizeConnection(result) {
-    result['aggregate'] = { count: result.totalCount }
-    return result
-  }
 
   /*
   Because we're migrating from prisma1 to prisma2 in pieces, there are some
