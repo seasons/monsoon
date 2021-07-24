@@ -85,7 +85,6 @@
     "csv-parser": "2.3.3",
     "cuid": "2.1.8",
     "dataloader": "2.0.0",
-    "dd-trace": "1.0.0",
     "dotenv": "8.2.0",
     "drip-nodejs": "3.1.1",
     "envalid": "7.1.1",
