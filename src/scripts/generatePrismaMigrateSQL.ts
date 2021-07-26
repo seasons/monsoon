@@ -137,7 +137,6 @@ const ENUMS = {
     values: ["Inches", "Millimeters"],
     usage: [{ table: "Category", column: "measurementType" }],
   },
-  // ENUM object checked for accuracy through this line. TODO: Check remaining below
   CustomerStatus: {
     values: [
       "Invited",
@@ -156,7 +155,7 @@ const ENUMS = {
     values: ["Admin", "Customer", "Partner", "Marketer"],
     usage: [
       { table: "User", column: "role" },
-      { table: "User", column: "roles" },
+      { table: "User", column: "roles", isArray: true },
     ],
   },
   InventoryStatus: {
@@ -227,11 +226,7 @@ const ENUMS = {
   },
   Plan: {
     values: ["AllAccess", "Essential"],
-    usage: [
-      { table: "PaymentPlan", column: "tier" },
-      { table: "Customer", column: "plan" },
-      { table: "CustomerMembership", column: "plan" },
-    ],
+    usage: [{ table: "Customer", column: "plan" }],
   },
   ProductType: {
     values: ["Top", "Bottom", "Accessory", "Shoe"],
@@ -265,7 +260,10 @@ const ENUMS = {
     values: ["Fashion", "Showstopper", "Staple"],
     usage: [{ table: "Product", column: "architecture" }],
   },
-  WarehouseLocationType: { values: ["Conveyor", "Rail", "Bin"], usage: [] },
+  WarehouseLocationType: {
+    values: ["Conveyor", "Rail", "Bin"],
+    usage: [{ table: "WarehouseLocation", column: "type" }],
+  },
   PhotographyStatus: {
     values: ["Done", "InProgress", "ReadyForEditing", "ReadyToShoot", "Steam"],
     usage: [{ table: "Product", column: "photographyStatus" }],
@@ -368,7 +366,7 @@ const ENUMS = {
   },
   CollectionPlacement: {
     values: ["Homepage"],
-    usage: [{ table: "Collection", column: "placements" }],
+    usage: [{ table: "Collection", column: "placements", isArray: true }],
   },
   PhysicalProductDamageType: {
     values: [
@@ -381,7 +379,11 @@ const ENUMS = {
     ],
     usage: [
       { table: "PhysicalProductQualityReport", column: "damageType" },
-      { table: "PhysicalProductQualityReport", column: "damageTypes" },
+      {
+        table: "PhysicalProductQualityReport",
+        column: "damageTypes",
+        isArray: true,
+      },
     ],
   },
   ProductFit: {
@@ -392,7 +394,10 @@ const ENUMS = {
     values: ["Restock", "AvailableForPurchase"],
     usage: [{ table: "ProductNotification", column: "type" }],
   },
-  PaymentPlanTier: { values: ["Essential", "AllAccess", "Pause"], usage: [] },
+  PaymentPlanTier: {
+    values: ["Essential", "AllAccess", "Pause"],
+    usage: [{ table: "PaymentPlan", column: "tier" }],
+  },
   SmsStatus: {
     values: [
       "Queued",
@@ -416,7 +421,9 @@ const ENUMS = {
   },
   SeasonString: {
     values: ["Spring", "Summer", "Winter", "Fall"],
-    usage: [{ table: "ProductSeason", column: "wearableSeasons" }],
+    usage: [
+      { table: "ProductSeason", column: "wearableSeasons", isArray: true },
+    ],
   },
   UserVerificationMethod: {
     values: ["SMS", "Email", "None"],
@@ -448,9 +455,9 @@ const ENUMS = {
       "Techwear",
     ],
     usage: [
-      { table: "Brand", column: "styles" },
-      { table: "Product", column: "styles" },
-      { table: "CustomerDetail", column: "styles" },
+      { table: "Brand", column: "styles", isArray: true },
+      { table: "Product", column: "styles", isArray: true },
+      { table: "CustomerDetail", column: "styles", isArray: true },
     ],
   },
   NotificationBarID: {
@@ -490,7 +497,7 @@ const ENUMS = {
     usage: [{ table: "Order", column: "cancelReason" }],
   },
   OrderPaymentStatus: {
-    values: ["Paid", "PartiallyPaid", "Refunded", "NotPaid"],
+    values: ["Paid", "PartiallyPaid", "Refunded", "NotPaid", "Complete"],
     usage: [{ table: "Order", column: "paymentStatus" }],
   },
   AdminAction: {
@@ -647,16 +654,27 @@ const generateEnumsMigrate = () => {
     console.log(
       `CREATE TYPE "${enumName}" AS ENUM (${valueArrayToValueString(values)});`
     )
-    for (const { table, column } of usage) {
+
+    // Fix some bad data for order payment status
+    if (enumName == "OrderPaymentStatus") {
+      console.log(`
+UPDATE monsoon$dev."Order"
+SET "paymentStatus" = 'Complete'
+WHERE  monsoon$dev."Order"."paymentStatus" = 'complete'
+      `)
+    }
+    for (const { table, column, isArray } of usage) {
+      const typeSuffix = isArray ? "[]" : ""
       console.log(
-        `ALTER TABLE monsoon$dev."${table}" ALTER COLUMN "${column}" TYPE "${enumName}" USING "${column}"::text::"${enumName}";\n`
+        `ALTER TABLE monsoon$dev."${table}" ALTER COLUMN "${column}" TYPE "${enumName}"${typeSuffix} USING "${column}"::text${typeSuffix}::"${enumName}"${typeSuffix};`
       )
     }
+    console.log(`\n`)
   }
 }
 
 // generateScalarListMigration()
 // generateRelationsMigration()
 // parseEnumsFromPrismaOne()
-// generateEnumsMigrate()
-checkEnumsObject()
+generateEnumsMigrate()
+// checkEnumsObject()
