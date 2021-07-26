@@ -212,7 +212,7 @@ CREATE TYPE "OrderPaymentStatus" AS ENUM ('Paid', 'PartiallyPaid', 'Refunded', '
 
 UPDATE monsoon$dev."Order"
 SET "paymentStatus" = 'Complete'
-WHERE  monsoon$dev."Order"."paymentStatus" = 'complete'
+WHERE  monsoon$dev."Order"."paymentStatus" = 'complete';
       
 ALTER TABLE monsoon$dev."Order" ALTER COLUMN "paymentStatus" TYPE "OrderPaymentStatus" USING "paymentStatus"::text::"OrderPaymentStatus";
 

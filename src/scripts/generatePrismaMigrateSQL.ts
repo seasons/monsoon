@@ -660,7 +660,7 @@ const generateEnumsMigrate = () => {
       console.log(`
 UPDATE monsoon$dev."Order"
 SET "paymentStatus" = 'Complete'
-WHERE  monsoon$dev."Order"."paymentStatus" = 'complete'
+WHERE  monsoon$dev."Order"."paymentStatus" = 'complete';
       `)
     }
     for (const { table, column, isArray } of usage) {
