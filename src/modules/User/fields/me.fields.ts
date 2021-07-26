@@ -82,7 +82,7 @@ export class MeFieldsResolver {
   @ResolveField()
   async activeReservation(
     @Customer() customer,
-    @Select({ withFragment: `fragment EnsureStatusOnReservation {status}` })
+    @Select({ withFragment: `fragment EnsureStatus on Reservation {status}` })
     select
   ) {
     if (!customer) {
@@ -98,10 +98,7 @@ export class MeFieldsResolver {
       select,
     })) as any
 
-    if (
-      latestReservation &&
-      !["Completed", "Cancelled"].includes(latestReservation.status)
-    ) {
+    if (this.statements.reservationIsActive(latestReservation)) {
       return latestReservation
     }
 
