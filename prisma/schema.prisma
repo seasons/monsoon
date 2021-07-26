@@ -113,6 +113,18 @@ model BottomSize {
   size   Size?
 }
 
+enum BrandTier {
+  Tier0
+  Tier1
+  Tier2
+  Niche
+  Upcoming
+  Retro
+  Boutique
+  Local
+  Discovery
+}
+
 model Brand {
   id                     String                  @id @default(cuid()) @db.VarChar(30)
   slug                   String                  @unique
@@ -121,7 +133,7 @@ model Brand {
   isPrimaryBrand         Boolean                 @default(value: false)
   name                   String
   since                  DateTime?
-  tier                   String
+  tier                   BrandTier
   websiteUrl             String?
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
@@ -709,9 +721,14 @@ model ProductSeason {
 
 }
 
+enum ProductTierName {
+  Standard
+  Luxury
+}
+
 model ProductTier {
   id        String    @id @default(cuid()) @db.VarChar(30)
-  tier      String
+  tier      ProductTierName
   price     Int
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
