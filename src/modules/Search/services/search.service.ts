@@ -154,7 +154,7 @@ export class SearchService {
             objectID: id,
             kindOf: "Product",
             name,
-            brandName: brand.name,
+            brandName: brand?.name,
             image: url,
             description,
             variantsCount,
@@ -163,8 +163,8 @@ export class SearchService {
             type,
             status,
             categoryName: category.name,
-            tags: tags.map(a => a.name),
-            popularity: productViews.length,
+            tags: tags?.map(a => a.name),
+            popularity: productViews?.length,
             createdAt: createdAt?.getTime() / 1000,
             publishedAt: publishedAt?.getTime() / 1000,
           }
@@ -238,8 +238,8 @@ export class SearchService {
           tier,
           published,
           websiteUrl,
-          createdAt: createdAt.getTime() / 1000,
-          updatedAt: updatedAt.getTime() / 1000,
+          createdAt: createdAt?.getTime() / 1000,
+          updatedAt: updatedAt?.getTime() / 1000,
         }
       }
     )
@@ -276,12 +276,12 @@ export class SearchService {
           kindOf: "Customer",
           plan,
           status,
-          email: user.email,
+          email: user?.email,
           user,
-          bagItemsCount: bagItems.length,
+          bagItemsCount: bagItems?.length,
           popularity: status === "Active" ? 100 : 0 + bagItems.length * 2,
-          createdAt: createdAt.getTime() / 1000,
-          updatedAt: updatedAt.getTime() / 1000,
+          createdAt: createdAt?.getTime() / 1000,
+          updatedAt: updatedAt?.getTime() / 1000,
         }
       }
     )
