@@ -12,7 +12,7 @@ services:
     environment:
       - REDIS_REPLICATION_MODE=master
   postgres:
-    image: postgres:10.3
+    image: postgres:12.6
     restart: always
     ports:
       - "9876:5432"
