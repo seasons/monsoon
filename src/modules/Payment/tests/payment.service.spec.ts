@@ -133,7 +133,7 @@ describe("Payment Service", () => {
         shippingAddress
       )
 
-      const newCustomer = await prisma.client2.customer.findUnique({
+      const newCustomer = await prisma.client.customer.findUnique({
         where: { id: customer.id },
         select: {
           id: true,
@@ -185,7 +185,7 @@ describe("Payment Service", () => {
       expect(newCustomer.membership.plan.planID).toEqual("essential")
 
       // Email was sent
-      const emailReceipts = await prisma.client2.emailReceipt.findMany({
+      const emailReceipts = await prisma.client.emailReceipt.findMany({
         where: {
           user: { id: newCustomer.user.id },
         },
@@ -193,13 +193,13 @@ describe("Payment Service", () => {
       expect(emailReceipts.length).toEqual(1)
       expect(emailReceipts[0].emailId).toEqual("WelcomeToSeasons")
 
-      await prisma.client2.billingInfo.delete({
+      await prisma.client.billingInfo.delete({
         where: { id: newCustomer.billingInfo.id },
       })
-      await prisma.client2.emailReceipt.deleteMany({
+      await prisma.client.emailReceipt.deleteMany({
         where: { user: { id: newCustomer.user.id } },
       })
-      await prisma.client2.paymentPlan.deleteMany({})
+      await prisma.client.paymentPlan.deleteMany({})
       cleanupFunc()
     })
   })
@@ -223,7 +223,7 @@ const setupPaymentPlans = async () => {
         status: item.plan.status,
       }
 
-      await ps.client2.paymentPlan.upsert({
+      await ps.client.paymentPlan.upsert({
         where: { planID: item.plan.id },
         create: data,
         update: data,

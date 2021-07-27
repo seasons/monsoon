@@ -129,14 +129,14 @@ export class DataScheduledJobs {
 
   @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async updateLatitudesAndLongitudes() {
-    const locationsToUpdate = await this.prisma.client2.location.findMany({
+    const locationsToUpdate = await this.prisma.client.location.findMany({
       where: { OR: [{ lat: null }, { lng: null }] },
       select: { zipCode: true, id: true },
     })
     for (const l of locationsToUpdate) {
       const { latitude, longitude } = zipcodes.lookup(l.zipCode) || {}
       if (!!latitude && !!longitude) {
-        await this.prisma.client2.location.update({
+        await this.prisma.client.location.update({
           where: { id: l.id },
           data: { lat: latitude, lng: longitude },
         })
@@ -145,7 +145,7 @@ export class DataScheduledJobs {
   }
 
   async checkAll(withDetails = false) {
-    const allProdVars = await this.prisma.client2.productVariant.findMany({
+    const allProdVars = await this.prisma.client.productVariant.findMany({
       select: {
         id: true,
         sku: true,
@@ -160,7 +160,7 @@ export class DataScheduledJobs {
         stored: true,
       },
     })
-    const allPhysicalProducts = await this.prisma.client2.physicalProduct.findMany(
+    const allPhysicalProducts = await this.prisma.client.physicalProduct.findMany(
       {
         select: {
           id: true,
@@ -343,7 +343,7 @@ export class DataScheduledJobs {
         issues: [],
         siblingsWithIssues: [],
       } as any
-      const activeReservationWithPhysProd = await this.prisma.client2.reservation.findFirst(
+      const activeReservationWithPhysProd = await this.prisma.client.reservation.findFirst(
         {
           where: {
             AND: [
@@ -362,7 +362,7 @@ export class DataScheduledJobs {
         case "Reserved":
           if (!activeReservationWithPhysProd) {
             // check if the customer held onto it from their last completed reservation
-            const lastCompletedReservation = await this.prisma.client2.reservation.findFirst(
+            const lastCompletedReservation = await this.prisma.client.reservation.findFirst(
               {
                 where: {
                   AND: [
@@ -443,7 +443,7 @@ export class DataScheduledJobs {
   private async checkStoredPhysicalProduct(physProd, thisCase) {
     let thisCaseClone = Object.assign({}, thisCase)
 
-    const parentProduct = await this.prisma.client2.product.findFirst({
+    const parentProduct = await this.prisma.client.product.findFirst({
       where: {
         variants: {
           some: {
@@ -463,7 +463,7 @@ export class DataScheduledJobs {
       )
     }
 
-    const parentProductVariant = await this.prisma.client2.productVariant.findFirst(
+    const parentProductVariant = await this.prisma.client.productVariant.findFirst(
       {
         where: {
           physicalProducts: { some: { seasonsUID: physProd.seasonsUID } },

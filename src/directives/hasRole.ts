@@ -16,7 +16,7 @@ export async function hasRole(
   ctx
 ) {
   const userID = getEnforcedUser(ctx).id
-  const user = await prisma.client2.user.findUnique({
+  const user = await prisma.client.user.findUnique({
     where: { id: userID },
     select: { id: true, roles: true },
   })

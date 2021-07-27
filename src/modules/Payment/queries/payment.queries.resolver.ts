@@ -13,7 +13,7 @@ export class PaymentQueriesResolver {
     })
     args
   ) {
-    return await this.prisma.client2.paymentPlan.findMany({
+    return await this.prisma.client.paymentPlan.findMany({
       ...args,
       where: { ...args.where, status: "active" },
     })
@@ -27,7 +27,7 @@ export class PaymentQueriesResolver {
     })
     select
   ) {
-    return await this.prisma.client2.paymentPlan.findFirst({
+    return await this.prisma.client.paymentPlan.findFirst({
       where: { ...args.where, status: "active" },
       select,
     })

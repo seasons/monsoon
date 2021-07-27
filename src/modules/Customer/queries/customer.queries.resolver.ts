@@ -29,7 +29,7 @@ export class CustomerQueriesResolver {
         },
       }
     }
-    const data = await this.prisma.client2.customer.findUnique({
+    const data = await this.prisma.client.customer.findUnique({
       where: { ...args.where },
       select,
     })
@@ -43,7 +43,7 @@ export class CustomerQueriesResolver {
     })
     findManyArgs
   ) {
-    const data = await this.prisma.client2.customer.findMany({
+    const data = await this.prisma.client.customer.findMany({
       ...findManyArgs,
     })
 

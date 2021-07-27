@@ -164,7 +164,7 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
-    const returnUser = await this.prisma.client2.user.findUnique({
+    const returnUser = await this.prisma.client.user.findUnique({
       where: { email },
       ...select.user,
     })
@@ -173,7 +173,7 @@ export class AuthService {
       throw new Error(`user with email ${email} not found`)
     }
 
-    const customer = await this.prisma.client2.customer.findFirst({
+    const customer = await this.prisma.client.customer.findFirst({
       where: {
         user: { email },
       },
@@ -223,7 +223,7 @@ export class AuthService {
   }
 
   async getCustomerFromUserID(userID: string) {
-    return await this.prisma.client2.customer.findFirst({
+    return await this.prisma.client.customer.findFirst({
       where: {
         user: {
           id: userID,
@@ -417,7 +417,7 @@ export class AuthService {
       ...select?.user?.select,
     })
 
-    const user = await this.prisma.client2.user.create({
+    const user = await this.prisma.client.user.create({
       data: {
         auth0Id,
         email,
@@ -478,14 +478,12 @@ export class AuthService {
     )
     let referrerIsValidCustomer = false
     if (referrerId) {
-      referrerIsValidCustomer = !!(await this.prisma.client2.customer.findFirst(
-        {
-          where: { id: referrerId },
-        }
-      ))
+      referrerIsValidCustomer = !!(await this.prisma.client.customer.findFirst({
+        where: { id: referrerId },
+      }))
     }
 
-    return await this.prisma.client2.customer.update({
+    return await this.prisma.client.customer.update({
       where: { id: customer.id },
       data: {
         referralLink: referralLink.shortUrl,
@@ -515,7 +513,7 @@ export class AuthService {
   }
 
   private async rebrandlyUsernameFromFirstname(firstName: string) {
-    const usersWithSameFirstName = await this.prisma.client2.user.findMany({
+    const usersWithSameFirstName = await this.prisma.client.user.findMany({
       where: { firstName: firstName.trim() },
     })
 

@@ -16,25 +16,23 @@ export class ProductVariantService {
   ) {}
 
   async addPhysicalProducts(productVariantID: string, count: number) {
-    const productVariant = await this.prisma.client2.productVariant.findUnique({
+    const productVariant = await this.prisma.client.productVariant.findUnique({
       where: { id: productVariantID },
       select: { id: true, sku: true, total: true, nonReservable: true },
     })
-    const physicalProducts = await this.prisma.client2.physicalProduct.findMany(
-      {
-        where: {
-          productVariant: {
-            id: productVariant.id,
-          },
+    const physicalProducts = await this.prisma.client.physicalProduct.findMany({
+      where: {
+        productVariant: {
+          id: productVariant.id,
         },
-        select: {
-          id: true,
-          price: {
-            select: { id: true, buyUsedEnabled: true, buyUsedPrice: true },
-          },
+      },
+      select: {
+        id: true,
+        price: {
+          select: { id: true, buyUsedEnabled: true, buyUsedPrice: true },
         },
-      }
-    )
+      },
+    })
 
     const SUIDs = []
     const newTotal = physicalProducts.length + count
@@ -50,7 +48,7 @@ export class ProductVariantService {
     }
 
     const physProdPromises = SUIDs.map((SUID, i) => {
-      return this.prisma.client2.physicalProduct.create({
+      return this.prisma.client.physicalProduct.create({
         data: {
           seasonsUID: SUID,
           productStatus: "New",
@@ -63,7 +61,7 @@ export class ProductVariantService {
         },
       })
     })
-    const prodVarPromise = this.prisma.client2.productVariant.update({
+    const prodVarPromise = this.prisma.client.productVariant.update({
       where: {
         id: productVariant.id,
       },
@@ -73,10 +71,7 @@ export class ProductVariantService {
       },
     })
 
-    await this.prisma.client2.$transaction([
-      ...physProdPromises,
-      prodVarPromise,
-    ])
+    await this.prisma.client.$transaction([...physProdPromises, prodVarPromise])
   }
 
   async updateProductVariantCounts(
@@ -84,7 +79,7 @@ export class ProductVariantService {
     customerId: string,
     { dryRun } = { dryRun: false }
   ) {
-    const productVariants = await this.prisma.client2.productVariant.findMany({
+    const productVariants = await this.prisma.client.productVariant.findMany({
       where: {
         id: {
           in: items,
@@ -129,7 +124,7 @@ export class ProductVariantService {
 
     if (unavailableVariantsIDS.length > 0) {
       // Move the items from the bag to saved items
-      await this.prisma.client2.bagItem.updateMany({
+      await this.prisma.client.bagItem.updateMany({
         where: {
           customer: {
             id: customerId,
@@ -164,7 +159,7 @@ export class ProductVariantService {
         }
 
         promises.push(
-          this.prisma.client2.productVariant.update({
+          this.prisma.client.productVariant.update({
             where: {
               id: productVariant.id,
             },
@@ -196,7 +191,7 @@ export class ProductVariantService {
       newInventoryStatus,
     })
 
-    return this.prisma.client2.productVariant.update({
+    return this.prisma.client.productVariant.update({
       where: { id: productVariant.id },
       data,
     })
@@ -240,7 +235,7 @@ export class ProductVariantService {
       throw new Error(`Please pass no more than 1 manufacturer size name`)
     }
 
-    const prodVar = await this.prisma.client2.productVariant.findUnique({
+    const prodVar = await this.prisma.client.productVariant.findUnique({
       where: { id },
       select: {
         internalSize: { select: { id: true, display: true, type: true } },
@@ -331,7 +326,7 @@ export class ProductVariantService {
         : undefined,
       weight,
     })
-    const result = (await this.prisma.client2.productVariant.update({
+    const result = (await this.prisma.client.productVariant.update({
       where: { id },
       data: updateData,
       select,

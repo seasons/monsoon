@@ -80,7 +80,7 @@ export class CustomerMutationsResolver {
     @Args() { notification: { notificationBarId, viewCount, clickCount } },
     @Select() select
   ) {
-    const r = await this.prisma.client2.customerNotificationBarReceipt.findFirst(
+    const r = await this.prisma.client.customerNotificationBarReceipt.findFirst(
       {
         where: {
           AND: [{ customer: { id: customer.id } }, { notificationBarId }],
@@ -88,7 +88,7 @@ export class CustomerMutationsResolver {
       }
     )
 
-    const data = await this.prisma.client2.customerNotificationBarReceipt.upsert(
+    const data = await this.prisma.client.customerNotificationBarReceipt.upsert(
       {
         where: { id: r?.id || "" },
         create: {

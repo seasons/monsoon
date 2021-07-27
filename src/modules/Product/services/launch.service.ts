@@ -38,7 +38,7 @@ export class LaunchService {
         },
       }
     }
-    const launch = await this.prisma.client2.launch.upsert({
+    const launch = await this.prisma.client.launch.upsert({
       where,
       create: upsertdata,
       update: upsertdata,

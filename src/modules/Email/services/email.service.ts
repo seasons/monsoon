@@ -111,7 +111,7 @@ export class EmailService {
 
   async sendBuyUsedOrderConfirmationEmail(user: EmailUser, order: Order) {
     // Gather the appropriate product info
-    const orderWithLineItems = await this.prisma.client2.order.findUnique({
+    const orderWithLineItems = await this.prisma.client.order.findUnique({
       where: { id: order.id },
       select: {
         lineItems: {
@@ -123,7 +123,7 @@ export class EmailService {
     const physicalProductId = orderLineItems.find(
       orderLineItem => orderLineItem.recordType === "PhysicalProduct"
     ).recordID
-    const physicalProduct = await this.prisma.client2.physicalProduct.findUnique(
+    const physicalProduct = await this.prisma.client.physicalProduct.findUnique(
       {
         where: { id: physicalProductId },
         select: {
@@ -148,7 +148,7 @@ export class EmailService {
       false
     )
 
-    const custData = await this.prisma.client2.customer.findFirst({
+    const custData = await this.prisma.client.customer.findFirst({
       where: { user: { id: user.id } },
       select: {
         id: true,
@@ -239,7 +239,7 @@ export class EmailService {
   }
 
   async sendSubscribedEmail(user: EmailUser) {
-    const cust = await this.prisma.client2.customer.findFirst({
+    const cust = await this.prisma.client.customer.findFirst({
       where: { user: { id: user.id } },
       select: {
         membership: {
@@ -268,7 +268,7 @@ export class EmailService {
     if (withItems) {
       const planID = this.utils.getPauseWithItemsPlanId(customer.membership)
       pausedWithItemsPrice = (
-        await this.prisma.client2.paymentPlan.findFirst({
+        await this.prisma.client.paymentPlan.findFirst({
           where: { planID },
           select: {
             id: true,
@@ -389,7 +389,7 @@ export class EmailService {
   }
 
   private async storeEmailReceipt(emailId: EmailId, userId: string) {
-    return this.prisma.client2.emailReceipt.create({
+    return this.prisma.client.emailReceipt.create({
       data: {
         emailId,
         user: { connect: { id: userId } },
@@ -528,7 +528,7 @@ export class EmailService {
     if (type === "essential") {
       return true
     }
-    const u = await this.prisma.client2.user.findUnique({
+    const u = await this.prisma.client.user.findUnique({
       where: { email: to },
       select: { sendSystemEmails: true },
     })
@@ -539,11 +539,11 @@ export class EmailService {
     user: EmailUser,
     products: MonsoonProductGridItem[]
   ) {
-    const customer = await this.prisma.client2.customer.findFirst({
+    const customer = await this.prisma.client.customer.findFirst({
       where: { user: { id: user.id } },
       select: { id: true },
     })
-    await this.prisma.client2.customer.update({
+    await this.prisma.client.customer.update({
       where: { id: customer.id },
       data: {
         emailedProducts: {

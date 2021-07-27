@@ -17,7 +17,7 @@ export class ShopifyScheduledJobs {
     this.logger.log(
       "Run import product variants for external shopify integrations"
     )
-    const shopifyShops = await this.prisma.client2.shopifyShop.findMany({
+    const shopifyShops = await this.prisma.client.shopifyShop.findMany({
       where: {
         accessToken: { not: undefined },
         shopName: { not: undefined },
@@ -25,7 +25,7 @@ export class ShopifyScheduledJobs {
     })
 
     for (const { shopName, accessToken, id } of shopifyShops) {
-      const brand = await this.prisma.client2.brand.findFirst({
+      const brand = await this.prisma.client.brand.findFirst({
         where: {
           shopifyShop: { id },
         },

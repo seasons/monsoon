@@ -18,7 +18,7 @@ export class PhysicalProductUtilsService {
   ) {}
 
   async getPhysicalProductsWithReservationSpecificData(items: string[]) {
-    return await this.prisma.client2.physicalProduct.findMany({
+    return await this.prisma.client.physicalProduct.findMany({
       where: {
         productVariant: {
           id: {
@@ -50,7 +50,7 @@ export class PhysicalProductUtilsService {
     physProd: Pick<PhysicalProduct, "seasonsUID">
   ): Promise<Category[]> {
     return await this.productUtils.getAllCategoriesForProduct(
-      await this.prisma.client2.product.findFirst({
+      await this.prisma.client.product.findFirst({
         where: {
           variants: {
             some: {
@@ -63,7 +63,7 @@ export class PhysicalProductUtilsService {
   }
 
   async nextSequenceNumber(): Promise<number> {
-    const lastPhysicalProduct = await this.prisma.client2.physicalProduct.findFirst(
+    const lastPhysicalProduct = await this.prisma.client.physicalProduct.findFirst(
       {
         orderBy: { sequenceNumber: "desc" },
       }
@@ -73,7 +73,7 @@ export class PhysicalProductUtilsService {
   }
 
   async groupedSequenceNumbers(inputs): Promise<any> {
-    const lastPhysicalProduct = await this.prisma.client2.physicalProduct.findFirst(
+    const lastPhysicalProduct = await this.prisma.client.physicalProduct.findFirst(
       {
         orderBy: { sequenceNumber: "desc" },
       }

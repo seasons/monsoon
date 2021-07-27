@@ -125,7 +125,7 @@ export class PaymentMutationsResolver {
       pauseType,
       reasonID
     )
-    const customerWithData = (await this.prisma.client2.customer.findUnique({
+    const customerWithData = (await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
         id: true,

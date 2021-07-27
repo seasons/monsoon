@@ -32,7 +32,7 @@ export class PhysicalProductMutationsResolver {
   @Mutation()
   async updateManyPhysicalProducts(@Args() args) {
     const prisma2Where = makeWherePrisma2Compatible(args.where)
-    return this.prisma.client2.physicalProduct.updateMany({
+    return this.prisma.client.physicalProduct.updateMany({
       ...args,
       where: prisma2Where,
     })
@@ -44,7 +44,7 @@ export class PhysicalProductMutationsResolver {
       data,
       "PhysicalProductQualityReport"
     )
-    return await this.prisma.client2.physicalProductQualityReport.create({
+    return await this.prisma.client.physicalProductQualityReport.create({
       data: prisma2Data,
       select,
     })
@@ -55,29 +55,25 @@ export class PhysicalProductMutationsResolver {
     const { barcode, status } = args
     const sequenceNumber = parseInt(barcode.replace("SZNS", ""), 10)
 
-    const physicalProduct = await this.prisma.client2.physicalProduct.findFirst(
-      {
-        where: {
-          sequenceNumber,
-        },
-        select: { id: true, seasonsUID: true, productStatus: true },
-      }
-    )
+    const physicalProduct = await this.prisma.client.physicalProduct.findFirst({
+      where: {
+        sequenceNumber,
+      },
+      select: { id: true, seasonsUID: true, productStatus: true },
+    })
 
     let updatedPhysicalProduct
 
     if (physicalProduct) {
-      updatedPhysicalProduct = await this.prisma.client2.physicalProduct.update(
-        {
-          where: {
-            seasonsUID: physicalProduct.seasonsUID,
-          },
-          data: {
-            productStatus: status,
-          },
-          select,
-        }
-      )
+      updatedPhysicalProduct = await this.prisma.client.physicalProduct.update({
+        where: {
+          seasonsUID: physicalProduct.seasonsUID,
+        },
+        data: {
+          productStatus: status,
+        },
+        select,
+      })
     }
 
     return updatedPhysicalProduct

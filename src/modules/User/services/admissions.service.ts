@@ -76,7 +76,7 @@ export class AdmissionsService {
     let pass = true
     let detail = {}
 
-    const emailsSent = await this.prisma.client2.emailReceipt.findMany({
+    const emailsSent = await this.prisma.client.emailReceipt.findMany({
       where: {
         emailId: {
           in: ["WelcomeToSeasons", "CompleteAccount", "PriorityAccess"],
@@ -200,7 +200,7 @@ export class AdmissionsService {
     reservableStyles: ProductWithEmailData[]
     adjustedReservableStyles: number
   }> {
-    const customer = await this.prisma.client2.customer.findFirst({
+    const customer = await this.prisma.client.customer.findFirst({
       where,
       select: {
         id: true,
@@ -227,7 +227,7 @@ export class AdmissionsService {
 
     const preferredSizes = customer.detail[sizesKey]
 
-    const availableStyles = await this.prisma.client2.product.findMany({
+    const availableStyles = await this.prisma.client.product.findMany({
       where: {
         AND: [
           { type: productType },
@@ -310,7 +310,7 @@ export class AdmissionsService {
   }
 
   private async pausedCustomersResumingThisWeek() {
-    const pausedCustomers = await this.prisma.client2.customer.findMany({
+    const pausedCustomers = await this.prisma.client.customer.findMany({
       where: { status: "Paused" },
       select: {
         id: true,
@@ -344,7 +344,7 @@ export class AdmissionsService {
   }
 
   private async activeCustomersWithoutActiveReservation() {
-    return await this.prisma.client2.customer.findMany({
+    return await this.prisma.client.customer.findMany({
       where: {
         AND: [
           { status: "Active" },

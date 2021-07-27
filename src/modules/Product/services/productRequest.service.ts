@@ -61,7 +61,7 @@ export class ProductRequestService {
 
         // Otherwise, means we failed to scrape URL so just store
         // the reason and URL itself
-        productRequest = await this.prisma.client2.productRequest.create({
+        productRequest = await this.prisma.client.productRequest.create({
           data: {
             reason,
             url,

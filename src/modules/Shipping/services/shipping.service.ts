@@ -137,7 +137,7 @@ export class ShippingService {
     itemIDs: string[]
   ): Promise<number> {
     const shippingBagWeight = 1
-    const productVariants = await this.prisma.client2.productVariant.findMany({
+    const productVariants = await this.prisma.client.productVariant.findMany({
       where: { id: { in: itemIDs } },
       select: { weight: true },
     })
@@ -177,7 +177,7 @@ export class ShippingService {
   private async calcTotalRetailPriceFromProductVariantIDs(
     itemIDs: string[]
   ): Promise<number> {
-    const products = await this.prisma.client2.product.findMany({
+    const products = await this.prisma.client.product.findMany({
       where: {
         variants: {
           some: {
@@ -207,7 +207,7 @@ export class ShippingService {
 
     // Create customer address object
 
-    const customerData = await this.prisma.client2.customer.findUnique({
+    const customerData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
         id: true,

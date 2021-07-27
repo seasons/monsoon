@@ -48,7 +48,7 @@ export class MarketingScheduledJobs {
     const dayThreeFollowupsSent = []
     const dayTwoFollowupsSent = []
     const windowsClosed = []
-    const customers = await this.prisma.client2.customer.findMany({
+    const customers = await this.prisma.client.customer.findMany({
       where: {
         AND: [
           // Prior to Jan 26 2021 we had some cases we need to handle manually
@@ -135,7 +135,7 @@ export class MarketingScheduledJobs {
             renderData: { name: cust.user.firstName },
             smsId: "Rewaitlisted",
           })
-          await this.prisma.client2.customer.update({
+          await this.prisma.client.customer.update({
             where: { id: cust.id },
             data: { status: "Waitlisted" },
           })
@@ -231,7 +231,7 @@ export class MarketingScheduledJobs {
       )
       return
     }
-    const waitlistedAdmissableCustomers = await this.prisma.client2.customer.findMany(
+    const waitlistedAdmissableCustomers = await this.prisma.client.customer.findMany(
       {
         where: {
           AND: [{ admissions: { admissable: true } }, { status: "Waitlisted" }],
@@ -269,7 +269,7 @@ export class MarketingScheduledJobs {
     const oneDapperStreetMediaPartnerId = 183668
     const threadabilityMediaPartnerId = 2253589
     const faiyamRahmanMediaPartnerId = 2729780
-    const customersToUpdate = await this.prisma.client2.customer.findMany({
+    const customersToUpdate = await this.prisma.client.customer.findMany({
       where: {
         AND: [
           // They came through a rev share partner but not through an impact link
@@ -334,7 +334,7 @@ export class MarketingScheduledJobs {
     })
     const syncTimingUpdates = []
     const createSyncTimingUpdateFunc = (cust, detail) => async () =>
-      this.prisma.client2.customer.update({
+      this.prisma.client.customer.update({
         where: { id: cust.id },
         data: {
           impactSyncTimings: {

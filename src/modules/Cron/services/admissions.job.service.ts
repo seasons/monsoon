@@ -21,7 +21,7 @@ export class AdmissionsScheduledJobs {
   async updateAdmissionsFields() {
     this.logger.log(`Start update admissions field job`)
 
-    const customers = await this.prisma.client2.customer.findMany({
+    const customers = await this.prisma.client.customer.findMany({
       where: {
         status: { in: ["Invited", "Created", "Waitlisted", "Authorized"] },
       },

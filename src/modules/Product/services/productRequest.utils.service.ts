@@ -125,7 +125,7 @@ export class ProductRequestUtilsService {
     url: string,
     select: Prisma.ProductRequestSelect
   ) {
-    const productRequest = await this.prisma.client2.productRequest.create({
+    const productRequest = await this.prisma.client.productRequest.create({
       data: {
         brand,
         description,

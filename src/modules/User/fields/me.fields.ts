@@ -64,7 +64,7 @@ export class MeFieldsResolver {
         },
       }
     }
-    const data = await this.prisma.client2.customer.findUnique({
+    const data = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select,
     })
@@ -88,7 +88,7 @@ export class MeFieldsResolver {
     if (!customer) {
       return null
     }
-    const latestReservation = (await this.prisma.client2.reservation.findFirst({
+    const latestReservation = (await this.prisma.client.reservation.findFirst({
       where: {
         customer: {
           id: customer.id,
@@ -110,7 +110,7 @@ export class MeFieldsResolver {
     if (!customer) {
       return null
     }
-    const bagItems = await this.prisma.client2.bagItem.findMany({
+    const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         customer: {
           id: customer.id,
@@ -127,7 +127,7 @@ export class MeFieldsResolver {
     if (!customer) {
       return null
     }
-    const savedItems = await this.prisma.client2.bagItem.findMany({
+    const savedItems = await this.prisma.client.bagItem.findMany({
       where: {
         customer: {
           id: customer.id,

@@ -40,7 +40,7 @@ export class ProductUtilsService {
   }
 
   async getProductStyleCode(productID) {
-    const prod = await this.prisma.client2.product.findUnique({
+    const prod = await this.prisma.client.product.findUnique({
       where: { id: productID },
       select: { id: true, variants: { select: { id: true, sku: true } } },
     })
@@ -76,7 +76,7 @@ export class ProductUtilsService {
   }
 
   async getAllCategoriesForProduct(prod: Product): Promise<Category[]> {
-    const prodWithCategory = await this.prisma.client2.product.findUnique({
+    const prodWithCategory = await this.prisma.client.product.findUnique({
       where: { id: prod.id },
       include: { category: true },
     })
@@ -87,7 +87,7 @@ export class ProductUtilsService {
   async getAllCategoriesForCategory(category: {
     id: string
   }): Promise<Category[]> {
-    const thisCategory = await this.prisma.client2.category.findUnique({
+    const thisCategory = await this.prisma.client.category.findUnique({
       where: { id: category.id },
     })
     return [...(await this.getAllParentCategories(thisCategory)), thisCategory]
@@ -96,7 +96,7 @@ export class ProductUtilsService {
   private async getAllParentCategories(
     category: Category
   ): Promise<Category[]> {
-    const parent = await this.prisma.client2.category.findFirst({
+    const parent = await this.prisma.client.category.findFirst({
       where: { children: { some: { id: category.id } } },
     })
     if (!parent) {
@@ -291,7 +291,7 @@ export class ProductUtilsService {
     }
   }
   async getReservedBagItems(customer) {
-    const reservedBagItems = await this.prisma.client2.bagItem.findMany({
+    const reservedBagItems = await this.prisma.client.bagItem.findMany({
       where: { customer: { id: customer.id }, status: "Reserved" },
       select: {
         id: true,
@@ -358,7 +358,7 @@ export class ProductUtilsService {
 
   async createProductSlug(brandCode: string, name: string, color: string) {
     const pureSlug = slugify(brandCode + " " + name + " " + color).toLowerCase()
-    const numProductsWithSlug = await this.prisma.client2.product.count({
+    const numProductsWithSlug = await this.prisma.client.product.count({
       where: { slug: { startsWith: pureSlug } },
     })
     return `${pureSlug}${
@@ -436,7 +436,7 @@ export class ProductUtilsService {
   async getImageIDs(imageDatas: ImageData[], slug: string) {
     const prismaImages = await Promise.all(
       imageDatas.map(async imageData => {
-        return await this.prisma.client2.image.upsert({
+        return await this.prisma.client.image.upsert({
           where: { url: imageData.url },
           create: { ...imageData, title: slug },
           update: { ...imageData, title: slug },
@@ -457,7 +457,7 @@ export class ProductUtilsService {
         },
       },
     } as Prisma.ProductMaterialCategoryCreateInput
-    return await this.prisma.client2.productMaterialCategory.upsert({
+    return await this.prisma.client.productMaterialCategory.upsert({
       where: { slug: material.model.name },
       create: data,
       update: data,
@@ -483,7 +483,7 @@ export class ProductUtilsService {
   }
 
   async getAllStyleCodesForBrand(brandID) {
-    const productVariants = await this.prisma.client2.productVariant.findMany({
+    const productVariants = await this.prisma.client.productVariant.findMany({
       where: { product: { brand: { id: brandID } } },
       select: { id: true, sku: true },
     })
@@ -498,12 +498,12 @@ export class ProductUtilsService {
   }
 
   async getSKUData({ brandID, colorCode, productID }) {
-    const brand = await this.prisma.client2.brand.findUnique({
+    const brand = await this.prisma.client.brand.findUnique({
       where: { id: brandID },
       select: { brandCode: true },
     })
     const colorExists =
-      (await this.prisma.client2.color.count({
+      (await this.prisma.client.color.count({
         where: { colorCode },
       })) > 0
 
@@ -538,19 +538,17 @@ export class ProductUtilsService {
     where: Prisma.CategoryWhereUniqueInput,
     select: Prisma.CategorySelect
   ): Promise<(Partial<Category> & Pick<Category, "id" | "slug">)[]> {
-    const categoryWithChildren = (await this.prisma.client2.category.findUnique(
-      {
-        where,
-        select: merge(
-          {
-            id: true,
-            slug: true,
-            children: { select: merge({ id: true, slug: true }, select) },
-          },
-          select
-        ),
-      }
-    )) as any
+    const categoryWithChildren = (await this.prisma.client.category.findUnique({
+      where,
+      select: merge(
+        {
+          id: true,
+          slug: true,
+          children: { select: merge({ id: true, slug: true }, select) },
+        },
+        select
+      ),
+    })) as any
     const allChildrenWithData = await Promise.all(
       categoryWithChildren.children.map(
         async a => await this.getCategoryAndAllChildren({ id: a.id }, select)

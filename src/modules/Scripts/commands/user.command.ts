@@ -78,7 +78,7 @@ export class UserCommands {
       lastName,
     })
 
-    await this.prisma.client2.user.update({
+    await this.prisma.client.user.update({
       where: { email: targetEmail },
       data: { auth0Id, email: newEmail },
     })
@@ -198,7 +198,7 @@ export class UserCommands {
     } = this.createTestUserBasics(_email, _password)
 
     // Fail gracefully if the user is already in the DB
-    if (!!(await this.prisma.client2.user.findUnique({ where: { email } }))) {
+    if (!!(await this.prisma.client.user.findUnique({ where: { email } }))) {
       this.logger.error("User already in DB")
       return
     }
@@ -289,7 +289,7 @@ export class UserCommands {
           this.utils.snakeCaseify(card)
         )
 
-        await this.prisma.client2.customer.update({
+        await this.prisma.client.customer.update({
           data: {
             membership: {
               create: {
@@ -325,7 +325,7 @@ export class UserCommands {
           where: { id: customer.id },
         })
 
-        await this.prisma.client2.billingInfo.create({
+        await this.prisma.client.billingInfo.create({
           data: {
             brand: "Visa",
             name: fullName,
@@ -351,7 +351,7 @@ export class UserCommands {
         const authorizationWindowClosesAt = DateTime.local()
           .plus({ days: 7 })
           .toISO()
-        await this.prisma.client2.customer.update({
+        await this.prisma.client.customer.update({
           data: {
             admissions: {
               create: {
@@ -370,12 +370,12 @@ export class UserCommands {
       }
 
       // Make sure we always update these
-      await this.prisma.client2.customer.update({
+      await this.prisma.client.customer.update({
         where: { id: customer.id },
         data: { status },
       })
 
-      await this.prisma.client2.user.update({
+      await this.prisma.client.user.update({
         data: {
           roles,
         },

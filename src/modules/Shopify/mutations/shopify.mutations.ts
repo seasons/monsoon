@@ -24,12 +24,12 @@ export class ShopifyMutationsResolver {
         enabled: true,
       } as Prisma.ShopifyShopUpdateInput
 
-      const shop = await this.prisma.client2.shopifyShop.findUnique({
+      const shop = await this.prisma.client.shopifyShop.findUnique({
         where: { shopName: data.shop },
         select: { id: true },
       })
 
-      await this.prisma.client2.shopifyShop.upsert({
+      await this.prisma.client.shopifyShop.upsert({
         where: {
           shopName: data.shop,
         },
@@ -47,7 +47,7 @@ export class ShopifyMutationsResolver {
 
   @Mutation()
   async importShopifyData(@Args() { shopName, ids }) {
-    const shopifyShop = await this.prisma.client2.shopifyShop.findUnique({
+    const shopifyShop = await this.prisma.client.shopifyShop.findUnique({
       where: { shopName },
     })
 

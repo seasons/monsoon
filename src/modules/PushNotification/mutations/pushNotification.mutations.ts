@@ -33,7 +33,7 @@ export class PushNotificationMutationsResolver {
     } = QueryUtilsService.prismaOneToPrismaTwoArgs({ where }, "Customer")
 
     // Validate the user
-    const customers = await this.prisma.client2.customer.findMany({
+    const customers = await this.prisma.client.customer.findMany({
       where: prismaTwoWhere,
       select: { id: true, user: { select: { id: true, email: true } } },
     })
