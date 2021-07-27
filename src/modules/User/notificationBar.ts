@@ -1,20 +1,19 @@
 import { DateTime } from "luxon"
 
+export const maintenanceDate =
+  process.env.MAINTENANCE_DATE && DateTime.fromISO(process.env.MAINTENANCE_DATE)
+
 export const NOTIFICATION_BAR_DATA = {
   UpcomingMaintenance: {
     web: {
       title: "Planned maintenance",
-      detail: `Seasons will be undergoing maintenance on ${DateTime.fromISO(
-        process.env.MAINTENANCE_DATE
-      ).toFormat(
+      detail: `Seasons will be undergoing maintenance on ${maintenanceDate.toFormat(
         "LLLL d 'at' ha"
       )} for one hour. In this window, you may notice a period of downtime.`,
     },
     mobile: {
       title: "Planned maintenance",
-      detail: `Seasons will be undergoing maintenance on ${DateTime.fromISO(
-        process.env.MAINTENANCE_DATE
-      ).toFormat(
+      detail: `Seasons will be undergoing maintenance on ${maintenanceDate.toFormat(
         "LLLL d 'at' ha"
       )} for one hour. In this window, you may notice a period of downtime.`,
     },

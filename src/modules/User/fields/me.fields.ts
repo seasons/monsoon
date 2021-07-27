@@ -7,6 +7,8 @@ import { ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 import { DateTime } from "luxon"
 
+import { maintenanceDate } from "../notificationBar"
+
 // estimate on customer --> membership --> plan requires planID to be on the plan
 const EnsureFieldsForDownstreamFieldResolvers = `fragment EnsureFieldsForDownstreamFieldResolvers on Customer {
   membership {
@@ -149,22 +151,11 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async notificationBar(@Customer() customer) {
-    if (
-      process.env.MAINTENANCE_DATE &&
-      DateTime.fromISO(process.env.MAINTENANCE_DATE) > DateTime.local()
-    ) {
-      return await this.customerService.getNotificationBarData(
-        "UpcomingMaintenance",
-        null
-      )
-    } else if (
-      process.env.MAINTENANCE_DATE &&
-      DateTime.fromISO(process.env.MAINTENANCE_DATE) < DateTime.local()
-    ) {
-      return await this.customerService.getNotificationBarData(
-        "CurrentMaintenance",
-        null
-      )
+    if (maintenanceDate) {
+      const now = DateTime.local()
+      const templateID =
+        maintenanceDate > now ? "UpcomingMaintenance" : "CurrentMaintenance"
+      return await this.customerService.getNotificationBarData(templateID, null)
     } else if (!customer) {
       return null
     } else if (customer?.status === "PaymentFailed") {
