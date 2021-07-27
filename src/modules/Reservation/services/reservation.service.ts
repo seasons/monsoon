@@ -112,6 +112,7 @@ export class ReservationService {
     )
     await this.checkLastReservation(lastReservation, items)
 
+    // Get the most recent reservation that potentially carries products being kept in the new reservation
     const lastReservationWithHeldItems = !!lastReservation
       ? [
           "Queued",
@@ -128,6 +129,7 @@ export class ReservationService {
             "Completed"
           )
       : null
+
     const newProductVariantsBeingReserved = await this.getNewProductVariantsBeingReserved(
       { productVariantIDs: items, customerId: customer.id }
     )
