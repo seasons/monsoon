@@ -110,7 +110,7 @@ export class ReservationService {
     const lastReservation = await this.reservationUtils.getLatestReservation(
       customer
     )
-    await this.checkLastReservation(lastReservation)
+    await this.checkLastReservation(lastReservation, items)
 
     const lastReservationWithHeldItems = !!lastReservation
       ? [
@@ -881,16 +881,19 @@ export class ReservationService {
     ]
   }
 
-  private async checkLastReservation(lastReservation) {
+  private async checkLastReservation(lastReservation, items) {
+    const lastReservationHasLessItems =
+      lastReservation.products.length < items.length
     if (
       !!lastReservation &&
+      lastReservationHasLessItems &&
       [
-        "Queued" as ReservationStatus,
-        "Picked" as ReservationStatus,
-        "Packed" as ReservationStatus,
-        "Delivered" as ReservationStatus,
-        "Received" as ReservationStatus,
-        "Shipped" as ReservationStatus,
+        "Queued",
+        "Picked",
+        "Packed",
+        "Delivered",
+        "Received",
+        "Shipped",
       ].includes(lastReservation.status)
     ) {
       // Update last reservation to completed since the customer is creating a new reservation while having one active
@@ -904,11 +907,7 @@ export class ReservationService {
       })
     } else if (
       !!lastReservation &&
-      ![
-        "Completed" as ReservationStatus,
-        "Cancelled" as ReservationStatus,
-        "Lost" as ReservationStatus,
-      ].includes(lastReservation.status)
+      !["Completed", "Cancelled", "Lost"].includes(lastReservation.status)
     ) {
       throw new ApolloError(
         `Last reservation has non-completed, non-cancelled status. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
