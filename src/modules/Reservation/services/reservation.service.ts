@@ -463,10 +463,8 @@ export class ReservationService {
         const productVariant = physicalProduct.productVariant as any
         const product = productVariant.product
 
-        const inventoryStatus =
-          product.status === "Stored"
-            ? "Stored"
-            : ("NonReservable" as InventoryStatus)
+        const inventoryStatus: InventoryStatus =
+          product.status === "Stored" ? "Stored" : "NonReservable"
 
         const updateData = {
           productStatus: state.productStatus,
