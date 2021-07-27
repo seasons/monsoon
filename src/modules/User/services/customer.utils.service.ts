@@ -15,6 +15,12 @@ export class CustomerUtilsService {
             createdAt: "desc",
           },
           select: {
+            status: true,
+            products: {
+              select: {
+                id: true,
+              },
+            },
             createdAt: true,
           },
         },
@@ -22,6 +28,7 @@ export class CustomerUtilsService {
           select: {
             plan: {
               select: {
+                itemCount: true,
                 tier: true,
               },
             },
@@ -37,7 +44,8 @@ export class CustomerUtilsService {
     })
     const customer = this.prisma.sanitizePayload(_customer, "Customer")
     const latestReservation = head(customer.reservations)
-    const customerPlanTier = customer?.membership?.plan?.tier
+    const customerPlan = customer?.membership?.plan
+    const customerPlanTier = customerPlan?.tier
     const latestReservationCreatedAt = latestReservation?.createdAt?.toISOString()
     const currentTermEnd = customer?.membership?.subscription?.currentTermEnd?.toISOString()
     const currentTermStart = customer?.membership?.subscription?.currentTermStart?.toISOString()
@@ -52,11 +60,25 @@ export class CustomerUtilsService {
       return null
     }
 
+    // Check if the customer has upgraded their plan since their last reservation
+    const justUpgradedPlan =
+      latestReservation &&
+      [
+        "Queued",
+        "Picked",
+        "Packed",
+        "Delivered",
+        "Received",
+        "Shipped",
+      ].includes(latestReservation?.status) &&
+      latestReservation?.products?.length < customerPlan?.itemCount
+
     const reservationCreatedBeforeTermStart =
       latestReservationCreatedAt &&
       currentTermStart &&
       latestReservationCreatedAt < currentTermStart
-    const hasAvailableSwap = reservationCreatedBeforeTermStart
+    const hasAvailableSwap =
+      reservationCreatedBeforeTermStart || justUpgradedPlan
 
     if (hasAvailableSwap) {
       return currentTermStart
