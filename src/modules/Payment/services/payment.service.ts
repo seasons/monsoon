@@ -143,7 +143,9 @@ export class PaymentService {
           .request()
       }
 
-      return shippingOption.id
+      return {
+        shippingOption,
+      }
     } catch (e) {
       this.error.setExtraContext({ shippingCode })
       this.error.setExtraContext(customer, "customer")

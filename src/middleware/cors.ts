@@ -22,8 +22,8 @@ const STATIC_ORIGINS =
         /null/, // requests from file:// URIs
       ]
 
-export const createCorsMiddleware = async (prismaClient: PrismaClient) => {
-  const productsWithExternalURLs = await prismaClient.product.findMany({
+export const createCorsMiddleware = async (prisma: PrismaClient) => {
+  const productsWithExternalURLs = await prisma.product.findMany({
     where: { externalURL: { not: "" } },
     select: { externalURL: true },
   })

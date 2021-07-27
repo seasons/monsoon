@@ -324,7 +324,8 @@ export class UtilsService {
     return QueryUtilsService.fieldsToSelect(
       fields,
       PrismaService.modelFieldsByModelName,
-      modelName
+      modelName,
+      null
     )
   }
 

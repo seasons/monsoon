@@ -7,11 +7,7 @@ You can explore the Monsoon API using the staging [GraphQL Playground](https://e
 
 ## Requirements
 
-1. You need to have both the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
-
-2. Docker command line tools. You can get them by visiting the [Docker Website](https://www.docker.com/products/docker-desktop) and downloading the desktop client.
-
-3. Postgres CLI tools.
+1. Install Docker command line tools. You can get them by visiting the [Docker Website](https://www.docker.com/products/docker-desktop) and downloading the desktop client.
 
 ## Getting started
 

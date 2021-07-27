@@ -7,7 +7,7 @@ import * as Transport from "winston-transport"
 import { getRequestIdContext } from "../middleware/http-context.middleware"
 import { WinstonLogger } from "./winston.logger"
 
-const logLevel = process.env.NODE_ENV === "development" ? "info" : "error"
+const logLevel = process.env.NODE_ENV === "development" ? "debug" : "info"
 
 /**
  * The custom formatter that manages winston meta.
@@ -22,9 +22,6 @@ const injectMeta = format(info => {
 
   // Add extra metadata from the config
   info.environment = process.env.NODE_ENV
-
-  // const currentSpan = tracer.scope().active()
-  // currentSpan.setTag("request-id", requestId)
 
   return info
 })
@@ -44,16 +41,16 @@ function serializeError(error: Error) {
 /* istanbul ignore next */
 // tslint:disable-next-line: ter-arrow-parens
 const errorsFormat = format(info => {
-  if (info.level === "error" && info.error) {
-    info.error = serializeError(info.error)
+  // @ts-ignore:
+  if (info.level === "error" && info.message instanceof Error) {
+    info.error = serializeError(info.message)
   }
   return info
 })
 
 /**
- * Create a labelled `winston` logger instance.
+ * Create a `winston` logger instance.
  *
-
  * @returns The Logger instance with transports attached by environment.
  */
 export function createNestWinstonLogger() {
@@ -81,7 +78,7 @@ export function createNestWinstonLogger() {
     createLogger({
       level: logLevel,
       exitOnError: false,
-      format: format.json(),
+      format: format.combine(errorsFormat(), injectMeta(), format.json()),
       transports: finalTransports,
     })
   )
@@ -131,11 +128,37 @@ export function createExpressWinstonHandler(logger: Logger) {
   return expressWinston.logger({
     winstonInstance: logger,
     meta: true,
+
+    // NOTE: the below object populates Datadog's reserved keywords to ensure proper formatting.
+    // https://docs.datadoghq.com/logs/log_configuration/attributes_naming_convention/#reserved-attributes
+    dynamicMeta: (req, res) => {
+      return {
+        http: {
+          method: req.method,
+          status_code: res.statusCode,
+          url_details: {
+            path: req.url,
+          },
+        },
+
+        // @ts-ignore:
+        duration: res.responseTime * 1000000,
+      }
+    },
     level: logLevel,
-    metaField: "express",
-    msg: "{{req.method}} {{req.url}}",
+    metaField: null,
+    msg: (req, res) => {
+      let msg = `status=${res.statusCode} `
+      msg += `- method=${req.method} `
+      msg += `- path=${req.url} `
+      // @ts-ignore:
+      msg += `- duration=${res.responseTime}ms`
+
+      return msg
+    },
     expressFormat: false,
-    colorize: process.env.NODE_ENV === "development",
+    colorize: false,
+    statusLevels: true,
     requestFilter: sanitizeHeaders,
     headerBlacklist: ["cookie"],
     ignoreRoute: () => false,
