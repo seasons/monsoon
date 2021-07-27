@@ -39,7 +39,7 @@ export class CollectionService {
         slug,
         ...upsertData,
         images: imageIDs && { connect: imageIDs },
-        products: data.s && {
+        products: data.productIDs && {
           connect: data.productIDs?.map(id => {
             return { id }
           }),
