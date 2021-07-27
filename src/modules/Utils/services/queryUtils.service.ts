@@ -128,11 +128,11 @@ export class QueryUtilsService {
 
       switch (field.kind) {
         case "scalar":
+        case "enum":
           select.select[field.name] = true
           break
         case "object":
           // Recurse down
-
           const includeDefaultSortToChild =
             modelFieldsByModelName?.[field.type]?.some(
               f => f.name === "createdAt"
@@ -296,7 +296,7 @@ export class QueryUtilsService {
       // to a list, e.g {styles: []}
       if (
         fieldData.isList &&
-        fieldData.kind === "scalar" &&
+        ["scalar", "enum"].includes(fieldData.kind) &&
         isEmpty(prismaOneData[k])
       ) {
         prismaTwoData[k] = []
