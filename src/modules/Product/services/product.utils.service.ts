@@ -577,11 +577,14 @@ export class ProductUtilsService {
       _categoryWithChildren,
       "Category"
     )
-    const allChildrenWithData = await Promise.all(
-      categoryWithChildren.children.map(
-        async a => await this.getCategoryAndAllChildren({ id: a.id }, select)
+    let allChildrenWithData = []
+    if (categoryWithChildren?.children?.length > 0) {
+      allChildrenWithData = await Promise.all(
+        categoryWithChildren?.children?.map(
+          async a => await this.getCategoryAndAllChildren({ id: a.id }, select)
+        )
       )
-    )
+    }
     return [categoryWithChildren, ...flatten(allChildrenWithData)] as any
   }
 }
