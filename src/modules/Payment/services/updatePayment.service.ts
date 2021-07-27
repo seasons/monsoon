@@ -196,6 +196,11 @@ export class UpdatePaymentService {
       confirmation_method: "manual",
       setup_future_usage: "off_session",
       capture_method: "manual",
+      payment_method_options: {
+        card: {
+          request_three_d_secure: "any",
+        },
+      },
     })
 
     // Update card
