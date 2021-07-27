@@ -5,11 +5,7 @@ import {
   makeWherePrisma2Compatible,
 } from "@prisma/binding-argument-transform"
 import { Prisma } from "@prisma/client"
-import {
-  PrismaService,
-  SCALAR_LIST_FIELD_NAMES,
-  SINGLETON_RELATIONS_POSING_AS_ARRAYS,
-} from "@prisma1/prisma.service"
+import { PrismaService } from "@prisma1/prisma.service"
 import { GraphQLResolveInfo } from "graphql"
 import graphqlFields from "graphql-fields"
 import {
@@ -135,25 +131,20 @@ export class QueryUtilsService {
           select.select[field.name] = true
           break
         case "object":
-          // If it's a scalar list, return true
-          if (SCALAR_LIST_FIELD_NAMES[modelName]?.includes(field.name)) {
-            select.select[field.name] = true
-          } else {
-            // Otherwise recurse down
+          // Recurse down
 
-            const includeDefaultSortToChild =
-              modelFieldsByModelName?.[field.type]?.some(
-                f => f.name === "createdAt"
-              ) && field.isList
+          const includeDefaultSortToChild =
+            modelFieldsByModelName?.[field.type]?.some(
+              f => f.name === "createdAt"
+            ) && field.isList
 
-            select.select[field.name] = this.fieldsToSelect(
-              fieldsToParse[field.name],
-              modelFieldsByModelName,
-              field.type,
-              includeDefaultSortToChild ? { createdAt: "desc" } : null,
-              { callType: "recursive" }
-            )
-          }
+          select.select[field.name] = this.fieldsToSelect(
+            fieldsToParse[field.name],
+            modelFieldsByModelName,
+            field.type,
+            includeDefaultSortToChild ? { createdAt: "desc" } : null,
+            { callType: "recursive" }
+          )
       }
     })
     return callType === "initial" ? select.select : select
@@ -261,15 +252,6 @@ export class QueryUtilsService {
         ),
       }
     }
-
-    const singleRelationFieldNames =
-      SINGLETON_RELATIONS_POSING_AS_ARRAYS[modelName] || []
-    singleRelationFieldNames.forEach(fieldName => {
-      const fieldInWhere = !!where[fieldName]
-      if (!!fieldInWhere) {
-        returnWhere[fieldName] = { every: where[fieldName] }
-      }
-    })
 
     return QueryUtilsService.notNullToNotUndefined(returnWhere)
   }

@@ -12,7 +12,6 @@ import {
   AdminActionLog,
   Customer,
   InventoryStatus,
-  OrderLineItemCreateInput,
   PhysicalProduct,
   PhysicalProductStatus,
   Prisma,
@@ -277,7 +276,7 @@ export class ReservationService {
     reservationID,
     customerID,
     nextFreeSwapDate
-  ): Promise<OrderLineItemCreateInput[]> {
+  ): Promise<Prisma.OrderLineItemCreateInput[]> {
     const doesNotHaveFreeSwap =
       nextFreeSwapDate && DateTime.fromISO(nextFreeSwapDate) > DateTime.local()
 
