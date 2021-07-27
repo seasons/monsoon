@@ -55,7 +55,7 @@ import {
       }: PrismaGenerateParams
     ) {
       const where = formatWhere(keys, ctx)
-      const data = await this.prisma.client2[lowerFirst(model)].findMany(
+      const data = await this.prisma.client[lowerFirst(model)].findMany(
           { where, select, orderBy },
         )
   

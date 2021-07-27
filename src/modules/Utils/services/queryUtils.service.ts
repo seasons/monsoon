@@ -316,7 +316,7 @@ export class QueryUtilsService {
     findManyArgs,
     modelName: Prisma.ModelName
   ): Promise<T[]> {
-    const modelClient = this.prisma.client2[lowerFirst(modelName)]
+    const modelClient = this.prisma.client[lowerFirst(modelName)]
     const data = await modelClient.findMany({
       ...findManyArgs,
     })
@@ -328,7 +328,7 @@ export class QueryUtilsService {
     findUniqueArgs: { where: any; select?: any; include?: any },
     modelName: Prisma.ModelName
   ): Promise<T> {
-    const modelClient = this.prisma.client2[lowerFirst(modelName)]
+    const modelClient = this.prisma.client[lowerFirst(modelName)]
     const data = await modelClient.findUnique(findUniqueArgs)
 
     return data
@@ -352,7 +352,7 @@ export class QueryUtilsService {
       modelName
     )
 
-    const modelClient = this.prisma.client2[lowerFirst(modelName)]
+    const modelClient = this.prisma.client[lowerFirst(modelName)]
     const findManyArgs = { where, orderBy, select: queryArgs.select }
     if (!!queryArgs.skip) {
       findManyArgs["skip"] = queryArgs.skip

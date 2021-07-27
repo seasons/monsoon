@@ -118,12 +118,12 @@ export class PushNotificationMutationsResolver {
     id,
     slug
   ) {
-    const recordById = ((await this.prisma.client2[
+    const recordById = ((await this.prisma.client[
       recordName
     ]) as any).findUnique({
       where: { id },
     })
-    const recordBySlug = ((await this.prisma.client2[
+    const recordBySlug = ((await this.prisma.client[
       recordName
     ]) as any).findUnique({
       where: { slug },

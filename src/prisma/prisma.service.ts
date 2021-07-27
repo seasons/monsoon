@@ -16,20 +16,21 @@ const generateSmartClient = (readClient: PrismaClient, writeClient: PrismaClient
   const datamodel = new PrismaSelect(null).dataModel
 
   datamodel.forEach(model => {
-    smartClient[model.name].aggregate = readClient[model.name].aggregate
-    smartClient[model.name].count = readClient[model.name].count
-    smartClient[model.name].findFirst = readClient[model.name].findFirst
-    smartClient[model.name].findMany = readClient[model.name].findMany
-    smartClient[model.name].findUnique = readClient[model.name].findUnique
-    smartClient[model.name].groupBy = readClient[model.name].groupBy
-
-    smartClient[model.name].create = writeClient[model.name].create
-    smartClient[model.name].createMany = writeClient[model.name].createMany
-    smartClient[model.name].delete = writeClient[model.name].delete
-    smartClient[model.name].deleteMany = writeClient[model.name].deleteMany
-    smartClient[model.name].update = writeClient[model.name].update
-    smartClient[model.name].updateMany = writeClient[model.name].updateMany
-    smartClient[model.name].upsert = writeClient[model.name].upsert
+    smartClient[model.name] = {
+      aggregate: readClient[model.name].aggregate,
+      count: readClient[model.name].count,
+      findFirst : readClient[model.name].findFirst,
+      findMany : readClient[model.name].findMany,
+      findUnique : readClient[model.name].findUnique,
+      groupBy : readClient[model.name].groupBy,
+      create : writeClient[model.name].create,
+      createMany : writeClient[model.name].createMany,
+      delete : writeClient[model.name].delete,
+      deleteMany : writeClient[model.name].deleteMany,
+      update : writeClient[model.name].update,
+      updateMany : writeClient[model.name].updateMany,
+      upsert : writeClient[model.name].upsert
+    }
   })
 
   return smartClient as PrismaClient
