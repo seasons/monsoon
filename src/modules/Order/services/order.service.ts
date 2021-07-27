@@ -6,15 +6,15 @@ import {
 } from "@app/modules/Product"
 import { BagService } from "@app/modules/Product/services/bag.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
+import { Injectable } from "@nestjs/common"
 import {
   BagItem,
   OrderStatus,
   PhysicalProduct,
   PhysicalProductPrice,
-} from "@app/prisma"
-import { OrderLineItemRecordType } from "@app/prisma"
-import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { Injectable } from "@nestjs/common"
+} from "@prisma/client"
+import { OrderLineItemRecordType } from "@prisma/client"
 import {
   BillingInfo,
   Category,

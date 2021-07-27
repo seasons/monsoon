@@ -9,12 +9,12 @@ import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.servic
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
-import { Prisma } from "@prisma/client"
 import {
   CustomerStatus,
+  Prisma,
   SmsStatus,
   UserVerificationStatus,
-} from "@prisma1/index"
+} from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { LinksAndEmails } from "@seasons/wind"
 import moment from "moment"

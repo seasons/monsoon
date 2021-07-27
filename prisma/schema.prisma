@@ -987,7 +987,7 @@ model PaymentPlan {
   updatedAt           DateTime             @updatedAt
   tagline             String?
   itemCount           Int?
-  tier                String?
+  tier                PaymentPlanTier?
   customerMemberships CustomerMembership[]
 }
 

@@ -1,8 +1,8 @@
 import * as util from "util"
 
 import { ApplicationType } from "@app/decorators/application.decorator"
-import { CustomerStatus, PaymentPlanTier } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import { CustomerStatus, PaymentPlanTier } from "@prisma/client"
 import * as Sentry from "@sentry/node"
 import Analytics from "analytics-node"
 

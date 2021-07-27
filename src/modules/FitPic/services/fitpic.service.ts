@@ -4,8 +4,8 @@ import {
   S3_BASE,
 } from "@app/modules/Image/services/image.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
-import { Customer, User } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import { Customer, User } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"

@@ -1,18 +1,18 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ImageService } from "@app/modules/Image/services/image.service"
+import { Injectable } from "@nestjs/common"
 import {
   Brand,
   Category,
-  ID_Input,
   Image,
+  Order,
+  Prisma,
+  Product,
   ProductVariant,
   User,
-} from "@app/prisma"
-import { Injectable } from "@nestjs/common"
-import { Product } from "@prisma/client"
-import { Order, Prisma } from "@prisma/client"
+} from "@prisma/client"
 import { ProductGridItem } from "@seasons/wind"
-import { head, pick, sampleSize, uniq } from "lodash"
+import { pick, sampleSize, uniq } from "lodash"
 
 import { PrismaService } from "../../../prisma/prisma.service"
 
@@ -78,7 +78,7 @@ export class EmailUtilsService {
 
   async getXReservableProductsForUser(
     numProducts: number,
-    user: User,
+    user: Pick<User, "id" | "email">,
     products: ProductWithEmailData[]
   ): Promise<MonsoonProductGridItem[] | null> {
     let returnProducts = []

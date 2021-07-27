@@ -1,5 +1,5 @@
-import { SmsStatus, UserVerificationStatus } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import { SmsStatus, UserVerificationStatus } from "@prisma/client"
 import { camelCase, upperFirst } from "lodash"
 import Twilio from "twilio"
 import { MessageStatus } from "twilio/lib/rest/api/v2010/account/message"

@@ -1,30 +1,26 @@
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { SizeType } from "@app/prisma/prisma.binding"
 import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
+  BottomSizeType,
   Brand,
   Category,
   Customer,
   Image,
+  InventoryStatus,
+  LetterSize,
   PhysicalProduct,
   Prisma,
   PrismaPromise,
   Product,
+  ProductStatus,
   ProductTier,
+  ProductType,
   ProductVariant,
 } from "@prisma/client"
-import {
-  BottomSizeType,
-  ID_Input,
-  InventoryStatus,
-  LetterSize,
-  MeasurementType,
-  ProductStatus,
-  ProductType,
-  SizeType,
-} from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { difference, flatten, head, isArray, pick, sum } from "lodash"
@@ -539,7 +535,7 @@ export class ProductService {
                 internalSize: {
                   top: {
                     letter: {
-                      in: (customer.detail.topSizes as unknown) as string[],
+                      in: customer.detail.topSizes as LetterSize[],
                     },
                   },
                 },

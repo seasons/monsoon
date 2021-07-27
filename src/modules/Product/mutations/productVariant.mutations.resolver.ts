@@ -1,7 +1,7 @@
 import { Customer } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
-import { ProductType } from "@app/prisma"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { ProductType } from "@prisma/client"
 import { Category, Color, Product } from "@prisma/client"
 import { ProductNotificationType } from "@prisma1/prisma.binding"
 import { PrismaService } from "@prisma1/prisma.service"

@@ -1,5 +1,4 @@
 import { Customer, User } from "@app/decorators"
-import { FitPicReportUpdateInput } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"

@@ -2,32 +2,25 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
-import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
-import {
-  PhysicalProductUtilsService,
-  ProductUtilsService,
-  ProductVariantService,
-} from "@modules/Product"
+import { ProductUtilsService, ProductVariantService } from "@modules/Product"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
-  Customer,
-  Prisma,
-  PrismaPromise,
-  ReservationFeedback,
-  User,
-} from "@prisma/client"
-import {
   AdminActionLog,
-  ID_Input,
+  Customer,
   InventoryStatus,
   PhysicalProduct,
   PhysicalProductStatus,
+  Prisma,
+  PrismaPromise,
+  ReservationFeedback,
   ReservationStatus,
   ShippingCode,
-} from "@prisma1/index"
+  User,
+} from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import chargebee from "chargebee"
@@ -38,7 +31,7 @@ import { DateTime } from "luxon"
 import { ReservationUtilsService } from "./reservation.utils.service"
 
 interface PhysicalProductWithProductVariant extends PhysicalProduct {
-  productVariant: { id: ID_Input }
+  productVariant: { id: string }
 }
 
 interface ProductState {
@@ -49,7 +42,7 @@ interface ProductState {
 }
 
 export interface ReservationWithProductVariantData {
-  id: ID_Input
+  id: string
   status: ReservationStatus
   reservationNumber: number
   products: PhysicalProductWithProductVariant[]
@@ -62,7 +55,6 @@ export class ReservationService {
     private readonly payment: PaymentService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
-    private readonly physicalProductUtilsService: PhysicalProductUtilsService,
     private readonly shippingService: ShippingService,
     private readonly emails: EmailService,
     private readonly pushNotifs: PushNotificationService,
@@ -70,7 +62,7 @@ export class ReservationService {
     private readonly error: ErrorService,
     private readonly utils: UtilsService,
     private readonly customerUtils: CustomerUtilsService,
-    private readonly queryUtils: QueryUtilsService
+    private readonly statements: StatementsService
   ) {}
 
   async reserveItems(
@@ -441,7 +433,9 @@ export class ReservationService {
         const product = productVariant.product
 
         const inventoryStatus =
-          product.status === "Stored" ? "Stored" : "NonReservable"
+          product.status === "Stored"
+            ? "Stored"
+            : ("NonReservable" as InventoryStatus)
 
         const updateData = {
           productStatus: state.productStatus,
@@ -825,10 +819,7 @@ export class ReservationService {
   private checkLastReservation(lastReservation) {
     if (
       !!lastReservation &&
-      ![
-        "Completed" as ReservationStatus,
-        "Cancelled" as ReservationStatus,
-      ].includes(lastReservation.status)
+      this.statements.reservationIsActive(lastReservation)
     ) {
       throw new ApolloError(
         `Last reservation has non-completed, non-cancelled status. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`

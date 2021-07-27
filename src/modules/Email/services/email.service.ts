@@ -280,8 +280,8 @@ export class EmailService {
 
     const data = {
       name: customer.user.firstName,
-      resumeDate: latestPauseRequest.resumeDate,
-      startDate: latestPauseRequest.pauseDate,
+      resumeDate: latestPauseRequest.resumeDate.toISOString(),
+      startDate: latestPauseRequest.pauseDate.toISOString(),
       hasOpenReservation:
         !!latestReservation &&
         !["Completed", "Cancelled"].includes(latestReservation.status),
@@ -445,7 +445,7 @@ export class EmailService {
   }) {
     const products = await this.emailUtils.getXReservableProductsForUser(
       numStylesToSend,
-      user as User,
+      user,
       availableStyles
     )
     const payload = await RenderEmail[renderEmailFunc]({

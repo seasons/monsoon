@@ -3,10 +3,15 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Inject, Injectable, Logger, forwardRef } from "@nestjs/common"
-import { CustomerDetail, Location, Prisma, UTMData, User } from "@prisma/client"
-import { UserPushNotificationInterestType } from "@prisma1/index"
+import {
+  CustomerDetail,
+  Location,
+  Prisma,
+  UTMData,
+  User,
+  UserPushNotificationInterestType,
+} from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
 import { defaultsDeep } from "lodash"

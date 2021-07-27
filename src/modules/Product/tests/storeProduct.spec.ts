@@ -1,9 +1,9 @@
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { ID_Input, InventoryStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
+import { InventoryStatus } from "@prisma/client"
 
 import { ProductModuleDef } from "../product.module"
 import { ProductWithPhysicalProducts } from "../product.types"
@@ -13,10 +13,10 @@ import { ProductUtilsService } from "../services/product.utils.service"
 const ONE_MIN = 60000
 
 interface TestPhysicalProduct {
-  id: ID_Input
+  id: string
   inventoryStatus: InventoryStatus
   productVariant?: {
-    id: ID_Input
+    id: string
     total: number
     reserved: number
     reservable: number

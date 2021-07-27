@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { Category } from "@prisma/client"
-import { ID_Input, PhysicalProduct, ProductVariant } from "@prisma1/index"
+import { Category, PhysicalProduct, ProductVariant } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head, uniqBy } from "lodash"
 

@@ -1,14 +1,14 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { Injectable } from "@nestjs/common"
 import {
   Brand,
   InventoryStatus,
   PhysicalProductOffloadMethod,
   Product,
   WarehouseLocationType,
-} from "@app/prisma"
-import { Injectable } from "@nestjs/common"
+} from "@prisma/client"
 import {
   AdminActionLog,
   PhysicalProduct,
