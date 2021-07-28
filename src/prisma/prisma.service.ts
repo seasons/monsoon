@@ -4,7 +4,7 @@ import { PrismaSelect } from "@paljs/plugins"
 import { PrismaClient } from "@prisma/client"
 import { lowerFirst } from "lodash"
 
-export type SmartClient = Omit<
+export type SmartPrismaClient = Omit<
   PrismaClient,
   "$executeRaw" | "$queryRaw" | "$on" | "$connect" | "$disconnect"
 >
@@ -30,10 +30,10 @@ const writeClient = new PrismaClient({
 const generateSmartClient = (
   readClient: PrismaClient,
   writeClient: PrismaClient
-): SmartClient => {
+): SmartPrismaClient => {
   const smartClient = {
     $transaction: args => writeClient.$transaction(args),
-  } as SmartClient
+  } as SmartPrismaClient
 
   const datamodel = new PrismaSelect(null).dataModel
   datamodel.forEach(model => {
