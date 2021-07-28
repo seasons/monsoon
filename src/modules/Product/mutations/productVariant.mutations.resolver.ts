@@ -27,7 +27,7 @@ export class ProductVariantMutationsResolver {
   ) {
     if (!customer) throw new Error("Missing customer from context")
 
-    const existingNotification = await this.prisma.client2.productNotification.findFirst(
+    const existingNotification = await this.prisma.client.productNotification.findFirst(
       {
         where: {
           customer: {
@@ -60,7 +60,7 @@ export class ProductVariantMutationsResolver {
       },
     }
 
-    return await this.prisma.client2.productNotification.upsert({
+    return await this.prisma.client.productNotification.upsert({
       where: { id: existingNotification?.id || "" },
       create: data,
       update: data,
@@ -82,7 +82,7 @@ export class ProductVariantMutationsResolver {
     @Args() { productID: productSlug, inputs },
     @Select() select
   ) {
-    const product = (await this.prisma.client2.product.findUnique({
+    const product = (await this.prisma.client.product.findUnique({
       where: { slug: productSlug },
       select: {
         id: true,
@@ -119,11 +119,11 @@ export class ProductVariantMutationsResolver {
         measurementType,
       })
     })
-    const results = await this.prisma.client2.$transaction(
+    const results = await this.prisma.client.$transaction(
       variantPromises.flat()
     )
     const createdVariants = results.filter(a => !!a.sku)
-    const variantsToReturn = await this.prisma.client2.productVariant.findMany({
+    const variantsToReturn = await this.prisma.client.productVariant.findMany({
       where: { sku: { in: createdVariants.map(a => a.sku) } },
       select,
     })
@@ -136,7 +136,7 @@ export class ProductVariantMutationsResolver {
     @Select() select
   ) {
     await this.productVariantService.addPhysicalProducts(variantID, count)
-    return await this.prisma.client2.productVariant.findUnique({
+    return await this.prisma.client.productVariant.findUnique({
       where: { id: variantID },
       select,
     })

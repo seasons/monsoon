@@ -136,7 +136,7 @@ export class UtilsService {
   }
 
   async getPrismaLocationFromSlug(slug: string): Promise<Location> {
-    const prismaLocation = await this.prisma.client2.location.findUnique({
+    const prismaLocation = await this.prisma.client.location.findUnique({
       where: { slug },
     })
     if (!prismaLocation) {
@@ -453,7 +453,7 @@ export class UtilsService {
   }
 
   async getSyncTimingsRecord(type: SyncTimingType) {
-    const syncTiming = await this.prisma.client2.syncTiming.findFirst({
+    const syncTiming = await this.prisma.client.syncTiming.findFirst({
       where: { type },
       orderBy: { createdAt: "desc" },
     })

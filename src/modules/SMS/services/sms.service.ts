@@ -59,7 +59,7 @@ export class SMSService {
       .services(process.env.TWILIO_SERVICE_SID)
       .verifications.create({ to: e164PhoneNumber, channel: "sms" })
 
-    await this.prisma.client2.user.update({
+    await this.prisma.client.user.update({
       data: {
         verificationStatus: this.twilioUtils.twilioToPrismaVerificationStatus(
           verification.status
@@ -71,7 +71,7 @@ export class SMSService {
       },
     })
 
-    const customerDetail = await this.prisma.client2.customerDetail.findFirst({
+    const customerDetail = await this.prisma.client.customerDetail.findFirst({
       where: {
         customer: {
           id: customer.id,
@@ -79,7 +79,7 @@ export class SMSService {
       },
     })
 
-    await this.prisma.client2.customerDetail.update({
+    await this.prisma.client.customerDetail.update({
       where: { id: customerDetail.id },
       data: {
         phoneNumber: e164PhoneNumber,
@@ -95,7 +95,7 @@ export class SMSService {
     @Customer() customer,
     @User() user
   ): Promise<UserVerificationStatus> {
-    const detail = await this.prisma.client2.customerDetail.findFirst({
+    const detail = await this.prisma.client.customerDetail.findFirst({
       where: {
         customer: {
           id: customer.id,
@@ -130,7 +130,7 @@ export class SMSService {
       check.status
     )
 
-    await this.prisma.client2.user.update({
+    await this.prisma.client.user.update({
       data: {
         verificationStatus: newStatus,
       },
@@ -181,7 +181,7 @@ export class SMSService {
       )
     }
 
-    const cust = await this.prisma.client2.customer.findFirst({
+    const cust = await this.prisma.client.customer.findFirst({
       where: { user: to },
       select: {
         detail: { select: { phoneNumber: true } },
@@ -222,7 +222,7 @@ export class SMSService {
         this.error.captureError(new Error(errorMessage))
       }
       // Create receipt and add it to the user
-      await this.prisma.client2.user.update({
+      await this.prisma.client.user.update({
         where: to,
         data: {
           smsReceipts: {
@@ -247,7 +247,7 @@ export class SMSService {
   }
 
   async handleSMSStatusUpdate(externalId: string, status: SmsStatus) {
-    await this.prisma.client2.smsReceipt.updateMany({
+    await this.prisma.client.smsReceipt.updateMany({
       data: { status },
       where: { externalId },
     })
@@ -328,7 +328,7 @@ export class SMSService {
                   )}.`
                 )
                 sendCorrespondingEmailFunc = async () => {
-                  const custWithUpdatedResumeDate = await this.prisma.client2.customer.findUnique(
+                  const custWithUpdatedResumeDate = await this.prisma.client.customer.findUnique(
                     {
                       where: { id: smsCust.id },
                       select: {
@@ -460,7 +460,7 @@ export class SMSService {
     smsId: SMSID,
     select: Prisma.CustomerSelect
   ) {
-    return await this.prisma.client2.customer.findFirst({
+    return await this.prisma.client.customer.findFirst({
       where: {
         AND: [
           {

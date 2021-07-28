@@ -25,7 +25,7 @@ export class UserQueriesResolver {
     })
     select
   ) {
-    return await this.prisma.client2.user.findUnique({
+    return await this.prisma.client.user.findUnique({
       select,
       where: { ...args.where },
     })

@@ -13,9 +13,9 @@ export class UserMutationsResolver {
 
   @Mutation()
   async unsubscribeUserFromEmails(@Args() { id }) {
-    const u = await this.prisma.client2.user.findUnique({ where: { id } })
+    const u = await this.prisma.client.user.findUnique({ where: { id } })
     if (!!u) {
-      await this.prisma.client2.user.update({
+      await this.prisma.client.user.update({
         where: { id },
         data: { sendSystemEmails: false },
       })
@@ -33,14 +33,14 @@ export class UserMutationsResolver {
       throw new Error("Missing user from context")
     }
 
-    const memberWithPushNotification = await this.prisma.client2.user.findUnique(
+    const memberWithPushNotification = await this.prisma.client.user.findUnique(
       {
         where: { id: user.id },
         select: { id: true, pushNotification: { select: { id: true } } },
       }
     )
 
-    return await this.prisma.client2.userPushNotification.update({
+    return await this.prisma.client.userPushNotification.update({
       where: {
         id: memberWithPushNotification.pushNotification.id,
       },
@@ -51,7 +51,7 @@ export class UserMutationsResolver {
 
   @Mutation()
   async updateUser(@Args() { data, where }, @Select() select) {
-    return await this.prisma.client2.user.update({
+    return await this.prisma.client.user.update({
       where,
       data,
       select,
@@ -60,7 +60,7 @@ export class UserMutationsResolver {
 
   @Mutation()
   async createInterestedUser(@Args() { email, zipcode }, @Info() info) {
-    const interestUser = await this.prisma.client2.interestedUser.create({
+    const interestUser = await this.prisma.client.interestedUser.create({
       data: {
         email,
         zipcode,

@@ -54,7 +54,7 @@ export class ReservationFeedbackService {
     const responsesArray = Object.keys(responses)
     for (const key of responsesArray) {
       promises.push(
-        this.prisma.client2.productVariantFeedbackQuestion.update({
+        this.prisma.client.productVariantFeedbackQuestion.update({
           where: {
             id: key,
           },
@@ -66,7 +66,7 @@ export class ReservationFeedbackService {
     }
 
     promises.push(
-      this.prisma.client2.reservationFeedback.update({
+      this.prisma.client.reservationFeedback.update({
         where: {
           id: reservationFeedbackID,
         },
@@ -77,7 +77,7 @@ export class ReservationFeedbackService {
     )
 
     promises.push(
-      this.prisma.client2.productVariantFeedback.update({
+      this.prisma.client.productVariantFeedback.update({
         where: {
           id: productReservationID,
         },
@@ -85,7 +85,7 @@ export class ReservationFeedbackService {
       })
     )
 
-    const result = await this.prisma.client2.$transaction(promises)
+    const result = await this.prisma.client.$transaction(promises)
 
     const feedback = result.pop()
 
@@ -94,7 +94,7 @@ export class ReservationFeedbackService {
 
   async getReservationFeedback(user, select) {
     if (!user) return null
-    const feedback = await this.prisma.client2.reservationFeedback.findFirst({
+    const feedback = await this.prisma.client.reservationFeedback.findFirst({
       where: {
         user: { id: user.id },
         AND: {
@@ -112,7 +112,7 @@ export class ReservationFeedbackService {
   }
 
   async updateReservationFeedback(feedbackID, input) {
-    const feedback = await this.prisma.client2.reservationFeedback.update({
+    const feedback = await this.prisma.client.reservationFeedback.update({
       where: { id: feedbackID },
       data: input,
       select: RESERVATION_FEEDBACK_SELECT,

@@ -7,7 +7,7 @@ export class CustomerUtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async nextFreeSwapDate(customerID: string): Promise<string> {
-    const customer = await this.prisma.client2.customer.findUnique({
+    const customer = await this.prisma.client.customer.findUnique({
       where: { id: customerID },
       select: {
         reservations: {

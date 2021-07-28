@@ -81,7 +81,7 @@ export class ShippoController {
 
     switch (event) {
       case ShippoEventType.TrackUpdated:
-        const reservation = await this.prisma.client2.reservation.findFirst({
+        const reservation = await this.prisma.client.reservation.findFirst({
           where: {
             OR: [
               { sentPackage: { transactionID } },
@@ -121,13 +121,13 @@ export class ShippoController {
           this.logger.error(e)
         }
 
-        const updatedPackage = await this.prisma.client2.package.findFirst({
+        const updatedPackage = await this.prisma.client.package.findFirst({
           where: {
             transactionID,
           },
         })
 
-        packageTransitEvent = await this.prisma.client2.packageTransitEvent.create(
+        packageTransitEvent = await this.prisma.client.packageTransitEvent.create(
           {
             data: {
               status,
@@ -139,7 +139,7 @@ export class ShippoController {
         )
 
         if (updatedPackage) {
-          await this.prisma.client2.package.update({
+          await this.prisma.client.package.update({
             where: {
               id: updatedPackage.id,
             },
@@ -153,7 +153,7 @@ export class ShippoController {
           })
         }
 
-        await this.prisma.client2.reservation.update({
+        await this.prisma.client.reservation.update({
           where: { id: reservation.id },
           data: {
             status: reservationStatus,
@@ -193,7 +193,7 @@ export class ShippoController {
     phase: ReservationPhase
   ) {
     if (reservationStatus === "Delivered") {
-      const reservationWithData = await this.prisma.client2.reservation.findFirst(
+      const reservationWithData = await this.prisma.client.reservation.findFirst(
         {
           where: { id: reservation.id },
           select: {
@@ -206,7 +206,7 @@ export class ShippoController {
 
       let location
       if (phase === "BusinessToCustomer") {
-        const customerWithShippingAddress = await this.prisma.client2.customer.findUnique(
+        const customerWithShippingAddress = await this.prisma.client.customer.findUnique(
           {
             where: { id: reservationWithData.customer.id },
             select: {
@@ -227,7 +227,7 @@ export class ShippoController {
 
         location = customerWithShippingAddress.detail.shippingAddress
       } else if (phase === "CustomerToBusiness") {
-        location = await this.prisma.client2.location.findFirst({
+        location = await this.prisma.client.location.findFirst({
           where: {
             slug:
               process.env.SEASONS_CLEANER_LOCATION_SLUG ||
@@ -240,7 +240,7 @@ export class ShippoController {
 
       reservationWithData.products?.forEach(async product => {
         promises.push(
-          this.prisma.client2.physicalProduct.update({
+          this.prisma.client.physicalProduct.update({
             where: { id: product.id },
             data: {
               location: {
@@ -254,7 +254,7 @@ export class ShippoController {
       })
 
       promises.push(
-        this.prisma.client2.reservation.update({
+        this.prisma.client.reservation.update({
           where: { id: reservation.id },
           data: {
             phase,
@@ -267,7 +267,7 @@ export class ShippoController {
         })
       )
 
-      await this.prisma.client2.$transaction(promises)
+      await this.prisma.client.$transaction(promises)
     }
   }
 
@@ -276,7 +276,7 @@ export class ShippoController {
     reservation
   ) {
     const user = (
-      await this.prisma.client2.reservation.findUnique({
+      await this.prisma.client.reservation.findUnique({
         where: { id: reservation.id },
         select: {
           id: true,
@@ -288,7 +288,7 @@ export class ShippoController {
     const pushNotifID = `Reservation${status}` as PushNotificationID
 
     if (["Shipped", "Delivered"].includes(status)) {
-      const receipt = await this.prisma.client2.pushNotificationReceipt.findFirst(
+      const receipt = await this.prisma.client.pushNotificationReceipt.findFirst(
         {
           where: {
             users: { every: { id: user.id } },

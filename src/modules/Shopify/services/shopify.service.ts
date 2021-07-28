@@ -125,7 +125,7 @@ export class ShopifyService {
       params: { code: authorizationCode, shop, state: nonce, timestamp },
     })
 
-    const shopifyShop = await this.prisma.client2.shopifyShop.findFirst({
+    const shopifyShop = await this.prisma.client.shopifyShop.findFirst({
       where: {
         shopName: this.getShopName(shop),
       },
@@ -717,7 +717,7 @@ export class ShopifyService {
             productVariant?.product?.images.edges?.[0]?.node?.transformedSrc
 
           const image = !!imageSrc
-            ? await this.prisma.client2.image.upsert({
+            ? await this.prisma.client.image.upsert({
                 where: {
                   url: imageSrc,
                 },
@@ -765,15 +765,13 @@ export class ShopifyService {
               .toISO(),
           }
 
-          const result = await this.prisma.client2.shopifyProductVariant.upsert(
-            {
-              where: {
-                externalId: productVariant.id,
-              },
-              create: data,
-              update: data,
-            }
-          )
+          const result = await this.prisma.client.shopifyProductVariant.upsert({
+            where: {
+              externalId: productVariant.id,
+            },
+            create: data,
+            update: data,
+          })
           shopifyProductVariantResults.push(result)
         } catch (e) {
           console.error(
@@ -854,7 +852,7 @@ export class ShopifyService {
         seconds: PRODUCT_VARIANT_CACHE_SECONDS,
       })
       .toISO()
-    return this.prisma.client2.shopifyProductVariant.update({
+    return this.prisma.client.shopifyProductVariant.update({
       where: { id: shopifyProductVariantInternalId },
       data: {
         externalId: externalShopifyProductVariant.externalId,

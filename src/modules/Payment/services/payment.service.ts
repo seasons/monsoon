@@ -67,7 +67,7 @@ export class PaymentService {
   ) {}
 
   async addEarlySwapCharge(customerID: string) {
-    const customer = await this.prisma.client2.customer.findUnique({
+    const customer = await this.prisma.client.customer.findUnique({
       where: {
         id: customerID,
       },
@@ -96,7 +96,7 @@ export class PaymentService {
 
   async addShippingCharge(customer, shippingCode) {
     try {
-      const customerWithShippingData = await this.prisma.client2.customer.findUnique(
+      const customerWithShippingData = await this.prisma.client.customer.findUnique(
         {
           where: {
             id: customer.id,
@@ -162,7 +162,7 @@ export class PaymentService {
     let billingAddress = null
 
     if (customer) {
-      const customerWithBillingInfo = await this.prisma.client2.customer.findFirst(
+      const customerWithBillingInfo = await this.prisma.client.customer.findFirst(
         {
           where: { id: customer.id },
           select: {
@@ -231,7 +231,7 @@ export class PaymentService {
 
   async changeCustomerPlan(planID, customer) {
     try {
-      const customerWithMembership = await this.prisma.client2.customer.findUnique(
+      const customerWithMembership = await this.prisma.client.customer.findUnique(
         {
           where: { id: customer.id },
           select: {
@@ -257,7 +257,7 @@ export class PaymentService {
         })
         .request()
 
-      return await this.prisma.client2.customerMembership.update({
+      return await this.prisma.client.customerMembership.update({
         where: { id: membership.id },
         data: {
           plan: { connect: { planID } },
@@ -280,7 +280,7 @@ export class PaymentService {
     customer,
     application
   ) {
-    const customerWithUserData = await this.prisma.client2.customer.findUnique({
+    const customerWithUserData = await this.prisma.client.customer.findUnique({
       where: {
         id: customer.id,
       },
@@ -391,7 +391,7 @@ export class PaymentService {
     application,
     shippingAddress
   ) {
-    const customerWithUserData = await this.prisma.client2.customer.findUnique({
+    const customerWithUserData = await this.prisma.client.customer.findUnique({
       where: {
         id: customer.id,
       },
@@ -501,7 +501,7 @@ export class PaymentService {
     pauseType: PauseType = "WithoutItems",
     reasonID
   ) {
-    const customerWithMembership = await this.prisma.client2.customer.findUnique(
+    const customerWithMembership = await this.prisma.client.customer.findUnique(
       {
         where: { id: customer.id },
         select: {
@@ -552,7 +552,7 @@ export class PaymentService {
         resumeDateISO = DateTime.fromISO(termEnd).plus({ months: 1 }).toISO()
       }
 
-      return await this.prisma.client2.pauseRequest.create({
+      return await this.prisma.client.pauseRequest.create({
         data: {
           membership: {
             connect: { id: customerWithMembership?.membership?.id },
@@ -575,7 +575,7 @@ export class PaymentService {
 
   async removeScheduledPause(subscriptionId, customer) {
     try {
-      const pauseRequest = await this.prisma.client2.pauseRequest.findFirst({
+      const pauseRequest = await this.prisma.client.pauseRequest.findFirst({
         where: {
           membership: {
             customer: {
@@ -597,7 +597,7 @@ export class PaymentService {
           .request()
       }
 
-      return await this.prisma.client2.pauseRequest.update({
+      return await this.prisma.client.pauseRequest.update({
         where: { id: pauseRequest.id },
         data: { pausePending: false },
       })
@@ -727,7 +727,7 @@ export class PaymentService {
       last4,
     } = card
 
-    const customer = await this.prisma.client2.customer.findFirst({
+    const customer = await this.prisma.client.customer.findFirst({
       where: { user: { id: userID } },
     })
 
@@ -828,7 +828,7 @@ export class PaymentService {
     giftID?: string,
     shippingAddress?: any
   ) {
-    const customer = await this.prisma.client2.customer.findFirst({
+    const customer = await this.prisma.client.customer.findFirst({
       where: { user: { id: userID } },
       select: {
         id: true,
@@ -848,7 +848,7 @@ export class PaymentService {
       chargebeeCustomer,
     })
 
-    await this.prisma.client2.customer.update({
+    await this.prisma.client.customer.update({
       where: { id: customer.id },
       data: updateData,
     })

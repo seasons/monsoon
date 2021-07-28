@@ -55,7 +55,7 @@ export class EmailUtilsService {
   })
 
   async createGridPayload(products: { id: string }[]) {
-    const productsWithData = await this.prisma.client2.product.findMany({
+    const productsWithData = await this.prisma.client.product.findMany({
       where: { id: { in: products.map(a => a.id) } },
       select: this.productSelectForGridData,
     })
@@ -65,7 +65,7 @@ export class EmailUtilsService {
   async getXLatestProducts(
     numProducts: number
   ): Promise<MonsoonProductGridItem[]> {
-    const xLatestProducts = await this.prisma.client2.product.findMany({
+    const xLatestProducts = await this.prisma.client.product.findMany({
       where: {
         AND: [{ status: "Available" }, { category: { slug: { not: "tees" } } }],
       },
@@ -87,7 +87,7 @@ export class EmailUtilsService {
     const productsWithoutTees = products.filter(a => a.category.slug !== "tees")
 
     // Filter out from products we've already emailed to the user
-    const customer = await this.prisma.client2.customer.findFirst({
+    const customer = await this.prisma.client.customer.findFirst({
       where: { user: { id: user.id } },
       select: { emailedProducts: { select: this.productSelectForGridData } },
     })
@@ -130,7 +130,7 @@ export class EmailUtilsService {
       lineItemValue: number // total in cents
     }[]
   > {
-    const orderWithLineItems = await this.prisma.client2.order.findUnique({
+    const orderWithLineItems = await this.prisma.client.order.findUnique({
       where: { id: order.id },
       select: {
         id: true,
@@ -145,7 +145,7 @@ export class EmailUtilsService {
       },
     })
 
-    const physicalProductsInOrder = await this.prisma.client2.physicalProduct.findMany(
+    const physicalProductsInOrder = await this.prisma.client.physicalProduct.findMany(
       {
         where: {
           id: {

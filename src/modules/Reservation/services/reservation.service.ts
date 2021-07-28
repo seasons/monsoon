@@ -78,7 +78,7 @@ export class ReservationService {
 
     const promises = []
 
-    const customerWithPlanItemCount = await this.prisma.client2.customer.findUnique(
+    const customerWithPlanItemCount = await this.prisma.client.customer.findUnique(
       {
         where: { id: customer.id },
         select: {
@@ -132,7 +132,7 @@ export class ReservationService {
     promises.push(productVariantsCountsUpdatePromises)
 
     promises.push(
-      this.prisma.client2.physicalProduct.updateMany({
+      this.prisma.client.physicalProduct.updateMany({
         where: { id: { in: physicalProductsBeingReserved.map(a => a.id) } },
         data: { inventoryStatus: "Reserved" },
       })
@@ -149,7 +149,7 @@ export class ReservationService {
     )
 
     const bagItemsToUpdateIds = (
-      await this.prisma.client2.bagItem.findMany({
+      await this.prisma.client.bagItem.findMany({
         where: {
           productVariant: {
             id: {
@@ -164,7 +164,7 @@ export class ReservationService {
     ).map(a => a.id)
 
     promises.push(
-      this.prisma.client2.bagItem.updateMany({
+      this.prisma.client.bagItem.updateMany({
         where: { id: { in: bagItemsToUpdateIds } },
         data: {
           status: "Reserved",
@@ -213,7 +213,7 @@ export class ReservationService {
       heldPhysicalProducts,
       shippingOptionID
     )
-    const reservationPromise = this.prisma.client2.reservation.create({
+    const reservationPromise = this.prisma.client.reservation.create({
       data: reservationData,
       select: {
         ...select,
@@ -224,7 +224,7 @@ export class ReservationService {
     promises.push(reservationPromise)
 
     // Resolve all prisma operation in one transaction
-    const result = await this.prisma.client2.$transaction(promises.flat())
+    const result = await this.prisma.client.$transaction(promises.flat())
 
     const reservation = result.pop()
 
@@ -261,7 +261,7 @@ export class ReservationService {
 
   async addLineItemsToReservation(lineItems, reservationID: string) {
     if (lineItems?.length > 0 && reservationID) {
-      await this.prisma.client2.reservation.update({
+      await this.prisma.client.reservation.update({
         where: { id: reservationID },
         data: {
           lineItems: {
@@ -306,7 +306,7 @@ export class ReservationService {
       customer
     )
 
-    await this.prisma.client2.reservation.update({
+    await this.prisma.client.reservation.update({
       data: {
         returnedProducts: { set: [] },
         returnedAt: null,
@@ -335,7 +335,7 @@ export class ReservationService {
       )
     }
 
-    await this.prisma.client2.reservation.update({
+    await this.prisma.client.reservation.update({
       data: {
         returnedProducts: {
           set: items.map(item => ({ id: item })),
@@ -349,7 +349,7 @@ export class ReservationService {
   }
 
   async removeRestockNotifications(items, customer) {
-    const restockNotifications = await this.prisma.client2.productNotification.findMany(
+    const restockNotifications = await this.prisma.client.productNotification.findMany(
       {
         where: {
           customer: {
@@ -368,7 +368,7 @@ export class ReservationService {
     )
 
     if (restockNotifications?.length > 0) {
-      return await this.prisma.client2.productNotification.updateMany({
+      return await this.prisma.client.productNotification.updateMany({
         where: { id: { in: restockNotifications.map(notif => notif.id) } },
         data: {
           shouldNotify: false,
@@ -378,7 +378,7 @@ export class ReservationService {
   }
 
   async getReservation(reservationNumber: number) {
-    return await this.prisma.client2.reservation.findUnique({
+    return await this.prisma.client.reservation.findUnique({
       where: {
         reservationNumber,
       },
@@ -428,30 +428,28 @@ export class ReservationService {
     // Update status on physical products depending on whether
     // the item was returned, and update associated product variant counts
 
-    const physicalProducts = await this.prisma.client2.physicalProduct.findMany(
-      {
-        where: {
-          seasonsUID: {
-            in: productStates.map(p => p.productUID),
+    const physicalProducts = await this.prisma.client.physicalProduct.findMany({
+      where: {
+        seasonsUID: {
+          in: productStates.map(p => p.productUID),
+        },
+      },
+      select: {
+        id: true,
+        seasonsUID: true,
+        inventoryStatus: true,
+        productVariant: {
+          select: {
+            id: true,
+            sku: true,
+            reserved: true,
+            reservable: true,
+            nonReservable: true,
+            product: true,
           },
         },
-        select: {
-          id: true,
-          seasonsUID: true,
-          inventoryStatus: true,
-          productVariant: {
-            select: {
-              id: true,
-              sku: true,
-              reserved: true,
-              reservable: true,
-              nonReservable: true,
-              product: true,
-            },
-          },
-        },
-      }
-    )
+      },
+    })
 
     let promises = []
 
@@ -480,7 +478,7 @@ export class ReservationService {
         )
 
         promises.push(
-          this.prisma.client2.product.update({
+          this.prisma.client.product.update({
             where: {
               id: product.id,
             },
@@ -511,7 +509,7 @@ export class ReservationService {
       }
     }
 
-    const receiptPromise = this.prisma.client2.reservationReceipt.create({
+    const receiptPromise = this.prisma.client.reservationReceipt.create({
       data: {
         reservation: {
           connect: { reservationNumber },
@@ -536,7 +534,7 @@ export class ReservationService {
 
     const reservation = await this.getReservation(reservationNumber)
 
-    const prismaUser = await this.prisma.client2.user.findUnique({
+    const prismaUser = await this.prisma.client.user.findUnique({
       where: {
         email: reservation.user.email,
       },
@@ -550,7 +548,7 @@ export class ReservationService {
     })
 
     // Mark reservation as completed
-    const reservationPromise = this.prisma.client2.reservation.update({
+    const reservationPromise = this.prisma.client.reservation.update({
       where: {
         id: reservation.id,
       },
@@ -567,7 +565,7 @@ export class ReservationService {
       },
     })
 
-    const updateBagPromise = this.prisma.client2.bagItem.deleteMany({
+    const updateBagPromise = this.prisma.client.bagItem.deleteMany({
       where: {
         customer: { id: reservation.customer.id },
         saved: false,
@@ -584,7 +582,7 @@ export class ReservationService {
     const [
       reservationFeedbackPromise,
     ] = await this.createReservationFeedbacksForVariants(
-      await this.prisma.client2.productVariant.findMany({
+      await this.prisma.client.productVariant.findMany({
         where: {
           id: {
             in: returnedPhysicalProducts.map(p => (p.productVariant as any).id),
@@ -602,7 +600,7 @@ export class ReservationService {
       returnedPhysicalProducts
     )
 
-    await this.prisma.client2.$transaction([
+    await this.prisma.client.$transaction([
       ...(promises as PrismaPromise<any>[]),
       receiptPromise,
       reservationPromise,
@@ -690,7 +688,7 @@ export class ReservationService {
     where: { id: string },
     select: Prisma.ReservationSelect
   ) {
-    const reservation = await this.prisma.client2.reservation.findUnique({
+    const reservation = await this.prisma.client.reservation.findUnique({
       where,
       select: {
         id: true,
@@ -710,7 +708,7 @@ export class ReservationService {
     }
 
     let promises: any[] = [
-      this.prisma.client2.reservation.update({ data, where, select }),
+      this.prisma.client.reservation.update({ data, where, select }),
     ]
 
     // Reservation was just packed. Null out warehouse locations on attached products
@@ -724,7 +722,7 @@ export class ReservationService {
       }
       promises.push(
         ...reservation.products.map(a =>
-          this.prisma.client2.physicalProduct.update({
+          this.prisma.client.physicalProduct.update({
             where: { id: a.id },
             data: updateData,
           })
@@ -732,9 +730,7 @@ export class ReservationService {
       )
     }
 
-    const [updatedReservation] = await this.prisma.client2.$transaction(
-      promises
-    )
+    const [updatedReservation] = await this.prisma.client.$transaction(promises)
     return updatedReservation
   }
 
@@ -746,7 +742,7 @@ export class ReservationService {
     const MULTIPLE_CHOICE = "MultipleChoice"
     const variantInfos = await Promise.all(
       productVariants.map(async variant => {
-        const products = await this.prisma.client2.product.findMany({
+        const products = await this.prisma.client.product.findMany({
           where: {
             variants: {
               some: {
@@ -769,7 +765,7 @@ export class ReservationService {
     )
 
     return [
-      this.prisma.client2.reservationFeedback.create({
+      this.prisma.client.reservationFeedback.create({
         data: {
           feedbacks: {
             create: variantInfos.map(
@@ -863,7 +859,7 @@ export class ReservationService {
     productVariantIDs: string[]
     customerId: string
   }): Promise<string[]> {
-    const customerBagItems = await this.prisma.client2.bagItem.findMany({
+    const customerBagItems = await this.prisma.client.bagItem.findMany({
       where: { customer: { id: customerId }, saved: false },
       select: { status: true, productVariant: { select: { id: true } } },
     })
@@ -923,7 +919,7 @@ export class ReservationService {
     }))
 
     const customerShippingAddressRecordID = await (
-      await this.prisma.client2.customer
+      await this.prisma.client.customer
         .findUnique({ where: { id: customer.id } })
         .detail()
     ).shippingAddressId

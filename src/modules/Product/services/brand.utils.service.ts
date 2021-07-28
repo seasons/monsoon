@@ -51,7 +51,7 @@ export class BrandUtilsService {
       const title = `${data.brandCode} Logo`
 
       logoData = {
-        promise: this.prisma.client2.image.upsert({
+        promise: this.prisma.client.image.upsert({
           where: { url: imageData.url },
           create: { ...imageData, title },
           update: { ...imageData, title },

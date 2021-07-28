@@ -83,7 +83,7 @@ export class ActiveAdminInterceptor implements NestInterceptor {
           pollInterval: this.pollInterval,
         })
       }
-      await this.prisma.client2.activeAdminUser.create({
+      await this.prisma.client.activeAdminUser.create({
         data: {
           admin: { connect: { id: ctx.req.user.id } },
         },
@@ -103,7 +103,7 @@ export class ActiveAdminInterceptor implements NestInterceptor {
   }
 
   async updateLoggerBlocked() {
-    const adminActiveUsers = await this.prisma.client2.activeAdminUser.findMany()
+    const adminActiveUsers = await this.prisma.client.activeAdminUser.findMany()
 
     this.loggerBlocked = adminActiveUsers.length !== 0
   }
@@ -111,7 +111,7 @@ export class ActiveAdminInterceptor implements NestInterceptor {
   async destroyActiveAdminRecordIfNeeded(ctx: ActiveAdminInterceptorContext) {
     if (ctx.isAdminAction) {
       // Use a many so we can query by the admin field. Should only be deleting 1 record though
-      await this.prisma.client2.activeAdminUser.deleteMany()
+      await this.prisma.client.activeAdminUser.deleteMany()
     }
   }
 

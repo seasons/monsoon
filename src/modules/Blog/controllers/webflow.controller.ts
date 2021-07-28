@@ -20,7 +20,7 @@ export class WebflowController {
   async handlePost() {
     const lastPostPublished = await this.blog.getLastPost()
 
-    const lastPostStored = await this.prisma.client2.blogPost.findFirst({
+    const lastPostStored = await this.prisma.client.blogPost.findFirst({
       orderBy: {
         webflowCreatedAt: "desc",
       },
@@ -60,14 +60,14 @@ export class WebflowController {
       imageName
     )
 
-    const blogImage = await this.prisma.client2.image.upsert({
+    const blogImage = await this.prisma.client.image.upsert({
       where: { url: imageData.url },
       create: { ...imageData, title, alt },
       update: { ...imageData, title, alt },
     })
 
     if (lastPostPublished.id !== lastPostStored.webflowId) {
-      await this.prisma.client2.blogPost.create({
+      await this.prisma.client.blogPost.create({
         data: {
           ...this.queryUtils.prismaOneToPrismaTwoMutateData(
             blogData,
@@ -79,7 +79,7 @@ export class WebflowController {
         },
       })
     } else if (lastPostPublished.id === lastPostStored.webflowId) {
-      await this.prisma.client2.blogPost.update({
+      await this.prisma.client.blogPost.update({
         where: { id: lastPostStored.id },
         data: {
           ...this.queryUtils.prismaOneToPrismaTwoMutateData(

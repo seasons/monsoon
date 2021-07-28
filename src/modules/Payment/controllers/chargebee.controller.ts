@@ -55,7 +55,7 @@ export class ChargebeeController {
 
   private async chargebeePaymentSucceeded(content: any) {
     const { subscription, customer, transaction } = content
-    const custWithData = await this.prisma.client2.customer.findFirst({
+    const custWithData = await this.prisma.client.customer.findFirst({
       where: { user: { id: customer.id } },
       select: {
         id: true,
@@ -80,7 +80,7 @@ export class ChargebeeController {
       let newStatus: CustomerStatus = subscription.plan_id.includes("pause")
         ? "Paused"
         : "Active"
-      await this.prisma.client2.customer.update({
+      await this.prisma.client.customer.update({
         where: { id: custWithData.id },
         data: { status: newStatus },
       })
@@ -121,7 +121,7 @@ export class ChargebeeController {
     }
 
     const userId = customer?.id
-    const cust = await this.prisma.client2.customer.findFirst({
+    const cust = await this.prisma.client.customer.findFirst({
       where: { user: { id: userId } },
       select: {
         id: true,
@@ -131,7 +131,7 @@ export class ChargebeeController {
     })
     if (!!cust) {
       if (this.statements.isPayingCustomer(cust)) {
-        await this.prisma.client2.customer.update({
+        await this.prisma.client.customer.update({
           where: { id: cust.id },
           data: { status: "PaymentFailed" },
         })
@@ -153,7 +153,7 @@ export class ChargebeeController {
 
     const { customer_id, plan_id } = subscription
 
-    const customerWithBillingAndUserData = await this.prisma.client2.customer.findUnique(
+    const customerWithBillingAndUserData = await this.prisma.client.customer.findUnique(
       {
         where: { id: customer.id },
         select: {

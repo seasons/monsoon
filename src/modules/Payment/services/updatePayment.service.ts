@@ -45,7 +45,7 @@ export class UpdatePaymentService {
     billing
   ) {
     try {
-      const customerWithUserData = await this.prisma.client2.customer.findUnique(
+      const customerWithUserData = await this.prisma.client.customer.findUnique(
         {
           where: { id: customer.id },
           select: {
@@ -130,7 +130,7 @@ export class UpdatePaymentService {
         )
       }
 
-      await this.prisma.client2.billingInfo.update({
+      await this.prisma.client.billingInfo.update({
         where: { id: billingInfo.id },
         data: { ...prismaBillingAddress, brand: _brand, last_digits: _last4 },
       })
@@ -369,7 +369,7 @@ export class UpdatePaymentService {
     )
 
     // Adds the customer's shipping options to their location record
-    const customerWithLocationId = await this.prisma.client2.customer.findUnique(
+    const customerWithLocationId = await this.prisma.client.customer.findUnique(
       {
         where: { id: customer.id },
         select: {
@@ -406,12 +406,12 @@ export class UpdatePaymentService {
       street2: billingStreet2,
     }
 
-    const billingInfo = await this.prisma.client2.billingInfo.findFirst({
+    const billingInfo = await this.prisma.client.billingInfo.findFirst({
       where: { customer: { id: customerID } },
     })
 
     if (billingInfo.id) {
-      await this.prisma.client2.billingInfo.update({
+      await this.prisma.client.billingInfo.update({
         where: { id: billingInfo.id },
         data: billingAddressData,
       })
@@ -427,7 +427,7 @@ export class UpdatePaymentService {
         last_name,
       } = cardInfo
 
-      const billingInfo = await this.prisma.client2.billingInfo.create({
+      const billingInfo = await this.prisma.client.billingInfo.create({
         data: {
           customer: {
             connect: {

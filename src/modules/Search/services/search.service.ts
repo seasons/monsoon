@@ -56,7 +56,7 @@ export class SearchService {
     let recentlyViewedProducts = []
     let lastPageRecentlyViewedProducts
     do {
-      lastPageRecentlyViewedProducts = await this.prisma.client2.recentlyViewedProduct.findMany(
+      lastPageRecentlyViewedProducts = await this.prisma.client.recentlyViewedProduct.findMany(
         {
           skip: recentlyViewedProducts.length,
           take: PAGE_SIZE,
@@ -83,7 +83,7 @@ export class SearchService {
   }
 
   async indexProducts(indices = [IndexKey.Default]) {
-    const products = await this.prisma.client2.product.findMany({
+    const products = await this.prisma.client.product.findMany({
       select: {
         id: true,
         slug: true,
@@ -178,7 +178,7 @@ export class SearchService {
   }
 
   async indexBrands(indices = [IndexKey.Default]) {
-    const brands = await this.prisma.client2.brand.findMany({
+    const brands = await this.prisma.client.brand.findMany({
       select: {
         id: true,
         brandCode: true,
@@ -247,7 +247,7 @@ export class SearchService {
   }
 
   async indexCustomers(indices = [IndexKey.Default]) {
-    const customers = await this.prisma.client2.customer.findMany({
+    const customers = await this.prisma.client.customer.findMany({
       select: {
         id: true,
         plan: true,
@@ -288,19 +288,17 @@ export class SearchService {
   }
 
   async indexPhysicalProducts(indices = [IndexKey.Default]) {
-    const physicalProducts = await this.prisma.client2.physicalProduct.findMany(
-      {
-        select: {
-          id: true,
-          seasonsUID: true,
-          inventoryStatus: true,
-          sequenceNumber: true,
-          productVariant: {
-            select: { product: { select: { name: true } } },
-          },
+    const physicalProducts = await this.prisma.client.physicalProduct.findMany({
+      select: {
+        id: true,
+        seasonsUID: true,
+        inventoryStatus: true,
+        sequenceNumber: true,
+        productVariant: {
+          select: { product: { select: { name: true } } },
         },
-      }
-    )
+      },
+    })
 
     this.logger.log(
       `Re-indexing ${physicalProducts.length} physical products...`
@@ -332,7 +330,7 @@ export class SearchService {
     indices = [IndexKey.Default],
     brandID?: string
   ) {
-    const shopifyProductVariants = await this.prisma.client2.shopifyProductVariant.findMany(
+    const shopifyProductVariants = await this.prisma.client.shopifyProductVariant.findMany(
       {
         where: {
           brand: brandID ? { id: brandID } : { id: { not: undefined } },

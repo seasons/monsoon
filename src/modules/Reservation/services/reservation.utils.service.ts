@@ -27,7 +27,7 @@ export class ReservationUtilsService {
   }
 
   async getLatestReservation(customer: Customer, status = undefined) {
-    const latestReservation = await this.prisma.client2.reservation.findFirst({
+    const latestReservation = await this.prisma.client.reservation.findFirst({
       where: {
         customer: {
           id: customer.id,
@@ -80,7 +80,7 @@ export class ReservationUtilsService {
 
     if (prismaReservation.returnedPackage != null) {
       return [
-        this.prisma.client2.package.update({
+        this.prisma.client.package.update({
           data: {
             items: { connect: returnedPhysicalProductIDs },
             weight,
@@ -90,7 +90,7 @@ export class ReservationUtilsService {
       ]
     } else {
       return [
-        (this.prisma.client2.reservation.update({
+        (this.prisma.client.reservation.update({
           data: {
             returnedPackage: {
               update: {
@@ -126,7 +126,7 @@ export class ReservationUtilsService {
     let foundUnique = false
     while (!foundUnique) {
       reservationNumber = Math.floor(Math.random() * 900000000) + 100000000
-      const reservationWithThatNumber = await this.prisma.client2.reservation.findUnique(
+      const reservationWithThatNumber = await this.prisma.client.reservation.findUnique(
         {
           where: {
             reservationNumber,

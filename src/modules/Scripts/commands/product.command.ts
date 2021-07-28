@@ -31,7 +31,7 @@ export class ProductCommands {
       moduleRef: this.moduleRef,
     })
 
-    const reservableProductVariants = await this.prisma.client2.productVariant.findMany(
+    const reservableProductVariants = await this.prisma.client.productVariant.findMany(
       {
         where: {
           reservable: { gt: 0 },

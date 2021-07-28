@@ -21,7 +21,7 @@ export class CollectionFieldsResolver {
     })
     select
   ) {
-    const categoriesWithProducts = await this.prisma.client2.collection.findUnique(
+    const categoriesWithProducts = await this.prisma.client.collection.findUnique(
       {
         where: { id: collection.id },
         select: { products: { select: { id: true } } },

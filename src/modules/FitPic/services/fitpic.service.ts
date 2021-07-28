@@ -43,7 +43,7 @@ export class FitPicService {
     })
     const imgixUrl = imageData.url.replace(S3_BASE, IMGIX_BASE)
 
-    const fitPic = await this.prisma.client2.fitPic.create({
+    const fitPic = await this.prisma.client.fitPic.create({
       data: {
         user: {
           connect: { id: user.id },
@@ -58,7 +58,7 @@ export class FitPicService {
       },
     })
 
-    await this.prisma.client2.user.update({
+    await this.prisma.client.user.update({
       data: {
         fitPics: { connect: [{ id: fitPic.id }] },
       },
@@ -73,7 +73,7 @@ export class FitPicService {
   }
 
   async reportFitPic({ id }: { id: string }, user: User) {
-    const fitPic = await this.prisma.client2.fitPic.findFirst({
+    const fitPic = await this.prisma.client.fitPic.findFirst({
       where: {
         id,
       },
@@ -81,7 +81,7 @@ export class FitPicService {
     if (!fitPic) {
       throw new Error(`There exists no fit pic with id ${id}`)
     }
-    await this.prisma.client2.fitPicReport.create({
+    await this.prisma.client.fitPicReport.create({
       data: {
         reporter: { connect: { id: user.id } },
         reported: { connect: { id } },
@@ -99,7 +99,7 @@ export class FitPicService {
   }) {
     // FitPicUpdateInput
     const oldStatus = (
-      await this.prisma.client2.fitPic.findFirst({
+      await this.prisma.client.fitPic.findFirst({
         where: {
           id,
         },
@@ -107,7 +107,7 @@ export class FitPicService {
     ).status
 
     // update fit pic and get submitter email
-    const submitter = await this.prisma.client2.fitPic.update({
+    const submitter = await this.prisma.client.fitPic.update({
       data,
       where: { id },
       select: {
@@ -142,7 +142,7 @@ export class FitPicService {
     instagramHandle: string
     customer: Customer
   }) {
-    const customerDetail = await this.prisma.client2.customer.findFirst({
+    const customerDetail = await this.prisma.client.customer.findFirst({
       where: { id: customer.id },
       select: {
         detailId: true,
@@ -150,7 +150,7 @@ export class FitPicService {
     })
     const customerDetailID = customerDetail.detailId
 
-    return await this.prisma.client2.customerDetail.update({
+    return await this.prisma.client.customerDetail.update({
       data: { instagramHandle },
       where: { id: customerDetailID },
     })
@@ -183,7 +183,7 @@ export class FitPicService {
         },
       }
     } else {
-      const customer = await this.prisma.client2.customer.findUnique({
+      const customer = await this.prisma.client.customer.findUnique({
         where: { id: forCustomer.id },
         select: {
           detail: {

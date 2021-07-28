@@ -29,7 +29,7 @@ export class FitPicMutationsResolver {
 
   @Mutation()
   async deleteFitPic(@Args() { id }: { id: string }) {
-    await this.prisma.client2.fitPic.delete({ where: { id } })
+    await this.prisma.client.fitPic.delete({ where: { id } })
     // delete image from s3?
     return true
   }
@@ -38,7 +38,7 @@ export class FitPicMutationsResolver {
   async updateFitPicReport(
     @Args() { id, data }: { id: string; data: Prisma.FitPicReportUpdateInput }
   ) {
-    await this.prisma.client2.fitPicReport.update({
+    await this.prisma.client.fitPicReport.update({
       data,
       where: { id },
     })

@@ -17,7 +17,7 @@ export class LogsScheduledJobs {
 
   @Cron(CronExpression.EVERY_HOUR)
   async interpretPhysicalProductLogs() {
-    let logsToInterpret = await this.prisma.client2.adminActionLog.findMany({
+    let logsToInterpret = await this.prisma.client.adminActionLog.findMany({
       where: {
         AND: [{ tableName: "PhysicalProduct" }, { interpretedAt: null }],
       },
@@ -29,7 +29,7 @@ export class LogsScheduledJobs {
       .map(a => a.changedFields)
       .filter(b => b["warehouseLocation"] != null)
       .map(c => c["warehouseLocation"])
-    let allReferencedWarehouseLocations = await this.prisma.client2.warehouseLocation.findMany(
+    let allReferencedWarehouseLocations = await this.prisma.client.warehouseLocation.findMany(
       {
         where: { id: { in: allReferencedWarehouseLocationIDs } },
         select: { id: true, barcode: true },
@@ -38,7 +38,7 @@ export class LogsScheduledJobs {
 
     const allPhysProdIDs = logsToInterpret.map(a => a.entityId)
 
-    const allRelevantReservations = await this.prisma.client2.reservation.findMany(
+    const allRelevantReservations = await this.prisma.client.reservation.findMany(
       {
         where: { products: { some: { id: { in: allPhysProdIDs } } } },
         select: {
@@ -89,10 +89,10 @@ export class LogsScheduledJobs {
         .map(a => createInterpretationsPayloads[a.actionId])
         .filter(b => !!b)
       try {
-        await this.prisma.client2.adminActionLogInterpretation.createMany({
+        await this.prisma.client.adminActionLogInterpretation.createMany({
           data: createManyPayload,
         })
-        await this.prisma.client2.adminActionLog.updateMany({
+        await this.prisma.client.adminActionLog.updateMany({
           where: { actionId: { in: batch.map(a => a.actionId) } },
           data: { interpretedAt: new Date() },
         })
@@ -103,11 +103,11 @@ export class LogsScheduledJobs {
           try {
             const payload = createInterpretationsPayloads[log.actionId]
             if (!!payload) {
-              await this.prisma.client2.adminActionLogInterpretation.create({
+              await this.prisma.client.adminActionLogInterpretation.create({
                 data: payload,
               })
             }
-            await this.prisma.client2.adminActionLog.update({
+            await this.prisma.client.adminActionLog.update({
               where: { actionId: log.actionId },
               data: { interpretedAt: new Date() },
             })

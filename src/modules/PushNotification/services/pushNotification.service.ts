@@ -57,7 +57,7 @@ export class PushNotificationService {
     )
 
     // // Create the receipt
-    let usersToUpdate = await this.prisma.client2.user.findMany({
+    let usersToUpdate = await this.prisma.client.user.findMany({
       where: {
         pushNotification: {
           AND: [
@@ -88,7 +88,7 @@ export class PushNotificationService {
       )
     }
 
-    const receipt = await this.prisma.client2.pushNotificationReceipt.create({
+    const receipt = await this.prisma.client.pushNotificationReceipt.create({
       data: {
         ...receiptPayload,
         interest: targetInterest,
@@ -99,7 +99,7 @@ export class PushNotificationService {
 
     // Update user histories
     const updates = usersToUpdate.map(a =>
-      this.prisma.client2.user.update({
+      this.prisma.client.user.update({
         where: { id: a.id },
         data: {
           pushNotification: {
@@ -109,7 +109,7 @@ export class PushNotificationService {
       })
     )
 
-    await this.prisma.client2.$transaction(updates)
+    await this.prisma.client.$transaction(updates)
 
     return receipt
   }
@@ -136,7 +136,7 @@ export class PushNotificationService {
         } = this.data.getPushNotifData(pushNotifID, vars)
 
         // Filter any emails that have received this push notification before
-        const pushNotificationReceipts = await this.prisma.client2.pushNotificationReceipt.findMany(
+        const pushNotificationReceipts = await this.prisma.client.pushNotificationReceipt.findMany(
           {
             where: {
               title: notificationPayload?.apns?.aps?.alert?.title,
@@ -167,7 +167,7 @@ export class PushNotificationService {
           notificationPayload as any
         )
 
-        const receipt = await this.prisma.client2.pushNotificationReceipt.create(
+        const receipt = await this.prisma.client.pushNotificationReceipt.create(
           {
             data: {
               ...receiptPayload,
@@ -182,7 +182,7 @@ export class PushNotificationService {
         for (const email of targetEmails) {
           // Update the user's history
           promises.push(
-            this.prisma.client2.user.update({
+            this.prisma.client.user.update({
               where: { email },
               data: {
                 pushNotification: {
@@ -193,7 +193,7 @@ export class PushNotificationService {
           )
         }
 
-        await this.prisma.client2.$transaction(promises)
+        await this.prisma.client.$transaction(promises)
 
         return receipt
       }
