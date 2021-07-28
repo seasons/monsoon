@@ -1,11 +1,11 @@
-import { PrismaClient } from "@prisma/client"
+import { SmartPrismaClient } from "@app/prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
 
-export function createGetUserMiddleware(prisma: PrismaClient, logger) {
+export function createGetUserMiddleware(prisma: SmartPrismaClient, logger) {
   return (req, res, next) => {
     // Get auth0 user from request
     const auth0User = req.user
@@ -40,6 +40,7 @@ export function createGetUserMiddleware(prisma: PrismaClient, logger) {
       } catch (e) {
         console.error(e)
         logger.error(e)
+        logger.setContext({ id: prismaUser.id, email: prismaUser.email })
       }
       return next()
     })

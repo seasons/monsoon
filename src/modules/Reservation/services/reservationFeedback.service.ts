@@ -54,23 +54,19 @@ export class ReservationFeedbackService {
     const responsesArray = Object.keys(responses)
     for (const key of responsesArray) {
       promises.push(
-        this.prisma.client2.productVariantFeedbackQuestion.update({
+        this.prisma.client.productVariantFeedbackQuestion.update({
           where: {
             id: key,
           },
           data: {
-            responses: this.queryUtils.createScalarListMutateInput(
-              [responses[key]],
-              key,
-              "update"
-            ),
+            responses: [responses[key]],
           },
         })
       )
     }
 
     promises.push(
-      this.prisma.client2.reservationFeedback.update({
+      this.prisma.client.reservationFeedback.update({
         where: {
           id: reservationFeedbackID,
         },
@@ -81,7 +77,7 @@ export class ReservationFeedbackService {
     )
 
     promises.push(
-      this.prisma.client2.productVariantFeedback.update({
+      this.prisma.client.productVariantFeedback.update({
         where: {
           id: productReservationID,
         },
@@ -89,19 +85,16 @@ export class ReservationFeedbackService {
       })
     )
 
-    const result = await this.prisma.client2.$transaction(promises)
+    const result = await this.prisma.client.$transaction(promises)
 
-    const feedback = this.prisma.sanitizePayload(
-      result.pop(),
-      "ProductVariantFeedback"
-    )
+    const feedback = result.pop()
 
     return feedback
   }
 
   async getReservationFeedback(user, select) {
     if (!user) return null
-    const _feedback = await this.prisma.client2.reservationFeedback.findFirst({
+    const feedback = await this.prisma.client.reservationFeedback.findFirst({
       where: {
         user: { id: user.id },
         AND: {
@@ -115,19 +108,15 @@ export class ReservationFeedbackService {
       orderBy: { createdAt: "desc" },
       select: select ?? RESERVATION_FEEDBACK_SELECT,
     })
-    const feedback = this.prisma.sanitizePayload(
-      _feedback,
-      "ReservationFeedback"
-    )
     return feedback
   }
 
   async updateReservationFeedback(feedbackID, input) {
-    const feedback = await this.prisma.client2.reservationFeedback.update({
+    const feedback = await this.prisma.client.reservationFeedback.update({
       where: { id: feedbackID },
       data: input,
       select: RESERVATION_FEEDBACK_SELECT,
     })
-    return this.prisma.sanitizePayload(feedback, "ReservationFeedback")
+    return feedback
   }
 }

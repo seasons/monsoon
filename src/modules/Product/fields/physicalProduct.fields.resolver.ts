@@ -1,7 +1,7 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import { PhysicalProduct } from "@app/prisma"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { PhysicalProduct } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"

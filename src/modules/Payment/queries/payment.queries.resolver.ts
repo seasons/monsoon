@@ -13,12 +13,10 @@ export class PaymentQueriesResolver {
     })
     args
   ) {
-    const _data = await this.prisma.client2.paymentPlan.findMany({
+    return await this.prisma.client.paymentPlan.findMany({
       ...args,
       where: { ...args.where, status: "active" },
     })
-
-    return this.prisma.sanitizePayload(_data, "PaymentPlan")
   }
 
   @Query()
@@ -29,11 +27,9 @@ export class PaymentQueriesResolver {
     })
     select
   ) {
-    const _data = await this.prisma.client2.paymentPlan.findFirst({
+    return await this.prisma.client.paymentPlan.findFirst({
       where: { ...args.where, status: "active" },
       select,
     })
-
-    return this.prisma.sanitizePayload(_data, "PaymentPlan")
   }
 }

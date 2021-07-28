@@ -73,7 +73,7 @@ export class ImageService {
       const updatedAt =
         passedOptions.updatedAt ??
         (
-          await this.prisma.client2.image.findUnique({
+          await this.prisma.client.image.findUnique({
             where: { url },
             select: { updatedAt: true },
           })
@@ -286,7 +286,7 @@ export class ImageService {
           // Thus, we need to convert it to s3 format and strip any query params as needed.
           const s3BaseURL = S3_BASE.replace(/\/$/, "") // Remove trailing slash
           const s3ImageURL = `${s3BaseURL}${url.parse(data).pathname}`
-          const prismaImagePromise = this.prisma.client2.image.upsert({
+          const prismaImagePromise = this.prisma.client.image.upsert({
             create: { url: s3ImageURL, title },
             update: { url: s3ImageURL, title },
             where: { url: s3ImageURL },
@@ -308,7 +308,7 @@ export class ImageService {
           await this.purgeS3ImageFromImgix(url)
 
           // Upsert the image with the s3 image url
-          const prismaImagePromise = this.prisma.client2.image.upsert({
+          const prismaImagePromise = this.prisma.client.image.upsert({
             create: { height, url, width, title },
             update: { height, width, title },
             where: { url },

@@ -2,10 +2,16 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { Inject, Injectable, Logger, forwardRef } from "@nestjs/common"
-import { CustomerDetail, Location, Prisma, UTMData, User } from "@prisma/client"
-import { UserPushNotificationInterestType } from "@prisma1/index"
+import {
+  CustomerDetail,
+  Location,
+  Prisma,
+  UTMData,
+  User,
+  UserPushNotificationInterestType,
+} from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
 import { defaultsDeep } from "lodash"
@@ -38,7 +44,8 @@ export class AuthService {
     private readonly email: EmailService,
     private readonly error: ErrorService,
     @Inject(forwardRef(() => PaymentService))
-    private readonly payment: PaymentService
+    private readonly payment: PaymentService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   defaultPushNotificationInterests = [
@@ -100,8 +107,11 @@ export class AuthService {
       email: email.trim(),
       firstName: firstName.trim(),
       lastName: lastName.trim(),
-      details,
       utm,
+      details: this.queryUtils.prismaOneToPrismaTwoMutateData(
+        details,
+        "CustomerDetail"
+      ),
       referrerId,
       select,
     })
@@ -154,23 +164,21 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
-    const _returnUser = await this.prisma.client2.user.findUnique({
+    const returnUser = await this.prisma.client.user.findUnique({
       where: { email },
       ...select.user,
     })
-    const returnUser = this.prisma.sanitizePayload(_returnUser, "User")
 
     if (!returnUser) {
       throw new Error(`user with email ${email} not found`)
     }
 
-    const _customer = await this.prisma.client2.customer.findFirst({
+    const customer = await this.prisma.client.customer.findFirst({
       where: {
         user: { email },
       },
       ...select.customer,
     })
-    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
     return {
       token: tokenData.access_token,
@@ -215,7 +223,7 @@ export class AuthService {
   }
 
   async getCustomerFromUserID(userID: string) {
-    return await this.prisma.client2.customer.findFirst({
+    return await this.prisma.client.customer.findFirst({
       where: {
         user: {
           id: userID,
@@ -409,18 +417,13 @@ export class AuthService {
       ...select?.user?.select,
     })
 
-    const user = await this.prisma.client2.user.create({
+    const user = await this.prisma.client.user.create({
       data: {
         auth0Id,
         email,
         firstName,
         lastName,
-        roles: {
-          create: {
-            position: 1000,
-            value: "Customer",
-          },
-        },
+        roles: ["Customer"],
         pushNotification: {
           create: {
             interests: {
@@ -465,7 +468,7 @@ export class AuthService {
 
     await this.updateCustomerWithReferrerData(user, user.customer, referrerId)
 
-    return this.prisma.sanitizePayload(user, "User")
+    return user
   }
 
   async updateCustomerWithReferrerData(user, customer, referrerId) {
@@ -475,14 +478,12 @@ export class AuthService {
     )
     let referrerIsValidCustomer = false
     if (referrerId) {
-      referrerIsValidCustomer = !!(await this.prisma.client2.customer.findFirst(
-        {
-          where: { id: referrerId },
-        }
-      ))
+      referrerIsValidCustomer = !!(await this.prisma.client.customer.findFirst({
+        where: { id: referrerId },
+      }))
     }
 
-    return await this.prisma.client2.customer.update({
+    return await this.prisma.client.customer.update({
       where: { id: customer.id },
       data: {
         referralLink: referralLink.shortUrl,
@@ -512,7 +513,7 @@ export class AuthService {
   }
 
   private async rebrandlyUsernameFromFirstname(firstName: string) {
-    const usersWithSameFirstName = await this.prisma.client2.user.findMany({
+    const usersWithSameFirstName = await this.prisma.client.user.findMany({
       where: { firstName: firstName.trim() },
     })
 

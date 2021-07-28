@@ -5,11 +5,7 @@ import {
   makeWherePrisma2Compatible,
 } from "@prisma/binding-argument-transform"
 import { Prisma } from "@prisma/client"
-import {
-  PrismaService,
-  SCALAR_LIST_FIELD_NAMES,
-  SINGLETON_RELATIONS_POSING_AS_ARRAYS,
-} from "@prisma1/prisma.service"
+import { PrismaService } from "@prisma1/prisma.service"
 import { GraphQLResolveInfo } from "graphql"
 import graphqlFields from "graphql-fields"
 import {
@@ -132,28 +128,23 @@ export class QueryUtilsService {
 
       switch (field.kind) {
         case "scalar":
+        case "enum":
           select.select[field.name] = true
           break
         case "object":
-          // If it's a scalar list, return true
-          if (SCALAR_LIST_FIELD_NAMES[modelName]?.includes(field.name)) {
-            select.select[field.name] = true
-          } else {
-            // Otherwise recurse down
+          // Recurse down
+          const includeDefaultSortToChild =
+            modelFieldsByModelName?.[field.type]?.some(
+              f => f.name === "createdAt"
+            ) && field.isList
 
-            const includeDefaultSortToChild =
-              modelFieldsByModelName?.[field.type]?.some(
-                f => f.name === "createdAt"
-              ) && field.isList
-
-            select.select[field.name] = this.fieldsToSelect(
-              fieldsToParse[field.name],
-              modelFieldsByModelName,
-              field.type,
-              includeDefaultSortToChild ? { createdAt: "desc" } : null,
-              { callType: "recursive" }
-            )
-          }
+          select.select[field.name] = this.fieldsToSelect(
+            fieldsToParse[field.name],
+            modelFieldsByModelName,
+            field.type,
+            includeDefaultSortToChild ? { createdAt: "desc" } : null,
+            { callType: "recursive" }
+          )
       }
     })
     return callType === "initial" ? select.select : select
@@ -262,15 +253,6 @@ export class QueryUtilsService {
       }
     }
 
-    const singleRelationFieldNames =
-      SINGLETON_RELATIONS_POSING_AS_ARRAYS[modelName] || []
-    singleRelationFieldNames.forEach(fieldName => {
-      const fieldInWhere = !!where[fieldName]
-      if (!!fieldInWhere) {
-        returnWhere[fieldName] = { every: where[fieldName] }
-      }
-    })
-
     return QueryUtilsService.notNullToNotUndefined(returnWhere)
   }
 
@@ -300,108 +282,56 @@ export class QueryUtilsService {
     return returnObj
   }
 
-  prismaOneToPrismaTwoMutateData(
-    prismaOneData,
-    record: { id: string } | null,
-    modelName: Prisma.ModelName,
-    type: "create" | "update"
-  ) {
-    const scalarListFieldNames = SCALAR_LIST_FIELD_NAMES[modelName]
-
-    let args = cloneDeep(prismaOneData)
+  prismaOneToPrismaTwoMutateData(prismaOneData, model: Prisma.ModelName) {
+    let prismaTwoData = cloneDeep(prismaOneData)
     const mutateKeys = Object.keys(prismaOneData)
 
-    // Translate scalar list fields
-    scalarListFieldNames.forEach(field => {
-      if (!mutateKeys.includes(field) || !args[field]) {
+    const modelFieldsByModelName = PrismaService.modelFieldsByModelName
+    mutateKeys.forEach(k => {
+      const fieldData = modelFieldsByModelName[model].find(a => a.name === k)
+      if (!fieldData) {
         return
       }
-      args[field] = this.createScalarListMutateInput(
-        args[field]["set"],
-        type === "update" ? record.id : "",
-        type
-      )
+      // If it's an empty scalar list input, e.g {styles: {}}, we need to change it
+      // to a list, e.g {styles: []}
+      if (
+        fieldData.isList &&
+        ["scalar", "enum"].includes(fieldData.kind) &&
+        isEmpty(prismaOneData[k])
+      ) {
+        prismaTwoData[k] = []
+      }
     })
-
     // Change nulls to undefined
     mutateKeys.forEach(k => {
-      if (args[k] === null) {
-        args[k] = undefined
+      if (prismaTwoData[k] === null) {
+        prismaTwoData[k] = undefined
       }
     })
 
-    return args
+    return prismaTwoData
   }
 
   async resolveFindMany<T>(
     findManyArgs,
     modelName: Prisma.ModelName
   ): Promise<T[]> {
-    const modelClient = this.prisma.client2[lowerFirst(modelName)]
+    const modelClient = this.prisma.client[lowerFirst(modelName)]
     const data = await modelClient.findMany({
       ...findManyArgs,
     })
-    const sanitizedData = this.prisma.sanitizePayload(data, modelName)
 
-    return sanitizedData
+    return data
   }
 
-  createScalarListMutateInput<T>(
-    values: any[],
-    nodeId: string,
-    type: "create" | "update"
-  ): T {
-    if (!values) {
-      return undefined
-    }
-    if (!Array.isArray(values)) {
-      throw new Error(
-        "Values needs to be an array in createScalarListMutateInput"
-      )
-    }
-    if (type === "create") {
-      return {
-        createMany: {
-          data: values.map((val, idx) => ({
-            position: (idx + 1) * 1000, // 1000, 2000, 3000
-            value: val,
-          })),
-          skipDuplicates: true,
-        },
-      } as any
-    }
-    if (type === "update") {
-      return {
-        upsert: values.map((value, idx) => ({
-          where: {
-            nodeId_position: {
-              nodeId: nodeId || "",
-              position: (idx + 1) * 1000, // 1000, 2000, 3000
-            },
-          },
-          create: { position: (idx + 1) * 1000, value },
-          update: { value },
-        })),
-        // If we're updating the list to have fewer values than before,
-        // we need to remove some values. If the new list has 2 values,
-        // this would say to delete all values with position > 3000 for
-        // the given nodeId
-        deleteMany: {
-          nodeId: nodeId || "",
-          position: { gte: (values.length + 1) * 1000 },
-        },
-      } as any
-    }
-  }
   async resolveFindUnique<T>(
     findUniqueArgs: { where: any; select?: any; include?: any },
     modelName: Prisma.ModelName
   ): Promise<T> {
-    const modelClient = this.prisma.client2[lowerFirst(modelName)]
+    const modelClient = this.prisma.client[lowerFirst(modelName)]
     const data = await modelClient.findUnique(findUniqueArgs)
-    const sanitizedData = this.prisma.sanitizePayload(data, modelName)
 
-    return sanitizedData
+    return data
   }
 
   async resolveConnection(
@@ -422,7 +352,7 @@ export class QueryUtilsService {
       modelName
     )
 
-    const modelClient = this.prisma.client2[lowerFirst(modelName)]
+    const modelClient = this.prisma.client[lowerFirst(modelName)]
     const findManyArgs = { where, orderBy, select: queryArgs.select }
     if (!!queryArgs.skip) {
       findManyArgs["skip"] = queryArgs.skip
@@ -433,13 +363,16 @@ export class QueryUtilsService {
           ...args,
           ...findManyArgs,
         })
-        return this.prisma.sanitizePayload(data, modelName)
+        return data
       },
       () => modelClient.count({ where }),
       pick(queryArgs, ["first", "last", "after", "before"])
     )
 
-    const sanitizedResult = this.prisma.sanitizeConnection(result)
+    const sanitizedResult = {
+      ...result,
+      aggregate: { count: result.totalCount },
+    }
     return sanitizedResult
   }
 }

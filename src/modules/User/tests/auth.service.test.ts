@@ -113,33 +113,33 @@ describe("Auth Service", () => {
       expect(customer.plan).toBeUndefined()
 
       // Customer Details Fields
-      const customerDetails = await prisma.client2.customerDetail.findUnique({
+      const customerDetails = await prisma.client.customerDetail.findUnique({
         where: { id: "1" },
       })
       expect(customerDetails.discoveryReference).toEqual(discoveryReference)
       expect(customerDetails.phoneNumber).toEqual(phoneNumber)
 
       // Shipping Address Fields
-      const customerShippingAddress = await prisma.client2.location.findUnique({
+      const customerShippingAddress = await prisma.client.location.findUnique({
         where: { id: "2" },
       })
       expect(customerShippingAddress.zipCode).toEqual(zipCode)
 
       cleanupFunc = async () => {
-        const userNotifInterests = await prisma.client2.userPushNotificationInterest.findMany()
-        const userNotifs = await prisma.client2.userPushNotification.findMany()
+        const userNotifInterests = await prisma.client.userPushNotificationInterest.findMany()
+        const userNotifs = await prisma.client.userPushNotification.findMany()
 
-        await prisma.client2.userPushNotificationInterest.deleteMany({
+        await prisma.client.userPushNotificationInterest.deleteMany({
           where: {
             id: { in: userNotifInterests.map(interest => interest.id) },
           },
         })
-        await prisma.client2.userPushNotification.delete({
+        await prisma.client.userPushNotification.delete({
           where: { id: userNotifs[0].id },
         })
-        await prisma.client2.location.delete({ where: { id: "2" } })
-        await prisma.client2.customerDetail.delete({ where: { id: "1" } })
-        await prisma.client2.customer.delete({ where: { id: customer.id } })
+        await prisma.client.location.delete({ where: { id: "2" } })
+        await prisma.client.customerDetail.delete({ where: { id: "1" } })
+        await prisma.client.customer.delete({ where: { id: customer.id } })
       }
     })
   })

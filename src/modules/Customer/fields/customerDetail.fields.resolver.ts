@@ -1,5 +1,5 @@
-import { CustomerDetail } from "@app/prisma"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { CustomerDetail } from "@prisma/client"
 
 @Resolver("CustomerDetail")
 export class CustomerDetailFieldsResolver {

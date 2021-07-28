@@ -2,33 +2,25 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
-import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
-import {
-  PhysicalProductUtilsService,
-  ProductUtilsService,
-  ProductVariantService,
-} from "@modules/Product"
+import { ProductUtilsService, ProductVariantService } from "@modules/Product"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
+  AdminActionLog,
   Customer,
+  InventoryStatus,
+  PhysicalProduct,
+  PhysicalProductStatus,
   Prisma,
   PrismaPromise,
   ReservationFeedback,
-  User,
-} from "@prisma/client"
-import {
-  AdminActionLog,
-  ID_Input,
-  InventoryStatus,
-  OrderLineItemCreateInput,
-  PhysicalProduct,
-  PhysicalProductStatus,
   ReservationStatus,
   ShippingCode,
-} from "@prisma1/index"
+  User,
+} from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import chargebee from "chargebee"
@@ -39,7 +31,7 @@ import { DateTime } from "luxon"
 import { ReservationUtilsService } from "./reservation.utils.service"
 
 interface PhysicalProductWithProductVariant extends PhysicalProduct {
-  productVariant: { id: ID_Input }
+  productVariant: { id: string }
 }
 
 interface ProductState {
@@ -50,7 +42,7 @@ interface ProductState {
 }
 
 export interface ReservationWithProductVariantData {
-  id: ID_Input
+  id: string
   status: ReservationStatus
   reservationNumber: number
   products: PhysicalProductWithProductVariant[]
@@ -63,7 +55,6 @@ export class ReservationService {
     private readonly payment: PaymentService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
-    private readonly physicalProductUtilsService: PhysicalProductUtilsService,
     private readonly shippingService: ShippingService,
     private readonly emails: EmailService,
     private readonly pushNotifs: PushNotificationService,
@@ -71,7 +62,7 @@ export class ReservationService {
     private readonly error: ErrorService,
     private readonly utils: UtilsService,
     private readonly customerUtils: CustomerUtilsService,
-    private readonly queryUtils: QueryUtilsService
+    private readonly statements: StatementsService
   ) {}
 
   async reserveItems(
@@ -87,7 +78,7 @@ export class ReservationService {
 
     const promises = []
 
-    const customerWithPlanItemCount = await this.prisma.client2.customer.findUnique(
+    const customerWithPlanItemCount = await this.prisma.client.customer.findUnique(
       {
         where: { id: customer.id },
         select: {
@@ -110,7 +101,7 @@ export class ReservationService {
     const lastReservation = await this.reservationUtils.getLatestReservation(
       customer
     )
-    await this.checkLastReservation(lastReservation, items)
+    await this.validateLastReservation(lastReservation, items)
 
     // Get the most recent reservation that potentially carries products being kept in the new reservation
     const lastReservationWithHeldItems = !!lastReservation
@@ -151,7 +142,7 @@ export class ReservationService {
     promises.push(productVariantsCountsUpdatePromises)
 
     promises.push(
-      this.prisma.client2.physicalProduct.updateMany({
+      this.prisma.client.physicalProduct.updateMany({
         where: { id: { in: physicalProductsBeingReserved.map(a => a.id) } },
         data: { inventoryStatus: "Reserved" },
       })
@@ -168,7 +159,7 @@ export class ReservationService {
     )
 
     const bagItemsToUpdateIds = (
-      await this.prisma.client2.bagItem.findMany({
+      await this.prisma.client.bagItem.findMany({
         where: {
           productVariant: {
             id: {
@@ -183,7 +174,7 @@ export class ReservationService {
     ).map(a => a.id)
 
     promises.push(
-      this.prisma.client2.bagItem.updateMany({
+      this.prisma.client.bagItem.updateMany({
         where: { id: { in: bagItemsToUpdateIds } },
         data: {
           status: "Reserved",
@@ -232,7 +223,7 @@ export class ReservationService {
       heldPhysicalProducts,
       shippingOptionID
     )
-    const reservationPromise = this.prisma.client2.reservation.create({
+    const reservationPromise = this.prisma.client.reservation.create({
       data: reservationData,
       select: {
         ...select,
@@ -243,7 +234,7 @@ export class ReservationService {
     promises.push(reservationPromise)
 
     // Resolve all prisma operation in one transaction
-    const result = await this.prisma.client2.$transaction(promises.flat())
+    const result = await this.prisma.client.$transaction(promises.flat())
 
     const reservation = result.pop()
 
@@ -290,7 +281,7 @@ export class ReservationService {
 
   async addLineItemsToReservation(lineItems, reservationID: string) {
     if (lineItems?.length > 0 && reservationID) {
-      await this.prisma.client2.reservation.update({
+      await this.prisma.client.reservation.update({
         where: { id: reservationID },
         data: {
           lineItems: {
@@ -305,7 +296,7 @@ export class ReservationService {
     reservationID,
     customerID,
     nextFreeSwapDate
-  ): Promise<OrderLineItemCreateInput[]> {
+  ): Promise<Prisma.OrderLineItemCreateInput[]> {
     const doesNotHaveFreeSwap =
       nextFreeSwapDate && DateTime.fromISO(nextFreeSwapDate) > DateTime.local()
 
@@ -335,7 +326,7 @@ export class ReservationService {
       customer
     )
 
-    await this.prisma.client2.reservation.update({
+    await this.prisma.client.reservation.update({
       data: {
         returnedProducts: { set: [] },
         returnedAt: null,
@@ -364,7 +355,7 @@ export class ReservationService {
       )
     }
 
-    await this.prisma.client2.reservation.update({
+    await this.prisma.client.reservation.update({
       data: {
         returnedProducts: {
           set: items.map(item => ({ id: item })),
@@ -378,7 +369,7 @@ export class ReservationService {
   }
 
   async removeRestockNotifications(items, customer) {
-    const restockNotifications = await this.prisma.client2.productNotification.findMany(
+    const restockNotifications = await this.prisma.client.productNotification.findMany(
       {
         where: {
           customer: {
@@ -397,7 +388,7 @@ export class ReservationService {
     )
 
     if (restockNotifications?.length > 0) {
-      return await this.prisma.client2.productNotification.updateMany({
+      return await this.prisma.client.productNotification.updateMany({
         where: { id: { in: restockNotifications.map(notif => notif.id) } },
         data: {
           shouldNotify: false,
@@ -407,7 +398,7 @@ export class ReservationService {
   }
 
   async getReservation(reservationNumber: number) {
-    const data = await this.prisma.client2.reservation.findUnique({
+    return await this.prisma.client.reservation.findUnique({
       where: {
         reservationNumber,
       },
@@ -451,41 +442,34 @@ export class ReservationService {
         },
       },
     })
-    return this.prisma.sanitizePayload(data, "Reservation")
   }
 
   async processReservation(reservationNumber, productStates: ProductState[]) {
     // Update status on physical products depending on whether
     // the item was returned, and update associated product variant counts
 
-    const _physicalProducts = await this.prisma.client2.physicalProduct.findMany(
-      {
-        where: {
-          seasonsUID: {
-            in: productStates.map(p => p.productUID),
+    const physicalProducts = await this.prisma.client.physicalProduct.findMany({
+      where: {
+        seasonsUID: {
+          in: productStates.map(p => p.productUID),
+        },
+      },
+      select: {
+        id: true,
+        seasonsUID: true,
+        inventoryStatus: true,
+        productVariant: {
+          select: {
+            id: true,
+            sku: true,
+            reserved: true,
+            reservable: true,
+            nonReservable: true,
+            product: true,
           },
         },
-        select: {
-          id: true,
-          seasonsUID: true,
-          inventoryStatus: true,
-          productVariant: {
-            select: {
-              id: true,
-              sku: true,
-              reserved: true,
-              reservable: true,
-              nonReservable: true,
-              product: true,
-            },
-          },
-        },
-      }
-    )
-    const physicalProducts = this.prisma.sanitizePayload(
-      _physicalProducts,
-      "PhysicalProduct"
-    )
+      },
+    })
 
     let promises = []
 
@@ -497,7 +481,7 @@ export class ReservationService {
         const productVariant = physicalProduct.productVariant as any
         const product = productVariant.product
 
-        const inventoryStatus =
+        const inventoryStatus: InventoryStatus =
           product.status === "Stored" ? "Stored" : "NonReservable"
 
         const updateData = {
@@ -514,7 +498,7 @@ export class ReservationService {
         )
 
         promises.push(
-          this.prisma.client2.product.update({
+          this.prisma.client.product.update({
             where: {
               id: product.id,
             },
@@ -545,7 +529,7 @@ export class ReservationService {
       }
     }
 
-    const receiptPromise = this.prisma.client2.reservationReceipt.create({
+    const receiptPromise = this.prisma.client.reservationReceipt.create({
       data: {
         reservation: {
           connect: { reservationNumber },
@@ -570,7 +554,7 @@ export class ReservationService {
 
     const reservation = await this.getReservation(reservationNumber)
 
-    const prismaUser = await this.prisma.client2.user.findUnique({
+    const prismaUser = await this.prisma.client.user.findUnique({
       where: {
         email: reservation.user.email,
       },
@@ -584,7 +568,7 @@ export class ReservationService {
     })
 
     // Mark reservation as completed
-    const reservationPromise = this.prisma.client2.reservation.update({
+    const reservationPromise = this.prisma.client.reservation.update({
       where: {
         id: reservation.id,
       },
@@ -601,7 +585,7 @@ export class ReservationService {
       },
     })
 
-    const updateBagPromise = this.prisma.client2.bagItem.deleteMany({
+    const updateBagPromise = this.prisma.client.bagItem.deleteMany({
       where: {
         customer: { id: reservation.customer.id },
         saved: false,
@@ -618,7 +602,7 @@ export class ReservationService {
     const [
       reservationFeedbackPromise,
     ] = await this.createReservationFeedbacksForVariants(
-      await this.prisma.client2.productVariant.findMany({
+      await this.prisma.client.productVariant.findMany({
         where: {
           id: {
             in: returnedPhysicalProducts.map(p => (p.productVariant as any).id),
@@ -636,7 +620,7 @@ export class ReservationService {
       returnedPhysicalProducts
     )
 
-    await this.prisma.client2.$transaction([
+    await this.prisma.client.$transaction([
       ...(promises as PrismaPromise<any>[]),
       receiptPromise,
       reservationPromise,
@@ -724,7 +708,7 @@ export class ReservationService {
     where: { id: string },
     select: Prisma.ReservationSelect
   ) {
-    const reservation = await this.prisma.client2.reservation.findUnique({
+    const reservation = await this.prisma.client.reservation.findUnique({
       where,
       select: {
         id: true,
@@ -744,7 +728,7 @@ export class ReservationService {
     }
 
     let promises: any[] = [
-      this.prisma.client2.reservation.update({ data, where, select }),
+      this.prisma.client.reservation.update({ data, where, select }),
     ]
 
     // Reservation was just packed. Null out warehouse locations on attached products
@@ -758,7 +742,7 @@ export class ReservationService {
       }
       promises.push(
         ...reservation.products.map(a =>
-          this.prisma.client2.physicalProduct.update({
+          this.prisma.client.physicalProduct.update({
             where: { id: a.id },
             data: updateData,
           })
@@ -766,10 +750,8 @@ export class ReservationService {
       )
     }
 
-    const [updatedReservation] = await this.prisma.client2.$transaction(
-      promises
-    )
-    return this.prisma.sanitizePayload(updatedReservation, "Reservation")
+    const [updatedReservation] = await this.prisma.client.$transaction(promises)
+    return updatedReservation
   }
 
   async createReservationFeedbacksForVariants(
@@ -780,7 +762,7 @@ export class ReservationService {
     const MULTIPLE_CHOICE = "MultipleChoice"
     const variantInfos = await Promise.all(
       productVariants.map(async variant => {
-        const products = await this.prisma.client2.product.findMany({
+        const products = await this.prisma.client.product.findMany({
           where: {
             variants: {
               some: {
@@ -803,7 +785,7 @@ export class ReservationService {
     )
 
     return [
-      this.prisma.client2.reservationFeedback.create({
+      this.prisma.client.reservationFeedback.create({
         data: {
           feedbacks: {
             create: variantInfos.map(
@@ -819,22 +801,18 @@ export class ReservationService {
                       {
                         question: `What did you think about this?`,
                         options: {
-                          create: [
-                            { value: "Disliked", position: 1000 },
-                            { value: "It was OK", position: 2000 },
-                            { value: "Loved it", position: 3000 },
-                          ],
+                          set: ["Disliked", "It was OK", "Loved it"],
                         },
                         type: MULTIPLE_CHOICE,
                       },
                       {
                         question: `How many times did you wear this?`,
                         options: {
-                          create: [
-                            { value: "Never wore it", position: 1000 },
-                            { value: "1-2 times", position: 2000 },
-                            { value: "3-5 times", position: 3000 },
-                            { value: "More than 6 times", position: 4000 },
+                          set: [
+                            "Never wore it",
+                            "1-2 times",
+                            "3-5 times",
+                            "More than 6 times",
                           ],
                         },
                         type: MULTIPLE_CHOICE,
@@ -842,10 +820,10 @@ export class ReservationService {
                       {
                         question: `Did it fit as expected?`,
                         options: {
-                          create: [
-                            { value: "Fit small", position: 1000 },
-                            { value: "Fit true to size", position: 2000 },
-                            { value: "Fit oversized", position: 3000 },
+                          set: [
+                            "Fit small",
+                            "Fit true to size",
+                            "Fit oversized",
                           ],
                         },
                         type: MULTIPLE_CHOICE,
@@ -853,11 +831,11 @@ export class ReservationService {
                       {
                         question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
                         options: {
-                          create: [
-                            { value: "No", position: 1000 },
-                            { value: "Yes", position: 2000 },
-                            { value: "Buy below retail", position: 3000 },
-                            { value: "Would only rent", position: 4000 },
+                          set: [
+                            "No",
+                            "Yes",
+                            "Buy below retail",
+                            "Would only rent",
                           ],
                         },
                         type: MULTIPLE_CHOICE,
@@ -883,7 +861,7 @@ export class ReservationService {
     ]
   }
 
-  private async checkLastReservation(lastReservation, items) {
+  private async validateLastReservation(lastReservation, items) {
     if (!lastReservation) {
       return
     }
@@ -892,14 +870,7 @@ export class ReservationService {
     if (
       !!lastReservation &&
       lastReservationHasLessItems &&
-      [
-        "Queued",
-        "Picked",
-        "Packed",
-        "Delivered",
-        "Received",
-        "Shipped",
-      ].includes(lastReservation.status)
+      this.statements.reservationIsActive(lastReservation)
     ) {
       // Update last reservation to completed since the customer is creating a new reservation while having one active
       await this.prisma.client2.reservation.update({
@@ -912,7 +883,7 @@ export class ReservationService {
       })
     } else if (
       !!lastReservation &&
-      !["Completed", "Cancelled", "Lost"].includes(lastReservation.status)
+      this.statements.reservationIsActive(lastReservation)
     ) {
       throw new ApolloError(
         `Last reservation must either be null, completed, cancelled, or lost. Last Reservation number. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
@@ -927,14 +898,10 @@ export class ReservationService {
     productVariantIDs: string[]
     customerId: string
   }): Promise<string[]> {
-    const _customerBagItems = await this.prisma.client2.bagItem.findMany({
+    const customerBagItems = await this.prisma.client.bagItem.findMany({
       where: { customer: { id: customerId }, saved: false },
       select: { status: true, productVariant: { select: { id: true } } },
     })
-    const customerBagItems = this.prisma.sanitizePayload(
-      _customerBagItems,
-      "BagItem"
-    )
     const reservedProductVariantIds = customerBagItems
       .filter(a => a.status === "Reserved")
       .map(b => b.productVariant.id)
@@ -991,7 +958,7 @@ export class ReservationService {
     }))
 
     const customerShippingAddressRecordID = await (
-      await this.prisma.client2.customer
+      await this.prisma.client.customer
         .findUnique({ where: { id: customer.id } })
         .detail()
     ).shippingAddressId

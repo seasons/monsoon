@@ -63,7 +63,7 @@ describe("Validate Warehouse Location", () => {
     let testBrand: Brand
 
     beforeAll(async () => {
-      testBrand = await prismaService.client2.brand.create({
+      testBrand = await prismaService.client.brand.create({
         data: {
           slug: utilsService.randomString(),
           brandCode: "000t",
@@ -75,7 +75,7 @@ describe("Validate Warehouse Location", () => {
 
     afterAll(
       async () =>
-        await prismaService.client2.brand.delete({
+        await prismaService.client.brand.delete({
           where: { id: testBrand.id },
         })
     )

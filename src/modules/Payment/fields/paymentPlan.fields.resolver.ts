@@ -1,7 +1,7 @@
 import { Customer } from "@app/decorators"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
-import { PaymentPlan } from "@app/prisma"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { PaymentPlan } from "@prisma/client"
 
 @Resolver("PaymentPlan")
 export class PaymentPlanFieldsResolver {

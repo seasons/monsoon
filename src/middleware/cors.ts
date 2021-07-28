@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client"
+import { SmartPrismaClient } from "@app/prisma/prisma.service"
 import cors from "cors"
 import { uniq } from "lodash"
 
@@ -22,7 +22,7 @@ const STATIC_ORIGINS =
         /null/, // requests from file:// URIs
       ]
 
-export const createCorsMiddleware = async (prisma: PrismaClient) => {
+export const createCorsMiddleware = async (prisma: SmartPrismaClient) => {
   const productsWithExternalURLs = await prisma.product.findMany({
     where: { externalURL: { not: "" } },
     select: { externalURL: true },
