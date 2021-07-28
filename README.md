@@ -88,7 +88,7 @@ Before deploying to production your first time, please check with a senior membe
 
 ### Commands
 
-- `yarn start` starts GraphQL server on `http://localhost:3000`
+- `yarn start` starts GraphQL server on `http://localhost:4000`
 - `yarn prisma:<subcommand>` gives access to local version of Prisma CLI (e.g. `yarn prisma:deploy`)
 
 Monsoon ships with a command line interface. To install it run `yarn link`. Once that's complete, you can use the following commands:

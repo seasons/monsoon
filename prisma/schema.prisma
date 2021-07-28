@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -586,10 +587,7 @@ model Brand {
   products               Product[]
   shopifyProductVariants ShopifyProductVariant[]
   styles                 CustomerStyle[]
-
-  // Do not use. Artifact of Prisma2 migration
-  Launch Launch[]
-
+  launches               Launch[]
 }
 
 model Category {
