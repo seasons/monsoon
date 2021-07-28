@@ -915,7 +915,7 @@ export class ReservationService {
       !["Completed", "Cancelled", "Lost"].includes(lastReservation.status)
     ) {
       throw new ApolloError(
-        `Last reservation has non-completed, non-cancelled status. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
+        `Last reservation must either be null, completed, cancelled, or lost. Last Reservation number. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
       )
     }
   }
