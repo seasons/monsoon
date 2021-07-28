@@ -884,8 +884,11 @@ export class ReservationService {
   }
 
   private async checkLastReservation(lastReservation, items) {
+    if (!lastReservation) {
+      return
+    }
     const lastReservationHasLessItems =
-      lastReservation.products.length < items.length
+      lastReservation?.products?.length < items?.length
     if (
       !!lastReservation &&
       lastReservationHasLessItems &&
