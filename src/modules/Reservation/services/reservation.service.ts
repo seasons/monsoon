@@ -4,6 +4,12 @@ import { PushNotificationService } from "@app/modules/PushNotification"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import {
+  InventoryStatus,
+  PhysicalProductStatus,
+  ReservationStatus,
+  ShippingCode,
+} from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ProductUtilsService, ProductVariantService } from "@modules/Product"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
@@ -11,14 +17,10 @@ import { Injectable } from "@nestjs/common"
 import {
   AdminActionLog,
   Customer,
-  InventoryStatus,
   PhysicalProduct,
-  PhysicalProductStatus,
   Prisma,
   PrismaPromise,
   ReservationFeedback,
-  ReservationStatus,
-  ShippingCode,
   User,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -873,7 +875,7 @@ export class ReservationService {
       this.statements.reservationIsActive(lastReservation)
     ) {
       // Update last reservation to completed since the customer is creating a new reservation while having one active
-      await this.prisma.client2.reservation.update({
+      await this.prisma.client.reservation.update({
         where: {
           id: lastReservation.id,
         },
