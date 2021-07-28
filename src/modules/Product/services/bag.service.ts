@@ -66,6 +66,7 @@ export class BagService {
   }
 
   async removeFromBag(item, saved, customer): Promise<BagItem> {
+    // TODO: removeFromBag has been deprecated, use deleteBagItem
     const bagItem = await this.getBagItem(item, saved, customer, { id: true })
 
     if (!bagItem) {
