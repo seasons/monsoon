@@ -1,6 +1,7 @@
 import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { PrismaService } from "@prisma1/prisma.service"
 
 import { BagService } from "../services/bag.service"
 import { ProductService } from "../services/product.service"
@@ -11,7 +12,8 @@ export class ProductMutationsResolver {
   constructor(
     private readonly bagService: BagService,
     private readonly productRequestService: ProductRequestService,
-    private readonly productService: ProductService
+    private readonly productService: ProductService,
+    private readonly prisma: PrismaService
   ) {}
 
   @Mutation()
@@ -29,6 +31,12 @@ export class ProductMutationsResolver {
       user,
       select
     )
+  }
+
+  @Mutation()
+  async deleteBagItem(@Args() { itemID }) {
+    await this.prisma.client.bagItem.delete({ where: { id: itemID } })
+    return true
   }
 
   @Mutation()
