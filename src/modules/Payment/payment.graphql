@@ -34,11 +34,20 @@ type Mutation {
     billing: JSON
     shipping: JSON
   ): JSON
+  confirmPayment(
+    paymentIntentID: String!
+    planID: String!
+    couponID: String
+    billing: JSON
+    shipping: JSON
+  ): JSON
   updatePaymentMethod(
     paymentMethodID: String!
     planID: String
     billing: JSON
-  ): Boolean @hasRole(roles: [Customer])
+  ): JSON @hasRole(roles: [Customer])
+  confirmPaymentMethodUpdate(paymentIntentID: String!, billing: JSON): JSON
+
   applePayCheckout(
     planID: String!
     token: StripeToken!

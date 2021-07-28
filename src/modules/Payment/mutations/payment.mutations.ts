@@ -44,6 +44,27 @@ export class PaymentMutationsResolver {
   }
 
   /**
+   * To be called after [3Ds secure flow](https://stripe.com/docs/payments/3d-secure#when-to-use-3d-secure) is completed
+   *
+   * Platform: Web (flare), Native mobile (harvest)
+   */
+  async confirmPayment(
+    @Args() { planID, paymentIntentID, couponID, billing, shipping },
+    @Customer() customer,
+    @Application() application
+  ) {
+    return this.paymentService.confirmPayment({
+      paymentIntentID,
+      planID,
+      couponID,
+      billing,
+      shipping,
+      customer,
+      application,
+    })
+  }
+
+  /**
    * This method is used for both credit card and apple pay checkouts
    *
    * Platform: Native mobile (harvest)
@@ -71,7 +92,7 @@ export class PaymentMutationsResolver {
     @Args() { planID, paymentMethodID, billing },
     @Customer() customer
   ) {
-    await this.updatePaymentService.updatePaymentMethod(
+    const intent = await this.updatePaymentService.updatePaymentMethod(
       planID,
       customer,
       null,
@@ -79,7 +100,19 @@ export class PaymentMutationsResolver {
       paymentMethodID,
       billing
     )
-    return true
+    return intent
+  }
+
+  @Mutation()
+  async confirmPaymentMethodUpdate(
+    @Args() { paymentIntentID, billing },
+    @Customer() customer
+  ) {
+    return this.updatePaymentService.confirmPaymentMethodUpdate({
+      paymentIntentID,
+      userId: customer.user.id,
+      chargebeeBillingAddress: billing,
+    })
   }
 
   /**
@@ -144,6 +177,8 @@ export class PaymentMutationsResolver {
                 resumeDate: true,
                 pauseDate: true,
                 pauseType: true,
+                reason: true,
+                reasonId: true,
               },
             },
           },
@@ -157,6 +192,8 @@ export class PaymentMutationsResolver {
     )
     await this.email.sendPausedEmail(customerWithData, false)
 
+    const pauseRequests = customerWithData?.membership?.pauseRequests
+    const reason = pauseRequests[pauseRequests.length - 1].reason
     const tier = customerWithData?.membership?.plan?.tier
     const planID = customerWithData?.membership?.plan?.planID
 
@@ -165,6 +202,7 @@ export class PaymentMutationsResolver {
       planID,
       tier,
       pauseType,
+      reason,
     })
 
     return true

@@ -107,6 +107,7 @@ export class UpdatePaymentService {
 
       let _brand
       let _last4
+      let intent
 
       if (token && tokenType) {
         // FIXME:
@@ -120,7 +121,11 @@ export class UpdatePaymentService {
         _last4 = last4
         _brand = brand
       } else if (paymentMethodID && billing) {
-        const { last4, brand } = await this.updatePaymentWithGWToken(
+        const {
+          last4,
+          brand,
+          paymentIntent,
+        } = await this.updatePaymentWithGWToken(
           planID,
           chargebeeBillingAddress,
           paymentMethodID,
@@ -128,6 +133,7 @@ export class UpdatePaymentService {
         )
         _last4 = last4
         _brand = brand
+        intent = paymentIntent
       } else {
         throw new Error(
           `Error updating your payment method, insufficient data provided`
@@ -138,6 +144,8 @@ export class UpdatePaymentService {
         where: { id: billingInfo.id },
         data: { ...prismaBillingAddress, brand: _brand, last_digits: _last4 },
       })
+
+      return intent
     } catch (e) {
       this.error.setExtraContext({ token, tokenType })
       this.error.setExtraContext(customer, "customer")
@@ -203,6 +211,31 @@ export class UpdatePaymentService {
       },
     })
 
+    if (
+      intent.status === "requires_action" &&
+      intent.next_action.use_stripe_sdk
+    ) {
+      return {
+        paymentIntent: intent,
+        last4: "",
+        brand: "",
+      }
+    }
+
+    return this.confirmPaymentMethodUpdate({
+      paymentIntentID: intent.id,
+      userId,
+      chargebeeBillingAddress,
+    })
+  }
+
+  async confirmPaymentMethodUpdate({
+    paymentIntentID,
+    userId,
+    chargebeeBillingAddress,
+  }) {
+    const intent = await stripe.paymentIntents.retrieve(paymentIntentID)
+
     // Update card
     const payload = await chargebee.payment_source
       .create_using_payment_intent({
@@ -226,7 +259,7 @@ export class UpdatePaymentService {
     const brand = card.card_type
     const last4 = card.last4
 
-    return { brand, last4 }
+    return { brand, last4, paymentIntent: intent }
   }
 
   async updateChargebeeBillingAddress(
