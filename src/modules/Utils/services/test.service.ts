@@ -2,7 +2,7 @@ import {
   InventoryStatus,
   PhysicalProductStatus,
   UserPushNotificationInterestType,
-} from "@app/prisma"
+} from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 
@@ -35,7 +35,7 @@ export class TestUtilsService {
     { variants, type = "Top" }: CreateTestProductInput,
     info = `{id}`
   ): Promise<CreateTestProductOutput> {
-    const color = await this.prisma.client2.color.create({
+    const color = await this.prisma.client.color.create({
       data: {
         slug: this.utils.randomString(),
         name: this.utils.randomString(),
@@ -44,7 +44,7 @@ export class TestUtilsService {
       },
     })
 
-    const brand = await this.prisma.client2.brand.create({
+    const brand = await this.prisma.client.brand.create({
       data: {
         slug: this.utils.randomString(),
         brandCode: this.utils.randomString(),
@@ -56,7 +56,7 @@ export class TestUtilsService {
       },
     })
 
-    const category = await this.prisma.client2.category.create({
+    const category = await this.prisma.client.category.create({
       data: {
         slug: this.utils.randomString(),
         name: this.utils.randomString(),
@@ -78,7 +78,6 @@ export class TestUtilsService {
                 id: color.id,
               },
             },
-            productID: this.utils.randomString(),
             total: v.physicalProducts.length,
             reservable: this.getInventoryStatusCount(v, "Reservable"),
             reserved: this.getInventoryStatusCount(v, "Reserved"),
@@ -102,15 +101,15 @@ export class TestUtilsService {
       name: "",
     } as Prisma.ProductCreateInput
 
-    const product = await this.prisma.client2.product.create({
+    const product = await this.prisma.client.product.create({
       data,
     })
 
     const cleanupFunc = async () => {
-      await this.prisma.client2.product.delete({ where: { id: product.id } })
-      await this.prisma.client2.color.delete({ where: { id: color.id } })
-      await this.prisma.client2.brand.delete({ where: { id: brand.id } })
-      await this.prisma.client2.category.delete({ where: { id: category.id } })
+      await this.prisma.client.product.delete({ where: { id: product.id } })
+      await this.prisma.client.color.delete({ where: { id: color.id } })
+      await this.prisma.client.brand.delete({ where: { id: brand.id } })
+      await this.prisma.client.category.delete({ where: { id: category.id } })
     }
 
     return {
@@ -134,16 +133,8 @@ export class TestUtilsService {
     const detail = !!input.detail
       ? {
           create: {
-            topSizes: this.queryUtils.createScalarListMutateInput(
-              input.detail.topSizes,
-              null,
-              "create"
-            ),
-            waistSizes: this.queryUtils.createScalarListMutateInput(
-              input.detail.waistSizes,
-              null,
-              "create"
-            ),
+            topSizes: input.detail.topSizes,
+            waistSizes: input.detail.waistSizes,
             shippingAddress: {
               create: {
                 zipCode: "10013",
@@ -168,7 +159,7 @@ export class TestUtilsService {
       }
     }
 
-    const _createdCustomer = await this.prisma.client2.customer.create({
+    const createdCustomer = await this.prisma.client.customer.create({
       data: {
         status: input.status || "Active",
         user: {
@@ -192,10 +183,6 @@ export class TestUtilsService {
         },
       },
     })
-    const createdCustomer = this.prisma.sanitizePayload(
-      _createdCustomer,
-      "Customer"
-    )
 
     const defaultPushNotificationInterests = [
       "General",
@@ -204,7 +191,7 @@ export class TestUtilsService {
       "NewProduct",
     ] as UserPushNotificationInterestType[]
 
-    const pushNotif = await this.prisma.client2.userPushNotification.create({
+    const pushNotif = await this.prisma.client.userPushNotification.create({
       data: {
         interests: {
           create: defaultPushNotificationInterests.map(type => ({
@@ -218,7 +205,7 @@ export class TestUtilsService {
       },
     })
 
-    await this.prisma.client2.user.update({
+    await this.prisma.client.user.update({
       where: { id: createdCustomer.user.id },
       data: {
         pushNotification: {
@@ -233,7 +220,7 @@ export class TestUtilsService {
         1
       )) {
         await new Promise(r => setTimeout(r, 2000))
-        await this.prisma.client2.customer.update({
+        await this.prisma.client.customer.update({
           where: { id: createdCustomer.id },
           data: {
             membership: {
@@ -241,7 +228,7 @@ export class TestUtilsService {
             },
           },
         })
-        await this.prisma.client2.customer.update({
+        await this.prisma.client.customer.update({
           where: { id: createdCustomer.id },
           data: {
             membership: {
@@ -252,32 +239,32 @@ export class TestUtilsService {
       }
     }
 
-    const returnedCustomer = await this.prisma.client2.customer.findFirst({
+    const returnedCustomer = await this.prisma.client.customer.findFirst({
       where: { id: createdCustomer.id },
       select,
     })
 
     const cleanupFunc = async () => {
-      await this.prisma.client2.customerAdmissionsData.deleteMany({
+      await this.prisma.client.customerAdmissionsData.deleteMany({
         where: { id: createdCustomer.id },
       })
 
-      await this.prisma.client2.userPushNotificationInterest.deleteMany({
+      await this.prisma.client.userPushNotificationInterest.deleteMany({
         where: {
           user: { id: createdCustomer.user.id },
         },
       })
 
-      await this.prisma.client2.userPushNotification.delete({
+      await this.prisma.client.userPushNotification.delete({
         where: { id: pushNotif.id },
       })
 
       if (!!createdCustomer.detail?.shippingAddress?.id) {
-        await this.prisma.client2.location.delete({
+        await this.prisma.client.location.delete({
           where: { id: createdCustomer.detail.shippingAddress.id },
         })
       }
-      await this.prisma.client2.customer.delete({
+      await this.prisma.client.customer.delete({
         where: { id: createdCustomer.id },
       })
     }

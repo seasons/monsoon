@@ -24,30 +24,22 @@ export class ShopifyMutationsResolver {
         enabled: true,
       } as Prisma.ShopifyShopUpdateInput
 
-      const shop = await this.prisma.client2.shopifyShop.findUnique({
+      const shop = await this.prisma.client.shopifyShop.findUnique({
         where: { shopName: data.shop },
         select: { id: true },
       })
 
-      await this.prisma.client2.shopifyShop.upsert({
+      await this.prisma.client.shopifyShop.upsert({
         where: {
           shopName: data.shop,
         },
         create: {
           ...mutationData,
-          scope: this.queryUtils.createScalarListMutateInput(
-            data.scope.split(","),
-            null,
-            "create"
-          ),
+          scope: data.scope.split(","),
         } as Prisma.ShopifyShopCreateInput,
         update: {
           ...mutationData,
-          scope: this.queryUtils.createScalarListMutateInput(
-            data.scope.split(","),
-            shop?.id || "",
-            "update"
-          ),
+          scope: data.scope.split(","),
         },
       })
     }
@@ -55,7 +47,7 @@ export class ShopifyMutationsResolver {
 
   @Mutation()
   async importShopifyData(@Args() { shopName, ids }) {
-    const shopifyShop = await this.prisma.client2.shopifyShop.findUnique({
+    const shopifyShop = await this.prisma.client.shopifyShop.findUnique({
       where: { shopName },
     })
 

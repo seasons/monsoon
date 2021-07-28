@@ -2,10 +2,10 @@ import "module-alias/register"
 
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { User } from "@app/prisma"
 import { CustomerWhereInput } from "@app/prisma/prisma.binding"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
+import { User } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import * as Sentry from "@sentry/node"
 import { head } from "lodash"
@@ -28,7 +28,7 @@ export class DripSyncService {
       status: "unsubscribed",
     })
     const emails = allUnsubscribedCustomers.body.subscribers.map(a => a.email)
-    const { count } = await this.prisma.client2.user.updateMany({
+    const { count } = await this.prisma.client.user.updateMany({
       where: { AND: [{ email: { in: emails } }, { sendSystemEmails: true }] },
       data: { sendSystemEmails: false },
     })
@@ -39,12 +39,12 @@ export class DripSyncService {
     const syncTiming = await this.utils.getSyncTimingsRecord("Drip")
 
     // Interested Users to Update
-    const interestedUsers = await this.prisma.client2.interestedUser.findMany({
+    const interestedUsers = await this.prisma.client.interestedUser.findMany({
       where: { createdAt: { gte: syncTiming.syncedAt } },
       select: { email: true, zipcode: true },
     })
     const interestedUsersTurnedCustomers = (
-      await this.prisma.client2.user.findMany({
+      await this.prisma.client.user.findMany({
         where: { email: { in: interestedUsers.map(a => a.email) } },
         select: { email: true },
       })
@@ -175,7 +175,7 @@ export class DripSyncService {
   private async getCustomersWithDripData(
     where: Prisma.CustomerWhereInput = {}
   ) {
-    const _customers = await this.prisma.client2.customer.findMany({
+    return await this.prisma.client.customer.findMany({
       where,
       select: {
         id: true,
@@ -213,7 +213,6 @@ export class DripSyncService {
         },
       },
     })
-    return this.prisma.sanitizePayload(_customers, "Customer")
   }
 
   private customerToDripRecord(customer: any) {
@@ -267,7 +266,7 @@ export class DripSyncService {
   }
 
   private async updateDripSyncedAt() {
-    await this.prisma.client2.syncTiming.create({
+    await this.prisma.client.syncTiming.create({
       data: { syncedAt: new Date(), type: "Drip" },
     })
   }

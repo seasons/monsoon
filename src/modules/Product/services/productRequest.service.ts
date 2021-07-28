@@ -42,7 +42,7 @@ export class ProductRequestService {
           select
         )
         if (productRequest) {
-          resolve(this.prisma.sanitizePayload(productRequest, "ProductRequest"))
+          resolve(productRequest)
           return
         }
 
@@ -55,13 +55,13 @@ export class ProductRequestService {
           select
         )
         if (productRequest) {
-          resolve(this.prisma.sanitizePayload(productRequest, "ProductRequest"))
+          resolve(productRequest)
           return
         }
 
         // Otherwise, means we failed to scrape URL so just store
         // the reason and URL itself
-        productRequest = await this.prisma.client2.productRequest.create({
+        productRequest = await this.prisma.client.productRequest.create({
           data: {
             reason,
             url,
@@ -73,7 +73,7 @@ export class ProductRequestService {
           },
           select,
         })
-        resolve(this.prisma.sanitizePayload(productRequest, "ProductRequest"))
+        resolve(productRequest)
         return
       })
     })

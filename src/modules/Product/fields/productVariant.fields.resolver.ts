@@ -3,14 +3,14 @@ import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { Order, ProductVariant } from "@app/prisma/prisma.binding"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import {
   InventoryStatus,
   ShopifyProductVariant,
   ShopifyShop,
-} from "@app/prisma"
-import { Order, ProductVariant } from "@app/prisma/prisma.binding"
-import { PrismaDataLoader } from "@app/prisma/prisma.loader"
-import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+} from "@prisma/client"
 import {
   BagItem,
   PhysicalProduct,
@@ -344,7 +344,7 @@ export class ProductVariantFieldsResolver {
         formatWhere: keys => ({
           AND: [
             { inventoryStatus: "Reservable" },
-            { productVariant: { every: { id: { in: keys } } } },
+            { productVariant: { id: { in: keys } } },
           ],
         }),
         select: Prisma.validator<Prisma.PhysicalProductSelect>()({
@@ -537,7 +537,8 @@ export class ProductVariantFieldsResolver {
       let result
       if (product?.brand?.shopifyShop?.enabled) {
         const cacheExpired =
-          Date.parse(shopifyProductVariant?.cacheExpiresAt) < Date.now()
+          Date.parse(shopifyProductVariant.cacheExpiresAt.toISOString()) <
+          Date.now()
         if (cacheExpired) {
           result = await this.shopify.cacheProductVariantBuyMetadata({
             shopifyProductVariantExternalId: shopifyProductVariant.externalId,

@@ -5,9 +5,9 @@ import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
+import { CustomerStatus } from "@prisma/client"
 import { ApolloError } from "apollo-server"
 
 import { AdmissionsService } from "../services/admissions.service"
@@ -143,7 +143,7 @@ describe.only("Customer Service", () => {
             // Had some issues hooking up the RenderEmail stuff from wind
             expect(sendAuthorizedEmail).toBeCalledTimes(1)
           } else if (oldStatus == "Invited") {
-            const emailReceipts = await prisma.client2.emailReceipt.findMany({
+            const emailReceipts = await prisma.client.emailReceipt.findMany({
               where: {
                 user: { id: newCustomer.user.id },
               },
@@ -160,10 +160,10 @@ describe.only("Customer Service", () => {
 
         expect(newCustomer.plan).toEqual(newPlan)
 
-        await prisma.client2.pushNotificationReceipt.deleteMany({
+        await prisma.client.pushNotificationReceipt.deleteMany({
           where: { users: { some: { id: newCustomer.user.id } } },
         })
-        await prisma.client2.emailReceipt.deleteMany({
+        await prisma.client.emailReceipt.deleteMany({
           where: { user: { id: newCustomer.user.id } },
         })
         await cleanupFunc()
@@ -184,7 +184,7 @@ describe.only("Customer Service", () => {
           status: "Created",
         })
 
-        const user = await prisma.client2.user.findUnique({
+        const user = await prisma.client.user.findUnique({
           where: { id: customer.user.id },
         })
         const newCustomer: any = await customerService.addCustomerDetails(

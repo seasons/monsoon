@@ -22,7 +22,7 @@ export class BrandQueriesResolver {
   ) {
     let data
     if (typeof args?.published === "boolean") {
-      const brand: any = await this.prisma.client2.brand.findUnique({
+      const brand: any = await this.prisma.client.brand.findUnique({
         select: {
           ...select,
           published: true,
@@ -38,15 +38,13 @@ export class BrandQueriesResolver {
     }
 
     if (!data) {
-      data = await this.prisma.client2.brand.findUnique({
+      data = await this.prisma.client.brand.findUnique({
         ...args,
         select,
       })
     }
 
-    const sanitizedData = this.prisma.sanitizePayload(data, "Brand")
-
-    return sanitizedData
+    return data
   }
 
   @Query()

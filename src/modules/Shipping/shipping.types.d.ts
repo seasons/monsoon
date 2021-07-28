@@ -1,7 +1,7 @@
 import {
   PackageTransitEventStatus,
   PackageTransitEventSubStatus,
-} from "@app/prisma"
+} from "@prisma/client"
 
 export interface ShippoShipment {
   object_id?: string

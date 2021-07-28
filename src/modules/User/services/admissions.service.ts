@@ -1,9 +1,7 @@
-import { ApplicationType } from "@app/decorators/application.decorator"
 import { ProductWithEmailData } from "@app/modules/Email/services/email.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerStatus, CustomerWhereUniqueInput, Product } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
-import { Prisma } from "@prisma/client"
+import { CustomerStatus, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head, intersection, uniqBy } from "lodash"
 import moment from "moment"
@@ -78,7 +76,7 @@ export class AdmissionsService {
     let pass = true
     let detail = {}
 
-    const emailsSent = await this.prisma.client2.emailReceipt.findMany({
+    const emailsSent = await this.prisma.client.emailReceipt.findMany({
       where: {
         emailId: {
           in: ["WelcomeToSeasons", "CompleteAccount", "PriorityAccess"],
@@ -202,7 +200,7 @@ export class AdmissionsService {
     reservableStyles: ProductWithEmailData[]
     adjustedReservableStyles: number
   }> {
-    const _customer = await this.prisma.client2.customer.findFirst({
+    const customer = await this.prisma.client.customer.findFirst({
       where,
       select: {
         id: true,
@@ -214,7 +212,6 @@ export class AdmissionsService {
         },
       },
     })
-    const customer = await this.prisma.sanitizePayload(_customer, "Customer")
 
     let sizesKey
     switch (productType) {
@@ -230,7 +227,7 @@ export class AdmissionsService {
 
     const preferredSizes = customer.detail[sizesKey]
 
-    const _availableStyles = await this.prisma.client2.product.findMany({
+    const availableStyles = await this.prisma.client.product.findMany({
       where: {
         AND: [
           { type: productType },
@@ -282,10 +279,6 @@ export class AdmissionsService {
         },
       },
     })
-    const availableStyles = this.prisma.sanitizePayload(
-      _availableStyles,
-      "Product"
-    )
 
     // Find the competing users. Note that we assume all active customers without an active
     // reservation may be a competing user, regardless of how long it's been since their last reservation
@@ -317,7 +310,7 @@ export class AdmissionsService {
   }
 
   private async pausedCustomersResumingThisWeek() {
-    const _pausedCustomers = await this.prisma.client2.customer.findMany({
+    const pausedCustomers = await this.prisma.client.customer.findMany({
       where: { status: "Paused" },
       select: {
         id: true,
@@ -329,10 +322,7 @@ export class AdmissionsService {
         },
       },
     })
-    const pausedCustomers = this.prisma.sanitizePayload(
-      _pausedCustomers,
-      "Customer"
-    )
+
     const pausedCustomersResumingThisWeek = pausedCustomers.filter(a => {
       const pauseRequests = a.membership?.pauseRequests || []
       if (pauseRequests.length === 0) {
@@ -354,7 +344,7 @@ export class AdmissionsService {
   }
 
   private async activeCustomersWithoutActiveReservation() {
-    return await this.prisma.client2.customer.findMany({
+    return await this.prisma.client.customer.findMany({
       where: {
         AND: [
           { status: "Active" },

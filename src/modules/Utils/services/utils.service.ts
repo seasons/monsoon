@@ -3,15 +3,10 @@ import * as fs from "fs"
 
 import { UTMData as BindingUTMData, DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
-import { AdminActionLog } from "@prisma/client"
+import { AdminActionLog, PauseRequest, SyncTimingType } from "@prisma/client"
 import { Location } from "@prisma/client"
 import { UTMData } from "@prisma/client"
 import { Reservation } from "@prisma/client"
-import {
-  PauseRequest,
-  AdminActionLog as PrismaOneAdminActionLog,
-  SyncTimingType,
-} from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import cliProgress from "cli-progress"
 import graphqlFields from "graphql-fields"
@@ -141,7 +136,7 @@ export class UtilsService {
   }
 
   async getPrismaLocationFromSlug(slug: string): Promise<Location> {
-    const prismaLocation = await this.prisma.client2.location.findUnique({
+    const prismaLocation = await this.prisma.client.location.findUnique({
       where: { slug },
     })
     if (!prismaLocation) {
@@ -425,10 +420,7 @@ export class UtilsService {
     return planID
   }
 
-  filterAdminLogs(
-    logs: AdminActionLog[] | PrismaOneAdminActionLog[],
-    ignoreKeys = []
-  ) {
+  filterAdminLogs(logs: AdminActionLog[], ignoreKeys = []) {
     const isEmptyUpdate = b =>
       b.action === "Update" && Object.keys(b.changedFields).length === 0
 
@@ -461,7 +453,7 @@ export class UtilsService {
   }
 
   async getSyncTimingsRecord(type: SyncTimingType) {
-    const syncTiming = await this.prisma.client2.syncTiming.findFirst({
+    const syncTiming = await this.prisma.client.syncTiming.findFirst({
       where: { type },
       orderBy: { createdAt: "desc" },
     })
@@ -472,6 +464,6 @@ export class UtilsService {
       )
     }
 
-    return this.prisma.sanitizePayload(syncTiming, "SyncTiming")
+    return syncTiming
   }
 }

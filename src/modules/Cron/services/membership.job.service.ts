@@ -27,7 +27,7 @@ export class MembershipScheduledJobs {
 
   @Cron(CronExpression.EVERY_6_HOURS)
   async updatePausePendingToPaused() {
-    const pauseRequests = await this.prisma.client2.pauseRequest.findMany({
+    const pauseRequests = await this.prisma.client.pauseRequest.findMany({
       where: {
         AND: [
           {
@@ -46,7 +46,7 @@ export class MembershipScheduledJobs {
           DateTime.fromISO(pauseRequest.pauseDate.toISOString()) <=
           DateTime.local()
         ) {
-          pauseRequestWithCustomer = await this.prisma.client2.pauseRequest.findUnique(
+          pauseRequestWithCustomer = await this.prisma.client.pauseRequest.findUnique(
             {
               where: { id: pauseRequest.id },
               select: {
@@ -62,10 +62,6 @@ export class MembershipScheduledJobs {
               },
             }
           )
-          pauseRequestWithCustomer = this.prisma.sanitizePayload(
-            pauseRequestWithCustomer,
-            "PauseRequest"
-          )
 
           const customerId = pauseRequestWithCustomer?.membership?.customer?.id
 
@@ -80,7 +76,7 @@ export class MembershipScheduledJobs {
               })
               .request()
 
-            await this.prisma.client2.customer.update({
+            await this.prisma.client.customer.update({
               where: { id: customerId },
               data: {
                 status: "Paused",
@@ -102,7 +98,7 @@ export class MembershipScheduledJobs {
               `Paused customer subscription with items: ${customerId}`
             )
           } else {
-            const reservedBagItemsCount = await this.prisma.client2.bagItem.count(
+            const reservedBagItemsCount = await this.prisma.client.bagItem.count(
               {
                 where: { customer: { id: customerId }, status: "Reserved" },
               }
@@ -123,7 +119,7 @@ export class MembershipScheduledJobs {
               this.logger.log(`Resumed customer subscription: ${customerId}`)
             } else {
               // Otherwise we can pause the membership if no reserved pieces
-              await this.prisma.client2.customer.update({
+              await this.prisma.client.customer.update({
                 data: {
                   status: "Paused",
                   membership: {
@@ -159,7 +155,7 @@ export class MembershipScheduledJobs {
     this.logger.log("Begin Membership Resumes Job")
     const report = { errors: [], resumed: [], reminded: [] }
 
-    const _pausedCustomers = await this.prisma.client2.customer.findMany({
+    const pausedCustomers = await this.prisma.client.customer.findMany({
       where: {
         status: "Paused",
       },
@@ -186,10 +182,6 @@ export class MembershipScheduledJobs {
         },
       },
     })
-    const pausedCustomers = this.prisma.sanitizePayload(
-      _pausedCustomers,
-      "Customer"
-    )
     for (const customer of pausedCustomers) {
       try {
         const pauseRequest = (this.utils.getLatestPauseRequest(
@@ -255,7 +247,7 @@ export class MembershipScheduledJobs {
         customer.user,
         pauseRequest.resumeDate
       )
-      await this.prisma.client2.pauseRequest.update({
+      await this.prisma.client.pauseRequest.update({
         where: { id: pauseRequest.id },
         data: { notified: true },
       })

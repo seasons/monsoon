@@ -23,50 +23,48 @@ describe("getCategoryAndAllChildren", () => {
 
   describe("Functions as Expected", () => {
     afterAll(async () => {
-      await prismaService.client2.category.deleteMany({
+      await prismaService.client.category.deleteMany({
         where: { slug: { in: originalSlugs } },
       })
     })
 
     beforeAll(async () => {
-      const original = await prismaService.client2.category.create({
+      const original = await prismaService.client.category.create({
         data: { name: "Original", slug: "original", visible: true },
       })
-      const [child1, child2, child3] = await prismaService.client2.$transaction(
-        [
-          prismaService.client2.category.create({
-            data: {
-              name: "Child1",
-              slug: "child1",
-              parents: { connect: { id: original.id } },
-              visible: true,
-            },
-          }),
-          prismaService.client2.category.create({
-            data: {
-              name: "Child2",
-              slug: "child2",
-              parents: { connect: { id: original.id } },
-              visible: true,
-            },
-          }),
-          prismaService.client2.category.create({
-            data: {
-              name: "Child3",
-              slug: "child3",
-              parents: { connect: { id: original.id } },
-              visible: true,
-            },
-          }),
-        ]
-      )
+      const [child1, child2, child3] = await prismaService.client.$transaction([
+        prismaService.client.category.create({
+          data: {
+            name: "Child1",
+            slug: "child1",
+            parents: { connect: { id: original.id } },
+            visible: true,
+          },
+        }),
+        prismaService.client.category.create({
+          data: {
+            name: "Child2",
+            slug: "child2",
+            parents: { connect: { id: original.id } },
+            visible: true,
+          },
+        }),
+        prismaService.client.category.create({
+          data: {
+            name: "Child3",
+            slug: "child3",
+            parents: { connect: { id: original.id } },
+            visible: true,
+          },
+        }),
+      ])
       const [
         grandchild21,
         grandchild31,
         grandchild32,
         grandchild33,
-      ] = await prismaService.client2.$transaction([
-        prismaService.client2.category.create({
+      ] = await prismaService.client.$transaction([
+        prismaService.client.category.create({
           data: {
             name: "GrandChild2-1",
             slug: "grandchild2-1",
@@ -74,7 +72,7 @@ describe("getCategoryAndAllChildren", () => {
             visible: true,
           },
         }),
-        prismaService.client2.category.create({
+        prismaService.client.category.create({
           data: {
             name: "GrandChild3-1",
             slug: "grandchild3-1",
@@ -82,7 +80,7 @@ describe("getCategoryAndAllChildren", () => {
             visible: true,
           },
         }),
-        prismaService.client2.category.create({
+        prismaService.client.category.create({
           data: {
             name: "GrandChild3-2",
             slug: "grandchild3-2",
@@ -90,7 +88,7 @@ describe("getCategoryAndAllChildren", () => {
             visible: true,
           },
         }),
-        prismaService.client2.category.create({
+        prismaService.client.category.create({
           data: {
             name: "GrandChild3-3",
             slug: "grandchild3-3",
@@ -99,7 +97,7 @@ describe("getCategoryAndAllChildren", () => {
           },
         }),
       ])
-      const greatGrandChild321 = await prismaService.client2.category.create({
+      const greatGrandChild321 = await prismaService.client.category.create({
         data: {
           name: "GrandChild3-2-1",
           slug: "grandchild3-2-1",

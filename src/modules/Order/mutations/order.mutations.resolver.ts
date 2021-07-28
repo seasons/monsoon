@@ -67,7 +67,7 @@ export class OrderMutationsResolver {
     @Select() select
   ) {
     try {
-      const order = await this.prisma.client2.order.findUnique({
+      const order = await this.prisma.client.order.findUnique({
         where: { id: orderID },
       })
       let submittedOrder

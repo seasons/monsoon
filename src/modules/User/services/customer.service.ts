@@ -13,19 +13,14 @@ import {
   Customer,
   CustomerAdmissionsData,
   CustomerDetail,
+  CustomerStatus,
+  InAdmissableReason,
   Location,
+  NotificationBarID,
   Prisma,
   UTMData,
   User,
 } from "@prisma/client"
-import {
-  BillingInfoUpdateDataInput,
-  CustomerAdmissionsDataUpdateInput,
-  CustomerStatus,
-  CustomerUpdateInput,
-  InAdmissableReason,
-  NotificationBarID,
-} from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
@@ -101,7 +96,7 @@ export class CustomerService {
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
     const customer = await this.auth.getCustomerFromUserID(user.id)
 
-    return await this.prisma.client2.customer.update({
+    return await this.prisma.client.customer.update({
       data: { status },
       where: { id: customer.id },
     })
@@ -111,8 +106,8 @@ export class CustomerService {
     destinationState,
     shippingAddressID
   ) {
-    const shippingMethods = await this.prisma.client2.shippingMethod.findMany()
-    const warehouseLocation = await this.prisma.client2.location.findUnique({
+    const shippingMethods = await this.prisma.client.shippingMethod.findMany()
+    const warehouseLocation = await this.prisma.client.location.findUnique({
       where: {
         slug:
           process.env.SEASONS_CLEANER_LOCATION_SLUG ||
@@ -133,7 +128,7 @@ export class CustomerService {
       const stateData =
         shippingOptionsData[method.code].from[originState].to[destinationState]
 
-      const shippingOption = await this.prisma.client2.shippingOption.create({
+      const shippingOption = await this.prisma.client.shippingOption.create({
         data: {
           origin: { connect: { id: warehouseLocation.id } },
           destination: { connect: { id: shippingAddressID } },
@@ -146,7 +141,7 @@ export class CustomerService {
       shippingOptions.push(shippingOption)
     }
 
-    return await this.prisma.client2.location.update({
+    return await this.prisma.client.location.update({
       where: { id: shippingAddressID },
       data: {
         shippingOptions: {
@@ -199,7 +194,7 @@ export class CustomerService {
       }
     }
 
-    const detail = await this.prisma.client2.customerDetail.findFirst({
+    const detail = await this.prisma.client.customerDetail.findFirst({
       where: {
         customer: {
           id: customer.id,
@@ -213,15 +208,11 @@ export class CustomerService {
     Object.keys(details).map(detailKey => {
       if (["topSizes", "waistSizes", "weight", "styles"].includes(detailKey)) {
         const values = details[detailKey].set
-        details[detailKey] = this.queryUtils.createScalarListMutateInput(
-          values,
-          detail?.id,
-          "update"
-        )
+        details[detailKey] = values
       }
     })
 
-    await this.prisma.client2.customerDetail.update({
+    await this.prisma.client.customerDetail.update({
       data: details,
       where: {
         id: detail.id,
@@ -242,13 +233,13 @@ export class CustomerService {
       await this.setCustomerPrismaStatus(user, status)
     }
 
-    const updatedCustomer = await this.prisma.client2.customer.findUnique({
+    const updatedCustomer = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select,
     })
 
     // Return the updated customer object
-    return this.prisma.sanitizePayload(updatedCustomer, "Customer")
+    return updatedCustomer
   }
 
   async updateCustomerDetail(user, customer, shippingAddress, phoneNumber) {
@@ -290,7 +281,7 @@ export class CustomerService {
       address1: shippingStreet1,
       address2: shippingStreet2,
     }
-    const custWithData = await this.prisma.client2.customer.findFirst({
+    const custWithData = await this.prisma.client.customer.findFirst({
       where: { id: customer.id },
       select: {
         id: true,
@@ -332,7 +323,7 @@ export class CustomerService {
         update: { allAccessEnabled },
       }
     }
-    return await this.prisma.client2.customer.update({
+    return await this.prisma.client.customer.update({
       where: { id: customer.id },
       data,
     })
@@ -342,10 +333,10 @@ export class CustomerService {
     billingInfo,
     customerId,
   }: {
-    billingInfo: BillingInfoUpdateDataInput
+    billingInfo: Prisma.BillingInfoUpdateInput
     customerId: string
   }) {
-    const customer = await this.prisma.client2.customer.findFirst({
+    const customer = await this.prisma.client.customer.findFirst({
       where: { id: customerId },
       select: {
         id: true,
@@ -354,7 +345,7 @@ export class CustomerService {
     })
 
     if (customer.billingInfoId) {
-      return await this.prisma.client2.billingInfo.update({
+      return await this.prisma.client.billingInfo.update({
         data: billingInfo,
         where: { id: customer.billingInfoId },
       })
@@ -393,7 +384,7 @@ export class CustomerService {
       select
     )
 
-    const customer = await this.prisma.client2.customer.findFirst({
+    const customer = await this.prisma.client.customer.findFirst({
       where,
       select: mergedSelect,
     })
@@ -453,7 +444,7 @@ export class CustomerService {
             },
           },
         },
-      } as CustomerUpdateInput
+      } as Prisma.CustomerUpdateInput
 
       if (withContact) {
         // Normal users
@@ -493,7 +484,7 @@ export class CustomerService {
       })
     }
 
-    return this.prisma.client2.customer.update({
+    return this.prisma.client.customer.update({
       where,
       data,
       select: mergedSelect,
@@ -505,16 +496,12 @@ export class CustomerService {
     application: ApplicationType,
     dryRun: boolean
   ): Promise<TriageCustomerResult> {
-    const _customer = await this.prisma.client2.customer.findUnique({
+    const customer = await this.prisma.client.customer.findUnique({
       where,
       select: this.triageCustomerSelect,
     })
-    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
-    if (
-      !this.admissions.isTriageable(customer.status as CustomerStatus) &&
-      !dryRun
-    ) {
+    if (!this.admissions.isTriageable(customer.status) && !dryRun) {
       throw new ApolloError(
         `Invalid customer status: ${customer.status}. Can not triage a ${customer.status} customer`
       )
@@ -664,13 +651,10 @@ export class CustomerService {
       "src/modules/User/notificationBarColorSchemas"
     )[data.paletteID]
 
-    const receiptData = await this.prisma.client2.customerNotificationBarReceipt.findFirst(
+    const receiptData = await this.prisma.client.customerNotificationBarReceipt.findFirst(
       {
         where: {
-          AND: [
-            { notificationBarId },
-            { customer: { every: { id: customerId } } },
-          ],
+          AND: [{ notificationBarId }, { customer: { id: customerId } }],
         },
       }
     )
@@ -749,13 +733,13 @@ export class CustomerService {
       (dryRun &&
         this.shouldUpdateCustomerAdmissionsData(customer, admissionsUpsertData))
     ) {
-      await this.prisma.client2.customer.update({
+      await this.prisma.client.customer.update({
         where: { id: customer.id },
         data: {
           ...data,
           admissions: {
             upsert: {
-              update: admissionsUpsertData as CustomerAdmissionsDataUpdateInput,
+              update: admissionsUpsertData as Prisma.CustomerAdmissionsDataUpdateInput,
               create: admissionsUpsertData,
             },
           },
@@ -767,7 +751,7 @@ export class CustomerService {
 
   private shouldUpdateCustomerAdmissionsData(
     customer: Customer & { admissions: CustomerAdmissionsData },
-    upsertData: CustomerAdmissionsDataUpdateInput
+    upsertData: Prisma.CustomerAdmissionsDataUpdateInput
   ) {
     return (
       customer?.admissions?.admissable !== upsertData.admissable ||

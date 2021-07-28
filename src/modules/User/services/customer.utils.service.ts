@@ -7,7 +7,7 @@ export class CustomerUtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async nextFreeSwapDate(customerID: string): Promise<string> {
-    const _customer = await this.prisma.client2.customer.findUnique({
+    const customer = await this.prisma.client.customer.findUnique({
       where: { id: customerID },
       select: {
         reservations: {
@@ -35,7 +35,6 @@ export class CustomerUtilsService {
         },
       },
     })
-    const customer = this.prisma.sanitizePayload(_customer, "Customer")
     const latestReservation = head(customer.reservations)
     const customerPlanTier = customer?.membership?.plan?.tier
     const latestReservationCreatedAt = latestReservation?.createdAt?.toISOString()

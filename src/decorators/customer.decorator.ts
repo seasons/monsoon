@@ -15,10 +15,9 @@ export const Customer = createParamDecorator(
     const req = ctx.req
 
     const { id: userId } = req.user ? req.user : { id: "" }
-    const _customerArray = await prisma.client2.customer.findMany({
+    const customerArray = await prisma.client.customer.findMany({
       where: { user: { id: userId } },
     })
-    const customerArray = prisma.sanitizePayload(_customerArray, "Customer")
     const customer = customerArray.length > 0 ? customerArray[0] : null
     ctx.customer = customer
 

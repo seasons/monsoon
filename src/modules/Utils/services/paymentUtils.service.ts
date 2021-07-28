@@ -72,7 +72,7 @@ export class PaymentUtilsService {
   }
 
   async updateResumeDate(date, customer) {
-    const _customerWithMembership = await this.prisma.client2.customer.findUnique(
+    const customerWithMembership = await this.prisma.client.customer.findUnique(
       {
         where: { id: customer.id },
         select: {
@@ -89,14 +89,10 @@ export class PaymentUtilsService {
         },
       }
     )
-    const customerWithMembership = this.prisma.sanitizePayload(
-      _customerWithMembership,
-      "Customer"
-    )
 
     const pauseRequest = customerWithMembership.membership?.pauseRequests?.[0]
 
-    await this.prisma.client2.pauseRequest.update({
+    await this.prisma.client.pauseRequest.update({
       where: { id: pauseRequest?.id || "" },
       data: { resumeDate: date },
     })
@@ -173,7 +169,7 @@ export class PaymentUtilsService {
 
     const pausePlanIDs = ["pause-1", "pause-2", "pause-3", "pause-6"]
 
-    const _customerWithData = await this.prisma.client2.customer.findUnique({
+    const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
         id: true,
@@ -186,10 +182,6 @@ export class PaymentUtilsService {
         },
       },
     })
-    const customerWithData = this.prisma.sanitizePayload(
-      _customerWithData,
-      "Customer"
-    )
 
     const pauseRequest = head(
       orderBy(customerWithData.membership.pauseRequests, "createdAt", "desc")
@@ -230,7 +222,7 @@ export class PaymentUtilsService {
       }
 
       if (success) {
-        await this.prisma.client2.customer.update({
+        await this.prisma.client.customer.update({
           where: { id: customer.id },
           data: {
             status: "Active",
@@ -247,7 +239,7 @@ export class PaymentUtilsService {
           },
         })
 
-        const _customerWithTrackingData = await this.prisma.client2.customer.findUnique(
+        const customerWithTrackingData = await this.prisma.client.customer.findUnique(
           {
             where: { id: customer.id },
             select: {
@@ -268,10 +260,6 @@ export class PaymentUtilsService {
               },
             },
           }
-        )
-        const customerWithTrackingData = this.prisma.sanitizePayload(
-          _customerWithTrackingData,
-          "Customer"
         )
 
         const tier = customerWithTrackingData?.membership?.plan?.tier
@@ -298,7 +286,7 @@ export class PaymentUtilsService {
       ) {
         // don't set status to `PaymentFailed` here because we do it in the
         // chargebee webhook
-        await this.prisma.client2.pauseRequest.update({
+        await this.prisma.client.pauseRequest.update({
           where: { id: pauseRequest.id },
           data: { pausePending: false },
         })

@@ -1,7 +1,7 @@
 import { Customer } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
-import { ProductType } from "@app/prisma"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { ProductType } from "@prisma/client"
 import { Category, Color, Product } from "@prisma/client"
 import { ProductNotificationType } from "@prisma1/prisma.binding"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -27,7 +27,7 @@ export class ProductVariantMutationsResolver {
   ) {
     if (!customer) throw new Error("Missing customer from context")
 
-    const existingNotification = await this.prisma.client2.productNotification.findFirst(
+    const existingNotification = await this.prisma.client.productNotification.findFirst(
       {
         where: {
           customer: {
@@ -60,7 +60,7 @@ export class ProductVariantMutationsResolver {
       },
     }
 
-    return await this.prisma.client2.productNotification.upsert({
+    return await this.prisma.client.productNotification.upsert({
       where: { id: existingNotification?.id || "" },
       create: data,
       update: data,
@@ -78,9 +78,12 @@ export class ProductVariantMutationsResolver {
   }
 
   @Mutation()
-  async createProductVariants(@Args() { productID, inputs }, @Select() select) {
-    const product = (await this.prisma.client2.product.findUnique({
-      where: { slug: productID },
+  async createProductVariants(
+    @Args() { productID: productSlug, inputs },
+    @Select() select
+  ) {
+    const product = (await this.prisma.client.product.findUnique({
+      where: { slug: productSlug },
       select: {
         id: true,
         retailPrice: true,
@@ -110,26 +113,20 @@ export class ProductVariantMutationsResolver {
         sequenceNumbers: sequenceNumbers[index],
         variant: input,
         colorCode: product.color.colorCode,
-        productSlug: productID,
+        productSlug: productSlug,
         retailPrice: product.retailPrice,
         type: product.type as ProductType,
         measurementType,
       })
     })
-    const results = await this.prisma.client2.$transaction(
+    const results = await this.prisma.client.$transaction(
       variantPromises.flat()
     )
     const createdVariants = results.filter(a => !!a.sku)
-    const _variantsToReturn = await this.prisma.client2.productVariant.findMany(
-      {
-        where: { sku: { in: createdVariants.map(a => a.sku) } },
-        select,
-      }
-    )
-    const variantsToReturn = this.prisma.sanitizePayload(
-      _variantsToReturn,
-      "ProductVariant"
-    )
+    const variantsToReturn = await this.prisma.client.productVariant.findMany({
+      where: { sku: { in: createdVariants.map(a => a.sku) } },
+      select,
+    })
     return variantsToReturn
   }
 
@@ -139,10 +136,9 @@ export class ProductVariantMutationsResolver {
     @Select() select
   ) {
     await this.productVariantService.addPhysicalProducts(variantID, count)
-    const variant = await this.prisma.client2.productVariant.findUnique({
+    return await this.prisma.client.productVariant.findUnique({
       where: { id: variantID },
       select,
     })
-    return this.prisma.sanitizePayload(variant, "ProductVariant")
   }
 }
