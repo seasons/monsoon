@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common"
 import { BagItem, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { head } from "lodash"
 
 @Injectable()
 export class BagService {
