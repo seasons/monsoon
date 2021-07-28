@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -22,16 +23,16 @@ model ActiveAdminUser {
 }
 
 model AdminActionLog {
-  actionId          Int       @id @default(autoincrement())
-  entityId          String    @db.VarChar(30)
+  actionId          Int                           @id @default(autoincrement())
+  entityId          String                        @db.VarChar(30)
   tableName         String
   triggeredAt       DateTime
   action            String
   rowData           String
   changedFields     String?
   statementOnly     Boolean
-  activeAdminUserId String?   @map("activeAdminUser") @db.VarChar(30)
-  activeAdminUser   User?     @relation(fields: [activeAdminUserId], references: [id])
+  activeAdminUserId String?                       @map("activeAdminUser") @db.VarChar(30)
+  activeAdminUser   User?                         @relation(fields: [activeAdminUserId], references: [id])
   interpretedAt     DateTime?
   interpretation    AdminActionLogInterpretation?
 }
@@ -155,10 +156,10 @@ model Brand {
 }
 
 model Brand_styles {
-  nodeId   String  @db.VarChar(30)
+  nodeId   String @db.VarChar(30)
   position Int
   value    String
-  brand    Brand @relation(fields: [nodeId], references: [id])
+  brand    Brand  @relation(fields: [nodeId], references: [id])
 
   @@id([nodeId, position])
 }
@@ -263,7 +264,7 @@ model Customer {
 model CustomerAdmissionsData {
   id                          String    @id @default(cuid()) @db.VarChar(30)
   inServiceableZipcode        Boolean   @default(false)
-  admissable                  Boolean   
+  admissable                  Boolean
   inAdmissableReason          String?
   createdAt                   DateTime  @default(now())
   updatedAt                   DateTime  @updatedAt
@@ -524,8 +525,8 @@ model Order {
 }
 
 model OrderLineItem {
-  id            String   @id @default(cuid()) @db.VarChar(30)
-  recordID      String   @db.VarChar(30)
+  id            String       @id @default(cuid()) @db.VarChar(30)
+  recordID      String       @db.VarChar(30)
   recordType    String // OrderLineItemRecordType
   needShipping  Boolean?
   taxRate       Float?
@@ -535,13 +536,13 @@ model OrderLineItem {
   taxPrice      Int?
   price         Int
   currencyCode  String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  reservationId String? @map("reservation") @db.VarChar(30)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  reservationId String?      @map("reservation") @db.VarChar(30)
   reservation   Reservation? @relation(fields: [reservationId], references: [id])
 
   // Do not use. Artifact of prisma2 migration
-  Order         Order[]
+  Order Order[]
 }
 
 model Package {
@@ -582,37 +583,37 @@ model PackageTransitEvent {
 }
 
 model PauseReason {
-  id            String              @id @default(cuid()) @db.VarChar(30)
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
+  id            String         @id @default(cuid()) @db.VarChar(30)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   reason        String
   pauseRequests PauseRequest[]
 }
 
 model PauseRequest {
-  id              String              @id @default(cuid()) @db.VarChar(30)
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  pausePending    Boolean
-  pauseDate       DateTime?
-  resumeDate      DateTime?
-  membershipId    String?             @map("membership") @db.VarChar(30)
-  membership      CustomerMembership? @relation(fields: [membershipId], references: [id])
-  notified        Boolean             @default(false)
-  pauseType       String              @default("WithoutItems")
-  reasonId        String?             @map("reason") @db.VarChar(30)
-  reason          PauseReason?        @relation(fields: [reasonId], references: [id])
+  id           String              @id @default(cuid()) @db.VarChar(30)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  pausePending Boolean
+  pauseDate    DateTime?
+  resumeDate   DateTime?
+  membershipId String?             @map("membership") @db.VarChar(30)
+  membership   CustomerMembership? @relation(fields: [membershipId], references: [id])
+  notified     Boolean             @default(false)
+  pauseType    String              @default("WithoutItems")
+  reasonId     String?             @map("reason") @db.VarChar(30)
+  reason       PauseReason?        @relation(fields: [reasonId], references: [id])
 }
 
 model PaymentPlan {
-  id                  String              @id @default(cuid()) @db.VarChar(30)
+  id                  String               @id @default(cuid()) @db.VarChar(30)
   description         String?
-  planID              String              @unique
+  planID              String               @unique
   status              String?
   name                String?
   price               Int?
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
   tagline             String?
   itemCount           Int?
   tier                String?
@@ -839,11 +840,11 @@ model ProductSeason_wearableSeasons {
 }
 
 model ProductTier {
-  id        String   @id @default(cuid()) @db.VarChar(30)
+  id        String    @id @default(cuid()) @db.VarChar(30)
   tier      String
   price     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   product   Product[]
 }
 
@@ -1003,7 +1004,7 @@ model Reservation {
   products          PhysicalProduct[]     @relation("ReservationToAllProducts")
   newProducts       PhysicalProduct[]     @relation("ReservationToNewProducts")
   returnedProducts  PhysicalProduct[]     @relation("ReservationToReturnedProducts")
-  lineItems         OrderLineItem[]       
+  lineItems         OrderLineItem[]
 }
 
 model ReservationFeedback {

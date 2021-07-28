@@ -43,6 +43,7 @@ import {
 import { AdminModule } from "./modules/Admin/admin.module"
 import { AnalyticsModule } from "./modules/Analytics/analytics.module"
 import { EmailModule } from "./modules/Email/email.module"
+import { HealthModule } from "./modules/Health/health.module"
 import { TwilioModule } from "./modules/Twilio/twilio.module"
 import { UtilsModule } from "./modules/Utils/utils.module"
 
@@ -165,6 +166,7 @@ const cache = (() => {
     TwilioModule,
     UserModule,
     UtilsModule,
+    HealthModule,
   ],
   providers: [
     {
