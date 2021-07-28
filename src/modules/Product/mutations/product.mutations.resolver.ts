@@ -75,6 +75,7 @@ export class ProductMutationsResolver {
     @Args() { item, saved, customer: passedCustomerID },
     @Customer() customer
   ) {
+    // TODO: removeFromBag has been deprecated, use deleteBagItem
     return await this.bagService.removeFromBag(
       item,
       saved,
