@@ -7,7 +7,8 @@ export class StatementsService {
 
   reservationIsActive(reservation: Pick<Reservation | Reservation, "status">) {
     return (
-      !!reservation && !["Completed", "Cancelled"].includes(reservation.status)
+      !!reservation &&
+      !["Completed", "Cancelled", "Lost"].includes(reservation.status)
     )
   }
 
