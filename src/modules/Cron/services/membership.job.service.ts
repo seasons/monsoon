@@ -62,10 +62,6 @@ export class MembershipScheduledJobs {
               },
             }
           )
-          pauseRequestWithCustomer = this.prisma.sanitizePayload(
-            pauseRequestWithCustomer,
-            "PauseRequest"
-          )
 
           const customerId = pauseRequestWithCustomer?.membership?.customer?.id
 
@@ -159,7 +155,7 @@ export class MembershipScheduledJobs {
     this.logger.log("Begin Membership Resumes Job")
     const report = { errors: [], resumed: [], reminded: [] }
 
-    const _pausedCustomers = await this.prisma.client2.customer.findMany({
+    const pausedCustomers = await this.prisma.client2.customer.findMany({
       where: {
         status: "Paused",
       },
@@ -186,10 +182,6 @@ export class MembershipScheduledJobs {
         },
       },
     })
-    const pausedCustomers = this.prisma.sanitizePayload(
-      _pausedCustomers,
-      "Customer"
-    )
     for (const customer of pausedCustomers) {
       try {
         const pauseRequest = (this.utils.getLatestPauseRequest(

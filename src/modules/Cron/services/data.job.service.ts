@@ -145,7 +145,7 @@ export class DataScheduledJobs {
   }
 
   async checkAll(withDetails = false) {
-    const _allProdVars = await this.prisma.client2.productVariant.findMany({
+    const allProdVars = await this.prisma.client2.productVariant.findMany({
       select: {
         id: true,
         sku: true,
@@ -160,11 +160,7 @@ export class DataScheduledJobs {
         stored: true,
       },
     })
-    const allProdVars = this.prisma.sanitizePayload(
-      _allProdVars,
-      "ProductVariant"
-    )
-    const _allPhysicalProducts = await this.prisma.client2.physicalProduct.findMany(
+    const allPhysicalProducts = await this.prisma.client2.physicalProduct.findMany(
       {
         select: {
           id: true,
@@ -173,10 +169,6 @@ export class DataScheduledJobs {
           warehouseLocation: { select: { id: true, barcode: true } },
         },
       }
-    )
-    const allPhysicalProducts = this.prisma.sanitizePayload(
-      _allPhysicalProducts,
-      "PhysicalProduct"
     )
     const SUIDToSKUMismatches = await this.getSUIDtoSKUMismatches(allProdVars)
     const prodVarsWithIncorrectNumberOfPhysProdsAttached = await this.getProductVariantsWithIncorrectNumberOfPhysicalProductsAttached(
@@ -370,7 +362,7 @@ export class DataScheduledJobs {
         case "Reserved":
           if (!activeReservationWithPhysProd) {
             // check if the customer held onto it from their last completed reservation
-            const _lastCompletedReservation = await this.prisma.client2.reservation.findFirst(
+            const lastCompletedReservation = await this.prisma.client2.reservation.findFirst(
               {
                 where: {
                   AND: [
@@ -387,10 +379,6 @@ export class DataScheduledJobs {
                   },
                 },
               }
-            )
-            const lastCompletedReservation = this.prisma.sanitizePayload(
-              _lastCompletedReservation,
-              "Reservation"
             )
             const returnedItems =
               lastCompletedReservation?.returnedPackage?.items?.map(
@@ -475,7 +463,7 @@ export class DataScheduledJobs {
       )
     }
 
-    const _parentProductVariant = await this.prisma.client2.productVariant.findFirst(
+    const parentProductVariant = await this.prisma.client2.productVariant.findFirst(
       {
         where: {
           physicalProducts: { some: { seasonsUID: physProd.seasonsUID } },
@@ -486,10 +474,6 @@ export class DataScheduledJobs {
           },
         },
       }
-    )
-    const parentProductVariant = this.prisma.sanitizePayload(
-      _parentProductVariant,
-      "ProductVariant"
     )
     const siblingPhysicalProducts = (parentProductVariant as any)?.physicalProducts?.filter(
       a => a.seasonsUID !== physProd.seasonsUID

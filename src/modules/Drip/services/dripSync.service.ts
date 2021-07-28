@@ -2,10 +2,10 @@ import "module-alias/register"
 
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { User } from "@app/prisma"
 import { CustomerWhereInput } from "@app/prisma/prisma.binding"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
+import { User } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import * as Sentry from "@sentry/node"
 import { head } from "lodash"
@@ -175,7 +175,7 @@ export class DripSyncService {
   private async getCustomersWithDripData(
     where: Prisma.CustomerWhereInput = {}
   ) {
-    const _customers = await this.prisma.client2.customer.findMany({
+    return await this.prisma.client2.customer.findMany({
       where,
       select: {
         id: true,
@@ -213,7 +213,6 @@ export class DripSyncService {
         },
       },
     })
-    return this.prisma.sanitizePayload(_customers, "Customer")
   }
 
   private customerToDripRecord(customer: any) {

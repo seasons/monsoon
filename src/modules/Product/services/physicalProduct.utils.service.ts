@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { Category } from "@prisma/client"
-import { ID_Input, PhysicalProduct, ProductVariant } from "@prisma1/index"
+import { Category, PhysicalProduct, ProductVariant } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head, uniqBy } from "lodash"
 
@@ -19,29 +18,23 @@ export class PhysicalProductUtilsService {
   ) {}
 
   async getPhysicalProductsWithReservationSpecificData(items: string[]) {
-    const _physicalProducts = await this.prisma.client2.physicalProduct.findMany(
-      {
-        where: {
-          productVariant: {
-            some: {
-              id: {
-                in: items,
-              },
-            },
+    return await this.prisma.client2.physicalProduct.findMany({
+      where: {
+        productVariant: {
+          id: {
+            in: items,
           },
         },
-        select: {
-          id: true,
-          seasonsUID: true,
-          sequenceNumber: true,
-          inventoryStatus: true,
-          productStatus: true,
-          productVariant: true,
-        },
-      }
-    )
-
-    return this.prisma.sanitizePayload(_physicalProducts, "PhysicalProduct")
+      },
+      select: {
+        id: true,
+        seasonsUID: true,
+        sequenceNumber: true,
+        inventoryStatus: true,
+        productStatus: true,
+        productVariant: true,
+      },
+    })
   }
 
   extractUniqueNonreservablePhysicalProducts(

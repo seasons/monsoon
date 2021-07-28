@@ -76,7 +76,7 @@ export class DataCommands {
       )
       return
     }
-    const _reservations = await this.prisma.client2.reservation.findMany({
+    const reservations = await this.prisma.client2.reservation.findMany({
       where: { products: { some: { seasonsUID } } },
       orderBy: { createdAt: "asc" },
       select: {
@@ -89,10 +89,6 @@ export class DataCommands {
         },
       },
     })
-    const reservations = this.prisma.sanitizePayload(
-      _reservations,
-      "Reservation"
-    )
     const formattedReservations = reservations.map(a => ({
       ...pick(a, [
         "reservationNumber",

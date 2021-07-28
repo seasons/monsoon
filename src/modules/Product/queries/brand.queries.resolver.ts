@@ -44,9 +44,7 @@ export class BrandQueriesResolver {
       })
     }
 
-    const sanitizedData = this.prisma.sanitizePayload(data, "Brand")
-
-    return sanitizedData
+    return data
   }
 
   @Query()

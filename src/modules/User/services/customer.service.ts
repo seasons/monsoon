@@ -13,19 +13,14 @@ import {
   Customer,
   CustomerAdmissionsData,
   CustomerDetail,
+  CustomerStatus,
+  InAdmissableReason,
   Location,
+  NotificationBarID,
   Prisma,
   UTMData,
   User,
 } from "@prisma/client"
-import {
-  BillingInfoUpdateDataInput,
-  CustomerAdmissionsDataUpdateInput,
-  CustomerStatus,
-  CustomerUpdateInput,
-  InAdmissableReason,
-  NotificationBarID,
-} from "@prisma1/index"
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
@@ -213,11 +208,7 @@ export class CustomerService {
     Object.keys(details).map(detailKey => {
       if (["topSizes", "waistSizes", "weight", "styles"].includes(detailKey)) {
         const values = details[detailKey].set
-        details[detailKey] = this.queryUtils.createScalarListMutateInput(
-          values,
-          detail?.id,
-          "update"
-        )
+        details[detailKey] = values
       }
     })
 
@@ -248,7 +239,7 @@ export class CustomerService {
     })
 
     // Return the updated customer object
-    return this.prisma.sanitizePayload(updatedCustomer, "Customer")
+    return updatedCustomer
   }
 
   async updateCustomerDetail(user, customer, shippingAddress, phoneNumber) {
@@ -342,7 +333,7 @@ export class CustomerService {
     billingInfo,
     customerId,
   }: {
-    billingInfo: BillingInfoUpdateDataInput
+    billingInfo: Prisma.BillingInfoUpdateInput
     customerId: string
   }) {
     const customer = await this.prisma.client2.customer.findFirst({
@@ -453,7 +444,7 @@ export class CustomerService {
             },
           },
         },
-      } as CustomerUpdateInput
+      } as Prisma.CustomerUpdateInput
 
       if (withContact) {
         // Normal users
@@ -505,16 +496,12 @@ export class CustomerService {
     application: ApplicationType,
     dryRun: boolean
   ): Promise<TriageCustomerResult> {
-    const _customer = await this.prisma.client2.customer.findUnique({
+    const customer = await this.prisma.client2.customer.findUnique({
       where,
       select: this.triageCustomerSelect,
     })
-    const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
-    if (
-      !this.admissions.isTriageable(customer.status as CustomerStatus) &&
-      !dryRun
-    ) {
+    if (!this.admissions.isTriageable(customer.status) && !dryRun) {
       throw new ApolloError(
         `Invalid customer status: ${customer.status}. Can not triage a ${customer.status} customer`
       )
@@ -667,10 +654,7 @@ export class CustomerService {
     const receiptData = await this.prisma.client2.customerNotificationBarReceipt.findFirst(
       {
         where: {
-          AND: [
-            { notificationBarId },
-            { customer: { every: { id: customerId } } },
-          ],
+          AND: [{ notificationBarId }, { customer: { id: customerId } }],
         },
       }
     )
@@ -755,7 +739,7 @@ export class CustomerService {
           ...data,
           admissions: {
             upsert: {
-              update: admissionsUpsertData as CustomerAdmissionsDataUpdateInput,
+              update: admissionsUpsertData as Prisma.CustomerAdmissionsDataUpdateInput,
               create: admissionsUpsertData,
             },
           },
@@ -767,7 +751,7 @@ export class CustomerService {
 
   private shouldUpdateCustomerAdmissionsData(
     customer: Customer & { admissions: CustomerAdmissionsData },
-    upsertData: CustomerAdmissionsDataUpdateInput
+    upsertData: Prisma.CustomerAdmissionsDataUpdateInput
   ) {
     return (
       customer?.admissions?.admissable !== upsertData.admissable ||

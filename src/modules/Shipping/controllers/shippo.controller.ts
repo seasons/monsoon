@@ -1,15 +1,15 @@
 import { PushNotificationID } from "@app/modules/PushNotification/pushNotification.types"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { PrismaService } from "@app/prisma/prisma.service"
+import { Body, Controller, Logger, Post } from "@nestjs/common"
 import {
   Package,
   PackageTransitEventStatus,
   Reservation,
   ReservationPhase,
   ReservationStatus,
-} from "@app/prisma"
-import { PackageTransitEventSubStatus } from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
-import { Body, Controller, Logger, Post } from "@nestjs/common"
+} from "@prisma/client"
+import { PackageTransitEventSubStatus } from "@prisma/client"
 import casify from "camelcase-keys"
 import { camelCase, head, isObject, upperFirst } from "lodash"
 
@@ -193,7 +193,7 @@ export class ShippoController {
     phase: ReservationPhase
   ) {
     if (reservationStatus === "Delivered") {
-      const _reservationWithData = await this.prisma.client2.reservation.findFirst(
+      const reservationWithData = await this.prisma.client2.reservation.findFirst(
         {
           where: { id: reservation.id },
           select: {
@@ -202,10 +202,6 @@ export class ShippoController {
             products: true,
           },
         }
-      )
-      const reservationWithData = this.prisma.sanitizePayload(
-        _reservationWithData,
-        "Reservation"
       )
 
       let location

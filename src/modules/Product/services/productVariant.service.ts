@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { Prisma, ProductVariant } from "@prisma/client"
-import { InventoryStatus } from "@prisma1/index"
+import { InventoryStatus, Prisma, ProductVariant } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { head, lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
@@ -25,7 +24,7 @@ export class ProductVariantService {
       {
         where: {
           productVariant: {
-            every: { id: productVariant.id },
+            id: productVariant.id,
           },
         },
         select: {
@@ -85,7 +84,7 @@ export class ProductVariantService {
     customerId: string,
     { dryRun } = { dryRun: false }
   ) {
-    const _productVariants = await this.prisma.client2.productVariant.findMany({
+    const productVariants = await this.prisma.client2.productVariant.findMany({
       where: {
         id: {
           in: items,
@@ -98,10 +97,6 @@ export class ProductVariantService {
         product: true,
       },
     })
-    const productVariants = this.prisma.sanitizePayload(
-      _productVariants,
-      "ProductVariant"
-    )
 
     const physicalProducts = await this.physicalProductUtilsService.getPhysicalProductsWithReservationSpecificData(
       items
@@ -245,12 +240,11 @@ export class ProductVariantService {
       throw new Error(`Please pass no more than 1 manufacturer size name`)
     }
 
-    const _prodVar = await this.prisma.client2.productVariant.findUnique({
+    const prodVar = await this.prisma.client2.productVariant.findUnique({
       where: { id },
       select: {
         internalSize: { select: { id: true, display: true, type: true } },
         manufacturerSizes: { select: { slug: true } },
-        productID: true,
         id: true,
         sku: true,
         product: {
@@ -260,7 +254,6 @@ export class ProductVariantService {
         },
       },
     })
-    const prodVar = this.prisma.sanitizePayload(_prodVar, "ProductVariant")
 
     // FIXME: Can remove the ts-ignore below once we convert full to prisma2
     // @ts-ignore
@@ -343,6 +336,6 @@ export class ProductVariantService {
       data: updateData,
       select,
     })) as ProductVariant
-    return this.prisma.sanitizePayload(result, "ProductVariant")
+    return result
   }
 }

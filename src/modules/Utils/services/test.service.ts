@@ -2,7 +2,7 @@ import {
   InventoryStatus,
   PhysicalProductStatus,
   UserPushNotificationInterestType,
-} from "@app/prisma"
+} from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 
@@ -78,7 +78,6 @@ export class TestUtilsService {
                 id: color.id,
               },
             },
-            productID: this.utils.randomString(),
             total: v.physicalProducts.length,
             reservable: this.getInventoryStatusCount(v, "Reservable"),
             reserved: this.getInventoryStatusCount(v, "Reserved"),
@@ -134,16 +133,8 @@ export class TestUtilsService {
     const detail = !!input.detail
       ? {
           create: {
-            topSizes: this.queryUtils.createScalarListMutateInput(
-              input.detail.topSizes,
-              null,
-              "create"
-            ),
-            waistSizes: this.queryUtils.createScalarListMutateInput(
-              input.detail.waistSizes,
-              null,
-              "create"
-            ),
+            topSizes: input.detail.topSizes,
+            waistSizes: input.detail.waistSizes,
             shippingAddress: {
               create: {
                 zipCode: "10013",
@@ -168,7 +159,7 @@ export class TestUtilsService {
       }
     }
 
-    const _createdCustomer = await this.prisma.client2.customer.create({
+    const createdCustomer = await this.prisma.client2.customer.create({
       data: {
         status: input.status || "Active",
         user: {
@@ -192,10 +183,6 @@ export class TestUtilsService {
         },
       },
     })
-    const createdCustomer = this.prisma.sanitizePayload(
-      _createdCustomer,
-      "Customer"
-    )
 
     const defaultPushNotificationInterests = [
       "General",

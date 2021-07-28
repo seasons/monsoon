@@ -1,5 +1,4 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { User } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import {
   CallHandler,
@@ -8,6 +7,7 @@ import {
   NestInterceptor,
 } from "@nestjs/common"
 import { GqlExecutionContext, GraphQLExecutionContext } from "@nestjs/graphql"
+import { User } from "@prisma/client"
 import { pick } from "lodash"
 import { Observable } from "rxjs"
 import { tap } from "rxjs/operators"

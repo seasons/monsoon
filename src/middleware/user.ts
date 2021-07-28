@@ -40,6 +40,7 @@ export function createGetUserMiddleware(prisma: PrismaClient, logger) {
       } catch (e) {
         console.error(e)
         logger.error(e)
+        logger.setContext({ id: prismaUser.id, email: prismaUser.email })
       }
       return next()
     })

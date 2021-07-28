@@ -1,11 +1,13 @@
 import crypto from "crypto"
 import querystring from "querystring"
 
-import { ShopifyProductVariantUpdateInput } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
-import { Prisma } from "@prisma/client"
-import { BillingInfo, Location } from "@prisma/client"
-import { ShopifyProductVariant } from "@prisma/client"
+import {
+  BillingInfo,
+  Location,
+  Prisma,
+  ShopifyProductVariant,
+} from "@prisma/client"
 import { minBy, pick } from "lodash"
 import { DateTime } from "luxon"
 import request from "request"

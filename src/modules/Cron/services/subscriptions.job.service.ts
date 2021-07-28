@@ -43,7 +43,7 @@ export class SubscriptionsScheduledJobs {
 
       for (subscription of allSubscriptions) {
         const userID = subscription.customer_id
-        const _customer = await this.prisma.client2.customer.findFirst({
+        const customer = await this.prisma.client2.customer.findFirst({
           where: { user: { id: userID } },
           select: {
             id: true,
@@ -52,7 +52,6 @@ export class SubscriptionsScheduledJobs {
             },
           },
         })
-        const customer = this.prisma.sanitizePayload(_customer, "Customer")
 
         if (!customer) {
           console.log("error no customer")

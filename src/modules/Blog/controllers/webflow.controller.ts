@@ -71,9 +71,7 @@ export class WebflowController {
         data: {
           ...this.queryUtils.prismaOneToPrismaTwoMutateData(
             blogData,
-            null,
-            "BlogPost",
-            "create"
+            "BlogPost"
           ),
           image: {
             connect: { id: blogImage.id },
@@ -86,9 +84,7 @@ export class WebflowController {
         data: {
           ...this.queryUtils.prismaOneToPrismaTwoMutateData(
             blogData,
-            null,
-            "BlogPost",
-            "update"
+            "BlogPost"
           ),
           image: {
             connect: { id: blogImage.id },

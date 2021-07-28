@@ -35,19 +35,11 @@ export class ShopifyMutationsResolver {
         },
         create: {
           ...mutationData,
-          scope: this.queryUtils.createScalarListMutateInput(
-            data.scope.split(","),
-            null,
-            "create"
-          ),
+          scope: data.scope.split(","),
         } as Prisma.ShopifyShopCreateInput,
         update: {
           ...mutationData,
-          scope: this.queryUtils.createScalarListMutateInput(
-            data.scope.split(","),
-            shop?.id || "",
-            "update"
-          ),
+          scope: data.scope.split(","),
         },
       })
     }

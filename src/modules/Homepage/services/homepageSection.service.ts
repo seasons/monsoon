@@ -45,7 +45,7 @@ export class HomepageSectionService {
     customerId?
   ) {
     if (!!tagData?.tagName) {
-      const _products = await this.prisma.client2.product.findMany({
+      return await this.prisma.client2.product.findMany({
         where: {
           AND: [
             { tags: { some: { name: tagData.tagName } } },
@@ -56,7 +56,6 @@ export class HomepageSectionService {
         take: 10,
         select: ProductSelect,
       })
-      return this.prisma.sanitizePayload(_products, "Product")
     }
 
     switch (sectionTitle) {
@@ -64,17 +63,13 @@ export class HomepageSectionService {
         if (!customerId) {
           return []
         }
-        const _viewedProducts = await this.prisma.client2.recentlyViewedProduct.findMany(
+        const viewedProducts = await this.prisma.client2.recentlyViewedProduct.findMany(
           {
             where: { customer: { id: customerId } },
             orderBy: { updatedAt: "desc" },
             take: 10,
             select: { updatedAt: true, product: { select: ProductSelect } },
           }
-        )
-        const viewedProducts = this.prisma.sanitizePayload(
-          _viewedProducts,
-          "RecentlyViewedProduct"
         )
         return viewedProducts.map(viewedProduct => viewedProduct.product)
 

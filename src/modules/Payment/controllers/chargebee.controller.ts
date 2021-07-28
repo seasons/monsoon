@@ -3,9 +3,9 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
+import { CustomerStatus } from "@prisma/client"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
 import { head, pick } from "lodash"
@@ -55,7 +55,7 @@ export class ChargebeeController {
 
   private async chargebeePaymentSucceeded(content: any) {
     const { subscription, customer, transaction } = content
-    const _custWithData = await this.prisma.client2.customer.findFirst({
+    const custWithData = await this.prisma.client2.customer.findFirst({
       where: { user: { id: customer.id } },
       select: {
         id: true,
@@ -75,7 +75,6 @@ export class ChargebeeController {
         },
       },
     })
-    const custWithData = this.prisma.sanitizePayload(_custWithData, "Customer")
 
     if (custWithData?.status === "PaymentFailed") {
       let newStatus: CustomerStatus = subscription.plan_id.includes("pause")
@@ -122,7 +121,7 @@ export class ChargebeeController {
     }
 
     const userId = customer?.id
-    const _cust = await this.prisma.client2.customer.findFirst({
+    const cust = await this.prisma.client2.customer.findFirst({
       where: { user: { id: userId } },
       select: {
         id: true,
@@ -130,7 +129,6 @@ export class ChargebeeController {
         user: { select: { id: true, email: true, firstName: true } },
       },
     })
-    const cust = this.prisma.sanitizePayload(_cust, "Customer")
     if (!!cust) {
       if (this.statements.isPayingCustomer(cust)) {
         await this.prisma.client2.customer.update({
@@ -155,7 +153,7 @@ export class ChargebeeController {
 
     const { customer_id, plan_id } = subscription
 
-    const _customerWithBillingAndUserData = await this.prisma.client2.customer.findUnique(
+    const customerWithBillingAndUserData = await this.prisma.client2.customer.findUnique(
       {
         where: { id: customer.id },
         select: {
@@ -177,10 +175,6 @@ export class ChargebeeController {
           },
         },
       }
-    )
-    const customerWithBillingAndUserData = this.prisma.sanitizePayload(
-      _customerWithBillingAndUserData,
-      "Customer"
     )
 
     try {

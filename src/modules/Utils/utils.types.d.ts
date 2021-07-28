@@ -1,12 +1,11 @@
+import { DateTime } from "@app/prisma/prisma.binding"
 import {
   CustomerStatus,
-  Int,
   InventoryStatus,
   LetterSize,
   PauseType,
   ProductType,
-} from "@app/prisma"
-import { DateTime } from "@app/prisma/prisma.binding"
+} from "@prisma/client"
 
 export interface ProductCountAndStatusSummary {
   total: number
@@ -41,7 +40,7 @@ export interface CreateTestProductOutput {
 
 export interface CreateTestCustomerDetailInput {
   topSizes?: string[]
-  waistSizes?: Int[]
+  waistSizes?: number[]
   phoneOS?: string
 }
 

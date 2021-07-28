@@ -42,9 +42,7 @@ export class PhysicalProductMutationsResolver {
   async createPhysicalProductQualityReport(@Args() { data }, @Select() select) {
     const prisma2Data = this.queryUtils.prismaOneToPrismaTwoMutateData(
       data,
-      null,
-      "PhysicalProductQualityReport",
-      "create"
+      "PhysicalProductQualityReport"
     )
     return await this.prisma.client2.physicalProductQualityReport.create({
       data: prisma2Data,
@@ -69,7 +67,7 @@ export class PhysicalProductMutationsResolver {
     let updatedPhysicalProduct
 
     if (physicalProduct) {
-      const _updatedPhysicalProduct = await this.prisma.client2.physicalProduct.update(
+      updatedPhysicalProduct = await this.prisma.client2.physicalProduct.update(
         {
           where: {
             seasonsUID: physicalProduct.seasonsUID,
@@ -79,10 +77,6 @@ export class PhysicalProductMutationsResolver {
           },
           select,
         }
-      )
-      updatedPhysicalProduct = this.prisma.sanitizePayload(
-        _updatedPhysicalProduct,
-        "PhysicalProduct"
       )
     }
 

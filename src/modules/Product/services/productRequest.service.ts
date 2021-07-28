@@ -42,7 +42,7 @@ export class ProductRequestService {
           select
         )
         if (productRequest) {
-          resolve(this.prisma.sanitizePayload(productRequest, "ProductRequest"))
+          resolve(productRequest)
           return
         }
 
@@ -55,7 +55,7 @@ export class ProductRequestService {
           select
         )
         if (productRequest) {
-          resolve(this.prisma.sanitizePayload(productRequest, "ProductRequest"))
+          resolve(productRequest)
           return
         }
 
@@ -73,7 +73,7 @@ export class ProductRequestService {
           },
           select,
         })
-        resolve(this.prisma.sanitizePayload(productRequest, "ProductRequest"))
+        resolve(productRequest)
         return
       })
     })

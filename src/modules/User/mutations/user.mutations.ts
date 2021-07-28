@@ -40,24 +40,22 @@ export class UserMutationsResolver {
       }
     )
 
-    const _returnVal = await this.prisma.client2.userPushNotification.update({
+    return await this.prisma.client2.userPushNotification.update({
       where: {
         id: memberWithPushNotification.pushNotification.id,
       },
       data: { status: newStatus },
       select,
     })
-    return this.prisma.sanitizePayload(_returnVal, "UserPushNotification")
   }
 
   @Mutation()
   async updateUser(@Args() { data, where }, @Select() select) {
-    const result = await this.prisma.client2.user.update({
+    return await this.prisma.client2.user.update({
       where,
       data,
       select,
     })
-    return this.prisma.sanitizePayload(result, "User")
   }
 
   @Mutation()
