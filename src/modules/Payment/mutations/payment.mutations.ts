@@ -106,11 +106,12 @@ export class PaymentMutationsResolver {
   @Mutation()
   async confirmPaymentMethodUpdate(
     @Args() { paymentIntentID, billing },
-    @Customer() customer
+    @Customer() customer,
+    @User() user
   ) {
     return this.updatePaymentService.confirmPaymentMethodUpdate({
       paymentIntentID,
-      userId: customer.user.id,
+      userId: user.id,
       chargebeeBillingAddress: billing,
     })
   }
