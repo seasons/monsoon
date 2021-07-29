@@ -30,16 +30,16 @@ PRISMA_ENDPOINT=http://localhost:4466/monsoon/dev
 DATABASE_URL='postgres://prisma:prisma@localhost:9876/prisma?schema=monsoon$dev'
 REDIS_URL=redis://localhost:6379
 
-# 5. Create your local Prisma Server and Postgres instances
+# 5. Create your local Postgres and Redis instances
 docker-compose up -d
 
-# 6. Deploy prisma
-yarn prisma:deploy
-
-# 7. Install monsoon-cli (command line interface)
+# 6. Install monsoon-cli (command line interface)
 yarn global add ts-node && yarn link
 
-# 8. # If using the Docker container, run the following command to copy production data into it:
+# 7A. Create a superuser on your database. Run this SQL against your local DB. (You can use Postico for this)
+CREATE USER postgres SUPERUSER;
+
+# 7B. Get a fresh copy of the database from production
 monsoon spp local
 
 # 9. Start server (runs on http://localhost:4000/playground) and open GraphQL Playground
@@ -61,19 +61,6 @@ To verify the server is setup properly. go open the [playground](http://localhos
 }
 ```
 
-Nota bene: To ensure your local DB is as close as possible to staging and production, go into Postico (a postgres client), and run the following SQL query:
-
-```
-ALTER TABLE "monsoon$dev"."ProductVariant"
-  ADD CHECK (total >= 0),
-  ADD CHECK (reservable >= 0),
-  ADD CHECK (reserved >= 0),
-  ADD CHECK ("nonReservable" >= 0),
-  ADD CHECK (stored >= 0),
-  ADD CHECK (offloaded >= 0),
-  ADD CHECK (total = reservable + reserved + "nonReservable" + stored + offloaded);
-```
-
 ## Deployment
 
 All deployments follow the following pattern.
@@ -89,7 +76,6 @@ Before deploying to production your first time, please check with a senior membe
 ### Commands
 
 - `yarn start` starts GraphQL server on `http://localhost:4000`
-- `yarn prisma:<subcommand>` gives access to local version of Prisma CLI (e.g. `yarn prisma:deploy`)
 
 Monsoon ships with a command line interface. To install it run `yarn link`. Once that's complete, you can use the following commands:
 
@@ -98,10 +84,6 @@ Monsoon ships with a command line interface. To install it run `yarn link`. Once
 For details on the arguments and options for each command, use `--help`. e.g `monsoon sync:prisma:prisma --help`
 
 Note that you may need to run `yarn tsc` to generate the files used by the monsoon cli.
-
-> **Note**: We recommend that you're using `yarn dev` during development as it will give you access to the GraphQL API or your server (defined by the [application schema](./src/schema.graphql)) as well as to the Prisma API directly (defined by the [Prisma database schema](./generated/prisma.graphql)). If you're starting the server with `yarn start`, you'll only be able to access the API of the application schema.
-
-### Testing
 
 #### Generating a random user account
 
@@ -113,7 +95,7 @@ If you're working against the staging server, run the staging version:
 
 `monsoon ctu --password Seasons2020 --prisma staging --roles Customer Admin`
 
-If `--email` and/or `--password` are not specified, those values are also generated. All random values are generated using a library called [faker.js](https://github.com/marak/Faker.js/)
+If `--email` and/or `--password` are not specified, those values are auto generated. All random values are generated using a library called [faker.js](https://github.com/marak/Faker.js/)
 
 #### Taking over a user's account
 
@@ -133,8 +115,6 @@ monsoon sync:prisma:prisma staging
 monsoon takeover someguy@gmail.com --pe staging
 ```
 
-Please note that before syncing prisma production to another environment, you need to ensure the schema's match. The instructions for doing so are in the CLI warning that appears when you run the `sync:prisma:prisma` command.
-
 ### Environments
 
 You should have `.env`, `.env.staging`, and `.env.production` that declare the environment variables for your local, and the staging and production environments respectively.
@@ -153,14 +133,6 @@ For example, to see the variable HELLO with value WORLD on app monsoon-staging, 
 - `heroku config:set HELLO=WORLD -a monsoon-staging`
 
 You may need to install the CLI and login using `heroku login` first.
-
-### Database security
-
-All prisma services (your local instance, staging, and production) have both their management API and the core service itself protected by secrets. You can learn more about how this works on the [prisma docs for security](https://www.prisma.io/docs/prisma-server/authentication-and-security-kke4/).
-
-To use the prisma manamgent API through the prisma CLI, you need to set the `PRISMA_MANAGEMENT_API_SECRET` environment variable. This will be taken care of if you have pulled the latest environment variables from heroku and are only using the prisma CLI through the associated `yarn` scripts.
-
-To make calls to prisma services on the prisma playground or use the prisma admin, you'll need to add a JWT. To generate that token, use the script `yarn prisma:token-<env>`.
 
 ### Project structure
 
