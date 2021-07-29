@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@apollo/gateway": "0.16.9",
-    "@aws-sdk/client-s3": "3.21.0",
+    "@aws-sdk/client-s3": "3.23.0",
     "@babel/plugin-proposal-class-properties": "7.8.3",
     "@babel/plugin-proposal-decorators": "7.8.3",
     "@devoxa/prisma-relay-cursor-connection": "2.0.0",
@@ -100,7 +100,7 @@
     "graphql-import": "0.7.1",
     "graphql-tools": "4.0.5",
     "graphql-type-json": "0.3.2",
-    "graphql-upload": "10.0.0",
+    "graphql-upload": "11.0.0",
     "image-size": "0.8.3",
     "json2csv": "5.0.6",
     "jsonexport": "3.0.1",
