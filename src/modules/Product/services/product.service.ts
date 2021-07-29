@@ -1,3 +1,5 @@
+import { SearchService } from "@app/modules/Search"
+import { SearchResultType } from "@app/modules/Search/services/search.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { SizeType } from "@app/prisma/prisma.binding"
 import { ImageData } from "@modules/Image/image.types"
@@ -42,7 +44,8 @@ export class ProductService {
     private readonly productVariantService: ProductVariantService,
     private readonly physicalProductUtils: PhysicalProductUtilsService,
     private readonly utils: UtilsService,
-    private readonly queryUtils: QueryUtilsService
+    private readonly queryUtils: QueryUtilsService,
+    private readonly search: SearchService
   ) {}
 
   async getProducts(args, select) {
@@ -55,19 +58,39 @@ export class ProductService {
       "Product"
     )
 
-    return this.queryUtils.resolveFindMany(
-      { ...findManyArgs, select },
+    const [updatedArgs] = await this.search.updateArgsForSearch(
+      findManyArgs,
+      SearchResultType.Product
+    )
+
+    const data = await this.queryUtils.resolveFindMany(
+      { ...updatedArgs, select },
       "Product"
     )
+
+    return data
   }
 
   async getProductsConnection(args, select) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
 
-    return this.queryUtils.resolveConnection(
-      { ...args, ...queryOptions, select },
+    const [updatedArgs, searchResult] = await this.search.updateArgsForSearch(
+      queryOptions,
+      SearchResultType.Product
+    )
+
+    const data = await this.queryUtils.resolveConnection(
+      { ...updatedArgs, ...queryOptions, select },
       "Product"
     )
+
+    return {
+      ...data,
+      aggregate: {
+        ...data.aggregate,
+        count: searchResult?.nbHits || data?.aggregate?.count,
+      },
+    }
   }
 
   async publishProducts(productIDs) {
