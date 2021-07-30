@@ -1,3 +1,4 @@
+import * as fs from "fs"
 import * as url from "url"
 import * as util from "util"
 
@@ -16,7 +17,6 @@ import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
 import GraphQLJSON from "graphql-type-json"
 
-import { IsMutationInterceptor } from "./interceptors/isMutationInterceptor"
 import {
   BlogModule,
   CollectionModule,
@@ -65,6 +65,24 @@ const context = {
   }, {}),
 }
 
+const persistedQueryMap = JSON.parse(
+  fs.readFileSync(process.cwd() + `/src/tests/complete.queryMap.json`, "utf-8")
+)
+
+const isRequestMutation = (req, persistedQueryMap) => {
+  let queryString
+  const isPersistedQuery = !req.body.query
+  if (isPersistedQuery) {
+    const opName = req.query.operationName
+    queryString = persistedQueryMap[opName]
+  } else {
+    queryString = req.body.query
+  }
+  const isMutation = queryString.includes("mutation")
+
+  return isMutation
+}
+
 // Don't run cron jobs in dev mode, or on web workers. Only on production cron workers
 const scheduleModule =
   process.env.NODE_ENV === "production" && process.env.DYNO?.includes("cron")
@@ -108,7 +126,14 @@ const cache = (() => {
             requireResolversForResolveType: false,
           },
           directiveResolvers,
-          context: ({ req }) => ({ req, ...context }),
+          context: ({ req }) => {
+            const ctx = { req, ...context }
+
+            // For use in deciding which prisma client to use. See prisma.service for more details
+            ctx["isMutation"] = isRequestMutation(req, persistedQueryMap)
+
+            return ctx
+          },
           plugins: [
             responseCachePlugin({
               sessionId: ({ request }) => {
@@ -170,10 +195,6 @@ const cache = (() => {
     HealthModule,
   ],
   providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: IsMutationInterceptor,
-    },
     {
       provide: APP_INTERCEPTOR,
       useClass: DataLoaderInterceptor,
