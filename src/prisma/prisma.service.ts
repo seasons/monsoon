@@ -135,7 +135,9 @@ export class PrismaService implements UpdatableConnection {
   ) => {
     return args => {
       const requestOnMutation = this.prismaUtils.requestIsOnMutation()
-      console.log(`requestOnMutation: ${requestOnMutation}`)
+      if (log.includes("info")) {
+        console.log(`requestOnMutation: ${requestOnMutation}`)
+      }
       if (requestOnMutation) {
         if (log.includes("info")) {
           console.log("use write client")
