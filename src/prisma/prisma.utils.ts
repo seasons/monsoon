@@ -9,3 +9,11 @@ export class PrismaUtilsService {
     return this.context.isMutation
   }
 }
+
+// For use in application contexts that dont have a Context
+@Injectable()
+export class MockPrismaUtilsService {
+  requestIsOnMutation(): Boolean {
+    return false
+  }
+}
