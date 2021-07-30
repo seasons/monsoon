@@ -7,7 +7,7 @@ import { Injectable } from "@nestjs/common"
 import DataLoader from "dataloader"
 import { cloneDeep, identity, isEqual, lowerFirst } from "lodash"
 
-import { PrismaService } from "./prisma.service"
+import { readClient } from "./prisma.service"
 
 export type PrismaDataLoader<V = any> = DataLoader<string, V>
 
@@ -28,8 +28,6 @@ interface UpdateMapInput {
 
 @Injectable()
 export class PrismaLoader implements NestDataLoader {
-  constructor(private readonly prisma: PrismaService) {}
-
   // TODO: Add support for custom `batchScheduleFn`s which we can use to coalesce queries
   // across tickets of the event loop. See https://www.npmjs.com/package/dataloader#batching for details
   // This is applicable, for example, when resolving queries on deeply nested field resolvers (e.g products -> variants -> hasRestockNotification)
@@ -54,7 +52,10 @@ export class PrismaLoader implements NestDataLoader {
     }: PrismaGenerateParams
   ) {
     const where = formatWhere(keys, ctx)
-    const data = await this.prisma.client[lowerFirst(model)].findMany({
+
+    // for whatever reason, trying to inject the prisma service doesn't work once
+    // we inject the CONTEXT into prisma utils. So we just use the read client directly.
+    const data = await readClient[lowerFirst(model)].findMany({
       where,
       select,
       orderBy,
