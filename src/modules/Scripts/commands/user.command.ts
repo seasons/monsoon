@@ -1,7 +1,6 @@
 import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
-import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable, Logger } from "@nestjs/common"
@@ -34,8 +33,7 @@ export class UserCommands {
     private readonly paymentService: PaymentService,
     private readonly utils: UtilsService,
     private readonly paymentUtils: PaymentUtilsService,
-    private moduleRef: ModuleRef,
-    private readonly queryUtils: QueryUtilsService
+    private moduleRef: ModuleRef
   ) {}
 
   @Command({

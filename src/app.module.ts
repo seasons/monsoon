@@ -16,6 +16,7 @@ import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
 import GraphQLJSON from "graphql-type-json"
 
+import { IsMutationInterceptor } from "./interceptors/isMutationInterceptor"
 import {
   BlogModule,
   CollectionModule,
@@ -169,6 +170,10 @@ const cache = (() => {
     HealthModule,
   ],
   providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: IsMutationInterceptor,
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: DataLoaderInterceptor,

@@ -210,7 +210,7 @@ const setupPaymentPlans = async () => {
     site: process.env.CHARGEBEE_SITE,
     api_key: process.env.CHARGEBEE_API_KEY,
   })
-  const ps = new PrismaService()
+  const ps = new PrismaService(null)
   const request = await chargebee.plan.list({ limit: 100 }).request()
   const list = request?.list || []
 
