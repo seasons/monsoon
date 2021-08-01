@@ -4,7 +4,7 @@ The below set of tutorials provide a walkthrough of spinning up an [AWS ECS Farg
 
 ##### I. Intro, teardown of old env, spin up new app and env
 
-<video width="400" height="400" id="player" playsinline controls>
+<video width="400" height="400" id="player" playsinline controls preload="auto">
   <source src="https://seasons-dev.s3.amazonaws.com/aws-ecs-tutorial-1.mp4" type="video/mp4" />
 </video>
 
