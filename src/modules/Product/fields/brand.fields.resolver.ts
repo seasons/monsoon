@@ -17,7 +17,7 @@ export class BrandFieldsResolver {
     let brandSlug = brand.slug
     if (!brandSlug) {
       brandSlug = (
-        await this.prisma.client2.brand.findUnique({
+        await this.prisma.client.brand.findUnique({
           where: { id: brand.id },
           select: { slug: true },
         })

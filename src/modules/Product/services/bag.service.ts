@@ -20,7 +20,7 @@ export class BagService {
     customer,
     select: Prisma.BagItemSelect
   ): Promise<Partial<BagItem>> {
-    const custWithData = await this.prisma.client2.customer.findUnique({
+    const custWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
         membership: { select: { plan: { select: { itemCount: true } } } },
@@ -49,7 +49,7 @@ export class BagService {
     const existingSavedItemForVariant = savedItems.find(
       a => a.productVariant.id === itemId
     )
-    const result = await this.prisma.client2.bagItem.upsert({
+    const result = await this.prisma.client.bagItem.upsert({
       where: { id: existingSavedItemForVariant?.id || "" },
       create: {
         customer: {
@@ -202,6 +202,7 @@ export class BagService {
   }
 
   async removeFromBag(item, saved, customer): Promise<BagItem> {
+    // TODO: removeFromBag has been deprecated, use deleteBagItem
     const bagItem = await this.getBagItem(item, saved, customer, { id: true })
 
     if (!bagItem) {
@@ -210,7 +211,7 @@ export class BagService {
 
     // has to return a promise because we roll it up in a transaction in at
     // least one parent function
-    return this.prisma.client2.bagItem.delete({ where: { id: bagItem.id } })
+    return this.prisma.client.bagItem.delete({ where: { id: bagItem.id } })
   }
 
   async getBagItem(
@@ -219,7 +220,7 @@ export class BagService {
     customer,
     select: Prisma.BagItemSelect = undefined // selects all scalars
   ): Promise<Partial<BagItem>> {
-    const bagItem = await this.prisma.client2.bagItem.findFirst({
+    const bagItem = await this.prisma.client.bagItem.findFirst({
       where: {
         customer: {
           id: customer.id,

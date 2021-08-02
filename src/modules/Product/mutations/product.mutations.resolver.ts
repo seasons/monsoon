@@ -1,7 +1,7 @@
 import { Customer, User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
 import { Select } from "@app/decorators/select.decorator"
-import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 
 import { BagService } from "../services/bag.service"
@@ -80,6 +80,7 @@ export class ProductMutationsResolver {
     @Args() { item, saved, customer: passedCustomerID },
     @Customer() customer
   ) {
+    // TODO: removeFromBag has been deprecated, use deleteBagItem
     return await this.bagService.removeFromBag(
       item,
       saved,

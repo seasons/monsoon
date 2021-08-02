@@ -1,5 +1,9 @@
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
+import {
+  SearchResultType,
+  SearchService,
+} from "@app/modules/Search/services/search.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { Args, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -9,7 +13,8 @@ import { ApolloError } from "apollo-server"
 export class BrandQueriesResolver {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly queryUtils: QueryUtilsService
+    private readonly queryUtils: QueryUtilsService,
+    private readonly search: SearchService
   ) {}
 
   @Query()
@@ -22,7 +27,7 @@ export class BrandQueriesResolver {
   ) {
     let data
     if (typeof args?.published === "boolean") {
-      const brand: any = await this.prisma.client2.brand.findUnique({
+      const brand: any = await this.prisma.client.brand.findUnique({
         select: {
           ...select,
           published: true,
@@ -38,15 +43,13 @@ export class BrandQueriesResolver {
     }
 
     if (!data) {
-      data = await this.prisma.client2.brand.findUnique({
+      data = await this.prisma.client.brand.findUnique({
         ...args,
         select,
       })
     }
 
-    const sanitizedData = this.prisma.sanitizePayload(data, "Brand")
-
-    return sanitizedData
+    return data
   }
 
   @Query()
@@ -54,11 +57,30 @@ export class BrandQueriesResolver {
     @FindManyArgs({ withFragment: `fragment EnsureSlug on Brand { slug }` })
     args
   ) {
-    return this.queryUtils.resolveFindMany(args, "Brand")
+    const [updatedArgs] = await this.search.updateArgsForSearch(
+      args,
+      SearchResultType.Brand
+    )
+    return this.queryUtils.resolveFindMany(updatedArgs, "Brand")
   }
 
   @Query()
   async brandsConnection(@Args() args, @Select() select) {
-    return this.queryUtils.resolveConnection({ ...args, select }, "Brand")
+    const [updatedArgs, searchResult] = await this.search.updateArgsForSearch(
+      args,
+      SearchResultType.Brand
+    )
+    const data = await this.queryUtils.resolveConnection(
+      { ...updatedArgs, select },
+      "Brand"
+    )
+
+    return {
+      ...data,
+      aggregate: {
+        ...data.aggregate,
+        count: searchResult?.nbHits || data?.aggregate?.count,
+      },
+    }
   }
 }

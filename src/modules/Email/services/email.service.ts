@@ -113,7 +113,7 @@ export class EmailService {
 
   async sendBuyUsedOrderConfirmationEmail(user: EmailUser, order: Order) {
     // Gather the appropriate product info
-    const orderWithLineItems = await this.prisma.client2.order.findUnique({
+    const orderWithLineItems = await this.prisma.client.order.findUnique({
       where: { id: order.id },
       select: {
         lineItems: {
@@ -125,15 +125,14 @@ export class EmailService {
     const physicalProductId = orderLineItems.find(
       orderLineItem => orderLineItem.recordType === "PhysicalProduct"
     ).recordID
-    const physicalProduct = this.prisma.sanitizePayload(
-      await this.prisma.client2.physicalProduct.findUnique({
+    const physicalProduct = await this.prisma.client.physicalProduct.findUnique(
+      {
         where: { id: physicalProductId },
         select: {
           productVariant: { select: { product: { select: { id: true } } } },
           price: { select: { buyUsedPrice: true } },
         },
-      }),
-      "PhysicalProduct"
+      }
     )
     const productPrice = physicalProduct.price?.buyUsedPrice
     const productId = (physicalProduct.productVariant as any).product.id
@@ -151,7 +150,7 @@ export class EmailService {
       false
     )
 
-    const _custData = await this.prisma.client2.customer.findFirst({
+    const custData = await this.prisma.client.customer.findFirst({
       where: { user: { id: user.id } },
       select: {
         id: true,
@@ -174,7 +173,6 @@ export class EmailService {
         billingInfo: { select: { id: true, brand: true, last_digits: true } },
       },
     })
-    const custData = this.prisma.sanitizePayload(_custData, "Customer")
 
     // Render the email
     const payload = await RenderEmail.buyUsedOrderConfirmation({
@@ -243,7 +241,7 @@ export class EmailService {
   }
 
   async sendSubscribedEmail(user: EmailUser) {
-    const _cust = await this.prisma.client2.customer.findFirst({
+    const cust = await this.prisma.client.customer.findFirst({
       where: { user: { id: user.id } },
       select: {
         membership: {
@@ -251,7 +249,6 @@ export class EmailService {
         },
       },
     })
-    const cust = this.prisma.sanitizePayload(_cust, "Customer")
     const payload = await RenderEmail.subscribed({
       name: user.firstName,
       planId: cust.membership?.plan?.planID,
@@ -275,7 +272,7 @@ export class EmailService {
     if (withItems) {
       const planID = this.utils.getPauseWithItemsPlanId(customer.membership)
       pausedWithItemsPrice = (
-        await this.prisma.client2.paymentPlan.findFirst({
+        await this.prisma.client.paymentPlan.findFirst({
           where: { planID },
           select: {
             id: true,
@@ -287,8 +284,8 @@ export class EmailService {
 
     const data = {
       name: customer.user.firstName,
-      resumeDate: latestPauseRequest.resumeDate,
-      startDate: latestPauseRequest.pauseDate,
+      resumeDate: latestPauseRequest.resumeDate.toISOString(),
+      startDate: latestPauseRequest.pauseDate.toISOString(),
       hasOpenReservation:
         !!latestReservation &&
         !["Completed", "Cancelled"].includes(latestReservation.status),
@@ -396,7 +393,7 @@ export class EmailService {
   }
 
   private async storeEmailReceipt(emailId: EmailId, userId: string) {
-    return this.prisma.client2.emailReceipt.create({
+    return this.prisma.client.emailReceipt.create({
       data: {
         emailId,
         user: { connect: { id: userId } },
@@ -452,9 +449,15 @@ export class EmailService {
   }) {
     const products = await this.emailUtils.getXReservableProductsForUser(
       numStylesToSend,
-      user as User,
+      user,
       availableStyles
     )
+    if (
+      products.length === 0 &&
+      renderEmailFunc === "recommendedItemsNurture"
+    ) {
+      return
+    }
     const payload = await RenderEmail[renderEmailFunc]({
       name: `${user.firstName}`,
       products,
@@ -516,7 +519,10 @@ export class EmailService {
       subject: subject,
       html,
     }
-    if (process.env.NODE_ENV === "production" || to.includes("seasons.nyc")) {
+
+    const nonMembershipSeasonsEmail =
+      to.includes("seasons.nyc") && to !== process.env.OPERATIONS_ADMIN_EMAIL
+    if (process.env.NODE_ENV === "production" || nonMembershipSeasonsEmail) {
       sgMail.send(msg)
     } else {
       await nodemailerTransport.sendMail({
@@ -535,7 +541,7 @@ export class EmailService {
     if (type === "essential") {
       return true
     }
-    const u = await this.prisma.client2.user.findUnique({
+    const u = await this.prisma.client.user.findUnique({
       where: { email: to },
       select: { sendSystemEmails: true },
     })
@@ -546,11 +552,11 @@ export class EmailService {
     user: EmailUser,
     products: MonsoonProductGridItem[]
   ) {
-    const customer = await this.prisma.client2.customer.findFirst({
+    const customer = await this.prisma.client.customer.findFirst({
       where: { user: { id: user.id } },
       select: { id: true },
     })
-    await this.prisma.client2.customer.update({
+    await this.prisma.client.customer.update({
       where: { id: customer.id },
       data: {
         emailedProducts: {

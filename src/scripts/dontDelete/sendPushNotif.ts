@@ -24,24 +24,14 @@ const run = async () => {
     error
   )
 
-  const target = await ps.binding.query.customers(
-    {
-      where: { status_in: ["Active", "Paused", "Waitlisted"] },
+  await pushNotificationService.pushNotifyUsers({
+    emails: ["faiyam+sendpushnotif2@seasons.nyc"],
+    pushNotifID: "Custom",
+    vars: {
+      title: "New Arrivals: Phipps",
+      body: "Bowling shirts, work jackets, knitwear & more",
     },
-    `{id user {id email}}`
-  )
-  const emails = target.map(a => a.user.email)
-
-  for (const emailsChunk of chunk(emails, 999)) {
-    await pushNotificationService.pushNotifyUsers({
-      emails: emailsChunk,
-      pushNotifID: "Custom",
-      vars: {
-        title: "New Arrivals: Phipps",
-        body: "Bowling shirts, work jackets, knitwear & more",
-      },
-    })
-  }
+  })
 }
 
 run()

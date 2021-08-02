@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { User } from "@prisma1/index"
+import { User } from "@prisma/client"
 import * as Sentry from "@sentry/node"
 
 @Injectable()

@@ -1,12 +1,15 @@
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
-import { ID_Input, InventoryStatus, Reservation } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
-import { Customer, Package, PrismaPromise } from "@prisma/client"
-import { head } from "lodash"
+import {
+  Customer,
+  InventoryStatus,
+  Package,
+  PrismaPromise,
+  Reservation,
+} from "@prisma/client"
 
 import { ReservationWithProductVariantData } from "./reservation.service"
-import { Prisma } from ".prisma/client"
 
 @Injectable()
 export class ReservationUtilsService {
@@ -17,14 +20,14 @@ export class ReservationUtilsService {
 
   inventoryStatusOf = (
     res: ReservationWithProductVariantData,
-    prodVarId: ID_Input
+    prodVarId: string
   ): InventoryStatus => {
     return res.products.find(prod => prod.productVariant.id === prodVarId)
       .inventoryStatus
   }
 
   async getLatestReservation(customerID: string, status = undefined) {
-    const _latestReservation = await this.prisma.client2.reservation.findFirst({
+    const latestReservation = await this.prisma.client.reservation.findFirst({
       where: {
         customer: {
           id: customerID,
@@ -52,14 +55,10 @@ export class ReservationUtilsService {
       },
     })
 
-    if (_latestReservation == null) {
+    if (latestReservation == null) {
       return null
     }
 
-    const latestReservation = this.prisma.sanitizePayload(
-      _latestReservation,
-      "Reservation"
-    )
     return latestReservation
   }
 
@@ -81,7 +80,7 @@ export class ReservationUtilsService {
 
     if (prismaReservation.returnedPackage != null) {
       return [
-        this.prisma.client2.package.update({
+        this.prisma.client.package.update({
           data: {
             items: { connect: returnedPhysicalProductIDs },
             weight,
@@ -91,7 +90,7 @@ export class ReservationUtilsService {
       ]
     } else {
       return [
-        (this.prisma.client2.reservation.update({
+        (this.prisma.client.reservation.update({
           data: {
             returnedPackage: {
               update: {
@@ -127,7 +126,7 @@ export class ReservationUtilsService {
     let foundUnique = false
     while (!foundUnique) {
       reservationNumber = Math.floor(Math.random() * 900000000) + 100000000
-      const reservationWithThatNumber = await this.prisma.client2.reservation.findUnique(
+      const reservationWithThatNumber = await this.prisma.client.reservation.findUnique(
         {
           where: {
             reservationNumber,

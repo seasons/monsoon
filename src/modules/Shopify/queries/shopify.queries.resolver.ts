@@ -8,13 +8,13 @@ export class ShopifyQueriesResolver {
 
   @Query()
   async shopifyProductVariants(@FindManyArgs() args) {
-    const _data = this.prisma.client2.shopifyProductVariant.findMany(args)
-    return this.prisma.sanitizePayload(_data, "ShopifyProductVariant")
+    const data = this.prisma.client.shopifyProductVariant.findMany(args)
+    return data
   }
 
   @Query()
   async shopifyShops(@FindManyArgs() args) {
-    const _data = this.prisma.client2.shopifyShop.findMany(args)
-    return this.prisma.sanitizePayload(_data, "ShopifyShop")
+    const data = this.prisma.client.shopifyShop.findMany(args)
+    return data
   }
 }

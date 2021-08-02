@@ -5,7 +5,7 @@ import { pick } from "lodash"
 
 import { AlgoliaService, IndexKey } from "./algolia.service"
 
-enum SearchResultType {
+export enum SearchResultType {
   Product = "Product",
   Brand = "Brand",
   PhysicalProduct = "PhysicalProduct",
@@ -37,7 +37,10 @@ export class SearchService {
     ])
   }
 
-  async query(query: string, options?: QueryOptions): Promise<any[]> {
+  async query(
+    query: string,
+    options?: QueryOptions
+  ): Promise<{ nbHits: number; hits: any[] }> {
     let filters = !!options?.filters ? options?.filters + " OR " : ""
     let typeFilter = options?.includeTypes
       .map(type => `kindOf:${type}`)
@@ -48,7 +51,27 @@ export class SearchService {
       filters,
     })
 
-    return results.hits
+    return results
+  }
+
+  async updateArgsForSearch(args, type: SearchResultType) {
+    const contains = args?.where?.name?.contains || args?.where?.name_contains
+    if (!!contains) {
+      const updatedArgs = args
+      const searchResult = await this.query(contains, {
+        includeTypes: [type],
+      })
+      const searchResults = searchResult.hits
+      const ids = searchResults.map(result => result.objectID)
+
+      delete updatedArgs.where.name
+      updatedArgs.where.id = {
+        in: ids,
+      }
+
+      return [updatedArgs, searchResult]
+    }
+    return [args]
   }
 
   async getRecentlyViewedProducts() {
@@ -56,7 +79,7 @@ export class SearchService {
     let recentlyViewedProducts = []
     let lastPageRecentlyViewedProducts
     do {
-      lastPageRecentlyViewedProducts = await this.prisma.client2.recentlyViewedProduct.findMany(
+      lastPageRecentlyViewedProducts = await this.prisma.client.recentlyViewedProduct.findMany(
         {
           skip: recentlyViewedProducts.length,
           take: PAGE_SIZE,
@@ -79,14 +102,11 @@ export class SearchService {
       )
     } while (lastPageRecentlyViewedProducts.length === PAGE_SIZE)
 
-    return this.prisma.sanitizePayload(
-      recentlyViewedProducts,
-      "RecentlyViewedProduct"
-    )
+    return recentlyViewedProducts
   }
 
   async indexProducts(indices = [IndexKey.Default]) {
-    const _products = await this.prisma.client2.product.findMany({
+    const products = await this.prisma.client.product.findMany({
       select: {
         id: true,
         slug: true,
@@ -107,7 +127,6 @@ export class SearchService {
         updatedAt: true,
       },
     })
-    const products = this.prisma.sanitizePayload(_products, "Product")
 
     const viewCounts = await this.getRecentlyViewedProducts()
 
@@ -154,7 +173,7 @@ export class SearchService {
             objectID: id,
             kindOf: "Product",
             name,
-            brandName: brand.name,
+            brandName: brand?.name,
             image: url,
             description,
             variantsCount,
@@ -163,8 +182,8 @@ export class SearchService {
             type,
             status,
             categoryName: category.name,
-            tags: tags.map(a => a.name),
-            popularity: productViews.length,
+            tags: tags?.map(a => a.name),
+            popularity: productViews?.length,
             createdAt: createdAt?.getTime() / 1000,
             publishedAt: publishedAt?.getTime() / 1000,
           }
@@ -182,7 +201,7 @@ export class SearchService {
   }
 
   async indexBrands(indices = [IndexKey.Default]) {
-    const _brands = await this.prisma.client2.brand.findMany({
+    const brands = await this.prisma.client.brand.findMany({
       select: {
         id: true,
         brandCode: true,
@@ -198,7 +217,6 @@ export class SearchService {
         updatedAt: true,
       },
     })
-    const brands = this.prisma.sanitizePayload(_brands, "Brand")
 
     const viewCounts = await this.getRecentlyViewedProducts()
 
@@ -238,8 +256,8 @@ export class SearchService {
           tier,
           published,
           websiteUrl,
-          createdAt: createdAt.getTime() / 1000,
-          updatedAt: updatedAt.getTime() / 1000,
+          createdAt: createdAt?.getTime() / 1000,
+          updatedAt: updatedAt?.getTime() / 1000,
         }
       }
     )
@@ -252,7 +270,7 @@ export class SearchService {
   }
 
   async indexCustomers(indices = [IndexKey.Default]) {
-    const _customers = await this.prisma.client2.customer.findMany({
+    const customers = await this.prisma.client.customer.findMany({
       select: {
         id: true,
         plan: true,
@@ -265,7 +283,6 @@ export class SearchService {
         updatedAt: true,
       },
     })
-    const customers = this.prisma.sanitizePayload(_customers, "Customer")
 
     this.logger.log(`Re-indexing ${customers.length} customers...`)
 
@@ -276,12 +293,12 @@ export class SearchService {
           kindOf: "Customer",
           plan,
           status,
-          email: user.email,
+          email: user?.email,
           user,
-          bagItemsCount: bagItems.length,
+          bagItemsCount: bagItems?.length,
           popularity: status === "Active" ? 100 : 0 + bagItems.length * 2,
-          createdAt: createdAt.getTime() / 1000,
-          updatedAt: updatedAt.getTime() / 1000,
+          createdAt: createdAt?.getTime() / 1000,
+          updatedAt: updatedAt?.getTime() / 1000,
         }
       }
     )
@@ -294,23 +311,17 @@ export class SearchService {
   }
 
   async indexPhysicalProducts(indices = [IndexKey.Default]) {
-    const _physicalProducts = await this.prisma.client2.physicalProduct.findMany(
-      {
-        select: {
-          id: true,
-          seasonsUID: true,
-          inventoryStatus: true,
-          sequenceNumber: true,
-          productVariant: {
-            select: { product: { select: { name: true } } },
-          },
+    const physicalProducts = await this.prisma.client.physicalProduct.findMany({
+      select: {
+        id: true,
+        seasonsUID: true,
+        inventoryStatus: true,
+        sequenceNumber: true,
+        productVariant: {
+          select: { product: { select: { name: true } } },
         },
-      }
-    )
-    const physicalProducts = this.prisma.sanitizePayload(
-      _physicalProducts,
-      "PhysicalProduct"
-    )
+      },
+    })
 
     this.logger.log(
       `Re-indexing ${physicalProducts.length} physical products...`
@@ -342,7 +353,7 @@ export class SearchService {
     indices = [IndexKey.Default],
     brandID?: string
   ) {
-    const _shopifyProductVariants = await this.prisma.client2.shopifyProductVariant.findMany(
+    const shopifyProductVariants = await this.prisma.client.shopifyProductVariant.findMany(
       {
         where: {
           brand: brandID ? { id: brandID } : { id: { not: undefined } },
@@ -357,10 +368,6 @@ export class SearchService {
           image: { select: { url: true } },
         },
       }
-    )
-    const shopifyProductVariants = this.prisma.sanitizePayload(
-      _shopifyProductVariants,
-      "ShopifyProductVariant"
     )
 
     this.logger.log(

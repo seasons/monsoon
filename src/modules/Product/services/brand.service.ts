@@ -36,7 +36,7 @@ export class BrandService {
     const promises = [
       ...imagePromises,
       logoData?.promise,
-      this.prisma.client2.warehouseLocation.create({
+      this.prisma.client.warehouseLocation.create({
         data: {
           type: "Rail",
           barcode: `SR-A100-${input.brandCode}`,
@@ -44,7 +44,7 @@ export class BrandService {
           itemCode: input.brandCode,
         },
       }),
-      this.prisma.client2.warehouseLocation.create({
+      this.prisma.client.warehouseLocation.create({
         data: {
           type: "Rail",
           barcode: `SR-A200-${input.brandCode}`,
@@ -52,14 +52,10 @@ export class BrandService {
           itemCode: input.brandCode,
         },
       }),
-      this.prisma.client2.brand.create({
+      this.prisma.client.brand.create({
         data: {
           ...input,
-          styles: this.queryUtils.createScalarListMutateInput(
-            input.styles,
-            "",
-            "create"
-          ),
+          styles: input.styles,
           logoImage: !!logoData
             ? { connect: { url: logoData.url } }
             : undefined,
@@ -73,9 +69,9 @@ export class BrandService {
       }),
     ].filter(Boolean)
 
-    const result = await this.prisma.client2.$transaction(promises)
+    const result = await this.prisma.client.$transaction(promises)
 
-    const brand = this.prisma.sanitizePayload(result.pop(), "Brand")
+    const brand = result.pop()
 
     return brand
   }
@@ -91,11 +87,10 @@ export class BrandService {
   }) {
     const promises = []
 
-    const _brand = await this.prisma.client2.brand.findUnique({
+    const brand = await this.prisma.client.brand.findUnique({
       where,
       select: { id: true, shopifyShop: { select: { id: true } } },
     })
-    const brand = this.prisma.sanitizePayload(_brand, "Brand")
 
     let imageDatas
     let logoData
@@ -122,7 +117,7 @@ export class BrandService {
           },
         },
       } as Prisma.ShopifyShopUpdateOneWithoutBrandInput
-      const shopifyProductVariants = await this.prisma.client2.shopifyProductVariant.findMany(
+      const shopifyProductVariants = await this.prisma.client.shopifyProductVariant.findMany(
         {
           where: {
             shop: {
@@ -134,7 +129,7 @@ export class BrandService {
       )
 
       promises.push(
-        this.prisma.client2.shopifyProductVariant.updateMany({
+        this.prisma.client.shopifyProductVariant.updateMany({
           where: { id: { in: shopifyProductVariants.map(a => a.id) } },
           data: { brandId: brand.id },
         })
@@ -147,11 +142,7 @@ export class BrandService {
 
     const updateBrandData = Prisma.validator<Prisma.BrandUpdateInput>()({
       ...data,
-      styles: this.queryUtils.createScalarListMutateInput(
-        data.styles,
-        brand.id,
-        "update"
-      ),
+      styles: data.styles,
       logoImage: !!logoData ? { connect: { url: logoData.url } } : undefined,
       images: !!imageDatas
         ? {
@@ -160,7 +151,7 @@ export class BrandService {
         : undefined,
     })
     promises.push(
-      this.prisma.client2.brand.update({
+      this.prisma.client.brand.update({
         where,
         data: updateBrandData,
         select,
@@ -168,8 +159,8 @@ export class BrandService {
     )
 
     const cleanPromises = promises.filter(Boolean)
-    const result = await this.prisma.client2.$transaction(cleanPromises)
-    const updatedBrand = this.prisma.sanitizePayload(result.pop(), "Brand")
+    const result = await this.prisma.client.$transaction(cleanPromises)
+    const updatedBrand = result.pop()
 
     if (data.shopifyShop) {
       await this.search.indexShopifyProductVariants(

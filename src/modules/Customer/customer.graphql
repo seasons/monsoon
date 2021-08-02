@@ -43,10 +43,10 @@ type Mutation {
     saved: Boolean
   ): BagItem! @hasRole(roles: [Admin])
   addToBag(item: ID!): BagItem! @hasRole(roles: [Customer])
+  # removeFromBag has been deprecated use deleteBagItem
   removeFromBag(item: ID!, saved: Boolean, customer: ID): BagItem!
     @hasRole(roles: [Customer])
   deleteBagItem(itemID: ID!): Boolean! @hasRole(roles: [Customer])
-  deleteBagItemFromAdmin(itemID: ID!): Boolean! @hasRole(roles: [Admin])
   updateCustomer(
     data: CustomerUpdateInput!
     where: CustomerWhereUniqueInput!

@@ -120,7 +120,7 @@ export class ScriptsService {
       const { endpoint, secret, url } = env.prisma[prismaEnv]
       process.env.PRISMA_ENDPOINT = endpoint
       process.env.PRISMA_SECRET = secret
-      process.env.DATABASE_URL = url
+      process.env.DB_WRITE_URL = url
 
       // drip
       const { account, apiKey } = env.drip[dripEnv]

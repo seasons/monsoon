@@ -1,11 +1,11 @@
 import { Customer } from "@app/decorators"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import { Image, Product, ProductModel } from "@app/prisma"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Image, Product, ProductModel } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { sortBy } from "lodash"
 
@@ -30,7 +30,7 @@ export class ProductFieldsResolver {
         formatWhere: (keys, ctx) =>
           Prisma.validator<Prisma.BagItemWhereInput>()({
             customer: { id: ctx.customer.id },
-            productVariant: { product: { every: { id: { in: keys } } } },
+            productVariant: { product: { id: { in: keys } } },
             saved: true,
           }),
         getKeys: bagItem => [bagItem.productVariant.product.id],
@@ -78,7 +78,7 @@ export class ProductFieldsResolver {
       params: {
         model: "ProductVariant",
         formatWhere: ids => ({
-          product: { every: { id: { in: ids } } },
+          product: { id: { in: ids } },
         }),
         infoFragment: `
           fragment EnsureDisplayAndProductId on ProductVariant {

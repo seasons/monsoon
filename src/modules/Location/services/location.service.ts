@@ -74,7 +74,7 @@ export class LocationService {
   }
 
   async weather(locationID: string) {
-    const location = await this.prisma.client2.location.findUnique({
+    const location = await this.prisma.client.location.findUnique({
       where: {
         id: locationID,
       },

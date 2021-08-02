@@ -45,7 +45,7 @@ export class HomepageSectionService {
     customerId?
   ) {
     if (!!tagData?.tagName) {
-      const _products = await this.prisma.client2.product.findMany({
+      return await this.prisma.client.product.findMany({
         where: {
           AND: [
             { tags: { some: { name: tagData.tagName } } },
@@ -56,7 +56,6 @@ export class HomepageSectionService {
         take: 10,
         select: ProductSelect,
       })
-      return this.prisma.sanitizePayload(_products, "Product")
     }
 
     switch (sectionTitle) {
@@ -64,7 +63,7 @@ export class HomepageSectionService {
         if (!customerId) {
           return []
         }
-        const _viewedProducts = await this.prisma.client2.recentlyViewedProduct.findMany(
+        const viewedProducts = await this.prisma.client.recentlyViewedProduct.findMany(
           {
             where: { customer: { id: customerId } },
             orderBy: { updatedAt: "desc" },
@@ -72,14 +71,10 @@ export class HomepageSectionService {
             select: { updatedAt: true, product: { select: ProductSelect } },
           }
         )
-        const viewedProducts = this.prisma.sanitizePayload(
-          _viewedProducts,
-          "RecentlyViewedProduct"
-        )
         return viewedProducts.map(viewedProduct => viewedProduct.product)
 
       case SectionTitle.Designers:
-        const brands = await this.prisma.client2.brand.findMany({
+        const brands = await this.prisma.client.brand.findMany({
           ...args,
           orderBy: { name: "asc" },
           where: {
@@ -143,7 +138,7 @@ export class HomepageSectionService {
           sweatshirts: "homepage-categories/Sweatshirts.jpg",
           shorts: "homepage-categories/Shorts.jpg",
         }
-        const categories = await this.prisma.client2.category.findMany({
+        const categories = await this.prisma.client.category.findMany({
           where: {
             slug: { in: categorySlugs },
           },

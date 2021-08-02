@@ -1,8 +1,6 @@
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { Customer, User } from "@prisma/client"
-import { Location } from "@prisma/client"
-import { ID_Input, ShippingCode } from "@prisma1/index"
+import { Customer, ShippingCode, User } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import shippo from "shippo"
 
@@ -38,7 +36,7 @@ export class ShippingService {
   ) {}
 
   async getBuyUsedShippingRate(
-    productVariantId: ID_Input,
+    productVariantId: string,
     user: User,
     customer: Customer
   ): Promise<ShippoRate> {
@@ -94,7 +92,7 @@ export class ShippingService {
   }
 
   async createReservationShippingLabels(
-    newProductVariantsBeingReserved: ID_Input[],
+    newProductVariantsBeingReserved: string[],
     user: User,
     customer: Customer,
     shippingCode: ShippingCode
@@ -139,7 +137,7 @@ export class ShippingService {
     itemIDs: string[]
   ): Promise<number> {
     const shippingBagWeight = 1
-    const productVariants = await this.prisma.client2.productVariant.findMany({
+    const productVariants = await this.prisma.client.productVariant.findMany({
       where: { id: { in: itemIDs } },
       select: { weight: true },
     })
@@ -179,7 +177,7 @@ export class ShippingService {
   private async calcTotalRetailPriceFromProductVariantIDs(
     itemIDs: string[]
   ): Promise<number> {
-    const products = await this.prisma.client2.product.findMany({
+    const products = await this.prisma.client.product.findMany({
       where: {
         variants: {
           some: {
@@ -209,7 +207,7 @@ export class ShippingService {
 
     // Create customer address object
 
-    const customerData = await this.prisma.client2.customer.findUnique({
+    const customerData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
         id: true,

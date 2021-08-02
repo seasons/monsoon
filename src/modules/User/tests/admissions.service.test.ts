@@ -7,9 +7,9 @@ import {
   CreateTestCustomerInput,
   CreateTestProductInput,
 } from "@app/modules/Utils/utils.types"
-import { EmailId, InventoryStatus, ProductType } from "@app/prisma"
 import { PrismaModule } from "@app/prisma/prisma.module"
 import { Test } from "@nestjs/testing"
+import { EmailId, InventoryStatus, ProductType } from "@prisma/client"
 import { fill } from "lodash"
 
 import { PrismaService } from "../../../prisma/prisma.service"
