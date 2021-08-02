@@ -45,11 +45,22 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async addToBag(@Args() { item }, @Customer() customer, @Select() select) {
-    if (!customer) {
-      throw new Error(`Can not add to bag without a logged in customer`)
+  async addToBag(
+    @Args() args,
+    @Customer() customer,
+    @Select() select,
+    @Application() application
+  ) {
+    if (application === "spring") {
+      const { customerID, item, status, saved } = args
+      await this.bagService.addBagItemFromAdmin(customerID, item, status, saved)
+    } else {
+      if (!customer) {
+        throw new Error(`Can not add to bag without a logged in customer`)
+      }
+      const { item } = args
+      return await this.bagService.addToBag(item, customer, select)
     }
-    return await this.bagService.addToBag(item, customer, select)
   }
 
   @Mutation()
