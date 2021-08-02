@@ -10,7 +10,7 @@ export class SearchQueriesResolver {
   async search(@Args() { query, options }) {
     const result = await this.service.query(query, options)
 
-    const data = result.map(data => {
+    const data = result.hits.map(data => {
       return {
         kindOf: data.kindOf,
         data: { id: data.objectID, ...data },
