@@ -84,6 +84,10 @@ All deployments follow the following pattern.
 
 Before deploying to production your first time, please check with a senior member of the engineering team.
 
+## Tutorials
+
+Video walkthroughs are available [here](docs/ecs.md).
+
 ## Documentation
 
 ### Commands
