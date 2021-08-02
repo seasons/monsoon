@@ -1,13 +1,7 @@
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
-import {
-  Customer,
-  InventoryStatus,
-  Package,
-  PrismaPromise,
-  Reservation,
-} from "@prisma/client"
+import { Package, PrismaPromise, Reservation } from "@prisma/client"
 
 import { ReservationWithProductVariantData } from "./reservation.service"
 
@@ -21,7 +15,7 @@ export class ReservationUtilsService {
   inventoryStatusOf = (
     res: ReservationWithProductVariantData,
     prodVarId: string
-  ): InventoryStatus => {
+  ) => {
     return res.products.find(prod => prod.productVariant.id === prodVarId)
       .inventoryStatus
   }
