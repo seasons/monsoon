@@ -11,6 +11,11 @@ export type SmartPrismaClient = Omit<
   "$executeRaw" | "$queryRaw" | "$on" | "$connect" | "$disconnect"
 >
 
+// Prevent multiple instances of Prisma Client in development
+declare const global: NodeJS.Global & {
+  readClient?: PrismaClient
+  writeClient?: PrismaClient
+}
 const clientOptions = {
   log:
     process.env.NODE_ENV === "production"
@@ -19,14 +24,22 @@ const clientOptions = {
       ? ["query", "info", "warn", "error"]
       : ([] as any),
 }
-export const readClient = new PrismaClient({
-  ...clientOptions,
-  datasources: { db: { url: process.env.DB_READ_URL } },
-})
-export const writeClient = new PrismaClient({
-  ...clientOptions,
-  datasources: { db: { url: process.env.DB_WRITE_URL } },
-})
+export const readClient =
+  global.readClient ||
+  new PrismaClient({
+    ...clientOptions,
+    datasources: { db: { url: process.env.DB_READ_URL } },
+  })
+export const writeClient =
+  global.writeClient ||
+  new PrismaClient({
+    ...clientOptions,
+    datasources: { db: { url: process.env.DB_WRITE_URL } },
+  })
+if (process.env.NODE_ENV === "development") {
+  global.readClient = readClient
+  global.writeClient = writeClient
+}
 
 @Injectable()
 export class PrismaService implements UpdatableConnection {
@@ -138,6 +151,7 @@ export class PrismaService implements UpdatableConnection {
       if (log.includes("info")) {
         console.log(`requestOnMutation: ${requestOnMutation}`)
       }
+
       if (requestOnMutation) {
         if (log.includes("info")) {
           console.log("use write client")
