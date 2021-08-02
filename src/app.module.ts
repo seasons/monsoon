@@ -78,7 +78,10 @@ const isRequestMutation = (req, persistedQueryMap) => {
   } else {
     queryString = req.body.query
   }
-  const isMutation = queryString.includes("mutation")
+
+  // if queryString is undefined, default to saying its mutation so
+  // we use the write client and are gauranteed that the app will work.
+  const isMutation = queryString?.includes("mutation") ?? true
 
   return isMutation
 }
