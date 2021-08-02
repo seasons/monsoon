@@ -108,7 +108,7 @@ export class ReservationService {
 
     // Figure out which items the user is reserving anew and which they already have
     const lastReservation = await this.reservationUtils.getLatestReservation(
-      customer
+      customer?.id
     )
     await this.checkLastReservation(lastReservation, items)
 
@@ -125,7 +125,7 @@ export class ReservationService {
         ].includes(lastReservation.status)
         ? lastReservation
         : await this.reservationUtils.getLatestReservation(
-            customer,
+            customer?.id,
             "Completed"
           )
       : null
@@ -278,7 +278,7 @@ export class ReservationService {
     )
 
     try {
-      await this.removeRestockNotifications(items, customer)
+      await this.removeRestockNotifications(items, customer?.id)
     } catch (err) {
       this.error.setUserContext(user)
       this.error.setExtraContext({ items })
@@ -332,7 +332,7 @@ export class ReservationService {
 
   async cancelReturn(customer: Customer) {
     const lastReservation = await this.reservationUtils.getLatestReservation(
-      customer
+      customer?.id
     )
 
     await this.prisma.client2.reservation.update({
@@ -348,7 +348,7 @@ export class ReservationService {
 
   async returnItems(items: string[], customer: Customer) {
     const lastReservation = await this.reservationUtils.getLatestReservation(
-      customer
+      customer?.id
     )
 
     // If there's an item being returned that isn't in the current reservation
@@ -377,12 +377,12 @@ export class ReservationService {
     return lastReservation
   }
 
-  async removeRestockNotifications(items, customer) {
-    const restockNotifications = await this.prisma.client2.productNotification.findMany(
+  async removeRestockNotifications(items: string[], customerID: string) {
+    const restockNotifications = await this.prisma.client.productNotification.findMany(
       {
         where: {
           customer: {
-            id: customer.id,
+            id: customerID,
           },
           AND: {
             productVariant: {

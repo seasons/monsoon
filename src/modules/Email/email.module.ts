@@ -1,3 +1,4 @@
+import { ReservationModule } from "@app/modules/Reservation/reservation.module"
 import { Module } from "@nestjs/common"
 
 import { PrismaModule } from "../../prisma/prisma.module"
@@ -8,7 +9,13 @@ import { EmailService } from "./services/email.service"
 import { EmailUtilsService } from "./services/email.utils.service"
 
 @Module({
-  imports: [PrismaModule, UtilsModule, ErrorModule, ImageModule],
+  imports: [
+    PrismaModule,
+    UtilsModule,
+    ErrorModule,
+    ImageModule,
+    ReservationModule,
+  ],
   providers: [EmailService, EmailUtilsService],
   exports: [EmailService],
 })

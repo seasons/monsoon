@@ -182,7 +182,7 @@ export class CustomerFieldsResolver {
   async shouldPayForNextReservation(@Customer() customer) {
     // TODO: add loader
     const lastReservation = await this.reservationUtils.getLatestReservation(
-      customer
+      customer.id
     )
 
     if (!lastReservation) {

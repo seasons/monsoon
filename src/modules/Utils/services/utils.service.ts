@@ -402,16 +402,6 @@ export class UtilsService {
     return latestPauseRequest
   }
 
-  getLatestReservation = (customer): Reservation => {
-    const latestResy = head(
-      customer.reservations.sort((a, b) =>
-        this.dateSort(a.createdAt, b.createdAt)
-      )
-    ) as Reservation
-
-    return latestResy
-  }
-
   getPauseWithItemsPlanId = membership => {
     const itemCount = membership?.plan?.itemCount
     let planID

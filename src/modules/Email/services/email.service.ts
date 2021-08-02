@@ -1,3 +1,4 @@
+import { ReservationUtilsService } from "@app/modules/Reservation"
 import { Injectable } from "@nestjs/common"
 import { Order } from "@prisma/client"
 import RenderEmail from "@seasons/wind"
@@ -22,7 +23,8 @@ export class EmailService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
-    private readonly emailUtils: EmailUtilsService
+    private readonly emailUtils: EmailUtilsService,
+    private readonly reservationUtils: ReservationUtilsService
   ) {}
 
   async sendSubmittedEmailEmail(user: EmailUser) {
@@ -264,7 +266,9 @@ export class EmailService {
 
   async sendPausedEmail(customer, isExtension: boolean) {
     const latestPauseRequest = this.utils.getLatestPauseRequest(customer)
-    const latestReservation = this.utils.getLatestReservation(customer)
+    const latestReservation = await this.reservationUtils.getLatestReservation(
+      customer?.id
+    )
     const withItems = latestPauseRequest.pauseType === "WithItems"
     let pausedWithItemsPrice
 

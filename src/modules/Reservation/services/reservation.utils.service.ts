@@ -23,11 +23,11 @@ export class ReservationUtilsService {
       .inventoryStatus
   }
 
-  async getLatestReservation(customer: Customer, status = undefined) {
+  async getLatestReservation(customerID: string, status = undefined) {
     const _latestReservation = await this.prisma.client2.reservation.findFirst({
       where: {
         customer: {
-          id: customer.id,
+          id: customerID,
         },
         status,
       },

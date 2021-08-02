@@ -36,10 +36,17 @@ type Query {
 }
 
 type Mutation {
+  addBagItemFromAdmin(
+    customerID: ID!
+    productVariantID: ID!
+    status: BagItemStatus
+    saved: Boolean
+  ): BagItem! @hasRole(roles: [Admin])
   addToBag(item: ID!): BagItem! @hasRole(roles: [Customer])
   removeFromBag(item: ID!, saved: Boolean, customer: ID): BagItem!
     @hasRole(roles: [Customer])
   deleteBagItem(itemID: ID!): Boolean! @hasRole(roles: [Customer])
+  deleteBagItemFromAdmin(itemID: ID!): Boolean! @hasRole(roles: [Admin])
   updateCustomer(
     data: CustomerUpdateInput!
     where: CustomerWhereUniqueInput!

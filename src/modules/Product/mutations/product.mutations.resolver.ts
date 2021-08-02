@@ -1,6 +1,7 @@
 import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
 import { Select } from "@app/decorators/select.decorator"
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 
 import { BagService } from "../services/bag.service"
@@ -31,6 +32,16 @@ export class ProductMutationsResolver {
       user,
       select
     )
+  }
+
+  @Mutation()
+  async deleteBagItem(@Args() { itemID }, @Application() application) {
+    if (application === "spring") {
+      await this.bagService.deleteBagItemFromAdmin(itemID)
+    } else {
+      await this.prisma.client.bagItem.delete({ where: { id: itemID } })
+    }
+    return true
   }
 
   @Mutation()
@@ -76,10 +87,15 @@ export class ProductMutationsResolver {
     )
   }
 
-  @Mutation()
-  async deleteBagItem(@Args() { itemID }) {
-    await this.prisma.client2.bagItem.delete({ where: { id: itemID } })
-    return true
+  async addBagItemFromAdmin(
+    @Args() { customerID, productVariantID, status, saved }
+  ) {
+    return await this.bagService.addBagItemFromAdmin(
+      customerID,
+      productVariantID,
+      status,
+      saved
+    )
   }
 
   @Mutation()
