@@ -11,8 +11,13 @@ orbs:
 jobs:
   test-unit:
     docker:
-      - image: circleci/postgres:12.6
+      - image: postgres:12.6-alpine
+    auth:
+      username: dmonay
+      password: $DOCKERHUB_PASSWORD # context / project UI env-var reference
+
     working_directory: ~/monsoon
+
     steps:
       - checkout
 
