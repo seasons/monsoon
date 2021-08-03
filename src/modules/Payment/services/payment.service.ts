@@ -124,42 +124,7 @@ export class PaymentService {
     }
   }
 
-  async processPayment(
-    planID,
-    paymentMethodID,
-    couponID,
-    billing,
-    shipping,
-    customer,
-    application
-  ) {
-    const customerWithUserData = await this.prisma.client.customer.findUnique({
-      where: {
-        id: customer.id,
-      },
-      select: {
-        id: true,
-        detail: true,
-        user: true,
-        utm: true,
-      },
-    })
-    const user = customerWithUserData?.user
-
-    let shippingAddress
-    if (shipping?.address) {
-      shippingAddress = {
-        name: `${shipping.firstName} ${shipping.lastName}`,
-        address1: shipping.address.line1,
-        address2: shipping.address.line2,
-        city: shipping.address.city,
-        country: shipping.address.country,
-        state: shipping.address.state,
-        zipCode: shipping.address.postal_code,
-        locationType: "Customer",
-      }
-    }
-
+  async processPayment({ planID, paymentMethodID, billing }) {
     const billingAddress = {
       first_name: billing.user.firstName || "",
       last_name: billing.user.lastName || "",
@@ -188,6 +153,55 @@ export class PaymentService {
       setup_future_usage: "off_session",
       capture_method: "manual",
     })
+
+    return intent
+  }
+
+  async confirmPayment({
+    paymentIntentID,
+    planID,
+    couponID,
+    billing,
+    customer,
+    shipping,
+    application,
+  }) {
+    const customerWithUserData = await this.prisma.client.customer.findUnique({
+      where: {
+        id: customer.id,
+      },
+      select: {
+        id: true,
+        detail: true,
+        user: true,
+        utm: true,
+      },
+    })
+    const user = customerWithUserData?.user
+
+    const intent = await stripe.paymentIntents.retrieve(paymentIntentID)
+
+    let shippingAddress
+    if (shipping?.address) {
+      shippingAddress = {
+        name: `${shipping.firstName} ${shipping.lastName}`,
+        address1: shipping.address.line1,
+        address2: shipping.address.line2,
+        city: shipping.address.city,
+        country: shipping.address.country,
+        state: shipping.address.state,
+        zipCode: shipping.address.postal_code,
+        locationType: "Customer",
+      }
+    }
+
+    const billingAddress = {
+      first_name: billing.user.firstName || "",
+      last_name: billing.user.lastName || "",
+      ...billing.address,
+      zip: billing.address.postal_code || "",
+      country: "US", // assume its US for now, because we need it for taxes.
+    }
 
     const subscriptionOptions = {
       plan_id: planID,
@@ -226,16 +240,12 @@ export class PaymentService {
       lastName: user.lastName,
       email: user.email,
       impactId: customerWithUserData.detail?.impactId,
-      total: amountDue,
+      total: intent.amount,
       application,
       discoveryReference: customerWithUserData.detail?.discoveryReference,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
-
-    return intent
   }
-
-  async confirmPayment({ paymentIntentID, billing }) {}
 
   async stripeTokenCheckout(
     planID,

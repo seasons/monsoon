@@ -20,25 +20,29 @@ export class PaymentMutationsResolver {
    * Platform: Web (flare)
    */
   @Mutation()
-  async processPayment(
-    @Args() { planID, paymentMethodID, couponID, billing, shipping },
-    @Customer() customer,
-    @Application() application
-  ) {
-    return this.paymentService.processPayment(
+  async processPayment(@Args() { planID, paymentMethodID, billing }) {
+    return this.paymentService.processPayment({
       planID,
       paymentMethodID,
-      couponID,
       billing,
-      shipping,
-      customer,
-      application
-    )
+    })
   }
 
   @Mutation()
-  async confirmPayment(@Args() { paymentIntentID, billing }) {
-    return this.paymentService.confirmPayment({ paymentIntentID, billing })
+  async confirmPayment(
+    @Args() { planID, couponID, paymentIntentID, billing, shipping },
+    @Customer() customer,
+    @Application() application
+  ) {
+    return this.paymentService.confirmPayment({
+      paymentIntentID,
+      planID,
+      couponID,
+      billing,
+      shipping,
+      application,
+      customer,
+    })
   }
 
   /**
