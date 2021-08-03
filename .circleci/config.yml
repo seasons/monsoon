@@ -15,7 +15,7 @@ jobs:
           name: Install dependencies
 
       - run:
-          command: docker-compose up -d
+          command: sudo service docker start && docker-compose up -d
           name: Start up docker containers
 
       - run:
@@ -41,24 +41,29 @@ jobs:
       - checkout
 
       - run:
+          name: Gain sudo
+          command: |
+            apt-get update && apt-get install -y sudo && rm -rf /var/lib/apt/lists/*
+
+      - run:
           name: Update and install curl
           command: |
-            apt update &&  apt upgrade -y
-            apt install curl -y
+            sudo apt update &&  sudo apt upgrade -y
+            sudo apt install curl -y
 
       - run:
           name: Install Node
           command: |
             curl -sL https://deb.nodesource.com/setup_14.x | bash -
-            apt install nodejs -y
+            sudo apt install nodejs -y
 
       - run:
           name: Install Yarn
           command: |
-            curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-            echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-            apt update
-            apt install yarn -y
+            curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+            echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+            sudo apt update
+            sudo apt install yarn -y
 
       - run:
           command: yarn
@@ -67,11 +72,13 @@ jobs:
       - run:
           name: Install Docker
           command: |
-            apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common -y
-            curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
-            add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian buster stable"
-            apt-get update
-            apt-get install docker-ce docker-ce-cli containerd.io -y
+            sudo apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common -y
+            curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+            sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian buster stable"
+            sudo apt-get update
+            sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+            sudo service docker start
+            cat /var/log/docker.log
 
       - run:
           name: Install docker-compose
