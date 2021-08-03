@@ -35,7 +35,7 @@
     "start": "concurrently -k -n 'TSC,ESBUILD' -c 'gray.dim,blue.dim' 'yarn tsc -w' 'node scripts/esbuild.watcher.js'",
     "lint": "eslint \"{src/**/*.ts\" --fix",
     "test": "jest",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "jest --config ./src/tests/jest-e2e.json",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"

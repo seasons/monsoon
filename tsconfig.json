@@ -14,12 +14,12 @@
     "emitDecoratorMetadata": true,
     "incremental": true,
     "baseUrl": "./src",
+    "rootDir": "src",
     "paths": {
       "@app/*": ["./*"],
       "@modules/*": ["modules/*"],
       "@prisma1/*": ["prisma/*"]
     }
   },
-  "include": ["src/**/*", "test/**/*"],
   "exclude": ["src/scripts"]
 }

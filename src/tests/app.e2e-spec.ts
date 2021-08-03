@@ -1,6 +1,6 @@
 import request from "supertest"
 
-import * as queryMap from "../src/tests/complete.queryMap.json"
+import * as queryMap from "./complete.queryMap.json"
 
 const server = "http://localhost:4000/"
 let token = "Bearer "
