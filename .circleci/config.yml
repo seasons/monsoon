@@ -12,9 +12,9 @@ jobs:
   test-unit:
     docker:
       - image: postgres:12.6-alpine
-    auth:
-      username: dmonay
-      password: $DOCKERHUB_PASSWORD # context / project UI env-var reference
+        auth:
+          username: dmonay
+          password: $DOCKERHUB_PASSWORD # context / project UI env-var reference
 
     working_directory: ~/monsoon
 
