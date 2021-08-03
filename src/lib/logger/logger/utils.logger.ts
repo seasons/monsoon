@@ -61,16 +61,12 @@ export function createNestWinstonLogger() {
   }
 
   const finalTransports: Transport[] = [
-    ...(process.env.NODE_ENV !== "development"
-      ? [
-          new transports.Console({
-            format: format.combine(
-              format.combine(injectMeta(), errorsFormat()),
-              nestWinstonModuleUtilities.format.nestLike()
-            ),
-          }),
-        ]
-      : []),
+    new transports.Console({
+      format: format.combine(
+        format.combine(injectMeta(), errorsFormat()),
+        nestWinstonModuleUtilities.format.nestLike()
+      ),
+    }),
     new transports.Http(httpTransportOptions),
   ]
 
@@ -95,7 +91,7 @@ function sanitizeHeaders(req: Request, propName: string) {
   if (propName === "headers") {
     // The 'if-none-match' header can break logstash JSON format
     if ("if-none-match" in req.headers)
-      req.headers["if-none-match"] = "EXCLUDED"
+      req.headers["if-none-match"] = "EXCLUDEslackD"
     // The 'authorization' header has the plaintext jwt token, we should never log it
     if (req.headers.authorization)
       req.headers.authorization = "Bearer [REDACTED]"
