@@ -42,7 +42,7 @@ import { ProductVariantService } from "./services/productVariant.service"
 
 export const ProductModuleDef = {
   imports: [
-    EmailModule,
+    forwardRef(() => EmailModule),
     ErrorModule,
     ImageModule,
     PrismaModule,

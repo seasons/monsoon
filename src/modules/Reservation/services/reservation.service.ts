@@ -100,9 +100,7 @@ export class ReservationService {
     }
 
     // Figure out which items the user is reserving anew and which they already have
-    const lastReservation = await this.reservationUtils.getLatestReservation(
-      customer?.id
-    )
+    const lastReservation = await this.utils.getLatestReservation(customer?.id)
     await this.validateLastReservation(lastReservation, items)
 
     // Get the most recent reservation that potentially carries products being kept in the new reservation
@@ -117,10 +115,7 @@ export class ReservationService {
           "Completed",
         ].includes(lastReservation.status)
         ? lastReservation
-        : await this.reservationUtils.getLatestReservation(
-            customer?.id,
-            "Completed"
-          )
+        : await this.utils.getLatestReservation(customer?.id, "Completed")
       : null
 
     const newProductVariantsBeingReserved = await this.getNewProductVariantsBeingReserved(
@@ -324,9 +319,7 @@ export class ReservationService {
   }
 
   async cancelReturn(customer: Customer) {
-    const lastReservation = await this.reservationUtils.getLatestReservation(
-      customer?.id
-    )
+    const lastReservation = await this.utils.getLatestReservation(customer?.id)
 
     await this.prisma.client.reservation.update({
       data: {
@@ -340,9 +333,7 @@ export class ReservationService {
   }
 
   async returnItems(items: string[], customer: Customer) {
-    const lastReservation = await this.reservationUtils.getLatestReservation(
-      customer?.id
-    )
+    const lastReservation = await this.utils.getLatestReservation(customer?.id)
 
     // If there's an item being returned that isn't in the current reservation
     // throw an error

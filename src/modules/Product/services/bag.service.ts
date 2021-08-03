@@ -1,19 +1,19 @@
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { BagItem, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 
 import { ReservationService } from "../../Reservation/services/reservation.service"
-import { ReservationUtilsService } from "../../Reservation/services/reservation.utils.service"
 import { ProductVariantService } from "../services/productVariant.service"
 
 @Injectable()
 export class BagService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly reservationUtils: ReservationUtilsService,
     private readonly reservationService: ReservationService,
-    private readonly productVariantService: ProductVariantService
+    private readonly productVariantService: ProductVariantService,
+    private readonly utils: UtilsService
   ) {}
 
   async addToBag(
@@ -84,9 +84,7 @@ export class BagService {
   ): Promise<BagItem> {
     if (status === "Reserved") {
       // Update the current reservation and it's physical product and counts
-      const lastReservation = await this.reservationUtils.getLatestReservation(
-        customerID
-      )
+      const lastReservation = await this.utils.getLatestReservation(customerID)
 
       const [
         productVariantsCountsUpdatePromises,
@@ -166,9 +164,7 @@ export class BagService {
 
     if (bagItem.status === "Reserved") {
       // Update the current reservation and it's physical product and counts
-      const lastReservation = await this.reservationUtils.getLatestReservation(
-        customerID
-      )
+      const lastReservation = await this.utils.getLatestReservation(customerID)
 
       const physicalProductsInRes = lastReservation.products
 

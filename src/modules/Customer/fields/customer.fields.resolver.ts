@@ -3,6 +3,7 @@ import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { PrismaGenerateParams } from "@app/modules/DataLoader/dataloader.types"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 import { ReservationUtilsService } from "@app/modules/Reservation/services/reservation.utils.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Loader } from "@modules/DataLoader/decorators/dataloader.decorator"
 import { InvoicesForCustomersLoader } from "@modules/Payment/loaders/invoicesForCustomers.loaders"
@@ -28,7 +29,7 @@ export class CustomerFieldsResolver {
   constructor(
     private readonly prisma: PrismaService,
     private readonly paymentService: PaymentService,
-    private readonly reservationUtils: ReservationUtilsService
+    private readonly utils: UtilsService
   ) {}
 
   @ResolveField()
@@ -181,9 +182,7 @@ export class CustomerFieldsResolver {
   @ResolveField()
   async shouldPayForNextReservation(@Customer() customer) {
     // TODO: add loader
-    const lastReservation = await this.reservationUtils.getLatestReservation(
-      customer.id
-    )
+    const lastReservation = await this.utils.getLatestReservation(customer.id)
 
     if (!lastReservation) {
       return false

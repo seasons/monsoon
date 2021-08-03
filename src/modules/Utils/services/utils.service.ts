@@ -397,6 +397,42 @@ export class UtilsService {
     return latestPauseRequest
   }
 
+  async getLatestReservation(customerID: string, status = undefined) {
+    const latestReservation = await this.prisma.client.reservation.findFirst({
+      where: {
+        customer: {
+          id: customerID,
+        },
+        status,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        products: {
+          select: {
+            id: true,
+            seasonsUID: true,
+            inventoryStatus: true,
+            productStatus: true,
+            productVariant: { select: { id: true } },
+          },
+        },
+        receivedAt: true,
+        status: true,
+        reservationNumber: true,
+        createdAt: true,
+      },
+    })
+
+    if (latestReservation == null) {
+      return null
+    }
+
+    return latestReservation
+  }
+
   getPauseWithItemsPlanId = membership => {
     const itemCount = membership?.plan?.itemCount
     let planID
