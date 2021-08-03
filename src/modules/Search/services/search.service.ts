@@ -5,7 +5,7 @@ import { pick } from "lodash"
 
 import { AlgoliaService, IndexKey } from "./algolia.service"
 
-enum SearchResultType {
+export enum SearchResultType {
   Product = "Product",
   Brand = "Brand",
   PhysicalProduct = "PhysicalProduct",
@@ -37,7 +37,10 @@ export class SearchService {
     ])
   }
 
-  async query(query: string, options?: QueryOptions): Promise<any[]> {
+  async query(
+    query: string,
+    options?: QueryOptions
+  ): Promise<{ nbHits: number; hits: any[] }> {
     let filters = !!options?.filters ? options?.filters + " OR " : ""
     let typeFilter = options?.includeTypes
       .map(type => `kindOf:${type}`)
@@ -48,7 +51,27 @@ export class SearchService {
       filters,
     })
 
-    return results.hits
+    return results
+  }
+
+  async updateArgsForSearch(args, type: SearchResultType) {
+    const contains = args?.where?.name?.contains || args?.where?.name_contains
+    if (!!contains) {
+      const updatedArgs = args
+      const searchResult = await this.query(contains, {
+        includeTypes: [type],
+      })
+      const searchResults = searchResult.hits
+      const ids = searchResults.map(result => result.objectID)
+
+      delete updatedArgs.where.name
+      updatedArgs.where.id = {
+        in: ids,
+      }
+
+      return [updatedArgs, searchResult]
+    }
+    return [args]
   }
 
   async getRecentlyViewedProducts() {
