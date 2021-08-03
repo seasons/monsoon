@@ -1,4 +1,3 @@
-import { ReservationUtilsService } from "@app/modules/Reservation"
 import { Injectable } from "@nestjs/common"
 import { Order } from "@prisma/client"
 import RenderEmail from "@seasons/wind"
@@ -9,6 +8,7 @@ import nodemailer from "nodemailer"
 import { EmailId, Product, User } from "../../../prisma"
 import { Customer, DateTime } from "../../../prisma/prisma.binding"
 import { PrismaService } from "../../../prisma/prisma.service"
+import { ReservationUtilsService } from "../../Reservation/services/reservation.utils.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import {
   EmailUtilsService,

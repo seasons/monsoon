@@ -1,10 +1,11 @@
-import { ReservationService } from "@app/modules/Reservation"
-import { ReservationUtilsService } from "@app/modules/Reservation/services/reservation.utils.service"
-import { ProductVariantService } from "@modules/Product"
 import { Injectable } from "@nestjs/common"
 import { BagItem, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
+
+import { ReservationService } from "../../Reservation/services/reservation.service"
+import { ReservationUtilsService } from "../../Reservation/services/reservation.utils.service"
+import { ProductVariantService } from "../services/productVariant.service"
 
 @Injectable()
 export class BagService {
