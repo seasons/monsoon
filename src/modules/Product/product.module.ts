@@ -50,7 +50,7 @@ export const ProductModuleDef = {
     SearchModule,
     UtilsModule,
     UserModule,
-    // ReservationModule,
+    ReservationModule,
   ],
   providers: [
     BagService,

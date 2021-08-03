@@ -24,7 +24,7 @@ import { CustomerService } from "./services/customer.service"
 
 @Module({
   imports: [
-    EmailModule,
+    forwardRef(() => EmailModule),
     PrismaModule,
     ShippingModule,
     PushNotificationModule,

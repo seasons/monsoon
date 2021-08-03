@@ -21,7 +21,7 @@ import { UpdatePaymentService } from "./services/updatePayment.service"
 export const PaymentModuleDef = {
   controllers: [ChargebeeController],
   imports: [
-    EmailModule,
+    forwardRef(() => EmailModule),
     PrismaModule,
     ShippingModule,
     forwardRef(() => UserModule),
