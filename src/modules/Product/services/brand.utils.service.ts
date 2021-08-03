@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 
-import { CustomBrandCreateOrUpdateData } from "../product.types"
+import { CustomBrandCreateOrUpdateData } from "../product.types.d"
 
 @Injectable()
 export class BrandUtilsService {

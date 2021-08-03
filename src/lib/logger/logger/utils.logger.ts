@@ -7,7 +7,7 @@ import * as Transport from "winston-transport"
 import { getRequestIdContext } from "../middleware/http-context.middleware"
 import { WinstonLogger } from "./winston.logger"
 
-const logLevel = process.env.NODE_ENV === "development" ? "debug" : "info"
+const logLevel = process.env.NODE_ENV === "development" ? "warn" : "info"
 
 /**
  * The custom formatter that manages winston meta.
@@ -61,16 +61,14 @@ export function createNestWinstonLogger() {
   }
 
   const finalTransports: Transport[] = [
-    ...(process.env.NODE_ENV !== "development"
-      ? [
-          new transports.Console({
-            format: format.combine(
-              format.combine(injectMeta(), errorsFormat()),
-              nestWinstonModuleUtilities.format.nestLike()
-            ),
-          }),
-        ]
-      : []),
+    ...[
+      new transports.Console({
+        format: format.combine(
+          format.combine(injectMeta(), errorsFormat()),
+          nestWinstonModuleUtilities.format.nestLike()
+        ),
+      }),
+    ],
     new transports.Http(httpTransportOptions),
   ]
 

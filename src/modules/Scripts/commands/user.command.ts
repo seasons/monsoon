@@ -1,4 +1,4 @@
-import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
+import { BillingAddress, Card } from "@app/modules/Payment/payment.types.d"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"

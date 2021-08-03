@@ -1,7 +1,7 @@
 import { Customer } from "@app/decorators"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
-import { ImageOptions, ImageSize } from "@modules/Image/image.types"
+import { ImageOptions, ImageSize } from "@modules/Image/image.types.d"
 import { ImageService } from "@modules/Image/services/image.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"

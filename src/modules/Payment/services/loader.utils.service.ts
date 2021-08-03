@@ -6,7 +6,7 @@ import { chunk, concat, curry, groupBy, identity } from "lodash"
 import {
   LoadAllRecordsWithListInput,
   LoadRecordsWithListInput,
-} from "../payment.types"
+} from "../payment.types.d"
 
 @Injectable()
 export class LoaderUtilsService {

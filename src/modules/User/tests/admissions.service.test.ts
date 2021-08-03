@@ -6,7 +6,7 @@ import { UtilsModule } from "@app/modules/Utils/utils.module"
 import {
   CreateTestCustomerInput,
   CreateTestProductInput,
-} from "@app/modules/Utils/utils.types"
+} from "@app/modules/Utils/utils.types.d"
 import { PrismaModule } from "@app/prisma/prisma.module"
 import { Test } from "@nestjs/testing"
 import { EmailId, InventoryStatus, ProductType } from "@prisma/client"

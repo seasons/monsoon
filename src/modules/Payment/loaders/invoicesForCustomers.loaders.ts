@@ -1,9 +1,9 @@
-import { NestDataLoader } from "@modules/DataLoader/dataloader.types"
+import { NestDataLoader } from "@modules/DataLoader/dataloader.types.d"
 import { Injectable } from "@nestjs/common"
 import DataLoader from "dataloader"
 import { identity, lowerFirst, mapKeys } from "lodash"
 
-import { Invoice, InvoicesDataLoader } from "../payment.types"
+import { Invoice, InvoicesDataLoader } from "../payment.types.d"
 import { LoaderUtilsService } from "../services/loader.utils.service"
 
 @Injectable()

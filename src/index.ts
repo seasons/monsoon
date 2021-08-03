@@ -58,6 +58,8 @@ async function bootstrap() {
     logger: nestWinstonLogger,
   })
 
+  app.enableShutdownHooks()
+
   await app.listen(process.env.PORT ? process.env.PORT : 4000, () =>
     console.log(`🚀 Server ready at ${process.env.PORT || 4000}`)
   )

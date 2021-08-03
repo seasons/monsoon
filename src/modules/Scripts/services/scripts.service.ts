@@ -13,7 +13,7 @@ import getStream from "get-stream"
 import {
   UpdateConnectionsInputs,
   UpdateEnvironmentInputs,
-} from "../scripts.types"
+} from "../scripts.types.d"
 
 @Injectable()
 export class ScriptsService {

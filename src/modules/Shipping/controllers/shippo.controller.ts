@@ -1,4 +1,4 @@
-import { PushNotificationID } from "@app/modules/PushNotification/pushNotification.types"
+import { PushNotificationID } from "@app/modules/PushNotification/pushNotification.types.d"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Logger, Post } from "@nestjs/common"

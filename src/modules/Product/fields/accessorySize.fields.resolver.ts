@@ -1,4 +1,4 @@
-import { LoaderParams } from "@app/modules/DataLoader/dataloader.types"
+import { LoaderParams } from "@app/modules/DataLoader/dataloader.types.d"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"

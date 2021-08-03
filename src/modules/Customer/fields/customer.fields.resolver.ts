@@ -1,6 +1,6 @@
 import { Customer, User } from "@app/decorators"
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
-import { PrismaGenerateParams } from "@app/modules/DataLoader/dataloader.types"
+import { PrismaGenerateParams } from "@app/modules/DataLoader/dataloader.types.d"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 import { ReservationUtilsService } from "@app/modules/Reservation/services/reservation.utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
@@ -9,7 +9,7 @@ import { InvoicesForCustomersLoader } from "@modules/Payment/loaders/invoicesFor
 import {
   InvoicesDataLoader,
   TransactionsDataLoader,
-} from "@modules/Payment/payment.types"
+} from "@modules/Payment/payment.types.d"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"

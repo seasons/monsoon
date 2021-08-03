@@ -3,7 +3,7 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
 import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
-import { TwilioEvent } from "@app/modules/Twilio/twilio.types"
+import { TwilioEvent } from "@app/modules/Twilio/twilio.types.d"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -23,7 +23,7 @@ import Twilio from "twilio"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
 import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
 
-import { SMSID, SMSPayload } from "../sms.types"
+import { SMSID, SMSPayload } from "../sms.types.d"
 
 const twilioStatusCallback = process.env.TWILIO_STATUS_CALLBACK
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
