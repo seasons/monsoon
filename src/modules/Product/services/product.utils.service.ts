@@ -126,7 +126,7 @@ export class ProductUtilsService {
           ...where,
           ...filters?.where,
         },
-        ...pick(args, ["first", "last", "after", "before"]),
+        ...pick(args, ["first", "last", "after", "before", "skip"]),
       },
       identity
     )
