@@ -22,7 +22,7 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
 
 @Module({
   imports: [
-    forwardRef(() => EmailModule),
+    EmailModule,
     ImageModule,
     PrismaModule,
     forwardRef(() => ProductModule),
