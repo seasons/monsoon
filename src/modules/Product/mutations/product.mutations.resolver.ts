@@ -99,17 +99,6 @@ export class ProductMutationsResolver {
     )
   }
 
-  async addBagItemFromAdmin(
-    @Args() { customerID, productVariantID, status, saved }
-  ) {
-    return await this.bagService.addBagItemFromAdmin(
-      customerID,
-      productVariantID,
-      status,
-      saved
-    )
-  }
-
   @Mutation()
   async checkItemsAvailability(@Args() { items }, @Customer() customer) {
     return await this.productService.checkItemsAvailability(items, customer)
