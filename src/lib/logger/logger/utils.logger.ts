@@ -61,16 +61,12 @@ export function createNestWinstonLogger() {
   }
 
   const finalTransports: Transport[] = [
-    ...(process.env.NODE_ENV !== "development"
-      ? [
-          new transports.Console({
-            format: format.combine(
-              format.combine(injectMeta(), errorsFormat()),
-              nestWinstonModuleUtilities.format.nestLike()
-            ),
-          }),
-        ]
-      : []),
+    new transports.Console({
+      format: format.combine(
+        format.combine(injectMeta(), errorsFormat()),
+        nestWinstonModuleUtilities.format.nestLike()
+      ),
+    }),
     new transports.Http(httpTransportOptions),
   ]
 
