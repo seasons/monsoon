@@ -10,7 +10,8 @@ orbs:
 
 jobs:
   test-unit:
-    machine: true
+    machine:
+      image: ubuntu-2004:202107-02
     working_directory: ~/monsoon
     steps:
       - checkout
@@ -92,6 +93,10 @@ jobs:
       - run:
           command: yarn build
           name: Compile so we can run the next cmd
+
+      - run:
+          command: sudo apt update && sudo apt install postgresql-12
+          name: Install postgres so that we have pg_dump and pg_restore
 
       - run:
           command: node bin/cli.js spp local staging -f
