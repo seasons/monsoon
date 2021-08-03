@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common"
+import { Module, forwardRef } from "@nestjs/common"
 
 import { PrismaModule } from "../../prisma/prisma.module"
 import { ErrorModule } from "../Error/error.module"
@@ -14,7 +14,7 @@ import { EmailUtilsService } from "./services/email.utils.service"
     UtilsModule,
     ErrorModule,
     ImageModule,
-    ReservationModule,
+    forwardRef(() => ReservationModule),
   ],
   providers: [EmailService, EmailUtilsService],
   exports: [EmailService],

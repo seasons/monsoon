@@ -11,13 +11,7 @@ import { SMSService } from "./services/sms.service"
 
 @Module({
   controllers: [SMSController],
-  imports: [
-    PrismaModule,
-    TwilioModule,
-    UtilsModule,
-    ErrorModule,
-    forwardRef(() => EmailModule),
-  ],
+  imports: [PrismaModule, TwilioModule, UtilsModule, ErrorModule, EmailModule],
   providers: [SMSMutationsResolver, SMSService],
   exports: [SMSService],
 })
