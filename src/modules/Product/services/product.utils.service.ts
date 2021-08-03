@@ -14,6 +14,7 @@ import {
   uniq,
   uniqBy,
 } from "lodash"
+import { pick } from "lodash"
 import slugify from "slugify"
 
 import { ProductType } from "../../../prisma"
@@ -125,6 +126,7 @@ export class ProductUtilsService {
           ...where,
           ...filters?.where,
         },
+        ...pick(args, ["first", "last", "after", "before"]),
       },
       identity
     )
