@@ -44,12 +44,12 @@ class BuildWatcher {
     await fs.rmdir(buildFolderPath, { recursive: true })
   }
 
-  async start() {
+  async start(runOnce) {
     console.time(chalk.hex("#ff5faf")("App initialized in"))
     console.log(chalk.red("RM\t"), "dist")
     await this.removeFolder("dist")
 
-    const debouncedStartApp = _.debounce(() => this.startApp())
+    const debouncedStartApp = _.debounce(() => this.startApp(runOnce))
 
     const log = console.log.bind(console)
 
@@ -94,7 +94,7 @@ class BuildWatcher {
       })
   }
 
-  async startApp() {
+  async startApp(runOnce) {
     if (!this.isWatcherReady) {
       return
     }
@@ -105,6 +105,10 @@ class BuildWatcher {
     const ready = await this.exists()
     if (!ready) {
       return
+    }
+
+    if (runOnce) {
+      process.exit(0)
     }
 
     console.log(chalk.blue("READY\t"), "file watcher")
