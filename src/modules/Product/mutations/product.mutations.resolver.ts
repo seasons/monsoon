@@ -53,7 +53,12 @@ export class ProductMutationsResolver {
   ) {
     if (application === "spring") {
       const { customerID, item, status, saved } = args
-      await this.bagService.addBagItemFromAdmin(customerID, item, status, saved)
+      return await this.bagService.addBagItemFromAdmin(
+        customerID,
+        item,
+        status,
+        saved
+      )
     } else {
       if (!customer) {
         throw new Error(`Can not add to bag without a logged in customer`)

@@ -306,7 +306,7 @@ export class CustomerFieldsResolver {
 
   @ResolveField()
   async reservations(@Parent() customer, @FindManyArgs() { where, ...args }) {
-    const reservations = await this.prisma.client.reservation.findMany({
+    return await this.prisma.client.reservation.findMany({
       where: { ...where, customer: { id: customer.id } },
       ...args,
     })
