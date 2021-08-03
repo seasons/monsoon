@@ -307,27 +307,6 @@ export class ProductUtilsService {
   }
 
   sortVariants(variants) {
-    const sizes = {
-      xs: {
-        sortWeight: 0,
-      },
-      s: {
-        sortWeight: 1,
-      },
-      m: {
-        sortWeight: 2,
-      },
-      l: {
-        sortWeight: 3,
-      },
-      xl: {
-        sortWeight: 4,
-      },
-      xxl: {
-        sortWeight: 5,
-      },
-    }
-
     const getSortWeight = displayShort => {
       switch (displayShort.toLowerCase()) {
         case "xxs":
@@ -349,8 +328,12 @@ export class ProductUtilsService {
       }
     }
 
-    const uniqueArray = uniqBy(variants, "displayShort")
-    return uniqueArray.sort((variantA: any, variantB: any) => {
+    const firstVariant = variants?.[0]
+    const productType = firstVariant?.internalSize?.productType
+    const isTop = productType == "Top"
+
+    const filteredVariants = isTop ? uniqBy(variants, "displayShort") : variants
+    return filteredVariants.sort((variantA: any, variantB: any) => {
       const a = getSortWeight(variantA.displayShort) || 0
       const b = getSortWeight(variantB.displayShort) || 0
 
