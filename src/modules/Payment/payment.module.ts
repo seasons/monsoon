@@ -16,6 +16,7 @@ import { ChargebeeQueriesResolver } from "./queries/chargebee.queries.resolver"
 import { PaymentQueriesResolver } from "./queries/payment.queries.resolver"
 import { LoaderUtilsService } from "./services/loader.utils.service"
 import { PaymentService } from "./services/payment.service"
+import { SubscriptionService } from "./services/subscription.service"
 import { UpdatePaymentService } from "./services/updatePayment.service"
 
 export const PaymentModuleDef = {
@@ -37,6 +38,7 @@ export const PaymentModuleDef = {
     PaymentMutationsResolver,
     PaymentService,
     UpdatePaymentService,
+    SubscriptionService,
     TransactionsLoader,
     TransactionsForCustomersLoader,
   ],
