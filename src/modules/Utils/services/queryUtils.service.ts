@@ -28,7 +28,9 @@ const QUERY_KEYS_TO_IGNORE = ["signup", "login"]
 
 @Injectable()
 export class QueryUtilsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {
+    QueryUtilsService.fieldCache.clear()
+  }
 
   // e.g {GetBrowseProducts: {brands: ..., products: ...}}
   private static fieldCache = new Map() as Map<string, Map<string, any>>
