@@ -260,9 +260,7 @@ export class EmailService {
 
   async sendPausedEmail(customer, isExtension: boolean) {
     const latestPauseRequest = this.utils.getLatestPauseRequest(customer)
-    const latestReservation = await this.utils.getLatestReservation(
-      customer?.id
-    )
+    const latestReservation = await this.utils.getLatestReservation(customer.id)
     const withItems = latestPauseRequest.pauseType === "WithItems"
     let pausedWithItemsPrice
 
