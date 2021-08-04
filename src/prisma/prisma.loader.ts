@@ -55,8 +55,6 @@ export class PrismaLoader implements NestDataLoader {
   ) {
     const where = formatWhere(keys, ctx)
 
-    // for whatever reason, trying to inject the prisma service doesn't work once
-    // we inject the CONTEXT into prisma utils. So we just use the read client directly.
     const data = await this.prisma.client[lowerFirst(model)].findMany({
       where,
       select,
