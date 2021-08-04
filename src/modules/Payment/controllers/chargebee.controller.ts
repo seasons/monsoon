@@ -8,9 +8,10 @@ import { Body, Controller, Post } from "@nestjs/common"
 import { CustomerStatus } from "@prisma/client"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
-import { head, pick } from "lodash"
+import { pick } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
+import { SubscriptionService } from "../services/subscription.service"
 
 export type ChargebeeEvent = {
   content: any
@@ -32,7 +33,8 @@ export class ChargebeeController {
     private readonly error: ErrorService,
     private readonly email: EmailService,
     private readonly utils: UtilsService,
-    private readonly statements: StatementsService
+    private readonly statements: StatementsService,
+    private readonly subscription: SubscriptionService
   ) {}
 
   @Post()
@@ -197,7 +199,7 @@ export class ChargebeeController {
           ...this.utils.formatUTMForSegment(customerWithBillingAndUserData.utm),
         })
         // Only create the billing info and send welcome email if user used chargebee checkout
-        await this.payment.createPrismaSubscription(
+        await this.subscription.createPrismaSubscription(
           customer_id,
           customer,
           card,
