@@ -9,6 +9,7 @@ import { PrismaModule } from "@prisma1/prisma.module"
 import { PusherService } from "../PushNotification/services/pusher.service"
 import { PushNotificationDataProvider } from "../PushNotification/services/pushNotification.data.service"
 import { PushNotificationService } from "../PushNotification/services/pushNotification.service"
+import { ReservationModule } from "../Reservation/reservation.module"
 import { SearchModule } from "../Search/search.module"
 import { AlgoliaService } from "../Search/services/algolia.service"
 import { ShopifyService } from "../Shopify/services/shopify.service"
@@ -49,6 +50,7 @@ export const ProductModuleDef = {
     SearchModule,
     UtilsModule,
     UserModule,
+    forwardRef(() => ReservationModule),
   ],
   providers: [
     BagService,

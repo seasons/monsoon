@@ -52,6 +52,12 @@ type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
   allAccessEnabled?: boolean
 }
 
+const shippingOptionsData = JSON.parse(
+  fs.readFileSync(
+    process.cwd() + "/src/modules/Shipping/shippingOptionsData.json",
+    "utf-8"
+  )
+)
 @Injectable()
 export class CustomerService {
   triageCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
@@ -115,12 +121,6 @@ export class CustomerService {
       },
     })
 
-    const shippingOptionsData = JSON.parse(
-      fs.readFileSync(
-        process.cwd() + "/src/modules/Shipping/shippingOptionsData.json",
-        "utf-8"
-      )
-    )
     const originState = warehouseLocation.state
     const shippingOptions = []
 
