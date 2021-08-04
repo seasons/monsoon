@@ -2,7 +2,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { BagItem, Prisma } from "@prisma/client"
+import { BagItem, InventoryStatus, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 
@@ -159,6 +159,8 @@ export class BagService {
    * Mutation for admins to delete a bagItem from a customer's bag
    */
   async deleteBagItemFromAdmin(bagItemID) {
+    const promises = []
+
     const bagItem = await this.prisma.client.bagItem.findUnique({
       where: {
         id: bagItemID,
@@ -168,6 +170,12 @@ export class BagService {
         productVariant: {
           select: {
             id: true,
+            reservable: true,
+            reserved: true,
+            total: true,
+            nonReservable: true,
+            offloaded: true,
+            stored: true,
           },
         },
         customer: {
@@ -178,11 +186,22 @@ export class BagService {
       },
     })
 
-    const customerID = bagItem?.customer?.id
+    const customerID = bagItem.customer.id
+    const productVariant = bagItem.productVariant
 
     if (bagItem.status === "Reserved") {
       // Update the current reservation and it's physical product and counts
-      const lastReservation = await this.utils.getLatestReservation(customerID)
+      const lastReservation = (await this.utils.getLatestReservation(
+        customerID,
+        undefined,
+        {
+          products: {
+            select: {
+              warehouseLocation: true,
+            },
+          },
+        }
+      )) as any
 
       const physicalProductsInRes = lastReservation.products
 
@@ -190,32 +209,64 @@ export class BagService {
         physProd => physProd.productVariant.id === bagItem.productVariant.id
       )
 
-      const filteredPhyProductIDs = physicalProductsInRes
-        .filter(physProd => physProd.id !== physicalProduct.id)
-        .map(physProd => {
-          return {
-            id: physProd.id,
-          }
+      if (!physicalProduct) {
+        throw Error(
+          `Physical product not in the last reservation: ${lastReservation.id}`
+        )
+      }
+
+      promises.push(
+        this.prisma.client.reservation.update({
+          where: {
+            id: lastReservation.id,
+          },
+          data: {
+            products: {
+              disconnect: {
+                id: physicalProduct.id,
+              },
+            },
+            newProducts: {
+              disconnect: {
+                id: physicalProduct.id,
+              },
+            },
+          },
+        })
+      )
+
+      const newInventoryStatus = !!physicalProduct.warehouseLocation
+        ? "Reservable"
+        : "NonReservable"
+
+      const productVariantData =
+        this.productVariantService.getCountsForStatusChange({
+          productVariant,
+          oldInventoryStatus:
+            physicalProduct.inventoryStatus as InventoryStatus,
+          newInventoryStatus,
         })
 
-      await this.prisma.client.reservation.update({
-        where: {
-          id: lastReservation?.id,
-        },
-        data: {
-          products: {
-            set: filteredPhyProductIDs,
+      promises.push(
+        this.prisma.client.physicalProduct.update({
+          where: { id: physicalProduct.id },
+          data: {
+            inventoryStatus: newInventoryStatus,
+            productVariant: {
+              update: {
+                ...productVariantData,
+              },
+            },
           },
-        },
-      })
-
-      await this.prisma.client.physicalProduct.update({
-        where: { id: physicalProduct.id },
-        data: { inventoryStatus: "Reservable" },
-      })
+        })
+      )
     }
 
-    await this.prisma.client.bagItem.delete({ where: { id: bagItemID } })
+    promises.push(
+      this.prisma.client.bagItem.delete({ where: { id: bagItemID } })
+    )
+
+    await this.prisma.client.$transaction(promises)
   }
 
   async removeFromBag(item, saved, customer): Promise<BagItem> {

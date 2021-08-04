@@ -1,9 +1,13 @@
 import crypto from "crypto"
 import * as fs from "fs"
 
-import { UTMData as BindingUTMData, DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
-import { AdminActionLog, PauseRequest, SyncTimingType } from "@prisma/client"
+import {
+  AdminActionLog,
+  PauseRequest,
+  SyncTimingType,
+  Prisma,
+} from "@prisma/client"
 import { Location } from "@prisma/client"
 import { UTMData } from "@prisma/client"
 import { Reservation } from "@prisma/client"
@@ -13,6 +17,7 @@ import graphqlFields from "graphql-fields"
 import {
   camelCase,
   get,
+  merge,
   head,
   isObject,
   mapKeys,
@@ -24,6 +29,7 @@ import states from "us-state-converter"
 
 import { bottomSizeRegex } from "../../Product/constants"
 import { QueryUtilsService } from "./queryUtils.service"
+import { DateTime } from "@app/prisma/prisma.binding"
 
 enum ProductSize {
   XXS = "XXS",
@@ -397,7 +403,11 @@ export class UtilsService {
     return latestPauseRequest
   }
 
-  async getLatestReservation(customerID: string, status = undefined) {
+  async getLatestReservation(
+    customerID: string,
+    status = undefined,
+    select: Prisma.ReservationSelect
+  ) {
     const latestReservation = await this.prisma.client.reservation.findFirst({
       where: {
         customer: {
@@ -408,22 +418,25 @@ export class UtilsService {
       orderBy: {
         createdAt: "desc",
       },
-      select: {
-        id: true,
-        products: {
-          select: {
-            id: true,
-            seasonsUID: true,
-            inventoryStatus: true,
-            productStatus: true,
-            productVariant: { select: { id: true } },
+      select: merge(
+        {
+          id: true,
+          products: {
+            select: {
+              id: true,
+              seasonsUID: true,
+              inventoryStatus: true,
+              productStatus: true,
+              productVariant: { select: { id: true } },
+            },
           },
+          receivedAt: true,
+          status: true,
+          reservationNumber: true,
+          createdAt: true,
         },
-        receivedAt: true,
-        status: true,
-        reservationNumber: true,
-        createdAt: true,
-      },
+        select
+      ),
     })
 
     if (latestReservation == null) {
