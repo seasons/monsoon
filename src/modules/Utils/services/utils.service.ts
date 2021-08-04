@@ -409,15 +409,7 @@ export class UtilsService {
 
   getPauseWithItemsPlanId = membership => {
     const itemCount = membership?.plan?.itemCount
-    let planID
-    if (itemCount === 1) {
-      planID = "pause-1"
-    } else if (itemCount === 2) {
-      planID = "pause-2"
-    } else if (itemCount === 3) {
-      planID = "pause-3"
-    }
-    return planID
+    return `pause-${itemCount}`
   }
 
   filterAdminLogs(logs: AdminActionLog[], ignoreKeys = []) {
