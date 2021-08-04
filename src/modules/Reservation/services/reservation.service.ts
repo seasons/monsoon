@@ -7,7 +7,6 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
   InventoryStatus,
   PhysicalProductStatus,
-  ReservationStatus,
   ShippingCode,
 } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
@@ -21,6 +20,7 @@ import {
   Prisma,
   PrismaPromise,
   ReservationFeedback,
+  ReservationStatus,
   User,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -742,8 +742,11 @@ export class ReservationService {
       },
     })
 
+    const changingStatusTo = (status: ReservationStatus) => {
+      return reservation.status !== status && data.status === status
+    }
     // If setting to cancelled, execute implied updates
-    if (reservation.status !== "Cancelled" && data.status === "Cancelled") {
+    if (changingStatusTo("Cancelled")) {
       // Set timestamp
       data["cancelledAt"] = new Date()
 
@@ -787,10 +790,7 @@ export class ReservationService {
     }
 
     // If setting to lost, execute implied updates
-    if (reservation.status !== "Cancelled" && data.status === "Cancelled") {
-      // Set timestamp
-      data["cancelledAt"] = new Date()
-
+    if (changingStatusTo("Lost")) {
       // For new products on reservation, update the status, related counts, and bag item
       for (const prod of reservation.newProducts) {
         const variantUpdateData = this.productVariantService.getCountsForStatusChange(
@@ -820,15 +820,12 @@ export class ReservationService {
     }
 
     // If setting to completed, set timestamp
-    if (reservation.status !== "Completed" && data.status === "Completed") {
+    if (changingStatusTo("Completed")) {
       data["completedAt"] = new Date()
     }
 
     // Reservation was just packed. Null out warehouse locations on attached products
-    if (
-      ["Packed", "Picked"].includes(data.status) &&
-      data.status !== reservation.status
-    ) {
+    if (changingStatusTo("Picked") || changingStatusTo("Packed")) {
       const updateData = { warehouseLocation: { disconnect: true } }
       if (data.status === "Packed") {
         updateData["packedAt"] = new Date()
