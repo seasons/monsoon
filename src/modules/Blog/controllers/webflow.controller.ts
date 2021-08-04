@@ -34,7 +34,7 @@ export class WebflowController {
       webflowId: lastPostPublished.id,
       webflowCreatedAt: lastPostPublished.createdAt,
       webflowUpdatedAt: lastPostPublished.updatedAt,
-      tags: { set: lastPostPublished.tags },
+      tags: { set: lastPostPublished.tags ?? [] },
       ...pick(lastPostPublished, [
         "name",
         "body",
