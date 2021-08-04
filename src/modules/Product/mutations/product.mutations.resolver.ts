@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -34,17 +35,37 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async deleteBagItem(@Args() { itemID }) {
-    await this.prisma.client.bagItem.delete({ where: { id: itemID } })
+  async deleteBagItem(@Args() { itemID }, @Application() application) {
+    if (application === "spring") {
+      await this.bagService.deleteBagItemFromAdmin(itemID)
+    } else {
+      await this.prisma.client.bagItem.delete({ where: { id: itemID } })
+    }
     return true
   }
 
   @Mutation()
-  async addToBag(@Args() { item }, @Customer() customer, @Select() select) {
-    if (!customer) {
-      throw new Error(`Can not add to bag without a logged in customer`)
+  async addToBag(
+    @Args() args,
+    @Customer() customer,
+    @Select() select,
+    @Application() application
+  ) {
+    if (application === "spring") {
+      const { customerID, item, status, saved } = args
+      return await this.bagService.addBagItemFromAdmin(
+        customerID,
+        item,
+        status,
+        saved
+      )
+    } else {
+      if (!customer) {
+        throw new Error(`Can not add to bag without a logged in customer`)
+      }
+      const { item } = args
+      return await this.bagService.addToBag(item, customer, select)
     }
-    return await this.bagService.addToBag(item, customer, select)
   }
 
   @Mutation()
