@@ -3,16 +3,10 @@ import { CustomerService } from "@app/modules/User/services/customer.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { AuthService } from "@modules/User/services/auth.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
 import { get, head } from "lodash"
-import Stripe from "stripe"
-
-const stripe = new Stripe(process.env.STRIPE_API_KEY, {
-  apiVersion: "2020-08-27",
-})
 
 export interface SubscriptionData {
   nextBillingAt: string
@@ -184,15 +178,10 @@ export class UpdatePaymentService {
     const amountDue =
       subscriptionEstimate?.estimate?.invoice_estimate?.amount_due
 
-    const intent = await stripe.paymentIntents.create({
-      payment_method: paymentMethodID,
-      amount: amountDue,
-      currency: "USD",
-      confirm: true,
-      confirmation_method: "manual",
-      setup_future_usage: "off_session",
-      capture_method: "manual",
-    })
+    const intent = await this.paymentUtils.createPaymentIntent(
+      paymentMethodID,
+      amountDue
+    )
 
     // Update card
     const payload = await chargebee.payment_source

@@ -1,6 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
+import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import { PaymentPlanTier } from "@prisma/client"
@@ -33,7 +34,8 @@ export class PaymentService {
     private readonly utils: UtilsService,
     private readonly segment: SegmentService,
     private readonly error: ErrorService,
-    private readonly subscription: SubscriptionService
+    private readonly subscription: SubscriptionService,
+    private readonly paymentUtils: PaymentUtilsService
   ) {}
 
   async addEarlySwapCharge(customerID: string) {
@@ -144,16 +146,10 @@ export class PaymentService {
 
     const amountDue =
       subscriptionEstimate?.estimate?.invoice_estimate?.amount_due
-    const intent = await stripe.paymentIntents.create({
-      payment_method: paymentMethodID,
-      amount: amountDue,
-      currency: "USD",
-      confirm: true,
-      confirmation_method: "manual",
-      setup_future_usage: "off_session",
-      capture_method: "manual",
-    })
-
+    const intent = await this.paymentUtils.createPaymentIntent(
+      paymentMethodID,
+      amountDue
+    )
     return intent
   }
 
@@ -180,6 +176,7 @@ export class PaymentService {
     const user = customerWithUserData?.user
 
     const intent = await stripe.paymentIntents.retrieve(paymentIntentID)
+    await stripe.paymentIntents.confirm(intent.id)
 
     let shippingAddress
     if (shipping?.address) {
@@ -223,7 +220,7 @@ export class PaymentService {
       .create(subscriptionOptions)
       .request()
 
-    await this.subscription.createPrismaSubscription(
+    const data = await this.subscription.createPrismaSubscription(
       customerWithUserData.user.id,
       subscriptionData.customer,
       subscriptionData.card,
@@ -245,6 +242,8 @@ export class PaymentService {
       discoveryReference: customerWithUserData.detail?.discoveryReference,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
+
+    return data
   }
 
   async stripeTokenCheckout(

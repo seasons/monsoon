@@ -34,6 +34,13 @@ type Mutation {
     billing: JSON
     shipping: JSON
   ): JSON
+  confirmPayment(
+    paymentIntentID: String!
+    planID: String!
+    couponID: String
+    billing: JSON
+    shipping: JSON
+  ): JSON
   updatePaymentMethod(
     paymentMethodID: String!
     planID: String

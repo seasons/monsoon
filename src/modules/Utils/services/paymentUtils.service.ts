@@ -5,6 +5,11 @@ import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
 import { get } from "lodash"
 import { DateTime } from "luxon"
+import Stripe from "stripe"
+
+const stripe = new Stripe(process.env.STRIPE_API_KEY, {
+  apiVersion: "2020-08-27",
+})
 
 @Injectable()
 export class PaymentUtilsService {
@@ -68,6 +73,23 @@ export class PaymentUtilsService {
     }
 
     return { prismaBillingAddress, chargebeeBillingAddress }
+  }
+
+  async createPaymentIntent(paymentMethodID, amountDue) {
+    return await stripe.paymentIntents.create({
+      payment_method: paymentMethodID,
+      amount: amountDue,
+      currency: "USD",
+      confirm: true,
+      confirmation_method: "manual",
+      setup_future_usage: "off_session",
+      capture_method: "manual",
+      payment_method_options: {
+        card: {
+          request_three_d_secure: "any",
+        },
+      },
+    })
   }
 
   async updateResumeDate(date, customer) {

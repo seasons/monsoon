@@ -1,6 +1,5 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { AuthService } from "@app/modules/User/services/auth.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
@@ -29,7 +28,6 @@ export class SubscriptionService {
     private readonly prisma: PrismaService,
     private readonly emailService: EmailService,
     private readonly paymentUtils: PaymentUtilsService,
-    private readonly auth: AuthService,
     private readonly error: ErrorService,
     private readonly segment: SegmentService
   ) {}
