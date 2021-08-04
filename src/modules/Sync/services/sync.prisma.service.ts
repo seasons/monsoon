@@ -172,12 +172,6 @@ export class PrismaSyncService {
       console.log(err)
     }
 
-    // Drop the audit trigger from the inherited schema. Should technically also recreate it, but
-    // we can pick that up another day
-    execSyncWithOptions(
-      `echo 'DROP FUNCTION ${toSchema}.if_modified_func() CASCADE' | psql ${destinationCreds}`
-    )
-
     //  Drop the (old) monsoon$staging or monsoon$dev schema and all contained tables
     execSyncWithOptions(
       `echo 'DROP SCHEMA "${toSchema}" CASCADE' | psql ${destinationCreds}`
@@ -186,6 +180,12 @@ export class PrismaSyncService {
     // Adjust the name of the schema to be appropriate for staging or dev
     execSyncWithOptions(
       `echo 'ALTER SCHEMA "${fromSchema}" RENAME TO "${toSchema}"' | psql ${destinationCreds}`
+    )
+
+    // Drop the audit trigger from the inherited schema. Should technically also recreate it, but
+    // we can pick that up another day
+    execSyncWithOptions(
+      `echo 'DROP FUNCTION ${toSchema}.if_modified_func() CASCADE' | psql ${destinationCreds}`
     )
   }
 
