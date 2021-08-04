@@ -406,7 +406,7 @@ export class UtilsService {
   async getLatestReservation(
     customerID: string,
     status = undefined,
-    select: Prisma.ReservationSelect
+    select: Prisma.ReservationSelect = {}
   ) {
     const latestReservation = await this.prisma.client.reservation.findFirst({
       where: {
