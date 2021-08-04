@@ -745,8 +745,17 @@ export class ReservationService {
     const changingStatusTo = (status: ReservationStatus) => {
       return reservation.status !== status && data.status === status
     }
+
+    const canCancelReservation = ["Queued", "Packed", "Picked"].includes(
+      reservation.status
+    )
     // If setting to cancelled, execute implied updates
     if (changingStatusTo("Cancelled")) {
+      if (!canCancelReservation) {
+        throw new Error(
+          `Can only cancel an order with status Queued, Picked, or Packed`
+        )
+      }
       // Set timestamp
       data["cancelledAt"] = new Date()
 
@@ -773,18 +782,9 @@ export class ReservationService {
         )
         const bagItemId = prod.productVariant.bagItems?.[0]?.id
         if (!!bagItemId) {
-          if (!!prod.warehouseLocation) {
-            promises.push(
-              this.prisma.client.bagItem.update({
-                where: { id: bagItemId },
-                data: { status: "Added" },
-              })
-            )
-          } else {
-            promises.push(
-              this.prisma.client.bagItem.delete({ where: { id: bagItemId } })
-            )
-          }
+          promises.push(
+            this.prisma.client.bagItem.delete({ where: { id: bagItemId } })
+          )
         }
       }
     }
