@@ -3,8 +3,7 @@ import { Injectable } from "@nestjs/common"
 import { PrismaSelect } from "@paljs/plugins"
 import { Prisma, PrismaClient } from "@prisma/client"
 import { lowerFirst } from "lodash"
-
-import { PrismaUtilsService } from "./prisma.utils"
+import * as requestContext from "request-context"
 
 export type SmartPrismaClient = Omit<
   PrismaClient,
@@ -43,7 +42,7 @@ if (process.env.NODE_ENV === "development") {
 
 @Injectable()
 export class PrismaService implements UpdatableConnection {
-  constructor(private readonly prismaUtils: PrismaUtilsService) {
+  constructor() {
     this.client = this.generateSmartClient(readClient, writeClient)
   }
 
@@ -147,7 +146,7 @@ export class PrismaService implements UpdatableConnection {
     { log }: { log: Array<Prisma.LogLevel> } = { log: [] }
   ) => {
     return args => {
-      const requestOnMutation = this.prismaUtils.requestIsOnMutation()
+      const requestOnMutation = this.requestIsOnMutation({ log })
       if (log.includes("info")) {
         console.log(`requestOnMutation: ${requestOnMutation}`)
       }
@@ -175,5 +174,20 @@ export class PrismaService implements UpdatableConnection {
       }
       return func(args)
     }
+  }
+
+  private requestIsOnMutation(
+    { log }: { log: Array<Prisma.LogLevel> } = { log: [] }
+  ): Boolean {
+    const context = requestContext.get("request:context")
+    const queryString = requestContext.get("request:queryString")
+    const isMutation = context?.isMutation || false
+
+    if (log.includes("info")) {
+      console.log(`queryString: ${queryString}`)
+      console.log(`isMutation: ${isMutation}`)
+    }
+
+    return isMutation
   }
 }

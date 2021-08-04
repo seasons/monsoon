@@ -119,6 +119,7 @@
     "readline-sync": "1.4.10",
     "reflect-metadata": "0.1.13",
     "request": "2.88.0",
+    "request-context": "^2.0.0",
     "scripty": "2.0.0",
     "sha1": "1.1.1",
     "shippo": "1.3.1",

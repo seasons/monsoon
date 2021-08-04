@@ -13494,6 +13494,11 @@ replaceall@^0.1.6:
   resolved "https://registry.yarnpkg.com/replaceall/-/replaceall-0.1.6.tgz#81d81ac7aeb72d7f5c4942adf2697a3220688d8e"
   integrity sha1-gdgax663LX9cSUKt8ml6MiBojY4=
 
+request-context@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/request-context/-/request-context-2.0.0.tgz#86017884cc9574d81fb23dcbc6c22c2b2520f1d0"
+  integrity sha1-hgF4hMyVdNgfsj3LxsIsKyUg8dA=
+
 request-promise-core@1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/request-promise-core/-/request-promise-core-1.1.4.tgz#3eedd4223208d419867b78ce815167d10593a22f"

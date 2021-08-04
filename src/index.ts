@@ -6,6 +6,7 @@ import * as Sentry from "@sentry/node"
 import bodyParser from "body-parser"
 import compression from "compression"
 import express from "express"
+import * as requestContext from "request-context"
 
 import { AppModule } from "./app.module"
 import {
@@ -43,6 +44,7 @@ async function bootstrap() {
   )
 
   server.use(
+    requestContext.middleware("request"),
     expressWinstonHandler,
     httpContextMiddleware,
     requestIdHandler,

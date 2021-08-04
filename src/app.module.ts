@@ -16,6 +16,7 @@ import responseCachePlugin from "apollo-server-plugin-response-cache"
 import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
 import GraphQLJSON from "graphql-type-json"
+import * as requestContext from "request-context"
 
 import {
   BlogModule,
@@ -79,6 +80,8 @@ const isRequestMutation = (req, persistedQueryMap) => {
     queryString = req.body.query
   }
 
+  requestContext.set("request:queryString", queryString)
+
   // if queryString is undefined, default to saying its mutation so
   // we use the write client and are gauranteed that the app will work.
   const isMutation = queryString?.includes("mutation") ?? true
@@ -135,6 +138,7 @@ const cache = (() => {
             // For use in deciding which prisma client to use. See prisma.service for more details
             ctx["isMutation"] = isRequestMutation(req, persistedQueryMap)
 
+            requestContext.set("request:context", ctx)
             return ctx
           },
           plugins: [
