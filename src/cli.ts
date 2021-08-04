@@ -8,7 +8,6 @@ import { CommandModule, CommandService } from "nestjs-command"
 dotenv.config()
 
 // Must be imported after dotenv.configure() to ensure that env vars are loaded before making module
-process.env.CLI = "true" // needed to properly instantiate PrismaModule. See prisma.module.ts
 import { ScriptsModule } from "./modules/Scripts/scripts.module"
 
 
