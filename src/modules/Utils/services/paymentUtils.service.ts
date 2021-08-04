@@ -1,11 +1,15 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { Injectable } from "@nestjs/common"
-import { Customer } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
-import { get, head, orderBy, pick } from "lodash"
+import { get } from "lodash"
 import { DateTime } from "luxon"
+import Stripe from "stripe"
+
+const stripe = new Stripe(process.env.STRIPE_API_KEY, {
+  apiVersion: "2020-08-27",
+})
 
 @Injectable()
 export class PaymentUtilsService {
@@ -69,6 +73,23 @@ export class PaymentUtilsService {
     }
 
     return { prismaBillingAddress, chargebeeBillingAddress }
+  }
+
+  async createPaymentIntent(paymentMethodID, amountDue) {
+    return await stripe.paymentIntents.create({
+      payment_method: paymentMethodID,
+      amount: amountDue,
+      currency: "USD",
+      confirm: true,
+      confirmation_method: "manual",
+      setup_future_usage: "off_session",
+      capture_method: "manual",
+      payment_method_options: {
+        card: {
+          request_three_d_secure: "any",
+        },
+      },
+    })
   }
 
   async updateResumeDate(date, customer) {
@@ -156,142 +177,5 @@ export class PaymentUtilsService {
       throw new Error(JSON.stringify(error))
     })
     return cardInfo
-  }
-
-  async resumeSubscription(
-    subscriptionId,
-    date,
-    customer: Pick<Customer, "id">
-  ) {
-    const resumeDate = !!date
-      ? { specific_date: DateTime.fromISO(date).toSeconds() }
-      : "immediately"
-
-    const pausePlanIDs = ["pause-1", "pause-2", "pause-3", "pause-6"]
-
-    const customerWithData = await this.prisma.client.customer.findUnique({
-      where: { id: customer.id },
-      select: {
-        id: true,
-        membership: {
-          select: {
-            id: true,
-            plan: { select: { id: true, planID: true, itemCount: true } },
-            pauseRequests: { select: { id: true, createdAt: true } },
-          },
-        },
-      },
-    })
-
-    const pauseRequest = head(
-      orderBy(customerWithData.membership.pauseRequests, "createdAt", "desc")
-    )
-
-    try {
-      const customerPlanID = customerWithData.membership.plan.planID
-
-      let success
-
-      if (pausePlanIDs.includes(customerPlanID)) {
-        const itemCount = customerWithData.membership.plan.itemCount
-        let newPlanID
-        if (itemCount === 1) {
-          newPlanID = "essential-1"
-        } else if (itemCount === 2) {
-          newPlanID = "essential-2"
-        } else if (itemCount === 3) {
-          newPlanID = "essential"
-        } else if (itemCount === 6) {
-          newPlanID = "essential-6"
-        }
-        // Customer is paused with items on a pause plan
-        // Check if the user is on a pause plan and switch plans instead of updating chargebee
-        success = await chargebee.subscription
-          .update(subscriptionId, {
-            plan_id: newPlanID,
-          })
-          .request()
-      } else {
-        // Customer is paused without items
-        success = await chargebee.subscription
-          .resume(subscriptionId, {
-            resume_option: resumeDate,
-            unpaid_invoices_handling: "schedule_payment_collection",
-          })
-          .request()
-      }
-
-      if (success) {
-        await this.prisma.client.customer.update({
-          where: { id: customer.id },
-          data: {
-            status: "Active",
-            membership: {
-              update: {
-                pauseRequests: {
-                  update: {
-                    where: { id: pauseRequest.id },
-                    data: { pausePending: false },
-                  },
-                },
-              },
-            },
-          },
-        })
-
-        const customerWithTrackingData = await this.prisma.client.customer.findUnique(
-          {
-            where: { id: customer.id },
-            select: {
-              id: true,
-              user: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true,
-                },
-              },
-              membership: {
-                select: {
-                  id: true,
-                  plan: { select: { id: true, tier: true, planID: true } },
-                },
-              },
-            },
-          }
-        )
-
-        const tier = customerWithTrackingData?.membership?.plan?.tier
-        const planID = customerWithTrackingData?.membership?.plan?.planID
-
-        this.segment.track(
-          customerWithTrackingData.user.id,
-          "Resumed Subscription",
-          {
-            ...pick(customerWithTrackingData.user, [
-              "firstName",
-              "lastName",
-              "email",
-            ]),
-            planID,
-            tier,
-          }
-        )
-      }
-    } catch (e) {
-      if (
-        e?.api_error_code &&
-        e?.api_error_code === "payment_processing_failed"
-      ) {
-        // don't set status to `PaymentFailed` here because we do it in the
-        // chargebee webhook
-        await this.prisma.client.pauseRequest.update({
-          where: { id: pauseRequest.id },
-          data: { pausePending: false },
-        })
-      }
-      throw e
-    }
   }
 }

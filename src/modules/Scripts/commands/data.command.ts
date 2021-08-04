@@ -102,6 +102,6 @@ export class DataCommands {
       this.logger.log("Item has never been reserved")
     }
     this.logger.log(`*** Reservation History ***`)
-    this.logger.log(formattedReservations)
+    this.logger.log(JSON.stringify(formattedReservations))
   }
 }

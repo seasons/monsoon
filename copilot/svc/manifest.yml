@@ -1,0 +1,117 @@
+# The manifest for the "monsoon-svc" service.
+# Read the full specification for the "Load Balanced Web Service" type at:
+#  https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/
+
+# Your service name will be used in naming your resources like log groups, ECS services, etc.
+name: svc
+type: Load Balanced Web Service
+
+# Distribute traffic to your service.
+http:
+  # Requests to this path will be forwarded to your service.
+  # To match all requests you can use the "/" path.
+  path: "/"
+  # You can specify a custom health check path. The default is "/".
+  healthcheck: "/health"
+
+# Configuration for your containers and service.
+image:
+  # Additional overrides: https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/#image-build
+  build: Dockerfile
+  # Port exposed through your container to route traffic to it.
+  port: 4000
+
+cpu: 256 # Number of CPU units for the task.
+
+memory: 512 # Amount of memory in MiB used by the task.
+
+# Configure autoscaling with first two instances dedicated. The third and any
+# additional copies will be placed on Spot until the maximum is reached.
+# https://github.com/aws/copilot-cli/blob/mainline/site/content/docs/include/common-svc-fields.en.md#count-spot
+count:
+  range:
+    min: 1
+    max: 10
+    spot_from: 3
+
+exec: true # Enable running commands in your container.
+
+​variables: # Pass environment variables as key value pairs.
+  AUTOMATIC_ADMISSIONS: true
+  DD_LOGS_INJECTION: true
+  DD_PROCESS_AGENT: true
+
+#secrets:                      # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
+#  GITHUB_TOKEN: GITHUB_TOKEN  # The key is the name of the env var, the value is the name of the SSM parameter
+
+environments:
+  staging:
+    secrets:
+      ALGOLIA_ACCOUNT_ID: /copilot/monsoon/staging/secrets/ALGOLIA_ACCOUNT_ID
+      ALGOLIA_KEY: /copilot/monsoon/staging/secrets/ALGOLIA_KEY
+      APP_URL: /copilot/monsoon/staging/secrets/APP_URL
+      AUTH0_AUDIENCE: /copilot/monsoon/staging/secrets/AUTH0_AUDIENCE
+      AUTH0_CLIENTID: /copilot/monsoon/staging/secrets/AUTH0_CLIENTID
+      AUTH0_CLIENT_SECRET: /copilot/monsoon/staging/secrets/AUTH0_CLIENT_SECRET
+      AUTH0_DB_CONNECTION: /copilot/monsoon/staging/secrets/AUTH0_DB_CONNECTION
+      AUTH0_DOMAIN: /copilot/monsoon/staging/secrets/AUTH0_DOMAIN
+      AUTH0_ISSUER: /copilot/monsoon/staging/secrets/AUTH0_ISSUER
+      AWS_ACCESS_KEY_ID: /copilot/monsoon/staging/secrets/AWS_ACCESS_KEY_ID
+      AWS_S3_IMAGES_BUCKET: /copilot/monsoon/staging/secrets/AWS_S3_IMAGES_BUCKET
+      AWS_SECRET_ACCESS_KEY: /copilot/monsoon/staging/secrets/AWS_SECRET_ACCESS_KEY
+      CACHE_MAX_AGE: /copilot/monsoon/staging/secrets/CACHE_MAX_AGE
+      CHARGEBEE_API_KEY: /copilot/monsoon/staging/secrets/CHARGEBEE_API_KEY
+      CHARGEBEE_GATEWAY_ACCOUNT_ID: /copilot/monsoon/staging/secrets/CHARGEBEE_GATEWAY_ACCOUNT_ID
+      CHARGEBEE_SITE: /copilot/monsoon/staging/secrets/CHARGEBEE_SITE
+      DATABASE_URL: /copilot/monsoon/staging/secrets/DATABASE_URL
+      DATADOG_KEY: /copilot/monsoon/staging/secrets/DATADOG_KEY
+      DRIP_ACCOUNT_ID: /copilot/monsoon/staging/secrets/DRIP_ACCOUNT_ID
+      DRIP_KEY: /copilot/monsoon/staging/secrets/DRIP_KEY
+      ELASTICSEARCH_PASSWORD: /copilot/monsoon/staging/secrets/ELASTICSEARCH_PASSWORD
+      ELASTICSEARCH_URL: /copilot/monsoon/staging/secrets/ELASTICSEARCH_URL
+      ELASTICSEARCH_USERNAME: /copilot/monsoon/staging/secrets/ELASTICSEARCH_USERNAME
+      GOOGLE_MAPS_KEY: /copilot/monsoon/staging/secrets/GOOGLE_MAPS_KEY
+      HASH_SECRET: /copilot/monsoon/staging/secrets/HASH_SECRET
+      IMGIX_API_KEY: /copilot/monsoon/staging/secrets/IMGIX_API_KEY
+      IMGIX_NAME: /copilot/monsoon/staging/secrets/IMGIX_NAME
+      LOOKERSDK_BASE_URL: /copilot/monsoon/staging/secrets/LOOKERSDK_BASE_URL
+      LOOKERSDK_CLIENT_ID: /copilot/monsoon/staging/secrets/LOOKERSDK_CLIENT_ID
+      LOOKERSDK_CLIENT_SECRET: /copilot/monsoon/staging/secrets/LOOKERSDK_CLIENT_SECRET
+      MAIN_CONTACT_EMAIL: /copilot/monsoon/staging/secrets/MAIN_CONTACT_EMAIL
+      MASTER_EMAIL_TEMPLATE_ID: /copilot/monsoon/staging/secrets/MASTER_EMAIL_TEMPLATE_ID
+      NODE_ENV: /copilot/monsoon/staging/secrets/NODE_ENV
+      ONE_DAPPER_STREET_COUPON_ID: /copilot/monsoon/staging/secrets/ONE_DAPPER_STREET_COUPON_ID
+      OPERATIONS_ADMIN_EMAIL: /copilot/monsoon/staging/secrets/OPERATIONS_ADMIN_EMAIL
+      PRISMA_ENDPOINT: /copilot/monsoon/staging/secrets/PRISMA_ENDPOINT
+      PRISMA_MANAGEMENT_API_SECRET: /copilot/monsoon/staging/secrets/PRISMA_MANAGEMENT_API_SECRET
+      PRISMA_SECRET: /copilot/monsoon/staging/secrets/PRISMA_SECRET
+      PUSHER_INSTANCE_ID: /copilot/monsoon/staging/secrets/PUSHER_INSTANCE_ID
+      PUSHER_SECRET_KEY: /copilot/monsoon/staging/secrets/PUSHER_SECRET_KEY
+      PUSH_NOTIFICATIONS_DEFAULT_EMAIL: /copilot/monsoon/staging/secrets/PUSH_NOTIFICATIONS_DEFAULT_EMAIL
+      REBRANDLY_API_KEY: /copilot/monsoon/staging/secrets/REBRANDLY_API_KEY
+      REBRANDLY_WORKSPACE_ID: /copilot/monsoon/staging/secrets/REBRANDLY_WORKSPACE_ID
+      REDIS_URL: /copilot/monsoon/staging/secrets/REDIS_URL
+      REFERRAL_COUPON_ID: /copilot/monsoon/staging/secrets/REFERRAL_COUPON_ID
+      REFERRAL_DOMAIN: /copilot/monsoon/staging/secrets/REFERRAL_DOMAIN
+      SEASONS_CLEANER_LOCATION_SLUG: /copilot/monsoon/staging/secrets/SEASONS_CLEANER_LOCATION_SLUG
+      SEEDLING_URL: /copilot/monsoon/staging/secrets/SEEDLING_URL
+      SEGMENT_MONSOON_WRITE_KEY: /copilot/monsoon/staging/secrets/SEGMENT_MONSOON_WRITE_KEY
+      SENDGRID_API_KEY: /copilot/monsoon/staging/secrets/SENDGRID_API_KEY
+      SENTRY_DSN: /copilot/monsoon/staging/secrets/SENTRY_DSN
+      SHIPPO_API_KEY: /copilot/monsoon/staging/secrets/SHIPPO_API_KEY
+      SHOW_TEST_DISMISSABLE_NOTIF: /copilot/monsoon/staging/secrets/SHOW_TEST_DISMISSABLE_NOTIF
+      SLACK_CANARY_API_TOKEN: /copilot/monsoon/staging/secrets/SLACK_CANARY_API_TOKEN
+      SLACK_DEV_CHANNEL_ID: /copilot/monsoon/staging/secrets/SLACK_DEV_CHANNEL_ID
+      SLACK_FUNNEL_CHANNEL_ID: /copilot/monsoon/staging/secrets/SLACK_FUNNEL_CHANNEL_ID
+      STRIPE_API_KEY: /copilot/monsoon/staging/secrets/STRIPE_API_KEY
+      TESTFLIGHT_URL: /copilot/monsoon/staging/secrets/TESTFLIGHT_URL
+      THROWING_FITS_COUPON_ID: /copilot/monsoon/staging/secrets/THROWING_FITS_COUPON_ID
+      TWILIO_AUTH_TOKEN: /copilot/monsoon/staging/secrets/TWILIO_AUTH_TOKEN
+      TWILIO_PHONE_NUMBER: /copilot/monsoon/staging/secrets/TWILIO_PHONE_NUMBER
+      TWILIO_SERVICE_SID: /copilot/monsoon/staging/secrets/TWILIO_SERVICE_SID
+      TWILIO_SID: /copilot/monsoon/staging/secrets/TWILIO_SID
+      TWILIO_STATUS_CALLBACK: /copilot/monsoon/staging/secrets/TWILIO_STATUS_CALLBACK
+      UPS_ACCOUNT_ID: /copilot/monsoon/staging/secrets/UPS_ACCOUNT_ID
+      WEBFLOW_KEY: /copilot/monsoon/staging/secrets/WEBFLOW_KEY
+      WEEKLY_INVITATIONS_THRESHOLD: /copilot/monsoon/staging/secrets/WEEKLY_INVITATIONS_THRESHOLD
+      WEEKLY_NEW_USERS_THRESHOLD: /copilot/monsoon/staging/secrets/WEEKLY_NEW_USERS_THRESHOLD

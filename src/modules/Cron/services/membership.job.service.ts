@@ -1,5 +1,6 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { SubscriptionService } from "@app/modules/Payment/services/subscription.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -22,7 +23,8 @@ export class MembershipScheduledJobs {
     private readonly email: EmailService,
     private readonly sms: SMSService,
     private readonly utils: UtilsService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly subscription: SubscriptionService
   ) {}
 
   @Cron(CronExpression.EVERY_6_HOURS)
@@ -113,7 +115,7 @@ export class MembershipScheduledJobs {
               }
 
               // Customer has reserved pieces so we restart membership
-              await this.paymentUtils.resumeSubscription(subscriptionId, null, {
+              await this.subscription.resumeSubscription(subscriptionId, null, {
                 id: customerId,
               })
               this.logger.log(`Resumed customer subscription: ${customerId}`)
@@ -197,7 +199,7 @@ export class MembershipScheduledJobs {
           if (!subscriptionId) {
             return
           }
-          await this.paymentUtils.resumeSubscription(
+          await this.subscription.resumeSubscription(
             subscriptionId,
             null,
             customer

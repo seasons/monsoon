@@ -4,6 +4,12 @@ import { PushNotificationService } from "@app/modules/PushNotification"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import {
+  InventoryStatus,
+  PhysicalProductStatus,
+  ReservationStatus,
+  ShippingCode,
+} from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ProductUtilsService, ProductVariantService } from "@modules/Product"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
@@ -11,14 +17,10 @@ import { Injectable } from "@nestjs/common"
 import {
   AdminActionLog,
   Customer,
-  InventoryStatus,
   PhysicalProduct,
-  PhysicalProductStatus,
   Prisma,
   PrismaPromise,
   ReservationFeedback,
-  ReservationStatus,
-  ShippingCode,
   User,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -101,22 +103,32 @@ export class ReservationService {
     const lastReservation = await this.reservationUtils.getLatestReservation(
       customer
     )
-    this.checkLastReservation(lastReservation)
+    await this.validateLastReservation(lastReservation, items)
 
-    const lastCompletedReservation = !!lastReservation
-      ? lastReservation.status === "Completed"
+    // Get the most recent reservation that potentially carries products being kept in the new reservation
+    const lastReservationWithHeldItems = !!lastReservation
+      ? [
+          "Queued",
+          "Picked",
+          "Packed",
+          "Shipped",
+          "Delivered",
+          "Received",
+          "Completed",
+        ].includes(lastReservation.status)
         ? lastReservation
         : await this.reservationUtils.getLatestReservation(
             customer,
             "Completed"
           )
       : null
+
     const newProductVariantsBeingReserved = await this.getNewProductVariantsBeingReserved(
       { productVariantIDs: items, customerId: customer.id }
     )
     const heldPhysicalProducts = await this.getHeldPhysicalProducts(
       customer,
-      lastCompletedReservation
+      lastReservationWithHeldItems
     )
 
     const [
@@ -228,16 +240,26 @@ export class ReservationService {
 
     const reservation = result.pop()
 
-    const earlySwapLineItems = await this.addEarlySwapLineItemsIfNeeded(
-      reservation?.id,
-      customer?.id,
-      nextFreeSwapDate
-    )
+    let earlySwapLineItems = []
 
-    await this.addLineItemsToReservation(
-      [...earlySwapLineItems, ...shippingLineItems],
-      reservation.id
-    )
+    try {
+      earlySwapLineItems = await this.addEarlySwapLineItemsIfNeeded(
+        reservation?.id,
+        customer?.id,
+        nextFreeSwapDate
+      )
+      await this.addLineItemsToReservation(
+        [...earlySwapLineItems, ...shippingLineItems],
+        reservation.id
+      )
+    } catch (err) {
+      this.error.setUserContext(user)
+      this.error.setExtraContext({
+        reservationID: reservation.id,
+        lineItems: [...earlySwapLineItems, ...shippingLineItems],
+      })
+      this.error.captureError(err)
+    }
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
@@ -841,13 +863,32 @@ export class ReservationService {
     ]
   }
 
-  private checkLastReservation(lastReservation) {
+  private async validateLastReservation(lastReservation, items) {
+    if (!lastReservation) {
+      return
+    }
+    const lastReservationHasLessItems =
+      lastReservation?.products?.length < items?.length
     if (
+      !!lastReservation &&
+      lastReservationHasLessItems &&
+      this.statements.reservationIsActive(lastReservation)
+    ) {
+      // Update last reservation to completed since the customer is creating a new reservation while having one active
+      await this.prisma.client.reservation.update({
+        where: {
+          id: lastReservation.id,
+        },
+        data: {
+          status: "Completed",
+        },
+      })
+    } else if (
       !!lastReservation &&
       this.statements.reservationIsActive(lastReservation)
     ) {
       throw new ApolloError(
-        `Last reservation has non-completed, non-cancelled status. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
+        `Last reservation must either be null, completed, cancelled, or lost. Last Reservation number. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
       )
     }
   }

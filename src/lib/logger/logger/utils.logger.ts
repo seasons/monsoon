@@ -145,12 +145,12 @@ export function createExpressWinstonHandler(logger: Logger) {
         duration: res.responseTime * 1000000,
       }
     },
-    level: logLevel,
+    level: process.env.NODE_ENV === "development" ? "warn" : "info",
     metaField: null,
     msg: (req, res) => {
       let msg = `status=${res.statusCode} `
       msg += `- method=${req.method} `
-      msg += `- path=${req.url} `
+      msg += `- path=${decodeURIComponent(req.url)} `
       // @ts-ignore:
       msg += `- duration=${res.responseTime}ms`
 

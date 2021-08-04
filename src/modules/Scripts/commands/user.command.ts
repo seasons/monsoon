@@ -1,7 +1,6 @@
 import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
-import { PaymentService } from "@app/modules/Payment/services/payment.service"
+import { SubscriptionService } from "@app/modules/Payment/services/subscription.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
-import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable, Logger } from "@nestjs/common"
@@ -31,11 +30,10 @@ export class UserCommands {
     private readonly scripts: ScriptsService,
     private readonly auth: AuthService,
     private readonly prisma: PrismaService,
-    private readonly paymentService: PaymentService,
     private readonly utils: UtilsService,
     private readonly paymentUtils: PaymentUtilsService,
     private moduleRef: ModuleRef,
-    private readonly queryUtils: QueryUtilsService
+    private readonly subscription: SubscriptionService
   ) {}
 
   @Command({
@@ -282,7 +280,7 @@ export class UserCommands {
           cvv: "222",
         }
         this.logger.log("Updating customer")
-        const { subscription } = await this.paymentService.createSubscription(
+        const { subscription } = await this.subscription.createSubscription(
           planID,
           this.utils.snakeCaseify(address),
           user,
