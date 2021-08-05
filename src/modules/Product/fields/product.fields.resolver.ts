@@ -1,11 +1,13 @@
 import { Customer } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { Image, Product, ProductModel } from "@prisma/client"
+import { Brand, Category, Image, Product, ProductModel } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { sortBy } from "lodash"
 
@@ -13,7 +15,8 @@ import { sortBy } from "lodash"
 export class ProductFieldsResolver {
   constructor(
     private readonly productUtilsService: ProductUtilsService,
-    private readonly imageService: ImageService
+    private readonly imageService: ImageService,
+    private readonly prisma: PrismaService
   ) {}
 
   @ResolveField()
@@ -44,6 +47,58 @@ export class ProductFieldsResolver {
     }
     const bagItems = await bagItemsLoader.load(product.id)
     return bagItems.length > 0
+  }
+
+  @ResolveField()
+  async relatedProducts(
+    @Parent() parent,
+    @Select() select,
+    @Loader({
+      params: {
+        model: "Product",
+        select: Prisma.validator<Prisma.ProductSelect>()({
+          id: true,
+          category: {
+            select: {
+              id: true,
+            },
+          },
+          brand: {
+            select: {
+              id: true,
+            },
+          },
+        }),
+      },
+    })
+    productLoader: PrismaDataLoader<{
+      id: string
+      category: Category
+      brand: Brand
+    }>
+  ) {
+    const product = await productLoader.load(parent.id)
+    const relatedProducts = await this.prisma.client.product.findMany({
+      where: {
+        AND: [
+          {
+            category: {
+              id: product.category.id,
+            },
+          },
+          {
+            NOT: {
+              brand: {
+                id: product.brand.id,
+              },
+            },
+          },
+        ],
+      },
+      take: 10,
+      select,
+    })
+    return relatedProducts
   }
 
   @ResolveField()
