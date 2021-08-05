@@ -14,9 +14,9 @@ import { RedisCache } from "apollo-server-cache-redis"
 import { ApolloServerPluginInlineTrace } from "apollo-server-core"
 import responseCachePlugin from "apollo-server-plugin-response-cache"
 import chargebee from "chargebee"
+import httpContext from "express-http-context"
 import { importSchema } from "graphql-import"
 import GraphQLJSON from "graphql-type-json"
-import * as requestContext from "request-context"
 
 import {
   BlogModule,
@@ -70,7 +70,7 @@ const persistedQueryMap = JSON.parse(
   fs.readFileSync(process.cwd() + `/src/tests/complete.queryMap.json`, "utf-8")
 )
 
-const isRequestMutation = (req, persistedQueryMap) => {
+const addQueryMetadataToContext = (ctx, req, persistedQueryMap) => {
   let queryString
   const isPersistedQuery = !req.body.query
   if (isPersistedQuery) {
@@ -80,13 +80,14 @@ const isRequestMutation = (req, persistedQueryMap) => {
     queryString = req.body.query
   }
 
-  requestContext.set("request:queryString", queryString)
-
   // if queryString is undefined, default to saying its mutation so
   // we use the write client and are gauranteed that the app will work.
   const isMutation = queryString?.includes("mutation") ?? true
 
-  return isMutation
+  ctx["queryString"] = queryString
+  ctx["isMutation"] = isMutation
+
+  return ctx
 }
 
 // Don't run cron jobs in dev mode, or on web workers. Only on production cron workers
@@ -133,12 +134,13 @@ const cache = (() => {
           },
           directiveResolvers,
           context: ({ req }) => {
-            const ctx = { req, ...context }
+            let ctx = { req, ...context }
 
-            // For use in deciding which prisma client to use. See prisma.service for more details
-            ctx["isMutation"] = isRequestMutation(req, persistedQueryMap)
+            // Add metadata used in routing prisma clients across write/read nodes
+            ctx = addQueryMetadataToContext(ctx, req, persistedQueryMap)
 
-            requestContext.set("request:context", ctx)
+            httpContext.set("context", ctx) // make it accessible without NestJS injection
+
             return ctx
           },
           plugins: [

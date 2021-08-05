@@ -2,8 +2,8 @@ import { UpdatableConnection } from "@app/modules/index.types"
 import { Injectable } from "@nestjs/common"
 import { PrismaSelect } from "@paljs/plugins"
 import { Prisma, PrismaClient } from "@prisma/client"
+import httpContext from "express-http-context"
 import { lowerFirst } from "lodash"
-import * as requestContext from "request-context"
 
 export type SmartPrismaClient = Omit<
   PrismaClient,
@@ -179,8 +179,8 @@ export class PrismaService implements UpdatableConnection {
   private requestIsOnMutation(
     { log }: { log: Array<Prisma.LogLevel> } = { log: [] }
   ): Boolean {
-    const context = requestContext.get("request:context")
-    const queryString = requestContext.get("request:queryString")
+    const context = httpContext.get("context")
+    const queryString = context?.queryString
     const isMutation = context?.isMutation || false
 
     if (log.includes("info")) {
