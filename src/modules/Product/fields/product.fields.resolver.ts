@@ -98,9 +98,6 @@ export class ProductFieldsResolver {
             category: {
               id: product.category.id,
             },
-            color: {
-              id: product.color.id,
-            },
           },
           {
             NOT: {
@@ -114,7 +111,13 @@ export class ProductFieldsResolver {
       take: 10,
       select,
     })
-    return relatedProducts
+    const sortedRelatedProducts = relatedProducts.sort((a: any, b: any) => {
+      if (b.color.id === product.color.id) {
+        return 1
+      }
+      return -1
+    })
+    return sortedRelatedProducts
   }
 
   @ResolveField()
