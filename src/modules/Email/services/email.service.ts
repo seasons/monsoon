@@ -2,11 +2,10 @@ import { Injectable } from "@nestjs/common"
 import { Order } from "@prisma/client"
 import RenderEmail from "@seasons/wind"
 import sgMail from "@sendgrid/mail"
-import { head } from "lodash"
 import nodemailer from "nodemailer"
 
 import { EmailId, Product, User } from "../../../prisma"
-import { Customer, DateTime } from "../../../prisma/prisma.binding"
+import { DateTime } from "../../../prisma/prisma.binding"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import {
@@ -261,7 +260,7 @@ export class EmailService {
 
   async sendPausedEmail(customer, isExtension: boolean) {
     const latestPauseRequest = this.utils.getLatestPauseRequest(customer)
-    const latestReservation = this.utils.getLatestReservation(customer)
+    const latestReservation = await this.utils.getLatestReservation(customer.id)
     const withItems = latestPauseRequest.pauseType === "WithItems"
     let pausedWithItemsPrice
 

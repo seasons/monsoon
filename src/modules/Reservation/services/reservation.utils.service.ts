@@ -1,13 +1,7 @@
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
-import {
-  Customer,
-  InventoryStatus,
-  Package,
-  PrismaPromise,
-  Reservation,
-} from "@prisma/client"
+import { Package, PrismaPromise, Reservation } from "@prisma/client"
 
 import { ReservationWithProductVariantData } from "./reservation.service"
 
@@ -21,45 +15,9 @@ export class ReservationUtilsService {
   inventoryStatusOf = (
     res: ReservationWithProductVariantData,
     prodVarId: string
-  ): InventoryStatus => {
+  ) => {
     return res.products.find(prod => prod.productVariant.id === prodVarId)
       .inventoryStatus
-  }
-
-  async getLatestReservation(customer: Customer, status = undefined) {
-    const latestReservation = await this.prisma.client.reservation.findFirst({
-      where: {
-        customer: {
-          id: customer.id,
-        },
-        status,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      select: {
-        id: true,
-        products: {
-          select: {
-            id: true,
-            seasonsUID: true,
-            inventoryStatus: true,
-            productStatus: true,
-            productVariant: { select: { id: true } },
-          },
-        },
-        receivedAt: true,
-        status: true,
-        reservationNumber: true,
-        createdAt: true,
-      },
-    })
-
-    if (latestReservation == null) {
-      return null
-    }
-
-    return latestReservation
   }
 
   async updateReturnPackageOnCompletedReservation(

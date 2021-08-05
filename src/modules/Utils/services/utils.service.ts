@@ -1,9 +1,14 @@
 import crypto from "crypto"
 import * as fs from "fs"
 
-import { UTMData as BindingUTMData, DateTime } from "@app/prisma/prisma.binding"
+import { DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
-import { AdminActionLog, PauseRequest, SyncTimingType } from "@prisma/client"
+import {
+  AdminActionLog,
+  PauseRequest,
+  Prisma,
+  SyncTimingType,
+} from "@prisma/client"
 import { Location } from "@prisma/client"
 import { UTMData } from "@prisma/client"
 import { Reservation } from "@prisma/client"
@@ -16,6 +21,7 @@ import {
   head,
   isObject,
   mapKeys,
+  merge,
   omit,
   snakeCase,
 } from "lodash"
@@ -397,27 +403,52 @@ export class UtilsService {
     return latestPauseRequest
   }
 
-  getLatestReservation = (customer): Reservation => {
-    const latestResy = head(
-      customer.reservations.sort((a, b) =>
-        this.dateSort(a.createdAt, b.createdAt)
-      )
-    ) as Reservation
+  async getLatestReservation(
+    customerID: string,
+    status = undefined,
+    select: Prisma.ReservationSelect = {}
+  ) {
+    const latestReservation = await this.prisma.client.reservation.findFirst({
+      where: {
+        customer: {
+          id: customerID,
+        },
+        status,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: merge(
+        {
+          id: true,
+          products: {
+            select: {
+              id: true,
+              seasonsUID: true,
+              inventoryStatus: true,
+              productStatus: true,
+              productVariant: { select: { id: true } },
+            },
+          },
+          receivedAt: true,
+          status: true,
+          reservationNumber: true,
+          createdAt: true,
+        },
+        select
+      ),
+    })
 
-    return latestResy
+    if (latestReservation == null) {
+      return null
+    }
+
+    return latestReservation
   }
 
   getPauseWithItemsPlanId = membership => {
     const itemCount = membership?.plan?.itemCount
-    let planID
-    if (itemCount === 1) {
-      planID = "pause-1"
-    } else if (itemCount === 2) {
-      planID = "pause-2"
-    } else if (itemCount === 3) {
-      planID = "pause-3"
-    }
-    return planID
+    return `pause-${itemCount}`
   }
 
   filterAdminLogs(logs: AdminActionLog[], ignoreKeys = []) {
