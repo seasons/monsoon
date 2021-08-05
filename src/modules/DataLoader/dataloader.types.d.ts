@@ -19,7 +19,7 @@ interface PrismaGenerateParams {
   model: Prisma.ModelName
   select?: any
 
-  ctx?: any
+  ctx?: any //don't pass in at callsite, handled behind the scenes
   orderBy?: any
 
   // if a given key does not resolve to any return value, what should we return?
@@ -53,7 +53,7 @@ export interface LoaderParams {
   type?: string
 
   // Defines the prisma query and data mapping process
-  params?: PrismaGenerateParams
+  params: PrismaGenerateParams
 
   // pass true to forward the info input passed by the client
   includeInfo?: boolean

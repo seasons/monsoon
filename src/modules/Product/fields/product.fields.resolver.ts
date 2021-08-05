@@ -88,36 +88,50 @@ export class ProductFieldsResolver {
       category: Category
       brand: Brand
       color: Color
-    }>
-  ) {
-    const product = await productLoader.load(parent.id)
-    const relatedProducts = await this.prisma.client.product.findMany({
-      where: {
-        AND: [
-          {
+    }>,
+    @Loader({
+      params: {
+        model: "Product",
+        formatWhere: keys =>
+          Prisma.validator<Prisma.ProductWhereInput>()({
             category: {
-              id: product.category.id,
-            },
-          },
-          {
-            NOT: {
-              brand: {
-                id: product.brand.id,
+              id: {
+                in: keys,
               },
             },
-          },
-        ],
+          }),
+        infoFragment: `fragment EnsureNeededIds on Product {
+            color{
+              id
+            }
+            brand{
+              id
+            }
+            category{
+              id
+            }
+          }`,
+        getKeys: product => [product.category.id],
+        keyToDataRelationship: "OneToMany",
       },
-      take: 10,
-      select,
+      includeInfo: true,
     })
-    const sortedRelatedProducts = relatedProducts.sort((a: any, b: any) => {
-      if (b.color.id === product.color.id) {
-        return 1
+    relatedProductLoader: PrismaDataLoader<any>
+  ) {
+    const product = await productLoader.load(parent.id)
+    const relatedProducts = await relatedProductLoader.load(product.category.id)
+    const filteredRelatedProducts = relatedProducts.filter(
+      a => a.brand.id !== product.brand.id
+    )
+    const sortedRelatedProducts = filteredRelatedProducts.sort(
+      (a: any, b: any) => {
+        if (b.color.id === product.color.id) {
+          return 1
+        }
+        return -1
       }
-      return -1
-    })
-    return sortedRelatedProducts
+    )
+    return sortedRelatedProducts.splice(0, 10)
   }
 
   @ResolveField()
