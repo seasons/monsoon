@@ -7,7 +7,6 @@ import * as Transport from "winston-transport"
 import { getRequestIdContext } from "../middleware/http-context.middleware"
 import { WinstonLogger } from "./winston.logger"
 
-// mo
 const logLevel = process.env.NODE_ENV === "development" ? "verbose" : "info"
 
 /**

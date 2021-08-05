@@ -1,90 +1,24 @@
 version: 2.1
 
+orbs:
+  node: circleci/node@4.6.0
+  docker: circleci/docker@1.6.0
+
 jobs:
   test-unit:
-    docker:
-      - image: cimg/node:14.17.1
+    machine: true
 
     working_directory: ~/monsoon
 
     steps:
       - checkout
 
-      - run:
-          command: yarn
-          name: Install dependencies
+      - node/install:
+          node-version: "14.17.1"
+          install-yarn: true
 
-      - run:
-          command: sudo service docker start && docker-compose up -d
-          name: Start up docker containers
-
-      - run:
-          command: sleep 20
-          name: Wait for containers to fully spin up
-
-      - run:
-          command: yarn prisma:deploy
-          name: Deploy Prisma service
-
-      - run:
-          command: yarn test
-          name: Run unit tests
-
-  test-integration:
-    docker:
-      - image: postgres:12.6
-        auth:
-          username: dmonay
-          password: $DOCKERHUB_PASSWORD # context / project UI env-var reference
-    working_directory: ~/monsoon
-    steps:
-      - checkout
-
-      - run:
-          name: Gain sudo
-          command: |
-            apt-get update && apt-get install -y sudo && rm -rf /var/lib/apt/lists/*
-
-      - run:
-          name: Update and install curl
-          command: |
-            sudo apt update &&  sudo apt upgrade -y
-            sudo apt install curl -y
-
-      - run:
-          name: Install Node
-          command: |
-            curl -sL https://deb.nodesource.com/setup_14.x | bash -
-            sudo apt install nodejs -y
-
-      - run:
-          name: Install Yarn
-          command: |
-            curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-            echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-            sudo apt update
-            sudo apt install yarn -y
-
-      - run:
-          command: yarn
-          name: Install dependencies
-
-      - run:
-          name: Install Docker
-          command: |
-            sudo apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common -y
-            curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-            sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian buster stable"
-            sudo apt-get update
-            sudo apt-get install docker-ce docker-ce-cli containerd.io -y
-            sudo service docker start
-            cat /var/log/docker.log
-
-      - run:
-          name: Install docker-compose
-          command: |
-            curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-            chmod +x /usr/local/bin/docker-compose
+      - node/install-packages:
+          pkg-manager: yarn
 
       - run:
           command: docker-compose up -d
@@ -95,12 +29,51 @@ jobs:
           name: Wait for containers to fully spin up
 
       - run:
-          command: yarn prisma:deploy
-          name: Deploy Prisma service
+          command: yarn test
+          name: Run unit tests
+
+  test-integration:
+    docker:
+      - image: postgres:12.6
+    working_directory: ~/monsoon
+    steps:
+      - run:
+          name: Gain sudo
+          command: |
+            apt-get update && apt-get install -y sudo && rm -rf /var/lib/apt/lists/*
 
       - run:
-          command: yarn build
-          name: Compile so we can run the next cmd
+          name: Install curl, git, jq
+          command: |
+            sudo apt update
+            sudo apt install curl -y
+            sudo apt install git -y
+            sudo apt-get install jq -y
+
+      - checkout
+
+      - docker/install-docker
+
+      - docker/install-docker-compose
+
+      - setup_remote_docker:
+          version: 20.10.6
+          docker_layer_caching: true
+
+      - run:
+          name: Start up docker containers
+          command: docker-compose up -d
+
+      - node/install:
+          node-version: "14.17.1"
+          install-yarn: true
+
+      - node/install-packages:
+          pkg-manager: yarn
+
+      - run:
+          command: sleep 20
+          name: Wait for containers to fully spin up
 
       - run:
           command: node bin/cli.js spp local staging -f
