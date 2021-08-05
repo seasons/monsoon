@@ -7,7 +7,14 @@ import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { Brand, Category, Image, Product, ProductModel } from "@prisma/client"
+import {
+  Brand,
+  Category,
+  Color,
+  Image,
+  Product,
+  ProductModel,
+} from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { sortBy } from "lodash"
 
@@ -68,6 +75,11 @@ export class ProductFieldsResolver {
               id: true,
             },
           },
+          color: {
+            select: {
+              id: true,
+            },
+          },
         }),
       },
     })
@@ -75,6 +87,7 @@ export class ProductFieldsResolver {
       id: string
       category: Category
       brand: Brand
+      color: Color
     }>
   ) {
     const product = await productLoader.load(parent.id)
@@ -84,6 +97,9 @@ export class ProductFieldsResolver {
           {
             category: {
               id: product.category.id,
+            },
+            color: {
+              id: product.color.id,
             },
           },
           {
