@@ -20,6 +20,7 @@ export class LaunchService {
     let brandData = {}
     let collectionData = {}
 
+    // A launch is either a brand or a collection, it can't have both
     if (data.brandID) {
       brandData = {
         brand: {
@@ -28,9 +29,7 @@ export class LaunchService {
           },
         },
       }
-    }
-
-    if (data.collectionID) {
+    } else if (data.collectionID) {
       collectionData = {
         collection: {
           connect: {
