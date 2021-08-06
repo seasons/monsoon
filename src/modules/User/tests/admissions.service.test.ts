@@ -1,3 +1,4 @@
+import { AppModule } from "@app/app.module"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
@@ -8,6 +9,7 @@ import {
   CreateTestProductInput,
 } from "@app/modules/Utils/utils.types"
 import { PrismaModule } from "@app/prisma/prisma.module"
+import { NestFactory } from "@nestjs/core"
 import { Test } from "@nestjs/testing"
 import { EmailId, InventoryStatus, ProductType } from "@prisma/client"
 import { fill } from "lodash"
@@ -221,10 +223,8 @@ describe("Admissions Service", () => {
         PrismaServiceMockElevenAccountActivations
       )
 
-      const {
-        pass,
-        detail,
-      } = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      const { pass, detail } =
+        await admissions.belowWeeklyNewActiveUsersOpsThreshold()
       expect(pass).toBe(false)
     })
 
@@ -261,10 +261,8 @@ describe("Admissions Service", () => {
         PrismaServiceMockTwentyOneAccountActivations
       )
 
-      const {
-        pass,
-        detail,
-      } = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      const { pass, detail } =
+        await admissions.belowWeeklyNewActiveUsersOpsThreshold()
       expect(pass).toBe(false)
     })
 
@@ -284,10 +282,8 @@ describe("Admissions Service", () => {
         PrismaServiceMockNoInvitationsOrAccountActiviations
       )
 
-      const {
-        pass,
-        detail,
-      } = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      const { pass, detail } =
+        await admissions.belowWeeklyNewActiveUsersOpsThreshold()
       expect(pass).toBe(true)
     })
   })
@@ -309,11 +305,10 @@ describe("Admissions Service", () => {
     let bottom30OneReservableOneNonReservable
     let testCustomer
 
-    beforeAll(() => {
-      let ps = (prismaService = new PrismaService())
-      const qus = new QueryUtilsService(ps)
-      testUtils = new TestUtilsService(ps, new UtilsService(ps, qus), qus)
-      utils = new UtilsService(ps, qus)
+    beforeAll(async () => {
+      const app = await NestFactory.createApplicationContext(AppModule)
+      testUtils = app.get(TestUtilsService)
+      utils = app.get(UtilsService)
 
       // reservable products
       topXSReservable = createTestProductCreateInput("Top", "XS", "Reservable")
@@ -382,12 +377,14 @@ describe("Admissions Service", () => {
       }
 
       // Create test user
-      const {
-        cleanupFunc: customerCleanUpFunc,
-        customer,
-      } = await testUtils.createTestCustomer({
-        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
-      })
+      const { cleanupFunc: customerCleanUpFunc, customer } =
+        await testUtils.createTestCustomer({
+          detail: {
+            topSizes: ["XS", "S"],
+            waistSizes: [30, 31],
+            phoneOS: "iOS",
+          },
+        })
       cleanupFuncs.push(customerCleanUpFunc)
       testCustomer = customer
     })
@@ -400,11 +397,10 @@ describe("Admissions Service", () => {
     })
 
     it("correctly calculates the available inventory for a user with no competing users", async () => {
-      const {
-        reservableStyles,
-      } = await admissions.reservableInventoryForCustomer({
-        id: testCustomer.id,
-      })
+      const { reservableStyles } =
+        await admissions.reservableInventoryForCustomer({
+          id: testCustomer.id,
+        })
       expect(reservableStyles).toBe(12)
     })
 
@@ -460,11 +456,10 @@ describe("Admissions Service", () => {
         cleanupFuncs.push(cleanupFunc)
       }
 
-      const {
-        reservableStyles,
-      } = await admissions.reservableInventoryForCustomer({
-        id: testCustomer.id,
-      })
+      const { reservableStyles } =
+        await admissions.reservableInventoryForCustomer({
+          id: testCustomer.id,
+        })
       expect(reservableStyles).toBe(9) // 6.5 available top styles, 2.5 available bottom styles
     }, 20000)
 
@@ -486,33 +481,30 @@ describe("Admissions Service", () => {
         cleanupFuncs.push(cleanupFunc)
       }
 
-      const {
-        reservableStyles,
-      } = await admissions.reservableInventoryForCustomer({
-        id: testCustomer.id,
-      })
+      const { reservableStyles } =
+        await admissions.reservableInventoryForCustomer({
+          id: testCustomer.id,
+        })
       expect(reservableStyles).toBe(6)
     })
 
     it("does not admit a user with insufficient available inventory", async () => {
       process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER = "15"
 
-      const {
-        pass,
-      } = await admissions.haveSufficientInventoryToServiceCustomer({
-        id: testCustomer.id,
-      })
+      const { pass } =
+        await admissions.haveSufficientInventoryToServiceCustomer({
+          id: testCustomer.id,
+        })
       expect(pass).toBe(false)
     })
 
     it("admits a user with sufficient inventory", async () => {
       process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER = "11"
 
-      const {
-        pass,
-      } = await admissions.haveSufficientInventoryToServiceCustomer({
-        id: testCustomer.id,
-      })
+      const { pass } =
+        await admissions.haveSufficientInventoryToServiceCustomer({
+          id: testCustomer.id,
+        })
       expect(pass).toBe(true)
     })
   })

@@ -1,7 +1,8 @@
 import { UpdatableConnection } from "@app/modules/index.types"
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { PrismaSelect } from "@paljs/plugins"
-import { PrismaClient } from "@prisma/client"
+import { Prisma, PrismaClient } from "@prisma/client"
+import httpContext from "express-http-context"
 import { lowerFirst } from "lodash"
 
 export type SmartPrismaClient = Omit<
@@ -9,6 +10,11 @@ export type SmartPrismaClient = Omit<
   "$executeRaw" | "$queryRaw" | "$on" | "$connect" | "$disconnect"
 >
 
+// Prevent multiple instances of Prisma Client in development
+declare const global: NodeJS.Global & {
+  readClient?: PrismaClient
+  writeClient?: PrismaClient
+}
 const clientOptions = {
   log:
     process.env.NODE_ENV === "production"
@@ -17,72 +23,32 @@ const clientOptions = {
       ? ["query", "info", "warn", "error"]
       : ([] as any),
 }
-const readClient = new PrismaClient({
-  ...clientOptions,
-  datasources: { db: { url: process.env.DB_READ_URL } },
-})
-const writeClient = new PrismaClient({
-  ...clientOptions,
-  datasources: { db: { url: process.env.DB_WRITE_URL } },
-})
-
-// We generate a client that routes reads to a read node, and writes to a write node
-const generateSmartClient = (
-  readClient: PrismaClient,
-  writeClient: PrismaClient
-): SmartPrismaClient => {
-  const smartClient = {
-    $transaction: args => writeClient.$transaction(args),
-  } as SmartPrismaClient
-
-  const datamodel = new PrismaSelect(null).dataModel
-  datamodel.forEach(model => {
-    const keyName = lowerFirst(model.name)
-
-    const {
-      aggregate,
-      count,
-      findFirst,
-      findMany,
-      findUnique,
-      groupBy,
-    } = readClient[keyName]
-
-    const {
-      deleteMany,
-      update,
-      updateMany,
-      upsert,
-      create,
-      createMany,
-      delete: _delete, // typescript is unhappy if you destructure into a var named "delete"
-    } = writeClient[keyName]
-
-    smartClient[keyName] = {
-      aggregate,
-      count,
-      findFirst,
-      findMany,
-      findUnique,
-      groupBy,
-      create,
-      createMany,
-      delete: _delete,
-      deleteMany,
-      update,
-      updateMany,
-      upsert,
-    }
+export const readClient =
+  global.readClient ||
+  new PrismaClient({
+    ...clientOptions,
+    datasources: { db: { url: process.env.DB_READ_URL } },
   })
-
-  return smartClient
+export const writeClient =
+  global.writeClient ||
+  new PrismaClient({
+    ...clientOptions,
+    datasources: { db: { url: process.env.DB_WRITE_URL } },
+  })
+if (process.env.NODE_ENV === "development") {
+  global.readClient = readClient
+  global.writeClient = writeClient
 }
-
-export const client = generateSmartClient(readClient, writeClient)
 
 @Injectable()
 export class PrismaService implements UpdatableConnection {
-  client = client
+  constructor() {
+    this.client = this.generateSmartClient(readClient, writeClient)
+  }
+
+  private readonly logger = new Logger(PrismaService.name)
+
+  client: SmartPrismaClient
 
   static modelFieldsByModelName = new PrismaSelect(null).dataModel.reduce(
     (accumulator, currentModel) => {
@@ -96,5 +62,128 @@ export class PrismaService implements UpdatableConnection {
     this.client = new PrismaClient({
       datasources: { db: { url: process.env.DB_WRITE_URL } },
     })
+  }
+
+  // We generate a client that routes reads to a read node, and writes to a write node
+  private generateSmartClient(
+    readClient: PrismaClient,
+    writeClient: PrismaClient
+  ): SmartPrismaClient {
+    const smartClient = {
+      $transaction: args => writeClient.$transaction(args),
+    } as SmartPrismaClient
+
+    const datamodel = new PrismaSelect(null).dataModel
+    datamodel.forEach(model => {
+      const keyName = lowerFirst(model.name)
+
+      const { aggregate, count, findFirst, findMany, findUnique, groupBy } =
+        readClient[keyName]
+
+      const {
+        aggregate: writeClientAggregate,
+        count: writeClientCount,
+        findFirst: writeClientFindFirst,
+        findMany: writeClientFindMany,
+        findUnique: writeClientFindUnique,
+        groupBy: writeClientGroupBy,
+        deleteMany,
+        update,
+        updateMany,
+        upsert,
+        create,
+        createMany,
+        delete: _delete, // typescript is unhappy if you destructure into a var named "delete"
+      } = writeClient[keyName]
+
+      smartClient[keyName] = {
+        aggregate: this.createSmartReadFunc(
+          aggregate,
+          writeClientAggregate,
+          clientOptions
+        ),
+        count: this.createSmartReadFunc(count, writeClientCount, clientOptions),
+        findFirst: this.createSmartReadFunc(
+          findFirst,
+          writeClientFindFirst,
+          clientOptions
+        ),
+        findMany: this.createSmartReadFunc(
+          findMany,
+          writeClientFindMany,
+          clientOptions
+        ),
+        findUnique: this.createSmartReadFunc(
+          findUnique,
+          writeClientFindUnique,
+          clientOptions
+        ),
+        groupBy: this.createSmartReadFunc(
+          groupBy,
+          writeClientGroupBy,
+          clientOptions
+        ),
+        create: this.createSmartWriteFunc(create, clientOptions),
+        createMany: this.createSmartWriteFunc(createMany, clientOptions),
+        delete: this.createSmartWriteFunc(_delete, clientOptions),
+        deleteMany: this.createSmartWriteFunc(deleteMany, clientOptions),
+        update: this.createSmartWriteFunc(update, clientOptions),
+        updateMany: this.createSmartWriteFunc(updateMany, clientOptions),
+        upsert: this.createSmartWriteFunc(upsert, clientOptions),
+      }
+    })
+
+    return smartClient
+  }
+
+  private createSmartReadFunc = (
+    readClientFunc,
+    writeClientFunc,
+    { log }: { log: Array<Prisma.LogLevel> } = { log: [] }
+  ) => {
+    return args => {
+      const requestOnMutation = this.requestIsOnMutation({ log })
+      if (log.includes("info")) {
+        this.logger.log(`requestOnMutation: ${requestOnMutation}`)
+      }
+
+      if (requestOnMutation) {
+        if (log.includes("info")) {
+          this.logger.log("use write client")
+        }
+        return writeClientFunc(args)
+      }
+      if (log.includes("info")) {
+        this.logger.log("use read client")
+      }
+      return readClientFunc(args)
+    }
+  }
+
+  private createSmartWriteFunc = (
+    func,
+    { log }: { log: Array<Prisma.LogLevel> } = { log: [] }
+  ) => {
+    return args => {
+      if (log.includes("info")) {
+        this.logger.log("use write client")
+      }
+      return func(args)
+    }
+  }
+
+  private requestIsOnMutation(
+    { log }: { log: Array<Prisma.LogLevel> } = { log: [] }
+  ): Boolean {
+    const context = httpContext.get("context")
+    const queryString = context?.queryString
+    const isMutation = context?.isMutation || false
+
+    if (log.includes("info")) {
+      this.logger.log(`queryString: ${queryString}`)
+      this.logger.log(`isMutation: ${isMutation}`)
+    }
+
+    return isMutation
   }
 }

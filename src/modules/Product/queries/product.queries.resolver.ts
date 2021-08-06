@@ -51,7 +51,11 @@ export class ProductQueriesResolver {
     })
     select
   ) {
-    return this.productService.getProductsConnection(args, select, application)
+    return await this.productService.getProductsConnection(
+      args,
+      select,
+      application
+    )
   }
 
   @Query()

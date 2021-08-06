@@ -1,3 +1,4 @@
+import * as fs from "fs"
 import * as url from "url"
 import * as util from "util"
 
@@ -13,6 +14,7 @@ import { RedisCache } from "apollo-server-cache-redis"
 import { ApolloServerPluginInlineTrace } from "apollo-server-core"
 import responseCachePlugin from "apollo-server-plugin-response-cache"
 import chargebee from "chargebee"
+import httpContext from "express-http-context"
 import { importSchema } from "graphql-import"
 import GraphQLJSON from "graphql-type-json"
 
@@ -64,6 +66,30 @@ const context = {
   }, {}),
 }
 
+const persistedQueryMap = JSON.parse(
+  fs.readFileSync(process.cwd() + `/src/tests/complete.queryMap.json`, "utf-8")
+)
+
+const addQueryMetadataToContext = (ctx, req, persistedQueryMap) => {
+  let queryString
+  const isPersistedQuery = !req.body.query
+  if (isPersistedQuery) {
+    const opName = req.query.operationName
+    queryString = persistedQueryMap[opName]
+  } else {
+    queryString = req.body.query
+  }
+
+  // if queryString is undefined, default to saying its mutation so
+  // we use the write client and are gauranteed that the app will work.
+  const isMutation = queryString?.includes("mutation") ?? true
+
+  ctx["queryString"] = queryString
+  ctx["isMutation"] = isMutation
+
+  return ctx
+}
+
 // Don't run cron jobs in dev mode, or on web workers. Only on production cron workers
 const scheduleModule =
   process.env.NODE_ENV === "production" && process.env.DYNO?.includes("cron")
@@ -99,7 +125,7 @@ const cache = (() => {
     ...scheduleModule,
     GraphQLModule.forRootAsync({
       useFactory: async () =>
-        (({
+        ({
           typeDefs: await importSchema("src/schema.graphql"),
           path: "/",
           installSubscriptionHandlers: true,
@@ -107,7 +133,16 @@ const cache = (() => {
             requireResolversForResolveType: false,
           },
           directiveResolvers,
-          context: ({ req }) => ({ req, ...context }),
+          context: ({ req }) => {
+            let ctx = { req, ...context }
+
+            // Add metadata used in routing prisma clients across write/read nodes
+            ctx = addQueryMetadataToContext(ctx, req, persistedQueryMap)
+
+            httpContext.set("context", ctx) // make it accessible without NestJS injection
+
+            return ctx
+          },
           plugins: [
             responseCachePlugin({
               sessionId: ({ request }) => {
@@ -137,7 +172,7 @@ const cache = (() => {
           },
 
           cache,
-        } as unknown) as GqlModuleOptions),
+        } as unknown as GqlModuleOptions),
     }),
     AdminModule,
     AnalyticsModule,

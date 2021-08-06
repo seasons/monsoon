@@ -7225,7 +7225,7 @@ express-graphql@0.12.0:
     http-errors "1.8.0"
     raw-body "^2.4.1"
 
-express-http-context@1.2.4:
+express-http-context@^1.2.4:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/express-http-context/-/express-http-context-1.2.4.tgz#49769d0e260836278996e728d9a3e7f3735f0531"
   integrity sha512-jPpBbF1MWWdRcUU1rxsX0CPnA8ueEj8xgWvpRGHoXWGI4l5KqhPY4Bq+Gt6s2IhqHQQ0g0wIvJ3jFfbUuJJycQ==
@@ -7243,6 +7243,11 @@ express-jwt@5.3.1:
     express-unless "^0.3.0"
     jsonwebtoken "^8.1.0"
     lodash.set "^4.0.0"
+
+express-request-context@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/express-request-context/-/express-request-context-1.0.1.tgz#b1828f945c2c7882de34900d8e8d3795241a566b"
+  integrity sha512-Fzjn7YVzeaCMzGwPmnq6dQQ5yOzmQktNihbSbl385BQo8AJu+QXZtYm7PJPqQotJfkOcTaYzIfzl6UIdBatTeQ==
 
 express-request-proxy@^2.0.0, express-request-proxy@^2.2.2:
   version "2.2.2"

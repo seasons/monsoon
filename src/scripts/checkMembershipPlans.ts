@@ -1,8 +1,8 @@
 import "module-alias/register"
-import { get, head } from "lodash"
 
 import { NestFactory } from "@nestjs/core"
 import chargebee from "chargebee"
+import { get, head } from "lodash"
 
 import { AppModule } from "../app.module"
 import { PrismaService } from "../prisma/prisma.service"
