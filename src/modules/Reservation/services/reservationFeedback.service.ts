@@ -9,7 +9,8 @@ const RESERVATION_FEEDBACK_SELECT = {
   comment: true,
   rating: true,
   feedbacks: {
-    orderBy: { createdAt: "desc" },
+    // Need to add an order to keep feedbacks in a consistent order
+    orderBy: { id: "desc" },
     select: {
       id: true,
       isCompleted: true,
