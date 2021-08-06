@@ -16,21 +16,22 @@ export class LaunchService {
     data: any
     select: Prisma.LaunchSelect
   }) {
-    let upsertdata
     const cleanedData = omit(data, ["brandID", "collectionID"])
+    let brandData = {}
+    let collectionData = {}
 
     if (data.brandID) {
-      upsertdata = {
-        ...cleanedData,
+      brandData = {
         brand: {
           connect: {
             id: data.brandID,
           },
         },
       }
-    } else {
-      upsertdata = {
-        ...cleanedData,
+    }
+
+    if (data.collectionID) {
+      collectionData = {
         collection: {
           connect: {
             id: data.collectionID,
@@ -38,7 +39,14 @@ export class LaunchService {
         },
       }
     }
-    const launch = await this.prisma.client.launch.upsert({
+
+    const upsertdata = {
+      ...cleanedData,
+      ...brandData,
+      ...collectionData,
+    }
+
+    return await this.prisma.client.launch.upsert({
       where,
       create: upsertdata,
       update: upsertdata,
