@@ -1,9 +1,11 @@
 import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { Logger } from "@nestjs/common"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
+import { application } from "express"
 
 import { ProductService } from "../services/product.service"
 
@@ -43,12 +45,13 @@ export class ProductQueriesResolver {
   @Query()
   async productsConnection(
     @Args() args,
+    @Application() application,
     @Select({
       withFragment: `fragment EnsureId on ProductConnection { edges { node { id } } }`,
     })
     select
   ) {
-    return this.productService.getProductsConnection(args, select)
+    return this.productService.getProductsConnection(args, select, application)
   }
 
   @Query()
@@ -84,11 +87,12 @@ export class ProductQueriesResolver {
     @Customer() customer
   ) {
     if (args.personalizedForCurrentUser) {
-      const products = await this.productService.availableProductVariantsConnectionForCustomer(
-        customer.id,
-        args,
-        select
-      )
+      const products =
+        await this.productService.availableProductVariantsConnectionForCustomer(
+          customer.id,
+          args,
+          select
+        )
       return products
     }
 
