@@ -1,7 +1,7 @@
+import { Application } from "@app/decorators/application.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { addFragmentToInfo } from "graphql-binding"
+import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 import { ProductService } from "../Product/services/product.service"
 
