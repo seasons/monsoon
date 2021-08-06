@@ -218,6 +218,7 @@ export class UpdatePaymentService {
     chargebeeBillingAddress,
   }) {
     const intent = await stripe.paymentIntents.retrieve(paymentIntentID)
+    await stripe.paymentIntents.confirm(paymentIntentID)
 
     // Update card
     const payload = await chargebee.payment_source

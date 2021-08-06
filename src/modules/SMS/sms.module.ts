@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common"
+import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma1/prisma.module"
 
 import { EmailModule } from "../Email/email.module"
@@ -18,7 +18,7 @@ import { SMSService } from "./services/sms.service"
     UtilsModule,
     ErrorModule,
     EmailModule,
-    PaymentModule,
+    forwardRef(() => PaymentModule),
   ],
   providers: [SMSMutationsResolver, SMSService],
   exports: [SMSService],
