@@ -77,6 +77,7 @@ export class ProductService {
       _args = {
         ...args,
         where: {
+          ...args.where,
           status: "Available",
         },
       }
