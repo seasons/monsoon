@@ -1,5 +1,5 @@
 import { UpdatableConnection } from "@app/modules/index.types"
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { PrismaSelect } from "@paljs/plugins"
 import { Prisma, PrismaClient } from "@prisma/client"
 import httpContext from "express-http-context"
@@ -45,6 +45,8 @@ export class PrismaService implements UpdatableConnection {
   constructor() {
     this.client = this.generateSmartClient(readClient, writeClient)
   }
+
+  private readonly logger = new Logger(PrismaService.name)
 
   client: SmartPrismaClient
 
@@ -148,17 +150,17 @@ export class PrismaService implements UpdatableConnection {
     return args => {
       const requestOnMutation = this.requestIsOnMutation({ log })
       if (log.includes("info")) {
-        console.log(`requestOnMutation: ${requestOnMutation}`)
+        this.logger.log(`requestOnMutation: ${requestOnMutation}`)
       }
 
       if (requestOnMutation) {
         if (log.includes("info")) {
-          console.log("use write client")
+          this.logger.log("use write client")
         }
         return writeClientFunc(args)
       }
       if (log.includes("info")) {
-        console.log("use read client")
+        this.logger.log("use read client")
       }
       return readClientFunc(args)
     }
@@ -170,7 +172,7 @@ export class PrismaService implements UpdatableConnection {
   ) => {
     return args => {
       if (log.includes("info")) {
-        console.log("use write client")
+        this.logger.log("use write client")
       }
       return func(args)
     }
@@ -184,8 +186,8 @@ export class PrismaService implements UpdatableConnection {
     const isMutation = context?.isMutation || false
 
     if (log.includes("info")) {
-      console.log(`queryString: ${queryString}`)
-      console.log(`isMutation: ${isMutation}`)
+      this.logger.log(`queryString: ${queryString}`)
+      this.logger.log(`isMutation: ${isMutation}`)
     }
 
     return isMutation
