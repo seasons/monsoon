@@ -223,10 +223,8 @@ describe("Admissions Service", () => {
         PrismaServiceMockElevenAccountActivations
       )
 
-      const {
-        pass,
-        detail,
-      } = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      const { pass, detail } =
+        await admissions.belowWeeklyNewActiveUsersOpsThreshold()
       expect(pass).toBe(false)
     })
 
@@ -263,10 +261,8 @@ describe("Admissions Service", () => {
         PrismaServiceMockTwentyOneAccountActivations
       )
 
-      const {
-        pass,
-        detail,
-      } = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      const { pass, detail } =
+        await admissions.belowWeeklyNewActiveUsersOpsThreshold()
       expect(pass).toBe(false)
     })
 
@@ -286,10 +282,8 @@ describe("Admissions Service", () => {
         PrismaServiceMockNoInvitationsOrAccountActiviations
       )
 
-      const {
-        pass,
-        detail,
-      } = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      const { pass, detail } =
+        await admissions.belowWeeklyNewActiveUsersOpsThreshold()
       expect(pass).toBe(true)
     })
   })
@@ -383,12 +377,14 @@ describe("Admissions Service", () => {
       }
 
       // Create test user
-      const {
-        cleanupFunc: customerCleanUpFunc,
-        customer,
-      } = await testUtils.createTestCustomer({
-        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
-      })
+      const { cleanupFunc: customerCleanUpFunc, customer } =
+        await testUtils.createTestCustomer({
+          detail: {
+            topSizes: ["XS", "S"],
+            waistSizes: [30, 31],
+            phoneOS: "iOS",
+          },
+        })
       cleanupFuncs.push(customerCleanUpFunc)
       testCustomer = customer
     })
@@ -401,11 +397,10 @@ describe("Admissions Service", () => {
     })
 
     it("correctly calculates the available inventory for a user with no competing users", async () => {
-      const {
-        reservableStyles,
-      } = await admissions.reservableInventoryForCustomer({
-        id: testCustomer.id,
-      })
+      const { reservableStyles } =
+        await admissions.reservableInventoryForCustomer({
+          id: testCustomer.id,
+        })
       expect(reservableStyles).toBe(12)
     })
 
@@ -461,11 +456,10 @@ describe("Admissions Service", () => {
         cleanupFuncs.push(cleanupFunc)
       }
 
-      const {
-        reservableStyles,
-      } = await admissions.reservableInventoryForCustomer({
-        id: testCustomer.id,
-      })
+      const { reservableStyles } =
+        await admissions.reservableInventoryForCustomer({
+          id: testCustomer.id,
+        })
       expect(reservableStyles).toBe(9) // 6.5 available top styles, 2.5 available bottom styles
     }, 20000)
 
@@ -487,33 +481,30 @@ describe("Admissions Service", () => {
         cleanupFuncs.push(cleanupFunc)
       }
 
-      const {
-        reservableStyles,
-      } = await admissions.reservableInventoryForCustomer({
-        id: testCustomer.id,
-      })
+      const { reservableStyles } =
+        await admissions.reservableInventoryForCustomer({
+          id: testCustomer.id,
+        })
       expect(reservableStyles).toBe(6)
     })
 
     it("does not admit a user with insufficient available inventory", async () => {
       process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER = "15"
 
-      const {
-        pass,
-      } = await admissions.haveSufficientInventoryToServiceCustomer({
-        id: testCustomer.id,
-      })
+      const { pass } =
+        await admissions.haveSufficientInventoryToServiceCustomer({
+          id: testCustomer.id,
+        })
       expect(pass).toBe(false)
     })
 
     it("admits a user with sufficient inventory", async () => {
       process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER = "11"
 
-      const {
-        pass,
-      } = await admissions.haveSufficientInventoryToServiceCustomer({
-        id: testCustomer.id,
-      })
+      const { pass } =
+        await admissions.haveSufficientInventoryToServiceCustomer({
+          id: testCustomer.id,
+        })
       expect(pass).toBe(true)
     })
   })

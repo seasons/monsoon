@@ -125,7 +125,7 @@ const cache = (() => {
     ...scheduleModule,
     GraphQLModule.forRootAsync({
       useFactory: async () =>
-        (({
+        ({
           typeDefs: await importSchema("src/schema.graphql"),
           path: "/",
           installSubscriptionHandlers: true,
@@ -172,7 +172,7 @@ const cache = (() => {
           },
 
           cache,
-        } as unknown) as GqlModuleOptions),
+        } as unknown as GqlModuleOptions),
     }),
     AdminModule,
     AnalyticsModule,
