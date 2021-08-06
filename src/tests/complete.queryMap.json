@@ -45,5 +45,8 @@
   "GetProductsByTag": "query GetProductsByTag($tag: String!, $first: Int!, $skip: Int!, $orderBy: ProductOrderByInput!) {\n  products(where: {AND: [{tags_some: {name: $tag}}, {status: Available}]}, first: $first, skip: $skip, orderBy: $orderBy) {\n    id\n    slug\n    name\n    images {\n      id\n      url\n    }\n    variants {\n      id\n      total\n      reservable\n      nonReservable\n      reserved\n      isSaved\n      displayShort\n    }\n  }\n}\n",
   "PauseModal_Query": "query PauseModal_Query {\n  ...PauseReasonPupUpFragment_Query\n}\n\nfragment PauseReasonPupUpFragment_Query on Query {\n  pauseReasons {\n    id\n    reason\n  }\n}\n",
   "CancelReturn": "mutation CancelReturn {\n  cancelReturn {\n    id\n  }\n}\n",
-  "DraftReservationLineItems": "mutation DraftReservationLineItems($hasFreeSwap: Boolean) {\n  draftReservationLineItems(hasFreeSwap: $hasFreeSwap) {\n    id\n    name\n    price\n    taxPrice\n  }\n}\n"
+  "DraftReservationLineItems": "mutation DraftReservationLineItems($hasFreeSwap: Boolean) {\n  draftReservationLineItems(hasFreeSwap: $hasFreeSwap) {\n    id\n    name\n    price\n    taxPrice\n  }\n}\n",
+  "GetNotificationBar": "query GetNotificationBar",
+  "Browse_Query": "query Browse_Query",
+  "GetBrowseProducts": "query GetBrowseProducts"
 }

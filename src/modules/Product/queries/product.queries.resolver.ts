@@ -48,7 +48,8 @@ export class ProductQueriesResolver {
     })
     select
   ) {
-    return this.productService.getProductsConnection(args, select)
+    const data = await this.productService.getProductsConnection(args, select)
+    return data
   }
 
   @Query()
