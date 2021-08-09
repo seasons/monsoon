@@ -40,6 +40,10 @@ jobs:
     working_directory: ~/monsoon
 
     steps:
+      - run:
+          name: Install postgres tools
+          command: sudo apt update && sudo apt install postgresql && sudo -i -u postgres
+
       - checkout
 
       - node/install:
@@ -56,10 +60,6 @@ jobs:
 
       - node/install-packages:
           pkg-manager: yarn
-
-      - run:
-          name: Install postgres tools
-          command: sudo apt update && sudo apt install postgresql
 
       - run:
           command: node bin/cli.js spp local staging -f
