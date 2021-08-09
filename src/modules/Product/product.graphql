@@ -264,6 +264,8 @@ type Product @cacheControl(maxAge: 200) {
   publishedAt: DateTime
   tier: ProductTier!
   rentalPrice: Int
+  wholesalePrice: Int
+  recoupment: Int
 }
 
 type Brand @cacheControl(maxAge: 1000) {
@@ -344,6 +346,8 @@ input ProductCreateInput {
   outerMaterials: [String!]!
   productFit: ProductFit
   retailPrice: Int!
+  wholesalePrice: Int!
+  recoupment: Int!
   season: UpsertSeasonInput
   photographyStatus: PhotographyStatus
   secondaryColorCode: String
@@ -368,6 +372,8 @@ input CustomProductUpdateInput {
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
   retailPrice: Int
+  wholesalePrice: Int
+  recoupment: Int
   season: UpsertSeasonInput
   secondaryColor: ColorUpdateOneInput
   slug: String
