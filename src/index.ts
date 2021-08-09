@@ -6,6 +6,7 @@ import * as Sentry from "@sentry/node"
 import bodyParser from "body-parser"
 import compression from "compression"
 import express from "express"
+import httpContext from "express-http-context"
 
 import { AppModule } from "./app.module"
 import {
@@ -17,7 +18,7 @@ import {
 import { createCorsMiddleware } from "./middleware/cors"
 import { checkJwt } from "./middleware/jwt"
 import { createGetUserMiddleware } from "./middleware/user"
-import { client } from "./prisma/prisma.service"
+import { readClient } from "./prisma/prisma.service"
 
 // Set up the server
 const server = express()
@@ -36,7 +37,7 @@ function handleErrors(logger) {
 }
 
 async function bootstrap() {
-  const cors = await createCorsMiddleware(client)
+  const cors = await createCorsMiddleware(readClient)
   const nestWinstonLogger = createNestWinstonLogger()
   const expressWinstonHandler = createExpressWinstonHandler(
     nestWinstonLogger.logger
@@ -49,9 +50,10 @@ async function bootstrap() {
     compression(),
     cors,
     checkJwt,
-    createGetUserMiddleware(client, nestWinstonLogger),
+    createGetUserMiddleware(readClient, nestWinstonLogger),
     bodyParser.json(),
-    handleErrors(nestWinstonLogger)
+    handleErrors(nestWinstonLogger),
+    httpContext.middleware
   )
 
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {

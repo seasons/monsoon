@@ -62,14 +62,6 @@ export class CustomerUtilsService {
     // Check if the customer has upgraded their plan since their last reservation
     const justUpgradedPlan =
       latestReservation &&
-      [
-        "Queued",
-        "Picked",
-        "Packed",
-        "Delivered",
-        "Received",
-        "Shipped",
-      ].includes(latestReservation?.status) &&
       latestReservation?.products?.length < customerPlan?.itemCount
 
     const reservationCreatedBeforeTermStart =

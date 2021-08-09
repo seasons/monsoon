@@ -54,6 +54,7 @@ export class PrismaLoader implements NestDataLoader {
     }: PrismaGenerateParams
   ) {
     const where = formatWhere(keys, ctx)
+
     const data = await this.prisma.client[lowerFirst(model)].findMany({
       where,
       select,

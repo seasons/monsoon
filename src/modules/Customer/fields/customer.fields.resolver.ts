@@ -310,6 +310,5 @@ export class CustomerFieldsResolver {
       where: { ...where, customer: { id: customer.id } },
       ...args,
     })
-    return reservations
   }
 }

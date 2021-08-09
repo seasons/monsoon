@@ -336,7 +336,9 @@ export class ReservationService {
   }
 
   async returnItems(items: string[], customer: Customer) {
-    const lastReservation = await this.utils.getLatestReservation(customer.id)
+    const lastReservation = (await this.utils.getLatestReservation(
+      customer.id
+    )) as any
 
     // If there's an item being returned that isn't in the current reservation
     // throw an error
