@@ -38,31 +38,4 @@ export class BrandFieldsResolver {
       application
     )
   }
-
-  @ResolveField()
-  async products(
-    @Parent() brand,
-    @Select() select,
-    @Application() application
-  ) {
-    let where = {}
-    if (application === "flare" || application === "harvest") {
-      where = {
-        brand: {
-          id: brand.id,
-        },
-        status: "Available",
-      }
-    } else {
-      where = {
-        brand: {
-          id: brand.id,
-        },
-      }
-    }
-    return await this.prisma.client.product.findMany({
-      where,
-      select,
-    })
-  }
 }
