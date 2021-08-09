@@ -1,11 +1,10 @@
-import { PrismaService } from "@app/prisma/prisma.service"
+import { readClient } from "@app/prisma/prisma.service"
 import { UserRole } from "@prisma/client"
 import { intersection } from "lodash"
 
 import { getEnforcedUser } from "./utils"
 
-const prisma = new PrismaService()
-
+// TODO: We should get the user roles from the context. We shouldn't need to do a DB query here.
 export async function hasRole(
   next,
   _,
@@ -16,7 +15,7 @@ export async function hasRole(
   ctx
 ) {
   const userID = getEnforcedUser(ctx).id
-  const user = await prisma.client.user.findUnique({
+  const user = await readClient.user.findUnique({
     where: { id: userID },
     select: { id: true, roles: true },
   })
@@ -24,7 +23,6 @@ export async function hasRole(
 
   // Set flags so admin-related contextual work can happen. e.g Admin Audit logging
   ctx.isAdminAction = permissibleRoles.includes("Admin")
-  ctx.isMutation = ctx.req.body.query?.includes("mutation")
   ctx.activeUserIsAdmin = roles.includes("Admin")
 
   if (intersection(permissibleRoles, roles).length === 0) {

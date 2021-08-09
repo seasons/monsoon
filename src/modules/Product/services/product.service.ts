@@ -71,8 +71,18 @@ export class ProductService {
     return data
   }
 
-  async getProductsConnection(args, select) {
-    const queryOptions = await this.productUtils.queryOptionsForProducts(args)
+  async getProductsConnection(args, select, application) {
+    let _args = args
+    if (application === "flare" || application === "harvest") {
+      _args = {
+        ...args,
+        where: {
+          ...args.where,
+          status: "Available",
+        },
+      }
+    }
+    const queryOptions = await this.productUtils.queryOptionsForProducts(_args)
 
     const [updatedArgs, searchResult] = await this.search.updateArgsForSearch(
       queryOptions,

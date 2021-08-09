@@ -2,12 +2,15 @@ import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.servic
 import { Injectable } from "@nestjs/common"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
+import { merge } from "lodash"
 
 const RESERVATION_FEEDBACK_SELECT = {
   id: true,
   comment: true,
   rating: true,
   feedbacks: {
+    // Need to add an order to keep feedbacks in a consistent order
+    orderBy: { id: "desc" },
     select: {
       id: true,
       isCompleted: true,
@@ -92,7 +95,7 @@ export class ReservationFeedbackService {
     return feedback
   }
 
-  async getReservationFeedback(user, select) {
+  async getReservationFeedback(user, select = {}) {
     if (!user) return null
     const feedback = await this.prisma.client.reservationFeedback.findFirst({
       where: {
@@ -106,7 +109,7 @@ export class ReservationFeedbackService {
         },
       },
       orderBy: { createdAt: "desc" },
-      select: select ?? RESERVATION_FEEDBACK_SELECT,
+      select: merge(RESERVATION_FEEDBACK_SELECT, select),
     })
     return feedback
   }
