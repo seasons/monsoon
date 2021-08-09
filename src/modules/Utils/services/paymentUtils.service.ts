@@ -173,23 +173,29 @@ export class PaymentUtilsService {
       where: { id: customer.id },
       select: {
         id: true,
+        user: {
+          select: {
+            id: true,
+          },
+        },
         membership: {
           select: {
             id: true,
             plan: { select: { id: true, planID: true, itemCount: true } },
-            pauseRequests: { select: { id: true, createdAt: true } },
+            pauseRequests: {
+              select: { id: true, createdAt: true },
+              orderBy: { createdAt: "desc" },
+            },
           },
         },
       },
     })
 
-    const pauseRequest = head(
-      orderBy(customerWithData.membership.pauseRequests, "createdAt", "desc")
-    )
+    const pauseRequest = head(customerWithData.membership.pauseRequests)
+    const customerPlanID = customerWithData.membership.plan.planID
+    const userID = customerWithData.user.id
 
     try {
-      const customerPlanID = customerWithData.membership.plan.planID
-
       let success
 
       if (pausePlanIDs.includes(customerPlanID)) {
@@ -213,12 +219,30 @@ export class PaymentUtilsService {
           .request()
       } else {
         // Customer is paused without items
-        success = await chargebee.subscription
-          .resume(subscriptionId, {
-            resume_option: resumeDate,
-            unpaid_invoices_handling: "schedule_payment_collection",
+        const subscriptions = await chargebee.subscription
+          .list({
+            plan_id: { in: [customerPlanID] },
+            customer_id: { is: userID },
           })
           .request()
+
+        const subscription = (head(subscriptions.list) as any)?.subscription
+
+        // If chargebee account is paused resume subscription
+        if (subscription.status === "paused") {
+          success = await chargebee.subscription
+            .resume(subscriptionId, {
+              resume_option: resumeDate,
+              unpaid_invoices_handling: "schedule_payment_collection",
+            })
+            .request()
+        } else if (subscription.status === "active") {
+          success = true
+        } else {
+          throw Error(
+            "User subscription is neither active or paused, cannot resume"
+          )
+        }
       }
 
       if (success) {
