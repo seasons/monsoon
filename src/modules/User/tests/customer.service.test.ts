@@ -13,7 +13,7 @@ import { ApolloError } from "apollo-server"
 import { AdmissionsService } from "../services/admissions.service"
 import { CustomerService } from "../services/customer.service"
 
-xdescribe.only("Customer Service", () => {
+xdescribe("Customer Service", () => {
   let customerService: CustomerService
   let prisma: PrismaService
   let testUtils: TestUtilsService
