@@ -178,6 +178,10 @@ export class ProductFieldsResolver {
               product {
                 id
               }
+              internalSize {
+                productType
+                display
+              }
           }
         `,
         keyToDataRelationship: "OneToMany",

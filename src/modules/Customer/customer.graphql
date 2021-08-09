@@ -36,7 +36,12 @@ type Query {
 }
 
 type Mutation {
-  addToBag(item: ID!): BagItem! @hasRole(roles: [Customer])
+  addToBag(
+    item: ID!
+    customerID: ID
+    status: BagItemStatus
+    saved: Boolean
+  ): BagItem! @hasRole(roles: [Customer, Admin])
   # removeFromBag has been deprecated use deleteBagItem
   removeFromBag(item: ID!, saved: Boolean, customer: ID): BagItem!
     @hasRole(roles: [Customer])

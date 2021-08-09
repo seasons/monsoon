@@ -652,7 +652,9 @@ const generateEnumsMigrate = () => {
   }
   for (const [enumName, { values, usage }] of Object.entries(ENUMS)) {
     console.log(
-      `CREATE TYPE "${enumName}" AS ENUM (${valueArrayToValueString(values)});`
+      `CREATE TYPE monsoon$dev."${enumName}" AS ENUM (${valueArrayToValueString(
+        values
+      )});`
     )
 
     // Fix some bad data for order payment status
@@ -666,7 +668,7 @@ WHERE  monsoon$dev."Order"."paymentStatus" = 'complete';
     for (const { table, column, isArray } of usage) {
       const typeSuffix = isArray ? "[]" : ""
       console.log(
-        `ALTER TABLE monsoon$dev."${table}" ALTER COLUMN "${column}" TYPE "${enumName}"${typeSuffix} USING "${column}"::text${typeSuffix}::"${enumName}"${typeSuffix};`
+        `ALTER TABLE monsoon$dev."${table}" ALTER COLUMN "${column}" TYPE monsoon$dev."${enumName}"${typeSuffix} USING "${column}"::text${typeSuffix}::monsoon$dev."${enumName}"${typeSuffix};`
       )
     }
     console.log(`\n`)

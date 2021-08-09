@@ -1,3 +1,4 @@
+import { AppModule } from "@app/app.module"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
@@ -8,6 +9,7 @@ import {
   CreateTestProductInput,
 } from "@app/modules/Utils/utils.types"
 import { PrismaModule } from "@app/prisma/prisma.module"
+import { NestFactory } from "@nestjs/core"
 import { Test } from "@nestjs/testing"
 import { EmailId, InventoryStatus, ProductType } from "@prisma/client"
 import { fill } from "lodash"
@@ -309,11 +311,10 @@ describe("Admissions Service", () => {
     let bottom30OneReservableOneNonReservable
     let testCustomer
 
-    beforeAll(() => {
-      let ps = (prismaService = new PrismaService())
-      const qus = new QueryUtilsService(ps)
-      testUtils = new TestUtilsService(ps, new UtilsService(ps, qus), qus)
-      utils = new UtilsService(ps, qus)
+    beforeAll(async () => {
+      const app = await NestFactory.createApplicationContext(AppModule)
+      testUtils = app.get(TestUtilsService)
+      utils = app.get(UtilsService)
 
       // reservable products
       topXSReservable = createTestProductCreateInput("Top", "XS", "Reservable")
@@ -386,7 +387,11 @@ describe("Admissions Service", () => {
         cleanupFunc: customerCleanUpFunc,
         customer,
       } = await testUtils.createTestCustomer({
-        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
+        detail: {
+          topSizes: ["XS", "S"],
+          waistSizes: [30, 31],
+          phoneOS: "iOS",
+        },
       })
       cleanupFuncs.push(customerCleanUpFunc)
       testCustomer = customer

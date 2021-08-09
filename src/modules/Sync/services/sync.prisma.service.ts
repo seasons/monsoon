@@ -141,17 +141,6 @@ export class PrismaSyncService {
     You are syncing from ${origin} to ${destination}.
 
     All data on the destination will be irreversibly replaced with the data from source.
-
-    DOUBLE DANGER: If the schema on the target DB does not match the schema on the origin db, 
-    this will irrevocably damage your target DB. You will then need to recreate it from scratch. 
-
-    Please ensure before proceeding that your target DB's schema matches the origin's.
-    You can do so as follows:
-    1. Get the latest commit to deployed to the origin service. (If production, run monsoon gpc)
-    2. Checkout that commit and deploy prisma to your target DB. 
-    3. Re-run this sync. 
-
-    After step 3, you free to switch branches as you desire. 
     `
   }
 
@@ -176,7 +165,7 @@ export class PrismaSyncService {
       )
 
       execSyncWithOptions(
-        `pg_dump --format=t --schema='${fromSchema}' --clean --create --no-password --host=${fromHost}\
+        `pg_dump --format=t --clean --create --schema='${fromSchema}' --no-password --host=${fromHost}\
    --port=${fromPort} --username=${fromUsername} ${fromDBName} | pg_restore ${destinationCreds}`
       )
     } catch (err) {

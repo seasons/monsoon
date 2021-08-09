@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DB_WRITE_URL")
 }
 
 enum ProductTierName {
@@ -721,8 +721,8 @@ model CustomerMembership {
   subscriptionId           String
   customerId               String                              @map("customer") @db.VarChar(30)
   customer                 Customer                            @relation(fields: [customerId], references: [id])
-  planId                   String?                             @map("plan") @db.VarChar(30)
-  plan                     PaymentPlan?                        @relation(fields: [planId], references: [id])
+  planId                   String                              @map("plan") @db.VarChar(30)
+  plan                     PaymentPlan                         @relation(fields: [planId], references: [id])
   giftId                   String?
   membershipSubscriptionId String?                             @map("subscription") @db.VarChar(30)
   subscription             CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])

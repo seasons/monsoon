@@ -7,7 +7,6 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
   InventoryStatus,
   PhysicalProductStatus,
-  ReservationStatus,
   ShippingCode,
 } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
@@ -21,6 +20,7 @@ import {
   Prisma,
   PrismaPromise,
   ReservationFeedback,
+  ReservationStatus,
   User,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -100,9 +100,7 @@ export class ReservationService {
     }
 
     // Figure out which items the user is reserving anew and which they already have
-    const lastReservation = await this.reservationUtils.getLatestReservation(
-      customer
-    )
+    const lastReservation = await this.utils.getLatestReservation(customer.id)
     await this.validateLastReservation(lastReservation, items)
 
     // Get the most recent reservation that potentially carries products being kept in the new reservation
@@ -117,14 +115,14 @@ export class ReservationService {
           "Completed",
         ].includes(lastReservation.status)
         ? lastReservation
-        : await this.reservationUtils.getLatestReservation(
-            customer,
-            "Completed"
-          )
+        : await this.utils.getLatestReservation(customer.id, "Completed")
       : null
 
     const newProductVariantsBeingReserved = await this.getNewProductVariantsBeingReserved(
-      { productVariantIDs: items, customerId: customer.id }
+      {
+        productVariantIDs: items,
+        customerId: customer.id,
+      }
     )
     const heldPhysicalProducts = await this.getHeldPhysicalProducts(
       customer,
@@ -271,7 +269,7 @@ export class ReservationService {
     )
 
     try {
-      await this.removeRestockNotifications(items, customer)
+      await this.removeRestockNotifications(items, customer?.id)
     } catch (err) {
       this.error.setUserContext(user)
       this.error.setExtraContext({ items })
@@ -324,9 +322,7 @@ export class ReservationService {
   }
 
   async cancelReturn(customer: Customer) {
-    const lastReservation = await this.reservationUtils.getLatestReservation(
-      customer
-    )
+    const lastReservation = await this.utils.getLatestReservation(customer.id)
 
     await this.prisma.client.reservation.update({
       data: {
@@ -340,9 +336,9 @@ export class ReservationService {
   }
 
   async returnItems(items: string[], customer: Customer) {
-    const lastReservation = await this.reservationUtils.getLatestReservation(
-      customer
-    )
+    const lastReservation = (await this.utils.getLatestReservation(
+      customer.id
+    )) as any
 
     // If there's an item being returned that isn't in the current reservation
     // throw an error
@@ -370,12 +366,12 @@ export class ReservationService {
     return lastReservation
   }
 
-  async removeRestockNotifications(items, customer) {
+  async removeRestockNotifications(items: string[], customerID: string) {
     const restockNotifications = await this.prisma.client.productNotification.findMany(
       {
         where: {
           customer: {
-            id: customer.id,
+            id: customerID,
           },
           AND: {
             productVariant: {
@@ -710,40 +706,128 @@ export class ReservationService {
     where: { id: string },
     select: Prisma.ReservationSelect
   ) {
+    const promises = []
     const reservation = await this.prisma.client.reservation.findUnique({
       where,
       select: {
         id: true,
         status: true,
-        products: {
-          select: { id: true },
+        customer: { select: { id: true } },
+        newProducts: {
+          select: {
+            id: true,
+            inventoryStatus: true,
+            warehouseLocation: true,
+            productVariant: {
+              select: {
+                reservable: true,
+                reserved: true,
+                nonReservable: true,
+                offloaded: true,
+                stored: true,
+                bagItems: {
+                  where: {
+                    customer: { reservations: { some: where } },
+                    saved: false,
+                  },
+                },
+              },
+            },
+          },
         },
       },
     })
 
-    // If we're completing or cancelling the resy, set the timestamp
-    if (reservation.status !== "Cancelled" && data.status === "Cancelled") {
-      data["cancelledAt"] = new Date()
+    const changingStatusTo = (status: ReservationStatus) => {
+      return reservation.status !== status && data.status === status
     }
-    if (reservation.status !== "Completed" && data.status === "Completed") {
+
+    const canCancelReservation = ["Queued", "Packed", "Picked"].includes(
+      reservation.status
+    )
+    // If setting to cancelled, execute implied updates
+    if (changingStatusTo("Cancelled")) {
+      if (!canCancelReservation) {
+        throw new Error(
+          `Can only cancel an order with status Queued, Picked, or Packed`
+        )
+      }
+      // Set timestamp
+      data["cancelledAt"] = new Date()
+
+      // For new products on reservation, update the status, related counts, and bag item
+      for (const prod of reservation.newProducts) {
+        const newInventoryStatus = !!prod.warehouseLocation
+          ? "Reservable"
+          : "NonReservable"
+        const variantUpdateData = this.productVariantService.getCountsForStatusChange(
+          {
+            productVariant: prod.productVariant,
+            oldInventoryStatus: prod.inventoryStatus,
+            newInventoryStatus,
+          }
+        )
+        promises.push(
+          this.prisma.client.physicalProduct.update({
+            where: { id: prod.id },
+            data: {
+              inventoryStatus: newInventoryStatus,
+              productVariant: { update: variantUpdateData },
+            },
+          })
+        )
+        const bagItemId = prod.productVariant.bagItems?.[0]?.id
+        if (!!bagItemId) {
+          promises.push(
+            this.prisma.client.bagItem.delete({ where: { id: bagItemId } })
+          )
+        }
+      }
+    }
+
+    // If setting to lost, execute implied updates
+    if (changingStatusTo("Lost")) {
+      // For new products on reservation, update the status, related counts, and bag item
+      for (const prod of reservation.newProducts) {
+        const variantUpdateData = this.productVariantService.getCountsForStatusChange(
+          {
+            productVariant: prod.productVariant,
+            oldInventoryStatus: prod.inventoryStatus,
+            newInventoryStatus: "NonReservable",
+          }
+        )
+        promises.push(
+          this.prisma.client.physicalProduct.update({
+            where: { id: prod.id },
+            data: {
+              productStatus: "Lost",
+              inventoryStatus: "NonReservable",
+              productVariant: { update: variantUpdateData },
+            },
+          })
+        )
+        const bagItemId = prod.productVariant.bagItems?.[0]?.id
+        if (!!bagItemId) {
+          promises.push(
+            this.prisma.client.bagItem.delete({ where: { id: bagItemId } })
+          )
+        }
+      }
+    }
+
+    // If setting to completed, set timestamp
+    if (changingStatusTo("Completed")) {
       data["completedAt"] = new Date()
     }
 
-    let promises: any[] = [
-      this.prisma.client.reservation.update({ data, where, select }),
-    ]
-
     // Reservation was just packed. Null out warehouse locations on attached products
-    if (
-      ["Packed", "Picked"].includes(data.status) &&
-      data.status !== reservation.status
-    ) {
+    if (changingStatusTo("Picked") || changingStatusTo("Packed")) {
       const updateData = { warehouseLocation: { disconnect: true } }
       if (data.status === "Packed") {
         updateData["packedAt"] = new Date()
       }
       promises.push(
-        ...reservation.products.map(a =>
+        ...reservation.newProducts.map(a =>
           this.prisma.client.physicalProduct.update({
             where: { id: a.id },
             data: updateData,
@@ -752,7 +836,13 @@ export class ReservationService {
       )
     }
 
-    const [updatedReservation] = await this.prisma.client.$transaction(promises)
+    promises.push(
+      this.prisma.client.reservation.update({ data, where, select })
+    )
+
+    const results = await this.prisma.client.$transaction(promises)
+    const updatedReservation = results.pop()
+
     return updatedReservation
   }
 
