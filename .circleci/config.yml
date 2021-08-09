@@ -13,8 +13,11 @@ jobs:
     steps:
       - checkout
 
+      - run:
+          command: nvm install 14.7.1
+          name: Install correct node version
+
       - node/install:
-          node-version: "14.17.1"
           install-yarn: true
 
       - node/install-packages:
@@ -70,10 +73,6 @@ jobs:
 
       - node/install-packages:
           pkg-manager: yarn
-
-      - run:
-          command: sleep 20
-          name: Wait for containers to fully spin up
 
       - run:
           command: node bin/cli.js spp local staging -f
