@@ -6,7 +6,8 @@ orbs:
 
 jobs:
   test-unit:
-    machine: true
+    machine:
+      image: ubuntu-2004:202107-02
 
     working_directory: ~/monsoon
 
@@ -20,13 +21,13 @@ jobs:
       - node/install-packages:
           pkg-manager: yarn
 
+      - docker/install-docker
+
+      - docker/install-docker-compose
+
       - run:
           command: docker-compose up -d
           name: Start up docker containers
-
-      - run:
-          command: sleep 20
-          name: Wait for containers to fully spin up
 
       - run:
           command: yarn test
@@ -55,6 +56,10 @@ jobs:
 
       - node/install-packages:
           pkg-manager: yarn
+
+      - run:
+          name: Install postgres tools
+          command: sudo apt update && sudo apt install postgresql
 
       - run:
           command: node bin/cli.js spp local staging -f
