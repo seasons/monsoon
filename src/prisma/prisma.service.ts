@@ -77,8 +77,14 @@ export class PrismaService implements UpdatableConnection {
     datamodel.forEach(model => {
       const keyName = lowerFirst(model.name)
 
-      const { aggregate, count, findFirst, findMany, findUnique, groupBy } =
-        readClient[keyName]
+      const {
+        aggregate,
+        count,
+        findFirst,
+        findMany,
+        findUnique,
+        groupBy,
+      } = readClient[keyName]
 
       const {
         aggregate: writeClientAggregate,
@@ -199,7 +205,4 @@ export class PrismaService implements UpdatableConnection {
 
     return isMutation
   }
-}
-function upperFirst(keyName: any) {
-  throw new Error("Function not implemented.")
 }
