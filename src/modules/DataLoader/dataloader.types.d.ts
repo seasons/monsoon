@@ -53,7 +53,7 @@ export interface LoaderParams {
   type?: string
 
   // Defines the prisma query and data mapping process
-  params: PrismaGenerateParams
+  params?: PrismaGenerateParams
 
   // pass true to forward the info input passed by the client
   includeInfo?: boolean

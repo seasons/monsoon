@@ -99,6 +99,7 @@ export class ProductFieldsResolver {
                 in: keys,
               },
             },
+            status: "Available",
           }),
         infoFragment: `fragment EnsureNeededIds on Product {
             color{
