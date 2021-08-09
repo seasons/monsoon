@@ -1,12 +1,10 @@
 import fs from "fs"
-import { createWriteStream } from "fs"
-import { Readable } from "stream"
 
 import { DripService } from "@app/modules/Drip/services/drip.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3"
 import { Injectable } from "@nestjs/common"
+import AWS from "aws-sdk"
 import chargebee from "chargebee"
 import getStream from "get-stream"
 
@@ -17,7 +15,7 @@ import {
 
 @Injectable()
 export class ScriptsService {
-  private s3 = new S3Client({ region: "us-east-1" })
+  private s3 = new AWS.S3()
 
   constructor(private readonly utilsService: UtilsService) {}
 
@@ -71,15 +69,17 @@ export class ScriptsService {
     }
   }
   async downloadFromS3(filePath, bucket, key): Promise<string> {
-    const s3Item = await this.s3.send(
-      new GetObjectCommand({
+    return new Promise((resolve, reject) => {
+      const params = {
         Bucket: bucket,
         Key: key,
+      }
+      this.s3.getObject(params, (err, data) => {
+        if (err) return reject(err)
+        fs.writeFileSync(filePath, data.Body.toString())
+        resolve(filePath)
       })
-    )
-    const buffer = await getStream.buffer(s3Item.Body as any)
-    fs.writeFileSync(filePath, buffer.toString())
-    return filePath
+    })
   }
 
   /**
