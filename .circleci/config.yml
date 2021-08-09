@@ -34,23 +34,16 @@ jobs:
 
   test-integration:
     machine:
-      image: postgres:12.6
+      image: ubuntu-2004:202107-02
+
     working_directory: ~/monsoon
+
     steps:
-      - run:
-          name: Gain sudo
-          command: |
-            apt-get update && apt-get install -y sudo && rm -rf /var/lib/apt/lists/*
-
-      - run:
-          name: Install curl, git, jq
-          command: |
-            sudo apt update
-            sudo apt install curl -y
-            sudo apt install git -y
-            sudo apt-get install jq -y
-
       - checkout
+
+      - node/install:
+          node-version: "14.17.1"
+          install-yarn: true
 
       - docker/install-docker
 
@@ -59,10 +52,6 @@ jobs:
       - run:
           name: Start up docker containers
           command: docker-compose up -d
-
-      - node/install:
-          node-version: "14.17.1"
-          install-yarn: true
 
       - node/install-packages:
           pkg-manager: yarn
