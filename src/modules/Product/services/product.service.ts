@@ -71,8 +71,18 @@ export class ProductService {
     return data
   }
 
-  async getProductsConnection(args, select) {
-    const queryOptions = await this.productUtils.queryOptionsForProducts(args)
+  async getProductsConnection(args, select, application) {
+    let _args = args
+    if (application === "flare" || application === "harvest") {
+      _args = {
+        ...args,
+        where: {
+          ...args.where,
+          status: "Available",
+        },
+      }
+    }
+    const queryOptions = await this.productUtils.queryOptionsForProducts(_args)
 
     const [updatedArgs, searchResult] = await this.search.updateArgsForSearch(
       queryOptions,
@@ -159,12 +169,11 @@ export class ProductService {
     customer: Pick<Customer, "id">,
     select: Prisma.RecentlyViewedProductSelect
   ) {
-    const viewedProduct = await this.prisma.client.recentlyViewedProduct.findFirst(
-      {
+    const viewedProduct =
+      await this.prisma.client.recentlyViewedProduct.findFirst({
         where: { customer: { id: customer.id }, product: { id: productId } },
         select: { id: true, viewCount: true },
-      }
-    )
+      })
 
     const priorViewCount = viewedProduct?.viewCount || 0
     const result = await this.prisma.client.recentlyViewedProduct.upsert({
@@ -307,9 +316,8 @@ export class ProductService {
       data: createData,
     })
 
-    const sequenceNumbers = await this.physicalProductUtils.groupedSequenceNumbers(
-      input.variants
-    )
+    const sequenceNumbers =
+      await this.physicalProductUtils.groupedSequenceNumbers(input.variants)
 
     const variantAndPhysicalProductPromises = flatten(
       input.variants.map((a, i) => {
@@ -808,8 +816,8 @@ export class ProductService {
     productId: string,
     physProdCurrentlyOffloadingId: string
   ) {
-    const prodWithPhysicalProducts = await this.prisma.client.product.findUnique(
-      {
+    const prodWithPhysicalProducts =
+      await this.prisma.client.product.findUnique({
         where: { id: productId },
         select: {
           status: true,
@@ -819,10 +827,9 @@ export class ProductService {
             },
           },
         },
-      }
-    )
+      })
     const downstreamPhysProds = this.productUtils.physicalProductsForProduct(
-      (prodWithPhysicalProducts as unknown) as ProductWithPhysicalProducts
+      prodWithPhysicalProducts as unknown as ProductWithPhysicalProducts
     )
     const allPhysProdsOffloaded = downstreamPhysProds.reduce(
       (acc, curPhysProd: { id: string; inventoryStatus: InventoryStatus }) =>
@@ -1008,18 +1015,17 @@ export class ProductService {
           buyUsedPrice == null && buyUsedEnabled == null
             ? physProdData.price || variant.price
             : { buyUsedEnabled, buyUsedPrice }
-        const createData = Prisma.validator<
-          Prisma.PhysicalProductCreateInput
-        >()({
-          ...physProdData,
-          sequenceNumber,
-          productVariant: { connect: { sku: variant.sku } },
-          ...(price && {
-            price: {
-              create: price,
-            },
-          }),
-        })
+        const createData =
+          Prisma.validator<Prisma.PhysicalProductCreateInput>()({
+            ...physProdData,
+            sequenceNumber,
+            productVariant: { connect: { sku: variant.sku } },
+            ...(price && {
+              price: {
+                create: price,
+              },
+            }),
+          })
         return this.prisma.client.physicalProduct.create({
           data: createData,
         })
@@ -1043,10 +1049,8 @@ export class ProductService {
         displayShort = displayShort.split("x")[0]
       }
     } else {
-      const {
-        type: internalSizeType,
-        display: internalSizeDisplay,
-      } = internalSizeData
+      const { type: internalSizeType, display: internalSizeDisplay } =
+        internalSizeData
       if (internalSizeType === "WxL") {
         displayShort = internalSizeDisplay.split("x")[0]
       }
@@ -1059,9 +1063,8 @@ export class ProductService {
     category: Pick<Category, "id">,
     retailPrice
   ): Promise<ProductTier> {
-    const allProductCategories = await this.productUtils.getAllCategoriesForCategory(
-      category
-    )
+    const allProductCategories =
+      await this.productUtils.getAllCategoriesForCategory(category)
     const luxThreshold = allProductCategories
       .map(a => a.name)
       .includes("Outerwear")
