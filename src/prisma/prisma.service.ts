@@ -206,6 +206,3 @@ export class PrismaService implements UpdatableConnection {
     return isMutation
   }
 }
-function upperFirst(keyName: any) {
-  throw new Error("Function not implemented.")
-}
