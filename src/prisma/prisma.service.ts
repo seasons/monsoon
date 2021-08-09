@@ -114,7 +114,7 @@ export class PrismaService implements UpdatableConnection {
         .includes("createdAt")
       const smartFindManyWithDefaultOrderBy = modelHasCreatedAt
         ? async args => {
-            const newArgs = { createdAt: "desc", ...args }
+            const newArgs = { orderBy: { createdAt: "desc" }, ...args }
             return smartFindMany(newArgs)
           }
         : smartFindMany
