@@ -1,4 +1,6 @@
+import { AppModule } from "@app/app.module"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { UtilsModule } from "@app/modules/Utils/utils.module"
@@ -6,9 +8,10 @@ import {
   CreateTestCustomerInput,
   CreateTestProductInput,
 } from "@app/modules/Utils/utils.types"
-import { EmailId, InventoryStatus, ProductType } from "@app/prisma"
 import { PrismaModule } from "@app/prisma/prisma.module"
+import { NestFactory } from "@nestjs/core"
 import { Test } from "@nestjs/testing"
+import { EmailId, InventoryStatus, ProductType } from "@prisma/client"
 import { fill } from "lodash"
 
 import { PrismaService } from "../../../prisma/prisma.service"
@@ -294,6 +297,7 @@ describe("Admissions Service", () => {
   describe("Inventory Threshold", () => {
     let testUtils: TestUtilsService
     let utils: UtilsService
+    let prismaService: PrismaService
     let cleanupFuncs = []
     let allTestProductsToCreate: CreateTestProductInput[]
     let topXSReservable
@@ -307,10 +311,10 @@ describe("Admissions Service", () => {
     let bottom30OneReservableOneNonReservable
     let testCustomer
 
-    beforeAll(() => {
-      const ps = new PrismaService()
-      testUtils = new TestUtilsService(ps, new UtilsService(ps))
-      utils = new UtilsService(ps)
+    beforeAll(async () => {
+      const app = await NestFactory.createApplicationContext(AppModule)
+      testUtils = app.get(TestUtilsService)
+      utils = app.get(UtilsService)
 
       // reservable products
       topXSReservable = createTestProductCreateInput("Top", "XS", "Reservable")
@@ -383,7 +387,11 @@ describe("Admissions Service", () => {
         cleanupFunc: customerCleanUpFunc,
         customer,
       } = await testUtils.createTestCustomer({
-        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
+        detail: {
+          topSizes: ["XS", "S"],
+          waistSizes: [30, 31],
+          phoneOS: "iOS",
+        },
       })
       cleanupFuncs.push(customerCleanUpFunc)
       testCustomer = customer
@@ -418,6 +426,7 @@ describe("Admissions Service", () => {
                 pausePending: false,
                 pauseDate: utils.xDaysAgoISOString(22),
                 resumeDate: utils.xDaysFromNowISOString(8),
+                pauseType: "WithItems",
               },
             ],
           },
@@ -511,46 +520,6 @@ describe("Admissions Service", () => {
       })
       expect(pass).toBe(true)
     })
-
-    it("does not admit a user with an unsupported platform", async () => {
-      const {
-        customer,
-        cleanupFunc: customerCleanupFunc,
-      } = await testUtils.createTestCustomer({
-        detail: {
-          topSizes: ["XS", "S"],
-          waistSizes: [30, 31],
-          phoneOS: "Android",
-        },
-      })
-      cleanupFuncs.push(customerCleanupFunc)
-
-      const { pass } = await admissions.hasSupportedPlatform(
-        {
-          id: customer.id,
-        },
-        "flare"
-      )
-      expect(pass).toBe(false)
-    })
-
-    it("admits a user with a supported platform", async () => {
-      const {
-        customer,
-        cleanupFunc: customerCleanupFunc,
-      } = await testUtils.createTestCustomer({
-        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
-      })
-      cleanupFuncs.push(customerCleanupFunc)
-
-      const { pass } = await admissions.hasSupportedPlatform(
-        {
-          id: customer.id,
-        },
-        "flare"
-      )
-      expect(pass).toBe(true)
-    })
   })
 })
 
@@ -576,7 +545,7 @@ const createEmailReceipts = (
   emailsSentXDaysAgoObject,
   emailId: EmailId
 ): Array<any> => {
-  const utils = new UtilsService(null)
+  const utils = new UtilsService(null, null)
 
   return Object.keys(emailsSentXDaysAgoObject).reduce(
     (emailReceipts, currentKey) => {

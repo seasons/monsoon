@@ -3,8 +3,9 @@ import { PaymentModule } from "@modules/Payment/payment.module"
 import { ProductModule } from "@modules/Product"
 import { PushNotificationModule } from "@modules/PushNotification"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
-import { Module } from "@nestjs/common"
-import { PrismaModule } from "@prisma/prisma.module"
+import { UserModule } from "@modules/User/user.module"
+import { Module, forwardRef } from "@nestjs/common"
+import { PrismaModule } from "@prisma1/prisma.module"
 
 import { AnalyticsModule } from "../Analytics/analytics.module"
 import { EmailModule } from "../Email/email.module"
@@ -24,13 +25,14 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
     EmailModule,
     ImageModule,
     PrismaModule,
-    ProductModule,
+    forwardRef(() => ProductModule),
     PushNotificationModule,
     ShippingModule,
     PaymentModule,
     AnalyticsModule,
     UtilsModule,
     ErrorModule,
+    UserModule,
   ],
   providers: [
     ReservationFeedbackMutationsResolver,
@@ -42,6 +44,6 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
     ReservationService,
     ReservationMutationsResolver,
   ],
-  exports: [ReservationService],
+  exports: [ReservationService, ReservationUtilsService],
 })
 export class ReservationModule {}

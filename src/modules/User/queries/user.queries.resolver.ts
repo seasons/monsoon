@@ -1,36 +1,49 @@
-import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
+import { Select } from "@app/decorators/select.decorator"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { Logger } from "@nestjs/common"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
-import { addFragmentToInfo } from "graphql-binding"
+import { PrismaService } from "@prisma1/prisma.service"
 
 import { AdmissionsService } from "../services/admissions.service"
 
 @Resolver()
 export class UserQueriesResolver {
+  private readonly logger = new Logger(`User`)
+
   constructor(
     private readonly prisma: PrismaService,
-    private readonly admissions: AdmissionsService
+    private readonly admissions: AdmissionsService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   @Query()
-  async user(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.user(
-      args,
-      addFragmentToInfo(info, `fragment EnsureIdAndEmail on User {id email}`)
-    )
+  async user(
+    @Args() args,
+    @Select({
+      withFragment: `fragment EnsureIdAndEmail on User {id email}`,
+    })
+    select
+  ) {
+    return await this.prisma.client.user.findUnique({
+      select,
+      where: { ...args.where },
+    })
   }
 
   @Query()
-  async users(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.users(
-      args,
-      addFragmentToInfo(info, `fragment EnsureIdAndEmail on User {id email}`)
-    )
+  async users(
+    @FindManyArgs({
+      withFragment: `fragment EnsureIdAndEmail on User {id email}`,
+    })
+    findManyArgs
+  ) {
+    return this.queryUtils.resolveFindMany(findManyArgs, "User")
   }
 
   @Query()
-  async usersConnection(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.usersConnection(args, info)
+  async usersConnection(@Args() args, @Select() select) {
+    return await this.queryUtils.resolveConnection({ ...args, select }, "User")
   }
 
   @Query()

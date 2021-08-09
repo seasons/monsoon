@@ -18,4 +18,5 @@ devnotes.txt
 log*.txt
 logs/*.txt
 coverage/
-
+prisma1/src/
+*.csv

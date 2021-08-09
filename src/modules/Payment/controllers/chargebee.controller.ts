@@ -3,9 +3,9 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
+import { CustomerStatus } from "@prisma/client"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
 import { head, pick } from "lodash"
@@ -55,40 +55,32 @@ export class ChargebeeController {
 
   private async chargebeePaymentSucceeded(content: any) {
     const { subscription, customer, transaction } = content
-    const custWithData: any = head(
-      await this.prisma.binding.query.customers(
-        { where: { user: { id: customer.id } } },
-        `
-        {
-          id
-          status
-          detail {
-            id
-            impactId
-          }
-          user {
-            id
-            firstName
-            lastName
-            email
-          }
-          utm {
-            source
-            medium
-            campaign
-            term
-            content
-          }
-        }
-      `
-      )
-    )
+    const custWithData = await this.prisma.client.customer.findFirst({
+      where: { user: { id: customer.id } },
+      select: {
+        id: true,
+        status: true,
+        detail: { select: { id: true, impactId: true } },
+        user: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        utm: {
+          select: {
+            source: true,
+            medium: true,
+            campaign: true,
+            term: true,
+            content: true,
+          },
+        },
+      },
+    })
 
     if (custWithData?.status === "PaymentFailed") {
       let newStatus: CustomerStatus = subscription.plan_id.includes("pause")
         ? "Paused"
         : "Active"
-      await this.prisma.client.updateCustomer({
+      await this.prisma.client.customer.update({
         where: { id: custWithData.id },
         data: { status: newStatus },
       })
@@ -116,7 +108,7 @@ export class ChargebeeController {
       impactId: custWithData.detail?.impactId,
       impactCustomerStatus: isRecurringSubscription ? "Existing" : null,
       text1: isRecurringSubscription ? "isRecurringSubscription" : "null",
-      ...this.utils.formatUTMForSegment(custWithData.utm),
+      ...this.utils.formatUTMForSegment(custWithData.utm as any),
     })
   }
 
@@ -129,25 +121,17 @@ export class ChargebeeController {
     }
 
     const userId = customer?.id
-    const cust = head(
-      await this.prisma.binding.query.customers(
-        {
-          where: { user: { id: userId } },
-        },
-        `{
-        id
-        status
-        user {
-          id
-          email
-          firstName
-        }
-      }`
-      )
-    ) as any
+    const cust = await this.prisma.client.customer.findFirst({
+      where: { user: { id: userId } },
+      select: {
+        id: true,
+        status: true,
+        user: { select: { id: true, email: true, firstName: true } },
+      },
+    })
     if (!!cust) {
       if (this.statements.isPayingCustomer(cust)) {
-        await this.prisma.client.updateCustomer({
+        await this.prisma.client.customer.update({
           where: { id: cust.id },
           data: { status: "PaymentFailed" },
         })
@@ -169,47 +153,28 @@ export class ChargebeeController {
 
     const { customer_id, plan_id } = subscription
 
-    const customerWithBillingAndUserData: any = head(
-      await this.prisma.binding.query.customers(
-        { where: { user: { id: customer_id } } },
-        `
-        {
-          id
-          billingInfo {
-            id
-          }
-          detail {
-            id
-            impactId
-            discoveryReference
-          }
-          utm {
-            source
-            medium
-            campaign
-            term
-            content
-          }
-          user {
-            id
-            firstName
-            lastName
-            email
-          }
-          referrer {
-            id
-            user {
-              id
-              email
-              firstName
-            }
-            membership {
-              subscriptionId
-            }
-          }
-        }
-      `
-      )
+    const customerWithBillingAndUserData = await this.prisma.client.customer.findUnique(
+      {
+        where: { id: customer.id },
+        select: {
+          id: true,
+          billingInfo: { select: { id: true } },
+          detail: {
+            select: { id: true, impactId: true, discoveryReference: true },
+          },
+          utm: true,
+          user: {
+            select: { id: true, firstName: true, lastName: true, email: true },
+          },
+          referrer: {
+            select: {
+              id: true,
+              user: { select: { id: true, email: true, firstName: true } },
+              membership: { select: { subscriptionId: true } },
+            },
+          },
+        },
+      }
     )
 
     try {

@@ -30,7 +30,7 @@ export class FAQService {
           {
             title: "5. Can I purchase items I want to keep?",
             text:
-              "Select items are available for purchase and more get added over time. If you something you like that doesn’t have a buy button, just send us a note. We may make an exception.",
+              "Select items are available for purchase and more get added over time. If you see something you like that doesn’t have a buy button, just send us a note. We may make an exception.",
           },
           {
             title: "6. How often do you add new items?",

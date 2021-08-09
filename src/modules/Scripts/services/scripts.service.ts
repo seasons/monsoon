@@ -6,6 +6,7 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import AWS from "aws-sdk"
 import chargebee from "chargebee"
+import getStream from "get-stream"
 
 import {
   UpdateConnectionsInputs,
@@ -116,9 +117,10 @@ export class ScriptsService {
       const env = this.readJSONObjectFromFile(envFilePath)
 
       // prisma
-      const { endpoint, secret } = env.prisma[prismaEnv]
+      const { endpoint, secret, url } = env.prisma[prismaEnv]
       process.env.PRISMA_ENDPOINT = endpoint
       process.env.PRISMA_SECRET = secret
+      process.env.DB_WRITE_URL = url
 
       // drip
       const { account, apiKey } = env.drip[dripEnv]

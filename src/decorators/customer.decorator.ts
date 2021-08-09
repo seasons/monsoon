@@ -1,9 +1,7 @@
 import { ExecutionContext, createParamDecorator } from "@nestjs/common"
+import { Customer as PrismaCustomer } from "@prisma/client"
 
-import { Customer as PrismaCustomer } from "../prisma"
-import { PrismaService } from "../prisma/prisma.service"
-
-const prisma = new PrismaService()
+import { PrismaService, readClient } from "../prisma/prisma.service"
 
 export const Customer = createParamDecorator(
   async (data, context: ExecutionContext): Promise<PrismaCustomer> => {
@@ -15,7 +13,7 @@ export const Customer = createParamDecorator(
     const req = ctx.req
 
     const { id: userId } = req.user ? req.user : { id: "" }
-    const customerArray = await prisma.client.customers({
+    const customerArray = await readClient.customer.findMany({
       where: { user: { id: userId } },
     })
     const customer = customerArray.length > 0 ? customerArray[0] : null

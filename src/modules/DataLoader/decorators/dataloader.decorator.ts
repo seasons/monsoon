@@ -1,5 +1,7 @@
 import qs from "querystring"
 
+import { getReturnTypeFromInfo } from "@app/decorators/utils"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { PrismaLoader } from "@app/prisma/prisma.loader"
 import {
   ExecutionContext,
@@ -7,11 +9,16 @@ import {
   createParamDecorator,
 } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
+import { makeOrderByPrisma2Compatible } from "@prisma/binding-argument-transform"
 import { addFragmentToInfo } from "graphql-binding"
 import { cloneDeep, isUndefined, omit } from "lodash"
 import sha1 from "sha1"
 
-import { DataloaderContext, LoaderParams } from "../dataloader.types"
+import {
+  DataloaderContext,
+  LoaderParams,
+  PrismaGenerateParams,
+} from "../dataloader.types"
 import { DataLoaderInterceptor } from "../interceptors/dataloader.interceptor"
 
 export const Loader: (
@@ -62,14 +69,33 @@ export const Loader: (
 
     // If needed, get the info from the context
     if (data.includeInfo === true) {
-      adjustedOptions.params.info = info
+      let adjustedInfo = info as any
+      if (!!adjustedOptions.params.infoFragment) {
+        adjustedInfo = addFragmentToInfo(
+          info,
+          adjustedOptions.params.infoFragment
+        )
+      }
+      const modelName = getReturnTypeFromInfo(info)
+      ;(adjustedOptions.params as PrismaGenerateParams).select = QueryUtilsService.infoToSelect(
+        {
+          info: adjustedInfo,
+          modelName,
+          modelFieldsByModelName: ctx.modelFieldsByModelName,
+        }
+      )
     }
 
     // If needed, get the orderBy from the context
     if (data.includeOrderBy === true) {
-      adjustedOptions.params.orderBy = args.orderBy
+      ;(adjustedOptions.params as PrismaGenerateParams).orderBy = makeOrderByPrisma2Compatible(
+        args.orderBy
+      )
     }
 
+    if (!!adjustedOptions.params) {
+      adjustedOptions.params.ctx = ctx
+    }
     return ctx.getDataLoader(adjustedOptions)
   }
 )
@@ -83,6 +109,12 @@ const createKey = (type, operationName, variables, data) => {
   let paramString = ""
   for (const key of Object.keys(data || {})) {
     paramString += paramToString(data[key])
+  }
+  if (!!data?.params?.formatWhere) {
+    paramString += data.params.formatWhere.toString()
+  }
+  if (!!data?.params?.getKeys) {
+    paramString += data.params.getKeys.toString()
   }
 
   return `${name}-${sha1(paramString)}` // hash param string for brevity

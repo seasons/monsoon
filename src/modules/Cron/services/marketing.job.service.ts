@@ -12,7 +12,6 @@ import { Parser } from "json2csv"
 import { head, isEmpty } from "lodash"
 import moment from "moment"
 
-const EVERY_15_DAYS_AT_6PM = "0 0 18 5,20 * ?"
 @Injectable()
 export class MarketingScheduledJobs {
   private readonly logger = new Logger(MarketingScheduledJobs.name)
@@ -38,10 +37,10 @@ export class MarketingScheduledJobs {
   async syncUnsubscribesFromDrip() {
     this.logger.log(`Run drip unsubscribe sync`)
     const count = await this.dripSync.syncUnsubscribesFromDrip()
-    this.logger.log(`Drip Unsubscribe job unsucrbied ${count} users`)
+    this.logger.log(`Drip Unsubscribe job unsubscribed ${count} users`)
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_6_HOURS)
   async authWindowFollowups() {
     this.logger.log("Run auth window followups job")
     const daySevenFollowupsSent = []
@@ -49,45 +48,35 @@ export class MarketingScheduledJobs {
     const dayThreeFollowupsSent = []
     const dayTwoFollowupsSent = []
     const windowsClosed = []
-
-    const customers = await this.prisma.binding.query.customers(
-      {
-        where: {
-          AND: [
-            // Prior to Jan 26 2021 we had some cases we need to handle manually
-            {
-              admissions: {
-                authorizationWindowClosesAt_gte: new Date(2021, 0, 26),
-              },
+    const customers = await this.prisma.client.customer.findMany({
+      where: {
+        AND: [
+          // Prior to Jan 26 2021 we had some cases we need to handle manually
+          {
+            admissions: {
+              authorizationWindowClosesAt: { gte: new Date(2021, 0, 26) },
             },
-            { status: "Authorized" },
-          ],
+          },
+          { status: "Authorized" },
+        ],
+      },
+      select: {
+        id: true,
+        authorizedAt: true,
+        admissions: { select: { authorizationWindowClosesAt: true } },
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            emails: { select: { emailId: true } },
+            smsReceipts: { select: { id: true, smsId: true } },
+          },
         },
       },
-      `{
-        id
-        authorizedAt
-        admissions {
-          authorizationWindowClosesAt
-        }
-        user {
-          id
-          email
-          firstName
-          emails {
-            emailId
-          }
-          smsReceipts {
-            id
-            smsId
-          }
-        }
-      }`
-    )
-
+    })
     for (const cust of customers) {
       const now = moment()
-
       const dayTwoStarted = moment(cust.authorizedAt)
         .add(1, "d")
         .isSameOrBefore(now)
@@ -109,7 +98,6 @@ export class MarketingScheduledJobs {
       const windowClosed = moment(now).isAfter(
         cust.admissions?.authorizationWindowClosesAt
       )
-
       const receivedEmails = cust.user.emails.map(a => a.emailId)
       const receivedSMSs = cust.user.smsReceipts.map(a => a.smsId)
       const dayTwoFollowupSent = receivedEmails.includes(
@@ -129,13 +117,15 @@ export class MarketingScheduledJobs {
       )
       const daySevenFollowupSent =
         receivedEmails.includes("DaySevenAuthorizationFollowup") ||
-        receivedEmails.includes("TwentyFourHourAuthorizationFollowup") // previous, deprecated email id. Maintain for backwards compatibility.
-
-      const rewaitlistEmailSent = receivedEmails.includes("Rewaitlisted")
-
+        // previous, deprecated email id. Maintain for backwards compatibility.
+        receivedEmails.includes("TwentyFourHourAuthorizationFollowup") ||
+        receivedSMSs.includes("TwentyFourHourLeftAuthorizationFollowup")
+      const rewaitlisted =
+        receivedEmails.includes("Rewaitlisted") ||
+        receivedSMSs.includes("Rewaitlisted")
       // Send rewaitlist email as needed
       if (windowClosed) {
-        if (!rewaitlistEmailSent) {
+        if (!rewaitlisted) {
           const availableStyles = await this.admissions.getAvailableStyles({
             id: cust.id,
           })
@@ -145,7 +135,7 @@ export class MarketingScheduledJobs {
             renderData: { name: cust.user.firstName },
             smsId: "Rewaitlisted",
           })
-          await this.prisma.client.updateCustomer({
+          await this.prisma.client.customer.update({
             where: { id: cust.id },
             data: { status: "Waitlisted" },
           })
@@ -153,7 +143,6 @@ export class MarketingScheduledJobs {
         }
         continue
       }
-
       // Send day 7 email as needed
       if (daySevenStarted) {
         if (!daySevenFollowupSent) {
@@ -173,7 +162,6 @@ export class MarketingScheduledJobs {
         }
         continue
       }
-
       // Send day 6 email as needed
       if (daySixStarted) {
         if (!daySixFollowupSent) {
@@ -181,7 +169,6 @@ export class MarketingScheduledJobs {
         }
         continue
       }
-
       // Send day 5 email if needed
       if (dayFiveStarted) {
         // TODO: Send email
@@ -195,7 +182,6 @@ export class MarketingScheduledJobs {
         }
         continue
       }
-
       // Send day 4 email if needed
       if (dayFourStarted) {
         // TODO: Send email
@@ -203,7 +189,6 @@ export class MarketingScheduledJobs {
         }
         continue
       }
-
       // Send day 3 email if needed
       if (dayThreeStarted) {
         if (!dayThreeFollowupSent) {
@@ -218,7 +203,6 @@ export class MarketingScheduledJobs {
         }
         continue
       }
-
       // Send day 2 email if needed
       if (dayTwoStarted) {
         if (!dayTwoFollowupSent) {
@@ -237,34 +221,27 @@ export class MarketingScheduledJobs {
     })
   }
 
-  @Cron(EVERY_15_DAYS_AT_6PM)
+  @Cron(CronExpression.EVERY_DAY_AT_6PM)
   async admissableBimonthlyNurture() {
-    // Just in case the cron expression is wrong, put a check
-    // to make sure we're doing it on the 1st and 15th only!
+    // Make sure we're doing it every 15 days only
     const todayDate = new Date().getDate()
-    if (![5, 20].includes(todayDate)) {
-      this.error.captureMessage(
-        `Tried to run admissable bimonthly nurture on wrong day: ${todayDate}`
+    if (![1, 15].includes(todayDate)) {
+      this.logger.log(
+        `Not running admissable bimonthly nurture because day is ${todayDate}`
       )
       return
     }
-
-    const waitlistedAdmissableCustomers = await this.prisma.binding.query.customers(
+    const waitlistedAdmissableCustomers = await this.prisma.client.customer.findMany(
       {
         where: {
           AND: [{ admissions: { admissable: true } }, { status: "Waitlisted" }],
         },
-      },
-      `{
-      id
-      user {
-        id
-        email
-        firstName
+        select: {
+          id: true,
+          user: { select: { id: true, email: true, firstName: true } },
+        },
       }
-    }`
     )
-
     for (const cust of waitlistedAdmissableCustomers) {
       const availableStyles = await this.admissions.getAvailableStyles({
         id: cust.id,
@@ -292,81 +269,72 @@ export class MarketingScheduledJobs {
     const oneDapperStreetMediaPartnerId = 183668
     const threadabilityMediaPartnerId = 2253589
     const faiyamRahmanMediaPartnerId = 2729780
-
-    const customersToUpdate = await this.prisma.binding.query.customers(
-      {
-        where: {
-          AND: [
-            // They came through a rev share partner but not through an impact link
-            {
-              detail: {
-                discoveryReference_in: ["onedapperstreet", "threadability"],
-                impactId: null,
-              },
+    const customersToUpdate = await this.prisma.client.customer.findMany({
+      where: {
+        AND: [
+          // They came through a rev share partner but not through an impact link
+          {
+            detail: {
+              discoveryReference: { in: ["onedapperstreet", "threadability"] },
+              impactId: null,
             },
-            {
-              OR: [
-                // We need to upload their Account Creation action
-                {
-                  impactSyncTimings_none: {
+          },
+          {
+            OR: [
+              // We need to upload their Account Creation action
+              {
+                impactSyncTimings: {
+                  none: {
                     AND: [{ type: "Impact" }, { detail: "AccountCreation" }],
                   },
                 },
-                // We need to upload their Authorized User action
-                {
-                  AND: [
-                    { authorizedAt_not: null },
-                    {
-                      impactSyncTimings_none: {
+              },
+              // We need to upload their Authorized User action
+              {
+                AND: [
+                  { authorizedAt: { not: undefined } },
+                  {
+                    impactSyncTimings: {
+                      none: {
                         AND: [{ type: "Impact" }, { detail: "AuthorizedUser" }],
                       },
                     },
-                  ],
-                },
-                // We need to upload their Initial Subscription action
-                {
-                  AND: [
-                    { admissions: { subscribedAt_not: null } },
-                    {
-                      impactSyncTimings_none: {
+                  },
+                ],
+              },
+              // We need to upload their Initial Subscription action
+              {
+                AND: [
+                  { admissions: { subscribedAt: { not: undefined } } },
+                  {
+                    impactSyncTimings: {
+                      none: {
                         AND: [
                           { type: "Impact" },
                           { detail: "InitialSubscription" },
                         ],
                       },
                     },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
-      `{
-        id
-        createdAt
-        authorizedAt
-        admissions {
-          id
-          subscribedAt
-        }
-        user {
-          id
-        }
-        impactSyncTimings {
-          type
-          detail
-        }
-        detail {
-          id
-          discoveryReference
-        }
-      }`
-    )
-
+      select: {
+        id: true,
+        createdAt: true,
+        authorizedAt: true,
+        admissions: { select: { id: true, subscribedAt: true } },
+        user: { select: { id: true } },
+        impactSyncTimings: { select: { type: true, detail: true } },
+        detail: { select: { id: true, discoveryReference: true } },
+      },
+    })
     const syncTimingUpdates = []
     const createSyncTimingUpdateFunc = (cust, detail) => async () =>
-      this.prisma.client.updateCustomer({
+      this.prisma.client.customer.update({
         where: { id: cust.id },
         data: {
           impactSyncTimings: {
@@ -398,10 +366,9 @@ export class MarketingScheduledJobs {
       MediaPartnerId: getMediaPartnerId(cust.detail.discoveryReference),
       Amount: 0.0,
     })
-
     const csvData = []
     for (const cust of customersToUpdate) {
-      const impactSyncTimings = cust.impactSyncTimings.filter(
+      const impactSyncTimings = (cust as any).impactSyncTimings.filter(
         a => a.type === "Impact"
       )
       const shouldUploadAccountCreation = isEmpty(
@@ -413,8 +380,7 @@ export class MarketingScheduledJobs {
       const shouldUploadInitialSubscription =
         isEmpty(
           impactSyncTimings.filter(a => a.detail === "InitialSubscription")
-        ) && !!cust.admissions.subscribedAt
-
+        ) && !!(cust as any).admissions?.subscribedAt
       if (shouldUploadAccountCreation) {
         csvData.push({
           ...createCommonFields(cust),
@@ -436,11 +402,13 @@ export class MarketingScheduledJobs {
         )
       }
       if (shouldUploadInitialSubscription) {
-        const Amount = await this.getInitialSubscriptionAmount(cust.user.id)
+        const Amount = await this.getInitialSubscriptionAmount(
+          (cust as any).user.id
+        )
         csvData.push({
           ...createCommonFields(cust),
           ActionTrackerId: InitialSubscriptionActionTrackerId,
-          EventDate: cust.admissions.subscribedAt,
+          EventDate: (cust as any).admissions.subscribedAt,
           Amount,
         })
         syncTimingUpdates.push(
@@ -448,12 +416,10 @@ export class MarketingScheduledJobs {
         )
       }
     }
-
     if (csvData.length === 0) {
       this.logger.log(`No events to sync`)
       return
     }
-
     const parser = new Parser({
       fields: [
         "CampaignId",
@@ -488,7 +454,6 @@ export class MarketingScheduledJobs {
         },
       ],
     }
-
     try {
       await sgMail.send(msg)
       await Promise.all(syncTimingUpdates.map(a => a()))

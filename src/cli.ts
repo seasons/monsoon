@@ -10,6 +10,8 @@ dotenv.config()
 // Must be imported after dotenv.configure() to ensure that env vars are loaded before making module
 import { ScriptsModule } from "./modules/Scripts/scripts.module"
 
+
+
 async function setup() {
   const app = await NestFactory.createApplicationContext(ScriptsModule)
 

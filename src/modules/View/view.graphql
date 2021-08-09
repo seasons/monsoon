@@ -13,5 +13,5 @@ type View {
 }
 
 type Query {
-  view(viewID: String): View
+  view(viewID: String): View @cacheControl(maxAge: 0)
 }

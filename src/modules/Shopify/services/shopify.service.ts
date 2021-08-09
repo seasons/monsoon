@@ -1,13 +1,13 @@
 import crypto from "crypto"
 import querystring from "querystring"
 
+import { Injectable } from "@nestjs/common"
 import {
   BillingInfo,
   Location,
+  Prisma,
   ShopifyProductVariant,
-  ShopifyProductVariantUpdateInput,
-} from "@app/prisma"
-import { Injectable } from "@nestjs/common"
+} from "@prisma/client"
 import { minBy, pick } from "lodash"
 import { DateTime } from "luxon"
 import request from "request"
@@ -34,6 +34,27 @@ const OAUTH_SCOPES = [
   "read_customers",
   "write_customers",
 ]
+
+const ProductVariantFragment = `
+  id
+  displayName
+  title
+  availableForSale
+  price
+  selectedOptions {
+    name
+    value
+  }
+  product {
+    images(first: 1) {
+      edges {
+        node {
+          transformedSrc
+        }
+      }
+    }
+  }
+`
 
 @Injectable()
 export class ShopifyService {
@@ -104,8 +125,10 @@ export class ShopifyService {
       params: { code: authorizationCode, shop, state: nonce, timestamp },
     })
 
-    const shopifyShop = await this.prisma.client.shopifyShop({
-      shopName: this.getShopName(shop),
+    const shopifyShop = await this.prisma.client.shopifyShop.findFirst({
+      where: {
+        shopName: this.getShopName(shop),
+      },
     })
 
     return shopifyShop && isValidHMAC
@@ -217,6 +240,30 @@ export class ShopifyService {
     }
   }
 
+  async getShopifyProductVariantsByIds(
+    ids: string[],
+    shopName: string,
+    accessToken: string
+  ) {
+    const query = `
+      {
+        productVariants: nodes(ids: ${JSON.stringify(ids)}) {
+          ... on ProductVariant {
+            ${ProductVariantFragment}
+          }
+        }
+      }
+    `
+
+    const data: any = await this.shopifyGraphQLRequest({
+      query,
+      shopName,
+      accessToken,
+    })
+
+    return data.productVariants
+  }
+
   async getShopifyProductVariants({
     after,
     first,
@@ -242,24 +289,7 @@ export class ShopifyService {
       productVariants(${!!after ? `after: "${after}", ` : ""}first: ${first}) {
         edges {
           node {
-            id
-            displayName
-            title
-            availableForSale
-            price
-            selectedOptions {
-              name
-              value
-            }
-            product {
-              images(first: 1) {
-                edges {
-                  node {
-                    transformedSrc
-                  }
-                }
-              }
-            }
+            ${ProductVariantFragment}
           }
           cursor
         }
@@ -667,10 +697,12 @@ export class ShopifyService {
     brandId,
     shopName,
     accessToken,
+    ids,
   }: {
     brandId?: string
     shopName: string
     accessToken: string
+    ids?: string[]
   }): Promise<Array<ShopifyProductVariant>> {
     function timeout(ms) {
       return new Promise(resolve => setTimeout(resolve, ms))
@@ -685,7 +717,7 @@ export class ShopifyService {
             productVariant?.product?.images.edges?.[0]?.node?.transformedSrc
 
           const image = !!imageSrc
-            ? await this.prisma.client.upsertImage({
+            ? await this.prisma.client.image.upsert({
                 where: {
                   url: imageSrc,
                 },
@@ -731,9 +763,9 @@ export class ShopifyService {
                 seconds: PRODUCT_VARIANT_CACHE_SECONDS,
               })
               .toISO(),
-          } as ShopifyProductVariantUpdateInput
+          }
 
-          const result = await this.prisma.client.upsertShopifyProductVariant({
+          const result = await this.prisma.client.shopifyProductVariant.upsert({
             where: {
               externalId: productVariant.id,
             },
@@ -778,8 +810,17 @@ export class ShopifyService {
 
       return updatedProductVariants
     }
+    if (!!ids) {
+      const productVariants = await this.getShopifyProductVariantsByIds(
+        ids,
+        shopName,
+        accessToken
+      )
 
-    await loop({ after: "", productVariants: [] })
+      await processVariants(productVariants)
+    } else {
+      await loop({ after: "", productVariants: [] })
+    }
 
     return shopifyProductVariantResults
   }
@@ -806,18 +847,18 @@ export class ShopifyService {
       }
     )
 
-    return this.prisma.client.updateShopifyProductVariant({
+    const cacheExpiresAt = DateTime.local()
+      .plus({
+        seconds: PRODUCT_VARIANT_CACHE_SECONDS,
+      })
+      .toISO()
+    return this.prisma.client.shopifyProductVariant.update({
       where: { id: shopifyProductVariantInternalId },
       data: {
         externalId: externalShopifyProductVariant.externalId,
-
         cachedPrice: externalShopifyProductVariant.price,
         cachedAvailableForSale: externalShopifyProductVariant.availableForSale,
-        cacheExpiresAt: DateTime.local()
-          .plus({
-            seconds: PRODUCT_VARIANT_CACHE_SECONDS,
-          })
-          .toISO(),
+        cacheExpiresAt,
       },
     })
   }

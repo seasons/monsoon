@@ -1,7 +1,7 @@
+import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { Customer, ID_Input, Location, ShippingCode, User } from "@prisma/index"
-import { PrismaService } from "@prisma/prisma.service"
+import { Customer, ShippingCode, User } from "@prisma/client"
 import { ApolloError } from "apollo-server-errors"
 import { pick } from "lodash"
 import shippo from "shippo"
@@ -38,7 +38,7 @@ export class ShippingService {
   ) {}
 
   async getBuyUsedShippingRate(
-    productVariantId: ID_Input,
+    productVariantId: string,
     user: User,
     customer: Customer
   ): Promise<ShippoRate> {
@@ -66,7 +66,7 @@ export class ShippingService {
   }
 
   async createBuyUsedShippingLabel(
-    productVariantId: ID_Input,
+    productVariantId: string,
     user: User,
     customer: Customer
   ): Promise<ShippoTransaction> {
@@ -94,7 +94,7 @@ export class ShippingService {
   }
 
   async createReservationShippingLabels(
-    newProductVariantsBeingReserved: ID_Input[],
+    newProductVariantsBeingReserved: string[],
     user: User,
     customer: Customer,
     shippingCode: ShippingCode
@@ -139,10 +139,11 @@ export class ShippingService {
     itemIDs: string[]
   ): Promise<number> {
     const shippingBagWeight = 1
-    const productVariants = await this.prisma.client.productVariants({
-      where: { id_in: itemIDs },
+    const productVariants = await this.prisma.client.productVariant.findMany({
+      where: { id: { in: itemIDs } },
+      select: { weight: true },
     })
-    return productVariants.reduce(function addProductWeight(acc, curProdVar) {
+    return productVariants.reduce((acc, curProdVar) => {
       return acc + curProdVar.weight
     }, shippingBagWeight)
   }
@@ -198,12 +199,15 @@ export class ShippingService {
   private async calcTotalRetailPriceFromProductVariantIDs(
     itemIDs: string[]
   ): Promise<number> {
-    const products = await this.prisma.client.products({
+    const products = await this.prisma.client.product.findMany({
       where: {
-        variants_some: {
-          id_in: itemIDs,
+        variants: {
+          some: {
+            id: { in: itemIDs },
+          },
         },
       },
+      select: { retailPrice: true },
     })
     return products.reduce((acc, prod) => acc + prod.retailPrice, 0)
   }
@@ -224,22 +228,28 @@ export class ShippingService {
     }
 
     // Create customer address object
-    const customerShippingAddressPrisma = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .shippingAddress()
-    const customerPhoneNumber = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .phoneNumber()
-    const insureShipmentForCustomer = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .insureShipment()
+
+    const customerData = await this.prisma.client.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        id: true,
+        detail: {
+          select: {
+            shippingAddress: true,
+            id: true,
+            phoneNumber: true,
+            insureShipment: true,
+          },
+        },
+      },
+    })
+    const customerShippingAddressPrisma = customerData.detail.shippingAddress
+    const insureShipmentForCustomer = customerData.detail.insureShipment
+
     const customerAddressShippo = {
       ...this.locationDataToShippoAddress(customerShippingAddressPrisma),
       name: `${user.firstName} ${user.lastName}`,
-      phone: customerPhoneNumber,
+      phone: customerData.detail.phoneNumber,
       country: "US",
       email: user.email,
     }
@@ -323,9 +333,7 @@ export class ShippingService {
     })
   }
 
-  private locationDataToShippoAddress(
-    location: Location
-  ): CoreShippoAddressFields {
+  private locationDataToShippoAddress(location): CoreShippoAddressFields {
     if (location == null) {
       throw new Error("can not extract values from null object")
     }

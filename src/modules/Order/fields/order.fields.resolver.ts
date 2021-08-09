@@ -1,9 +1,8 @@
-import { PrismaService } from "@app/prisma/prisma.service"
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("Order")
 export class OrderFieldsResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor() {}
 
   @ResolveField()
   async salesTaxTotal(@Parent() order) {

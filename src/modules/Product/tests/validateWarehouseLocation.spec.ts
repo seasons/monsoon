@@ -1,77 +1,42 @@
-import { ErrorService } from "@app/modules/Error/services/error.service"
-import {
-  PushNotificationDataProvider,
-  PusherService,
-} from "@app/modules/PushNotification"
-import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { AppModule } from "@app/app.module"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { Brand } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { ImageService } from "@modules/Image/services/image.service"
+import { NestFactory } from "@nestjs/core"
+import { Brand } from "@prisma/client"
 
 import { PhysicalProductService } from "../services/physicalProduct.service"
-import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
-import { ProductService, ProductUtilsService, ProductVariantService } from ".."
 
 describe("Validate Warehouse Location", () => {
   let physicalProductsService: PhysicalProductService
   let prismaService: PrismaService
   let utilsService: UtilsService
 
-  beforeAll(async done => {
-    // Instantiate test service
-    prismaService = new PrismaService()
-    utilsService = new UtilsService(prismaService)
-    let productUtilsService = new ProductUtilsService(
-      prismaService,
-      utilsService
-    )
-    let physicalProductUtilsService = new PhysicalProductUtilsService(
-      prismaService,
-      productUtilsService
-    )
-    let productVariantService = new ProductVariantService(
-      prismaService,
-      productUtilsService,
-      physicalProductUtilsService
-    )
-    const pusher = new PusherService()
-    const error = new ErrorService()
-    const pushData = new PushNotificationDataProvider()
-    physicalProductsService = new PhysicalProductService(
-      prismaService,
-      new PushNotificationService(pusher, pushData, prismaService, error),
-      productVariantService,
-      new ProductService(
-        prismaService,
-        new ImageService(prismaService),
-        productUtilsService,
-        productVariantService,
-        new PhysicalProductUtilsService(prismaService, productUtilsService),
-        utilsService
-      ),
-      physicalProductUtilsService,
-      utilsService
-    )
-
-    done()
+  beforeAll(async () => {
+    const app = await NestFactory.createApplicationContext(AppModule)
+    physicalProductsService = app.get(PhysicalProductService)
+    prismaService = app.get(PrismaService)
+    utilsService = app.get(UtilsService)
   })
 
   describe("Works as expected", () => {
     let testBrand: Brand
 
-    beforeAll(async done => {
-      testBrand = await prismaService.client.createBrand({
-        slug: utilsService.randomString(),
-        brandCode: "000t",
-        name: "testBrand",
-        tier: "Tier0",
+    beforeAll(async () => {
+      testBrand = await prismaService.client.brand.create({
+        data: {
+          slug: utilsService.randomString(),
+          brandCode: "000t",
+          name: "testBrand",
+          tier: "Tier0",
+        },
       })
-      done()
     })
 
     afterAll(
-      async () => await prismaService.client.deleteBrand({ id: testBrand.id })
+      async () =>
+        await prismaService.client.brand.delete({
+          where: { id: testBrand.id },
+        })
     )
 
     it("throws error if invalid barcode given", async () =>

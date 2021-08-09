@@ -1,8 +1,9 @@
 import { User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
+import { Select } from "@app/decorators/select.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
 
@@ -18,11 +19,16 @@ export class AuthMutationsResolver {
 
   @Mutation()
   async login(@Args() { email, password }, @User() requestUser, @Info() info) {
+    const select = {
+      ...this.utils.getSelectFromInfoAt(info, "customer"),
+      ...this.utils.getSelectFromInfoAt(info, "user"),
+    }
+
     const data = await this.auth.loginUser({
       email: email.toLowerCase(),
       password,
       requestUser,
-      info,
+      select,
     })
     return data
   }
@@ -34,6 +40,11 @@ export class AuthMutationsResolver {
     @Application() application,
     @Info() info
   ) {
+    const select = {
+      ...this.utils.getSelectFromInfoAt(info, "customer"),
+      ...this.utils.getSelectFromInfoAt(info, "user"),
+    }
+
     const { user, tokenData, customer } = await this.auth.signupUser({
       email: email.toLowerCase(),
       password,
@@ -42,7 +53,7 @@ export class AuthMutationsResolver {
       details,
       referrerId,
       utm,
-      info,
+      select,
       giftId,
     })
 

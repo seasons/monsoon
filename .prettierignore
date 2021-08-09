@@ -1,3 +1,5 @@
 src/cli.ts
-src/prisma/*.ts
+src/prisma/prisma-schema.ts
+src/prisma/prisma.binding.ts
+src/prisma/index.ts
 ./src/prisma/prisma.graphql

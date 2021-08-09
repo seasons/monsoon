@@ -5,7 +5,7 @@ import { pick } from "lodash"
 
 import { AlgoliaService, IndexKey } from "./algolia.service"
 
-enum SearchResultType {
+export enum SearchResultType {
   Product = "Product",
   Brand = "Brand",
   PhysicalProduct = "PhysicalProduct",
@@ -37,7 +37,10 @@ export class SearchService {
     ])
   }
 
-  async query(query: string, options?: QueryOptions): Promise<any[]> {
+  async query(
+    query: string,
+    options?: QueryOptions
+  ): Promise<{ nbHits: number; hits: any[] }> {
     let filters = !!options?.filters ? options?.filters + " OR " : ""
     let typeFilter = options?.includeTypes
       .map(type => `kindOf:${type}`)
@@ -48,7 +51,27 @@ export class SearchService {
       filters,
     })
 
-    return results.hits
+    return results
+  }
+
+  async updateArgsForSearch(args, type: SearchResultType) {
+    const contains = args?.where?.name?.contains || args?.where?.name_contains
+    if (!!contains) {
+      const updatedArgs = args
+      const searchResult = await this.query(contains, {
+        includeTypes: [type],
+      })
+      const searchResults = searchResult.hits
+      const ids = searchResults.map(result => result.objectID)
+
+      delete updatedArgs.where.name
+      updatedArgs.where.id = {
+        in: ids,
+      }
+
+      return [updatedArgs, searchResult]
+    }
+    return [args]
   }
 
   async getRecentlyViewedProducts() {
@@ -56,26 +79,22 @@ export class SearchService {
     let recentlyViewedProducts = []
     let lastPageRecentlyViewedProducts
     do {
-      lastPageRecentlyViewedProducts = await this.prisma.binding.query.recentlyViewedProducts(
+      lastPageRecentlyViewedProducts = await this.prisma.client.recentlyViewedProduct.findMany(
         {
           skip: recentlyViewedProducts.length,
-          first: PAGE_SIZE,
-          orderBy: "id_DESC",
-        },
-        `
-          {
-            id
-            product {
-              id
-              brand {
-                id
-                name
-                brandCode
-              }
-            }
-            viewCount
-          }
-        `
+          take: PAGE_SIZE,
+          orderBy: { id: "desc" },
+          select: {
+            id: true,
+            product: {
+              select: {
+                id: true,
+                brand: { select: { id: true, name: true, brandCode: true } },
+              },
+            },
+            viewCount: true,
+          },
+        }
       )
 
       recentlyViewedProducts = recentlyViewedProducts.concat(
@@ -87,48 +106,27 @@ export class SearchService {
   }
 
   async indexProducts(indices = [IndexKey.Default]) {
-    const products = await this.prisma.binding.query.products(
-      {},
-      `
-       {
-        id
-        slug
-        name
-        description
-        type
-        images {
-          url
-          __typename
-          updatedAt
-        }
-        retailPrice
-        brand {
-          id
-          name
-          __typename
-        }
-        category {
-          id
-          name
-          __typename
-        }
-        variants {
-          id
-          physicalProducts {
-            id
-          }
-        }
-        tags {
-          name
-        }
-        status
-        createdAt
-        publishedAt
-        updatedAt
-        __typename
-      }
-    `
-    )
+    const products = await this.prisma.client.product.findMany({
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        description: true,
+        type: true,
+        images: { select: { url: true, updatedAt: true } },
+        retailPrice: true,
+        brand: { select: { id: true, name: true } },
+        category: { select: { id: true, name: true } },
+        variants: {
+          select: { id: true, physicalProducts: { select: { id: true } } },
+        },
+        tags: { select: { name: true } },
+        status: true,
+        createdAt: true,
+        publishedAt: true,
+        updatedAt: true,
+      },
+    })
 
     const viewCounts = await this.getRecentlyViewedProducts()
 
@@ -161,7 +159,7 @@ export class SearchService {
 
           const image = images?.[0]
           const imageURL = image?.url
-          const updatedAt = image?.updatedAt as string
+          const updatedAt = image?.updatedAt?.toISOString()
 
           let url = "" //
 
@@ -171,11 +169,11 @@ export class SearchService {
             })
           } catch (err) {}
 
-          return {
+          const payload = {
             objectID: id,
             kindOf: "Product",
             name,
-            brandName: brand.name,
+            brandName: brand?.name,
             image: url,
             description,
             variantsCount,
@@ -184,11 +182,13 @@ export class SearchService {
             type,
             status,
             categoryName: category.name,
-            tags: tags.map(a => a.name),
-            popularity: productViews.length,
-            createdAt: new Date(createdAt).getMilliseconds() / 1000,
-            publishedAt: new Date(publishedAt).getMilliseconds() / 1000,
+            tags: tags?.map(a => a.name),
+            popularity: productViews?.length,
+            createdAt: createdAt?.getTime() / 1000,
+            publishedAt: publishedAt?.getTime() / 1000,
           }
+
+          return payload
         }
       )
     )
@@ -201,27 +201,22 @@ export class SearchService {
   }
 
   async indexBrands(indices = [IndexKey.Default]) {
-    const brands = await this.prisma.binding.query.brands(
-      {},
-      `
-    {
-      id
-      brandCode
-      name
-      description
-      designer
-      isPrimaryBrand
-      tier
-      published
-      websiteUrl
-      products {
-        id
-      }
-      createdAt
-      updatedAt
-    }
-    `
-    )
+    const brands = await this.prisma.client.brand.findMany({
+      select: {
+        id: true,
+        brandCode: true,
+        name: true,
+        description: true,
+        designer: true,
+        isPrimaryBrand: true,
+        tier: true,
+        published: true,
+        websiteUrl: true,
+        products: { select: { id: true } },
+        createdAt: true,
+        updatedAt: true,
+      },
+    })
 
     const viewCounts = await this.getRecentlyViewedProducts()
 
@@ -261,8 +256,8 @@ export class SearchService {
           tier,
           published,
           websiteUrl,
-          createdAt,
-          updatedAt,
+          createdAt: createdAt?.getTime() / 1000,
+          updatedAt: updatedAt?.getTime() / 1000,
         }
       }
     )
@@ -275,27 +270,19 @@ export class SearchService {
   }
 
   async indexCustomers(indices = [IndexKey.Default]) {
-    const customers = await this.prisma.binding.query.customers(
-      {},
-      `
-      {
-        id
-        plan
-        status
-        user {
-          id
-          email
-          firstName
-          lastName
-        }
-        bagItems {
-          id
-        }
-        createdAt
-        updatedAt
-      }
-    `
-    )
+    const customers = await this.prisma.client.customer.findMany({
+      select: {
+        id: true,
+        plan: true,
+        status: true,
+        user: {
+          select: { id: true, email: true, firstName: true, lastName: true },
+        },
+        bagItems: { select: { id: true } },
+        createdAt: true,
+        updatedAt: true,
+      },
+    })
 
     this.logger.log(`Re-indexing ${customers.length} customers...`)
 
@@ -306,12 +293,12 @@ export class SearchService {
           kindOf: "Customer",
           plan,
           status,
-          email: user.email,
+          email: user?.email,
           user,
-          bagItemsCount: bagItems.length,
+          bagItemsCount: bagItems?.length,
           popularity: status === "Active" ? 100 : 0 + bagItems.length * 2,
-          createdAt,
-          updatedAt,
+          createdAt: createdAt?.getTime() / 1000,
+          updatedAt: updatedAt?.getTime() / 1000,
         }
       }
     )
@@ -324,22 +311,17 @@ export class SearchService {
   }
 
   async indexPhysicalProducts(indices = [IndexKey.Default]) {
-    const physicalProducts = await this.prisma.binding.query.physicalProducts(
-      {},
-      `{
-        id
-        seasonsUID
-        inventoryStatus
-        sequenceNumber
-        productVariant {
-          product {
-            name
-          }
-        }
-        __typename
-      }
-    `
-    )
+    const physicalProducts = await this.prisma.client.physicalProduct.findMany({
+      select: {
+        id: true,
+        seasonsUID: true,
+        inventoryStatus: true,
+        sequenceNumber: true,
+        productVariant: {
+          select: { product: { select: { name: true } } },
+        },
+      },
+    })
 
     this.logger.log(
       `Re-indexing ${physicalProducts.length} physical products...`
@@ -350,7 +332,7 @@ export class SearchService {
         return {
           kindOf: "PhysicalProduct",
           objectID: id,
-          productName: data.productVariant.product.name,
+          productName: (data.productVariant as any).product.name,
           barcode: `SZNS` + `${data.sequenceNumber}`.padStart(5, "0"),
           ...pick(data, ["seasonsUID", "inventoryStatus"]),
         }
@@ -371,29 +353,21 @@ export class SearchService {
     indices = [IndexKey.Default],
     brandID?: string
   ) {
-    const shopifyProductVariants = await this.prisma.binding.query.shopifyProductVariants(
+    const shopifyProductVariants = await this.prisma.client.shopifyProductVariant.findMany(
       {
         where: {
-          brand: brandID ? { id: brandID } : { id_not: null },
+          brand: brandID ? { id: brandID } : { id: { not: undefined } },
         },
-      },
-      `{
-        id
-        externalId
-        displayName
-        selectedOptions {
-          name
-          value
-        }
-        brand {
-          id
-          name
-        }
-        title
-        image {
-          url
-        }
-      }`
+        select: {
+          id: true,
+          externalId: true,
+          displayName: true,
+          selectedOptions: { select: { name: true, value: true } },
+          brand: { select: { id: true, name: true } },
+          title: true,
+          image: { select: { url: true } },
+        },
+      }
     )
 
     this.logger.log(

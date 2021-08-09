@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
-import { Location } from "@prisma/prisma.binding"
-import { PrismaService } from "@prisma/prisma.service"
+import { Location } from "@prisma/client"
+import { PrismaService } from "@prisma1/prisma.service"
 import axios from "axios"
 
 @Injectable()
@@ -74,7 +74,11 @@ export class LocationService {
   }
 
   async weather(locationID: string) {
-    const location = await this.prisma.client.location({ id: locationID })
+    const location = await this.prisma.client.location.findUnique({
+      where: {
+        id: locationID,
+      },
+    })
     const weatherData = (await this.getWeatherForLocation(location)) as any
     const weather = weatherData?.weather?.[0]?.id
     const sunrise = weatherData?.sys.sunrise

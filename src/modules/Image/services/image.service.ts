@@ -2,8 +2,8 @@ import qs from "querystring"
 import * as url from "url"
 
 import { Injectable, Logger } from "@nestjs/common"
-import { ID_Input } from "@prisma/index"
-import { PrismaService } from "@prisma/prisma.service"
+import { Image, PrismaPromise } from "@prisma/client"
+import { PrismaService } from "@prisma1/prisma.service"
 import AWS from "aws-sdk"
 import { imageSize } from "image-size"
 import { identity, pickBy } from "lodash"
@@ -72,15 +72,20 @@ export class ImageService {
     try {
       const updatedAt =
         passedOptions.updatedAt ??
-        (await this.prisma.client.image({ url }).updatedAt())
+        (
+          await this.prisma.client.image.findUnique({
+            where: { url },
+            select: { updatedAt: true },
+          })
+        )?.updatedAt
       const updatedAtTimestamp =
         updatedAt && Math.floor(new Date(updatedAt).getTime() / 1000)
       const options: ImageResizerOptions = pickBy(
         {
           retina: true,
           fm: "webp",
-          updatedAt: updatedAtTimestamp,
           ...passedOptions,
+          updatedAt: updatedAtTimestamp,
         },
         identity
       )
@@ -141,8 +146,10 @@ export class ImageService {
       Key: name,
       Body: fileStream,
     }
+
     const result = await this.s3.upload(uploadParams).promise()
     const url = result.Location
+
     // Get image size
     const { width, height } = await new Promise((resolve, reject) => {
       request({ url, encoding: null }, async (err, res, body) => {
@@ -163,7 +170,7 @@ export class ImageService {
 
     return {
       height,
-      url: result.Location,
+      url: S3_BASE + uploadParams.Key,
       width,
     }
   }
@@ -192,13 +199,15 @@ export class ImageService {
               Key: imageName,
               Body: body,
             }
+
             try {
               const result = await this.s3.upload(uploadParams).promise()
+              const url = result.Location
               const { width, height } = imageSize(body)
 
               resolve({
                 height,
-                url: result.Location,
+                url,
                 width,
                 title,
               })
@@ -246,12 +255,16 @@ export class ImageService {
    * @param images of type (string | File)[]
    * @param imageNames: an array of image names
    * @param title: a title for the image, usually the record's slug
+   * @param getPromises: if true, will return array of prisma promises to be awaited by parent function
    */
   async upsertImages(
     images: any[],
     imageNames: string[],
-    title: string
-  ): Promise<{ id: ID_Input }[]> {
+    title: string,
+    getPromises = false
+  ): Promise<
+    { id: string }[] | { promise: PrismaPromise<Image>; url: string }[]
+  > {
     const imageDatas = await Promise.all(
       images.map(async (image, index) => {
         const data = await image
@@ -263,12 +276,14 @@ export class ImageService {
           // Thus, we need to convert it to s3 format and strip any query params as needed.
           const s3BaseURL = S3_BASE.replace(/\/$/, "") // Remove trailing slash
           const s3ImageURL = `${s3BaseURL}${url.parse(data).pathname}`
-          const prismaImage = await this.prisma.client.upsertImage({
+          const prismaImagePromise = this.prisma.client.image.upsert({
             create: { url: s3ImageURL, title },
             update: { url: s3ImageURL, title },
             where: { url: s3ImageURL },
           })
-          return { id: prismaImage.id }
+          return getPromises
+            ? { promise: prismaImagePromise, url: s3ImageURL }
+            : { id: (await prismaImagePromise).id }
         } else {
           // This means that we received a new image in the form of
           // a file in which case we have to upload the image to S3
@@ -283,15 +298,17 @@ export class ImageService {
           await this.purgeS3ImageFromImgix(url)
 
           // Upsert the image with the s3 image url
-          const prismaImage = await this.prisma.client.upsertImage({
+          const prismaImagePromise = this.prisma.client.image.upsert({
             create: { height, url, width, title },
             update: { height, width, title },
             where: { url },
           })
-          return { id: prismaImage.id }
+          return getPromises
+            ? { promise: prismaImagePromise, url }
+            : { id: (await prismaImagePromise).id }
         }
       })
     )
-    return imageDatas
+    return imageDatas as any
   }
 }

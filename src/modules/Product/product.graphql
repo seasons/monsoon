@@ -1,4 +1,4 @@
-# import ProductVariant, Query, Mutation, UpsertVariantInput from "./productVariant.graphql"
+# import ProductVariant, Query, Mutation, CreateVariantInput from "./productVariant.graphql"
 # import PhysicalProduct, Query, Mutation from "./physicalProduct.graphql"
 
 type Query {
@@ -41,7 +41,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): CategoryConnection!
+  ): CategoryConnection! @cacheControl(maxAge: 0)
   colors(
     where: ColorWhereInput
     orderBy: ColorOrderByInput
@@ -50,8 +50,8 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Color]!
-  launch(where: LaunchWhereUniqueInput!): Launch
+  ): [Color]! @cacheControl(maxAge: 0)
+  launch(where: LaunchWhereUniqueInput!): Launch @cacheControl(maxAge: 0)
   launches(
     upcoming: Boolean
     where: LaunchWhereInput
@@ -61,7 +61,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Launch]!
+  ): [Launch]! @cacheControl(maxAge: 0)
   launchesConnection(
     where: LaunchWhereInput
     orderBy: LaunchOrderByInput
@@ -70,8 +70,8 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): LaunchConnection!
-  product(where: ProductWhereUniqueInput!): Product
+  ): LaunchConnection! @cacheControl(maxAge: 0)
+  product(where: ProductWhereUniqueInput!): Product @cacheControl(maxAge: 0)
   products(
     category: String
     brand: String
@@ -87,7 +87,9 @@ type Query {
   productsConnection(
     tops: [String]
     bottoms: [String]
+    colors: [String]
     availableOnly: Boolean
+    forSaleOnly: Boolean
     sizes: [String!]
     category: String
     brand: String
@@ -109,7 +111,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ProductFunction]!
+  ): [ProductFunction]! @cacheControl(maxAge: 0)
   productMaterialCategories(
     where: ProductMaterialCategoryWhereInput
     orderBy: ProductMaterialCategoryOrderByInput
@@ -118,7 +120,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ProductMaterialCategory]!
+  ): [ProductMaterialCategory]! @cacheControl(maxAge: 0)
   productModels(
     where: ProductModelWhereInput
     orderBy: ProductModelOrderByInput
@@ -127,7 +129,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ProductModel]!
+  ): [ProductModel]! @cacheControl(maxAge: 0)
   productNotifications(
     where: ProductNotificationWhereInput
     orderBy: ProductNotificationOrderByInput
@@ -136,7 +138,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ProductNotification]!
+  ): [ProductNotification]! @cacheControl(maxAge: 0)
   productRequests(
     where: ProductRequestWhereInput
     orderBy: ProductRequestOrderByInput
@@ -145,7 +147,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [ProductRequest]!
+  ): [ProductRequest]! @cacheControl(maxAge: 0)
   tags(
     where: TagWhereInput
     orderBy: TagOrderByInput
@@ -154,7 +156,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Tag]!
+  ): [Tag]! @cacheControl(maxAge: 0)
 }
 
 type Mutation {
@@ -164,7 +166,7 @@ type Mutation {
     data: CustomProductUpdateInput!
   ): Product! @hasRole(roles: [Admin])
   addViewedProduct(item: ID!): RecentlyViewedProduct!
-  upsertProduct(input: UpsertProductInput!): Product @hasRole(roles: [Admin])
+  createProduct(input: ProductCreateInput!): Product @hasRole(roles: [Admin])
   addProductRequest(reason: String!, url: String!): ProductRequest!
   createBrand(input: CustomBrandCreateInput!): Brand @hasRole(roles: [Admin])
   updateBrand(
@@ -182,6 +184,13 @@ type Mutation {
     status: PhysicalProductStatus
   ): PhysicalProduct
   createUsedOrder(physicalProductID: ID!): Order!
+}
+
+type AccessorySize {
+  id: ID!
+  bridge: Float
+  length: Float
+  width: Float
 }
 
 type PublishProductsResponse {
@@ -311,14 +320,14 @@ type Brand @cacheControl(maxAge: 1000) {
   updatedAt: DateTime!
 }
 
-input UpsertProductInput {
+input ProductCreateInput {
   architecture: String
   internalSizeType: SizeType
   brandID: String!
   buyNewEnabled: Boolean
   buyUsedEnabled: Boolean!
   buyUsedPrice: Int!
-  categoryName: String!
+  categoryID: String!
   colorCode: String!
   description: String!
   functions: [String!]!
@@ -329,6 +338,7 @@ input UpsertProductInput {
   modelSizeDisplay: String
   modelSizeName: String
   modelSizeType: SizeType
+  externalURL: String
   name: String!
   outerMaterials: [String!]!
   productFit: ProductFit
@@ -339,18 +349,14 @@ input UpsertProductInput {
   status: ProductStatus!
   tags: [String!]!
   type: ProductType!
-  variants: [UpsertVariantInput!]!
+  variants: [CreateVariantInput!]!
   styles: [CustomerStyle!]
-  # Is this a new one?
-  createNew: Boolean!
 }
 
 input CustomProductUpdateInput {
   # Fields from ProductUpdateInput
   architecture: ProductArchitecture
-  brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
-  color: ColorUpdateOneRequiredInput
   description: String
   externalURL: String
   productFit: ProductFit

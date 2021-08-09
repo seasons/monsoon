@@ -1,6 +1,7 @@
-import { ShopifyShopCreateInput, ShopifyShopUpdateInput } from "@app/prisma"
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { Prisma } from "@prisma/client"
+import { PrismaService } from "@prisma1/prisma.service"
 
 import { ShopifyService } from "../services/shopify.service"
 
@@ -8,7 +9,8 @@ import { ShopifyService } from "../services/shopify.service"
 export class ShopifyMutationsResolver {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly shopify: ShopifyService
+    private readonly shopify: ShopifyService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   @Mutation()
@@ -20,40 +22,39 @@ export class ShopifyMutationsResolver {
         shopName: data.shop,
         accessToken: data.accessToken,
         enabled: true,
-        scope: {
-          set: data.scope.split(","),
-        },
-      } as ShopifyShopUpdateInput
+      } as Prisma.ShopifyShopUpdateInput
 
-      await this.prisma.client.upsertShopifyShop({
+      const shop = await this.prisma.client.shopifyShop.findUnique({
+        where: { shopName: data.shop },
+        select: { id: true },
+      })
+
+      await this.prisma.client.shopifyShop.upsert({
         where: {
           shopName: data.shop,
         },
         create: {
           ...mutationData,
-        } as ShopifyShopCreateInput,
+          scope: data.scope.split(","),
+        } as Prisma.ShopifyShopCreateInput,
         update: {
           ...mutationData,
+          scope: data.scope.split(","),
         },
       })
-
-      await this.shopify.importProductVariants({
-        shopName: data.shop,
-        accessToken: data.accessToken,
-      })
     }
-    console.log(data)
   }
 
   @Mutation()
-  async importShopifyData(@Args() { shopName }) {
-    const shopifyShop = await this.prisma.client.shopifyShop({
-      shopName,
+  async importShopifyData(@Args() { shopName, ids }) {
+    const shopifyShop = await this.prisma.client.shopifyShop.findUnique({
+      where: { shopName },
     })
 
     await this.shopify.importProductVariants({
       shopName: shopifyShop.shopName,
       accessToken: shopifyShop.accessToken,
+      ids,
     })
 
     return true

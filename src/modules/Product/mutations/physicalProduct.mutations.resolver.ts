@@ -1,7 +1,8 @@
-import { PhysicalProduct } from "@app/prisma"
+import { Select } from "@app/decorators/select.decorator"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import { head } from "lodash"
+import { makeWherePrisma2Compatible } from "@prisma/binding-argument-transform"
 
 import { PhysicalProductService } from "../services/physicalProduct.service"
 
@@ -9,11 +10,12 @@ import { PhysicalProductService } from "../services/physicalProduct.service"
 export class PhysicalProductMutationsResolver {
   constructor(
     private readonly physicalProductService: PhysicalProductService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   @Mutation()
-  async updatePhysicalProduct(@Args() { where, data }, @Info() info) {
+  async updatePhysicalProduct(@Args() { where, data }, @Select() select) {
     if (data.price) {
       data.price = {
         upsert: { update: data.price, create: data.price },
@@ -23,58 +25,54 @@ export class PhysicalProductMutationsResolver {
     return await this.physicalProductService.updatePhysicalProduct({
       where,
       data,
-      info,
+      select,
     })
   }
 
   @Mutation()
-  async updateManyPhysicalProducts(@Args() args, @Info() info) {
-    return await this.prisma.binding.mutation.updateManyPhysicalProducts(
-      args,
-      info
-    )
+  async updateManyPhysicalProducts(@Args() args) {
+    const prisma2Where = makeWherePrisma2Compatible(args.where)
+    return this.prisma.client.physicalProduct.updateMany({
+      ...args,
+      where: prisma2Where,
+    })
   }
 
   @Mutation()
-  async createPhysicalProductQualityReport(@Args() args, @Info() info) {
-    return await this.prisma.binding.mutation.createPhysicalProductQualityReport(
-      args,
-      info
+  async createPhysicalProductQualityReport(@Args() { data }, @Select() select) {
+    const prisma2Data = this.queryUtils.prismaOneToPrismaTwoMutateData(
+      data,
+      "PhysicalProductQualityReport"
     )
+    return await this.prisma.client.physicalProductQualityReport.create({
+      data: prisma2Data,
+      select,
+    })
   }
 
   @Mutation()
-  async updatePhysicalProductByBarcode(@Args() args, @Info() info) {
+  async updatePhysicalProductByBarcode(@Args() args, @Select() select) {
     const { barcode, status } = args
     const sequenceNumber = parseInt(barcode.replace("SZNS", ""), 10)
 
-    const physicalProduct: PhysicalProduct = head(
-      await this.prisma.binding.query.physicalProducts(
-        {
-          where: {
-            sequenceNumber,
-          },
-        },
-        `
-      {
-        id
-        seasonsUID
-        productStatus
-      }
-    `
-      )
-    )
+    const physicalProduct = await this.prisma.client.physicalProduct.findFirst({
+      where: {
+        sequenceNumber,
+      },
+      select: { id: true, seasonsUID: true, productStatus: true },
+    })
 
     let updatedPhysicalProduct
 
     if (physicalProduct) {
-      updatedPhysicalProduct = await this.prisma.client.updatePhysicalProduct({
+      updatedPhysicalProduct = await this.prisma.client.physicalProduct.update({
         where: {
           seasonsUID: physicalProduct.seasonsUID,
         },
         data: {
           productStatus: status,
         },
+        select,
       })
     }
 

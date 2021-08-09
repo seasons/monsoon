@@ -1,11 +1,10 @@
 import {
-  CustomerDetailCreateInput,
   InventoryStatus,
   PhysicalProductStatus,
-  ProductCreateInput,
   UserPushNotificationInterestType,
-} from "@app/prisma"
-import { PrismaService } from "@prisma/prisma.service"
+} from "@prisma/client"
+import { Prisma } from "@prisma/client"
+import { PrismaService } from "@prisma1/prisma.service"
 
 import {
   CreateTestCustomerInput,
@@ -15,12 +14,14 @@ import {
   CreateTestProductOutput,
   CreateTestProductVariantInput,
 } from "../utils.types"
+import { QueryUtilsService } from "./queryUtils.service"
 import { UtilsService } from "./utils.service"
 
 export class TestUtilsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly queryUtils: QueryUtilsService
   ) {}
 
   /* 
@@ -34,21 +35,32 @@ export class TestUtilsService {
     { variants, type = "Top" }: CreateTestProductInput,
     info = `{id}`
   ): Promise<CreateTestProductOutput> {
-    const color = await this.prisma.client.createColor({
-      slug: this.utils.randomString(),
-      name: this.utils.randomString(),
-      colorCode: this.utils.randomString(),
-      hexCode: this.utils.randomString(),
+    const color = await this.prisma.client.color.create({
+      data: {
+        slug: this.utils.randomString(),
+        name: this.utils.randomString(),
+        colorCode: this.utils.randomString(),
+        hexCode: this.utils.randomString(),
+      },
     })
-    const brand = await this.prisma.client.createBrand({
-      slug: this.utils.randomString(),
-      brandCode: this.utils.randomString(),
-      name: "",
-      tier: "Tier0",
+
+    const brand = await this.prisma.client.brand.create({
+      data: {
+        slug: this.utils.randomString(),
+        brandCode: this.utils.randomString(),
+        name: "",
+        tier: "Tier0",
+        isPrimaryBrand: true,
+        published: true,
+        featured: true,
+      },
     })
-    const category = await this.prisma.client.createCategory({
-      slug: this.utils.randomString(),
-      name: this.utils.randomString(),
+
+    const category = await this.prisma.client.category.create({
+      data: {
+        slug: this.utils.randomString(),
+        name: this.utils.randomString(),
+      },
     })
 
     const data = {
@@ -66,7 +78,6 @@ export class TestUtilsService {
                 id: color.id,
               },
             },
-            productID: this.utils.randomString(),
             total: v.physicalProducts.length,
             reservable: this.getInventoryStatusCount(v, "Reservable"),
             reserved: this.getInventoryStatusCount(v, "Reserved"),
@@ -88,18 +99,17 @@ export class TestUtilsService {
         }),
       },
       name: "",
-    } as ProductCreateInput
+    } as Prisma.ProductCreateInput
 
-    const product = await this.prisma.binding.mutation.createProduct(
-      { data },
-      info
-    )
+    const product = await this.prisma.client.product.create({
+      data,
+    })
 
     const cleanupFunc = async () => {
-      await this.prisma.client.deleteProduct({ id: product.id })
-      await this.prisma.client.deleteColor({ id: color.id })
-      await this.prisma.client.deleteBrand({ id: brand.id })
-      await this.prisma.client.deleteCategory({ id: category.id })
+      await this.prisma.client.product.delete({ where: { id: product.id } })
+      await this.prisma.client.color.delete({ where: { id: color.id } })
+      await this.prisma.client.brand.delete({ where: { id: brand.id } })
+      await this.prisma.client.category.delete({ where: { id: category.id } })
     }
 
     return {
@@ -110,30 +120,28 @@ export class TestUtilsService {
 
   async createTestCustomer(
     input: CreateTestCustomerInput,
-    info = `{
-      id
-      detail {
-        shippingAddress {
-          id
-        }
-      }
-      user {
-        id
-      }
-    }`
+    select = {
+      id: true,
+      detail: {
+        select: {
+          shippingAddress: { select: { id: true } },
+        },
+      },
+      user: { select: { id: true } },
+    } as any
   ): Promise<CreateTestCustomerOutput> {
     const detail = !!input.detail
       ? {
           create: {
-            topSizes: { set: input.detail.topSizes || [] },
-            waistSizes: { set: input.detail.waistSizes || [] },
+            topSizes: input.detail.topSizes,
+            waistSizes: input.detail.waistSizes,
             shippingAddress: {
               create: {
                 zipCode: "10013",
               },
             },
             phoneOS: input.detail?.phoneOS,
-          } as CustomerDetailCreateInput,
+          } as Prisma.CustomerDetailCreateInput,
         }
       : {}
 
@@ -151,34 +159,30 @@ export class TestUtilsService {
       }
     }
 
-    const createdCustomer = await this.prisma.binding.mutation.createCustomer(
-      {
-        data: {
-          status: input.status || "Active",
-          user: {
-            create: {
-              auth0Id: this.utils.randomString(),
-              email: this.utils.randomString() + "@seasons.nyc",
-              firstName: this.utils.randomString(),
-              lastName: this.utils.randomString(),
-            },
+    const createdCustomer = await this.prisma.client.customer.create({
+      data: {
+        status: input.status || "Active",
+        user: {
+          create: {
+            auth0Id: this.utils.randomString(),
+            email: this.utils.randomString() + "@seasons.nyc",
+            firstName: this.utils.randomString(),
+            lastName: this.utils.randomString(),
           },
-          detail,
-          membership,
+        },
+        detail,
+        membership,
+      },
+      select: {
+        id: true,
+        detail: { select: { shippingAddress: { select: { id: true } } } },
+        user: {
+          select: {
+            id: true,
+          },
         },
       },
-      `{
-        id
-        detail {
-          shippingAddress {
-            id
-          }
-        }
-        user {
-          id
-        }
-      }`
-    )
+    })
 
     const defaultPushNotificationInterests = [
       "General",
@@ -187,19 +191,21 @@ export class TestUtilsService {
       "NewProduct",
     ] as UserPushNotificationInterestType[]
 
-    const pushNotif = await this.prisma.client.createUserPushNotification({
-      interests: {
-        create: defaultPushNotificationInterests.map(type => ({
-          type,
-          value: "",
-          user: { connect: { id: createdCustomer.user.id } },
-          status: true,
-        })),
+    const pushNotif = await this.prisma.client.userPushNotification.create({
+      data: {
+        interests: {
+          create: defaultPushNotificationInterests.map(type => ({
+            type,
+            value: "",
+            user: { connect: { id: createdCustomer.user.id } },
+            status: true,
+          })),
+        },
+        status: true,
       },
-      status: true,
     })
 
-    await this.prisma.client.updateUser({
+    await this.prisma.client.user.update({
       where: { id: createdCustomer.user.id },
       data: {
         pushNotification: {
@@ -214,7 +220,15 @@ export class TestUtilsService {
         1
       )) {
         await new Promise(r => setTimeout(r, 2000))
-        await this.prisma.client.updateCustomer({
+        await this.prisma.client.customer.update({
+          where: { id: createdCustomer.id },
+          data: {
+            membership: {
+              update: { pauseRequests: { create: pauseRequestCreateInput } },
+            },
+          },
+        })
+        await this.prisma.client.customer.update({
           where: { id: createdCustomer.id },
           data: {
             membership: {
@@ -225,25 +239,34 @@ export class TestUtilsService {
       }
     }
 
-    const returnedCustomer = await this.prisma.binding.query.customer(
-      { where: { id: createdCustomer.id } },
-      info
-    )
+    const returnedCustomer = await this.prisma.client.customer.findFirst({
+      where: { id: createdCustomer.id },
+      select,
+    })
 
     const cleanupFunc = async () => {
-      await this.prisma.client.deleteManyCustomerAdmissionsDatas({
-        customer: { id: createdCustomer.id },
+      await this.prisma.client.customerAdmissionsData.deleteMany({
+        where: { id: createdCustomer.id },
       })
-      await this.prisma.client.deleteManyUserPushNotificationInterests({
-        user: { id: createdCustomer.user.id },
+
+      await this.prisma.client.userPushNotificationInterest.deleteMany({
+        where: {
+          user: { id: createdCustomer.user.id },
+        },
       })
-      await this.prisma.client.deleteUserPushNotification({ id: pushNotif.id })
+
+      await this.prisma.client.userPushNotification.delete({
+        where: { id: pushNotif.id },
+      })
+
       if (!!createdCustomer.detail?.shippingAddress?.id) {
-        await this.prisma.client.deleteLocation({
-          id: createdCustomer.detail.shippingAddress.id,
+        await this.prisma.client.location.delete({
+          where: { id: createdCustomer.detail.shippingAddress.id },
         })
       }
-      await this.prisma.client.deleteCustomer({ id: createdCustomer.id })
+      await this.prisma.client.customer.delete({
+        where: { id: createdCustomer.id },
+      })
     }
     return { cleanupFunc, customer: returnedCustomer }
   }

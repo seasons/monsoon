@@ -13,6 +13,18 @@ import {
 const maxTitleLength = 50
 const maxBodyLength = 110
 
+export const AllPushNotificationIDs = [
+  "Custom",
+  "CompleteAccount",
+  "NewBlogPost",
+  "ReservationShipped",
+  "ReservationDelivered",
+  "ResetBag",
+  "ReturnDue",
+  "PublishFitPic",
+  "ProductRestock",
+] as const
+
 @Injectable()
 export class PushNotificationDataProvider {
   getPushNotifData(
@@ -31,7 +43,7 @@ export class PushNotificationDataProvider {
       data = this.interpolateJSONObjectWithMustache(data, vars)
     }
 
-    this.enforceLengths(alert)
+    this.enforceLengths(alert, pushNotifID)
 
     const now = new Date()
     const receiptPayload = {
@@ -53,12 +65,19 @@ export class PushNotificationDataProvider {
     }
   }
 
-  private enforceLengths(alert: AlertPayload): AlertPayload {
+  private enforceLengths(
+    alert: AlertPayload,
+    pushNotifID: PushNotificationID
+  ): AlertPayload {
     if (alert.title?.length > maxTitleLength) {
-      throw new Error("Push notification title exceeds max length of 50 chars")
+      throw new Error(
+        `Push notification ${pushNotifID} title exceeds max length of 50 chars`
+      )
     }
     if (alert.body?.length > maxBodyLength) {
-      throw new Error("Push notification body exceeds max length of 110 chars")
+      throw new Error(
+        `Push notification ${pushNotifID} body exceeds max length of 110 chars`
+      )
     }
     return alert
   }

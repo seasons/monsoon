@@ -1,16 +1,9 @@
 import { PushNotificationReceiptCreateInput } from "@app/prisma/prisma.binding"
+import { Prisma } from "@prisma/client"
 
-export type PushNotificationID =
-  | "Custom"
-  | "CompleteAccount"
-  | "NewBlogPost"
-  | "ResumeReminder"
-  | "ReservationShipped"
-  | "ReservationDelivered"
-  | "ResetBag"
-  | "ReturnDue"
-  | "PublishFitPic"
-  | "ProductRestock"
+import { AllPushNotificationIDs } from "./services/pushNotification.data.service"
+
+export type PushNotificationID = typeof AllPushNotificationIDs[number]
 export type PushNotificationInterest = "seasons-general-notifications"
 export type PushNotificationVars = NewBlogPostVars | {}
 
@@ -32,6 +25,7 @@ interface PushNotifyFuncInput {
   pushNotifID: PushNotificationID
   vars?: any
   debug?: boolean
+  select?: Prisma.PushNotificationReceiptSelect
 }
 
 export interface ApplePushNotification {
@@ -39,5 +33,5 @@ export interface ApplePushNotification {
 }
 export interface PushNotificationData {
   notificationPayload: ApplePushNotification
-  receiptPayload: Omit<PushNotificationReceiptCreateInput, "users">
+  receiptPayload: Omit<PushNotificationReceiptCreateInput, "users" | "id">
 }

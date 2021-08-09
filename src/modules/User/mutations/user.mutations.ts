@@ -1,7 +1,8 @@
 import { User } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
 import { DripService } from "@app/modules/Drip/services/drip.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
+import { PrismaService } from "@prisma1/prisma.service"
 
 @Resolver()
 export class UserMutationsResolver {
@@ -12,9 +13,9 @@ export class UserMutationsResolver {
 
   @Mutation()
   async unsubscribeUserFromEmails(@Args() { id }) {
-    const u = await this.prisma.client.user({ id })
+    const u = await this.prisma.client.user.findUnique({ where: { id } })
     if (!!u) {
-      await this.prisma.client.updateUser({
+      await this.prisma.client.user.update({
         where: { id },
         data: { sendSystemEmails: false },
       })
@@ -26,52 +27,44 @@ export class UserMutationsResolver {
   async updateUserPushNotificationStatus(
     @Args() { newStatus },
     @User() user,
-    @Info() info
+    @Select() select
   ) {
     if (!user) {
       throw new Error("Missing user from context")
     }
 
-    const memberWithPushNotification = await this.prisma.binding.query.user(
+    const memberWithPushNotification = await this.prisma.client.user.findUnique(
       {
         where: { id: user.id },
-      },
-      `
-    {
-      id
-      pushNotification {
-        id
+        select: { id: true, pushNotification: { select: { id: true } } },
       }
-    }
-    `
     )
 
-    const returnVal = await this.prisma.binding.mutation.updateUserPushNotification(
-      {
-        where: {
-          id: memberWithPushNotification.pushNotification.id,
-        },
-        data: { status: newStatus },
+    return await this.prisma.client.userPushNotification.update({
+      where: {
+        id: memberWithPushNotification.pushNotification.id,
       },
-      info
-    )
-    return returnVal
+      data: { status: newStatus },
+      select,
+    })
   }
 
   @Mutation()
-  async updateUser(@Args() { data, where }, @Info() info) {
-    const result = await this.prisma.binding.mutation.updateUser({
+  async updateUser(@Args() { data, where }, @Select() select) {
+    return await this.prisma.client.user.update({
       where,
       data,
+      select,
     })
-    return result
   }
 
   @Mutation()
   async createInterestedUser(@Args() { email, zipcode }, @Info() info) {
-    const interestUser = await this.prisma.client.createInterestedUser({
-      email,
-      zipcode,
+    const interestUser = await this.prisma.client.interestedUser.create({
+      data: {
+        email,
+        zipcode,
+      },
     })
 
     // TODO: Subscribe user to newsletter and send welcome email

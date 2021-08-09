@@ -1,15 +1,15 @@
 import { PushNotificationID } from "@app/modules/PushNotification/pushNotification.types"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { PrismaService } from "@app/prisma/prisma.service"
+import { Body, Controller, Logger, Post } from "@nestjs/common"
 import {
   Package,
   PackageTransitEventStatus,
   Reservation,
   ReservationPhase,
   ReservationStatus,
-} from "@app/prisma"
-import { PackageTransitEventSubStatus } from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
-import { Body, Controller, Logger, Post } from "@nestjs/common"
+} from "@prisma/client"
+import { PackageTransitEventSubStatus } from "@prisma/client"
 import casify from "camelcase-keys"
 import { camelCase, head, isObject, upperFirst } from "lodash"
 
@@ -41,11 +41,6 @@ export type ShippoData = {
     transaction?: string
   }
   test?: boolean
-}
-
-export type ReservationWithPackage = Reservation & {
-  sentPackage: Package
-  returnedPackage: Package
 }
 
 /**
@@ -86,30 +81,22 @@ export class ShippoController {
 
     switch (event) {
       case ShippoEventType.TrackUpdated:
-        const reservation: ReservationWithPackage = head(
-          await this.prisma.binding.query.reservations(
-            {
-              where: {
-                OR: [
-                  { sentPackage: { transactionID } },
-                  { returnedPackage: { transactionID } },
-                ],
-              },
-            },
-            `{
-              id
-              status
-              receivedAt
-              shippedAt
-              sentPackage {
-                transactionID
-              }
-              returnedPackage {
-                transactionID
-              }
-          }`
-          )
-        )
+        const reservation = await this.prisma.client.reservation.findFirst({
+          where: {
+            OR: [
+              { sentPackage: { transactionID } },
+              { returnedPackage: { transactionID } },
+            ],
+          },
+          select: {
+            id: true,
+            status: true,
+            receivedAt: true,
+            shippedAt: true,
+            sentPackage: true,
+            returnedPackage: true,
+          },
+        })
 
         if (reservation.status === "Completed") {
           break
@@ -134,25 +121,25 @@ export class ShippoController {
           this.logger.error(e)
         }
 
-        const updatedPackage = head(
-          await this.prisma.client.packages({
-            where: {
-              transactionID,
-            },
-          })
-        )
+        const updatedPackage = await this.prisma.client.package.findFirst({
+          where: {
+            transactionID,
+          },
+        })
 
-        packageTransitEvent = await this.prisma.client.createPackageTransitEvent(
+        packageTransitEvent = await this.prisma.client.packageTransitEvent.create(
           {
-            status,
-            subStatus,
-            data: result,
-            package: { connect: { id: updatedPackage.id } },
+            data: {
+              status,
+              subStatus,
+              data: JSON.stringify(result),
+              package: { connect: { id: updatedPackage.id } },
+            },
           }
         )
 
         if (updatedPackage) {
-          await this.prisma.client.updatePackage({
+          await this.prisma.client.package.update({
             where: {
               id: updatedPackage.id,
             },
@@ -166,7 +153,7 @@ export class ShippoController {
           })
         }
 
-        await this.prisma.client.updateReservation({
+        await this.prisma.client.reservation.update({
           where: { id: reservation.id },
           data: {
             status: reservationStatus,
@@ -193,10 +180,7 @@ export class ShippoController {
     return packageTransitEvent
   }
 
-  reservationPhase(
-    reservation: ReservationWithPackage,
-    transactionID: string
-  ): ReservationPhase {
+  reservationPhase(reservation, transactionID: string): ReservationPhase {
     if (reservation.sentPackage.transactionID === transactionID) {
       return "BusinessToCustomer"
     }
@@ -205,96 +189,113 @@ export class ShippoController {
 
   async updateLastLocation(
     reservationStatus: ReservationStatus,
-    reservation: ReservationWithPackage,
+    reservation,
     phase: ReservationPhase
   ) {
     if (reservationStatus === "Delivered") {
-      const reservationWithData = await this.prisma.binding.query.reservation(
-        { where: { id: reservation.id } },
-        `
+      const reservationWithData = await this.prisma.client.reservation.findFirst(
         {
-          id
-          customer {
-            id
-          }
-          products {
-            id
-          }
+          where: { id: reservation.id },
+          select: {
+            id: true,
+            customer: true,
+            products: true,
+          },
         }
-      `
       )
 
       let location
       if (phase === "BusinessToCustomer") {
-        const customerWithShippingAddress = await this.prisma.binding.query.customer(
-          { where: { id: reservationWithData.customer.id } },
-          `
+        const customerWithShippingAddress = await this.prisma.client.customer.findUnique(
           {
-            id
-            detail {
-              id
-              shippingAddress {
-                id
-              }
-            }
+            where: { id: reservationWithData.customer.id },
+            select: {
+              id: true,
+              detail: {
+                select: {
+                  id: true,
+                  shippingAddress: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
           }
-        `
         )
+
         location = customerWithShippingAddress.detail.shippingAddress
       } else if (phase === "CustomerToBusiness") {
-        location = await this.prisma.client.location({
-          slug:
-            process.env.SEASONS_CLEANER_LOCATION_SLUG ||
-            "seasons-cleaners-official",
+        location = await this.prisma.client.location.findFirst({
+          where: {
+            slug:
+              process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+              "seasons-cleaners-official",
+          },
         })
       }
 
+      const promises = []
+
       reservationWithData.products?.forEach(async product => {
-        await this.prisma.client.updatePhysicalProduct({
-          where: { id: product.id },
+        promises.push(
+          this.prisma.client.physicalProduct.update({
+            where: { id: product.id },
+            data: {
+              location: {
+                connect: {
+                  id: location.id,
+                },
+              },
+            },
+          })
+        )
+      })
+
+      promises.push(
+        this.prisma.client.reservation.update({
+          where: { id: reservation.id },
           data: {
-            location: {
+            phase,
+            lastLocation: {
               connect: {
                 id: location.id,
               },
             },
           },
         })
-      })
+      )
 
-      await this.prisma.client.updateReservation({
-        where: { id: reservation.id },
-        data: {
-          phase,
-          lastLocation: {
-            connect: {
-              id: location.id,
-            },
-          },
-        },
-      })
+      await this.prisma.client.$transaction(promises)
     }
   }
 
   async sendPushNotificationForReservationStatus(
     status: ReservationStatus,
-    reservation: Reservation
+    reservation
   ) {
-    const user = await this.prisma.client
-      .reservation({ id: reservation.id })
-      .user()
+    const user = (
+      await this.prisma.client.reservation.findUnique({
+        where: { id: reservation.id },
+        select: {
+          id: true,
+          user: true,
+        },
+      })
+    ).user
 
     const pushNotifID = `Reservation${status}` as PushNotificationID
 
     if (["Shipped", "Delivered"].includes(status)) {
-      const receipt = head(
-        await this.prisma.client.pushNotificationReceipts({
+      const receipt = await this.prisma.client.pushNotificationReceipt.findFirst(
+        {
           where: {
-            users_every: { id: user.id },
+            users: { every: { id: user.id } },
             recordID: reservation.id,
             notificationKey: pushNotifID,
           },
-        })
+        }
       )
 
       if (!receipt) {

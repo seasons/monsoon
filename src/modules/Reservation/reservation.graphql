@@ -1,6 +1,7 @@
 type Query {
   reservation(where: ReservationWhereUniqueInput!): Reservation
     @hasRole(roles: [Customer, Admin, Partner])
+    @cacheControl(maxAge: 0)
   reservations(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput
@@ -9,7 +10,9 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Reservation]! @hasRole(roles: [Customer, Admin, Partner])
+  ): [Reservation]!
+    @hasRole(roles: [Customer, Admin, Partner])
+    @cacheControl(maxAge: 0)
   reservationsConnection(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput
@@ -18,8 +21,10 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): ReservationConnection! @hasRole(roles: [Customer, Admin, Partner])
-  reservationFeedback: ReservationFeedback
+  ): ReservationConnection!
+    @hasRole(roles: [Customer, Admin, Partner])
+    @cacheControl(maxAge: 0)
+  reservationFeedback: ReservationFeedback @cacheControl(maxAge: 0)
 }
 
 type Mutation {
@@ -28,17 +33,48 @@ type Mutation {
     options: ReserveItemsOptions
     shippingCode: ShippingCode
   ): Reservation @hasRole(roles: [Customer])
+  draftReservationLineItems(hasFreeSwap: Boolean): [OrderLineItem!]
   checkItemsAvailability(items: [ID!]!): Boolean! @hasRole(roles: [Customer])
   updateReservationFeedback(
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback! @hasRole(roles: [Customer, Admin])
+  updateProductReservationFeedback(
+    reservationFeedbackID: ID!
+    productReservationID: ID!
+    input: ProductVariantFeedbackUpdateInput!
+    responses: JSON
+  ): ProductVariantFeedback! @hasRole(roles: [Customer])
   processReservation(data: ReservationProcessReturnInput!): ReservationReceipt
     @hasRole(roles: [Admin, Partner])
   updateReservation(
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
   ): Reservation @hasRole(roles: [Admin])
+  returnItems(items: [ID!]!): Reservation @hasRole(roles: [Customer])
+  cancelReturn: Reservation @hasRole(roles: [Customer])
+}
+
+type ReservationFeedback {
+  id: ID!
+  comment: String
+    @deprecated(reason: "replaced with ProductVariantFeedback.review")
+  feedbacks(
+    where: ProductVariantFeedbackWhereInput
+    orderBy: ProductVariantFeedbackOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductVariantFeedback!]
+  rating: Rating
+    @deprecated(reason: "replaced with ProductVariantFeedback.rating")
+  user: User!
+  reservation: Reservation!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  respondedAt: DateTime
 }
 
 input ReservationWhereInput {
@@ -165,8 +201,10 @@ type Reservation @cacheControl(maxAge: 0) {
   returnedPackage: Package
   feedback: ReservationFeedback
   lastLocation: Location
+  lineItems: [OrderLineItem]
   products: [PhysicalProduct!]!
   newProducts: [PhysicalProduct!]!
+  returnedProducts: [PhysicalProduct!]!
   packageEvents(
     where: PackageTransitEventWhereInput
     orderBy: PackageTransitEventOrderByInput
@@ -186,6 +224,7 @@ type Reservation @cacheControl(maxAge: 0) {
   reminderSentAt: DateTime
   statusUpdatedAt: DateTime
   returnAt: DateTime
+  returnedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
   adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])

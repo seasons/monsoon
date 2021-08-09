@@ -1,6 +1,6 @@
 import { ImageService } from "@app/modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "@prisma/prisma.service"
+import { PrismaService } from "@prisma1/prisma.service"
 import slugify from "slugify"
 
 @Injectable()
@@ -33,7 +33,7 @@ export class CollectionService {
       placements: data.productIDs && { set: data.placements },
     }
 
-    return this.prisma.client.upsertCollection({
+    return this.prisma.client.collection.upsert({
       where: { id: data.id || "" },
       create: {
         slug,

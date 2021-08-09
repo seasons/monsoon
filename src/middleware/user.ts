@@ -1,9 +1,11 @@
-const Sentry = require("@sentry/node")
+import { PrismaClient } from "@prisma/client"
+import * as Sentry from "@sentry/node"
+
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
 
-export function createGetUserMiddleware(prisma) {
+export function createGetUserMiddleware(prisma: PrismaClient, logger) {
   return (req, res, next) => {
     // Get auth0 user from request
     const auth0User = req.user
@@ -14,7 +16,7 @@ export function createGetUserMiddleware(prisma) {
     // Get user from prisma
     const { sub } = auth0User
     const auth0Id = sub.split("|")[1]
-    return prisma.user({ auth0Id }).then(prismaUser => {
+    return prisma.user.findUnique({ where: { auth0Id } }).then(prismaUser => {
       if (!prismaUser && process.env.NODE_ENV !== "production") {
         // In some scenarios, the email/PW entered resolves to a user
         // on auth0, but not in prisma. Mostly for staging/local. In that
@@ -32,9 +34,13 @@ export function createGetUserMiddleware(prisma) {
           Sentry.configureScope(scope => {
             scope.setUser({ id: prismaUser.id, email: prismaUser.email })
           })
+
+          logger.setContext({ id: prismaUser.id, email: prismaUser.email })
         }
       } catch (e) {
         console.error(e)
+        logger.error(e)
+        logger.setContext({ id: prismaUser.id, email: prismaUser.email })
       }
       return next()
     })

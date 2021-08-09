@@ -1,5 +1,8 @@
 import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
+import { Select } from "@app/decorators/select.decorator"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { PrismaService } from "@prisma1/prisma.service"
 
 import { BagService } from "../services/bag.service"
 import { ProductService } from "../services/product.service"
@@ -10,36 +13,82 @@ export class ProductMutationsResolver {
   constructor(
     private readonly bagService: BagService,
     private readonly productRequestService: ProductRequestService,
-    private readonly productService: ProductService
+    private readonly productService: ProductService,
+    private readonly prisma: PrismaService
   ) {}
 
   @Mutation()
-  async addProductRequest(@Args() { reason, url }, @User() user) {
-    return await this.productRequestService.addProductRequest(reason, url, user)
+  async addProductRequest(
+    @Args() { reason, url },
+    @User() user,
+    @Select() select
+  ) {
+    if (!user) {
+      throw new Error(`Can not add product request in logged out state`)
+    }
+    return await this.productRequestService.addProductRequest(
+      reason,
+      url,
+      user,
+      select
+    )
   }
 
   @Mutation()
-  async addToBag(@Args() { item }, @Customer() customer) {
-    return await this.bagService.addToBag(item, customer)
+  async deleteBagItem(@Args() { itemID }, @Application() application) {
+    if (application === "spring") {
+      await this.bagService.deleteBagItemFromAdmin(itemID)
+    } else {
+      await this.prisma.client.bagItem.delete({ where: { id: itemID } })
+    }
+    return true
   }
 
   @Mutation()
-  async addViewedProduct(@Args() { item }, @Customer() customer) {
-    return await this.productService.addViewedProduct(item, customer)
+  async addToBag(
+    @Args() args,
+    @Customer() customer,
+    @Select() select,
+    @Application() application
+  ) {
+    if (application === "spring") {
+      const { customerID, item, status, saved } = args
+      return await this.bagService.addBagItemFromAdmin(
+        customerID,
+        item,
+        status,
+        saved
+      )
+    } else {
+      if (!customer) {
+        throw new Error(`Can not add to bag without a logged in customer`)
+      }
+      const { item } = args
+      return await this.bagService.addToBag(item, customer, select)
+    }
   }
 
   @Mutation()
-  async upsertProduct(@Args() { input }, @User() user) {
-    return await this.productService.deepUpsertProduct(input)
+  async addViewedProduct(
+    @Args() { item },
+    @Customer() customer,
+    @Select() select
+  ) {
+    return await this.productService.addViewedProduct(item, customer, select)
+  }
+
+  @Mutation()
+  async createProduct(@Args() { input }, @Select() select) {
+    return await this.productService.createProduct(input, select)
   }
 
   @Mutation()
   async saveProduct(
     @Args() { item, save = false },
-    @Info() info,
+    @Select() select,
     @Customer() customer
   ) {
-    return await this.productService.saveProduct(item, save, info, customer)
+    return await this.productService.saveProduct(item, save, select, customer)
   }
 
   @Mutation()
@@ -47,6 +96,7 @@ export class ProductMutationsResolver {
     @Args() { item, saved, customer: passedCustomerID },
     @Customer() customer
   ) {
+    // TODO: removeFromBag has been deprecated, use deleteBagItem
     return await this.bagService.removeFromBag(
       item,
       saved,
@@ -60,8 +110,8 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async updateProduct(@Args() { where, data }, @Info() info) {
-    return await this.productService.updateProduct({ where, data, info })
+  async updateProduct(@Args() { where, data }, @Select() select) {
+    return await this.productService.updateProduct({ where, data, select })
   }
 
   @Mutation()

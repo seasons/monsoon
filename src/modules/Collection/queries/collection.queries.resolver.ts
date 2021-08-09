@@ -1,36 +1,64 @@
+import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
+import { Select } from "@app/decorators/select.decorator"
+import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
-import { addFragmentToInfo } from "graphql-binding"
+import { PrismaService } from "@prisma1/prisma.service"
 
 @Resolver()
 export class CollectionQueriesResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly queryUtils: QueryUtilsService
+  ) {}
 
   @Query()
-  async collection(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.collection(args, info)
+  async collection(
+    @Args() args,
+    @Select({
+      withFragment: `fragment EnsureSlug on Collection { slug }`,
+    })
+    select
+  ) {
+    return await this.queryUtils.resolveFindUnique(
+      {
+        select: {
+          ...select,
+        },
+        where: { ...args.where },
+      },
+      "Collection"
+    )
   }
 
   @Query()
-  async collections(@Args() args, @Info() info) {
+  async collections(
+    @Args() args,
+    @FindManyArgs({
+      withFragment: args =>
+        args?.placements?.length > 0
+          ? `fragment EnsurePlacements on Collection { placements }`
+          : "fragment DefaultFragment on Collection { id }",
+    })
+    findManyArgs
+  ) {
+    const collections = await this.queryUtils.resolveFindMany<any>(
+      findManyArgs,
+      "Collection"
+    )
     if (args?.placements?.length > 0) {
-      const collections = await this.prisma.binding.query.collections(
-        args,
-        addFragmentToInfo(
-          info,
-          `fragment EnsurePlacements on Collection { placements }`
-        )
-      )
       return collections.filter(collection => {
         return collection?.placements?.some(p => args?.placements.includes(p))
       })
     } else {
-      return await this.prisma.binding.query.collections(args, info)
+      return collections
     }
   }
 
   @Query()
-  async collectionsConnection(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.collectionsConnection(args, info)
+  async collectionsConnection(@Args() args, @Select() select) {
+    return await this.queryUtils.resolveConnection(
+      { ...args, select },
+      "Collection"
+    )
   }
 }

@@ -1,9 +1,10 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "@prisma/prisma.service"
+import { Customer } from "@prisma/client"
+import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
-import { get, head, pick } from "lodash"
+import { get, head, orderBy, pick } from "lodash"
 import { DateTime } from "luxon"
 
 @Injectable()
@@ -71,24 +72,27 @@ export class PaymentUtilsService {
   }
 
   async updateResumeDate(date, customer) {
-    const customerWithMembership = await this.prisma.binding.query.customer(
-      { where: { id: customer.id } },
-      `
-        {
-          id
-          membership {
-            id
-            pauseRequests(orderBy: createdAt_DESC) {
-              id
-            }
-          }
-        }
-      `
+    const customerWithMembership = await this.prisma.client.customer.findUnique(
+      {
+        where: { id: customer.id },
+        select: {
+          id: true,
+          membership: {
+            select: {
+              id: true,
+              pauseRequests: {
+                select: { id: true },
+                orderBy: { createdAt: "desc" },
+              },
+            },
+          },
+        },
+      }
     )
 
     const pauseRequest = customerWithMembership.membership?.pauseRequests?.[0]
 
-    await this.prisma.client.updatePauseRequest({
+    await this.prisma.client.pauseRequest.update({
       where: { id: pauseRequest?.id || "" },
       data: { resumeDate: date },
     })
@@ -154,42 +158,48 @@ export class PaymentUtilsService {
     return cardInfo
   }
 
-  async resumeSubscription(subscriptionId, date, customer) {
+  async resumeSubscription(
+    subscriptionId,
+    date,
+    customer: Pick<Customer, "id">
+  ) {
     const resumeDate = !!date
       ? { specific_date: DateTime.fromISO(date).toSeconds() }
       : "immediately"
 
-    const pausePlanIDs = ["pause-1", "pause-2", "pause-3"]
+    const pausePlanIDs = ["pause-1", "pause-2", "pause-3", "pause-6"]
 
-    const customerWithInfo = await this.prisma.binding.query.customer(
-      { where: { id: customer.id } },
-      `
-      {
-        id
-        membership {
-          id
-          plan {
-            id
-            planID
-            itemCount
-          }
-          pauseRequests(orderBy: createdAt_DESC) {
-            id
-          }
-        }
-      }
-    `
-    )
+    const customerWithData = await this.prisma.client.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        id: true,
+        user: {
+          select: {
+            id: true,
+          },
+        },
+        membership: {
+          select: {
+            id: true,
+            plan: { select: { id: true, planID: true, itemCount: true } },
+            pauseRequests: {
+              select: { id: true, createdAt: true },
+              orderBy: { createdAt: "desc" },
+            },
+          },
+        },
+      },
+    })
 
-    const pauseRequest = head(customerWithInfo.membership.pauseRequests)
+    const pauseRequest = head(customerWithData.membership.pauseRequests)
+    const customerPlanID = customerWithData.membership.plan.planID
+    const userID = customerWithData.user.id
 
     try {
-      const customerPlanID = customerWithInfo.membership.plan.planID
-
       let success
 
       if (pausePlanIDs.includes(customerPlanID)) {
-        const itemCount = customerWithInfo.membership.plan.itemCount
+        const itemCount = customerWithData.membership.plan.itemCount
         let newPlanID
         if (itemCount === 1) {
           newPlanID = "essential-1"
@@ -197,6 +207,8 @@ export class PaymentUtilsService {
           newPlanID = "essential-2"
         } else if (itemCount === 3) {
           newPlanID = "essential"
+        } else if (itemCount === 6) {
+          newPlanID = "essential-6"
         }
         // Customer is paused with items on a pause plan
         // Check if the user is on a pause plan and switch plans instead of updating chargebee
@@ -207,73 +219,101 @@ export class PaymentUtilsService {
           .request()
       } else {
         // Customer is paused without items
-        success = await chargebee.subscription
-          .resume(subscriptionId, {
-            resume_option: resumeDate,
-            unpaid_invoices_handling: "schedule_payment_collection",
+        const subscriptions = await chargebee.subscription
+          .list({
+            plan_id: { in: [customerPlanID] },
+            customer_id: { is: userID },
           })
           .request()
+
+        const subscription = (head(subscriptions.list) as any)?.subscription
+
+        // If chargebee account is paused resume subscription
+        if (subscription.status === "paused") {
+          success = await chargebee.subscription
+            .resume(subscriptionId, {
+              resume_option: resumeDate,
+              unpaid_invoices_handling: "schedule_payment_collection",
+            })
+            .request()
+        } else if (subscription.status === "active") {
+          success = true
+        } else {
+          throw Error(
+            "User subscription is neither active or paused, cannot resume"
+          )
+        }
       }
 
       if (success) {
-        await this.prisma.client.updatePauseRequest({
-          where: { id: pauseRequest.id },
-          data: { pausePending: false },
-        })
-
-        await this.prisma.client.updateCustomer({
+        await this.prisma.client.customer.update({
+          where: { id: customer.id },
           data: {
             status: "Active",
+            membership: {
+              update: {
+                pauseRequests: {
+                  update: {
+                    where: { id: pauseRequest.id },
+                    data: { pausePending: false },
+                  },
+                },
+              },
+            },
           },
-          where: { id: customer.id },
         })
 
-        const customerWithData = await this.prisma.binding.mutation.updateCustomer(
+        const customerWithTrackingData = await this.prisma.client.customer.findUnique(
           {
-            data: {
-              status: "Active",
-            },
             where: { id: customer.id },
-          },
-          `{
-              id
-              user {
-                id
-                firstName
-                lastName
-                email
-              }
-              membership {
-                id
-                plan {
-                  id
-                  tier
-                  planID
-                }
-              }
-            }`
+            select: {
+              id: true,
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                },
+              },
+              membership: {
+                select: {
+                  id: true,
+                  plan: { select: { id: true, tier: true, planID: true } },
+                },
+              },
+            },
+          }
         )
 
-        const tier = customerWithData?.membership?.plan?.tier
-        const planID = customerWithData?.membership?.plan?.planID
+        const tier = customerWithTrackingData?.membership?.plan?.tier
+        const planID = customerWithTrackingData?.membership?.plan?.planID
 
-        this.segment.track(customerWithData.user.id, "Resumed Subscription", {
-          ...pick(customerWithData.user, ["firstName", "lastName", "email"]),
-          planID,
-          tier,
-        })
+        this.segment.track(
+          customerWithTrackingData.user.id,
+          "Resumed Subscription",
+          {
+            ...pick(customerWithTrackingData.user, [
+              "firstName",
+              "lastName",
+              "email",
+            ]),
+            planID,
+            tier,
+          }
+        )
       }
     } catch (e) {
       if (
         e?.api_error_code &&
         e?.api_error_code === "payment_processing_failed"
       ) {
-        await this.prisma.client.updatePauseRequest({
+        // don't set status to `PaymentFailed` here because we do it in the
+        // chargebee webhook
+        await this.prisma.client.pauseRequest.update({
           where: { id: pauseRequest.id },
           data: { pausePending: false },
         })
-        // don't set status to `PaymentFailed` here because we do it in the
-        // chargebee webhook
       }
       throw e
     }

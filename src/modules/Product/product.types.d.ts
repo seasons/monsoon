@@ -1,14 +1,12 @@
-import { ID_Input } from "@app/prisma"
-
 export interface ProductWithPhysicalProducts {
-  id: ID_Input
+  id: string
   variants: ProductVariantWithPhysicalProducts[]
 }
 
 interface ProductVariantWithPhysicalProducts {
-  id: ID_Input
+  id: string
   physicalProducts: {
-    id: ID_Input
+    id: string
   }[]
 }
 

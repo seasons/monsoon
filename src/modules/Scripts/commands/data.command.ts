@@ -67,30 +67,28 @@ export class DataCommands {
       prismaEnv,
       moduleRef: this.moduleRef,
     })
-    const physProd = await this.prisma.client.physicalProduct({ seasonsUID })
+    const physProd = await this.prisma.client.physicalProduct.findUnique({
+      where: { seasonsUID },
+    })
     if (!physProd) {
       this.logger.error(
         `No Physical Product found with seasonsUID: ${seasonsUID}`
       )
       return
     }
-    const reservations = await this.prisma.binding.query.reservations(
-      {
-        where: { products_some: { seasonsUID } },
-        orderBy: "createdAt_ASC",
+    const reservations = await this.prisma.client.reservation.findMany({
+      where: { products: { some: { seasonsUID } } },
+      orderBy: { createdAt: "asc" },
+      select: {
+        status: true,
+        reservationNumber: true,
+        createdAt: true,
+        updatedAt: true,
+        customer: {
+          select: { user: { select: { email: true } } },
+        },
       },
-      `{
-        status
-        reservationNumber
-        createdAt
-        updatedAt
-        customer {
-          user {
-            email
-          }
-        }
-      }`
-    )
+    })
     const formattedReservations = reservations.map(a => ({
       ...pick(a, [
         "reservationNumber",
@@ -104,6 +102,6 @@ export class DataCommands {
       this.logger.log("Item has never been reserved")
     }
     this.logger.log(`*** Reservation History ***`)
-    this.logger.log(formattedReservations)
+    this.logger.log(JSON.stringify(formattedReservations))
   }
 }

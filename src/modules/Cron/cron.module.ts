@@ -8,7 +8,7 @@ import { SlackModule } from "@modules/Slack/slack.module"
 import { UserModule } from "@modules/User/user.module"
 import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "@prisma/prisma.module"
+import { PrismaModule } from "@prisma1/prisma.module"
 
 import { AnalyticsModule } from "../Analytics/analytics.module"
 import { DripModule } from "../Drip/drip.module"

@@ -44,7 +44,16 @@ export class SyncCommands {
       choices: ["staging", "production"],
       default: "production",
     })
-    origin
+    origin,
+    @Option({
+      name: "force",
+      describe: "skip user confirmation prompt",
+      type: "boolean",
+      alias: "f",
+      default: false,
+      required: false,
+    })
+    force: boolean
   ) {
     if (origin === "staging" && destination !== "local") {
       throw new Error(`If syncing from staging, destination must be local`)
@@ -67,11 +76,13 @@ export class SyncCommands {
         ...env.postgres[destination],
         ...env.prisma[destination],
       })
+
       process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_ID =
         env.auth0.staging["monsoon(staging)"].clientID
       process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_SECRET =
         env.auth0.staging["monsoon(staging)"].clientSecret
-      this.prismaSync.syncPrisma(destination, origin)
+
+      this.prismaSync.syncPrisma(destination, origin, force)
     } catch (err) {
       console.log(err)
     } finally {

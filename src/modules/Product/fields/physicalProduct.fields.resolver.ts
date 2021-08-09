@@ -1,11 +1,8 @@
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import {
-  AdminActionLog,
-  AdminActionLogWhereInput,
-  PhysicalProduct,
-} from "@app/prisma"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaDataLoader } from "@prisma/prisma.loader"
+import { PhysicalProduct } from "@prisma/client"
+import { Prisma } from "@prisma/client"
 
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
 
@@ -20,8 +17,11 @@ export class PhysicalProductFieldsResolver {
     @Parent() physicalProduct,
     @Loader({
       params: {
-        query: "physicalProducts",
-        info: `{ id sequenceNumber }`,
+        model: "PhysicalProduct",
+        select: Prisma.validator<Prisma.PhysicalProductSelect>()({
+          id: true,
+          sequenceNumber: true,
+        }),
       },
     })
     physicalProductsLoader: PrismaDataLoader<PhysicalProduct>
@@ -39,19 +39,21 @@ export class PhysicalProductFieldsResolver {
     @Parent() physicalProduct,
     @Loader({
       params: {
-        query: `adminActionLogs`,
-        formatWhere: keys => ({
-          AND: [
-            { entityId_in: keys },
-            { tableName: "PhysicalProduct" },
-          ] as AdminActionLogWhereInput,
-        }),
+        model: `AdminActionLog`,
+        formatWhere: keys =>
+          Prisma.validator<Prisma.AdminActionLogWhereInput>()({
+            AND: [
+              { entityId: { in: keys } },
+              { tableName: "PhysicalProduct" },
+              { interpretation: { id: { not: undefined } } },
+            ],
+          }),
         keyToDataRelationship: "OneToMany",
         getKeys: a => [a.entityId],
       },
       includeInfo: true,
     })
-    logsLoader: PrismaDataLoader<AdminActionLog[]>
+    logsLoader: PrismaDataLoader
   ) {
     const logs = await logsLoader.load(physicalProduct.id)
     return logs
@@ -62,10 +64,12 @@ export class PhysicalProductFieldsResolver {
     @Parent() physicalProduct,
     @Loader({
       params: {
-        query: "reservations",
+        model: "Reservation",
         formatWhere: ids => ({
-          products_some: {
-            id_in: ids,
+          products: {
+            some: {
+              id: { in: ids },
+            },
           },
         }),
         infoFragment: `fragment EnsureProductIDs on Reservation {products {id}}`,

@@ -1,11 +1,11 @@
+import { DateTime } from "@app/prisma/prisma.binding"
 import {
   CustomerStatus,
-  Int,
   InventoryStatus,
   LetterSize,
+  PauseType,
   ProductType,
-} from "@app/prisma"
-import { DateTime } from "@app/prisma/prisma.binding"
+} from "@prisma/client"
 
 export interface ProductCountAndStatusSummary {
   total: number
@@ -39,8 +39,8 @@ export interface CreateTestProductOutput {
 }
 
 export interface CreateTestCustomerDetailInput {
-  topSizes?: String[]
-  waistSizes?: Int[]
+  topSizes?: string[]
+  waistSizes?: number[]
   phoneOS?: string
 }
 
@@ -48,7 +48,8 @@ export interface CreateTestPauseRequestInput {
   pausePending: boolean
   pauseDate?: DateTime
   resumeDate?: DateTime
-  notified?: boolean
+  notified: boolean
+  pauseType: PauseType
 }
 
 export interface CreateTestCustomerMembershipInput {

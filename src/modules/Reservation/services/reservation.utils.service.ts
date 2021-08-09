@@ -1,8 +1,7 @@
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
-import { Customer, ID_Input, InventoryStatus, Reservation } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
-import { head } from "lodash"
+import { Package, PrismaPromise, Reservation } from "@prisma/client"
 
 import { ReservationWithProductVariantData } from "./reservation.service"
 
@@ -15,72 +14,18 @@ export class ReservationUtilsService {
 
   inventoryStatusOf = (
     res: ReservationWithProductVariantData,
-    prodVarId: ID_Input
-  ): InventoryStatus => {
+    prodVarId: string
+  ) => {
     return res.products.find(prod => prod.productVariant.id === prodVarId)
       .inventoryStatus
-  }
-
-  async getLatestReservation(
-    customer: Customer
-  ): Promise<ReservationWithProductVariantData | null> {
-    return new Promise(async (resolve, reject) => {
-      const allCustomerReservationsOrderedByCreatedAt = await this.prisma.client
-        .customer({ id: customer.id })
-        .reservations({
-          orderBy: "createdAt_DESC",
-        })
-
-      const latestReservation = head(
-        allCustomerReservationsOrderedByCreatedAt
-      ) as Reservation
-      if (latestReservation == null) {
-        return resolve(null)
-      } else {
-        const res = (await this.prisma.binding.query.reservation(
-          {
-            where: { id: latestReservation.id },
-          },
-          `{
-                id
-                products {
-                    id
-                    seasonsUID
-                    inventoryStatus
-                    productStatus
-                    productVariant {
-                        id
-                    }
-                }
-                status
-                reservationNumber
-             }`
-        )) as ReservationWithProductVariantData
-        return resolve(res)
-      }
-    })
-  }
-
-  async updateUsersBagItemsOnCompletedReservation(
-    prismaReservation: any,
-    returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields
-  ) {
-    return await this.prisma.client.deleteManyBagItems({
-      customer: { id: prismaReservation.customer.id },
-      saved: false,
-      productVariant: {
-        id_in: returnedPhysicalProducts.map(p => p.productVariant.id),
-      },
-      status: "Reserved",
-    })
   }
 
   async updateReturnPackageOnCompletedReservation(
     prismaReservation: any,
     returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields
-  ) {
+  ): Promise<[PrismaPromise<Package> | PrismaPromise<Reservation>]> {
     const returnedPhysicalProductIDs: {
-      id: ID_Input
+      id: string
     }[] = returnedPhysicalProducts.map(p => {
       return { id: p.id }
     })
@@ -92,40 +37,45 @@ export class ReservationUtilsService {
     )
 
     if (prismaReservation.returnedPackage != null) {
-      await this.prisma.client.updatePackage({
-        data: {
-          items: { connect: returnedPhysicalProductIDs },
-          weight,
-        },
-        where: { id: prismaReservation.returnedPackage.id },
-      })
+      return [
+        this.prisma.client.package.update({
+          data: {
+            items: { connect: returnedPhysicalProductIDs },
+            weight,
+          },
+          where: { id: prismaReservation.returnedPackage.id },
+        }),
+      ]
     } else {
-      await this.prisma.client.updateReservation({
-        data: {
-          returnedPackage: {
-            update: {
-              items: { connect: returnedPhysicalProductIDs },
-              weight,
-              shippingLabel: {
-                create: {},
-              },
-              fromAddress: {
-                connect: {
-                  slug: prismaReservation.customer.detail.shippingAddress.slug,
+      return [
+        (this.prisma.client.reservation.update({
+          data: {
+            returnedPackage: {
+              update: {
+                items: { connect: returnedPhysicalProductIDs },
+                weight,
+                shippingLabel: {
+                  create: {},
                 },
-              },
-              toAddress: {
-                connect: {
-                  slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
+                fromAddress: {
+                  connect: {
+                    slug:
+                      prismaReservation.customer.detail.shippingAddress.slug,
+                  },
+                },
+                toAddress: {
+                  connect: {
+                    slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
+                  },
                 },
               },
             },
           },
-        },
-        where: {
-          id: prismaReservation.id,
-        },
-      })
+          where: {
+            id: prismaReservation.id,
+          },
+        }) as unknown) as PrismaPromise<Reservation>,
+      ]
     }
   }
 
@@ -134,9 +84,13 @@ export class ReservationUtilsService {
     let foundUnique = false
     while (!foundUnique) {
       reservationNumber = Math.floor(Math.random() * 900000000) + 100000000
-      const reservationWithThatNumber = await this.prisma.client.reservation({
-        reservationNumber,
-      })
+      const reservationWithThatNumber = await this.prisma.client.reservation.findUnique(
+        {
+          where: {
+            reservationNumber,
+          },
+        }
+      )
       foundUnique = !reservationWithThatNumber
     }
 
