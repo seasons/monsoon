@@ -387,7 +387,11 @@ describe("Admissions Service", () => {
         cleanupFunc: customerCleanUpFunc,
         customer,
       } = await testUtils.createTestCustomer({
-        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31], phoneOS: "iOS" },
+        detail: {
+          topSizes: ["XS", "S"],
+          waistSizes: [30, 31],
+          phoneOS: "iOS",
+        },
       })
       cleanupFuncs.push(customerCleanUpFunc)
       testCustomer = customer

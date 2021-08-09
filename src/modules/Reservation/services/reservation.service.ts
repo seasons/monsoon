@@ -760,12 +760,13 @@ export class ReservationService {
         const newInventoryStatus = !!prod.warehouseLocation
           ? "Reservable"
           : "NonReservable"
-        const variantUpdateData =
-          this.productVariantService.getCountsForStatusChange({
+        const variantUpdateData = this.productVariantService.getCountsForStatusChange(
+          {
             productVariant: prod.productVariant,
             oldInventoryStatus: prod.inventoryStatus,
             newInventoryStatus,
-          })
+          }
+        )
         promises.push(
           this.prisma.client.physicalProduct.update({
             where: { id: prod.id },
@@ -788,12 +789,13 @@ export class ReservationService {
     if (changingStatusTo("Lost")) {
       // For new products on reservation, update the status, related counts, and bag item
       for (const prod of reservation.newProducts) {
-        const variantUpdateData =
-          this.productVariantService.getCountsForStatusChange({
+        const variantUpdateData = this.productVariantService.getCountsForStatusChange(
+          {
             productVariant: prod.productVariant,
             oldInventoryStatus: prod.inventoryStatus,
             newInventoryStatus: "NonReservable",
-          })
+          }
+        )
         promises.push(
           this.prisma.client.physicalProduct.update({
             where: { id: prod.id },
