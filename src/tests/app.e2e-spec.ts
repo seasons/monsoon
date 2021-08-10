@@ -285,7 +285,7 @@ describe("INTEGRATION TEST", () => {
   })
 
   describe("Reservation flow", () => {
-    it("Add first item to bag", done => {
+    xit("Add first item to bag", done => {
       request(server)
         .post("/graphql")
         .send({
@@ -313,7 +313,7 @@ describe("INTEGRATION TEST", () => {
         })
     })
 
-    it("Add second item to bag", done => {
+    xit("Add second item to bag", done => {
       request(server)
         .post("/graphql")
         .send({

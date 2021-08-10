@@ -130,7 +130,6 @@ class BuildWatcher {
     this.app.stdout.setEncoding("utf8")
 
     this.app.stdout.pipe(process.stdout)
-    this.app.stdout.pipe(process.stdout)
     this.app.stderr.pipe(process.stderr)
 
     this.app.stdout.on("data", async data => {
