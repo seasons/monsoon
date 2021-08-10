@@ -300,15 +300,14 @@ export class PhysicalProductService {
           changedFields["inventoryStatus"] === "NonReservable"
         ) {
           interpretation = "Processed return from Reservation"
-        } else if (
-          changedFields["productStatus"] === "Lost" &&
-          changedFields["inventoryStatus"] === "NonReservable"
-        ) {
-          interpretation = "Marked as Lost"
         }
       } else if (keys.includes("packedAt")) {
         const activeReservation = getActiveReservation()
         interpretation = `Packed for reservation ${activeReservation?.reservationNumber}`
+      } else if (keys.includes("productStatus")) {
+        if (changedFields["productStatus"] === "Lost") {
+          interpretation = "Marked as Lost"
+        }
       }
       return { ...a, interpretation }
     })
