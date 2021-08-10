@@ -97,6 +97,10 @@ const scheduleModule =
     : []
 
 const cache = (() => {
+  if (process.env.TEST === "true") {
+    return
+  }
+
   try {
     const URL = process.env.REDIS_URL
     if (URL.includes("redis://")) {

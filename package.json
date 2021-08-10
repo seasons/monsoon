@@ -26,7 +26,7 @@
     "prestart": "docker-compose up -d",
     "start": "concurrently -k -n 'TSC,ESBUILD' -c 'gray.dim,blue.dim' 'yarn tsc -w' 'node scripts/esbuild.watcher.js'",
     "lint": "eslint \"{src/**/*.ts\" --fix",
-    "test": "jest",
+    "test": "TEST=true jest",
     "test:e2e": "jest --config ./src/tests/jest-e2e.json",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
