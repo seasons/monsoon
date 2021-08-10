@@ -172,9 +172,9 @@ export class BagService {
   }
 
   /*
-   * Mutation for admins to delete a bagItem from a customer's bag
+   * Mutation for admins to delete or return a bagItem from a customer's bag
    */
-  async deleteBagItemFromAdmin(bagItemID) {
+  async deleteBagItemFromAdmin(bagItemID, type: "Delete" | "Return") {
     const promises = []
 
     const bagItem = await this.prisma.client.bagItem.findUnique({
@@ -205,8 +205,7 @@ export class BagService {
     const customerID = bagItem.customer.id
     const productVariant = bagItem.productVariant
 
-    // FIXME: We need to create a separate mutation for delete vs returning a bag item
-    if (bagItem.status === "Reserved" && false) {
+    if (bagItem.status === "Reserved" && type === "Delete") {
       // Update the current reservation and it's physical product and counts
       const lastReservation = (await this.utils.getLatestReservation(
         customerID,
@@ -220,17 +219,10 @@ export class BagService {
         }
       )) as any
 
-      const physicalProductsInRes = lastReservation.products
-
-      const physicalProduct = physicalProductsInRes.find(
-        physProd => physProd.productVariant.id === bagItem.productVariant.id
+      const physicalProduct = this.getPhysicalProductFromLastReservationAndBagItem(
+        lastReservation,
+        bagItem
       )
-
-      if (!physicalProduct) {
-        throw Error(
-          `Physical product not in the last reservation: ${lastReservation.id}`
-        )
-      }
 
       promises.push(
         this.prisma.client.reservation.update({
@@ -277,6 +269,37 @@ export class BagService {
           },
         })
       )
+    } else if (type === "Return") {
+      const lastReservation = (await this.utils.getLatestReservation(
+        customerID,
+        undefined,
+        {
+          products: {
+            select: {
+              warehouseLocation: true,
+            },
+          },
+        }
+      )) as any
+
+      const physicalProduct = this.getPhysicalProductFromLastReservationAndBagItem(
+        lastReservation,
+        bagItem
+      )
+
+      promises.push(
+        this.prisma.client.reservation.update({
+          data: {
+            returnedProducts: {
+              connect: {
+                id: physicalProduct.id,
+              },
+            },
+            returnedAt: new Date(),
+          },
+          where: { id: String(lastReservation.id) },
+        })
+      )
     }
 
     promises.push(
@@ -321,5 +344,24 @@ export class BagService {
     })
 
     return bagItem
+  }
+
+  private getPhysicalProductFromLastReservationAndBagItem(
+    lastReservation,
+    bagItem
+  ) {
+    const physicalProductsInRes = lastReservation.products
+
+    const physicalProduct = physicalProductsInRes.find(
+      physProd => physProd.productVariant.id === bagItem.productVariant.id
+    )
+
+    if (!physicalProduct) {
+      throw Error(
+        `Physical product not in the last reservation: ${lastReservation.id}`
+      )
+    }
+
+    return physicalProduct
   }
 }
