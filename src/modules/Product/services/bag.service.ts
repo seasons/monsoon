@@ -205,7 +205,8 @@ export class BagService {
     const customerID = bagItem.customer.id
     const productVariant = bagItem.productVariant
 
-    if (bagItem.status === "Reserved") {
+    // FIXME: We need to create a separate mutation for delete vs returning a bag item
+    if (bagItem.status === "Reserved" && false) {
       // Update the current reservation and it's physical product and counts
       const lastReservation = (await this.utils.getLatestReservation(
         customerID,
@@ -255,13 +256,13 @@ export class BagService {
         ? "Reservable"
         : "NonReservable"
 
-      const productVariantData =
-        this.productVariantService.getCountsForStatusChange({
+      const productVariantData = this.productVariantService.getCountsForStatusChange(
+        {
           productVariant,
-          oldInventoryStatus:
-            physicalProduct.inventoryStatus as InventoryStatus,
+          oldInventoryStatus: physicalProduct.inventoryStatus as InventoryStatus,
           newInventoryStatus,
-        })
+        }
+      )
 
       promises.push(
         this.prisma.client.physicalProduct.update({
