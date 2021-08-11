@@ -60,6 +60,7 @@ export class ProductFieldsResolver {
   async relatedProducts(
     @Parent() parent,
     @Select() select,
+    @Args() { take },
     @Loader({
       params: {
         model: "Product",
@@ -88,51 +89,27 @@ export class ProductFieldsResolver {
       category: Category
       brand: Brand
       color: Color
-    }>,
-    @Loader({
-      params: {
-        model: "Product",
-        formatWhere: keys =>
-          Prisma.validator<Prisma.ProductWhereInput>()({
-            category: {
-              id: {
-                in: keys,
-              },
-            },
-            status: "Available",
-          }),
-        infoFragment: `fragment EnsureNeededIds on Product {
-            color{
-              id
-            }
-            brand{
-              id
-            }
-            category{
-              id
-            }
-          }`,
-        getKeys: product => [product.category.id],
-        keyToDataRelationship: "OneToMany",
-      },
-      includeInfo: true,
-    })
-    relatedProductLoader: PrismaDataLoader<any>
+    }>
   ) {
     const product = await productLoader.load(parent.id)
-    const relatedProducts = await relatedProductLoader.load(product.category.id)
-    const filteredRelatedProducts = relatedProducts.filter(
-      a => a.brand.id !== product.brand.id
-    )
-    const sortedRelatedProducts = filteredRelatedProducts.sort(
-      (a: any, b: any) => {
-        if (b.color.id === product.color.id) {
-          return 1
-        }
-        return -1
+    const relatedProducts = await this.prisma.client.product.findMany({
+      where: {
+        category: { id: product.category.id },
+        brand: { id: { not: product.brand.id } },
+        status: "Available",
+      },
+      select: {
+        ...select,
+      },
+      take,
+    })
+    const sortedRelatedProducts = relatedProducts.sort((a: any, b: any) => {
+      if (b.color.id === product.color.id) {
+        return 1
       }
-    )
-    return sortedRelatedProducts.splice(0, 10)
+      return -1
+    })
+    return sortedRelatedProducts
   }
 
   @ResolveField()

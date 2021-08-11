@@ -263,7 +263,7 @@ type Product @cacheControl(maxAge: 200) {
   updatedAt: DateTime!
   publishedAt: DateTime
   tier: ProductTier!
-  relatedProducts: [Product!]
+  relatedProducts(take: Int): [Product]!
 }
 
 type Brand @cacheControl(maxAge: 1000) {
