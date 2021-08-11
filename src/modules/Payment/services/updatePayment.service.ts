@@ -1,18 +1,15 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
-import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
+import {
+  PaymentUtilsService,
+  stripe,
+} from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { AuthService } from "@modules/User/services/auth.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
 import { get, head } from "lodash"
-import Stripe from "stripe"
-
-const stripe = new Stripe(process.env.STRIPE_API_KEY, {
-  apiVersion: "2020-08-27",
-})
 
 export interface SubscriptionData {
   nextBillingAt: string
@@ -103,6 +100,7 @@ export class UpdatePaymentService {
 
       let _brand
       let _last4
+      let intent
 
       if (token && tokenType) {
         // FIXME:
@@ -116,7 +114,11 @@ export class UpdatePaymentService {
         _last4 = last4
         _brand = brand
       } else if (paymentMethodID && billing) {
-        const { last4, brand } = await this.updatePaymentWithGWToken(
+        const {
+          last4,
+          brand,
+          paymentIntent,
+        } = await this.updatePaymentWithGWToken(
           planID,
           chargebeeBillingAddress,
           paymentMethodID,
@@ -124,6 +126,7 @@ export class UpdatePaymentService {
         )
         _last4 = last4
         _brand = brand
+        intent = paymentIntent
       } else {
         throw new Error(
           `Error updating your payment method, insufficient data provided`
@@ -134,6 +137,8 @@ export class UpdatePaymentService {
         where: { id: billingInfo.id },
         data: { ...prismaBillingAddress, brand: _brand, last_digits: _last4 },
       })
+
+      return intent
     } catch (e) {
       this.error.setExtraContext({ token, tokenType })
       this.error.setExtraContext(customer, "customer")
@@ -184,15 +189,36 @@ export class UpdatePaymentService {
     const amountDue =
       subscriptionEstimate?.estimate?.invoice_estimate?.amount_due
 
-    const intent = await stripe.paymentIntents.create({
-      payment_method: paymentMethodID,
-      amount: amountDue,
-      currency: "USD",
-      confirm: true,
-      confirmation_method: "manual",
-      setup_future_usage: "off_session",
-      capture_method: "manual",
+    const intent = await this.paymentUtils.createPaymentIntent(
+      paymentMethodID,
+      amountDue
+    )
+
+    if (
+      intent.status === "requires_action" &&
+      intent.next_action.use_stripe_sdk
+    ) {
+      return {
+        paymentIntent: intent,
+        last4: "",
+        brand: "",
+      }
+    }
+
+    return this.confirmPaymentMethodUpdate({
+      paymentIntentID: intent.id,
+      userId,
+      chargebeeBillingAddress,
     })
+  }
+
+  async confirmPaymentMethodUpdate({
+    paymentIntentID,
+    userId,
+    chargebeeBillingAddress,
+  }) {
+    const intent = await stripe.paymentIntents.retrieve(paymentIntentID)
+    await stripe.paymentIntents.confirm(paymentIntentID)
 
     // Update card
     const payload = await chargebee.payment_source
@@ -217,7 +243,7 @@ export class UpdatePaymentService {
     const brand = card.card_type
     const last4 = card.last4
 
-    return { brand, last4 }
+    return { brand, last4, paymentIntent: intent }
   }
 
   async updateChargebeeBillingAddress(

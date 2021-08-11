@@ -1,11 +1,11 @@
 import { Customer } from "@app/decorators"
-import { PaymentService } from "@app/modules/Payment/services/payment.service"
+import { SubscriptionService } from "@app/modules/Payment/services/subscription.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PaymentPlan } from "@prisma/client"
 
 @Resolver("PaymentPlan")
 export class PaymentPlanFieldsResolver {
-  constructor(private readonly payment: PaymentService) {}
+  constructor(private readonly subscription: SubscriptionService) {}
 
   @ResolveField()
   async pauseWithItemsPrice(@Parent() paymentPlan: PaymentPlan) {
@@ -42,6 +42,10 @@ export class PaymentPlanFieldsResolver {
     @Customer() customer,
     @Args() { couponID }
   ) {
-    return this.payment.subscriptionEstimate(paymentPlan, customer, couponID)
+    return this.subscription.subscriptionEstimate(
+      paymentPlan,
+      customer,
+      couponID
+    )
   }
 }

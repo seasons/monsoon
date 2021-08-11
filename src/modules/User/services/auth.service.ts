@@ -1,6 +1,7 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
+import { SubscriptionService } from "@app/modules/Payment/services/subscription.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { Inject, Injectable, Logger, forwardRef } from "@nestjs/common"
@@ -9,7 +10,6 @@ import {
   Location,
   Prisma,
   UTMData,
-  User,
   UserPushNotificationInterestType,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -43,9 +43,11 @@ export class AuthService {
     private readonly pushNotification: PushNotificationService,
     private readonly email: EmailService,
     private readonly error: ErrorService,
+    private readonly queryUtils: QueryUtilsService,
     @Inject(forwardRef(() => PaymentService))
     private readonly payment: PaymentService,
-    private readonly queryUtils: QueryUtilsService
+    @Inject(forwardRef(() => SubscriptionService))
+    private readonly subscription: SubscriptionService
   ) {}
 
   defaultPushNotificationInterests = [
@@ -124,7 +126,7 @@ export class AuthService {
 
       const nextMonth = DateTime.local().plus({ months: 1 })
       // Only create the billing info and send welcome email if user used chargebee checkout
-      await this.payment.createPrismaSubscription(
+      await this.subscription.createPrismaSubscription(
         user.id,
         gift.gift_receiver.customer_id,
         {
