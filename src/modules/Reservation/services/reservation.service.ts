@@ -796,7 +796,18 @@ export class ReservationService {
     }
 
     // If setting to lost, execute implied updates
+    const cannotMarkReservationAsLost = [
+      "Queued",
+      "Picked",
+      "Packed",
+      "Completed",
+    ].includes(reservation.status)
     if (changingStatusTo("Lost")) {
+      if (cannotMarkReservationAsLost) {
+        throw new Error(
+          `Cannot mark reservation with status ${reservation.status} as Lost.`
+        )
+      }
       // If it's on the way to the customer, we know all new products got lost. If it's on the way
       //  back to us and they've used the return flow, we know all the "returnedProducts" got lost.
       const productsToUpdate =
