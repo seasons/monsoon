@@ -356,7 +356,7 @@ export class ReservationService {
     await this.prisma.client.reservation.update({
       data: {
         returnedProducts: {
-          set: items.map(item => ({ id: item })),
+          connect: items.map(item => ({ id: item })),
         },
         returnedAt: new Date(),
       },
@@ -816,31 +816,29 @@ export class ReservationService {
           : reservation.returnedProducts
 
       // For whichever products we know got lost, update status, counts, and bag items accordingly
-      if (productsToUpdate.length > 0) {
-        for (const prod of productsToUpdate) {
-          const variantUpdateData = this.productVariantService.getCountsForStatusChange(
-            {
-              productVariant: prod.productVariant,
-              oldInventoryStatus: prod.inventoryStatus,
-              newInventoryStatus: "NonReservable",
-            }
-          )
-          promises.push(
-            this.prisma.client.physicalProduct.update({
-              where: { id: prod.id },
-              data: {
-                productStatus: "Lost",
-                inventoryStatus: "NonReservable",
-                productVariant: { update: variantUpdateData },
-              },
-            })
-          )
-          const bagItemId = prod.productVariant.bagItems?.[0]?.id
-          if (!!bagItemId) {
-            promises.push(
-              this.prisma.client.bagItem.delete({ where: { id: bagItemId } })
-            )
+      for (const prod of productsToUpdate) {
+        const variantUpdateData = this.productVariantService.getCountsForStatusChange(
+          {
+            productVariant: prod.productVariant,
+            oldInventoryStatus: prod.inventoryStatus,
+            newInventoryStatus: "NonReservable",
           }
+        )
+        promises.push(
+          this.prisma.client.physicalProduct.update({
+            where: { id: prod.id },
+            data: {
+              productStatus: "Lost",
+              inventoryStatus: "NonReservable",
+              productVariant: { update: variantUpdateData },
+            },
+          })
+        )
+        const bagItemId = prod.productVariant.bagItems?.[0]?.id
+        if (!!bagItemId) {
+          promises.push(
+            this.prisma.client.bagItem.delete({ where: { id: bagItemId } })
+          )
         }
       }
     }
