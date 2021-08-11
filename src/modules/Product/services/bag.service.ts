@@ -204,20 +204,29 @@ export class BagService {
 
     const customerID = bagItem.customer.id
     const productVariant = bagItem.productVariant
+    const lastReservation = (await this.utils.getLatestReservation(
+      customerID,
+      undefined,
+      {
+        products: {
+          select: {
+            warehouseLocation: true,
+          },
+        },
+      }
+    )) as any
+
+    if (
+      !["Queued", "Hold"].includes(lastReservation.status) &&
+      type === "Delete"
+    ) {
+      throw Error(
+        "Only reservations with status Hold or Queued can have bag items deleted"
+      )
+    }
 
     if (bagItem.status === "Reserved" && type === "Delete") {
       // Update the current reservation and it's physical product and counts
-      const lastReservation = (await this.utils.getLatestReservation(
-        customerID,
-        undefined,
-        {
-          products: {
-            select: {
-              warehouseLocation: true,
-            },
-          },
-        }
-      )) as any
 
       const physicalProduct = this.getPhysicalProductFromLastReservationAndBagItem(
         lastReservation,
@@ -270,18 +279,6 @@ export class BagService {
         })
       )
     } else if (type === "Return") {
-      const lastReservation = (await this.utils.getLatestReservation(
-        customerID,
-        undefined,
-        {
-          products: {
-            select: {
-              warehouseLocation: true,
-            },
-          },
-        }
-      )) as any
-
       const physicalProduct = this.getPhysicalProductFromLastReservationAndBagItem(
         lastReservation,
         bagItem
