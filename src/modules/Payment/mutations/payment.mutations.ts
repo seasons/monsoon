@@ -33,6 +33,7 @@ export class PaymentMutationsResolver {
    *
    * Platform: Web (flare), Native mobile (harvest)
    */
+  @Mutation()
   async confirmPayment(
     @Args() { planID, paymentIntentID, couponID, billing, shipping },
     @Customer() customer,
