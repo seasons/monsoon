@@ -106,11 +106,6 @@
     "@algolia/logger-common" "4.3.0"
     "@algolia/requester-common" "4.3.0"
 
-"@anatine/esbuild-decorators@0.2.12":
-  version "0.2.12"
-  resolved "https://registry.yarnpkg.com/@anatine/esbuild-decorators/-/esbuild-decorators-0.2.12.tgz#8d3ca99eb68c38422726606cfb028a780be935e2"
-  integrity sha512-meUjcLY0Rp1rsNidvHsI17kI33Y8EotL/H9am3Q0ETdfO/ZB5QYeh1zcmqecuI/+wlwdINn6CRSmUFPAFlIvMg==
-
 "@angular-devkit/core@11.2.4":
   version "11.2.4"
   resolved "https://registry.yarnpkg.com/@angular-devkit/core/-/core-11.2.4.tgz#4404b86d8dbdb41a0e3f94cb08ff8604e0c49a2e"
@@ -6250,11 +6245,6 @@ es6-weak-map@^2.0.3:
     es5-ext "^0.10.46"
     es6-iterator "^2.0.3"
     es6-symbol "^3.1.1"
-
-esbuild@0.12.17:
-  version "0.12.17"
-  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.12.17.tgz#5816f905c2905de0ebbc658860df7b5b48afbcd3"
-  integrity sha512-GshKJyVYUnlSXIZj/NheC2O0Kblh42CS7P1wJyTbbIHevTG4jYMS9NNw8EOd8dDWD0dzydYHS01MpZoUcQXB4g==
 
 escalade@^3.1.1:
   version "3.1.1"

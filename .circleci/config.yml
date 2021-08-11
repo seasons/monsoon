@@ -26,12 +26,12 @@ jobs:
       - docker/install-docker-compose
 
       - run:
-          command: docker-compose up -d
           name: Start up docker containers
+          command: docker-compose up -d
 
       - run:
-          command: yarn test
           name: Run unit tests
+          command: yarn test
 
   test-integration:
     machine:
@@ -62,24 +62,24 @@ jobs:
           command: sudo apt update && sudo apt install postgresql
 
       - run:
-          command: node bin/cli.js spp local staging -f
           name: Clone staging data into local Postgres DB
+          command: node bin/cli.js spp local staging -f
 
       - run:
-          command: node bin/cli.js ctu --email integration_test_ci@seasons.nyc --password Seasons2020 --prisma local --roles Customer Admin --aid 60e4ac2aaf20ac0069155156 --dbo
           name: Generate user for integration test
+          command: node bin/cli.js ctu --email integration_test_ci@seasons.nyc --password Seasons2020 --prisma local --roles Customer Admin --aid 60e4ac2aaf20ac0069155156 --dbo
 
       - run:
-          command: nohup yarn ci &
           name: Start server locally to run integration tests against
+          command: nohup yarn ci &
 
       - run:
-          command: sleep 20
           name: Wait for server to spin up
+          command: sleep 25
 
       - run:
-          command: yarn test:e2e
           name: Run integration test suite
+          command: yarn test:e2e
 
 workflows:
   run_all_tests:

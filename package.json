@@ -14,7 +14,6 @@
   "scripts": {
     "apollo": "apollo service:push",
     "build": "yarn prisma generate && rimraf dist && tsc",
-    "check:parity": "node -r dotenv/config -r ts-node/register src/scripts/queryParity.ts dotenv_config_path=.env",
     "debug": "concurrently --kill-others 'yarn tsc -w' 'yarn debug:server'",
     "debug:server": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
     "debug:cli": "node --inspect -r dotenv/config -r ts-node/register bin/cli.js",
@@ -128,7 +127,6 @@
     "zipcodes": "8.0.0"
   },
   "devDependencies": {
-    "@anatine/esbuild-decorators": "0.2.12",
     "@babel/core": "7.8.3",
     "@babel/preset-env": "7.8.3",
     "@babel/preset-typescript": "7.8.3",
@@ -145,10 +143,8 @@
     "apollo-server-testing": "2.9.16",
     "babel-jest": "27.0.6",
     "chalk": "4.1.0",
-    "chokidar": "3.5.1",
     "concurrently": "6.2.0",
     "dotenv-cli": "1.4.0",
-    "esbuild": "0.12.17",
     "eslint": "7.22.0",
     "graphql-cli": "3.0.14",
     "husky": "4.2.3",
