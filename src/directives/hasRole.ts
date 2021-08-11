@@ -19,7 +19,7 @@ export async function hasRole(
     where: { id: userID },
     select: { id: true, roles: true },
   })
-  const roles = user.roles as unknown as string[]
+  const roles = (user.roles as unknown) as string[]
 
   // Set flags so admin-related contextual work can happen. e.g Admin Audit logging
   ctx.isAdminAction = permissibleRoles.includes("Admin")

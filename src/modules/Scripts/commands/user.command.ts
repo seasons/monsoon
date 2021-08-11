@@ -186,8 +186,14 @@ export class UserCommands {
       moduleRef: this.moduleRef,
     })
 
-    let { firstName, lastName, fullName, email, password, slug } =
-      this.createTestUserBasics(_email, _password)
+    let {
+      firstName,
+      lastName,
+      fullName,
+      email,
+      password,
+      slug,
+    } = this.createTestUserBasics(_email, _password)
 
     // Fail gracefully if the user is already in the DB
     if (!!(await this.prisma.client.user.findUnique({ where: { email } }))) {
@@ -305,10 +311,9 @@ export class UserCommands {
                     }
                   : {}),
                 subscription: {
-                  create:
-                    this.paymentUtils.getCustomerMembershipSubscriptionData(
-                      subscription
-                    ),
+                  create: this.paymentUtils.getCustomerMembershipSubscriptionData(
+                    subscription
+                  ),
                 },
               },
             } as any,

@@ -22,11 +22,12 @@ export class CollectionFieldsResolver {
     })
     select
   ) {
-    const categoriesWithProducts =
-      await this.prisma.client.collection.findUnique({
+    const categoriesWithProducts = await this.prisma.client.collection.findUnique(
+      {
         where: { id: collection.id },
         select: { products: { select: { id: true } } },
-      })
+      }
+    )
     const IDs = categoriesWithProducts?.products?.map(p => p.id)
 
     const newArgs = Object.assign({}, args, { where: { id_in: IDs } })

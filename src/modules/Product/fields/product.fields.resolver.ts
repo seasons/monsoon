@@ -1,11 +1,20 @@
 import { Customer } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { Image, Product, ProductModel } from "@prisma/client"
+import {
+  Brand,
+  Category,
+  Color,
+  Image,
+  Product,
+  ProductModel,
+} from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { sortBy } from "lodash"
 
@@ -13,7 +22,8 @@ import { sortBy } from "lodash"
 export class ProductFieldsResolver {
   constructor(
     private readonly productUtilsService: ProductUtilsService,
-    private readonly imageService: ImageService
+    private readonly imageService: ImageService,
+    private readonly prisma: PrismaService
   ) {}
 
   @ResolveField()
@@ -68,6 +78,62 @@ export class ProductFieldsResolver {
     }
     const bagItems = await bagItemsLoader.load(product.id)
     return bagItems.length > 0
+  }
+
+  @ResolveField()
+  async relatedProducts(
+    @Parent() parent,
+    @Select() select,
+    @Args() { take },
+    @Loader({
+      params: {
+        model: "Product",
+        select: Prisma.validator<Prisma.ProductSelect>()({
+          id: true,
+          category: {
+            select: {
+              id: true,
+            },
+          },
+          brand: {
+            select: {
+              id: true,
+            },
+          },
+          color: {
+            select: {
+              id: true,
+            },
+          },
+        }),
+      },
+    })
+    productLoader: PrismaDataLoader<{
+      id: string
+      category: Category
+      brand: Brand
+      color: Color
+    }>
+  ) {
+    const product = await productLoader.load(parent.id)
+    const relatedProducts = await this.prisma.client.product.findMany({
+      where: {
+        category: { id: product.category.id },
+        brand: { id: { not: product.brand.id } },
+        status: "Available",
+      },
+      select: {
+        ...select,
+      },
+      take,
+    })
+    const sortedRelatedProducts = relatedProducts.sort((a: any, b: any) => {
+      if (b.color.id === product.color.id) {
+        return 1
+      }
+      return -1
+    })
+    return sortedRelatedProducts
   }
 
   @ResolveField()

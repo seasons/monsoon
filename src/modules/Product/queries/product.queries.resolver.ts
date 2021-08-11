@@ -91,12 +91,11 @@ export class ProductQueriesResolver {
     @Customer() customer
   ) {
     if (args.personalizedForCurrentUser) {
-      const products =
-        await this.productService.availableProductVariantsConnectionForCustomer(
-          customer.id,
-          args,
-          select
-        )
+      const products = await this.productService.availableProductVariantsConnectionForCustomer(
+        customer.id,
+        args,
+        select
+      )
       return products
     }
 

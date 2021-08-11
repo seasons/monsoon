@@ -1,5 +1,7 @@
+import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from "constants"
+
 import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
-import { Injectable } from "@nestjs/common"
+import { Inject, Injectable } from "@nestjs/common"
 import {
   makeOrderByPrisma2Compatible,
   makeWherePrisma2Compatible,
@@ -15,6 +17,7 @@ import {
   isEmpty,
   lowerFirst,
   merge,
+  omit,
   pick,
 } from "lodash"
 
@@ -53,7 +56,7 @@ export class QueryUtilsService {
     } = params
 
     // Parse the fields object
-    let fields = graphqlFields(info)
+    let fields = graphqlFields(info, {}, { processArguments: true })
 
     // Depending on whether or not we're analyzing at the level of a top-level query key,
     // either cache the fields object or deepmerge with the relevant cached fields object
@@ -138,13 +141,34 @@ export class QueryUtilsService {
               f => f.name === "createdAt"
             ) && field.isList
 
-          select.select[field.name] = this.fieldsToSelect(
+          //get the select
+          const fieldSelect = this.fieldsToSelect(
             fieldsToParse[field.name],
             modelFieldsByModelName,
             field.type,
             includeDefaultSortToChild ? { createdAt: "desc" } : null,
             { callType: "recursive" }
           )
+          //get the arguments
+          const fieldArgs = fieldsToParse[field.name]?.__arguments
+          let processedFieldArgs = {}
+          if (!!fieldArgs) {
+            const prismaOneArgs = fieldArgs.reduce((acc, currentArgument) => {
+              const keyName = Object.keys(currentArgument)[0]
+              acc[keyName] = currentArgument[keyName].value
+              return acc
+            }, {})
+            const prisma2Args = this.prismaOneToPrismaTwoArgs(
+              prismaOneArgs,
+              field.type
+            )
+            processedFieldArgs = {
+              ...omit(prisma2Args, "select"),
+              skip: prisma2Args.skip > 0 ? prisma2Args.skip : undefined,
+            }
+          }
+
+          select.select[field.name] = { ...fieldSelect, ...processedFieldArgs }
       }
     })
     return callType === "initial" ? select.select : select

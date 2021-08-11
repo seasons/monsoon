@@ -1,11 +1,11 @@
 import "module-alias/register"
 
-import { head } from "lodash"
 import { NestFactory } from "@nestjs/core"
-import { AppModule } from "../../app.module"
+import { head } from "lodash"
 
-import { PrismaService } from "../../prisma/prisma.service"
+import { AppModule } from "../../app.module"
 import { ReservationService } from "../../modules/Reservation/services/reservation.service"
+import { PrismaService } from "../../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
@@ -58,12 +58,13 @@ const run = async () => {
     },
   })
 
-  const [reservationFeedbackPromise] =
-    await reservationService.createReservationFeedbacksForVariants(
-      returnedPhysicalProducts,
-      prismaUser,
-      _reservation
-    )
+  const [
+    reservationFeedbackPromise,
+  ] = await reservationService.createReservationFeedbacksForVariants(
+    returnedPhysicalProducts,
+    prismaUser,
+    _reservation
+  )
 
   await ps.client.$transaction([reservationFeedbackPromise])
   console.log("finished")
