@@ -77,8 +77,14 @@ export class PrismaService implements UpdatableConnection {
     datamodel.forEach(model => {
       const keyName = lowerFirst(model.name)
 
-      const { aggregate, count, findFirst, findMany, findUnique, groupBy } =
-        readClient[keyName]
+      const {
+        aggregate,
+        count,
+        findFirst,
+        findMany,
+        findUnique,
+        groupBy,
+      } = readClient[keyName]
 
       const {
         aggregate: writeClientAggregate,
@@ -96,6 +102,23 @@ export class PrismaService implements UpdatableConnection {
         delete: _delete, // typescript is unhappy if you destructure into a var named "delete"
       } = writeClient[keyName]
 
+      // Set things up to add a default orderBy to FindMany
+      const smartFindMany = this.createSmartReadFunc(
+        findMany,
+        writeClientFindMany,
+        clientOptions
+      )
+      const modelFields = PrismaService.modelFieldsByModelName[model.name]
+      const modelHasCreatedAt = modelFields
+        .map(a => a.name)
+        .includes("createdAt")
+      const smartFindManyWithDefaultOrderBy = modelHasCreatedAt
+        ? async args => {
+            const newArgs = { orderBy: { createdAt: "desc" }, ...args }
+            return smartFindMany(newArgs)
+          }
+        : smartFindMany
+
       smartClient[keyName] = {
         aggregate: this.createSmartReadFunc(
           aggregate,
@@ -108,11 +131,7 @@ export class PrismaService implements UpdatableConnection {
           writeClientFindFirst,
           clientOptions
         ),
-        findMany: this.createSmartReadFunc(
-          findMany,
-          writeClientFindMany,
-          clientOptions
-        ),
+        findMany: smartFindManyWithDefaultOrderBy,
         findUnique: this.createSmartReadFunc(
           findUnique,
           writeClientFindUnique,
