@@ -1,12 +1,13 @@
 import crypto from "crypto"
 import * as fs from "fs"
 
+import { DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import {
   AdminActionLog,
   PauseRequest,
-  SyncTimingType,
   Prisma,
+  SyncTimingType,
 } from "@prisma/client"
 import { Location } from "@prisma/client"
 import { UTMData } from "@prisma/client"
@@ -17,10 +18,10 @@ import graphqlFields from "graphql-fields"
 import {
   camelCase,
   get,
-  merge,
   head,
   isObject,
   mapKeys,
+  merge,
   omit,
   snakeCase,
 } from "lodash"
@@ -29,7 +30,6 @@ import states from "us-state-converter"
 
 import { bottomSizeRegex } from "../../Product/constants"
 import { QueryUtilsService } from "./queryUtils.service"
-import { DateTime } from "@app/prisma/prisma.binding"
 
 enum ProductSize {
   XXS = "XXS",

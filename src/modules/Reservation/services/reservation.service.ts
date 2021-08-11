@@ -356,7 +356,7 @@ export class ReservationService {
     await this.prisma.client.reservation.update({
       data: {
         returnedProducts: {
-          set: items.map(item => ({ id: item })),
+          connect: items.map(item => ({ id: item })),
         },
         returnedAt: new Date(),
       },
