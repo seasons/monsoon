@@ -35,9 +35,9 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async deleteBagItem(@Args() { itemID }, @Application() application) {
+  async deleteBagItem(@Args() { itemID, type }, @Application() application) {
     if (application === "spring") {
-      await this.bagService.deleteBagItemFromAdmin(itemID)
+      await this.bagService.deleteBagItemFromAdmin(itemID, type)
     } else {
       await this.prisma.client.bagItem.delete({ where: { id: itemID } })
     }
