@@ -1053,7 +1053,8 @@ model Product {
   externalURL                 String?
   retailPrice                 Int?
   wholesalePrice              Int?
-  recoupment                  Int?                     @default(4)
+  rentalPriceOverride         Int?
+  recoupment                  Float?                   @default(4)
   status                      ProductStatus?
   createdAt                   DateTime                 @default(now())
   updatedAt                   DateTime                 @updatedAt

@@ -265,7 +265,8 @@ type Product @cacheControl(maxAge: 200) {
   tier: ProductTier!
   rentalPrice: Int
   wholesalePrice: Int
-  recoupment: Int
+  rentalPriceOverride: Int
+  recoupment: Float
 }
 
 type Brand @cacheControl(maxAge: 1000) {
@@ -347,7 +348,8 @@ input ProductCreateInput {
   productFit: ProductFit
   retailPrice: Int!
   wholesalePrice: Int!
-  recoupment: Int!
+  recoupment: Float!
+  rentalPriceOverride: Int
   season: UpsertSeasonInput
   photographyStatus: PhotographyStatus
   secondaryColorCode: String
@@ -372,6 +374,7 @@ input CustomProductUpdateInput {
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
   retailPrice: Int
+  rentalPriceOverride: Int
   wholesalePrice: Int
   recoupment: Int
   season: UpsertSeasonInput

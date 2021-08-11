@@ -26,6 +26,7 @@ export class ProductFieldsResolver {
           id: true,
           wholesalePrice: true,
           recoupment: true,
+          rentalPriceOverride: true,
         }),
       },
     })
@@ -33,11 +34,17 @@ export class ProductFieldsResolver {
       id: string
       wholesalePrice: number
       recoupment: number
+      rentalPriceOverride: number
     }>
   ) {
     const product = await productLoader.load(parent.id)
 
-    return Math.ceil(product.wholesalePrice / product.recoupment)
+    if (product.rentalPriceOverride) {
+      return product.rentalPriceOverride
+    } else {
+      const rate = product.wholesalePrice / product.recoupment
+      return Math.ceil(rate / 5) * 5
+    }
   }
 
   @ResolveField()
