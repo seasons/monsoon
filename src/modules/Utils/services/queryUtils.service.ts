@@ -166,7 +166,6 @@ export class QueryUtilsService {
               ...omit(prisma2Args, "select"),
               skip: prisma2Args.skip > 0 ? prisma2Args.skip : undefined,
             }
-            // processedFieldArgs = omit(prisma2Args, "select")
           }
 
           select.select[field.name] = { ...fieldSelect, ...processedFieldArgs }
