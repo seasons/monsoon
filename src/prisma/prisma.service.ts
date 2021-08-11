@@ -1,4 +1,4 @@
-import { UpdatableConnection } from "@app/modules/index.types"
+import { UpdatableConnection } from "@app/modules/index.types.d"
 import { Injectable, Logger } from "@nestjs/common"
 import { PrismaSelect } from "@paljs/plugins"
 import { Prisma, PrismaClient } from "@prisma/client"

@@ -70,7 +70,7 @@ jobs:
           name: Generate user for integration test
 
       - run:
-          command: nohup node scripts/esbuild.watcher.js &
+          command: nohup yarn ci &
           name: Start server locally to run integration tests against
 
       - run:
