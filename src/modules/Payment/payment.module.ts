@@ -12,10 +12,12 @@ import { InvoicesForCustomersLoader } from "./loaders/invoicesForCustomers.loade
 import { TransactionsLoader } from "./loaders/transactions.loaders"
 import { TransactionsForCustomersLoader } from "./loaders/transactionsForCustomers.loader"
 import { PaymentMutationsResolver } from "./mutations/payment.mutations"
+import { SubscriptionMutationsResolver } from "./mutations/subscription.mutations"
 import { ChargebeeQueriesResolver } from "./queries/chargebee.queries.resolver"
 import { PaymentQueriesResolver } from "./queries/payment.queries.resolver"
 import { LoaderUtilsService } from "./services/loader.utils.service"
 import { PaymentService } from "./services/payment.service"
+import { SubscriptionService } from "./services/subscription.service"
 import { UpdatePaymentService } from "./services/updatePayment.service"
 
 export const PaymentModuleDef = {
@@ -34,13 +36,15 @@ export const PaymentModuleDef = {
     InvoicesForCustomersLoader,
     LoaderUtilsService,
     PaymentQueriesResolver,
+    SubscriptionService,
+    SubscriptionMutationsResolver,
     PaymentMutationsResolver,
     PaymentService,
     UpdatePaymentService,
     TransactionsLoader,
     TransactionsForCustomersLoader,
   ],
-  exports: [PaymentService, UpdatePaymentService],
+  exports: [SubscriptionService, PaymentService, UpdatePaymentService],
 }
 @Module(PaymentModuleDef)
 export class PaymentModule {}

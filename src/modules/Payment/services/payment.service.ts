@@ -1,33 +1,16 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { CustomerFieldsResolver } from "@app/modules/Customer/fields/customer.fields.resolver"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PauseType } from "@app/prisma/prisma.binding"
-import { EmailService } from "@modules/Email/services/email.service"
-import { EmailUser } from "@modules/Email/services/email.service"
-import { AuthService } from "@modules/User/services/auth.service"
 import { Inject, Injectable, forwardRef } from "@nestjs/common"
-import { Customer, PaymentPlan, PaymentPlanTier, User } from "@prisma/client"
-import { Prisma } from "@prisma/client"
+import { PaymentPlanTier } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
-import {
-  camelCase,
-  get,
-  head,
-  identity,
-  snakeCase,
-  stubTrue,
-  upperFirst,
-} from "lodash"
-import { DateTime } from "luxon"
+import { camelCase, head, identity, snakeCase, upperFirst } from "lodash"
 import Stripe from "stripe"
 
 import {
-  BillingAddress,
-  Card,
   Coupon,
   CouponType,
   Invoice,
@@ -35,35 +18,24 @@ import {
   RefundInvoiceInput,
   Transaction,
   TransactionsDataLoader,
-} from "../payment.types.d"
+} from "../payment.types"
+import { SubscriptionService } from "./subscription.service"
 
 const stripe = new Stripe(process.env.STRIPE_API_KEY, {
   apiVersion: "2020-08-27",
 })
-
-export interface SubscriptionData {
-  nextBillingAt: string
-  currentTermEnd: string
-  currentTermStart: string
-  status: string
-  planPrice: number
-  subscriptionId: string
-  planID: string
-}
 
 @Injectable()
 export class PaymentService {
   constructor(
     @Inject(forwardRef(() => CustomerService))
     private readonly customerService: CustomerService,
-    private readonly emailService: EmailService,
-    private readonly paymentUtils: PaymentUtilsService,
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
     private readonly segment: SegmentService,
     private readonly error: ErrorService,
-    @Inject(forwardRef(() => AuthService))
-    private readonly auth: AuthService
+    private readonly subscription: SubscriptionService,
+    private readonly paymentUtils: PaymentUtilsService
   ) {}
 
   async addEarlySwapCharge(customerID: string) {
@@ -154,132 +126,42 @@ export class PaymentService {
     }
   }
 
-  async subscriptionEstimate(
-    plan: PaymentPlan,
-    customer: Customer,
-    couponID: string
-  ) {
-    let billingAddress = null
-
-    if (customer) {
-      const customerWithBillingInfo = await this.prisma.client.customer.findFirst(
-        {
-          where: { id: customer.id },
-          select: {
-            id: true,
-            billingInfo: {
-              select: {
-                street1: true,
-                street2: true,
-                city: true,
-                state: true,
-                postal_code: true,
-                country: true,
-              },
-            },
-            detail: {
-              select: {
-                id: true,
-                shippingAddress: {
-                  select: {
-                    id: true,
-                    address1: true,
-                    address2: true,
-                    city: true,
-                    country: true,
-                    state: true,
-                    zipCode: true,
-                  },
-                },
-              },
-            },
-          },
-        }
-      )
-
-      const { billingInfo } = customerWithBillingInfo
-
-      if (!!billingInfo) {
-        billingAddress = {
-          line1: billingInfo.street1,
-          line2: billingInfo.street2,
-          city: billingInfo.city,
-          state: billingInfo.state,
-          zip: billingInfo.postal_code,
-          country: "US",
-        }
-      } else {
-        billingAddress = {
-          zip: customerWithBillingInfo?.detail?.shippingAddress?.zipCode,
-          country: "US",
-        }
-      }
+  async processPayment({ planID, paymentMethodID, billing }) {
+    const billingAddress = {
+      first_name: billing.user.firstName || "",
+      last_name: billing.user.lastName || "",
+      ...billing.address,
+      zip: billing.address.postal_code || "",
+      country: "US", // assume its US for now, because we need it for taxes.
     }
 
     const subscriptionEstimate = await chargebee.estimate
       .create_subscription({
-        ...(!!billingAddress ? { billing_address: billingAddress } : {}),
+        billing_address: billingAddress,
         subscription: {
-          plan_id: plan.planID,
+          plan_id: planID,
         },
-        ...(!!couponID ? { coupon_ids: [couponID] } : {}),
       })
       .request()
 
-    return subscriptionEstimate.estimate.invoice_estimate
+    const amountDue =
+      subscriptionEstimate?.estimate?.invoice_estimate?.amount_due
+    const intent = await this.paymentUtils.createPaymentIntent(
+      paymentMethodID,
+      amountDue
+    )
+    return intent
   }
 
-  async changeCustomerPlan(planID, customer) {
-    try {
-      const customerWithMembership = await this.prisma.client.customer.findUnique(
-        {
-          where: { id: customer.id },
-          select: {
-            id: true,
-            membership: {
-              select: {
-                id: true,
-                subscriptionId: true,
-                subscription: { select: { id: true, currentTermEnd: true } },
-              },
-            },
-            bagItems: { select: { id: true, status: true } },
-          },
-        }
-      )
-
-      const membership = customerWithMembership.membership
-      const subscriptionID = membership.subscriptionId
-
-      await chargebee.subscription
-        .update(subscriptionID, {
-          plan_id: planID,
-        })
-        .request()
-
-      return await this.prisma.client.customerMembership.update({
-        where: { id: membership.id },
-        data: {
-          plan: { connect: { planID } },
-        },
-      })
-    } catch (e) {
-      this.error.setExtraContext({ planID })
-      this.error.setExtraContext(customer, "customer")
-      this.error.captureError(e)
-      throw new Error(`Error updating to new plan: ${e.message}`)
-    }
-  }
-
-  async processPayment(
+  async confirmPayment({
+    paymentIntentID,
     planID,
-    paymentMethodID,
     couponID,
     billing,
-    shipping,
     customer,
-    application
-  ) {
+    shipping,
+    application,
+  }) {
     const customerWithUserData = await this.prisma.client.customer.findUnique({
       where: {
         id: customer.id,
@@ -292,6 +174,9 @@ export class PaymentService {
       },
     })
     const user = customerWithUserData?.user
+
+    const intent = await stripe.paymentIntents.retrieve(paymentIntentID)
+    await stripe.paymentIntents.confirm(intent.id)
 
     let shippingAddress
     if (shipping?.address) {
@@ -315,36 +200,15 @@ export class PaymentService {
       country: "US", // assume its US for now, because we need it for taxes.
     }
 
-    const subscriptionEstimate = await chargebee.estimate
-      .create_subscription({
-        billing_address: billingAddress,
-        subscription: {
-          plan_id: planID,
-        },
-      })
-      .request()
-
-    const amountDue =
-      subscriptionEstimate?.estimate?.invoice_estimate?.amount_due
-    const intent = await stripe.paymentIntents.create({
-      payment_method: paymentMethodID,
-      amount: amountDue,
-      currency: "USD",
-      confirm: true,
-      confirmation_method: "manual",
-      setup_future_usage: "off_session",
-      capture_method: "manual",
-    })
-
     const subscriptionOptions = {
       plan_id: planID,
       billing_address: billingAddress,
       coupon_ids: !!couponID ? [couponID] : [],
       customer: {
         id: customerWithUserData.user.id,
-        first_name: billing.user.firstName || "",
-        last_name: billing.user.lastName || "",
-        email: billing.user.email || "",
+        first_name: user.firstName || "",
+        last_name: user.lastName || "",
+        email: user.email || "",
       },
       payment_intent: {
         gw_token: intent.id,
@@ -356,7 +220,7 @@ export class PaymentService {
       .create(subscriptionOptions)
       .request()
 
-    await this.createPrismaSubscription(
+    const data = await this.subscription.createPrismaSubscription(
       customerWithUserData.user.id,
       subscriptionData.customer,
       subscriptionData.card,
@@ -373,13 +237,13 @@ export class PaymentService {
       lastName: user.lastName,
       email: user.email,
       impactId: customerWithUserData.detail?.impactId,
-      total: amountDue,
+      total: intent.amount,
       application,
       discoveryReference: customerWithUserData.detail?.discoveryReference,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
 
-    return intent
+    return data
   }
 
   async stripeTokenCheckout(
@@ -471,7 +335,7 @@ export class PaymentService {
 
     const total = payload.invoice?.total
 
-    await this.createPrismaSubscription(
+    await this.subscription.createPrismaSubscription(
       user.id,
       payload.customer,
       paymentSource.payment_source.card,
@@ -493,146 +357,6 @@ export class PaymentService {
       application,
       ...this.utils.formatUTMForSegment(customerWithUserData.utm),
     })
-  }
-
-  async pauseSubscription(
-    subscriptionId,
-    customer,
-    pauseType: PauseType = "WithoutItems",
-    reasonID
-  ) {
-    const customerWithMembership = await this.prisma.client.customer.findUnique(
-      {
-        where: { id: customer.id },
-        select: {
-          id: true,
-          membership: {
-            select: {
-              id: true,
-              subscription: { select: { id: true, currentTermEnd: true } },
-            },
-          },
-          bagItems: { select: { id: true, status: true } },
-        },
-      }
-    )
-
-    const numReservedItemsInBag = customerWithMembership.bagItems?.filter(
-      a => a.status === "Reserved"
-    )?.length
-
-    if (pauseType === "WithItems" && numReservedItemsInBag === 0) {
-      throw new Error(
-        `Error pausing subscription: You must have reserved items to pause with items.`
-      )
-    }
-
-    try {
-      let termEnd
-      let resumeDateISO
-
-      if (pauseType === "WithItems") {
-        termEnd = customerWithMembership?.membership?.subscription.currentTermEnd.toISOString()
-        resumeDateISO = DateTime.fromISO(termEnd).plus({ months: 1 }).toISO()
-      } else {
-        const result = await chargebee.subscription
-          .pause(subscriptionId, {
-            pause_option: "immediately",
-          })
-          .request()
-
-        termEnd = DateTime.fromSeconds(
-          result?.subscription?.current_term_end
-        ).toISO()
-        if (!termEnd) {
-          throw new Error(
-            "Unable to query term end for subscription. Please try again"
-          )
-        }
-        resumeDateISO = DateTime.fromISO(termEnd).plus({ months: 1 }).toISO()
-      }
-
-      return await this.prisma.client.pauseRequest.create({
-        data: {
-          membership: {
-            connect: { id: customerWithMembership?.membership?.id },
-          },
-          pausePending: true,
-          pauseDate: termEnd,
-          resumeDate: resumeDateISO,
-          pauseType,
-          reason: reasonID && { connect: { id: reasonID } },
-          notified: false,
-        },
-      })
-    } catch (e) {
-      this.error.setExtraContext({ subscriptionId })
-      this.error.setExtraContext(customer, "customer")
-      this.error.captureError(e)
-      throw new Error(`Error pausing subscription: ${JSON.stringify(e)}`)
-    }
-  }
-
-  async removeScheduledPause(subscriptionId, customer) {
-    try {
-      const pauseRequest = await this.prisma.client.pauseRequest.findFirst({
-        where: {
-          membership: {
-            customer: {
-              id: customer.id,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      })
-
-      if (pauseRequest.pauseType === "WithoutItems") {
-        await chargebee.subscription
-          .resume(subscriptionId, {
-            resume_option: "immediately",
-            charges_handling: "add_to_unbilled_charges",
-          })
-          .request()
-      }
-
-      return await this.prisma.client.pauseRequest.update({
-        where: { id: pauseRequest.id },
-        data: { pausePending: false },
-      })
-    } catch (e) {
-      if (
-        e?.api_error_code &&
-        e?.api_error_code !== "invalid_state_for_request"
-      ) {
-        this.error.setExtraContext({ subscriptionId })
-        this.error.setExtraContext(customer, "customer")
-        this.error.captureError(e)
-        throw new Error(`Error removing scheduled pause: ${e}`)
-      }
-    }
-  }
-
-  async createSubscription(
-    planID: string,
-    billingAddress: BillingAddress,
-    user: User,
-    card: Card
-  ) {
-    return await chargebee.subscription
-      .create({
-        plan_id: planID,
-        billingAddress,
-        customer: {
-          id: user.id,
-          first_name: user.firstName,
-          last_name: user.lastName,
-          email: user.email,
-        },
-        card,
-      })
-      .request()
   }
 
   async getGift(id) {
@@ -743,118 +467,6 @@ export class PaymentService {
         },
       })
     }
-  }
-
-  async createCustomerSubscriptionInputData({
-    subscription,
-    card,
-    chargebeeCustomer,
-    shippingAddress,
-    giftID,
-  }) {
-    const subscriptionData: SubscriptionData = {
-      nextBillingAt: DateTime.fromSeconds(subscription.next_billing_at).toISO(),
-      currentTermEnd: DateTime.fromSeconds(
-        subscription.current_term_end
-      ).toISO(),
-      currentTermStart: DateTime.fromSeconds(
-        subscription.current_term_start
-      ).toISO(),
-      status: subscription.status,
-      planPrice: subscription.plan_amount,
-      subscriptionId: subscription.id,
-      planID: subscription.plan_id.replace("-gift", ""),
-    }
-
-    // Retrieve plan and billing data
-    const billingInfo = this.paymentUtils.createBillingInfoObject(
-      card,
-      chargebeeCustomer
-    )
-
-    let updateData: Prisma.CustomerUpdateInput = {
-      billingInfo: {
-        create: billingInfo,
-      },
-      status: "Active",
-      admissions: {
-        update: {
-          subscribedAt: new Date(),
-          inServiceableZipcode: true,
-          admissable: true,
-          authorizationsCount: 1,
-          allAccessEnabled: false,
-        },
-      },
-      detail: {
-        update: {
-          shippingAddress: {
-            create: shippingAddress,
-          },
-        },
-      },
-      membership: {
-        create: {
-          subscriptionId: subscriptionData.subscriptionId,
-          giftId: giftID,
-          plan: { connect: { planID: subscriptionData.planID } },
-          subscription: {
-            create: subscriptionData,
-          },
-        },
-      },
-    }
-
-    return updateData
-  }
-
-  /**
-   * Creates a prisma subscription after a successful payment
-   *
-   * Platform: web, mobile
-   *
-   * @param userID
-   * @param chargebeeCustomer
-   * @param card
-   * @param subscription
-   * @param giftID
-   * @param shippingAddress
-   */
-  async createPrismaSubscription(
-    userID: string,
-    chargebeeCustomer: any,
-    card: any,
-    subscription: any,
-    giftID?: string,
-    shippingAddress?: any
-  ) {
-    const customer = await this.prisma.client.customer.findFirst({
-      where: { user: { id: userID } },
-      select: {
-        id: true,
-        user: true,
-      },
-    })
-
-    if (!customer) {
-      throw new Error(`Could not find customer with user id: ${userID}`)
-    }
-
-    const updateData = await this.createCustomerSubscriptionInputData({
-      subscription,
-      card,
-      giftID,
-      shippingAddress,
-      chargebeeCustomer,
-    })
-
-    await this.prisma.client.customer.update({
-      where: { id: customer.id },
-      data: updateData,
-    })
-
-    // Send welcome to seasons email
-    await this.emailService.sendSubscribedEmail(customer.user)
   }
 
   getPaymentPlanTier(planID): PaymentPlanTier {

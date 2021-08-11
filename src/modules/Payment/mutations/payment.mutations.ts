@@ -1,22 +1,15 @@
 import { Customer, User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
-import { SegmentService } from "@app/modules/Analytics/services/segment.service"
-import { EmailService } from "@app/modules/Email/services/email.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
-import { PrismaService } from "@app/prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { UpdatePaymentService } from "@modules/Payment/services/updatePayment.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
-import { pick } from "lodash"
 
 @Resolver()
 export class PaymentMutationsResolver {
   constructor(
-    private readonly prisma: PrismaService,
     private readonly paymentService: PaymentService,
     private readonly updatePaymentService: UpdatePaymentService,
-    private readonly segment: SegmentService,
-    private readonly email: EmailService,
     private readonly paymentUtils: PaymentUtilsService
   ) {}
 
@@ -27,20 +20,34 @@ export class PaymentMutationsResolver {
    * Platform: Web (flare)
    */
   @Mutation()
-  async processPayment(
-    @Args() { planID, paymentMethodID, couponID, billing, shipping },
+  async processPayment(@Args() { planID, paymentMethodID, billing }) {
+    return this.paymentService.processPayment({
+      planID,
+      paymentMethodID,
+      billing,
+    })
+  }
+
+  /**
+   * To be called after [3Ds secure flow](https://stripe.com/docs/payments/3d-secure#when-to-use-3d-secure) is completed
+   *
+   * Platform: Web (flare), Native mobile (harvest)
+   */
+  @Mutation()
+  async confirmPayment(
+    @Args() { planID, paymentIntentID, couponID, billing, shipping },
     @Customer() customer,
     @Application() application
   ) {
-    return this.paymentService.processPayment(
+    return this.paymentService.confirmPayment({
+      paymentIntentID,
       planID,
-      paymentMethodID,
       couponID,
       billing,
-      shipping,
       customer,
-      application
-    )
+      application,
+      shipping,
+    })
   }
 
   /**
@@ -71,7 +78,7 @@ export class PaymentMutationsResolver {
     @Args() { planID, paymentMethodID, billing },
     @Customer() customer
   ) {
-    await this.updatePaymentService.updatePaymentMethod(
+    const intent = await this.updatePaymentService.updatePaymentMethod(
       planID,
       customer,
       null,
@@ -79,7 +86,20 @@ export class PaymentMutationsResolver {
       paymentMethodID,
       billing
     )
-    return true
+    return intent
+  }
+
+  @Mutation()
+  async confirmPaymentMethodUpdate(
+    @Args() { paymentIntentID, billing },
+    @Customer() customer,
+    @User() user
+  ) {
+    return this.updatePaymentService.confirmPaymentMethodUpdate({
+      paymentIntentID,
+      userId: user.id,
+      chargebeeBillingAddress: billing,
+    })
   }
 
   /**
@@ -102,82 +122,8 @@ export class PaymentMutationsResolver {
   }
 
   @Mutation()
-  async changeCustomerPlan(@Args() { planID }, @Customer() customer) {
-    await this.paymentService.changeCustomerPlan(planID, customer)
-    return true
-  }
-
-  @Mutation()
   async updateResumeDate(@Args() { date }, @Customer() customer) {
     await this.paymentUtils.updateResumeDate(date, customer)
-    return true
-  }
-
-  @Mutation()
-  async pauseSubscription(
-    @Args() { subscriptionID, pauseType, reasonID },
-    @Customer() customer,
-    @User() user
-  ) {
-    await this.paymentService.pauseSubscription(
-      subscriptionID,
-      customer,
-      pauseType,
-      reasonID
-    )
-    const customerWithData = (await this.prisma.client.customer.findUnique({
-      where: { id: customer.id },
-      select: {
-        id: true,
-        createdAt: true,
-        updatedAt: true,
-        user: { select: { firstName: true, email: true, id: true } },
-        membership: {
-          select: {
-            id: true,
-            plan: {
-              select: { id: true, tier: true, planID: true, itemCount: true },
-            },
-            pauseRequests: {
-              select: {
-                createdAt: true,
-                resumeDate: true,
-                pauseDate: true,
-                pauseType: true,
-              },
-            },
-          },
-        },
-        reservations: { select: { id: true, status: true, createdAt: true } },
-      },
-    })) as any
-    await this.email.sendPausedEmail(customerWithData, false)
-
-    const tier = customerWithData?.membership?.plan?.tier
-    const planID = customerWithData?.membership?.plan?.planID
-
-    this.segment.track(user.id, "Paused Subscription", {
-      ...pick(user, ["firstName", "lastName", "email"]),
-      planID,
-      tier,
-      pauseType,
-    })
-
-    return true
-  }
-
-  @Mutation()
-  async resumeSubscription(
-    @Args() { subscriptionID, date },
-    @Customer() customer
-  ) {
-    await this.paymentUtils.resumeSubscription(subscriptionID, date, customer)
-    return true
-  }
-
-  @Mutation()
-  async removeScheduledPause(@Args() { subscriptionID }, @Customer() customer) {
-    await this.paymentService.removeScheduledPause(subscriptionID, customer)
     return true
   }
 

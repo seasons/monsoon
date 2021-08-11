@@ -1,13 +1,13 @@
 import { Customer, User } from "@app/decorators"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { SubscriptionService } from "@app/modules/Payment/services/subscription.service"
 import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
 import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
 import { TwilioEvent } from "@app/modules/Twilio/twilio.types.d"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
-import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { Injectable } from "@nestjs/common"
+import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
 import {
   CustomerStatus,
@@ -37,7 +37,8 @@ export class SMSService {
     private readonly error: ErrorService,
     private readonly email: EmailService,
     private readonly utils: UtilsService,
-    private readonly queryUtils: QueryUtilsService
+    @Inject(forwardRef(() => SubscriptionService))
+    private readonly subscription: SubscriptionService
   ) {}
 
   async startSMSVerification(
@@ -409,7 +410,7 @@ export class SMSService {
           status = smsCust.status as CustomerStatus
           switch (status) {
             case "Paused":
-              await this.paymentUtils.resumeSubscription(
+              await this.subscription.resumeSubscription(
                 smsCust.membership.subscriptionId,
                 null,
                 smsCust

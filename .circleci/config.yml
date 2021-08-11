@@ -79,7 +79,7 @@ jobs:
 
       - run:
           name: Wait for server to spin up
-          command: sleep 35
+          command: sleep 100
 
       - run:
           name: Run integration test suite
