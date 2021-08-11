@@ -70,16 +70,29 @@ jobs:
           command: node bin/cli.js ctu --email integration_test_ci@seasons.nyc --password Seasons2020 --prisma local --roles Customer Admin --aid 60e4ac2aaf20ac0069155156 --dbo
 
       - run:
+          name: Install JUnit coverage reporter
+          command: yarn add --dev jest-junit
+
+      - run:
           name: Start server locally to run integration tests against
           command: yarn ci
 
       - run:
           name: Wait for server to spin up
-          command: sleep 30
+          command: sleep 35
 
       - run:
           name: Run integration test suite
-          command: yarn test:e2e
+          command: yarn test:e2e:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+
+      # https://circleci.com/docs/2.0/collect-test-data/#jest
+      - store_test_results:
+          path: ./reports/junit/
+
+      - store_artifacts:
+          path: ./reports/junit
 
 workflows:
   run_all_tests:
