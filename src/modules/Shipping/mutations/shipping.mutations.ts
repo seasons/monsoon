@@ -8,6 +8,8 @@ export class ShippingMutationsResolver {
 
   @Mutation()
   async validateAddress(@Args() { input }) {
-    return await this.shippingService.validateAddress(input)
+    // We deprecated this when we moved from Shippo to UPS. If we need it again, we'd just need to revisit how to
+    // get the proper formatting for the expected output on this mutation.
+    throw new Error("Deprecated. If needed, need to re-implement")
   }
 }
