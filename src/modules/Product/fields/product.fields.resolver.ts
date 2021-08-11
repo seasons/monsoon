@@ -27,6 +27,30 @@ export class ProductFieldsResolver {
   ) {}
 
   @ResolveField()
+  async rentalPrice(
+    @Parent() parent,
+    @Loader({
+      params: {
+        model: "Product",
+        select: Prisma.validator<Prisma.ProductSelect>()({
+          id: true,
+          wholesalePrice: true,
+          recoupment: true,
+        }),
+      },
+    })
+    productLoader: PrismaDataLoader<{
+      id: string
+      wholesalePrice: number
+      recoupment: number
+    }>
+  ) {
+    const product = await productLoader.load(parent.id)
+
+    return Math.ceil(product.wholesalePrice / product.recoupment)
+  }
+
+  @ResolveField()
   async isSaved(
     @Parent() product,
     @Customer() customer,

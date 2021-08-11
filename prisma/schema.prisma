@@ -321,6 +321,8 @@ enum PaymentPlanTier {
   Essential
   AllAccess
   Pause
+  Access
+  Guest
 }
 
 enum SmsStatus {
@@ -1050,6 +1052,8 @@ model Product {
   description                 String?
   externalURL                 String?
   retailPrice                 Int?
+  wholesalePrice              Int?
+  recoupment                  Int?                     @default(4)
   status                      ProductStatus?
   createdAt                   DateTime                 @default(now())
   updatedAt                   DateTime                 @updatedAt
