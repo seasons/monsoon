@@ -12,7 +12,6 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "emitDecoratorMetadata": true,
-    // "incremental": true,
     "baseUrl": "./src",
     "rootDir": "src",
     "paths": {

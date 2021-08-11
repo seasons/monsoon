@@ -19,7 +19,7 @@ interface PrismaGenerateParams {
   model: Prisma.ModelName
   select?: any
 
-  ctx?: any
+  ctx?: any //don't pass in at callsite, handled behind the scenes
   orderBy?: any
 
   // if a given key does not resolve to any return value, what should we return?

@@ -71,11 +71,11 @@ jobs:
 
       - run:
           name: Start server locally to run integration tests against
-          command: nohup yarn ci &
+          command: yarn ci
 
       - run:
           name: Wait for server to spin up
-          command: sleep 25
+          command: sleep 30
 
       - run:
           name: Run integration test suite
