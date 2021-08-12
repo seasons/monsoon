@@ -123,10 +123,13 @@ export class CustomerService {
 
     const originState = warehouseLocation.state
     const shippingOptions = []
+    const abbreviatedDestState = this.utils.abbreviateState(destinationState)
 
     for (const method of shippingMethods) {
       const stateData =
-        shippingOptionsData[method.code].from[originState].to[destinationState]
+        shippingOptionsData[method.code].from[originState].to[
+          abbreviatedDestState
+        ]
 
       const shippingOption = await this.prisma.client.shippingOption.create({
         data: {
