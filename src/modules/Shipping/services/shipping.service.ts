@@ -8,7 +8,7 @@ import {
   ShippoRate,
   ShippoShipment,
   ShippoTransaction,
-} from "../shipping.types"
+} from "../shipping.types.d"
 
 interface CoreShippoAddressFields {
   name: string

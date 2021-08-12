@@ -1,6 +1,6 @@
 import request from "supertest"
 
-import * as queryMap from "../../../tests/complete.queryMap.json"
+import * as queryMap from "./complete.queryMap.json"
 
 const server = "http://localhost:4000/"
 let token = "Bearer "
@@ -284,209 +284,209 @@ describe("INTEGRATION TEST", () => {
       })
   })
 
-  describe("Reservation flow", () => {
-    it("Add first item to bag", done => {
-      request(server)
-        .post("/graphql")
-        .send({
-          operationName: "addToBag",
-          query: addToBagMutation,
-          variables: { item: variableMap.ReserveItems.items[0] },
-        })
-        .set("Accept", "/")
-        .set("application", "spring")
-        .set("authorization", token)
-        .expect("Content-Type", /json/)
-        .expect(200)
-        .end(function (err, res) {
-          if (err) return done(err)
+  // describe("Reservation flow", () => {
+  //   it("Add first item to bag", done => {
+  //     request(server)
+  //       .post("/graphql")
+  //       .send({
+  //         operationName: "addToBag",
+  //         query: addToBagMutation,
+  //         variables: { item: variableMap.ReserveItems.items[0] },
+  //       })
+  //       .set("Accept", "/")
+  //       .set("application", "spring")
+  //       .set("authorization", token)
+  //       .expect("Content-Type", /json/)
+  //       .expect(200)
+  //       .end(function (err, res) {
+  //         if (err) return done(err)
 
-          expect(res.body).toBeInstanceOf(Object)
-          expect(res.body.data).toBeInstanceOf(Object)
-          expect(res.body.data.addToBag).toBeInstanceOf(Object)
-          expect(res.body.data.addToBag.productVariant.id).toBe(
-            variableMap.ReserveItems.items[0]
-          )
-          expect(res.body.data.addToBag.status).toBe("Added")
+  //         expect(res.body).toBeInstanceOf(Object)
+  //         expect(res.body.data).toBeInstanceOf(Object)
+  //         expect(res.body.data.addToBag).toBeInstanceOf(Object)
+  //         expect(res.body.data.addToBag.productVariant.id).toBe(
+  //           variableMap.ReserveItems.items[0]
+  //         )
+  //         expect(res.body.data.addToBag.status).toBe("Added")
 
-          done()
-        })
-    })
+  //         done()
+  //       })
+  //   })
 
-    it("Add second item to bag", done => {
-      request(server)
-        .post("/graphql")
-        .send({
-          operationName: "addToBag",
-          query: addToBagMutation,
-          variables: { item: variableMap.ReserveItems.items[1] },
-        })
-        .set("Accept", "/")
-        .set("application", "spring")
-        .set("authorization", token)
-        .expect("Content-Type", /json/)
-        .expect(200)
-        .end(function (err, res) {
-          if (err) return done(err)
+  //   it("Add second item to bag", done => {
+  //     request(server)
+  //       .post("/graphql")
+  //       .send({
+  //         operationName: "addToBag",
+  //         query: addToBagMutation,
+  //         variables: { item: variableMap.ReserveItems.items[1] },
+  //       })
+  //       .set("Accept", "/")
+  //       .set("application", "spring")
+  //       .set("authorization", token)
+  //       .expect("Content-Type", /json/)
+  //       .expect(200)
+  //       .end(function (err, res) {
+  //         if (err) return done(err)
 
-          expect(res.body).toBeInstanceOf(Object)
-          expect(res.body.data).toBeInstanceOf(Object)
-          expect(res.body.data.addToBag).toBeInstanceOf(Object)
-          expect(res.body.data.addToBag.productVariant.id).toBe(
-            variableMap.ReserveItems.items[1]
-          )
-          expect(res.body.data.addToBag.status).toBe("Added")
+  //         expect(res.body).toBeInstanceOf(Object)
+  //         expect(res.body.data).toBeInstanceOf(Object)
+  //         expect(res.body.data.addToBag).toBeInstanceOf(Object)
+  //         expect(res.body.data.addToBag.productVariant.id).toBe(
+  //           variableMap.ReserveItems.items[1]
+  //         )
+  //         expect(res.body.data.addToBag.status).toBe("Added")
 
-          done()
-        })
-    })
+  //         done()
+  //       })
+  //   })
 
-    it("ReserveItems", done => {
-      request(server)
-        .post("/graphql")
-        .send({
-          operationName: "ReserveItems",
-          query: queryMap.ReserveItems,
-          variables: variableMap.ReserveItems,
-        })
-        .set("Accept", "/")
-        .set("application", "spring")
-        .set("authorization", token)
-        .expect("Content-Type", /json/)
-        .expect(200)
-        .end(function (err, res) {
-          if (err) return done(err)
+  //   it("ReserveItems", done => {
+  //     request(server)
+  //       .post("/graphql")
+  //       .send({
+  //         operationName: "ReserveItems",
+  //         query: queryMap.ReserveItems,
+  //         variables: variableMap.ReserveItems,
+  //       })
+  //       .set("Accept", "/")
+  //       .set("application", "spring")
+  //       .set("authorization", token)
+  //       .expect("Content-Type", /json/)
+  //       .expect(200)
+  //       .end(function (err, res) {
+  //         if (err) return done(err)
 
-          expect(res.body).toBeInstanceOf(Object)
-          expect(res.body.data).toBeInstanceOf(Object)
-          expect(res.body.data.reserveItems).toBeInstanceOf(Object)
-          expect(res.body.data.reserveItems.id.length).toBeGreaterThan(10)
+  //         expect(res.body).toBeInstanceOf(Object)
+  //         expect(res.body.data).toBeInstanceOf(Object)
+  //         expect(res.body.data.reserveItems).toBeInstanceOf(Object)
+  //         expect(res.body.data.reserveItems.id.length).toBeGreaterThan(10)
 
-          variableMap.GetCustomerReservationItems.reservationID =
-            res.body.data.reserveItems.id
+  //         variableMap.GetCustomerReservationItems.reservationID =
+  //           res.body.data.reserveItems.id
 
-          done()
-        })
-    }, 10000)
+  //         done()
+  //       })
+  //   }, 10000)
 
-    it("GetCustomerReservationItems", done => {
-      request(server)
-        .post("/graphql")
-        .send({
-          operationName: "GetCustomerReservationItems",
-          query: queryMap.GetCustomerReservationItems,
-          variables: variableMap.GetCustomerReservationItems,
-        })
-        .set("Accept", "/")
-        .set("application", "spring")
-        .set("authorization", token)
-        .expect("Content-Type", /json/)
-        .expect(200)
-        .end(function (err, res) {
-          if (err) return done(err)
+  //   it("GetCustomerReservationItems", done => {
+  //     request(server)
+  //       .post("/graphql")
+  //       .send({
+  //         operationName: "GetCustomerReservationItems",
+  //         query: queryMap.GetCustomerReservationItems,
+  //         variables: variableMap.GetCustomerReservationItems,
+  //       })
+  //       .set("Accept", "/")
+  //       .set("application", "spring")
+  //       .set("authorization", token)
+  //       .expect("Content-Type", /json/)
+  //       .expect(200)
+  //       .end(function (err, res) {
+  //         if (err) return done(err)
 
-          expect(res.body).toBeInstanceOf(Object)
-          expect(res.body.data).toBeInstanceOf(Object)
-          expect(res.body.data.me).toBeInstanceOf(Object)
+  //         expect(res.body).toBeInstanceOf(Object)
+  //         expect(res.body.data).toBeInstanceOf(Object)
+  //         expect(res.body.data.me).toBeInstanceOf(Object)
 
-          done()
-        })
-    })
+  //         done()
+  //       })
+  //   })
 
-    it("ActiveReservation", done => {
-      request(server)
-        .post("/graphql")
-        .send({
-          operationName: "ActiveReservation",
-          query: queryMap.ActiveReservation,
-        })
-        .set("Accept", "/")
-        .set("application", "spring")
-        .set("authorization", token)
-        .expect("Content-Type", /json/)
-        .expect(200)
-        .end(function (err, res) {
-          if (err) return done(err)
+  //   it("ActiveReservation", done => {
+  //     request(server)
+  //       .post("/graphql")
+  //       .send({
+  //         operationName: "ActiveReservation",
+  //         query: queryMap.ActiveReservation,
+  //       })
+  //       .set("Accept", "/")
+  //       .set("application", "spring")
+  //       .set("authorization", token)
+  //       .expect("Content-Type", /json/)
+  //       .expect(200)
+  //       .end(function (err, res) {
+  //         if (err) return done(err)
 
-          expect(res.body).toBeInstanceOf(Object)
-          expect(res.body.data).toBeInstanceOf(Object)
-          expect(res.body.data.me).toBeInstanceOf(Object)
-          expect(res.body.data.me.activeReservation).toBeInstanceOf(Object)
-          expect(res.body.data.me.activeReservation.products).toBeInstanceOf(
-            Array
-          )
+  //         expect(res.body).toBeInstanceOf(Object)
+  //         expect(res.body.data).toBeInstanceOf(Object)
+  //         expect(res.body.data.me).toBeInstanceOf(Object)
+  //         expect(res.body.data.me.activeReservation).toBeInstanceOf(Object)
+  //         expect(res.body.data.me.activeReservation.products).toBeInstanceOf(
+  //           Array
+  //         )
 
-          const products = res.body.data.me.activeReservation.products
+  //         const products = res.body.data.me.activeReservation.products
 
-          expect(products.length).toBe(2)
-          expect(products[0].productVariant).toBeInstanceOf(Object)
-          expect(products[0].productVariant.id).toBe(
-            variableMap.ReserveItems.items[0]
-          )
-          expect(products[1].productVariant).toBeInstanceOf(Object)
-          expect(products[1].productVariant.id).toBe(
-            variableMap.ReserveItems.items[1]
-          )
+  //         expect(products.length).toBe(2)
+  //         expect(products[0].productVariant).toBeInstanceOf(Object)
+  //         expect(products[0].productVariant.id).toBe(
+  //           variableMap.ReserveItems.items[0]
+  //         )
+  //         expect(products[1].productVariant).toBeInstanceOf(Object)
+  //         expect(products[1].productVariant.id).toBe(
+  //           variableMap.ReserveItems.items[1]
+  //         )
 
-          variableMap.ReturnItems.items.push(products[0].id)
-          variableMap.ReturnItems.items.push(products[1].id)
+  //         variableMap.ReturnItems.items.push(products[0].id)
+  //         variableMap.ReturnItems.items.push(products[1].id)
 
-          done()
-        })
-    }, 10000)
+  //         done()
+  //       })
+  //   }, 10000)
 
-    it("ReturnItems", done => {
-      request(server)
-        .post("/graphql")
-        .send({
-          operationName: "ReturnItems",
-          query: queryMap.ReturnItems,
-          variables: variableMap.ReturnItems,
-        })
-        .set("Accept", "/")
-        .set("application", "spring")
-        .set("authorization", token)
-        .expect("Content-Type", /json/)
-        .expect(200)
-        .end(function (err, res) {
-          if (err) return done(err)
+  //   it("ReturnItems", done => {
+  //     request(server)
+  //       .post("/graphql")
+  //       .send({
+  //         operationName: "ReturnItems",
+  //         query: queryMap.ReturnItems,
+  //         variables: variableMap.ReturnItems,
+  //       })
+  //       .set("Accept", "/")
+  //       .set("application", "spring")
+  //       .set("authorization", token)
+  //       .expect("Content-Type", /json/)
+  //       .expect(200)
+  //       .end(function (err, res) {
+  //         if (err) return done(err)
 
-          expect(res.body).toBeInstanceOf(Object)
-          expect(res.body.data).toBeInstanceOf(Object)
-          expect(res.body.data.returnItems).toBeInstanceOf(Object)
-          expect(res.body.data.returnItems.id.length).toBeGreaterThan(10)
+  //         expect(res.body).toBeInstanceOf(Object)
+  //         expect(res.body.data).toBeInstanceOf(Object)
+  //         expect(res.body.data.returnItems).toBeInstanceOf(Object)
+  //         expect(res.body.data.returnItems.id.length).toBeGreaterThan(10)
 
-          done()
-        })
-    })
+  //         done()
+  //       })
+  //   })
 
-    it("ReturnedItems", done => {
-      request(server)
-        .post("/graphql")
-        .send({
-          operationName: "ReturnedItems",
-          query: queryMap.ReturnedItems,
-        })
-        .set("Accept", "/")
-        .set("application", "spring")
-        .set("authorization", token)
-        .expect("Content-Type", /json/)
-        .expect(200)
-        .end(function (err, res) {
-          if (err) return done(err)
+  //   it("ReturnedItems", done => {
+  //     request(server)
+  //       .post("/graphql")
+  //       .send({
+  //         operationName: "ReturnedItems",
+  //         query: queryMap.ReturnedItems,
+  //       })
+  //       .set("Accept", "/")
+  //       .set("application", "spring")
+  //       .set("authorization", token)
+  //       .expect("Content-Type", /json/)
+  //       .expect(200)
+  //       .end(function (err, res) {
+  //         if (err) return done(err)
 
-          expect(res.body).toBeInstanceOf(Object)
-          expect(res.body.data).toBeInstanceOf(Object)
-          expect(res.body.data.me).toBeInstanceOf(Object)
-          expect(res.body.data.me.activeReservation).toBeInstanceOf(Object)
-          expect(res.body.data.me.activeReservation.id).toBe(
-            variableMap.GetCustomerReservationItems.reservationID
-          )
+  //         expect(res.body).toBeInstanceOf(Object)
+  //         expect(res.body.data).toBeInstanceOf(Object)
+  //         expect(res.body.data.me).toBeInstanceOf(Object)
+  //         expect(res.body.data.me.activeReservation).toBeInstanceOf(Object)
+  //         expect(res.body.data.me.activeReservation.id).toBe(
+  //           variableMap.GetCustomerReservationItems.reservationID
+  //         )
 
-          done()
-        })
-    })
-  })
+  //         done()
+  //       })
+  //   })
+  // })
 
   it("PauseSubscription", done => {
     request(server)

@@ -18,7 +18,7 @@ import {
   DataloaderContext,
   LoaderParams,
   PrismaGenerateParams,
-} from "../dataloader.types"
+} from "../dataloader.types.d"
 import { DataLoaderInterceptor } from "../interceptors/dataloader.interceptor"
 
 export const Loader: (

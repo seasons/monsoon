@@ -8,7 +8,7 @@ import {
   PushNotificationData,
   PushNotificationID,
   PushNotificationVars,
-} from "../pushNotification.types"
+} from "../pushNotification.types.d"
 
 const maxTitleLength = 50
 const maxBodyLength = 110

@@ -9,7 +9,7 @@ import { imageSize } from "image-size"
 import { identity, pickBy } from "lodash"
 import request from "request"
 
-import { ImageData, ImageSize } from "../image.types"
+import { ImageData, ImageSize } from "../image.types.d"
 
 const S3_BUCKET = process.env.AWS_S3_IMAGES_BUCKET
 export const IMGIX_BASE = `https://${process.env.IMGIX_NAME}.imgix.net/`

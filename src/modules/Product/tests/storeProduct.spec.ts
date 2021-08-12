@@ -6,7 +6,7 @@ import { Test } from "@nestjs/testing"
 import { InventoryStatus } from "@prisma/client"
 
 import { ProductModuleDef } from "../product.module"
-import { ProductWithPhysicalProducts } from "../product.types"
+import { ProductWithPhysicalProducts } from "../product.types.d"
 import { ProductService } from "../services/product.service"
 import { ProductUtilsService } from "../services/product.utils.service"
 
