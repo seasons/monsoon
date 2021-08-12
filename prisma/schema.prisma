@@ -800,7 +800,7 @@ model Image {
   width                 Int?
   alt                   String?
 
-  # Don't those fields for now
+  // Don't those fields for now
   BlogPost              BlogPost[]
   Brand_BrandToImage    Brand[]
   FitPic                FitPic[]
@@ -1117,7 +1117,7 @@ model ProductNotification {
   customerId        String?                 @map("customer") @db.VarChar(30)
   customer          Customer?               @relation(fields: [customerId], references: [id])
   physicalProduct   PhysicalProduct?        @relation(fields: [physicalProductId], references: [id])
-  productVariant    ProductVariant          @relation(fields: [productVariantId], references: [id])
+  productVariant    ProductVariant?         @relation(fields: [productVariantId], references: [id])
 }
 
 model ProductRequest {
