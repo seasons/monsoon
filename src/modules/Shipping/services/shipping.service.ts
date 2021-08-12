@@ -7,20 +7,11 @@ import { pick } from "lodash"
 import shippo from "shippo"
 
 import {
+  CoreShippoAddressFields,
   ShippoRate,
   ShippoShipment,
   ShippoTransaction,
 } from "../shipping.types"
-
-interface CoreShippoAddressFields {
-  name: string
-  company: string
-  street1: string
-  street2: string
-  city: string
-  state: string
-  zip: string
-}
 
 interface ShippoLabelInputs {
   shipment: ShippoShipment
@@ -148,7 +139,7 @@ export class ShippingService {
     }, shippingBagWeight)
   }
 
-  async shippoValidateAddress(address) {
+  async shippoValidateAddress(address: CoreShippoAddressFields) {
     const result = await this.shippo.address.create({
       ...address,
       country: "US",
@@ -161,11 +152,15 @@ export class ShippingService {
     // response from shippo about why their validator doesn't properly
     // handle this case
     const isValid = result.validation_results.is_valid
-    const invalidCityStateZipCombo = validationResults.messages
-      .map(a => a.code)
-      .includes("Invalid City/State/Zip")
-    if (isValid && invalidCityStateZipCombo) {
-      throw new ApolloError("Invalid City/State/Zip Combo", "400", {
+    const needToSuggestAddress =
+      address.street1 !== result.street1 ||
+      address.city !== result.city ||
+      address.state !== result.state ||
+      address.zip !== result.zip
+    if (isValid && needToSuggestAddress) {
+      // Clients rely on exact copy of error message to power
+      // suggested address flow
+      throw new ApolloError("Need to Suggest Address", "400", {
         suggestedAddress: pick(result, [
           "city",
           "country",
@@ -186,12 +181,11 @@ export class ShippingService {
   }
 
   async validateAddress(input) {
-    const { email, location } = input
+    const { location } = input
 
     const shippoAddress = this.locationDataToShippoAddress(location)
     return await this.shippoValidateAddress({
       ...shippoAddress,
-      email,
       name: location.name,
     })
   }
