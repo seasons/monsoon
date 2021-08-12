@@ -941,7 +941,7 @@ model PackageTransitEvent {
 }
 
 model PauseReason {
-  id            String         @id @default(cuid()) @db.VarChar(30)
+  id            String         @id @default(cuid()) @db.VarChar(25)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   reason        String
@@ -958,7 +958,7 @@ model PauseRequest {
   membershipId String?             @map("membership") @db.VarChar(30)
   notified     Boolean             @default(false)
   pauseType    PauseType           @default(WithoutItems)
-  reasonId     String?             @map("reason") @db.VarChar(30)
+  reasonId     String?             @map("reason") @db.VarChar(25)
   membership   CustomerMembership? @relation(fields: [membershipId], references: [id])
   reason       PauseReason?        @relation(fields: [reasonId], references: [id])
 }
