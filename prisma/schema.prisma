@@ -149,6 +149,8 @@ enum BottomSizeType {
   EU
   JP
   Letter
+  Access
+  Guest
 }
 
 enum SizeType {
@@ -479,7 +481,7 @@ model AdminActionLog {
   activeAdminUserId String?                        @map("activeAdminUser") @db.VarChar(30)
   interpretedAt     DateTime?
   activeAdminUser   User?                          @relation(fields: [activeAdminUserId], references: [id])
-  interpretation    AdminActionLogInterpretation[]
+  interpretation    AdminActionLogInterpretation?
 }
 
 model AdminActionLogInterpretation {
@@ -499,7 +501,7 @@ model BagItem {
   status           BagItemStatus
   customerId       String?         @map("customer") @db.VarChar(30)
   productVariantId String?         @map("productVariant") @db.VarChar(30)
-  createdAt        DateTime
+  createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   customer         Customer?       @relation(fields: [customerId], references: [id])
   productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
@@ -518,7 +520,7 @@ model BillingInfo {
   state            String?
   country          String?
   postal_code      String?
-  createdAt        DateTime
+  createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
   customer         Customer[]
 }
@@ -538,7 +540,7 @@ model BlogPost {
   url              String?
   author           String?
   category         String?
-  createdAt        DateTime
+  createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   publishedOn      DateTime
   imageId          String?  @map("image") @db.VarChar(30)
@@ -610,7 +612,7 @@ model Collection {
   title              String?
   subTitle           String?
   published          Boolean
-  createdAt          DateTime
+  createdAt          DateTime              @default(now())
   updatedAt          DateTime?             @updatedAt
   displayTextOverlay Boolean
   textOverlayColor   String?
@@ -639,7 +641,7 @@ model Customer {
   userId                  String?                          @map("user") @db.VarChar(30)
   plan                    Plan?
   billingInfoId           String?                          @map("billingInfo") @db.VarChar(30)
-  createdAt               DateTime
+  createdAt               DateTime                         @default(now())
   updatedAt               DateTime                         @updatedAt
   authorizedAt            DateTime?
   admissionsId            String?                          @map("admissions") @db.VarChar(30)
@@ -670,7 +672,7 @@ model CustomerAdmissionsData {
   inServiceableZipcode        Boolean
   admissable                  Boolean
   inAdmissableReason          InAdmissableReason?
-  createdAt                   DateTime
+  createdAt                   DateTime            @default(now())
   updatedAt                   DateTime            @updatedAt
   authorizationsCount         Int
   allAccessEnabled            Boolean
@@ -696,7 +698,7 @@ model CustomerDetail {
   averageSpend       String?
   style              String?
   commuteStyle       String?
-  createdAt          DateTime
+  createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
   shippingAddressId  String?           @map("shippingAddress") @db.VarChar(30)
   phoneOS            String?
@@ -736,7 +738,7 @@ model CustomerMembershipSubscriptionData {
   nextBillingAt    DateTime?
   status           String
   planPrice        Int
-  createdAt        DateTime
+  createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
   membership       CustomerMembership[]
 }
@@ -746,7 +748,7 @@ model CustomerNotificationBarReceipt {
   notificationBarId NotificationBarID
   viewCount         Int
   clickCount        Int
-  createdAt         DateTime
+  createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   customerId        String?           @map("customer") @db.VarChar(30)
   customer          Customer?         @relation(fields: [customerId], references: [id])
@@ -755,7 +757,7 @@ model CustomerNotificationBarReceipt {
 model EmailReceipt {
   id        String   @id @default(cuid()) @db.VarChar(30)
   emailId   EmailId
-  createdAt DateTime
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String?  @map("user") @db.VarChar(30)
   user      User?    @relation(fields: [userId], references: [id])
@@ -764,7 +766,7 @@ model EmailReceipt {
 model FitPic {
   id                     String         @id @default(cuid()) @db.VarChar(30)
   status                 FitPicStatus
-  createdAt              DateTime
+  createdAt              DateTime       @default(now())
   updatedAt              DateTime       @updatedAt
   locationId             String?        @map("location") @db.VarChar(30)
   userId                 String?        @map("user") @db.VarChar(30)
@@ -792,7 +794,7 @@ model Image {
   id                    String                  @id @default(cuid()) @db.VarChar(30)
   caption               String?
   title                 String?
-  createdAt             DateTime
+  createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
   url                   String                  @unique
   height                Int?
@@ -811,7 +813,7 @@ model InterestedUser {
   id        String   @id @default(cuid()) @db.VarChar(30)
   email     String
   zipcode   String?
-  createdAt DateTime
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
@@ -828,7 +830,7 @@ model Launch {
   id           String      @id @default(cuid()) @db.VarChar(30)
   published    Boolean
   launchAt     DateTime
-  createdAt    DateTime
+  createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   collectionId String?     @map("collection") @db.VarChar(30)
   brandId      String?     @map("brand") @db.VarChar(30)
@@ -850,7 +852,7 @@ model Location {
   locationType                                   LocationType?
   lat                                            Decimal?
   lng                                            Decimal?
-  createdAt                                      DateTime
+  createdAt                                      DateTime          @default(now())
   updatedAt                                      DateTime          @updatedAt
   userId                                         String?           @map("user") @db.VarChar(30)
   country                                        String?
@@ -871,7 +873,7 @@ model Order {
   total         Int?
   couponID      String?
   note          String?
-  createdAt     DateTime
+  createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
   type          OrderType
   status        OrderStatus
@@ -897,7 +899,7 @@ model OrderLineItem {
   taxPrice      Int?
   price         Int
   currencyCode  String
-  createdAt     DateTime
+  createdAt     DateTime                @default(now())
   updatedAt     DateTime                @updatedAt
   name          String?
   reservationId String?                 @map("reservation") @db.VarChar(30)
@@ -908,7 +910,7 @@ model OrderLineItem {
 model Package {
   id                                               String                @id @default(cuid()) @db.VarChar(30)
   weight                                           Decimal?
-  createdAt                                        DateTime
+  createdAt                                        DateTime              @default(now())
   updatedAt                                        DateTime              @updatedAt
   fromAddressId                                    String?               @map("fromAddress") @db.VarChar(30)
   toAddressId                                      String?               @map("toAddress") @db.VarChar(30)
@@ -930,7 +932,7 @@ model PackageTransitEvent {
   id            String                       @id @default(cuid()) @db.VarChar(30)
   status        PackageTransitEventStatus
   subStatus     PackageTransitEventSubStatus
-  createdAt     DateTime
+  createdAt     DateTime                     @default(now())
   updatedAt     DateTime                     @updatedAt
   data          Json                         @db.Json
   packageId     String?                      @map("package") @db.VarChar(30)
@@ -941,7 +943,7 @@ model PackageTransitEvent {
 
 model PauseReason {
   id            String         @id @default(cuid()) @db.VarChar(25)
-  createdAt     DateTime
+  createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   reason        String
   pauseRequests PauseRequest[]
@@ -949,7 +951,7 @@ model PauseReason {
 
 model PauseRequest {
   id           String              @id @default(cuid()) @db.VarChar(30)
-  createdAt    DateTime
+  createdAt    DateTime            @default(now())
   updatedAt    DateTime            @updatedAt
   pausePending Boolean
   pauseDate    DateTime?
@@ -982,7 +984,7 @@ model PhysicalProduct {
   seasonsUID                   String                         @unique
   inventoryStatus              InventoryStatus
   productStatus                PhysicalProductStatus
-  createdAt                    DateTime
+  createdAt                    DateTime                       @default(now())
   updatedAt                    DateTime                       @updatedAt
   locationId                   String?                        @map("location") @db.VarChar(30)
   offloadMethod                PhysicalProductOffloadMethod?
@@ -1020,7 +1022,7 @@ model PhysicalProductQualityReport {
   id                String                      @id @default(cuid()) @db.VarChar(30)
   damageType        PhysicalProductDamageType?
   notes             String?
-  createdAt         DateTime
+  createdAt         DateTime                    @default(now())
   updatedAt         DateTime                    @updatedAt
   physicalProductId String?                     @map("physicalProduct") @db.VarChar(30)
   userId            String?                     @map("user") @db.VarChar(30)
@@ -1041,7 +1043,7 @@ model Product {
   rentalPriceOverride         Int?
   recoupment                  Float? 
   status                      ProductStatus?
-  createdAt                   DateTime
+  createdAt                   DateTime                 @default(now())
   updatedAt                   DateTime                 @updatedAt
   categoryId                  String?                  @map("category") @db.VarChar(30)
   colorId                     String?                  @map("color") @db.VarChar(30)
@@ -1106,7 +1108,7 @@ model ProductNotification {
   id                String                  @id @default(cuid()) @db.VarChar(30)
   type              ProductNotificationType
   shouldNotify      Boolean
-  createdAt         DateTime
+  createdAt         DateTime                @default(now())
   updatedAt         DateTime                @updatedAt
   productVariantId  String?                 @map("productVariant") @db.VarChar(30)
   physicalProductId String?                 @map("physicalProduct") @db.VarChar(30)
@@ -1146,7 +1148,7 @@ model ProductTier {
   id        String          @id @default(cuid()) @db.VarChar(30)
   tier      ProductTierName
   price     Int
-  createdAt DateTime
+  createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
   product   Product[]
 }
@@ -1161,7 +1163,7 @@ model ProductVariant {
   reservable              Int
   reserved                Int
   nonReservable           Int
-  createdAt               DateTime
+  createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
   colorId                 String?                  @map("color") @db.VarChar(30)
   internalSizeId          String?                  @map("internalSize") @db.VarChar(30)
@@ -1228,7 +1230,7 @@ model PushNotificationReceipt {
   body                   String
   title                  String?
   sentAt                 DateTime
-  createdAt              DateTime
+  createdAt              DateTime              @default(now())
   updatedAt              DateTime              @updatedAt
   interest               String?
   recordID               String?
@@ -1253,7 +1255,7 @@ model RecentlyViewedProduct {
 model Reservation {
   id                String                @id @default(cuid()) @db.VarChar(30)
   shipped           Boolean
-  createdAt         DateTime
+  createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
   userId            String?               @map("user") @db.VarChar(30)
   reservationNumber Int                   @unique
@@ -1292,7 +1294,7 @@ model ReservationFeedback {
   comment       String?
   rating        Rating?
   userId        String?                  @map("user") @db.VarChar(30)
-  createdAt     DateTime
+  createdAt     DateTime                 @default(now())
   updatedAt     DateTime                 @updatedAt
   reservationId String?                  @map("reservation") @db.VarChar(30)
   respondedAt   DateTime?
@@ -1331,7 +1333,7 @@ model ShippingMethod {
   id             String           @id @default(cuid()) @db.VarChar(30)
   code           ShippingCode
   displayText    String
-  createdAt      DateTime
+  createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   shippingOption ShippingOption[]
 }
@@ -1340,7 +1342,7 @@ model ShippingOption {
   id               String          @id @default(cuid()) @db.VarChar(30)
   externalCost     Int?
   averageDuration  Int?
-  createdAt        DateTime
+  createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   destinationId    String?         @map("destination") @db.VarChar(30)
   originId         String?         @map("origin") @db.VarChar(30)
@@ -1419,7 +1421,7 @@ model StylePreferences {
 
 model SyncTiming {
   id         String         @id @default(cuid()) @db.VarChar(30)
-  createdAt  DateTime
+  createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
   type       SyncTimingType
   syncedAt   DateTime
@@ -1432,7 +1434,7 @@ model Tag {
   id          String    @id @default(cuid()) @db.VarChar(30)
   name        String    @unique
   description String?
-  createdAt   DateTime
+  createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   products    Product[]
 }
@@ -1455,7 +1457,7 @@ model User {
   firstName                     String
   lastName                      String
   role                          UserRole
-  createdAt                     DateTime
+  createdAt                     DateTime                       @default(now())
   updatedAt                     DateTime                       @updatedAt
   pushNotificationStatus        PushNotificationStatus
   verificationStatus            UserVerificationStatus
@@ -1515,7 +1517,7 @@ model UTMData {
   campaign  String?
   term      String?
   content   String?
-  createdAt DateTime
+  createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   customer  Customer[]
 }
@@ -1526,7 +1528,7 @@ model WarehouseLocation {
   barcode          String                        @unique
   locationCode     String
   itemCode         String
-  createdAt        DateTime
+  createdAt        DateTime                      @default(now())
   updatedAt        DateTime                      @updatedAt
   physicalProducts PhysicalProduct[]
   constraints      WarehouseLocationConstraint[]
@@ -1535,7 +1537,7 @@ model WarehouseLocation {
 model WarehouseLocationConstraint {
   id         String              @id @default(cuid()) @db.VarChar(30)
   limit      Int
-  createdAt  DateTime
+  createdAt  DateTime            @default(now())
   updatedAt  DateTime            @updatedAt
   categoryId String?             @map("category") @db.VarChar(30)
   category   Category?           @relation(fields: [categoryId], references: [id])
@@ -1547,7 +1549,7 @@ model ShopifyShop {
   shopName               String                  @unique
   enabled                Boolean
   accessToken            String?
-  createdAt              DateTime
+  createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
   scope                  String[]
   brand                  Brand[]
