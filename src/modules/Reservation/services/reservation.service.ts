@@ -707,33 +707,40 @@ export class ReservationService {
     select: Prisma.ReservationSelect
   ) {
     const promises = []
+    const physicalProductSelect = Prisma.validator<
+      Prisma.PhysicalProductSelect
+    >()({
+      id: true,
+      inventoryStatus: true,
+      warehouseLocation: true,
+      productVariant: {
+        select: {
+          reservable: true,
+          reserved: true,
+          nonReservable: true,
+          offloaded: true,
+          stored: true,
+          bagItems: {
+            where: {
+              customer: { reservations: { some: where } },
+              saved: false,
+            },
+          },
+        },
+      },
+    })
     const reservation = await this.prisma.client.reservation.findUnique({
       where,
       select: {
         id: true,
         status: true,
         customer: { select: { id: true } },
+        phase: true,
+        returnedProducts: {
+          select: physicalProductSelect,
+        },
         newProducts: {
-          select: {
-            id: true,
-            inventoryStatus: true,
-            warehouseLocation: true,
-            productVariant: {
-              select: {
-                reservable: true,
-                reserved: true,
-                nonReservable: true,
-                offloaded: true,
-                stored: true,
-                bagItems: {
-                  where: {
-                    customer: { reservations: { some: where } },
-                    saved: false,
-                  },
-                },
-              },
-            },
-          },
+          select: physicalProductSelect,
         },
       },
     })
@@ -742,9 +749,12 @@ export class ReservationService {
       return reservation.status !== status && data.status === status
     }
 
-    const canCancelReservation = ["Queued", "Packed", "Picked"].includes(
-      reservation.status
-    )
+    const canCancelReservation = [
+      "Queued",
+      "Packed",
+      "Picked",
+      "Hold",
+    ].includes(reservation.status)
     // If setting to cancelled, execute implied updates
     if (changingStatusTo("Cancelled")) {
       if (!canCancelReservation) {
@@ -786,9 +796,27 @@ export class ReservationService {
     }
 
     // If setting to lost, execute implied updates
+    const cannotMarkReservationAsLost = [
+      "Queued",
+      "Picked",
+      "Packed",
+      "Completed",
+    ].includes(reservation.status)
     if (changingStatusTo("Lost")) {
-      // For new products on reservation, update the status, related counts, and bag item
-      for (const prod of reservation.newProducts) {
+      if (cannotMarkReservationAsLost) {
+        throw new Error(
+          `Cannot mark reservation with status ${reservation.status} as Lost.`
+        )
+      }
+      // If it's on the way to the customer, we know all new products got lost. If it's on the way
+      //  back to us and they've used the return flow, we know all the "returnedProducts" got lost.
+      const productsToUpdate =
+        reservation.phase === "BusinessToCustomer"
+          ? reservation.newProducts
+          : reservation.returnedProducts
+
+      // For whichever products we know got lost, update status, counts, and bag items accordingly
+      for (const prod of productsToUpdate) {
         const variantUpdateData = this.productVariantService.getCountsForStatusChange(
           {
             productVariant: prod.productVariant,
