@@ -571,7 +571,7 @@ model Brand {
   since                  DateTime?
   tier                   BrandTier
   websiteUrl             String?
-  createdAt              DateTime
+  createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
   basedIn                String?
   designer               String?
@@ -1404,7 +1404,7 @@ model SmsReceipt {
   externalId String?
   body       String
   status     SmsStatus
-  sentAt     DateTime
+  sentAt     DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   smsId      String?
   mediaUrls  String[]
