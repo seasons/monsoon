@@ -80,18 +80,23 @@ export class ReservationService {
 
     const promises = []
 
-    const customerWithPlanItemCount = await this.prisma.client.customer.findUnique(
-      {
-        where: { id: customer.id },
-        select: {
-          membership: { select: { plan: { select: { itemCount: true } } } },
-        },
-      }
-    )
-    const customerPlanItemCount =
-      customerWithPlanItemCount?.membership?.plan?.itemCount
+    const customerWithData = await this.prisma.client.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        membership: { select: { plan: { select: { itemCount: true } } } },
+        detail: { select: { shippingAddress: true } },
+      },
+    })
 
-    // Do a quick validation on the data
+    // Validate customer address
+    await this.shippingService.shippoValidateAddress(
+      this.shippingService.locationDataToShippoAddress(
+        customerWithData.detail.shippingAddress
+      )
+    )
+
+    // Validate number of items being reserved
+    const customerPlanItemCount = customerWithData?.membership?.plan?.itemCount
     if (!!customerPlanItemCount && items.length !== customerPlanItemCount) {
       throw new ApolloError(
         `Your reservation must contain ${customerPlanItemCount} items`,

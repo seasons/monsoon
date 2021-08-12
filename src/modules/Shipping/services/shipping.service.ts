@@ -327,7 +327,7 @@ export class ShippingService {
     })
   }
 
-  private locationDataToShippoAddress(location): CoreShippoAddressFields {
+  locationDataToShippoAddress(location): CoreShippoAddressFields {
     if (location == null) {
       throw new Error("can not extract values from null object")
     }
