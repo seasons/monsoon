@@ -8,6 +8,451 @@ datasource db {
   url      = env("DB_WRITE_URL")
 }
 
+enum ProductTierName {
+  Standard
+  Luxury
+}
+
+enum CollectionPlacement {
+  Homepage
+}
+
+enum BrandTier {
+  Tier0
+  Tier1
+  Tier2
+  Niche
+  Upcoming
+  Retro
+  Boutique
+  Local
+  Discovery
+}
+
+enum Department {
+  Clothes
+  Bags
+  Accessories
+  Jewelry
+}
+
+enum LocationType {
+  Office
+  Warehouse
+  Cleaner
+  Customer
+}
+
+enum MeasurementType {
+  Inches
+  Millimeters
+}
+
+enum CustomerStatus {
+  Invited
+  Created
+  Waitlisted
+  Authorized
+  Active
+  Suspended
+  PaymentFailed
+  Paused
+  Deactivated
+}
+
+enum UserRole {
+  Admin
+  Customer
+  Partner
+  Marketer
+}
+
+enum InventoryStatus {
+  NonReservable
+  Reservable
+  Reserved
+  Stored
+  Offloaded
+}
+
+enum PhysicalProductStatus {
+  New
+  Used
+  Dirty
+  Damaged
+  PermanentlyDamaged
+  Clean
+  Lost
+  Sold
+}
+
+enum PhysicalProductOffloadMethod {
+  SoldToUser
+  SoldToThirdParty
+  ReturnedToVendor
+  Recycled
+  Unknown
+}
+
+enum ProductStatus {
+  Available
+  NotAvailable
+  Stored
+  Offloaded
+}
+
+enum PackageStatus {
+  Queued
+  Shipped
+  Delivered
+  Blocked
+  Received
+  Cancelled
+}
+
+enum ReservationStatus {
+  Queued
+  Picked
+  Packed
+  Shipped
+  Delivered
+  Completed
+  Cancelled
+  Hold
+  Blocked
+  Unknown
+  Lost
+  Received
+}
+
+enum BagItemStatus {
+  Added
+  Reserved
+  Received
+}
+
+enum Plan {
+  AllAccess
+  Essential
+}
+
+enum ProductType {
+  Top
+  Bottom
+  Accessory
+  Shoe
+}
+
+enum BottomSizeType {
+  WxL
+  US
+  EU
+  JP
+  Letter
+}
+
+enum SizeType {
+  WxL
+  US
+  EU
+  JP
+  Letter
+  Universal
+}
+
+enum QuestionType {
+  MultipleChoice
+  FreeResponse
+}
+
+enum Rating {
+  Disliked
+  Ok
+  Loved
+}
+
+enum LetterSize {
+  XXS
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+  XXXL
+}
+
+enum ProductArchitecture {
+  Fashion
+  Showstopper
+  Staple
+}
+
+enum WarehouseLocationType {
+  Conveyor
+  Rail
+  Bin
+}
+
+enum PhotographyStatus {
+  Done
+  InProgress
+  ReadyForEditing
+  ReadyToShoot
+  Steam
+}
+
+enum EmailId {
+  CompleteAccount
+  BuyUsedOrderConfirmation
+  DaySevenAuthorizationFollowup
+  DaySixAuthorizationFollowup
+  DayFiveAuthorizationFollowup
+  DayFourAuthorizationFollowup
+  DayThreeAuthorizationFollowup
+  DayTwoAuthorizationFollowup
+  FreeToReserve
+  Paused
+  PriorityAccess
+  ReferralConfirmation
+  ReservationConfirmation
+  ReservationReturnConfirmation
+  ResumeConfirmation
+  ResumeReminder
+  ReturnReminder
+  Rewaitlisted
+  SubmittedEmail
+  TwentyFourHourAuthorizationFollowup
+  Waitlisted
+  WelcomeToSeasons
+  UnpaidMembership
+  ReturnToGoodStanding
+  RecommendedItemsNurture
+}
+
+enum PackageTransitEventStatus {
+  Delivered
+  Failure
+  PreTransit
+  Returned
+  Transit
+  Unknown
+}
+
+enum PackageTransitEventSubStatus {
+  AddressIssue
+  ContactCarrier
+  Delayed
+  Delivered
+  DeliveryAttempted
+  DeliveryRescheduled
+  DeliveryScheduled
+  InformationReceived
+  LocationInaccessible
+  NoticeLeft
+  Other
+  OutForDelivery
+  PackageAccepted
+  PackageArrived
+  PackageDamaged
+  PackageDeparted
+  PackageDisposed
+  PackageForwarded
+  PackageHeld
+  PackageLost
+  PackageProcessed
+  PackageProcessing
+  PackageUnclaimed
+  PackageUndeliverable
+  PickupAvailable
+  RescheduleDelivery
+  ReturnToSender
+}
+
+enum ReservationPhase {
+  BusinessToCustomer
+  CustomerToBusiness
+}
+
+enum UserPushNotificationInterestType {
+  Bag
+  Blog
+  Brand
+  General
+  NewProduct
+}
+
+enum InAdmissableReason {
+  Untriageable
+  UnsupportedPlatform
+  AutomaticAdmissionsFlagOff
+  UnserviceableZipcode
+  InsufficientInventory
+  OpsThresholdExceeded
+}
+
+enum ShippingCode {
+  UPSGround
+  UPSSelect
+}
+
+enum PhysicalProductDamageType {
+  BarcodeMissing
+  ButtonMissing
+  Stain
+  Smell
+  Tear
+  Other
+}
+
+enum ProductFit {
+  RunsBig
+  TrueToSize
+  RunsSmall
+}
+
+enum ProductNotificationType {
+  Restock
+  AvailableForPurchase
+}
+
+enum PaymentPlanTier {
+  Essential
+  AllAccess
+  Pause
+}
+
+enum SmsStatus {
+  Queued
+  Sending
+  Sent
+  Failed
+  Delivered
+  Undelivered
+  Receiving
+  Received
+  Accepted
+  Scheduled
+  Read
+  PartiallyDelivered
+}
+
+enum SeasonCode {
+  FW
+  SS
+  PS
+  PF
+  HO
+  AW
+}
+
+enum SeasonString {
+  Spring
+  Summer
+  Winter
+  Fall
+}
+
+enum UserVerificationMethod {
+  SMS
+  Email
+  None
+}
+
+enum UserVerificationStatus {
+  Approved
+  Denied
+  Pending
+}
+
+enum PushNotificationStatus {
+  Blocked
+  Granted
+  Denied
+}
+
+enum FitPicStatus {
+  Submitted
+  Published
+  Unpublished
+}
+
+enum FitPicReportStatus {
+  Pending
+  Reviewed
+}
+
+enum CustomerStyle {
+  AvantGarde
+  Bold
+  Classic
+  Minimalist
+  Streetwear
+  Techwear
+}
+
+enum NotificationBarID {
+  PastDueInvoice
+  TestDismissable
+  AuthorizedReminder
+}
+
+enum OrderType {
+  Used
+  New
+}
+
+enum PauseType {
+  WithItems
+  WithoutItems
+}
+
+enum OrderLineItemRecordType {
+  PhysicalProduct
+  ProductVariant
+  ExternalProduct
+  Package
+  EarlySwap
+  Reservation
+}
+
+enum OrderStatus {
+  Drafted
+  Submitted
+  Fulfilled
+  Returned
+  Cancelled
+}
+
+enum OrderCancelReason {
+  Customer
+  Declined
+  Fraud
+  Inventory
+  Other
+}
+
+enum OrderPaymentStatus {
+  Paid
+  PartiallyPaid
+  Refunded
+  NotPaid
+  Complete
+}
+
+enum AdminAction {
+  Insert
+  Delete
+  Update
+  Truncate
+}
+
+enum SyncTimingType {
+  Drip
+  Next
+  Impact
+}
+
 model AccessorySize {
   id     String   @id @default(cuid()) @db.VarChar(30)
   bridge Decimal?
@@ -593,6 +1038,8 @@ model Product {
   description                 String?
   externalURL                 String?
   retailPrice                 Int?
+  rentalPriceOverride         Int?
+  recoupment                  Float? 
   status                      ProductStatus?
   createdAt                   DateTime
   updatedAt                   DateTime                 @updatedAt
@@ -1105,449 +1552,4 @@ model ShopifyShop {
   scope                  String[]
   brand                  Brand[]
   shopifyProductVariants ShopifyProductVariant[]
-}
-
-enum ProductTierName {
-  Standard
-  Luxury
-}
-
-enum CollectionPlacement {
-  Homepage
-}
-
-enum BrandTier {
-  Tier0
-  Tier1
-  Tier2
-  Niche
-  Upcoming
-  Retro
-  Boutique
-  Local
-  Discovery
-}
-
-enum Department {
-  Clothes
-  Bags
-  Accessories
-  Jewelry
-}
-
-enum LocationType {
-  Office
-  Warehouse
-  Cleaner
-  Customer
-}
-
-enum MeasurementType {
-  Inches
-  Millimeters
-}
-
-enum CustomerStatus {
-  Invited
-  Created
-  Waitlisted
-  Authorized
-  Active
-  Suspended
-  PaymentFailed
-  Paused
-  Deactivated
-}
-
-enum UserRole {
-  Admin
-  Customer
-  Partner
-  Marketer
-}
-
-enum InventoryStatus {
-  NonReservable
-  Reservable
-  Reserved
-  Stored
-  Offloaded
-}
-
-enum PhysicalProductStatus {
-  New
-  Used
-  Dirty
-  Damaged
-  PermanentlyDamaged
-  Clean
-  Lost
-  Sold
-}
-
-enum PhysicalProductOffloadMethod {
-  SoldToUser
-  SoldToThirdParty
-  ReturnedToVendor
-  Recycled
-  Unknown
-}
-
-enum ProductStatus {
-  Available
-  NotAvailable
-  Stored
-  Offloaded
-}
-
-enum PackageStatus {
-  Queued
-  Shipped
-  Delivered
-  Blocked
-  Received
-  Cancelled
-}
-
-enum ReservationStatus {
-  Queued
-  Picked
-  Packed
-  Shipped
-  Delivered
-  Completed
-  Cancelled
-  Hold
-  Blocked
-  Unknown
-  Lost
-  Received
-}
-
-enum BagItemStatus {
-  Added
-  Reserved
-  Received
-}
-
-enum Plan {
-  AllAccess
-  Essential
-}
-
-enum ProductType {
-  Top
-  Bottom
-  Accessory
-  Shoe
-}
-
-enum BottomSizeType {
-  WxL
-  US
-  EU
-  JP
-  Letter
-}
-
-enum SizeType {
-  WxL
-  US
-  EU
-  JP
-  Letter
-  Universal
-}
-
-enum QuestionType {
-  MultipleChoice
-  FreeResponse
-}
-
-enum Rating {
-  Disliked
-  Ok
-  Loved
-}
-
-enum LetterSize {
-  XXS
-  XS
-  S
-  M
-  L
-  XL
-  XXL
-  XXXL
-}
-
-enum ProductArchitecture {
-  Fashion
-  Showstopper
-  Staple
-}
-
-enum WarehouseLocationType {
-  Conveyor
-  Rail
-  Bin
-}
-
-enum PhotographyStatus {
-  Done
-  InProgress
-  ReadyForEditing
-  ReadyToShoot
-  Steam
-}
-
-enum EmailId {
-  CompleteAccount
-  BuyUsedOrderConfirmation
-  DaySevenAuthorizationFollowup
-  DaySixAuthorizationFollowup
-  DayFiveAuthorizationFollowup
-  DayFourAuthorizationFollowup
-  DayThreeAuthorizationFollowup
-  DayTwoAuthorizationFollowup
-  FreeToReserve
-  Paused
-  PriorityAccess
-  ReferralConfirmation
-  ReservationConfirmation
-  ReservationReturnConfirmation
-  ResumeConfirmation
-  ResumeReminder
-  ReturnReminder
-  Rewaitlisted
-  SubmittedEmail
-  TwentyFourHourAuthorizationFollowup
-  Waitlisted
-  WelcomeToSeasons
-  UnpaidMembership
-  ReturnToGoodStanding
-  RecommendedItemsNurture
-}
-
-enum PackageTransitEventStatus {
-  Delivered
-  Failure
-  PreTransit
-  Returned
-  Transit
-  Unknown
-}
-
-enum PackageTransitEventSubStatus {
-  AddressIssue
-  ContactCarrier
-  Delayed
-  Delivered
-  DeliveryAttempted
-  DeliveryRescheduled
-  DeliveryScheduled
-  InformationReceived
-  LocationInaccessible
-  NoticeLeft
-  Other
-  OutForDelivery
-  PackageAccepted
-  PackageArrived
-  PackageDamaged
-  PackageDeparted
-  PackageDisposed
-  PackageForwarded
-  PackageHeld
-  PackageLost
-  PackageProcessed
-  PackageProcessing
-  PackageUnclaimed
-  PackageUndeliverable
-  PickupAvailable
-  RescheduleDelivery
-  ReturnToSender
-}
-
-enum ReservationPhase {
-  BusinessToCustomer
-  CustomerToBusiness
-}
-
-enum UserPushNotificationInterestType {
-  Bag
-  Blog
-  Brand
-  General
-  NewProduct
-}
-
-enum InAdmissableReason {
-  Untriageable
-  UnsupportedPlatform
-  AutomaticAdmissionsFlagOff
-  UnserviceableZipcode
-  InsufficientInventory
-  OpsThresholdExceeded
-}
-
-enum ShippingCode {
-  UPSGround
-  UPSSelect
-}
-
-enum PhysicalProductDamageType {
-  BarcodeMissing
-  ButtonMissing
-  Stain
-  Smell
-  Tear
-  Other
-}
-
-enum ProductFit {
-  RunsBig
-  TrueToSize
-  RunsSmall
-}
-
-enum ProductNotificationType {
-  Restock
-  AvailableForPurchase
-}
-
-enum PaymentPlanTier {
-  Essential
-  AllAccess
-  Pause
-}
-
-enum SmsStatus {
-  Queued
-  Sending
-  Sent
-  Failed
-  Delivered
-  Undelivered
-  Receiving
-  Received
-  Accepted
-  Scheduled
-  Read
-  PartiallyDelivered
-}
-
-enum SeasonCode {
-  FW
-  SS
-  PS
-  PF
-  HO
-  AW
-}
-
-enum SeasonString {
-  Spring
-  Summer
-  Winter
-  Fall
-}
-
-enum UserVerificationMethod {
-  SMS
-  Email
-  None
-}
-
-enum UserVerificationStatus {
-  Approved
-  Denied
-  Pending
-}
-
-enum PushNotificationStatus {
-  Blocked
-  Granted
-  Denied
-}
-
-enum FitPicStatus {
-  Submitted
-  Published
-  Unpublished
-}
-
-enum FitPicReportStatus {
-  Pending
-  Reviewed
-}
-
-enum CustomerStyle {
-  AvantGarde
-  Bold
-  Classic
-  Minimalist
-  Streetwear
-  Techwear
-}
-
-enum NotificationBarID {
-  PastDueInvoice
-  TestDismissable
-  AuthorizedReminder
-}
-
-enum OrderType {
-  Used
-  New
-}
-
-enum PauseType {
-  WithItems
-  WithoutItems
-}
-
-enum OrderLineItemRecordType {
-  PhysicalProduct
-  ProductVariant
-  ExternalProduct
-  Package
-  EarlySwap
-  Reservation
-}
-
-enum OrderStatus {
-  Drafted
-  Submitted
-  Fulfilled
-  Returned
-  Cancelled
-}
-
-enum OrderCancelReason {
-  Customer
-  Declined
-  Fraud
-  Inventory
-  Other
-}
-
-enum OrderPaymentStatus {
-  Paid
-  PartiallyPaid
-  Refunded
-  NotPaid
-  Complete
-}
-
-enum AdminAction {
-  Insert
-  Delete
-  Update
-  Truncate
-}
-
-enum SyncTimingType {
-  Drip
-  Next
-  Impact
 }
