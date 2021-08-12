@@ -149,8 +149,6 @@ enum BottomSizeType {
   EU
   JP
   Letter
-  Access
-  Guest
 }
 
 enum SizeType {
@@ -322,6 +320,8 @@ enum PaymentPlanTier {
   Essential
   AllAccess
   Pause
+  Access
+  Guest
 }
 
 enum SmsStatus {
@@ -677,7 +677,7 @@ model CustomerAdmissionsData {
   allAccessEnabled            Boolean             @default(false)
   authorizationWindowClosesAt DateTime?
   subscribedAt                DateTime?
-  customer                    Customer[]
+  customer                    Customer?
 }
 
 model CustomerDetail {
@@ -799,6 +799,8 @@ model Image {
   height                Int?
   width                 Int?
   alt                   String?
+
+  # Don't those fields for now
   BlogPost              BlogPost[]
   Brand_BrandToImage    Brand[]
   FitPic                FitPic[]
@@ -993,7 +995,7 @@ model PhysicalProduct {
   dateOrdered                  DateTime?
   dateReceived                 DateTime?
   unitCost                     Float?
-  barcoded                     Boolean?
+  barcoded                     Boolean?                       @default(value: false)
   priceId                      String?                        @map("price") @db.VarChar(30)
   packedAt                     DateTime?
   productVariantId             String?                        @map("productVariant") @db.VarChar(30)
@@ -1026,7 +1028,7 @@ model PhysicalProductQualityReport {
   physicalProductId String?                     @map("physicalProduct") @db.VarChar(30)
   userId            String?                     @map("user") @db.VarChar(30)
   score             Int?
-  published         Boolean
+  published         Boolean                     @default(value: false)
   damageTypes       PhysicalProductDamageType[]
   physicalProduct   PhysicalProduct?            @relation(fields: [physicalProductId], references: [id])
   user              User?                       @relation(fields: [userId], references: [id])
@@ -1039,6 +1041,7 @@ model Product {
   description                 String?
   externalURL                 String?
   retailPrice                 Int?
+  wholesalePrice              Int?
   rentalPriceOverride         Int?
   recoupment                  Float?                   @default(4)
   status                      ProductStatus?
@@ -1114,7 +1117,7 @@ model ProductNotification {
   customerId        String?                 @map("customer") @db.VarChar(30)
   customer          Customer?               @relation(fields: [customerId], references: [id])
   physicalProduct   PhysicalProduct?        @relation(fields: [physicalProductId], references: [id])
-  productVariant    ProductVariant?         @relation(fields: [productVariantId], references: [id])
+  productVariant    ProductVariant          @relation(fields: [productVariantId], references: [id])
 }
 
 model ProductRequest {
@@ -1446,7 +1449,7 @@ model TopSize {
   chest    Float?
   neck     Float?
   length   Float?
-  size     Size[]
+  size     Size?
 }
 
 model User {
@@ -1455,14 +1458,14 @@ model User {
   email                         String                         @unique
   firstName                     String
   lastName                      String
-  role                          UserRole
+  role                          UserRole                       @default(Customer)
   createdAt                     DateTime                       @default(now())
   updatedAt                     DateTime                       @updatedAt
   pushNotificationStatus        PushNotificationStatus         @default(Denied)
   verificationStatus            UserVerificationStatus         @default(Pending)
   verificationMethod            UserVerificationMethod         @default(None)
   pushNotificationId            String?                        @map("pushNotification") @db.VarChar(30)
-  sendSystemEmails              Boolean
+  sendSystemEmails              Boolean                        @default(true)
   deviceDataId                  String?                        @map("deviceData") @db.VarChar(30)
   roles                         UserRole[]
   deviceData                    UserDeviceData?                @relation(fields: [deviceDataId], references: [id])
