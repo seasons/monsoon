@@ -598,6 +598,9 @@ model Category {
   name                         String                        @unique
   description                  String?
   image                        Json?
+  singularName                 String?
+  dryCleaningFee               Float?
+  recoupment                   Float                         @default(4)
   productType                  ProductType?
   measurementType              MeasurementType?
   visible                      Boolean                       @default(value: false)

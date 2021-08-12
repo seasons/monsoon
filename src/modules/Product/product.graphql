@@ -173,6 +173,10 @@ type Mutation {
     where: BrandWhereUniqueInput!
     data: CustomBrandUpdateInput!
   ): Brand @hasRole(roles: [Admin])
+  upsertCategory(
+    where: CategoryWhereUniqueInput!
+    data: CustomCategoryUpsertInput!
+  ): Category @hasRole(roles: [Admin])
   upsertLaunch(
     where: LaunchWhereUniqueInput!
     data: CustomLaunchUpsertInput!
