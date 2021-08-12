@@ -646,13 +646,12 @@ model Customer {
   authorizedAt            DateTime?
   admissionsId            String?                          @map("admissions") @db.VarChar(30)
   referralLink            String?                          @unique
-  referrerId              String?
+  referrerId              String?                          @map("referrer") @db.VarChar(30)
   referrer                Customer?                        @relation("CustomerToCustomer_referrer", fields: [referrerId], references: [id])
   utmId                   String?                          @map("utm") @db.VarChar(30)
   admissions              CustomerAdmissionsData?          @relation(fields: [admissionsId], references: [id])
   billingInfo             BillingInfo?                     @relation(fields: [billingInfoId], references: [id])
   detail                  CustomerDetail?                  @relation(fields: [detailId], references: [id])
-  Customer                Customer?                        @relation("CustomerToCustomer_referrer", fields: [referrer], references: [id])
   user                    User?                            @relation(fields: [userId], references: [id])
   utm                     UTMData?                         @relation(fields: [utmId], references: [id])
   bagItems                BagItem[]
