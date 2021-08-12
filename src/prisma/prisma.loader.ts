@@ -2,7 +2,7 @@ import {
   KeyToDataRelationship,
   NestDataLoader,
   PrismaGenerateParams,
-} from "@modules/DataLoader/dataloader.types"
+} from "@modules/DataLoader/dataloader.types.d"
 import { Injectable } from "@nestjs/common"
 import DataLoader from "dataloader"
 import { cloneDeep, identity, isEqual, lowerFirst } from "lodash"

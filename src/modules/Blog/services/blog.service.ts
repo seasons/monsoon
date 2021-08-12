@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common"
 import { head, pick } from "lodash"
 import moment from "moment"
 
-import { BlogPost } from "../blog.types"
+import { BlogPost } from "../blog.types.d"
 import {
   AuthorsCollectionId,
   BlogPostsCollectionId,

@@ -1,0 +1,123 @@
+$ dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts
+[33m[nodemon] 2.0.12[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: ts,graphql[39m
+[32m[nodemon] starting `ts-node src/index.ts`[39m
+[92m[NestWinston][39m [33mInfo[39m	[33m[NestFactory][39m [92mStarting Nest application...[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mTwilioModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mViewModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mSlackModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mTwilioModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mSlackModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mHttpModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mPrismaModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mPrismaModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mFAQModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mAdminModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mErrorModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mErrorModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mTerminusModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mHealthModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mUtilsModule dependencies initialized[39m - {"environment":"development"}
+🚀 Server ready at 4000
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mImageModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mUtilsModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mImageModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mLocationModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mPushNotificationModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mShopifyModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mPushNotificationModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mShopifyModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mAppModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mSyncModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mSearchModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mSearchModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mAnalyticsModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mAnalyticsModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mDripModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mDripModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mFitPicModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mHomepageModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mEmailModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mEmailModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mGraphQLSchemaBuilderModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mBlogModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mShippingModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mCustomerModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mUserModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mUserModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mShippingModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mPaymentModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mPaymentModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mCollectionModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mReservationModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mReservationModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mSMSModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mSMSModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mGraphQLModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mCronModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mProductModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mProductModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[InstanceLoader][39m [92mOrderModule dependencies initialized[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RoutesResolver][39m [92mSegmentController {/segment_events}:[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RouterExplorer][39m [92mMapped {/segment_events, POST} route[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RoutesResolver][39m [92mWebflowController {/webflow_events}:[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RouterExplorer][39m [92mMapped {/webflow_events, POST} route[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RoutesResolver][39m [92mSegmentController {/segment_events}:[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RouterExplorer][39m [92mMapped {/segment_events, POST} route[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RoutesResolver][39m [92mShippoController {/shippo_events}:[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RouterExplorer][39m [92mMapped {/shippo_events, POST} route[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RoutesResolver][39m [92mSMSController {/sms_events}:[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RouterExplorer][39m [92mMapped {/sms_events, POST} route[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RoutesResolver][39m [92mChargebeeController {/chargebee_events}:[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RouterExplorer][39m [92mMapped {/chargebee_events, POST} route[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RoutesResolver][39m [92mChargebeeController {/chargebee_events}:[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RouterExplorer][39m [92mMapped {/chargebee_events, POST} route[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RoutesResolver][39m [92mSMSController {/sms_events}:[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RouterExplorer][39m [92mMapped {/sms_events, POST} route[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RoutesResolver][39m [92mShippoController {/shippo_events}:[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RouterExplorer][39m [92mMapped {/shippo_events, POST} route[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RoutesResolver][39m [92mFacebookSyncController {/facebook}:[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RouterExplorer][39m [92mMapped {/facebook/catalog, GET} route[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RoutesResolver][39m [92mHealthController {/health}:[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[RouterExplorer][39m [92mMapped {/health, GET} route[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[33m[NestApplication][39m [92mNest application successfully started[39m - {"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[92mstatus=200 - method=POST - path=//graphql - duration=1181ms[39m - {"req":{"url":"//graphql","headers":{"host":"localhost:4000","accept-encoding":"gzip, deflate","content-type":"application/json","accept":"/","application":"spring","content-length":"724","connection":"close"},"method":"POST","httpVersion":"1.1","originalUrl":"//graphql","query":{}},"res":{"statusCode":200},"responseTime":1181,"http":{"method":"POST","status_code":200,"url_details":{"path":"//graphql"}},"duration":1181000000,"environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[92mstatus=200 - method=POST - path=//graphql - duration=377ms[39m - {"req":{"url":"//graphql","headers":{"host":"localhost:4000","accept-encoding":"gzip, deflate","content-type":"application/json","accept":"/","application":"spring","authorization":"Bearer [REDACTED]","content-length":"1527","connection":"close"},"method":"POST","httpVersion":"1.1","originalUrl":"//graphql","query":{}},"res":{"statusCode":200},"responseTime":377,"http":{"method":"POST","status_code":200,"url_details":{"path":"//graphql"}},"duration":377000000,"id":"cks843say0002kjca8xmf3690","email":"integration_test_ci@seasons.nyc","requestId":"c80447d7-d928-4c5d-9c32-3f3178c74c8d","environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[92mstatus=200 - method=POST - path=//graphql - duration=38ms[39m - {"req":{"url":"//graphql","headers":{"host":"localhost:4000","accept-encoding":"gzip, deflate","content-type":"application/json","accept":"/","application":"spring","authorization":"Bearer [REDACTED]","content-length":"655","connection":"close"},"method":"POST","httpVersion":"1.1","originalUrl":"//graphql","query":{}},"res":{"statusCode":200},"responseTime":38,"http":{"method":"POST","status_code":200,"url_details":{"path":"//graphql"}},"duration":38000000,"id":"cks843say0002kjca8xmf3690","email":"integration_test_ci@seasons.nyc","requestId":"6c764a1e-c3ca-4db1-bc36-40ebaadc17f9","environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[92mstatus=200 - method=POST - path=//graphql - duration=241ms[39m - {"req":{"url":"//graphql","headers":{"host":"localhost:4000","accept-encoding":"gzip, deflate","content-type":"application/json","accept":"/","application":"spring","authorization":"Bearer [REDACTED]","content-length":"702","connection":"close"},"method":"POST","httpVersion":"1.1","originalUrl":"//graphql","query":{}},"res":{"statusCode":200},"responseTime":241,"http":{"method":"POST","status_code":200,"url_details":{"path":"//graphql"}},"duration":241000000,"id":"cks843say0002kjca8xmf3690","email":"integration_test_ci@seasons.nyc","requestId":"18ee1781-a4c4-4f0a-aeba-f07c7f2980bf","environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[92mstatus=200 - method=POST - path=//graphql - duration=48ms[39m - {"req":{"url":"//graphql","headers":{"host":"localhost:4000","accept-encoding":"gzip, deflate","content-type":"application/json","accept":"/","application":"spring","authorization":"Bearer [REDACTED]","content-length":"940","connection":"close"},"method":"POST","httpVersion":"1.1","originalUrl":"//graphql","query":{}},"res":{"statusCode":200},"responseTime":48,"http":{"method":"POST","status_code":200,"url_details":{"path":"//graphql"}},"duration":48000000,"id":"cks843say0002kjca8xmf3690","email":"integration_test_ci@seasons.nyc","requestId":"b2e3c607-ca32-4d79-af68-4381b01e2806","environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[92mstatus=200 - method=POST - path=//graphql - duration=10ms[39m - {"req":{"url":"//graphql","headers":{"host":"localhost:4000","accept-encoding":"gzip, deflate","content-type":"application/json","accept":"/","application":"spring","authorization":"Bearer [REDACTED]","content-length":"146","connection":"close"},"method":"POST","httpVersion":"1.1","originalUrl":"//graphql","query":{}},"res":{"statusCode":200},"responseTime":10,"http":{"method":"POST","status_code":200,"url_details":{"path":"//graphql"}},"duration":10000000,"id":"cks843say0002kjca8xmf3690","email":"integration_test_ci@seasons.nyc","requestId":"aeba3f72-3e1e-4a3b-a1b3-fbf0858164d1","environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[92mstatus=200 - method=POST - path=//graphql - duration=362ms[39m - {"req":{"url":"//graphql","headers":{"host":"localhost:4000","accept-encoding":"gzip, deflate","content-type":"application/json","accept":"/","application":"spring","authorization":"Bearer [REDACTED]","content-length":"557","connection":"close"},"method":"POST","httpVersion":"1.1","originalUrl":"//graphql","query":{}},"res":{"statusCode":200},"responseTime":362,"http":{"method":"POST","status_code":200,"url_details":{"path":"//graphql"}},"duration":362000000,"id":"cks843say0002kjca8xmf3690","email":"integration_test_ci@seasons.nyc","requestId":"883c8818-2d46-410f-8cf6-be7b460b8edf","environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[92mstatus=200 - method=POST - path=//graphql - duration=41ms[39m - {"req":{"url":"//graphql","headers":{"host":"localhost:4000","accept-encoding":"gzip, deflate","content-type":"application/json","accept":"/","application":"spring","authorization":"Bearer [REDACTED]","content-length":"247","connection":"close"},"method":"POST","httpVersion":"1.1","originalUrl":"//graphql","query":{}},"res":{"statusCode":200},"responseTime":41,"http":{"method":"POST","status_code":200,"url_details":{"path":"//graphql"}},"duration":41000000,"id":"cks843say0002kjca8xmf3690","email":"integration_test_ci@seasons.nyc","requestId":"49ec0b8e-fee5-4d27-82ad-e55dc4ae6be0","environment":"development"}
+tracked event
+{
+  userId: 'cks843say0002kjca8xmf3690',
+  event: 'Paused Subscription',
+  properties: {
+    firstName: 'Travon',
+    lastName: 'Wilderman',
+    email: 'integration_test_ci@seasons.nyc',
+    planID: 'essential-2',
+    tier: 'Essential',
+    pauseType: 'WithoutItems'
+  }
+}
+[92m[NestWinston][39m [33mInfo[39m	[92mstatus=200 - method=POST - path=//graphql - duration=601ms[39m - {"req":{"url":"//graphql","headers":{"host":"localhost:4000","accept-encoding":"gzip, deflate","content-type":"application/json","accept":"/","application":"spring","authorization":"Bearer [REDACTED]","content-length":"285","connection":"close"},"method":"POST","httpVersion":"1.1","originalUrl":"//graphql","query":{}},"res":{"statusCode":200},"responseTime":601,"http":{"method":"POST","status_code":200,"url_details":{"path":"//graphql"}},"duration":601000000,"id":"cks843say0002kjca8xmf3690","email":"integration_test_ci@seasons.nyc","requestId":"127060ac-e794-4a51-8633-156d439c5d2d","environment":"development"}
+tracked event
+{
+  userId: 'cks843say0002kjca8xmf3690',
+  event: 'Resumed Subscription',
+  properties: {
+    firstName: 'Travon',
+    lastName: 'Wilderman',
+    email: 'integration_test_ci@seasons.nyc',
+    planID: 'essential-2',
+    tier: 'Essential'
+  }
+}
+[92m[NestWinston][39m [33mInfo[39m	[92mstatus=200 - method=POST - path=//graphql - duration=414ms[39m - {"req":{"url":"//graphql","headers":{"host":"localhost:4000","accept-encoding":"gzip, deflate","content-type":"application/json","accept":"/","application":"spring","authorization":"Bearer [REDACTED]","content-length":"215","connection":"close"},"method":"POST","httpVersion":"1.1","originalUrl":"//graphql","query":{}},"res":{"statusCode":200},"responseTime":414,"http":{"method":"POST","status_code":200,"url_details":{"path":"//graphql"}},"duration":414000000,"id":"cks843say0002kjca8xmf3690","email":"integration_test_ci@seasons.nyc","requestId":"4c43e567-7464-4947-b56a-4c15eeb043dc","environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[92mstatus=200 - method=POST - path=//graphql - duration=584ms[39m - {"req":{"url":"//graphql","headers":{"host":"localhost:4000","accept-encoding":"gzip, deflate","content-type":"application/json","accept":"/","application":"spring","authorization":"Bearer [REDACTED]","content-length":"517","connection":"close"},"method":"POST","httpVersion":"1.1","originalUrl":"//graphql","query":{}},"res":{"statusCode":200},"responseTime":584,"http":{"method":"POST","status_code":200,"url_details":{"path":"//graphql"}},"duration":584000000,"id":"cks843say0002kjca8xmf3690","email":"integration_test_ci@seasons.nyc","requestId":"cbfe8dcb-8953-43e0-a9ad-b5067cd20e66","environment":"development"}
+[92m[NestWinston][39m [33mInfo[39m	[92mstatus=200 - method=POST - path=//graphql - duration=66ms[39m - {"req":{"url":"//graphql","headers":{"host":"localhost:4000","accept-encoding":"gzip, deflate","content-type":"application/json","accept":"/","application":"spring","authorization":"Bearer [REDACTED]","content-length":"1527","connection":"close"},"method":"POST","httpVersion":"1.1","originalUrl":"//graphql","query":{}},"res":{"statusCode":200},"responseTime":66,"http":{"method":"POST","status_code":200,"url_details":{"path":"//graphql"}},"duration":66000000,"id":"cks843say0002kjca8xmf3690","email":"integration_test_ci@seasons.nyc","requestId":"8e07c4fb-4def-4ec2-ae92-50442766df3f","environment":"development"}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m

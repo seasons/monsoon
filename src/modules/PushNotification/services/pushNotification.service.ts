@@ -9,7 +9,7 @@ import {
   PushNotificationID,
   PushNotifyInterestInput,
   PushNotifyUsersInput,
-} from "../pushNotification.types"
+} from "../pushNotification.types.d"
 import { PusherService } from "./pusher.service"
 import {
   AllPushNotificationIDs,

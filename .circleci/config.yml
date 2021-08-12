@@ -1,32 +1,22 @@
-# Javascript Node CircleCI 2.1 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
 version: 2.1
 
 orbs:
-  node: circleci/node@4.5.1
+  node: circleci/node@4.6.0
   docker: circleci/docker@1.6.0
 
 jobs:
   test-unit:
-    machine: true
+    machine:
+      image: ubuntu-2004:202107-02
+
     working_directory: ~/monsoon
+
     steps:
       - checkout
 
-      - run:
-          name: Install Node Version Manager
-          command: |
-            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-            export NVM_DIR="/opt/circleci/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm install v16.4.0
-            nvm alias default v16.4.0
-            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
-            echo "[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"" >> $BASH_ENV
-
-      - node/install-yarn
+      - node/install:
+          node-version: "14.17.1"
+          install-yarn: true
 
       - node/install-packages:
           pkg-manager: yarn
@@ -36,78 +26,73 @@ jobs:
       - docker/install-docker-compose
 
       - run:
-          command: docker-compose up -d
           name: Start up docker containers
+          command: docker-compose up -d
 
       - run:
-          command: sleep 20
-          name: Wait for containers to fully spin up
-
-      - run:
-          command: yarn prisma1 deploy
-          name: Deploy Prisma1 service
-
-      - run:
-          command: yarn test
           name: Run unit tests
+          command: yarn test
 
   test-integration:
-    machine: true
+    machine:
+      image: ubuntu-2004:202107-02
+
     working_directory: ~/monsoon
+
     steps:
       - checkout
 
-      - run:
-          name: Install Node Version Manager
-          command: |
-            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-            export NVM_DIR="/opt/circleci/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm install v16.4.0
-            nvm alias default v16.4.0
-            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
-            echo "[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"" >> $BASH_ENV
-
-      - node/install-yarn
-
-      - node/install-packages:
-          pkg-manager: yarn
+      - node/install:
+          node-version: "14.17.1"
+          install-yarn: true
 
       - docker/install-docker
 
       - docker/install-docker-compose
 
       - run:
-          command: docker-compose up -d
           name: Start up docker containers
+          command: docker-compose up -d
+
+      - node/install-packages:
+          pkg-manager: yarn
 
       - run:
-          command: sleep 20
-          name: Wait for containers to fully spin up
+          name: Install postgres tools
+          command: sudo apt update && sudo apt install postgresql
 
       - run:
-          command: yarn prisma:deploy
-          name: Deploy Prisma1 service
-
-      - run:
-          command: yarn build
-          name: Compile so we can run the next cmd
-
-      - run:
-          command: node bin/cli.js spp local staging -f
           name: Clone staging data into local Postgres DB
+          command: node bin/cli.js spp local staging -f
 
       - run:
-          command: node bin/cli.js ctu --email integration_test_ci@seasons.nyc --password Seasons2020 --prisma local --roles Customer Admin --aid 60e4ac2aaf20ac0069155156 --dbo
           name: Generate user for integration test
+          command: node bin/cli.js ctu --email integration_test_ci@seasons.nyc --password Seasons2020 --prisma local --roles Customer Admin --aid 60e4ac2aaf20ac0069155156 --dbo
 
       - run:
-          command: yarn start:ci && sleep 30
+          name: Install JUnit coverage reporter
+          command: yarn add --dev jest-junit
+
+      - run:
           name: Start server locally to run integration tests against
+          command: yarn ci
 
       - run:
-          command: yarn jest -i src/modules/User/tests/integration.test.ts
+          name: Wait for server to spin up
+          command: sleep 100
+
+      - run:
           name: Run integration test suite
+          command: yarn test:e2e:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+
+      # https://circleci.com/docs/2.0/collect-test-data/#jest
+      - store_test_results:
+          path: ./reports/junit/
+
+      - store_artifacts:
+          path: ./reports/junit
 
 workflows:
   run_all_tests:

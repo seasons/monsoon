@@ -57,7 +57,7 @@ class PrismaServiceMock {
   }
 }
 
-describe("Shippo Controller", () => {
+xdescribe("Shippo Controller", () => {
   let app: INestApplication
   let pushNotificationsService: PushNotificationService
 

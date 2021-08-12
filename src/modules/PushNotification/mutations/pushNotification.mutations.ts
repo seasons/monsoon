@@ -6,7 +6,7 @@ import { ApolloError } from "apollo-server"
 import { kebabCase, pick } from "lodash"
 import * as validUrl from "valid-url"
 
-import { PushNotificationInterest } from "../pushNotification.types"
+import { PushNotificationInterest } from "../pushNotification.types.d"
 import { PushNotificationService } from "../services/pushNotification.service"
 
 @Resolver()

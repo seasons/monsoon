@@ -1,6 +1,6 @@
 import { Option } from "nestjs-command"
 
-import { MonsoonCommandOptions } from "./scripts.types"
+import { MonsoonCommandOptions } from "./scripts.types.d"
 
 export const PrismaEnvOption = ({
   choices = ["local", "staging"],

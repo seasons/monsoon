@@ -13,7 +13,7 @@ import {
   CreateTestProductInput,
   CreateTestProductOutput,
   CreateTestProductVariantInput,
-} from "../utils.types"
+} from "../utils.types.d"
 import { QueryUtilsService } from "./queryUtils.service"
 import { UtilsService } from "./utils.service"
 

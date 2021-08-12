@@ -3,9 +3,9 @@
     "target": "es6",
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "removeComments": true,
     "module": "commonjs",
     "sourceMap": true,
-    "rootDir": "src",
     "outDir": "dist",
     "lib": ["esnext", "dom"],
     "esModuleInterop": true,
@@ -13,11 +13,12 @@
     "forceConsistentCasingInFileNames": true,
     "emitDecoratorMetadata": true,
     "baseUrl": "./src",
+    "rootDir": "src",
     "paths": {
       "@app/*": ["./*"],
       "@modules/*": ["modules/*"],
       "@prisma1/*": ["prisma/*"]
     }
   },
-  "exclude": ["src/scripts", "./bin"]
+  "exclude": ["src/scripts"]
 }

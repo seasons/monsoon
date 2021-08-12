@@ -7,7 +7,7 @@ import * as Transport from "winston-transport"
 import { getRequestIdContext } from "../middleware/http-context.middleware"
 import { WinstonLogger } from "./winston.logger"
 
-const logLevel = process.env.NODE_ENV === "development" ? "debug" : "info"
+const logLevel = process.env.NODE_ENV === "development" ? "verbose" : "info"
 
 /**
  * The custom formatter that manages winston meta.

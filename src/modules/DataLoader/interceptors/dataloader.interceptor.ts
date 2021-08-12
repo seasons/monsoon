@@ -15,7 +15,7 @@ import {
   DataloaderContext,
   LoaderParams,
   NestDataLoader,
-} from "../dataloader.types"
+} from "../dataloader.types.d"
 
 @Injectable()
 export class DataLoaderInterceptor implements NestInterceptor {
