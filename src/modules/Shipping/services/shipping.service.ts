@@ -1,24 +1,17 @@
+import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { Customer, ShippingCode, User } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
+import { ApolloError } from "apollo-server-errors"
+import { pick } from "lodash"
 import shippo from "shippo"
 
 import {
+  CoreShippoAddressFields,
   ShippoRate,
   ShippoShipment,
   ShippoTransaction,
 } from "../shipping.types.d"
-
-interface CoreShippoAddressFields {
-  name: string
-  company: string
-  street1: string
-  street2: string
-  city: string
-  state: string
-  zip: string
-}
 
 interface ShippoLabelInputs {
   shipment: ShippoShipment
@@ -146,7 +139,7 @@ export class ShippingService {
     }, shippingBagWeight)
   }
 
-  async shippoValidateAddress(address) {
+  async shippoValidateAddress(address: CoreShippoAddressFields) {
     const result = await this.shippo.address.create({
       ...address,
       country: "US",
@@ -154,8 +147,32 @@ export class ShippingService {
     })
 
     const validationResults = result.validation_results
+
+    // Patchwork case for invalid city/state/zip combo, pending
+    // response from shippo about why their validator doesn't properly
+    // handle this case
     const isValid = result.validation_results.is_valid
+    const needToSuggestAddress =
+      address.street1 !== result.street1 ||
+      address.city !== result.city ||
+      address.state !== result.state ||
+      address.zip !== result.zip
+    if (isValid && needToSuggestAddress) {
+      // Clients rely on exact copy of error message to power
+      // suggested address flow
+      throw new ApolloError("Need to Suggest Address", "400", {
+        suggestedAddress: pick(result, [
+          "city",
+          "country",
+          "state",
+          "street1",
+          "street2",
+          "zip",
+        ]),
+      })
+    }
     const message = validationResults?.messages?.[0]
+
     return {
       isValid,
       code: message?.code,
@@ -164,12 +181,11 @@ export class ShippingService {
   }
 
   async validateAddress(input) {
-    const { email, location } = input
+    const { location } = input
 
     const shippoAddress = this.locationDataToShippoAddress(location)
     return await this.shippoValidateAddress({
       ...shippoAddress,
-      email,
       name: location.name,
     })
   }
@@ -311,7 +327,7 @@ export class ShippingService {
     })
   }
 
-  private locationDataToShippoAddress(location): CoreShippoAddressFields {
+  locationDataToShippoAddress(location): CoreShippoAddressFields {
     if (location == null) {
       throw new Error("can not extract values from null object")
     }
