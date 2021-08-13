@@ -232,19 +232,19 @@ CREATE UNIQUE INDEX "ProductVariant_internalSize_unique" ON "ProductVariant"("in
 CREATE UNIQUE INDEX "ProductVariant_price_unique" ON "ProductVariant"("price");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ProductVariantWant_productVariant_unique" ON "ProductVariantWant"("productVariant");
+-- CREATE UNIQUE INDEX "ProductVariantWant_productVariant_unique" ON "ProductVariantWant"("productVariant", "user");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Reservation_receipt_unique" ON "Reservation"("receipt");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Reservation_shippingOption_unique" ON "Reservation"("shippingOption");
+-- CREATE UNIQUE INDEX "Reservation_shippingOption_unique" ON "Reservation"("shippingOption");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ReservationFeedback_reservation_unique" ON "ReservationFeedback"("reservation");
+-- CREATE UNIQUE INDEX "ReservationFeedback_reservation_unique" ON "ReservationFeedback"("reservation");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ShippingOption_shippingMethod_unique" ON "ShippingOption"("shippingMethod");
+-- CREATE UNIQUE INDEX "ShippingOption_shippingMethod_unique" ON "ShippingOption"("shippingMethod");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ShopifyProductVariant_productVariant_unique" ON "ShopifyProductVariant"("productVariant");

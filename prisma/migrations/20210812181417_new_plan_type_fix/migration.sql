@@ -43,4 +43,4 @@ ALTER COLUMN "sendSystemEmails" SET DEFAULT true;
 CREATE UNIQUE INDEX "Customer_admissions_unique" ON "Customer"("admissions");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Size_top_unique" ON "Size"("top");
+-- CREATE UNIQUE INDEX "Size_top_unique" ON "Size"("top");
