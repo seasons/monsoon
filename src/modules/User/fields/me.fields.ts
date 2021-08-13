@@ -9,6 +9,7 @@ import { head } from "lodash"
 
 // estimate on customer --> membership --> plan requires planID to be on the plan
 const EnsureFieldsForDownstreamFieldResolvers = `fragment EnsureFieldsForDownstreamFieldResolvers on Customer {
+  id
   membership {
     plan {
       planID
