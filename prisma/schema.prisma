@@ -916,6 +916,21 @@ model OrderLineItem {
   Order Order[]
 }
 
+model RentalInvoiceLineItem {
+  id            String                  @id @default(cuid()) @db.VarChar(30)
+  taxRate       Float?
+  productId     String                  @map("product") @db.VarChar(30)
+  product       Product                 @relation(fields: [productId], references: [id])
+  daysRented    Int
+  taxName       String?
+  taxPercentage Float?
+  taxPrice      Int?
+  price         Int
+  currencyCode  String
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+}
+
 model Package {
   id              String                @id @default(cuid()) @db.VarChar(30)
   weight          Float?
@@ -1092,6 +1107,7 @@ model Product {
   materialCategory            ProductMaterialCategory? @relation(fields: [materialCategoryId], references: [id])
   modelId                     String?                  @map("model") @db.VarChar(30)
   model                       ProductModel?            @relation(fields: [modelId], references: [id])
+  rentalInvoiceLineItems      RentalInvoiceLineItem[]
 }
 
 model ProductFunction {
