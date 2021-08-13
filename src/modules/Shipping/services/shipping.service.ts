@@ -156,7 +156,8 @@ export class ShippingService {
       address.street1 !== result.street1 ||
       address.city !== result.city ||
       address.state !== result.state ||
-      address.zip !== result.zip
+      // check startsWith because shippo returns zips with extensions
+      !result.zip.startsWith(address.zip)
     if (isValid && needToSuggestAddress) {
       // Clients rely on exact copy of error message to power
       // suggested address flow
