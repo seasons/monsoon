@@ -160,7 +160,7 @@ export class BagService {
       })
     )
 
-    const results = await this.prisma.client.$transaction(promises)
+    const results = await this.prisma.client.$transaction(promises.flat())
     const bagItem = results.pop()
 
     await this.reservationService.removeRestockNotifications(
