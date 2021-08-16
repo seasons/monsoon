@@ -86,4 +86,40 @@ export class SubscriptionsScheduledJobs {
 
     this.logger.log(`Finished update subscriptions field job`)
   }
+
+  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  async handleRentalInvoices() {
+    /*
+    Query all rental invoices whose billing ends today
+      Bill them
+      Create the customer's next rental invoice IF they are still active
+    */
+    const now = new Date()
+    const invoicesToHandle = await this.prisma.client.rentalInvoice.findMany({
+      where: {
+        billingEndAt: {
+          equals: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+        },
+        status: "Draft",
+      },
+      select: {
+        id: true,
+        membership: {
+          select: { customer: { select: { status: true } }, id: true },
+        },
+      },
+    })
+    for (const invoice of invoicesToHandle) {
+      // TODO: Bill it
+      // TODO: Update the status
+
+      // Create the next status if customer is still active
+      // TODO: Update this to be a transaction once you also update the status
+      if (
+        ["Active", "PaymentFailed"].includes(invoice.membership.customer.status)
+      ) {
+        await this.paymentUtils.initDraftRentalInvoice(invoice.membership.id)
+      }
+    }
+  }
 }

@@ -729,6 +729,7 @@ model CustomerMembership {
   membershipSubscriptionId String?                             @map("subscription") @db.VarChar(30)
   subscription             CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
   pauseRequests            PauseRequest[]
+  rentalInvoices           RentalInvoice[]
 }
 
 model CustomerMembershipSubscriptionData {
@@ -925,9 +926,11 @@ model RentalInvoice {
   id             String                  @id @default(cuid()) @db.VarChar(30)
   createdAt      DateTime                @default(now())
   updatedAt      DateTime                @updatedAt
+  membershipId   String                  @map("membership") @db.VarChar(30)
+  membership     CustomerMembership      @relation(fields: [membershipId], references: [id])
   billingStartAt DateTime
   billingEndAt   DateTime
-  status         RentalInvoiceStatus
+  status         RentalInvoiceStatus     @default(Draft)
   reservations   Reservation[]           @relation("RentalInvoiceToReservations")
   products       Product[]               @relation("RentalInvoiceToProducts")
   lineItems      RentalInvoiceLineItem[]
