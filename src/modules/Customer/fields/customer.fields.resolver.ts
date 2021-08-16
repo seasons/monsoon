@@ -31,6 +31,37 @@ export class CustomerFieldsResolver {
     private readonly utils: UtilsService
   ) {}
 
+  /*
+   * While we transition to new plan types some customers will be
+   * grandfathered in with the original plan, i.e. essential and all-access
+   */
+  @ResolveField()
+  async grandfathered(
+    @Customer() _customer,
+    @Loader({
+      params: {
+        model: "Customer",
+        select: Prisma.validator<Prisma.CustomerSelect>()({
+          id: true,
+          membership: {
+            select: {
+              plan: {
+                select: {
+                  tier: true,
+                },
+              },
+            },
+          },
+        }),
+      },
+    })
+    prismaLoader: PrismaDataLoader<any>
+  ) {
+    const customer = await prismaLoader.load(_customer.id)
+    const tier = customer.membership.plan.tier
+    return tier === "Essential" || tier === "AllAccess"
+  }
+
   @ResolveField()
   async paymentPlan(
     @Parent() customer,

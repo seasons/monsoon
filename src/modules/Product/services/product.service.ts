@@ -696,10 +696,13 @@ export class ProductService {
       imageUrls = imageDatas.map(a => a.url)
     }
 
+    if (updateData.styles?.length > 0) {
+      updateData["styles"] = { set: updateData.styles }
+    }
+
     const prismaTwoUpdateData = this.queryUtils.prismaOneToPrismaTwoMutateData(
       {
         ...updateData,
-        styles: { set: updateData.styles },
       },
       "Product"
     )

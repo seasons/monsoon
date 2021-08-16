@@ -63,6 +63,10 @@ export class UtilsService {
   })
 
   abbreviateState(state: string) {
+    if (state.length === 2) {
+      return state
+    }
+
     let abbr
     const _state = state?.trim()
 
