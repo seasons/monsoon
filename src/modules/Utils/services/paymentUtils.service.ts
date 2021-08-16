@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { RentalInvoiceStatus } from "@prisma/client"
+import { Prisma, RentalInvoiceStatus } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
@@ -176,7 +176,11 @@ export class PaymentUtilsService {
     return cardInfo
   }
 
-  async initDraftRentalInvoice(membershipId) {
+  async initDraftRentalInvoice(
+    membershipId,
+    reservationIds = [],
+    physicalProductIds = []
+  ) {
     const now = new Date()
     const data = {
       membership: {
@@ -185,7 +189,9 @@ export class PaymentUtilsService {
       billingStartAt: now,
       billingEndAt: this.getRentalInvoiceBillingEndAt(now),
       status: "Draft" as RentalInvoiceStatus,
-    }
+      reservations: { connect: reservationIds },
+      products: { connect: physicalProductIds },
+    } as Prisma.RentalInvoiceCreateInput
     await this.prisma.client.rentalInvoice.create({
       data,
     })

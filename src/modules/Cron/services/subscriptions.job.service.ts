@@ -105,7 +105,29 @@ export class SubscriptionsScheduledJobs {
       select: {
         id: true,
         membership: {
-          select: { customer: { select: { status: true } }, id: true },
+          select: {
+            customer: {
+              select: {
+                status: true,
+                reservations: {
+                  where: {
+                    status: {
+                      notIn: ["Cancelled", "Completed", "Lost", "Unknown"],
+                    },
+                  },
+                  select: { id: true },
+                },
+                bagItems: {
+                  where: { status: { in: ["Received", "Reserved"] } },
+                  select: {
+                    id: true,
+                    physicalProduct: { select: { id: true } },
+                  },
+                },
+              },
+            },
+            id: true,
+          },
         },
       },
     })
@@ -118,7 +140,11 @@ export class SubscriptionsScheduledJobs {
       if (
         ["Active", "PaymentFailed"].includes(invoice.membership.customer.status)
       ) {
-        await this.paymentUtils.initDraftRentalInvoice(invoice.membership.id)
+        await this.paymentUtils.initDraftRentalInvoice(
+          invoice.membership.id,
+          invoice.membership.customer.reservations.map(a => a.id),
+          invoice.membership.customer.bagItems.map(a => a.physicalProduct.id)
+        )
       }
     }
   }

@@ -83,19 +83,35 @@ export class ReservationService {
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
-        membership: { select: { plan: { select: { itemCount: true } } } },
-        detail: { select: { shippingAddress: true } },
+        membership: {
+          select: {
+            plan: { select: { itemCount: true, tier: true } },
+            rentalInvoices: {
+              select: { id: true },
+              where: { status: "Draft" },
+            },
+          },
+        },
       },
     })
 
-    // Validate customer address
-    await this.shippingService.shippoValidateAddress(
-      this.shippingService.locationDataToShippoAddress(
-        customerWithData.detail.shippingAddress
+    // Do a quick validation on the data
+    const customerPlanType = customerWithData.membership.plan.tier
+    const numDraftRentalInvoices =
+      customerWithData.membership.rentalInvoices.length
+    const activeRentalInvoice =
+      customerPlanType === "Access" &&
+      customerWithData.membership.rentalInvoices[0]
+    if (customerPlanType === "Access" && numDraftRentalInvoices !== 1) {
+      const errorMessageSuffix =
+        numDraftRentalInvoices === 0
+          ? "no draft rental invoices"
+          : "more than 1 draft rental invoice"
+      throw new ApolloError(
+        `Invalid State. Customer has ${errorMessageSuffix}`,
+        "400"
       )
-    )
-
-    // Validate number of items being reserved
+    }
     const customerPlanItemCount = customerWithData?.membership?.plan?.itemCount
     if (!!customerPlanItemCount && items.length !== customerPlanItemCount) {
       throw new ApolloError(
@@ -238,6 +254,18 @@ export class ReservationService {
 
     promises.push(reservationPromise)
 
+    if (customerPlanType === "Access") {
+      const rentalInvoicePromise = this.prisma.client.rentalInvoice.update({
+        where: { id: activeRentalInvoice.id },
+        data: {
+          reservations: { connect: { id: reservationData.id } },
+          products: {
+            connect: reservationData.products.connect,
+          },
+        },
+      })
+      promises.push(rentalInvoicePromise)
+    }
     // Resolve all prisma operation in one transaction
     const result = await this.prisma.client.$transaction(promises.flat())
 
@@ -1093,6 +1121,7 @@ export class ReservationService {
     const uniqueReservationNumber = await this.reservationUtils.getUniqueReservationNumber()
 
     let createData = Prisma.validator<Prisma.ReservationCreateInput>()({
+      id: cuid(),
       products: {
         connect: physicalProductSUIDs,
       },
