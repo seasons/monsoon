@@ -3,6 +3,7 @@ import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.se
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
+import { Prisma } from "@prisma/client"
 import chargebee from "chargebee"
 
 @Injectable()
@@ -104,10 +105,13 @@ export class SubscriptionsScheduledJobs {
       },
       select: {
         id: true,
+        products: { select: { id: true, seasonsUID: true } },
+        reservations: { select: { id: true } },
         membership: {
           select: {
             customer: {
               select: {
+                id: true,
                 status: true,
                 reservations: {
                   where: {
@@ -131,7 +135,91 @@ export class SubscriptionsScheduledJobs {
         },
       },
     })
+
+    // TODO: Add analytics that helps us gauge how accurately we are billing
     for (const invoice of invoicesToHandle) {
+      const customer = invoice.membership.customer
+      const data: Prisma.RentalInvoiceLineItemCreateManyInput[] = []
+      for (const physicalProduct of invoice.products) {
+        let daysRented: Number
+        /*
+        Find the package on which it was sent to the customer. Call this RR
+        define f getDeliveryDate(RR) => RR.sentPackage.deliveredAt || RR.createdAt + X (3-5)
+
+        If RR is still Queued, Picked, Packed, Hold, Blocked, Unknown OR
+           RR is shipped, in BusinessToCustomerPhase:
+           daysRented = 0
+
+        TODO: Is it possible for it be "Delivered" in "CustomerToBusiness" phase? Address if so
+        If RR is Delivered and its in BusinessToCustomer phase:
+          endDate = today
+
+          deliveryDate = getDeliveryDate(RR)
+          startDate = max(deliveryDate, invoice.startBillingAt)
+
+          daysRented = endDate - startDate + 1
+
+        If RR is Completed:
+          deliveryDate = getDeliveryDate(RR)
+          startDate = max(deliveryDate, invoice.startBillingAt)
+
+          If item in reservation.returnedProducts:  
+            endDate = returnedPackage.enteredDeliverySystemAt || reservation.completedAt
+          Else:
+            // It should be in his bag, with status Reserved or Received. Confirm this is so.
+            endDate = today
+
+          daysRented = endDate - startDate + 1
+        
+        If RR is Cancelled:
+          daysRented = 0
+
+        If RR is Lost:
+          If the sentPackage got lost, daysRented = 0
+          If the returnedPackage got lost,
+            deliveryDate = getDeliveryDate(RR)
+            startDate = max(deliveryDate, invoice.startBillingAt)
+            endDate = returnedPackage.lostAt
+            daysRented = endDate - startDate + 1 - Y (lostCushion, call it 1-3)
+
+        If RR is Received:
+          // TODO: Only 2 reservations with this status. See if we can deprecate it
+
+
+        */
+        const sentPackage = await this.prisma.client.package.findFirst({
+          where: {
+            items: { some: { seasonsUID: physicalProduct.seasonsUID } },
+            reservationOnSentPackage: { customer: { id: customer.id } },
+          },
+          orderBy: { createdAt: "desc" },
+          select: {
+            deliveredAt: true,
+            reservationOnSentPackage: { select: { id: true, status: true } },
+          },
+        })
+
+        // TODO: Handle case where it's not delivered
+        // In that case, we'll set this date to 3-5 days after the reservation createdAt date
+        const rentalStartDate = sentPackage.deliveredAt
+
+        const receivedPackage = await this.prisma.client.package.findFirst({
+          where: {
+            items: { some: { seasonsUID: physicalProduct.seasonsUID } },
+            reservationOnReturnedPackage: {
+              id: sentPackage.reservationOnSentPackage.id,
+            },
+          },
+          orderBy: { createdAt: "desc" },
+          select: { enteredDeliverySystemAt: true },
+        })
+
+        // TODO: Handle case where we don't have this.
+        const rentalEndDate = receivedPackage.enteredDeliverySystemAt
+      }
+      await this.prisma.client.rentalInvoiceLineItem.createMany({
+        data,
+      })
       // TODO: Bill it
       // TODO: Update the status
 
