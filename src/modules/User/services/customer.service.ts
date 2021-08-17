@@ -155,6 +155,9 @@ export class CustomerService {
   }
 
   async addCustomerDetails({ details, status }, customer, user, select) {
+    let data = { ...details }
+
+    // Handle shipping address payload
     const groupedKeys = ["name", "address1", "address2", "city", "state"]
     const isUpdatingShippingAddress =
       details.shippingAddress?.create &&
@@ -162,13 +165,13 @@ export class CustomerService {
         groupedKeys.includes(key)
       )
     if (isUpdatingShippingAddress) {
-      const {
-        name,
-        address1: street1,
-        city,
-        state,
-        zipCode: zip,
-      } = details.shippingAddress.create
+      const addressCreateData = details.shippingAddress.create
+      const name = addressCreateData.name?.trim()
+      const street1 = addressCreateData.street1?.trim()
+      const street2 = addressCreateData.street2?.trim()
+      const city = addressCreateData.city?.trim()
+      const state = addressCreateData.state?.trim()
+      const zip = addressCreateData.zipCode?.trim()
       if (!(street1 && city && state && zip)) {
         throw new Error(
           "Missing a required field. Expected address1, city, state, and zipCode."
@@ -179,6 +182,7 @@ export class CustomerService {
       } = await this.shipping.shippoValidateAddress({
         name,
         street1,
+        street2,
         city,
         state,
         zip,
@@ -187,6 +191,14 @@ export class CustomerService {
         throw new Error("Shipping address is invalid")
       }
 
+      data.shippingAddress.create = {
+        name,
+        street1,
+        street2,
+        city,
+        state,
+        zipCode: zip,
+      }
       if (!!state && state.length > 2) {
         const abbreviatedState = this.utils.abbreviateState(state)
         if (abbreviatedState) {
@@ -216,7 +228,7 @@ export class CustomerService {
     })
 
     await this.prisma.client.customerDetail.update({
-      data: details,
+      data: data,
       where: {
         id: detail.id,
       },
