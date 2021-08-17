@@ -108,7 +108,10 @@ export class EmailService {
     })
   }
 
-  async sendBuyUsedOrderConfirmationEmail(user: EmailUser, order: Order) {
+  async sendBuyUsedOrderConfirmationEmail(
+    user: EmailUser,
+    order: Pick<Order, "id" | "orderNumber">
+  ) {
     // Gather the appropriate product info
     const orderWithLineItems = await this.prisma.client.order.findUnique({
       where: { id: order.id },
