@@ -162,7 +162,12 @@ export class SubscriptionsScheduledJobs {
       // Create the RentalInvoice line items
       const lineItemPromises = []
       for (const physicalProduct of invoice.products) {
-        const daysRented = await this.calcDaysRented(invoice, physicalProduct)
+        const {
+          daysRented,
+          rentalStartedAt,
+          rentalEndedAt,
+          comment,
+        } = await this.calcDaysRented(invoice, physicalProduct)
         const dailyRentalPrice = this.productUtils.calcRentalPrice(
           physicalProduct.productVariant.product,
           "daily"
@@ -172,6 +177,9 @@ export class SubscriptionsScheduledJobs {
           physicalProduct: { connect: { id: physicalProduct.id } },
           rentalInvoice: { connect: { id: invoice.id } },
           daysRented,
+          rentalStartedAt,
+          rentalEndedAt,
+          comment,
           price: daysRented * dailyRentalPrice,
           currencyCode: "USD",
         } as Prisma.RentalInvoiceLineItemCreateInput
@@ -182,6 +190,9 @@ export class SubscriptionsScheduledJobs {
             select: {
               price: true,
               daysRented: true,
+              rentalStartedAt: true,
+              rentalEndedAt: true,
+              comment: true,
               physicalProduct: {
                 select: {
                   productVariant: {
@@ -214,15 +225,14 @@ export class SubscriptionsScheduledJobs {
         case "access-monthly":
           for (const lineItem of lineItems) {
             // TODO: Handle errors
-            const invoice = await chargebee.invoice
+            const { invoice } = await chargebee.invoice
               .add_charge(invoiceId, {
                 amount: lineItem.price * 100,
                 description: this.lineItemToDescription(lineItem),
                 // TODO: Handle taxes
                 line_item: {
-                  // TODO: Store date_from and date_to on RentalInvoiceLineItem, then set it here
-                  date_from: "",
-                  date_to: "",
+                  date_from: lineItem.rentalStartedAt.getTime(),
+                  date_to: lineItem.rentalEndedAt.getTime(),
                 },
               })
               .request((error, result) => {
@@ -248,9 +258,8 @@ export class SubscriptionsScheduledJobs {
                 amount: a.price * 100,
                 description: this.lineItemToDescription(a),
                 // TODO: Taxes
-                // TODO: Dates
-                // date_from: "",
-                // date_to: "",
+                date_from: a.rentalStartedAt.getTime(),
+                date_to: a.rentalEndedAt.getTime(),
               })),
             })
             .request((err, result) => {
@@ -355,7 +364,12 @@ export class SubscriptionsScheduledJobs {
       orderBy: { createdAt: "desc" },
       select: { enteredDeliverySystemAt: true },
     })
-    return 5 // TODO: Implement
+    return {
+      daysRented: 5,
+      rentalStartedAt: new Date(),
+      rentalEndedAt: new Date(),
+      comment: "",
+    } // TODO: Implement
   }
 
   private lineItemToDescription(

@@ -938,11 +938,15 @@ model RentalInvoiceLineItem {
   rentalInvoiceId   String          @map("rentalInvoice") @db.VarChar(30)
   rentalInvoice     RentalInvoice   @relation(fields: [rentalInvoiceId], references: [id])
   daysRented        Int
+  rentalStartedAt   DateTime
+  rentalEndedAt     DateTime
+  comment           String?
   taxName           String?
   taxPercentage     Float?
   taxPrice          Int?
   price             Int
   currencyCode      String
+
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 }
