@@ -36,6 +36,19 @@ export class PaymentPlanFieldsResolver {
     }
   }
 
+  // @ResolveField()
+  // async features(
+  //   @Parent() paymentPlan: PaymentPlan,
+  //   @Customer() customer,
+  //   @Args() { couponID }
+  // ) {
+  //   return this.subscription.subscriptionEstimate(
+  //     paymentPlan,
+  //     customer,
+  //     couponID
+  //   )
+  // }
+
   @ResolveField()
   async estimate(
     @Parent() paymentPlan: PaymentPlan,

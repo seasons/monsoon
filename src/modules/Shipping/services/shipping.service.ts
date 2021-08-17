@@ -1,3 +1,5 @@
+import { resourceLimits } from "worker_threads"
+
 import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
@@ -152,8 +154,12 @@ export class ShippingService {
     // response from shippo about why their validator doesn't properly
     // handle this case
     const isValid = result.validation_results.is_valid
+    const streetMatches =
+      address.street1 === result.street1 ||
+      `${address.street1} ${address.street2}` === result.street1
+
     const needToSuggestAddress =
-      address.street1 !== result.street1 ||
+      !streetMatches ||
       address.city !== result.city ||
       address.state !== result.state ||
       // check startsWith because shippo returns zips with extensions
