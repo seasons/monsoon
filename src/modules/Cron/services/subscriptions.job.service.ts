@@ -172,7 +172,6 @@ export class SubscriptionsScheduledJobs {
           physicalProduct: { connect: { id: physicalProduct.id } },
           rentalInvoice: { connect: { id: invoice.id } },
           daysRented,
-          // TODO: Get price into proper unit
           price: daysRented * dailyRentalPrice,
           currencyCode: "USD",
         } as Prisma.RentalInvoiceLineItemCreateInput
@@ -217,8 +216,7 @@ export class SubscriptionsScheduledJobs {
             // TODO: Handle errors
             const invoice = await chargebee.invoice
               .add_charge(invoiceId, {
-                // TODO: Get price into proper unit
-                amount: lineItem.price,
+                amount: lineItem.price * 100,
                 description: this.lineItemToDescription(lineItem),
                 // TODO: Handle taxes
                 line_item: {
@@ -247,8 +245,7 @@ export class SubscriptionsScheduledJobs {
               customer_id: "", // TODO:
               currency_code: "USD",
               charges: lineItems.map(a => ({
-                // TODO: Get price into proper unit
-                amount: a.price,
+                amount: a.price * 100,
                 description: this.lineItemToDescription(a),
                 // TODO: Taxes
                 // TODO: Dates
