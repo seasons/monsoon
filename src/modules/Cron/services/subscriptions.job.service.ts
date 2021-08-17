@@ -1,4 +1,5 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { ProductUtilsService } from "@app/modules/Product"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
@@ -15,7 +16,8 @@ export class SubscriptionsScheduledJobs {
   constructor(
     private readonly prisma: PrismaService,
     private readonly error: ErrorService,
-    private readonly paymentUtils: PaymentUtilsService
+    private readonly paymentUtils: PaymentUtilsService,
+    private readonly productUtils: ProductUtilsService
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
@@ -105,7 +107,23 @@ export class SubscriptionsScheduledJobs {
       },
       select: {
         id: true,
-        products: { select: { id: true, seasonsUID: true } },
+        products: {
+          select: {
+            id: true,
+            seasonsUID: true,
+            productVariant: {
+              select: {
+                product: {
+                  select: {
+                    rentalPriceOverride: true,
+                    wholesalePrice: true,
+                    recoupment: true,
+                  },
+                },
+              },
+            },
+          },
+        },
         reservations: { select: { id: true } },
         membership: {
           select: {
@@ -138,11 +156,50 @@ export class SubscriptionsScheduledJobs {
 
     // TODO: Add analytics that helps us gauge how accurately we are billing
     for (const invoice of invoicesToHandle) {
-      const customer = invoice.membership.customer
-      const data: Prisma.RentalInvoiceLineItemCreateManyInput[] = []
+      // Create the RentalInvoice line items
+      const lineItemPromises = []
       for (const physicalProduct of invoice.products) {
-        let daysRented: Number
-        /*
+        const daysRented = await this.calcDaysRented(invoice, physicalProduct)
+        const price = this.productUtils.calcRentalPrice(
+          physicalProduct.productVariant.product
+        )
+        const lineItemCreateData = {
+          // TODO: taxRate, taxName, taxPercentage, taxPrice
+          physicalProduct: { connect: { id: physicalProduct.id } },
+          rentalInvoice: { connect: { id: invoice.id } },
+          daysRented,
+          price,
+          currencyCode: "USD",
+        } as Prisma.RentalInvoiceLineItemCreateInput
+
+        lineItemPromises.push(
+          this.prisma.client.rentalInvoiceLineItem.create({
+            data: lineItemCreateData,
+          })
+        )
+      }
+      await this.prisma.client.$transaction(lineItemPromises)
+
+      // Bill the line items
+      // TODO: Bill it
+      // TODO: Update the status
+
+      // Create the next status if customer is still active
+      // TODO: Update this to be a transaction once you also update the status
+      if (
+        ["Active", "PaymentFailed"].includes(invoice.membership.customer.status)
+      ) {
+        await this.paymentUtils.initDraftRentalInvoice(
+          invoice.membership.id,
+          invoice.membership.customer.reservations.map(a => a.id),
+          invoice.membership.customer.bagItems.map(a => a.physicalProduct.id)
+        )
+      }
+    }
+  }
+
+  private async calcDaysRented(invoice, physicalProduct) {
+    /*
         Find the package on which it was sent to the customer. Call this RR
         define f getDeliveryDate(RR) => RR.sentPackage.deliveredAt || RR.createdAt + X (3-5)
 
@@ -187,53 +244,29 @@ export class SubscriptionsScheduledJobs {
 
 
         */
-        const sentPackage = await this.prisma.client.package.findFirst({
-          where: {
-            items: { some: { seasonsUID: physicalProduct.seasonsUID } },
-            reservationOnSentPackage: { customer: { id: customer.id } },
-          },
-          orderBy: { createdAt: "desc" },
-          select: {
-            deliveredAt: true,
-            reservationOnSentPackage: { select: { id: true, status: true } },
-          },
-        })
+    const customer = invoice.membership.customer
+    const sentPackage = await this.prisma.client.package.findFirst({
+      where: {
+        items: { some: { seasonsUID: physicalProduct.seasonsUID } },
+        reservationOnSentPackage: { customer: { id: customer.id } },
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        deliveredAt: true,
+        reservationOnSentPackage: { select: { id: true, status: true } },
+      },
+    })
 
-        // TODO: Handle case where it's not delivered
-        // In that case, we'll set this date to 3-5 days after the reservation createdAt date
-        const rentalStartDate = sentPackage.deliveredAt
-
-        const receivedPackage = await this.prisma.client.package.findFirst({
-          where: {
-            items: { some: { seasonsUID: physicalProduct.seasonsUID } },
-            reservationOnReturnedPackage: {
-              id: sentPackage.reservationOnSentPackage.id,
-            },
-          },
-          orderBy: { createdAt: "desc" },
-          select: { enteredDeliverySystemAt: true },
-        })
-
-        // TODO: Handle case where we don't have this.
-        const rentalEndDate = receivedPackage.enteredDeliverySystemAt
-      }
-      await this.prisma.client.rentalInvoiceLineItem.createMany({
-        data,
-      })
-      // TODO: Bill it
-      // TODO: Update the status
-
-      // Create the next status if customer is still active
-      // TODO: Update this to be a transaction once you also update the status
-      if (
-        ["Active", "PaymentFailed"].includes(invoice.membership.customer.status)
-      ) {
-        await this.paymentUtils.initDraftRentalInvoice(
-          invoice.membership.id,
-          invoice.membership.customer.reservations.map(a => a.id),
-          invoice.membership.customer.bagItems.map(a => a.physicalProduct.id)
-        )
-      }
-    }
+    const receivedPackage = await this.prisma.client.package.findFirst({
+      where: {
+        items: { some: { seasonsUID: physicalProduct.seasonsUID } },
+        reservationOnReturnedPackage: {
+          id: sentPackage.reservationOnSentPackage.id,
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      select: { enteredDeliverySystemAt: true },
+    })
+    return 5 // TODO: Implement
   }
 }

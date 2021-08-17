@@ -40,6 +40,20 @@ export class ProductUtilsService {
     )
   }
 
+  calcRentalPrice(
+    product: Pick<
+      Product,
+      "rentalPriceOverride" | "wholesalePrice" | "recoupment"
+    >
+  ) {
+    if (product.rentalPriceOverride) {
+      return product.rentalPriceOverride
+    } else {
+      const rate = product.wholesalePrice / product.recoupment
+      return Math.ceil(rate / 5) * 5
+    }
+  }
+
   async getProductStyleCode(productID) {
     const prod = await this.prisma.client.product.findUnique({
       where: { id: productID },

@@ -49,12 +49,7 @@ export class ProductFieldsResolver {
   ) {
     const product = await productLoader.load(parent.id)
 
-    if (product.rentalPriceOverride) {
-      return product.rentalPriceOverride
-    } else {
-      const rate = product.wholesalePrice / product.recoupment
-      return Math.ceil(rate / 5) * 5
-    }
+    return this.productUtilsService.calcRentalPrice(product)
   }
 
   @ResolveField()
