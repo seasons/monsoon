@@ -4,7 +4,7 @@ import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.se
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { Prisma } from "@prisma/client"
+import { Prisma, Product, RentalInvoiceLineItem } from "@prisma/client"
 import chargebee from "chargebee"
 
 @Injectable()
@@ -127,6 +127,7 @@ export class SubscriptionsScheduledJobs {
         reservations: { select: { id: true } },
         membership: {
           select: {
+            plan: { select: { planID: true } },
             customer: {
               select: {
                 id: true,
@@ -156,35 +157,125 @@ export class SubscriptionsScheduledJobs {
 
     // TODO: Add analytics that helps us gauge how accurately we are billing
     for (const invoice of invoicesToHandle) {
+      const planID = invoice.membership.plan.planID
+
       // Create the RentalInvoice line items
       const lineItemPromises = []
       for (const physicalProduct of invoice.products) {
         const daysRented = await this.calcDaysRented(invoice, physicalProduct)
-        const price = this.productUtils.calcRentalPrice(
-          physicalProduct.productVariant.product
+        const dailyRentalPrice = this.productUtils.calcRentalPrice(
+          physicalProduct.productVariant.product,
+          "daily"
         )
         const lineItemCreateData = {
           // TODO: taxRate, taxName, taxPercentage, taxPrice
           physicalProduct: { connect: { id: physicalProduct.id } },
           rentalInvoice: { connect: { id: invoice.id } },
           daysRented,
-          price,
+          // TODO: Get price into proper unit
+          price: daysRented * dailyRentalPrice,
           currencyCode: "USD",
         } as Prisma.RentalInvoiceLineItemCreateInput
 
         lineItemPromises.push(
           this.prisma.client.rentalInvoiceLineItem.create({
             data: lineItemCreateData,
+            select: {
+              price: true,
+              daysRented: true,
+              physicalProduct: {
+                select: {
+                  productVariant: {
+                    select: {
+                      product: {
+                        select: {
+                          name: true,
+                          recoupment: true,
+                          rentalPriceOverride: true,
+                          wholesalePrice: true,
+                        },
+                      },
+                      displayShort: true,
+                    },
+                  },
+                },
+              },
+            },
           })
         )
       }
-      await this.prisma.client.$transaction(lineItemPromises)
+      const lineItems = await this.prisma.client.$transaction(lineItemPromises)
 
-      // Bill the line items
-      // TODO: Bill it
-      // TODO: Update the status
+      // Bill the customer
 
-      // Create the next status if customer is still active
+      const invoiceId = "" // TODO:
+      switch (planID) {
+        // TODO: Get exact name here
+        /* Create a one time charge and add it to their upcoming invoice */
+        case "access-monthly":
+          for (const lineItem of lineItems) {
+            // TODO: Handle errors
+            const invoice = await chargebee.invoice
+              .add_charge(invoiceId, {
+                // TODO: Get price into proper unit
+                amount: lineItem.price,
+                description: this.lineItemToDescription(lineItem),
+                // TODO: Handle taxes
+                line_item: {
+                  // TODO: Store date_from and date_to on RentalInvoiceLineItem, then set it here
+                  date_from: "",
+                  date_to: "",
+                },
+              })
+              .request((error, result) => {
+                if (error) {
+                  console.log(error)
+                  return
+                }
+                console.log(result)
+                return result
+              })
+          }
+          break
+        case "access-annual":
+          /* Create a one time charge and set it to bill on their designated billing date */
+          // TODO: If their next annual charge is coming up, append the charges to their next invoice.
+
+          // TODO: Handle errors
+          const { invoice } = chargebee.invoice
+            .create({
+              customer_id: "", // TODO:
+              currency_code: "USD",
+              charges: lineItems.map(a => ({
+                // TODO: Get price into proper unit
+                amount: a.price,
+                description: this.lineItemToDescription(a),
+                // TODO: Taxes
+                // TODO: Dates
+                // date_from: "",
+                // date_to: "",
+              })),
+            })
+            .request((err, result) => {
+              if (err) {
+                console.log(err)
+                return err
+              }
+              console.log(result)
+              return result
+            })
+
+          break
+        default:
+        // TODO:
+      }
+
+      await this.prisma.client.rentalInvoice.update({
+        where: { id: invoice.id },
+        data: { status: "Billed" },
+      })
+
+      // Create the next rental invoice if customer is still active
       // TODO: Update this to be a transaction once you also update the status
       if (
         ["Active", "PaymentFailed"].includes(invoice.membership.customer.status)
@@ -268,5 +359,28 @@ export class SubscriptionsScheduledJobs {
       select: { enteredDeliverySystemAt: true },
     })
     return 5 // TODO: Implement
+  }
+
+  private lineItemToDescription(
+    lineItem: Pick<RentalInvoiceLineItem, "daysRented"> & {
+      physicalProduct: {
+        productVariant: {
+          product: Pick<
+            Product,
+            "name" | "recoupment" | "wholesalePrice" | "rentalPriceOverride"
+          >
+          displayShort: string
+        }
+      }
+    }
+  ) {
+    const productName = lineItem.physicalProduct.productVariant.product.name
+    const displaySize = lineItem.physicalProduct.productVariant.displayShort
+    const monthlyRentalPrice = this.productUtils.calcRentalPrice(
+      lineItem.physicalProduct.productVariant.product,
+      "monthly"
+    )
+
+    return `${productName} -- ${displaySize} for ${lineItem.daysRented} days at ${monthlyRentalPrice} every 30 days.`
   }
 }

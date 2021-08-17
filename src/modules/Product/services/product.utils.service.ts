@@ -44,14 +44,22 @@ export class ProductUtilsService {
     product: Pick<
       Product,
       "rentalPriceOverride" | "wholesalePrice" | "recoupment"
-    >
+    >,
+    type: "monthly" | "daily" = "monthly"
   ) {
+    let monthlyPrice
     if (product.rentalPriceOverride) {
-      return product.rentalPriceOverride
+      monthlyPrice = product.rentalPriceOverride
     } else {
       const rate = product.wholesalePrice / product.recoupment
-      return Math.ceil(rate / 5) * 5
+      monthlyPrice = Math.ceil(rate / 5) * 5
     }
+
+    if (type === "daily") {
+      return monthlyPrice / 30 // TODO: ROund this to second decimal place
+    }
+
+    return monthlyPrice
   }
 
   async getProductStyleCode(productID) {
