@@ -128,10 +128,12 @@ export class SubscriptionsScheduledJobs {
         membership: {
           select: {
             plan: { select: { planID: true } },
+            subscriptionId: true,
             customer: {
               select: {
                 id: true,
                 status: true,
+                user: { select: { id: true } },
                 reservations: {
                   where: {
                     status: {
@@ -188,6 +190,7 @@ export class SubscriptionsScheduledJobs {
           this.prisma.client.rentalInvoiceLineItem.create({
             data: lineItemCreateData,
             select: {
+              id: true,
               price: true,
               daysRented: true,
               rentalStartedAt: true,
@@ -215,26 +218,43 @@ export class SubscriptionsScheduledJobs {
         )
       }
       const lineItems = await this.prisma.client.$transaction(lineItemPromises)
+      const {
+        estimate: { invoice_estimate },
+      } = await chargebee.estimate
+        .create_invoice({
+          // TODO: Add customer id
+          invoice: { customer_id: "" },
+          charges: lineItems.map(a => ({
+            amount: a.price * 100,
+            description: a.id,
+            taxable: true,
+            avalara_tax_code: "", // TODO: Fill in
+          })),
+        })
+        .request((err, result) => {
+          // TODO:
+        })
 
       // Bill the customer
-
-      const invoiceId = "" // TODO:
       switch (planID) {
         // TODO: Get exact name here
         /* Create a one time charge and add it to their upcoming invoice */
         case "access-monthly":
+          //TODO: Handle taxes. Accumulate all the taxes across all line items, then add a single line item
+          // for it to chargebee
           for (const lineItem of lineItems) {
             // TODO: Handle errors
-            const { invoice } = await chargebee.invoice
-              .add_charge(invoiceId, {
-                amount: lineItem.price * 100,
-                description: this.lineItemToDescription(lineItem),
-                // TODO: Handle taxes
-                line_item: {
-                  date_from: lineItem.rentalStartedAt.getTime(),
-                  date_to: lineItem.rentalEndedAt.getTime(),
-                },
-              })
+            const subscriptionId = lineItem.membership.subscriptionId
+            const payload = {
+              amount: lineItem.price * 100,
+              description: this.lineItemToDescription(lineItem),
+              date_from: lineItem.rentalStartedAt.getTime(),
+              date_to: lineItem.rentalEndedAt.getTime(),
+            }
+            const {
+              invoice,
+            } = await chargebee.subscription
+              .add_charge_at_term_end(subscriptionId, payload)
               .request((error, result) => {
                 if (error) {
                   console.log(error)
@@ -248,18 +268,24 @@ export class SubscriptionsScheduledJobs {
         case "access-annual":
           /* Create a one time charge and set it to bill on their designated billing date */
           // TODO: If their next annual charge is coming up, append the charges to their next invoice.
+          // TODO: Handle taxes. Accumulate all the taxes across all line items, then add a single line item
+          // for it to chargebee
 
           // TODO: Handle errors
+          if (lineItems.length === 0) {
+            break
+          }
+          const prismaUserId = lineItems[0].membership.customer.user.id
           const { invoice } = chargebee.invoice
             .create({
-              customer_id: "", // TODO:
+              customer_id: prismaUserId,
               currency_code: "USD",
               charges: lineItems.map(a => ({
                 amount: a.price * 100,
                 description: this.lineItemToDescription(a),
-                // TODO: Taxes
                 date_from: a.rentalStartedAt.getTime(),
                 date_to: a.rentalEndedAt.getTime(),
+                avalara_tax_code: "", // TODO: Get tax code
               })),
             })
             .request((err, result) => {
@@ -318,7 +344,7 @@ export class SubscriptionsScheduledJobs {
           startDate = max(deliveryDate, invoice.startBillingAt)
 
           If item in reservation.returnedProducts:  
-            endDate = returnedPackage.enteredDeliverySystemAt || reservation.completedAt
+            endDate = returnedPackage.enteredDeliverySystemAt || reservation.completedAt - Z (data loss cushion. 3 days)
           Else:
             // It should be in his bag, with status Reserved or Received. Confirm this is so.
             endDate = today

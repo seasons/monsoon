@@ -851,7 +851,6 @@ export class OrderService {
   async updateOrderStatus({
     orderID,
     status,
-
     select,
   }: {
     orderID: string
