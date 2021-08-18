@@ -4,8 +4,16 @@ import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.se
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { Prisma, Product, RentalInvoiceLineItem } from "@prisma/client"
+import {
+  Package,
+  Prisma,
+  Product,
+  RentalInvoiceLineItem,
+  Reservation,
+} from "@prisma/client"
 import chargebee from "chargebee"
+
+const DELIVERY_CUSHION = 3 // days
 
 @Injectable()
 export class SubscriptionsScheduledJobs {
@@ -195,7 +203,7 @@ export class SubscriptionsScheduledJobs {
               })
           }
           break
-        case "access-annual":
+        case "access-yearly":
           /* Create a one time charge and set it to bill on their designated billing date */
           // TODO: If their next annual charge is coming up, append the charges to their next invoice.
           // TODO: Handle taxes. Accumulate all the taxes across all line items, then add a single line item
@@ -385,20 +393,60 @@ export class SubscriptionsScheduledJobs {
       orderBy: { createdAt: "desc" },
       select: {
         deliveredAt: true,
-        reservationOnSentPackage: { select: { id: true, status: true } },
-      },
-    })
-
-    const receivedPackage = await this.prisma.client.package.findFirst({
-      where: {
-        items: { some: { seasonsUID: physicalProduct.seasonsUID } },
-        reservationOnReturnedPackage: {
-          id: sentPackage.reservationOnSentPackage.id,
+        reservationOnSentPackage: {
+          select: {
+            id: true,
+            status: true,
+            phase: true,
+            reservationNumber: true,
+          },
         },
       },
-      orderBy: { createdAt: "desc" },
-      select: { enteredDeliverySystemAt: true },
     })
+    const relevantReservation = sentPackage.reservationOnSentPackage
+
+    let daysRented, rentalStartedAt, rentalEndedAt, comment
+    comment = `Sent on reservation ${relevantReservation.reservationNumber} with status ${relevantReservation.status}.`
+    switch (relevantReservation.status) {
+      case "Hold":
+      case "Blocked":
+      case "Unknown":
+        daysRented = 0
+        comment += ` Unknown rental status.`
+        break
+      case "Queued":
+      case "Picked":
+      case "Packed":
+        daysRented = 0
+        comment += ` Not yet shipped to customer.`
+        break
+
+      case "Shipped":
+        if (relevantReservation.phase === "BusinessToCustomer") {
+          daysRented = 0
+          comment += ` En route to customer.`
+        } else {
+          /* 
+          Simplest case: Customer has one reservation. This item was sent on that reservation, and is now being returned with the label provided on that item.
+            See if this item is on the `returnedProducts` array for the reservation. 
+              If it is, the return date is the date the return package entered the carrier network, with today - a cushion as the fallback. 
+              If it isn't, 
+          
+          */
+          // TODO: Figure out this logic. How do we know if the item is on its way back or not?
+        }
+    }
+
+    // const receivedPackage = await this.prisma.client.package.findFirst({
+    //   where: {
+    //     items: { some: { seasonsUID: physicalProduct.seasonsUID } },
+    //     reservationOnReturnedPackage: {
+    //       id: sentPackage.reservationOnSentPackage.id,
+    //     },
+    //   },
+    //   orderBy: { createdAt: "desc" },
+    //   select: { enteredDeliverySystemAt: true },
+    // })
     return {
       daysRented: 5,
       rentalStartedAt: new Date(),
@@ -429,4 +477,22 @@ export class SubscriptionsScheduledJobs {
 
     return `${productName} -- ${displaySize} for ${lineItem.daysRented} days at ${monthlyRentalPrice} every 30 days.`
   }
+
+  // TODO: Write unit tests
+  private getItemDeliveryRate(
+    reservation: Pick<Reservation, "createdAt"> & {
+      sentPackage: Pick<Package, "deliveredAt">
+    }
+  ) {
+    const fallbackDate = new Date(reservation.createdAt)
+    fallbackDate.setDate(fallbackDate.getDate() + DELIVERY_CUSHION)
+    return reservation.sentPackage.deliveredAt || fallbackDate
+  }
+
+  private getItemReturnDate(
+    reservation: Pick<Reservation, "completedAt"> & {
+      returnPackage: Pick<Package, "enteredDeliverySystemAt">
+    },
+    options: { fallback: "today" | "completedAt" }
+  ) {}
 }
