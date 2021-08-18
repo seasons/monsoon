@@ -75,6 +75,14 @@ type Mutation {
   checkCoupon(couponID: String!): Coupon
 }
 
+enum PaymentPlanTier {
+  Essential
+  AllAccess
+  Pause
+  Access
+  Guest
+}
+
 type PaymentPlan {
   id: ID!
   description: String
@@ -86,6 +94,7 @@ type PaymentPlan {
   tagline: String
   tier: PaymentPlanTier
   billingDate: DateTime!
+  caption: String
   createdAt: DateTime!
   updatedAt: DateTime!
 
