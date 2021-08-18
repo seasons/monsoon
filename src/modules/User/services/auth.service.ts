@@ -571,7 +571,7 @@ export class AuthService {
             )
             reject(err)
           }
-          console.log("body", JSON.parse(body))
+
           resolve(JSON.parse(body))
         }
       )
