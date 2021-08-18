@@ -1182,7 +1182,7 @@ model ProductVariant {
   physicalProducts        PhysicalProduct[]
   productNotifications    ProductNotification[]
   productVariantFeedbacks ProductVariantFeedback[]
-  productVariantWant      ProductVariantWant?
+  productVariantWants     ProductVariantWant[]
   shopifyProductVariant   ShopifyProductVariant?
   manufacturerSizes       Size[]                   @relation("ProductVariantManufacturerSize")
 }
@@ -1222,6 +1222,8 @@ model ProductVariantWant {
   userId           String?         @map("user") @db.VarChar(30)
   productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
   user             User?           @relation(fields: [userId], references: [id])
+
+  @@unique([productVariantId, userId])
 }
 
 model PushNotificationReceipt {
@@ -1303,6 +1305,8 @@ model ReservationFeedback {
   reservation   Reservation?             @relation(fields: [reservationId], references: [id])
   user          User?                    @relation(fields: [userId], references: [id])
   feedbacks     ProductVariantFeedback[]
+
+  @@unique([reservationId, userId])
 }
 
 model ReservationReceipt {
@@ -1352,7 +1356,7 @@ model ShippingOption {
   destination      Location?       @relation("LocationToShippingOption_destination", fields: [destinationId], references: [id])
   origin           Location?       @relation("LocationToShippingOption_origin", fields: [originId], references: [id])
   shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
-  reservation      Reservation?
+  reservations     Reservation[]
 }
 
 model ShopifyProductVariant {
