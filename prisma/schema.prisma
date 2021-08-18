@@ -932,7 +932,6 @@ model RentalInvoice {
 
 model RentalInvoiceLineItem {
   id                String          @id @default(cuid()) @db.VarChar(30)
-  taxRate           Float?
   physicalProductId String          @map("physicalProduct") @db.VarChar(30)
   physicalProduct   PhysicalProduct @relation(fields: [physicalProductId], references: [id])
   rentalInvoiceId   String          @map("rentalInvoice") @db.VarChar(30)
@@ -941,6 +940,7 @@ model RentalInvoiceLineItem {
   rentalStartedAt   DateTime
   rentalEndedAt     DateTime
   comment           String?
+  taxRate           Float?
   taxName           String?
   taxPercentage     Float?
   taxPrice          Int?
