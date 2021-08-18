@@ -136,7 +136,6 @@ export class ImageService {
     options: { imageName?: string }
   ): Promise<ImageData> {
     const { file } = await image
-    console.log(file)
     const { createReadStream, filename } = file
     const fileStream = createReadStream()
     const name = options.imageName || filename

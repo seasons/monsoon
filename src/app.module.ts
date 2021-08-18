@@ -163,10 +163,6 @@ const cache = (() => {
           cacheControl: {
             defaultMaxAge: process.env.CACHE_MAX_AGE || 5,
           },
-          // uploads: {
-          //   maxFileSize: 1250000000, // 1.2 GB
-          //   maxFiles: 8,
-          // },
           uploads: false,
           introspection: true,
           formatError: error => {
