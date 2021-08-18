@@ -929,6 +929,7 @@ model Package {
   events                                           PackageTransitEvent[]
   Reservation_PackageToReservation_returnedPackage Reservation[]         @relation("PackageToReservation_returnedPackage")
   Reservation_PackageToReservation_sentPackage     Reservation[]         @relation("PackageToReservation_sentPackage")
+  reservationOnReturnPackages                      Reservation[]         @relation("PackageToReservationReturnPackages")
   items                                            PhysicalProduct[]
 }
 
@@ -1283,6 +1284,7 @@ model Reservation {
   lastLocation      Location?             @relation(fields: [lastLocationId], references: [id])
   receipt           ReservationReceipt?   @relation(fields: [receiptId], references: [id])
   returnedPackage   Package?              @relation("PackageToReservation_returnedPackage", fields: [returnedPackageId], references: [id])
+  returnPackages    Package[]             @relation("PackageToReservationReturnPackages")
   sentPackage       Package?              @relation("PackageToReservation_sentPackage", fields: [sentPackageId], references: [id])
   shippingOption    ShippingOption?       @relation(fields: [shippingOptionId], references: [id])
   user              User?                 @relation(fields: [userId], references: [id])
