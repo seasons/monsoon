@@ -30,3 +30,13 @@ export type ShippoRate = {
     terms: string
   }
 }
+
+export interface CoreShippoAddressFields {
+  name?: string
+  company?: string
+  street1: string
+  street2?: string
+  city: string
+  state: string
+  zip: string
+}

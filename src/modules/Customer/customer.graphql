@@ -146,6 +146,7 @@ type Customer {
   authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+  grandfathered: Boolean!
 }
 
 input NotificationBarReceiptUpdateInput {
