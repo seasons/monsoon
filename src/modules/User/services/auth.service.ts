@@ -476,7 +476,7 @@ export class AuthService {
   async updateCustomerWithReferrerData(user, customer, referrerId) {
     const referralLink = await this.createReferralLink(
       customer.id,
-      this.rebrandlyUsernameFromFirstname(user.firstName)
+      await this.rebrandlyUsernameFromFirstname(user.firstName)
     )
     let referrerIsValidCustomer = false
     if (referrerId) {
@@ -515,15 +515,22 @@ export class AuthService {
   }
 
   private async rebrandlyUsernameFromFirstname(firstName: string) {
-    const usersWithSameFirstName = await this.prisma.client.user.findMany({
-      where: { firstName: firstName.trim() },
-    })
+    const customersWithSameFirstName = await this.prisma.client.customer.findMany(
+      {
+        where: {
+          user: { firstName: firstName.trim() },
+          referralLink: {
+            not: undefined,
+          },
+        },
+      }
+    )
 
     // replace all non-aphabetical characters with an empty space so e.g "R.J." doesn't throw an error on rebrandly
     // We had to increment here by 4 after an early issue with collisions due to whitespace
     return (
       firstName.replace(/[^a-z]/gi, "") +
-      (usersWithSameFirstName.length + 4).toString().toLowerCase()
+      (customersWithSameFirstName.length + 200).toString().toLowerCase()
     )
   }
 
@@ -564,6 +571,7 @@ export class AuthService {
             )
             reject(err)
           }
+
           resolve(JSON.parse(body))
         }
       )
