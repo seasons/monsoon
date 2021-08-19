@@ -43,6 +43,14 @@ const run = async () => {
           },
         },
       })
+      for (const resy of previousReservations) {
+        await ps.client.reservation.update({
+          where: { id: resy.id },
+          data: {
+            returnPackages: { connect: { id: resy.returnedPackage.id } },
+          },
+        })
+      }
     } catch (err) {
       console.log(err)
     }
