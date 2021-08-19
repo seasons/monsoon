@@ -199,6 +199,8 @@ type Reservation @cacheControl(maxAge: 0) {
   customer: Customer!
   sentPackage: Package
   returnedPackage: Package
+    @deprecated(reason: "Deprecated in favor of returnPackages")
+  returnPackages: [Package]
   feedback: ReservationFeedback
   lastLocation: Location
   lineItems: [OrderLineItem]
