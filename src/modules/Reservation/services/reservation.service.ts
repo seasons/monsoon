@@ -109,7 +109,11 @@ export class ReservationService {
     const lastReservation = await this.utils.getLatestReservation(
       customer.id,
       undefined,
-      { returnPackages: { select: { id: true } } }
+      {
+        returnPackages: {
+          select: { id: true, events: { select: { id: true } } },
+        },
+      }
     )
     await this.validateLastReservation(lastReservation, items)
 
@@ -1069,7 +1073,9 @@ export class ReservationService {
   private async createReservationData(
     seasonsToCustomerTransaction,
     customerToSeasonsTransaction,
-    lastReservation: { returnPackages: Pick<Package, "id">[] },
+    lastReservation: {
+      returnPackages: Array<Pick<Package, "id"> & { events: { id: string }[] }>
+    },
     user: User,
     customer: Customer,
     shipmentWeight: number,
@@ -1099,6 +1105,8 @@ export class ReservationService {
     }
     const uniqueReservationNumber = await this.reservationUtils.getUniqueReservationNumber()
 
+    const returnPackagesToCarryOver =
+      lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []
     let createData = Prisma.validator<Prisma.ReservationCreateInput>()({
       products: {
         connect: physicalProductSUIDs,
@@ -1174,7 +1182,9 @@ export class ReservationService {
             },
           },
         },
-        connect: lastReservation.returnPackages.map(a => ({ id: a.id })),
+        connect: returnPackagesToCarryOver.map(a => ({
+          id: a.id,
+        })),
       },
       reservationNumber: uniqueReservationNumber,
       lastLocation: {
