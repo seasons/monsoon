@@ -485,7 +485,7 @@ export class AuthService {
       }))
     }
 
-    const updatedCus = await this.prisma.client.customer.update({
+    await this.prisma.client.customer.update({
       where: { id: customer.id },
       data: {
         referralLink: referralLink.shortUrl,
@@ -498,8 +498,6 @@ export class AuthService {
           : {}),
       },
     })
-
-    console.log("updatedCus", updatedCus)
   }
 
   private formatDetailsForCreateInput(details) {
