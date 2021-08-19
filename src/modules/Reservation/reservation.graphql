@@ -200,7 +200,7 @@ type Reservation @cacheControl(maxAge: 0) {
   sentPackage: Package
   returnedPackage: Package
     @deprecated(reason: "Deprecated in favor of returnPackages")
-  returnPackages: [Package]
+  returnPackages(orderBy: PackageOrderByInput): [Package]
   feedback: ReservationFeedback
   lastLocation: Location
   lineItems: [OrderLineItem]
@@ -244,4 +244,11 @@ type AdminActionLog {
   changedFields: Json
   statementOnly: Boolean!
   interpretation: AdminActionLogInterpretation
+}
+
+enum PackageOrderByInput {
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
