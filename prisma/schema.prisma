@@ -927,7 +927,6 @@ model Package {
   toAddress                                        Location?             @relation("LocationToPackage_toAddress", fields: [toAddressId], references: [id])
   order                                            Order?
   events                                           PackageTransitEvent[]
-  Reservation_PackageToReservation_returnedPackage Reservation[]         @relation("PackageToReservation_returnedPackage")
   Reservation_PackageToReservation_sentPackage     Reservation[]         @relation("PackageToReservation_sentPackage")
   reservationOnReturnPackages                      Reservation[]         @relation("PackageToReservationReturnPackages")
   items                                            PhysicalProduct[]
@@ -1273,7 +1272,6 @@ model Reservation {
   lastLocationId    String?               @map("lastLocation") @db.VarChar(30)
   customerId        String?               @map("customer") @db.VarChar(30)
   sentPackageId     String?               @map("sentPackage") @db.VarChar(30)
-  returnedPackageId String?               @map("returnedPackage") @db.VarChar(30)
   reminderSentAt    DateTime?
   receiptId         String?               @map("receipt") @db.VarChar(30)
   phase             ReservationPhase
@@ -1285,7 +1283,6 @@ model Reservation {
   customer          Customer?             @relation(fields: [customerId], references: [id])
   lastLocation      Location?             @relation(fields: [lastLocationId], references: [id])
   receipt           ReservationReceipt?   @relation(fields: [receiptId], references: [id])
-  returnedPackage   Package?              @relation("PackageToReservation_returnedPackage", fields: [returnedPackageId], references: [id])
   returnPackages    Package[]             @relation("PackageToReservationReturnPackages")
   sentPackage       Package?              @relation("PackageToReservation_sentPackage", fields: [sentPackageId], references: [id])
   shippingOption    ShippingOption?       @relation(fields: [shippingOptionId], references: [id])
