@@ -20,7 +20,10 @@ const run = async () => {
     },
   })
   const customersToHandle = customers.filter(a => a.reservations.length > 0)
+  const numCustomers = customersToHandle.length
+  let i = 0
   for (const cust of customersToHandle) {
+    console.log(`${i++} of ${numCustomers}`)
     try {
       const latestReservation = cust.reservations[0]
       const previousReservations = cust.reservations.slice(
@@ -28,32 +31,42 @@ const run = async () => {
         cust.reservations.length
       )
       const previousReservationsWithUnusedReturnPackages = previousReservations.filter(
-        a => a.returnedPackage.events.length === 0
+        a => a.returnedPackage?.events.length === 0
       )
       const returnPackagesConnectArray = previousReservationsWithUnusedReturnPackages.map(
         a => ({
           id: a.returnedPackage.id,
         })
       )
+
+      const finalCorrectArray = !!latestReservation.returnedPackage?.id
+        ? [
+            ...returnPackagesConnectArray,
+            { id: latestReservation.returnedPackage.id },
+          ]
+        : returnPackagesConnectArray
       await ps.client.reservation.update({
         where: { id: latestReservation.id },
         data: {
           returnPackages: {
-            connect: returnPackagesConnectArray,
+            connect: finalCorrectArray,
           },
         },
       })
       for (const resy of previousReservations) {
-        await ps.client.reservation.update({
-          where: { id: resy.id },
-          data: {
-            returnPackages: { connect: { id: resy.returnedPackage.id } },
-          },
-        })
+        if (!!resy.returnedPackage?.id) {
+          await ps.client.reservation.update({
+            where: { id: resy.id },
+            data: {
+              returnPackages: { connect: { id: resy.returnedPackage?.id } },
+            },
+          })
+        }
       }
     } catch (err) {
       console.log(err)
     }
   }
+  console.log("done")
 }
 run()
