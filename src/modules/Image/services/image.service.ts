@@ -136,6 +136,11 @@ export class ImageService {
     options: { imageName?: string }
   ): Promise<ImageData> {
     const { file } = await image
+    if (!file) {
+      this.logger.error("Error uploading image")
+      return { width: 0, height: 0, url: "" }
+    }
+
     const { createReadStream, filename } = file
     const fileStream = createReadStream()
     const name = options.imageName || filename
