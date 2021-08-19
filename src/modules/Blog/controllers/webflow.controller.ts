@@ -50,7 +50,7 @@ export class WebflowController {
       ]),
     } as Prisma.BlogPostCreateInput
 
-    const imageName = `${blogData.slug}-image`
+    const imageName = `${blogData.slug}-image-${Date.now()}`
     const title = `${blogData.name} Image`
     const alt = blogData.imageAlt ? blogData.imageAlt : title
 
