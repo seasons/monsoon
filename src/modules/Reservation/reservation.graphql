@@ -243,10 +243,3 @@ type AdminActionLog {
   statementOnly: Boolean!
   interpretation: AdminActionLogInterpretation
 }
-
-enum PackageOrderByInput {
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
