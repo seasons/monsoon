@@ -2,6 +2,7 @@ import { ShippingService } from "@app/modules/Shipping/services/shipping.service
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Package, PrismaPromise, Reservation } from "@prisma/client"
+import { head } from "lodash"
 
 import { ReservationWithProductVariantData } from "./reservation.service"
 
@@ -36,47 +37,17 @@ export class ReservationUtilsService {
       returnedProductVariantIDs
     )
 
-    if (prismaReservation.returnedPackage != null) {
-      return [
-        this.prisma.client.package.update({
-          data: {
-            items: { connect: returnedPhysicalProductIDs },
-            weight,
-          },
-          where: { id: prismaReservation.returnedPackage.id },
-        }),
-      ]
-    } else {
-      return [
-        (this.prisma.client.reservation.update({
-          data: {
-            returnedPackage: {
-              update: {
-                items: { connect: returnedPhysicalProductIDs },
-                weight,
-                shippingLabel: {
-                  create: {},
-                },
-                fromAddress: {
-                  connect: {
-                    slug:
-                      prismaReservation.customer.detail.shippingAddress.slug,
-                  },
-                },
-                toAddress: {
-                  connect: {
-                    slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
-                  },
-                },
-              },
-            },
-          },
-          where: {
-            id: prismaReservation.id,
-          },
-        }) as unknown) as PrismaPromise<Reservation>,
-      ]
-    }
+    // TODO: Update the logic we use get the package to update. Make use of scanned shipping label.
+    const packageToUpdate = head(prismaReservation.returnPackages)
+    return [
+      this.prisma.client.package.update({
+        data: {
+          items: { connect: returnedPhysicalProductIDs },
+          weight,
+        },
+        where: { id: packageToUpdate.id },
+      }),
+    ]
   }
 
   async getUniqueReservationNumber(): Promise<number> {

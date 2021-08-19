@@ -410,7 +410,7 @@ export class ReservationService {
     }
   }
 
-  async getReservation(reservationNumber: number) {
+  private async getReservation(reservationNumber: number) {
     return await this.prisma.client.reservation.findUnique({
       where: {
         reservationNumber,
@@ -448,7 +448,8 @@ export class ReservationService {
             email: true,
           },
         },
-        returnedPackage: {
+        returnPackages: {
+          orderBy: { createdAt: "desc" },
           select: {
             id: true,
           },
