@@ -1300,13 +1300,11 @@ model ReservationFeedback {
   userId        String?                  @map("user") @db.VarChar(30)
   createdAt     DateTime                 @default(now())
   updatedAt     DateTime                 @updatedAt
-  reservationId String?                  @map("reservation") @db.VarChar(30)
+  reservationId String                   @map("reservation") @db.VarChar(30)
   respondedAt   DateTime?
-  reservation   Reservation?             @relation(fields: [reservationId], references: [id])
+  reservation   Reservation              @relation(fields: [reservationId], references: [id])
   user          User?                    @relation(fields: [userId], references: [id])
   feedbacks     ProductVariantFeedback[]
-
-  @@unique([reservationId, userId])
 }
 
 model ReservationReceipt {
@@ -1341,7 +1339,7 @@ model ShippingMethod {
   displayText    String
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
-  shippingOption ShippingOption?
+  shippingOptions ShippingOption[]
 }
 
 model ShippingOption {
@@ -1357,6 +1355,8 @@ model ShippingOption {
   origin           Location?       @relation("LocationToShippingOption_origin", fields: [originId], references: [id])
   shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
   reservations     Reservation[]
+
+  @@unique([originId, destinationId, shippingMethodId])
 }
 
 model ShopifyProductVariant {
