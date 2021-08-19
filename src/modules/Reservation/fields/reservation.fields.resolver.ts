@@ -5,7 +5,7 @@ import { ImageSize } from "@modules/Image/image.types.d"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
+import { head } from "lodash"
 
 import { ReservationService } from "../services/reservation.service"
 
@@ -101,5 +101,42 @@ export class ReservationFieldsResolver {
         }),
       }
     })
+  }
+
+  @ResolveField()
+  async returnedPackage(
+    @Parent() parent,
+    @Loader({
+      params: {
+        model: "Reservation",
+        select: Prisma.validator<Prisma.ReservationSelect>()({
+          id: true,
+          returnPackages: {
+            select: { id: true },
+            orderBy: { createdAt: "desc" },
+          },
+        }),
+      },
+    })
+    reservationWithReturnPackagesLoader,
+    @Loader({
+      params: {
+        model: "Package",
+        infoFragment: `fragment EnsureID on Package {id}`,
+      },
+      includeInfo: true,
+    })
+    returnedPackageLoader
+  ) {
+    const reservationWithReturnPackages = await reservationWithReturnPackagesLoader.load(
+      parent.id
+    )
+    const mostRecentReturnedPackage = head(
+      reservationWithReturnPackages.returnPackages
+    )
+    const returnedPackageWithData = await returnedPackageLoader.load(
+      mostRecentReturnedPackage.id
+    )
+    return returnedPackageWithData
   }
 }
