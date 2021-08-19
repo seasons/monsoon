@@ -485,7 +485,7 @@ export class AuthService {
       }))
     }
 
-    return await this.prisma.client.customer.update({
+    const updatedCus = await this.prisma.client.customer.update({
       where: { id: customer.id },
       data: {
         referralLink: referralLink.shortUrl,
@@ -498,6 +498,8 @@ export class AuthService {
           : {}),
       },
     })
+
+    console.log("updatedCus", updatedCus)
   }
 
   private formatDetailsForCreateInput(details) {
@@ -520,17 +522,16 @@ export class AuthService {
         where: {
           user: { firstName: firstName.trim() },
           referralLink: {
-            not: undefined,
+            not: null,
           },
         },
       }
     )
-
     // replace all non-aphabetical characters with an empty space so e.g "R.J." doesn't throw an error on rebrandly
     // We had to increment here by 4 after an early issue with collisions due to whitespace
     return (
       firstName.replace(/[^a-z]/gi, "") +
-      (customersWithSameFirstName.length + 200).toString().toLowerCase()
+      (customersWithSameFirstName.length + 220).toString().toLowerCase()
     )
   }
 
@@ -540,6 +541,7 @@ export class AuthService {
   ): Promise<{
     shortUrl: string
   }> {
+    console.log("referralSlashTag", referralSlashTag)
     const baseDomain =
       process.env.NODE_ENV === "production"
         ? "www.wearseasons.com"
