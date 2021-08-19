@@ -539,7 +539,6 @@ export class AuthService {
   ): Promise<{
     shortUrl: string
   }> {
-    console.log("referralSlashTag", referralSlashTag)
     const baseDomain =
       process.env.NODE_ENV === "production"
         ? "www.wearseasons.com"
