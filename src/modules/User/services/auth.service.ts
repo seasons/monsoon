@@ -478,7 +478,6 @@ export class AuthService {
       customer.id,
       await this.rebrandlyUsernameFromFirstname(user.firstName)
     )
-    console.log("referralLink", referralLink)
     let referrerIsValidCustomer = false
     if (referrerId) {
       referrerIsValidCustomer = !!(await this.prisma.client.customer.findFirst({
