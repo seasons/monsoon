@@ -14,7 +14,7 @@ import {
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
-import { defaultsDeep } from "lodash"
+import { defaultsDeep, upperFirst } from "lodash"
 import { DateTime } from "luxon"
 import request from "request"
 import zipcodes from "zipcodes"
@@ -478,6 +478,7 @@ export class AuthService {
       customer.id,
       await this.rebrandlyUsernameFromFirstname(user.firstName)
     )
+    console.log("referralLink", referralLink)
     let referrerIsValidCustomer = false
     if (referrerId) {
       referrerIsValidCustomer = !!(await this.prisma.client.customer.findFirst({
@@ -518,7 +519,7 @@ export class AuthService {
     const customersWithSameFirstName = await this.prisma.client.customer.findMany(
       {
         where: {
-          user: { firstName: firstName.trim() },
+          user: { firstName: upperFirst(firstName.trim()) },
           referralLink: {
             not: null,
           },

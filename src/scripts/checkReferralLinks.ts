@@ -30,16 +30,14 @@ const run = async () => {
       },
     },
   })
-  // const c = await ps.client.customer.findUnique{
-  //     where: {}
-  // }
 
   let count = 0
   for (const c of customers) {
     if (!c.referralLink) {
       count++
-      // await new Promise(r => setTimeout(r, 1000))
-      // await auth.updateCustomerWithReferrerData(c.user, c, null)
+      console.log("c", c)
+      await new Promise(r => setTimeout(r, 1000))
+      await auth.updateCustomerWithReferrerData(c.user, c, null)
       //   console.log("c", c)
       console.log(count)
     }
@@ -78,6 +76,8 @@ const test = async () => {
   for (const c of customersWithSameFirstName) {
     if (!c.referralLink) {
       count++
+      await new Promise(r => setTimeout(r, 1000))
+      await auth.updateCustomerWithReferrerData(c.user, c, null)
       console.log(count)
     }
   }
@@ -86,4 +86,4 @@ const test = async () => {
   // console.log(customersWithSameFirstName.length)
 }
 
-test()
+run()
