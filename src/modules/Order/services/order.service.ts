@@ -811,23 +811,29 @@ export class OrderService {
         newInventoryStatus: "Offloaded",
       })
     } else {
-      // Item is with the customer
+      // Item is with the customer.
+      // - Delete the bag item.
+      // - If this is the last item in their bag, mark the reservation as Completed
       updateProductVariantData = this.productVariant.getCountsForStatusChange({
         productVariant,
         oldInventoryStatus: "Reserved",
         newInventoryStatus: "Offloaded",
       })
-      const bagItemToDelete = await this.prisma.client.bagItem.findFirst({
+
+      const reservedBagItems = await this.prisma.client.bagItem.findMany({
         where: {
           customer: { id: customer.id },
-          productVariant: { id: productVariant.id },
           status: { in: ["Received", "Reserved"] },
         },
-        select: { id: true },
+        select: { id: true, productVariant: { select: { id: true } } },
       })
+      const bagItemToDelete = reservedBagItems.find(
+        a => a.productVariant.id === productVariant.id
+      )
       promises.push(
         this.prisma.client.bagItem.delete({ where: { id: bagItemToDelete.id } })
       )
+
       const reservationToUpdate = await this.prisma.client.reservation.findFirst(
         {
           where: {
@@ -835,13 +841,20 @@ export class OrderService {
             customer: { id: customer.id },
           },
           orderBy: { createdAt: "desc" },
-          select: { id: true },
+          select: { id: true, status: true },
         }
       )
+      const shouldCompleteReservation =
+        reservedBagItems.length === 1 && !!bagItemToDelete
       promises.push(
         this.prisma.client.reservation.update({
           where: { id: reservationToUpdate.id },
-          data: { purchasedProducts: { connect: { id: physicalProductId } } },
+          data: {
+            purchasedProducts: { connect: { id: physicalProductId } },
+            status: shouldCompleteReservation
+              ? "Completed"
+              : reservationToUpdate.status,
+          },
         })
       )
     }
