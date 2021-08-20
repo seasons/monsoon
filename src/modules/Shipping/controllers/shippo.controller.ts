@@ -10,7 +10,7 @@ import {
 import { PackageTransitEventSubStatus, Prisma } from "@prisma/client"
 import casify from "camelcase-keys"
 import cuid from "cuid"
-import { assign, camelCase, isObject, upperFirst } from "lodash"
+import { camelCase, isObject, upperFirst } from "lodash"
 
 export enum ShippoEventType {
   TransactionCreated = "transaction_created",
@@ -100,13 +100,6 @@ export class ShippoController {
             sentPackage: true,
           },
         })
-
-        // TODO: We may need to update this. If we early return a reservation before it hits the
-        // UPS system, we mark the reservation as Completed. In that case, we wouldn't get the package
-        // transit events, which means we may not know when their rental date ends
-        if (reservation.status === "Completed") {
-          break
-        }
 
         const phase = this.reservationPhase(reservation, transactionID)
 
@@ -309,6 +302,9 @@ export class ShippoController {
     status: ReservationStatus,
     reservation
   ) {
+    if (["Cancelled", "Completed"].includes(reservation.status)) {
+      return
+    }
     const user = (
       await this.prisma.client.reservation.findUnique({
         where: { id: reservation.id },
