@@ -5,7 +5,6 @@ import { ImageSize } from "@modules/Image/image.types.d"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
 
 import { ReservationService } from "../services/reservation.service"
 
