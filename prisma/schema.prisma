@@ -1273,18 +1273,20 @@ model Reservation {
   status            ReservationStatus
   shippedAt         DateTime?
   receivedAt        DateTime?
+  completedAt       DateTime?
+  cancelledAt       DateTime?
+  returnedAt        DateTime?
+  reminderSentAt    DateTime?
+  lostAt            DateTime?
+  lostInPhase       ReservationPhase?
   lastLocationId    String?               @map("lastLocation") @db.VarChar(30)
   customerId        String?               @map("customer") @db.VarChar(30)
   sentPackageId     String?               @map("sentPackage") @db.VarChar(30)
   returnedPackageId String?               @map("returnedPackage") @db.VarChar(30)
-  reminderSentAt    DateTime?
   receiptId         String?               @map("receipt") @db.VarChar(30)
   phase             ReservationPhase
   statusUpdatedAt   DateTime?
   shippingOptionId  String?               @map("shippingOption") @db.VarChar(30)
-  completedAt       DateTime?
-  cancelledAt       DateTime?
-  returnedAt        DateTime?
   customer          Customer?             @relation(fields: [customerId], references: [id])
   lastLocation      Location?             @relation(fields: [lastLocationId], references: [id])
   receipt           ReservationReceipt?   @relation(fields: [receiptId], references: [id])
