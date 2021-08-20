@@ -456,7 +456,7 @@ enum SyncTimingType {
 }
 
 model AccessorySize {
-  id     String   @id @default(cuid()) @db.VarChar(30)
+  id     String @id @default(cuid()) @db.VarChar(30)
   bridge Float?
   length Float?
   width  Float?
@@ -470,17 +470,17 @@ model ActiveAdminUser {
 }
 
 model AdminActionLog {
-  actionId          Int                            @id @default(autoincrement())
-  entityId          String                         @db.VarChar(30)
+  actionId          Int                           @id @default(autoincrement())
+  entityId          String                        @db.VarChar(30)
   tableName         String
   triggeredAt       DateTime
   action            AdminAction
-  rowData           Json                           @db.Json
-  changedFields     Json?                          @db.Json
+  rowData           Json                          @db.Json
+  changedFields     Json?                         @db.Json
   statementOnly     Boolean
-  activeAdminUserId String?                        @map("activeAdminUser") @db.VarChar(30)
+  activeAdminUserId String?                       @map("activeAdminUser") @db.VarChar(30)
   interpretedAt     DateTime?
-  activeAdminUser   User?                          @relation(fields: [activeAdminUserId], references: [id])
+  activeAdminUser   User?                         @relation(fields: [activeAdminUserId], references: [id])
   interpretation    AdminActionLogInterpretation?
 }
 
@@ -508,7 +508,7 @@ model BagItem {
 }
 
 model BillingInfo {
-  id               String     @id @default(cuid()) @db.VarChar(30)
+  id               String    @id @default(cuid()) @db.VarChar(30)
   brand            String
   name             String?
   last_digits      String
@@ -520,8 +520,8 @@ model BillingInfo {
   state            String?
   country          String?
   postal_code      String?
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
   customer         Customer?
 }
 
@@ -594,11 +594,14 @@ model Category {
   slug                         String                        @unique
   name                         String                        @unique
   description                  String?
-  image                        Json?                         @db.Json
-  visible                      Boolean                       @default(value: false)
-  updatedAt                    DateTime?                     @updatedAt
+  image                        Json?
+  singularName                 String?
+  dryCleaningFee               Float?
+  recoupment                   Float                         @default(4)
   productType                  ProductType?
   measurementType              MeasurementType?
+  visible                      Boolean                       @default(value: false)
+  updatedAt                    DateTime?                     @updatedAt
   products                     Product[]
   productMaterialCategories    ProductMaterialCategory[]
   warehouseLocationConstraints WarehouseLocationConstraint[]
@@ -729,7 +732,7 @@ model CustomerMembership {
 }
 
 model CustomerMembershipSubscriptionData {
-  id               String               @id @default(cuid()) @db.VarChar(30)
+  id               String              @id @default(cuid()) @db.VarChar(30)
   planID           String
   subscriptionId   String
   currentTermStart DateTime
@@ -737,8 +740,8 @@ model CustomerMembershipSubscriptionData {
   nextBillingAt    DateTime?
   status           String
   planPrice        Int
-  createdAt        DateTime             @default(now())
-  updatedAt        DateTime             @updatedAt
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
   membership       CustomerMembership?
 }
 
@@ -790,15 +793,15 @@ model FitPicReport {
 }
 
 model Image {
-  id                    String                  @id @default(cuid()) @db.VarChar(30)
-  caption               String?
-  title                 String?
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
-  url                   String                  @unique
-  height                Int?
-  width                 Int?
-  alt                   String?
+  id        String   @id @default(cuid()) @db.VarChar(30)
+  caption   String?
+  title     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  url       String   @unique
+  height    Int?
+  width     Int?
+  alt       String?
 
   // Don't those fields for now
   BlogPost              BlogPost[]
@@ -819,7 +822,7 @@ model InterestedUser {
 }
 
 model Label {
-  id             String    @id @default(cuid()) @db.VarChar(30)
+  id             String   @id @default(cuid()) @db.VarChar(30)
   name           String?
   image          String?
   trackingNumber String?
@@ -1014,7 +1017,7 @@ model PhysicalProduct {
 }
 
 model PhysicalProductPrice {
-  id              String            @id @default(cuid()) @db.VarChar(30)
+  id              String           @id @default(cuid()) @db.VarChar(30)
   buyUsedEnabled  Boolean
   buyUsedPrice    Float?
   physicalProduct PhysicalProduct?
@@ -1183,7 +1186,7 @@ model ProductVariant {
   physicalProducts        PhysicalProduct[]
   productNotifications    ProductNotification[]
   productVariantFeedbacks ProductVariantFeedback[]
-  productVariantWant      ProductVariantWant?
+  productVariantWants     ProductVariantWant[]
   shopifyProductVariant   ShopifyProductVariant?
   manufacturerSizes       Size[]                   @relation("ProductVariantManufacturerSize")
 }
@@ -1201,17 +1204,17 @@ model ProductVariantFeedback {
 }
 
 model ProductVariantFeedbackQuestion {
-  id                String                  @id @default(cuid()) @db.VarChar(30)
+  id                String                 @id @default(cuid()) @db.VarChar(30)
   question          String
   type              QuestionType
   options           String[]
   responses         String[]
-  variantFeedbackId String                  @map("variantFeedback") @db.VarChar(30)
-  variantFeedback   ProductVariantFeedback  @relation(fields: [variantFeedbackId], references: [id])
+  variantFeedbackId String                 @map("variantFeedback") @db.VarChar(30)
+  variantFeedback   ProductVariantFeedback @relation(fields: [variantFeedbackId], references: [id])
 }
 
 model ProductVariantPrice {
-  id             String           @id @default(cuid()) @db.VarChar(30)
+  id             String          @id @default(cuid()) @db.VarChar(30)
   retailPrice    Float?
   productVariant ProductVariant?
 }
@@ -1223,6 +1226,8 @@ model ProductVariantWant {
   userId           String?         @map("user") @db.VarChar(30)
   productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
   user             User?           @relation(fields: [userId], references: [id])
+
+  @@unique([productVariantId, userId])
 }
 
 model PushNotificationReceipt {
@@ -1299,9 +1304,9 @@ model ReservationFeedback {
   userId        String?                  @map("user") @db.VarChar(30)
   createdAt     DateTime                 @default(now())
   updatedAt     DateTime                 @updatedAt
-  reservationId String?                  @map("reservation") @db.VarChar(30)
+  reservationId String                   @map("reservation") @db.VarChar(30)
   respondedAt   DateTime?
-  reservation   Reservation?             @relation(fields: [reservationId], references: [id])
+  reservation   Reservation              @relation(fields: [reservationId], references: [id])
   user          User?                    @relation(fields: [userId], references: [id])
   feedbacks     ProductVariantFeedback[]
 }
@@ -1333,12 +1338,12 @@ model Season {
 }
 
 model ShippingMethod {
-  id             String           @id @default(cuid()) @db.VarChar(30)
-  code           ShippingCode
-  displayText    String
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  shippingOption ShippingOption?
+  id              String           @id @default(cuid()) @db.VarChar(30)
+  code            ShippingCode
+  displayText     String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  shippingOptions ShippingOption[]
 }
 
 model ShippingOption {
@@ -1353,7 +1358,9 @@ model ShippingOption {
   destination      Location?       @relation("LocationToShippingOption_destination", fields: [destinationId], references: [id])
   origin           Location?       @relation("LocationToShippingOption_origin", fields: [originId], references: [id])
   shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
-  reservation      Reservation?
+  reservations     Reservation[]
+
+  @@unique([originId, destinationId, shippingMethodId])
 }
 
 model ShopifyProductVariant {
@@ -1376,11 +1383,11 @@ model ShopifyProductVariant {
 }
 
 model ShopifyProductVariantSelectedOption {
-  id                      String                 @id @default(cuid()) @db.VarChar(30)
+  id                      String                @id @default(cuid()) @db.VarChar(30)
   name                    String
   value                   String
-  shopifyProductVariantId String                 @map("shopifyProductVariant") @db.VarChar(30)
-  shopifyProductVariant   ShopifyProductVariant  @relation(fields: [shopifyProductVariantId], references: [id])
+  shopifyProductVariantId String                @map("shopifyProductVariant") @db.VarChar(30)
+  shopifyProductVariant   ShopifyProductVariant @relation(fields: [shopifyProductVariantId], references: [id])
 }
 
 model Size {
@@ -1414,7 +1421,7 @@ model SmsReceipt {
 }
 
 model StylePreferences {
-  id             String           @id @default(cuid()) @db.VarChar(30)
+  id             String          @id @default(cuid()) @db.VarChar(30)
   styles         String[]
   patterns       String[]
   colors         String[]
@@ -1514,14 +1521,14 @@ model UserPushNotificationInterest {
 }
 
 model UTMData {
-  id        String     @id @default(cuid()) @db.VarChar(30)
+  id        String    @id @default(cuid()) @db.VarChar(30)
   source    String?
   medium    String?
   campaign  String?
   term      String?
   content   String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   customer  Customer?
 }
 

@@ -14,7 +14,7 @@ import {
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
-import { defaultsDeep } from "lodash"
+import { defaultsDeep, upperFirst } from "lodash"
 import { DateTime } from "luxon"
 import request from "request"
 import zipcodes from "zipcodes"
@@ -476,7 +476,7 @@ export class AuthService {
   async updateCustomerWithReferrerData(user, customer, referrerId) {
     const referralLink = await this.createReferralLink(
       customer.id,
-      this.rebrandlyUsernameFromFirstname(user.firstName)
+      await this.rebrandlyUsernameFromFirstname(user.firstName)
     )
     let referrerIsValidCustomer = false
     if (referrerId) {
@@ -485,7 +485,7 @@ export class AuthService {
       }))
     }
 
-    return await this.prisma.client.customer.update({
+    await this.prisma.client.customer.update({
       where: { id: customer.id },
       data: {
         referralLink: referralLink.shortUrl,
@@ -515,15 +515,21 @@ export class AuthService {
   }
 
   private async rebrandlyUsernameFromFirstname(firstName: string) {
-    const usersWithSameFirstName = await this.prisma.client.user.findMany({
-      where: { firstName: firstName.trim() },
-    })
-
+    const customersWithSameFirstName = await this.prisma.client.customer.findMany(
+      {
+        where: {
+          user: { firstName: upperFirst(firstName.trim()) },
+          referralLink: {
+            not: null,
+          },
+        },
+      }
+    )
     // replace all non-aphabetical characters with an empty space so e.g "R.J." doesn't throw an error on rebrandly
     // We had to increment here by 4 after an early issue with collisions due to whitespace
     return (
       firstName.replace(/[^a-z]/gi, "") +
-      (usersWithSameFirstName.length + 4).toString().toLowerCase()
+      (customersWithSameFirstName.length + 220).toString().toLowerCase()
     )
   }
 
@@ -564,6 +570,7 @@ export class AuthService {
             )
             reject(err)
           }
+
           resolve(JSON.parse(body))
         }
       )
