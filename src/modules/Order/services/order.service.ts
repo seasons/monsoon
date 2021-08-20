@@ -14,7 +14,6 @@ import {
   PhysicalProduct,
   PhysicalProductPrice,
 } from "@prisma/client"
-import { OrderLineItemRecordType } from "@prisma/client"
 import {
   BillingInfo,
   Category,
@@ -22,13 +21,14 @@ import {
   Location,
   Order,
   OrderLineItem,
+  OrderLineItemRecordType,
   Prisma,
   ProductVariant,
   User,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
-import { pick } from "lodash"
+import { merge, pick } from "lodash"
 
 type InvoiceCharge = {
   amount: number
@@ -868,7 +868,13 @@ export class OrderService {
               chargebeeInvoice.status === "paid" ? "Paid" : "NotPaid",
             ...orderShippingUpdate,
           },
-          select,
+          select: merge(
+            select,
+            Prisma.validator<Prisma.OrderSelect>()({
+              id: true,
+              orderNumber: true,
+            })
+          ),
         }),
       ]
     )
