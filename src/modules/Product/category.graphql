@@ -1,0 +1,42 @@
+type Category {
+  id: ID!
+  slug: String!
+  name: String!
+  singularName: String
+  dryCleaningFee: Float
+  recoupment: Float
+  image: Json
+  description: String
+  visible: Boolean!
+  products(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product!]
+  children(
+    where: CategoryWhereInput
+    orderBy: CategoryOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Category!]
+  updatedAt: DateTime
+  productType: ProductType
+  measurementType: MeasurementType
+}
+
+input CustomCategoryUpsertInput {
+  name: String
+  singularName: String
+  dryCleaningFee: Float
+  recoupment: Float
+  visible: Boolean
+  description: String
+  slug: String
+}

@@ -162,20 +162,21 @@ export class ShippingService {
       address.state !== result.state ||
       // check startsWith because shippo returns zips with extensions
       !result.zip.startsWith(address.zip)
-    if (isValid && needToSuggestAddress) {
-      // Clients rely on exact copy of error message to power
-      // suggested address flow
-      throw new ApolloError("Need to Suggest Address", "400", {
-        suggestedAddress: pick(result, [
-          "city",
-          "country",
-          "state",
-          "street1",
-          "street2",
-          "zip",
-        ]),
-      })
-    }
+    // FIXME: Turn off error for now until we fix existing accounts and harvest supports error
+    // if (isValid && needToSuggestAddress) {
+    //   // Clients rely on exact copy of error message to power
+    //   // suggested address flow
+    //   throw new ApolloError("Need to Suggest Address", "400", {
+    //     suggestedAddress: pick(result, [
+    //       "city",
+    //       "country",
+    //       "state",
+    //       "street1",
+    //       "street2",
+    //       "zip",
+    //     ]),
+    //   })
+    // }
     const message = validationResults?.messages?.[0]
 
     return {

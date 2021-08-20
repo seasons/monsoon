@@ -7,6 +7,7 @@ import bodyParser from "body-parser"
 import compression from "compression"
 import express from "express"
 import httpContext from "express-http-context"
+import { graphqlUploadExpress } from "graphql-upload"
 
 import { AppModule } from "./app.module"
 import {
@@ -53,7 +54,11 @@ async function bootstrap() {
     createGetUserMiddleware(readClient, nestWinstonLogger),
     bodyParser.json(),
     handleErrors(nestWinstonLogger),
-    httpContext.middleware
+    httpContext.middleware,
+    graphqlUploadExpress({
+      maxFileSize: 1250000000, // 1.2 GB
+      maxFiles: 8,
+    })
   )
 
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {

@@ -3,6 +3,7 @@ import { Application } from "@app/decorators/application.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
+import slugify from "slugify"
 
 import { BagService } from "../services/bag.service"
 import { ProductService } from "../services/product.service"
@@ -66,6 +67,17 @@ export class ProductMutationsResolver {
       const { item } = args
       return await this.bagService.addToBag(item, customer, select)
     }
+  }
+
+  @Mutation()
+  async upsertCategory(@Args() { where, data }, @Select() select) {
+    const cat = await this.prisma.client.category.upsert({
+      where,
+      create: { ...data, slug: slugify(data.name).toLowerCase() },
+      update: data,
+      select,
+    })
+    return cat
   }
 
   @Mutation()

@@ -594,11 +594,14 @@ model Category {
   slug                         String                        @unique
   name                         String                        @unique
   description                  String?
-  image                        Json?                         @db.Json
-  visible                      Boolean                       @default(value: false)
-  updatedAt                    DateTime?                     @updatedAt
+  image                        Json?
+  singularName                 String?
+  dryCleaningFee               Float?
+  recoupment                   Float                         @default(4)
   productType                  ProductType?
   measurementType              MeasurementType?
+  visible                      Boolean                       @default(value: false)
+  updatedAt                    DateTime?                     @updatedAt
   products                     Product[]
   productMaterialCategories    ProductMaterialCategory[]
   warehouseLocationConstraints WarehouseLocationConstraint[]
@@ -1184,7 +1187,7 @@ model ProductVariant {
   physicalProducts        PhysicalProduct[]
   productNotifications    ProductNotification[]
   productVariantFeedbacks ProductVariantFeedback[]
-  productVariantWant      ProductVariantWant?
+  productVariantWants     ProductVariantWant[]
   shopifyProductVariant   ShopifyProductVariant?
   manufacturerSizes       Size[]                   @relation("ProductVariantManufacturerSize")
 }
@@ -1224,6 +1227,8 @@ model ProductVariantWant {
   userId           String?         @map("user") @db.VarChar(30)
   productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
   user             User?           @relation(fields: [userId], references: [id])
+
+  @@unique([productVariantId, userId])
 }
 
 model PushNotificationReceipt {
@@ -1301,9 +1306,9 @@ model ReservationFeedback {
   userId        String?                  @map("user") @db.VarChar(30)
   createdAt     DateTime                 @default(now())
   updatedAt     DateTime                 @updatedAt
-  reservationId String?                  @map("reservation") @db.VarChar(30)
+  reservationId String                   @map("reservation") @db.VarChar(30)
   respondedAt   DateTime?
-  reservation   Reservation?             @relation(fields: [reservationId], references: [id])
+  reservation   Reservation              @relation(fields: [reservationId], references: [id])
   user          User?                    @relation(fields: [userId], references: [id])
   feedbacks     ProductVariantFeedback[]
 }
@@ -1335,12 +1340,12 @@ model Season {
 }
 
 model ShippingMethod {
-  id             String          @id @default(cuid()) @db.VarChar(30)
-  code           ShippingCode
-  displayText    String
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  shippingOption ShippingOption?
+  id              String           @id @default(cuid()) @db.VarChar(30)
+  code            ShippingCode
+  displayText     String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  shippingOptions ShippingOption[]
 }
 
 model ShippingOption {
@@ -1355,7 +1360,9 @@ model ShippingOption {
   destination      Location?       @relation("LocationToShippingOption_destination", fields: [destinationId], references: [id])
   origin           Location?       @relation("LocationToShippingOption_origin", fields: [originId], references: [id])
   shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
-  reservation      Reservation?
+  reservations     Reservation[]
+
+  @@unique([originId, destinationId, shippingMethodId])
 }
 
 model ShopifyProductVariant {
