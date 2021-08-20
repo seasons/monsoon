@@ -916,6 +916,9 @@ model Package {
   weight                                           Float?
   createdAt                                        DateTime              @default(now())
   updatedAt                                        DateTime              @updatedAt
+  enteredDeliverySystemAt                          DateTime?
+  deliveredAt                                      DateTime? 
+  lostAt                                           DateTime?
   fromAddressId                                    String?               @map("fromAddress") @db.VarChar(30)
   toAddressId                                      String?               @map("toAddress") @db.VarChar(30)
   shippingLabelId                                  String?               @map("shippingLabel") @db.VarChar(30)
