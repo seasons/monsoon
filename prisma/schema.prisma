@@ -979,6 +979,7 @@ model PaymentPlan {
   updatedAt           DateTime             @updatedAt
   tagline             String?
   itemCount           Int?
+  caption             String?
   tier                PaymentPlanTier?
   customerMemberships CustomerMembership[]
 }
