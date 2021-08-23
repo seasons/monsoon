@@ -148,35 +148,187 @@ export class ShippingService {
 
     const validationResults = result.validation_results
 
-    // Patchwork case for invalid city/state/zip combo, pending
-    // response from shippo about why their validator doesn't properly
-    // handle this case
+    // equality without regard for case or trailing whitespace
+    const fuzzyEquals = (x: string, y: string) =>
+      x?.toLowerCase().trim() === y?.toLowerCase().trim()
+
     const isValid = result.validation_results.is_valid
-    const streetMatches =
-      address.street1 === result.street1 ||
-      `${address.street1} ${address.street2}` === result.street1
+
+    // Shippo is very particular about how it formats street1 and street2
+    // This function tries to do a "fuzzy match" between the street1/stret2
+    // pair given and the pair returned in the result. It does that by
+    // checking for various permutations of "fuzzy equality".
+    const streetFuzzyMatches = (original, result) => {
+      const performCommonShippoTranslations = x => {
+        let translatedValue = !!x ? `${x}`.toLowerCase() : ""
+
+        const replaceCommonWord = (longForm: string, shortForm: string) => {
+          const lcLongForm = longForm.toLowerCase()
+          const lcShortForm = shortForm.toLowerCase()
+          const regex = new RegExp(` ${lcLongForm}\s?`) // space|word|optionalSpace
+
+          const longFormMatch = translatedValue.match(regex)
+          if (!!longFormMatch) {
+            const spaceAfterMatch = longFormMatch[0].endsWith(" ")
+            if (spaceAfterMatch) {
+              translatedValue = translatedValue.replace(
+                ` ${lcLongForm} `,
+                ` ${lcShortForm} `
+              )
+            } else {
+              translatedValue = translatedValue.replace(
+                ` ${lcLongForm}`,
+                ` ${lcShortForm}`
+              )
+            }
+          }
+        }
+        replaceCommonWord("street", "st")
+        replaceCommonWord("drive", "dr")
+        replaceCommonWord("place", "pl")
+        replaceCommonWord("avenue", "ave")
+        replaceCommonWord("apt.", "apt")
+        replaceCommonWord("west", "w")
+        replaceCommonWord("east", "e")
+        replaceCommonWord("north", "n")
+        replaceCommonWord("south", "s")
+        replaceCommonWord("point", "pt")
+        replaceCommonWord("road", "rd")
+        replaceCommonWord("st.", "st")
+        replaceCommonWord("dr.", "dr")
+        replaceCommonWord("pl.", "pl")
+        replaceCommonWord("pt.", "pt")
+        replaceCommonWord("rd.", "rd")
+        replaceCommonWord("cove", "cv")
+        replaceCommonWord("cv.", "cv")
+        replaceCommonWord("trail", "trl")
+        replaceCommonWord("trl.", "trl")
+        replaceCommonWord("lane", "ln")
+        replaceCommonWord("ln.", "ln")
+        replaceCommonWord("terrace", "ter")
+        replaceCommonWord("ter.", "ter")
+
+        return translatedValue
+      }
+
+      const fuzzyStreetEquals = (addressStreet, resultStreet) => {
+        const equalWithoutTranslations = fuzzyEquals(
+          addressStreet,
+          resultStreet
+        )
+        const equalWithTranslations = fuzzyEquals(
+          performCommonShippoTranslations(addressStreet),
+          resultStreet
+        )
+
+        return equalWithTranslations || equalWithoutTranslations
+      }
+
+      const basicallyEqual = fuzzyStreetEquals(address.street1, result.street1)
+
+      const equalOnceStreetsCombined = fuzzyStreetEquals(
+        `${address.street1} ${address.street2}`,
+        result.street1
+      )
+
+      const equalExceptForAnApartmentQualifier =
+        // No apartment qualifer in original address
+        fuzzyStreetEquals(
+          `${address.street1} Apt ${address.street2}`,
+          result.street1
+        ) ||
+        fuzzyStreetEquals(
+          `${address.street1} # ${address.street2}`,
+          result.street1
+        ) ||
+        fuzzyStreetEquals(
+          `${address.street1} Unit ${address.street2}`,
+          result.street1
+        ) ||
+        // original address had something like #4b
+        fuzzyStreetEquals(
+          `${address.street1} ${address.street2}`
+            .toLowerCase()
+            .replace(" #", " unit "),
+          result.street1
+        ) ||
+        fuzzyStreetEquals(
+          `${address.street1} ${address.street2}`
+            .toLowerCase()
+            .replace(" #", " apt "),
+          result.street1
+        ) ||
+        fuzzyStreetEquals(
+          `${address.street1} ${address.street2}`
+            .toLowerCase()
+            .replace(" #", " # "),
+          result.street1
+        ) ||
+        // original address had apt. shippo wants unit
+        fuzzyStreetEquals(
+          `${address.street1} ${address.street2}`
+            .toLowerCase()
+            .replace(" apt ", " unit "),
+          result.street1
+        ) ||
+        // original address had unit. shippo wants apt
+        fuzzyStreetEquals(
+          `${address.street1} ${address.street2}`
+            .toLowerCase()
+            .replace(" unit ", " apt "),
+          result.street1
+        )
+
+      // In some cases, the address is so edge casey that we can just let it
+      // slide through shippo validation, and catch any errors at label creation
+      // time. e.g if the street 2 is an entire floor "4th floor"
+      const streetException = address.street2?.toLowerCase()?.endsWith("floor")
+
+      return (
+        basicallyEqual ||
+        equalOnceStreetsCombined ||
+        equalExceptForAnApartmentQualifier ||
+        streetException
+      )
+    }
+
+    const streetMatches = streetFuzzyMatches(address, result)
+    const stateMatches =
+      fuzzyEquals(address.state, result.state) ||
+      fuzzyEquals(
+        this.utilsService.abbreviateState(address.state),
+        result.state
+      )
+    // check startsWith because shippo returns zips with extensions
+    const zipMatches = result.zip.startsWith(address.zip)
+    const cityMatches = fuzzyEquals(address.city, result.city)
 
     const needToSuggestAddress =
-      !streetMatches ||
-      address.city !== result.city ||
-      address.state !== result.state ||
-      // check startsWith because shippo returns zips with extensions
-      !result.zip.startsWith(address.zip)
-    // FIXME: Turn off error for now until we fix existing accounts and harvest supports error
-    // if (isValid && needToSuggestAddress) {
-    //   // Clients rely on exact copy of error message to power
-    //   // suggested address flow
-    //   throw new ApolloError("Need to Suggest Address", "400", {
-    //     suggestedAddress: pick(result, [
-    //       "city",
-    //       "country",
-    //       "state",
-    //       "street1",
-    //       "street2",
-    //       "zip",
-    //     ]),
-    //   })
-    // }
+      !streetMatches || !cityMatches || !stateMatches || !zipMatches
+    if (isValid && needToSuggestAddress) {
+      // Clients rely on exact copy of error message to power
+      // suggested address flow
+      throw new ApolloError("Need to Suggest Address", "400", {
+        suggestedAddress: pick(result, [
+          "city",
+          "country",
+          "state",
+          "street1",
+          "street2",
+          "zip",
+        ]),
+        failureMode: !streetMatches
+          ? "Street mismatch"
+          : !cityMatches
+          ? "City mismatch"
+          : !stateMatches
+          ? "State mismatch"
+          : !zipMatches
+          ? "Zip mismatch"
+          : "",
+        originalAddress: address,
+      })
+    }
     const message = validationResults?.messages?.[0]
 
     return {
