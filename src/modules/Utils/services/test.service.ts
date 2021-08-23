@@ -5,6 +5,7 @@ import {
 } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
+import { merge } from "lodash"
 
 import {
   CreateTestCustomerInput,
@@ -14,15 +15,121 @@ import {
   CreateTestProductOutput,
   CreateTestProductVariantInput,
 } from "../utils.types.d"
-import { QueryUtilsService } from "./queryUtils.service"
 import { UtilsService } from "./utils.service"
 
 export class TestUtilsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly utils: UtilsService,
-    private readonly queryUtils: QueryUtilsService
+    private readonly utils: UtilsService
   ) {}
+
+  async createTestReservation({
+    sentPackageTransactionID,
+    returnPackageTransactionID,
+    select = {},
+  }: {
+    sentPackageTransactionID: string
+    returnPackageTransactionID: string
+    select?: Prisma.ReservationSelect
+  }) {
+    const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
+    const customer = await this.prisma.client.customer.findFirst({
+      where: { status: "Active" },
+      select: { id: true, user: { select: { id: true } } },
+    })
+    const toLocation = await this.prisma.client.location.findFirst({
+      select: { id: true },
+    })
+    const products = await this.prisma.client.physicalProduct.findMany({
+      where: { inventoryStatus: "Reservable" },
+      take: 2,
+      select: { seasonsUID: true },
+    })
+    const productSUIDConnectInput = products.map(a => ({
+      seasonsUID: a.seasonsUID,
+    }))
+
+    const reservation = await this.prisma.client.reservation.create({
+      data: {
+        products: {
+          connect: productSUIDConnectInput,
+        },
+        newProducts: {
+          connect: productSUIDConnectInput,
+        },
+        customer: {
+          connect: {
+            id: customer.id,
+          },
+        },
+        user: {
+          connect: {
+            id: customer.user.id,
+          },
+        },
+        phase: "BusinessToCustomer",
+        sentPackage: {
+          create: {
+            transactionID: sentPackageTransactionID,
+            weight: 2,
+            items: {
+              connect: productSUIDConnectInput,
+            },
+            shippingLabel: {
+              create: {
+                image: "",
+                trackingNumber: "",
+                trackingURL: "",
+                name: "UPS",
+              },
+            },
+            fromAddress: {
+              connect: {
+                slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
+              },
+            },
+            toAddress: {
+              connect: { id: toLocation.id },
+            },
+          },
+        },
+        returnPackages: {
+          create: {
+            transactionID: returnPackageTransactionID,
+            shippingLabel: {
+              create: {
+                image: "",
+                trackingNumber: "",
+                trackingURL: "",
+                name: "UPS",
+              },
+            },
+            fromAddress: {
+              connect: {
+                id: toLocation.id,
+              },
+            },
+            toAddress: {
+              connect: {
+                slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
+              },
+            },
+          },
+        },
+        reservationNumber: uniqueReservationNumber,
+        lastLocation: {
+          connect: {
+            slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
+          },
+        },
+        shipped: false,
+        status: "Queued",
+      },
+      select: merge({ id: true }, select),
+    })
+
+    return reservation
+  }
 
   /* 
     Creates a test product according to the constraints passed in. 

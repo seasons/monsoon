@@ -1,3 +1,5 @@
+export const TRANSACTION_ID = "cab8f46684034257ba8d72c58347fc26"
+
 export const DeliveryScheduled = {
   test: false,
   data: {
@@ -142,7 +144,7 @@ export const DeliveryScheduled = {
         },
       },
     ],
-    transaction: "cab8f46684034257ba8d72c58347fc26",
+    transaction: TRANSACTION_ID,
     test: false,
   },
   event: "track_updated",
@@ -235,7 +237,7 @@ export const PackageDeparted = {
         },
       },
     ],
-    transaction: "cab8f46684034257ba8d72c58347fc26",
+    transaction: TRANSACTION_ID,
     test: false,
   },
   event: "track_updated",
@@ -348,7 +350,80 @@ export const PackageArrived = {
         },
       },
     ],
-    transaction: "cab8f46684034257ba8d72c58347fc26",
+    transaction: TRANSACTION_ID,
+    test: false,
+  },
+  event: "track_updated",
+}
+
+export const PackageAccepted = {
+  test: false,
+  data: {
+    messages: [],
+    carrier: "ups",
+    trackingNumber: "1Z73662R0328627213",
+    addressFrom: {
+      city: "Kearny",
+      state: "NJ",
+      zip: "07032",
+      country: "US",
+    },
+    addressTo: {
+      city: "New York",
+      state: "NY",
+      zip: "10007",
+      country: "US",
+    },
+    eta: "2021-08-14T04:00:00Z",
+    originalEta: "2021-08-14T04:00:00Z",
+    servicelevel: {
+      token: "ups_ground",
+      name: "Ground",
+    },
+    metadata: null,
+    trackingStatus: {
+      objectCreated: "2021-08-12T16:59:41.228Z",
+      objectUpdated: "2021-08-14T02:45:47.369Z",
+      objectId: "94850588aa2e4067b0322e91be28a63c",
+      status: "TRANSIT",
+      statusDetails: "Origin Scan",
+      statusDate: "2021-08-14T01:43:20Z",
+      substatus: {
+        code: "package_accepted",
+        text:
+          "Package has been accepted into the carrier network for delivery.",
+        actionRequired: false,
+      },
+      location: {
+        city: "Secaucus",
+        state: "NJ",
+        zip: "",
+        country: "US",
+      },
+    },
+    trackingHistory: [
+      {
+        objectCreated: "2021-08-12T16:59:41.228Z",
+        objectUpdated: "2021-08-14T02:45:47.369Z",
+        objectId: "6c488a8325a54511adab67b9cb5b2dc0",
+        status: "TRANSIT",
+        statusDetails: "Origin Scan",
+        statusDate: "2021-08-14T01:43:20Z",
+        substatus: {
+          code: "package_accepted",
+          text:
+            "Package has been accepted into the carrier network for delivery.",
+          actionRequired: false,
+        },
+        location: {
+          city: "Secaucus",
+          state: "NJ",
+          zip: "",
+          country: "US",
+        },
+      },
+    ],
+    transaction: TRANSACTION_ID,
     test: false,
   },
   event: "track_updated",

@@ -1,104 +1,95 @@
+import { APP_MODULE_DEF } from "@app/app.module"
 import { PushNotificationService } from "@app/modules/PushNotification"
-import { PushNotificationModule } from "@app/modules/PushNotification/pushNotification.module"
-import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { TestUtilsService } from "@app/modules/Utils/services/test.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { INestApplication } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
+import { Reservation } from "@prisma/client"
 import request from "supertest"
 
 import { PrismaService } from "../../../prisma/prisma.service"
-import { ShippoController } from "../controllers/shippo.controller"
-import { PackageDeparted } from "./shippoEvents.stub"
+import { SHIPPO_MODULE_DEF } from "../shipping.module"
+import { PackageAccepted, TRANSACTION_ID } from "./shippoEvents.stub"
 
-class PrismaServiceMock {
-  binding = {
-    query: {
-      reservations: () =>
-        Promise.resolve([
-          {
-            id: "123",
-            sentPackage: {
-              transactionID: "cab8f46684034257ba8d72c58347fc26",
-            },
-          },
-        ]),
-      user: () =>
-        Promise.resolve({
-          id: "789",
-          pushNotification: {
-            status: "Granted",
-          },
-        }),
-    },
-  }
-
-  client = {
-    createPackageTransitEvent: jest.fn().mockImplementation(data => {
-      return Promise.resolve({
-        id: "456",
-        status: data.status,
-        substatus: data.subStatus,
-        data,
-      })
-    }),
-    reservation: () => ({
-      id: "123",
-      user: () => ({
-        id: "789",
-      }),
-    }),
-    packages: () => [
-      {
-        transactionID: "cab8f46684034257ba8d72c58347fc26",
-      },
-    ],
-    updateReservation: jest.fn(),
-    pushNotificationReceipts: jest.fn(),
-    updatePackage: jest.fn(),
-  }
-}
-
-xdescribe("Shippo Controller", () => {
+describe("Shippo Controller", () => {
   let app: INestApplication
   let pushNotificationsService: PushNotificationService
+  let prismaService: PrismaService
+  let testUtils: TestUtilsService
+  let testReservation: Partial<Reservation>
 
-  beforeEach(async () => {
-    const PrismaServiceProvider = {
-      provide: PrismaService,
-      useClass: PrismaServiceMock,
-    }
-    const moduleRef = await Test.createTestingModule({
-      controllers: [ShippoController],
-      providers: [ShippoController, PrismaServiceProvider],
-      imports: [PushNotificationModule],
-    })
-      .overrideProvider(PrismaService)
-      .useClass(PrismaServiceMock)
-      .compile()
+  beforeAll(async () => {
+    // Create the test module and initalize the app
+    const moduleRef = await Test.createTestingModule(APP_MODULE_DEF).compile()
 
     app = moduleRef.createNestApplication()
+    await app.init()
+
     pushNotificationsService = moduleRef.get<PushNotificationService>(
       PushNotificationService
     )
+    prismaService = moduleRef.get<PrismaService>(PrismaService)
+    testUtils = new TestUtilsService(
+      prismaService,
+      new UtilsService(prismaService)
+    )
+    //@ts-ignore
 
-    await app.init()
-  })
+    console.log(await prismaService.client.reservation.findFirst())
+    testReservation = await testUtils.createTestReservation({
+      sentPackageTransactionID: TRANSACTION_ID,
+      returnPackageTransactionID: "ooglyBoogly",
+    })
 
-  it("processes PackageDeparted event", done => {
+    // Don't send push notifications
     jest
       .spyOn(pushNotificationsService, "pushNotifyUsers")
       .mockResolvedValue(Promise.resolve({}) as any)
+
+    // Create a test reservation, with one sentPackage and one returnPackage
+  })
+
+  it("sets the enteredDeliverySystemAt timestamp on a sent package", async () => {
+    // expect enteredDeliverySystemAt to be null on sent package before sending event
+    const testReservationWithData = await prismaService.client.reservation.findFirst(
+      {
+        where: { id: testReservation.id },
+        select: {
+          sentPackage: {
+            select: { id: true, enteredDeliverySystemAt: true },
+          },
+        },
+      }
+    )
+    expect(testReservationWithData.sentPackage.enteredDeliverySystemAt).toBe(
+      null
+    )
+
+    // Send a "Package Accepted" event to the endpoint
     return request(app.getHttpServer())
       .post("/shippo_events")
-      .send(PackageDeparted)
+      .send(PackageAccepted)
       .expect(201)
-      .end((err, res) => {
-        if (err) done(err)
-        expect(res.body).toMatchObject({
-          id: "456",
-          status: "Transit",
-          substatus: "PackageDeparted",
-        })
-        done()
+      .end(async (err, res) => {
+        if (err) return err
+        // expect sent package to have non-null enteredDeliverySystemAt
+        const testReservationWithData = await prismaService.client.reservation.findFirst(
+          {
+            where: { id: testReservation.id },
+            select: {
+              sentPackage: {
+                select: { id: true, enteredDeliverySystemAt: true },
+              },
+            },
+          }
+        )
+        expect(
+          testReservationWithData.sentPackage.enteredDeliverySystemAt
+        ).toBeDefined()
       })
+  })
+
+  it("sets the deliveredAt timestamp on a return package", done => {
+    done()
   })
 })

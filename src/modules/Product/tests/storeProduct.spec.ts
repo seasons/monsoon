@@ -44,11 +44,7 @@ xdescribe("Store Product", () => {
     )
     utilsService = moduleRef.get<UtilsService>(UtilsService)
     queryUtilsService = moduleRef.get<QueryUtilsService>(QueryUtilsService)
-    testUtilsService = new TestUtilsService(
-      prismaService,
-      utilsService,
-      queryUtilsService
-    )
+    testUtilsService = new TestUtilsService(prismaService, utilsService)
     done()
   })
 

@@ -771,6 +771,7 @@ export class ReservationService {
       "Picked",
       "Hold",
     ].includes(reservation.status)
+
     // If setting to cancelled, execute implied updates
     if (changingStatusTo("Cancelled")) {
       if (!canCancelReservation) {
@@ -824,6 +825,10 @@ export class ReservationService {
           `Cannot mark reservation with status ${reservation.status} as Lost.`
         )
       }
+
+      data["lostAt"] = new Date()
+      data["lostInPhase"] = reservation.phase
+
       // If it's on the way to the customer, we know all new products got lost. If it's on the way
       //  back to us and they've used the return flow, we know all the "returnedProducts" got lost.
       const productsToUpdate =
@@ -856,6 +861,24 @@ export class ReservationService {
             this.prisma.client.bagItem.delete({ where: { id: bagItemId } })
           )
         }
+      }
+
+      // Set lostAt on the sent package if appropriate.
+      if (reservation.phase === "BusinessToCustomer") {
+        // We don't try to set a `lostAt` timestamp if the reservation is in CustomerToBusiness
+        // phase because we are not a priori sure which package got lost.
+        const resyWithSentPackage = await this.prisma.client.reservation.findUnique(
+          {
+            where: { id: reservation.id },
+            select: { sentPackage: { select: { id: true } } },
+          }
+        )
+        promises.push(
+          this.prisma.client.package.update({
+            where: { id: resyWithSentPackage.sentPackage.id },
+            data: { lostAt: new Date() },
+          })
+        )
       }
     }
 
@@ -1104,7 +1127,7 @@ export class ReservationService {
     interface UniqueIDObject {
       id: string
     }
-    const uniqueReservationNumber = await this.reservationUtils.getUniqueReservationNumber()
+    const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
 
     const returnPackagesToCarryOver =
       lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []
