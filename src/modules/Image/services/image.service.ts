@@ -137,7 +137,9 @@ export class ImageService {
   ): Promise<ImageData> {
     const { file } = await image
     if (!file) {
-      this.logger.error("Error uploading image")
+      this.logger.error("Error uploading image", {
+        options,
+      } as any)
       return { width: 0, height: 0, url: "" }
     }
 
@@ -173,11 +175,17 @@ export class ImageService {
 
     fileStream.destroy()
 
-    return {
+    const data = {
       height,
       url: S3_BASE + uploadParams.Key,
       width,
     }
+
+    this.logger.log("Uploaded image", {
+      ...data,
+    } as any)
+
+    return data
   }
 
   async uploadImageFromURL(
@@ -217,9 +225,10 @@ export class ImageService {
                 title,
               })
             } catch (err) {
-              this.logger.error("Error while uploading image")
-              this.logger.error(imageName)
-              this.logger.error(err)
+              this.logger.error("Error while uploading image", {
+                imageName,
+                err,
+              } as any)
             }
           }
         }
@@ -245,10 +254,22 @@ export class ImageService {
           },
         },
         (err, res, body) => {
-          if (err) {
-            reject(err)
+          const errors = body.errors
+          if (err || errors?.length > 0) {
+            const error = err || errors?.[0]
+            reject(error)
+            this.logger.error("Error purging imgix cache", {
+              url: imgixImageURL,
+              s3Url: s3ImageURL,
+              error,
+            } as any)
+          } else {
+            resolve(body)
+            this.logger.log("Purged images from imgix cache", {
+              url: imgixImageURL,
+              s3Url: s3ImageURL,
+            } as any)
           }
-          resolve(body)
         }
       )
     })
@@ -314,6 +335,10 @@ export class ImageService {
         }
       })
     )
+
+    this.logger.log("Upserted images", {
+      images: imageNames,
+    } as any)
     return imageDatas as any
   }
 }
