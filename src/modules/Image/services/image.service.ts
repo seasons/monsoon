@@ -320,8 +320,10 @@ export class ImageService {
             imageName,
           })
 
-          // Purge this image url in imgix cache
-          await this.purgeS3ImageFromImgix(url)
+          try {
+            // Purge this image url in imgix cache
+            await this.purgeS3ImageFromImgix(url)
+          } catch (e) {}
 
           // Upsert the image with the s3 image url
           const prismaImagePromise = this.prisma.client.image.upsert({
